@@ -2674,7 +2674,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public boolean hasWorkingSystem(int system, int loc) {
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             CriticalSlot ccs = getCritical(loc, i);
-            if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM && ccs.getIndex() == system && !ccs.isDestroyed() && !ccs.isBreached()) {
+            if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM && ccs.getIndex() == system && !ccs.isDamaged()) {
                 return true;
             }
         }
@@ -2839,10 +2839,12 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * Does the mech have a functioning null signature system?
      */
     public boolean hasActiveNullSig() {
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
-            if (Mech.NULLSIG.equals(type.getInternalName()) && m.curMode().equals("On") && m.isReady()) {
-                return true;
+        if ( !isShutDown() ){
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (Mech.NULLSIG.equals(type.getInternalName()) && m.curMode().equals("On") && m.isReady()) {
+                    return true;
+                }
             }
         }
         return false;
@@ -2852,12 +2854,14 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveECM() {
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
-            //TacOps p. 100 Angle ECM can have 1 ECM and 1 ECCM at the same time
-            if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
-                    && ( m.curMode().equals("ECM") || m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECM & Ghost Targets")) ) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+        if ( !isShutDown() ){
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                //TacOps p. 100 Angle ECM can have 1 ECM and 1 ECCM at the same time
+                if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
+                        && ( m.curMode().equals("ECM") || m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECM & Ghost Targets")) ) {
+                    return !(m.isInoperable());
+                }
             }
         }
         return false;
@@ -2867,11 +2871,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveAngelECM() {
-        if (game.getOptions().booleanOption("tacops_angel_ecm")) {
+        if (game.getOptions().booleanOption("tacops_angel_ecm") && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
                 if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM) && m.curMode().equals("ECM")) {
-                    return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+                    return !(m.isInoperable());
                 }
             }
         }
@@ -2887,7 +2891,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      */
     public boolean hasGhostTargets(boolean active) {
 //        if you failed your ghost target PSR, then it doesn't matter
-        if(active && getGhostTargetRollMoS() < 0) { 
+        if((active && getGhostTargetRollMoS() < 0) || isShutDown()) { 
             return false;
         }
         for (Mounted m : getMisc()) {
@@ -2895,7 +2899,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             //TacOps p. 100 Angle ECM can have ECM/ECCM and Ghost Targets at the same time
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
                     && ( m.curMode().equals("Ghost Targets") || m.curMode().equals("ECM & Ghost Targets") || m.curMode().equals("ECCM & Ghost Targets")) ) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown() || this.getCrew().isUnconscious());
+                return !(m.isInoperable() || this.getCrew().isUnconscious());
             }
         }
         return false;
@@ -2910,13 +2914,13 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      *         or it is not in eccm mode or it is damaged.
      */
     public boolean hasActiveECCM() {
-        if (game.getOptions().booleanOption("tacops_eccm")) {
+        if (game.getOptions().booleanOption("tacops_eccm") && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
                 //TacOps p. 100 Angle ECM can have 1 ECM and 1 ECCM at the same time
                 if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM) 
                         && ( m.curMode().equals("ECCM") || m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECCM & Ghost Targets")) ) {
-                    return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+                    return !m.isInoperable();
                 }
             }
         }
@@ -2932,7 +2936,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      *         or it is not in eccm mode or it is damaged.
      */
     public boolean hasActiveAngelECCM() {
-        if (game.getOptions().booleanOption("tacops_angel_ecm") && game.getOptions().booleanOption("tacops_eccm")) {
+        if (game.getOptions().booleanOption("tacops_angel_ecm") && game.getOptions().booleanOption("tacops_eccm") && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
                 if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM) && m.curMode().equals("ECCM")) {
@@ -2952,16 +2956,18 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      */
     public int getECMRange() {
         
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
-            if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM) && !m.isInoperable()) {
-                if (BattleArmor.SINGLE_HEX_ECM.equals(type.getInternalName())) {
-                    return 0;
+        if ( !isShutDown() ){
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM) && !m.isInoperable()) {
+                    if (BattleArmor.SINGLE_HEX_ECM.equals(type.getInternalName())) {
+                        return 0;
+                    }
+                    if(game.getPlanetaryConditions().hasEMI()) {
+                        return 12;
+                    }
+                    return 6;
                 }
-                if(game.getPlanetaryConditions().hasEMI()) {
-                    return 12;
-                }
-                return 6;
             }
         }
         return Entity.NONE;
@@ -2976,7 +2982,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
     
     public boolean hasBAP(boolean checkECM) {
-        if(game.getPlanetaryConditions().hasEMI()) {
+        if(game.getPlanetaryConditions().hasEMI() || isShutDown()) {
             return false;
         }
         for (Mounted m : getMisc()) {
@@ -3006,7 +3012,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      *         be <code>Entity.NONE</code> if no BAP is active.
      */
     public int getBAPRange() {
-        if(game.getPlanetaryConditions().hasEMI()) {
+        if(game.getPlanetaryConditions().hasEMI() || isShutDown()) {
             return Entity.NONE;
         }
         for (Mounted m : getMisc()) {

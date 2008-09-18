@@ -209,13 +209,16 @@ public class DfaAttackAction extends DisplacementAttackAction {
             targetId = target.getTargetId();
         }
         
-        // a friendly unit can never be the target of a direct attack.
-        if (target.getTargetType() == Targetable.TYPE_ENTITY
-                && (((Entity)target).getOwnerId() == ae.getOwnerId()
-                        || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
-                                && ae.getOwner().getTeam() != Player.TEAM_NONE
-                                && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+        if (!game.getOptions().booleanOption("friendly_fire")) {
+            // a friendly unit can never be the target of a direct attack.
+            if (target.getTargetType() == Targetable.TYPE_ENTITY
+                    && (((Entity)target).getOwnerId() == ae.getOwnerId()
+                            || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
+                                    && ae.getOwner().getTeam() != Player.TEAM_NONE
+                                    && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+        }
+
         
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         ToHitData toHit = null;

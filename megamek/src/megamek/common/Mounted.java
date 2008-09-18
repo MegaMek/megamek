@@ -347,6 +347,10 @@ public class Mounted implements Serializable, RoundUpdated {
         this.destroyed = destroyed;
     }
 
+    public boolean isInoperable(){
+        return destroyed || missing || useless;
+    }
+    
     public boolean isHit() {
         return hit;
     }

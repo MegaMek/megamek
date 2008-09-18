@@ -2954,7 +2954,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM) && !m.isDestroyed() && !m.isMissing()) {
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM) && !m.isInoperable()) {
                 if (BattleArmor.SINGLE_HEX_ECM.equals(type.getInternalName())) {
                     return 0;
                 }
@@ -2983,7 +2983,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_BAP)) {
 
-                if (!m.isDestroyed() && !m.isMissing() && !m.isBreached() && !isShutDown() ) {
+                if (!m.isInoperable()) {
                     //Beagle Isn't effected by normal ECM
                     if (type.getName().equals("Beagle Active Probe") ) {
                         
@@ -3011,7 +3011,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         }
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && type.hasFlag(MiscType.F_BAP) && !m.isDestroyed() && !m.isMissing()) {
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_BAP) && !m.isInoperable()) {
                 // System.err.println("BAP type name: "+m.getName()+"
                 // internalName: "+((MiscType)m.getType()).internalName);
                 if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals("Bloodhound Active Probe"))
@@ -3034,7 +3034,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public boolean hasTargComp() {
         for (Mounted m : getMisc()) {
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP)) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached());
+                return !m.isInoperable();
             }
         }
         return false;
@@ -3056,7 +3056,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         }
         for (Mounted m : getMisc()) {
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP) && m.curMode().equals("Aimed shot")) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached());
+                return !m.isInoperable();
             }
         }
         return false;
@@ -3069,7 +3069,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         if (isShutDown() || isOffBoard())
             return false;
         for (Mounted m : getEquipment()) {
-            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3S) && !m.isDestroyed() && !m.isBreached()) {
+            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3S) && !m.isInoperable()) {
                 return true;
             }
         }
@@ -3104,7 +3104,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         if (isShutDown() || isOffBoard())
             return false;
         for (Mounted m : getEquipment()) {
-            if (m.getType() instanceof WeaponType && m.getType().hasFlag(WeaponType.F_C3M) && !m.isDestroyed() && !m.isBreached()) {
+            if (m.getType() instanceof WeaponType && m.getType().hasFlag(WeaponType.F_C3M) && !m.isInoperable()) {
                 // If this unit is configured as a company commander,
                 // and if this computer is the company master, then
                 // this unit does not have a lance master computer.
@@ -3130,11 +3130,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             Iterator<Mounted> e = getEquipment().iterator();
             while (C3CompanyMasterIndex == LOC_DESTROYED && e.hasNext()) {
                 Mounted m = e.next();
-                if (m.getType() instanceof WeaponType && m.getType().hasFlag(WeaponType.F_C3M) && !m.isDestroyed() && !m.isBreached()) {
+                if (m.getType() instanceof WeaponType && m.getType().hasFlag(WeaponType.F_C3M) && !m.isInoperable()) {
                     // Now look for the company command master.
                     while (C3CompanyMasterIndex == LOC_DESTROYED && e.hasNext()) {
                         m = e.next();
-                        if (m.getType() instanceof WeaponType && m.getType().hasFlag(WeaponType.F_C3M) && !m.isDestroyed() && !m.isBreached()) {
+                        if (m.getType() instanceof WeaponType && m.getType().hasFlag(WeaponType.F_C3M) && !m.isInoperable()) {
                             // Found the comany command master
                             this.C3CompanyMasterIndex = getEquipmentNum(m);
                         }
@@ -3168,7 +3168,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         if (isShutDown() || isOffBoard())
             return false;
         for (Mounted m : getEquipment()) {
-            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3I) && !m.isDestroyed() && !m.isBreached()) {
+            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3I) && !m.isInoperable()) {
                 return true;
             }
         }

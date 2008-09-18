@@ -6,12 +6,13 @@ v0.33.33-dev (SVN)
 + Bug: Mine Field Delievery Menu option not showing up for MML launchers
 + Bug: SmokeCloud not Seralizable.
 + Created Mounted.isInoperable(). Checks for Missing Destroyed and Breached flags
++ Enforce "no attack on friendly units" rule only when friendly fire is disabled
+
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files
 + Bug 2111184: 0.30.31 Bot Won't Move/Deploy
 + Bug: Issue with null buildings in losEffects
-
 
 v0.33.31 (2009-09-14, 19:30 GMT+1)
 + Bug: Improved Heavy Large Laser had the wrong crit/Tonnage

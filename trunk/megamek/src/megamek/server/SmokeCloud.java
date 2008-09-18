@@ -15,12 +15,17 @@
 
 package megamek.server;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import megamek.common.Coords;
 
-public class SmokeCloud{
+public class SmokeCloud implements Serializable{
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8937331680271675046L;
     private int smokeDuration = 0;
     private ArrayList<Coords> smokeHexList = new ArrayList<Coords>();
     private int smokeLevel = 1;

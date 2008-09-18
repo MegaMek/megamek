@@ -8,6 +8,7 @@ v0.33.33-dev (SVN)
 + Created Mounted.isInoperable(). Checks for Missing Destroyed and Breached flags
 + Enforce "no attack on friendly units" rule only when friendly fire is disabled
 + Bug: leg attacks not working
++ Bad Placements of isShutdown();
 
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)

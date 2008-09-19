@@ -2167,9 +2167,9 @@ public abstract class Mech extends Entity implements Serializable {
         // calculate heat efficiency
         int mechHeatEfficiency = 6 + this.getHeatCapacity();
         if (getJumpMP() > 0) {
-            mechHeatEfficiency -= Math.max(3, getJumpMP());
+            mechHeatEfficiency -= getEngine().getJumpHeat(getJumpMP());
         } else {
-            mechHeatEfficiency -= 2;
+            mechHeatEfficiency -= getEngine().getRunHeat();
         }
 
         // total up maximum heat generated

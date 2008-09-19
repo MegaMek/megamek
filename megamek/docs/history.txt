@@ -10,6 +10,7 @@ v0.33.33-dev (SVN)
 + Bug: leg attacks not working
 + Bad Placements of isShutdown();
 + Bug: BV heat efficiency not taking XXL engine movement heat into account
++ Bug: Fuel tanks not correctly initialized
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

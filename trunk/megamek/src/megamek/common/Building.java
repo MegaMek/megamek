@@ -213,6 +213,10 @@ public class Building implements Serializable {
                 && startHex.containsTerrain(Terrains.BRIDGE_CF)) {
             this.currentCF.put(coords, startHex.terrainLevel(Terrains.BRIDGE_CF));
         }
+        if (structureType == Terrains.FUEL_TANK
+                && startHex.containsTerrain(Terrains.FUEL_TANK_CF)) {
+            this.currentCF.put(coords, startHex.terrainLevel(Terrains.FUEL_TANK_CF));
+        }
         this.phaseCF.putAll(currentCF);
 
         // Walk through the exit directions and

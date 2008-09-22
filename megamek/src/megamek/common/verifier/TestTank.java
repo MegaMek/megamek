@@ -146,7 +146,7 @@ public class TestTank extends TestEntity {
             return false;
         if (getTankCountHeatLaserWeapons() <= 10)
             return false;
-        if (tank.getTechLevel() == TechConstants.T_IS_LEVEL_1)
+        if (tank.getTechLevel() == TechConstants.T_INTRO_BOXSET)
             return false;
         return false;
         // return true;

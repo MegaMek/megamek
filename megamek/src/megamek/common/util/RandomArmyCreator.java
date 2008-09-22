@@ -167,7 +167,7 @@ public class RandomArmyCreator {
         p.minBV = 7600;
         p.minYear = 3050;
         p.maxYear = 3055;
-        p.tech = TechConstants.T_IS_LEVEL_2;
+        p.tech = TechConstants.T_IS_TW_NON_BOX;
         p.canon = true;
         p.padWithInfantry = true;
         ArrayList<MechSummary> units = generateArmy(p);
@@ -196,24 +196,24 @@ public class RandomArmyCreator {
         for (MechSummary m : all) {
             if (p.tech != TechConstants.T_ALL && p.tech != m.getType()) {
                 // advanced rules includes basic too
-                if (p.tech == TechConstants.T_CLAN_LEVEL_3) {
-                    if (m.getType() != TechConstants.T_CLAN_LEVEL_2)
+                if (p.tech == TechConstants.T_CLAN_ADVANCED) {
+                    if (m.getType() != TechConstants.T_CLAN_TW)
                         continue;
-                } else if (p.tech == TechConstants.T_IS_LEVEL_3) {
-                    if (m.getType() != TechConstants.T_IS_LEVEL_1
-                            && m.getType() != TechConstants.T_IS_LEVEL_2)
+                } else if (p.tech == TechConstants.T_IS_ADVANCED) {
+                    if (m.getType() != TechConstants.T_INTRO_BOXSET
+                            && m.getType() != TechConstants.T_IS_TW_NON_BOX)
                         continue;
-                } else if (p.tech == TechConstants.T_IS_LEVEL_2) {
-                    if (m.getType() != TechConstants.T_IS_LEVEL_1)
+                } else if (p.tech == TechConstants.T_IS_TW_NON_BOX) {
+                    if (m.getType() != TechConstants.T_INTRO_BOXSET)
                         continue;
-                } else if (p.tech == TechConstants.T_LEVEL_2_ALL) {
-                    if (m.getType() != TechConstants.T_IS_LEVEL_1
-                            && m.getType() != TechConstants.T_IS_LEVEL_2
-                            && m.getType() != TechConstants.T_CLAN_LEVEL_2)
+                } else if (p.tech == TechConstants.T_TW_ALL) {
+                    if (m.getType() != TechConstants.T_INTRO_BOXSET
+                            && m.getType() != TechConstants.T_IS_TW_NON_BOX
+                            && m.getType() != TechConstants.T_CLAN_TW)
                         continue;
-                } else if (p.tech == TechConstants.T_IS_LEVEL_2_ALL) {
-                    if (m.getType() != TechConstants.T_IS_LEVEL_1
-                            && m.getType() != TechConstants.T_IS_LEVEL_2)
+                } else if (p.tech == TechConstants.T_IS_TW_ALL) {
+                    if (m.getType() != TechConstants.T_INTRO_BOXSET
+                            && m.getType() != TechConstants.T_IS_TW_NON_BOX)
                         continue;
                 } else {
                     continue;

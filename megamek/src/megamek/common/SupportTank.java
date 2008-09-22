@@ -97,5 +97,11 @@ public class SupportTank extends Tank implements Serializable {
         return false;
     }
     
-    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getTotalCommGearTons()
+     */
+    public int getTotalCommGearTons() {
+        return getExtraCommGearTons();
+    }
 }

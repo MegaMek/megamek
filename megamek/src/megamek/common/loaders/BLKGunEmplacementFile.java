@@ -63,28 +63,28 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
         }
         if (dataFile.getDataAsString("Type")[0].equals("IS")) {
             if (e.getYear() == 3025) {
-                e.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                e.setTechLevel(TechConstants.T_INTRO_BOXSET);
             } else {
-                e.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
             }
         } else if (dataFile.getDataAsString("Type")[0].equals("IS Level 1")) {
-            e.setTechLevel(TechConstants.T_IS_LEVEL_1);
+            e.setTechLevel(TechConstants.T_INTRO_BOXSET);
         } else if (dataFile.getDataAsString("Type")[0].equals("IS Level 2")) {
-            e.setTechLevel(TechConstants.T_IS_LEVEL_2);
+            e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
         } else if (dataFile.getDataAsString("Type")[0].equals("IS Level 3")) {
-            e.setTechLevel(TechConstants.T_IS_LEVEL_3);
+            e.setTechLevel(TechConstants.T_IS_ADVANCED);
         } else if (dataFile.getDataAsString("Type")[0].equals("Clan")
                 || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
-            e.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+            e.setTechLevel(TechConstants.T_CLAN_TW);
         } else if (dataFile.getDataAsString("Type")[0].equals("Clan Level 3")) {
-            e.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+            e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
         } else if (dataFile.getDataAsString("Type")[0]
                 .equals("Mixed (IS Chassis)")) {
-            e.setTechLevel(TechConstants.T_IS_LEVEL_3);
+            e.setTechLevel(TechConstants.T_IS_ADVANCED);
             e.setMixedTech(true);
         } else if (dataFile.getDataAsString("Type")[0]
                 .equals("Mixed (Clan Chassis)")) {
-            e.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+            e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
             e.setMixedTech(true);
         } else if (dataFile.getDataAsString("Type")[0].equals("Mixed")) {
             throw new EntityLoadingException(

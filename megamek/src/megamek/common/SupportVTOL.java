@@ -44,4 +44,12 @@ public class SupportVTOL extends VTOL implements Serializable {
     public void setArmoredChassisAndControl(boolean armoredChassisAndControl) {
         this.armoredChassisAndControl = armoredChassisAndControl;
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getTotalCommGearTons()
+     */
+    public int getTotalCommGearTons() {
+        return getExtraCommGearTons();
+    }
 }

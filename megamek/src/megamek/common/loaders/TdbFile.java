@@ -455,13 +455,13 @@ public class TdbFile implements IMechLoader {
             if (techBase.equals("Inner Sphere")) {
                 switch (Integer.parseInt(rulesLevel)) {
                     case 1:
-                        mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                        mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
                         break;
                     case 2:
-                        mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                        mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
                         break;
                     case 3:
-                        mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+                        mech.setTechLevel(TechConstants.T_IS_ADVANCED);
                         break;
                     default:
                         throw new EntityLoadingException(
@@ -470,10 +470,10 @@ public class TdbFile implements IMechLoader {
             } else if (techBase.equals("Clan")) {
                 switch (Integer.parseInt(rulesLevel)) {
                     case 2:
-                        mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+                        mech.setTechLevel(TechConstants.T_CLAN_TW);
                         break;
                     case 3:
-                        mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+                        mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
                         break;
                     default:
                         throw new EntityLoadingException(
@@ -481,10 +481,10 @@ public class TdbFile implements IMechLoader {
                 }
             } else if (techBase.equals("Mixed (IS Chassis)")
                     || techBase.equals("Inner Sphere 'C'")) {
-                mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+                mech.setTechLevel(TechConstants.T_IS_ADVANCED);
                 mech.setMixedTech(true);
             } else if (techBase.equals("Mixed (Clan Chassis)")) {
-                mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+                mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
                 mech.setMixedTech(true);
             } else {
                 throw new EntityLoadingException("Unsupported tech base: "

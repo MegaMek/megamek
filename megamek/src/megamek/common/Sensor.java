@@ -217,22 +217,22 @@ public class Sensor implements Serializable {
     public int getModForECM(Entity en) {
         
         //how many ECM fields are affecting the entity?
-        int ecm = Math.max(0,Compute.getECMFieldSize(en, en.getPosition(), en.getPosition()));
-        int ecmAngel = Math.max(0, Compute.getAngelECMFieldSize(en, en.getPosition(), en.getPosition()));
+        double ecm = Math.max(0,Compute.getECMFieldSize(en, en.getPosition(), en.getPosition()));
+        double ecmAngel = Math.max(0, Compute.getAngelECMFieldSize(en, en.getPosition(), en.getPosition()));
         
         switch(type) {
         case (TYPE_BAP):
         case (TYPE_CLAN_BAP):
         case (TYPE_WATCHDOG):
-            return ecm * 4 + ecmAngel * 5;
+            return (int)Math.floor(ecm * 4 + ecmAngel * 5);
         case (TYPE_BLOODHOUND):
-            return ecm * 2 + ecmAngel * 3;
+            return (int)Math.floor(ecm * 2 + ecmAngel * 3);
         case (TYPE_LIGHT_AP):
         case (TYPE_MEK_RADAR):
-            return ecm * 5 + ecmAngel * 6;
+            return (int)Math.floor(ecm * 5 + ecmAngel * 6);
         case (TYPE_VEE_RADAR):
         case (TYPE_BA_IMPROVED):
-            return ecm * 6 + ecmAngel * 7;
+            return (int)Math.floor(ecm * 6 + ecmAngel * 7);
         default:
             return 0;    
         }

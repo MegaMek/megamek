@@ -60,7 +60,7 @@ public class MiscType extends EquipmentType {
     public static final long F_UMU = 1L << 30;
     public static final long F_COOLANT_SYSTEM = 1L << 31;
     public static final long F_SPIKES = 1L << 32;
-    //public static final long F_B_POD = 1L << 33; -- Unused
+    public static final long F_COMMUNICATIONS = 1L << 33;
     public static final long F_PPC_CAPACITOR = 1L << 34;
     public static final long F_REFLECTIVE = 1L << 35;
     public static final long F_REACTIVE = 1L << 36;
@@ -497,24 +497,15 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISClaw());
         EquipmentType.addType(createCLHarJel());
         EquipmentType.addType(createISHarJel());
-        EquipmentType.addType(createCLMediumShield());
-        EquipmentType.addType(createCLSmallShield());
-        EquipmentType.addType(createCLLargeShield());
-        EquipmentType.addType(createCLClaw());
         EquipmentType.addType(createISUMU());
         EquipmentType.addType(createCLUMU());
         EquipmentType.addType(createISLance());
-        EquipmentType.addType(createCLLance());
         EquipmentType.addType(createISWreckingBall());
         EquipmentType.addType(createCLWreckingBall());
         EquipmentType.addType(createISFlail());
-        EquipmentType.addType(createCLFlail());
         EquipmentType.addType(createISMediumVibroblade());
         EquipmentType.addType(createISSmallVibroblade());
         EquipmentType.addType(createISLargeVibroblade());
-        EquipmentType.addType(createCLMediumVibroblade());
-        EquipmentType.addType(createCLSmallVibroblade());
-        EquipmentType.addType(createCLLargeVibroblade());
         EquipmentType.addType(createISBuzzsaw());
         EquipmentType.addType(createCLBuzzsaw());
         EquipmentType.addType(createCoolantSystem());
@@ -533,6 +524,22 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISLightPPCCapacitor());
         EquipmentType.addType(createISSNPPCCapacitor());
         EquipmentType.addType(createISERPPCCapacitor());
+        EquipmentType.addType(createCommsGear1());
+        EquipmentType.addType(createCommsGear2());
+        EquipmentType.addType(createCommsGear3());
+        EquipmentType.addType(createCommsGear4());
+        EquipmentType.addType(createCommsGear5());
+        EquipmentType.addType(createCommsGear6());
+        EquipmentType.addType(createCommsGear7());
+        EquipmentType.addType(createCommsGear8());
+        EquipmentType.addType(createCommsGear9());
+        EquipmentType.addType(createCommsGear10());
+        EquipmentType.addType(createCommsGear11());
+        EquipmentType.addType(createCommsGear12());
+        EquipmentType.addType(createCommsGear13());
+        EquipmentType.addType(createCommsGear14());
+        EquipmentType.addType(createCommsGear15());
+        
 
         // Start BattleArmor equipment
         EquipmentType.addType(createBABoardingClaw());
@@ -592,7 +599,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createImprovedJumpJet() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Improved Jump Jet";
         misc.setInternalName(misc.name);
         misc.addLookupName("ImprovedJump Jet");
@@ -608,7 +615,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLImprovedJumpJet() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.name = "Clan Improved Jump Jet";
         misc.setInternalName(misc.name);
         misc.addLookupName("CLImprovedJump Jet");
@@ -680,7 +687,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createHatchet() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_1;
+        misc.techLevel = TechConstants.T_INTRO_BOXSET;
         misc.name = "Hatchet";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
@@ -698,7 +705,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISDoubleHeatSink() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Double Heat Sink";
         misc.setInternalName("ISDoubleHeatSink");
         misc.addLookupName("IS Double Heat Sink");
@@ -714,7 +721,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLDoubleHeatSink() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.name = "Double Heat Sink";
         misc.setInternalName("CLDoubleHeatSink");
         misc.addLookupName("Clan Double Heat Sink");
@@ -730,7 +737,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISCASE() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "CASE";
         misc.setInternalName("ISCASE");
         misc.addLookupName("IS CASE");
@@ -747,7 +754,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLCASE() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.name = "CASE";
         misc.setInternalName("CLCASE");
         misc.addLookupName("Clan CASE");
@@ -764,7 +771,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISCASEII() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "CASE II";
         misc.setInternalName("ISCASEII");
         misc.addLookupName("IS CASE II");
@@ -781,7 +788,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLCASEII() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         misc.name = "CASE II";
         misc.setInternalName("CLCASEII");
         misc.addLookupName("Clan CASE II");
@@ -798,7 +805,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISMASC() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "MASC";
         misc.setInternalName("ISMASC");
         misc.addLookupName("IS MASC");
@@ -819,7 +826,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLMASC() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.name = "MASC";
         misc.setInternalName("CLMASC");
         misc.addLookupName("Clan MASC");
@@ -840,7 +847,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createSuperCharger() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Supercharger";
         misc.setInternalName(misc.name);
         misc.addLookupName("IS Super Charger");
@@ -862,7 +869,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createTSM() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "TSM";
         misc.setInternalName(misc.name);
         misc.addLookupName("IS TSM");
@@ -880,7 +887,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createC3S() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "C3 Slave";
         misc.setInternalName("ISC3SlaveUnit");
         misc.addLookupName("IS C3 Slave");
@@ -898,7 +905,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createC3I() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "C3i Computer";
         misc.setInternalName("ISC3iUnit");
         misc.addLookupName("ISImprovedC3CPU");
@@ -917,7 +924,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISArtemis() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Artemis IV FCS";
         misc.setInternalName("ISArtemisIV");
         misc.addLookupName("IS Artemis IV FCS");
@@ -932,7 +939,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLArtemis() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.name = "Artemis IV FCS";
         misc.setInternalName("CLArtemisIV");
         misc.addLookupName("Clan Artemis IV FCS");
@@ -947,7 +954,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISApolloFCS() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "MRM Apollo FCS";
         misc.setInternalName("ISApollo");
         misc.addLookupName("IS MRM Apollo Fire Control System");
@@ -963,7 +970,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createGECM() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Guardian ECM Suite";
         misc.setInternalName("ISGuardianECMSuite");
         misc.addLookupName("IS Guardian ECM");
@@ -985,7 +992,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLECM() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.name = "ECM Suite";
         misc.setInternalName("CLECMSuite");
         misc.addLookupName("Clan ECM Suite");
@@ -1006,7 +1013,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         // Don't forget, this will eventually count double for ECCM.
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Angel ECM Suite";
         misc.setInternalName("ISAngelECMSuite");
         misc.addLookupName("IS Angel ECM Suite");
@@ -1028,7 +1035,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         // Don't forget, this will eventually count double for ECCM.
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_UNOFFICIAL;
         misc.name = "THB Angel ECM Suite";
         misc.setInternalName("ISTHBAngelECMSuite");
         misc.addLookupName("IS THB Angel ECM Suite");
@@ -1050,7 +1057,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         // Don't forget, this will eventually count double for ECCM.
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         misc.name = "Clan Angel ECM Suite";
         misc.setInternalName("CLAngelECMSuite");
         misc.addLookupName("Clan Angel ECM Suite");
@@ -1071,7 +1078,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createWatchdogECM() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         misc.name = "Watchdog ECM Suite";
         misc.setInternalName(Sensor.WATCHDOG);
         misc.addLookupName("Watchdog ECM Suite");
@@ -1093,7 +1100,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createSword() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Sword";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
@@ -1109,7 +1116,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createChainWhip() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Chain Whip";
         misc.setInternalName(misc.name);
         misc.tonnage = 3;
@@ -1144,7 +1151,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createTHBMace() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_UNOFFICIAL;
         misc.name = "Mace (THB)";
         misc.setInternalName(misc.name);
         misc.addLookupName("THB Mace");
@@ -1161,7 +1168,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createMace() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Mace";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
@@ -1177,7 +1184,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBackhoe() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Backhoe";
         misc.setInternalName(misc.name);
         misc.tonnage = 5;
@@ -1208,7 +1215,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createDualSaw() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Dual Saw";
         misc.setInternalName(misc.name);
         misc.tonnage = 7;
@@ -1224,7 +1231,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createPileDriver() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Pile Driver";
         misc.setInternalName(misc.name);
         misc.addLookupName("PileDriver");
@@ -1241,7 +1248,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createChainsaw() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Chainsaw";
         misc.setInternalName(misc.name);
         misc.tonnage = 5;
@@ -1271,7 +1278,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createArmoredCowl() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_UNOFFICIAL;
         misc.name = "Armored Cowl";
         misc.setInternalName(misc.name);
         misc.tonnage = 1;
@@ -1296,7 +1303,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISTargComp() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Targeting Computer";
         misc.setInternalName("ISTargeting Computer");
         misc.addLookupName("IS Targeting Computer");
@@ -1316,7 +1323,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLTargComp() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.name = "Targeting Computer";
         misc.setInternalName("CLTargeting Computer");
         misc.addLookupName("Clan Targeting Computer");
@@ -1458,7 +1465,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createLightMinesweeper() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Light Minesweeper";
         misc.setInternalName("Light Minesweeper");
         misc.tonnage = 0;
@@ -1588,7 +1595,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
         misc.bv = 0; // ???
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
     }
@@ -1626,7 +1633,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
     }
@@ -1646,7 +1653,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
 
         return misc;
     }
@@ -1665,7 +1672,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
 
         return misc;
     }
@@ -1720,7 +1727,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags |= F_ENDO_STEEL;
         misc.bv = 0;
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
     }
@@ -1737,7 +1744,307 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.bv = 0;
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear1() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (1 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:1");
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear2() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (2 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:2");
+        misc.tonnage = 2;
+        misc.criticals = 2;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear3() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (3 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:3");
+        misc.tonnage = 3;
+        misc.criticals = 3;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear4() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (4 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:4");
+        misc.tonnage = 4;
+        misc.criticals = 4;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear5() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (5 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:51");
+        misc.tonnage = 5;
+        misc.criticals = 5;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear6() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (6 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:6");
+        misc.tonnage = 6;
+        misc.criticals = 6;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear7() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (7 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:7");
+        misc.tonnage = 7;
+        misc.criticals = 7;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear8() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (8 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:8");
+        misc.tonnage = 8;
+        misc.criticals = 8;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear9() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (9 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:9");
+        misc.tonnage = 9;
+        misc.criticals = 9;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear10() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (10 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:10");
+        misc.tonnage = 10;
+        misc.criticals = 10;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear11() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (11 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:11");
+        misc.tonnage = 11;
+        misc.criticals = 11;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear12() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (12 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:12");
+        misc.tonnage = 12;
+        misc.criticals = 12;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear13() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (13 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:13");
+        misc.tonnage = 13;
+        misc.criticals = 13;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear14() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (14 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:14");
+        misc.tonnage = 14;
+        misc.criticals = 14;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+
+        return misc;
+    }
+    
+    public static MiscType createCommsGear15() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Communications Equipment (15 ton)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear:15");
+        misc.tonnage = 15;
+        misc.criticals = 15;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.flags |= F_COMMUNICATIONS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
 
         return misc;
     }
@@ -1754,7 +2061,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.bv = 0;
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
     }
@@ -1769,7 +2076,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.flags |= F_DOUBLE_HEAT_SINK | F_LASER_HEAT_SINK;
         misc.bv = 0;
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
 
         return misc;
     }
@@ -1788,7 +2095,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.flags |= F_HEAT_SINK;
         misc.bv = 0;
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
     }
@@ -1803,7 +2110,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.flags |= F_DOUBLE_HEAT_SINK;
         misc.bv = 0;
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
     }
@@ -1811,7 +2118,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISImprovedSensors() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Improved Sensors";
         misc.setInternalName(Sensor.ISIMPROVED);
         misc.addLookupName("BAP (2 Hex)");
@@ -1825,7 +2132,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLImprovedSensors() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.name = "Improved Sensors";
         misc.setInternalName(Sensor.CLIMPROVED);
         misc.addLookupName("BAP (3 Hex)");
@@ -1839,7 +2146,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBeagleActiveProbe() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Beagle Active Probe";
         misc.setInternalName(Sensor.BAP);
         misc.addLookupName("Beagle Active Probe");
@@ -1859,7 +2166,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBloodhoundActiveProbe() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Bloodhound Active Probe";
         misc.setInternalName(Sensor.BLOODHOUND);
         misc.addLookupName("Bloodhound Active Probe");
@@ -1879,7 +2186,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createTHBBloodhoundActiveProbe() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_UNOFFICIAL;
         misc.name = "Bloodhound Active Probe (THB)";
         misc.setInternalName("THBBloodhoundActiveProbe");
         misc.addLookupName("THB Bloodhound Active Probe");
@@ -1899,7 +2206,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLActiveProbe() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.name = "Clan Active Probe";
         misc.setInternalName(Sensor.CLAN_AP);
         misc.addLookupName("Active Probe");
@@ -1919,7 +2226,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Light Active Probe";
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.setInternalName(Sensor.LIGHT_AP);
         misc.addLookupName("CL Light Active Probe");
         misc.addLookupName("Light Active Probe");
@@ -1939,7 +2246,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "IS AP Pod";
-        misc.techLevel = TechConstants.T_IS_LEVEL_1;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.setInternalName("ISAntiPersonnelPod");
         misc.addLookupName("ISAPod");
         misc.addLookupName("IS A-Pod");
@@ -1958,7 +2265,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "CL AP Pod";
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.setInternalName("CLAntiPersonnelPod");
         misc.addLookupName("Clan A-Pod");
         misc.tonnage = 0.5f;
@@ -2018,7 +2325,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createJumpBooster() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Jump Booster";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
@@ -2034,7 +2341,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createDemolitionCharge() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Demolition Charge";
         misc.setInternalName(misc.name);
         misc.tonnage = 0;
@@ -2052,7 +2359,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createVibroShovel() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Vibro-Shovel";
         misc.setInternalName(misc.name);
         misc.tonnage = 0;
@@ -2070,7 +2377,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBridgeKit() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Bridge Kit";
         misc.setInternalName(misc.name);
         misc.tonnage = 0;
@@ -2088,7 +2395,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISSmallShield() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Small Shield";
         misc.setInternalName("ISSmallShield");
         misc.addLookupName("Small Shield");
@@ -2116,7 +2423,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISClaw() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Claw";
         misc.setInternalName("ISClaw");
         misc.addLookupName("Claw");
@@ -2133,7 +2440,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISMediumShield() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Medium Shield";
         misc.setInternalName("ISMediumShield");
         misc.addLookupName("Medium Shield");
@@ -2156,7 +2463,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISLargeShield() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Large Shield";
         misc.setInternalName("ISLargeShield");
         misc.addLookupName("Large Shield");
@@ -2176,100 +2483,9 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createCLSmallShield() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
-        misc.name = "Small Shield";
-        misc.setInternalName("CLSmallShield");
-        misc.addLookupName("Clan Small Shield");
-        misc.tonnage = 2;
-        misc.criticals = 3;
-        misc.cost = 50000;
-        misc.flags |= F_CLUB;
-        misc.subType |= S_SHIELD_SMALL;
-        misc.bv = 50;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
-        misc.setModes(modes);
-        misc.damageTaken = 0;
-        misc.baseDamageAbsorptionRate = 3;
-        misc.baseDamageCapacity = 11;
-
-        return misc;
-    }
-
-    /**
-     * Creates a claw MiscType Object
-     * 
-     * @return MiscType
-     */
-    public static MiscType createCLClaw() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
-        misc.name = "Claw";
-        misc.setInternalName("CLClaw");
-        misc.addLookupName("Clan Claw");
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.flags |= F_HAND_WEAPON;
-        misc.subType |= S_CLAW;
-        misc.bv = BV_VARIABLE;
-
-        return misc;
-    }
-
-    public static MiscType createCLMediumShield() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
-        misc.name = "Medium Shield";
-        misc.setInternalName("CLMediumShield");
-        misc.addLookupName("Clan Medium Shield");
-        misc.tonnage = 4;
-        misc.criticals = 5;
-        misc.cost = 100000;
-        misc.flags |= F_CLUB;
-        misc.subType |= S_SHIELD_MEDIUM;
-        misc.bv = 135;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
-        misc.setModes(modes);
-        misc.damageTaken = 0;
-        misc.baseDamageAbsorptionRate = 5;
-        misc.baseDamageCapacity = 18;
-
-        return misc;
-    }
-
-    public static MiscType createCLLargeShield() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
-        misc.name = "Large Shield";
-        misc.setInternalName("CLLargeShield");
-        misc.addLookupName("Clan Large Shield");
-        misc.tonnage = 6;
-        misc.criticals = 7;
-        misc.cost = 300000;
-        misc.flags |= F_CLUB;
-        misc.subType |= S_SHIELD_LARGE;
-        misc.bv = 263;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
-        misc.setModes(modes);
-        misc.damageTaken = 0;
-        misc.baseDamageAbsorptionRate = 7;
-        misc.baseDamageCapacity = 25;
-
-        return misc;
-    }
-
     public static MiscType createCLHarJel() {
         MiscType misc = new MiscType();
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         misc.name = "Clan HarJel";
         misc.setInternalName(misc.getName());
         misc.tonnage = 1;
@@ -2286,7 +2502,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISHarJel() {
         MiscType misc = new MiscType();
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "IS HarJel";
         misc.setInternalName(misc.getName());
         misc.tonnage = 1;
@@ -2303,7 +2519,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISAES() {
         MiscType misc = new MiscType();
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "AES";
         misc.setInternalName("ISAES");
         misc.addLookupName("IS Actuator Enhancement System");
@@ -2319,7 +2535,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createCLAES() {
         MiscType misc = new MiscType();
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         misc.name = "AES";
         misc.setInternalName("CLAES");
         misc.addLookupName("CL Actuator Enhancement System");
@@ -2336,7 +2552,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISUMU() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "UMU";
         misc.setInternalName("ISUMU");
         misc.addLookupName("IS Underwater Maneuvering Unit");
@@ -2351,7 +2567,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLUMU() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         misc.name = "UMU";
         misc.setInternalName("CLUMU");
         misc.addLookupName("Clan Underwater Maneuvering Unit");
@@ -2366,7 +2582,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISLance() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Lance";
         misc.setInternalName("IS Lance");
         misc.addLookupName("ISLance");
@@ -2381,27 +2597,10 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createCLLance() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
-        misc.name = "Lance";
-        misc.setInternalName("Clan Lance");
-        misc.addLookupName("CLLance");
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.flags |= F_CLUB;
-        misc.subType |= S_LANCE;
-        misc.bv = BV_VARIABLE;
-
-        return misc;
-    }
-
     public static MiscType createISFlail() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Flail";
         misc.setInternalName("IS Flail");
         misc.addLookupName("Flail");
@@ -2415,27 +2614,10 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createCLFlail() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
-        misc.name = "Flail";
-        misc.setInternalName("Clan Flail");
-        misc.addLookupName("CLFLail");
-        misc.tonnage = 5;
-        misc.criticals = 4;
-        misc.cost = 110000;
-        misc.flags |= F_CLUB;
-        misc.subType |= S_FLAIL;
-        misc.bv = 11;
-
-        return misc;
-    }
-
     public static MiscType createISWreckingBall() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Wrecking Ball";
         misc.setInternalName("IS Wrecking Ball");
         misc.addLookupName("WreckingBall");
@@ -2452,7 +2634,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLWreckingBall() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Wrecking Ball";
         misc.setInternalName("Clan Wrecking Ball");
         misc.addLookupName("CLWrecking Ball");
@@ -2469,7 +2651,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISSmallVibroblade() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Small Vibroblade";
         misc.setInternalName("ISSmallVibroblade");
         misc.addLookupName("Small Vibroblade");
@@ -2489,7 +2671,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISMediumVibroblade() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Medium Vibroblade";
         misc.setInternalName("ISMediumVibroblade");
         misc.addLookupName("Medium Vibroblade");
@@ -2509,7 +2691,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISLargeVibroblade() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Large Vibroblade";
         misc.setInternalName("ISLargeVibroblade");
         misc.addLookupName("Large Vibroblade");
@@ -2526,70 +2708,10 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createCLSmallVibroblade() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
-        misc.name = "Small Vibroblade";
-        misc.setInternalName("CLSmallVibroblade");
-        misc.addLookupName("Clan Small Vibroblade");
-        misc.tonnage = 3;
-        misc.criticals = 1;
-        misc.cost = 150000;
-        misc.flags |= F_CLUB;
-        misc.subType |= S_VIBRO_SMALL;
-        misc.bv = 12;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { "Inactive", "Active" };
-        misc.setModes(modes);
-
-        return misc;
-    }
-
-    public static MiscType createCLMediumVibroblade() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
-        misc.name = "Medium Vibroblade";
-        misc.setInternalName("CLMediumVibroblade");
-        misc.addLookupName("Clan Medium Vibroblade");
-        misc.tonnage = 5;
-        misc.criticals = 2;
-        misc.cost = 400000;
-        misc.flags |= F_CLUB;
-        misc.subType |= S_VIBRO_MEDIUM;
-        misc.bv = 17;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { "Inactive", "Active" };
-        misc.setModes(modes);
-
-        return misc;
-    }
-
-    public static MiscType createCLLargeVibroblade() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
-        misc.name = "Large Vibroblade";
-        misc.setInternalName("CLLargeVibroblade");
-        misc.addLookupName("Clan Large Vibroblade");
-        misc.tonnage = 7;
-        misc.criticals = 4;
-        misc.cost = 750000;
-        misc.flags |= F_CLUB;
-        misc.subType |= S_VIBRO_LARGE;
-        misc.bv = 24;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { "Inactive", "Active" };
-        misc.setModes(modes);
-
-        return misc;
-    }
-
     public static MiscType createISBuzzsaw() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Buzzsaw";
         misc.setInternalName(misc.name);
         misc.addLookupName("IS Buzzsaw");
@@ -2606,7 +2728,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLBuzzsaw() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         misc.name = "Buzzsaw";
         misc.setInternalName("CLBuzzsaw");
         misc.addLookupName("Clan Buzzsaw");
@@ -2623,7 +2745,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCoolantSystem() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Coolant System";
         misc.setInternalName(misc.name);
         misc.tonnage = 9;
@@ -2638,7 +2760,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createSpikes() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Spikes";
         misc.setInternalName(misc.name);
         misc.tonnage = 0.5f;
@@ -2653,7 +2775,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createTalons() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
         misc.name = "Talons";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
@@ -2668,7 +2790,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createHeavyArmor() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Heavy Armor";
         misc.setInternalName(misc.name);
         misc.tonnage = 0;
@@ -2698,7 +2820,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISPPCCapacitor() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "PPC Capacitor";
         misc.setInternalName("ISPPCCapacitor");
         misc.tonnage = 1.0f;
@@ -2716,7 +2838,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISLightPPCCapacitor() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "LPPC Capacitor";
         misc.setInternalName("ISLightPPCCapacitor");
         misc.tonnage = 1.0f;
@@ -2734,7 +2856,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISHeavyPPCCapacitor() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "HPPC Capacitor";
         misc.setInternalName("ISHeavyPPCCapacitor");
         misc.tonnage = 1.0f;
@@ -2752,7 +2874,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISERPPCCapacitor() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "ERPPC Capacitor";
         misc.setInternalName("ISERPPCCapacitor");
         misc.tonnage = 1.0f;
@@ -2770,7 +2892,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISSNPPCCapacitor() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "SNPPC Capacitor";
         misc.setInternalName("ISSNPPCCapacitor");
         misc.tonnage = 1.0f;
@@ -2827,7 +2949,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISModularArmor() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Modular Armor";
         misc.setInternalName("ISModularArmor");
         misc.setInternalName("IS Modular Armor");
@@ -2846,7 +2968,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLModularArmor() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         misc.name = "Modular Armor";
         misc.setInternalName("CLModularArmor");
         misc.addLookupName("Clan Modular Armor");

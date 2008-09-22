@@ -873,4 +873,14 @@ public class Dropship extends SmallCraft {
         return success;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getIniBonus()
+     */
+    public int getIniBonus() {
+        // large craft are considered to have > 7 tons comm equipment
+        // hence they get +2 ini bonus as a mobile hq
+        return 2;
+    }
+    
 }

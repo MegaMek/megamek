@@ -129,6 +129,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public int delta_distance = 0;
     public int mpUsed = 0;
     public int moved = IEntityMovementType.MOVE_NONE;
+    protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
     public boolean hitThisRoundByAntiTSM = false;
 
@@ -565,13 +566,19 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * @see megamek.common.Entity#setTechLevel(int)
      */
     public boolean isClan() {
-        return (techLevel == TechConstants.T_CLAN_LEVEL_2 || techLevel == TechConstants.T_CLAN_LEVEL_3);
+        return (techLevel == TechConstants.T_CLAN_TW
+                || techLevel == TechConstants.T_CLAN_ADVANCED
+                || techLevel == TechConstants.T_CLAN_EXPERIMENTAL
+                || techLevel == TechConstants.T_CLAN_UNOFFICIAL);
     }
 
     public boolean isClanArmor() {
         if (getArmorTechLevel() == TechConstants.T_TECH_UNKNOWN)
             return isClan();
-        return ((getArmorTechLevel() == TechConstants.T_CLAN_LEVEL_2) || (getArmorTechLevel() == TechConstants.T_CLAN_LEVEL_3));
+        return ((getArmorTechLevel() == TechConstants.T_CLAN_TW)
+                || (getArmorTechLevel() == TechConstants.T_CLAN_ADVANCED)
+                || (getArmorTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)
+                || (getArmorTechLevel() == TechConstants.T_CLAN_UNOFFICIAL));
     }
 
     public boolean isMixedTech() {
@@ -2897,19 +2904,27 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * Does the mech have a functioning ECM unit, tuned to ghost target generation?
      */
     public boolean hasGhostTargets(boolean active) {
-//        if you failed your ghost target PSR, then it doesn't matter
-        if((active && getGhostTargetRollMoS() < 0) || isShutDown()) { 
+        // if you failed your ghost target PSR, then it doesn't matter
+        if ((active && getGhostTargetRollMoS() < 0) || isShutDown()) { 
             return false;
         }
+        boolean hasGhost = false;
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             //TacOps p. 100 Angle ECM can have ECM/ECCM and Ghost Targets at the same time
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
-                    && ( m.curMode().equals("Ghost Targets") || m.curMode().equals("ECM & Ghost Targets") || m.curMode().equals("ECCM & Ghost Targets")) ) {
-                return !(m.isInoperable() || this.getCrew().isUnconscious());
+                    && ( m.curMode().equals("Ghost Targets") || m.curMode().equals("ECM & Ghost Targets") || m.curMode().equals("ECCM & Ghost Targets"))
+                    && !(m.isInoperable() || this.getCrew().isUnconscious())) {
+                hasGhost = true;
+            }
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_COMMUNICATIONS)
+                    && m.curMode().equals("Ghost Targets")
+                    && this.getTotalCommGearTons() >= 7
+                    && !(m.isInoperable() || this.getCrew().isUnconscious())) {
+                hasGhost = true;
             }
         }
-        return false;
+        return hasGhost;
     }
     
     /**
@@ -2925,8 +2940,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
                 //TacOps p. 100 Angle ECM can have 1 ECM and 1 ECCM at the same time
-                if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM) 
-                        && ( m.curMode().equals("ECCM") || m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECCM & Ghost Targets")) ) {
+                if (type instanceof MiscType
+                        && ((type.hasFlag(MiscType.F_ECM)
+                                && (m.curMode().equals("ECCM") || m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECCM & Ghost Targets")))
+                            || (type.hasFlag(MiscType.F_COMMUNICATIONS)
+                                    && m.curMode().equals("ECCM")))) {
                     return !m.isInoperable();
                 }
             }
@@ -3555,6 +3573,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         unloadedThisTurn = false;
         done = false;
         delta_distance = 0;
+        mpUsedLastRound = mpUsed;
         mpUsed = 0;
         damageThisRound = 0;
         if (assaultDropInProgress == 2)
@@ -7318,5 +7337,75 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     public void addCoolantFailureAmount(int amount){
+    }
+    
+    /**
+     * @return the tonnage of additional mounted communications equipment
+     */
+    public int getExtraCommGearTons(){
+        int i = 0;
+        for (Mounted mounted : miscList) {
+            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS))
+                i+= mounted.getType().getTonnage(this);
+        }
+        return i;
+    }
+    
+    /**
+     * @return the strength of the ECM field this unit emits
+     */
+    public double getECMStrength() {
+        int strength = 0;
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_ECM) && strength < 1)
+                strength = 1;
+            if (m.getType().hasFlag(MiscType.F_ANGEL_ECM) && strength < 2)
+                strength = 2;
+        }
+        return strength;
+    }
+    
+    /**
+     * @return the strength of the ECCM field this unit emits
+     */
+    public double getECCMStrength() {
+        double strength = 0;
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                if (getTotalCommGearTons() > 3 && strength < 0.5)
+                    strength = 0.5;
+                if (getTotalCommGearTons() > 6 && strength < 1)
+                strength = 1;
+            }
+            if (m.getType().hasFlag(MiscType.F_ECM) && strength < 1)
+                strength = 1;
+            if (m.getType().hasFlag(MiscType.F_ANGEL_ECM) && strength < 2)
+                strength = 2;
+        }
+        return strength;
+    }
+    
+    /**
+     * @return the total tonnage of communications gear in this entity
+     */
+    public abstract int getTotalCommGearTons();
+    
+    /**
+     * @return the initiative bonus this Entity grants
+     */
+    public int getIniBonus() {
+        int bonus = 0;
+        for (Mounted misc : getMisc()) {
+            if (misc.getType().hasFlag(MiscType.F_COMMUNICATIONS)
+                    && misc.curMode().equals("Default")) {
+                if (getTotalCommGearTons() >= 3) {
+                    bonus += 1;
+                }
+                if (getTotalCommGearTons() >= 7) {
+                    bonus += 1;
+                }
+            }
+        }
+        return bonus;
     }
 }

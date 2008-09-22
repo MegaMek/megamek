@@ -64,21 +64,21 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
 
         if (dataFile.getDataAsString("type")[0].equals("IS")) {
             if (t.getYear() == 3025) {
-                t.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                t.setTechLevel(TechConstants.T_INTRO_BOXSET);
             } else {
-                t.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                t.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
             }
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 1")) {
-            t.setTechLevel(TechConstants.T_IS_LEVEL_1);
+            t.setTechLevel(TechConstants.T_INTRO_BOXSET);
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 2")) {
-            t.setTechLevel(TechConstants.T_IS_LEVEL_2);
+            t.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 3")) {
-            t.setTechLevel(TechConstants.T_IS_LEVEL_3);
+            t.setTechLevel(TechConstants.T_IS_ADVANCED);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan")
                 || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
-            t.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+            t.setTechLevel(TechConstants.T_CLAN_TW);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
-            t.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+            t.setTechLevel(TechConstants.T_CLAN_ADVANCED);
         }
 
         if (!dataFile.exists("tonnage"))

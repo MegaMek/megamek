@@ -2576,39 +2576,29 @@ public class Compute {
      * @param b
      * @return
      */
-    public static int getECMFieldSize(Entity ae, Coords a, Coords b) {
+    public static double getECMFieldSize(Entity ae, Coords a, Coords b) {
         if (a == null || b == null)
             return 0;
 
         // Only grab enemies with active ECM
         Vector<Coords> vEnemyECMCoords = new Vector<Coords>(16);
         Vector<Integer> vEnemyECMRanges = new Vector<Integer>(16);
+        Vector<Double> vEnemyECMStrengths = new Vector<Double>(16);
         Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
         Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
+        Vector<Double> vFriendlyECCMStrengths = new Vector<Double>(16);
         for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && entPos != null) {
                 vEnemyECMCoords.addElement(entPos);
                 vEnemyECMRanges.addElement(new Integer(ent.getECMRange()));
-            }
-            // angel ECM gets added another time, to make it count as 2 ECMs,
-            // because it's already included above because it works as a normal
-            // ECM, too
-            if (ent.isEnemyOf(ae) && ent.hasActiveAngelECM() && entPos != null) {
-                vEnemyECMCoords.addElement(entPos);
-                vEnemyECMRanges.addElement(new Integer(ent.getECMRange()));
+                vEnemyECMStrengths.addElement(new Double(ent.getECMStrength()));
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null) {
                 vFriendlyECCMCoords.addElement(entPos);
                 vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-            }
-            // angel ECCM gets added another time, to make it count as 2 ECMs,
-            // because it's already included above because it works as a normal
-            // ECM, too
-            if (!ent.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null) {
-                vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                vFriendlyECCMStrengths.addElement(new Double(ent.getECCMStrength()));
             }
 
             // Check the ECM effects of the entity's passengers.
@@ -2616,24 +2606,12 @@ public class Compute {
                 if (other.isEnemyOf(ae) && other.hasActiveECM() && entPos != null) {
                     vEnemyECMCoords.addElement(entPos);
                     vEnemyECMRanges.addElement(new Integer(other.getECMRange()));
-                }
-                // angel ECM gets added another time, to make it count as 2 ECMs,
-                // because it's already included above because it works as a normal
-                // ECM, too
-                if (other.isEnemyOf(ae) && other.hasActiveAngelECM() && entPos != null) {
-                    vEnemyECMCoords.addElement(entPos);
-                    vEnemyECMRanges.addElement(new Integer(other.getECMRange()));
+                    vEnemyECMStrengths.addElement(new Double(other.getECMStrength()));
                 }
                 if (!other.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null) {
                     vFriendlyECCMCoords.addElement(entPos);
                     vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-                }
-                // angel ECCM gets added another time, to make it count as 2 ECMs,
-                // because it's already included above because it works as a normal
-                // ECM, too
-                if (!other.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null) {
-                    vFriendlyECCMCoords.addElement(entPos);
-                    vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                    vFriendlyECCMStrengths.addElement(new Double(ent.getECCMStrength()));
                 }
             }
         }
@@ -2646,12 +2624,12 @@ public class Compute {
         ArrayList<Coords> coords = Coords.intervening(a, b);
         // loop through all intervening coords, check each if they are ECM
         // affected
-        int worstECM = 0;
+        double worstECM = 0;
         for (Coords c : coords) {
             // > 0: in friendly ECCM
             // 0: unaffected by enemy ECM
             // <0: affected by enemy ECM
-            int ecmStatus = 0;
+            double ecmStatus = 0;
             // if we're at ae's Position, figure in a possible
             // iNarc ECM pod
             if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
@@ -2659,22 +2637,26 @@ public class Compute {
             }
             // first, subtract 1 for each enemy ECM that affects us
             Enumeration<Integer> ranges = vEnemyECMRanges.elements();
+            Enumeration<Double> strengths = vEnemyECMStrengths.elements();
             for (Enumeration<Coords> e = vEnemyECMCoords.elements(); e.hasMoreElements();) {
                 Coords enemyECMCoords = e.nextElement();
                 int range = ranges.nextElement().intValue();
                 int nDist = c.distance(enemyECMCoords);
+                double strength = strengths.nextElement().doubleValue();
                 if (nDist <= range) {
-                    ecmStatus++;
+                    ecmStatus += strength;
                 }
             }
             // now, add one for each friendly ECCM
             ranges = vFriendlyECCMRanges.elements();
+            strengths = vFriendlyECCMStrengths.elements();
             for (Enumeration<Coords> e = vFriendlyECCMCoords.elements(); e.hasMoreElements();) {
                 Coords friendlyECCMCoords = e.nextElement();
                 int range = ranges.nextElement().intValue();
                 int nDist = c.distance(friendlyECCMCoords);
+                double strength = strengths.nextElement().doubleValue();
                 if (nDist <= range) {
-                    ecmStatus--;
+                    ecmStatus -= strength;
                 }
             }
             // if any coords in the line are affected, the whole line is
@@ -2701,35 +2683,30 @@ public class Compute {
         return getAngelECMFieldSize(ae, a, b) > 0;
     }
     
-    public static int getAngelECMFieldSize(Entity ae, Coords a, Coords b) {
+    public static double getAngelECMFieldSize(Entity ae, Coords a, Coords b) {
         if (a == null || b == null)
             return 0;
 
         // Only grab enemies with active angel ECM
         Vector<Coords> vEnemyAngelECMCoords = new Vector<Coords>(16);
         Vector<Integer> vEnemyAngelECMRanges = new Vector<Integer>(16);
+        Vector<Double> vEnemyAngelECMStrengths = new Vector<Double>(16);
         Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
         Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
+        Vector<Double> vFriendlyECCMStrengths = new Vector<Double>(16);
         for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
-            // add each angel ECM twice, because it needs 2 ECMs to be countered 
+            // add each angel ECM at its ECM strength 
             if (ent.isEnemyOf(ae) && ent.hasActiveAngelECM() && entPos != null) {
                 vEnemyAngelECMCoords.addElement(entPos);
                 vEnemyAngelECMRanges.addElement(new Integer(ent.getECMRange()));
-                vEnemyAngelECMCoords.addElement(entPos);
-                vEnemyAngelECMRanges.addElement(new Integer(ent.getECMRange()));
+                vEnemyAngelECMStrengths.add(ent.getECMStrength());
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null) {
                 vFriendlyECCMCoords.addElement(entPos);
                 vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-            }
-            // angel ECCM gets added another time, to make it count as 2 ECMs,
-            // because it's already included above because it works as a normal
-            // ECM, too
-            if (!ent.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null) {
-                vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                vFriendlyECCMStrengths.add(ent.getECCMStrength());
             }
 
             // Check the angel ECM effects of the entity's passengers.
@@ -2737,17 +2714,12 @@ public class Compute {
                 if (other.isEnemyOf(ae) && other.hasActiveAngelECM() && entPos != null) {
                     vEnemyAngelECMCoords.addElement(entPos);
                     vEnemyAngelECMRanges.addElement(new Integer(other.getECMRange()));
+                    vEnemyAngelECMStrengths.add(ent.getECMStrength());
                 }
                 if (!other.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null) {
                     vFriendlyECCMCoords.addElement(entPos);
                     vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-                }
-                // angel ECCM gets added another time, to make it count as 2 ECMs,
-                // because it's already included above because it works as a normal
-                // ECM, too
-                if (!other.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null) {
-                    vFriendlyECCMCoords.addElement(entPos);
-                    vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                    vFriendlyECCMStrengths.add(ent.getECMStrength());
                 }
             }
         }
@@ -2760,30 +2732,35 @@ public class Compute {
         ArrayList<Coords> coords = Coords.intervening(a, b);
         // loop through all intervening coords, check each if they are ECM
         // affected
-        int worstECM = 0;
+        double worstECM = 0;
         for (Coords c : coords) {
             // > 0: in friendly ECCM
             // 0: unaffected by enemy ECM
             // <0: affected by enemy angel ECM
-            int ecmStatus = 0;
+            double ecmStatus = 0;
             // first, subtract 2 for each enemy angel ECM that affects us
             Enumeration<Integer> ranges = vEnemyAngelECMRanges.elements();
+            Enumeration<Double> strengths = vEnemyAngelECMStrengths.elements();
             for (Enumeration<Coords> e = vEnemyAngelECMCoords.elements(); e.hasMoreElements();) {
                 Coords enemyECMCoords = e.nextElement();
                 int range = ranges.nextElement().intValue();
                 int nDist = c.distance(enemyECMCoords);
+                double strength = strengths.nextElement().doubleValue();
                 if (nDist <= range) {
-                    ecmStatus++;
+                    ecmStatus += strength;
                 }
             }
             // now, add one for each friendly ECCM
             ranges = vFriendlyECCMRanges.elements();
+            strengths = vFriendlyECCMStrengths.elements();
             for (Enumeration<Coords> e = vFriendlyECCMCoords.elements(); e.hasMoreElements();) {
                 Coords friendlyECCMCoords = e.nextElement();
                 int range = ranges.nextElement().intValue();
                 int nDist = c.distance(friendlyECCMCoords);
+                double strength = strengths.nextElement().doubleValue();
+                
                 if (nDist <= range) {
-                    ecmStatus--;
+                    ecmStatus -= strength;
                 }
             }
             // if any coords in the line are affected, the whole line is
@@ -2810,11 +2787,13 @@ public class Compute {
         Hashtable<Integer, Integer> hEnemyGTMods = new Hashtable<Integer, Integer>();
         Vector<Coords> vEnemyECMCoords = new Vector<Coords>(16);
         Vector<Integer> vEnemyECMRanges = new Vector<Integer>(16);
+        Vector<Double> vEnemyECMStrengths = new Vector<Double>(16);
         Vector<Coords> vEnemyGTCoords = new Vector<Coords>(16);
         Vector<Integer> vEnemyGTRanges = new Vector<Integer>(16);
         Vector<Integer> vEnemyGTId = new Vector<Integer>(16);
         Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
         Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
+        Vector<Double> vFriendlyECCMStrengths = new Vector<Double>(16);
         for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
@@ -2828,24 +2807,12 @@ public class Compute {
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && entPos != null) {
                 vEnemyECMCoords.addElement(entPos);
                 vEnemyECMRanges.addElement(new Integer(ent.getECMRange()));
-            }
-            // angel ECM gets added another time, to make it count as 2 ECMs,
-            // because it's already included above because it works as a normal
-            // ECM, too
-            if (ent.isEnemyOf(ae) && ent.hasActiveAngelECM() && entPos != null) {
-                vEnemyECMCoords.addElement(entPos);
-                vEnemyECMRanges.addElement(new Integer(ent.getECMRange()));
+                vEnemyECMStrengths.add(ent.getECMStrength());
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null) {
                 vFriendlyECCMCoords.addElement(entPos);
                 vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-            }
-            // angel ECCM gets added another time, to make it count as 2 ECMs,
-            // because it's already included above because it works as a normal
-            // ECM, too
-            if (!ent.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null) {
-                vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                vFriendlyECCMStrengths.add(ent.getECCMStrength());
             }
 
             // Check the ECM effects of the entity's passengers.
@@ -2860,24 +2827,12 @@ public class Compute {
                 if (other.isEnemyOf(ae) && other.hasActiveECM() && entPos != null) {
                     vEnemyECMCoords.addElement(entPos);
                     vEnemyECMRanges.addElement(new Integer(other.getECMRange()));
-                }
-                // angel ECM gets added another time, to make it count as 2 ECMs,
-                // because it's already included above because it works as a normal
-                // ECM, too
-                if (other.isEnemyOf(ae) && other.hasActiveAngelECM() && entPos != null) {
-                    vEnemyECMCoords.addElement(entPos);
-                    vEnemyECMRanges.addElement(new Integer(other.getECMRange()));
+                    vEnemyECMStrengths.add(ent.getECMStrength());
                 }
                 if (!other.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null) {
                     vFriendlyECCMCoords.addElement(entPos);
                     vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-                }
-                // angel ECCM gets added another time, to make it count as 2 ECMs,
-                // because it's already included above because it works as a normal
-                // ECM, too
-                if (!other.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null) {
-                    vFriendlyECCMCoords.addElement(entPos);
-                    vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                    vFriendlyECCMStrengths.add(ent.getECCMStrength());
                 }
             }
         }
@@ -2897,22 +2852,26 @@ public class Compute {
             int ecmStatus = 0;
             // first, subtract 1 for each enemy ECM that affects us
             Enumeration<Integer> ranges = vEnemyECMRanges.elements();
+            Enumeration<Double> strengths = vEnemyECMStrengths.elements();
             for (Enumeration<Coords> e = vEnemyECMCoords.elements(); e.hasMoreElements();) {
                 Coords enemyECMCoords = e.nextElement();
                 int range = ranges.nextElement().intValue();
                 int nDist = c.distance(enemyECMCoords);
+                double strength = strengths.nextElement().doubleValue();
                 if (nDist <= range) {
-                    ecmStatus++;
+                    ecmStatus += strength;
                 }
             }
             // now, add one for each friendly ECCM
             ranges = vFriendlyECCMRanges.elements();
+            strengths = vFriendlyECCMStrengths.elements();
             for (Enumeration<Coords> e = vFriendlyECCMCoords.elements(); e.hasMoreElements();) {
                 Coords friendlyECCMCoords = e.nextElement();
                 int range = ranges.nextElement().intValue();
                 int nDist = c.distance(friendlyECCMCoords);
+                double strength = strengths.nextElement().doubleValue();
                 if (nDist <= range) {
-                    ecmStatus--;
+                    ecmStatus -= strength;
                 }
             }
             

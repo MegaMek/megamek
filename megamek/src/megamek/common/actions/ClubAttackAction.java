@@ -339,31 +339,37 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         // Set the base BTH
         int base = ae.getCrew().getPiloting();
-
+        
         // Various versions of physical weapons have different base bonuses and
         // penalties.
-        if ((((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_LANCE))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL))) {
-            base += 1;
-        } else if ((((MiscType) club.getType()).hasSubType(MiscType.S_MACE_THB))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_SWORD))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_RETRACTABLE_BLADE))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_MACE))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_BACKHOE))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_BACKHOE))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_WRECKING_BALL))) {
+        if (((MiscType) club.getType()).hasSubType(MiscType.S_PILE_DRIVER)) {
             base += 2;
-        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_PILE_DRIVER)) {
-            base += 3;
-        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_SHIELD_LARGE)) {
-            base -= 3;
-        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_SHIELD_MEDIUM)
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_BACKHOE)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_ROCK_CUTTER)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_WRECKING_BALL)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_LANCE)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_MACE)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_MACE_THB)) {
+            base += 1;
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW)) {
+            base += 0;
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_HATCHET)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_MINING_DRILL)) {
+            base -= 1;
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_SWORD)
                 || ((MiscType) club.getType()).hasSubType(MiscType.S_CHAIN_WHIP)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_SHIELD_SMALL)
                 || ((MiscType) club.getType()).isVibroblade()) {
             base -= 2;
-        }else {
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_SHIELD_MEDIUM)) {
+            base -= 3;
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_SHIELD_LARGE)) {
+            base -= 4;
+        } else {
             base -= 1;
         }
 

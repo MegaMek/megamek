@@ -215,13 +215,19 @@ public class MtfFile implements IMechLoader {
             if (techBase.substring(9).trim().equals("Inner Sphere")) {
                 switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                     case 1:
-                        mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                        mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
                         break;
                     case 2:
-                        mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                        mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
                         break;
                     case 3:
-                        mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+                        mech.setTechLevel(TechConstants.T_IS_ADVANCED);
+                        break;
+                    case 4:
+                        mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+                        break;
+                    case 5:
+                        mech.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
                         break;
                     default:
                         throw new EntityLoadingException(
@@ -231,11 +237,17 @@ public class MtfFile implements IMechLoader {
             } else if (techBase.substring(9).trim().equals("Clan")) {
                 switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                     case 2:
-                        mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+                        mech.setTechLevel(TechConstants.T_CLAN_TW);
                         break;
                     case 3:
-                        mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+                        mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
                         break;
+                    case 4:
+                        mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
+                        break;
+                    case 5:
+                        mech.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
+                        break;    
                     default:
                         throw new EntityLoadingException(
                                 "Unsupported tech level: "
@@ -243,11 +255,39 @@ public class MtfFile implements IMechLoader {
                 }
             } else if (techBase.substring(9).trim()
                     .equals("Mixed (IS Chassis)")) {
-                mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+                switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                case 3:
+                    mech.setTechLevel(TechConstants.T_IS_ADVANCED);
+                    break;
+                case 4:
+                    mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+                    break;
+                case 5:
+                    mech.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
+                    break;    
+                default:
+                    throw new EntityLoadingException(
+                            "Unsupported tech level: "
+                                    + rulesLevel.substring(12).trim());
+                }
                 mech.setMixedTech(true);
             } else if (techBase.substring(9).trim().equals(
                     "Mixed (Clan Chassis)")) {
-                mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+                switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                case 3:
+                    mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+                    break;
+                case 4:
+                    mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
+                    break;
+                case 5:
+                    mech.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
+                    break;    
+                default:
+                    throw new EntityLoadingException(
+                            "Unsupported tech level: "
+                                    + rulesLevel.substring(12).trim());
+                }
                 mech.setMixedTech(true);
             } else if (techBase.substring(9).trim().equals("Mixed")) {
                 throw new EntityLoadingException(

@@ -98,28 +98,28 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
 
         if (dataFile.getDataAsString("type")[0].equals("IS")) {
             if (mech.getYear() == 3025) {
-                mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
             } else {
-                mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
             }
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 1")) {
-            mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+            mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 2")) {
-            mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+            mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 3")) {
-            mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+            mech.setTechLevel(TechConstants.T_IS_ADVANCED);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan")
                 || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
-            mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+            mech.setTechLevel(TechConstants.T_CLAN_TW);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
-            mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+            mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
         } else if (dataFile.getDataAsString("type")[0]
                 .equals("Mixed (IS Chassis)")) {
-            mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+            mech.setTechLevel(TechConstants.T_IS_ADVANCED);
             mech.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0]
                 .equals("Mixed (Clan Chassis)")) {
-            mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+            mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
             mech.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed")) {
             throw new EntityLoadingException(
@@ -241,7 +241,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
 
         // prefix is "Clan " or "IS "
         String prefix;
-        if (mech.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
+        if (mech.getTechLevel() == TechConstants.T_CLAN_TW) {
             prefix = "Clan ";
         } else {
             prefix = "IS ";

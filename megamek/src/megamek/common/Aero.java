@@ -2162,6 +2162,13 @@ public class Aero
         }
 
         return false;
-        
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getTotalCommGearTons()
+     */
+    public int getTotalCommGearTons() {
+        return 1 + getExtraCommGearTons();
     }
 }

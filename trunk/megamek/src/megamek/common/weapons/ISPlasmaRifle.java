@@ -35,7 +35,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
     private static final long serialVersionUID = -7919371014161089388L;
 
     public ISPlasmaRifle() {
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Plasma Rifle";
         this.setInternalName("ISPlasmaRifle");
         this.heat = 10;

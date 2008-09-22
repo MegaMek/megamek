@@ -31,7 +31,7 @@ public class ISTAG extends TAGWeapon {
 
     public ISTAG() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "IS TAG";
         this.setInternalName("ISTAG");
         this.addLookupName("IS TAG");

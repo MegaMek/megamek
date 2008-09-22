@@ -34,7 +34,7 @@ public class ISBPod extends BPodWeapon {
      */
     public ISBPod() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "B-Pod";
         this.setInternalName("ISBPod");
         this.addLookupName("ISB-Pod");

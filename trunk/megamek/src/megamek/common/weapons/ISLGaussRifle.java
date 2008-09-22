@@ -38,7 +38,7 @@ public class ISLGaussRifle extends GaussWeapon {
      */
     public ISLGaussRifle() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Light Gauss Rifle";
         this.setInternalName("ISLightGaussRifle");
         this.addLookupName("IS Light Gauss Rifle");

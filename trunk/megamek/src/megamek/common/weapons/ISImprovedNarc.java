@@ -31,7 +31,7 @@ public class ISImprovedNarc extends NarcWeapon {
      */
     public ISImprovedNarc() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "iNarc";
         this.setInternalName("ISImprovedNarc");
         this.addLookupName("IS iNarc Beacon");

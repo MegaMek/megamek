@@ -35,7 +35,7 @@ public class ISSniper extends ArtilleryWeapon {
      */
     public ISSniper() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_ADVANCED;
         this.name = "Sniper";
         this.setInternalName("ISSniper");
         this.addLookupName("ISSniperArtillery");

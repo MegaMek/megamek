@@ -37,7 +37,7 @@ public class ISCompactNarc extends NarcWeapon {
      */
     public ISCompactNarc() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Compact Narc";
         this.setInternalName("ISCompactNarc");
         this.addLookupName("ISCompact Narc");

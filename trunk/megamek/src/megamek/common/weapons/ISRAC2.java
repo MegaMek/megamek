@@ -33,7 +33,7 @@ public class ISRAC2 extends RACWeapon {
      */
     public ISRAC2() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Rotary AC/2";
         this.setInternalName("ISRotaryAC2");
         this.addLookupName("IS Rotary AC/2");

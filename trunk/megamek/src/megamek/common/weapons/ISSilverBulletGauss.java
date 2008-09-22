@@ -38,7 +38,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
      */
     public ISSilverBulletGauss() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         this.name = "Silver Bullet Gauss Rifle";
         this.setInternalName("ISSBGR");
         this.addLookupName("IS Silver Bullet Gauss Rifle");

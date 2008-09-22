@@ -37,7 +37,7 @@ public class ISFireExtinguisher extends Weapon {
      */
     public ISFireExtinguisher() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_3;
+        this.techLevel = TechConstants.T_IS_ADVANCED;
         this.name = "Fire Extinguisher";
         this.setInternalName(this.name);
         this.heat = 0;

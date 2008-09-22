@@ -32,7 +32,7 @@ public class ISMGA extends AmmoWeapon {
 
     public ISMGA() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Machine Gun Array";
         this.addLookupName("IS Machine Gun Array");
         this.setInternalName("ISMGA");

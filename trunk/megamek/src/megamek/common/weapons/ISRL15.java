@@ -30,7 +30,7 @@ public class ISRL15 extends RLWeapon {
      */
     public ISRL15() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "RL 15";
         this.setInternalName("RL15");
         this.addLookupName("ISRocketLauncher15");

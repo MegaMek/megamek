@@ -34,7 +34,7 @@ public class ISAMS extends AmmoWeapon {
      */
     public ISAMS() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "AMS";
         this.setInternalName("ISAntiMissileSystem");
         this.addLookupName("IS Anti-Missile System");

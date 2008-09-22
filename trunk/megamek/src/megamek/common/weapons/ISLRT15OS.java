@@ -30,7 +30,7 @@ public class ISLRT15OS extends LRTWeapon {
      */
     public ISLRT15OS() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "LRT 15 (OS)";
         this.setInternalName(this.name);
         this.addLookupName("IS OS LRT-15");

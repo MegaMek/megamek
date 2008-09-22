@@ -30,7 +30,7 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
      */
     public ISStreakSRM2() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Streak SRM 2";
         this.setInternalName("ISStreakSRM2");
         this.addLookupName("IS Streak SRM-2");

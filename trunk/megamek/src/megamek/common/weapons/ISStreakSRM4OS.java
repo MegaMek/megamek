@@ -30,7 +30,7 @@ public class ISStreakSRM4OS extends StreakSRMWeapon {
      */
     public ISStreakSRM4OS() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Streak SRM 4 (OS)";
         this.setInternalName("ISStreakSRM4OS");
         this.addLookupName("ISStreakSRM4 (OS)"); // mtf

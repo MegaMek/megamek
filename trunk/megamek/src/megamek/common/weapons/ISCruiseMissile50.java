@@ -35,7 +35,7 @@ public class ISCruiseMissile50 extends ArtilleryWeapon {
      */
     public ISCruiseMissile50() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_3;
+        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         this.name = "Cruise Missile/50";
         this.setInternalName("ISCruiseMissile50");
         this.heat = 50;

@@ -35,7 +35,7 @@ public class ISBombastLaser extends LaserWeapon {
 
     public ISBombastLaser() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         this.name = "Bombast Laser";
         this.setInternalName(this.name);
         this.addLookupName("IS Bombast Laser");

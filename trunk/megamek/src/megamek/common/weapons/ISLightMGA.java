@@ -32,7 +32,7 @@ public class ISLightMGA extends AmmoWeapon {
 
     public ISLightMGA() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "IS Light Machine Gun Array";
         this.setInternalName("ISLMGA");
         this.heat = 0;

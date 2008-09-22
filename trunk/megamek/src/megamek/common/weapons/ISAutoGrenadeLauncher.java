@@ -36,7 +36,7 @@ public class ISAutoGrenadeLauncher extends Weapon {
 
     public ISAutoGrenadeLauncher() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Auto Grenade Launcher";
         this.setInternalName(this.name);
         this.addLookupName("ISAutoGL");

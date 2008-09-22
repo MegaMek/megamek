@@ -34,7 +34,7 @@ public class ISSupportPPC extends PPCWeapon {
      */
     public ISSupportPPC() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Support PPC";
         this.setInternalName(this.name);
         this.addLookupName("ISSupportPPC");

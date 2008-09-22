@@ -30,7 +30,7 @@ public class ISMediumLaser extends LaserWeapon {
 
     public ISMediumLaser() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_INTRO_BOXSET;
         this.name = "Medium Laser";
         this.setInternalName(this.name);
         this.addLookupName("IS Medium Laser");

@@ -28,7 +28,7 @@ public class ISLAC2 extends LACWeapon {
 
     public ISLAC2() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Light Auto Cannon/2";
         this.setInternalName(this.name);
         this.addLookupName("IS Light AutoCannon/2");

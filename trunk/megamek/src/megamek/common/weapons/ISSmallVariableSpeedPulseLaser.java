@@ -34,7 +34,7 @@ public class ISSmallVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeapo
      */
     public ISSmallVariableSpeedPulseLaser() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_ADVANCED;
         this.name = "Small VSP";
         this.setInternalName("ISSmallVSPLaser");
         this.setInternalName("ISSVSPL");

@@ -30,7 +30,7 @@ public class ISMRM10OS extends MRMWeapon {
      */
     public ISMRM10OS() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "MRM 10 (OS)";
         this.setInternalName(this.name);
         this.addLookupName("OS MRM-10");

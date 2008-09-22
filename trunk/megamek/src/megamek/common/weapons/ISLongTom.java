@@ -35,7 +35,7 @@ public class ISLongTom extends ArtilleryWeapon {
      */
     public ISLongTom() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_ADVANCED;
         this.name = "Long Tom";
         this.setInternalName("ISLongTom");
         this.addLookupName("ISLongTomArtillery");

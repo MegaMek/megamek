@@ -36,7 +36,7 @@ public class HVACWeapon extends ACWeapon {
 
     public HVACWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         this.explosionDamage = damage;
         this.ammoType = AmmoType.T_HYPER_VELOCITY;
     }

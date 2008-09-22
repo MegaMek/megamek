@@ -32,7 +32,7 @@ public class NAC10Weapon extends NavalACWeapon {
      */
     public NAC10Weapon() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Naval AC 10";
         this.setInternalName(this.name);
         this.addLookupName("NAC10");

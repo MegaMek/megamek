@@ -33,7 +33,7 @@ public class ISERSmallLaser extends LaserWeapon {
      */
     public ISERSmallLaser() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "ER Small Laser";
         this.setInternalName("ISERSmallLaser");
         this.addLookupName("IS ER Small Laser");

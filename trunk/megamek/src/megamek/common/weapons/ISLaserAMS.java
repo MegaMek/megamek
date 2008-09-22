@@ -30,7 +30,7 @@ public class ISLaserAMS extends LaserWeapon {
 
     public ISLaserAMS() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_3;
+        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         this.name = "Laser AMS";
         this.setInternalName("ISLaserAntiMissileSystem");
         this.addLookupName("IS Laser Anti-Missile System");

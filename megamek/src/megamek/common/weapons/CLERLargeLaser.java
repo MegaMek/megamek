@@ -33,7 +33,7 @@ public class CLERLargeLaser extends LaserWeapon {
      */
     public CLERLargeLaser() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "ER Large Laser";
         this.setInternalName("CLERLargeLaser");
         this.addLookupName("Clan ER Large Laser");

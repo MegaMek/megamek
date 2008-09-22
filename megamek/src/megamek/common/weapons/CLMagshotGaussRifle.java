@@ -34,7 +34,7 @@ public class CLMagshotGaussRifle extends GaussWeapon {
      */
     public CLMagshotGaussRifle() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        this.techLevel = TechConstants.T_CLAN_ADVANCED;
         this.name = "Magshot";
         this.setInternalName("CLMagshotGR");
         this.addLookupName("CLMagshotGR");

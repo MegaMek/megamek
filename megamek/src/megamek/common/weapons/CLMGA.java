@@ -32,7 +32,7 @@ public class CLMGA extends AmmoWeapon {
 
     public CLMGA() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Machine Gun Array";
         this.addLookupName("Clan Machine Gun Array");
         this.setInternalName("CLMGA");

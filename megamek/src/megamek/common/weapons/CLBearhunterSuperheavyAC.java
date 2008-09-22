@@ -38,7 +38,7 @@ public class CLBearhunterSuperheavyAC extends Weapon {
      */
     public CLBearhunterSuperheavyAC() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Bearhunter Superheavy AC";
         this.setInternalName(this.name);
         this.addLookupName("CLBearhunter Superheavy AC");

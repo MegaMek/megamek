@@ -37,7 +37,7 @@ public class CLMicroPulseLaser extends PulseLaserWeapon {
      */
     public CLMicroPulseLaser() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Micro Pulse Laser";
         this.setInternalName("CLMicroPulseLaser");
         this.addLookupName("Clan Micro Pulse Laser");

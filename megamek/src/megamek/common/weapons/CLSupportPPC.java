@@ -34,7 +34,7 @@ public class CLSupportPPC extends PPCWeapon {
      */
     public CLSupportPPC() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Support PPC";
         this.setInternalName(this.name);
         this.addLookupName("CLSupportPPC");

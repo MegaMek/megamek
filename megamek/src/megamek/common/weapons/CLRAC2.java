@@ -33,7 +33,7 @@ public class CLRAC2 extends RACWeapon {
      */
     public CLRAC2() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        this.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         this.name = "Rotary AC/2";
         this.setInternalName("CLRotaryAC2");
         this.addLookupName("Clan Rotary AC/2");

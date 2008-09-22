@@ -35,7 +35,7 @@ public class CLArrowIV extends ArtilleryWeapon {
      */
     public CLArrowIV() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_ADVANCED;
         this.name = "Arrow IV";
         this.setInternalName("CLArrowIV");
         this.addLookupName("CLArrowIVSystem");

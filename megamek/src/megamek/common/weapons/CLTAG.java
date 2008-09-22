@@ -31,7 +31,7 @@ public class CLTAG extends TAGWeapon {
 
     public CLTAG() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Clan TAG";
         this.setInternalName("CLTAG");
         this.addLookupName("Clan TAG");

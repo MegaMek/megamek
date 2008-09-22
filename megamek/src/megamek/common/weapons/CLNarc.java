@@ -30,7 +30,7 @@ public class CLNarc extends NarcWeapon {
      */
     public CLNarc() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Narc";
         this.setInternalName("CLNarcBeacon");
         this.addLookupName("Clan Narc Beacon");

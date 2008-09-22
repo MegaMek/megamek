@@ -33,7 +33,7 @@ public class CLERPPC extends PPCWeapon {
      */
     public CLERPPC() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "ER PPC";
         this.setInternalName("CLERPPC");
         this.addLookupName("Clan ER PPC");

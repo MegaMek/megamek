@@ -33,7 +33,7 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
      */
     public CLPlasmaRifle() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        this.techLevel = TechConstants.T_CLAN_UNOFFICIAL;
         this.name = "Plasma Rifle";
         this.setInternalName(this.name);
         this.addLookupName("Clan Plasma Rifle");

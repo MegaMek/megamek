@@ -37,7 +37,7 @@ public class BarracudaWeapon extends CapitalMissileWeapon {
      */
     public BarracudaWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Barracuda";
         this.setInternalName(this.name);
         this.addLookupName("Barracuda");

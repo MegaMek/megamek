@@ -30,7 +30,7 @@ public class CLSRM2OS extends SRMWeapon {
      */
     public CLSRM2OS() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "SRM 2 (OS)";
         this.setInternalName("CLSRM2 (OS)");
         this.addLookupName("Clan OS SRM-2");

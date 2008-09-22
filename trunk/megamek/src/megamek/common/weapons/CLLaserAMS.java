@@ -34,7 +34,7 @@ public class CLLaserAMS extends LaserWeapon {
      */
     public CLLaserAMS() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        this.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         this.name = "Laser AMS";
         this.setInternalName("CLLaserAntiMissileSystem");
         this.addLookupName("Clan Laser Anti-Missile Sys");

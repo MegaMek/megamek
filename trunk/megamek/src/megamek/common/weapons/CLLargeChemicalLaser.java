@@ -35,7 +35,7 @@ public class CLLargeChemicalLaser extends AmmoWeapon {
     private static final long serialVersionUID = 322396740172378519L;
 
     public CLLargeChemicalLaser() {
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         this.name = "Large Chem Laser";
         this.setInternalName("CLLargeChemicalLaser");
         this.setInternalName("CLLargeChemLaser");

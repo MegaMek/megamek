@@ -34,7 +34,7 @@ public class CLBAMG extends BAMGWeapon {
      */
     public CLBAMG() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Machine Gun";
         this.setInternalName("CLBAMG");
         this.addLookupName("Clan BA Machine Gun");

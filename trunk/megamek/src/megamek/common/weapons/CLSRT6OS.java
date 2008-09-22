@@ -30,7 +30,7 @@ public class CLSRT6OS extends SRTWeapon {
      */
     public CLSRT6OS() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "SRT 6 (OS)";
         this.setInternalName("CLSRT6 (OS)");
         this.addLookupName("Clan OS SRT-6");

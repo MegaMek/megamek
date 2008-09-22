@@ -38,7 +38,7 @@ public class CLHeavyRecoillessRifle extends Weapon {
      */
     public CLHeavyRecoillessRifle() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Heavy Recoilless Rifle";
         this.setInternalName(this.name);
         this.addLookupName("CLHeavy Recoilless Rifle");

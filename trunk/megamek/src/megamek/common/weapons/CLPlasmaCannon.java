@@ -35,7 +35,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
     private static final long serialVersionUID = 322396740172378519L;
 
     public CLPlasmaCannon() {
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Plasma Cannon";
         this.setInternalName("CLPlasmaCannon");
         this.heat = 7;

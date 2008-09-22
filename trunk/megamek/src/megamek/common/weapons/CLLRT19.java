@@ -30,7 +30,7 @@ public class CLLRT19 extends LRTWeapon {
      */
     public CLLRT19() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "LRT 19";
         this.setInternalName("CLLRTorpedo19");
         this.heat = 0;

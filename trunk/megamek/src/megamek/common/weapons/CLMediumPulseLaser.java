@@ -33,7 +33,7 @@ public class CLMediumPulseLaser extends PulseLaserWeapon {
      */
     public CLMediumPulseLaser() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Medium Pulse Laser";
         this.setInternalName("CLMediumPulseLaser");
         this.addLookupName("Clan Pulse Med Laser");

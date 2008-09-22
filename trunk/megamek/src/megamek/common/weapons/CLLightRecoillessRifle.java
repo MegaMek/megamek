@@ -38,7 +38,7 @@ public class CLLightRecoillessRifle extends Weapon {
      */
     public CLLightRecoillessRifle() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Light Recoilless Rifle";
         this.setInternalName(this.name);
         this.addLookupName("CLLight Recoilless Rifle");

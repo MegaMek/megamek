@@ -30,7 +30,7 @@ public class CLLRM20OS extends LRMWeapon {
      */
     public CLLRM20OS() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "LRM 20 (OS)";
         this.setInternalName("CLLRM20 (OS)");
         this.addLookupName("Clan OS LRM-20");

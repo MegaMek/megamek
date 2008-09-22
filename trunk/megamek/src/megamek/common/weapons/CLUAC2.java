@@ -33,7 +33,7 @@ public class CLUAC2 extends UACWeapon {
      */
     public CLUAC2() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Ultra AC/2";
         this.setInternalName("CLUltraAC2");
         this.addLookupName("Clan Ultra AC/2");

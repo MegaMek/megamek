@@ -33,7 +33,7 @@ public class CLLargePulseLaser extends PulseLaserWeapon {
      */
     public CLLargePulseLaser() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Large Pulse Laser";
         this.setInternalName("CLLargePulseLaser");
         this.addLookupName("Clan Pulse Large Laser");

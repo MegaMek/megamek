@@ -30,7 +30,7 @@ public class CLMekMortar2 extends MekMortarWeapon{
      */
     public CLMekMortar2() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Mortar 2";
         this.setInternalName("Clan Mech Mortar-2");
         this.addLookupName("CLMekMortar2");

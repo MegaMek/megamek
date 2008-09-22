@@ -30,7 +30,7 @@ public class CLLRM18 extends LRMWeapon {
      */
     public CLLRM18() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "LRM 18";
         this.setInternalName("CLLRM18");
         this.heat = 0;

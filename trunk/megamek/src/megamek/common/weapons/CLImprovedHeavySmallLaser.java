@@ -22,7 +22,7 @@ import megamek.common.TechConstants;
 /**
  * @author Jason Tighe
  */
-public class CLImprovedSmallLargeLaser extends LaserWeapon {
+public class CLImprovedHeavySmallLaser extends LaserWeapon {
     /**
      * 
      */
@@ -31,9 +31,9 @@ public class CLImprovedSmallLargeLaser extends LaserWeapon {
     /**
      * 
      */
-    public CLImprovedSmallLargeLaser() {
+    public CLImprovedHeavySmallLaser() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Improved Small Heavy Laser";
         this.setInternalName("CLImprovedSmallHeavyLaser");
         this.addLookupName("Clan Improved Small Heavy Laser");

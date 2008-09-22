@@ -34,7 +34,7 @@ public class ISMagshotGaussRifle extends GaussWeapon {
      */
     public ISMagshotGaussRifle() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Magshot";
         this.setInternalName("ISMagshotGR");
         this.heat = 1;

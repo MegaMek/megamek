@@ -34,7 +34,7 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
      */
     public ISHeavyFlamer() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_3;
+        this.techLevel = TechConstants.T_IS_ADVANCED;
         this.name = "Heavy Flamer";
         this.setInternalName(this.name);
         this.addLookupName("IS Heavy Flamer");

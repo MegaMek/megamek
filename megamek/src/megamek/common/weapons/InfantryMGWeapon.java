@@ -36,7 +36,7 @@ public class InfantryMGWeapon extends InfantryWeapon {
 
     public InfantryMGWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_INTRO_BOXSET;
         this.name = "Infantry MG";
         this.setInternalName(this.name);
         this.addLookupName("InfantryMG");

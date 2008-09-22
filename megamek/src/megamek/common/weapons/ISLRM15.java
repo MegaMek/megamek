@@ -30,7 +30,7 @@ public class ISLRM15 extends LRMWeapon {
      */
     public ISLRM15() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_INTRO_BOXSET;
         this.name = "LRM 15";
         this.setInternalName(this.name);
         this.addLookupName("IS LRM-15");

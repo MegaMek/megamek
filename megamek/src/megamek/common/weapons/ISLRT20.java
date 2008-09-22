@@ -30,7 +30,7 @@ public class ISLRT20 extends LRTWeapon {
      */
     public ISLRT20() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "LRT 20";
         this.setInternalName(this.name);
         this.addLookupName("IS LRT-20");

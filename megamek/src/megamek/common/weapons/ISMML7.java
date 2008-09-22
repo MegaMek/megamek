@@ -30,7 +30,7 @@ public class ISMML7 extends MMLWeapon {
      */
     public ISMML7() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "MML 7";
         this.setInternalName("ISMML7");
         this.addLookupName("IS MML-7");

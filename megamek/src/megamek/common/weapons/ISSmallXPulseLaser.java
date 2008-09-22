@@ -33,7 +33,7 @@ public class ISSmallXPulseLaser extends PulseLaserWeapon {
      */
     public ISSmallXPulseLaser() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_3;
+        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         this.name = "Small X-Pulse Laser";
         this.setInternalName("ISSmallXPulseLaser");
         this.addLookupName("IS X-Pulse Small Laser");

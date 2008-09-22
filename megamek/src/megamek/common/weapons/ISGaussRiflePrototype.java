@@ -38,7 +38,7 @@ public class ISGaussRiflePrototype extends GaussWeapon {
      */
     public ISGaussRiflePrototype() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_3;
+        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         this.name = "Gauss Rifle Prototype";
         this.setInternalName("ISGaussRiflePrototype");
         this.addLookupName("IS Gauss Rifle Prototype");

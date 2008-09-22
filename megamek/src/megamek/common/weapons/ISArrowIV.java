@@ -35,7 +35,7 @@ public class ISArrowIV extends ArtilleryWeapon {
      */
     public ISArrowIV() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_ADVANCED;
         this.name = "Arrow IV";
         this.setInternalName("ISArrowIV");
         this.addLookupName("ISArrowIVSystem");

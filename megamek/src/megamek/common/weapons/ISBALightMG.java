@@ -34,7 +34,7 @@ public class ISBALightMG extends BAMGWeapon {
      */
     public ISBALightMG() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Light Machine Gun";
         this.setInternalName("BA Light Machine Gun");
         this.addLookupName("IS BA Light Machine Gun");

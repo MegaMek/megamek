@@ -29,7 +29,7 @@ public class ISBAMagshotGaussRifle extends Weapon {
      */
     public ISBAMagshotGaussRifle() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Magshot";
         this.setInternalName("ISBAMagshotGR");
         this.damage = 2;

@@ -30,7 +30,7 @@ public class ISExtendedLRM10 extends ExtendedLRMWeapon {
      */
     public ISExtendedLRM10() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_3;
+        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         this.name = "ExtendedLRM 10";
         this.setInternalName(this.name);
         this.addLookupName("IS ExtendedLRM-10");

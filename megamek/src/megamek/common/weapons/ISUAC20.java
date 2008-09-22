@@ -33,7 +33,7 @@ public class ISUAC20 extends UACWeapon {
      */
     public ISUAC20() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Ultra AC/20";
         this.setInternalName("ISUltraAC20");
         this.addLookupName("IS Ultra AC/20");

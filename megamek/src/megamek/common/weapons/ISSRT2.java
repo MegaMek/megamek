@@ -30,7 +30,7 @@ public class ISSRT2 extends SRTWeapon {
      */
     public ISSRT2() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "SRT 2";
         this.setInternalName(this.name);
         this.addLookupName("IS SRT-2");

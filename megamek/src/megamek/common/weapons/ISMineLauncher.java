@@ -39,7 +39,7 @@ public class ISMineLauncher extends Weapon {
      */
     public ISMineLauncher() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Mine Launcher";
         this.setInternalName(BattleArmor.MINE_LAUNCHER);
         this.addLookupName("ISMine Launcher");

@@ -31,7 +31,7 @@ public class ISBinaryLaserCannon extends LaserWeapon {
 
     public ISBinaryLaserCannon() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         this.name = "Blazer Cannon";
         this.setInternalName(this.name);
         this.addLookupName("IS Binary Laser Cannon");

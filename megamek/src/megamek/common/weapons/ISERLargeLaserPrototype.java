@@ -35,8 +35,8 @@ public class ISERLargeLaserPrototype extends LaserWeapon {
 
     public ISERLargeLaserPrototype() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_3;
-        this.name = "ER Large Laser";
+        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        this.name = "ER Large Laser Prototype";
         this.setInternalName("ISERLargeLaserPrototype");
         this.addLookupName("IS ER Large Laser Prototype");
         this.toHitModifier = 1;

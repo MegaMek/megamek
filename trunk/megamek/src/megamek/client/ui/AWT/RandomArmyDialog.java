@@ -295,7 +295,7 @@ public class RandomArmyDialog extends Dialog implements ActionListener,
 
     private void updateTechChoice(boolean force) {
         boolean maxTechOption = m_client.game.getOptions().booleanOption(
-                "allow_level_3_units");
+                "allow_advanced_units");
         int maxTech = (maxTechOption ? TechConstants.SIZE
                 : TechConstants.SIZE_LEVEL_2);
         if (includeMaxTech == maxTechOption && !force) {
@@ -307,9 +307,9 @@ public class RandomArmyDialog extends Dialog implements ActionListener,
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }
         if (maxTechOption) {
-            m_chType.select(TechConstants.T_IS_LEVEL_3);
+            m_chType.select(TechConstants.T_IS_ADVANCED);
         } else {
-            m_chType.select(TechConstants.T_IS_LEVEL_2);
+            m_chType.select(TechConstants.T_IS_TW_NON_BOX);
         }
     }
 

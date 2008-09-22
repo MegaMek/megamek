@@ -1851,9 +1851,9 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
 
         // Set the tech base.
         if (stateTechBase == TECH_BASE_IS)
-            retVal.setTechLevel(TechConstants.T_IS_LEVEL_2);
+            retVal.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
         else
-            retVal.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+            retVal.setTechLevel(TechConstants.T_CLAN_TW);
 
         // Set the ground movement.
         retVal.setOriginalWalkMP(stateGroundMP);

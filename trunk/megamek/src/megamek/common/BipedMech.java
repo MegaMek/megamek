@@ -677,7 +677,9 @@ public class BipedMech extends Mech {
     public boolean canGoHullDown() {
         return game.getOptions().booleanOption("tacops_hull_down")
             && !isLocationBad(Mech.LOC_LLEG)
-            && !isLocationBad(Mech.LOC_RLEG);
+            && !isLocationBad(Mech.LOC_RLEG)
+            && !isLocationDoomed(Mech.LOC_LLEG)
+            && !isLocationDoomed(Mech.LOC_RLEG);
     }
     
     public PilotingRollData checkGetUp(MoveStep step) {

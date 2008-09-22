@@ -402,13 +402,16 @@ public class EquipmentType {
     }
 
     public static double getArmorPointMultiplier(int inArmor) {
-        return getArmorPointMultiplier(inArmor, TechConstants.T_IS_LEVEL_2);
+        return getArmorPointMultiplier(inArmor, TechConstants.T_IS_TW_NON_BOX);
     }
 
     public static double getArmorPointMultiplier(int inArmor, int inTechLevel) {
         return getArmorPointMultiplier(
                 inArmor,
-                ((inTechLevel == TechConstants.T_CLAN_LEVEL_2) || (inTechLevel == TechConstants.T_CLAN_LEVEL_3)));
+                ((inTechLevel == TechConstants.T_CLAN_TW)
+                        || (inTechLevel == TechConstants.T_CLAN_ADVANCED))
+                        || (inTechLevel == TechConstants.T_CLAN_EXPERIMENTAL)
+                        || (inTechLevel == TechConstants.T_CLAN_UNOFFICIAL));
     }
 
     public static double getArmorPointMultiplier(int inArmor, boolean clanArmor) {
@@ -511,17 +514,17 @@ public class EquipmentType {
                     w.write("M,");
                 }
                 switch (type.getTechLevel()) {
-                    case TechConstants.T_IS_LEVEL_2:
-                    case TechConstants.T_IS_LEVEL_2_ALL:
+                    case TechConstants.T_IS_TW_NON_BOX:
+                    case TechConstants.T_IS_TW_ALL:
                         w.write("IS,2,");
                         break;
-                    case TechConstants.T_IS_LEVEL_3:
+                    case TechConstants.T_IS_ADVANCED:
                         w.write("IS,3,");
                         break;
-                    case TechConstants.T_CLAN_LEVEL_2:
+                    case TechConstants.T_CLAN_TW:
                         w.write("Clan,2,");
                         break;
-                    case TechConstants.T_CLAN_LEVEL_3:
+                    case TechConstants.T_CLAN_ADVANCED:
                         w.write("Clan,3,");
                         break;
                     default:

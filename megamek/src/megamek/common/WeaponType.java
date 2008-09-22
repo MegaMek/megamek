@@ -462,8 +462,8 @@ public class WeaponType extends EquipmentType {
         addType(new CLERMicroLaser());
         addType(new CLMicroPulseLaser());
         addType(new CLImprovedHeavyLargeLaser());
-        addType(new CLImprovedMediumLargeLaser());
-        addType(new CLImprovedSmallLargeLaser());
+        addType(new CLImprovedHeavyMediumLaser());
+        addType(new CLImprovedHeavySmallLaser());
         addType(new CLLargeChemicalLaser());
         addType(new CLMediumChemicalLaser());
         addType(new CLSmallChemicalLaser());

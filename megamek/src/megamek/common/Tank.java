@@ -1565,6 +1565,26 @@ public class Tank extends Entity implements Serializable {
         }
 
         return false;
-        
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getTotalCommGearTons()
+     */
+    public int getTotalCommGearTons() {
+        return 1 + getExtraCommGearTons();
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getIniBonus()
+     */
+    public int getIniBonus() {
+        int bonus = super.getIniBonus();
+        if ((stabiliserHits > 0 && mpUsedLastRound > 0)
+                || commanderHit) {
+            return 0;
+        }
+        return bonus;
     }
 }

@@ -864,4 +864,11 @@ public class SmallCraft extends Aero {
         return success;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getTotalCommGearTons()
+     */
+    public int getTotalCommGearTons() {
+        return 3 + getExtraCommGearTons();
+    }
 }

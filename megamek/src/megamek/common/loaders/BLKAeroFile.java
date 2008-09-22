@@ -65,26 +65,26 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             
         if (dataFile.getDataAsString("type")[0].equals("IS")) {
             if (a.getYear() == 3025) {
-                a.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                a.setTechLevel(TechConstants.T_INTRO_BOXSET);
             } else {
-                a.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                a.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
             }
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 1")) {
-            a.setTechLevel(TechConstants.T_IS_LEVEL_1);
+            a.setTechLevel(TechConstants.T_INTRO_BOXSET);
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 2")) {
-            a.setTechLevel(TechConstants.T_IS_LEVEL_2);
+            a.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 3")) {
-            a.setTechLevel(TechConstants.T_IS_LEVEL_3);
+            a.setTechLevel(TechConstants.T_IS_ADVANCED);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan")
                 || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
-            a.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+            a.setTechLevel(TechConstants.T_CLAN_TW);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
-            a.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+            a.setTechLevel(TechConstants.T_CLAN_ADVANCED);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis)")) {
-            a.setTechLevel(TechConstants.T_IS_LEVEL_3);
+            a.setTechLevel(TechConstants.T_IS_ADVANCED);
             a.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed (Clan Chassis)")) {
-            a.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+            a.setTechLevel(TechConstants.T_CLAN_ADVANCED);
             a.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed")) {
             throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
@@ -175,7 +175,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
         // prefix is "Clan " or "IS "
         String prefix;
-        if (t.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
+        if (t.getTechLevel() == TechConstants.T_CLAN_TW) {
             prefix = "Clan ";
         } else {
             prefix = "IS ";

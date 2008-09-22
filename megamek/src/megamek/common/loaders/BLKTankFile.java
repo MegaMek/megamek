@@ -69,28 +69,28 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
 
         if (dataFile.getDataAsString("type")[0].equals("IS")) {
             if (t.getYear() == 3025) {
-                t.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                t.setTechLevel(TechConstants.T_INTRO_BOXSET);
             } else {
-                t.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                t.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
             }
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 1")) {
-            t.setTechLevel(TechConstants.T_IS_LEVEL_1);
+            t.setTechLevel(TechConstants.T_INTRO_BOXSET);
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 2")) {
-            t.setTechLevel(TechConstants.T_IS_LEVEL_2);
+            t.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 3")) {
-            t.setTechLevel(TechConstants.T_IS_LEVEL_3);
+            t.setTechLevel(TechConstants.T_IS_ADVANCED);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan")
                 || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
-            t.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+            t.setTechLevel(TechConstants.T_CLAN_TW);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
-            t.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+            t.setTechLevel(TechConstants.T_CLAN_ADVANCED);
         } else if (dataFile.getDataAsString("type")[0]
                 .equals("Mixed (IS Chassis)")) {
-            t.setTechLevel(TechConstants.T_IS_LEVEL_3);
+            t.setTechLevel(TechConstants.T_IS_ADVANCED);
             t.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0]
                 .equals("Mixed (Clan Chassis)")) {
-            t.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+            t.setTechLevel(TechConstants.T_CLAN_ADVANCED);
             t.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed")) {
             throw new EntityLoadingException(
@@ -210,20 +210,20 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
                 type = "Mixed (Clan Chassis)";
         } else {
             switch (t.getTechLevel()) {
-                case TechConstants.T_IS_LEVEL_1:
+                case TechConstants.T_INTRO_BOXSET:
                     type = "IS Level 1";
                     break;
-                case TechConstants.T_IS_LEVEL_2:
+                case TechConstants.T_IS_TW_NON_BOX:
                     type = "IS Level 2";
                     break;
-                case TechConstants.T_IS_LEVEL_3:
+                case TechConstants.T_IS_ADVANCED:
                 default:
                     type = "IS Level 3";
                     break;
-                case TechConstants.T_CLAN_LEVEL_2:
+                case TechConstants.T_CLAN_TW:
                     type = "Clan Level 2";
                     break;
-                case TechConstants.T_CLAN_LEVEL_3:
+                case TechConstants.T_CLAN_ADVANCED:
                     type = "Clan Level 3";
                     break;
             }

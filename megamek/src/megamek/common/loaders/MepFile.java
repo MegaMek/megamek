@@ -182,12 +182,12 @@ public class MepFile implements IMechLoader {
             // TODO: this ought to be a better test
             if ("InnerSphere".equals(this.innerSphere.trim())) {
                 if (mech.getYear() == 3025) {
-                    mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                    mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
                 } else {
-                    mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                    mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
                 }
             } else {
-                mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+                mech.setTechLevel(TechConstants.T_CLAN_TW);
             }
 
             int engineFlags = 0;
@@ -254,7 +254,7 @@ public class MepFile implements IMechLoader {
 
             // prefix is "Clan " or "IS "
             String prefix;
-            if (mech.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
+            if (mech.getTechLevel() == TechConstants.T_CLAN_TW) {
                 prefix = "Clan ";
             } else {
                 prefix = "IS ";

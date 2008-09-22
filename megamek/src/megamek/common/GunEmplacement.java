@@ -94,7 +94,7 @@ public class GunEmplacement extends Entity implements Serializable {
         setConstructionFactor(cf);
         initializeArmor(cf, GunEmplacement.LOC_BUILDING);
         setArmorType(EquipmentType.T_ARMOR_STANDARD);
-        setArmorTechLevel(TechConstants.T_IS_LEVEL_1);
+        setArmorTechLevel(TechConstants.T_INTRO_BOXSET);
         initializeInternal(IArmorState.ARMOR_NA, LOC_BUILDING);
     }
 
@@ -639,5 +639,13 @@ public class GunEmplacement extends Entity implements Serializable {
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
                 getEquipmentNum(mounted), true));
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getTotalCommGearTons()
+     */
+    public int getTotalCommGearTons() {
+        return getExtraCommGearTons();
     }
 }

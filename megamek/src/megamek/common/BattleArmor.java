@@ -206,11 +206,6 @@ public class BattleArmor extends Infantry implements Serializable {
      */
     public static final int LOC_SQUAD = 0;
 
-    // The next few things are never referenced!
-    // Why do we even have them?...
-    // This looks like the beginnings of implementing 6-man squads, though.
-    // Which we DO want.
-    // FIXME
     public static final int LOC_TROOPER_1 = 1;
     public static final int LOC_TROOPER_2 = 2;
     public static final int LOC_TROOPER_3 = 3;
@@ -260,7 +255,7 @@ public class BattleArmor extends Infantry implements Serializable {
         super();
 
         // All Battle Armor squads are Clan until specified otherwise.
-        this.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+        this.setTechLevel(TechConstants.T_CLAN_TW);
 
         // Construction complete.
         this.isInitialized = true;
@@ -1127,19 +1122,19 @@ public class BattleArmor extends Infantry implements Serializable {
         buff.append("<type>");
         buff.append(newline);
         switch (getTechLevel()) {
-            case TechConstants.T_IS_LEVEL_1:
+            case TechConstants.T_INTRO_BOXSET:
                 buff.append("IS Level 1");
                 break;
-            case TechConstants.T_IS_LEVEL_2:
+            case TechConstants.T_IS_TW_NON_BOX:
                 buff.append("IS Level 2");
                 break;
-            case TechConstants.T_IS_LEVEL_3:
+            case TechConstants.T_IS_ADVANCED:
                 buff.append("IS Level 3");
                 break;
-            case TechConstants.T_CLAN_LEVEL_2:
+            case TechConstants.T_CLAN_TW:
                 buff.append("Clan Level 2");
                 break;
-            case TechConstants.T_CLAN_LEVEL_3:
+            case TechConstants.T_CLAN_ADVANCED:
                 buff.append("Clan Level 3");
                 break;
         }

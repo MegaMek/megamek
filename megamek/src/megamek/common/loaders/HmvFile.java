@@ -238,7 +238,7 @@ public class HmvFile implements IMechLoader {
                                     || weaponAmmo % ammoType.getShots() > 0) {
                                 switch (ammoType.getAmmoType()) {
                                     case AmmoType.T_MG:
-                                        if (ammoType.getTechLevel() == TechConstants.T_IS_LEVEL_1) {
+                                        if (ammoType.getTechLevel() == TechConstants.T_INTRO_BOXSET) {
                                             ammoType = (AmmoType) EquipmentType
                                                     .get("ISMG Ammo (100)");
                                         } else {
@@ -494,14 +494,14 @@ public class HmvFile implements IMechLoader {
             vehicle.setOmni(isOmni);
             vehicle.setFluff(fluff);
 
-            int techLevel = TechConstants.T_IS_LEVEL_3;
+            int techLevel = TechConstants.T_IS_ADVANCED;
             if (rulesLevel == 1) {
-                techLevel = TechConstants.T_IS_LEVEL_1;
+                techLevel = TechConstants.T_INTRO_BOXSET;
             } else if (rulesLevel == 2) {
-                techLevel = techType == HMVTechType.CLAN ? TechConstants.T_CLAN_LEVEL_2
-                        : TechConstants.T_IS_LEVEL_2;
+                techLevel = techType == HMVTechType.CLAN ? TechConstants.T_CLAN_TW
+                        : TechConstants.T_IS_TW_NON_BOX;
             } else if (techType == HMVTechType.CLAN) {
-                techLevel = TechConstants.T_CLAN_LEVEL_3;
+                techLevel = TechConstants.T_CLAN_ADVANCED;
             }
 
             vehicle.setTechLevel(techLevel);
@@ -604,6 +604,19 @@ public class HmvFile implements IMechLoader {
                 Integer count = equipmentAtLocation.get(equipmentType);
 
                 for (int i = 0; i < count.intValue(); i++) {
+                    // for experimental or unofficial equipment, we need
+                    // to adjust the mech's techlevel, because HMV only
+                    // knows lvl1/2/3
+                    if (equipmentType.getTechLevel() > tank.getTechLevel()
+                            && tank.getTechLevel() >= TechConstants.T_IS_ADVANCED) {
+                        boolean isClan = tank.isClan();
+                        if (equipmentType.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL ||
+                                equipmentType.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)
+                            tank.setTechLevel(isClan?TechConstants.T_CLAN_EXPERIMENTAL:TechConstants.T_IS_EXPERIMENTAL);
+                        else if (equipmentType.getTechLevel() == TechConstants.T_IS_UNOFFICIAL ||
+                                equipmentType.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)
+                            tank.setTechLevel(isClan?TechConstants.T_CLAN_UNOFFICIAL:TechConstants.T_IS_UNOFFICIAL);
+                    }
                     Mounted weapon = tank.addEquipment(equipmentType, location);
 
                     // Add artemis?
@@ -630,8 +643,8 @@ public class HmvFile implements IMechLoader {
                         }
                         if (artemis != null) {
                             EquipmentType artEq;
-                            if (equipmentType.getTechLevel() == TechConstants.T_CLAN_LEVEL_2
-                                    || equipmentType.getTechLevel() == TechConstants.T_CLAN_LEVEL_3) {
+                            if (equipmentType.getTechLevel() == TechConstants.T_CLAN_TW
+                                    || equipmentType.getTechLevel() == TechConstants.T_CLAN_ADVANCED) {
                                 artEq = EquipmentType.get("CL" + artemis);
                             } else {
                                 artEq = EquipmentType.get("IS" + artemis);

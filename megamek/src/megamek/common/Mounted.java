@@ -239,6 +239,17 @@ public class Mounted implements Serializable, RoundUpdated {
                 pendingMode = newMode;
             }
         }
+        // all communicationsequipment mounteds need to have the same mode at
+        // all times
+        if (getType() instanceof MiscType
+                && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+            for (Mounted m : entity.getMisc()) {
+                if (!m.equals(this)
+                        && m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                    m.setMode(newMode);
+                }
+            }
+        }
         return true;
     }
 

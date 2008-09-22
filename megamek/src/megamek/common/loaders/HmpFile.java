@@ -453,13 +453,13 @@ implements IMechLoader
             if (techType == TechType.INNER_SPHERE) {
                 switch (rulesLevel) {
                     case 1:
-                        mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                        mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
                         break;
                     case 2:
-                        mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                        mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
                         break;
                     case 3:
-                        mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+                        mech.setTechLevel(TechConstants.T_IS_ADVANCED);
                         break;
                     default:
                         throw new EntityLoadingException(
@@ -468,10 +468,10 @@ implements IMechLoader
             } else if (techType == TechType.CLAN) {
                 switch (rulesLevel) {
                     case 2:
-                        mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+                        mech.setTechLevel(TechConstants.T_CLAN_TW);
                         break;
                     case 3:
-                        mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+                        mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
                         break;
                     default:
                         throw new EntityLoadingException(
@@ -479,11 +479,11 @@ implements IMechLoader
                 }
             } else if (techType == TechType.MIXED
                     && mixedBaseTechType == TechType.INNER_SPHERE) {
-                mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+                mech.setTechLevel(TechConstants.T_IS_ADVANCED);
                 mech.setMixedTech(true);
             } else if (techType == TechType.MIXED
                     && mixedBaseTechType == TechType.CLAN) {
-                mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+                mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
                 mech.setMixedTech(true);
             } else {
                 throw new EntityLoadingException("Unsupported tech base: "
@@ -495,8 +495,7 @@ implements IMechLoader
             int engineFlags = 0;
             if (techType == TechType.CLAN || engineTechType == TechType.CLAN)
                 engineFlags = Engine.CLAN_ENGINE;
-            mech
-                    .setEngine(new Engine(engineRating, Engine
+            mech.setEngine(new Engine(engineRating, Engine
                             .getEngineTypeByString(engineType.toString()),
                             engineFlags));
 
@@ -659,6 +658,19 @@ implements IMechLoader
                     try {
                         equipment = EquipmentType.get(criticalName);
                         if (equipment != null) {
+                            // for experimental or unofficial equipment, we need
+                            // to adjust the mech's techlevel, because HMP only
+                            // knows lvl1/2/3
+                            if (equipment.getTechLevel() > mech.getTechLevel()
+                                    && mech.getTechLevel() >= TechConstants.T_IS_ADVANCED) {
+                                boolean isClan = mech.isClan();
+                                if (equipment.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL ||
+                                        equipment.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)
+                                    mech.setTechLevel(isClan?TechConstants.T_CLAN_EXPERIMENTAL:TechConstants.T_IS_EXPERIMENTAL);
+                                else if (equipment.getTechLevel() == TechConstants.T_IS_UNOFFICIAL ||
+                                        equipment.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)
+                                    mech.setTechLevel(isClan?TechConstants.T_CLAN_UNOFFICIAL:TechConstants.T_IS_UNOFFICIAL);
+                            }
                             boolean rearMounted = equipment instanceof WeaponType
                                     && isRearMounted(critical);
                             if (equipment.isSpreadable()) {

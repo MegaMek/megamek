@@ -1131,6 +1131,14 @@ public class Protomech extends Entity implements Serializable {
         }
         return super.isEligibleForMovement();
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getTotalCommGearTons()
+     */
+    public int getTotalCommGearTons() {
+        return 0;
+    }
 
 
 }

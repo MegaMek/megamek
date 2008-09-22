@@ -875,5 +875,13 @@ public class Infantry extends Entity implements Serializable {
         }
         return false;
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getTotalCommGearTons()
+     */
+    public int getTotalCommGearTons() {
+        return 0;
+    }
 
 } // End class Infantry

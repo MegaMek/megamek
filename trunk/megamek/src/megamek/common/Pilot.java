@@ -549,13 +549,18 @@ public class Pilot implements Serializable {
         this.ejected = abandoned;
     }
 
-    // A function that returns a string description of the gunnery skills when
-    // using RPG
+    /**
+     *  @return a string description of the gunnery skills when
+     * using RPG
+     */
     public String getGunneryRPG() {
         return "" + gunneryL + "(L)/" + gunneryM + "(M)/" + gunneryB + "(B)";
     }
     
-    //for sensor ops, so these might be easily expanded later for rpg
+    
+    /**
+     * for sensor ops, so these might be easily expanded later for rpg
+     */
     public int getSensorOps() {
         if(piloting > -1) {
             return piloting;

@@ -476,14 +476,14 @@ public class Engine implements Serializable {
             level = 3;
         if (level == 3) {
             if (hasFlag(CLAN_ENGINE))
-                return TechConstants.T_CLAN_LEVEL_3;
-            return TechConstants.T_IS_LEVEL_3;
+                return TechConstants.T_CLAN_ADVANCED;
+            return TechConstants.T_IS_ADVANCED;
         } else if (level == 2) {
             if (hasFlag(CLAN_ENGINE))
-                return TechConstants.T_CLAN_LEVEL_2;
-            return TechConstants.T_IS_LEVEL_2;
+                return TechConstants.T_CLAN_TW;
+            return TechConstants.T_IS_TW_NON_BOX;
         } else {
-            return TechConstants.T_IS_LEVEL_1;
+            return TechConstants.T_INTRO_BOXSET;
         }
     }
 

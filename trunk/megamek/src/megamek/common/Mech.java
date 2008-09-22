@@ -519,8 +519,9 @@ public abstract class Mech extends Entity implements Serializable {
         return NUM_MECH_LOCATIONS;
     }
 
-    /**
-     * Override Entity#newRound() method.
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#newRound(int)
      */
     public void newRound(int roundNumber) {
         // Walk through the Mech's miscellaneous equipment before
@@ -3768,5 +3769,27 @@ public abstract class Mech extends Entity implements Serializable {
 
     public void addCoolantFailureAmount(int amount){
         heatSinkCoolantFailureFactor += amount;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getTotalCommGearTons()
+     */
+    public int getTotalCommGearTons() {
+        return 1 + getExtraCommGearTons();
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getIniBonus()
+     */
+    public int getIniBonus() {
+        int bonus = super.getIniBonus();
+        if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0
+                || hasHipCrit())
+                && mpUsedLastRound > 0) {
+            return 0;
+        }
+        return bonus;
     }
 }

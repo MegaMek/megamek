@@ -38,7 +38,7 @@ public class ISLB10XACPrototype extends LBXACWeapon {
      */
     public ISLB10XACPrototype() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_3;
+        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         this.name = "LB 10-X AC Prototype";
         this.setInternalName("ISLBXAC10Prototype");
         this.addLookupName("IS LB 10-X AC Prototype");

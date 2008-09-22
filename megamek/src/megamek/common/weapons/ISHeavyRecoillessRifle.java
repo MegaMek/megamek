@@ -38,7 +38,7 @@ public class ISHeavyRecoillessRifle extends Weapon {
      */
     public ISHeavyRecoillessRifle() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Heavy Recoilless Rifle";
         this.setInternalName(this.name);
         this.addLookupName("ISHeavy Recoilless Rifle");

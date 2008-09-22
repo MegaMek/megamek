@@ -35,7 +35,7 @@ public class InfantryFlamerWeapon extends InfantryWeapon {
 
     public InfantryFlamerWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_INTRO_BOXSET;
         this.name = "Infantry Flamer";
         this.setInternalName(this.name);
         this.addLookupName("InfantryFlamer");

@@ -34,7 +34,7 @@ public class ISGrandMaulerGaussCannon extends Weapon {
      */
     public ISGrandMaulerGaussCannon() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Grand Mauler Gauss Cannon";
         this.setInternalName(this.name);
         this.addLookupName("ISGrandMauler");

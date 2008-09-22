@@ -30,7 +30,7 @@ public class ISMRM40 extends MRMWeapon {
      */
     public ISMRM40() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "MRM 40";
         this.setInternalName(this.name);
         this.addLookupName("MRM-40");

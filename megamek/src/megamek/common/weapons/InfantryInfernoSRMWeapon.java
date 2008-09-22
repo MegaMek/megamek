@@ -36,7 +36,7 @@ public class InfantryInfernoSRMWeapon extends InfantryWeapon {
 
     public InfantryInfernoSRMWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Infantry Inferno SRM";
         this.setInternalName(this.name);
         this.addLookupName("InfantryInfernoSRM");

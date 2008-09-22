@@ -33,7 +33,7 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
      */
     public ISVehicleFlamer() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_INTRO_BOXSET;
         this.name = "Vehicle Flamer";
         this.setInternalName(this.name);
         this.addLookupName("IS Vehicle Flamer");

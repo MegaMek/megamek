@@ -30,7 +30,7 @@ public class ISLRM5OS extends LRMWeapon {
      */
     public ISLRM5OS() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_INTRO_BOXSET;
         this.name = "LRM 5 (OS)";
         this.setInternalName(this.name);
         this.addLookupName("IS OS LRM-5");

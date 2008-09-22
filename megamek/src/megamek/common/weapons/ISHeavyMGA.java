@@ -32,7 +32,7 @@ public class ISHeavyMGA extends AmmoWeapon {
 
     public ISHeavyMGA() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "IS Heavy Machine Gun Array";
         this.setInternalName("ISHMGA");
         this.heat = 0;

@@ -34,7 +34,7 @@ public class ISTHBLB20XAC extends LBXACWeapon {
      */
     public ISTHBLB20XAC() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_3;
+        this.techLevel = TechConstants.T_IS_UNOFFICIAL;
         this.name = "LB 20-X AC (THB)";
         this.setInternalName("ISTHBLBXAC20");
         this.addLookupName("IS LB 20-X AC (THB)");

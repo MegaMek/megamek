@@ -30,7 +30,7 @@ public class ISSRM5 extends SRMWeapon {
      */
     public ISSRM5() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "SRM 5";
         this.setInternalName(this.name);
         this.addLookupName("IS SRM-5");

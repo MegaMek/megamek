@@ -33,7 +33,7 @@ public class MediumNGaussWeapon extends NavalGaussWeapon {
      */
     public MediumNGaussWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Medium N-Gauss";
         this.setInternalName(this.name);
         this.addLookupName("MediumNGauss");

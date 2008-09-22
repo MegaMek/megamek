@@ -38,7 +38,7 @@ public class ISUAC5Prototype extends UACWeapon {
      */
     public ISUAC5Prototype() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_3;
+        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         this.name = "Ultra AC/5 Prototype";
         this.setInternalName("ISUltraAC5Prototype");
         this.addLookupName("IS Ultra AC/5 Prototype");

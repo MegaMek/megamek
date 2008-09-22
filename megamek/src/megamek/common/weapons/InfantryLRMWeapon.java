@@ -36,7 +36,7 @@ public class InfantryLRMWeapon extends InfantryWeapon {
 
     public InfantryLRMWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "Infantry LRM";
         this.setInternalName(this.name);
         this.addLookupName("InfantryLRM");

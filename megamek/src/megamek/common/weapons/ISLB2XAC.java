@@ -33,7 +33,7 @@ public class ISLB2XAC extends LBXACWeapon {
      */
     public ISLB2XAC() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "LB 2-X AC";
         this.setInternalName("ISLBXAC2");
         this.addLookupName("IS LB 2-X AC");

@@ -30,7 +30,7 @@ public class ISLargeLaser extends LaserWeapon {
 
     public ISLargeLaser() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_INTRO_BOXSET;
         this.name = "Large Laser";
         this.setInternalName(this.name);
         this.addLookupName("IS Large Laser");

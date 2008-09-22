@@ -33,7 +33,7 @@ public class ISMediumVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeap
      */
     public ISMediumVariableSpeedPulseLaser() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_ADVANCED;
         this.name = "Medium VSP";
         this.setInternalName("ISMediumVSPLaser");
         this.setInternalName("ISMVSPL");

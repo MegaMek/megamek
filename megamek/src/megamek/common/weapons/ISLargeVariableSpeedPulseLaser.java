@@ -34,7 +34,7 @@ public class ISLargeVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeapo
      */
     public ISLargeVariableSpeedPulseLaser() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_ADVANCED;
         this.name = "Large VSP";
         this.setInternalName("ISLargeVSPLaser");
         this.setInternalName("ISLVSPL");

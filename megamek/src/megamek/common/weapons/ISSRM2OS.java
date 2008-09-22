@@ -30,7 +30,7 @@ public class ISSRM2OS extends SRMWeapon {
      */
     public ISSRM2OS() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_INTRO_BOXSET;
         this.name = "SRM 2 (OS)";
         this.setInternalName("ISSRM2OS");
         this.addLookupName("ISSRM2 (OS)"); // mtf

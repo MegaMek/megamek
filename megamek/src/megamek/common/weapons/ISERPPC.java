@@ -33,7 +33,7 @@ public class ISERPPC extends PPCWeapon {
      */
     public ISERPPC() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "ER PPC";
         this.setInternalName("ISERPPC");
         this.addLookupName("IS ER PPC");

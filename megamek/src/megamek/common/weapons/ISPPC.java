@@ -37,7 +37,7 @@ public class ISPPC extends PPCWeapon {
      */
     public ISPPC() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
+        this.techLevel = TechConstants.T_INTRO_BOXSET;
         this.name = "Particle Cannon";
         this.setInternalName(this.name);
         this.addLookupName("IS PPC");

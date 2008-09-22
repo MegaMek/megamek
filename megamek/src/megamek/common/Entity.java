@@ -1890,6 +1890,13 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     /**
+     * Is this location destroyed or breached?
+     */
+    public boolean isLocationDoomed(int loc) {
+        return getInternal(loc) == IArmorState.ARMOR_DOOMED;
+    }
+
+    /**
      * returns exposure or breached flag for location
      */
     public int getLocationStatus(int loc) {

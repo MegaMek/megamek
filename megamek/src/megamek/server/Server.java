@@ -4591,10 +4591,9 @@ public class Server implements Runnable {
                 if ( !entity.isCarefulStand() )
                     break;
             }else {
-                entity.setHullDown(false);
-               // moveType = step.getMovementType();
-                //curFacing = entity.getFacing();
-                //curPos = entity.getPosition();
+                moveType = step.getMovementType();
+                curFacing = entity.getFacing();
+                curPos = entity.getPosition();
                 mpUsed = step.getMpUsed();
                 fellDuringMovement = false;
             }
@@ -7295,16 +7294,18 @@ public class Server implements Runnable {
         if (diceRoll < roll.getValue() ) {
             r.choose(false);
             addReport(r);
-            if ( game.getOptions().booleanOption("tacops_falling_expanded") 
+            if ( entity instanceof Mech 
+                    && game.getOptions().booleanOption("tacops_falling_expanded") 
                     && entity.getCrew().getPiloting() < 6
-                    && !entity.isHullDown() ){
+                    && !entity.isHullDown() 
+                    && entity.canGoHullDown() ){
                 if ( entity.getCrew().getPiloting() > 1 && roll.getValue() - diceRoll < 2){
                     entity.setHullDown(true);
                 }else if ( entity.getCrew().getPiloting() <= 1 && roll.getValue() - diceRoll < 3 ){
                     entity.setHullDown(true);
                 }
             }
-            if ( !entity.isHullDown() ) {
+            if ( !entity.isHullDown() || ( entity.isHullDown() && !entity.canGoHullDown()) ) {
                 addReport(doEntityFall(entity, roll));
             }
             else{
@@ -13136,7 +13137,7 @@ public class Server implements Runnable {
             }
         }
         // non mechs and prone mechs can now return
-        if (!(entity instanceof Mech) || entity.isProne() || entity.isHullDown()) {
+        if (!(entity instanceof Mech) || entity.isProne() || (entity.isHullDown() && entity.canGoHullDown()) ) {
             return vPhaseReport;
         }
 
@@ -13236,15 +13237,17 @@ public class Server implements Runnable {
                 if (moving) {
                     vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, base));
                 } else {
-                    if ( game.getOptions().booleanOption("tacops_falling_expanded") 
+                    if ( entity instanceof Mech 
+                            && game.getOptions().booleanOption("tacops_falling_expanded") 
                             && entity.getCrew().getPiloting() < 6
-                            && !entity.isHullDown() ){
+                            && !entity.isHullDown() 
+                            && entity.canGoHullDown()){
                         if ( entity.getCrew().getPiloting() > 1 && target.getValue() - diceRoll < 2){
                             entity.setHullDown(true);
                         }else if ( entity.getCrew().getPiloting() <= 1 && target.getValue() - diceRoll < 3 ){
                             entity.setHullDown(true);
                         }
-                        if ( entity.isHullDown() ){
+                        if ( entity.isHullDown() && entity.canGoHullDown() ){
                             r = new Report (2317);
                             r.subject = entity.getId();
                             r.add(entity.getDisplayName());

@@ -199,6 +199,7 @@ public class MechView {
 
         if (entity.getFluff() != null)
             sFluff.append(entity.getFluff());
+        sFluff.append('\n');
     }
 
     public String getMechReadoutBasic() {

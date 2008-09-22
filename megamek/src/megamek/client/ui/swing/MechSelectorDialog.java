@@ -396,7 +396,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
 
     private void updateTechChoice() {
         boolean maxTechOption = m_client.game.getOptions().booleanOption(
-                "allow_level_3_units");
+                "allow_advanced_units");
         int maxTech = (maxTechOption ? TechConstants.SIZE
                 : TechConstants.SIZE_LEVEL_2);
         if (includeMaxTech == maxTechOption) {
@@ -455,7 +455,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         m_chWeightClass.setSelectedIndex(0);
 
         includeMaxTech = m_client.game.getOptions().booleanOption(
-                "allow_level_3_units");
+                "allow_advanced_units");
         int maxTech = (includeMaxTech ? TechConstants.SIZE
                 : TechConstants.SIZE_LEVEL_2);
         for (int i = 0; i < maxTech; i++) {
@@ -525,12 +525,12 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
             EquipmentType et = e.nextElement();
             if (et instanceof WeaponType
                     && (et.getTechLevel() == nType
-                            || ((nType == TechConstants.T_LEVEL_2_ALL) && ((et
-                                    .getTechLevel() == TechConstants.T_IS_LEVEL_1)
-                                    || (et.getTechLevel() == TechConstants.T_IS_LEVEL_2) || (et
-                                    .getTechLevel() == TechConstants.T_CLAN_LEVEL_2))) || ((nType == TechConstants.T_IS_LEVEL_2_ALL || nType == TechConstants.T_IS_LEVEL_2) && ((et
-                            .getTechLevel() == TechConstants.T_IS_LEVEL_1) || (et
-                            .getTechLevel() == TechConstants.T_IS_LEVEL_2))))) {
+                            || ((nType == TechConstants.T_TW_ALL) && ((et
+                                    .getTechLevel() == TechConstants.T_INTRO_BOXSET)
+                                    || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (et
+                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL || nType == TechConstants.T_IS_TW_NON_BOX) && ((et
+                            .getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et
+                            .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
                 if (!(nUnitType == UnitType.SIZE)
                         && ((UnitType.getTypeName(nUnitType).equals("Mek") || UnitType
                                 .getTypeName(nUnitType).equals("Tank")) && (et
@@ -539,19 +539,19 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
                 }
                 weapons.add(et.getName());
                 if (et.hasFlag(WeaponType.F_C3M)
-                        && (nType == TechConstants.T_LEVEL_2_ALL
-                                || nType == TechConstants.T_IS_LEVEL_2 || nType == TechConstants.T_IS_LEVEL_2_ALL)) {
+                        && (nType == TechConstants.T_TW_ALL
+                                || nType == TechConstants.T_IS_TW_NON_BOX || nType == TechConstants.T_IS_TW_ALL)) {
                     equipment.add(et.getName());
                 }
             }
             if (et instanceof MiscType
                     && (et.getTechLevel() == nType
-                            || ((nType == TechConstants.T_LEVEL_2_ALL) && ((et
-                                    .getTechLevel() == TechConstants.T_IS_LEVEL_1)
-                                    || (et.getTechLevel() == TechConstants.T_IS_LEVEL_2) || (et
-                                    .getTechLevel() == TechConstants.T_CLAN_LEVEL_2))) || ((nType == TechConstants.T_IS_LEVEL_2_ALL || nType == TechConstants.T_IS_LEVEL_2) && ((et
-                            .getTechLevel() == TechConstants.T_IS_LEVEL_1) || (et
-                            .getTechLevel() == TechConstants.T_IS_LEVEL_2))))) {
+                            || ((nType == TechConstants.T_TW_ALL) && ((et
+                                    .getTechLevel() == TechConstants.T_INTRO_BOXSET)
+                                    || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (et
+                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL || nType == TechConstants.T_IS_TW_NON_BOX) && ((et
+                            .getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et
+                            .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
                 equipment.add(et.getName());
             }
         }
@@ -584,12 +584,12 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
                     && /* Technology Level */
                     ((nType == TechConstants.T_ALL)
                             || (nType == mechs[x].getType())
-                            || ((nType == TechConstants.T_LEVEL_2_ALL) && ((mechs[x]
-                                    .getType() == TechConstants.T_IS_LEVEL_1)
-                                    || (mechs[x].getType() == TechConstants.T_IS_LEVEL_2) || (mechs[x]
-                                    .getType() == TechConstants.T_CLAN_LEVEL_2))) || ((nType == TechConstants.T_IS_LEVEL_2_ALL) && ((mechs[x]
-                            .getType() == TechConstants.T_IS_LEVEL_1) || (mechs[x]
-                            .getType() == TechConstants.T_IS_LEVEL_2))))
+                            || ((nType == TechConstants.T_TW_ALL) && ((mechs[x]
+                                    .getType() == TechConstants.T_INTRO_BOXSET)
+                                    || (mechs[x].getType() == TechConstants.T_IS_TW_NON_BOX) || (mechs[x]
+                                    .getType() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL) && ((mechs[x]
+                            .getType() == TechConstants.T_INTRO_BOXSET) || (mechs[x]
+                            .getType() == TechConstants.T_IS_TW_NON_BOX))))
                     && /* Unit Type (Mek, Infantry, etc.) */
                     (nUnitType == UnitType.SIZE || mechs[x].getUnitType()
                             .equals(UnitType.getTypeName(nUnitType)))

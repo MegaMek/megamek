@@ -13,6 +13,16 @@ v0.33.33-dev (SVN)
 + Bug: Fuel tanks not correctly initialized
 + Bug: Some BV Skill modifiers were wrong (see Welshman's table at http://www.classicbattletech.com/forums/index.php?action=dlattach;topic=38208.0;attach=34721
 + Bug 2076194: Hulldowned mech lost leg and still Hull Down
++ Changed Tech level handling:
+    We now have introductory box set, TW, advanced, experimental and unofficial
+    techlevels. (advanced and experimental being Tactical Operations stuff and
+    other current rules, unofficial being all old rules (THB) and MFUK and house
+    rule equipment.
+    In MTF files, techlevel 3 now corresponds to advanced, 4 corresponds to
+    experimental, and 5 to unofficial.
+ + Implemented Communications Gear, including ECCM, Ghost Target and Initiative
+    bonus functions
+ + Bug: Fixed physical weapon attacks to hit mods
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

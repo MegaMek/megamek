@@ -775,16 +775,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 // because there is no special lvl1 ammo, therefore it doesn't
                 // need to show up in this display.
                 if (!bTechMatch
-                        && entity.getTechLevel() == TechConstants.T_IS_LEVEL_2
-                        && atCheck.getTechLevel() == TechConstants.T_IS_LEVEL_1) {
+                        && entity.getTechLevel() == TechConstants.T_IS_TW_NON_BOX
+                        && atCheck.getTechLevel() == TechConstants.T_INTRO_BOXSET) {
                     bTechMatch = true;
                 }
 
                 // if is_eq_limits is unchecked allow l1 guys to use l2 stuff
                 if (!clientgui.getClient().game.getOptions().booleanOption(
                         "is_eq_limits") //$NON-NLS-1$
-                        && entity.getTechLevel() == TechConstants.T_IS_LEVEL_1
-                        && atCheck.getTechLevel() == TechConstants.T_IS_LEVEL_2) {
+                        && entity.getTechLevel() == TechConstants.T_INTRO_BOXSET
+                        && atCheck.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) {
                     bTechMatch = true;
                 }
 
@@ -793,18 +793,18 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         "allow_level_3_ammo")) {
                     if (!clientgui.getClient().game.getOptions().booleanOption(
                             "is_eq_limits")) {
-                        if (entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2
-                                && atCheck.getTechLevel() == TechConstants.T_CLAN_LEVEL_3) {
+                        if (entity.getTechLevel() == TechConstants.T_CLAN_TW
+                                && atCheck.getTechLevel() == TechConstants.T_CLAN_ADVANCED) {
                             bTechMatch = true;
                         }
-                        if (((entity.getTechLevel() == TechConstants.T_IS_LEVEL_1) || (entity
-                                .getTechLevel() == TechConstants.T_IS_LEVEL_2))
-                                && (atCheck.getTechLevel() == TechConstants.T_IS_LEVEL_3)) {
+                        if (((entity.getTechLevel() == TechConstants.T_INTRO_BOXSET) || (entity
+                                .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))
+                                && (atCheck.getTechLevel() == TechConstants.T_IS_ADVANCED)) {
                             bTechMatch = true;
                         }
                     }
-                } else if ((atCheck.getTechLevel() == TechConstants.T_IS_LEVEL_3)
-                        || (atCheck.getTechLevel() == TechConstants.T_CLAN_LEVEL_3)) {
+                } else if ((atCheck.getTechLevel() == TechConstants.T_IS_ADVANCED)
+                        || (atCheck.getTechLevel() == TechConstants.T_CLAN_ADVANCED)) {
                     bTechMatch = false;
                 }
 

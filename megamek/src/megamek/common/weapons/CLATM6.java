@@ -30,7 +30,7 @@ public class CLATM6 extends ATMWeapon {
      */
     public CLATM6() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "ATM 6";
         this.setInternalName("CLATM6");
         this.addLookupName("Clan ATM-6");

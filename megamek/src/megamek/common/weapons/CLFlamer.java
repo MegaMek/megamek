@@ -33,7 +33,7 @@ public class CLFlamer extends FlamerWeapon {
      */
     public CLFlamer() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Flamer";
         this.setInternalName("CLFlamer");
         this.addLookupName("Clan Flamer");

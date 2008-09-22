@@ -30,7 +30,7 @@ public class CLStreakLRM10 extends StreakLRMWeapon {
      */
     public CLStreakLRM10() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        this.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         this.name = "Streak LRM 10";
         this.setInternalName("CLStreakLRM10");
         this.addLookupName("Clan Streak LRM-10");

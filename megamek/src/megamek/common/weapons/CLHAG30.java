@@ -31,7 +31,7 @@ public class CLHAG30 extends HAGWeapon {
 
     public CLHAG30() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "HAG/30";
         this.setInternalName("CLHAG30");
         this.addLookupName("Clan HAG/30");

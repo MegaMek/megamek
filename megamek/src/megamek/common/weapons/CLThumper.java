@@ -35,7 +35,7 @@ public class CLThumper extends ArtilleryWeapon {
      */
     public CLThumper() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_ADVANCED;
         this.name = "Thumper";
         this.setInternalName("CLThumper");
         this.addLookupName("CLThumperArtillery");

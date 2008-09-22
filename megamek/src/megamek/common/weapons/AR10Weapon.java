@@ -38,7 +38,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
     public AR10Weapon() {
         super();
         //assume a barracuda is loaded
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
         this.name = "AR10";
         this.setInternalName(this.name);
         this.addLookupName("AR10");

@@ -30,7 +30,7 @@ public class CLAdvancedSRM3 extends AdvancedSRMWeapon {
      */
     public CLAdvancedSRM3() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Advanced SRM 3";
         this.setInternalName("CLAdvancedSRM3");
         this.addLookupName("Clan Advanced SRM-3");

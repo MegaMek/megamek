@@ -29,7 +29,7 @@ public class CLStreakSRM5 extends StreakSRMWeapon {
      * 
      */
     public CLStreakSRM5() {
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Streak SRM 5";
         this.setInternalName("CLStreakSRM5");
         this.heat = 0;

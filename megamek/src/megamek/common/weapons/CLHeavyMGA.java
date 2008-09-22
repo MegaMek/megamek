@@ -32,7 +32,7 @@ public class CLHeavyMGA extends AmmoWeapon {
 
     public CLHeavyMGA() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Heavy Machine Gun Array";
         this.setInternalName("CLHMGA");
         this.heat = 0;

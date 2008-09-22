@@ -30,7 +30,7 @@ public class CLStreakLRM20OS extends StreakLRMWeapon {
      */
     public CLStreakLRM20OS() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        this.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         this.name = "Streak LRM 20 (OS)";
         this.setInternalName("CLOSStreakLRM20");
         this.addLookupName("Clan Streak LRM-20 (OS)");

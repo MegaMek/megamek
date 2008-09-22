@@ -34,7 +34,7 @@ public class CLAMS extends AmmoWeapon {
      */
     public CLAMS() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "AMS";
         this.setInternalName("CLAntiMissileSystem");
         this.addLookupName("Clan Anti-Missile Sys");

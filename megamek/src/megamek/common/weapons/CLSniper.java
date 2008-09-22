@@ -35,7 +35,7 @@ public class CLSniper extends ArtilleryWeapon {
      */
     public CLSniper() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_ADVANCED;
         this.name = "Sniper";
         this.setInternalName("CLSniper");
         this.addLookupName("CLSniperArtillery");

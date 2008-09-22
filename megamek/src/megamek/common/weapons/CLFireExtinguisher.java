@@ -37,7 +37,7 @@ public class CLFireExtinguisher extends Weapon {
      */
     public CLFireExtinguisher() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        this.techLevel = TechConstants.T_CLAN_ADVANCED;
         this.name = "Fire Extinguisher";
         this.setInternalName(this.name);
         this.heat = 0;

@@ -33,7 +33,7 @@ public class CLLB10XAC extends LBXACWeapon {
      */
     public CLLB10XAC() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "LB 10-X AC";
         this.setInternalName("CLLBXAC10");
         this.addLookupName("Clan LB 10-X AC");

@@ -30,7 +30,7 @@ public class CLSRM1 extends SRMWeapon {
      */
     public CLSRM1() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "SRM 1";
         this.setInternalName("CLSRM1");
         this.addLookupName("Clan SRM-1");

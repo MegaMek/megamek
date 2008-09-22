@@ -35,7 +35,7 @@ public class CLLongTom extends ArtilleryWeapon {
      */
     public CLLongTom() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_CLAN_ADVANCED;
         this.name = "Long Tom";
         this.setInternalName("CLLongTom");
         this.addLookupName("CLLongTomArtillery");

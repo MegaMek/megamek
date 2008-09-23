@@ -986,9 +986,8 @@ public class Board implements Serializable, IBoard {
         // Remove the building from the building map.
         Building bldg = bldgByCoords.get(coords);
         bldg.removeHex(coords);
-        if (!bldg.getCoords().hasMoreElements())
-            this.bldgByCoords.get(coords).removeHex(coords);
-       
+        bldgByCoords.remove(coords);
+    
         // if more than half of the hexes are gone, collapse all
         if (bldg.getCollapsedHexCount() > bldg.getOriginalHexCount()/2) {
             collapseBuilding(bldg);

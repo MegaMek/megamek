@@ -28,6 +28,8 @@ v0.33.33-dev (SVN)
     option is set
 + Bug: go prone and go hulldown and climb mode movement sprites not displayed
     immediately
++ Bug: Swing UI target menu not working correctly
++ Bug: problem with collapsing multi-hex buildings
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

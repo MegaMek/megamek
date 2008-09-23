@@ -2038,6 +2038,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
             previousStep = step;
         }
+        repaint(100);
     }
 
     /**

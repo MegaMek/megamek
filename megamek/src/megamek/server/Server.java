@@ -4567,6 +4567,7 @@ public class Server implements Runnable {
             
                 entity.heatBuildup += 1;
                 entity.setProne(false);
+                entity.setHullDown(false);
                 wasProne = false;
                 game.resetPSRs(entity);
                 entityFellWhileAttemptingToStand = !doSkillCheckInPlace(entity, rollTarget);

@@ -23,6 +23,9 @@ v0.33.33-dev (SVN)
  + Implemented Communications Gear, including ECCM, Ghost Target and Initiative
     bonus functions
  + Bug: Fixed physical weapon attacks to hit mods
+ + Bug: getting up from hull down not working correctly
+ + Bug: experimental/unofficial ammo not being allowed when appropriate game
+    option is set
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

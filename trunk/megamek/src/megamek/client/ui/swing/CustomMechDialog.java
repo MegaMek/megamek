@@ -802,12 +802,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     if (!clientgui.getClient().game.getOptions().booleanOption(
                             "is_eq_limits")) {
                         if (entity.getTechLevel() == TechConstants.T_CLAN_TW
-                                && atCheck.getTechLevel() == TechConstants.T_CLAN_ADVANCED) {
+                                && (atCheck.getTechLevel() == TechConstants.T_CLAN_ADVANCED
+                                        || atCheck.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL
+                                        || atCheck.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
                             bTechMatch = true;
                         }
                         if (((entity.getTechLevel() == TechConstants.T_INTRO_BOXSET) || (entity
                                 .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))
-                                && (atCheck.getTechLevel() == TechConstants.T_IS_ADVANCED)) {
+                                && (atCheck.getTechLevel() == TechConstants.T_IS_ADVANCED
+                                        || atCheck.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL
+                                        || atCheck.getTechLevel() == TechConstants.T_IS_UNOFFICIAL)) {
                             bTechMatch = true;
                         }
                     }

@@ -2871,10 +2871,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
         } else if (ev.getActionCommand().equals(MOVE_UNJAM)) {
-            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_CHARGE || gear == MovementDisplay.GEAR_DFA || cmd.getMpUsed() > ce.getWalkMP() || gear == MovementDisplay.GEAR_SWIM || gear == MovementDisplay.GEAR_RAM) { // in
-                                                                                                                                                                                                                                                // the
-                                                                                                                                                                                                                                                // wrong
-                                                                                                                                                                                                                                                // gear
+            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_CHARGE || gear == MovementDisplay.GEAR_DFA || cmd.getMpUsed() > ce.getWalkMP() || gear == MovementDisplay.GEAR_SWIM || gear == MovementDisplay.GEAR_RAM) {
+                // in the wrong gear
                 // clearAllMoves();
                 // gear = Compute.GEAR_LAND;
                 setUnjamEnabled(false);

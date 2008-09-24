@@ -6780,8 +6780,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 cs.setMissing(true);
             }
         }
-        // dependent locations destroyed
-        if (getDependentLocation(loc) != Entity.LOC_NONE) {
+        // dependent locations destroyed, unless they are already destroyed
+        if (getDependentLocation(loc) != Entity.LOC_NONE
+                && !(getInternal(getDependentLocation(loc)) < 0)) {
             destroyLocation(getDependentLocation(loc));
         }
         // remove any narc/inarc pods in this location

@@ -89,7 +89,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             throw new IllegalStateException("Attacker is null");
         }
 
-        // Do to pretreatment of physical attacks, the target may be null.
+        // Due to pretreatment of physical attacks, the target may be null.
         if (target == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is null");
         }
@@ -103,7 +103,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         
         if (!game.getOptions().booleanOption("friendly_fire")) {
             // a friendly unit can never be the target of a direct attack.
-            if (target.getTargetType() == Targetable.TYPE_ENTITY
+            if (!skid && target.getTargetType() == Targetable.TYPE_ENTITY
                     && (((Entity)target).getOwnerId() == ae.getOwnerId()
                             || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
                                     && ae.getOwner().getTeam() != Player.TEAM_NONE

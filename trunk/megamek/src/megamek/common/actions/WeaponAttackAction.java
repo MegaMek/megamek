@@ -1515,7 +1515,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         
         if (!game.getOptions().booleanOption("friendly_fire")) {
             // a friendly unit can never be the target of a direct attack.
-            if (target.getTargetType() == Targetable.TYPE_ENTITY
+            if (!exchangeSwarmTarget && target.getTargetType() == Targetable.TYPE_ENTITY
                     && (((Entity)target).getOwnerId() == ae.getOwnerId()
                             || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
                                     && ae.getOwner().getTeam() != Player.TEAM_NONE

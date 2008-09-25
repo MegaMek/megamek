@@ -3723,7 +3723,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         HashSet<WeaponAttackAction> targets = new HashSet<WeaponAttackAction>();
         for (Mounted weapon : getWeaponList()) {
             if (weapon.getType().hasFlag(WeaponType.F_AMS)) {
-                if (!weapon.isReady() || weapon.isMissing()) {
+                if (!weapon.isReady() || weapon.isMissing() || weapon.curMode().equals("Off")) {
                     continue;
                 }
 

@@ -2447,8 +2447,9 @@ public abstract class Mech extends Entity implements Serializable {
                 // assumption: ammo without a location is for a oneshot weapon
                 continue;
             }
-            // semiguided ammo might count double
-            if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
+            // semiguided or homing ammo might count double
+            if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED
+                    || atype.getMunitionType() == AmmoType.M_HOMING) {
                 Player tmpP = getOwner();
 
                 if (tmpP != null) {

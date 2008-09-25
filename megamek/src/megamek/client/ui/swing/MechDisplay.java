@@ -1394,14 +1394,11 @@ public class MechDisplay extends JPanel {
                 }
 
             }
-
-            boolean bOwner = clientgui.getClient().getLocalPlayer().equals(
-                    entity.getOwner());
-
+            
             // update weapon bay selector
             int chosen = m_chBayWeapon.getSelectedIndex();
             m_chBayWeapon.removeAllItems();
-            if (!(wtype instanceof BayWeapon) || !bOwner
+            if (!(wtype instanceof BayWeapon)
                     || !entity.usesWeaponBays()) {
                 m_chBayWeapon.setEnabled(false);
             } else {
@@ -1432,7 +1429,7 @@ public class MechDisplay extends JPanel {
                         .elementAt(n));
                 wtype = (WeaponType) mounted.getType();
             }
-            if (wtype.getAmmoType() == AmmoType.T_NA || !bOwner) {
+            if (wtype.getAmmoType() == AmmoType.T_NA) {
                 m_chAmmo.setEnabled(false);
             } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
                 if (mounted.getLinked().getShotsLeft() == 1) {
@@ -1442,7 +1439,7 @@ public class MechDisplay extends JPanel {
                     m_chAmmo.setEnabled(false);
                 }
             } else {
-                if (!(entity instanceof Infantry)) {
+                if (!(entity instanceof Infantry) || entity instanceof BattleArmor) {
                     m_chAmmo.setEnabled(true);
                 } else {
                     m_chAmmo.setEnabled(false);
@@ -1837,8 +1834,13 @@ public class MechDisplay extends JPanel {
         // ItemListener
         //
         public void itemStateChanged(ItemEvent ev) {
+
             if (ev.getItemSelectable().equals(m_chAmmo)
                     && m_chAmmo.getItemCount() > 0) {
+                // only change our own units
+                if (!clientgui.getClient().getLocalPlayer().equals(
+                        entity.getOwner()))
+                    return;
                 int n = weaponList.getSelectedIndex();
                 if (n == -1) {
                     return;

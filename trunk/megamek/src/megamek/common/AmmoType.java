@@ -4651,9 +4651,9 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createBASRM2OSAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        ammo.techLevel = TechConstants.T_ALLOWED_ALL;
         ammo.name = "BA Disposable SRM 2 Ammo";
-        ammo.setInternalName(BattleArmor.IS_DISPOSABLE_SRM2_AMMO);
+        ammo.setInternalName(BattleArmor.DISPOSABLE_SRM2_AMMO);
         ammo.addLookupName("BASRM2OS Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
@@ -4702,9 +4702,9 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createBACompactNarcAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        ammo.techLevel = TechConstants.T_ALLOWED_ALL;
         ammo.name = "Compact Narc Ammo";
-        ammo.setInternalName(BattleArmor.IS_DISPOSABLE_NARC_AMMO);
+        ammo.setInternalName(BattleArmor.DISPOSABLE_NARC_AMMO);
         ammo.addLookupName("BACompactNarc Ammo");
         ammo.damagePerShot = 2; // only used for ammo crits
         ammo.rackSize = 4;

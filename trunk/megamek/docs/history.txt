@@ -36,6 +36,7 @@ v0.33.33-dev (SVN)
     then the torso it was attached to
 + Bug: DFAs and charges not working
 + Bug: Pulse lasers not adjusted for glazed armor
++ Bug: Homing artillery ammo not giving extra BV when TAG present
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

@@ -4562,9 +4562,7 @@ public class Server implements Runnable {
             // check piloting skill for getting up
             rollTarget = entity.checkGetUp(step);
             
-            
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-            
                 entity.heatBuildup += 1;
                 entity.setProne(false);
                 entity.setHullDown(false);
@@ -4581,7 +4579,7 @@ public class Server implements Runnable {
                 fellDuringMovement = true;
                 if ( !entity.isCarefulStand() )
                     break;
-            }else if ( entityFellWhileAttemptingToStand && entity.isHullDown() ){
+            } else if (entityFellWhileAttemptingToStand && entity.isHullDown()) {
                 mpUsed = step.getMpUsed();
                 entity.setHullDown(true);
                 moveType = step.getMovementType();
@@ -4589,14 +4587,8 @@ public class Server implements Runnable {
                 curPos = entity.getPosition();
                 mpUsed = step.getMpUsed();
                 fellDuringMovement = true;
-                if ( !entity.isCarefulStand() )
+                if (!entity.isCarefulStand())
                     break;
-            }else {
-                moveType = step.getMovementType();
-                curFacing = entity.getFacing();
-                curPos = entity.getPosition();
-                mpUsed = step.getMpUsed();
-                fellDuringMovement = false;
             }
 
             if (step.getType() == MovePath.STEP_UNJAM_RAC) {

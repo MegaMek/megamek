@@ -38,6 +38,7 @@ v0.33.33-dev (SVN)
 + Bug: Pulse lasers not adjusted for glazed armor
 + Bug: Homing artillery ammo not giving extra BV when TAG present
 + Bug: Disabled AMS still shoots
++ Bug: some BA ammo had wrong tech level
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

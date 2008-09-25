@@ -122,14 +122,14 @@ public class BattleArmor extends Infantry implements Serializable {
     // Public and Protected constants, constructors, and methods.
 
     /**
-     * Internal name of the Inner Sphere's disposable SRM2 ammo pack.
+     * Internal name of the Inner disposable SRM2 ammo pack.
      */
-    public static final String IS_DISPOSABLE_SRM2_AMMO = "BA-SRM2 (one shot) Ammo";
+    public static final String DISPOSABLE_SRM2_AMMO = "BA-SRM2 (one shot) Ammo";
 
     /**
-     * Internal name of the Inner Sphere's disposable NARC ammo pack.
+     * Internal name of the disposable NARC ammo pack.
      */
-    public static final String IS_DISPOSABLE_NARC_AMMO = "BA-Compact Narc Ammo";
+    public static final String DISPOSABLE_NARC_AMMO = "BA-Compact Narc Ammo";
 
     /**
      * The internal name for Boarding Claw equipment.

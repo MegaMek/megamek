@@ -1326,14 +1326,11 @@ public class MechDisplay extends BufferedPanel {
                 }
 
             }
-
-            boolean bOwner = (client.getClient().getLocalPlayer() == entity
-                    .getOwner());
-
+            
             // update weapon bay selector
             int chosen = m_chBayWeapon.getSelectedIndex();
             m_chBayWeapon.removeAll();
-            if (!(wtype instanceof BayWeapon) || !bOwner
+            if (!(wtype instanceof BayWeapon)
                     || !entity.usesWeaponBays()) {
                 m_chBayWeapon.setEnabled(false);
             } else {
@@ -1363,7 +1360,7 @@ public class MechDisplay extends BufferedPanel {
                         .elementAt(n));
                 wtype = (WeaponType) mounted.getType();
             }
-            if (wtype.getAmmoType() == AmmoType.T_NA || !bOwner) {
+            if (wtype.getAmmoType() == AmmoType.T_NA) {
                 m_chAmmo.setEnabled(false);
             } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
                 if (mounted.getLinked().getShotsLeft() == 1) {
@@ -1373,7 +1370,7 @@ public class MechDisplay extends BufferedPanel {
                     m_chAmmo.setEnabled(false);
                 }
             } else {
-                if (!(entity instanceof Infantry && !(entity instanceof BattleArmor))) {
+                if (!(entity instanceof Infantry) || entity instanceof BattleArmor) {
                     m_chAmmo.setEnabled(true);
                 } else {
                     m_chAmmo.setEnabled(false);
@@ -1776,6 +1773,10 @@ public class MechDisplay extends BufferedPanel {
                 m_chBayWeapon.removeAll();
                 displaySelected();
             } else if (ev.getItemSelectable() == m_chAmmo) {
+                // only change our own units
+                if (!clientgui.getClient().getLocalPlayer().equals(
+                        entity.getOwner()))
+                    return;
                 int n = weaponList.getSelectedIndex();
                 if (n == -1) {
                     return;

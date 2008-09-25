@@ -35,6 +35,7 @@ v0.33.33-dev (SVN)
 + Bug: multiple leg destroyed PSRs for a quad that loses first a front leg and
     then the torso it was attached to
 + Bug: DFAs and charges not working
++ Bug: Pulse lasers not adjusted for glazed armor
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

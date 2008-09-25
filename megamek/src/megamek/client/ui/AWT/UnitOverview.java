@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.client.event.BoardViewEvent;
+import megamek.client.ui.IDisplayable;
 import megamek.client.ui.AWT.widget.PMUtil;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
@@ -37,7 +38,7 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.util.StringUtil;
 
-public class UnitOverview implements Displayable {
+public class UnitOverview implements IDisplayable {
 
     private static final String IMAGE_DIR = "data/images/widgets";
 

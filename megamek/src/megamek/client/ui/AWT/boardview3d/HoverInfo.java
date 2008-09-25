@@ -24,7 +24,8 @@ import java.awt.Point;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Vector;
-import megamek.client.ui.AWT.Displayable;
+
+import megamek.client.ui.IDisplayable;
 import megamek.client.ui.AWT.GUIPreferences;
 import megamek.client.ui.AWT.Messages;
 import megamek.common.Player;
@@ -46,7 +47,7 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 
-class HoverInfo implements Displayable {
+class HoverInfo implements IDisplayable {
 
     private static final Font FONT = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
     private static final int TOP = 5;

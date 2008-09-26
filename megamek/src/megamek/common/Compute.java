@@ -3317,13 +3317,7 @@ public class Compute {
 
     public static Coords scatter(Coords coords, int margin) {
         int scatterDirection = d6(1) - 1;
-        int scatterDistance = 0;
-        if (margin > 0) {
-            scatterDistance = margin;
-        } else {
-            scatterDistance = d6(1);
-        }
-
+        int scatterDistance = d6(Math.min(1, margin/2));
         return coords.translated(scatterDirection, scatterDistance);
     }
 

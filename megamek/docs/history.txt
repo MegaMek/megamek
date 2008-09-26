@@ -40,6 +40,11 @@ v0.33.33-dev (SVN)
 + Bug: Disabled AMS still shoots
 + Bug: some BA ammo had wrong tech level
 + Bug: BA ammo choice not showing correctly in Mech Display
++ Bug: Artillery scatter not using updated rules from TO
+    Removed unofficial error_margin_scatter, as current artillery scatter rules
+    depend on margin of success.
+    Used these scatter rules also for LRM scatterable stuff, although TO does
+    not specify scatter rules for this.
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

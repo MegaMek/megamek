@@ -187,7 +187,6 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers, "lobby_ammo_dump", false); //$NON-NLS-1$
         addOption(ruleBreakers, "set_arty_player_homeedge", false); //$NON-NLS-1$
         addOption(ruleBreakers, "no_premove_vibra", false); //$NON-NLS-1$
-        addOption(ruleBreakers, "margin_scatter_distance", false); //$NON-NLS-1$
         addOption(ruleBreakers, "allow_illegal_units", false); //$NON-NLS-1$
         addOption(ruleBreakers, "ejected_pilots_flee", false); //$NON-NLS-1$
         addOption(ruleBreakers, "a4homing_target_area", false); //$NON-NLS-1$

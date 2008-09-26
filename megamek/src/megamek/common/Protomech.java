@@ -1140,6 +1140,12 @@ public class Protomech extends Entity implements Serializable {
     public int getTotalCommGearTons() {
         return 0;
     }
-
-
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#checkSkid(int, megamek.common.IHex, int, megamek.common.MoveStep, int, int, megamek.common.Coords, megamek.common.Coords, boolean, int)
+     */
+    public PilotingRollData checkSkid(int moveType, IHex prevHex, int overallMoveType, MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
+        return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE, "ProtoMechs can't skid");
+    }
 }

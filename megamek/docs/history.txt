@@ -45,6 +45,7 @@ v0.33.33-dev (SVN)
     depend on margin of success.
     Used these scatter rules also for LRM scatterable stuff, although TO does
     not specify scatter rules for this.
++ Bug: ProtoMechs should not be able to skid
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

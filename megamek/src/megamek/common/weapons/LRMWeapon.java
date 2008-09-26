@@ -58,8 +58,7 @@ public abstract class LRMWeapon extends MissileWeapon {
                 || atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE
                 || atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED
                 || atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO
-                || atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB
-                || atype.getMunitionType() == AmmoType.M_FLARE) {
+                || atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) {
             return new LRMScatterableHandler(toHit, waa, game, server);
         }
         if (atype.getMunitionType() == AmmoType.M_SWARM) {

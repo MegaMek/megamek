@@ -317,9 +317,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                             "Artilery Hit. Better text later."));
 
         } else {
-            coords = Compute.scatter(coords, (game.getOptions()
-                    .booleanOption("margin_scatter_distance")) ? (toHit
-                    .getValue() - roll) : -1);
+            coords = Compute.scatter(coords, toHit
+                    .getValue() - roll);
             if (game.getBoard().contains(coords)) {
                 // misses and scatters to another hex
                 if (!isFlak) {

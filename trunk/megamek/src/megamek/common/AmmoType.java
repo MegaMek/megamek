@@ -1027,8 +1027,6 @@ public class AmmoType extends EquipmentType {
                 1, M_INFERNO_IV, TechConstants.T_IS_TW_NON_BOX ) );
         munitions.add( new MunitionMutator( "Vibrabomb-IV",
                 1, M_VIBRABOMB_IV, TechConstants.T_IS_TW_NON_BOX ) );
-        munitions.add( new MunitionMutator( "Illumination",
-                1, M_FLARE, TechConstants.T_IS_TW_NON_BOX ) );
         munitions.add( new MunitionMutator( "Cluster",
                 1, M_CLUSTER, TechConstants.T_IS_TW_NON_BOX ) );
         munitions.add( new MunitionMutator( "Davy Crockett-M",
@@ -1052,8 +1050,6 @@ public class AmmoType extends EquipmentType {
                 1, M_VIBRABOMB_IV, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "Davy Crockett-M",
                 5, M_DAVY_CROCKETT_M, TechConstants.T_CLAN_ADVANCED ) );
-        munitions.add( new MunitionMutator( "Illumination",
-                1, M_FLARE, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "Cluster",
                 1, M_CLUSTER, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "Smoke",
@@ -1069,8 +1065,6 @@ public class AmmoType extends EquipmentType {
                 1, M_SMOKE, TechConstants.T_IS_TW_NON_BOX ) );
         munitions.add( new MunitionMutator( "Copperhead",
                 1, M_HOMING, TechConstants.T_IS_TW_NON_BOX ) );
-        munitions.add( new MunitionMutator( "Illumination",
-                1, M_FLARE, TechConstants.T_IS_TW_NON_BOX ) );
         munitions.add( new MunitionMutator( "Cluster",
                 1, M_CLUSTER, TechConstants.T_IS_TW_NON_BOX ) );
         munitions.add( new MunitionMutator( "Flechette",
@@ -1092,8 +1086,6 @@ public class AmmoType extends EquipmentType {
                 1, M_HOMING, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "(Clan) Smoke",
                 1, M_SMOKE, TechConstants.T_CLAN_TW ) );
-        munitions.add( new MunitionMutator( "(Clan) Illumination",
-                1, M_FLARE, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "(Clan) Flechette",
                 1, M_FLECHETTE, TechConstants.T_CLAN_TW ) );
 

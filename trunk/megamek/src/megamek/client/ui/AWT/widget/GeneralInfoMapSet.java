@@ -377,7 +377,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         if (en instanceof Tank) {
             movementTypeL.setVisible(true);
-            movementTypeR.setString(en.getMovementModeAsString());
+            movementTypeR.setString(Messages.getString("MovementType."+en.getMovementModeAsString()));
             movementTypeR.setVisible(true);
         } else {
             movementTypeL.setVisible(false);

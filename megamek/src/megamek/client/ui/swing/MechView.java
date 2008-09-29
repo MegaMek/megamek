@@ -125,7 +125,7 @@ public class MechView {
         }
         if (isVehicle) {
             sBasic.append(" (")//$NON-NLS-1$
-                    .append(entity.getMovementModeAsString()).append(")"); //$NON-NLS-1$
+                    .append(Messages.getString("MovementType."+entity.getMovementModeAsString())).append(")"); //$NON-NLS-1$
         }
         sBasic.append("\n"); //$NON-NLS-1$
         if (isMech || isVehicle || (isAero && !isSmallCraft && !isJumpship && !isSquadron)) {

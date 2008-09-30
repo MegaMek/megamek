@@ -29,7 +29,6 @@ package megamek.common.loaders;
 import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.MiscType;
-import megamek.common.TechConstants;
 import megamek.common.util.BuildingBlock;
 
 public class BLKInfantryFile extends BLKFile implements IMechLoader {
@@ -55,32 +54,8 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find model block.");
         t.setModel(dataFile.getDataAsString("Model")[0]);
 
-        if (!dataFile.exists("year"))
-            throw new EntityLoadingException("Could not find year block.");
-        t.setYear(dataFile.getDataAsInt("year")[0]);
-
-        if (!dataFile.exists("type"))
-            throw new EntityLoadingException("Could not find type block.");
-
-        if (dataFile.getDataAsString("type")[0].equals("IS")) {
-            if (t.getYear() == 3025) {
-                t.setTechLevel(TechConstants.T_INTRO_BOXSET);
-            } else {
-                t.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-            }
-        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 1")) {
-            t.setTechLevel(TechConstants.T_INTRO_BOXSET);
-        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 2")) {
-            t.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 3")) {
-            t.setTechLevel(TechConstants.T_IS_ADVANCED);
-        } else if (dataFile.getDataAsString("type")[0].equals("Clan")
-                || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
-            t.setTechLevel(TechConstants.T_CLAN_TW);
-        } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
-            t.setTechLevel(TechConstants.T_CLAN_ADVANCED);
-        }
-
+        setTechLevel(t);
+        
         if (!dataFile.exists("tonnage"))
             throw new EntityLoadingException("Could not find weight block.");
         t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);

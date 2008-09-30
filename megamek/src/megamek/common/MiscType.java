@@ -230,9 +230,9 @@ public class MiscType extends EquipmentType {
                 return (float) (Math.ceil(e.getWeightEngine() / 10.0 * 2.0) / 2.0);
             }
             if (entity.isClan()) {
-                return (float)Math.ceil(entity.getWeight() / 25.0f);
+                return (float)Math.round(entity.getWeight() / 25.0f);
             }
-            return (float)Math.ceil(entity.getWeight() / 20.0f);
+            return (float)Math.round(entity.getWeight() / 20.0f);
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
@@ -331,9 +331,9 @@ public class MiscType extends EquipmentType {
             return 1 + (int) Math.ceil(entity.getWeight() / 20.0);
         } else if (hasFlag(F_MASC)) {
             if (entity.isClan()) {
-                return (int)Math.ceil(entity.getWeight() / 25.0);
+                return (int)Math.round(entity.getWeight() / 25.0);
             }
-            return (int)Math.ceil(entity.getWeight() / 20.0);
+            return (int)Math.round(entity.getWeight() / 20.0);
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;

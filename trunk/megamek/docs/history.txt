@@ -62,7 +62,9 @@ v0.33.33-dev (SVN)
     Mixed (IS Chassis) Experimental: mixed tech with TO experimental equipment
     Mixed (IS Chassis) Unofficial: mixed tech with unofficial equipment
     Mixed (Clan Chassis) etc for clan base chassis
-+ Bug 2095170: ATM Standard Ammo 
++ Bug 2095170: ATM Standard Ammo
++ Bug: MASC weight calculation wrong
++ Bug: Server crash when building crashes because of unit standing on it
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

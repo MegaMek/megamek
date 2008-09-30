@@ -12636,7 +12636,7 @@ public class Server implements Runnable {
                         addReport(r);
                         addReport(oneCriticalEntity(entity, Compute.randomInt(8)));
                         // add an empty report, for linebreaking
-                        r = new Report(1210);
+                        r = new Report(1210, Report.PUBLIC);
                         addReport(r);
                     }
                 }
@@ -13645,7 +13645,7 @@ public class Server implements Runnable {
         // carriage return
         if (needReport) {
             Report finish;
-            finish = new Report(1210);
+            finish = new Report(1210, Report.PUBLIC);
             finish.newlines = 1;
             vDesc.addElement(finish);
         }
@@ -20733,7 +20733,7 @@ public class Server implements Runnable {
                             addReport(damageEntity(entity, hit, next));
                             remaining -= next;
                         }
-                        addReport(new Report(1210));
+                        addReport(new Report(1210, Report.PUBLIC));
                     }
 
                 } // End infantry-inside-building
@@ -20744,7 +20744,7 @@ public class Server implements Runnable {
 
         // If we found any infantry, add a line to the phase report.
         if (foundInfantry) {
-            addReport(new Report(1210));
+            addReport(new Report(1210, Report.PUBLIC));
         }
 
     } // End private void damageInfantryIn( Building, int )
@@ -20869,7 +20869,7 @@ public class Server implements Runnable {
 
         // Collapse the building if the flag is set.
         if (collapse) {
-            Report r = new Report(2375);
+            Report r = new Report(2375, Report.PUBLIC);
             r.add(bldg.getName());
             addReport(r);
             collapseBuilding(bldg, positionMap, coords);
@@ -20917,6 +20917,9 @@ public class Server implements Runnable {
 
             // Now collapse the building in this hex, so entities fall to
             // the ground
+            bldg.setCurrentCF(0, coords);
+            bldg.setPhaseCF(0, coords);
+            send(createCollapseBuildingPacket(coords));
             game.getBoard().collapseBuilding(coords);
 
             // Sort in elevation order
@@ -20981,7 +20984,7 @@ public class Server implements Runnable {
                     addReport(damageEntity(entity, hit, next));
                     remaining -= next;
                 }
-                addReport(new Report(1210));
+                addReport(new Report(1210, Report.PUBLIC));
                 // TODO: Why are dead entities showing up on firing phase?
 
                 // Do we need to handle falling Meks?
@@ -21012,12 +21015,13 @@ public class Server implements Runnable {
 
         } // End have-entities-here.
 
-
-        // Update the building.
-        bldg.setCurrentCF(0, coords);
-        bldg.setPhaseCF(0, coords);
-        send(createCollapseBuildingPacket(coords));
-        game.getBoard().collapseBuilding(coords);
+        else {
+            // Update the building.
+            bldg.setCurrentCF(0, coords);
+            bldg.setPhaseCF(0, coords);
+            send(createCollapseBuildingPacket(coords));
+            game.getBoard().collapseBuilding(coords);
+        }
 
     } // End private void collapseBuilding( Building )
 
@@ -21173,7 +21177,7 @@ public class Server implements Runnable {
     public Vector<Report> damageBuilding(Building bldg, int damage, String why,
             Coords coords) {
         Vector<Report> vPhaseReport = new Vector<Report>();
-        Report r = new Report(1210);
+        Report r = new Report(1210, Report.PUBLIC);
         r.newlines = 0;
 
         // Do nothing if no building or no damage was passed.

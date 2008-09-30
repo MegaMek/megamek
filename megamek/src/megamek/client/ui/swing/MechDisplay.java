@@ -1898,6 +1898,8 @@ public class MechDisplay extends JPanel {
                 } else if (clientgui.curPanel instanceof TargetingPhaseDisplay) {
                     ((TargetingPhaseDisplay) clientgui.curPanel).updateTarget();
                 }
+                
+                displaySelected();
 
                 // Alert the server of the update.
                 clientgui.getClient().sendAmmoChange(entity.getId(),

@@ -1839,6 +1839,7 @@ public class MechDisplay extends BufferedPanel {
                 this.client.getClient().sendAmmoChange(entity.getId(),
                         entity.getEquipmentNum(mWeap),
                         entity.getEquipmentNum(mAmmo));
+                displaySelected();
             } else if (ev.getItemSelectable() == m_chBayWeapon) {
                 int n = weaponList.getSelectedIndex();
                 if (n == -1) {

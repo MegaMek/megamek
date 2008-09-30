@@ -380,6 +380,13 @@ public class TestMech extends TestEntity {
             buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
+        if (getCountHeatSinks() < engine.getCountEngineHeatSinks()) {
+        	buff.append("Heat Sinks:\n");
+        	buff.append(" Engine    "+engine.integralHeatSinkCapacity()+"\n");
+        	buff.append(" Total     "+getCountHeatSinks()+"\n");
+        	buff.append(" Required  "+engine.getCountEngineHeatSinks()+"\n");
+        	correct = false;
+        }
         if (showCorrectArmor() && !correctArmor(buff))
             correct = false;
         if (showCorrectCritical() && !correctCriticals(buff))

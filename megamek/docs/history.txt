@@ -48,6 +48,7 @@ v0.33.33-dev (SVN)
 + Bug: ProtoMechs should not be able to skid
 + Bug 2085049: movement types not localised
 	Note german text is machine translated, please correct if you are a native speaker
++ Bug 2098953: Thorn 1S and Hornet 154 have 9 HS
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

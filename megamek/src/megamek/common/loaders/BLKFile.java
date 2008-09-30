@@ -94,4 +94,60 @@ public class BLKFile {
         else
             return -1;
     }
+    
+    public void setTechLevel(Entity e) throws EntityLoadingException {
+        if (!dataFile.exists("year")) throw new EntityLoadingException("Could not find year block.");
+        e.setYear(dataFile.getDataAsInt("year")[0]);
+            
+        if (!dataFile.exists("type")) throw new EntityLoadingException("Could not find type block.");
+            
+        if (dataFile.getDataAsString("type")[0].equals("IS")) {
+            if (e.getYear() == 3025) {
+                e.setTechLevel(TechConstants.T_INTRO_BOXSET);
+            } else {
+                e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+            }
+        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 1")) {
+            e.setTechLevel(TechConstants.T_INTRO_BOXSET);
+        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 2")) {
+            e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 3")) {
+            e.setTechLevel(TechConstants.T_IS_ADVANCED);
+        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 4")) {
+            e.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 5")) {
+            e.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
+        } else if (dataFile.getDataAsString("type")[0].equals("Clan")
+                || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
+            e.setTechLevel(TechConstants.T_CLAN_TW);
+        } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
+            e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+        } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 4")) {
+            e.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
+        } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 5")) {
+            e.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
+        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis)")) {
+            e.setTechLevel(TechConstants.T_IS_ADVANCED);
+            e.setMixedTech(true);
+        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis) Experimental")) {
+            e.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+            e.setMixedTech(true);
+        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis) Unofficial")) {
+            e.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
+            e.setMixedTech(true);
+        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (Clan Chassis)")) {
+            e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+            e.setMixedTech(true);
+        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (Clan Chassis) Experimental")) {
+            e.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
+            e.setMixedTech(true);
+        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (Clan Chassis) Unofficial")) {
+            e.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
+            e.setMixedTech(true);
+        }  else if (dataFile.getDataAsString("type")[0].equals("Mixed")) {
+            throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+        } else {
+            throw new EntityLoadingException("Unsupported tech level: " + dataFile.getDataAsString("type")[0]);
+        }
+    }
 }

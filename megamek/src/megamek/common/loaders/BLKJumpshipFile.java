@@ -72,39 +72,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         }
        
         
-        if (!dataFile.exists("year")) throw new EntityLoadingException("Could not find year block.");
-        a.setYear(dataFile.getDataAsInt("year")[0]);
-            
-        if (!dataFile.exists("type")) throw new EntityLoadingException("Could not find type block.");
-            
-        if (dataFile.getDataAsString("type")[0].equals("IS")) {
-            if (a.getYear() == 3025) {
-                a.setTechLevel(TechConstants.T_INTRO_BOXSET);
-            } else {
-                a.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-            }
-        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 1")) {
-            a.setTechLevel(TechConstants.T_INTRO_BOXSET);
-        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 2")) {
-            a.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 3")) {
-            a.setTechLevel(TechConstants.T_IS_ADVANCED);
-        } else if (dataFile.getDataAsString("type")[0].equals("Clan")
-                || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
-            a.setTechLevel(TechConstants.T_CLAN_TW);
-        } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
-            a.setTechLevel(TechConstants.T_CLAN_ADVANCED);
-        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis)")) {
-            a.setTechLevel(TechConstants.T_IS_ADVANCED);
-            a.setMixedTech(true);
-        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (Clan Chassis)")) {
-            a.setTechLevel(TechConstants.T_CLAN_ADVANCED);
-            a.setMixedTech(true);
-        } else if (dataFile.getDataAsString("type")[0].equals("Mixed")) {
-            throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
-        } else {
-            throw new EntityLoadingException("Unsupported tech level: " + dataFile.getDataAsString("type")[0]);
-        }
+        setTechLevel(a);
 
         if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find weight block.");
         a.setWeight(dataFile.getDataAsFloat("tonnage")[0]);

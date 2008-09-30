@@ -52,54 +52,14 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
         } else {
             e.setModel("");
         }
-
-        if (!dataFile.exists("Year")) {
-            throw new EntityLoadingException("Could not find year block.");
-        }
-        e.setYear(dataFile.getDataAsInt("Year")[0]);
-
-        if (!dataFile.exists("Type")) {
-            throw new EntityLoadingException("Could not find type block.");
-        }
-        if (dataFile.getDataAsString("Type")[0].equals("IS")) {
-            if (e.getYear() == 3025) {
-                e.setTechLevel(TechConstants.T_INTRO_BOXSET);
-            } else {
-                e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-            }
-        } else if (dataFile.getDataAsString("Type")[0].equals("IS Level 1")) {
-            e.setTechLevel(TechConstants.T_INTRO_BOXSET);
-        } else if (dataFile.getDataAsString("Type")[0].equals("IS Level 2")) {
-            e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-        } else if (dataFile.getDataAsString("Type")[0].equals("IS Level 3")) {
-            e.setTechLevel(TechConstants.T_IS_ADVANCED);
-        } else if (dataFile.getDataAsString("Type")[0].equals("Clan")
-                || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
-            e.setTechLevel(TechConstants.T_CLAN_TW);
-        } else if (dataFile.getDataAsString("Type")[0].equals("Clan Level 3")) {
-            e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
-        } else if (dataFile.getDataAsString("Type")[0]
-                .equals("Mixed (IS Chassis)")) {
-            e.setTechLevel(TechConstants.T_IS_ADVANCED);
-            e.setMixedTech(true);
-        } else if (dataFile.getDataAsString("Type")[0]
-                .equals("Mixed (Clan Chassis)")) {
-            e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
-            e.setMixedTech(true);
-        } else if (dataFile.getDataAsString("Type")[0].equals("Mixed")) {
-            throw new EntityLoadingException(
-                    "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
-        } else {
-            throw new EntityLoadingException("Unsupported tech level: "
-                    + dataFile.getDataAsString("Type")[0]);
-        }
-
+        
+        setTechLevel(e);
+       
         if (!dataFile.exists("ConstructionFactor")) {
             throw new EntityLoadingException("Could not find block.");
         }
-        e
-                .initConstructionFactor(dataFile
-                        .getDataAsInt("ConstructionFactor")[0]);
+        e.initConstructionFactor(dataFile
+                .getDataAsInt("ConstructionFactor")[0]);
 
         if (dataFile.exists("Height")) {
             e.setHeight(dataFile.getDataAsInt("Height")[0]);

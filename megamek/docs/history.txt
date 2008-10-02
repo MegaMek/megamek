@@ -66,6 +66,7 @@ v0.33.33-dev (SVN)
 + Bug: MASC weight calculation wrong
 + Bug: Server crash when building crashes because of unit standing on it
 + Bug: Only one leg attack per turn possible
++ Bug: Swarm/Swarm-I target choosing now updated to TO rules
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

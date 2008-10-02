@@ -3362,17 +3362,20 @@ public class Compute {
      */
     public static Entity getSwarmMissileTarget(IGame game, int aeId, Entity te, int weaponId) {
         Coords coords = te.getPosition();
-        Entity newTarget = null;
         Entity tempEntity = null;
-        Entity attacker = game.getEntity(aeId);
         // first, check the hex of the original target
-        Enumeration<Entity> entities = game.getEnemyEntities(coords, te);
+        Enumeration<Entity> entities = game.getEntities(coords);
+        Vector<Entity> possibleTargets = new Vector<Entity>();
         while (entities.hasMoreElements()) {
             tempEntity = entities.nextElement();
             if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                 // we found a target
-                return tempEntity;
+                possibleTargets.add(tempEntity);
             }
+        }
+        // if there is at least one target, get a random one of them
+        if (!possibleTargets.isEmpty()) {
+            return possibleTargets.get(Compute.randomInt(possibleTargets.size()));
         }
         // loop through adjacent hexes
         for (int dir = 0; dir <= 5; dir++) {
@@ -3383,24 +3386,20 @@ public class Compute {
             if (coords.equals(tempcoords)) {
                 continue;
             }
-            entities = game.getEnemyEntities(tempcoords, te);
+            entities = game.getEntities(tempcoords);
             if (entities.hasMoreElements()) {
                 tempEntity = entities.nextElement();
                 if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                     // we found a target
-                    return tempEntity;
-                }
-            }
-            entities = game.getFriendlyEntities(tempcoords, te);
-            if (entities.hasMoreElements()) {
-                tempEntity = entities.nextElement();
-                if (!tempEntity.getTargetedBySwarm(aeId, weaponId) && !attacker.equals(tempEntity)) {
-                    // we found a target
-                    return tempEntity;
+                    possibleTargets.add(tempEntity);
                 }
             }
         }
-        return newTarget;
+        // if there is at least one target, get a random one of them
+        if (!possibleTargets.isEmpty()) {
+            return possibleTargets.get(Compute.randomInt(possibleTargets.size()));
+        }
+        return null;
     }
 
     public static int[] getRandomSkills(int method, int type, int level, boolean isVee) {

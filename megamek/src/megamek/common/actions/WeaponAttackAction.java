@@ -1564,7 +1564,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 EntityAction ea = actions.nextElement();
                 if (ea instanceof WeaponAttackAction) {
                     WeaponAttackAction waa = (WeaponAttackAction)ea;
-                    if (waa.getTargetType() == Targetable.TYPE_ENTITY && waa.getTarget(game) instanceof Mech && waa.getEntity(game) != ae) {
+                    if (waa.getTargetType() == Targetable.TYPE_ENTITY
+                            && waa.getTarget(game) instanceof Mech
+                            && waa.getTarget(game).equals(target)
+                            && waa.getEntity(game) != ae) {
                         if (waa.getEntity(game).getEquipment(waa.getWeaponId()).getType().getInternalName().equals(Infantry.LEG_ATTACK)) {
                             return "Target mech can only be targeted by one leg attack";
                         }

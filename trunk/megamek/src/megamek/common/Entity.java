@@ -7407,11 +7407,6 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 }
             }
         }
-        //init bonus if using individual initiative
-        if(game.getOptions().booleanOption("individual_initiative")) {
-            bonus += getCrew().getInitBonus();
-        }
-        
         return bonus;
     }
 }

@@ -2734,15 +2734,6 @@ public class Server implements Runnable {
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(entity.getInitiative().toString());
-                    // add bonus
-                    int bonus = game.getTeamForPlayer(entity.getOwner()).getTotalInitBonus();
-                    String bstring = "";
-                    if (bonus >= 0) {
-                        bstring = bstring + "+" + bonus;
-                    } else {
-                        bstring = bstring + bonus;
-                    }
-                    r.add(bstring);
                     addReport(r);
                 } else {
                     Player player = getPlayer(t.getPlayerNum());
@@ -2764,28 +2755,12 @@ public class Server implements Runnable {
                     r = new Report(1015, Report.PUBLIC);
                     r.add(player.getName());
                     r.add(team.getInitiative().toString());
-                    int bonus = team.getTotalInitBonus();
-                    String bstring = "";
-                    if (bonus >= 0) {
-                        bstring = bstring + "+" + bonus;
-                    } else {
-                        bstring = bstring + bonus;
-                    }
-                    r.add(bstring);
                     addReport(r);
                 } else {
                     // Multiple players. List the team, then break it down.
                     r = new Report(1015, Report.PUBLIC);
                     r.add(Player.teamNames[team.getId()]);
                     r.add(team.getInitiative().toString());
-                    int bonus = team.getTotalInitBonus();
-                    String bstring = "";
-                    if (bonus >= 0) {
-                        bstring = bstring + "+" + bonus;
-                    } else {
-                        bstring = bstring + bonus;
-                    }
-                    r.add(bstring);
                     addReport(r);
                     for (Enumeration<Player> j = team.getPlayers(); j.hasMoreElements();) {
                         final Player player = j.nextElement();

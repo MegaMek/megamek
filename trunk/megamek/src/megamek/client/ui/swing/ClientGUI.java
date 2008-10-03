@@ -1177,7 +1177,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         dlgLoadList.setSelectedFile(new File(client.getLocalPlayer().getName() + ".mul")); //$NON-NLS-1$
 
         int returnVal = dlgLoadList.showOpenDialog(frame);
-        if (returnVal != JFileChooser.APPROVE_OPTION || dlgSaveList.getSelectedFile() == null) {
+        if (returnVal != JFileChooser.APPROVE_OPTION || dlgLoadList.getSelectedFile() == null) {
             // I want a file, y'know!
             return;
         }

@@ -36,7 +36,8 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
     private Vector<Integer> rolls = new Vector<Integer>();
     private Vector<Integer> originalRolls = new Vector<Integer>();
     private Vector<Boolean> wasRollReplaced = new Vector<Boolean>(); // booleans
-
+    private Vector<Integer> bonuses = new Vector<Integer>();
+    
     /** Creates new InitaitiveRoll */
     public InitiativeRoll() {
     }
@@ -48,9 +49,10 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
     }
 
     public void addRoll(int bonus) {
-        Integer roll = bonus + new Integer(Compute.d6(2));
+        Integer roll = new Integer(Compute.d6(2));
         rolls.addElement(roll);
         originalRolls.addElement(roll);
+        bonuses.addElement(bonus);
         wasRollReplaced.addElement(new Boolean(false));
     }
 
@@ -59,8 +61,9 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
      * was replaced. Used for Tactical Genius special pilot ability (lvl 3).
      */
     public void replaceRoll(int bonus) {
-        Integer roll = bonus + new Integer(Compute.d6(2));
+        Integer roll = new Integer(Compute.d6(2));
         rolls.setElementAt(roll, size() - 1);
+        bonuses.setElementAt(bonus, size()-1);
         wasRollReplaced.setElementAt(new Boolean(true), size() - 1);
     }
 
@@ -69,7 +72,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
     }
 
     public int getRoll(int index) {
-        return rolls.elementAt(index).intValue();
+        return rolls.elementAt(index).intValue() + bonuses.elementAt(index).intValue();
     }
 
     /**
@@ -106,13 +109,16 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         for (int i = 0; i < rolls.size(); i++) {
             Integer r = rolls.elementAt(i);
             Integer o = originalRolls.elementAt(i);
-
+            Integer b = bonuses.elementAt(i);
+            Integer t = r+b;
+            Integer to = o+b;
+            
             if (wasRollReplaced.elementAt(i).booleanValue()) {
-                buff.append(o.toString()).append("(").append(r.toString())
+                buff.append(to.toString()).append("[").append(o.toString()).append("+").append(b.toString()).append("]").append("(").append(t.toString()).append("[").append(r.toString()).append("+").append(b.toString()).append("]")
                         .append(")");
                 tacticalGenius = true;
             } else {
-                buff.append(r.toString());
+                buff.append(t.toString()).append("[").append(r.toString()).append("+").append(b.toString()).append("]");
             }
             if (i != rolls.size() - 1) {
                 buff.append(" / ");

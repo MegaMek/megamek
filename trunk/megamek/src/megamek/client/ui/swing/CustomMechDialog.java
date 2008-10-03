@@ -111,6 +111,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JLabel labPiloting = new JLabel(Messages
             .getString("CustomMechDialog.labPiloting"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JTextField fldPiloting = new JTextField(3);
+    private JLabel labInit = new JLabel(Messages
+            .getString("CustomMechDialog.labInit"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JTextField fldInit = new JTextField(3);
     private JLabel labC3 = new JLabel(Messages
             .getString("CustomMechDialog.labC3"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox choC3 = new JComboBox();
@@ -293,7 +296,18 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(fldPiloting, c);
         tempPanel.add(fldPiloting);
-
+        
+        if(client.game.getOptions().booleanOption("individual_initiative")) {
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labInit, c);
+            tempPanel.add(labInit);
+    
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(fldInit, c);
+            tempPanel.add(fldInit);
+        }
         if(entity instanceof Aero) {
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
@@ -603,6 +617,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         fldGunneryB.addActionListener(this);
         fldPiloting.setText(Integer.toString(entity.getCrew().getPiloting()));
         fldPiloting.addActionListener(this);
+        fldInit.setText(Integer.toString(entity.getCrew().getInitBonus()));
+        fldInit.addActionListener(this);
         if(entity instanceof Aero) {
             Aero a = (Aero)entity;
             fldStartVelocity.setText(new Integer(a.getCurrentVelocity()).toString());
@@ -619,6 +635,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldGunneryM.setEnabled(false);
             fldGunneryB.setEnabled(false);
             fldPiloting.setEnabled(false);
+            fldInit.setEnabled(false);
             choC3.setEnabled(false);
             choDeployment.setEnabled(false);
             chAutoEject.setEnabled(false);
@@ -1877,6 +1894,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             int gunneryM;
             int gunneryB;
             int piloting;
+            int init = 0;
             int velocity = 0;
             int elev = 0;
             int offBoardDistance;
@@ -1887,6 +1905,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 gunneryM = Integer.parseInt(fldGunneryM.getText());
                 gunneryB = Integer.parseInt(fldGunneryB.getText());
                 piloting = Integer.parseInt(fldPiloting.getText());
+                init = Integer.parseInt(fldInit.getText());
                 if(entity instanceof Aero) {
                     velocity = Integer.parseInt(fldStartVelocity.getText());
                     elev = Integer.parseInt(fldStartElevation.getText());
@@ -1955,6 +1974,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             } else {
                 entity.setCrew(new Pilot(name, gunnery, piloting));
             }
+            entity.getCrew().setInitBonus(init);
             if (entity instanceof Mech) {
                 Mech mech = (Mech) entity;
                 mech.setAutoEject(!autoEject);

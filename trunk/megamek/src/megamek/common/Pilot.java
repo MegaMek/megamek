@@ -42,6 +42,9 @@ public class Pilot implements Serializable {
     private int gunneryM;
     private int gunneryB;
 
+    //init bonus
+    private int initBonus;
+    
     // these are only used on the server:
     private boolean koThisRound; // did I go KO this game round?
 
@@ -73,6 +76,7 @@ public class Pilot implements Serializable {
         this.gunneryM = gunnery;
         this.gunneryB = gunnery;
         this.piloting = piloting;
+        this.initBonus = 0;
         hits = 0;
         unconscious = false;
         dead = false;
@@ -125,6 +129,10 @@ public class Pilot implements Serializable {
         return hits;
     }
 
+    public int getInitBonus() {
+        return initBonus;
+    }
+    
     public void setGunnery(int gunnery) {
         this.gunnery = gunnery;
     }
@@ -152,6 +160,10 @@ public class Pilot implements Serializable {
         }
     }
 
+    public void setInitBonus(int bonus) {
+        this.initBonus = bonus;
+    }
+    
     public boolean isUnconscious() {
         return unconscious;
     }

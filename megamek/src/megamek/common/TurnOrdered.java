@@ -218,7 +218,7 @@ public abstract class TurnOrdered implements Serializable {
             }
             if (item instanceof Entity) {
                 Entity e = (Entity) item;
-                bonus = e.game.getTeamForPlayer(e.owner).getTotalInitBonus();
+                bonus = e.game.getTeamForPlayer(e.owner).getTotalInitBonus() + e.getCrew().getInitBonus();
             }
             if (rerollRequests == null) { // normal init roll
                 item.getInitiative().addRoll(bonus); // add a roll for all

@@ -68,6 +68,7 @@ v0.33.33-dev (SVN)
 + Bug: Only one leg attack per turn possible
 + Bug: Swarm/Swarm-I target choosing now updated to TO rules
 + Bug: Artillery scatter not correct
++ Bug 2080245: C3i DB bug
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

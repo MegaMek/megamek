@@ -933,14 +933,14 @@ public class Compute {
 
         int position = 0;
         for ( Entity spotter: network ) {
-            if (!isAffectedByECM(spotter, spotter.getPosition(), attacker.getPosition())) {
+            /*if (!isAffectedByECM(spotter, spotter.getPosition(), attacker.getPosition())) {
                 return spotter;
             }
 
             if (isAffectedByECM(spotter, spotter.getPosition(), target.getPosition())) {
                 position++;
                 continue;
-            }
+            }*/
 
             for (int count = ++position; count < network.size(); count++ ) {
                 if ( canCompleteNodePath(spotter, attacker, network, count) ) {

@@ -1235,7 +1235,7 @@ public class Game implements Serializable, IGame {
         resetRams();
         resetPSRs();
         resetArtilleryAttacks();
-        //resetAttacks();
+        resetAttacks();
         removeMinefields();
         removeArtyAutoHitHexes();
         resetLayMinefieldActions();

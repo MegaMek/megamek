@@ -6823,7 +6823,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public boolean isFlying() {
         //stuff that moves like a VTOL is flying unless at elevation 0 or on top of/in a building,
         if (this.getMovementMode() == IEntityMovementMode.VTOL) {
-            if (game.getBoard().getHex(this.getPosition()).terrainLevel(Terrains.BLDG_ELEV) >= getElevation())
+            if (game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BLDG_ELEV) >= getElevation()
+                    || game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BRIDGE_ELEV) >= getElevation())
                 return false;
             else return getElevation() > 0;
         }

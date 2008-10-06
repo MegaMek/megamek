@@ -114,6 +114,7 @@ public class PlanetaryConditions implements Serializable {
     private float gravity = (float)1.0;
     private boolean emi = false;
     private boolean terrainAffected = true;
+    private int maxWindStrength = PlanetaryConditions.WI_TORNADO_F4;
     
     /**
      * Constructor
@@ -372,12 +373,10 @@ public class PlanetaryConditions implements Serializable {
             // Wind strength changes on a roll of 1 or 6
             switch (Compute.d6()) {
             case 1: // weaker
-                if (windStrength > 0)
-                    windStrength--;
+                windStrength = Math.max(0, --windStrength);
                 break;
             case 6: // stronger
-                if (windStrength < WI_TORNADO_F4)
-                    windStrength++;
+                windStrength = Math.min(maxWindStrength, ++windStrength);
             }
         }
         
@@ -822,5 +821,13 @@ public class PlanetaryConditions implements Serializable {
     
     public boolean isRecklessConditions() {
         return fog > FOG_NONE || lightConditions > L_DUSK;
+    }
+    
+    public int getMaxWindStrength(){
+        return maxWindStrength;
+    }
+    
+    public void setMaxWindStrength(int strength){
+        this.maxWindStrength = strength;
     }
 }

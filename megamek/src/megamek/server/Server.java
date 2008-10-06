@@ -2764,7 +2764,7 @@ public class Server implements Runnable {
                     addReport(r);
                     for (Enumeration<Player> j = team.getPlayers(); j.hasMoreElements();) {
                         final Player player = j.nextElement();
-                        r = new Report(1016, Report.PUBLIC);
+                        r = new Report(1015, Report.PUBLIC);
                         r.indent();
                         r.add(player.getName());
                         r.add(player.getInitiative().toString());

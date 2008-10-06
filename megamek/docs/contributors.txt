@@ -136,6 +136,7 @@
      Walter Smith <walter_smith@users.sourceforge.net>
      Shatara
      Zoltan 'Nyrond' Kollar
+     Adgar76 <adgar76@users.sourceforge.net>
 
   Translations
      Jörg Harder <joergharder@t-online.de>

@@ -3661,8 +3661,13 @@ public class Compute {
         return endpos;
     }
 
-    //method to change a set of active vectors for a one-point thrust
-    //expenditure in the giving facing
+    /**
+     * method to change a set of active vectors for a one-point thrust
+     * expenditure in the giving facing
+     * @param v
+     * @param facing
+     * @return
+     */
     public static int[] changeVectors(int[] v, int facing) {
         
         if(v == null || v.length != 6)
@@ -3715,7 +3720,12 @@ public class Compute {
         return v;    
     }
     
-    //compare two vectors and determine if they are the same
+    /**
+     * compare two vectors and determine if they are the same
+     * @param v1
+     * @param v2
+     * @return
+     */
     public static boolean sameVectors(int[] v1, int[] v2) {
     
         for(int i = 0; i<6; i++) {
@@ -3727,7 +3737,7 @@ public class Compute {
         return true;
     }
     
-    /*
+    /**
      * Get the net velocity of two aeros for ramming attacks
      */
     public static int getNetVelocity(Coords src, Aero te, int avel, int tvel) {

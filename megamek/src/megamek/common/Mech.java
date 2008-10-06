@@ -390,7 +390,7 @@ public abstract class Mech extends Entity implements Serializable {
      *            the description off the masc failure. used as output.
      * @param vCriticals
      *            ontains tuple of intiger and critical slot. used as output.
-     * @return true iff there was a masc failure.
+     * @return true if there was a masc failure.
      */
     public boolean checkForMASCFailure(MovePath md, Vector<Report> vDesc, HashMap<Integer, CriticalSlot> vCriticals) {
         if (md.hasActiveMASC()) {

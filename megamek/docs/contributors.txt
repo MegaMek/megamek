@@ -135,6 +135,7 @@
      beretboy <dp777@users.sourceforge.net>
      Walter Smith <walter_smith@users.sourceforge.net>
      Shatara
+     Nyrond
 
   Translations
      Jörg Harder <joergharder@t-online.de>

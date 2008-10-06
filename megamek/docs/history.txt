@@ -72,6 +72,9 @@ v0.33.33-dev (SVN)
 + Bug: /reset not clearing pending attacks
 + RFE: Set Max wind Strength for Planetary Conditions.
 + Bug: fix initiative reporting error
++ Added Stinger wreck image
++ Added new field gunner pics
+    Thanks Nyrond!
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

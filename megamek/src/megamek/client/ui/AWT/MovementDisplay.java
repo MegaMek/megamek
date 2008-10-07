@@ -119,10 +119,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
     public static final String MOVE_MODE_AIRCRAFT = "moveModeAircraft"; //$NON-NLS-1$
     public static final String MOVE_RECKLESS = "moveReckless"; //$NON-NLS-1$
     public static final String MOVE_CAREFUL_STAND = "moveCarefulStand"; //$NON-NLS-1$
+    public static final String MOVE_EVADE = "MoveEvade"; //$NON-NLS-1$
     // Aero Movement
     public static final String MOVE_ACC = "MoveAccelerate"; //$NON-NLS-1$
     public static final String MOVE_DEC = "MoveDecelerate"; //$NON-NLS-1$
-    public static final String MOVE_EVADE = "MoveEvade"; //$NON-NLS-1$
+    public static final String MOVE_EVADE_AERO = "MoveEvadeAero"; //$NON-NLS-1$
     public static final String MOVE_ACCN = "MoveAccNext"; //$NON-NLS-1$
     public static final String MOVE_DECN = "MoveDecNext"; //$NON-NLS-1$
     public static final String MOVE_ROLL = "MoveRoll"; //$NON-NLS-1$
@@ -188,10 +189,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
     private Button butShakeOff;
     
     private Button butReckless;
+    private Button butEvade;
 
     private Button butAcc;
     private Button butDec;
-    private Button butEvade;
+    private Button butEvadeAero;
     private Button butAccN;
     private Button butDecN;
     private Button butRoll;
@@ -426,6 +428,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         butReckless.setActionCommand(MOVE_RECKLESS);
         butReckless.addKeyListener(this);
 
+        butEvade = new Button(Messages.getString("MovementDisplay.butEvade")); //$NON-NLS-1$
+        butEvade.addActionListener(this);
+        butEvade.setEnabled(false);
+        butEvade.setActionCommand(MOVE_EVADE);
+        butEvade.addKeyListener(this);
+        
         butAcc = new Button(Messages.getString("MovementDisplay.butAcc")); //$NON-NLS-1$
         butAcc.addActionListener(this);
         butAcc.setEnabled(false);
@@ -450,11 +458,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         butDecN.setActionCommand(MOVE_DECN);
         butDecN.addKeyListener(this);
 
-        butEvade = new Button(Messages.getString("MovementDisplay.butEvade")); //$NON-NLS-1$
-        butEvade.addActionListener(this);
-        butEvade.setEnabled(false);
-        butEvade.setActionCommand(MOVE_EVADE);
-        butEvade.addKeyListener(this);
+        butEvadeAero = new Button(Messages.getString("MovementDisplay.butEvadeAero")); //$NON-NLS-1$
+        butEvadeAero.addActionListener(this);
+        butEvadeAero.setEnabled(false);
+        butEvadeAero.setActionCommand(MOVE_EVADE_AERO);
+        butEvadeAero.addKeyListener(this);
 
         butRoll = new Button(Messages.getString("MovementDisplay.butRoll")); //$NON-NLS-1$
         butRoll.addActionListener(this);
@@ -666,7 +674,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             buttonsAero.add(butThrust);
             buttonsAero.add(butTurnLeft);
             buttonsAero.add(butTurnRight);
-            buttonsAero.add(butEvade);
+            buttonsAero.add(butEvadeAero);
             buttonsAero.add(butRoll);
             buttonsAero.add(butYaw);
             buttonsAero.add(butEndOver);
@@ -866,7 +874,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             butEndOver.setEnabled(true);
             butTurnLeft.setEnabled(true);
             butTurnRight.setEnabled(true);
-            setEvadeEnabled(true);
+            setEvadeAeroEnabled(true);
             setEjectEnabled(true);
             // no turning for spheroids in atmosphere
             if ((((Aero) ce).isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) 
@@ -991,9 +999,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         setClearEnabled(false);
         setHullDownEnabled(false);
         setSwimEnabled(false);
+        setEvadeEnabled(false);
         setAccEnabled(false);
         setDecEnabled(false);
-        setEvadeEnabled(false);
+        setEvadeAeroEnabled(false);
         setAccNEnabled(false);
         setDecNEnabled(false);
         setRollEnabled(false);
@@ -3143,6 +3152,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         } else if (ev.getActionCommand().equals(MOVE_EVADE)) {
             cmd.addStep(MovePath.STEP_EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
+        } else if (ev.getActionCommand().equals(MOVE_EVADE_AERO)) {
+            cmd.addStep(MovePath.STEP_EVADE);
+            clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_ROLL)) {
             cmd.addStep(MovePath.STEP_ROLL);
             clientgui.bv.drawMovementData(ce, cmd);
@@ -3548,6 +3560,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
     private void setEvadeEnabled(boolean enabled) {
         butEvade.setEnabled(enabled);
         clientgui.getMenuBar().setMoveEvadeEnabled(enabled);
+    }
+
+    private void setEvadeAeroEnabled(boolean enabled) {
+        butEvadeAero.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveEvadeAeroEnabled(enabled);
     }
 
     private void setRollEnabled(boolean enabled) {

@@ -128,6 +128,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     private MenuItem moveRaise = null;
     private MenuItem moveLower = null;
     private MenuItem moveReckless = null;
+    private MenuItem moveEvade = null;
     private MenuItem moveLAMmechMode = null;
     private MenuItem moveLAMairmechMode = null;
     private MenuItem moveLAMaircraftMode = null;
@@ -135,7 +136,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     private MenuItem moveDec = null;
     private MenuItem moveAccN = null;
     private MenuItem moveDecN = null;
-    private MenuItem moveEvade = null;
+    private MenuItem moveEvadeAero = null;
     private MenuItem moveRoll = null;
     private MenuItem moveLaunch = null;
     private MenuItem moveRecover = null;
@@ -192,6 +193,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     public CommonMenuBar() {
         Menu menu = null;
         Menu submenu = null;
+        Menu aeromenu = null;
         MenuItem item = null;
 
         // *** Create the File menu.
@@ -437,7 +439,29 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         moveReckless = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveReckless"), MovementDisplay.MOVE_RECKLESS); //$NON-NLS-1$
-
+        moveEvade = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.moveEvade"), MovementDisplay.MOVE_EVADE); //$NON-NLS-1$
+        //add aero stuff
+        aeromenu = new Menu(Messages.getString("CommonMenuBar.AeroMenu")); //$NON-NLS-1$
+        moveAcc = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveAcc"), MovementDisplay.MOVE_ACC); //$NON-NLS-1$
+        moveDec = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveDec"), MovementDisplay.MOVE_DEC); //$NON-NLS-1$
+        moveAccN = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveAccN"), MovementDisplay.MOVE_ACCN); //$NON-NLS-1$
+        moveDecN = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveDecN"), MovementDisplay.MOVE_DECN); //$NON-NLS-1$
+        moveRoll = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveRoll"), MovementDisplay.MOVE_ROLL); //$NON-NLS-1$
+        moveHover = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveHover"), MovementDisplay.MOVE_HOVER); //$NON-NLS-1$
+        moveManeuver = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveManeuver"), MovementDisplay.MOVE_MANEUVER); //$NON-NLS-1$
+        moveEvadeAero = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveEvadeAero"), MovementDisplay.MOVE_EVADE); //$NON-NLS-1$       
+        
+        aeromenu.addSeparator();
+        moveTurnLeft = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveTurnLeft"), MovementDisplay.MOVE_TURN_LEFT); //$NON-NLS-1$
+        moveTurnRight = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveTurnRight"), MovementDisplay.MOVE_TURN_RIGHT); //$NON-NLS-1$
+        moveThrust = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveThrust"), MovementDisplay.MOVE_THRUST); //$NON-NLS-1$
+        moveYaw = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveYaw"), MovementDisplay.MOVE_YAW); //$NON-NLS-1$
+        moveEndOver = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveEndOver"), MovementDisplay.MOVE_END_OVER); //$NON-NLS-1$
+        
+        menu.addSeparator();
+        menu.add(aeromenu);
         
         // Create the Special sub-menu.
         submenu = new Menu(Messages.getString("CommonMenuBar.SpecialMenu")); //$NON-NLS-1$
@@ -447,12 +471,15 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         moveUnload = createMenuItem(
                 submenu,
                 Messages.getString("CommonMenuBar.MoveUnload"), MovementDisplay.MOVE_UNLOAD); //$NON-NLS-1$
+        moveLaunch = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveLaunch"), MovementDisplay.MOVE_LAUNCH); //$NON-NLS-1$
+        moveRecover = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveRecover"), MovementDisplay.MOVE_RECOVER); //$NON-NLS-1$
         submenu.addSeparator();
         moveCharge = createMenuItem(
                 submenu,
                 Messages.getString("CommonMenuBar.MoveCharge"), MovementDisplay.MOVE_CHARGE); //$NON-NLS-1$
         moveDFA = createMenuItem(submenu, Messages
                 .getString("CommonMenuBar.MoveDeth"), MovementDisplay.MOVE_DFA); //$NON-NLS-1$
+        moveRam = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveRam"), MovementDisplay.MOVE_RAM); //$NON-NLS-1$
         submenu.addSeparator();
         moveFlee = createMenuItem(submenu, Messages
                 .getString("CommonMenuBar.MoveFlee"), MovementDisplay.MOVE_FLEE); //$NON-NLS-1$
@@ -475,6 +502,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         moveLayMine = createMenuItem(
                 submenu,
                 Messages.getString("CommonMenuBar.moveLayMine"), MovementDisplay.MOVE_LAY_MINE); //$NON-NLS-1$
+        moveDump = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveDump"), MovementDisplay.MOVE_DUMP); //$NON-NLS-1$ 
         submenu.addSeparator();
         moveLAMmechMode = createMenuItem(
                 submenu,
@@ -485,28 +513,10 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         moveLAMaircraftMode = createMenuItem(
                 submenu,
                 Messages.getString("CommonMenuBar.moveLAMaircraftMode"), MovementDisplay.MOVE_MODE_AIRCRAFT); //$NON-NLS-1$
-
-        moveAcc = createMenuItem(menu, Messages.getString("CommonMenuBar.moveAcc"), MovementDisplay.MOVE_ACC); //$NON-NLS-1$
-        moveDec = createMenuItem(menu, Messages.getString("CommonMenuBar.moveDec"), MovementDisplay.MOVE_DEC); //$NON-NLS-1$
-        moveAccN = createMenuItem(menu, Messages.getString("CommonMenuBar.moveAccN"), MovementDisplay.MOVE_ACCN); //$NON-NLS-1$
-        moveDecN = createMenuItem(menu, Messages.getString("CommonMenuBar.moveDecN"), MovementDisplay.MOVE_DECN); //$NON-NLS-1$
-        moveEvade = createMenuItem(menu, Messages.getString("CommonMenuBar.moveAcc"), MovementDisplay.MOVE_EVADE); //$NON-NLS-1$
-        moveRoll = createMenuItem(menu, Messages.getString("CommonMenuBar.moveRoll"), MovementDisplay.MOVE_ROLL); //$NON-NLS-1$
-        moveLaunch = createMenuItem(menu, Messages.getString("CommonMenuBar.moveLaunch"), MovementDisplay.MOVE_LAUNCH); //$NON-NLS-1$
-        moveRecover = createMenuItem(menu, Messages.getString("CommonMenuBar.moveRecover"), MovementDisplay.MOVE_RECOVER); //$NON-NLS-1$
-        moveDump = createMenuItem(menu, Messages.getString("CommonMenuBar.moveDump"), MovementDisplay.MOVE_DUMP); //$NON-NLS-1$
-        moveRam = createMenuItem(menu, Messages.getString("CommonMenuBar.moveRam"), MovementDisplay.MOVE_RAM); //$NON-NLS-1$
-        moveHover = createMenuItem(menu, Messages.getString("CommonMenuBar.moveHover"), MovementDisplay.MOVE_HOVER); //$NON-NLS-1$
-        moveManeuver = createMenuItem(menu, Messages.getString("CommonMenuBar.moveManeuver"), MovementDisplay.MOVE_MANEUVER); //$NON-NLS-1$
-        moveTurnLeft = createMenuItem(menu, Messages.getString("CommonMenuBar.moveTurnLeft"), MovementDisplay.MOVE_TURN_LEFT); //$NON-NLS-1$
-        moveTurnRight = createMenuItem(menu, Messages.getString("CommonMenuBar.moveTurnRight"), MovementDisplay.MOVE_TURN_RIGHT); //$NON-NLS-1$
-        moveThrust = createMenuItem(menu, Messages.getString("CommonMenuBar.moveThrust"), MovementDisplay.MOVE_THRUST); //$NON-NLS-1$
-        moveYaw = createMenuItem(menu, Messages.getString("CommonMenuBar.moveYaw"), MovementDisplay.MOVE_YAW); //$NON-NLS-1$
-        moveEndOver = createMenuItem(menu, Messages.getString("CommonMenuBar.moveEndOver"), MovementDisplay.MOVE_END_OVER); //$NON-NLS-1$
-        
+      
         menu.addSeparator();
         menu.add(submenu);
-
+        
         // Add the cancel button.
         menu.addSeparator();
         moveNext = createMenuItem(
@@ -1011,6 +1021,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     }
     public synchronized void setMoveEvadeEnabled(boolean enabled) {
         moveEvade.setEnabled(enabled);
+    }
+    public synchronized void setMoveEvadeAeroEnabled(boolean enabled) {
+        moveEvadeAero.setEnabled(enabled);
     }
     public synchronized void setMoveRollEnabled(boolean enabled) {
         moveRoll.setEnabled(enabled);

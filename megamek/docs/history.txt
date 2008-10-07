@@ -79,6 +79,10 @@ v0.33.33-dev (SVN)
 + Data 2113425: Revised WS gifs and mechset based on errors
 + Data 2127520: Some missing unit GIFs
 + Added Pariah unit files
++ Bug: Infantry with 0 walk MP but some run MP can't move (this can happen with
+    TacOps weather conditions
++ Added image for Manteuffel tank
+
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

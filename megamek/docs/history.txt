@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.33-dev (SVN)
+v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's
 + Bug: Cluster artillery doing reduced damage against units in woods.
 + Bug: Mine Field Delievery Menu option not showing up for MML launchers

@@ -654,7 +654,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             buttonsAero.add(butAccN);
             buttonsAero.add(butDecN);
             buttonsAero.add(butRoll);
-            buttonsAero.add(butEvade);
+            buttonsAero.add(butEvadeAero);
             buttonsAero.add(butRam);
             buttonsAero.add(butLower);
             buttonsAero.add(butRaise);

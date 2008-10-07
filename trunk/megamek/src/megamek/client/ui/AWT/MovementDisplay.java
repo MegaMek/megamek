@@ -824,7 +824,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         // ^-- I suppose these should really be methods, a-la
         // Entity.canCharge(), Entity.canDFA()...
 
-        setWalkEnabled(!ce.isImmobile() && ce.getWalkMP() > 0 && !ce.isStuck());
+        setWalkEnabled(!ce.isImmobile()
+                && (ce.getWalkMP() > 0 || ce.getRunMP() > 0) && !ce.isStuck());
         setJumpEnabled(!isAero && !ce.isImmobile() && ce.getJumpMP() > 0 && !(ce.isStuck() && !ce.canUnstickByJumping()));
         setSwimEnabled(!isAero && !ce.isImmobile() && ce.hasUMU() && client.game.getBoard().getHex(ce.getPosition()).containsTerrain(Terrains.WATER));
         setBackUpEnabled(butWalk.isEnabled() && !isAero);
@@ -2880,10 +2881,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
         } else if (ev.getActionCommand().equals(MOVE_UNJAM)) {
-            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_CHARGE || gear == MovementDisplay.GEAR_DFA || cmd.getMpUsed() > ce.getWalkMP() || gear == MovementDisplay.GEAR_SWIM || gear == MovementDisplay.GEAR_RAM) {
+            if (gear == MovementDisplay.GEAR_JUMP
+                    || gear == MovementDisplay.GEAR_CHARGE
+                    || gear == MovementDisplay.GEAR_DFA
+                    || cmd.getMpUsed() > ce.getWalkMP()
+                    || gear == MovementDisplay.GEAR_SWIM
+                    || gear == MovementDisplay.GEAR_RAM) {
                 // in the wrong gear
-                // clearAllMoves();
-                // gear = Compute.GEAR_LAND;
                 setUnjamEnabled(false);
             } else {
                 cmd.addStep(MovePath.STEP_UNJAM_RAC);

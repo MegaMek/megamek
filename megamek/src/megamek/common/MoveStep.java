@@ -1375,31 +1375,31 @@ public class MoveStep implements Serializable {
         // guilty until proven innocent
         movementType = IEntityMovementType.MOVE_ILLEGAL;
 
-           //AERO STUFF
+        //AERO STUFF
         //I am going to put in a whole seperate section for Aeros and just return from it
-        if(entity instanceof Aero) {
+        if (entity instanceof Aero) {
             int tmpSafeTh = entity.getWalkMP();
             Aero a = (Aero)entity;
                 
             //if the vessel is "immobile" due to shutdown or pilot black out then all moves are illegal
-            if(a.isImmobile()) {
+            if (a.isImmobile()) {
                 return;
             }
             
             //can't let players do an illegal move and use that to go less than 
             //velocity
-            if( !isFirstStep() && prev.getMovementType() == IEntityMovementType.MOVE_ILLEGAL )
+            if ( !isFirstStep() && prev.getMovementType() == IEntityMovementType.MOVE_ILLEGAL)
                 return;
             
             //check the fuel requirements
-            if(game.getOptions().booleanOption("fuel_consumption")) {              
+            if(game.getOptions().booleanOption("fuel_consumption")) {
                 int fuelUsed = this.mpUsed + Math.max(this.mpUsed - a.getWalkMP(), 0);
                 if(fuelUsed > a.getFuel()) {
                     return;
-                }                
+                }
             }
             
-            if( type == MovePath.STEP_ACC || type == MovePath.STEP_DEC ) {
+            if (type == MovePath.STEP_ACC || type == MovePath.STEP_DEC) {
                 //either the previous had to be acceleration or deceleration or this is the first
                 //in atmosphere, acceleration can happen later as a result of elevation change
                 //I think I can safely comment this out, because acc/dec should be appropriately
@@ -1418,7 +1418,7 @@ public class MoveStep implements Serializable {
             }
             
             //unless velocity is zero ASFs must move forward one hex before making turns
-            if(!game.useVectorMove() && !isManeuver() && 
+            if (!game.useVectorMove() && !isManeuver() && 
                     !(game.getBoard().inAtmosphere() 
                             && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum())) &&
                     distance == 0 && velocity != 0 && 
@@ -1427,16 +1427,18 @@ public class MoveStep implements Serializable {
             }
             
             //if in atmosphere, then they cannot turn under any circumstances in the first hex
-            if(game.getBoard().inAtmosphere() && distance == 0  && !isManeuver()
+            if (game.getBoard().inAtmosphere() && distance == 0  && !isManeuver()
                     && !(game.getBoard().inAtmosphere() && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum())) && 
                     (type == MovePath.STEP_TURN_LEFT || type == MovePath.STEP_TURN_RIGHT)) {
                 return;
             }
             
             //no more than two turns in one hex unless velocity is zero for anything except ASF
-            if( !game.useVectorMove() && !isManeuver() &&
-                    !(game.getBoard().inAtmosphere() && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum())) &&
-                    a instanceof SmallCraft && velocity != 0 && getNTurns() > 2 ) {
+            if (!game.useVectorMove() && !isManeuver()
+                    && !(game.getBoard().inAtmosphere()
+                    && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()))
+                    && a instanceof SmallCraft && velocity != 0
+                    && getNTurns() > 2) {
                 return;
             }
             
@@ -1447,19 +1449,21 @@ public class MoveStep implements Serializable {
             }
 
             //if in atmosphere then only one turn no matter what
-            if( game.getBoard().inAtmosphere() && getNTurns() > 1 && !isManeuver() && 
-                    !(game.getBoard().inAtmosphere() && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()))) {
+            if( game.getBoard().inAtmosphere() && getNTurns() > 1 && !isManeuver()
+                    && !(game.getBoard().inAtmosphere()
+                            && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()))) {
                 return;
             }
             
             //conventional fighters cannot use thrust to get extra turns
-            if(a instanceof ConvFighter && 
+            if (a instanceof ConvFighter && 
                     (type == MovePath.STEP_TURN_LEFT || type == MovePath.STEP_TURN_RIGHT)
                     && !prev.hasFreeTurn() ) {
                 return;
             }
             
-            if(type == MovePath.STEP_FORWARDS && game.getBoard().inAtmosphere() && !a.isOutControl()) {
+            if (type == MovePath.STEP_FORWARDS && game.getBoard().inAtmosphere()
+                    && !a.isOutControl()) {
                 IHex desth = game.getBoard().getHex(this.getPosition());
                 if (elevation<=desth.ceiling()) {
                     return; //can't fly into a cliff face or woods (unless out of control)
@@ -1479,39 +1483,41 @@ public class MoveStep implements Serializable {
             */
             
             //check for thruster damage
-            if(type == MovePath.STEP_TURN_LEFT && a.getRightThrustHits() > 2 && 
-                    !(game.getBoard().inAtmosphere() && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()))) 
+            if (type == MovePath.STEP_TURN_LEFT && a.getRightThrustHits() > 2
+                    && !(game.getBoard().inAtmosphere()
+                            && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()))) 
                 return;
-            if(type == MovePath.STEP_TURN_RIGHT && a.getLeftThrustHits() > 2 && 
-                    !(game.getBoard().inAtmosphere() && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum())))
+            if (type == MovePath.STEP_TURN_RIGHT && a.getLeftThrustHits() > 2
+                    && !(game.getBoard().inAtmosphere()
+                            && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum())))
                 return;
             
             //no moves after launching fighters
-            if(!isFirstStep() && prev.getType() == MovePath.STEP_LAUNCH) {
+            if (!isFirstStep() && prev.getType() == MovePath.STEP_LAUNCH) {
                 return;
             }
             
             //no moves after being recovered
-            if(!isFirstStep() && prev.getType() == MovePath.STEP_RECOVER) {
+            if (!isFirstStep() && prev.getType() == MovePath.STEP_RECOVER) {
                 return;
             }
             
             //can only use safe thrust when ammo (or bomb) dumping
             //(unless out of control?)
             boolean bDumping = a.isDumpingBombs();
-            for(Mounted mo : entity.getAmmo()) {
+            for (Mounted mo : entity.getAmmo()) {
                 if (mo.isDumping()) {
                     bDumping = true;
                     break;
                 }
             }
             
-            if(bDumping && getMpUsed() > tmpSafeTh && !a.isRandomMove()) {
+            if (bDumping && getMpUsed() > tmpSafeTh && !a.isRandomMove()) {
                 return;
             }
             
             //check to make sure there is velocity left to spend
-            if(getVelocityLeft() >= 0 || (game.getBoard().inAtmosphere() 
+            if (getVelocityLeft() >= 0 || (game.getBoard().inAtmosphere() 
                     && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()))) {
                 if (getMpUsed() <= tmpSafeTh) {
                     movementType = IEntityMovementType.MOVE_SAFE_THRUST;
@@ -1634,6 +1640,11 @@ public class MoveStep implements Serializable {
                 && (getElevation() != 0)
                 && !(parent.getEntity() instanceof VTOL)) {
             tmpWalkMP = entity.getJumpMP();
+        }
+        
+        // infantry can have 0 walk, and some run MP due to weather
+        if (isInfantry && tmpWalkMP == 0 && parent.getMpUsed() <= entity.getRunMP()) {
+            movementType = IEntityMovementType.MOVE_RUN;
         }
         // check for valid walk/run mp
         if (!parent.isJumping() && !entity.isStuck() && tmpWalkMP > 0
@@ -2187,7 +2198,8 @@ public class MoveStep implements Serializable {
         }
         if (bDumping
                 && (movementType == IEntityMovementType.MOVE_RUN
-                        || movementType == IEntityMovementType.MOVE_VTOL_RUN || movementType == IEntityMovementType.MOVE_JUMP)) {
+                        || movementType == IEntityMovementType.MOVE_VTOL_RUN
+                        || movementType == IEntityMovementType.MOVE_JUMP)) {
             return false;
         }
 

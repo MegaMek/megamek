@@ -362,8 +362,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
             clientgui.setDisplayVisible(true);
         }
 
+        GameTurn turn = client.getMyTurn();
         // There's special processing for triggering AP Pods.
-        if (client.game.getTurn() instanceof GameTurn.TriggerAPPodTurn && null != ce()) {
+        if (turn instanceof GameTurn.TriggerAPPodTurn && null != ce()) {
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui.getFrame(), ce());
             dialog.setVisible(true);
@@ -373,10 +374,10 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
                 attacks.addElement(actions.nextElement());
             }
             ready();
-        } else if (client.game.getTurn() instanceof GameTurn.TriggerBPodTurn && null != ce()) {
+        } else if (turn instanceof GameTurn.TriggerBPodTurn && null != ce()) {
             disableButtons();
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
-                    ((GameTurn.TriggerBPodTurn) client.game.getTurn()).getAttackType());
+                    ((GameTurn.TriggerBPodTurn) turn).getAttackType());
             dialog.setVisible(true);
             attacks.removeAllElements();
             Enumeration<TriggerBPodAction> actions = dialog.getActions();
@@ -496,8 +497,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
         // Clear the menu bar.
         clientgui.getMenuBar().setEntity(null);
 
-        // close aimed shot display, if any
-
+        endMyTurn();
     }
 
     private void doSearchlight() {
@@ -912,12 +912,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
         }
 
         if (client.game.getPhase() == phase) {
-            endMyTurn();
 
             if (client.isMyTurn()) {
-                beginMyTurn();
+            	if(cen==Entity.NONE)
+            		beginMyTurn();
                 setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_your_turn")); //$NON-NLS-1$
             } else {
+                endMyTurn();
                 setStatusBarText(Messages
                         .getString(
                                 "TargetingPhaseDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
@@ -1145,7 +1146,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
 
         Entity e = client.game.getEntity(b.getEntityId());
         if (client.isMyTurn()) {
-            if (client.game.getTurn().isValidEntity(e, client.game)) {
+            if (client.getMyTurn().isValidEntity(e, client.game)) {
                 selectEntity(e.getId());
             }
         } else {

@@ -70,19 +70,13 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
-        ItemListener, BoardViewListener, GameListener, DoneButtoned,
-        Distractable {
+        ItemListener, BoardViewListener, GameListener, DoneButtoned {
     /**
      * 
      */
     private static final long serialVersionUID = -2899398109433232077L;
-
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
 
     Client client;
     private ClientGUI clientgui;
@@ -1884,27 +1878,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             return client;
         }
         return c;
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     * 
-     * @return <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     * 
-     * @param distracted <code>true</code> if the listener should ignore
-     *            events <code>false</code> if the listener should pay
-     *            attention again. Events that occured while the listener was
-     *            distracted NOT going to be processed.
-     */
-    public void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**

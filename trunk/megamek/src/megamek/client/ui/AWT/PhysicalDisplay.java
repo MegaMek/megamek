@@ -73,20 +73,15 @@ import megamek.common.actions.TripAttackAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
 public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         GameListener, ActionListener, DoneButtoned, KeyListener,
-        BoardViewListener, Distractable {
+        BoardViewListener {
 
     /**
      * 
      */
     private static final long serialVersionUID = -3621285458197917442L;
-
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
 
     public static final String PHYSICAL_PUNCH = "punch"; //$NON-NLS-1$
     public static final String PHYSICAL_KICK = "kick"; //$NON-NLS-1$
@@ -390,10 +385,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Does turn start stuff
      */
     private void beginMyTurn() {
+    	GameTurn turn = client.getMyTurn();
         // There's special processing for countering break grapple.
-        if (client.game.getTurn() instanceof GameTurn.CounterGrappleTurn) {
+        if (turn instanceof GameTurn.CounterGrappleTurn) {
             disableButtons();
-            selectEntity(((GameTurn.CounterGrappleTurn) client.game.getTurn())
+            selectEntity(((GameTurn.CounterGrappleTurn) turn)
                     .getEntityNum());
             grapple(true);
             ready();
@@ -474,6 +470,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         attacks.removeAllElements();
         // close aimed shot display, if any
         ash.closeDialog();
+        endMyTurn();
     }
 
     /**
@@ -1428,13 +1425,14 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (client.game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
-            endMyTurn();
 
             if (client.isMyTurn()) {
-                beginMyTurn();
+                if(cen==Entity.NONE)
+                	beginMyTurn();
                 setStatusBarText(Messages
                         .getString("PhysicalDisplay.its_your_turn")); //$NON-NLS-1$
             } else {
+                endMyTurn();
                 setStatusBarText(Messages
                         .getString(
                                 "PhysicalDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
@@ -1559,7 +1557,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
 
         Entity e = client.game.getEntity(b.getEntityId());
         if (client.isMyTurn()) {
-            if (client.game.getTurn().isValidEntity(e, client.game)) {
+            if (client.getMyTurn().isValidEntity(e, client.game)) {
                 selectEntity(e.getId());
             }
         } else {
@@ -1636,27 +1634,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     private void setSearchlightEnabled(boolean enabled) {
         butSearchlight.setEnabled(enabled);
         clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     * 
-     * @return <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     * 
-     * @param distract <code>true</code> if the listener should ignore events
-     *            <code>false</code> if the listener should pay attention
-     *            again. Events that occured while the listener was distracted
-     *            NOT going to be processed.
-     */
-    public void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**

@@ -986,7 +986,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (canSelectEntities()) {
             for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
                 final Entity entity = i.nextElement();
-                if (client.game.getTurn().isValidEntity(entity, client.game)) {
+                if (client.getMyTurn().isValidEntity(entity, client.game)) {
                     popup.add(new SelectMenuItem(entity));
                     needsSeparator = true;
                 }

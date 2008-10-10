@@ -1453,7 +1453,16 @@ public class Server implements Runnable {
         // The "isNormalTurn" flag is checking to see if any non-Infantry
         // or non-Protomech units can move during the current turn.
         boolean turnsChanged = false;
+        boolean outOfOrder = false;
         GameTurn turn = game.getTurn();
+        if(game.isPhaseSimultaneous() && !turn.isValid(entityUsed.getOwnerId(), game)) {
+        	//turn played out of order
+        	outOfOrder = true;
+        	entityUsed.setDone(false);
+        	game.removeFirstTurnFor(entityUsed);
+        	entityUsed.setDone(true);
+        	turnsChanged = true;
+        }
         final int playerId = null == entityUsed ? Player.PLAYER_NONE : entityUsed.getOwnerId();
         boolean infMoved = entityUsed instanceof Infantry;
         boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi") && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT || game.getPhase() == IGame.Phase.PHASE_INITIATIVE);
@@ -1556,7 +1565,11 @@ public class Server implements Runnable {
         }
 
         // move along
-        changeToNextTurn();
+        if(outOfOrder) {
+       		send(createTurnIndexPacket());
+        } else {
+        	changeToNextTurn();
+        }
     }
 
     /**
@@ -7969,8 +7982,14 @@ public class Server implements Runnable {
         }
 
         // can this player/entity act right now?
-        if (!game.getTurn().isValid(connId, entity, game)) {
+        GameTurn turn = game.getTurn();
+        if(game.isPhaseSimultaneous()) {
+        	turn = game.getTurnForPlayer(connId);
+        }
+        if (turn==null || !turn.isValid(connId, entity, game)) {
             System.err.println("error: server got invalid attack packet");
+            send(connId, createTurnVectorPacket());
+            send(connId, createTurnIndexPacket());
             return;
         }
 
@@ -8138,9 +8157,19 @@ public class Server implements Runnable {
         }
         entityUpdate(entity.getId());
 
-        // update all players on the attacks. Don't worry about pushes being a
-        // "charge" attack. It doesn't matter to the client.
-        send(createAttackPacket(vector, 0));
+        Packet p = createAttackPacket(vector,0);
+        if(game.isPhaseSimultaneous()) {
+        	// Update attack only to player who declared it & observers
+        	for(Player player:game.getPlayersVector()) {
+        		if(player.canSeeAll() || player.isObserver() || entity.getOwnerId()==player.getId()) {
+        			send(player.getId(),p);
+        		}
+        	}
+        } else {
+	        // update all players on the attacks. Don't worry about pushes being a
+	        // "charge" attack. It doesn't matter to the client.
+	        send(p);
+        }
     }
 
     /**

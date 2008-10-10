@@ -160,21 +160,28 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(advancedGroundMovement, "tacops_attempting_stand", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_careful_stand", false); //$NON-NLS-1$
 
+        IBasicOptionGroup initiative = addGroup("initiative"); //$NON-NLS-1$
+        addOption(initiative, "individual_initiative", false); //$NON-NLS-1$
+        addOption(initiative, "inf_move_even", false); //$NON-NLS-1$
+        addOption(initiative, "inf_deploy_even", false); //$NON-NLS-1$
+        addOption(initiative, "inf_move_later", false); //$NON-NLS-1$
+        addOption(initiative, "inf_move_multi", false); //$NON-NLS-1$
+        addOption(initiative, "protos_move_even", false); //$NON-NLS-1$
+        addOption(initiative, "protos_deploy_even", false); //$NON-NLS-1$
+        addOption(initiative, "protos_move_later", false); //$NON-NLS-1$
+        addOption(initiative, "protos_move_multi", false); //$NON-NLS-1$
+        addOption(initiative, "inf_proto_move_multi", 3); //$NON-NLS-1$
+        //addOption(initiative, "simultaneous_deployment", false); //$NON-NLS-1$
+        addOption(initiative, "simultaneous_targeting", false); //$NON-NLS-1$
+        //addOption(initiative, "simultaneous_movement", false); //$NON-NLS-1$
+        addOption(initiative, "simultaneous_firing", false); //$NON-NLS-1$
+        addOption(initiative, "simultaneous_physical", false); //$NON-NLS-1$
+
         IBasicOptionGroup ruleBreakers = addGroup("ruleBreakers"); //$NON-NLS-1$
         addOption(ruleBreakers, "no_tac", false); //$NON-NLS-1$
         addOption(ruleBreakers, "rpg_gunnery", false); //$NON-NLS-1$
         addOption(ruleBreakers, "no_immobile_vehicles", false); //$NON-NLS-1$
         addOption(ruleBreakers, "vehicles_can_eject", false); //$NON-NLS-1$
-        addOption(ruleBreakers, "individual_initiative", false); //$NON-NLS-1$
-        addOption(ruleBreakers, "inf_move_even", false); //$NON-NLS-1$
-        addOption(ruleBreakers, "inf_deploy_even", false); //$NON-NLS-1$
-        addOption(ruleBreakers, "inf_move_later", false); //$NON-NLS-1$
-        addOption(ruleBreakers, "inf_move_multi", false); //$NON-NLS-1$
-        addOption(ruleBreakers, "protos_move_even", false); //$NON-NLS-1$
-        addOption(ruleBreakers, "protos_deploy_even", false); //$NON-NLS-1$
-        addOption(ruleBreakers, "protos_move_later", false); //$NON-NLS-1$
-        addOption(ruleBreakers, "protos_move_multi", false); //$NON-NLS-1$
-        addOption(ruleBreakers, "inf_proto_move_multi", 3); //$NON-NLS-1$
         addOption(ruleBreakers, "blind_drop", false); //$NON-NLS-1$
         addOption(ruleBreakers, "real_blind_drop", false); //$NON-NLS-1$
         addOption(ruleBreakers, "clan_ignore_eq_limits", false); //$NON-NLS-1$

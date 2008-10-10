@@ -41,19 +41,14 @@ import megamek.common.Player;
 import megamek.common.Terrains;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
 public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
         BoardViewListener, ActionListener, DoneButtoned, KeyListener,
-        GameListener, Distractable {
+        GameListener {
     /**
      * 
      */
     private static final long serialVersionUID = 1471981663393324556L;
-
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
 
     // Action command names
     public static final String DEPLOY_MINE_CONV = "deployMineConv"; //$NON-NLS-1$
@@ -610,27 +605,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
     private void setRemoveMineEnabled(boolean enable) {
         butRemove.setEnabled(enable);
         //clientgui.getMenuBar().setRemoveMineEnabled(enable);
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     * 
-     * @return <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     * 
-     * @param distract <code>true</code> if the listener should ignore events
-     *            <code>false</code> if the listener should pay attention
-     *            again. Events that occured while the listener was distracted
-     *            NOT going to be processed.
-     */
-    public void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**

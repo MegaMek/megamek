@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2008 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -81,19 +81,15 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
         BoardViewListener, GameListener, ActionListener, DoneButtoned,
-        KeyListener, ItemListener, Distractable {
+        KeyListener, ItemListener {
     /**
      * 
      */
     private static final long serialVersionUID = 1270378753030784714L;
 
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
 
     private static final int NUM_BUTTON_LAYOUTS = 2;
 
@@ -440,8 +436,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             clientgui.setDisplayVisible(true);
         }
 
+        GameTurn turn = client.getMyTurn();
         // There's special processing for triggering AP Pods.
-        if (client.game.getTurn() instanceof GameTurn.TriggerAPPodTurn
+        if (turn instanceof GameTurn.TriggerAPPodTurn
                 && null != ce()) {
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui
@@ -453,11 +450,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 attacks.addElement(actions.nextElement());
             }
             ready();
-        } else if (client.game.getTurn() instanceof GameTurn.TriggerBPodTurn
+        } else if (turn instanceof GameTurn.TriggerBPodTurn
                 && null != ce()) {
             disableButtons();
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
-                    ((GameTurn.TriggerBPodTurn)client.game.getTurn()).getAttackType());
+                    ((GameTurn.TriggerBPodTurn)turn).getAttackType());
             dialog.setVisible(true);
             attacks.removeAllElements();
             Enumeration<EntityAction> actions = dialog.getActions();
@@ -721,6 +718,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // close aimed shot display, if any
         ash.closeDialog();
+        
+        endMyTurn();
     }
 
     private void doClearTurret() {
@@ -1249,13 +1248,14 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (client.game.getPhase() == IGame.Phase.PHASE_FIRING) {
-            endMyTurn();
 
             if (client.isMyTurn()) {
-                beginMyTurn();
+                if(cen==Entity.NONE)
+                	beginMyTurn();
                 setStatusBarText(Messages
                         .getString("FiringDisplay.its_your_turn")); //$NON-NLS-1$
             } else {
+                endMyTurn();
                 setStatusBarText(Messages
                         .getString(
                                 "FiringDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
@@ -1542,7 +1542,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         Entity e = client.game.getEntity(b.getEntityId());
         if (client.isMyTurn()) {
-            if (client.game.getTurn().isValidEntity(e, client.game)) {
+            if (client.getMyTurn().isValidEntity(e, client.game)) {
                 selectEntity(e.getId());
             }
         } else {
@@ -1909,28 +1909,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             aimingAt = icb.getIndex();
             updateTarget();
         }
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     * 
-     * @return <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     * 
-     * @param distracted
-     *            <code>true</code> if the listener should ignore events
-     *            <code>false</code> if the listener should pay attention
-     *            again. Events that occured while the listener was distracted
-     *            NOT going to be processed.
-     */
-    public void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**

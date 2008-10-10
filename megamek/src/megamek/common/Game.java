@@ -140,7 +140,7 @@ public class Game implements Serializable, IGame {
     // internal integer value for an external game id link
     private int externalGameId = 0;
 
-    // victorycondition related stuff
+    // victory condition related stuff
     private Victory victory = null;
     private VictoryFactory vf = new SpaghettiVictoryFactory();
     
@@ -198,7 +198,7 @@ public class Game implements Serializable, IGame {
      * Get the coordinates of all mined hexes in the game.
      * 
      * @return an <code>Enumeration</code> of the <code>Coords</code>
-     *         containing minefilds. This will not be <code>null</code>.
+     *         containing minefields. This will not be <code>null</code>.
      */
     public Enumeration<Coords> getMinedCoords() {
         return minefields.keys();
@@ -597,14 +597,38 @@ public class Game implements Serializable, IGame {
         }
     }
 
+    public boolean isPhaseSimultaneous() {
+		switch (phase) {
+		case PHASE_DEPLOYMENT:
+		case PHASE_MOVEMENT:
+			return false;
+		case PHASE_FIRING:
+			return getOptions().booleanOption("simultaneous_firing");
+		case PHASE_PHYSICAL:
+			return getOptions().booleanOption("simultaneous_physical");
+		case PHASE_TARGETING:
+			return getOptions().booleanOption("simultaneous_targeting");
+		default:
+			return false;
+		}
+	}
+    
     /**
-     * Returns the current GameTurn object
-     */
+	 * Returns the current GameTurn object
+	 */
     public GameTurn getTurn() {
         if (turnIndex < 0 || turnIndex >= turnVector.size()) {
             return null;
         }
         return turnVector.elementAt(turnIndex);
+    }
+    
+    public GameTurn getTurnForPlayer(int pn) {
+    	for(int i=turnIndex;i<turnVector.size();i++) {
+    		GameTurn gt = turnVector.get(i);
+    		if(gt.isValid(pn, this)) return gt;
+    	}
+    	return null;
     }
 
     /** Changes to the next turn, returning it. */
@@ -640,7 +664,7 @@ public class Game implements Serializable, IGame {
 
     /** Sets the current turn index */
     public void setTurnIndex(int turnIndex) {
-        //FIXME: occasionally getTurn() returns null. Handle that case inteligently.
+        //FIXME: occasionally getTurn() returns null. Handle that case intelligently.
         this.turnIndex = turnIndex;
         processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn()
                 .getPlayerNum())));
@@ -1495,7 +1519,7 @@ public class Game implements Serializable, IGame {
      * none can.33
      */
     public Entity getFirstEntity(GameTurn turn) {
-        return getEntity(getFirstEntityNum(getTurn()));
+        return getEntity(getFirstEntityNum(turn));
     }
 
     /**
@@ -1706,6 +1730,21 @@ public class Game implements Serializable, IGame {
         return remaining;
     }
 
+    /**
+     * Removes the first turn found that the specified entity can move in.
+     * Used when a turn is played out of order
+     */
+    public void removeFirstTurnFor(Entity entity) {
+    	assert(phase != Phase.PHASE_MOVEMENT); //special move multi cases ignored
+        for (int i = turnIndex; i < turnVector.size(); i++) {
+            GameTurn turn = turnVector.elementAt(i);
+            if (turn.isValidEntity(entity, this)) {
+                turnVector.removeElementAt(i);
+                break;
+            }
+        }
+
+    }
     /**
      * Removes the last, next turn found that the specified entity can move in.
      * Used when, say, an entity dies mid-phase.

@@ -457,8 +457,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
             clientgui.setDisplayVisible(true);
         }
 
+        GameTurn turn = client.getMyTurn();
         // There's special processing for triggering AP Pods.
-        if (client.game.getTurn() instanceof GameTurn.TriggerAPPodTurn && ce() != null) {
+        if (turn instanceof GameTurn.TriggerAPPodTurn && ce() != null) {
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui.getFrame(), ce());
             dialog.setVisible(true);
@@ -468,10 +469,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
                 attacks.addElement(actions.nextElement());
             }
             ready();
-        } else if (client.game.getTurn() instanceof GameTurn.TriggerBPodTurn && null != ce()) {
+        } else if (turn instanceof GameTurn.TriggerBPodTurn && null != ce()) {
             disableButtons();
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
-                    ((GameTurn.TriggerBPodTurn) client.game.getTurn()).getAttackType());
+                    ((GameTurn.TriggerBPodTurn) turn).getAttackType());
             dialog.setVisible(true);
             attacks.removeAllElements();
             Enumeration<TriggerBPodAction> actions = dialog.getActions();
@@ -592,7 +593,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
             }
         };
 
-        // put the vetor in the TreeSet first to sort it.
+        // put the vector in the TreeSet first to sort it.
         TreeSet<Entity> tree = new TreeSet<Entity>(sortComp);
         visibleTargets = new Entity[vec.size()];
 
@@ -733,6 +734,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
 
         // close aimed shot display, if any
         ash.closeDialog();
+        
+        endMyTurn();
     }
 
     /**
@@ -1245,12 +1248,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
         }
 
         if (client.game.getPhase() == IGame.Phase.PHASE_FIRING) {
-            endMyTurn();
 
             if (client.isMyTurn()) {
-                beginMyTurn();
+            	if(cen==Entity.NONE)
+            		beginMyTurn();
                 setStatusBarText(Messages.getString("FiringDisplay.its_your_turn")); //$NON-NLS-1$
             } else {
+                endMyTurn();
                 setStatusBarText(Messages.getString(
                         "FiringDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
             }
@@ -1528,7 +1532,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
 
         Entity e = client.game.getEntity(b.getEntityId());
         if (client.isMyTurn()) {
-            if (client.game.getTurn().isValidEntity(e, client.game)) {
+            if (client.getMyTurn().isValidEntity(e, client.game)) {
                 selectEntity(e.getId());
             }
         } else {

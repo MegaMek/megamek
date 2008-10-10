@@ -293,7 +293,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
         if (canSelectEntities()) {
             for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
                 final Entity entity = i.nextElement();
-                if (client.game.getTurn().isValidEntity(entity, client.game)) {
+                if (client.getMyTurn().isValidEntity(entity, client.game)) {
                     menu.add(SelectMenuItem(entity));
                 }
             }

@@ -42,19 +42,14 @@ import megamek.common.Player;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         BoardViewListener, ActionListener, DoneButtoned, KeyListener,
-        GameListener, Distractable {
+        GameListener {
     /**
      * 
      */
     private static final long serialVersionUID = 6264922297603128233L;
-
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
 
     // Action command names
     public static final String DEPLOY_TURN = "deployTurn"; //$NON-NLS-1$
@@ -716,27 +711,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     private void setAssaultDropEnabled(boolean enabled) {
         butAssaultDrop.setEnabled(enabled);
         clientgui.getMenuBar().setDeployAssaultDropEnabled(enabled);
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     * 
-     * @return <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     * 
-     * @param distract <code>true</code> if the listener should ignore events
-     *            <code>false</code> if the listener should pay attention
-     *            again. Events that occured while the listener was distracted
-     *            NOT going to be processed.
-     */
-    public void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**

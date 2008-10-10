@@ -351,10 +351,21 @@ public interface IGame {
     public abstract boolean phaseHasTurns(IGame.Phase phase);
 
     /**
+     * @return true if the current phase can be played simultaneously
+     */
+    public abstract boolean isPhaseSimultaneous();
+    
+    /**
      * Returns the current GameTurn object
      */
     public abstract GameTurn getTurn();
 
+    /**
+     * @return the first GameTurn object for the specified player, or null
+     * if the player has no turns to play
+     */
+    public abstract GameTurn getTurnForPlayer(int pn);
+    
     /**
      * Changes to the next turn, returning it.
      */
@@ -786,6 +797,12 @@ public interface IGame {
      * Used when, say, an entity dies mid-phase.
      */
     public abstract void removeTurnFor(Entity entity);
+
+    /**
+     * Removes the first turn found that the specified entity can move in.
+     * Used when a turn is played out of order
+     */
+    public abstract void removeFirstTurnFor(Entity entity);
 
     /**
      * Check each player for the presence of a Battle Armor squad equipped with

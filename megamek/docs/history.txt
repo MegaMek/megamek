@@ -4,6 +4,9 @@ v0.33.34-dev (SVN)
 + Added Hephaestus image
 + Fixed lots of munition techlevel
 + Bug: Mech with left arm and a leg destroyed couldn't get back up
++ Options to play attack phases in parallel to speed up large games
+    Attack arrows aren't shown to your opponent to avoid disadvantage in declaring first
++ Initiative related options including the above given their own tab, since there are a lot of them
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

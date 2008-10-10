@@ -59,8 +59,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
 /*
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is
@@ -68,14 +66,11 @@ import megamek.common.util.DistractableAdapter;
  */
 public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         GameListener, ActionListener, DoneButtoned, KeyListener, ItemListener,
-        BoardViewListener, Distractable {
+        BoardViewListener {
     /**
      * 
      */
     private static final long serialVersionUID = 6948890985035249901L;
-
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
 
     // Action command names
     public static final String FIRE_FIRE = "fireFire"; //$NON-NLS-1$
@@ -357,8 +352,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             clientgui.setDisplayVisible(true);
         }
 
+        GameTurn turn = client.getMyTurn();
         // There's special processing for triggering AP Pods.
-        if (client.game.getTurn() instanceof GameTurn.TriggerAPPodTurn
+        if (turn instanceof GameTurn.TriggerAPPodTurn
                 && null != ce()) {
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui
@@ -370,11 +366,11 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 attacks.addElement(actions.nextElement());
             }
             ready();
-        } else if (client.game.getTurn() instanceof GameTurn.TriggerBPodTurn
+        } else if (turn instanceof GameTurn.TriggerBPodTurn
                 && null != ce()) {
             disableButtons();
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
-            ((GameTurn.TriggerBPodTurn)client.game.getTurn()).getAttackType());
+            ((GameTurn.TriggerBPodTurn)turn).getAttackType());
             dialog.setVisible(true);
             attacks.removeAllElements();
             Enumeration<EntityAction> actions = dialog.getActions();
@@ -498,8 +494,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // Clear the menu bar.
         clientgui.getMenuBar().setEntity(null);
 
-        // close aimed shot display, if any
-
+        endMyTurn();
     }
 
     private void doSearchlight() {
@@ -917,13 +912,14 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (client.game.getPhase() == phase) {
-            endMyTurn();
 
             if (client.isMyTurn()) {
-                beginMyTurn();
+            	if(cen==Entity.NONE)
+            		beginMyTurn();
                 setStatusBarText(Messages
                         .getString("TargetingPhaseDisplay.its_your_turn")); //$NON-NLS-1$
             } else {
+                endMyTurn();
                 setStatusBarText(Messages
                         .getString(
                                 "TargetingPhaseDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
@@ -1159,7 +1155,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         Entity e = client.game.getEntity(b.getEntityId());
         if (client.isMyTurn()) {
-            if (client.game.getTurn().isValidEntity(e, client.game)) {
+            if (client.getMyTurn().isValidEntity(e, client.game)) {
                 selectEntity(e.getId());
             }
         } else {
@@ -1169,27 +1165,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 clientgui.bv.centerOnHex(e.getPosition());
             }
         }
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     * 
-     * @return <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     * 
-     * @param distract <code>true</code> if the listener should ignore events
-     *            <code>false</code> if the listener should pay attention
-     *            again. Events that occured while the listener was distracted
-     *            NOT going to be processed.
-     */
-    public void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**

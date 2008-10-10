@@ -392,10 +392,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Does turn start stuff
      */
     private void beginMyTurn() {
+    	GameTurn turn = client.getMyTurn();
         // There's special processing for countering break grapple.
-        if (client.game.getTurn() instanceof GameTurn.CounterGrappleTurn) {
+        if (turn instanceof GameTurn.CounterGrappleTurn) {
             disableButtons();
-            selectEntity(((GameTurn.CounterGrappleTurn) client.game.getTurn())
+            selectEntity(((GameTurn.CounterGrappleTurn) turn)
                     .getEntityNum());
             grapple(true);
             ready();
@@ -476,6 +477,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         attacks.removeAllElements();
         // close aimed shot display, if any
         ash.closeDialog();
+        endMyTurn();
     }
 
     /**
@@ -1396,13 +1398,14 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (client.game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
-            endMyTurn();
 
             if (client.isMyTurn()) {
-                beginMyTurn();
+            	if(cen==Entity.NONE)
+            		beginMyTurn();
                 setStatusBarText(Messages
                         .getString("PhysicalDisplay.its_your_turn")); //$NON-NLS-1$
             } else {
+                endMyTurn();
                 setStatusBarText(Messages
                         .getString(
                                 "PhysicalDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
@@ -1527,7 +1530,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
 
         Entity e = client.game.getEntity(b.getEntityId());
         if (client.isMyTurn()) {
-            if (client.game.getTurn().isValidEntity(e, client.game)) {
+            if (client.getMyTurn().isValidEntity(e, client.game)) {
                 selectEntity(e.getId());
             }
         } else {

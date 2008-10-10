@@ -322,14 +322,14 @@ public class Client implements IClientCommandHandler {
      * Returns the number of first selectable entity
      */
     public int getFirstEntityNum() {
-        return game.getFirstEntityNum();
+        return game.getFirstEntityNum(getMyTurn());
     }
 
     /**
      * Returns the number of the next selectable entity after the one given
      */
     public int getNextEntityNum(int entityId) {
-        return game.getNextEntityNum(entityId);
+        return game.getNextEntityNum(getMyTurn(), entityId);
     }
 
     /**
@@ -439,7 +439,17 @@ public class Client implements IClientCommandHandler {
      * is it my turn?
      */
     public boolean isMyTurn() {
+    	if(game.isPhaseSimultaneous()) {
+    		return game.getTurnForPlayer(local_pn) != null;
+    	}
         return game.getTurn() != null && game.getTurn().isValid(local_pn, game);
+    }
+    
+    public GameTurn getMyTurn() {
+    	if(game.isPhaseSimultaneous()) {
+    		return game.getTurnForPlayer(local_pn);
+    	}
+    	return game.getTurn();
     }
 
     /**

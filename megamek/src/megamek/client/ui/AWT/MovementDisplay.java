@@ -74,17 +74,13 @@ import megamek.common.actions.RamAttackAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
-public class MovementDisplay extends StatusBarPhaseDisplay implements ActionListener, DoneButtoned, KeyListener, GameListener, BoardViewListener, Distractable {
+public class MovementDisplay extends StatusBarPhaseDisplay implements ActionListener, 
+DoneButtoned, KeyListener, GameListener, BoardViewListener {
     /**
      * 
      */
     private static final long serialVersionUID = 9136822404087057673L;
-
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
 
     private static final int NUM_BUTTON_LAYOUTS = 4;
 
@@ -3629,28 +3625,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
     private void setEndOverEnabled(boolean enabled) {
         butEndOver.setEnabled(enabled);
         clientgui.getMenuBar().setMoveEndOverEnabled(enabled);
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     * 
-     * @return <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     * 
-     * @param distracted
-     *            <code>true</code> if the listener should ignore events
-     *            <code>false</code> if the listener should pay attention
-     *            again. Events that occured while the listener was distracted
-     *            NOT going to be processed.
-     */
-    public void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**

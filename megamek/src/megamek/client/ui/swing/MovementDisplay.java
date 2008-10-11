@@ -35,7 +35,6 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.AWT.Messages;
-import megamek.client.ui.swing.ManeuverChoiceDialog;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Bay;
@@ -75,17 +74,15 @@ import megamek.common.actions.RamAttackAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
-public class MovementDisplay extends StatusBarPhaseDisplay implements ActionListener, DoneButtoned, KeyListener, GameListener, BoardViewListener, Distractable {
+public class MovementDisplay extends StatusBarPhaseDisplay implements ActionListener, DoneButtoned, KeyListener, GameListener, BoardViewListener {
     /**
      * 
      */
     private static final long serialVersionUID = -7246715124042905688L;
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
+
     private static final int NUM_BUTTON_LAYOUTS = 4;
+
     public static final String MOVE_WALK = "moveWalk"; //$NON-NLS-1$
     public static final String MOVE_NEXT = "moveNext"; //$NON-NLS-1$
     public static final String MOVE_JUMP = "moveJump"; //$NON-NLS-1$
@@ -112,12 +109,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
     public static final String MOVE_DIG_IN = "moveDigIn"; //$NON-NLS-1$
     public static final String MOVE_FORTIFY = "moveFortify"; //$NON-NLS-1$
     public static final String MOVE_SHAKE_OFF = "moveShakeOff"; //$NON-NLS-1$
+    public static final String MOVE_MODE_MECH = "moveModeMech"; //$NON-NLS-1$
+    public static final String MOVE_MODE_AIRMECH = "moveModeAirmech"; //$NON-NLS-1$
+    public static final String MOVE_MODE_AIRCRAFT = "moveModeAircraft"; //$NON-NLS-1$
     public static final String MOVE_RECKLESS = "moveReckless"; //$NON-NLS-1$
-    public static final String MOVE_EVADE = "moveEvade"; //$NON-NLS-1$
+    public static final String MOVE_CAREFUL_STAND = "moveCarefulStand"; //$NON-NLS-1$
+    public static final String MOVE_EVADE = "MoveEvade"; //$NON-NLS-1$
     // Aero Movement
     public static final String MOVE_ACC = "MoveAccelerate"; //$NON-NLS-1$
     public static final String MOVE_DEC = "MoveDecelerate"; //$NON-NLS-1$
-    public static final String MOVE_EVADE_AERO = "MoveEvade"; //$NON-NLS-1$
+    public static final String MOVE_EVADE_AERO = "MoveEvadeAero"; //$NON-NLS-1$
     public static final String MOVE_ACCN = "MoveAccNext"; //$NON-NLS-1$
     public static final String MOVE_DECN = "MoveDecNext"; //$NON-NLS-1$
     public static final String MOVE_ROLL = "MoveRoll"; //$NON-NLS-1$
@@ -126,7 +127,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
     public static final String MOVE_DUMP = "MoveDump"; //$NON-NLS-1$
     public static final String MOVE_RAM = "MoveRam"; //$NON-NLS-1$
     public static final String MOVE_HOVER = "MoveHover"; //$NON-NLS-1$
-    public static final String MOVE_MANEUVER = "MoveManevuer"; //$NON-NLS-1$
+    public static final String MOVE_MANEUVER = "MoveManeuver";
     // Aero Vector Movement
     public static final String MOVE_TURN_LEFT = "MoveTurnLeft"; //$NON-NLS-1$
     public static final String MOVE_TURN_RIGHT = "MoveTurnRight"; //$NON-NLS-1$
@@ -2753,12 +2754,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
         } else if (ev.getActionCommand().equals(MOVE_UNJAM)) {
-            if (gear == MovementDisplay.GEAR_JUMP 
-                    || gear == MovementDisplay.GEAR_CHARGE 
-                    || gear == MovementDisplay.GEAR_DFA 
-                    || cmd.getMpUsed() > ce.getWalkMP() 
-                    || gear == MovementDisplay.GEAR_SWIM) {
+            if (gear == MovementDisplay.GEAR_JUMP || 
+                    gear == MovementDisplay.GEAR_CHARGE || 
+                    gear == MovementDisplay.GEAR_DFA || 
+                    cmd.getMpUsed() > ce.getWalkMP() || 
+                    gear == MovementDisplay.GEAR_SWIM || 
+                    gear == MovementDisplay.GEAR_RAM) {
                 // in the wrong gear
+                // clearAllMoves();
+                // gear = Compute.GEAR_LAND;
                 setUnjamEnabled(false);
             } else {
                 cmd.addStep(MovePath.STEP_UNJAM_RAC);
@@ -3451,28 +3455,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
     private void setEndOverEnabled(boolean enabled) {
         butEndOver.setEnabled(enabled);
         clientgui.getMenuBar().setMoveEndOverEnabled(enabled);
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     * 
-     * @return <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     * 
-     * @param distracted
-     *            <code>true</code> if the listener should ignore events
-     *            <code>false</code> if the listener should pay attention
-     *            again. Events that occured while the listener was distracted
-     *            NOT going to be processed.
-     */
-    public void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**

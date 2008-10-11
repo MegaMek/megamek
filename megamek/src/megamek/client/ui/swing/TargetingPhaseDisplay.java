@@ -63,8 +63,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
 /*
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
@@ -72,15 +70,12 @@ import megamek.common.util.DistractableAdapter;
  */
 
 public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements GameListener,
-        ActionListener, DoneButtoned, KeyListener, ItemListener, BoardViewListener, Distractable,
+        ActionListener, DoneButtoned, KeyListener, ItemListener, BoardViewListener,
         ListSelectionListener {
     /**
      * 
      */
     private static final long serialVersionUID = 3441669419807288865L;
-
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
 
     // Action command names
     private static final String FIRE_FIRE = "fireFire"; //$NON-NLS-1$
@@ -1156,27 +1151,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
                 clientgui.bv.centerOnHex(e.getPosition());
             }
         }
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     * 
-     * @return <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     * 
-     * @param distracted
-     *            <code>true</code> if the listener should ignore events <code>false</code> if
-     *            the listener should pay attention again. Events that occured while the listener
-     *            was distracted NOT going to be processed.
-     */
-    public void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**

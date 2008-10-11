@@ -87,19 +87,14 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewListener,
-        GameListener, ActionListener, DoneButtoned, KeyListener, ItemListener, Distractable,
+        GameListener, ActionListener, DoneButtoned, KeyListener, ItemListener,
         ListSelectionListener {
     /**
      * 
      */
     private static final long serialVersionUID = -5586388490027013723L;
-
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
 
     private static final int NUM_BUTTON_LAYOUTS = 2;
 
@@ -805,7 +800,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
     /**
      * Adds a weapon attack with the currently selected weapon to the attack queue.
      */
-    private void fire() {
+    void fire() {
         // get the selected weaponnum
         int weaponNum = clientgui.mechD.wPan.getSelectedWeaponNum();
         Mounted mounted = ce().getEquipment(weaponNum);
@@ -915,7 +910,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
     /**
      * Skips to the next weapon
      */
-    private void nextWeapon() {
+    void nextWeapon() {
         int nextWeapon = ce().getNextWeapon(clientgui.mechD.wPan.getSelectedWeaponNum());
         // if there's no next weapon, forget about it
         if (nextWeapon == -1) {
@@ -1132,7 +1127,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
     /**
      * Torso twist in the proper direction.
      */
-    private void torsoTwist(Coords target) {
+    void torsoTwist(Coords target) {
         int direction = ce().getFacing();
 
         if (target != null)
@@ -1154,7 +1149,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
      *            twisting to the left, 1 if to the right.
      */
 
-    private void torsoTwist(int target) {
+    void torsoTwist(int target) {
         int direction = ce().getSecondaryFacing();
         if (target == 0) {
             clearAttacks();
@@ -1346,7 +1341,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
      * 
      * @param armsFlipped
      */
-    private void updateFlipArms(boolean armsFlipped) {
+    void updateFlipArms(boolean armsFlipped) {
         if (armsFlipped == ce().getArmsFlipped()) {
             return;
         }
@@ -1903,27 +1898,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
             aimingAt = icb.getIndex();
             updateTarget();
         }
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     * 
-     * @return <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     * 
-     * @param distracted
-     *            <code>true</code> if the listener should ignore events <code>false</code> if
-     *            the listener should pay attention again. Events that occured while the listener
-     *            was distracted NOT going to be processed.
-     */
-    public void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**

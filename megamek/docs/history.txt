@@ -15,6 +15,7 @@ v0.33.34-dev (SVN)
 + Bug 2151853: Off Board Artillery and reinforcements get NPEs when checking for buildings
 + Bug 1662069: Bot using MASC too much, especially if it's under threat.
 + Bug 1662074: Bot takes PSRs too often
++ Bug 1967269: Negative damage on accidental charges
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

@@ -367,10 +367,12 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
     public static int getDamageFor(Entity entity, Entity target, boolean tacops, int mos, int hexesMoved) {
         if ( !tacops ) {
+            if (hexesMoved == 0) {
+                hexesMoved = 1;
+            }
             return (int) Math.ceil((entity.getWeight() / 10.0) * (hexesMoved - 1) * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
-        }else {
-            return (int) Math.floor((((target.getWeight() * entity.getWeight()) * hexesMoved) / (target.getWeight() + entity.getWeight())) / 10+mos);
         }
+        return (int) Math.floor((((target.getWeight() * entity.getWeight()) * hexesMoved) / (target.getWeight() + entity.getWeight())) / 10+mos);        
     }
 
     /**

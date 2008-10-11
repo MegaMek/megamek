@@ -796,17 +796,27 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         int drawWidth = view.width / (int) (HEX_WC * scale) + 3;
         int drawHeight = view.height / (int) (HEX_H * scale) + 3;
 
-        /*
-         * // only draw what we came to draw boardGraph.setClip(rect.x - boardRect.x, rect.y -
-         * boardRect.y, rect.width, rect.height); // clear, if we need to if (rect.x < (21*scale)) {
-         * g.clearRect( rect.x - boardRect.x, rect.y - boardRect.y, (int)(21*scale) - rect.x,
-         * rect.height); } if (rect.y < (36*scale)) { g.clearRect( rect.x - boardRect.x, rect.y -
-         * boardRect.y, rect.width, (int)(36*scale) - rect.y); } if (rect.x > boardSize.width -
-         * view.width - (21*scale)) { g.clearRect( boardRect.width - (int)(21*scale), rect.y -
-         * boardRect.y, (int)(21*scale), rect.height); } if (rect.y > boardSize.height - view.height -
-         * (int)(36*scale)) { g.clearRect( rect.x - boardRect.x, boardRect.height - (int)(36*scale),
-         * rect.width, (int)(36*scale)); }
-         */
+      /*  // only draw what we came to draw
+        boardGraph.setClip(rect.x - boardRect.x, rect.y - boardRect.y,
+                rect.width, rect.height);
+
+        // clear, if we need to
+        if (rect.x < (21 * scale)) {
+            boardGraph.clearRect(rect.x - boardRect.x, rect.y - boardRect.y,
+                    (int) (21 * scale) - rect.x, rect.height);
+        }
+        if (rect.y < (36 * scale)) {
+            boardGraph.clearRect(rect.x - boardRect.x, rect.y - boardRect.y,
+                    rect.width, (int) (36 * scale) - rect.y);
+        }
+        if (rect.x > boardSize.width - view.width - (21 * scale)) {
+            boardGraph.clearRect(boardRect.width - (int) (21 * scale), rect.y
+                    - boardRect.y, (int) (21 * scale), rect.height);
+        }
+        if (rect.y > boardSize.height - view.height - (int) (36 * scale)) {
+            boardGraph.clearRect(rect.x - boardRect.x, boardRect.height
+                    - (int) (36 * scale), rect.width, (int) (36 * scale));
+        }*/
         // draw some hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {

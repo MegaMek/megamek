@@ -35,18 +35,13 @@ import javax.swing.JTextArea;
 import megamek.client.Client;
 import megamek.common.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
 public class ReportDisplay extends StatusBarPhaseDisplay implements
-        ActionListener, KeyListener, DoneButtoned, Distractable {
+        ActionListener, KeyListener, DoneButtoned {
     /**
      * 
      */
     private static final long serialVersionUID = 6185643976857892270L;
-
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
 
     // parent game
     public Client client;
@@ -287,27 +282,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
                 client.phaseReport);
         resetButtons();
         rerolled = false;
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     * 
-     * @return <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     * 
-     * @param distracted <code>true</code> if the listener should ignore
-     *            events <code>false</code> if the listener should pay
-     *            attention again. Events that occured while the listener was
-     *            distracted NOT going to be processed.
-     */
-    public void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**

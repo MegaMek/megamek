@@ -37,14 +37,41 @@ import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.util.Distractable;
+import megamek.common.util.DistractableAdapter;
 
-public class AbstractPhaseDisplay extends JPanel implements BoardViewListener,
-        GameListener {
+public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewListener,
+        GameListener, Distractable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 4421205210788230341L;
+
+    // Distraction implementation.
+    protected DistractableAdapter distracted = new DistractableAdapter();
+
+    /**
+     * Determine if the listener is currently distracted.
+     * 
+     * @return <code>true</code> if the listener is ignoring events.
+     */
+    public boolean isIgnoringEvents() {
+        return this.distracted.isIgnoringEvents();
+    }
+
+    /**
+     * Specify if the listener should be distracted.
+     * 
+     * @param distracted
+     *            <code>true</code> if the listener should ignore events
+     *            <code>false</code> if the listener should pay attention
+     *            again. Events that occured while the listener was distracted
+     *            NOT going to be processed.
+     */
+    public void setIgnoringEvents(boolean distracted) {
+        this.distracted.setIgnoringEvents(distracted);
+    }
 
     //
     // BoardListener

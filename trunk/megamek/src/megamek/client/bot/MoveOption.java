@@ -190,6 +190,7 @@ public class MoveOption extends MovePath implements Cloneable {
             this.getStep(0).setDanger(true);
             current.setDanger(true);
         }
+        
         if (current.isDanger()) {
             if (getCEntity().base_psr_odds < .1) {
                 current.setMovementType(IEntityMovementType.MOVE_ILLEGAL);
@@ -429,6 +430,9 @@ public class MoveOption extends MovePath implements Cloneable {
                 }
             }
             double mascMult = Compute.oddsAbove(mascTN) / 100;
+            if (mascMult < 1.0) {
+                this.inDanger = true;
+            }
             retVal *= (mascMult > 0) ? mascMult : 0.01;
         }
         // If getting up is difficult...

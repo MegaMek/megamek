@@ -51,7 +51,6 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -62,18 +61,12 @@ import megamek.client.bot.TestBot;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityListFile;
-import megamek.common.HexTarget;
 import megamek.common.IGame;
-import megamek.common.IHex;
 import megamek.common.MechSummaryCache;
-import megamek.common.MinefieldTarget;
 import megamek.common.Player;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -136,7 +129,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public MiniMap minimap;
 
-    private JPopupMenu popup = new JPopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
+    private MapMenu popup;// = new JPopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
 
     private UnitOverview uo;
 
@@ -916,17 +909,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
-    private boolean canTargetEntities() {
-        return client.isMyTurn()
-                && (curPanel instanceof FiringDisplay || curPanel instanceof PhysicalDisplay || curPanel instanceof TargetingPhaseDisplay);
-    }
-
-    private boolean canSelectEntities() {
-        return client.isMyTurn()
-                && (curPanel instanceof FiringDisplay || curPanel instanceof PhysicalDisplay
-                        || curPanel instanceof MovementDisplay || curPanel instanceof TargetingPhaseDisplay);
-    }
-
     /**
      * Toggles the entity display window
      */
@@ -978,7 +960,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     private boolean fillPopup(Coords coords) {
-        popup.removeAll();
+        popup = new MapMenu(coords,client,curPanel,this);
+        return popup.getHasMenu();
+        /*popup.removeAll();
         boolean retval = false;
         boolean needsSeparator = false;
 
@@ -1083,7 +1067,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 }
             }
         }
-        return retval;
+        return retval;*/
     }
 
     /**
@@ -1294,89 +1278,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void windowOpened(WindowEvent windowEvent) {
-    }
-
-    /**
-     * A menu item that lives to view an entity.
-     */
-    private class ViewMenuItem extends JMenuItem implements ActionListener {
-        /**
-         * 
-         */
-        private static final long serialVersionUID = -666611691422273047L;
-
-        Entity entity;
-
-        public ViewMenuItem(Entity entity) {
-            super(
-                    Messages.getString("ClientGUI.viewMenuItem")
-                            + entity.getDisplayName()
-                            + (entity.isDone() ? " (" + Messages.getString("ClientGUI.doneMenuItem").trim() + ')' : "")); //$NON-NLS-1$
-            this.entity = entity;
-            addActionListener(this);
-        }
-
-        public void actionPerformed(ActionEvent actionEvent) {
-            setDisplayVisible(true);
-            mechD.displayEntity(entity);
-        }
-    }
-
-    /**
-     * A menu item that would really like to select an entity. You can use this during movement,
-     * firing & physical phases. (Deployment would just be silly.)
-     */
-    private class SelectMenuItem extends JMenuItem implements ActionListener {
-        /**
-         * 
-         */
-        private static final long serialVersionUID = 2297987555798437914L;
-
-        Entity entity;
-
-        public SelectMenuItem(Entity entity) {
-            super(Messages.getString("ClientGUI.selectMenuItem") + entity.getDisplayName()); //$NON-NLS-1$
-            this.entity = entity;
-            addActionListener(this);
-        }
-
-        public void actionPerformed(ActionEvent actionEvent) {
-            if (curPanel instanceof MovementDisplay) {
-                ((MovementDisplay) curPanel).selectEntity(entity.getId());
-            } else if (curPanel instanceof FiringDisplay) {
-                ((FiringDisplay) curPanel).selectEntity(entity.getId());
-            } else if (curPanel instanceof PhysicalDisplay) {
-                ((PhysicalDisplay) curPanel).selectEntity(entity.getId());
-            }
-        }
-    }
-
-    /**
-     * A menu item that will target an entity, provided that it's sensible to do so
-     */
-    private class TargetMenuItem extends JMenuItem implements ActionListener {
-        /**
-         * 
-         */
-        private static final long serialVersionUID = -787739862752367595L;
-
-        Targetable target;
-
-        public TargetMenuItem(Targetable t) {
-            super(Messages.getString("ClientGUI.targetMenuItem") + t.getDisplayName()); //$NON-NLS-1$
-            target = t;
-            addActionListener(this);
-        }
-
-        public void actionPerformed(ActionEvent actionEvent) {
-            if (curPanel instanceof FiringDisplay) {
-                ((FiringDisplay) curPanel).target(target);
-            } else if (curPanel instanceof PhysicalDisplay) {
-                ((PhysicalDisplay) curPanel).target(target);
-            } else if (curPanel instanceof TargetingPhaseDisplay) {
-                ((TargetingPhaseDisplay) curPanel).target(target);
-            }
-        }
     }
 
     /**

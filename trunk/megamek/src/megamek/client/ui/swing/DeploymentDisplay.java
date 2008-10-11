@@ -34,7 +34,6 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.AWT.AlertDialog;
-import megamek.client.ui.swing.BoardView1;
 import megamek.client.ui.AWT.Messages;
 import megamek.common.Aero;
 import megamek.common.Board;
@@ -46,18 +45,15 @@ import megamek.common.Player;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         BoardViewListener, ActionListener, DoneButtoned, KeyListener,
-        GameListener, Distractable {
+        GameListener {
     /**
      * 
      */
     private static final long serialVersionUID = -430925219438520710L;
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
+
     // Action command names
     public static final String DEPLOY_TURN = "deployTurn"; //$NON-NLS-1$
     public static final String DEPLOY_NEXT = "deployNext"; //$NON-NLS-1$
@@ -667,27 +663,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     private void setAssaultDropEnabled(boolean enabled) {
         butAssaultDrop.setEnabled(enabled);
         clientgui.getMenuBar().setDeployAssaultDropEnabled(enabled);
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     * 
-     * @return <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     * 
-     * @param distracted <code>true</code> if the listener should ignore
-     *            events <code>false</code> if the listener should pay
-     *            attention again. Events that occured while the listener was
-     *            distracted NOT going to be processed.
-     */
-    public void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**

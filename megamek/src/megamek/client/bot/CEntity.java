@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import megamek.client.Client;
+import megamek.client.ui.SharedUtility;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
@@ -750,9 +752,9 @@ public class CEntity {
         return new Integer(this.entity.getId());
     }
 
-    public MoveOption.Table getAllMoves() {
+    public MoveOption.Table getAllMoves(Client client) {
         if (moves == null) {
-            moves = calculateMoveOptions(this.current);
+            moves = calculateMoveOptions(this.current, client);
         }
         return moves;
     }
@@ -761,18 +763,12 @@ public class CEntity {
      * From the current state, explore based upon an implementation of
      * Dijkstra's algorithm.
      */
-    protected MoveOption.Table calculateMoveOptions(MoveOption base) {
-        ArrayList<MoveOption> possible = new ArrayList<MoveOption>(); // New
-                                                                        // array
-                                                                        // of
-                                                                        // movement
-                                                                        // options
+    protected MoveOption.Table calculateMoveOptions(MoveOption base, Client client) {
+        //New array of movement options
+        ArrayList<MoveOption> possible = new ArrayList<MoveOption>();
         MoveOption.Table discovered = new MoveOption.Table();
 
-        // If this entity can jump, then... what is this doing?
-        // ... I THINK its creating a duplicate of the base movment option, then
-        // adding
-        // a jumping start
+        // Add the seed for jumping if allowed
         if (entity.getJumpMPWithTerrain() > 0) {
             possible.add((base.clone()).addStep(MovePath.STEP_START_JUMP));
         }
@@ -855,6 +851,10 @@ public class CEntity {
                             * next.getMovementheatBuildup();
                 }
             }
+            String pilotChecks = SharedUtility.doPSRCheck(next,client);
+            if (pilotChecks.length()>0) {
+                next.inDanger = true;
+            }
         }
         return discovered;
     }
@@ -862,13 +862,13 @@ public class CEntity {
     /**
      * find all moves that get into dest
      */
-    public ArrayList<MoveOption> findMoves(Coords dest) {
+    public ArrayList<MoveOption> findMoves(Coords dest, Client client) {
         ArrayList<MoveOption> result = new ArrayList<MoveOption>();
         for (int i = 0; i < 6; i++) {
             for (int j = 1; j < 2; j++) {
                 MoveOption.Key key = new MoveOption.Key(dest, i, j);
                 MoveOption es = null;
-                if ((es = getAllMoves().get(key)) != null) {
+                if ((es = getAllMoves(client).get(key)) != null) {
                     result.add(es);
                 }
             }

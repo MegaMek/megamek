@@ -3294,6 +3294,11 @@ public class Compute {
         // Get the Hex at those coordinates.
         final IHex curHex = game.getBoard().getHex(coords);
 
+        if (curHex == null) {
+            // probably off board artillery or reinforcement
+            return false;
+        }
+        
         // The entity can't be inside of a building that isn't there.
         if (!curHex.containsTerrain(Terrains.BLDG_ELEV)) {
             return false;

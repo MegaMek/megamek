@@ -12,6 +12,7 @@ v0.33.34-dev (SVN)
 + Updated some 3050U mechfiles' rules levels
 + Context Menu for Swing
 + Bug 2128994: Artifacts on Swing when scrolling
++ Bug 2151853: Off Board Artillery and reinforcements get NPEs when checking for buildings
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

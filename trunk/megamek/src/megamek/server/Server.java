@@ -20998,19 +20998,21 @@ public class Server implements Runnable {
                 // TODO: implement basements, then fall into it.
                 // ASSUMPTION: we'll let the Mech fall twice: once
                 // during damageEntity() above and once here.
-                floor = entity.getElevation();
-                if (floor > 0 || floor == bridgeEl) {
-                    // ASSUMPTION: PSR to avoid pilot damage
-                    // should use mods for entity damage and
-                    // 20+ points of collapse damage (if any).
-                    PilotingRollData psr = entity.getBasePilotingRoll();
-                    entity.addPilotingModifierForTerrain(psr, coords);
-                    if (damage >= 20) {
-                        psr.addModifier(1, "20+ damage");
+                if (entity instanceof Mech) {
+                    floor = entity.getElevation();
+                    if (floor > 0 || floor == bridgeEl) {
+                        // ASSUMPTION: PSR to avoid pilot damage
+                        // should use mods for entity damage and
+                        // 20+ points of collapse damage (if any).
+                        PilotingRollData psr = entity.getBasePilotingRoll();
+                        entity.addPilotingModifierForTerrain(psr, coords);
+                        if (damage >= 20) {
+                            psr.addModifier(1, "20+ damage");
+                        }
+                        addReport(doEntityFallsInto(entity, coords, coords, psr));
                     }
-                    addReport(doEntityFallsInto(entity, coords, coords, psr));
+                    
                 }
-
                 // Update this entity.
                 // ASSUMPTION: this is the correct thing to do.
                 entityUpdate(entity.getId());

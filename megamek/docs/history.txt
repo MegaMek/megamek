@@ -18,6 +18,7 @@ v0.33.34-dev (SVN)
 + Bug 1967269: Negative damage on accidental charges
 + Bug: non-mech units falling when in collapsing building
 + Commander Initiative
++ IR scanners only detect units with heat on their heat track
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

@@ -1834,7 +1834,6 @@ public class MechDisplay extends BufferedPanel {
                     ((TargetingPhaseDisplay) this.client.curPanel)
                             .updateTarget();
                 }
-
                 // Alert the server of the update.
                 this.client.getClient().sendAmmoChange(entity.getId(),
                         entity.getEquipmentNum(mWeap),
@@ -1848,9 +1847,7 @@ public class MechDisplay extends BufferedPanel {
                 // I need to change the ammo selected
                 displaySelected();
             }
-
         }
-
     }
 
     /**

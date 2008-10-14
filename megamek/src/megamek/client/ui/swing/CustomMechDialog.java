@@ -93,91 +93,152 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
      * 
      */
     private static final long serialVersionUID = -6809436986445582731L;
+
     private JLabel labName = new JLabel(Messages
             .getString("CustomMechDialog.labName"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JTextField fldName = new JTextField(20);
+
     private JLabel labGunnery = new JLabel(Messages
             .getString("CustomMechDialog.labGunnery"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JTextField fldGunnery = new JTextField(3);
+
     private JLabel labGunneryL = new JLabel(Messages
             .getString("CustomMechDialog.labGunneryL"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JTextField fldGunneryL = new JTextField(3);
+
     private JLabel labGunneryM = new JLabel(Messages
             .getString("CustomMechDialog.labGunneryM"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JTextField fldGunneryM = new JTextField(3);
+
     private JLabel labGunneryB = new JLabel(Messages
             .getString("CustomMechDialog.labGunneryB"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JTextField fldGunneryB = new JTextField(3);
+
     private JLabel labPiloting = new JLabel(Messages
             .getString("CustomMechDialog.labPiloting"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JTextField fldPiloting = new JTextField(3);
+
     private JLabel labInit = new JLabel(Messages
             .getString("CustomMechDialog.labInit"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JTextField fldInit = new JTextField(3);
+
+    private JLabel labCommandInit = new JLabel(Messages
+            .getString("CustomMechDialog.labCommandInit"), SwingConstants.RIGHT); //$NON-NLS-1$
+
+    private JTextField fldCommandInit = new JTextField(3);
+
     private JLabel labC3 = new JLabel(Messages
             .getString("CustomMechDialog.labC3"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JComboBox choC3 = new JComboBox();
+
     private int[] entityCorrespondance;
+
     private JLabel labCallsign = new JLabel(Messages
             .getString("CustomMechDialog.labCallsign"), SwingConstants.CENTER); //$NON-NLS-1$
+
     private JLabel labUnitNum = new JLabel(Messages
             .getString("CustomMechDialog.labUnitNum"), SwingConstants.CENTER); //$NON-NLS-1$
+
     private JComboBox choUnitNum = new JComboBox();
+
     private ArrayList<Entity> entityUnitNum = new ArrayList<Entity>();
+
     private JLabel labDeployment = new JLabel(Messages
             .getString("CustomMechDialog.labDeployment"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JComboBox choDeployment = new JComboBox();
+
     private JLabel labAutoEject = new JLabel(Messages
             .getString("CustomMechDialog.labAutoEject"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JCheckBox chAutoEject = new JCheckBox();
+
     private JLabel labSearchlight = new JLabel(Messages
             .getString("CustomMechDialog.labSearchlight"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JCheckBox chSearchlight = new JCheckBox();
+
     private JLabel labCommander = new JLabel(Messages
             .getString("CustomMechDialog.labCommander"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JCheckBox chCommander = new JCheckBox();
 
     private JLabel labOffBoard = new JLabel(Messages
             .getString("CustomMechDialog.labOffBoard"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JCheckBox chOffBoard = new JCheckBox();
+
     private JLabel labOffBoardDirection = new JLabel(
             Messages.getString("CustomMechDialog.labOffBoardDirection"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JComboBox choOffBoardDirection = new JComboBox();
+
     private JLabel labOffBoardDistance = new JLabel(
             Messages.getString("CustomMechDialog.labOffBoardDistance"), SwingConstants.RIGHT); //$NON-NLS-1$
+
     private JTextField fldOffBoardDistance = new JTextField(4);
+
     private JButton butOffBoardDistance = new JButton("0");
 
     private JLabel labTargSys = new JLabel(Messages
             .getString("CustomMechDialog.labTargSys"), SwingConstants.RIGHT);
+
     private JComboBox choTargSys = new JComboBox();
-    
-    private JLabel labStartVelocity = new JLabel(Messages.getString("CustomMechDialog.labStartVelocity"), Label.RIGHT); //$NON-NLS-1$
+
+    private JLabel labStartVelocity = new JLabel(Messages
+            .getString("CustomMechDialog.labStartVelocity"), Label.RIGHT); //$NON-NLS-1$
+
     private JTextField fldStartVelocity = new JTextField(3);
-    
-    private JLabel labStartElevation = new JLabel(Messages.getString("CustomMechDialog.labStartElevation"), Label.RIGHT); //$NON-NLS-1$
+
+    private JLabel labStartElevation = new JLabel(Messages
+            .getString("CustomMechDialog.labStartElevation"), Label.RIGHT); //$NON-NLS-1$
+
     private JTextField fldStartElevation = new JTextField(3);
 
     private JPanel panButtons = new JPanel();
+
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
+
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+
     private JButton butNext = new JButton(Messages.getString("Next"));
+
     private JButton butPrev = new JButton(Messages.getString("Previous"));
 
     private ArrayList<MunitionChoicePanel> m_vMunitions = new ArrayList<MunitionChoicePanel>();
+
     private JPanel panMunitions = new JPanel();
+
     private ArrayList<RapidfireMGPanel> m_vMGs = new ArrayList<RapidfireMGPanel>();
+
     private JPanel panRapidfireMGs = new JPanel();
+
     private ArrayList<MineChoicePanel> m_vMines = new ArrayList<MineChoicePanel>();
+
     private JPanel panMines = new JPanel();
+
     private ArrayList<SantaAnnaChoicePanel> m_vSantaAnna = new ArrayList<SantaAnnaChoicePanel>();
+
     private JPanel panSantaAnna = new JPanel();
+
     private BombChoicePanel m_bombs;
-    private JPanel panBombs= new JPanel();
+
+    private JPanel panBombs = new JPanel();
 
     Entity entity;
+
     private boolean okay;
+
     ClientGUI clientgui;
+
     private Client client;
 
     private PilotOptions options;
@@ -185,6 +246,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private ArrayList<DialogOptionComponent> optionComps = new ArrayList<DialogOptionComponent>();
 
     private JPanel panOptions = new JPanel();
+
     private JScrollPane scrOptions;
 
     private JScrollPane scrAll;
@@ -195,6 +257,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private boolean editable;
 
     private int direction = -1;
+
     private int distance = 17;
 
     /**
@@ -296,40 +359,53 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(fldPiloting, c);
         tempPanel.add(fldPiloting);
-        
-        if(client.game.getOptions().booleanOption("individual_initiative")) {
+
+        if (client.game.getOptions().booleanOption("individual_initiative")) {
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labInit, c);
             tempPanel.add(labInit);
-    
+
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(fldInit, c);
             tempPanel.add(fldInit);
         }
-        if(entity instanceof Aero) {
+
+        if (client.game.getOptions().booleanOption("command_init")) {
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labCommandInit, c);
+            tempPanel.add(labCommandInit);
+
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(fldCommandInit, c);
+            tempPanel.add(fldCommandInit);
+        }
+
+        if (entity instanceof Aero) {
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labStartVelocity, c);
             tempPanel.add(labStartVelocity);
-        
+
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(fldStartVelocity, c);
             tempPanel.add(fldStartVelocity);
-            
+
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labStartElevation, c);
             tempPanel.add(labStartElevation);
-                
+
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(fldStartElevation, c);
             tempPanel.add(fldStartElevation);
         }
-        
+
         // Auto-eject checkbox.
         if (entity instanceof Mech) {
             Mech mech = (Mech) entity;
@@ -497,6 +573,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     .getSelectedEntities(new EntitySelector() {
                         private final int ownerId = CustomMechDialog.this.entity
                                 .getOwnerId();
+
                         private final char unitNumber = CustomMechDialog.this.entity
                                 .getUnitNumber();
 
@@ -531,27 +608,24 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             gridbag.setConstraints(panMunitions, c);
             tempPanel.add(panMunitions);
         }
-        
-        //set up Santa Annas if using nukes
-        if( (entity instanceof Dropship || entity instanceof Jumpship)
-                && clientgui.getClient().game.getOptions().booleanOption("at2_nukes")) {
+
+        // set up Santa Annas if using nukes
+        if ((entity instanceof Dropship || entity instanceof Jumpship)
+                && clientgui.getClient().game.getOptions().booleanOption(
+                        "at2_nukes")) {
             setupSantaAnna();
             c.anchor = GridBagConstraints.CENTER;
             gridbag.setConstraints(panSantaAnna, c);
             tempPanel.add(panSantaAnna);
         }
-        
-        
+
         /*
-         * TODO: Disabling bomb interface until I can figure out JComboBox (help!)
-        if(entity instanceof Aero 
-                && !(entity instanceof FighterSquadron || entity instanceof SmallCraft || entity instanceof Jumpship)) {
-            setupBombs();
-            c.anchor = GridBagConstraints.CENTER;
-            gridbag.setConstraints(panBombs, c);
-            tempPanel.add(panBombs);
-        }
-        */
+         * TODO: Disabling bomb interface until I can figure out JComboBox
+         * (help!) if(entity instanceof Aero && !(entity instanceof
+         * FighterSquadron || entity instanceof SmallCraft || entity instanceof
+         * Jumpship)) { setupBombs(); c.anchor = GridBagConstraints.CENTER;
+         * gridbag.setConstraints(panBombs, c); tempPanel.add(panBombs); }
+         */
 
         // Set up rapidfire mg
         if (clientgui.getClient().game.getOptions().booleanOption(
@@ -564,7 +638,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
 
         // Set up searchlight
-        if (clientgui.getClient().game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) { 
+        if (clientgui.getClient().game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) {
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labSearchlight, c);
@@ -619,11 +693,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         fldPiloting.addActionListener(this);
         fldInit.setText(Integer.toString(entity.getCrew().getInitBonus()));
         fldInit.addActionListener(this);
-        if(entity instanceof Aero) {
-            Aero a = (Aero)entity;
-            fldStartVelocity.setText(new Integer(a.getCurrentVelocity()).toString());
+        fldCommandInit.setText(Integer.toString(entity.getCrew()
+                .getCommandBonus()));
+        fldCommandInit.addActionListener(this);
+        if (entity instanceof Aero) {
+            Aero a = (Aero) entity;
+            fldStartVelocity.setText(new Integer(a.getCurrentVelocity())
+                    .toString());
             fldStartVelocity.addActionListener(this);
-            
+
             fldStartElevation.setText(new Integer(a.getElevation()).toString());
             fldStartElevation.addActionListener(this);
         }
@@ -636,6 +714,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldGunneryB.setEnabled(false);
             fldPiloting.setEnabled(false);
             fldInit.setEnabled(false);
+            fldCommandInit.setEnabled(false);
             choC3.setEnabled(false);
             choDeployment.setEnabled(false);
             chAutoEject.setEnabled(false);
@@ -732,15 +811,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         GridBagLayout gbl = new GridBagLayout();
         panSantaAnna.setLayout(gbl);
         GridBagConstraints gbc = new GridBagConstraints();
-        
+
         int row = 0;
         for (Mounted m : entity.getAmmo()) {
-            AmmoType at = (AmmoType)m.getType();
-            //          Santa Annas?
-            if(clientgui.getClient().game.getOptions().booleanOption("at2_nukes") 
-                    && (at.getAmmoType() == AmmoType.T_KILLER_WHALE ||
-                            (at.getAmmoType() == AmmoType.T_AR10 
-                                    && at.hasFlag(AmmoType.F_AR10_KILLER_WHALE)))) {
+            AmmoType at = (AmmoType) m.getType();
+            // Santa Annas?
+            if (clientgui.getClient().game.getOptions().booleanOption(
+                    "at2_nukes")
+                    && (at.getAmmoType() == AmmoType.T_KILLER_WHALE || (at
+                            .getAmmoType() == AmmoType.T_AR10 && at
+                            .hasFlag(AmmoType.F_AR10_KILLER_WHALE)))) {
                 gbc.gridy = row++;
                 SantaAnnaChoicePanel sacp = new SantaAnnaChoicePanel(m);
                 gbl.setConstraints(sacp, gbc);
@@ -749,18 +829,18 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
         }
     }
-    
+
     private void setupBombs() {
         GridBagLayout gbl = new GridBagLayout();
         panBombs.setLayout(gbl);
         GridBagConstraints gbc = new GridBagConstraints();
-            
-        Aero a = (Aero)entity;
+
+        Aero a = (Aero) entity;
         m_bombs = new BombChoicePanel(a.getBombChoices(), a.getMaxBombPoints());
         gbl.setConstraints(m_bombs, gbc);
         panBombs.add(m_bombs);
     }
-    
+
     private void setupMunitions() {
 
         GridBagLayout gbl = new GridBagLayout();
@@ -776,17 +856,19 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             if (vAllTypes == null) {
                 continue;
             }
-            
-            //don't allow ammo switching of most things for Aeros
-            //allow only MML, ATM, NARC, and LBX switching
-            //TODO: need a better way to customize munitions on Aeros
-            //currently this doesn't allow AR10 and tele-missile launchers
-            //to switch back and forth between tele and regular missiles
-            //also would be better to not have to add Santa Anna's in such 
-            //an idiosyncratic fashion
-            if((entity instanceof Aero) && !(at.getAmmoType() == AmmoType.T_MML ||
-                    at.getAmmoType() == AmmoType.T_ATM || at.getAmmoType() == AmmoType.T_NARC || 
-                    at.getAmmoType() == AmmoType.T_AC_LBX)) {
+
+            // don't allow ammo switching of most things for Aeros
+            // allow only MML, ATM, NARC, and LBX switching
+            // TODO: need a better way to customize munitions on Aeros
+            // currently this doesn't allow AR10 and tele-missile launchers
+            // to switch back and forth between tele and regular missiles
+            // also would be better to not have to add Santa Anna's in such
+            // an idiosyncratic fashion
+            if ((entity instanceof Aero)
+                    && !(at.getAmmoType() == AmmoType.T_MML
+                            || at.getAmmoType() == AmmoType.T_ATM
+                            || at.getAmmoType() == AmmoType.T_NARC || at
+                            .getAmmoType() == AmmoType.T_AC_LBX)) {
                 continue;
             }
 
@@ -820,15 +902,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                             "is_eq_limits")) {
                         if (entity.getTechLevel() == TechConstants.T_CLAN_TW
                                 && (atCheck.getTechLevel() == TechConstants.T_CLAN_ADVANCED
-                                        || atCheck.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL
-                                        || atCheck.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
+                                        || atCheck.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL || atCheck
+                                        .getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
                             bTechMatch = true;
                         }
                         if (((entity.getTechLevel() == TechConstants.T_INTRO_BOXSET) || (entity
                                 .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))
                                 && (atCheck.getTechLevel() == TechConstants.T_IS_ADVANCED
-                                        || atCheck.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL
-                                        || atCheck.getTechLevel() == TechConstants.T_IS_UNOFFICIAL)) {
+                                        || atCheck.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL || atCheck
+                                        .getTechLevel() == TechConstants.T_IS_UNOFFICIAL)) {
                             bTechMatch = true;
                         }
                     }
@@ -901,8 +983,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             if (vTypes.size() < 2
                     && !client.game.getOptions().booleanOption(
                             "lobby_ammo_dump")
-                    && !client.game.getOptions().booleanOption(
-                            "tacops_hotload")) { //$NON-NLS-1$
+                    && !client.game.getOptions()
+                            .booleanOption("tacops_hotload")) { //$NON-NLS-1$
                 continue;
             }
 
@@ -925,7 +1007,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
          * 
          */
         private static final long serialVersionUID = -1868675102440527538L;
+
         private JComboBox m_choice;
+
         private Mounted m_mounted;
 
         MineChoicePanel(Mounted m) {
@@ -970,15 +1054,21 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
          * 
          */
         private static final long serialVersionUID = 3401106035583965326L;
+
         private ArrayList<AmmoType> m_vTypes;
+
         private JComboBox m_choice;
+
         private Mounted m_mounted;
 
         JLabel labDump = new JLabel(Messages
                 .getString("CustomMechDialog.labDump")); //$NON-NLS-1$
+
         JCheckBox chDump = new JCheckBox();
+
         JLabel labHotLoad = new JLabel(Messages
                 .getString("CustomMechDialog.switchToHotLoading")); //$NON-NLS-1$
+
         JCheckBox chHotLoad = new JCheckBox();
 
         MunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
@@ -1090,7 +1180,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         /**
          * Set the number of shots in the mount.
          * 
-         * @param shots the <code>int</code> number of shots for the mount.
+         * @param shots
+         *            the <code>int</code> number of shots for the mount.
          */
         /* package */
         void setShotsLeft(int shots) {
@@ -1098,24 +1189,26 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
     }
 
-    //a choice panel for determining number of santa anna warheads
+    // a choice panel for determining number of santa anna warheads
     class SantaAnnaChoicePanel extends Panel {
         /**
          * 
          */
         private static final long serialVersionUID = -1645895479085898410L;
+
         private JComboBox m_choice;
+
         private Mounted m_mounted;
-                
+
         public SantaAnnaChoicePanel(Mounted m) {
             m_mounted = m;
             m_choice = new JComboBox();
-            for(int i = 0; i <= m_mounted.getShotsLeft(); i++) {
+            for (int i = 0; i <= m_mounted.getShotsLeft(); i++) {
                 m_choice.addItem(Integer.toString(i));
             }
             int loc;
             loc = m.getLocation();
-            String sDesc = "Nuclear warheads for " + m_mounted.getName() + " ("+ entity.getLocationAbbr(loc) + "):"; //$NON-NLS-1$ //$NON-NLS-2$
+            String sDesc = "Nuclear warheads for " + m_mounted.getName() + " (" + entity.getLocationAbbr(loc) + "):"; //$NON-NLS-1$ //$NON-NLS-2$
             Label lLoc = new Label(sDesc);
             GridBagLayout g = new GridBagLayout();
             setLayout(g);
@@ -1130,43 +1223,55 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             c.anchor = GridBagConstraints.WEST;
             g.setConstraints(m_choice, c);
             m_choice.setSelectedIndex(0);
-            //m_choice.select(m.getNSantaAnna());
+            // m_choice.select(m.getNSantaAnna());
             add(m_choice);
         }
 
         public void applyChoice() {
-            //what should I do here? If I apply the choice immediately then it sort of screws 
-            //things up if the player reopens this window
-            //what if I set this number in Mounted somewhere and then when I update the weapons
-            //bay, I can adjust the ammo
-            //m_mounted.setNSantaAnna(m_choice.getSelectedIndex());
-            
+            // what should I do here? If I apply the choice immediately then it
+            // sort of screws
+            // things up if the player reopens this window
+            // what if I set this number in Mounted somewhere and then when I
+            // update the weapons
+            // bay, I can adjust the ammo
+            // m_mounted.setNSantaAnna(m_choice.getSelectedIndex());
+
         }
 
         public void setEnabled(boolean enabled) {
             m_choice.setEnabled(enabled);
         }
     }
-    
+
     class BombChoicePanel extends Panel implements ItemListener {
         /**
          * 
          */
         private static final long serialVersionUID = 483782753790544050L;
-        //private Vector<MiscType> b_vTypes;
+
+        // private Vector<MiscType> b_vTypes;
         private JComboBox b_choice_he;
+
         private JComboBox b_choice_cl;
+
         private JComboBox b_choice_lg;
+
         private JComboBox b_choice_inf;
+
         private JComboBox b_choice_mine;
+
         private JComboBox b_choice_tag;
+
         private JComboBox b_choice_arrow;
+
         private JComboBox b_choice_rl;
+
         private JComboBox b_choice_alamo;
+
         private int maxPoints = 0;
-       
+
         public BombChoicePanel(int[] bombChoices, int maxBombPoints) {
-            //b_vTypes = vTypes;
+            // b_vTypes = vTypes;
             maxPoints = maxBombPoints;
             b_choice_he = new JComboBox();
             b_choice_cl = new JComboBox();
@@ -1177,7 +1282,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             b_choice_arrow = new JComboBox();
             b_choice_rl = new JComboBox();
             b_choice_alamo = new JComboBox();
-            
+
             b_choice_he.addItemListener(this);
             b_choice_cl.addItemListener(this);
             b_choice_lg.addItemListener(this);
@@ -1187,50 +1292,59 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             b_choice_arrow.addItemListener(this);
             b_choice_rl.addItemListener(this);
             b_choice_alamo.addItemListener(this);
-            
-            //how many bomb points am I currently using?
+
+            // how many bomb points am I currently using?
             int curBombPoints = 0;
-            for(int i = 0; i < bombChoices.length; i++) {
-                curBombPoints += bombChoices[i]*Aero.bombCosts[i];
+            for (int i = 0; i < bombChoices.length; i++) {
+                curBombPoints += bombChoices[i] * Aero.bombCosts[i];
             }
             int availBombPoints = maxBombPoints - curBombPoints;
-            
-            for (int x = 0; x<=Math.max(availBombPoints, bombChoices[Aero.BOMB_HE]); x++) {
+
+            for (int x = 0; x <= Math.max(availBombPoints,
+                    bombChoices[Aero.BOMB_HE]); x++) {
                 b_choice_he.addItem(Integer.toString(x));
             }
-            
-            for (int x = 0; x<=Math.max(availBombPoints, bombChoices[Aero.BOMB_CL]); x++) {
+
+            for (int x = 0; x <= Math.max(availBombPoints,
+                    bombChoices[Aero.BOMB_CL]); x++) {
                 b_choice_cl.addItem(Integer.toString(x));
             }
-                   
-            for (int x = 0; x<=Math.max(availBombPoints, bombChoices[Aero.BOMB_LG]); x++) {
+
+            for (int x = 0; x <= Math.max(availBombPoints,
+                    bombChoices[Aero.BOMB_LG]); x++) {
                 b_choice_lg.addItem(Integer.toString(x));
             }
-            
-            for (int x = 0; x<=Math.max(availBombPoints, bombChoices[Aero.BOMB_INF]); x++) {
+
+            for (int x = 0; x <= Math.max(availBombPoints,
+                    bombChoices[Aero.BOMB_INF]); x++) {
                 b_choice_inf.addItem(Integer.toString(x));
             }
-            
-            for (int x = 0; x<=Math.max(availBombPoints, bombChoices[Aero.BOMB_MINE]); x++) {
+
+            for (int x = 0; x <= Math.max(availBombPoints,
+                    bombChoices[Aero.BOMB_MINE]); x++) {
                 b_choice_mine.addItem(Integer.toString(x));
             }
-            
-            for (int x = 0; x<=Math.max(availBombPoints, bombChoices[Aero.BOMB_TAG]); x++) {
+
+            for (int x = 0; x <= Math.max(availBombPoints,
+                    bombChoices[Aero.BOMB_TAG]); x++) {
                 b_choice_tag.addItem(Integer.toString(x));
             }
-            
-            for (int x = 0; x<=Math.max(availBombPoints, bombChoices[Aero.BOMB_RL]); x++) {
+
+            for (int x = 0; x <= Math.max(availBombPoints,
+                    bombChoices[Aero.BOMB_RL]); x++) {
                 b_choice_rl.addItem(Integer.toString(x));
             }
-            
-            for(int y = 0; y<=Math.max(Math.round(availBombPoints/5), bombChoices[Aero.BOMB_ARROW]);y++ ) {
+
+            for (int y = 0; y <= Math.max(Math.round(availBombPoints / 5),
+                    bombChoices[Aero.BOMB_ARROW]); y++) {
                 b_choice_arrow.addItem(Integer.toString(y));
             }
-            
-            for(int z = 0; z<=Math.max(Math.round(availBombPoints/10),bombChoices[Aero.BOMB_ALAMO]);z++ ) {
-                b_choice_alamo.addItem(Integer.toString(z)); 
+
+            for (int z = 0; z <= Math.max(Math.round(availBombPoints / 10),
+                    bombChoices[Aero.BOMB_ALAMO]); z++) {
+                b_choice_alamo.addItem(Integer.toString(z));
             }
-            
+
             b_choice_he.setSelectedIndex(bombChoices[Aero.BOMB_HE]);
             b_choice_cl.setSelectedIndex(bombChoices[Aero.BOMB_CL]);
             b_choice_lg.setSelectedIndex(bombChoices[Aero.BOMB_LG]);
@@ -1240,7 +1354,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             b_choice_arrow.setSelectedIndex(bombChoices[Aero.BOMB_ARROW]);
             b_choice_rl.setSelectedIndex(bombChoices[Aero.BOMB_RL]);
             b_choice_alamo.setSelectedIndex(bombChoices[Aero.BOMB_ALAMO]);
-            
+
             String heDesc = Messages.getString("CustomMechDialog.labBombHE"); //$NON-NLS-1$
             Label lhe = new Label(heDesc);
             GridBagLayout g = new GridBagLayout();
@@ -1256,7 +1370,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             c.anchor = GridBagConstraints.WEST;
             g.setConstraints(b_choice_he, c);
             add(b_choice_he);
-            
+
             String clDesc = Messages.getString("CustomMechDialog.labBombCL"); //$NON-NLS-1$
             Label lcl = new Label(clDesc);
             c.gridx = 0;
@@ -1269,7 +1383,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             c.anchor = GridBagConstraints.WEST;
             g.setConstraints(b_choice_cl, c);
             add(b_choice_cl);
-            
+
             String lgDesc = Messages.getString("CustomMechDialog.labBombLG"); //$NON-NLS-1$
             Label llg = new Label(lgDesc);
             c.gridx = 0;
@@ -1282,7 +1396,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             c.anchor = GridBagConstraints.WEST;
             g.setConstraints(b_choice_lg, c);
             add(b_choice_lg);
-            
+
             String infDesc = Messages.getString("CustomMechDialog.labBombInf"); //$NON-NLS-1$
             Label linf = new Label(infDesc);
             c.gridx = 0;
@@ -1295,8 +1409,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             c.anchor = GridBagConstraints.WEST;
             g.setConstraints(b_choice_inf, c);
             add(b_choice_inf);
-            
-            String mineDesc = Messages.getString("CustomMechDialog.labBombMine"); //$NON-NLS-1$
+
+            String mineDesc = Messages
+                    .getString("CustomMechDialog.labBombMine"); //$NON-NLS-1$
             Label lmine = new Label(mineDesc);
             c.gridx = 0;
             c.gridy = 4;
@@ -1308,8 +1423,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             c.anchor = GridBagConstraints.WEST;
             g.setConstraints(b_choice_mine, c);
             add(b_choice_mine);
-            
-            
+
             String tagDesc = Messages.getString("CustomMechDialog.labBombTAG"); //$NON-NLS-1$
             Label ltag = new Label(tagDesc);
             c.gridx = 2;
@@ -1322,8 +1436,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             c.anchor = GridBagConstraints.WEST;
             g.setConstraints(b_choice_tag, c);
             add(b_choice_tag);
-            
-            String arrowDesc = Messages.getString("CustomMechDialog.labBombArrow"); //$NON-NLS-1$
+
+            String arrowDesc = Messages
+                    .getString("CustomMechDialog.labBombArrow"); //$NON-NLS-1$
             Label larrow = new Label(arrowDesc);
             c.gridx = 2;
             c.gridy = 1;
@@ -1335,7 +1450,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             c.anchor = GridBagConstraints.WEST;
             g.setConstraints(b_choice_arrow, c);
             add(b_choice_arrow);
-            
+
             String rlDesc = Messages.getString("CustomMechDialog.labBombRL"); //$NON-NLS-1$
             Label lrl = new Label(rlDesc);
             c.gridx = 2;
@@ -1348,9 +1463,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             c.anchor = GridBagConstraints.WEST;
             g.setConstraints(b_choice_rl, c);
             add(b_choice_rl);
-            
-            if(clientgui.getClient().game.getOptions().booleanOption("at2_nukes")) {
-                String alamoDesc = Messages.getString("CustomMechDialog.labBombAlamo"); //$NON-NLS-1$
+
+            if (clientgui.getClient().game.getOptions().booleanOption(
+                    "at2_nukes")) {
+                String alamoDesc = Messages
+                        .getString("CustomMechDialog.labBombAlamo"); //$NON-NLS-1$
                 Label lalamo = new Label(alamoDesc);
                 c.gridx = 2;
                 c.gridy = 3;
@@ -1363,100 +1480,105 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 g.setConstraints(b_choice_alamo, c);
                 add(b_choice_alamo);
             }
-            
+
         }
 
         public void itemStateChanged(ItemEvent ie) {
-            
-                //reset the bombs available
-                int current_he = b_choice_he.getSelectedIndex();
-                int current_cl = b_choice_cl.getSelectedIndex();
-                int current_lg = b_choice_lg.getSelectedIndex();
-                int current_inf = b_choice_inf.getSelectedIndex();
-                int current_mine = b_choice_mine.getSelectedIndex();
-                int current_tag = b_choice_tag.getSelectedIndex();
-                int current_arrow = b_choice_arrow.getSelectedIndex();
-                int current_rl = b_choice_rl.getSelectedIndex();
-                int current_alamo = b_choice_alamo.getSelectedIndex();
-                
-                int curPoints = current_he+current_cl+current_lg+current_inf+current_mine+
-                                current_tag+5*current_arrow+current_rl+10*current_alamo;
-                
-                int availBombPoints = maxPoints - curPoints;
 
-                b_choice_he.removeAllItems();
-                b_choice_cl.removeAllItems();
-                b_choice_lg.removeAllItems();
-                b_choice_inf.removeAllItems();
-                b_choice_mine.removeAllItems();
-                b_choice_tag.removeAllItems();
-                b_choice_arrow.removeAllItems();
-                b_choice_rl.removeAllItems();
-                b_choice_alamo.removeAllItems();
-                
-                //re-calculate available bomb loads
-                for (int x = 0; x<=Math.max(availBombPoints, current_he); x++) {
-                    b_choice_he.addItem(Integer.toString(x));
-                }
-                
-                for (int x = 0; x<=Math.max(availBombPoints, current_cl); x++) {
-                    b_choice_cl.addItem(Integer.toString(x));
-                }
-                       
-                for (int x = 0; x<=Math.max(availBombPoints, current_lg); x++) {
-                    b_choice_lg.addItem(Integer.toString(x));
-                }
-                
-                for (int x = 0; x<=Math.max(availBombPoints, current_inf); x++) {
-                    b_choice_inf.addItem(Integer.toString(x));
-                }
-                
-                for (int x = 0; x<=Math.max(availBombPoints, current_mine); x++) {
-                    b_choice_mine.addItem(Integer.toString(x));
-                }
-                
-                for (int x = 0; x<=Math.max(availBombPoints, current_tag); x++) {
-                    b_choice_tag.addItem(Integer.toString(x));
-                }
-                
-                for (int x = 0; x<=Math.max(availBombPoints, current_rl); x++) {
-                    b_choice_rl.addItem(Integer.toString(x));
-                }
-                
-                for(int y = 0; y<=Math.max(Math.round(availBombPoints/5), current_arrow);y++ ) {
-                    b_choice_arrow.addItem(Integer.toString(y));
-                }
-                
-                for(int z = 0; z<=Math.max(Math.round(availBombPoints/10), current_alamo);z++ ) {
-                    b_choice_alamo.addItem(Integer.toString(z)); 
-                }
-                
-                //for some reason they are all resetting to zero at certain times
-                b_choice_he.setSelectedIndex(current_he);
-                b_choice_cl.setSelectedIndex(current_cl);
-                b_choice_lg.setSelectedIndex(current_lg);
-                b_choice_inf.setSelectedIndex(current_inf);
-                b_choice_mine.setSelectedIndex(current_mine);
-                b_choice_tag.setSelectedIndex(current_tag);
-                b_choice_arrow.setSelectedIndex(current_arrow);
-                b_choice_rl.setSelectedIndex(current_rl);
-                b_choice_alamo.setSelectedIndex(current_alamo);
-                
-            //}
+            // reset the bombs available
+            int current_he = b_choice_he.getSelectedIndex();
+            int current_cl = b_choice_cl.getSelectedIndex();
+            int current_lg = b_choice_lg.getSelectedIndex();
+            int current_inf = b_choice_inf.getSelectedIndex();
+            int current_mine = b_choice_mine.getSelectedIndex();
+            int current_tag = b_choice_tag.getSelectedIndex();
+            int current_arrow = b_choice_arrow.getSelectedIndex();
+            int current_rl = b_choice_rl.getSelectedIndex();
+            int current_alamo = b_choice_alamo.getSelectedIndex();
+
+            int curPoints = current_he + current_cl + current_lg + current_inf
+                    + current_mine + current_tag + 5 * current_arrow
+                    + current_rl + 10 * current_alamo;
+
+            int availBombPoints = maxPoints - curPoints;
+
+            b_choice_he.removeAllItems();
+            b_choice_cl.removeAllItems();
+            b_choice_lg.removeAllItems();
+            b_choice_inf.removeAllItems();
+            b_choice_mine.removeAllItems();
+            b_choice_tag.removeAllItems();
+            b_choice_arrow.removeAllItems();
+            b_choice_rl.removeAllItems();
+            b_choice_alamo.removeAllItems();
+
+            // re-calculate available bomb loads
+            for (int x = 0; x <= Math.max(availBombPoints, current_he); x++) {
+                b_choice_he.addItem(Integer.toString(x));
+            }
+
+            for (int x = 0; x <= Math.max(availBombPoints, current_cl); x++) {
+                b_choice_cl.addItem(Integer.toString(x));
+            }
+
+            for (int x = 0; x <= Math.max(availBombPoints, current_lg); x++) {
+                b_choice_lg.addItem(Integer.toString(x));
+            }
+
+            for (int x = 0; x <= Math.max(availBombPoints, current_inf); x++) {
+                b_choice_inf.addItem(Integer.toString(x));
+            }
+
+            for (int x = 0; x <= Math.max(availBombPoints, current_mine); x++) {
+                b_choice_mine.addItem(Integer.toString(x));
+            }
+
+            for (int x = 0; x <= Math.max(availBombPoints, current_tag); x++) {
+                b_choice_tag.addItem(Integer.toString(x));
+            }
+
+            for (int x = 0; x <= Math.max(availBombPoints, current_rl); x++) {
+                b_choice_rl.addItem(Integer.toString(x));
+            }
+
+            for (int y = 0; y <= Math.max(Math.round(availBombPoints / 5),
+                    current_arrow); y++) {
+                b_choice_arrow.addItem(Integer.toString(y));
+            }
+
+            for (int z = 0; z <= Math.max(Math.round(availBombPoints / 10),
+                    current_alamo); z++) {
+                b_choice_alamo.addItem(Integer.toString(z));
+            }
+
+            // for some reason they are all resetting to zero at certain times
+            b_choice_he.setSelectedIndex(current_he);
+            b_choice_cl.setSelectedIndex(current_cl);
+            b_choice_lg.setSelectedIndex(current_lg);
+            b_choice_inf.setSelectedIndex(current_inf);
+            b_choice_mine.setSelectedIndex(current_mine);
+            b_choice_tag.setSelectedIndex(current_tag);
+            b_choice_arrow.setSelectedIndex(current_arrow);
+            b_choice_rl.setSelectedIndex(current_rl);
+            b_choice_alamo.setSelectedIndex(current_alamo);
+
+            // }
         }
-        
-        
+
         public void applyChoice() {
-            int[] choices = {b_choice_he.getSelectedIndex(),b_choice_cl.getSelectedIndex(),
-                             b_choice_lg.getSelectedIndex(),b_choice_inf.getSelectedIndex(),
-                             b_choice_mine.getSelectedIndex(),b_choice_tag.getSelectedIndex(),
-                             b_choice_arrow.getSelectedIndex(),b_choice_rl.getSelectedIndex(),
-                             b_choice_alamo.getSelectedIndex()};
-            
-            ((Aero)entity).setBombChoices(choices);
+            int[] choices = { b_choice_he.getSelectedIndex(),
+                    b_choice_cl.getSelectedIndex(),
+                    b_choice_lg.getSelectedIndex(),
+                    b_choice_inf.getSelectedIndex(),
+                    b_choice_mine.getSelectedIndex(),
+                    b_choice_tag.getSelectedIndex(),
+                    b_choice_arrow.getSelectedIndex(),
+                    b_choice_rl.getSelectedIndex(),
+                    b_choice_alamo.getSelectedIndex() };
+
+            ((Aero) entity).setBombChoices(choices);
 
         }
-        
 
         public void setEnabled(boolean enabled) {
             b_choice_he.setEnabled(enabled);
@@ -1468,11 +1590,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             b_choice_arrow.setEnabled(enabled);
             b_choice_rl.setEnabled(enabled);
             b_choice_alamo.setEnabled(enabled);
-            
+
         }
-        
+
     }
-    
+
     /**
      * When a Protomech selects ammo, you need to adjust the shots on the unit
      * for the weight of the selected munition.
@@ -1482,7 +1604,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
          * 
          */
         private static final long serialVersionUID = -8170286698673268120L;
+
         private final float m_origShotsLeft;
+
         private final AmmoType m_origAmmo;
 
         ProtomechMunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
@@ -1825,7 +1949,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     /**
      * Populate the list of entities in other units from the given enumeration.
      * 
-     * @param others the <code>Enumeration</code> containing entities in other
+     * @param others
+     *            the <code>Enumeration</code> containing entities in other
      *            units.
      */
     private void refreshUnitNum(Enumeration<Entity> others) {
@@ -1895,6 +2020,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             int gunneryB;
             int piloting;
             int init = 0;
+            int command = 0;
             int velocity = 0;
             int elev = 0;
             int offBoardDistance;
@@ -1906,7 +2032,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 gunneryB = Integer.parseInt(fldGunneryB.getText());
                 piloting = Integer.parseInt(fldPiloting.getText());
                 init = Integer.parseInt(fldInit.getText());
-                if(entity instanceof Aero) {
+                command = Integer.parseInt(fldCommandInit.getText());
+                if (entity instanceof Aero) {
                     velocity = Integer.parseInt(fldStartVelocity.getText());
                     elev = Integer.parseInt(fldStartElevation.getText());
                 }
@@ -1930,18 +2057,26 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                                         .getString("CustomMechDialog.EnterSkillsBetween0_8"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
-         
-            if(entity instanceof Aero) {
-                if(velocity > (2 * entity.getWalkMP()) || velocity < 0) {
-                    JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.EnterCorrectVelocity"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+
+            if (entity instanceof Aero) {
+                if (velocity > (2 * entity.getWalkMP()) || velocity < 0) {
+                    JOptionPane
+                            .showMessageDialog(
+                                    clientgui.frame,
+                                    Messages
+                                            .getString("CustomMechDialog.EnterCorrectVelocity"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                     return;
-                }  
-                if(elev < 1 || elev > 10) {
-                    JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.EnterCorrectElevation"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                if (elev < 1 || elev > 10) {
+                    JOptionPane
+                            .showMessageDialog(
+                                    clientgui.frame,
+                                    Messages
+                                            .getString("CustomMechDialog.EnterCorrectElevation"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                     return;
                 }
             }
-            
+
             if (chOffBoard.isSelected()) {
                 try {
                     offBoardDistance = distance;
@@ -1975,12 +2110,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 entity.setCrew(new Pilot(name, gunnery, piloting));
             }
             entity.getCrew().setInitBonus(init);
+            entity.getCrew().setCommandBonus(command);
             if (entity instanceof Mech) {
                 Mech mech = (Mech) entity;
                 mech.setAutoEject(!autoEject);
             }
-            if(entity instanceof Aero) {             
-                Aero a = (Aero)entity;
+            if (entity instanceof Aero) {
+                Aero a = (Aero) entity;
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
                 a.setElevation(elev);
@@ -2058,12 +2194,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (final Object newVar : m_vMines) {
                 ((MineChoicePanel) newVar).applyChoice();
             }
-            //update Santa Anna setting
+            // update Santa Anna setting
             for (final Object newVar : m_vSantaAnna) {
                 ((SantaAnnaChoicePanel) newVar).applyChoice();
             }
-            //update bomb setting
-            if(null != m_bombs) {
+            // update bomb setting
+            if (null != m_bombs) {
                 m_bombs.applyChoice();
             }
             // update searchlight setting

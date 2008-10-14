@@ -152,6 +152,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String GUNNERYB = "gunneryB";
     public static final String PILOTING = "piloting";
     public static final String INITB = "initB";
+    public static final String COMMANDB = "commandB";
     public static final String HITS = "hits";
     public static final String ADVS = "advantages";
     public static final String IMPLANTS = "implants";
@@ -461,6 +462,7 @@ public class XMLStreamParser implements XMLResponder {
                 String gunneryB = (String) attr.get(GUNNERYB);
                 String piloting = (String) attr.get(PILOTING);
                 String initB = (String) attr.get(INITB);
+                String commandB = (String) attr.get(COMMANDB);
                 String hits = (String) attr.get(HITS);
                 String advantages = (String) attr.get(ADVS);
                 String implants = (String) attr.get(IMPLANTS);
@@ -504,6 +506,14 @@ public class XMLStreamParser implements XMLResponder {
                     if (null != initB && initB.length() > 0) {
                         try {
                             initBVal = Integer.parseInt(initB);
+                        } catch (NumberFormatException excep) {
+                            // Handled by the next if test.
+                        }
+                    }
+                    int commandBVal = 0;
+                    if (null != commandB && commandB.length() > 0) {
+                        try {
+                            commandBVal = Integer.parseInt(commandB);
                         } catch (NumberFormatException excep) {
                             // Handled by the next if test.
                         }
@@ -562,6 +572,7 @@ public class XMLStreamParser implements XMLResponder {
                             gunneryBVal, pilotVal);
 
                     crew.setInitBonus(initBVal);
+                    crew.setCommandBonus(commandBVal);
                     if ((null != advantages)
                             && (advantages.trim().length() > 0)) {
                         StringTokenizer st = new StringTokenizer(advantages,

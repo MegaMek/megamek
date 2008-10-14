@@ -1834,9 +1834,8 @@ public class MechDisplay extends JPanel {
         // ItemListener
         //
         public void itemStateChanged(ItemEvent ev) {
-
             if (ev.getItemSelectable().equals(m_chAmmo)
-                    && m_chAmmo.getItemCount() > 0) {
+                    && m_chAmmo.getSelectedIndex() != -1) {
                 // only change our own units
                 if (!clientgui.getClient().getLocalPlayer().equals(
                         entity.getOwner()))
@@ -1876,7 +1875,6 @@ public class MechDisplay extends JPanel {
 
                 // Update the range display to account for the weapon's loaded
                 // ammo.
-
                 updateRangeDisplayForAmmo(mAmmo);
                 if (entity instanceof Aero) {
                     WeaponType wtype = (WeaponType) mWeap.getType();
@@ -1898,13 +1896,11 @@ public class MechDisplay extends JPanel {
                 } else if (clientgui.curPanel instanceof TargetingPhaseDisplay) {
                     ((TargetingPhaseDisplay) clientgui.curPanel).updateTarget();
                 }
-                
-                displaySelected();
-
                 // Alert the server of the update.
                 clientgui.getClient().sendAmmoChange(entity.getId(),
                         entity.getEquipmentNum(mWeap),
                         entity.getEquipmentNum(mAmmo));
+                displaySelected();
             } else if (ev.getItemSelectable().equals(m_chBayWeapon)
                     && m_chBayWeapon.getItemCount() > 0) {
                 int n = weaponList.getSelectedIndex();

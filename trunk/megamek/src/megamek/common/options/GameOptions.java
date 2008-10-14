@@ -162,6 +162,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
 
         IBasicOptionGroup initiative = addGroup("initiative"); //$NON-NLS-1$
         addOption(initiative, "individual_initiative", false); //$NON-NLS-1$
+        addOption(initiative, "command_init", false); //$NON-NLS-1$
         addOption(initiative, "inf_move_even", false); //$NON-NLS-1$
         addOption(initiative, "inf_deploy_even", false); //$NON-NLS-1$
         addOption(initiative, "inf_move_later", false); //$NON-NLS-1$

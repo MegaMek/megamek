@@ -248,6 +248,11 @@ public class Sensor implements Serializable {
         
         //if you have infrared, then each increment of 5 heat will increase the range
         if(type == TYPE_MEK_IR || type == TYPE_VEE_IR) {
+            
+            //if the target isn't overheating then you can't detect it
+            if(target.heat < 1)
+                return 0;
+            
             range += target.heat / 5;
             
             if(null != game.getBoard().getHex(target.getPosition())

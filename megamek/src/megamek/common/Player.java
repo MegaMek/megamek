@@ -444,4 +444,26 @@ public final class Player extends TurnOrdered implements Serializable {
         }
         return 0;
     }
+    
+    /**
+     * @return the bonus to this player's initiative rolls for 
+     * the highest value initiative (i.e. the 'commander')
+     */
+    public int getCommandBonus() {
+        int commandb = 0;
+        if (game.getOptions().booleanOption("command_init")) {
+            for (Entity entity : game.getEntitiesVector()) {
+                if (entity.getOwner().equals(this) 
+                        && !entity.isDestroyed()
+                        && entity.isDeployed() 
+                        && !entity.isOffBoard()
+                        && entity.getCrew().isActive()
+                        && !entity.isCaptured()) {
+                    if (entity.getCrew().getCommandBonus() > commandb)
+                        commandb = entity.getCrew().getCommandBonus();
+                }
+            }
+        }
+        return commandb;
+    }
 }

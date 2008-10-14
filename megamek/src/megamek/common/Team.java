@@ -208,6 +208,7 @@ public final class Team extends TurnOrdered implements Serializable {
 
         int constantb = 0;
         int turnb = 0;
+        int commandb = 0;
 
         for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
             Player player = p.nextElement();
@@ -224,8 +225,11 @@ public final class Team extends TurnOrdered implements Serializable {
         for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
             Player player = p.nextElement();
             turnb += player.getTurnInitBonus();
+            if(player.getCommandBonus() > commandb)
+                commandb = player.getCommandBonus();
         }
-        return constantb + turnb;
+        
+        return constantb + turnb + commandb;
     }
 
 }

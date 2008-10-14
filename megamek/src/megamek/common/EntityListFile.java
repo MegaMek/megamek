@@ -393,6 +393,8 @@ public class EntityListFile {
             output.write(String.valueOf(crew.getPiloting()));
             output.write("\" initB=\"");
             output.write(String.valueOf(crew.getInitBonus()));
+            output.write("\" commandB=\"");
+            output.write(String.valueOf(crew.getCommandBonus()));
             if (crew.isDead() || crew.getHits() > 5) {
                 output.write("\" hits=\"Dead");
             } else if (crew.getHits() > 0) {

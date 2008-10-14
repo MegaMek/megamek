@@ -258,12 +258,7 @@ public class Sensor implements Serializable {
             if(null != game.getBoard().getHex(target.getPosition())
                     && game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.FIRE)) {
                 range += 1;
-            }
-            
-            //for now I will assume "hot" means units that can overheat (i.e. Mechs and Aeros)
-            if(!(target instanceof Mech || target instanceof Aero)) {
-                return 0;
-            }        
+            }       
         }
         
         if(type == TYPE_MEK_MAGSCAN || type == TYPE_VEE_MAGSCAN) {

@@ -204,7 +204,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
             //now check for general hit bonuses for heat
             if(te != null && !(attacker instanceof Infantry && !(attacker instanceof BattleArmor))) {                 
                 int heatBonus = game.getPlanetaryConditions().getLightHeatBonus(te.heat);
-                if(heatBonus > 0) {
+                if(heatBonus < 0) {
                     toHit.addModifier(heatBonus, "target excess heat at night");
                 }
             }

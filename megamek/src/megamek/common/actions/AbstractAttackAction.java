@@ -123,15 +123,16 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
                     }
                 }
             }
-            // Searchlights reduce the penalty to zero (except for dusk/dawn)
+            // Searchlights reduce the penalty to zero (or 1 for pitch-black) (except for dusk/dawn)
             int searchlightMod = Math.min(3, night_modifier);
-            if (te != null && te.isUsingSpotlight() && lightCond != PlanetaryConditions.L_DUSK) {
-                toHit.addModifier(-searchlightMod, "target using searchlight");
-                night_modifier = night_modifier - searchlightMod;
-            } else if (illuminated && lightCond != PlanetaryConditions.L_DUSK) {
-                toHit.addModifier(-searchlightMod,
-                        "target illuminated by searchlight");
-                night_modifier = night_modifier - searchlightMod;
+            if(te != null && lightCond > PlanetaryConditions.L_DUSK) {
+                if (te.isUsingSpotlight()) {
+                    toHit.addModifier(-searchlightMod, "target using searchlight");
+                    night_modifier = night_modifier - searchlightMod;
+                } else if (illuminated) {
+                    toHit.addModifier(-searchlightMod,"target illuminated by searchlight");
+                    night_modifier = night_modifier - searchlightMod;
+                }
             }
             /*
             // Ignored with EI system & implants

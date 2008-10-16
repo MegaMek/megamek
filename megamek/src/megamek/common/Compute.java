@@ -2314,6 +2314,9 @@ public class Compute {
         
         int maxSensorRange = bracket*range;
         int minSensorRange = Math.max((bracket-1)*range,0);
+        if(game.getOptions().booleanOption("inclusive_sensor_range")) {
+            minSensorRange = 0;
+        }
         
         boolean inSensorRange = ae.getPosition() != null && target.getPosition() != null && ae.getPosition().distance(target.getPosition()) > minSensorRange && ae.getPosition().distance(target.getPosition()) <= maxSensorRange;
         

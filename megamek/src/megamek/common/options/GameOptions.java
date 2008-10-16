@@ -180,6 +180,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
 
         IBasicOptionGroup ruleBreakers = addGroup("ruleBreakers"); //$NON-NLS-1$
         addOption(ruleBreakers, "no_tac", false); //$NON-NLS-1$
+        addOption(ruleBreakers, "inclusive_sensor_range", false); //$NON-NLS-1$
         addOption(ruleBreakers, "rpg_gunnery", false); //$NON-NLS-1$
         addOption(ruleBreakers, "no_immobile_vehicles", false); //$NON-NLS-1$
         addOption(ruleBreakers, "vehicles_can_eject", false); //$NON-NLS-1$

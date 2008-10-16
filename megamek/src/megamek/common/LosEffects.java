@@ -758,16 +758,11 @@ public class LosEffects {
                     los.hardBuildings++;
                 else if(bldgEl > 0)
                     los.softBuildings++;
-            }
-            //for sensors I need to know whether this would have been blocked by a "hill"
-            if (hexEl > (ai.targetAbsHeight
-                    * ai.attackPos.distance(coords) + ai.attackAbsHeight
-                    * ai.targetPos.distance(coords))
-                    / (ai.targetPos.distance(coords) + ai.attackPos
-                            .distance(coords))) {
-                los.blockedByHill = true;
+                else
+                    los.blockedByHill = true;
             }
         }
+        
         if ((hexEl + bldgEl > ai.attackAbsHeight && hexEl + bldgEl > ai.targetAbsHeight)
                 || (hexEl + bldgEl > ai.attackAbsHeight && ai.attackPos
                         .distance(coords) == 1)
@@ -778,15 +773,10 @@ public class LosEffects {
                 los.hardBuildings++;
             else if(bldgEl > 0)
                 los.softBuildings++;
+            else
+                los.blockedByHill = true;
         }
-        //for sensors I need to know whether this would have been blocked by a "hill"
-        if ((hexEl > ai.attackAbsHeight && hexEl + bldgEl > ai.targetAbsHeight)
-                || (hexEl + bldgEl > ai.attackAbsHeight && ai.attackPos
-                        .distance(coords) == 1)
-                || (hexEl + bldgEl > ai.targetAbsHeight && ai.targetPos
-                        .distance(coords) == 1)) {
-            los.blockedByHill = true;
-        }
+
         // check if there's a clear hex between the targets that's higher than
         // one of them, if we're in underwater combat
         if (ai.underWaterCombat

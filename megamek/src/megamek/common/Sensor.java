@@ -112,6 +112,16 @@ public class Sensor implements Serializable {
     
     public int adjustRange(int range, IGame game, LosEffects los) {
         
+        if((type == TYPE_MEK_RADAR || type == TYPE_VEE_RADAR
+                || type == TYPE_VEE_MAGSCAN || type == TYPE_MEK_MAGSCAN) 
+                && (los.getHardBuildings() + los.getSoftBuildings()) > 0) {
+            return 0;
+        }
+        
+        if(type != TYPE_MEK_SEISMIC && type != TYPE_VEE_SEISMIC && los.isBlockedByHill()) {
+            return 0;
+        }
+        
         if(type != TYPE_MEK_SEISMIC && type != TYPE_VEE_SEISMIC) {
             if(game.getPlanetaryConditions().hasEMI()) {
                 range -= 4;
@@ -123,16 +133,6 @@ public class Sensor implements Serializable {
                 || type == TYPE_VEE_IR || type == TYPE_MEK_IR || type == TYPE_BA_HEAT) {
             range -= los.getHeavyWoods() + los.getSoftBuildings();
             range -= 2*(los.getUltraWoods() + los.getHardBuildings());
-        }
-        
-        if((type == TYPE_MEK_RADAR || type == TYPE_VEE_RADAR
-                || type == TYPE_VEE_MAGSCAN || type == TYPE_MEK_MAGSCAN) 
-                && (los.getHardBuildings() + los.getSoftBuildings()) > 0) {
-            range = 0;
-        }
-        
-        if(type != TYPE_MEK_SEISMIC && type != TYPE_VEE_SEISMIC && los.isBlockedByHill()) {
-            range = 0;
         }
         
         if(type == TYPE_MEK_IR || type == TYPE_VEE_IR) {

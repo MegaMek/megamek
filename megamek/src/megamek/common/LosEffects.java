@@ -349,29 +349,6 @@ public class LosEffects {
                         + ((finalLoS.heavyWoods + finalLoS.heavySmoke) * 2)
                         + (finalLoS.ultraWoods * 3) < 3;
 
-        /*
-         * Torren (MekWars) If LOS is blocked And the Attacker has BAP that is
-         * working i.e. not effect by ECM or destoyed/damaged/breached/Shutdown
-         * And the target is a Non-Infantry Unit And the target is not under
-         * water And the target is in range of the Attackers BAP Then remove the
-         * Block. Note code was done with 2 version of BMR and maxtech rules
-         * from various user sources anything that is wrong please let me know
-         * for feature refence. This will not detect hidden units(not coded yet
-         * anyways) This was designed for double blind.
-         */
-        final int probeRange = ae.getBAPRange();
-        if (!finalLoS.canSee()
-                && ae.hasBAP()
-                && ai.targetEntity
-                && !(ai.targetInfantry && !(target instanceof BattleArmor) && probeRange != 8)
-                && !ai.underWaterCombat
-                && ae.getPosition().distance(ai.targetPos) <= probeRange
-                && !Compute.isAffectedByECM(ae, ae.getPosition(), ai.targetPos)) {
-            Entity te = (Entity) target;
-            if (probeRange == 8 || !(te.isStealthActive()))
-                finalLoS.hasLoS = true;
-        }
-
         return finalLoS;
     }
 

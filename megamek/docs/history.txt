@@ -21,6 +21,7 @@ v0.33.34-dev (SVN)
 + IR scanners only detect units with heat on their heat track
 + Bug: game-option dependent modes not appearing on units after loading a savegame
 + old code for BAP detection within a certain range deleted
++ Bug: BAP not detecting through buildings
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

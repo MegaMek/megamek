@@ -78,33 +78,33 @@ public class Sensor implements Serializable {
             || type == TYPE_LIGHT_AP;
     }
     
-    public int getRange(int bracket) {
+    public int getRangeByBracket() {
         
         switch(type) {
         case TYPE_BAP:
-            return bracket*12;
+            return 12;
         case TYPE_BLOODHOUND:
-            return bracket*16;
+            return 16;
         case TYPE_CLAN_BAP:
-            return bracket*15;
+            return 15;
         case TYPE_WATCHDOG:
         case TYPE_LIGHT_AP:
         case TYPE_VEE_MAGSCAN:
         case TYPE_VEE_IR:
         case TYPE_BA_HEAT:
-            return bracket*9;
+            return 9;
         case TYPE_MEK_MAGSCAN:
         case TYPE_MEK_IR:
-            return bracket*10;
+            return 10;
         case TYPE_MEK_RADAR:
-            return bracket*8;
+            return 8;
         case TYPE_VEE_RADAR:
         case TYPE_BA_IMPROVED:
-            return bracket*6;
+            return 6;
         case TYPE_MEK_SEISMIC:
-            return bracket*2;
+            return 2;
         case TYPE_VEE_SEISMIC:
-            return bracket*1;
+            return 1;
         default: 
             return 0;
         }

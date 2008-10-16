@@ -397,6 +397,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         for (Mounted mounted : equipmentList) {
             mounted.restore();
         }
+        // set game options, we derive some equipment's modes from this
+        setGameOptions();
     }
 
     /**
@@ -7121,10 +7123,10 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 String[] modes = {"Powered Up","Powered Down"};
                 ((WeaponType) mounted.getType()).setModes(modes);
                 ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-            } else if (mounted.getType() instanceof ACWeapon 
-            		&& game.getOptions().booleanOption("tacops_rapid_ac")) {
-            	String[] modes = { "", "Rapid" };
-            	((WeaponType) mounted.getType()).setModes(modes);
+            } else if (mounted.getType() instanceof ACWeapon
+                    && game.getOptions().booleanOption("tacops_rapid_ac")) {
+                String[] modes = { "", "Rapid" };
+                ((WeaponType) mounted.getType()).setModes(modes);
             } else if ( mounted.getType() instanceof ISBombastLaser ){
                 int damage = 12;
                 ArrayList<String> modes = new ArrayList<String>();

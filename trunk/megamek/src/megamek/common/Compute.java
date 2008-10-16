@@ -2309,9 +2309,13 @@ public class Compute {
         visualRange -= LosEffects.calculateLos(game, ae.getId(), target).getLightSmoke();
         visualRange -= (2 * LosEffects.calculateLos(game, ae.getId(), target).getHeavySmoke());
         
-        int sensorRange = getSensorRange(game, ae, target);
+        int bracket = getSensorRangeBracket(ae, target);
+        int range = getSensorRangeByBracket(game, ae, target);
         
-        boolean inSensorRange = ae.getPosition() != null && target.getPosition() != null && ae.getPosition().distance(target.getPosition()) <= sensorRange;
+        int maxSensorRange = bracket*range;
+        int minSensorRange = Math.max((bracket-1)*range,0);
+        
+        boolean inSensorRange = ae.getPosition() != null && target.getPosition() != null && ae.getPosition().distance(target.getPosition()) > minSensorRange && ae.getPosition().distance(target.getPosition()) <= maxSensorRange;
         
         if (!inSensorRange && ae.getPosition() != null && target.getPosition() != null && ae.getPosition().distance(target.getPosition()) > visualRange) {
             return false;
@@ -2320,10 +2324,43 @@ public class Compute {
         return LosEffects.calculateLos(game, ae.getId(), target).canSee() && ae.getCrew().isActive() || inSensorRange;
     }
     
+    private static int getSensorRangeBracket(Entity ae, Targetable target) {
+        
+        Sensor sensor = ae.getActiveSensor();
+        if(null == sensor) {
+            return 0;
+        }
+        //only works for entities
+        if(target.getTargetType() != Targetable.TYPE_ENTITY) {
+            return 0;
+        }
+        Entity te = (Entity)target;
+        
+        //if this sensor is an active probe and it is critted, then no can see
+        if(sensor.isBAP() && !ae.hasBAP(false)) {
+            return 0;
+        }
+
+        int check = ae.getSensorCheck();
+        check += sensor.getModsForStealth(te);
+        //ECM bubbles
+        check += sensor.getModForECM(ae);
+            
+        //get the range bracket (0 - none; 1 - short; 2 - medium; 3 - long)
+        int bracket = 0;
+        if(check == 7 || check == 8)
+            bracket = 1;
+        if(check == 5 || check == 6)
+            bracket = 2;
+        if(check < 5)
+            bracket = 3;
+        
+        return bracket;
+    }
     /**
      * Checks whether the target is within sensor range of the current entity
      */
-    private static int getSensorRange(IGame game, Entity ae, Targetable target) {
+    private static int getSensorRangeByBracket(IGame game, Entity ae, Targetable target) {
         
         Sensor sensor = ae.getActiveSensor();
         if(null == sensor) {
@@ -2346,31 +2383,21 @@ public class Compute {
                 && ae.getMovementMode() != IEntityMovementMode.HYDROFOIL && ae.getMovementMode() != IEntityMovementMode.NAVAL) {
             return 0;
         }
-        
-        int check = ae.getSensorCheck();
-        check += sensor.getModsForStealth(te);
-        //ECM bubbles
-        check += sensor.getModForECM(ae);
-            
-        //get the range bracket (0 - none; 1 - short; 2 - medium; 3 - long)
-        int bracket = 0;
-        if(check == 7 || check == 8)
-            bracket = 1;
-        if(check == 5 || check == 6)
-            bracket = 2;
-        if(check < 5)
-            bracket = 3;
             
         //now get the range
-        int maxrange = sensor.getRange(bracket);   
+        int range = sensor.getRangeByBracket();   
 
         //adjust the range based on LOS and planetary conditions
-        maxrange = sensor.adjustRange(maxrange, game, LosEffects.calculateLos(game, ae.getId(), target));
+        range = sensor.adjustRange(range, game, LosEffects.calculateLos(game, ae.getId(), target));
         
         //now adjust for anything about the target entity (size, heat, etc)
-        maxrange = sensor.entityAdjustments(maxrange, te, game);
+        range = sensor.entityAdjustments(range, te, game);
         
-        return maxrange;
+        if(range < 0) {
+            range = 0;
+        }
+            
+        return range;
         
     }
     

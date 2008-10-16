@@ -19,6 +19,7 @@ v0.33.34-dev (SVN)
 + Bug: non-mech units falling when in collapsing building
 + Commander Initiative
 + IR scanners only detect units with heat on their heat track
++ Bug: game-option dependent modes not appearing on units after loading a savegame
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

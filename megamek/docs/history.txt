@@ -23,6 +23,7 @@ v0.33.34-dev (SVN)
 + old code for BAP detection within a certain range deleted
 + Bug: BAP not detecting through buildings
 + Bug: overheating adjustments to night modifiers
++ Bug: VTOL units have seismic sensors
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

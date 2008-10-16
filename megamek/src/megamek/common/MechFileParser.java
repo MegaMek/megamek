@@ -207,14 +207,19 @@ public class MechFileParser {
 
         //add any sensors to the entity's vector of sensors
         if(ent instanceof Mech) {
-            //all meks get the four bacis sensors
+            //all meks get the four basic sensors
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_RADAR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_IR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_MAGSCAN));
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_SEISMIC));
             ent.setNextSensor(ent.getSensors().firstElement());
+        } else if(ent instanceof VTOL) {
+            ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_RADAR));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_IR));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAGSCAN));
+            ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent instanceof Tank) {
-            //all tanks get the four bacis sensors
+            //all tanks get the four basic sensors
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_RADAR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_IR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAGSCAN));

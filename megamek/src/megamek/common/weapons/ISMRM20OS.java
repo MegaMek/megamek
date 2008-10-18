@@ -37,7 +37,7 @@ public class ISMRM20OS extends MRMWeapon {
         this.addLookupName("ISMRM20 (OS)");
         this.addLookupName("IS MRM 20 (OS)");
         this.heat = 6;
-        this.rackSize = 40;
+        this.rackSize = 20;
         this.shortRange = 3;
         this.mediumRange = 8;
         this.longRange = 15;

@@ -208,7 +208,9 @@ public class GAAttack extends GA {
         int overheat = currentHeat + heat_total - capacity;
         // Don't forget heat from stealth armor...
         if (attacker.entity instanceof Mech
-                && ((Mech) attacker.entity).isStealthActive()) {
+                && (attacker.entity.isStealthActive()
+                      || attacker.entity.isNullSigActive()
+                      || attacker.entity.isVoidSigActive())) {
             overheat += 10;
         }
         // ... or infernos...

@@ -12232,9 +12232,17 @@ public class Server implements Runnable {
             }
             
             //void sig adds 10 heat
-            if (entity instanceof Mech && entity.hasActiveVoidSig()) {
+            if (entity instanceof Mech && entity.isVoidSigActive()) {
                 entity.heatBuildup += 10;
                 r = new Report(5016);
+                r.subject = entity.getId();
+                addReport(r);
+            }
+            
+            //null sig adds 10 heat
+            if (entity instanceof Mech && entity.isNullSigActive()) {
+                entity.heatBuildup += 10;
+                r = new Report(5017);
                 r.subject = entity.getId();
                 addReport(r);
             }
@@ -12287,7 +12295,7 @@ public class Server implements Runnable {
                 vibroHeat += entity.getActiveVibrobladeHeat(Mech.LOC_LARM);
 
                 if (vibroHeat > 0) {
-                    r = new Report(5017);
+                    r = new Report(5018);
                     r.subject = entity.getId();
                     r.add(vibroHeat);
                     addReport(r);

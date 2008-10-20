@@ -780,7 +780,7 @@ public abstract class BotClient extends Client {
                 if (((Mech) check_ent).hasStealth()) {
                     for (Mounted mEquip : check_ent.getMisc()) {
                         MiscType mtype = (MiscType) mEquip.getType();
-                        if (Mech.STEALTH.equals(mtype.getInternalName())) {
+                        if (mtype.hasFlag(MiscType.F_STEALTH)) {
 
                             // If the Mech is in danger of shutting down (14+
                             // heat), consider shutting

@@ -1002,8 +1002,10 @@ public class MechDisplay extends BufferedPanel {
                     currentHeatBuildup += 10;
                 }
             }
-            if (en instanceof Mech && en.isStealthActive()) {
-                currentHeatBuildup += 10; // active stealth heat
+            if (en instanceof Mech && (en.isStealthActive()
+                    || en.isNullSigActive()
+                    || en.isVoidSigActive())) {
+                currentHeatBuildup += 10; // active stealth/nullsig/void sig heat
             }
 
             for (Mounted m : entity.getEquipment()) {

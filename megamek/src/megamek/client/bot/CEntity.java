@@ -393,7 +393,9 @@ public class CEntity {
         if (entity instanceof Mech) {
             heat = heat_total - capacity;
             // Include heat from active stealth armor
-            if (entity instanceof Mech && entity.isStealthActive()) {
+            if (entity instanceof Mech && (entity.isStealthActive()
+                    || entity.isNullSigActive()
+                    || entity.isVoidSigActive())) {
                 heat += 10;
             }
             // Include heat from infernos

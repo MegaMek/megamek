@@ -124,6 +124,7 @@ import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponComparator;
 import megamek.common.WeaponType;
+import megamek.common.IGame.Phase;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -19661,6 +19662,10 @@ public class Server implements Runnable {
             return false;
         }
 
+        if ( game.getPhase() != Phase.PHASE_LOUNGE ){
+            return false;
+        }
+        
         int changed = 0;
 
         for (Enumeration<?> i = ((Vector<?>) packet.getObject(1)).elements(); i.hasMoreElements();) {
@@ -20308,25 +20313,29 @@ public class Server implements Runnable {
             }
             break;
         case Packet.COMMAND_SENDING_MAP_SETTINGS:
-            MapSettings newSettings = (MapSettings) packet.getObject(0);
-            if (!mapSettings.equalMapGenParameters(newSettings)) {
-                sendServerChat("Player " + player.getName() + " changed mapsettings");
+            if ( game.getPhase() == Phase.PHASE_LOUNGE ){
+                MapSettings newSettings = (MapSettings) packet.getObject(0);
+                if (!mapSettings.equalMapGenParameters(newSettings)) {
+                    sendServerChat("Player " + player.getName() + " changed mapsettings");
+                }
+                mapSettings = newSettings;
+                newSettings = null;
+                mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
+                resetPlayersDone();
+                transmitAllPlayerDones();
+                send(createMapSettingsPacket());
             }
-            mapSettings = newSettings;
-            newSettings = null;
-            mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
-            resetPlayersDone();
-            transmitAllPlayerDones();
-            send(createMapSettingsPacket());
             break;
         case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
             // MapSettings newSettings = (MapSettings) packet.getObject(0);
-            PlanetaryConditions conditions = (PlanetaryConditions) packet.getObject(0);
-            sendServerChat("Player " + player.getName() + " changed planetary conditions");
-            game.setPlanetaryConditions(conditions);
-            resetPlayersDone();
-            transmitAllPlayerDones();
-            send(createPlanetaryConditionsPacket());
+            if ( game.getPhase() == Phase.PHASE_LOUNGE ){
+                PlanetaryConditions conditions = (PlanetaryConditions) packet.getObject(0);
+                sendServerChat("Player " + player.getName() + " changed planetary conditions");
+                game.setPlanetaryConditions(conditions);
+                resetPlayersDone();
+                transmitAllPlayerDones();
+                send(createPlanetaryConditionsPacket());
+            }
             break;
         case Packet.COMMAND_QUERY_MAP_SETTINGS:
             MapSettings temp = (MapSettings) packet.getObject(0);

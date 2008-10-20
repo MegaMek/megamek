@@ -97,6 +97,8 @@ public class Pilot implements Serializable {
         this.gunneryM = gunneryM;
         this.gunneryB = gunneryB;
         this.piloting = piloting;
+        this.initBonus = 0;
+        this.commandBonus = 0;
         hits = 0;
         unconscious = false;
         dead = false;

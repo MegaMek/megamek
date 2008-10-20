@@ -77,6 +77,8 @@ public class MiscType extends EquipmentType {
     public static final long F_VISUAL_CAMO = 1L << 47;
     public static final long F_APOLLO = 1L << 48;
     public static final long F_INDUSTRIAL_TSM = 1L << 49;
+    public static final long F_NULLSIG = 1L << 50;
+    public static final long F_VOIDSIG = 1L << 51;
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1565,7 +1567,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Stealth Armor";
-        misc.setInternalName(Mech.STEALTH);
+        misc.setInternalName("Stealth Armor");
         misc.addLookupName("Stealth Armor");
         misc.tonnage = 0; // ???
         misc.criticals = 12;
@@ -1584,14 +1586,14 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Null Signature System";
-        misc.setInternalName(Mech.NULLSIG);
+        misc.setInternalName("Mek Null Signature System");
         misc.addLookupName("Null Signature System");
         misc.addLookupName("NullSignatureSystem");
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.hittable = true;
         misc.spreadable = true;
-        misc.flags |= F_STEALTH;
+        misc.flags |= F_NULLSIG;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
@@ -1605,7 +1607,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Void Signature System";
-        misc.setInternalName(Mech.VOIDSIG);
+        misc.setInternalName("Mek Void Signature System");
         misc.addLookupName("Void Signature System");
         misc.addLookupName("VoidSignatureSystem");
         misc.tonnage = 0;
@@ -1615,6 +1617,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
+        misc.flags |= F_VOIDSIG;
         misc.bv = 0; // ???
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 

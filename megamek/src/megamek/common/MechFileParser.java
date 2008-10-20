@@ -270,7 +270,8 @@ public class MechFileParser {
                             "Unable to match Artemis to launcher");
                 }
             } // End link-Artemis
-            else if (Mech.STEALTH.equals(m.getType().getInternalName())
+            else if ((m.getType().hasFlag(MiscType.F_STEALTH)
+                    || m.getType().hasFlag(MiscType.F_VOIDSIG))
                     && m.getLinked() == null) {
                 // Find an ECM suite to link to the stealth system.
                 // Stop looking after we find the first ECM suite.
@@ -286,7 +287,7 @@ public class MechFileParser {
                     // This mech has stealth armor but no ECM. Probably
                     // an improperly created custom.
                     throw new EntityLoadingException(
-                            "Unable to find an ECM Suite.  Mechs with Stealth Armor must also be equipped with an ECM Suite.");
+                            "Unable to find an ECM Suite.  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
                 }
             } // End link-Stealth
             // Link PPC Capacitor to PPC it its location.

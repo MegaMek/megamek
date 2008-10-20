@@ -1561,7 +1561,7 @@ public class TestBot extends BotClient {
                 && getEntity(entNum).getArmorType() == EquipmentType.T_ARMOR_STEALTH) {
             for (Mounted test_equip : getEntity(entNum).getMisc()) {
                 MiscType test_type = (MiscType) test_equip.getType();
-                if (Mech.STEALTH.equals(test_type.getInternalName())) {
+                if (test_type.hasFlag(MiscType.F_STEALTH)) {
                     if (test_equip.curMode().getName() != "On") {
                         test_equip.setMode("On");
                         super.sendModeChange(entNum, getEntity(entNum).getEquipmentNum(test_equip),

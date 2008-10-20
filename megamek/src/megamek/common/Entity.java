@@ -2852,36 +2852,6 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     /**
-     * Does the mech have a functioning null signature system?
-     */
-    public boolean hasActiveNullSig() {
-        if ( !isShutDown() ){
-            for (Mounted m : getMisc()) {
-                EquipmentType type = m.getType();
-                if (Mech.NULLSIG.equals(type.getInternalName()) && m.curMode().equals("On") && m.isReady()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    
-    /**
-     * Does the mech have a functioning void signature system?
-     */
-    public boolean hasActiveVoidSig() {
-        if ( !isShutDown() ){
-            for (Mounted m : getMisc()) {
-                EquipmentType type = m.getType();
-                if (Mech.VOIDSIG.equals(type.getInternalName()) && m.curMode().equals("On") && m.isReady()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    
-    /**
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveECM() {
@@ -5274,6 +5244,30 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         return false;
     }
 
+    /**
+     * Determine if this unit has an active null-signature system. <p/>
+     * Sub-classes are encouraged to override this method.
+     * 
+     * @return <code>true</code> if this unit has a null signature system that
+     *         is currently active, <code>false</code> if there is no stealth
+     *         system or if it is inactive.
+     */
+    public boolean isNullSigActive() {
+        return false;
+    }
+    
+    /**
+     * Determine if this unit has an active void signature system. <p/>
+     * Sub-classes are encouraged to override this method.
+     * 
+     * @return <code>true</code> if this unit has a void signature system that
+     *         is currently active, <code>false</code> if there is no stealth
+     *         system or if it is inactive.
+     */
+    public boolean isVoidSigActive() {
+        return false;
+    }
+    
     /**
      * Determine the stealth modifier for firing at this unit from the given
      * range. If the value supplied for <code>range</code> is not one of the

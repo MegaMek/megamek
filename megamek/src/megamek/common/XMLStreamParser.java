@@ -310,6 +310,7 @@ public class XMLStreamParser implements XMLResponder {
         // Do nothing.
     }
 
+    @SuppressWarnings("unchecked")
     public void recordElementStart(String name, Hashtable attr)
             throws ParseException {
 

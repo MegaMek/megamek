@@ -22,6 +22,10 @@ package megamek.common.net;
  */
 public abstract class ConnectionEvent extends java.util.EventObject {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6124300183866317006L;
     public static final int CONNECTED = 0;
     public static final int DISCONNECTED = 1;
     public static final int PACKET_RECEIVED = 2;

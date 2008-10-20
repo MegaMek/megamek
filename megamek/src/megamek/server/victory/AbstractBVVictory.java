@@ -23,6 +23,11 @@ import megamek.common.Player;
  * abstract baseclass for bv-checking victory implementations
  */
 public abstract class AbstractBVVictory implements Victory, Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -689891568905531049L;
+
     public int getFriendlyBV(IGame game, Player player) {
         int ret = 0;
         for (Enumeration<Player> f = game.getPlayers(); f.hasMoreElements();) {

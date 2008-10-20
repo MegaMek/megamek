@@ -63,6 +63,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @SuppressWarnings("unchecked")
     public Entity getEntity() throws EntityLoadingException {
 
         int chassisType = 0;

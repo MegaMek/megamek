@@ -34,6 +34,10 @@ import megamek.common.WeaponType;
  */
 public abstract class AbstractAttackAction extends AbstractEntityAction
         implements AttackAction {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -897197664652217134L;
     private int targetType;
     private int targetId;
 

@@ -21,6 +21,10 @@ package megamek.common.event;
  */
 public abstract class GameEvent extends java.util.EventObject {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8935663731287150831L;
     public static final int GAME_PLAYER_CONNECTED = 0;
     public static final int GAME_PLAYER_DISCONNECTED = 1;
     public static final int GAME_PLAYER_CHANGE = 2;

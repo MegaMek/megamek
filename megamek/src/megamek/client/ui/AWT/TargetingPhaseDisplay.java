@@ -914,8 +914,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (client.game.getPhase() == phase) {
 
             if (client.isMyTurn()) {
-            	if(cen==Entity.NONE)
-            		beginMyTurn();
+                if(cen==Entity.NONE)
+                    beginMyTurn();
                 setStatusBarText(Messages
                         .getString("TargetingPhaseDisplay.its_your_turn")); //$NON-NLS-1$
             } else {

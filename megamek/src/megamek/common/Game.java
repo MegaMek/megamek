@@ -598,24 +598,24 @@ public class Game implements Serializable, IGame {
     }
 
     public boolean isPhaseSimultaneous() {
-		switch (phase) {
-		case PHASE_DEPLOYMENT:
-		case PHASE_MOVEMENT:
-			return false;
-		case PHASE_FIRING:
-			return getOptions().booleanOption("simultaneous_firing");
-		case PHASE_PHYSICAL:
-			return getOptions().booleanOption("simultaneous_physical");
-		case PHASE_TARGETING:
-			return getOptions().booleanOption("simultaneous_targeting");
-		default:
-			return false;
-		}
-	}
+        switch (phase) {
+        case PHASE_DEPLOYMENT:
+        case PHASE_MOVEMENT:
+            return false;
+        case PHASE_FIRING:
+            return getOptions().booleanOption("simultaneous_firing");
+        case PHASE_PHYSICAL:
+            return getOptions().booleanOption("simultaneous_physical");
+        case PHASE_TARGETING:
+            return getOptions().booleanOption("simultaneous_targeting");
+        default:
+            return false;
+        }
+    }
     
     /**
-	 * Returns the current GameTurn object
-	 */
+     * Returns the current GameTurn object
+     */
     public GameTurn getTurn() {
         if (turnIndex < 0 || turnIndex >= turnVector.size()) {
             return null;
@@ -624,11 +624,11 @@ public class Game implements Serializable, IGame {
     }
     
     public GameTurn getTurnForPlayer(int pn) {
-    	for(int i=turnIndex;i<turnVector.size();i++) {
-    		GameTurn gt = turnVector.get(i);
-    		if(gt.isValid(pn, this)) return gt;
-    	}
-    	return null;
+        for(int i=turnIndex;i<turnVector.size();i++) {
+            GameTurn gt = turnVector.get(i);
+            if(gt.isValid(pn, this)) return gt;
+        }
+        return null;
     }
 
     /** Changes to the next turn, returning it. */
@@ -1735,7 +1735,7 @@ public class Game implements Serializable, IGame {
      * Used when a turn is played out of order
      */
     public void removeFirstTurnFor(Entity entity) {
-    	assert(phase != Phase.PHASE_MOVEMENT); //special move multi cases ignored
+        assert(phase != Phase.PHASE_MOVEMENT); //special move multi cases ignored
         for (int i = turnIndex; i < turnVector.size(); i++) {
             GameTurn turn = turnVector.elementAt(i);
             if (turn.isValidEntity(entity, this)) {

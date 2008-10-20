@@ -159,8 +159,21 @@ public class Sensor implements Serializable {
         //TODO: implement void-sig
         switch(type) {
         case (TYPE_BAP):
-        case (TYPE_CLAN_BAP):
         case (TYPE_WATCHDOG):
+            if(te.hasActiveVoidSig()) {
+                mod += 6;
+            } 
+            if(te.hasActiveNullSig()) {
+                mod += 5;
+            }
+            if(te.isStealthActive() && !te.hasActiveNullSig()) {
+                mod += 3;
+            }
+            break;
+        case (TYPE_CLAN_BAP):
+            if(te.hasActiveVoidSig()) {
+                mod += 5;
+            } 
             if(te.hasActiveNullSig()) {
                 mod += 5;
             }
@@ -169,6 +182,9 @@ public class Sensor implements Serializable {
             }
             break;
         case (TYPE_BLOODHOUND):
+            if(te.hasActiveVoidSig()) {
+                mod += 4;
+            }
             if(te.hasActiveNullSig()) {
                 mod += 3;
             }
@@ -180,6 +196,9 @@ public class Sensor implements Serializable {
             }
             break;
         case (TYPE_LIGHT_AP):
+            if(te.hasActiveVoidSig()) {
+                mod += 6;
+            }
             if(te.hasActiveNullSig()) {
                 mod += 6;
             }
@@ -188,6 +207,9 @@ public class Sensor implements Serializable {
             }
             break;
         case (TYPE_MEK_RADAR):
+            if(te.hasActiveVoidSig()) {
+                mod += 7;
+            }
             if(te.hasActiveNullSig()) {
                 mod += 6;
             }
@@ -200,6 +222,9 @@ public class Sensor implements Serializable {
             break;
         case (TYPE_VEE_RADAR):
         case (TYPE_BA_IMPROVED):
+            if(te.hasActiveVoidSig()) {
+                mod += 7;
+            }
             if(te.hasActiveNullSig()) {
                 mod += 7;
             }

@@ -27,6 +27,7 @@ v0.33.34-dev (SVN)
 + Sensors only detect a single range bracket
 + Added game option to make sensor ranges inclusive (i.e. medium range includes medium and short)
 + Bug: MRM 20 OS showing rack size 40
++ Void-Signature System (including sensor modifiers)
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

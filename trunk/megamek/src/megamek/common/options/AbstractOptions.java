@@ -24,6 +24,10 @@ import java.util.Vector;
  */
 public abstract class AbstractOptions implements IOptions, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6406883135074654379L;
     private Hashtable<String, IOption> optionsHash = new Hashtable<String, IOption>();
 
     protected AbstractOptions() {

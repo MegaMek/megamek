@@ -26,6 +26,10 @@ import megamek.common.Entity;
  */
 public abstract class GameEntityEvent extends GameEvent {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2152420685366625391L;
     protected Entity entity;
 
     /**

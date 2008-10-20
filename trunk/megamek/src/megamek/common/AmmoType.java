@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+@SuppressWarnings("unchecked")
 public class AmmoType extends EquipmentType {
     // ammo types
     public static final int     T_NA                = -1;

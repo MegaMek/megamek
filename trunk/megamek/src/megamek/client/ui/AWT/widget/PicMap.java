@@ -49,6 +49,10 @@ import java.util.Vector;
  * Within single layer elements are drawing in the order they added to PicMap.
  */
 public abstract class PicMap extends Component {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -822818427765592128L;
     // Vector of Background Drawers
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     // Group of other areas which does not implement PMHotArea or PMLAbel

@@ -45,6 +45,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
     public void clear() {
         rolls.removeAllElements();
         originalRolls.removeAllElements();
+        bonuses.removeAllElements();
         wasRollReplaced.removeAllElements();
     }
 

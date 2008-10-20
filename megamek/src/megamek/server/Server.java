@@ -12229,7 +12229,15 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 addReport(r);
             }
-
+            
+            //void sig adds 10 heat
+            if (entity instanceof Mech && entity.hasActiveVoidSig()) {
+                entity.heatBuildup += 10;
+                r = new Report(5016);
+                r.subject = entity.getId();
+                addReport(r);
+            }
+            
             // If a Mek is in extreme Temperatures, add or subtract one
             // heat per 10 degrees (or fraction of 10 degrees) above or
             // below 50 or -30 degrees Celsius

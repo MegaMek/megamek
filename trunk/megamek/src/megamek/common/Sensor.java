@@ -160,35 +160,35 @@ public class Sensor implements Serializable {
         switch(type) {
         case (TYPE_BAP):
         case (TYPE_WATCHDOG):
-            if(te.hasActiveVoidSig()) {
+            if(te.isVoidSigActive()) {
                 mod += 6;
             } 
-            if(te.hasActiveNullSig()) {
+            if(te.isNullSigActive()) {
                 mod += 5;
             }
-            if(te.isStealthActive() && !te.hasActiveNullSig()) {
+            if(te.isStealthActive() && !te.isNullSigActive()) {
                 mod += 3;
             }
             break;
         case (TYPE_CLAN_BAP):
-            if(te.hasActiveVoidSig()) {
+            if(te.isVoidSigActive()) {
                 mod += 5;
             } 
-            if(te.hasActiveNullSig()) {
+            if(te.isNullSigActive()) {
                 mod += 5;
             }
-            if(te.isStealthActive() && !te.hasActiveNullSig()) {
+            if(te.isStealthActive() && !te.isNullSigActive()) {
                 mod += 3;
             }
             break;
         case (TYPE_BLOODHOUND):
-            if(te.hasActiveVoidSig()) {
+            if(te.isVoidSigActive()) {
                 mod += 4;
             }
-            if(te.hasActiveNullSig()) {
+            if(te.isNullSigActive()) {
                 mod += 3;
             }
-            if(te.isStealthActive() && !te.hasActiveNullSig()) {
+            if(te.isStealthActive() && !te.isNullSigActive()) {
                 mod += 1;
             }
             if(te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
@@ -196,24 +196,24 @@ public class Sensor implements Serializable {
             }
             break;
         case (TYPE_LIGHT_AP):
-            if(te.hasActiveVoidSig()) {
+            if(te.isVoidSigActive()) {
                 mod += 6;
             }
-            if(te.hasActiveNullSig()) {
+            if(te.isNullSigActive()) {
                 mod += 6;
             }
-            if(te.isStealthActive() && !te.hasActiveNullSig()) {
+            if(te.isStealthActive() && !te.isNullSigActive()) {
                 mod += 4;
             }
             break;
         case (TYPE_MEK_RADAR):
-            if(te.hasActiveVoidSig()) {
+            if(te.isVoidSigActive()) {
                 mod += 7;
             }
-            if(te.hasActiveNullSig()) {
+            if(te.isNullSigActive()) {
                 mod += 6;
             }
-            if(te.isStealthActive() && !te.hasActiveNullSig()) {
+            if(te.isStealthActive() && !te.isNullSigActive()) {
                 mod += 4;
             }
             if(te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
@@ -222,13 +222,13 @@ public class Sensor implements Serializable {
             break;
         case (TYPE_VEE_RADAR):
         case (TYPE_BA_IMPROVED):
-            if(te.hasActiveVoidSig()) {
+            if(te.isVoidSigActive()) {
                 mod += 7;
             }
-            if(te.hasActiveNullSig()) {
+            if(te.isNullSigActive()) {
                 mod += 7;
             }
-            if(te.isStealthActive() && !te.hasActiveNullSig()) {
+            if(te.isStealthActive() && !te.isNullSigActive()) {
                 mod += 5;
             }
             if(te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {

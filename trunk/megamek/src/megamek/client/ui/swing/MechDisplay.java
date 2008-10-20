@@ -1073,8 +1073,10 @@ public class MechDisplay extends JPanel {
                     currentHeatBuildup += 10;
                 }
             }
-            if (en instanceof Mech && en.isStealthActive()) {
-                currentHeatBuildup += 10; // active stealth heat
+            if (en instanceof Mech && en.isStealthActive()
+                    || en.isNullSigActive()
+                    || en.isVoidSigActive()) {
+                currentHeatBuildup += 10; // active stealth/null sig/void sig heat
             }
 
             // update weapon list

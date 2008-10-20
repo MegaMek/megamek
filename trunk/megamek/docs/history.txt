@@ -30,6 +30,7 @@ v0.33.34-dev (SVN)
 + Void-Signature System (including sensor modifiers)
 + Bug: initiative bonuses not clearing in InitiativeRoll
 + RFE: Do not update Planetary Conditions/Game Options/Map settings after the game has started
++ Bug: Null-Sig/Void-Sig fixes
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

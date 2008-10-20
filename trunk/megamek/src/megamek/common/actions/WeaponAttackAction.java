@@ -1336,7 +1336,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         //penalty for void sig system
-        if(ae.hasActiveVoidSig()) {
+        if(ae.isVoidSigActive()) {
             toHit.addModifier(1, "Void signature active");
         }
         

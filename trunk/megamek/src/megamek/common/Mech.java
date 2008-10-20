@@ -129,15 +129,6 @@ public abstract class Mech extends Entity implements Serializable {
 
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Torso Mounted", "Small", "Command Console", "Dual" };
 
-    /**
-     * The internal name for Mek Stealth systems.
-     */
-    public static final String STEALTH = "Stealth";
-
-    public static final String NULLSIG = "Mek Null Signature System";
-    
-    public static final String VOIDSIG = "Mek Void Signature System";
-
     // jump types
     public static final int JUMP_UNKNOWN = -1;
 
@@ -533,7 +524,7 @@ public abstract class Mech extends Entity implements Serializable {
             MiscType mtype = (MiscType) m.getType();
 
             // Stealth can not be turned on if it's ECM is destroyed.
-            if (Mech.STEALTH.equals(mtype.getInternalName()) && m.getLinked().isDestroyed() && m.getLinked().isBreached()) {
+            if (mtype.hasFlag(MiscType.F_STEALTH) && m.getLinked().isDestroyed() && m.getLinked().isBreached()) {
                 m.setMode("Off");
             }
         } // Check the next piece of equipment.
@@ -759,7 +750,29 @@ public abstract class Mech extends Entity implements Serializable {
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
             if (mtype.hasFlag(MiscType.F_STEALTH)) {
-                // The Mek has Stealth Armor or null signature system.
+                // The Mek has Stealth Armor
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean hasNullSig() {
+        for (Mounted mEquip : getMisc()) {
+            MiscType mtype = (MiscType) mEquip.getType();
+            if (mtype.hasFlag(MiscType.F_NULLSIG)) {
+                // The Mek has Null-Sig
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasVoidSig() {
+        for (Mounted mEquip : getMisc()) {
+            MiscType mtype = (MiscType) mEquip.getType();
+            if (mtype.hasFlag(MiscType.F_VOIDSIG)) {
+                // The Mek has Void-Sig
                 return true;
             }
         }
@@ -2162,8 +2175,10 @@ public abstract class Mech extends Entity implements Serializable {
         int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false), true, false).getValue();
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
         // Try to find a Mek Stealth system.
-        if (hasStealth())
+        if (hasStealth() || hasNullSig())
             targetMovementModifier += 2;
+        if (hasVoidSig())
+            targetMovementModifier += 3;
         double tmmFactor = 1 + (targetMovementModifier / 10);
         dbv *= tmmFactor;
 
@@ -2806,17 +2821,46 @@ public abstract class Mech extends Entity implements Serializable {
         // Try to find a Mek Stealth system.
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (Mech.STEALTH.equals(mtype.getInternalName())) {
+            if (mtype.hasFlag(MiscType.F_STEALTH)) {
                 if (mEquip.curMode().equals("On") && hasActiveECM()) {
                     // Return true if the mode is "On" and ECM is working
                     return true;
                 }
-            } else if (Mech.NULLSIG.equals(mtype.getInternalName()) && mEquip.curMode().equals("On") && mEquip.isReady()) {
-                return true;
             }
         }
-
         // No Mek Stealth or system inactive. Return false.
+        return false;
+    }
+    
+    /**
+     * Does the mech have a functioning null signature system?
+     */
+    public boolean isNullSigActive() {
+        if ( !isShutDown() ){
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (type.hasFlag(MiscType.F_NULLSIG) && m.curMode().equals("On")
+                        && m.isReady()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Does the mech have a functioning void signature system?
+     */
+    public boolean isVoidSigActive() {
+        if ( !isShutDown() ){
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (type.hasFlag(MiscType.F_VOIDSIG) && m.curMode().equals("On")
+                        && m.isReady()) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -2839,7 +2883,7 @@ public abstract class Mech extends Entity implements Serializable {
         TargetRoll result = null;
 
         //can't combine void sig and stealth or null-sig
-        if(hasActiveVoidSig()) {
+        if(isVoidSigActive()) {
             int mmod = 3;
             if(delta_distance > 5) {
                 mmod = 0;
@@ -2851,8 +2895,8 @@ public abstract class Mech extends Entity implements Serializable {
             return new TargetRoll(mmod, "void signature");
         }
         
-        // Stealth must be active.
-        if (!isStealthActive()) {
+        // Stealth or null sig must be active.
+        if (!isStealthActive() && !isNullSigActive()) {
             result = new TargetRoll(0, "stealth not active");
         } else if (ae instanceof Infantry && !(ae instanceof BattleArmor)) {
             result = new TargetRoll(0, "infantry ignore stealth");
@@ -2872,7 +2916,7 @@ public abstract class Mech extends Entity implements Serializable {
                 result = new TargetRoll(2, "stealth");
                 break;
             case RangeType.RANGE_EXTREME:
-                result = new TargetRoll(8, "stealth");
+                result = new TargetRoll(2, "stealth");
                 break;
             default:
                 throw new IllegalArgumentException("Unknown range constant: " + range);

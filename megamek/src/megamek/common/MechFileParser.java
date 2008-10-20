@@ -272,7 +272,8 @@ public class MechFileParser {
             } // End link-Artemis
             else if ((m.getType().hasFlag(MiscType.F_STEALTH)
                     || m.getType().hasFlag(MiscType.F_VOIDSIG))
-                    && m.getLinked() == null) {
+                    && m.getLinked() == null
+                    && ent instanceof Mech) {
                 // Find an ECM suite to link to the stealth system.
                 // Stop looking after we find the first ECM suite.
                 for (Mounted mEquip : ent.getMisc()) {

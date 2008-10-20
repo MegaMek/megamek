@@ -385,7 +385,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Does turn start stuff
      */
     private void beginMyTurn() {
-    	GameTurn turn = client.getMyTurn();
+        GameTurn turn = client.getMyTurn();
         // There's special processing for countering break grapple.
         if (turn instanceof GameTurn.CounterGrappleTurn) {
             disableButtons();
@@ -1427,8 +1427,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         if (client.game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
 
             if (client.isMyTurn()) {
-            	if(cen==Entity.NONE)
-            		beginMyTurn();
+                if(cen==Entity.NONE)
+                    beginMyTurn();
                 setStatusBarText(Messages
                         .getString("PhysicalDisplay.its_your_turn")); //$NON-NLS-1$
             } else {

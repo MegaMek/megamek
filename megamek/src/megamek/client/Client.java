@@ -439,17 +439,17 @@ public class Client implements IClientCommandHandler {
      * is it my turn?
      */
     public boolean isMyTurn() {
-    	if(game.isPhaseSimultaneous()) {
-    		return game.getTurnForPlayer(local_pn) != null;
-    	}
+        if(game.isPhaseSimultaneous()) {
+            return game.getTurnForPlayer(local_pn) != null;
+        }
         return game.getTurn() != null && game.getTurn().isValid(local_pn, game);
     }
     
     public GameTurn getMyTurn() {
-    	if(game.isPhaseSimultaneous()) {
-    		return game.getTurnForPlayer(local_pn);
-    	}
-    	return game.getTurn();
+        if(game.isPhaseSimultaneous()) {
+            return game.getTurnForPlayer(local_pn);
+        }
+        return game.getTurn();
     }
 
     /**

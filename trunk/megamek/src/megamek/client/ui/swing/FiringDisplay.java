@@ -1245,8 +1245,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
         if (client.game.getPhase() == IGame.Phase.PHASE_FIRING) {
 
             if (client.isMyTurn()) {
-            	if(cen==Entity.NONE)
-            		beginMyTurn();
+                if(cen==Entity.NONE)
+                    beginMyTurn();
                 setStatusBarText(Messages.getString("FiringDisplay.its_your_turn")); //$NON-NLS-1$
             } else {
                 endMyTurn();

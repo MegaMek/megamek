@@ -1251,7 +1251,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
             if (client.isMyTurn()) {
                 if(cen==Entity.NONE)
-                	beginMyTurn();
+                    beginMyTurn();
                 setStatusBarText(Messages
                         .getString("FiringDisplay.its_your_turn")); //$NON-NLS-1$
             } else {

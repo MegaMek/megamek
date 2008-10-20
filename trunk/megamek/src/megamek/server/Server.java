@@ -1456,12 +1456,12 @@ public class Server implements Runnable {
         boolean outOfOrder = false;
         GameTurn turn = game.getTurn();
         if(game.isPhaseSimultaneous() && !turn.isValid(entityUsed.getOwnerId(), game)) {
-        	//turn played out of order
-        	outOfOrder = true;
-        	entityUsed.setDone(false);
-        	game.removeFirstTurnFor(entityUsed);
-        	entityUsed.setDone(true);
-        	turnsChanged = true;
+            //turn played out of order
+            outOfOrder = true;
+            entityUsed.setDone(false);
+            game.removeFirstTurnFor(entityUsed);
+            entityUsed.setDone(true);
+            turnsChanged = true;
         }
         final int playerId = null == entityUsed ? Player.PLAYER_NONE : entityUsed.getOwnerId();
         boolean infMoved = entityUsed instanceof Infantry;
@@ -1566,9 +1566,9 @@ public class Server implements Runnable {
 
         // move along
         if(outOfOrder) {
-       		send(createTurnIndexPacket());
+            send(createTurnIndexPacket());
         } else {
-        	changeToNextTurn();
+            changeToNextTurn();
         }
     }
 
@@ -7984,7 +7984,7 @@ public class Server implements Runnable {
         // can this player/entity act right now?
         GameTurn turn = game.getTurn();
         if(game.isPhaseSimultaneous()) {
-        	turn = game.getTurnForPlayer(connId);
+            turn = game.getTurnForPlayer(connId);
         }
         if (turn==null || !turn.isValid(connId, entity, game)) {
             System.err.println("error: server got invalid attack packet");
@@ -8159,16 +8159,16 @@ public class Server implements Runnable {
 
         Packet p = createAttackPacket(vector,0);
         if(game.isPhaseSimultaneous()) {
-        	// Update attack only to player who declared it & observers
-        	for(Player player:game.getPlayersVector()) {
-        		if(player.canSeeAll() || player.isObserver() || entity.getOwnerId()==player.getId()) {
-        			send(player.getId(),p);
-        		}
-        	}
+            // Update attack only to player who declared it & observers
+            for(Player player:game.getPlayersVector()) {
+                if(player.canSeeAll() || player.isObserver() || entity.getOwnerId()==player.getId()) {
+                    send(player.getId(),p);
+                }
+            }
         } else {
-	        // update all players on the attacks. Don't worry about pushes being a
-	        // "charge" attack. It doesn't matter to the client.
-	        send(p);
+            // update all players on the attacks. Don't worry about pushes being a
+            // "charge" attack. It doesn't matter to the client.
+            send(p);
         }
     }
 

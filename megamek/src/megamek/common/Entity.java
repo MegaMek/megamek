@@ -2867,6 +2867,21 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
     
     /**
+     * Does the mech have a functioning void signature system?
+     */
+    public boolean hasActiveVoidSig() {
+        if ( !isShutDown() ){
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (Mech.VOIDSIG.equals(type.getInternalName()) && m.curMode().equals("On") && m.isReady()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveECM() {

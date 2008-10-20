@@ -135,6 +135,8 @@ public abstract class Mech extends Entity implements Serializable {
     public static final String STEALTH = "Stealth";
 
     public static final String NULLSIG = "Mek Null Signature System";
+    
+    public static final String VOIDSIG = "Mek Void Signature System";
 
     // jump types
     public static final int JUMP_UNKNOWN = -1;
@@ -2836,6 +2838,19 @@ public abstract class Mech extends Entity implements Serializable {
     public TargetRoll getStealthModifier(int range, Entity ae) {
         TargetRoll result = null;
 
+        //can't combine void sig and stealth or null-sig
+        if(hasActiveVoidSig()) {
+            int mmod = 3;
+            if(delta_distance > 5) {
+                mmod = 0;
+            } else if(delta_distance > 2) {
+                mmod = 1;
+            } else if(delta_distance > 0) {
+                mmod = 2;
+            }
+            return new TargetRoll(mmod, "void signature");
+        }
+        
         // Stealth must be active.
         if (!isStealthActive()) {
             result = new TargetRoll(0, "stealth not active");

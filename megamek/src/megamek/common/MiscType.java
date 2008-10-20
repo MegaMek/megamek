@@ -486,6 +486,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createPileDriver());
         EquipmentType.addType(createArmoredCowl());
         EquipmentType.addType(createNullSignatureSystem());
+        EquipmentType.addType(createVoidSignatureSystem());
         EquipmentType.addType(createLightMinesweeper());
         EquipmentType.addType(createBridgeKit());
         EquipmentType.addType(createVibroShovel());
@@ -1591,6 +1592,26 @@ public class MiscType extends EquipmentType {
         misc.hittable = true;
         misc.spreadable = true;
         misc.flags |= F_STEALTH;
+        String[] saModes = { "Off", "On" };
+        misc.setModes(saModes);
+        misc.setInstantModeSwitch(false);
+        misc.bv = 0; // ???
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+
+        return misc;
+    }
+    
+    public static MiscType createVoidSignatureSystem() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Void Signature System";
+        misc.setInternalName(Mech.VOIDSIG);
+        misc.addLookupName("Void Signature System");
+        misc.addLookupName("VoidSignatureSystem");
+        misc.tonnage = 0;
+        misc.criticals = 7;
+        misc.hittable = true;
+        misc.spreadable = true;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);

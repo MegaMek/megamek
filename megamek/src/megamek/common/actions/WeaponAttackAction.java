@@ -1335,6 +1335,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.addModifier(1, "Heavy Armor");
         }
 
+        //penalty for void sig system
+        if(ae.hasActiveVoidSig()) {
+            toHit.addModifier(1, "Void signature active");
+        }
+        
         // add targeting computer (except with LBX cluster ammo)
         if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP
                 && aimingAt != Entity.LOC_NONE) {

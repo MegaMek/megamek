@@ -28,7 +28,6 @@ package megamek.common.loaders;
 
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.TechConstants;
 import megamek.common.util.BuildingBlock;
 
 public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {

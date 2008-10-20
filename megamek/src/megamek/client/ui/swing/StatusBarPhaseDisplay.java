@@ -29,6 +29,10 @@ import megamek.client.Client;
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         implements ActionListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 639696875125581395L;
     // displays
     private JLabel labStatus;
     protected JPanel panStatus;

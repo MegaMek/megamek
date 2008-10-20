@@ -117,6 +117,7 @@ public class TinyXMLTest implements XMLResponder {
         System.out.println("Parsing finished without error");
     }
 
+    @SuppressWarnings("unchecked")
     public void recordElementStart(String name, Hashtable attr)
             throws ParseException {
         System.out.println(prefix + "Element: " + name);

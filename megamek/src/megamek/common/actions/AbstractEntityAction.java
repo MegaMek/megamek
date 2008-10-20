@@ -21,6 +21,10 @@ import java.io.Serializable;
  */
 public abstract class AbstractEntityAction implements Serializable,
         EntityAction {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -758003433608975464L;
     private int entityId;
 
     public AbstractEntityAction(int entityId) {

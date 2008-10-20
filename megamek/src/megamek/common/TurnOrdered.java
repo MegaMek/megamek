@@ -24,6 +24,11 @@ import java.util.Vector;
 
 public abstract class TurnOrdered implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4131468442031773195L;
+
     private InitiativeRoll initiative = new InitiativeRoll();
 
     private transient int turns_other = 0;

@@ -2290,24 +2290,24 @@ public class Compute {
         
         //check visual range based on planetary conditions
         int visualRange = game.getPlanetaryConditions().getVisualRange(ae, teSpotlight);
-        if(target.getTargetType() == Targetable.TYPE_ENTITY) {
-            Entity te = (Entity) target;
-            //check for an active null signature system
-            //TODO: implement void signature
-            /*
-            if(te.hasActiveVoidSig()) {
-                visualRange = visualRange / 4;
-            } 
-            */
-            //check for visual camoflauge
-            //else 
-            if(te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
-                visualRange = visualRange / 2;
-            }
-        }
+        
         //smoke in los
         visualRange -= LosEffects.calculateLos(game, ae.getId(), target).getLightSmoke();
         visualRange -= (2 * LosEffects.calculateLos(game, ae.getId(), target).getHeavySmoke());
+        
+        //check for camo and null sig on the target
+        if(target.getTargetType() == Targetable.TYPE_ENTITY) {
+            Entity te = (Entity) target;
+            if(te.isVoidSigActive()) {
+                visualRange = visualRange / 4;
+            } else if(te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+                visualRange = visualRange / 2;
+            } else if(te.isChameleonShieldActive()) {
+                visualRange = visualRange / 2;
+            }
+        }
+        
+        visualRange = Math.max(visualRange, 1);
         
         int bracket = getSensorRangeBracket(ae, target);
         int range = getSensorRangeByBracket(game, ae, target);

@@ -4419,10 +4419,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         }
 
         StringBuffer sb = new StringBuffer();
+        sb.append("<html>");
         for (String str : strings) {
             sb.append(str);
-            sb.append(";");
+            sb.append("<br>");
         }
+        sb.append("</html>");
         return sb.toString();
     }
 

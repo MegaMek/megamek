@@ -542,6 +542,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
         }
 
+        //fatigue
+        if(game.getOptions().booleanOption("tacops_fatigue") && ae.crew.isGunneryFatigued(game.getRoundCount())) {
+            toHit.addModifier(1,"fatigue");
+        }
+        
         // If a unit is suffering from electromagnetic interference, they get a
         // blanket +2.
         // Sucks to be them.

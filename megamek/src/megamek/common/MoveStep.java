@@ -865,6 +865,7 @@ public class MoveStep implements Serializable {
         this.isFlying = entity.isFlying();
         isHullDown = entity.isHullDown();
         climbMode = entity.climbMode();
+        this.thisStepBackwards = entity.inReverse;
 
         this.elevation = entity.getElevation();
         movementType = entity.moved;

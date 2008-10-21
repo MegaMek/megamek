@@ -4276,6 +4276,7 @@ public class Server implements Runnable {
             final MoveStep step = i.nextElement();
             wasProne = entity.isProne();
             boolean isPavementStep = step.isPavementStep();
+            entity.inReverse = step.isThisStepBackwards();
             boolean entityFellWhileAttemptingToStand = false;
 
             // stop for illegal movement

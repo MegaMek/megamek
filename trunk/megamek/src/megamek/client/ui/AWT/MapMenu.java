@@ -50,7 +50,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.weapons.CLFireExtinguisher;
 import megamek.common.weapons.ISFireExtinguisher;
 
-/*
+/**
  * Context menu for the board.
  */
 public class MapMenu extends PopupMenu implements ActionListener {
@@ -858,10 +858,6 @@ public class MapMenu extends PopupMenu implements ActionListener {
         if (canTargetEntities()) {
             for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
                 final Entity entity = i.nextElement();
-
-                if (myTarget instanceof Entity && ((Entity) myTarget).equals(entity)) {
-                    continue;
-                }
                 menu.add(TargetMenuItem(entity));
             }
             // Can target weapons at the hex if it contains woods or building.

@@ -403,7 +403,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
             return;
         }
         includeMaxTech = maxTechOption;
-        m_chType.removeAll();
+        m_chType.removeAllItems();
         for (int i = 0; i < maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }
@@ -512,9 +512,9 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
     private void populateWeaponsAndEquipmentChoices() {
         LinkedHashSet<String> weapons = new LinkedHashSet<String>();
         LinkedHashSet<String> equipment = new LinkedHashSet<String>();
-        m_cWeapons1.removeAll();
-        m_cWeapons2.removeAll();
-        m_cEquipment.removeAll();
+        m_cWeapons1.removeAllItems();
+        m_cWeapons2.removeAllItems();
+        m_cEquipment.removeAllItems();
         m_tWeapons1.setText("");
         m_tWeapons2.setText("");
         m_chkEquipment.setSelected(false);

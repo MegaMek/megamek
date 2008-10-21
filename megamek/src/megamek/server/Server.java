@@ -12247,6 +12247,14 @@ public class Server implements Runnable {
                 addReport(r);
             }
             
+            //chameleon polarization field adds 6
+            if (entity instanceof Mech && entity.isChameleonShieldActive()) {
+                entity.heatBuildup += 6;
+                r = new Report(5014);
+                r.subject = entity.getId();
+                addReport(r);
+            }   
+            
             // If a Mek is in extreme Temperatures, add or subtract one
             // heat per 10 degrees (or fraction of 10 degrees) above or
             // below 50 or -30 degrees Celsius

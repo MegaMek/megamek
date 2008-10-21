@@ -1079,6 +1079,10 @@ public class MechDisplay extends JPanel {
                 currentHeatBuildup += 10; // active stealth/null sig/void sig heat
             }
 
+            if (en instanceof Mech && en.isChameleonShieldActive()) {
+                currentHeatBuildup += 6;
+            }
+            
             // update weapon list
             ((DefaultListModel) weaponList.getModel()).removeAllElements();
             ((DefaultComboBoxModel) m_chAmmo.getModel()).removeAllElements();

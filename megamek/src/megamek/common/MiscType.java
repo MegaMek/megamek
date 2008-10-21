@@ -79,6 +79,7 @@ public class MiscType extends EquipmentType {
     public static final long F_INDUSTRIAL_TSM = 1L << 49;
     public static final long F_NULLSIG = 1L << 50;
     public static final long F_VOIDSIG = 1L << 51;
+    public static final long F_CHAMELEON_SHIELD = 1L << 52;
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -489,6 +490,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createArmoredCowl());
         EquipmentType.addType(createNullSignatureSystem());
         EquipmentType.addType(createVoidSignatureSystem());
+        EquipmentType.addType(createChameleonLightPolarizationField());
         EquipmentType.addType(createLightMinesweeper());
         EquipmentType.addType(createBridgeKit());
         EquipmentType.addType(createVibroShovel());
@@ -1618,6 +1620,27 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
         misc.flags |= F_VOIDSIG;
+        misc.bv = 0; // ???
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+
+        return misc;
+    }
+    
+    public static MiscType createChameleonLightPolarizationField() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Chameleon Light Polarization Field";
+        misc.setInternalName("Chameleon Light Polarization Field");
+        misc.addLookupName("Chameleon Light Polarization Field");
+        misc.addLookupName("ChameleonLightPolarizationField");
+        misc.tonnage = 0;
+        misc.criticals = 6;
+        misc.hittable = true;
+        misc.spreadable = true;
+        String[] saModes = { "Off", "On" };
+        misc.setModes(saModes);
+        misc.setInstantModeSwitch(false);
+        misc.flags |= F_CHAMELEON_SHIELD;
         misc.bv = 0; // ???
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 

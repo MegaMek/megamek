@@ -398,6 +398,9 @@ public class CEntity {
                     || entity.isVoidSigActive())) {
                 heat += 10;
             }
+            if (entity instanceof Mech && entity.isChameleonShieldActive()) {
+                heat += 6;
+            }
             // Include heat from infernos
             if (entity.infernos.isStillBurning()) {
                 heat += 6;

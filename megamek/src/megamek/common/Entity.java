@@ -5273,6 +5273,18 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
     
     /**
+     * Determine if this unit has an active chameleon light polarization field. <p/>
+     * Sub-classes are encouraged to override this method.
+     * 
+     * @return <code>true</code> if this unit has a void signature system that
+     *         is currently active, <code>false</code> if there is no stealth
+     *         system or if it is inactive.
+     */
+    public boolean isChameleonShieldActive() {
+        return false;
+    }
+    
+    /**
      * Determine the stealth modifier for firing at this unit from the given
      * range. If the value supplied for <code>range</code> is not one of the
      * <code>Entity</code> class range constants, an

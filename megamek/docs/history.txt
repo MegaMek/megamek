@@ -40,6 +40,7 @@ v0.33.34-dev (SVN)
     for illegal units
 + Bug: MASC and supercharger on one mech not working correctly
 + Minefield damage delivered in 5-pt clusters
++ Bug 2083962: move mod for walking backwards
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

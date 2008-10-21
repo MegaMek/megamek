@@ -4027,6 +4027,10 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             roll.addModifier(-2, "careful stand");
         }
         
+        if(game.getOptions().booleanOption("tacops_fatigue") && crew.isPilotingFatigued(game.getRoundCount())) {
+            roll.addModifier(1,"fatigue");
+        }
+        
         return roll;
     }
 

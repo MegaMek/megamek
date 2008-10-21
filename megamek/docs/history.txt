@@ -33,6 +33,7 @@ v0.33.34-dev (SVN)
 + Bug: Null-Sig/Void-Sig fixes
 + Bug: only link stealth/Null-sig to ECM on Meks
 + Bug 2176127: Swarm missiles being weird.
++ TacOps Pilot Fatigue Option
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

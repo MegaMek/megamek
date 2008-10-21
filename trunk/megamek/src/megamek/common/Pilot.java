@@ -594,5 +594,37 @@ public class Pilot implements Serializable {
             return gunnery;
         }
     }
+    
+    public boolean isPilotingFatigued(int turn) {
+        
+        if(piloting > 5 && turn > 9) {
+            return true;
+        }
+        if(piloting > 3 && turn > 13) {
+            return true;
+        }
+        if(piloting > 1 && turn > 16) {
+            return true;
+        }
+        if(turn > 19) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isGunneryFatigued(int turn) {
+        
+        if(piloting > 5 && turn > 13) {
+            return true;
+        }
+        if(piloting > 3 && turn > 16) {
+            return true;
+        }
+        if(piloting > 1 && turn > 19) {
+            return true;
+        }
+        return false;
+    }
+    
 
 }

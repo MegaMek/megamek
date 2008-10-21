@@ -874,7 +874,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // and add it into the game, temporarily
         client.game.addAction(waa);
-        clientgui.bv.addAttack(waa);
         clientgui.minimap.drawMap();
 
         // set the weapon as used

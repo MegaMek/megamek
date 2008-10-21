@@ -44,6 +44,8 @@ v0.33.34-dev (SVN)
 + In right-click popup target menu, show target entity even if it's the only one
 + Bug: Fixed a few oddities in the swing add unit dialog
 + Bug: fix ATM ammo switching not working correctly
++ Bug: Attacks listed twice in attack-arrow tooltips before finishing firing
+    declaration of a unit
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

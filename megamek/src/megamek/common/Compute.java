@@ -1179,6 +1179,13 @@ public class Compute {
     }
 
     public static ToHitData getSecondaryTargetMod(IGame game, Entity attacker, Targetable target, boolean isSwarm) {
+ 
+        //large craft do not get secondary target mod
+        //http://www.classicbattletech.com/forums/index.php/topic,37661.0.html
+        if(attacker instanceof Dropship || attacker instanceof Jumpship) {
+            return null;
+        }
+        
         boolean curInFrontArc = isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
 
         int primaryTarget = Entity.NONE;

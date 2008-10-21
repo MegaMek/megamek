@@ -2188,12 +2188,10 @@ public abstract class Mech extends Entity implements Serializable {
         // Try to find a Mek Stealth or similar system.
         if (hasStealth() || hasNullSig())
             targetMovementModifier += 2;
-        if(hasChameleonShield())
+        if (hasChameleonShield())
             targetMovementModifier += 2;
         if (hasVoidSig())
             targetMovementModifier += 3;
-        if (hasChameleonShield())
-            targetMovementModifier += 2;
         double tmmFactor = 1 + (targetMovementModifier / 10);
         dbv *= tmmFactor;
 

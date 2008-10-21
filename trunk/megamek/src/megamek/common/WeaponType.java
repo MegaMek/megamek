@@ -236,45 +236,46 @@ public class WeaponType extends EquipmentType {
     }
 
     public int[] getRanges(Mounted weapon) {
-        
-        int[] weaponRanges = { minimumRange, shortRange, mediumRange, longRange,
-                extremeRange };
         // modify the ranges for ATM missile systems based on the ammo selected
         // TODO: this is not the right place to hardcode these
+        int minRange = minimumRange;
+        int sRange = shortRange;
+        int mRange = mediumRange;
+        int lRange = longRange;
+        int eRange = extremeRange;
         if (this.getAmmoType() == AmmoType.T_ATM) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if ((atype.getAmmoType() == AmmoType.T_ATM) && atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
-                minimumRange = 4;
-                shortRange = 9;
-                mediumRange = 18;
-                longRange = 27;
-                extremeRange = 36;
+                minRange = 4;
+                sRange = 9;
+                mRange = 18;
+                lRange = 27;
+                eRange = 36;
             } else if ((atype.getAmmoType() == AmmoType.T_ATM) && atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
-                minimumRange = 0;
-                shortRange = 3;
-                mediumRange = 6;
-                longRange = 9;
-                extremeRange = 12;
+                minRange = 0;
+                sRange = 3;
+                mRange = 6;
+                lRange = 9;
+                eRange = 12;
             }
         }
         if (this.getAmmoType() == AmmoType.T_MML) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if (atype.hasFlag(AmmoType.F_MML_LRM) || this.getAmmoType() == AmmoType.T_LRM_TORPEDO) {
-                minimumRange = 6;
-                shortRange = 7;
-                mediumRange = 14;
-                longRange = 21;
-                extremeRange = 28;
+                minRange = 6;
+                sRange = 7;
+                mRange = 14;
+                lRange = 21;
+                eRange = 28;
             } else {
-                minimumRange = 0;
-                shortRange = 3;
-                mediumRange = 6;
-                longRange = 9;
-                extremeRange = 12;
+                minRange = 0;
+                sRange = 3;
+                mRange = 6;
+                lRange = 9;
+                eRange = 12;
             }
-            weaponRanges = new int[] { minimumRange, shortRange, mediumRange, longRange, extremeRange };
         }
-
+        int[] weaponRanges = { minRange, sRange, mRange, lRange, eRange };
         return weaponRanges;
     }
 

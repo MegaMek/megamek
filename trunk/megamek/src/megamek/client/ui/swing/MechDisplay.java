@@ -1502,7 +1502,7 @@ public class MechDisplay extends JPanel {
             onResize();
         }
 
-        private String formatAmmo(Mounted m) {
+        private Object formatAmmo(Mounted m) {
             StringBuffer sb = new StringBuffer(64);
             int ammoIndex = m.getDesc().indexOf(
                     Messages.getString("MechDisplay.0")); //$NON-NLS-1$
@@ -1516,7 +1516,8 @@ public class MechDisplay extends JPanel {
                 sb.append(m.getDesc().substring(0, ammoIndex));
                 sb.append(m.getDesc().substring(ammoIndex + 4));
             }
-            return sb.toString();
+            final String ammoString = sb.toString();
+            return new Object() { public String toString() { return ammoString; } };
         }
 
         private String formatBayWeapon(Mounted m) {
@@ -1840,6 +1841,9 @@ public class MechDisplay extends JPanel {
         // ItemListener
         //
         public void itemStateChanged(ItemEvent ev) {
+            if (ev.getStateChange() != ItemEvent.SELECTED) {
+                return;
+            }
             if (ev.getItemSelectable().equals(m_chAmmo)
                     && m_chAmmo.getSelectedIndex() != -1) {
                 // only change our own units

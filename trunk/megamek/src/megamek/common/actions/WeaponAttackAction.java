@@ -1518,15 +1518,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         boolean isHoming = false;
         ToHitData toHit = null;
         
-        if (!game.getOptions().booleanOption("friendly_fire")) {
-            // a friendly unit can never be the target of a direct attack.
-            if (!exchangeSwarmTarget && target.getTargetType() == Targetable.TYPE_ENTITY
-                    && (((Entity)target).getOwnerId() == ae.getOwnerId()
-                            || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
-                                    && ae.getOwner().getTeam() != Player.TEAM_NONE
-                                    && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
-                return "A friendly unit can never be the target of a direct attack.";
-        }
         // only leg mounted b-pods can be fired normally
         if (wtype.hasFlag(WeaponType.F_B_POD)) {
             if (!(target instanceof Infantry)) {
@@ -1544,8 +1535,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
         if (ae.hasShield()
-                && ae.hasActiveShield(weapon.getLocation(), weapon
-                        .isRearMounted())) {
+                && ae.hasActiveShield(weapon.getLocation(),
+                        weapon.isRearMounted())) {
             return "Weapon blocked by active shield";
         }
         // If it has a torso-mounted cockpit and two head sensor hits or three
@@ -1579,12 +1570,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     }
                 }
             }
-        }
-        
-        
-        // missing, breached or jammed weapons can't fire
-        if (!weapon.canFire() && !exchangeSwarmTarget) {
-            return "Weapon is not in a state where it can be fired";
         }
 
         // can't fire Indirect LRM with direct LOS
@@ -1687,28 +1672,62 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Weapon can't make artillery attacks.";
             }
         }
-
-        // can't target yourself, unless those are swarm missiles that
-        // continued to a new target
-        if (ae.equals(te) && !exchangeSwarmTarget) {
-            return "You can't target yourself";
+        
+        // check the following only if we're not a flight of continuing swarm
+        // missiles
+        if (!exchangeSwarmTarget) {
+            
+            if (!game.getOptions().booleanOption("friendly_fire")) {
+                // a friendly unit can never be the target of a direct attack.
+                if (target.getTargetType() == Targetable.TYPE_ENTITY
+                        && (((Entity)target).getOwnerId() == ae.getOwnerId()
+                                || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
+                                        && ae.getOwner().getTeam() != Player.TEAM_NONE
+                                        && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
+                    return "A friendly unit can never be the target of a direct attack.";
+            }
+            // can't target yourself,
+            if (ae.equals(te)) {
+                return "You can't target yourself";
+            }
+            // is the attacker even active?
+            if (ae.isShutDown() || !ae.getCrew().isActive()) {
+                return "Attacker is in no condition to fire weapons.";
+            }
+            
+            // sensors operational?
+            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+            if (ae instanceof Mech
+                    && ((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+                sensorHits += ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                        Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+                if (sensorHits > 2)
+                    return "Attacker sensors destroyed.";
+            } else if (sensorHits > 1) {
+                return "Attacker sensors destroyed.";
+            }
+            // weapon operational?
+            if (!weapon.canFire()) {
+                return "Weapon is not in a state where it can be fired";
+            }
+            
+             // got ammo?
+            if (usesAmmo && (ammo == null 
+                    || ammo.getShotsLeft() == 0
+                    || ammo.isBreached())) {
+                return "Weapon out of ammo.";
+            }
+            
+            if (ae instanceof Tank) {
+                sensorHits = ((Tank) ae).getSensorHits();
+                if (sensorHits > 3)
+                    return "Attacker sensors destroyed.";
+                if (((Tank) ae).getStunnedTurns() > 0)
+                    return "Crew stunned";
+            }
         }
-
-        // weapon operational?
-        if (weapon.isDestroyed() || weapon.isBreached()) {
-            return "Weapon not operational.";
-        }
-
-        // got ammo?
-        // don't check if it's a swarm-missile-follow-on-attack, we used the
-        // ammo previously
-        if (usesAmmo
-                && !exchangeSwarmTarget
-                && (ammo == null || ammo.getShotsLeft() == 0 || ammo
-                        .isBreached())) {
-            return "Weapon out of ammo.";
-        }
-
+        
         // Are we dumping that ammo?
         if (usesAmmo && ammo.isDumping()) {
             ae.loadWeaponWithSameAmmo(weapon);
@@ -1716,30 +1735,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Dumping remaining ammo.";
             }
         }
-
-        // is the attacker even active?
-        if (ae.isShutDown() || !ae.getCrew().isActive()) {
-            return "Attacker is in no condition to fire weapons.";
-        }
-
-        // sensors operational?
-        int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-        if (ae instanceof Mech
-                && ((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            sensorHits += ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mech.SYSTEM_SENSORS, Mech.LOC_CT);
-            if (sensorHits > 2)
-                return "Attacker sensors destroyed.";
-        } else if (sensorHits > 1) {
-            return "Attacker sensors destroyed.";
-        }
         
         if(ae.isEvading() && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) 
             return "Attacker is evading.";
 
         if (ae instanceof Aero) {
-            Aero aero = (Aero)ae;            
+            Aero aero = (Aero)ae;
             //FCS hits
             int fcs = aero.getFCSHits();
             if(fcs > 2 )
@@ -1761,28 +1762,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
                 WeaponAttackAction prevAttack = (WeaponAttackAction)o;
                 if (prevAttack.getEntityId() == attackerId) {
-          
                     if ( weaponId != prevAttack.getWeaponId() && 
                             ae.getEquipment(prevAttack.getWeaponId()).getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {                       
                         return "Already space bombing";
                     }
                 }
             }
-            
-            //aeros cannot make artillery shots (really I should just change the targetable
-            //hexes, but I cannot find it)
-            if(isArtilleryIndirect || isArtilleryDirect || isArtilleryFLAK) {
-                return "This unit cannot make artillery attacks";
-            }
-            
-        }
-        
-        if (ae instanceof Tank) {
-            sensorHits = ((Tank) ae).getSensorHits();
-            if (sensorHits > 3)
-                return "Attacker sensors destroyed.";
-            if (((Tank) ae).getStunnedTurns() > 0)
-                return "Crew stunned";
         }
 
         // Is the weapon blocked by a passenger?

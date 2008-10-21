@@ -670,6 +670,49 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append("Unit has more than one TAG\n");
             illegal = true;
         }
+        if (getEntity() instanceof Mech) {
+            Mech mech = (Mech)getEntity();
+            if (mech.hasNullSig()) {
+                if (mech.hasStealth()) {
+                    buff.append("Unit mounts both null-signature-system and stealth armor\n");
+                    illegal = true;
+                }
+                if (mech.hasTargComp()) {
+                    buff.append("Unit mounts both null-signature-system and targeting computer\n");
+                    illegal = true;
+                }
+                if (mech.hasVoidSig()) {
+                    buff.append("Unit mounts both null-signature-system and void-signature-system\n");
+                    illegal = true;
+                }
+                if (mech.hasC3()) {
+                    buff.append("Unit mounts both null-signature-system and a c3 system\n");
+                    illegal = true;
+                }
+            }
+            if (mech.hasVoidSig()) {
+                if (mech.hasStealth()) {
+                    buff.append("Unit mounts both void-signature-system and stealth armor\n");
+                    illegal = true;
+                }
+                if (mech.hasTargComp()) {
+                    buff.append("Unit mounts both void-signature-system and targeting computer\n");
+                    illegal = true;
+                }
+                if (mech.hasC3()) {
+                    buff.append("Unit mounts both void-signature-system and a c3 system\n");
+                    illegal = true;
+                }
+                if (mech.hasChameleonShield()) {
+                    buff.append("Unit mounts both void-signature-system and a chameleon light polarisation shield\n");
+                    illegal = true;
+                }
+            }
+            if (mech.hasChameleonShield() && mech.hasStealth()) {
+                buff.append("Unit mounts both chameleon-light-polarization-system and stealth armor\n");
+                illegal = true;
+            }
+        }
         return illegal;
     }
 

@@ -36,7 +36,8 @@ v0.33.34-dev (SVN)
 + TacOps Pilot Fatigue Option
 + Chameleon Light Polarization Field
 + Adjust visual range for visual camo (including null sig)
-+ BV for CLPF
++ Check chameleon/void-sig/null-sig/stealth armor and other equipment restrictions
+    for illegal units
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

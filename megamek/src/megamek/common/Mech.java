@@ -156,9 +156,9 @@ public abstract class Mech extends Entity implements Serializable {
 
     private static int[] MASC_FAILURE = { 2, 4, 6, 10, 12, 12, 12 };
 
-    private int nMASCLevel = 0; // MASCLevel is the # of turns MASC has been
+    // MASCLevel is the # of turns MASC has been used previously
+    private int nMASCLevel = 0;
 
-    // used previously
     private boolean bMASCWentUp = false;
 
     private boolean usedMASC = false; // Has masc been used?
@@ -382,12 +382,11 @@ public abstract class Mech extends Entity implements Serializable {
      * @param vDesc
      *            the description off the masc failure. used as output.
      * @param vCriticals
-     *            ontains tuple of intiger and critical slot. used as output.
+     *            contains tuple of intiger and critical slot. used as output.
      * @return true if there was a masc failure.
      */
     public boolean checkForMASCFailure(MovePath md, Vector<Report> vDesc, HashMap<Integer, CriticalSlot> vCriticals) {
         if (md.hasActiveMASC()) {
-            Report r;
             boolean bFailure = false;
 
             // If usedMASC is already set, then we've already checked MASC
@@ -395,94 +394,108 @@ public abstract class Mech extends Entity implements Serializable {
             // If we failed before, the MASC was destroyed, and we wouldn't
             // have gotten here (hasActiveMASC would return false)
             if (!usedMASC) {
-                Mounted equip = getMASC();
-                int nRoll = Compute.d6(2);
+                Mounted masc = getMASC();
+                Mounted superCharger = getSuperCharger();
+                bFailure = doMASCCheckFor(masc, vDesc, vCriticals);
+                boolean bSuperChargeFailure = doMASCCheckFor(superCharger, vDesc, vCriticals);
+                return bFailure || bSuperChargeFailure;
+            }
+        }
+        return false;
+    }
 
-                usedMASC = true;
-                r = new Report(2365);
-                r.subject = this.getId();
-                r.addDesc(this);
-                r.add(equip.getName());
+    /**
+     * check one masc system for failure
+     * @param masc
+     * @param vDesc
+     * @param vCriticals
+     * @return
+     */
+    private boolean doMASCCheckFor(Mounted masc, Vector<Report> vDesc, HashMap<Integer, CriticalSlot> vCriticals) {
+        if (masc != null) {
+            boolean bFailure = false;
+            int nRoll = Compute.d6(2);
+
+            usedMASC = true;
+            Report r = new Report(2365);
+            r.subject = this.getId();
+            r.addDesc(this);
+            r.add(masc.getName());
+            vDesc.addElement(r);
+            r = new Report(2370);
+            r.subject = this.getId();
+            r.indent();
+            r.add(getMASCTarget());
+            r.add(nRoll);
+
+            if (nRoll < getMASCTarget()) {
+                // uh oh
+                bFailure = true;
+                r.choose(false);
                 vDesc.addElement(r);
-                r = new Report(2370);
-                r.subject = this.getId();
-                r.indent();
-                r.add(getMASCTarget());
-                r.add(nRoll);
 
-                if (nRoll < getMASCTarget()) {
-                    // uh oh
-                    bFailure = true;
-                    r.choose(false);
+                if (((MiscType) (masc.getType())).hasSubType(MiscType.S_SUPERCHARGER)) {
+                    if (masc.getType().hasFlag(MiscType.F_MASC)) {
+                        masc.setDestroyed(true);
+                        masc.setMode("Off");
+                    }
+                    // do the damage - engine crits
+                    int hits = 0;
+                    int roll = Compute.d6(2);
+                    r = new Report(6310);
+                    r.subject = getId();
+                    r.add(roll);
+                    r.newlines = 0;
                     vDesc.addElement(r);
-
-                    if (((MiscType) (equip.getType())).hasSubType(MiscType.S_SUPERCHARGER)) {
-                        if (equip.getType().hasFlag(MiscType.F_MASC)) {
-                            equip.setDestroyed(true);
-                            equip.setMode("Off");
-                        }
-                        // do the damage - engine crits
-                        int hits = 0;
-                        int roll = Compute.d6(2);
-                        r = new Report(6310);
+                    if (roll <= 7) {
+                        // no effect
+                        r = new Report(6005);
                         r.subject = getId();
-                        r.add(roll);
                         r.newlines = 0;
                         vDesc.addElement(r);
-                        if (roll <= 7) {
-                            // no effect
-                            r = new Report(6005);
-                            r.subject = getId();
-                            r.newlines = 0;
-                            vDesc.addElement(r);
-                        } else if (roll >= 8 && roll <= 9) {
-                            hits = 1;
-                            r = new Report(6315);
-                            r.subject = getId();
-                            r.newlines = 0;
-                            vDesc.addElement(r);
-                        } else if (roll >= 10 && roll <= 11) {
-                            hits = 2;
-                            r = new Report(6320);
-                            r.subject = getId();
-                            r.newlines = 0;
-                            vDesc.addElement(r);
-                        } else if (roll == 12) {
-                            hits = 3;
-                            r = new Report(6325);
-                            r.subject = getId();
-                            r.newlines = 0;
-                            vDesc.addElement(r);
-                        }
-                        for (int i = 0; i < 12 && hits > 0; i++) {
-                            CriticalSlot cs = getCritical(LOC_CT, i);
-                            if (cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == SYSTEM_ENGINE) {
-                                vCriticals.put(new Integer(LOC_CT), cs);
-                                // vDesc.addAll(server.applyCriticalHit(this,
-                                // LOC_CT, cs, true));
-                                hits--;
-                            }
-                        }
-                    } else {
-                        // do the damage.
-                        // random crit on each leg, but MASC is not destroyed
-                        for (int loc = 0; loc < locations(); loc++) {
-                            if (locationIsLeg(loc) && getHittableCriticals(loc) > 0) {
-                                CriticalSlot slot = null;
-                                do {
-                                    int slotIndex = Compute.randomInt(getNumberOfCriticals(loc));
-                                    slot = getCritical(loc, slotIndex);
-                                } while (slot == null || !slot.isHittable());
-
-                                vCriticals.put(new Integer(loc), slot);
-
-                            }
+                    } else if (roll >= 8 && roll <= 9) {
+                        hits = 1;
+                        r = new Report(6315);
+                        r.subject = getId();
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+                    } else if (roll >= 10 && roll <= 11) {
+                        hits = 2;
+                        r = new Report(6320);
+                        r.subject = getId();
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+                    } else if (roll == 12) {
+                        hits = 3;
+                        r = new Report(6325);
+                        r.subject = getId();
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+                    }
+                    for (int i = 0; i < 12 && hits > 0; i++) {
+                        CriticalSlot cs = getCritical(LOC_CT, i);
+                        if (cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == SYSTEM_ENGINE) {
+                            vCriticals.put(new Integer(LOC_CT), cs);
+                            hits--;
                         }
                     }
                 } else {
-                    r.choose(true);
-                    vDesc.addElement(r);
+                    // do the damage.
+                    // random crit on each leg, but MASC is not destroyed
+                    for (int loc = 0; loc < locations(); loc++) {
+                        if (locationIsLeg(loc) && getHittableCriticals(loc) > 0) {
+                            CriticalSlot slot = null;
+                            do {
+                                int slotIndex = Compute.randomInt(getNumberOfCriticals(loc));
+                                slot = getCritical(loc, slotIndex);
+                            } while (slot == null || !slot.isHittable());
+                            vCriticals.put(new Integer(loc), slot);
+                        }
+                    }
                 }
+            } else {
+                r.choose(true);
+                vDesc.addElement(r);
             }
             return bFailure;
         }
@@ -692,10 +705,30 @@ public abstract class Mech extends Entity implements Serializable {
         return jumpBoosters;
     }
 
+    /**
+     * get non-supercharger MASC mounted on this mech
+     * @return
+     */
     public Mounted getMASC() {
         for (Mounted m : getMisc()) {
             MiscType mtype = (MiscType) m.getType();
-            if (mtype.hasFlag(MiscType.F_MASC) && m.isReady()) {
+            if (mtype.hasFlag(MiscType.F_MASC) && m.isReady() 
+                    && !mtype.hasSubType(MiscType.S_SUPERCHARGER)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * get a supercharger mounted on this mech
+     * @return
+     */
+    public Mounted getSuperCharger() {
+        for (Mounted m : getMisc()) {
+            MiscType mtype = (MiscType) m.getType();
+            if (mtype.hasFlag(MiscType.F_MASC) && m.isReady() 
+                    && mtype.hasSubType(MiscType.S_SUPERCHARGER)) {
                 return m;
             }
         }
@@ -713,6 +746,24 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
         return false;
+    }
+    
+    /**
+     * checks if a mech has both a normal armed MASC system and a armed super-
+     * charger.
+     */
+    public boolean hasArmedMASCAndSuperCharger() {
+        boolean hasMASC = false;
+        boolean hasSuperCharger = false;
+        for (Mounted m : getEquipment()) {
+            if (!m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_MASC) && m.curMode().equals("Armed") && m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
+                hasSuperCharger = true;
+            }
+            if (!m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_MASC) && m.curMode().equals("Armed") && !m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
+                hasMASC = true;
+            }
+        }
+        return hasMASC && hasSuperCharger;
     }
 
     public boolean hasExtendedRetractableBlade() {
@@ -820,6 +871,9 @@ public abstract class Mech extends Entity implements Serializable {
      */
 
     public int getRunMP(boolean gravity, boolean ignoreheat) {
+        if (hasArmedMASCAndSuperCharger()) {
+            return ((int)Math.ceil(getWalkMP(gravity, ignoreheat) * 2.5)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+        }
         if (hasArmedMASC()) {
             return (getWalkMP(gravity, ignoreheat) * 2) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
         }

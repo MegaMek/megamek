@@ -1579,7 +1579,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
-        misc.bv = 0; // ???
+        misc.bv = 0;
 
         return misc;
     }
@@ -1599,7 +1599,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
-        misc.bv = 0; // ???
+        misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
@@ -1620,7 +1620,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
         misc.flags |= F_VOIDSIG;
-        misc.bv = 0; // ???
+        misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
@@ -1641,7 +1641,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
         misc.flags |= F_CHAMELEON_SHIELD;
-        misc.bv = 0; // ???
+        misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;

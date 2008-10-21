@@ -2185,13 +2185,15 @@ public abstract class Mech extends Entity implements Serializable {
         int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
         int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false), true, false).getValue();
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
-        // Try to find a Mek Stealth system.
+        // Try to find a Mek Stealth or similar system.
         if (hasStealth() || hasNullSig())
             targetMovementModifier += 2;
         if(hasChameleonShield())
             targetMovementModifier += 2;
         if (hasVoidSig())
             targetMovementModifier += 3;
+        if (hasChameleonShield())
+            targetMovementModifier += 2;
         double tmmFactor = 1 + (targetMovementModifier / 10);
         dbv *= tmmFactor;
 

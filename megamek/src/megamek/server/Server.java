@@ -6539,8 +6539,13 @@ public class Server implements Runnable {
                 r.add(entity.getShortName(), true);
                 r.add(mf.getCoords().getBoardNum(), true);
                 vMineReport.add(r);
-                HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-                vMineReport.addAll(damageEntity(entity, hit, mf.getDensity()));
+                int damage = mf.getDensity();
+                while(damage > 0) {
+                    int cur_damage = Math.min(5, damage);
+                    damage = damage - cur_damage;
+                    HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+                    vMineReport.addAll(damageEntity(entity, hit, cur_damage));
+                }
                 if(entity instanceof Tank) {
                     vMineReport.addAll(vehicleMotiveDamage((Tank)entity, 2));
                 }
@@ -6652,9 +6657,13 @@ public class Server implements Runnable {
                     rVictim.add(victim.getShortName(), true);
                     rVictim.indent(2);
                     vClearReport.add(rVictim);
-                    HitData hit = victim.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-                    vClearReport.addAll(damageEntity(victim, hit, mf.getDensity()));
-                    Report.addNewline(vClearReport);
+                    int damage = mf.getDensity();
+                    while(damage > 0) {
+                        int cur_damage = Math.min(5, damage);
+                        damage = damage - cur_damage;
+                        HitData hit = victim.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+                        vClearReport.addAll(damageEntity(victim, hit, cur_damage));
+                    }
                 }
             }
             //reduction works differently here
@@ -6751,8 +6760,13 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 r.add(entity.getShortName(), true);
                 vMineReport.add(r);
-                HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-                vMineReport.addAll(damageEntity(entity, hit, mf.getDensity()));
+                int damage = mf.getDensity();
+                while(damage > 0) {
+                    int cur_damage = Math.min(5, damage);
+                    damage = damage - cur_damage;
+                    HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+                    vMineReport.addAll(damageEntity(entity, hit, cur_damage));
+                }
                 vMineReport.addAll(resolvePilotingRolls(entity, true, lastPos, curPos));
                 // we need to apply Damage now, in case the entity lost a leg,
                 // otherwise it won't get a leg missing mod if it hasn't yet
@@ -6939,9 +6953,13 @@ public class Server implements Runnable {
             r.add(entity.getShortName(), true);
             vBoomReport.add(r);
 
-            // normal vibrabombs do all damage in one pack
-            HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-            vBoomReport.addAll(damageEntity(entity, hit, mf.getDensity()));
+            int damage = mf.getDensity();
+            while(damage > 0) {
+                int cur_damage = Math.min(5, damage);
+                damage = damage - cur_damage;
+                HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+                vBoomReport.addAll(damageEntity(entity, hit, cur_damage));
+            }
             Report.addNewline(vBoomReport);
            
             if(entity instanceof Tank) {

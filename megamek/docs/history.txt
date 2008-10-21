@@ -39,6 +39,7 @@ v0.33.34-dev (SVN)
 + Check chameleon/void-sig/null-sig/stealth armor and other equipment restrictions
     for illegal units
 + Bug: MASC and supercharger on one mech not working correctly
++ Minefield damage delivered in 5-pt clusters
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

@@ -90,8 +90,8 @@ public class GAAttack extends GA {
         // TODO should account for high heat?
         int heat_total = 0;
         if (chromArrayList.genes[chromosomeDim - 1] >= this.target_array.size()) {
-            chromArrayList.genes[chromosomeDim - 1] = this.valid_target_indexes
-                    .get(0).intValue();
+            chromArrayList.genes[chromosomeDim - 1] = 
+                this.valid_target_indexes.get(0).intValue();
         }
         Entity target = this.target_array
                 .get(chromArrayList.genes[chromosomeDim - 1]);
@@ -213,10 +213,10 @@ public class GAAttack extends GA {
                       || attacker.entity.isVoidSigActive())) {
             overheat += 10;
         }
+        // ... or chameleon lps...
         if (attacker.entity instanceof Mech && attacker.entity.isChameleonShieldActive()) {
-                    overheat += 6;
-                }
-                        
+            overheat += 6;
+        }
         // ... or infernos...
         if (attacker.entity.infernos.isStillBurning()) {
             overheat += 6;

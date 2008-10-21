@@ -1008,6 +1008,10 @@ public class MechDisplay extends BufferedPanel {
                 currentHeatBuildup += 10; // active stealth/nullsig/void sig heat
             }
 
+            if (en instanceof Mech && en.isChameleonShieldActive()) {
+                currentHeatBuildup += 6;
+            }
+            
             for (Mounted m : entity.getEquipment()) {
                 int capHeat = 0;
                 if (m.hasChargedCapacitor())

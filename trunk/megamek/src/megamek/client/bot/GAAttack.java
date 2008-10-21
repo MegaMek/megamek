@@ -213,6 +213,10 @@ public class GAAttack extends GA {
                       || attacker.entity.isVoidSigActive())) {
             overheat += 10;
         }
+        if (attacker.entity instanceof Mech && attacker.entity.isChameleonShieldActive()) {
+                    overheat += 6;
+                }
+                        
         // ... or infernos...
         if (attacker.entity.infernos.isStillBurning()) {
             overheat += 6;

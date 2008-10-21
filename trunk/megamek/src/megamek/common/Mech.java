@@ -778,6 +778,17 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return false;
     }
+    
+    public boolean hasChameleonShield() {
+        for (Mounted mEquip : getMisc()) {
+            MiscType mtype = (MiscType) mEquip.getType();
+            if (mtype.hasFlag(MiscType.F_CHAMELEON_SHIELD)) {
+                // The Mek has Chameleon Light Polarization Field
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Depends on engine type
@@ -2177,6 +2188,8 @@ public abstract class Mech extends Entity implements Serializable {
         // Try to find a Mek Stealth system.
         if (hasStealth() || hasNullSig())
             targetMovementModifier += 2;
+        if(hasChameleonShield())
+            targetMovementModifier += 2;
         if (hasVoidSig())
             targetMovementModifier += 3;
         double tmmFactor = 1 + (targetMovementModifier / 10);
@@ -2863,6 +2876,22 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return false;
     }
+    
+    /**
+     * Does the mech have a functioning Chameleon Light Polarization Field?
+     */
+    public boolean isChameleonShieldActive() {
+        if ( !isShutDown() ){
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (type.hasFlag(MiscType.F_CHAMELEON_SHIELD) && m.curMode().equals("On")
+                        && m.isReady()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Determine the stealth modifier for firing at this unit from the given
@@ -2895,34 +2924,80 @@ public abstract class Mech extends Entity implements Serializable {
             return new TargetRoll(mmod, "void signature");
         }
         
+        boolean isInfantry = ae instanceof Infantry && !(ae instanceof BattleArmor);
         // Stealth or null sig must be active.
-        if (!isStealthActive() && !isNullSigActive()) {
+        if (!isStealthActive() && !isNullSigActive() && !isChameleonShieldActive()) {
             result = new TargetRoll(0, "stealth not active");
-        } else if (ae instanceof Infantry && !(ae instanceof BattleArmor)) {
-            result = new TargetRoll(0, "infantry ignore stealth");
-        }
-
+        } 
         // Determine the modifier based upon the range.
         else {
             switch (range) {
             case RangeType.RANGE_MINIMUM:
             case RangeType.RANGE_SHORT:
-                result = new TargetRoll(0, "stealth");
+                if(isStealthActive() && !isInfantry) {
+                    result = new TargetRoll(0, "stealth");
+                } else if(isNullSigActive() && !isInfantry) {
+                    result = new TargetRoll(0, "null-sig");
+                    if(isChameleonShieldActive()) {
+                        result.addModifier(0, "chameleon");
+                    }
+                } else if(isChameleonShieldActive()) {
+                    result = new TargetRoll(0, "chameleon");
+                } else {
+                    //must be infantry
+                    result = new TargetRoll(0, "infantry ignore stealth");
+                }
                 break;
             case RangeType.RANGE_MEDIUM:
-                result = new TargetRoll(1, "stealth");
+                if(isStealthActive() && !isInfantry) {
+                    result = new TargetRoll(1, "stealth");
+                } else if(isNullSigActive() && !isInfantry) {
+                    result = new TargetRoll(1, "null-sig");
+                    if(isChameleonShieldActive()) {
+                        result.addModifier(0, "chameleon");
+                    }
+                } else if(isChameleonShieldActive()) {
+                    result = new TargetRoll(1, "chameleon");
+                } else {
+                    //must be infantry
+                    result = new TargetRoll(0, "infantry ignore stealth");
+                }
                 break;
             case RangeType.RANGE_LONG:
-                result = new TargetRoll(2, "stealth");
+                if(isStealthActive() && !isInfantry) {
+                    result = new TargetRoll(2, "stealth");
+                } else if(isNullSigActive() && !isInfantry) {
+                    result = new TargetRoll(2, "null-sig");
+                    if(isChameleonShieldActive()) {
+                        result.addModifier(2, "chameleon");
+                    }
+                } else if(isChameleonShieldActive()) {
+                    result = new TargetRoll(2, "chameleon");
+                } else {
+                    //must be infantry
+                    result = new TargetRoll(0, "infantry ignore stealth");
+                }
                 break;
             case RangeType.RANGE_EXTREME:
-                result = new TargetRoll(2, "stealth");
+                if(isStealthActive()) {
+                    result = new TargetRoll(2, "stealth");
+                } else if(isNullSigActive()) {
+                    result = new TargetRoll(2, "null-sig");
+                    if(isChameleonShieldActive()) {
+                        result.addModifier(2, "chameleon");
+                    }
+                } else if(isChameleonShieldActive()) {
+                    result = new TargetRoll(2, "chameleon");
+                } else {
+                    //must be infantry
+                    result = new TargetRoll(0, "infantry ignore stealth");
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Unknown range constant: " + range);
             }
         }
-
+        
         // Return the result.
         return result;
 

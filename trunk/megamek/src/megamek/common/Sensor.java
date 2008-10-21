@@ -182,6 +182,9 @@ public class Sensor implements Serializable {
             }
             break;
         case (TYPE_BLOODHOUND):
+            if(te.isChameleonShieldActive()) {
+                mod += 1;
+            }
             if(te.isVoidSigActive()) {
                 mod += 4;
             }
@@ -207,6 +210,9 @@ public class Sensor implements Serializable {
             }
             break;
         case (TYPE_MEK_RADAR):
+            if(te.isChameleonShieldActive()) {
+                mod += 2;
+            }
             if(te.isVoidSigActive()) {
                 mod += 7;
             }
@@ -222,6 +228,9 @@ public class Sensor implements Serializable {
             break;
         case (TYPE_VEE_RADAR):
         case (TYPE_BA_IMPROVED):
+            if(te.isChameleonShieldActive()) {
+                mod += 3;
+            }
             if(te.isVoidSigActive()) {
                 mod += 7;
             }

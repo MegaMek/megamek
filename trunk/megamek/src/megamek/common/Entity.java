@@ -132,6 +132,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
     public boolean hitThisRoundByAntiTSM = false;
+    public boolean inReverse = false;
 
     private int[] exposure;
     private int[] armor;
@@ -3568,6 +3569,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         moved = IEntityMovementType.MOVE_NONE;
         gotPavementBonus = false;
         hitThisRoundByAntiTSM = false;
+        inReverse = false;
         hitBySwarmsEntity.clear();
         hitBySwarmsWeapon.clear();
         setTaggedBy(-1);

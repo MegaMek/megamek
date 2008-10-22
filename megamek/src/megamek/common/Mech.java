@@ -1057,13 +1057,16 @@ public abstract class Mech extends Entity implements Serializable {
      * entire number of heat sinks, whichever is less
      */
     public void addEngineSinks(int totalSinks, boolean dblSinks, boolean clan) {
-        // this relies on these being the correct internalNames for these items
-        EquipmentType sinkType;
         if (dblSinks) {
-            sinkType = EquipmentType.get(clan ? "CLDoubleHeatSink" : "ISDoubleHeatSink");
+            addEngineSinks(totalSinks, clan ? "CLDoubleHeatSink" : "ISDoubleHeatSink");
         } else {
-            sinkType = EquipmentType.get("Heat Sink");
+            addEngineSinks(totalSinks,"Heat Sink");
         }
+    }
+    
+    public void addEngineSinks(int totalSinks, String sinkName){
+        // this relies on these being the correct internalNames for these items
+        EquipmentType sinkType = EquipmentType.get(sinkName);
 
         if (sinkType == null) {
             System.out.println("Mech: can't find heat sink to add to engine");

@@ -49,6 +49,8 @@ v0.33.34-dev (SVN)
 + Bug 2043390: Large Units and Multiple Target Mods
 + Bug: Swing tooltip not multiline like the AWT one
 + Bug: jumping onto ice
++ RFE: Added overload to Mech.addEngineSinks() to allow for the loading of Laser 
+	and Compact Heat Sinks
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

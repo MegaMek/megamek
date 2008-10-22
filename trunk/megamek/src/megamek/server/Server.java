@@ -6189,7 +6189,7 @@ public class Server implements Runnable {
             }
             //possibly melt ice and snow
             if(h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
-                vPhaseReport.addAll(meltIceAndSnow(coords, subjectId));
+                vPhaseReport.addAll(meltIceAndSnow(tempcoords, subjectId));
             }
             for (Enumeration<Entity> splashHexHits = game.getEntities(tempcoords); splashHexHits.hasMoreElements();) {
                 Entity entity = splashHexHits.nextElement();

@@ -55,6 +55,7 @@ v0.33.34-dev (SVN)
 + Bug 1971380: first step does not break ice from below
 + Bug: non-careful movement shouldn't affect movement below ice
 + Inferno fire corrections
++ Bug: inferno fire not melting ice and snow
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

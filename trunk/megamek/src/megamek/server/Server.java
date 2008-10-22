@@ -5097,14 +5097,17 @@ public class Server implements Runnable {
 
             // check for breaking ice by breaking through from below
             // FIXME: this does not work for first steps
-            if (prevHex != null && prevStep != null 
-                    && prevStep.getElevation() < 0 && step.getElevation() == 0 
-                    && prevHex.containsTerrain(Terrains.ICE) && prevHex.containsTerrain(Terrains.WATER) 
+            if (lastElevation < 0 && step.getElevation() == 0 
+                    && lastHex.containsTerrain(Terrains.ICE) && lastHex.containsTerrain(Terrains.WATER) 
                     && step.getMovementType() != IEntityMovementType.MOVE_JUMP && !lastPos.equals(curPos)) {
+                //need to temporarily reset entity's position so it doesn't fall in the ice
+                entity.setPosition(curPos);
                 r = new Report(2410);
                 r.addDesc(entity);
                 addReport(r);
                 addReport(resolveIceBroken(lastPos));
+                //ok now set back
+                entity.setPosition(lastPos);
             }
             // check for breaking ice by stepping on it
             if (curHex.containsTerrain(Terrains.ICE) && curHex.containsTerrain(Terrains.WATER) 

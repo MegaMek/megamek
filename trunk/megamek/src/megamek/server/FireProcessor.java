@@ -72,15 +72,9 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
     /**
      * Make fires spread, smoke spread, and make sure that all fires started
-     * this turn are marked as "burning" for next turn. A "FIRE" terrain has one
-     * of two levels: 1 (Created this turn, and so can't spread of generate
-     * heat) 2 (Created as a result of spreading fire or on a previous turn)
-     * Since fires created at end of turn act normally in the following turn,
-     * spread fires have level 2. At NO TIME should any fire created outside
-     * this function have a level of 2, nor should anything except this function
-     * SET fires to level 2. Newly created "spread" fires have a level of 1, so
-     * that they do not spread in the turn they are created. After all spreading
-     * has been completed, all burning hexes are set to level 2.
+     * this turn are marked as "burning" for next turn. What turn the fire startd on is no
+     * longer determined by level but is rather a characteristic of the hex.
+     * Level now denotes standard and inferno fires.
      */
     private void resolveFire() {
         IBoard board = game.getBoard();

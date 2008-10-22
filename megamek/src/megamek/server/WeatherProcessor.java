@@ -154,9 +154,18 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 IHex currentHex = board.getHex(currentXCoord, currentYCoord);
 
                 //check for fires and potentially put them out
-                if (currentHex.containsTerrain(Terrains.FIRE)
-                        && conditions.putOutFire()) {
-                    server.removeFire(currentCoords, "weather conditions");           
+                if (currentHex.containsTerrain(Terrains.FIRE)) {
+                    //only standard fires get put out
+                    if(currentHex.terrainLevel(Terrains.FIRE) == 1) {
+                        if(conditions.putOutFire()) {
+                            server.removeFire(currentCoords, "weather conditions");    
+                        }
+                    } else {
+                        //inferno fires should become regular fires
+                        currentHex.removeTerrain(Terrains.FIRE);
+                        currentHex.addTerrain(tf.createTerrain(Terrains.FIRE,1));
+                        server.sendChangedHex(currentCoords);
+                    }
                 }   
                 
                 if(ice && !currentHex.containsTerrain(Terrains.ICE) 

@@ -2024,7 +2024,8 @@ public class MoveStep implements Serializable {
                     }
                 }
                 //if using non-careful movement on ice then reduce cost
-                if(destHex.containsTerrain(Terrains.ICE) && !parent.isCareful()) {
+                if(destHex.containsTerrain(Terrains.ICE) && !parent.isCareful()
+                        && nDestEl == destHex.surface()) {
                     mp--;
                 }
                 

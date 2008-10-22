@@ -53,6 +53,7 @@ v0.33.34-dev (SVN)
 	and Compact Heat Sinks
 + Bug: infantry/Battle Armor should not check for breaking ice
 + Bug 1971380: first step does not break ice from below
++ Bug: non-careful movement shouldn't affect movement below ice
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

@@ -5579,7 +5579,7 @@ public class Server implements Runnable {
                 r.add(roll);
                 r.subject = entity.getId();
                 addReport(r);
-                if (roll >= 7) {
+                if (roll >= 4) {
                     // oops!
                     entity.setPosition(curPos);
                     addReport(resolveIceBroken(curPos));

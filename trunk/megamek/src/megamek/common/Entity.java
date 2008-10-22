@@ -4156,7 +4156,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             IHex nextHex = game.getBoard().getHex(nextStep.getPosition());
             if(null == nextHex)
                 continue;
-            if(nextHex.containsTerrain(Terrains.ICE)) {
+            if(nextHex.containsTerrain(Terrains.ICE) && nextStep.getElevation() == 0) {
                 hasIce = true;
                 break;
             }

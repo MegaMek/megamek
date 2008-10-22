@@ -51,6 +51,7 @@ v0.33.34-dev (SVN)
 + Bug: jumping onto ice
 + RFE: Added overload to Mech.addEngineSinks() to allow for the loading of Laser 
 	and Compact Heat Sinks
++ Bug: infantry/Battle Armor should not check for breaking ice
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

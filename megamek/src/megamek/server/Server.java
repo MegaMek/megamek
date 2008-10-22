@@ -5097,14 +5097,20 @@ public class Server implements Runnable {
 
             // check for breaking ice by breaking through from below
             // FIXME: this does not work for first steps
-            if (prevHex != null && prevStep != null && prevStep.getElevation() < 0 && step.getElevation() == 0 && prevHex.containsTerrain(Terrains.ICE) && prevHex.containsTerrain(Terrains.WATER) && step.getMovementType() != IEntityMovementType.MOVE_JUMP && !lastPos.equals(curPos)) {
+            if (prevHex != null && prevStep != null 
+                    && prevStep.getElevation() < 0 && step.getElevation() == 0 
+                    && prevHex.containsTerrain(Terrains.ICE) && prevHex.containsTerrain(Terrains.WATER) 
+                    && step.getMovementType() != IEntityMovementType.MOVE_JUMP && !lastPos.equals(curPos)) {
                 r = new Report(2410);
                 r.addDesc(entity);
                 addReport(r);
                 addReport(resolveIceBroken(lastPos));
             }
             // check for breaking ice by stepping on it
-            if (curHex.containsTerrain(Terrains.ICE) && curHex.containsTerrain(Terrains.WATER) && step.getMovementType() != IEntityMovementType.MOVE_JUMP && !lastPos.equals(curPos)) {
+            if (curHex.containsTerrain(Terrains.ICE) && curHex.containsTerrain(Terrains.WATER) 
+                    && step.getMovementType() != IEntityMovementType.MOVE_JUMP 
+                    && !lastPos.equals(curPos)
+                    && !(entity instanceof Infantry)) {
                 if (step.getElevation() == 0) {
                     int roll = Compute.d6(1);
                     r = new Report(2118);
@@ -5571,35 +5577,37 @@ public class Server implements Runnable {
             // jumped into water?
             int waterLevel = curHex.terrainLevel(Terrains.WATER);
             if (curHex.containsTerrain(Terrains.ICE) && waterLevel > 0) {
-                waterLevel = 0;
-                // check for breaking ice
-                int roll = Compute.d6(1);
-                r = new Report(2122);
-                r.add(entity.getDisplayName(), true);
-                r.add(roll);
-                r.subject = entity.getId();
-                addReport(r);
-                if (roll >= 4) {
-                    // oops!
-                    entity.setPosition(curPos);
-                    addReport(resolveIceBroken(curPos));
-                    curPos = entity.getPosition();
-                } else {
-                    //TacOps: immediate PSR with +4 for terrain. If you fall then may break the ice after all
-                    rollTarget = entity.checkLandingOnIce(overallMoveType, curHex);
-                    if(!doSkillCheckInPlace(entity, rollTarget)) {
-                        //apply damage now, or it will show up as a possible breach, if ice is broken
-                        entity.applyDamage();
-                        roll = Compute.d6(1);
-                        r = new Report(2118);
-                        r.addDesc(entity);
-                        r.add(roll);
-                        r.subject = entity.getId();
-                        addReport(r);
-                        if(roll == 6) {
-                            entity.setPosition(curPos);
-                            addReport(resolveIceBroken(curPos));
-                            curPos = entity.getPosition();
+                if(!(entity instanceof Infantry)) {
+                    waterLevel = 0;
+                    // check for breaking ice
+                    int roll = Compute.d6(1);
+                    r = new Report(2122);
+                    r.add(entity.getDisplayName(), true);
+                    r.add(roll);
+                    r.subject = entity.getId();
+                    addReport(r);
+                    if (roll >= 4) {
+                        // oops!
+                        entity.setPosition(curPos);
+                        addReport(resolveIceBroken(curPos));
+                        curPos = entity.getPosition();
+                    } else {
+                        //TacOps: immediate PSR with +4 for terrain. If you fall then may break the ice after all
+                        rollTarget = entity.checkLandingOnIce(overallMoveType, curHex);
+                        if(!doSkillCheckInPlace(entity, rollTarget)) {
+                            //apply damage now, or it will show up as a possible breach, if ice is broken
+                            entity.applyDamage();
+                            roll = Compute.d6(1);
+                            r = new Report(2118);
+                            r.addDesc(entity);
+                            r.add(roll);
+                            r.subject = entity.getId();
+                            addReport(r);
+                            if(roll == 6) {
+                                entity.setPosition(curPos);
+                                addReport(resolveIceBroken(curPos));
+                                curPos = entity.getPosition();
+                            }
                         }
                     }
                 }

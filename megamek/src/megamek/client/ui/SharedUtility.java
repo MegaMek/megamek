@@ -137,7 +137,7 @@ public class SharedUtility {
             }
 
             // check for crossing ice
-            if (curHex.containsTerrain(Terrains.ICE) && curHex.containsTerrain(Terrains.WATER) && !(curPos.equals(lastPos)) && step.getElevation() == 0 && moveType != IEntityMovementType.MOVE_JUMP) {
+            if (curHex.containsTerrain(Terrains.ICE) && curHex.containsTerrain(Terrains.WATER) && !(curPos.equals(lastPos)) && step.getElevation() == 0 && moveType != IEntityMovementType.MOVE_JUMP && !(entity instanceof Infantry)) {
                 nagReport.append(Messages.getString("MovementDisplay.IceMoving"));
             }
 
@@ -298,7 +298,9 @@ public class SharedUtility {
             IHex hex = client.game.getBoard().getHex(curPos);
             int waterLevel = hex.terrainLevel(Terrains.WATER);
             if (hex.containsTerrain(Terrains.ICE) && waterLevel > 0) {
-                nagReport.append(Messages.getString("MovementDisplay.IceLanding"));
+                if(!(entity instanceof Infantry)) {
+                    nagReport.append(Messages.getString("MovementDisplay.IceLanding"));
+                }
             } else if (!(prevStep.climbMode() && hex.containsTerrain(Terrains.BRIDGE))) {
                 rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {

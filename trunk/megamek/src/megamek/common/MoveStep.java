@@ -413,12 +413,17 @@ public class MoveStep implements Serializable {
                     + game.getBoard().getHex(entity.getPosition()).surface()
                     - hex.surface();
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
+            int depth = -hex.depth();
+            //need to adjust depth for potential ice over water
+            if(hex.containsTerrain(Terrains.ICE) && hex.containsTerrain(Terrains.WATER)) {
+                depth = 0;
+            }
             if (entity instanceof Infantry) {
                 // infantry can jump into a building
-                setElevation(Math.max(-hex.depth(), Math.min(building,
+                setElevation(Math.max(depth, Math.min(building,
                         maxElevation)));
             } else {
-                setElevation(Math.max(-hex.depth(), building));
+                setElevation(Math.max(depth, building));
             }
             if (climbMode()
                     && maxElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV)) {

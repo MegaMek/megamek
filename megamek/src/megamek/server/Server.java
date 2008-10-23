@@ -16642,7 +16642,7 @@ public class Server implements Runnable {
                 vDesc.add(r);
                 a.setHeatSinks(Math.max(0, a.getHeatSinks() - sinksLost));
                 break;
-            case Aero.CRIT_WEAPON: {
+            case Aero.CRIT_WEAPON:
                 r = new Report(9150);
                 r.subject = a.getId();
                 r.newlines = 0;
@@ -16686,7 +16686,6 @@ public class Server implements Runnable {
                     r.newlines = 0;
                     vDesc.add(r);
                 }
-            }
                 break;
             case Aero.CRIT_ENGINE:
                 // engine hit

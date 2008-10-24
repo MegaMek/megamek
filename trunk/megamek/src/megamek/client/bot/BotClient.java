@@ -229,7 +229,7 @@ public abstract class BotClient extends Client {
                     || game.getPhase() == IGame.Phase.PHASE_OFFBOARD) {
                 // Send a "no attack" to clear the game turn, if any.
                 // TODO: Fix for real arty stuff
-                sendAttackData(game.getFirstEntityNum(),
+                sendAttackData(game.getFirstEntityNum(getMyTurn()),
                         new Vector<EntityAction>(0));
                 sendDone(true);
             }

@@ -1239,7 +1239,7 @@ public class TestBot extends BotClient {
     }
 
     public void calculateFiringTurn() {
-        int first_entity = game.getFirstEntityNum();
+        int first_entity = game.getFirstEntityNum(getMyTurn());
         int entity_num = first_entity;
         int best_entity = first_entity;
         int spin_mode = 0;
@@ -1266,7 +1266,7 @@ public class TestBot extends BotClient {
                 best_entity = entity_num;
                 winner = test.getAttack();
             }
-            entity_num = game.getNextEntityNum(entity_num);
+            entity_num = game.getNextEntityNum(getMyTurn(), entity_num);
         } while (entity_num != first_entity && entity_num != -1);
 
         Vector<EntityAction> av = new Vector<EntityAction>();

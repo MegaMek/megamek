@@ -45,7 +45,7 @@ public final class PhysicalCalculator {
     }
 
     static PhysicalOption calculatePhysicalTurn(TestBot bot) {
-        int entNum = bot.game.getFirstEntityNum();
+        int entNum = bot.game.getFirstEntityNum(bot.getMyTurn());
         int first = entNum;
         do {
             // take the first entity that can do an attack

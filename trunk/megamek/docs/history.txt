@@ -60,6 +60,7 @@ v0.33.34-dev (SVN)
 + Reworked CustomMechDialog to use GBC
 + Bug 2000045: Celestial OmniMechs not Omnis
 + Blowing sand planetary condition
++ BUG 2167295: MegaMek Lock-Up w/ new init rules 33.44-dev
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

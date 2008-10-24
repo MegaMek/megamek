@@ -893,6 +893,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_HEAVY) {
             toHit.addModifier(1, "heavy fog");
         }
+        
+        //blowind sand mods
+        if(wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
+                && game.getPlanetaryConditions().isSandBlowing() 
+                && game.getPlanetaryConditions().getWindStrength() > PlanetaryConditions.WI_LIGHT_GALE) {
+            toHit.addModifier(1, "blowing sand");
+        }
 
         // gravity mods (not in space)
         if (!game.getBoard().inSpace()) {

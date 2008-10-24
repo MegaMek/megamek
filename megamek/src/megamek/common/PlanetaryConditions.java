@@ -24,20 +24,6 @@ public class PlanetaryConditions implements Serializable {
     
     private static final long serialVersionUID = 6838624193286089781L;
     
-    //What will go here
-    //-Terrain Conditions
-    //  -atmospheric pressure
-    //  -Gravity
-    //  -EMI
-    //-Weather Conditions
-    //   -Light
-    //   -Fog
-    //   -Weather (Hail, Rain, Snow)
-    //   -Wind
-    //   -Lightning
-    //   -Blowing Sands
-    //-Temperature
-    
     //light
     public static final int L_DAY          = 0;
     public static final int L_DUSK         = 1;
@@ -100,6 +86,9 @@ public class PlanetaryConditions implements Serializable {
     
     private static String[] fogNames = {"None", "Light Fog", "Heavy Fog" };
     public static final int FOG_SIZE = fogNames.length;
+    
+    //misc
+    private boolean blowingSand = false;
     
     //set up the specific conditions
     private int lightConditions = WI_NONE;
@@ -829,5 +818,13 @@ public class PlanetaryConditions implements Serializable {
     
     public void setMaxWindStrength(int strength){
         this.maxWindStrength = strength;
+    }
+    
+    public boolean isSandBlowing() {
+        return blowingSand;
+    }
+    
+    public void setBlowingSand(boolean b) {
+        this.blowingSand = b;
     }
 }

@@ -231,5 +231,19 @@ public final class Team extends TurnOrdered implements Serializable {
         
         return constantb + turnb + commandb;
     }
-
+    
+    /**
+     * cycle through entities on team and collect all the airborne VTOL/WIGE
+     * @return a vector of relevant entity ids
+     */
+    public Vector<Integer> getAirborneVTOL() {
+    
+        //a vector of unit ids
+        Vector<Integer> units = new Vector<Integer>();       
+        for (Enumeration<Player> loop = players.elements(); loop.hasMoreElements();) {
+            Player player = loop.nextElement();
+            units.addAll(player.getAirborneVTOL());
+        }
+        return units;
+    }
 }

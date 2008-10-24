@@ -67,6 +67,8 @@ public class PlanetaryConditionsDialog extends JDialog implements ActionListener
     private JLabel labFog = new JLabel(Messages
             .getString("PlanetaryConditionsDialog.labFog"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox choAtmosphere = new JComboBox();
+    private JCheckBox cBlowingSands = new JCheckBox(Messages
+            .getString("PlanetaryConditionsDialog.BlowingSands"));
     private JCheckBox cShiftWindDir = new JCheckBox(Messages
             .getString("PlanetaryConditionsDialog.shiftWindDir"));
     private JCheckBox cShiftWindStr = new JCheckBox(Messages
@@ -241,6 +243,11 @@ public class PlanetaryConditionsDialog extends JDialog implements ActionListener
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(cBlowingSands, c);
+        panOptions.add(cBlowingSands);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(cShiftWindDir, c);
         panOptions.add(cShiftWindDir);
         
@@ -308,6 +315,8 @@ public class PlanetaryConditionsDialog extends JDialog implements ActionListener
         }
         choFog.setSelectedIndex(conditions.getFog());    
         
+        cBlowingSands.setSelected(conditions.isSandBlowing());
+        
         cShiftWindDir.setSelected(conditions.shiftingWindDirection());
         cShiftWindStr.setSelected(conditions.shiftingWindStrength());
         
@@ -328,6 +337,7 @@ public class PlanetaryConditionsDialog extends JDialog implements ActionListener
         conditions.setWindStrength(choWind.getSelectedIndex());
         conditions.setAtmosphere(choAtmosphere.getSelectedIndex());
         conditions.setFog(choFog.getSelectedIndex());
+        conditions.setBlowingSand(cBlowingSands.isSelected());
         conditions.setShiftingWindDirection(cShiftWindDir.isSelected());
         conditions.setShiftingWindStrength(cShiftWindStr.isSelected());
         conditions.setTemperature(Integer.parseInt(fldTemp.getText()));

@@ -466,4 +466,24 @@ public final class Player extends TurnOrdered implements Serializable {
         }
         return commandb;
     }
+    
+    /**
+     * cycle through entities on team and collect all the airborne VTOL/WIGE
+     * @return a vector of relevant entity ids
+     */
+    public Vector<Integer> getAirborneVTOL() {
+    
+        //a vector of unit ids
+        Vector<Integer> units = new Vector<Integer>();           
+        for(Entity entity : game.getEntitiesVector()) {
+            if (entity.getOwner().equals(this) ) {
+                if(entity.getElevation() > 0 &&
+                        (entity instanceof VTOL 
+                                || entity.getMovementMode() == IEntityMovementMode.WIGE)) {
+                    units.add(entity.getId());
+                }             
+            }
+        }
+        return units;
+    }
 }

@@ -1729,6 +1729,10 @@ public class Server implements Runnable {
             resetEntityPhase(phase);
             clearReports();
             resolveHeat();
+            if(game.getPlanetaryConditions().isSandBlowing() 
+                    && game.getPlanetaryConditions().getWindStrength() > PlanetaryConditions.WI_LIGHT_GALE) {
+                addReport(resolveBlowingSandDamage());
+            }
             addReport(resolveControlRolls());
             // write End Phase header
             addReport(new Report(5005, Report.PUBLIC));
@@ -23350,4 +23354,37 @@ public class Server implements Runnable {
     public List<SmokeCloud> getSmokeCloudList(){
         return game.getSmokeCloudList();
     }
+    
+    /**
+     * Check to see if blowing sand caused damage to airborne VTOL/WIGEs
+     */
+    private Vector<Report> resolveBlowingSandDamage() {
+        Vector<Report> vFullReport = new Vector<Report>();
+        vFullReport.add(new Report(5002, Report.PUBLIC));
+        int damage_bonus = Math.max(0, game.getPlanetaryConditions().getWindStrength() - PlanetaryConditions.WI_MOD_GALE);
+        //cycle through each team and damage 1d6 airborne VTOL/WIGE
+        for (Enumeration<Team> loop = game.getTeams(); loop.hasMoreElements();) {
+            Team team = loop.nextElement();
+            Vector<Integer> airborne = team.getAirborneVTOL();
+            if(airborne.size() > 0) {
+                //how many units are affected
+                int unitsAffected = Math.min(Compute.d6(), airborne.size());
+                while(unitsAffected > 0 && airborne.size() > 0) {
+                    int loc = Compute.randomInt(airborne.size());
+                    Entity en = game.getEntity(airborne.get(loc));                    
+                    int damage = Math.max(1, Compute.d6()/2) + damage_bonus;
+                    while(damage > 0) {
+                        HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_RANDOM);
+                        vFullReport.addAll(damageEntity(en, hit, 1));
+                        damage--;
+                    }
+                    unitsAffected--;
+                    airborne.remove(loc);
+                }
+            }
+        }
+        Report.addNewline(vPhaseReport);
+        return vFullReport;
+    }
+    
 }

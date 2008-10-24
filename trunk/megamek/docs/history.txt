@@ -61,6 +61,9 @@ v0.33.34-dev (SVN)
 + Bug 2000045: Celestial OmniMechs not Omnis
 + Blowing sand planetary condition
 + BUG 2167295: MegaMek Lock-Up w/ new init rules 33.44-dev
++ RFE (mekwars.org forum suggestion): typing /defeat before /victory now informs other 
+  players that you wish to surrender. Bot accepts surrenders but will still play the rest
+  of the turn normally.  
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

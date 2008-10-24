@@ -63,6 +63,8 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
     private Label labFog = new Label(Messages
             .getString("PlanetaryConditionsDialog.labFog"), Label.RIGHT); //$NON-NLS-1$
     private Choice choFog = new Choice();
+    private Checkbox cBlowingSands = new Checkbox(Messages
+            .getString("PlanetaryConditionsDialog.BlowingSands"));
     private Checkbox cShiftWindDir = new Checkbox(Messages
             .getString("PlanetaryConditionsDialog.shiftWindDir"));
     private Checkbox cShiftWindStr = new Checkbox(Messages
@@ -238,6 +240,11 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(cBlowingSands, c);
+        panOptions.add(cBlowingSands);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(cShiftWindDir, c);
         panOptions.add(cShiftWindDir);
         
@@ -305,6 +312,7 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         }
         choFog.select(conditions.getFog());    
         
+        cBlowingSands.setState(conditions.isSandBlowing());
         cShiftWindDir.setState(conditions.shiftingWindDirection());
         cShiftWindStr.setState(conditions.shiftingWindStrength());
         
@@ -324,6 +332,7 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         conditions.setWindStrength(choWind.getSelectedIndex());
         conditions.setAtmosphere(choAtmosphere.getSelectedIndex());
         conditions.setFog(choFog.getSelectedIndex());
+        conditions.setBlowingSand(cBlowingSands.getState());
         conditions.setShiftingWindDirection(cShiftWindDir.getState());
         conditions.setShiftingWindStrength(cShiftWindStr.getState());
         conditions.setTemperature(Integer.parseInt(fldTemp.getText()));

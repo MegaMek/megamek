@@ -52,8 +52,8 @@ public class DefeatCommand extends ServerCommand {
             server.sendServerChat(player.getName() + " admits defeat.");
             player.setAdmitsDefeat(true);
         } else {
-            server.sendServerChat(connId,
-                    "Nobody has declared victory, you can't declare a defeat.");
+            server.sendServerChat(player.getName() + " wants to admit defeat - type /victory to accept the surrender at the end of the turn.");
+            server.sendServerChat(connId, "note you need to type /defeat again after your opponent declares victory");
         }
     }
 }

@@ -497,11 +497,10 @@ public class EquipmentType {
             BufferedWriter w = new BufferedWriter(new FileWriter(f));
             w.write("Megamek Equipment Database");
             w.newLine();
-            w
-                    .write("This file can be regenerated with java -jar MegaMek.jar -eqdb ");
+            w.write("This file can be regenerated with java -jar MegaMek.jar -eqdb ");
             w.write(f.toString());
             w.newLine();
-            w.write("Type,Tech,Rules,Name,Aliases");
+            w.write("Type,Tech Base,Rules,Name,Aliases");
             w.newLine();
             for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
                     .hasMoreElements();) {
@@ -513,24 +512,10 @@ public class EquipmentType {
                 } else {
                     w.write("M,");
                 }
-                switch (type.getTechLevel()) {
-                    case TechConstants.T_IS_TW_NON_BOX:
-                    case TechConstants.T_IS_TW_ALL:
-                        w.write("IS,2,");
-                        break;
-                    case TechConstants.T_IS_ADVANCED:
-                        w.write("IS,3,");
-                        break;
-                    case TechConstants.T_CLAN_TW:
-                        w.write("Clan,2,");
-                        break;
-                    case TechConstants.T_CLAN_ADVANCED:
-                        w.write("Clan,3,");
-                        break;
-                    default:
-                        w.write("Any,1,");
-                        break;
-                }
+                w.write(TechConstants.getTechName(type.getTechLevel()));
+                w.write(",");
+            	w.write(TechConstants.getLevelName(type.getTechLevel()));
+            	w.write(",");
                 for (Enumeration<String> names = type.getNames(); names
                         .hasMoreElements();) {
                     String name = names.nextElement();

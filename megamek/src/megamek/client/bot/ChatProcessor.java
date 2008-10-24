@@ -31,12 +31,31 @@ public class ChatProcessor {
             return;
         if (tb.getLocalPlayer() == null)
             return;
-        if (ge.getMessage().indexOf(
-                "declares individual victory at the end of the turn.") > -1
-                || ge.getMessage().indexOf(
-                        "declares team victory at the end of the turn.") > -1) {
-            tb.sendChat("/defeat");
+        String message = ge.getMessage();
+        if (message.contains("declares individual victory at the end of the turn.")
+                || message.contains("declares team victory at the end of the turn.")) {
+        	String name = message.split(" ")[1];
+        	for(Player p:tb.game.getPlayersVector()) {
+        		if(p.getName().equals(name)) {
+        			if(p.isEnemyOf(tb.getLocalPlayer())) {
+        	            tb.sendChat("/defeat");        				
+        			} 
+        			break;
+        		}
+        	}
             return;
+        }
+        if (message.contains("type /victory to accept the surrender")) {
+        	String name = message.split(" ")[1];
+        	for(Player p:tb.game.getPlayersVector()) {
+        		if(p.getName().equals(name)) {
+        			if(p.isEnemyOf(tb.getLocalPlayer())) {
+        				tb.sendChat("/victory");
+        			}
+        			break;
+        		}
+        	}
+        	return;
         }
         StringTokenizer st = new StringTokenizer(ge.getMessage(), ":"); //$NON-NLS-1$
         if (!st.hasMoreTokens()) {

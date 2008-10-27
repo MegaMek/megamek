@@ -40,6 +40,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
 import megamek.MegaMek;
@@ -78,6 +80,28 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Contruct a MegaMek, and display the main menu in the specified frame.
      */
     private void createGUI() {
+        //Set a couple of things to make the Swing GUI look more "Mac-like" on Macs
+        //Taken from: http://www.devdaily.com/apple/mac/java-mac-native-look/Introduction.shtml
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MegaMek");
+        
+        //this should also help to make MegaMek look more system-specific
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         ToolTipManager.sharedInstance().setInitialDelay(
                 GUIPreferences.getInstance().getTooltipDelay());
         frame = new JFrame("MegaMek"); //$NON-NLS-1$

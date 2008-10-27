@@ -46,7 +46,7 @@ public class ISAMS extends AmmoWeapon {
         this.tonnage = 0.5f;
         this.criticals = 1;
         this.bv = 32;
-        this.flags |= F_AUTO_TARGET | F_AMS;
+        this.flags |= F_AUTO_TARGET | F_AMS | F_BALLISTIC;
         this.setModes(new String[] { "On", "Off" });
         this.setInstantModeSwitch(false);
         this.cost = 100000;

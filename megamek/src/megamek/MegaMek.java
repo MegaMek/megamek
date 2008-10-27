@@ -157,11 +157,11 @@ public class MegaMek {
     }
 
     /**
-     * Attempts to start the GUI with the given name. If the GUI is unkown the
-     * progarm will exit.
+     * Attempts to start the GUI with the given name. If the GUI is unknown the
+     * program will exit.
      * 
-     * @param guiName The name of the GUI, ussualy AWT or swing
-     * @param args the agruments to be passed onto the GUI.
+     * @param guiName The name of the GUI, usually AWT or swing
+     * @param args the arguments to be passed onto the GUI.
      */
     private static void startGUI(String guiName, String[] args) {
         megamek.debug.Assert.assertTrue(guiName != null,

@@ -622,8 +622,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         int index = 0;
         for (Iterator<String> i = client.getMapSettings().getBoardsSelected(); i
                 .hasNext();) {
-            ((DefaultListModel) lisBoardsSelected.getModel())
-                    .addElement((index++) + ": " + i.next()); //$NON-NLS-1$
+            if(client.getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE) {
+                ((DefaultListModel) lisBoardsSelected.getModel()).addElement((index++) + ": " + Messages.getString("ChatLounge.SPACE")); //$NON-NLS-1$
+                i.next();
+              } else {
+                  ((DefaultListModel) lisBoardsSelected.getModel()).addElement((index++) + ": " + i.next()); //$NON-NLS-1$
+              }
         }
     }
 

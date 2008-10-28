@@ -8,6 +8,7 @@ v0.33.35-dev (SVN)
 + Fixed: Tele-Missile NPE Error
 + Rules change: BA micro bombs use only anti-mech skill for to-hit
 + Fixed LRM scatter
++ Fixed some swing display issues for Aeros
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

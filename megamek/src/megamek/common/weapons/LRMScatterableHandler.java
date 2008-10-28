@@ -67,7 +67,9 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);
         } else {
-            coords = Compute.scatter(coords, toHit.getValue() - roll);
+            // according to http://www.classicbattletech.com/forums/index.php/topic,41188.0.html
+            // scatterable LRMs scatter like dive bombing
+            coords = Compute.scatterDiveBombs(coords);
             if (game.getBoard().contains(coords)) {
                 // misses and scatters to another hex
                 r = new Report(3195, whoReport);

@@ -514,8 +514,8 @@ public class EquipmentType {
                 }
                 w.write(TechConstants.getTechName(type.getTechLevel()));
                 w.write(",");
-            	w.write(TechConstants.getLevelName(type.getTechLevel()));
-            	w.write(",");
+                w.write(TechConstants.getLevelName(type.getTechLevel()));
+                w.write(",");
                 for (Enumeration<String> names = type.getNames(); names
                         .hasMoreElements();) {
                     String name = names.nextElement();

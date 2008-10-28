@@ -3349,7 +3349,23 @@ public class Compute {
         // Entity is not *inside* of the building.
         return false;
     }
+    
+    /**
+     * scatter from hex according to dive bombing rules
+     * @param coords The <code>Coords</code> to scatter from
+     * @return the <code>Coords</code> scattered to
+     */
+    public static Coords scatterDiveBombs(Coords coords) {
+        return Compute.scatter(coords, 2);
+    }
 
+    /**
+     * scatter from a hex according, roll d6 to choose scatter direction
+     * @param coords The <code>Coords</code> to scatter from
+     * @param margin the <code>int</code> margin of failure, 
+     * scatter distance will be margin/2 d6 (round up)
+     * @return the <code>Coords</code> scattered to
+     */
     public static Coords scatter(Coords coords, int margin) {
         int scatterDirection = d6(1) - 1;
         int scatterDistance = d6((int)Math.ceil(((double)margin)/2.0));

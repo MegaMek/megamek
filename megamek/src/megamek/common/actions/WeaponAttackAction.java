@@ -222,14 +222,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && game.getPhase() == IGame.Phase.PHASE_FIRING;
         boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING || game
-                        .getPhase() == IGame.Phase.PHASE_OFFBOARD);// hack,
-        // otherwise
-        // when
-        // actually
-        // resolves
-        // shot
-        // labeled
-        // impossible.
+                        .getPhase() == IGame.Phase.PHASE_OFFBOARD);
+        // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect
                 && target.getTargetType() == Targetable.TYPE_ENTITY
                 && te.getMovementMode() == IEntityMovementMode.VTOL
@@ -481,6 +475,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         } else if (BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName())) {
             // Mine launchers can not hit infantry.
             toHit = new ToHitData(8, "magnetic mine attack");
+        } else if (atype != null && atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
+            // Micro bombs use anti-mech skill
+            return new ToHitData(ae.getCrew().getPiloting(), "anit-mech skill");
         }
         // Swarming infantry always hit their target, but
         // they can only target the Mek they're swarming.

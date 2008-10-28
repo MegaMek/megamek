@@ -69,6 +69,13 @@ public class AR10Weapon extends CapitalMissileWeapon {
      */
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
+        if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
+            return new SantaAnnaHandler(toHit, waa, game, server);
+        }
+        if (atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
+            return new TeleMissileHandler(toHit, waa, game, server);
+        }
         return new AR10Handler(toHit, waa, game, server);
     }
 }

@@ -64,6 +64,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean bSalvo = false;
     protected boolean bGlancing = false;
     protected boolean bDirect = false;
+    protected boolean nukeS2S = false;
     protected WeaponType wtype;
     protected Mounted weapon;
     protected Entity ae;
@@ -77,6 +78,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean missed = false;
     protected DamageType damageType;
     protected int generalDamageType = HitData.DAMAGE_NONE;
+    protected Vector<Integer> insertedAttacks = new Vector<Integer>();
+    
 
     /**
      * return the <code>int</code> Id of the attacking <code>Entity</code>
@@ -191,6 +194,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (!this.cares(phase)) {
             return true;
         }
+        
+        insertAttacks(phase, vPhaseReport);
+        
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
@@ -543,7 +549,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront));
+                                    : damageType, false, false, throughFront, false, nukeS2S));
         }
     }
 
@@ -746,5 +752,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean canDoDirectBlowDamage(){
         return true;
     }
-
+    
+    /**
+     * Insert any additionaly attacks that should occur before this attack
+     */
+    protected void insertAttacks(IGame.Phase phase, Vector<Report> vPhaseReport) {
+        return;
+    }
 }

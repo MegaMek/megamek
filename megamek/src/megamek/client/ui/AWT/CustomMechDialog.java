@@ -988,19 +988,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             c.gridy = 0;
             c.anchor = GridBagConstraints.WEST;
             g.setConstraints(m_choice, c);
-            m_choice.select(0);
-            // m_choice.select(m.getNSantaAnna());
+            m_choice.select(m.getNSantaAnna());
             add(m_choice);
         }
 
         public void applyChoice() {
-            // what should I do here? If I apply the choice immediately then it
-            // sort of screws
-            // things up if the player reopens this window
-            // what if I set this number in Mounted somewhere and then when I
-            // update the weapons
-            // bay, I can adjust the ammo
-            // m_mounted.setNSantaAnna(m_choice.getSelectedIndex());
+            //this is a hack. I can't immediately apply the choice, because
+            //that would split this ammo bin in two and then the player could never
+            //get back to it. So I keep track of the Santa Anna allocation 
+            //on the mounted and then apply it before deployment
+            m_mounted.setNSantaAnna(m_choice.getSelectedIndex());
 
         }
 

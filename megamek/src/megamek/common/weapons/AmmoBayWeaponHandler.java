@@ -22,6 +22,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import java.util.Vector;
 
 /**
  * @author Jay Lawson
@@ -29,7 +30,7 @@ import megamek.server.Server;
 public class AmmoBayWeaponHandler extends BayWeaponHandler {
     
     private static final long serialVersionUID = -1618484541772117621L;
-
+    
     /**
      * @param t
      * @param w
@@ -50,6 +51,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
      * @return an <code>int</code> representing the attack value at that range.
      */
     protected int calcAttackValue() {
+
         int distance = ae.getPosition().distance(target.getPosition());
         double av = 0;
         int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
@@ -59,16 +61,17 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
             //check the currently loaded ammo
             Mounted bayWAmmo = bayW.getLinked();
             if(null == bayWAmmo || bayWAmmo.getShotsLeft() < 1) {
-                //try loading something else
+                //try loadinsg something else
                 ae.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinked();
             }
-            
             if(!bayW.isBreached() && !bayW.isDestroyed() && !bayW.isJammed()
                     && bayWAmmo != null && bayWAmmo.getShotsLeft() > 0) {
                 WeaponType bayWType = ((WeaponType)bayW.getType());
                 //need to cycle through weapons and add av
-                double current_av = 0;
+                double current_av = 0;                             
+                AmmoType atype = (AmmoType)bayWAmmo.getType();              
+                
                 if(range == WeaponType.RANGE_SHORT) {
                     current_av =  bayWType.getShortAV();
                 } else if(range == WeaponType.RANGE_MED) {
@@ -78,12 +81,19 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                 } else if (range == WeaponType.RANGE_EXT) {
                     current_av = bayWType.getExtAV();
                 }
-                current_av = updateAVforAmmo(current_av, (AmmoType)bayWAmmo.getType(), 
-                                             bayWType, range);               
+                current_av = updateAVforAmmo(current_av, atype, 
+                                             bayWType, range, wId);               
                 av = av + current_av;
                 //now use the ammo that we had loaded
                 if(current_av > 0) {
                     bayWAmmo.setShotsLeft(bayWAmmo.getShotsLeft() - 1);
+                }
+                
+                //check for nukes and tele-missiles and if they are there then I will need to 
+                //add them to an inserted attack list and reset the av
+                if(atype.hasFlag(AmmoType.F_NUCLEAR) || atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
+                    insertedAttacks.addElement(wId);
+                    av = av - current_av;
                 }
             }
         }       
@@ -95,7 +105,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
      * TODO: it might be better to have unique weapon handlers 
      * for these by bay, but I am lazy
      */   
-    protected double updateAVforAmmo(double current_av, AmmoType atype, WeaponType wtype, int range) {     
+    protected double updateAVforAmmo(double current_av, AmmoType atype, WeaponType wtype, int range, int wId) {     
         
         //check for artemisIV
         Mounted mLinker = weapon.getLinkedBy();

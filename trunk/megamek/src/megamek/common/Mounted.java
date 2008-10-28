@@ -102,6 +102,10 @@ public class Mounted implements Serializable, RoundUpdated {
     protected int baseDamageCapacity = 0;
     protected int damageTaken = 0;
 
+    //this is a hack but in the case of Killer Whale ammo
+    //I need some way of tracking how many missiles are Santa Annas
+    private int nSantaAnna = 0;
+    
     /** Creates new Mounted */
     public Mounted(Entity entity, EquipmentType type) {
         this.entity = entity;
@@ -967,5 +971,13 @@ public class Mounted implements Serializable, RoundUpdated {
             return ((WeaponType)this.getType()).getHeat()*getCurrentShots();
         }
         return 0;
+    }
+    
+    public int getNSantaAnna() {
+        return nSantaAnna;
+    }
+    
+    public void setNSantaAnna(int n) {
+        this.nSantaAnna = n;
     }
 }

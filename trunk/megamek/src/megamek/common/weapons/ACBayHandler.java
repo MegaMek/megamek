@@ -94,7 +94,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
                         current_av = bayWType.getExtAV();
                     }
                     current_av = updateAVforAmmo(current_av, (AmmoType)bayWAmmo.getType(), 
-                            bayWType, range);     
+                            bayWType, range, wId);     
                     //need to divide current_av by the number of shots in order for it to come out
                     //right
                     current_av = current_av / ammoUsed;

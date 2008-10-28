@@ -1881,7 +1881,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Can only raise the heat level of Meks.";
         }
         
-        if(ae.usesWeaponBays()) {
+        if(ae.usesWeaponBays() && weapon.getBayWeapons().size() > 0) {
             
             //first check to see if there are any usable weapons
             boolean useable = false;

@@ -2341,6 +2341,49 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             }
 
             // draw condition strings
+            
+            if(entity instanceof Aero) {    
+                Aero a = (Aero)entity;        
+                
+                //draw altitude if Aero in atmosphere
+                if(game.getBoard().inAtmosphere()) {
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Integer.toString(a.getElevation()), 26, 15); //$NON-NLS-1$
+                    graph.setColor(Color.PINK);
+                    graph.drawString(Integer.toString(a.getElevation()), 25, 14); //$NON-NLS-1$
+                }
+                
+                if(a.isRolled()) {
+                    // draw "rolled"
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.ROLLED"), 18, 15); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.ROLLED"), 17, 14); //$NON-NLS-1$
+                }
+                
+                if(a.isOutControlTotal() & a.isRandomMove()) {
+                    // draw "RANDOM"
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.RANDOM"), 18, 35); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.RANDOM"), 17, 34); //$NON-NLS-1$
+                } else if (a.isOutControlTotal()) {
+                    //draw "CONTROL"
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.CONTROL"), 18, 39); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.CONTROL"), 17, 38); //$NON-NLS-1$
+                }
+                
+                if(a.isEvading()) {
+                    //draw "EVADE" - can't overlap with out of control
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.EVADE"), 18, 39); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.EVADE"), 17, 38); //$NON-NLS-1$
+                }
+            }
+            
             if (entity.crew.isDead()) {
                 // draw "CREW DEAD"
                 graph.setColor(Color.darkGray);
@@ -2802,6 +2845,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(col);
                 myPoly.translate(-1, -1);
                 graph.drawPolygon(myPoly);
+                if(game.useVectorMove()) {
+                    drawMovementCost(step, stepPos, graph, col, false);
+                }
                 break;
             case MovePath.STEP_LOAD:
                 // Announce load.

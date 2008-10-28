@@ -2,6 +2,7 @@
 ----------------
 v0.33.35-dev (SVN)
 + Santa Anna ship-to-ship missiles
++ Fixed: White Shark/Santa Anna appropriate weapon handler
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

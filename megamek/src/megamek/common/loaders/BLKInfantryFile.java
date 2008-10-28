@@ -77,7 +77,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
 
         if (!dataFile.exists("cruiseMP"))
             throw new EntityLoadingException("Could not find cruiseMP block.");
-        t.setOriginalRunMP(dataFile.getDataAsInt("cruiseMP")[0]);
+        t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
 
         if (dataFile.exists("jumpingMP"))
             t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);

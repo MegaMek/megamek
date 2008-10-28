@@ -66,6 +66,8 @@ v0.33.34-dev (SVN)
   of the turn normally.  
 + updated equipment.txt with new tech levels
 + Bug: AMS did not have a Ballistic flag
++ Bug: Infantry should have identical walk and run MP
++ Bug: 0 MP infantry units should be able to shoot or move
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's

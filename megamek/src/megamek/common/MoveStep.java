@@ -1647,11 +1647,6 @@ public class MoveStep implements Serializable {
                 && !(parent.getEntity() instanceof VTOL)) {
             tmpWalkMP = entity.getJumpMP();
         }
-        
-        // infantry can have 0 walk, and some run MP due to weather
-        if (isInfantry && tmpWalkMP == 0 && parent.getMpUsed() <= entity.getRunMP()) {
-            movementType = IEntityMovementType.MOVE_RUN;
-        }
         // check for valid walk/run mp
         if (!parent.isJumping() && !entity.isStuck() && tmpWalkMP > 0
                 && getMp() > 0) {
@@ -1711,6 +1706,12 @@ public class MoveStep implements Serializable {
                 // gravity psr
                 entity.gotPavementBonus = true;
             }
+        }
+        // 0 MP infantry units can move 1 hex
+        if (isInfantry && parent.getEntity().getWalkMP() == 0
+                && parent.getEntity().getPosition().equals(prev.getPosition())
+                && parent.getEntity().getPosition().distance(getPosition()) == 1) {
+            movementType = IEntityMovementType.MOVE_WALK;
         }
         // Free facing changes are legal
         if ((stepType == MovePath.STEP_TURN_LEFT || stepType == MovePath.STEP_TURN_RIGHT)
@@ -1964,6 +1965,14 @@ public class MoveStep implements Serializable {
         mp = 1;
         // jumping always costs 1
         if (parent.isJumping()) {
+            return;
+        }
+        
+        // 0 MP infantry units can move 1 hex
+        if (isInfantry && parent.getEntity().getWalkMP() == 0
+                && parent.getEntity().getPosition().equals(prev)
+                && parent.getEntity().getPosition().distance(getPosition()) == 1) {
+            mp = 0;
             return;
         }
 

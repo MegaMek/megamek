@@ -68,8 +68,6 @@ public class Infantry extends Entity implements Serializable {
      */
     private boolean antiMek = false;
 
-    protected int runMP = 1;
-
     public int turnsLayingExplosives = -1;
 
     public static final int DUG_IN_NONE = 0;
@@ -186,19 +184,10 @@ public class Infantry extends Entity implements Serializable {
     }
     
     /**
-     * Return this Infantry's run MP.
+     * Return this Infantry's run MP, which is identical to its walk MP
      */
     public int getRunMP(boolean gravity, boolean ignoreheat) {
-        int j = getOriginalRunMP();
-        if(null != game) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
-            if(weatherMod != 0) {
-                j = Math.max(j + weatherMod, 0);
-            } 
-        }  
-        if (gravity)
-            j = applyGravityEffectsOnMP(j);
-        return j;
+        return getWalkMP(gravity, ignoreheat);
     }
 
     /**
@@ -208,12 +197,6 @@ public class Infantry extends Entity implements Serializable {
         return getRunMP(gravity, ignoreheat);
     }
 
-    /**
-     * Get this infantry's orignal Run MP
-     */
-    protected int getOriginalRunMP() {
-        return this.runMP;
-    }
     
     /*
      * Get this infantry's jump MP, adjusted for weather conditions
@@ -573,7 +556,7 @@ public class Infantry extends Entity implements Serializable {
         double speedFactorTableLookup = getRunMP(false, true)
                 + Math.round((double) getJumpMP(false) / 2);
         if (speedFactorTableLookup > 25)
-            speedFactor = Math.pow(1 + (((double) runMP
+            speedFactor = Math.pow(1 + (((double) walkMP
                     + (Math.round((double) getJumpMP(false) / 2)) - 5) / 10), 1.2);
         else
             speedFactor = Math
@@ -698,13 +681,6 @@ public class Infantry extends Entity implements Serializable {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Not entering bog-down terrain, or jumping/hovering over such terrain");
         }
         return roll;
-    }
-
-    /**
-     * Sets this entity's original walking movement points
-     */
-    public void setOriginalRunMP(int runMP) {
-        this.runMP = runMP;
     }
 
     /**

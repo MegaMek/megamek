@@ -2007,7 +2007,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
                 WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
                 if (prevAttack.getEntityId() == attackerId) {
-
                     // If the attacker fires another weapon, this attack fails.
                     if (weaponId != prevAttack.getWeaponId()) {
                         return "Other weapon attacks declared.";
@@ -2015,14 +2014,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         } else if (isAttackerInfantry && !(ae instanceof BattleArmor)) {
-            // check for trying to fire heavy weapons after moving
-            // note antimech attacks which are allowed are solo attacks, above.
+            // 0 MP infantry units: move or shoot, except for anti-mech attacks,
+            // those are handled above
             if (ae.getMovementMode() == IEntityMovementMode.INF_LEG
-                    && wtype.hasFlag(WeaponType.F_INFANTRY)
-                    && !wtype.hasFlag(WeaponType.F_LASER)
-                    && wtype.getAmmoType() != AmmoType.T_AC
+                    && ae.getWalkMP() == 0
                     && ae.moved != IEntityMovementType.MOVE_NONE) {
-                return "Foot platoons can only fire rifles in same turn as moving";
+                return "Foot platoons with 0 MP can move or shoot, not both";
             }
             // check for trying to fire field gun after moving
             if (!wtype.hasFlag(WeaponType.F_INFANTRY)

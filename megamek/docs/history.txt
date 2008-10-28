@@ -71,6 +71,7 @@ v0.33.34 (2008-10-28, 02:30 UTC)
 + Bug: Infantry should have identical walk and run MP
 + Bug: 0 MP infantry units should be able to shoot or move
 + Bug 2171505: C3i not granting bonus
++ Enhancements to swing GUI to make it look more system-specific (especially for Macs)
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Clan IJJ's being treated like IJJ's
@@ -154,8 +155,6 @@ v0.33.33 (2008-10-07, 20:33 GMT+1)
 + Bug: Infantry with 0 walk MP but some run MP can't move (this can happen with
     TacOps weather conditions
 + Added image for Manteuffel tank
-+ Enhancements to swing GUI to make it look more system-specific (especially for Macs)
-
 
 v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files

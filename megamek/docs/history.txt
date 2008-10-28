@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.34-dev (SVN)
+v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image
 + Fixed lots of munition techlevel
 + Bug: Mech with left arm and a leg destroyed couldn't get back up

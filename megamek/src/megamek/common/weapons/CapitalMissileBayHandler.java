@@ -15,11 +15,15 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
+import megamek.common.Building;
+import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.Report;
+import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -77,38 +81,19 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             return 11;
         }
     }
-     
     
     /**
-     * special resolution, like minefields and arty
-     * 
-     * @param vPhaseReport - a <code>Vector</code> containing the phase report
-     * @param entityTarget - the <code>Entity</code> targeted, or
-     *            <code>null</code>, if no Entity targeted
-     * @param bMissed - a <code>boolean</code> value indicating wether the
-     *            attack missed or hit
-     * @return true when done with processing, false when not
+     * Insert any additionaly attacks that should occur before this attack
      */
-    protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget, boolean bMissed) {
-        //need a special resolution to check for any tele-missiles, deploy them, and 
-        //take them out of the relevant attack value
-        for(int wId: weapon.getBayWeapons()) {
+    protected void insertAttacks(IGame.Phase phase, Vector<Report> vPhaseReport) {
+        for(int wId: insertedAttacks) {
             Mounted bayW = ae.getEquipment(wId);
-            Mounted bayWAmmo = bayW.getLinked();
-            AmmoType atype = (AmmoType) bayWAmmo.getType();
-            if(!bayW.isBreached() && !bayW.isDestroyed() && !bayW.isJammed()
-                    && bayWAmmo.getShotsLeft() > 0 
-                    && atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
-                server.deployTeleMissile(ae, atype, wId, getCritMod(atype), vPhaseReport);  
-                attackValue -= atype.getDamagePerShot();
-            }
+            WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),waa.getTargetId(), wId);
+            Weapon w = (Weapon) bayW.getType();
+            //increase ammo by one, we'll use one that we shouldn't use
+            // in the next line
+            bayW.getLinked().setShotsLeft(bayW.getLinked().getShotsLeft()+1);
+            (w.fire(newWaa, game, server)).handle(phase, vPhaseReport);
         }
-                
-        if(attackValue <= 0) {
-            return true;
-        }
-        return false;
     }
-    
 }

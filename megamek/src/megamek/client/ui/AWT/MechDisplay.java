@@ -1656,7 +1656,16 @@ public class MechDisplay extends BufferedPanel {
                     avMed = 2;
                     avLong = 2;
                     avExt = 2;
+                } 
+                
+                //check for santa annas
+                if(atype.hasFlag(AmmoType.F_NUCLEAR)) {
+                    avShort = 100;
+                    avMed = 100;
+                    avLong = 100;
+                    avExt = 100;
                 }
+                
             }
 
             double[] result = { avShort, avMed, avLong, avExt, maxr };

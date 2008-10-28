@@ -1155,6 +1155,21 @@ public class Server implements Runnable {
             } else {
                 entity.setDone(false);
             }
+            
+            //if this is the deployment phase, then apply bombs and santa annas to
+            //the appropriate aero entities
+            //FIXME: there must be a better place to do this
+            if( phase == IGame.Phase.PHASE_DEPLOYMENT ) {
+                if(entity instanceof Aero) {
+                    if(game.getOptions().booleanOption("at2_nukes") && 
+                            (entity instanceof Dropship || entity instanceof Jumpship)) {
+                        entity.applySantaAnna();
+                    }
+                    if(!(entity instanceof SmallCraft || entity instanceof Jumpship)) {
+                        //a.applyBombs();
+                    }
+                }
+            }
 
             // reset spotlights
             entity.setIlluminated(false);
@@ -13926,8 +13941,8 @@ public class Server implements Runnable {
      *            Is the damage coming through the hex the unit is facing?
      * @param finalSquadDamage
      *            is this the final resolution of squadron damage
-     * @param is
-     *            this a ship-to-ship nuke?
+     * @param nukeS2s
+     *            is this a ship-to-ship nuke?
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag, boolean damageIS, boolean areaSatArty, boolean throughFront, boolean finalSquadDamage, boolean nukeS2S) {
@@ -14708,30 +14723,46 @@ public class Server implements Runnable {
                         a.setSI(0);
                     }
 
-                    /*
-                     * //check for nuclear critical if(nukeS2S) { //add a
-                     * control roll PilotingRollData nukePSR = new
-                     * PilotingRollData( te.getId(), 4, "Nuclear attack" );
-                     * //FIXME: This is not actually resetting to false for some
-                     * reason nukePSR.setCumulative(false);
-                     * game.addPSR(nukePSR);
-                     * 
-                     * //need some kind of report int nukeroll = Compute.d6(2);
-                     * r = new Report(9145); r.subject = a.getId(); r.newlines =
-                     * 0; r.indent(3); r.add(CapitalMissile); r.add(nukeroll);
-                     * vDesc.add(r); if(nukeroll >= CapitalMissile) {
-                     * 
-                     * int nukeDamage = damage_orig;
-                     * a.setSI(a.getSI()-nukeDamage); te.damageThisPhase +=
-                     * nukeDamage; r = new Report(9146); r.subject = a.getId();
-                     * r.newlines = 0; r.add(nukeDamage);
-                     * r.add(Math.max(a.getSI(),0)); vDesc.addElement(r);
-                     * if(a.getSI() <= 0) { vDesc.addAll( destroyEntity(te,
-                     * "structural integrity collapse")); a.setSI(0); } else
-                     * if(!critSI) { critSI = true; } } else { r = new Report
-                     * (9147); r.subject = a.getId(); r.newlines = 0;
-                     * vDesc.addElement(r); } }
-                     */
+                     //check for nuclear critical 
+                    if(nukeS2S) { 
+                        //add a control roll 
+                        PilotingRollData nukePSR = new PilotingRollData( te.getId(), 4, "Nuclear attack" );
+                        nukePSR.setCumulative(false);
+                        game.addControlRoll(nukePSR);
+                        
+                        //need some kind of report 
+                        int nukeroll = Compute.d6(2);
+                        r = new Report(9145); 
+                        r.subject = a.getId(); 
+                        r.newlines = 0; 
+                        r.indent(3); 
+                        r.add(CapitalMissile); 
+                        r.add(nukeroll);
+                        vDesc.add(r); 
+                        if(nukeroll >= CapitalMissile) {                      
+                            int nukeDamage = damage_orig;
+                            a.setSI(a.getSI()-nukeDamage); 
+                            te.damageThisPhase += nukeDamage; 
+                            r = new Report(9146); 
+                            r.subject = a.getId();
+                            r.newlines = 0; 
+                            r.add(nukeDamage);
+                            r.add(Math.max(a.getSI(),0)); 
+                            vDesc.addElement(r);
+                            if(a.getSI() <= 0) { 
+                                vDesc.addAll( destroyEntity(te,"structural integrity collapse")); 
+                                a.setSI(0); 
+                            } else if(!critSI) { 
+                                critSI = true; 
+                            }     
+                        } else { 
+                            r = new Report(9147); 
+                            r.subject = a.getId(); 
+                            r.newlines = 0;
+                            vDesc.addElement(r); 
+                        }     
+                    }
+                     
                     // apply crits
                     if (critBoxCars) {
                         vDesc.elementAt(vDesc.size() - 1).newlines++;
@@ -15167,27 +15198,45 @@ public class Server implements Runnable {
                 Aero a = (Aero) te;
 
                 // check for nuclear critical
-                /*
-                 * if(nukeS2S) {
-                 * 
-                 * //add a control roll game.addPSR(new PilotingRollData (
-                 * te.getId(), 4, "Nuclear attack" ));
-                 * 
-                 * //need some kind of report int nukeroll = Compute.d6(2); r =
-                 * new Report(9145); r.subject = a.getId(); r.newlines = 0;
-                 * r.indent(3); r.add(CapitalMissile); r.add(nukeroll);
-                 * vDesc.add(r); if(nukeroll >= CapitalMissile) {
-                 * 
-                 * int nukeDamage = damage_orig; a.setSI(a.getSI()-nukeDamage);
-                 * te.damageThisPhase += nukeDamage; r = new Report(9146);
-                 * r.subject = a.getId(); r.newlines = 0; r.add(nukeDamage);
-                 * r.add(Math.max(a.getSI(),0)); vDesc.addElement(r);
-                 * if(a.getSI() <= 0) { vDesc.addAll( destroyEntity(te,
-                 * "structural integrity collapse")); a.setSI(0); } else
-                 * if(!critSI) { critSI = true; } } else { r = new Report
-                 * (9147); r.subject = a.getId(); r.newlines = 0;
-                 * vDesc.addElement(r); } }
-                 */
+                if(nukeS2S) {
+                    //add a control roll 
+                    PilotingRollData nukePSR = new PilotingRollData( te.getId(), 4, "Nuclear attack" );
+                    nukePSR.setCumulative(false);
+                    game.addControlRoll(nukePSR);
+                    
+                    //need some kind of report 
+                    int nukeroll = Compute.d6(2);
+                    r = new Report(9145); 
+                    r.subject = a.getId(); 
+                    r.newlines = 0; 
+                    r.indent(3); 
+                    r.add(CapitalMissile); 
+                    r.add(nukeroll);
+                    vDesc.add(r); 
+                    if(nukeroll >= CapitalMissile) {                      
+                        int nukeDamage = damage_orig;
+                        a.setSI(a.getSI()-nukeDamage); 
+                        te.damageThisPhase += nukeDamage; 
+                        r = new Report(9146); 
+                        r.subject = a.getId();
+                        r.newlines = 0; 
+                        r.add(nukeDamage);
+                        r.add(Math.max(a.getSI(),0)); 
+                        vDesc.addElement(r);
+                        if(a.getSI() <= 0) { 
+                            vDesc.addAll( destroyEntity(te,"structural integrity collapse")); 
+                            a.setSI(0); 
+                        } else if(!critSI) { 
+                            critSI = true; 
+                        }     
+                    } else { 
+                        r = new Report(9147); 
+                        r.subject = a.getId(); 
+                        r.newlines = 0;
+                        vDesc.addElement(r); 
+                    }     
+                }
+                  
                 if (critBoxCars) {
                     vDesc.elementAt(vDesc.size() - 1).newlines++;
                     vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit", 8, damage_orig, isCapital));

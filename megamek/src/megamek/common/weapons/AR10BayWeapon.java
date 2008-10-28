@@ -16,7 +16,10 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.AmmoType;
 import megamek.common.IGame;
+import megamek.common.Mounted;
+import megamek.common.TargetRoll;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -25,7 +28,7 @@ import megamek.server.Server;
 /**
  * @author Jay Lawson
  */
-public class AR10BayWeapon extends AmmoBayWeapon {
+public class AR10BayWeapon extends CapitalMissileBayWeapon {
     /**
      * 
      */
@@ -62,6 +65,6 @@ public class AR10BayWeapon extends AmmoBayWeapon {
      */
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new AR10BayHandler(toHit, waa, game, server);
+        return new CapitalMissileBayHandler(toHit, waa, game, server);
     }
 }

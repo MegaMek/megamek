@@ -183,5 +183,9 @@ public class TeleMissile extends Aero {
     public int getCritMod() {
         return critMod;
     }
+    
+    public int locations() {
+        return 1;
+    }
 
 }

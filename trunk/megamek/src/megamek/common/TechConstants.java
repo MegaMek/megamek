@@ -70,11 +70,11 @@ public class TechConstants {
             "3", "3", "4", "4", "5", "5", "-1" };
 
     public static String getLevelName(int level) {
-    	if(level == T_ALLOWED_ALL)
-    		return "(allowed to all)";
-    	if(level == T_TECH_UNKNOWN)
-    		return "(unknown tech level)";
-    	if (level >= 0 && level < SIZE) {
+        if(level == T_ALLOWED_ALL)
+            return "(allowed to all)";
+        if(level == T_TECH_UNKNOWN)
+            return "(unknown tech level)";
+        if (level >= 0 && level < SIZE) {
             return T_NAMES[level];
         }
         throw new IllegalArgumentException("Unknown tech level");

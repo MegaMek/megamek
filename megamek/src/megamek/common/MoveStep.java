@@ -666,7 +666,7 @@ public class MoveStep implements Serializable {
                                 mpUsed += 99;
                                 break;
                             }else {
-                                mpUsed += 3 - ((Mech)entity).countLegActuatorCrits(location);
+                                mpUsed += ((Mech)entity).countLegActuatorCrits(location);
                                 if ( ((Mech)entity).legHasHipCrit(location) ){
                                     mpUsed += 1;
                                 }
@@ -678,7 +678,7 @@ public class MoveStep implements Serializable {
                                 mpUsed += 99;
                                 break;
                             }else {
-                                mpUsed += 3 - ((QuadMech)entity).countLegActuatorCrits(location);
+                                mpUsed += ((QuadMech)entity).countLegActuatorCrits(location);
                                 if ( ((QuadMech)entity).legHasHipCrit(location) ){
                                     mpUsed += 1;
                                 }
@@ -1657,6 +1657,7 @@ public class MoveStep implements Serializable {
                     && stepType != MovePath.STEP_UNLOAD
                     && stepType != MovePath.STEP_LOAD
                     && stepType != MovePath.STEP_CAREFUL_STAND
+                    && stepType != MovePath.STEP_HULL_DOWN
                     && (isProne() || isHullDown())) {
                 movementType = IEntityMovementType.MOVE_ILLEGAL;
                 return;

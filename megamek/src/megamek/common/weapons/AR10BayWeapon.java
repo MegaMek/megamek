@@ -28,7 +28,7 @@ import megamek.server.Server;
 /**
  * @author Jay Lawson
  */
-public class AR10BayWeapon extends CapitalMissileBayWeapon {
+public class AR10BayWeapon extends AmmoBayWeapon {
     /**
      * 
      */

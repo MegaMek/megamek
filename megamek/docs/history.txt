@@ -5,6 +5,7 @@ v0.33.35-dev (SVN)
 + Fixed: White Shark/Santa Anna appropriate weapon handler
 + Bug 2204575: Can't go from prone to hull down
 + Bug: Capital Missile Bays reported as AR10 Bays
++ Fixed: Tele-Missile NPE Error
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

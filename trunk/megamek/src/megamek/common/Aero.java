@@ -2171,4 +2171,11 @@ public class Aero
     public int getTotalCommGearTons() {
         return 1 + getExtraCommGearTons();
     }
+    
+    /**
+     * The number of critical slots that are destroyed in the component.
+     */
+    public int getBadCriticals(int type, int index, int loc) {
+        return 0;
+    }
 }

@@ -18,6 +18,7 @@ v0.33.35-dev (SVN)
 + changed rough_1.png to the hex image for ultra rough
 + Bug 2205548: More Hull Down Issues
 + added Fulcrum image (thanks evilimperial)
++ added hex images for light and heavy jungle (taken from the coast line theme - thanks Battledroid)
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

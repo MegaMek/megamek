@@ -14,6 +14,7 @@ v0.33.35-dev (SVN)
 + Tooltip now shows all terrains present in a hex, except for fluff
 + No snowfall on magma hexes
 + Fixed rubble levels
++ give wall rubble (level 5) "light rubble" hex image
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

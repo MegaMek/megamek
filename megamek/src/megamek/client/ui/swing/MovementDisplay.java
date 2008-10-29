@@ -1454,7 +1454,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             if (cmd.getFinalProne()) {
                 setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
                 setGoProneEnabled(false);
-                setHullDownEnabled(false);
+                setHullDownEnabled(true);
             } else if (cmd.getFinalHullDown()) {
                 if (isMech)
                     setGetUpEnabled(!ce.isImmobile() && !ce.isStuck() && !((Mech)ce).cannotStandUpFromHullDown());
@@ -2498,7 +2498,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             }
             gear = MovementDisplay.GEAR_RAM;
         } else if (ev.getActionCommand().equals(MOVE_GET_UP)) {
-            clearAllMoves();
+            //if the unit has a hull down step
+            //then don't clear the moves
+            if(!cmd.contains(MovePath.STEP_HULL_DOWN)) {
+                clearAllMoves();
+            }
             
             if ( client.game.getOptions().booleanOption("tacops_careful_stand") && ce.getWalkMP() > 2) {
                 megamek.client.ui.swing.ConfirmDialog response = clientgui.doYesNoBotherDialog(

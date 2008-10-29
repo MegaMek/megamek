@@ -1658,6 +1658,7 @@ public class MoveStep implements Serializable {
                     && stepType != MovePath.STEP_LOAD
                     && stepType != MovePath.STEP_CAREFUL_STAND
                     && stepType != MovePath.STEP_HULL_DOWN
+                    && stepType != MovePath.STEP_GO_PRONE
                     && (isProne() || isHullDown())) {
                 movementType = IEntityMovementType.MOVE_ILLEGAL;
                 return;
@@ -1719,6 +1720,12 @@ public class MoveStep implements Serializable {
                 && getMp() == 0) {
             movementType = prev.movementType;
         }
+        
+        //going prone from hull down is legal and costs 0
+        if(getMp() == 0 && stepType == MovePath.STEP_GO_PRONE && isHullDown()) {
+            movementType = prev.movementType;
+        }
+        
         if (movementType == IEntityMovementType.MOVE_WALK
                 && prev.movementType == IEntityMovementType.MOVE_RUN) {
             movementType = IEntityMovementType.MOVE_RUN;

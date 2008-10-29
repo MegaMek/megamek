@@ -176,13 +176,15 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 
                 if(lightSnow
                         && !currentHex.containsTerrain(Terrains.SNOW)
-                        && !(currentHex.containsTerrain(Terrains.WATER) && !currentHex.containsTerrain(Terrains.ICE))) {
+                        && !(currentHex.containsTerrain(Terrains.WATER) && !currentHex.containsTerrain(Terrains.ICE))
+                        && !currentHex.containsTerrain(Terrains.MAGMA)) {
                     currentHex.addTerrain(tf.createTerrain(Terrains.SNOW, 1));
                     server.sendChangedHex(currentCoords);
                 }
                 
                 if(deepSnow && !(currentHex.terrainLevel(Terrains.SNOW) > 1)
-                        && !(currentHex.containsTerrain(Terrains.WATER) && !currentHex.containsTerrain(Terrains.ICE))) {
+                        && !(currentHex.containsTerrain(Terrains.WATER) && !currentHex.containsTerrain(Terrains.ICE))
+                        && !currentHex.containsTerrain(Terrains.MAGMA)) {
                     currentHex.addTerrain(tf.createTerrain(Terrains.SNOW, 2));
                     server.sendChangedHex(currentCoords);
                 }

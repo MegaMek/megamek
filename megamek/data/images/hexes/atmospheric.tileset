@@ -32,7 +32,8 @@
 
 super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
 
-super * "rough:1" "" "transparent/rough_0.png;transparent/rough_1.png;transparent/rough_2.png;transparent/rough_3.png"
+super * "rough:1" "" "transparent/rough_0.png;transparent/rough_2.png;transparent/rough_3.png"
+super * "rough:2" "" "transparent/rough_1.png"
 
 super * "woods:1" "snow" "themes/snow_lf.png"
 super * "woods:2" "snow" "themes/snow_hf.png"
@@ -54,6 +55,7 @@ super * "water:3" "" "transparent/blue_water_3.png"
 super * "water:4" "" "transparent/blue_water_4.png"
 
 super * "rapids:1" "" "transparent/rapids.png"
+super * "rapids:2" "" "transparent/rapids.png"
 
 super * "ice:1" "" "transparent/ice.png"
 

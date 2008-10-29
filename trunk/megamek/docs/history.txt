@@ -17,6 +17,7 @@ v0.33.35-dev (SVN)
 + give wall rubble (level 5) "light rubble" hex image
 + changed rough_1.png to the hex image for ultra rough
 + Bug 2205548: More Hull Down Issues
++ added Fulcrum image (thanks evilimperial)
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

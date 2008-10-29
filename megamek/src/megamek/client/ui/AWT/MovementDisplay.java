@@ -1553,7 +1553,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if (cmd.getFinalProne()) {
                 setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
                 setGoProneEnabled(false);
-                setHullDownEnabled(false);
+                setHullDownEnabled(true);
             } else if (cmd.getFinalHullDown()) {
                 if (isMech)
                     setGetUpEnabled(!ce.isImmobile() && !ce.isStuck() && !((Mech)ce).cannotStandUpFromHullDown());
@@ -2618,7 +2618,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             }
             gear = MovementDisplay.GEAR_RAM;
         } else if (ev.getActionCommand().equals(MOVE_GET_UP)) {
-            clearAllMoves();
+            //if the unit has a hull down step
+            //then don't clear the moves
+            if(!cmd.contains(MovePath.STEP_HULL_DOWN)) {
+                clearAllMoves();
+            }
             
             if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                 cmd.addStep(MovePath.STEP_GET_UP);

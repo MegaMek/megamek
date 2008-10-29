@@ -4574,13 +4574,13 @@ public class Server implements Runnable {
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 entity.heatBuildup += 1;
                 entity.setProne(false);
-                entity.setHullDown(false);
+                //entity.setHullDown(false);
                 wasProne = false;
                 game.resetPSRs(entity);
                 entityFellWhileAttemptingToStand = !doSkillCheckInPlace(entity, rollTarget);
             }
             // did the entity just fall?
-            if (entityFellWhileAttemptingToStand && !entity.isHullDown()) {
+            if (entityFellWhileAttemptingToStand) {
                 moveType = step.getMovementType();
                 curFacing = entity.getFacing();
                 curPos = entity.getPosition();
@@ -4588,16 +4588,8 @@ public class Server implements Runnable {
                 fellDuringMovement = true;
                 if ( !entity.isCarefulStand() )
                     break;
-            } else if (entityFellWhileAttemptingToStand && entity.isHullDown()) {
-                mpUsed = step.getMpUsed();
-                entity.setHullDown(true);
-                moveType = step.getMovementType();
-                curFacing = entity.getFacing();
-                curPos = entity.getPosition();
-                mpUsed = step.getMpUsed();
-                fellDuringMovement = true;
-                if (!entity.isCarefulStand())
-                    break;
+            }  else {
+                entity.setHullDown(false);
             }
 
             if (step.getType() == MovePath.STEP_UNJAM_RAC) {

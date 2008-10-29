@@ -8769,6 +8769,11 @@ public class Server implements Runnable {
                     found = true;
                 }
                 break;
+            default:
+                //we must be in ultra
+                if(roll >= 4) {
+                    found = true;
+                }
             }
 
             // Let the player know if they found a club.

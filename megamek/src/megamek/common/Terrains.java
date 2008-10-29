@@ -20,7 +20,7 @@ public class Terrains implements ITerrainFactory {
 
     public static final int WOODS = 1; //1: light 2: heavy 3: ultra
     public static final int ROUGH = 2; //1: normal 2: ultra
-    public static final int RUBBLE = 3; //1: normal 2: ultra
+    public static final int RUBBLE = 3; //1: light bldg 2: medium bldg 3: heavy bldg 4: hardened bldg 5: wall 6: ultra
     public static final int WATER = 4;
     public static final int PAVEMENT = 5;
     public static final int ROAD = 6;
@@ -115,10 +115,10 @@ public class Terrains implements ITerrainFactory {
                 }
                 return "rough (unknown)";
             case(RUBBLE):
-                if(level == 1) {
+                if(level < 6) {
                     return "rubble";
                 }
-                if(level == 2) {
+                if(level > 5) {
                     return "ultra rubble";
                 }
                 return "rubble (unknown)";

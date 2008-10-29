@@ -995,9 +995,10 @@ public class Board implements Serializable, IBoard {
 
         // determine type of rubble
         // Terrain type can be a max of 4 for harded building
-        // I have know idea how to fix it for Walls need Coelocanth
-        // Or someone else to fix my hacky hack. -- Torren.
-        int type = Math.min(curHex.terrainLevel(Terrains.BUILDING), 4);
+        // 5 for walls, but the only place where we actually check
+        // for rubble type is resolveFindClub in Server, and we 
+        // make it impossible to find clubs in wallrubble there
+        int type = curHex.terrainLevel(Terrains.BUILDING);
         type = Math.max(type, curHex.terrainLevel(Terrains.BRIDGE));
         type = Math.max(type, curHex.terrainLevel(Terrains.FUEL_TANK));
 

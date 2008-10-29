@@ -175,6 +175,11 @@ public interface IHex extends Cloneable {
     public abstract void removeAllTerrains();
 
     /**
+     * @return the number of terrain attributes present that are displayable in tooltips
+     */
+    public abstract int displayableTerrainsPresent();
+
+    /**
      * @return the number of terrain attributes present
      */
     public abstract int terrainsPresent();

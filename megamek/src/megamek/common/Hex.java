@@ -343,6 +343,20 @@ public class Hex implements IHex, Serializable {
      * 
      * @see megamek.common.IHex#terrainsPresent()
      */
+    public int displayableTerrainsPresent() {
+        int present = 0;
+        for (int i = 0; i < terrains.length; i++) {
+            if (null != terrains[i] && null != Terrains.getDisplayName(i, terrains[i].getLevel())) {
+                present++;
+            }
+        }
+        return present;
+    }
+    
+    /*
+     * report the number of displayable terrains present for the tooltips. 
+     * This should not include any terrains which don't report back a display name
+     */
     public int terrainsPresent() {
         int present = 0;
         for (int i = 0; i < terrains.length; i++) {

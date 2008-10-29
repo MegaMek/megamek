@@ -88,6 +88,145 @@ public class Terrains implements ITerrainFactory {
     }
 
     /**
+     * 
+     * @param type
+     * @param level
+     * @return a displayable name for this terrain (for tooltips)
+     */
+    public static String getDisplayName(int type, int level) {   
+        switch(type) {
+            case(WOODS):
+                if(level == 1) {
+                    return "light woods";
+                }
+                if(level == 2) {
+                    return "heavy woods";
+                }
+                if(level == 3) {
+                    return "ultra-heavy woods";
+                }
+                return "woods (unknown)";
+            case(ROUGH):
+                if(level == 1) {
+                    return "rough";
+                }
+                if(level == 2) {
+                    return "ultra rough";
+                }
+                return "rough (unknown)";
+            case(RUBBLE):
+                if(level == 1) {
+                    return "rubble";
+                }
+                if(level == 2) {
+                    return "ultra rubble";
+                }
+                return "rubble (unknown)";
+            case(WATER):
+                return "water (depth " + level + ")";
+            case(PAVEMENT):
+                return "pavement";
+            case(ROAD):
+                return "road";
+            case(FIRE):
+                if(level == 1) {
+                    return "fire";
+                }
+                if(level == 2) {
+                    return "inferno fire";
+                }
+                return "fire (unknown)";
+            case(SMOKE):
+                if(level == 1) {
+                    return "light smoke";
+                }
+                if(level == 2) {
+                    return "heavy smoke";
+                }
+                return "smoke (unknown)";
+            case(SWAMP):
+                if(level == 1) {
+                    return "swamp";
+                }
+                if(level == 2 || level == 3) {
+                    return "quicksand";
+                }
+                return "swamp";
+            case(ICE):
+                return "ice";
+            case(FORTIFIED):
+                return "improved position";
+            case(GEYSER):
+                if(level == 1) {
+                    return "dormant";
+                }
+                if(level == 2) {
+                    return "active";
+                }
+                if(level == 3) {
+                    return "magma vent";
+                }
+                return "geyser (unknown)";
+            case(JUNGLE):
+                if(level == 1) {
+                    return "light jungle";
+                }
+                if(level == 2) {
+                    return "heavy jungle";
+                }
+                if(level == 3) {
+                    return "ultra-heavy jungle";
+                }
+                return "jungle (unknown)";
+            case(MAGMA):
+                if(level == 1) {
+                    return "magma crust";
+                }
+                if(level == 2) {
+                    return "magma liquid";
+                }
+                return "magma (unknown)";
+            case(MUD):
+                return "mud";
+            case(RAPIDS):
+                if(level == 1) {
+                    return "rapids";
+                }
+                if(level == 2) {
+                    return "torrent";
+                }
+                return "rapids (unknown)";
+            case(SAND):
+                return "sand";
+            case(SNOW):
+                if(level == 1) {
+                    return "thin snow";
+                }
+                if(level == 2) {
+                    return "heavy snow";
+                }
+                return "snow (unknown)";
+            case(TUNDRA):
+                return "tundra";
+            case(SPACE):
+                return "space";
+            case(SCREEN):
+                return "screen";
+            case(FIELDS):
+                return "planted fields";
+            case(INDUSTRIAL):
+                return "heavy industrial zone (height " + level + ")";
+            case(IMPASSABLE):
+                return "impassable terrain";
+            case(ELEVATOR):
+                return "elevator";
+            default:
+                return null;
+        }
+        
+    }
+    
+    /**
      * This function converts the name of a terrain into the constant.
      * 
      * @param name the name of the terain (from the names list.

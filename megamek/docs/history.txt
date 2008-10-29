@@ -11,6 +11,7 @@ v0.33.35-dev (SVN)
 + Fixed some swing display issues for Aeros
 + Data 2154265 and Data 2161694 - fixes Bug 2033354, Bug 2024271, Bug 2126353
 + Bug 2206470: Light and heavy snow not showing
++ Tooltip now shows all terrains present in a hex, except for fluff
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

@@ -1484,6 +1484,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             tipWindow.setVisible(true);
         } catch (Exception e) {
+            e.printStackTrace();
             tipWindow = new Window(null);
         }
     }
@@ -1521,24 +1522,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
         }
 
-        // If the hex contains a building or rubble, make more space.
-        // Also if it contains woods or jungle.
+        // If the hex contains a building, make more space.
+        // Also if it contains other displayable terrain.
         if (mhex != null) {
-            if (mhex.containsTerrain(Terrains.RUBBLE))
-                stringsSize++;
+            stringsSize += mhex.displayableTerrainsPresent();
             if (mhex.containsTerrain(Terrains.BUILDING))
                 stringsSize++;
             if (mhex.containsTerrain(Terrains.FUEL_TANK))
                 stringsSize++;
             if (mhex.containsTerrain(Terrains.BRIDGE))
-                stringsSize++;
-            if (mhex.containsTerrain(Terrains.JUNGLE))
-                stringsSize++;
-            else if (mhex.containsTerrain(Terrains.WOODS))
-                stringsSize++;
-            if (mhex.containsTerrain(Terrains.ICE))
-                stringsSize++;
-            if (mhex.containsTerrain(Terrains.SWAMP))
                 stringsSize++;
         }
 
@@ -1575,6 +1567,21 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     + Messages.getString("BoardView1.level") + mhex.getElevation(); //$NON-NLS-1$
             stringsIndex += 1;
 
+            //cycle through the terrains and report types found
+            //this will skip buildings and other constructed units
+            for(int i=0;i < Terrains.SIZE; i++) {
+                if(mhex.containsTerrain(i)) {
+                    int tf = mhex.getTerrain(i).getTerrainFactor();
+                    int ttl = mhex.getTerrain(i).getLevel();
+                    String name = Terrains.getDisplayName(i, ttl);
+                    if(null != name) {
+                        strings[stringsIndex] = name + " (" + tf + ")";
+                        stringsIndex += 1;
+                    }
+                }
+            }
+            
+            /*
             if (mhex.containsTerrain(Terrains.JUNGLE)) {
                 int ttl = mhex.getTerrain(Terrains.JUNGLE).getLevel();
                 int tf = mhex.getTerrain(Terrains.JUNGLE).getTerrainFactor();
@@ -1628,6 +1635,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                         .getString("BoardView1.TipSwamp");
                 stringsIndex += 1;
             }
+            */
 
             // Do we have a building?
             if (mhex.containsTerrain(Terrains.FUEL_TANK)) {

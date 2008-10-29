@@ -1012,29 +1012,25 @@ base 1 "tundra:1" "" "tundra/tundra_1.gif"
 base 2 "tundra:1" "" "tundra/tundra_2.gif"
 base 3 "tundra:1" "" "tundra/tundra_3.gif"
 
+base 0 "snow:1" "" "snow/snow_0.gif"
+base 1 "snow:1" "" "snow/snow_1.gif"
+base 2 "snow:1" "" "snow/snow_2.gif"
+base 3 "snow:1" "" "snow/snow_3.gif"
+base 4 "snow:1" "" "snow/snow_4.gif"
+base 5 "snow:1" "" "snow/snow_5.gif"
+base 6 "snow:1" "" "snow/snow_6.gif"
+base 7 "snow:1" "" "snow/snow_7.gif"
+base 8 "snow:1" "" "snow/snow_8.gif"
+base 9 "snow:1" "" "snow/snow_9.gif"
+base 10 "snow:1" "" "snow/snow_10.gif"
+base -1 "snow:1" "" "snow/snow_-1.gif"
+base -2 "snow:1" "" "snow/snow_-2.gif"
+base -3 "snow:1" "" "snow/snow_-3.gif"
+base -4 "snow:1" "" "snow/snow_-4.gif"
+base -5 "snow:1" "" "snow/snow_-5.gif"
+base -6 "snow:1" "" "snow/snow_-6.gif"
+
 base * "impassable:1" "" "boring/solidrock.gif"
-
-#------------------- BEGIN snow theme
-
-base 0 "" "snow" "themes/snow_0.gif"
-base 1 "" "snow" "themes/snow_1.gif"
-base 2 "" "snow" "themes/snow_2.gif"
-base 3 "" "snow" "themes/snow_3.gif"
-base 4 "" "snow" "themes/snow_4.gif"
-base 5 "" "snow" "themes/snow_5.gif"
-base 6 "" "snow" "themes/snow_6.gif"
-base 7 "" "snow" "themes/snow_7.gif"
-base 8 "" "snow" "themes/snow_8.gif"
-base 9 "" "snow" "themes/snow_9.gif"
-base 10 "" "snow" "themes/snow_10.gif"
-base -1 "" "snow" "themes/snow_-1.gif"
-base -2 "" "snow" "themes/snow_-2.gif"
-base -3 "" "snow" "themes/snow_-3.gif"
-base -4 "" "snow" "themes/snow_-4.gif"
-base -5 "" "snow" "themes/snow_-5.gif"
-base -6 "" "snow" "themes/snow_-6.gif"
-
-#------------------- END snow theme
 
 #------------------- BEGIN grass theme
 

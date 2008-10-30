@@ -47,7 +47,7 @@ public class Terrain implements ITerrain, Serializable {
         this.level = level;
         this.exitsSpecified = exitsSpecified;
         this.exits = exits;
-        this.terrainFactor = 40 * level + 10;
+        this.terrainFactor = Terrains.getTerrainFactor(type, level);
     }
 
     public Terrain(ITerrain other) {
@@ -82,7 +82,7 @@ public class Terrain implements ITerrain, Serializable {
             this.exitsSpecified = true;
             this.exits = levelFor(terrain.substring(lastColon + 1));
         }
-        this.terrainFactor = 40 * level + 10;
+        this.terrainFactor = Terrains.getTerrainFactor(type, level);
     }
 
     public static int levelFor(String string) {

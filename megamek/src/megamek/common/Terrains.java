@@ -311,4 +311,65 @@ public class Terrains implements ITerrainFactory {
     public ITerrain createTerrain(ITerrain other) {
         return getTerrainFactory().createTerrain(other);
     }
+    
+    /**
+     * 
+     * @param level
+     * @return the terrain factor for the given type and level - pg. 64, TacOps
+     */
+    public static int getTerrainFactor(int type, int level) {
+        switch(type) {
+        case(WOODS):
+            if(level == 1) {
+                return 50;
+            }
+            if(level == 2) {
+                return 90;
+            }
+            if(level == 3) {
+                return 130;
+            }
+            return 50;
+        case(ROUGH):
+            return 200;
+        case(PAVEMENT):
+            return 200;
+        case(ROAD):
+            return 150;
+        case(ICE):
+            return 40;
+        case(JUNGLE):
+            if(level == 1) {
+                return 50;
+            }
+            if(level == 2) {
+                return 90;
+            }
+            if(level == 3) {
+                return 130;
+            }
+            return 50;
+        case(MAGMA):
+            if(level == 1) {
+                return 30;
+            }
+            return 0;
+        case(SAND):
+            return 100;
+        case(SNOW):
+            if(level == 1) {
+                return 15;
+            }
+            if(level == 2) {
+                return 30;
+            }
+            return 15;
+        case(TUNDRA):
+            return 70;
+        case(FIELDS):
+            return 30;
+        default:
+            return 0;
+        }
+    }
 }

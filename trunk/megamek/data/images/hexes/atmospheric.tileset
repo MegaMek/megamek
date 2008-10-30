@@ -971,6 +971,8 @@ base 20 "pavement:1" "" "boring/grey_pavement_6.gif"
 base 30 "pavement:1" "" "boring/grey_pavement_7.gif"
 base 40 "pavement:1" "" "boring/grey_pavement_8.gif"
 
+base * "planted_fields:1" "" "boring/fields.gif"
+
 base * "mud:1" "" "boring/mud_1.gif"
 base * "mud:2" "" "boring/mud_2.gif"
 

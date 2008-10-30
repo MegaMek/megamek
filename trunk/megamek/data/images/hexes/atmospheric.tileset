@@ -35,11 +35,10 @@ super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swam
 super * "rough:1" "" "transparent/rough_0.png;transparent/rough_1.png;transparent/rough_2.png"
 super * "rough:2" "" "transparent/ultra_rough.png"
 
-super * "woods:1" "snow" "themes/snow_lf.png"
-super * "woods:2" "snow" "themes/snow_hf.png"
-
 super * "woods:1" "" "boring/lf0.gif;boring/lf1.gif;boring/lf2.gif;boring/lf3.gif;boring/lf4.gif"
-super * "woods:2" "" "boring/hf0.gif;boring/hf1.gif;boring/hf2.gif;boring/hf3.gif"
+#hf2.gif has been taken out because it looks too much like ultra heavy
+super * "woods:2" "" "boring/hf0.gif;boring/hf1.gif;boring/hf3.gif"
+super * "woods:3" "" "boring/uhf.gif"
 
 super * "jungle:1" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
 super * "jungle:2" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"

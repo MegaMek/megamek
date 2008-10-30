@@ -23,6 +23,7 @@ v0.33.35-dev (SVN)
 + added hex image for ultra heavy jungle
 + added colors to minimap and map preview for ultra heavy woods/jungle, planted fields, and heavy industrial zone
 + reorganized the ordering of terrain types for the tooltips, including more comments
++ corrected terrain factor sizes for TacOps (pg. 64)
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

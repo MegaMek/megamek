@@ -9,6 +9,7 @@ none 215 211 156
 sinkhole 210 180 150
 woods 180 230 130
 heavywoods 160 200 100
+ultraheavywoods 0 100 0
 rough 186 191 160
 rubble 200 200 200
 water 200 247 253

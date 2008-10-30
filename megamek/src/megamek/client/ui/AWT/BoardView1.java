@@ -1574,8 +1574,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     int tf = mhex.getTerrain(i).getTerrainFactor();
                     int ttl = mhex.getTerrain(i).getLevel();
                     String name = Terrains.getDisplayName(i, ttl);
+                    if(tf > 0) {
+                        name = name + " (" + tf + ")";
+                    }
                     if(null != name) {
-                        strings[stringsIndex] = name + " (" + tf + ")";
+                        strings[stringsIndex] = name;
                         stringsIndex += 1;
                     }
                 }

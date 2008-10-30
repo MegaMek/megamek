@@ -18,60 +18,76 @@ import java.util.Hashtable;
 
 public class Terrains implements ITerrainFactory {
 
-    public static final int WOODS = 1; //1: light 2: heavy 3: ultra
-    public static final int ROUGH = 2; //1: normal 2: ultra
-    public static final int RUBBLE = 3; //1: light bldg 2: medium bldg 3: heavy bldg 4: hardened bldg 5: wall 6: ultra
-    public static final int WATER = 4;
-    public static final int PAVEMENT = 5;
-    public static final int ROAD = 6;
-    public static final int FIRE = 7; // 1: normal fire 2: inferno fire
-    public static final int SMOKE = 8;
-    public static final int SWAMP = 9; //1: normal 2: just became quicksand 3: quicksand
-    public static final int BUILDING = 10; // 1: light 2: medium 3: heavy 4: hardened 5: wall
-    public static final int BLDG_CF = 11;
-    public static final int BLDG_ELEV = 12;
-    public static final int BLDG_BASEMENT = 13;
-    public static final int BRIDGE = 14;
-    public static final int BRIDGE_CF = 15;
-    public static final int BRIDGE_ELEV = 16;
-    public static final int FLUFF = 17;
-    public static final int ARMS = 18; // blown off arms for use as clubs,
-                                        // level = number of arms in that hex
-    public static final int LEGS = 19; // blown off legs for use as clubs,
-                                        // level = number of legs in that hex
-    public static final int ICE = 20;
-    // level 3 terrain types (TacOps)
-    public static final int FORTIFIED = 21;
-    public static final int GEYSER = 22; // 1: dormant 2: active 3: magma
-                                            // vent
-    public static final int JUNGLE = 23; //1: light 2: heavy 3: ultra
-    public static final int MAGMA = 24; // 1: crust 2: liquid
-    public static final int MUD = 25;
-    public static final int RAPIDS = 26; //1: rapids 2: torrent
-    public static final int SAND = 27;
-    public static final int SNOW = 28; // 1: thin 2: deep
-    public static final int TUNDRA = 29;
-    public static final int SPACE = 30;
-    public static final int SCREEN  = 31;
-    public static final int FIELDS = 32;
-    public static final int INDUSTRIAL = 33; //level indicates height
-    // special types
-    public static final int IMPASSABLE = 34;
-    public static final int ELEVATOR = 35; // level=elevation it moves to,
-                                            // exits=d6 rolls it moves on
-    public static final int FUEL_TANK = 36;
-    public static final int FUEL_TANK_CF = 37;
-    public static final int FUEL_TANK_ELEV = 38;
-    public static final int FUEL_TANK_MAGN = 39;
+    //base terrain types
+    public static final int WOODS      = 1; //1: light 2: heavy 3: ultra
+    public static final int WATER      = 2; //level = depth  
+    public static final int ROUGH      = 3; //1: normal 2: ultra
+    public static final int RUBBLE     = 4; //1: light bldg 2: medium bldg 3: heavy bldg 4: hardened bldg 5: wall 6: ultra  
+    public static final int JUNGLE     = 5; //1: light 2: heavy 3: ultra
+    public static final int SAND       = 6;
+    public static final int TUNDRA     = 7;
+    public static final int MAGMA      = 8; // 1: crust 2: liquid
+    public static final int FIELDS     = 9;
+    public static final int INDUSTRIAL = 10; //level indicates height
+    public static final int SPACE      = 11;
+    //unimplemented
+    //Level 1 Foliage
+    //Sheer Cliffs
+    
+    //Terrain modifications
+    public static final int PAVEMENT = 12;
+    public static final int ROAD     = 13;
+    public static final int SWAMP    = 14; //1: normal 2: just became quicksand 3: quicksand
+    public static final int MUD      = 15;
+    public static final int RAPIDS   = 16; //1: rapids 2: torrent
+    public static final int ICE      = 17;
+    public static final int SNOW     = 18; // 1: thin 2: deep  
+    public static final int FIRE     = 19; // 1: normal fire 2: inferno fire
+    public static final int SMOKE    = 20;
+    public static final int GEYSER   = 21; // 1: dormant 2: active 3: magma vent
+    //unimplemented
+    //Black Ice
+    //Bug Storm
+    //Extreme Depths
+    //Hazardous Liquid Pools
+    //Rail
+    //Dirt Roads, Gravel Roads
+    
+    //Building stuff
+    public static final int BUILDING       = 22; // 1: light 2: medium 3: heavy 4: hardened 5: wall
+    public static final int BLDG_CF        = 23;
+    public static final int BLDG_ELEV      = 24;
+    public static final int BLDG_BASEMENT  = 25;
+    public static final int BRIDGE         = 26;
+    public static final int BRIDGE_CF      = 27;
+    public static final int BRIDGE_ELEV    = 28;
+    public static final int FUEL_TANK      = 29;
+    public static final int FUEL_TANK_CF   = 30;
+    public static final int FUEL_TANK_ELEV = 31;
+    public static final int FUEL_TANK_MAGN = 32;
+    //unimplemented
+    //building types
 
-    private static final String[] names = { "none", "woods", "rough", "rubble",
-            "water", "pavement", "road", "fire", "smoke", "swamp", "building",
-            "bldg_cf", "bldg_elev", "bldg_basement", "bridge", "bridge_cf",
-            "bridge_elev", "fluff", "arms", "legs", "ice", "fortified",
-            "geyser", "jungle", "magma", "mud", "rapids", "sand", "snow",
-            "tundra", "space", "screen", "planted fields", "heavy industrial zone", 
-            "impassable", "elevator", "fuel_tank", "fuel_tank_cf",
-            "fuel_tank_elev", "fuel_tank_magn" };
+    // special types
+    public static final int IMPASSABLE = 33;
+    public static final int ELEVATOR   = 34; // level=elevation it moves to,exits=d6 rolls it moves on
+    public static final int FORTIFIED  = 35;
+    public static final int SCREEN     = 36;
+    
+    //fluff
+    public static final int FLUFF = 37;
+    public static final int ARMS  = 38; // blown off arms for use as clubs, level = number of arms in that hex
+    public static final int LEGS  = 39; // blown off legs for use as clubs, level = number of legs in that hex
+
+    private static final String[] names = { "none", "woods", "water", "rough", 
+        "rubble", "jungle", "sand", "tundra", "magma", "planted_fields",
+        "heavy_industrial", "space",
+        "pavement", "road", "swamp", "mud", "rapids", "ice", "snow", 
+        "fire", "smoke", "geyser", 
+        "building", "bldg_cf", "bldg_elev", "bldg_basement", "bridge", "bridge_cf",
+        "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev", "fuel_tank_magn", 
+        "impassable", "elevator", "fortified", "screen",
+        "fluff", "arms", "legs" };
 
     public static final int SIZE = names.length;
 

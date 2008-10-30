@@ -48,6 +48,7 @@ public class MapPreview extends Canvas {
     private static final long serialVersionUID = -1116202683552362104L;
     private final static Color[] m_terrainColors = new Color[Terrains.SIZE];
     private static Color HEAVY_WOODS;
+    private static Color ULTRA_HEAVY_WOODS;
     private static Color BACKGROUND;
     private static Color SINKHOLE;
     private static Color SMOKE_AND_FIRE;
@@ -137,6 +138,9 @@ public class MapPreview extends Canvas {
         m_terrainColors[Terrains.MAGMA] = new Color(200, 0, 0);
         m_terrainColors[Terrains.MUD] = new Color(218, 160, 100);
         m_terrainColors[Terrains.JUNGLE] = new Color(180, 230, 130);
+        m_terrainColors[Terrains.FIELDS] = new Color(250, 255, 205);
+        m_terrainColors[Terrains.INDUSTRIAL] = new Color(112, 138, 144);
+        m_terrainColors[Terrains.SPACE] = Color.gray;
 
         // now try to read in the config file
         int red;
@@ -191,6 +195,15 @@ public class MapPreview extends Canvas {
                         blue = (int) st.nval;
 
                         HEAVY_WOODS = new Color(red, green, blue);
+                    } else if (key.equals("ultraheavywoods")) { //$NON-NLS-1$
+                        st.nextToken();
+                        red = (int) st.nval;
+                        st.nextToken();
+                        green = (int) st.nval;
+                        st.nextToken();
+                        blue = (int) st.nval;
+
+                        ULTRA_HEAVY_WOODS = new Color(red, green, blue);
                     } else if (key.equals("sinkhole")) { //$NON-NLS-1$
                         st.nextToken();
                         red = (int) st.nval;
@@ -477,8 +490,12 @@ public class MapPreview extends Canvas {
                 terrain = j;
                 // make heavy woods darker
                 if ((j == Terrains.WOODS || j == Terrains.JUNGLE)
-                        && x.getTerrain(j).getLevel() > 1) {
+                        && x.getTerrain(j).getLevel() == 2) {
                     terrColor = HEAVY_WOODS;
+                }
+                if ((j == Terrains.WOODS || j == Terrains.JUNGLE)
+                        && x.getTerrain(j).getLevel() > 2) {
+                    terrColor = ULTRA_HEAVY_WOODS;
                 }
                 // contains both smoke and fire
                 if (j == Terrains.SMOKE && x.getTerrain(Terrains.FIRE) != null) {
@@ -498,6 +515,7 @@ public class MapPreview extends Canvas {
             case Terrains.WATER:
             case Terrains.PAVEMENT:
             case Terrains.ICE:
+            case Terrains.FIELDS:
                 level = Math.abs(x.floor());
                 // By experiment it is possible to make only 6 distinctive color
                 // steps

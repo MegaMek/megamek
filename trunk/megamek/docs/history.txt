@@ -21,6 +21,7 @@ v0.33.35-dev (SVN)
 + added hex images for light and heavy jungle (taken from the coast line theme - thanks Battledroid)
 + added hex image for ultra heavy woods
 + added hex image for ultra heavy jungle
++ added colors to minimap and map preview for ultra heavy woods/jungle, planted fields, and heavy industrial zone
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

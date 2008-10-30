@@ -42,6 +42,7 @@ super * "woods:3" "" "boring/uhf.gif"
 
 super * "jungle:1" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
 super * "jungle:2" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+super * "jungle:3" "" "jungle/ultra_heavy_jungle1.png"
 
 super * "geyser:1" "" "boring/geyservent.gif"
 # geyser 2 is rendered with smoke

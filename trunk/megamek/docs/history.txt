@@ -30,6 +30,7 @@ v0.33.35-dev (SVN)
 + stealth armor not using correct armor name
 + Bug: Laser Heat sinks not being saved with getMtf()
 + Bug: Omnimech not being saved with getMtf()
++ Sub-Capital Weapons
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

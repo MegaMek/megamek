@@ -27,6 +27,7 @@ v0.33.35-dev (SVN)
 + added hex image for planted fields
 + Added shortName field to AmmoType
 + added getShortName() to AmmoType
++ stealth armor not using correct armor name
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

@@ -19757,7 +19757,7 @@ public class Server implements Runnable {
             return false;
         }
 
-        if ( game.getPhase() != Phase.PHASE_LOUNGE ){
+        if ( game.getPhase().isDuringOrAfter(Phase.PHASE_DEPLOYMENT) ){
             return false;
         }
         
@@ -20408,7 +20408,7 @@ public class Server implements Runnable {
             }
             break;
         case Packet.COMMAND_SENDING_MAP_SETTINGS:
-            if ( game.getPhase() == Phase.PHASE_LOUNGE ){
+            if ( game.getPhase().isBefore(Phase.PHASE_DEPLOYMENT)){
                 MapSettings newSettings = (MapSettings) packet.getObject(0);
                 if (!mapSettings.equalMapGenParameters(newSettings)) {
                     sendServerChat("Player " + player.getName() + " changed mapsettings");
@@ -20423,7 +20423,7 @@ public class Server implements Runnable {
             break;
         case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
             // MapSettings newSettings = (MapSettings) packet.getObject(0);
-            if ( game.getPhase() == Phase.PHASE_LOUNGE ){
+            if ( game.getPhase().isBefore(Phase.PHASE_DEPLOYMENT) ){
                 PlanetaryConditions conditions = (PlanetaryConditions) packet.getObject(0);
                 sendServerChat("Player " + player.getName() + " changed planetary conditions");
                 game.setPlanetaryConditions(conditions);

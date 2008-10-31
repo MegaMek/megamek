@@ -1568,8 +1568,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createMekStealth() {
         MiscType misc = new MiscType();
 
-        misc.name = "Stealth Armor";
-        misc.setInternalName("Stealth Armor");
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH));
         misc.addLookupName("Stealth Armor");
         misc.tonnage = 0; // ???
         misc.criticals = 12;

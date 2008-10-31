@@ -64,14 +64,19 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      * get the cap mis mod given a single ammo type
      */
     protected int getCritMod(AmmoType atype) {
-        if(atype == null) 
+        if(atype == null || atype.getAmmoType() == AmmoType.T_PIRANHA) 
             return 0;
-        if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK) {
+        if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK 
+                || atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
             return 9;
-        } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE) {
+        } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE 
+                || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE) 
+                || atype.getAmmoType() == AmmoType.T_MANTA_RAY) {
             return 10;
         } else if (atype.getAmmoType() == AmmoType.T_KRAKEN_T) {
             return 8;
+        } else if (atype.getAmmoType() == AmmoType.T_STINGRAY) {
+            return 12;
         } else {
             return 11;
         }

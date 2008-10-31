@@ -653,21 +653,28 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         }
                     }
                 }
-                // barracuda missiles
+                // barracuda and piranha missiles
                 else if (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE) {
+                    boolean onlyBarracuda = true;
+                    boolean onlyPiranha = true;
                     for (int wId : weapon.getBayWeapons()) {
                         Mounted bweap = ae.getEquipment(wId);
                         Mounted bammo = bweap.getLinked();
                         if (bammo != null) {
                             AmmoType batype = (AmmoType) bammo.getType();
-                            if (batype.getAmmoType() == AmmoType.T_BARRACUDA) {
-                                toHit.addModifier(-2, "barracuda missile");
-                                break;
+                            if (batype.getAmmoType() != AmmoType.T_BARRACUDA) {
+                                onlyBarracuda = false;
                             }
-                        }
-
+                            if (batype.getAmmoType() != AmmoType.T_PIRANHA && batype.getAmmoType() != AmmoType.T_BARRACUDA) {
+                                onlyPiranha = false;
+                            }
+                        }      
                     }
-
+                    if (onlyBarracuda) {
+                        toHit.addModifier(-2, "barracuda missile");
+                    } else if (onlyPiranha) {
+                        toHit.addModifier(-1, "piranha missile");
+                    }
                 }
                 // barracuda missiles in an AR10 launcher (must all be
                 // barracuda)
@@ -680,7 +687,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                             AmmoType batype = (AmmoType) bammo.getType();
                             if (!batype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
                                 onlyBarracuda = false;
-                                break;
                             }
                         }
                     }
@@ -723,7 +729,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     && wtype.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE
                     && wtype.getAtClass() != WeaponType.CLASS_AR10
                     && (a.getWeight() < 500 || target instanceof FighterSquadron)) {
-                toHit.addModifier(+5, "capital weapon at small target");
+                if(wtype.isSubCapital()) {
+                    toHit.addModifier(+3, "sub-capital weapon at small target");
+                } else {
+                    toHit.addModifier(+5, "capital weapon at small target");
+                }
             }
         }
 

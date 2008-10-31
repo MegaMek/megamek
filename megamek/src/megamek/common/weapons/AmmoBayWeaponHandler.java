@@ -22,8 +22,6 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
-import java.util.Vector;
-
 /**
  * @author Jay Lawson
  */

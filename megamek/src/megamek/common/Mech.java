@@ -3392,10 +3392,17 @@ public abstract class Mech extends Entity implements Serializable {
         sb.append(nl);
 
         sb.append("Config:");
-        if (this instanceof BipedMech)
+        if (this instanceof BipedMech){
             sb.append("Biped");
-        else if (this instanceof QuadMech)
+        }
+        else if (this instanceof QuadMech){
             sb.append("Quad");
+        }
+        
+        if ( this.isOmni() ){
+            sb.append(" Omnimech");
+        }
+        
         sb.append(nl);
         sb.append("TechBase:").append(TechConstants.getTechName(techLevel));
         sb.append(nl);
@@ -3431,10 +3438,14 @@ public abstract class Mech extends Entity implements Serializable {
         sb.append(nl);
 
         sb.append("Heat Sinks:").append(heatSinks()).append(" ");
-        if (hasDoubleHeatSinks())
+        if ( hasLaserHeatSinks() ){
+            sb.append("Laser");
+        }else if (hasDoubleHeatSinks()){
             sb.append("Double");
-        else
+        }else{
             sb.append("Single");
+        }
+        
         sb.append(nl);
         sb.append("Walk MP:").append(walkMP).append(nl);
         sb.append("Jump MP:").append(jumpMP).append(nl);

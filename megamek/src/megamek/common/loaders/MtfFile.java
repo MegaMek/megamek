@@ -312,9 +312,10 @@ public class MtfFile implements IMechLoader {
 
             mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
 
-            boolean dblSinks = (heatSinks.substring(14).equalsIgnoreCase(
-                    "Double") || heatSinks.substring(14).equalsIgnoreCase(
-                    "Laser"));
+            boolean dblSinks = (heatSinks.substring(14).equalsIgnoreCase("Double"));
+            
+            boolean laserSinks = heatSinks.substring(14).equalsIgnoreCase("Laser");
+            
             int expectedSinks = Integer.parseInt(heatSinks.substring(11, 14)
                     .trim());
 
@@ -357,7 +358,11 @@ public class MtfFile implements IMechLoader {
             }
 
             // add any heat sinks not allocated
-            mech.addEngineSinks(expectedSinks - mech.heatSinks(), dblSinks);
+            if ( laserSinks ){
+                mech.addEngineSinks(expectedSinks - mech.heatSinks(), "CLLaser Heat Sink");
+            } else {
+                mech.addEngineSinks(expectedSinks - mech.heatSinks(), dblSinks);
+            }
 
             return mech;
         } catch (NumberFormatException ex) {

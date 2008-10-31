@@ -93,7 +93,12 @@ public class AmmoType extends EquipmentType {
     public static final int     T_MEK_MORTAR        = 67;
     public static final int     T_CRUISE_MISSILE    = 68;
     public static final int     T_BPOD              = 69;
-    public static final int     NUM_TYPES           = 70;
+    public static final int     T_SCC               = 70;
+    public static final int     T_MANTA_RAY         = 71;
+    public static final int     T_SWORDFISH         = 72;
+    public static final int     T_STINGRAY          = 73;
+    public static final int     T_PIRANHA           = 74;   
+    public static final int     NUM_TYPES           = 75;
     
 
     // ammo flags
@@ -786,6 +791,13 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createAR10BarracudaTAmmo());
         EquipmentType.addType(createScreenLauncherAmmo());
         EquipmentType.addType(createAlamoAmmo());
+        EquipmentType.addType(createLightSCCAmmo());
+        EquipmentType.addType(createMediumSCCAmmo());
+        EquipmentType.addType(createHeavySCCAmmo());
+        EquipmentType.addType(createMantaRayAmmo());
+        EquipmentType.addType(createSwordfishAmmo());
+        EquipmentType.addType(createStingrayAmmo());
+        EquipmentType.addType(createPiranhaAmmo());
         
         
         base = createISAPMortar1Ammo();
@@ -6968,6 +6980,131 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.flags |= F_NUCLEAR;
+        ammo.capital = true;
+
+        return ammo;
+    }
+    
+    private static AmmoType createLightSCCAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
+        ammo.name = "LightSCC Ammo";
+        ammo.setInternalName("Ammo LightSCC");
+        ammo.addLookupName("LightSCC Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SCC;
+        ammo.shots = 1;
+        ammo.bv = 47;
+        ammo.cost = 10000;
+        ammo.ammoRatio = 2;
+        ammo.capital = true;
+        
+        return ammo;
+    }
+    
+    private static AmmoType createMediumSCCAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
+        ammo.name = "MediumSCC Ammo";
+        ammo.setInternalName("Ammo MediumSCC");
+        ammo.addLookupName("MediumSCC Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_SCC;
+        ammo.shots = 1;
+        ammo.bv = 89;
+        ammo.cost = 18000;
+        ammo.ammoRatio = 1;
+        ammo.capital = true;
+        
+        return ammo;
+    }
+    
+    private static AmmoType createHeavySCCAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
+        ammo.name = "HeavySCC Ammo";
+        ammo.setInternalName("Ammo HeavySCC");
+        ammo.addLookupName("HeavySCC Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 7;
+        ammo.ammoType = AmmoType.T_SCC;
+        ammo.shots = 1;
+        ammo.bv = 124;
+        ammo.cost = 25000;
+        ammo.ammoRatio = 0.5;
+        ammo.capital = true;
+        
+        return ammo;
+    }
+    
+    private static AmmoType createMantaRayAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
+        ammo.name = "Manta Ray Ammo";
+        ammo.setInternalName("Ammo Manta Ray");
+        ammo.addLookupName("MantaRay Ammo");
+        ammo.damagePerShot = 5;
+        ammo.ammoType = AmmoType.T_MANTA_RAY;
+        ammo.shots = 1;
+        ammo.bv = 50;
+        ammo.cost = 30000;
+        ammo.capital = true;
+
+        return ammo;
+    }
+    
+    private static AmmoType createSwordfishAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
+        ammo.name = "Swordfish Ammo";
+        ammo.setInternalName("Ammo Swordfish");
+        ammo.addLookupName("Swordfish Ammo");
+        ammo.damagePerShot = 4;
+        ammo.ammoType = AmmoType.T_SWORDFISH;
+        ammo.shots = 1;
+        ammo.bv = 40;
+        ammo.cost = 25000;
+        ammo.capital = true;
+
+        return ammo;
+    }
+    
+    private static AmmoType createStingrayAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
+        ammo.name = "Stringray Ammo";
+        ammo.setInternalName("Ammo Stringray");
+        ammo.addLookupName("Stingray Ammo");
+        ammo.damagePerShot = 3;
+        ammo.ammoType = AmmoType.T_STINGRAY;
+        ammo.shots = 1;
+        ammo.bv = 62;
+        ammo.cost = 19000;
+        ammo.capital = true;
+
+        return ammo;
+    }
+    
+    private static AmmoType createPiranhaAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
+        ammo.name = "Piranha Ammo";
+        ammo.setInternalName("Ammo Piranha");
+        ammo.addLookupName("Piranha Ammo");
+        ammo.damagePerShot = 3;
+        ammo.ammoType = AmmoType.T_PIRANHA;
+        ammo.shots = 1;
+        ammo.bv = 84;
+        ammo.cost = 15000;
         ammo.capital = true;
 
         return ammo;

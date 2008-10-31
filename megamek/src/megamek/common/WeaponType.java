@@ -120,13 +120,14 @@ public class WeaponType extends EquipmentType {
     public static final int     CLASS_CAPITAL_MISSILE = 19;
     public static final int     CLASS_AR10 = 20;
     public static final int     CLASS_SCREEN = 21;
-    public static final int     NUM_CLASSES = 22;
+    public static final int     CLASS_SUB_CAPITAL_CANNON = 22;
+    public static final int     NUM_CLASSES = 23;
     
     public static String[] classNames = {"Unknown", "Laser","Point Defense", "PPC","Pulse Laser",
                                          "Artilery","AMS","AC","LBX","LRM","SRM","MRM","ATM",
                                          "Rocket Launcher","Capital Laser","Capital PPC",
                                          "Capital AC", "Capital Gauss", "Capital Missile",
-                                         "AR10","Screen"};
+                                         "AR10","Screen", "Sub Capital Cannon"};
     
     // protected RangeType rangeL;
     protected int heat;
@@ -157,6 +158,7 @@ public class WeaponType extends EquipmentType {
     public double      extAV = 0;
     public int      maxRange = RANGE_SHORT;
     public boolean  capital = false;
+    public boolean subCapital = false;
     public int     atClass = CLASS_NONE;
     
     public void setDamage(int inD) {
@@ -369,8 +371,25 @@ public class WeaponType extends EquipmentType {
         return capital;
     }
     
+    public boolean isSubCapital() {
+        return subCapital;
+    }
+    
     public int getAtClass() {
         return atClass;
+    }
+    
+
+    public static EquipmentType getSubCapBayType(int atclass) {    
+        //return the correct weapons bay for the given type of weapon
+        switch(atclass) {
+        case(CLASS_CAPITAL_AC):
+            return EquipmentType.get("Sub-Capital Cannon Bay");
+        case(CLASS_CAPITAL_LASER):
+            return EquipmentType.get("Sub-Capital Laser Bay");
+        default:
+            return getBayType(atclass);
+        }
     }
     
     //Probably not the best place for this
@@ -851,6 +870,17 @@ public class WeaponType extends EquipmentType {
         addType(new KrakenTWeapon());
         addType(new AR10Weapon());
         addType(new ScreenLauncherWeapon());
+        addType(new LightSCCWeapon());
+        addType(new MediumSCCWeapon());
+        addType(new HeavySCCWeapon());
+        addType(new SCL1Weapon());
+        addType(new SCL2Weapon());
+        addType(new SCL3Weapon());
+        addType(new PiranhaWeapon());
+        addType(new StingrayWeapon());
+        addType(new SwordfishWeapon());
+        addType(new MantaRayWeapon());
+        
         
         //Weapon Bays
         addType(new LaserBayWeapon());
@@ -874,6 +904,9 @@ public class WeaponType extends EquipmentType {
         addType(new CapitalMissileBayWeapon());
         addType(new AR10BayWeapon());
         addType(new ScreenLauncherBayWeapon());
+        addType(new SCCBayWeapon());
+        addType(new SCLBayWeapon());
+        addType(new SubCapitalMissileBayWeapon());
         addType(new MiscBayWeapon());
     }
 

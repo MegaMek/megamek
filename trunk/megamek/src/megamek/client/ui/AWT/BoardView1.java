@@ -68,6 +68,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.AWT.util.ImageCache;
 import megamek.client.ui.AWT.util.ImprovedAveragingScaleFilter;
@@ -5583,12 +5584,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         repaint();
     }
 
-    public void showPopup(PopupMenu popup, Coords c) {
+    public void showPopup(Object popup, Coords c) {
         Point p = getHexLocation(c);
         p.x += (int)(HEX_WC*scale)-view.x;
         p.y += (int)(HEX_H*scale/2)-view.y;
-        if (popup.getParent() == null) add(popup);
-        popup.show(this, p.x, p.y);
+        if (((PopupMenu)popup).getParent() == null) add((PopupMenu)popup);
+        ((PopupMenu)popup).show(this, p.x, p.y);
     }
 
     public void refreshMinefields() {

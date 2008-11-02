@@ -70,7 +70,7 @@ import megamek.common.preference.PreferenceManager;
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
-public class BoardView3D extends Canvas3D implements megamek.client.ui.AWT.IBoardView,
+public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardView,
         BoardListener, MouseListener, MouseMotionListener, MechDisplayListener,
         IPreferenceChangeListener, GameListener {
     // FIXME: this isn't actually serializable, I guess.
@@ -301,9 +301,9 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.AWT.IBoar
         }
     }
 
-    public void showPopup(PopupMenu popup, Coords c) {
-        if (popup.getParent() == null)
-            add(popup);
+    public void showPopup(Object popup, Coords c) {
+        if (((PopupMenu)popup).getParent() == null)
+            add((PopupMenu)popup);
 
         IHex hex = game.getBoard().getHex(c);
         int level = 0;
@@ -320,7 +320,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.AWT.IBoar
         v2i.transform(p);
         Point2d pixel = new Point2d();
         getPixelLocationFromImagePlate(p, pixel);
-        popup.show(this, (int) pixel.x, (int) pixel.y);
+        ((PopupMenu)popup).show(this, (int) pixel.x, (int) pixel.y);
     }
 
     private Object pickSomething(MouseEvent me) {

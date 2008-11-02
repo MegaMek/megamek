@@ -36,6 +36,7 @@ import javax.swing.JTextField;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.IBoardView;
 import megamek.common.Coords;
 import megamek.common.LosEffects;
 import megamek.common.TargetRoll;

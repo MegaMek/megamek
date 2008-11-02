@@ -4,253 +4,257 @@
 <!-- from a command prompt where this file is located -->
 
 <project default="all" name="MegaMek" basedir=".">
-  <!-- Global properties for this build -->
-  
-  <property name="srcdir" value="src"/>
-  <property name="propdir" value="l10n"/>
-  <property name="confdir" value="mmconf"/>
-  <property name="logdir" value="logs"/>
-  <property name="builddir" value="classes"/>
-  <property name="libdir" value="lib"/>
-  <property name="datadir" value="data"/>
-  <property name="apidocdir" value="apidocs"/>
-  <property name="docdir" value="docs"/>
-  <property name="svndir" value="svndev"/>
+	<!-- Global properties for this build -->
 
-  <!-- same as builddir but under svn -->
-  <property name="svnbuilddir" value="${svndir}/${builddir}"/>
-  
-  <!-- svnroot used for svn authentification --> 
-  <property name="svnroot" value="https://megamek.svn.sourceforge.net/svnroot/megamek/trunk/megamek"/>
-  
-  <property name="timestampfile" value="${logdir}/timestamp"/>
-  <property name="TinyXMLsrc" value="TinyXML07-src.zip" />
-  
-  <!-- Name of the target jarfile and the class containing the main-Method -->
-  <property name="jarfile" value="MegaMek.jar"/>
-  <property name="jarmainclass" value="megamek.MegaMek"/>
-  
-  <!-- This is the relative path to the 'data' directory -->
-  <property name="dataclasspath" value="."/>
+	<property name="srcdir" value="src" />
+	<property name="propdir" value="l10n" />
+	<property name="confdir" value="mmconf" />
+	<property name="logdir" value="logs" />
+	<property name="builddir" value="classes" />
+	<property name="libdir" value="lib" />
+	<property name="datadir" value="data" />
+	<property name="apidocdir" value="apidocs" />
+	<property name="docdir" value="docs" />
+	<property name="svndir" value="svndev" />
 
-  <!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
-  <pathconvert pathsep=" " property="jarclasspath">
-     <path>
-        <!-- We'll include the jars in the "lib" directory -->
-        <fileset dir="lib/">
-           <include name="*.jar"/>
-        </fileset>
-     </path>
-     <mapper>
-        <chainedmapper>
-          <flattenmapper/>
-          <globmapper from="*" to="lib/*"/>
-        </chainedmapper>
-     </mapper>
-  </pathconvert>
+	<!-- same as builddir but under svn -->
+	<property name="svnbuilddir" value="${svndir}/${builddir}" />
 
-  <!-- initializes system before build -->
-  <target name="init">
-     <!-- Create the time stamp -->
-     <tstamp/>
+	<!-- svnroot used for svn authentification -->
+	<property name="svnroot" value="https://megamek.svn.sourceforge.net/svnroot/megamek/trunk/megamek" />
 
-     <!-- Ensure that the build directory exists. -->
-     <mkdir dir="${builddir}"/>
-  </target>
+	<property name="timestampfile" value="${logdir}/timestamp" />
+	<property name="TinyXMLsrc" value="TinyXML07-src.zip" />
 
-  <target name="compile" depends="init" description="Compile java sources into class files">
-    <!-- compile -->
-    <javac debug="true" debuglevel="lines,source"
-         target="1.5" source="1.5"
-         destdir="${builddir}" srcdir="${srcdir}" >
-        <classpath>
-            <pathelement location="${basedir}"/>
-            <fileset dir="${libdir}" includes="*.jar"/>
-         </classpath>
-    </javac>
-    <!-- generate current equipment.txt -->
-    <java classname="megamek.MegaMek" fork="true">
-        <arg line="-eqdb docs/equipment.txt"/>
-		<classpath>
-           <pathelement path="${basedir}"/>
-           <pathelement path="${builddir}"/>
-           <fileset dir="${libdir}" includes="*.jar"/>
-		</classpath>		
-	</java>
-    <!-- Ensure that the log directory exists. -->
-    <mkdir dir="${logdir}"/>
-    <touch file="${timestampfile}"/>
-  </target>
+	<!-- Name of the target jarfile and the class containing the main-Method -->
+	<property name="jarfile" value="MegaMek.jar" />
+	<property name="jarmainclass" value="megamek.MegaMek" />
 
-  <target name="jar" depends="compile" description="Generates JAR File from compiled sources">
-     <!-- collects all files from the ${builddir} (classes) and generates the jar file in ${basedir} -->  
-     <jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
-        <fileset dir="${propdir}" includes="**/*.properties"/>
-        <fileset dir="${srcdir}" includes="**/*.properties"/>
-        <manifest>
-            <attribute name="Built-By" value="${user.name}"/>
-            <attribute name="Class-Path" value=". ${jarclasspath}"/>
-            <attribute name="Main-Class" value="${jarmainclass}"/>
-        </manifest>
-    </jar>
-  </target>
-  
-  <target name="run" depends="compile" >
-    <echo message="Running MegaMek from build directory: ${builddir}"/>
-     <java classname="megamek.MegaMek" fork="true">
-        <classpath>
-           <pathelement path="${basedir}"/>
-           <pathelement path="${builddir}"/>
-           <fileset dir="${libdir}" includes="*.jar"/>
-        </classpath>
-     </java>
-  </target>
+	<!-- This is the relative path to the 'data' directory -->
+	<property name="dataclasspath" value="." />
 
-  <target name="run3d" depends="compile" >
-    <echo message="Running MegaMek in 3D-Mode from build directory: ${builddir}"/>
-     <java classname="megamek.MegaMek" fork="true">
-        <arg line="-log off -gui swing"/>
-        <classpath>
-           <pathelement path="${basedir}"/>
-           <pathelement path="${builddir}"/>
-           <pathelement path="${basedir}/src/"/>
-           <pathelement path="${basedir}/l10n/"/>
-           <fileset dir="${libdir}" includes="*.jar"/>
-        </classpath>
-        <jvmarg value="-Dmegamek.client.ui.AWT.boardView=megamek.client.ui.AWT.boardview3d.BoardView3D"/>
-        <jvmarg value="-Dmegamek.client.ui.AWT.boardview3d.view=0"/>
-        <jvmarg value="-Xmx512M"/>
-     </java>
-  </target>
+	<!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
+	<pathconvert pathsep=" " property="jarclasspath">
+		<path>
+			<!-- We'll include the jars in the "lib" directory -->
+			<fileset dir="lib/">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+		<mapper>
+			<chainedmapper>
+				<flattenmapper />
+				<globmapper from="*" to="lib/*" />
+			</chainedmapper>
+		</mapper>
+	</pathconvert>
 
-  <!-- generates MegaMek API Doc in ${apidocdir} -->
-  <target name="apidoc">
-     <mkdir dir="${apidocdir}"/>
-     <javadoc classpath="${basedir}" destdir="${apidocdir}" package="yes" packagenames="megamek.*" sourcepath="${srcdir}" windowtitle="MegaMek API"/>
-  </target>
-  
-  <target name="clean" description="Remove all compiled and generated files">
-    <!-- Delete the ${build} directory tree -->
-    <delete dir="${builddir}"/>
-    <delete dir="${apidocdir}"/>
-    <delete file="${timestampfile}"/>
-    <delete file="${jarfile}"/>
-    <delete>
-        <fileset dir="${basedir}">
-           <include name="**/megamek-*.zip"/>
-        </fileset>
-    </delete>
-	<delete>
-	  <fileset dir="${datadir}/mechfiles">
-		  <include name="units.cache"/>
-	  </fileset>
-	</delete>
-  </target>
+	<!-- initializes system before build -->
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
 
-  <target depends="clean, compile, jar" name="all"/>
+		<!-- Ensure that the build directory exists. -->
+		<mkdir dir="${builddir}" />
+	</target>
 
-  <!-- generates the updated code & media package and the regular package (containing both) -->
-  <target name="packageAll" description="Generates 3 packages: code, media, code+media" depends="svndev-get, svndev-build, packageMedia, packageCode, svndev-package">
-  </target>
+	<target name="compile" depends="init" description="Compile java sources into class files">
+		<!-- compile -->
+		<javac debug="true" debuglevel="lines,source" target="1.5" source="1.5" destdir="${builddir}" srcdir="${srcdir}">
+			<classpath>
+				<pathelement location="${basedir}" />
+				<fileset dir="${libdir}" includes="*.jar" />
+			</classpath>
+		</javac>
+		<!-- generate current equipment.txt -->
+		<java classname="megamek.MegaMek" fork="true">
+			<arg line="-eqdb docs/equipment.txt" />
+			<classpath>
+				<pathelement path="${builddir}" />
+				<fileset dir="${libdir}" includes="*.jar" />
+			</classpath>
+		</java>
+		<!-- Ensure that the log directory exists. -->
+		<mkdir dir="${logdir}" />
+		<touch file="${timestampfile}" />
+	</target>
 
-  <target name="packageCode" description="Generates code package only" depends="svndev-get, svndev-build">
-    <zip basedir="${svndir}" zipfile="${basedir}/megamek-dev-upgrade-${DSTAMP}.zip" includes="${jarfile} docs/history.txt license.txt MegaMek.exe startup.sh mmconf/MegaMek.bat"/>
-  </target>
+	<target name="jar" depends="compile" description="Generates JAR File from compiled sources">
+		<!-- collects all files from the ${builddir} (classes) and generates the jar file in ${basedir} -->
+		<jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
+			<fileset dir="${propdir}" includes="**/*.properties" />
+			<fileset dir="${srcdir}" includes="**/*.properties" />
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Class-Path" value=". ${jarclasspath}" />
+				<attribute name="Main-Class" value="${jarmainclass}" />
+			</manifest>
+		</jar>
+	</target>
 
-  <target name="packageMedia" description="Generates media package only" depends="svndev-get">
-    <zip basedir="${svndir}" zipfile="${basedir}/megamek-dev-media-${DSTAMP}.zip" includes="${datadir}/ ${confdir}/ ${docdir}/ *.txt stats.pl" excludes="*.jar"/>
-  </target>
+	<target name="run" depends="compile">
+		<echo message="Running MegaMek from build directory: ${builddir}" />
+		<java classname="megamek.MegaMek" fork="true">
+			<classpath>
+				<pathelement path="${basedir}" />
+				<pathelement path="${builddir}" />
+				<fileset dir="${libdir}" includes="*.jar" />
+			</classpath>
+		</java>
+	</target>
 
-  <target name="updateInstalledCode" description="Compiles, jars and installs the newest sources from svn." depends="svndev-init"> 
-    <!-- get the code -->
-    <antcall target="svndev-clean"/>
-	<exec executable="svn">
-		<arg line="export ${svnroot}/${srcdir} ${svndir}/${srcdir}"/>
-	</exec>
-	<exec executable="svn">
-		<arg line="export ${svnroot}/${propdir} ${svndir}/${propdir}"/>
-	</exec>
-    <!-- downloading precompiled libraries that are needed for a successful build -->
-	<exec executable="svn">
-		<arg line="export ${svnroot}/${libdir} ${svndir}/${libdir}"/>
-	</exec>
-    
-    <antcall target="svndev-build"/>
-    
-    <!-- Copy new MegaMek.jar and potentially updated libraries into user dir -->
-    <copy todir="${basedir}" overwrite="true">
-        <fileset dir="${svndir}" includes="*.jar"/>
-    </copy>
-    <echo message="New '${jarfile}' has been build and installed"/>
-  </target>
-  
-  <target name="updateInstalledMedia" description="Gets the newest datafiles from svn">
-    <!-- data files will be directly downloaded over existing ones -->
-	<exec executable="svn">
-		<arg line="export ${svnroot}/${datadir} ${svndir}/${datadir}"/>
-	</exec>
-    
-    <echo message="datafiles updated."/>
-  </target>
-  
-  <target name="svndev-init">
-    <tstamp/>
-    <delete dir="${svndir}"/>
-  </target>
+	<target name="run3d" depends="compile">
+		<echo message="Running MegaMek in 3D-Mode from build directory: ${builddir}" />
+		<java classname="megamek.MegaMek" fork="true">
+			<arg line="-log off -gui swing" />
+			<classpath>
+				<pathelement path="${basedir}" />
+				<pathelement path="${builddir}" />
+				<pathelement path="${basedir}/src/" />
+				<pathelement path="${basedir}/l10n/" />
+				<fileset dir="${libdir}" includes="*.jar" />
+			</classpath>
+			<jvmarg value="-Dmegamek.client.ui.AWT.boardView=megamek.client.ui.AWT.boardview3d.BoardView3D" />
+			<jvmarg value="-Dmegamek.client.ui.AWT.boardview3d.view=0" />
+			<jvmarg value="-Xmx512M" />
+		</java>
+	</target>
 
-  <!-- following svndev-* tasks get, build & package the current version from svn -->
-  <target name="svndev-get" depends="svndev-init">
-	<exec executable="svn">
-		<arg line="export ${svnroot} ${svndir}"/>
-	</exec>
-  </target>
+	<!-- generates MegaMek API Doc in ${apidocdir} -->
+	<target name="apidoc">
+		<mkdir dir="${apidocdir}" />
+		<javadoc classpath="${basedir}" destdir="${apidocdir}" package="yes" packagenames="megamek.*" sourcepath="${srcdir}" windowtitle="MegaMek API" />
+	</target>
 
-  <target name="svndev-build" depends="svndev-init">
-    <mkdir dir="${svnbuilddir}"/>
+	<target name="clean" description="Remove all compiled and generated files">
+		<!-- Delete the ${build} directory tree -->
+		<delete dir="${builddir}" />
+		<delete dir="${apidocdir}" />
+		<delete file="${timestampfile}" />
+		<delete file="${jarfile}" />
+		<delete>
+			<fileset dir="${basedir}">
+				<include name="**/megamek-*.zip" />
+			</fileset>
+		</delete>
+		<delete>
+			<fileset dir="${datadir}/mechfiles">
+				<include name="units.cache" />
+			</fileset>
+		</delete>
+	</target>
 
-    <!-- compile -->
-    <echo message="building MegaMek from svn sources"/>
-    <javac debug="true" debuglevel="lines,source"
-         target="1.5" source="1.5"
-         destdir="${svnbuilddir}" srcdir="${svndir}/${srcdir}">
-        <classpath> 
-           <pathelement location="${svndir}"/>
-           <fileset dir="${svndir}/${libdir}" includes="*.jar"/>
-        </classpath>
-    </javac>
+	<target depends="clean, compile, jar" name="all" />
 
-    <!-- jar -->
-    <jar basedir="${svnbuilddir}" jarfile="${svndir}/${jarfile}">
-        <fileset dir="${svndir}/${propdir}" includes="**/*.properties"/>
-    	<fileset dir="${svndir}/${srcdir}" includes="**/*.properties"/>
-        <manifest>
-            <attribute name="Built-By" value="${user.name}"/>
-            <attribute name="Class-Path" value=". ${jarclasspath}"/>
-            <attribute name="Main-Class" value="${jarmainclass}"/>
-        </manifest>
-    </jar>
-    
-    <!-- Ensure that the log directory exists. -->
-    <mkdir dir="${svndir}/${logdir}"/>
-    <touch file="${svndir}/${timestampfile}"/>
-  </target>
+	<!-- generates the updated code & media package and the regular package (containing both) -->
+	<target name="packageAll" description="Generates 3 packages: code, media, code+media" depends="svndev-get, svndev-build, packageMedia, packageCode, svndev-package">
+	</target>
 
-  <target name="svndev-package" depends="svndev-build">
-    <delete file="${svndir}/${TinyXMLsrc}"/>
-    <!-- zip file generation from svn sources -->
-    <!-- keep in mind that directory references for 'excludes' are -->
-    <!-- relative to the zip-tasks basedir but 'zipfile' uses the -->
-    <!-- absolute (project) ${basedir} -->
-    <zip zipfile="${basedir}/megamek-dev-svn-${DSTAMP}.zip" basedir="${svndir}" excludes="${builddir}/"/>
-  </target>
-  
-  <target name="svndev-clean">
-    <delete dir="${svnbuilddir}"/>
-  </target>
+	<target name="packageCode" description="Generates code package only" depends="svndev-get, svndev-build">
+		<zip basedir="${svndir}" zipfile="${basedir}/megamek-dev-upgrade-${DSTAMP}.zip" includes="${jarfile} docs/history.txt license.txt MegaMek.exe startup.sh mmconf/MegaMek.bat" />
+	</target>
 
-  <target name="svndev" depends="svndev-init, svndev-get, svndev-build, svndev-package"/>
-  
-  <target name="cleansvn" description="removes everything inside 'svndev' and the dir itself">
-    <delete dir="${svndir}/"/>
-  </target>
+	<target name="packageMedia" description="Generates media package only" depends="svndev-get">
+		<zip basedir="${svndir}" zipfile="${basedir}/megamek-dev-media-${DSTAMP}.zip" includes="${datadir}/ ${confdir}/ ${docdir}/ *.txt stats.pl" excludes="*.jar" />
+	</target>
+
+	<target name="updateInstalledCode" description="Compiles, jars and installs the newest sources from svn." depends="svndev-init">
+		<!-- get the code -->
+		<antcall target="svndev-clean" />
+		<exec executable="svn">
+			<arg line="export ${svnroot}/${srcdir} ${svndir}/${srcdir}" />
+		</exec>
+		<exec executable="svn">
+			<arg line="export ${svnroot}/${propdir} ${svndir}/${propdir}" />
+		</exec>
+		<!-- downloading precompiled libraries that are needed for a successful build -->
+		<exec executable="svn">
+			<arg line="export ${svnroot}/${libdir} ${svndir}/${libdir}" />
+		</exec>
+
+		<antcall target="svndev-build" />
+
+		<!-- Copy new MegaMek.jar and potentially updated libraries into user dir -->
+		<copy todir="${basedir}" overwrite="true">
+			<fileset dir="${svndir}" includes="*.jar" />
+		</copy>
+		<echo message="New '${jarfile}' has been build and installed" />
+	</target>
+
+	<target name="updateInstalledMedia" description="Gets the newest datafiles from svn">
+		<!-- data files will be directly downloaded over existing ones -->
+		<exec executable="svn">
+			<arg line="export ${svnroot}/${datadir} ${svndir}/${datadir}" />
+		</exec>
+
+		<echo message="datafiles updated." />
+	</target>
+
+	<target name="svndev-init">
+		<tstamp />
+		<delete dir="${svndir}" />
+	</target>
+
+	<!-- following svndev-* tasks get, build & package the current version from svn -->
+	<target name="svndev-get" depends="svndev-init">
+		<exec executable="svn">
+			<arg line="export ${svnroot} ${svndir}" />
+		</exec>
+	</target>
+
+	<target name="svndev-build" depends="svndev-init">
+		<mkdir dir="${svnbuilddir}" />
+
+		<!-- compile -->
+		<echo message="building MegaMek from svn sources" />
+		<javac debug="true" debuglevel="lines,source" target="1.5" source="1.5" destdir="${svnbuilddir}" srcdir="${svndir}/${srcdir}">
+			<classpath>
+				<pathelement location="${svndir}" />
+				<fileset dir="${svndir}/${libdir}" includes="*.jar" />
+			</classpath>
+		</javac>
+
+		<!-- jar -->
+		<jar basedir="${svnbuilddir}" jarfile="${svndir}/${jarfile}">
+			<fileset dir="${svndir}/${propdir}" includes="**/*.properties" />
+			<fileset dir="${svndir}/${srcdir}" includes="**/*.properties" />
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Class-Path" value=". ${jarclasspath}" />
+				<attribute name="Main-Class" value="${jarmainclass}" />
+			</manifest>
+		</jar>
+		<!-- generate current equipment.txt -->
+		<java classname="megamek.MegaMek" fork="true">
+			<arg line="-eqdb docs/equipment.txt" />
+			<classpath>
+				<pathelement path="${svndir}" />
+				<fileset dir="${libdir}" includes="*.jar" />
+			</classpath>
+		</java>
+
+		<!-- Ensure that the log directory exists. -->
+		<mkdir dir="${svndir}/${logdir}" />
+		<touch file="${svndir}/${timestampfile}" />
+
+	</target>
+
+	<target name="svndev-package" depends="svndev-build">
+		<delete file="${svndir}/${TinyXMLsrc}" />
+		<!-- zip file generation from svn sources -->
+		<!-- keep in mind that directory references for 'excludes' are -->
+		<!-- relative to the zip-tasks basedir but 'zipfile' uses the -->
+		<!-- absolute (project) ${basedir} -->
+		<zip zipfile="${basedir}/megamek-dev-svn-${DSTAMP}.zip" basedir="${svndir}" excludes="${builddir}/" />
+	</target>
+
+	<target name="svndev-clean">
+		<delete dir="${svnbuilddir}" />
+	</target>
+
+	<target name="svndev" depends="svndev-init, svndev-get, svndev-build, svndev-package" />
+
+	<target name="cleansvn" description="removes everything inside 'svndev' and the dir itself">
+		<delete dir="${svndir}/" />
+	</target>
 </project>

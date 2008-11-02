@@ -294,16 +294,7 @@ public class BattleArmor extends Infantry implements Serializable {
      * gravity.
      */
     public int getRunMP(boolean gravity, boolean ignoreheat) {
-        int j = getOriginalRunMP();
-        if(null != game) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
-            if(weatherMod != 0) {
-                j = Math.max(j + weatherMod, 0);
-            } 
-        }  
-        if (gravity)
-            j = applyGravityEffectsOnMP(j);
-        return j;
+        return getWalkMP(gravity, ignoreheat);
     }
     
     public int getJumpMP(boolean gravity) {

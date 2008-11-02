@@ -60,7 +60,7 @@
 
 	<target name="compile" depends="init" description="Compile java sources into class files">
 		<!-- compile -->
-		<javac debug="true" debuglevel="lines,source" target="1.5" source="1.5" destdir="${builddir}" srcdir="${srcdir}">
+		<javac debug="true" debuglevel="lines,source" target="1.5" source="1.5" destdir="${builddir}" srcdir="${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true">
 			<classpath>
 				<pathelement location="${basedir}" />
 				<fileset dir="${libdir}" includes="*.jar" />
@@ -207,7 +207,7 @@
 
 		<!-- compile -->
 		<echo message="building MegaMek from svn sources" />
-		<javac debug="true" debuglevel="lines,source" target="1.5" source="1.5" destdir="${svnbuilddir}" srcdir="${svndir}/${srcdir}">
+		<javac debug="true" debuglevel="lines,source" target="1.5" source="1.5" destdir="${svnbuilddir}" srcdir="${svndir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true">
 			<classpath>
 				<pathelement location="${svndir}" />
 				<fileset dir="${svndir}/${libdir}" includes="*.jar" />

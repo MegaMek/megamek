@@ -60,6 +60,7 @@ import megamek.client.Client;
 import megamek.client.bot.TestBot;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.IBoardView;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -244,7 +245,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         return bv;
     }
 
-    /*
+    /**
      * Try to load the "bing" sound clip.
      */
     private void loadSoundClip() {

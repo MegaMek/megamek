@@ -61,6 +61,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
@@ -4515,13 +4516,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         repaint();
     }
 
-    public void showPopup(JPopupMenu popup, Coords c) {
+    public void showPopup(Object popup, Coords c) {
         Point p = getHexLocation(c);
         p.x += (int) (HEX_WC * scale) - scrollpane.getX();
         p.y += (int) (HEX_H * scale / 2) - scrollpane.getY();
-        if (popup.getParent() == null)
-            add(popup);
-        popup.show(this, p.x, p.y);
+        if (((JPopupMenu)popup).getParent() == null)
+            add((JPopupMenu)popup);
+            ((JPopupMenu)popup).show(this, p.x, p.y);
     }
 
     public void refreshMinefields() {

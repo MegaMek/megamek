@@ -50,7 +50,7 @@ import megamek.common.actions.GrappleAttackAction;
 import megamek.common.weapons.CLFireExtinguisher;
 import megamek.common.weapons.ISFireExtinguisher;
 
-/*
+/**
  * Context menu for the board.
  */
 public class MapMenu extends JPopupMenu implements ActionListener {

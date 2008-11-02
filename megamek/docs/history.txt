@@ -36,6 +36,9 @@ v0.33.35-dev (SVN)
 + Added extra building roof images
 + Bug: LACs having Rapid fire mode when game option is not set
 + Bug: BA have higher run MP than they should
++ Bug: 3D boardview not working
++ Assign more memory to javac when building MM via ant, to prevent OutOfMemory
+    errors
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

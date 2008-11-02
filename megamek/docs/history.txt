@@ -34,6 +34,7 @@ v0.33.35-dev (SVN)
 + Bug 2204611: (AERO) Capital Missile Mods Wrong
 + RFE: Still show player DB messages for their unit after the pilot lost LOS of the attacker.
 + Added extra building roof images
++ Bug: LACs having Rapid fire mode when game option is not set
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

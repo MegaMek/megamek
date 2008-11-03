@@ -606,9 +606,16 @@ public class Tank extends Entity implements Serializable {
     public int calculateBattleValue(boolean ignoreC3) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
+        
+        int modularArmor = 0;
+        for (Mounted mounted : getEquipment()) {
+            if (mounted.getType() instanceof MiscType && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
+            }
+        }
 
         // total armor points
-        dbv += getTotalArmor() * 2.5;
+        dbv += (getTotalArmor()+modularArmor) * 2.5;
 
         // total internal structure
         dbv += getTotalInternal() * 1.5;

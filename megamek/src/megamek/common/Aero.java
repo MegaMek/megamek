@@ -898,11 +898,18 @@ public class Aero
     public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
+        
+        int modularArmor = 0;
+        for (Mounted mounted : getEquipment()) {
+            if (mounted.getType() instanceof MiscType && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
+            }
+        }
 
         // total armor points
-        dbv += getTotalArmor() * 2.5;
+        dbv += (getTotalArmor()+modularArmor) * 2.5;
 
-        // total internal structure        
+        // total internal structure
         dbv += getSI() * 2.0;
 
         // add defensive equipment

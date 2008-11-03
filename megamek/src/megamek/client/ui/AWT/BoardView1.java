@@ -1193,7 +1193,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         int depth = hex.depth();
         int height = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex
                 .terrainLevel(Terrains.BRIDGE_ELEV));
-
+        height = Math.max(height, hex.terrainLevel(Terrains.INDUSTRIAL));
+        
         // offset drawing point
 
         int drawX = hexLoc.x - boardRect.x;

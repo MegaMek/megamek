@@ -40,6 +40,7 @@ v0.33.35-dev (SVN)
 + Assign more memory to javac when building MM via ant, to prevent OutOfMemory
     errors
 + Modular armor BV
++ TacOps Retractable Blades
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

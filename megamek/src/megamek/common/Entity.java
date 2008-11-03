@@ -7126,6 +7126,43 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             }
         }
     }
+    
+    /**
+     * Set the retractable blade in the given location as extended
+     * Takes the first piece of appropriate equipment
+     */
+    public void extendBlade(int loc) {
+        for (Mounted m : getEquipment()) {
+            if (m.getLocation() == loc && !m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+                m.setMode("extended");
+                return;
+            }
+        }
+    }
+    
+    /**
+     * destroys the first retractable blade critical slot found
+     */
+    /**
+     * Checks whether a weapon has been fired from the specified location this
+     * turn
+     */
+    public void destroyRetractableBlade(int loc) {
+        // check critical slots
+        for (int i = 0; i < this.getNumberOfCriticals(loc); i++) {
+            CriticalSlot slot = getCritical(loc, i);
+            // ignore empty & system slots
+            if (slot == null || slot.getType() != CriticalSlot.TYPE_EQUIPMENT) {
+                continue;
+            }
+            Mounted m = getEquipment(slot.getIndex());
+            if (m.getLocation() == loc && !m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+                slot.setDestroyed(true);
+                m.setDestroyed(true);
+                return;
+            }
+        }
+    }
 
     public TeleMissileTracker getTMTracker() {
         return tmTracker;

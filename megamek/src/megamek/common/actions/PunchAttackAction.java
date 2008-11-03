@@ -41,15 +41,20 @@ public class PunchAttackAction extends PhysicalAttackAction {
     public static final int RIGHT = 2;
 
     private int arm;
+    //booleans for rectractable blade extension
+    private boolean leftBlade = false;
+    private boolean rightBlade = false;
 
     public PunchAttackAction(int entityId, int targetId, int arm) {
         super(entityId, targetId);
         this.arm = arm;
     }
 
-    public PunchAttackAction(int entityId, int targetType, int targetId, int arm) {
+    public PunchAttackAction(int entityId, int targetType, int targetId, int arm, boolean leftBlade, boolean rightBlade) {
         super(entityId, targetType, targetId);
         this.arm = arm;
+        this.leftBlade = leftBlade;
+        this.rightBlade = rightBlade;
     }
 
     public int getArm() {
@@ -58,6 +63,16 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
     public void setArm(int arm) {
         this.arm = arm;
+    }
+    
+    public boolean isBladeExtended(int arm) {
+        if(arm == LEFT) {
+            return leftBlade;
+        }
+        if(arm == RIGHT) {
+            return rightBlade;
+        }
+        return false;
     }
 
     public ToHitData toHit(IGame game) {

@@ -373,6 +373,19 @@ public class BipedMech extends Mech {
 
         return false;
     }
+    
+    /**
+     * Does the entity have a retracted blade in the given location
+     * 
+     */
+    public boolean hasRetractedBlade(int loc) {
+        for (Mounted m : getEquipment()) {
+            if (m.getLocation() == loc && !m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) && !m.curMode().equals("extended")) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Checks for Active Vibroblades in <code>location</code> and returns the

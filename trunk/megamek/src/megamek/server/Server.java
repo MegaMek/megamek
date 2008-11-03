@@ -9352,6 +9352,45 @@ public class Server implements Runnable {
                 // destroy rotor
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_ROTOR_DESTROYED), false));
             }
+            //check for extending retractable blades
+            if(paa.isBladeExtended(paa.getArm())) {
+                addNewLines();
+                r = new Report(4455);
+                r.indent(2);
+                r.subject = ae.getId();
+                r.newlines = 0;
+                addReport(r);
+                //conventional infantry don't take crits and battle armor need to be handled differently
+                if(!(target instanceof Infantry)) {
+                    addNewLines();
+                    addReport(criticalEntity(te, hit.getLocation(), 0, true, false));
+                }
+                if(target instanceof BattleArmor 
+                        && hit.getLocation() < te.locations() && te.getInternal(hit.getLocation()) > 0) {
+                    //TODO: we should really apply BA criticals through the critical
+                    //hits methods. Right now they are applied in damageentity
+                    HitData bahit = new HitData(hit.getLocation(), false, HitData.EFFECT_CRITICAL);
+                    addReport(damageEntity(te,bahit,0));
+                }
+                //extend the blade
+                //since retracting/extending is a freebie in the movement phase, lets assume that the
+                //blade retracts to its original mode
+                //ae.extendBlade(paa.getArm());
+                //check for breaking a nail
+                if(Compute.d6(2) > 9) {
+                    int armLoc = (paa.getArm() == PunchAttackAction.RIGHT) ? Mech.LOC_RARM : Mech.LOC_LARM;
+                    addNewLines();
+                    r = new Report(4456);
+                    r.indent(2);
+                    r.subject = ae.getId();
+                    r.newlines = 0;
+                    addReport(r);
+                    ae.destroyRetractableBlade(armLoc);
+                }
+            }
+                
+            
+            
         }
 
         addNewLines();

@@ -774,6 +774,15 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return false;
     }
+    
+    /**
+     * Does the entity have a retracted blade in the given location?
+     * Only true for biped mechs
+     * 
+     */
+    public boolean hasRetractedBlade(int loc) {
+        return false;
+    }
 
     /**
      * Same

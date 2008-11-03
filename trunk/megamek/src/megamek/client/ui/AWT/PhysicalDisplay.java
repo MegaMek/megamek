@@ -517,6 +517,24 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
                                         && !(target instanceof BattleArmor))),
                         leftArm.getTableDesc() });
         if (clientgui.doYesNoDialog(title, message)) {
+            //check for retractable blade that can be extended in each arm
+            boolean leftBladeExtend = false;
+            boolean rightBladeExtend = false;
+            if(ce() instanceof Mech 
+                    && target instanceof Entity
+                    && clientgui.client.game.getOptions().booleanOption("tacops_retractable_blades")
+                    && leftArm.getValue() != TargetRoll.IMPOSSIBLE
+                    && ((Mech)ce()).hasRetractedBlade(Mech.LOC_LARM)) {
+                leftBladeExtend = clientgui.doYesNoDialog(Messages.getString("PhysicalDisplay.ExtendBladeDialog.title"), Messages.getString("PhysicalDisplay.ExtendBladeDialog.message", new Object[] { ce().getLocationName(Mech.LOC_LARM) }));
+            }
+            if(ce() instanceof Mech 
+                    && target instanceof Entity
+                    && clientgui.client.game.getOptions().booleanOption("tacops_retractable_blades")
+                    && rightArm.getValue() != TargetRoll.IMPOSSIBLE
+                    && ((Mech)ce()).hasRetractedBlade(Mech.LOC_RARM)) {
+                rightBladeExtend = clientgui.doYesNoDialog(Messages.getString("PhysicalDisplay.ExtendBladeDialog.title"), Messages.getString("PhysicalDisplay.ExtendBladeDialog.message", new Object[] { ce().getLocationName(Mech.LOC_RARM) }));
+            }
+            
             disableButtons();
             // declare searchlight, if possible
             if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
@@ -527,15 +545,15 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
                     && rightArm.getValue() != TargetRoll.IMPOSSIBLE) {
                 attacks.addElement(new PunchAttackAction(cen, target
                         .getTargetType(), target.getTargetId(),
-                        PunchAttackAction.BOTH));
+                        PunchAttackAction.BOTH, leftBladeExtend, rightBladeExtend));
             } else if (leftArm.getValue() < rightArm.getValue()) {
                 attacks.addElement(new PunchAttackAction(cen, target
                         .getTargetType(), target.getTargetId(),
-                        PunchAttackAction.LEFT));
+                        PunchAttackAction.LEFT, leftBladeExtend, rightBladeExtend));
             } else {
                 attacks.addElement(new PunchAttackAction(cen, target
                         .getTargetType(), target.getTargetId(),
-                        PunchAttackAction.RIGHT));
+                        PunchAttackAction.RIGHT, leftBladeExtend, rightBladeExtend));
             }
             ready();
         }

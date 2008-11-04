@@ -2384,6 +2384,14 @@ public abstract class Mech extends Entity implements Serializable {
                     }
                     dBV = mgaBV * 0.67;
                 }
+                
+                // if linked to AES, multiply by 1.5
+                if (this.hasFunctionalArmAES(weapon.getLocation())
+                        || ((weapon.getLocation() == Mech.LOC_LLEG 
+                                || weapon.getLocation() == Mech.LOC_RLEG)
+                              && this.hasFunctionalLegAES())) {
+                    dBV *= 1.5;
+                }
 
                 // and we'll add the tcomp here too
                 if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
@@ -2436,6 +2444,14 @@ public abstract class Mech extends Entity implements Serializable {
                         }
                     }
                     dBV = mgaBV * 0.67;
+                }
+                
+                // if linked to AES, multiply by 1.5
+                if (this.hasFunctionalArmAES(weapon.getLocation())
+                        || ((weapon.getLocation() == Mech.LOC_LLEG 
+                                || weapon.getLocation() == Mech.LOC_RLEG)
+                              && this.hasFunctionalLegAES())) {
+                    dBV *= 1.5;
                 }
                 // and we'll add the tcomp here too
                 if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
@@ -2511,7 +2527,12 @@ public abstract class Mech extends Entity implements Serializable {
                     || mtype.hasFlag(MiscType.F_TARGCOMP)) // targ counted with
                 // weapons
                 continue;
-            oEquipmentBV += mtype.getBV(this);
+            double bv = mtype.getBV(this);
+            // if physical weapon linked to AES, multiply by 1.5
+            if ((mtype.hasFlag(MiscType.F_CLUB) || mtype.hasFlag(MiscType.F_HAND_WEAPON)) &&
+                    hasFunctionalArmAES(mounted.getLocation()))
+                bv *= 1.5;
+            oEquipmentBV += bv;
             // need to do this here, a MiscType does not know the location
             // where it's mounted
             if (mtype.hasFlag(MiscType.F_HARJEL)) {
@@ -2604,6 +2625,16 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
         weaponBV += ammoBV;
+        
+        double weight = getWeight();
+        double aesMultiplier = 1;
+        if (hasFunctionalArmAES(Mech.LOC_LARM))
+            aesMultiplier += 0.1;
+        if (hasFunctionalArmAES(Mech.LOC_RARM))
+            aesMultiplier += 0.1;
+        if (hasFunctionalLegAES())
+            aesMultiplier += 0.2;
+        weight *= aesMultiplier;
 
         // add tonnage, adjusted for TSM
         if (hasTSM())

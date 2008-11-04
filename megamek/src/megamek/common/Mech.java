@@ -2213,9 +2213,9 @@ public abstract class Mech extends Entity implements Serializable {
                     // and arms if arm & torso not CASEed
                     if ((loc == LOC_RT || loc == LOC_LT) && locationHasCase(loc)) {
                         continue;
-                    } else if (loc == LOC_LARM && (locationHasCase(loc) || locationHasCase(LOC_LT) || hasCASEII(loc) || hasCASEII(LOC_LT))) {
+                    } else if (loc == LOC_LARM && (locationHasCase(loc) || locationHasCase(LOC_LT))) {
                         continue;
-                    } else if (loc == LOC_RARM && (locationHasCase(loc) || locationHasCase(LOC_RT)) || hasCASEII(loc) || hasCASEII(LOC_RT)) {
+                    } else if (loc == LOC_RARM && (locationHasCase(loc) || locationHasCase(LOC_RT))) {
                         continue;
                     }
                 }

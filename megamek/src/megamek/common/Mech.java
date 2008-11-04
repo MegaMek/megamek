@@ -2407,10 +2407,7 @@ public abstract class Mech extends Entity implements Serializable {
                 }
                 
                 // if linked to AES, multiply by 1.5
-                if (this.hasFunctionalArmAES(weapon.getLocation())
-                        || ((weapon.getLocation() == Mech.LOC_LLEG 
-                                || weapon.getLocation() == Mech.LOC_RLEG)
-                              && this.hasFunctionalLegAES())) {
+                if (hasFunctionalArmAES(weapon.getLocation())) {
                     dBV *= 1.5;
                 }
 
@@ -2468,10 +2465,7 @@ public abstract class Mech extends Entity implements Serializable {
                 }
                 
                 // if linked to AES, multiply by 1.5
-                if (this.hasFunctionalArmAES(weapon.getLocation())
-                        || ((weapon.getLocation() == Mech.LOC_LLEG 
-                                || weapon.getLocation() == Mech.LOC_RLEG)
-                              && this.hasFunctionalLegAES())) {
+                if (hasFunctionalArmAES(weapon.getLocation())) {
                     dBV *= 1.5;
                 }
                 // and we'll add the tcomp here too
@@ -2530,7 +2524,7 @@ public abstract class Mech extends Entity implements Serializable {
                     dBV /= 2;
                 heatAdded += weaponValues[1];
                 weaponBV += dBV;
-            }             
+            }
         }
         
         // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -

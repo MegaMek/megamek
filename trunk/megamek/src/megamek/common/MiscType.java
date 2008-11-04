@@ -2681,7 +2681,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLWreckingBall() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.name = "Wrecking Ball";
         misc.setInternalName("Clan Wrecking Ball");
         misc.addLookupName("CLWrecking Ball");

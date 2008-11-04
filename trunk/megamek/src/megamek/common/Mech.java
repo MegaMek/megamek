@@ -2638,11 +2638,11 @@ public abstract class Mech extends Entity implements Serializable {
 
         // add tonnage, adjusted for TSM
         if (hasTSM())
-            weaponBV += getWeight() * 1.5;
+            weaponBV += weight * 1.5;
         else if (hasIndustrialTSM())
-            weaponBV += getWeight() * 1.15;
+            weaponBV += weight * 1.15;
         else
-            weaponBV += getWeight();
+            weaponBV += weight;
 
         // adjust further for speed factor
         // this is a bit weird, because the formula gives

@@ -44,6 +44,8 @@ v0.33.35-dev (SVN)
 + added image and height display for Heavy Industrial Zone
 + AES BV
 + UMU BV
++ CASE II BV
++ Cooland pods BV
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

@@ -2643,15 +2643,19 @@ public abstract class Mech extends Entity implements Serializable {
         
         double weight = getWeight();
         double aesMultiplier = 1;
-        if (hasFunctionalArmAES(Mech.LOC_LARM))
+        if (hasFunctionalArmAES(Mech.LOC_LARM)) {
             aesMultiplier += 0.1;
-        if (hasFunctionalArmAES(Mech.LOC_RARM))
+        }
+        if (hasFunctionalArmAES(Mech.LOC_RARM)) {
             aesMultiplier += 0.1;
+        }
         if (hasFunctionalLegAES()) {
-            if (this instanceof BipedMech)
+            if (this instanceof BipedMech) {
                 aesMultiplier += 0.2;
-            else if (this instanceof QuadMech)
+            }
+            else if (this instanceof QuadMech) {
                 aesMultiplier += 0.4;
+            }
         }
             
         weight *= aesMultiplier;

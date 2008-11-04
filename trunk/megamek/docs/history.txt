@@ -42,6 +42,7 @@ v0.33.35-dev (SVN)
 + Modular armor BV
 + TacOps Retractable Blades
 + added image and height display for Heavy Industrial Zone
++ AES BV
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

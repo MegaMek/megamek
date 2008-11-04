@@ -2255,7 +2255,9 @@ public abstract class Mech extends Entity implements Serializable {
             runMP = (getWalkMP(false, true) * 2) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
-        int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false), true, false).getValue();
+        // use UMU for JJ, unless we have more jump MP than UMU (then we have mechanical jumpboosters
+        int jumpMP = Math.max(getActiveUMUCount(), getJumpMP(false));
+        int tmmJumped = Compute.getTargetMovementModifier(jumpMP, true, false).getValue();
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
         // Try to find a Mek Stealth or similar system.
         if (hasStealth() || hasNullSig())
@@ -2663,9 +2665,9 @@ public abstract class Mech extends Entity implements Serializable {
         if (hasMASC()) {
             speedFactorTableLookup = getWalkMP(false, true) * 1.5 + 1 - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
         }
-        speedFactorTableLookup += Math.round((double) getJumpMP() / 2);
+        speedFactorTableLookup += Math.round((double)jumpMP / 2);
         if (speedFactorTableLookup > 25)
-            speedFactor = Math.pow(1 + (((double) runMP + (Math.round((double) getJumpMP() / 2)) - 5) / 10), 1.2);
+            speedFactor = Math.pow(1 + (((double) runMP + (Math.round((double) jumpMP / 2)) - 5) / 10), 1.2);
         else
             speedFactor = Math.pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;

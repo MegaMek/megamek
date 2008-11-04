@@ -30,6 +30,7 @@ import megamek.common.loaders.MtfFile;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.EnergyWeapon;
+import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.PPCWeapon;
 
 /**
@@ -2222,7 +2223,7 @@ public abstract class Mech extends Entity implements Serializable {
             }
 
             // gauss rifles only subtract 1 point per slot
-            if (etype instanceof WeaponType && (etype.getName().indexOf("Gauss") != -1 || etype.getName().indexOf("HAG") != -1 || etype.getName().toLowerCase().indexOf("magshot") != -1)) {
+            if (etype instanceof GaussWeapon) {
                 toSubtract = 1;
             }
 

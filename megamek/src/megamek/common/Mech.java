@@ -2647,8 +2647,13 @@ public abstract class Mech extends Entity implements Serializable {
             aesMultiplier += 0.1;
         if (hasFunctionalArmAES(Mech.LOC_RARM))
             aesMultiplier += 0.1;
-        if (hasFunctionalLegAES())
-            aesMultiplier += 0.2;
+        if (hasFunctionalLegAES()) {
+            if (this instanceof BipedMech)
+                aesMultiplier += 0.2;
+            else if (this instanceof QuadMech)
+                aesMultiplier += 0.4;
+        }
+            
         weight *= aesMultiplier;
 
         // add tonnage, adjusted for TSM

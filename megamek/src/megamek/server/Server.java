@@ -4628,7 +4628,7 @@ public class Server implements Runnable {
             mpUsed = step.getMpUsed();
 
             if (cachedGravityLimit < 0)
-                cachedGravityLimit = IEntityMovementType.MOVE_JUMP == moveType ? entity.getOriginalJumpMP() : entity.getRunMP(false, false);
+                cachedGravityLimit = IEntityMovementType.MOVE_JUMP == moveType ? entity.getJumpMP(false) : entity.getRunMP(false, false);
             // check for charge
             if (step.getType() == MovePath.STEP_CHARGE) {
                 if (entity.canCharge()) {
@@ -13224,7 +13224,7 @@ public class Server implements Runnable {
                     if (game.getPlanetaryConditions().getGravity() < 1) {
                         int j = entity.mpUsed;
                         int damage = 0;
-                        while (j > entity.getOriginalJumpMP()) {
+                        while (j > entity.getJumpMP(false)) {
                             j--;
                             damage++;
                         }

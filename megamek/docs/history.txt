@@ -48,6 +48,7 @@ v0.33.35-dev (SVN)
 + Cooland pods BV
 + Changed Loc0st string to make users report server crashes correctly
 + Bug: Clan Wrecking Ball listed as IS TW Non Box
++ Fix wrong use of getOriginalJumpMP()
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

@@ -185,7 +185,7 @@ public class SharedUtility {
                             }
                         }
                     } else if (step.getMovementType() == IEntityMovementType.MOVE_JUMP) {
-                        if (step.getMpUsed() > entity.getOriginalJumpMP()) {
+                        if (step.getMpUsed() > entity.getJumpMP(false)) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(addNag(rollTarget));

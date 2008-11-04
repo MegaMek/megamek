@@ -344,22 +344,16 @@ public class TestMech extends TestEntity {
     public boolean correctMovement(StringBuffer buff) {
         // Mechanical Jump Boosts can be greater then Running as long as
         // the unit can handle the weight.
-        if (mech.getOriginalJumpMP() > mech.getOriginalRunMPwithoutMASC()
+        if (mech.getJumpMP(false) > mech.getOriginalRunMPwithoutMASC()
                 && !mech.hasJumpBoosters()) {
             buff.append("Jump MP exceeds run MP\n");
             return false;
         }
-
-        // As long as it's improved jump jets, this simply isn't true any more.
-        // Or, at the very least, IJJs are as level 2 as any other piece of TW
-        // equipment.
-        /*
-         * if(mech.getOriginalJumpMP() > mech.getOriginalWalkMP() &&
-         * mech.getTechLevel() != TechConstants.T_CLAN_LEVEL_3 &&
-         * mech.getTechLevel() != TechConstants.T_IS_LEVEL_3) {
-         * buff.append("Jump MP exceeds walk MP for level 2 construction");
-         * return false; }
-         */
+        if (mech.getJumpMP(false) > mech.getOriginalWalkMP() &&
+               mech.getJumpType() != Mech.JUMP_IMPROVED) {
+          buff.append("Jump MP exceeds walk MP without IJJs");
+          return false;
+        }
         return true;
     }
 

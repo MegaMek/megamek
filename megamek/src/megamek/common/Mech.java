@@ -2193,6 +2193,11 @@ public abstract class Mech extends Entity implements Serializable {
             if (loc == LOC_NONE) {
                 continue;
             }
+            
+            // CASE II means no subtraction
+            if (hasCASEII(loc)) {
+                continue;
+            }
 
             if (isClan()) {
                 // Clan mechs only count ammo in ct, legs or head (per BMRr).
@@ -2206,7 +2211,7 @@ public abstract class Mech extends Entity implements Serializable {
                 if (getEngine().getSideTorsoCriticalSlots().length <= 2) {
                     // without XL or XXL, only count torsos if not CASEed,
                     // and arms if arm & torso not CASEed
-                    if ((loc == LOC_RT || loc == LOC_LT) && (locationHasCase(loc) || hasCASEII(loc))) {
+                    if ((loc == LOC_RT || loc == LOC_LT) && locationHasCase(loc)) {
                         continue;
                     } else if (loc == LOC_LARM && (locationHasCase(loc) || locationHasCase(LOC_LT) || hasCASEII(loc) || hasCASEII(LOC_LT))) {
                         continue;
@@ -2236,6 +2241,11 @@ public abstract class Mech extends Entity implements Serializable {
             // BV
             if (etype instanceof WeaponType && (((WeaponType) etype).getAmmoType() == AmmoType.T_AC || ((WeaponType) etype).getAmmoType() == AmmoType.T_LAC)) {
                 toSubtract = 0;
+            }
+            
+            // coolant pods subtract 1 each
+            if (etype instanceof AmmoType && etype.hasFlag(AmmoType.T_COOLANT_POD)) {
+                toSubtract = 1;
             }
             // we subtract per critical slot
             toSubtract *= etype.getCriticals(this);
@@ -2271,6 +2281,14 @@ public abstract class Mech extends Entity implements Serializable {
 
         // calculate heat efficiency
         int mechHeatEfficiency = 6 + this.getHeatCapacity();
+        int coolantPods = 0;
+        for (Mounted ammo : this.getAmmo()) {
+            if (ammo.getType().hasFlag(AmmoType.T_COOLANT_POD)) {
+                coolantPods++;
+            }
+        }
+        // account for coolant pods
+        mechHeatEfficiency += Math.max(2*getNumberOfSinks(), Math.ceil((double)(getNumberOfSinks()*coolantPods)/5));
         if (getJumpMP() > 0) {
             mechHeatEfficiency -= getEngine().getJumpHeat(getJumpMP());
         } else {

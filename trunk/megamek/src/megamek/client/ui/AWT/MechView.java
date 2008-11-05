@@ -20,6 +20,7 @@
 
 package megamek.client.ui.AWT;
 
+import java.text.DecimalFormat;
 import java.util.Iterator;
 
 import megamek.common.Aero;
@@ -92,8 +93,16 @@ public class MechView {
         }
         sLoadout.append(getMisc()) //has to occur before basic is processed
         .append("\r\n") //$NON-NLS-1$
-        .append(getFailed());
+        .append(getFailed()).append("\r\n");
 
+        DecimalFormat dFormatter = new DecimalFormat("#,###.##");
+        sLoadout.append("BV: ");
+        sLoadout.append(dFormatter.format(entity.calculateBattleValue()));
+        
+        sLoadout.append(" Cost: ");
+        sLoadout.append(dFormatter.format(entity.getCost()));
+        sLoadout.append(" Cbills");
+        
         sBasic.append(entity.getShortNameRaw());
         sBasic.append("\r\n"); //$NON-NLS-1$
         if (!isInf) {

@@ -462,16 +462,13 @@ public class MegaMek {
                                 new File(
                                         "data/mechfiles/UnitVerifierOptions.xml"));
                         MechView mechView = new MechView(entity, false);
-                        StringBuffer sb = new StringBuffer(mechView
-                                .getMechReadout());
+                        StringBuffer sb = new StringBuffer(mechView.getMechReadout());
                         if (entity instanceof Mech || entity instanceof Tank) {
                             TestEntity testEntity = null;
                             if (entity instanceof Mech)
-                                testEntity = new TestMech((Mech) entity,
-                                        entityVerifier.mechOption, null);
+                                testEntity = new TestMech((Mech) entity,entityVerifier.mechOption, null);
                             if (entity instanceof Tank)
-                                testEntity = new TestTank((Tank) entity,
-                                        entityVerifier.tankOption, null);
+                                testEntity = new TestTank((Tank) entity,entityVerifier.tankOption, null);
 
                             if (testEntity != null) {
                                 testEntity.correctEntity(sb, true);

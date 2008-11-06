@@ -43,4 +43,8 @@ public class ConvFighter extends Aero {
         return used;
     }
     
+    public double getBVTypeModifier() {
+        return 1.1;
+    }
+    
 }

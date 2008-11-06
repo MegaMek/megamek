@@ -504,6 +504,8 @@ public class WeaponType extends EquipmentType {
         addType(new CLVehicleFlamer());
         addType(new ISVehicleFlamer());
         addType(new ISHeavyFlamer());
+        addType(new ISBAFlamer());
+        addType(new CLBAFlamer());
         // Autocannons
         addType(new ISAC2());
         addType(new ISAC5());

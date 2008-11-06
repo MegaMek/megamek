@@ -1879,7 +1879,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         try {
             if (stateArmorType == 7) { // Fire-resistant Armor
                 retVal.addEquipment(EquipmentType
-                        .get(BattleArmor.FIRE_PROTECTION),
+                        .get("BA-Fire Resistant Armor"),
                         BattleArmor.LOC_SQUAD);
             }
 

@@ -53,6 +53,7 @@ v0.33.35-dev (SVN)
 + Added BA Vibroclaws and their physical attack (accessible via right-click menu
     in physical attack phase
 + Updated ASF, Conventional Fighter, and Small Craft BV to TM Errata 1.0
++ BA BV, not yet done
  
 
 v0.33.34 (2008-10-28, 02:30 UTC)

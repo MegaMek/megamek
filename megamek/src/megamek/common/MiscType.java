@@ -1373,7 +1373,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = false;
         misc.flags |= F_ASSAULT_CLAW;
-        misc.bv = 0;
+        misc.bv = 3;
 
         return misc;
     }
@@ -1382,7 +1382,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Fire Resistant Armor";
-        misc.setInternalName(BattleArmor.FIRE_PROTECTION);
+        misc.setInternalName("BA-Fire Resistant Armor");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -2353,7 +2353,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = false;
         misc.flags |= F_VIBROCLAW;
-        misc.bv = 0;
+        misc.bv = 1;
 
         return misc;
     }

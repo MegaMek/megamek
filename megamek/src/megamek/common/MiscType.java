@@ -80,6 +80,7 @@ public class MiscType extends EquipmentType {
     public static final long F_NULLSIG = 1L << 50;
     public static final long F_VOIDSIG = 1L << 51;
     public static final long F_CHAMELEON_SHIELD = 1L << 52;
+    public static final long F_VIBROCLAW = 1L << 53;
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -563,6 +564,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createBASearchlight());
         EquipmentType.addType(createISImprovedSensors());
         EquipmentType.addType(createCLImprovedSensors());
+        EquipmentType.addType(createBAVibroClaw());
         
         //support vee stuff
         EquipmentType.addType(createLiftHoist());
@@ -2336,6 +2338,21 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = false;
         misc.flags |= F_SEARCHLIGHT;
+        misc.bv = 0;
+
+        return misc;
+    }
+    
+    public static MiscType createBAVibroClaw() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Vibroclaw";
+        misc.setInternalName("BAVibroClaw");
+        misc.tonnage = 0.0f;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_VIBROCLAW;
         misc.bv = 0;
 
         return misc;

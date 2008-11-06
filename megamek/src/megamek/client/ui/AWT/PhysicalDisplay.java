@@ -55,6 +55,7 @@ import megamek.common.QuadMech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -256,12 +257,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
-        // c.gridwidth = GridBagConstraints.REMAINDER;
-        // addBag(clientgui.bv, gridbag, c);
-
-        // c.weightx = 1.0; c.weighty = 0;
-        // c.gridwidth = 1;
-        // addBag(client.cb.getComponent(), gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;
@@ -1136,6 +1131,33 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
                         new Double(Compute.oddsAbove(toHit.getValue())),
                         toHit.getDesc(),
                         ThrashAttackAction.getDamageFor(ce())
+                                + toHit.getTableDesc() });
+
+        // Give the user to cancel the attack.
+        if (clientgui.doYesNoDialog(title, message)) {
+            disableButtons();
+            attacks.addElement(act);
+            ready();
+        }
+    }
+    
+    /**
+     * slice 'em up with your vibroclaws
+     */
+    public void vibroclawatt() {
+        BAVibroClawAttackAction act = new BAVibroClawAttackAction(cen, target
+                .getTargetType(), target.getTargetId());
+        ToHitData toHit = act.toHit(client.game);
+
+        String title = Messages
+                .getString(
+                        "PhysicalDisplay.BAVibroClawDialog.title", new Object[] { target.getDisplayName() }); //$NON-NLS-1$
+        String message = Messages.getString(
+                "PhysicalDisplay.BAVibroClawDialog.message", new Object[] {//$NON-NLS-1$
+                        toHit.getValueAsString(),
+                        new Double(Compute.oddsAbove(toHit.getValue())),
+                        toHit.getDesc(),
+                        ce().getVibroClaws()
                                 + toHit.getTableDesc() });
 
         // Give the user to cancel the attack.

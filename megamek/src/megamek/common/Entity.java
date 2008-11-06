@@ -7538,7 +7538,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         }   
     }
     
-    //get the bay that ammo is associated with
+    /**
+     * get the bay that ammo is associated with
+     * @param mammo
+     * @return
+     */
     public Mounted getBayByAmmo(Mounted mammo) {
         
         for (Mounted m : getWeaponBayList()) {
@@ -7550,5 +7554,13 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             }
         }
         return null;
+    }
+    
+    /**
+     * Return how many BA vibroclaws this <code>Entity</code> is equipped with
+     */
+    public int getVibroClaws() {
+        // generic entities can't carry vibroclaws
+        return 0;
     }
 }

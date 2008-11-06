@@ -45,6 +45,7 @@ import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.weapons.CLFireExtinguisher;
@@ -257,7 +258,7 @@ public class MapMenu extends JPopupMenu implements ActionListener {
 
     private JMenuItem SelectJMenuItem(Entity en) {
 
-        JMenuItem item = new JMenuItem(Messages.getString("ClientGUI.selectJMenuItem") + en.getDisplayName());
+        JMenuItem item = new JMenuItem(Messages.getString("ClientGUI.selectMenuItem") + en.getDisplayName());
 
         item.setActionCommand(Integer.toString(en.getId()));
         item.addActionListener(new ActionListener() {
@@ -763,6 +764,15 @@ public class MapMenu extends JPopupMenu implements ActionListener {
                     menu.add(item);
                 }
             }
+            if (myTarget != null) {
+                ToHitData vibro = BAVibroClawAttackAction.toHit(client.game, myEntity.getId(), myTarget);
+                if (vibro.getValue() != TargetRoll.IMPOSSIBLE) {
+                    item = createVibroClawMenuItem();
+                    if (item != null) {
+                        menu.add(item);
+                    }
+                }
+            }
 
         }
 
@@ -1072,7 +1082,7 @@ public class MapMenu extends JPopupMenu implements ActionListener {
         Vector<Entity> list = new Vector<Entity>();
 
         for (Entity en : game.getEntitiesVector(coords)) {
-            if (en.isEnemyOf(myEntity)) {
+            if (en.isEnemyOf(myEntity) || (game.getOptions().booleanOption("friendly_fire") && !en.equals(myEntity))) {
                 list.add(en);
             }
         }
@@ -1185,6 +1195,22 @@ public class MapMenu extends JPopupMenu implements ActionListener {
         });
 
         return item;
+    }
+    
+    private JMenuItem createVibroClawMenuItem() {
+        JMenuItem item = new JMenuItem("Vibro Claw Attack");
+        
+        item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    ((PhysicalDisplay) currentPanel).vibroclawatt();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        return item; 
     }
 
     private JMenuItem createJumpJetAttackJMenuItem() {

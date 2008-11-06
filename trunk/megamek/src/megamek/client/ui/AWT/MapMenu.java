@@ -44,6 +44,7 @@ import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.options.GameOptions;
@@ -750,6 +751,16 @@ public class MapMenu extends PopupMenu implements ActionListener {
                     menu.add(item);
                 }
             }
+            
+            if (myTarget != null) {
+                ToHitData vibro = BAVibroClawAttackAction.toHit(client.game, myEntity.getId(), myTarget);
+                if (vibro.getValue() != TargetRoll.IMPOSSIBLE) {
+                    item = createVibroClawMenuItem();
+                    if (item != null) {
+                        menu.add(item);
+                    }
+                }
+            }
 
         }
 
@@ -1188,6 +1199,22 @@ public class MapMenu extends PopupMenu implements ActionListener {
         });
 
         return item;
+    }
+    
+    private MenuItem createVibroClawMenuItem() {
+        MenuItem item = new MenuItem("Vibro Claw Attack");
+        
+        item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    ((PhysicalDisplay) currentPanel).vibroclawatt();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        return item; 
     }
 
     private MenuItem createThrashMenuItem() {

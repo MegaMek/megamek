@@ -49,7 +49,10 @@ v0.33.35-dev (SVN)
 + Changed Loc0st string to make users report server crashes correctly
 + Bug: Clan Wrecking Ball listed as IS TW Non Box
 + Fix wrong use of getOriginalJumpMP()
-+ Added Cost and BV to the -validation command 
++ Added Cost and BV to the -validation command
++ Added BA Vibroclaws and their physical attack (accessible via right-click menu
+    in physical attack phase
+ 
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

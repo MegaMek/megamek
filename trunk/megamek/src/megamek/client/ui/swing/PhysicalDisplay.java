@@ -36,7 +36,6 @@ import javax.swing.JPanel;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.swing.widget.IndexedCheckbox;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
@@ -56,6 +55,7 @@ import megamek.common.QuadMech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -762,6 +762,33 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
 
             attacks.addElement(new BreakGrappleAttackAction(cen, target
                     .getTargetType(), target.getTargetId()));
+            ready();
+        }
+    }
+    
+    /**
+     * slice 'em up with your vibroclaws
+     */
+    public void vibroclawatt() {
+        BAVibroClawAttackAction act = new BAVibroClawAttackAction(cen, target
+                .getTargetType(), target.getTargetId());
+        ToHitData toHit = act.toHit(client.game);
+
+        String title = Messages
+                .getString(
+                        "PhysicalDisplay.BAVibroClawDialog.title", new Object[] { target.getDisplayName() }); //$NON-NLS-1$
+        String message = Messages.getString(
+                "PhysicalDisplay.BAVibroClawDialog.message", new Object[] {//$NON-NLS-1$
+                        toHit.getValueAsString(),
+                        new Double(Compute.oddsAbove(toHit.getValue())),
+                        toHit.getDesc(),
+                        ce().getVibroClaws()
+                                + toHit.getTableDesc() });
+
+        // Give the user to cancel the attack.
+        if (clientgui.doYesNoDialog(title, message)) {
+            disableButtons();
+            attacks.addElement(act);
             ready();
         }
     }

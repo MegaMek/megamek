@@ -4830,6 +4830,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 3;
+        ammo.kgPerShot = 20;
 
         return ammo;
     }
@@ -4847,6 +4848,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR | F_ENCUMBERING;
         ammo.shots = 1;
         ammo.bv = 3;
+        ammo.kgPerShot = 20;
 
         return ammo;
     }
@@ -4902,6 +4904,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 2;
         ammo.explosive = false;
         ammo.bv = 0;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -5102,6 +5105,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 2;
         ammo.flags |= F_HOTLOAD;
         ammo.setModes(new String[] {"", "HotLoad"});
+        ammo.kgPerShot = 8.3;
 
         return ammo;
     }
@@ -5123,6 +5127,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 3;
         ammo.flags |= F_HOTLOAD;
         ammo.setModes(new String[] {"", "HotLoad"});
+        ammo.kgPerShot = 16.6;
 
         return ammo;
     }
@@ -5144,6 +5149,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 4;
         ammo.flags |= F_HOTLOAD;
         ammo.setModes(new String[] {"", "HotLoad"});
+        ammo.kgPerShot = 25;
 
         return ammo;
     }
@@ -5165,6 +5171,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.flags |= F_HOTLOAD;
         ammo.setModes(new String[] {"", "HotLoad"});
+        ammo.kgPerShot = 33.3;
 
         return ammo;
     }
@@ -5184,6 +5191,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.flags |= F_HOTLOAD;
         ammo.setModes(new String[] {"", "HotLoad"});
+        ammo.kgPerShot = 41.5;
 
         return ammo;
     }
@@ -5203,6 +5211,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 2;
+        ammo.kgPerShot = 8.3;
 
         return ammo;
     }
@@ -5222,6 +5231,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 3;
+        ammo.kgPerShot = 16.6;
 
         return ammo;
     }
@@ -5241,6 +5251,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 5;
+        ammo.kgPerShot = 25;
 
         return ammo;
     }
@@ -5260,6 +5271,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 6;
+        ammo.kgPerShot = 33.3;
 
         return ammo;
     }
@@ -5279,6 +5291,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 7;
+        ammo.kgPerShot = 41.5;
 
         return ammo;
     }
@@ -5298,6 +5311,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 7;
+        ammo.kgPerShot = 60;
 
         return ammo;
     }
@@ -5317,6 +5331,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 6;
+        ammo.kgPerShot = 50;
 
         return ammo;
     }
@@ -5336,6 +5351,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 5;
+        ammo.kgPerShot = 40;
 
         return ammo;
     }
@@ -5355,6 +5371,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 4;
+        ammo.kgPerShot = 30;
 
         return ammo;
     }
@@ -5374,6 +5391,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 2;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -5392,6 +5410,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 1;
+        ammo.kgPerShot = 5;
 
         return ammo;
     }
@@ -5410,6 +5429,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 2;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -5428,6 +5448,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 2;
+        ammo.kgPerShot = 15;
 
         return ammo;
     }
@@ -5446,6 +5467,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 3;
+        ammo.kgPerShot = 20;
 
         return ammo;
     }   
@@ -5464,6 +5486,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 4;
+        ammo.kgPerShot = 25;
 
         return ammo;
     }
@@ -5573,6 +5596,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 2;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -5594,6 +5618,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 4;
+        ammo.kgPerShot = 20;
 
         return ammo;
     }
@@ -5613,6 +5638,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 6;
+        ammo.kgPerShot = 30;
 
         return ammo;
     }
@@ -5632,6 +5658,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 8;
+        ammo.kgPerShot = 40;
 
         return ammo;
     }
@@ -5651,6 +5678,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 10;
+        ammo.kgPerShot = 50;
 
         return ammo;
     }
@@ -5670,6 +5698,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 12;
+        ammo.kgPerShot = 60;
 
         return ammo;
     }

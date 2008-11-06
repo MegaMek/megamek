@@ -199,18 +199,14 @@ public class Infantry extends Entity implements Serializable {
 
     
     /*
-     * Get this infantry's jump MP, adjusted for weather conditions
+     * (non-Javadoc)
+     * @see megamek.common.Entity#getJumpMP(boolean)
      */
     public int getJumpMP(boolean gravity) {
-        return getJumpMP();
-    }
-    
-    /**
-     * Returns this entity's current jumping MP, not effected by terrain,
-     * factored for gravity.
-     */
-    public int getJumpMP() {
-        int mp = applyGravityEffectsOnMP(getOriginalJumpMP());
+        int mp = getOriginalJumpMP();
+        if (gravity) {
+            mp = applyGravityEffectsOnMP(mp);
+        }
         int windP = 0;
         if(null != game) {
             int windCond = game.getPlanetaryConditions().getWindStrength();
@@ -224,6 +220,7 @@ public class Infantry extends Entity implements Serializable {
         mp = Math.max(mp - windP, 0);
         return mp;
     }
+
     
 
     /**

@@ -147,7 +147,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         if (target instanceof Mech) {
             return 1;
         } else {
-            if (target instanceof BattleArmor && ((BattleArmor) target).hasFireresistantArmor())
+            if (target instanceof BattleArmor && ((BattleArmor) target).isFireResistant())
                 return 0;
             return Compute.d6(3);
         }

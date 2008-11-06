@@ -429,16 +429,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 toHit.addModifier(-2, "target is vehicle");
             }
 
-            // If the attacker has Assault claws, give a -1 modifier.
+            // If the attacker has assault claws, give a -1 modifier.
             // We can stop looking when we find our first match.
             for (Mounted mount : ae.getMisc()) {
                 EquipmentType equip = mount.getType();
                 if (BattleArmor.ASSAULT_CLAW.equals(equip.getInternalName())) {
                     toHit.addModifier(-1, "attacker has assault claws");
-                    break;
-                }
-                if (equip.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
-                    toHit.addModifier(-1, "attacker has magnetic claws");
                     break;
                 }
             }
@@ -477,7 +473,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit = new ToHitData(8, "magnetic mine attack");
         } else if (atype != null && atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
             // Micro bombs use anti-mech skill
-            return new ToHitData(ae.getCrew().getPiloting(), "anit-mech skill");
+            return new ToHitData(ae.getCrew().getPiloting(), "anti-mech skill");
         }
         // Swarming infantry always hit their target, but
         // they can only target the Mek they're swarming.

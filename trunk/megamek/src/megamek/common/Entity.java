@@ -1483,12 +1483,17 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * factored for gravity.
      */
     public int getJumpMP() {
-        return applyGravityEffectsOnMP(getOriginalJumpMP());
+        return getJumpMP(true);
     }
 
+    /**
+     * return this entity's current jump MP, possibly affected by gravity
+     * @param gravity
+     * @return
+     */
     public int getJumpMP(boolean gravity) {
         if (gravity) {
-            return getJumpMP();
+            return applyGravityEffectsOnMP(getOriginalJumpMP());
         }
         return getOriginalJumpMP();
     }

@@ -73,7 +73,7 @@ public class WeaponType extends EquipmentType {
                                                         // dice, not points
     public static final long F_AMS = 1l << 23; // Weapon is an anti-missile
                                                 // system.
-    public static final long F_BOOST_SWARM = 1l << 24; // boost leg & swarm
+    //public static final long F_UNUSED = 1l << 24;
     public static final long F_INFANTRY_ONLY = 1l << 25; // only target
                                                             // infantry
     public static final long F_TAG = 1l << 26; // Target acquisition gear

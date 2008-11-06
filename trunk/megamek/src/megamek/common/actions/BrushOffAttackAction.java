@@ -22,6 +22,7 @@ import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -213,7 +214,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
 
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
-        // If the target has Assault claws, give a 1 modifier.
+        // If the target has assault claws, give a 1 modifier.
         // We can stop looking when we find our first match.
         if (te != null) {
             for (Mounted mount : te.getMisc()) {

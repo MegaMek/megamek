@@ -5518,10 +5518,6 @@ public class Server implements Runnable {
                     roll.addModifier(1, "swarmer has assault claws");
                     break;
                 }
-                if (equip.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
-                    roll.addModifier(1, "swarmer has magnetic claw");
-                    break;
-                }
             }
 
             // okay, print the info
@@ -5709,10 +5705,6 @@ public class Server implements Runnable {
                     EquipmentType equip = mount.getType();
                     if (BattleArmor.ASSAULT_CLAW.equals(equip.getInternalName())) {
                         roll.addModifier(1, "swarmer has assault claws");
-                        break;
-                    }
-                    if (equip.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
-                        roll.addModifier(1, "swarmer has magnetic claw");
                         break;
                     }
                 }
@@ -6420,7 +6412,7 @@ public class Server implements Runnable {
                 }
             } else if (te instanceof BattleArmor) {
                 for (Mounted equip : te.getMisc()) {
-                    if (BattleArmor.FIRE_PROTECTION.equals(equip.getType().getInternalName())) {
+                    if (equip.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
                         r = new Report(3395);
                         r.indent(2);
                         r.subject = te.getId();
@@ -12973,7 +12965,7 @@ public class Server implements Runnable {
         // TODO: can conv. infantry mount fire-resistant armor?
         for (Mounted mount : entity.getMisc()) {
             EquipmentType equip = mount.getType();
-            if (BattleArmor.FIRE_PROTECTION.equals(equip.getInternalName())) {
+            if (equip.hasFlag(MiscType.F_FIRE_RESISTANT)) {
                 r = new Report(5095);
                 r.subject = entity.getId();
                 r.indent(1);
@@ -15133,7 +15125,7 @@ public class Server implements Runnable {
                                     if ((at.getAmmoType() == AmmoType.T_SRM || at.getAmmoType() == AmmoType.T_MML) && at.getMunitionType() == AmmoType.M_INFERNO) {
                                         infernos += at.getRackSize() * m.getShotsLeft();
                                     }
-                                } else if (BattleArmor.FIRE_PROTECTION.equals(m.getType().getInternalName())) {
+                                } else if (m.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
                                     // immune to inferno explosion
                                     infernos = 0;
                                     break;

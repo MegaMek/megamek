@@ -517,6 +517,7 @@ public class MechSummaryCache {
                         .append(zEntry.getName()).append("\n");
                 loadReport.append("      Unable to load file: ").append(
                         ex.getMessage()).append("\n");
+                ex.printStackTrace();
                 if (!(ex.getMessage() == null))
                     hFailedFiles.put(zEntry.getName(), ex.getMessage());
                 continue;

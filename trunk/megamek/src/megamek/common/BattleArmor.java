@@ -116,9 +116,7 @@ public class BattleArmor extends Infantry implements Serializable {
     private int mediumStealthMod = 0;
     private int longStealthMod = 0;
     private String stealthName = null;
-
-    private int vibroClawDamage = -1;
-
+    
     // Public and Protected constants, constructors, and methods.
 
     /**
@@ -140,11 +138,6 @@ public class BattleArmor extends Infantry implements Serializable {
      * The internal name for Assault Claw equipment.
      */
     public static final String ASSAULT_CLAW = "BA-Assault Claws";
-
-    /**
-     * The internal name for Fire Protection equipment.
-     */
-    public static final String FIRE_PROTECTION = "BA-Fire Resistant Armor";
 
     /**
      * The internal name for Magnetic Clamp equipment.
@@ -297,17 +290,22 @@ public class BattleArmor extends Infantry implements Serializable {
         return getWalkMP(gravity, ignoreheat);
     }
     
-    public int getJumpMP(boolean gravity) {
-        return getJumpMP();
-    }
-
-    /**
-     * Returns this entity's current jumping MP, not effected by terrain,
-     * factored for Gravity. Certain types of equipment prevent a squad from
-     * jumping.
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Infantry#getJumpMP(boolean)
      */
-    public int getJumpMP() {
-        if (this.isBurdened()) {
+    public int getJumpMP(boolean gravity) {
+        return getJumpMP(gravity, false);
+    }
+    
+    /**
+     * get this BA's jump MP, possibly ignoring gravity and burden
+     * @param gravity
+     * @param ignoreBurden
+     * @return
+     */
+    public int getJumpMP(boolean gravity, boolean ignoreBurden) {
+        if (this.isBurdened() && !ignoreBurden) {
             return 0;
         }      
         if(null != game) {
@@ -316,7 +314,10 @@ public class BattleArmor extends Infantry implements Serializable {
                 return 0;
             }
         }
-        int mp = applyGravityEffectsOnMP(getOriginalJumpMP());
+        int mp = getOriginalJumpMP();
+        if (gravity) {
+            mp = applyGravityEffectsOnMP(mp);
+        }
         return mp;
     }
 
@@ -645,17 +646,120 @@ public class BattleArmor extends Infantry implements Serializable {
      * Calculates the battle value of this platoon.
      */
     public int calculateBattleValue() {
-        double bv = myBV;
-
-        // Adjust for missing troopers
-        bv = bv * getInternalRemainingPercent();
+        // we do this per trooper, then add up
+        double squadBV = 0;
+        for (int i=1; i < locations(); i++) {
+            if (this.getInternal(i) <= 0) {
+                continue;
+            }
+            double dBV = 0;
+            double armorBV = 2.5;
+            if (isFireResistant()) {
+                armorBV = 3.5;
+            }
+            dBV += getArmor(i) * armorBV + 1;
+            // improved sensors add 1
+            if (hasImprovedSensors()) {
+                dBV += 1;
+            }
+            // ECM adds 1
+            for (Mounted mounted : getMisc()) {
+                if (mounted.getType().hasFlag(MiscType.F_ECM)) {
+                    dBV += 1;
+                    break;
+                }
+            }
+            int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, false), false, false).getValue();
+            // get jump MP, ignoring burden
+            int jumpMP = getJumpMP(false, true);
+            int tmmJumped = Compute.getTargetMovementModifier(jumpMP, true, false).getValue();
+            double targetMovementModifier = Math.max(tmmRan, tmmJumped);
+            double tmmFactor = 1 + (targetMovementModifier / 10) + 0.1;
+            if (isStealthy) {
+                tmmFactor += 0.2;
+            }
+            // improved stealth get's an extra 0.1, for 0.3 total
+            if (stealthName != null && stealthName.equals(BattleArmor.EXPERT_STEALTH)) {
+                tmmFactor += 0.1;
+            }
+            if (isMimetic) {
+                tmmFactor += 0.3;
+            }
+                
+            dBV *= tmmFactor;
+            double oBV = 0;
+            for (Mounted weapon : this.getWeaponList()) {
+                if (weapon.getLocation() == LOC_SQUAD) {
+                    oBV += weapon.getType().getBV(this);
+                } else {
+                    // squad support, count at 1/troopercount
+                    oBV += weapon.getType().getBV(this)/getTotalOInternal();
+                }
+            }
+            for (Mounted ammo : this.getAmmo()) {
+                if (ammo.getLocation() == LOC_SQUAD) {
+                    oBV += ((AmmoType)ammo.getType()).getBABV();
+                }
+            }
+            if (isAntiMek()) {
+                // all direct fire weapons counted again
+                for (Mounted weapon : this.getWeaponList()) {
+                    if (weapon.getLocation() == LOC_SQUAD) {
+                        if (weapon.getType().hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                            oBV += weapon.getType().getBV(this);
+                        }
+                    }
+                }
+                // magnetic claws and vibro claws counted again
+                for (Mounted misc : this.getMisc()) {
+                    if (misc.getLocation() == LOC_SQUAD) {
+                        if (misc.getType().hasFlag(MiscType.F_ASSAULT_CLAW)
+                                || misc.getType().hasFlag(MiscType.F_VIBROCLAW)) {
+                            oBV += misc.getType().getBV(this);
+                        }
+                    }
+                }
+            }
+            int movement = Math.max(getWalkMP(false, false), getJumpMP(false));
+            double speedFactor = Math.pow(1+((double)(movement-5)/10), 1.2);
+            speedFactor = Math.round(speedFactor * 100) / 100.0;
+            oBV *= speedFactor;
+            squadBV += dBV;
+            if (i == 1) {
+                System.out.println(this.getChassis()+this.getModel());
+                System.out.println(dBV);
+                System.out.println(oBV);
+                System.out.println((oBV+dBV));
+            }
+            squadBV += oBV;
+        }
+        // we have now added all troopers, divide by current strength to then
+        // multiply by the unit size mod
+        squadBV /= getShootingStrength();
+        switch (getTotalOInternal()) {
+        case 1:
+            break;
+        case 2:
+            squadBV *= 2.2;
+            break;
+        case 3:
+            squadBV *= 3.6;
+            break;
+        case 4:
+            squadBV *= 5.2;
+            break;
+        case 5:
+            squadBV *= 7;
+            break;
+        case 6:
+            squadBV *= 9;
+            break;
+        } 
 
         // Adjust BV for crew skills.
         double pilotFactor = crew.getBVSkillMultiplier();
 
-        int finalBV = (int) Math.round(bv);
-
-        int retVal = (int) Math.round(finalBV * pilotFactor);
+        int retVal = (int) Math.round(squadBV * pilotFactor);
         return retVal;
     }
 
@@ -751,15 +855,6 @@ public class BattleArmor extends Infantry implements Serializable {
      */
     public boolean isStealthActive() {
         return (isStealthy || isMimetic || isSimpleCamo);
-    }
-
-    /**
-     * does this BA have fire resistant armor?
-     * 
-     * @return
-     */
-    public boolean hasFireresistantArmor() {
-        return armorType == 7;
     }
 
     /**
@@ -932,20 +1027,6 @@ public class BattleArmor extends Infantry implements Serializable {
         // Return the result.
         return result;
     } // End public TargetRoll getStealthModifier( char )
-
-    public int getVibroClawDamage() {
-        if (vibroClawDamage < 0) {
-            vibroClawDamage = 0;
-            for (Mounted mounted : getWeaponList()) {
-                if (mounted.getType().hasFlag(WeaponType.F_BOOST_SWARM)) {
-                    vibroClawDamage = ((WeaponType) (mounted.getType()))
-                            .getRackSize();
-                    break;
-                }
-            }
-        }
-        return vibroClawDamage;
-    }
 
     public double getCost() {
         // Hopefully the cost is correctly set.
@@ -1226,6 +1307,38 @@ public class BattleArmor extends Infantry implements Serializable {
             }
         }
         return claws;
+    }
+    
+    /**
+     * return if this BA has fire resistant armor
+     * @return
+     */
+    public boolean isFireResistant() {
+        // when BA is created from custom BA dialog
+        if (armorType == 7) {
+            return true;
+        // else
+        } else if (armorType == -1) {
+            for (Mounted equip : getMisc()) {
+                if (equip.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * return if this BA has improved sensors
+     * @return
+     */
+    public boolean hasImprovedSensors() {
+        for (Mounted equip : getMisc()) {
+            if (equip.getType().hasFlag(MiscType.F_BAP)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 } // End public class BattleArmor extends Infantry implements Serializable

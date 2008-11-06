@@ -131,7 +131,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             // normal one, so only 5 damage
         } else {
             if (target instanceof BattleArmor
-                    && ((BattleArmor) target).hasFireresistantArmor())
+                    && ((BattleArmor) target).isFireResistant())
                 toReturn = 10 / 2;
             toReturn = 10 + Compute.d6(2);
             if (bGlancing)

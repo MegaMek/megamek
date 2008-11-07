@@ -15,8 +15,10 @@
 package megamek;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -319,6 +321,7 @@ public class MegaMek {
         private static final String OPTION_LOG = "log"; //$NON-NLS-1$
         private static final String OPTION_EQUIPMENT_DB = "eqdb"; //$NON-NLS-1$
         private static final String OPTION_UNIT_VALIDATOR = "validate"; //$NON-NLS-1$
+        private static final String OPTION_UNIT_EXPORT = "export"; //$NON-NLS-1$
 
         public CommandLineParser(String[] args) {
             super(args);
@@ -379,6 +382,12 @@ public class MegaMek {
                     && getTokenValue().equals(OPTION_UNIT_VALIDATOR)) {
                 nextToken();
                 processUnitValidator();
+            }
+
+            if (getToken() == TOK_OPTION
+                    && getTokenValue().equals(OPTION_UNIT_EXPORT)) {
+                nextToken();
+                processUnitExporter();
             }
 
             if (getToken() == TOK_OPTION
@@ -488,6 +497,54 @@ public class MegaMek {
                 error("\"chassie model\" expected as input"); //$NON-NLS-1$                
             }
             System.exit(0);
+        }
+
+        private void processUnitExporter() throws ParseException {
+            String filename;
+            if (getToken() == TOK_LITERAL) {
+                filename = getTokenValue();
+                nextToken();
+
+                if (!new File("./docs").exists()) {
+                    new File("./docs").mkdir();
+                }
+
+                try {
+                    File file = new File("./docs/"+filename);
+                    BufferedWriter w = new BufferedWriter(new FileWriter(file));
+                    w.write("Megamek Unit Database");
+                    w.newLine();
+                    w.write("This file can be regenerated with java -jar MegaMek.jar -export filename");
+                    w.newLine();
+                    w.write("Type,Name,BV,Cost,Year,Canon");
+                    w.newLine();
+
+                    MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
+                    for (MechSummary unit : units) {
+                        w.write(unit.getUnitType());
+                        w.write(",");
+                        w.write(unit.getName());
+                        w.write(",");
+                        w.write(Integer.toString(unit.getBV()));
+                        w.write(",");
+                        w.write(Integer.toString(unit.getCost()));
+                        w.write(",");
+                        w.write(Integer.toString(unit.getYear()));
+                        w.write(",");
+                        if ( unit.isCanon() ) {
+                            w.write("Canon");
+                        }else {
+                            w.write("Non-Canon");
+                        }
+                        w.newLine();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            System.exit(0);
+
         }
 
         private void processRestOfInput() {

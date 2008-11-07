@@ -846,6 +846,7 @@ public class WeaponType extends EquipmentType {
         addType(new CLBALightMG());
         addType(new CLBAHeavyMG());
         addType(new ISBAMagshotGaussRifle());
+        addType(new CLBAAPGaussRifle());
         
         //Naval weapons
         addType(new NL35Weapon());

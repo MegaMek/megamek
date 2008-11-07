@@ -48,6 +48,8 @@ public class Sensor implements Serializable {
     public static final String LIGHT_AP = "CLLightActiveProbe";
     public static final String ISIMPROVED = "ISImprovedSensors";
     public static final String CLIMPROVED = "CLImprovedSensors";
+    public static final String CLBALIGHT_AP = "CLBALightActiveProbe";
+    public static final String ISBALIGHT_AP = "ISBALightActiveProbe";
     
     private static String[] sensorNames = {"Mech Radar", "Vehicle Radar", "Beagle Active Probe", "Clan BAP", "Bloodhound AP",
                                     "Watchdog", "Light AP", "Mech IR", "Vehicle IR", "Mech Magscan", "Vehicle Magscan",

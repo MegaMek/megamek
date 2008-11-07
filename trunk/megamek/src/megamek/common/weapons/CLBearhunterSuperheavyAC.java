@@ -52,7 +52,7 @@ public class CLBearhunterSuperheavyAC extends Weapon {
         this.extremeRange = 2;
         this.tonnage = 0.0f;
         this.criticals = 0;
-        this.bv = 8;
+        this.bv = 4;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
     }
 

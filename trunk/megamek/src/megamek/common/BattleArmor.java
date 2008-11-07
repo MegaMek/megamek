@@ -602,19 +602,19 @@ public class BattleArmor extends Infantry implements Serializable {
             this.shortStealthMod = 0;
             this.mediumStealthMod = 1;
             this.longStealthMod = 2;
-            this.stealthName = "basic stealth";
+            this.stealthName = name;
         } else if (BattleArmor.ADVANCED_STEALTH.equals(name)) {
             this.isStealthy = true;
             this.shortStealthMod = 1;
             this.mediumStealthMod = 1;
             this.longStealthMod = 2;
-            this.stealthName = "standard stealth";
+            this.stealthName = name;
         } else if (BattleArmor.EXPERT_STEALTH.equals(name)) {
             this.isStealthy = true;
             this.shortStealthMod = 1;
             this.mediumStealthMod = 2;
             this.longStealthMod = 3;
-            this.stealthName = "improved stealth";
+            this.stealthName = name;
         } else if (BattleArmor.MIMETIC_CAMO.equals(name)) {
             this.isMimetic = true;
         } else if (BattleArmor.SIMPLE_CAMO.equals(name)) {
@@ -662,6 +662,10 @@ public class BattleArmor extends Infantry implements Serializable {
             if (hasImprovedSensors()) {
                 dBV += 1;
             }
+            // active probes add 1
+            if (hasActiveProbe()) {
+                dBV += 1;
+            }
             // ECM adds 1
             for (Mounted mounted : getMisc()) {
                 if (mounted.getType().hasFlag(MiscType.F_ECM)) {
@@ -675,6 +679,9 @@ public class BattleArmor extends Infantry implements Serializable {
             int tmmJumped = Compute.getTargetMovementModifier(jumpMP, true, false).getValue();
             double targetMovementModifier = Math.max(tmmRan, tmmJumped);
             double tmmFactor = 1 + (targetMovementModifier / 10) + 0.1;
+            if (isSimpleCamo) {
+                tmmFactor += 0.2;
+            }
             if (isStealthy) {
                 tmmFactor += 0.2;
             }
@@ -705,7 +712,7 @@ public class BattleArmor extends Infantry implements Serializable {
                 // all direct fire weapons counted again
                 for (Mounted weapon : this.getWeaponList()) {
                     if (weapon.getLocation() == LOC_SQUAD) {
-                        if (weapon.getType().hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                        if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
                             oBV += weapon.getType().getBV(this);
                         }
                     }
@@ -1335,6 +1342,24 @@ public class BattleArmor extends Infantry implements Serializable {
     public boolean hasImprovedSensors() {
         for (Mounted equip : getMisc()) {
             if (equip.getType().hasFlag(MiscType.F_BAP)) {
+                if (equip.getType().getInternalName().equals(Sensor.ISIMPROVED)
+                        || equip.getType().getInternalName().equals(Sensor.CLIMPROVED)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * return if the BA has a light active probe
+     * @return
+     */
+    public boolean hasActiveProbe() {
+        for (Mounted equip : getMisc()) {
+            if (equip.getType().hasFlag(MiscType.F_BAP)) {
+                if (equip.getType().getInternalName().equals(Sensor.CLBALIGHT_AP)
+                        || equip.getType().getInternalName().equals(Sensor.ISBALIGHT_AP))
                 return true;
             }
         }

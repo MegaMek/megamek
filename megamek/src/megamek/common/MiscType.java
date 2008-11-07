@@ -565,6 +565,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISImprovedSensors());
         EquipmentType.addType(createCLImprovedSensors());
         EquipmentType.addType(createBAVibroClaw());
+        EquipmentType.addType(createCLBALightActiveProbe());
+        EquipmentType.addType(createISBALightActiveProbe());
         
         //support vee stuff
         EquipmentType.addType(createLiftHoist());
@@ -2287,6 +2289,40 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_BAP;
         misc.bv = 7;
+
+        return misc;
+    }
+    
+    public static MiscType createCLBALightActiveProbe() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Light Active Probe";
+        misc.techLevel = TechConstants.T_CLAN_TW;
+        misc.setInternalName(Sensor.CLBALIGHT_AP);
+        misc.tonnage = 0.15f;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.cost = 50000;
+        misc.spreadable = false;
+        misc.flags |= F_BAP;
+        misc.bv = 0;
+
+        return misc;
+    }
+    
+    public static MiscType createISBALightActiveProbe() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Light Active Probe";
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.setInternalName(Sensor.ISBALIGHT_AP);
+        misc.tonnage = 0.25f;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.cost = 50000;
+        misc.spreadable = false;
+        misc.flags |= F_BAP;
+        misc.bv = 0;
 
         return misc;
     }

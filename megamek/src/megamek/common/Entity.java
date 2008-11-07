@@ -3038,13 +3038,13 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             if (type instanceof MiscType && type.hasFlag(MiscType.F_BAP) && !m.isInoperable()) {
                 // System.err.println("BAP type name: "+m.getName()+"
                 // internalName: "+((MiscType)m.getType()).internalName);
-                if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals("Bloodhound Active Probe"))
+                if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP))
                     return 8;
-                if ((m.getType()).getInternalName().equals("CLActiveProbe") || (m.getType()).getInternalName().equals("WatchdogECMSuite"))
+                if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP) || (m.getType()).getInternalName().equals(Sensor.WATCHDOG) || (m.getType().getInternalName().equals(Sensor.CLBALIGHT_AP)))
                     return 5;
-                if ((m.getType()).getInternalName().equals("CLLightActiveProbe") || m.getType().getInternalName().equals("CLImprovedSensors"))
+                if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP) || m.getType().getInternalName().equals(Sensor.CLIMPROVED))
                     return 3;
-                if (m.getType().getInternalName().equals("ISImprovedSensors"))
+                if (m.getType().getInternalName().equals(Sensor.ISIMPROVED))
                     return 2;
                 return 4;// everthing else should be range 4
             }

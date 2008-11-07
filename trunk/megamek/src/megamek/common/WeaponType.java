@@ -504,8 +504,6 @@ public class WeaponType extends EquipmentType {
         addType(new CLVehicleFlamer());
         addType(new ISVehicleFlamer());
         addType(new ISHeavyFlamer());
-        addType(new ISBAFlamer());
-        addType(new CLBAFlamer());
         // Autocannons
         addType(new ISAC2());
         addType(new ISAC5());
@@ -847,6 +845,8 @@ public class WeaponType extends EquipmentType {
         addType(new CLBAHeavyMG());
         addType(new ISBAMagshotGaussRifle());
         addType(new CLBAAPGaussRifle());
+        addType(new ISBAFlamer());
+        addType(new CLBAFlamer());
         
         //Naval weapons
         addType(new NL35Weapon());

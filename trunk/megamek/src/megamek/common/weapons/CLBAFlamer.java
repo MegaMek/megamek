@@ -35,8 +35,8 @@ public class CLBAFlamer extends FlamerWeapon {
         super();
         this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "Flamer";
-        this.setInternalName("CLFlamer");
-        this.addLookupName("Clan Flamer");
+        this.setInternalName("CLBAFlamer");
+        this.addLookupName("Clan BA Flamer");
         this.heat = 3;
         this.damage = 2;
         this.shortRange = 1;

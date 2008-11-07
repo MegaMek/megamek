@@ -705,7 +705,8 @@ public class BattleArmor extends Infantry implements Serializable {
             }
             for (Mounted ammo : this.getAmmo()) {
                 if (ammo.getLocation() == LOC_SQUAD) {
-                    oBV += ((AmmoType)ammo.getType()).getBABV();
+                    double ammoBV =((AmmoType)ammo.getType()).getBABV(); 
+                    oBV += ammoBV;
                 }
             }
             if (isAntiMek()) {

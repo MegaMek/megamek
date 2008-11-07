@@ -35,8 +35,7 @@ public class ISBAFlamer extends FlamerWeapon {
         super();
         this.techLevel = TechConstants.T_INTRO_BOXSET;
         this.name = "Flamer";
-        this.setInternalName(this.name);
-        this.addLookupName("IS BA Flamer");
+        this.setInternalName("IS BA Flamer");
         this.addLookupName("ISBAFlamer");
         this.heat = 3;
         this.damage = 2;

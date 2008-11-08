@@ -351,14 +351,17 @@ public class MiscType extends EquipmentType {
                 return (int) Math.ceil(fTons / 5.0f);
             }
             return (int) Math.ceil(fTons / 4.0f);
-        } else if (EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_FERRO_FIBROUS).equals(internalName)) {
+        } else if (EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS).equals(internalName) || EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE).equals(internalName)) {
             if (entity.isClanArmor()) {
                 return 7;
             }
             return 14;
-        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL)
-                .equals(internalName)) {
+        } else if (EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE).equals(internalName)) {
+            if (entity.isClanArmor()) {
+                return 5;
+            }
+            return 10;
+        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName)) {
             if (entity.isClan()) {
                 return 7;
             }

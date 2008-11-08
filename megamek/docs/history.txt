@@ -56,6 +56,7 @@ v0.33.35-dev (SVN)
 + BA BV, not yet done
 + Added Canon Column to -export printout
 + Removed Unused Imports
++ Bug: Reflective and Reactive armor not calculating the correct amount of crits
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

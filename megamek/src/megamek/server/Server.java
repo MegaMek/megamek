@@ -2060,6 +2060,7 @@ public class Server implements Runnable {
             break;
         case PHASE_TARGETING:
             vPhaseReport.addElement(new Report(1035, Report.PUBLIC));
+            resolveAllButWeaponAttacks();
             resolveOnlyWeaponAttacks();
             handleAttacks();
             // check reports

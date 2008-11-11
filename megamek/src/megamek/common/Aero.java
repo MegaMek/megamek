@@ -599,14 +599,16 @@ public class Aero
             case LOC_RWING:
                 if(mounted.isRearMounted()) {
                     arc = Compute.ARC_RWINGA;
+                } else {
+                    arc = Compute.ARC_RWING;
                 }
-                arc = Compute.ARC_RWING;
                 break;
             case LOC_LWING:
                 if(mounted.isRearMounted()) {
                     arc = Compute.ARC_LWINGA;
+                } else {
+                    arc = Compute.ARC_LWING;
                 }
-                arc = Compute.ARC_LWING;
                 break;
             case LOC_AFT:
                 arc = Compute.ARC_AFT;
@@ -910,7 +912,7 @@ public class Aero
         
         dbv += (getTotalArmor()+modularArmor) * 2.5;
 
-        dbv += getTotalInternal() * 2.0;
+        dbv += getSI() * 2.0;
 
         // add defensive equipment
         double dEquipmentBV = 0;
@@ -944,11 +946,6 @@ public class Aero
                 continue;
             }
 
-            // don't count oneshot ammo
-            if (loc == LOC_NONE) {
-                continue;
-            }
-            
             // CASE II means no subtraction
             if (hasCASEII(loc)) {
                 continue;
@@ -965,7 +962,7 @@ public class Aero
             }
 
             //only count each ammo type once
-            if(null == ammoTypesUsed.get(etype.getName()) || ammoTypesUsed.get(etype.getName())) {
+            if(null != ammoTypesUsed.get(etype.getName()) && ammoTypesUsed.get(etype.getName())) {
                 continue;
             }
             
@@ -1052,6 +1049,10 @@ public class Aero
             if (wtype.hasFlag(WeaponType.F_AMS)) {
                 continue;
             }
+            // don't count screen launchers, they are defensive
+            if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
+                continue;
+            }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
                 double mgaBV = 0;
@@ -1086,6 +1087,10 @@ public class Aero
 
                 // don't count AMS, it's defensive
                 if (wtype.hasFlag(WeaponType.F_AMS)) {
+                    continue;
+                }
+                //don't count screen launchers, they are defensive
+                if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
                     continue;
                 }
                 // calc MG Array here:
@@ -1146,6 +1151,10 @@ public class Aero
                     continue;
                 // don't count AMS, it's defensive
                 if (wtype.hasFlag(WeaponType.F_AMS)) {
+                    continue;
+                }
+                //don't count screen launchers, they are defensive
+                if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
                     continue;
                 }
                 // calc MG Array here:
@@ -1269,6 +1278,10 @@ public class Aero
 
             // don't count AMS, it's defensive
             if (atype.getAmmoType() == AmmoType.T_AMS) {
+                continue;
+            }
+            //don't count screen launchers, they are defensive
+            if(atype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
                 continue;
             }
 

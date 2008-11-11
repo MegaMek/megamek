@@ -290,14 +290,16 @@ public class SmallCraft extends Aero {
                 case LOC_RWING:
                     if(mounted.isRearMounted()) {
                         arc = Compute.ARC_RWINGA;
+                    } else {
+                        arc = Compute.ARC_RWING;
                     }
-                    arc = Compute.ARC_RWING;
                     break;
                 case LOC_LWING:
                     if(mounted.isRearMounted()) {
                         arc = Compute.ARC_LWINGA;
+                    } else {
+                        arc = Compute.ARC_LWING;
                     }
-                    arc = Compute.ARC_LWING;
                     break;
                 case LOC_AFT:
                     arc = Compute.ARC_AFT;
@@ -313,14 +315,16 @@ public class SmallCraft extends Aero {
             case LOC_RWING:
                 if(mounted.isRearMounted()) {
                     arc = Compute.ARC_RIGHTSIDEA_SPHERE;
+                } else {
+                    arc = Compute.ARC_RIGHTSIDE_SPHERE;
                 }
-                arc = Compute.ARC_RIGHTSIDE_SPHERE;
                 break;
             case LOC_LWING:
                 if(mounted.isRearMounted()) {
                     arc = Compute.ARC_LEFTSIDEA_SPHERE;
+                } else {
+                    arc = Compute.ARC_LEFTSIDE_SPHERE;
                 }
-                arc = Compute.ARC_LEFTSIDE_SPHERE;
                 break;
             case LOC_AFT:
                 arc = Compute.ARC_AFT;

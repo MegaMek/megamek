@@ -120,7 +120,10 @@ public class Sensor implements Serializable {
             return 0;
         }
         
-        if(type != TYPE_MEK_SEISMIC && type != TYPE_VEE_SEISMIC && los.isBlockedByHill()) {
+        if(type != TYPE_MEK_SEISMIC && type != TYPE_VEE_SEISMIC 
+                && type != TYPE_MEK_MAGSCAN && type != TYPE_VEE_MAGSCAN
+                && !isBAP()
+                && los.isBlockedByHill()) {
             return 0;
         }
         

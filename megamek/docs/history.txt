@@ -58,6 +58,7 @@ v0.33.35-dev (SVN)
 + Removed Unused Imports
 + Bug: Reflective and Reactive armor not calculating the correct amount of crits
 + Bug 2146268: artillery does not fire when torsotwisting
++ Magscan and Active Probe sensors are not blocked by hills (see http://www.classicbattletech.com/forums/index.php/topic,43036.0.html)
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

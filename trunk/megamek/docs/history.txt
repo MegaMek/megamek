@@ -62,6 +62,7 @@ v0.33.35-dev (SVN)
 + Updated Dropship BV to TM Errata 1.0
 + Added Mounted object to CriticalSlot
 + Added get/set methods for Mounted in CriticalSlot
++ Bug 2258241: Simultaneous fire with Protos caused server crash
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

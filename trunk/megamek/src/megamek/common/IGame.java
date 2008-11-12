@@ -802,7 +802,7 @@ public interface IGame {
      * Removes the first turn found that the specified entity can move in.
      * Used when a turn is played out of order
      */
-    public abstract void removeFirstTurnFor(Entity entity);
+    public abstract GameTurn removeFirstTurnFor(Entity entity);
 
     /**
      * Check each player for the presence of a Battle Armor squad equipped with

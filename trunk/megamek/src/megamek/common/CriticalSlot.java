@@ -26,6 +26,8 @@ public class CriticalSlot implements Serializable {
 
     private int type;
     private int index;
+    private Mounted mount;
+    
     private boolean hit; // hit
     private boolean missing; // location destroyed
     private boolean destroyed;
@@ -43,6 +45,17 @@ public class CriticalSlot implements Serializable {
         this.hittable = hittable;
     }
 
+    public CriticalSlot(int type, Mounted mount) {
+        this(type,mount,true);
+    }
+    
+    public CriticalSlot(int type, Mounted mount, boolean hittable) {
+        this.type = type;
+        this.index = -1;
+        this.hittable = hittable;
+        this.setMount(mount);
+    }
+    
     public int getType() {
         return type;
     }
@@ -130,5 +143,19 @@ public class CriticalSlot implements Serializable {
         }
         CriticalSlot other = (CriticalSlot) object;
         return other.getType() == this.type && other.getIndex() == this.index;
+    }
+
+    /**
+     * @param mount the mount to set
+     */
+    public void setMount(Mounted mount) {
+        this.mount = mount;
+    }
+
+    /**
+     * @return the mount
+     */
+    public Mounted getMount() {
+        return mount;
     }
 }

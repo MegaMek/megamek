@@ -2107,7 +2107,9 @@ public abstract class Mech extends Entity implements Serializable {
         int num = getEquipmentNum(mounted);
 
         for (int i = 0; i < slots; i++) {
-            addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num, mounted.getType().isHittable()));
+            CriticalSlot cs = new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num, mounted.getType().isHittable());
+            cs.setMount(mounted);
+            addCritical(loc, cs);
         }
     }
 

@@ -1476,9 +1476,10 @@ public class Server implements Runnable {
             //turn played out of order
             outOfOrder = true;
             entityUsed.setDone(false);
-            game.removeFirstTurnFor(entityUsed);
+            GameTurn removed = game.removeFirstTurnFor(entityUsed);
             entityUsed.setDone(true);
             turnsChanged = true;
+            if(removed != null) turn = removed;
         }
         final int playerId = null == entityUsed ? Player.PLAYER_NONE : entityUsed.getOwnerId();
         boolean infMoved = entityUsed instanceof Infantry;

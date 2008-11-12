@@ -1734,16 +1734,16 @@ public class Game implements Serializable, IGame {
      * Removes the first turn found that the specified entity can move in.
      * Used when a turn is played out of order
      */
-    public void removeFirstTurnFor(Entity entity) {
+    public GameTurn removeFirstTurnFor(Entity entity) {
         assert(phase != Phase.PHASE_MOVEMENT); //special move multi cases ignored
         for (int i = turnIndex; i < turnVector.size(); i++) {
             GameTurn turn = turnVector.elementAt(i);
             if (turn.isValidEntity(entity, this)) {
                 turnVector.removeElementAt(i);
-                break;
+                return turn;
             }
         }
-
+        return null;
     }
     /**
      * Removes the last, next turn found that the specified entity can move in.

@@ -64,6 +64,8 @@ v0.33.35-dev (SVN)
 + Added get/set methods for Mounted in CriticalSlot
 + Bug 2258241: Simultaneous fire with Protos caused server crash
 + Bug 2272739: A-pod doing no damage
++ Bug: extra BV from C3 should be based off base BV; ignoring pilot/gunnery of
+    units in force
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

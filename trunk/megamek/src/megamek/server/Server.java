@@ -8540,7 +8540,7 @@ public class Server implements Runnable {
             if (target instanceof Infantry && !(target instanceof BattleArmor)) {
 
                 // Roll d6-1 for damage.
-                final int damage = Math.min(1, Compute.d6() - 1);
+                final int damage = Math.max(1, Compute.d6() - 1);
 
                 // Damage the platoon.
                 addReport(damageEntity(target, new HitData(Infantry.LOC_INFANTRY), damage));
@@ -8626,7 +8626,7 @@ public class Server implements Runnable {
         // Is this an unarmored infantry platoon?
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
 
-            // Roll d6-1 for damage.
+            // Roll d6 for damage.
             final int damage = Compute.d6();
 
             // Damage the platoon.
@@ -8637,7 +8637,7 @@ public class Server implements Runnable {
 
             // End target-is-unarmored
         } else if ( target instanceof BattleArmor ){
-            // Roll d6-1 for damage.
+            // 20 damage in 5 point clusters
             final int damage = 5;
 
             // Damage the squad.

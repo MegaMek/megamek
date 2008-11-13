@@ -17,13 +17,11 @@
 package megamek.common;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Vector;
 
 import megamek.common.weapons.BayWeapon;
 
@@ -174,7 +172,7 @@ public class Dropship extends SmallCraft {
         return Math.round(cost * weightMultiplier);
         
     }
-    public int calculateBattleValue(boolean ignoreC3) {
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -305,10 +303,10 @@ public class Dropship extends SmallCraft {
         double oppArcMult = 0.5;
         double highBV = 0.0;
         double heatUsed = 0.0;
-        Set set= arcBVs.keySet();
-        Iterator iter = set.iterator();
+        Set<Integer> set= arcBVs.keySet();
+        Iterator<Integer> iter = set.iterator();
         while(iter.hasNext()) {
-            int key = (Integer)iter.next();
+            int key = iter.next();
             if(arcBVs.get(key) > highBV) {
                 highArc = key;
                 highBV = arcBVs.get(key);
@@ -513,10 +511,10 @@ public class Dropship extends SmallCraft {
         // times
         if (((hasC3MM() && calculateFreeC3MNodes() < 2) || (hasC3M() && calculateFreeC3Nodes() < 3) || (hasC3S() && C3Master > NONE) || (hasC3i() && calculateFreeC3Nodes() < 5)) && !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(true);
+            totalForceBV += this.calculateBattleValue(true, true);
             for (Entity e : game.getC3NetworkMembers(this)) {
                 if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV += e.calculateBattleValue(true);
+                    totalForceBV += e.calculateBattleValue(true, true);
                 }
             }
             xbv += totalForceBV *= 0.05;
@@ -525,7 +523,10 @@ public class Dropship extends SmallCraft {
         int finalBV = (int) Math.round(dbv + obv + xbv);
 
         // and then factor in pilot
-        double pilotFactor = crew.getBVSkillMultiplier();
+        double pilotFactor = 1;
+        if (!ignorePilot) {
+            pilotFactor = crew.getBVSkillMultiplier();
+        }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
 

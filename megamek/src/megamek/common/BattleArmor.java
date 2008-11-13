@@ -645,7 +645,7 @@ public class BattleArmor extends Infantry implements Serializable {
     /**
      * Calculates the battle value of this platoon.
      */
-    public int calculateBattleValue() {
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         // we do this per trooper, then add up
         double squadBV = 0;
         for (int i=1; i < locations(); i++) {
@@ -765,7 +765,10 @@ public class BattleArmor extends Infantry implements Serializable {
         } 
 
         // Adjust BV for crew skills.
-        double pilotFactor = crew.getBVSkillMultiplier();
+        double pilotFactor = 1;
+        if (!ignorePilot) {
+            pilotFactor = crew.getBVSkillMultiplier();
+        }
 
         int retVal = (int) Math.round(squadBV * pilotFactor);
         return retVal;

@@ -597,13 +597,13 @@ public class Tank extends Entity implements Serializable {
      * Calculates the battle value of this mech
      */
     public int calculateBattleValue() {
-        return calculateBattleValue(false);
+        return calculateBattleValue(false, false);
     }
 
     /**
      * Calculates the battle value of this tank
      */
-    public int calculateBattleValue(boolean ignoreC3) {
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
         
@@ -864,10 +864,10 @@ public class Tank extends Entity implements Serializable {
                 || (hasC3S() && C3Master > NONE) || (hasC3i() && calculateFreeC3Nodes() < 5))
                 && !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(true);
+            totalForceBV += this.calculateBattleValue(true, true);
             for (Entity e : game.getC3NetworkMembers(this)) {
                 if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV += e.calculateBattleValue(true);
+                    totalForceBV += e.calculateBattleValue(true, true);
                 }
             }
             xbv += totalForceBV *= 0.05;
@@ -875,8 +875,11 @@ public class Tank extends Entity implements Serializable {
 
         int finalBV = (int) Math.round(dbv + obv + xbv);
 
-        // and then factor in pilot
-        double pilotFactor = crew.getBVSkillMultiplier();
+         // and then factor in pilot
+        double pilotFactor = 1;
+        if (!ignorePilot) {
+            pilotFactor = crew.getBVSkillMultiplier();
+        }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
 

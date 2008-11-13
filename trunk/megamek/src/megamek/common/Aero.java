@@ -891,15 +891,19 @@ public class Aero
         return LOC_NONE;
     }
 
-    /**
-     * Calculates the battle value of this ASF
-     *for the moment return zero
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#calculateBattleValue()
      */
     public int calculateBattleValue() {
-        return calculateBattleValue(false);
+        return calculateBattleValue(false, false);
     }
     
-    public int calculateBattleValue(boolean ignoreC3) {
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#calculateBattleValue(boolean, boolean)
+     */
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -1361,10 +1365,10 @@ public class Aero
         // times
         if (((hasC3MM() && calculateFreeC3MNodes() < 2) || (hasC3M() && calculateFreeC3Nodes() < 3) || (hasC3S() && C3Master > NONE) || (hasC3i() && calculateFreeC3Nodes() < 5)) && !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(true);
+            totalForceBV += this.calculateBattleValue(true, true);
             for (Entity e : game.getC3NetworkMembers(this)) {
                 if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV += e.calculateBattleValue(true);
+                    totalForceBV += e.calculateBattleValue(true, true);
                 }
             }
             xbv += totalForceBV *= 0.05;
@@ -1373,7 +1377,10 @@ public class Aero
         int finalBV = (int) Math.round(dbv + obv + xbv);
 
         // and then factor in pilot
-        double pilotFactor = crew.getBVSkillMultiplier();
+        double pilotFactor = 1;
+        if (!ignorePilot) {
+            pilotFactor = crew.getBVSkillMultiplier();
+        }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
 

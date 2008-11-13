@@ -361,13 +361,13 @@ public class GunEmplacement extends Entity implements Serializable {
      * Calculates the battle value of this emplacement
      */
     public int calculateBattleValue() {
-        return calculateBattleValue(false);
+        return calculateBattleValue(false, false);
     }
 
     /**
      * Calculates the battle value of this emplacement
      */
-    public int calculateBattleValue(boolean ignoreC3) {
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         // using structures BV rules from MaxTech
 
         double dbv = 0; // defensive battle value
@@ -474,17 +474,20 @@ public class GunEmplacement extends Entity implements Serializable {
                 || (hasC3S() && C3Master > NONE) || (hasC3i() && calculateFreeC3Nodes() < 5))
                 && !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(true);
+            totalForceBV += this.calculateBattleValue(true, true);
             for (Entity e : game.getC3NetworkMembers(this)) {
                 if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV += e.calculateBattleValue(true);
+                    totalForceBV += e.calculateBattleValue(true, true);
                 }
             }
             xbv += totalForceBV *= 0.05;
         }
 
         // and then factor in pilot
-        double pilotFactor = crew.getBVSkillMultiplier();
+        double pilotFactor = 1;
+        if (!ignorePilot) {
+            pilotFactor = crew.getBVSkillMultiplier();
+        }
 
         // structure modifier
         obv *= 0.44;

@@ -528,11 +528,19 @@ public class Infantry extends Entity implements Serializable {
     public boolean hasHittableCriticals(int loc) {
         return false;
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#calculateBattleValue()
+     */
+    public int calculateBattleValue() {
+        return calculateBattleValue(false, false);
+    }
 
     /**
      * Calculates the battle value of this platoon.
      */
-    public int calculateBattleValue() {
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv;
         dbv = this.getInternal(Entity.LOC_NONE) * 1.5;
         int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true), false, false)
@@ -581,7 +589,10 @@ public class Infantry extends Entity implements Serializable {
         obv = wbv * speedFactor;
         int bv = (int) Math.round(obv + dbv);
         // and then factor in pilot
-        double pilotFactor = crew.getBVSkillMultiplier();
+        double pilotFactor = 1;
+        if (!ignorePilot) {
+            pilotFactor = crew.getBVSkillMultiplier();
+        }
         return (int) Math.round((bv) * pilotFactor);
 
     } // End public int calculateBattleValue()

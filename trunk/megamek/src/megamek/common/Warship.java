@@ -173,7 +173,7 @@ public class Warship extends Jumpship {
      * doing the same calculations as in
      * the TechManual, but with the corrected multipliers
      */
-    public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -506,13 +506,13 @@ public class Warship extends Jumpship {
         if (((hasC3MM() && calculateFreeC3MNodes() < 2) ||
             (hasC3M() && calculateFreeC3Nodes() < 3) ||
             (hasC3S() && C3Master > NONE) ||
-            (hasC3i() && calculateFreeC3Nodes() < 5) ||
-            assumeLinkedC3) && !ignoreC3 && (game != null)) {
+            (hasC3i() && calculateFreeC3Nodes() < 5)) &&
+            !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(false, true);
+            totalForceBV += this.calculateBattleValue(true, true);
             for (Entity e : game.getC3NetworkMembers(this)) {
                 if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV+=e.calculateBattleValue(true);
+                    totalForceBV+=e.calculateBattleValue(true, true);
                 }
             }
             xbv += totalForceBV *= 0.05;
@@ -524,8 +524,11 @@ public class Warship extends Jumpship {
         //double b = 2;
         //int finalBV = (int)Math.round((8 * dbv * obv)/((a * dbv) + (b * obv)));
         
-        // and then factor in pilot
-        double pilotFactor = crew.getBVSkillMultiplier();
+        // and then factor in pilot#
+        double pilotFactor = 1;
+        if (!ignorePilot) {
+            pilotFactor = crew.getBVSkillMultiplier();
+        }
         
         int retVal = (int)Math.round((finalBV) * pilotFactor);
         
@@ -538,8 +541,8 @@ public class Warship extends Jumpship {
     /**
      * Calculates the battle value of this ASF
      */
-    public int calculateBattleValue(boolean assumeLinkedC3) {
-        return calculateBattleValue(assumeLinkedC3, false);
+    public int calculateBattleValue() {
+        return calculateBattleValue(false, false);
     }
     
     public double getCost() {

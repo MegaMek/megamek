@@ -166,6 +166,8 @@ public class FighterSquadron extends Aero {
         this.hasTC = b;
     }
     
+
+    
     /*I am getting wierd naming stuff so I am going to disable this for the time being
     * numbering of unique display names is off
     public void compileSquadron() {
@@ -297,14 +299,17 @@ public class FighterSquadron extends Aero {
         this.updateAllWeaponBays();
     }
     */
-    
+
     /*
-     * No real Canon way to do this. I could just add up the BV of the individual
-     * fighters, but I want this to be able to adjust during the battle
-     * to account for damage. So I follow the procedure for other craft.
+     * (non-Javadoc)
+     * @see megamek.common.Aero#calculateBattleValue(boolean, boolean)
      */
-    
-    public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+       /*
+        * No real Canon way to do this. I could just add up the BV of the individual
+        * fighters, but I want this to be able to adjust during the battle
+        * to account for damage. So I follow the procedure for other craft.
+        */
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -630,13 +635,13 @@ public class FighterSquadron extends Aero {
         if (((hasC3MM() && calculateFreeC3MNodes() < 2) ||
             (hasC3M() && calculateFreeC3Nodes() < 3) ||
             (hasC3S() && C3Master > NONE) ||
-            (hasC3i() && calculateFreeC3Nodes() < 5) ||
-            assumeLinkedC3) && !ignoreC3 && (game != null)) {
+            (hasC3i() && calculateFreeC3Nodes() < 5))
+            && !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(false, true);
+            totalForceBV += this.calculateBattleValue(true, true);
             for (Entity e : game.getC3NetworkMembers(this)) {
                 if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV+=e.calculateBattleValue(true);
+                    totalForceBV+=e.calculateBattleValue(true, true);
                 }
             }
             xbv += totalForceBV *= 0.05;
@@ -645,7 +650,10 @@ public class FighterSquadron extends Aero {
         int finalBV = (int)Math.round(dbv + obv + xbv);
 
         // and then factor in pilot
-        double pilotFactor = crew.getBVSkillMultiplier();
+        double pilotFactor = 1;
+        if (!ignorePilot) {
+            pilotFactor = crew.getBVSkillMultiplier();
+        }
         
         int retVal = (int)Math.round((finalBV) * pilotFactor);
         
@@ -655,11 +663,12 @@ public class FighterSquadron extends Aero {
         return retVal;
     }
     
-    /**
-     * Calculates the battle value of this ASF
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Aero#calculateBattleValue()
      */
-    public int calculateBattleValue(boolean assumeLinkedC3) {
-        return calculateBattleValue(assumeLinkedC3, false);
+    public int calculateBattleValue() {
+        return calculateBattleValue(false, false);
     }
     
     public boolean doomedInAtmosphere() {

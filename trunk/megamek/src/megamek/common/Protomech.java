@@ -710,11 +710,19 @@ public class Protomech extends Entity implements Serializable {
             super.addEquipment(mounted, loc, rearMounted);
         }
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#calculateBattleValue()
+     */
+    public int calculateBattleValue() {
+        return calculateBattleValue(false, false);
+    }
 
     /**
      * Calculates the battle value of this pmech.
      */
-    public int calculateBattleValue() {
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -911,7 +919,10 @@ public class Protomech extends Entity implements Serializable {
         int finalBV = (int) Math.round(dbv + obv + xbv);
 
         // and then factor in pilot
-        double pilotFactor = crew.getBVSkillMultiplier();
+        double pilotFactor = 1;
+        if (!ignorePilot) {
+            pilotFactor = crew.getBVSkillMultiplier();
+        }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
         return retVal;

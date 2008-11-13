@@ -3866,8 +3866,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * @param ignoreC3
      *            if the contribution of the C3 computer should be ignored when
      *            calculating BV.
+     * @param ignorePilot
+     *            if the extra BV due to piloting skill should be ignore, needed
+     *            for c3 bv
      */
-    public int calculateBattleValue(boolean ignoreC3) {
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         return calculateBattleValue();
     }
 

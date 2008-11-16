@@ -499,7 +499,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createBridgeKit());
         EquipmentType.addType(createVibroShovel());
         EquipmentType.addType(createDemolitionCharge());
-        EquipmentType.addType(createSuperCharger());
+        EquipmentType.addType(createISSuperCharger());
+        EquipmentType.addType(createCLSuperCharger());
         EquipmentType.addType(createISMediumShield());
         EquipmentType.addType(createISSmallShield());
         EquipmentType.addType(createISLargeShield());
@@ -856,7 +857,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createSuperCharger() {
+    public static MiscType createISSuperCharger() {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
@@ -865,6 +866,26 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Super Charger");
         misc.addLookupName("SuperCharger");
         misc.addLookupName("Supercharger");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = COST_VARIABLE;
+        misc.flags |= F_MASC;
+        misc.subType |= S_SUPERCHARGER;
+        misc.bv = 0;
+
+        String[] saModes = { "Armed", "Off" };
+        misc.setModes(saModes);
+
+        return misc;
+    }
+    
+    public static MiscType createCLSuperCharger() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.name = "Supercharger";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CL Super Charger");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;

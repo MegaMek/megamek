@@ -67,6 +67,7 @@ v0.33.35-dev (SVN)
 + Bug: extra BV from C3 should be based off base BV; ignoring pilot/gunnery of
     units in force
 + Bug: Leg attack possible against mech doing a DFA
++ Bug: Supercharger should be available to clan units
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

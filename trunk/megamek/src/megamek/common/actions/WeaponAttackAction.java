@@ -1585,6 +1585,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     }
                 }
             }
+            if (te.isMakingDfa()) {
+                return "Target mech is in mid-DFA";
+            }
         }
 
         // can't fire Indirect LRM with direct LOS

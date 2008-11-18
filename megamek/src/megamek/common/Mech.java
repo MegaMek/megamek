@@ -2291,9 +2291,7 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
         // account for coolant pods
-        if (coolantPods > 0) {
-            mechHeatEfficiency += Math.max(2*getNumberOfSinks(), Math.ceil((double)(getNumberOfSinks()*coolantPods)/5));            
-        }
+        mechHeatEfficiency += Math.min(2*getNumberOfSinks(), Math.ceil((double)(getNumberOfSinks()*coolantPods)/5));
         if (getJumpMP() > 0) {
             mechHeatEfficiency -= getEngine().getJumpHeat(getJumpMP());
         } else {

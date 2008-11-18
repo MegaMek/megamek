@@ -50,24 +50,25 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
             IGame g, Server s) {
         super(t, w, g, s);
     }
+    
+    
 
     /*
      * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
+     * @see megamek.common.weapons.InfantryWeaponHandler#calcDamagePerHit()
      */
-    protected int calcHits(Vector<Report> vPhaseReport) {
+    protected int calcDamagePerHit() {
         int troopersHit = Compute.missilesHit(((Infantry) ae)
                 .getShootingStrength());
-        r = new Report(3325);
-        r.subject = subjectId;
-        r.add(troopersHit);
-        r.add(" troopers ");
-        r.add(toHit.getTableDesc() + ", causing " + damage[troopersHit - 1]
-                + " heat.");
-        r.newlines = 0;
-        vPhaseReport.addElement(r);
         return damage[troopersHit - 1];
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.weapons.InfantryWeaponHandler#calcHits(java.util.Vector)
+     */
+    protected int calcHits(Vector<Report> vPhaseReport) {
+        return 1;
     }
 
     protected void handleEntityDamage(Entity entityTarget,
@@ -76,7 +77,6 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
         if (entityTarget instanceof Mech
                 && game.getOptions().booleanOption("flamer_heat")) {
             // heat
-
             HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(), waa
                             .getAimingMode());

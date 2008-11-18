@@ -2141,8 +2141,8 @@ public abstract class Mech extends Entity implements Serializable {
             dbv += this.getArmor(Mech.LOC_CT,true);
         }
         int modularArmor = 0;
-        for (Mounted mounted : getEquipment()) {
-            if (mounted.getType() instanceof MiscType && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
+        for (Mounted mounted : getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
                 modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
             }
         }
@@ -2291,7 +2291,9 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
         // account for coolant pods
-        mechHeatEfficiency += Math.max(2*getNumberOfSinks(), Math.ceil((double)(getNumberOfSinks()*coolantPods)/5));
+        if (coolantPods > 0) {
+            mechHeatEfficiency += Math.max(2*getNumberOfSinks(), Math.ceil((double)(getNumberOfSinks()*coolantPods)/5));            
+        }
         if (getJumpMP() > 0) {
             mechHeatEfficiency -= getEngine().getJumpHeat(getJumpMP());
         } else {

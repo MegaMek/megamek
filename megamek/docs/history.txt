@@ -2,6 +2,7 @@
 ----------------
 v0.33.36-dev (SVN)
 + Bug in Mech BV calculation fixed
++ Bug: Infantry flamers cause too much heat
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

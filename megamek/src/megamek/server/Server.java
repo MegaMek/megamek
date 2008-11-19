@@ -189,6 +189,7 @@ import megamek.server.commands.FixElevationCommand;
 import megamek.server.commands.HelpCommand;
 import megamek.server.commands.KickCommand;
 import megamek.server.commands.LocalSaveGameCommand;
+import megamek.server.commands.LoadGameCommand;
 import megamek.server.commands.NukeCommand;
 import megamek.server.commands.ResetCommand;
 import megamek.server.commands.RollCommand;
@@ -363,6 +364,7 @@ public class Server implements Runnable {
         registerCommand(new ResetCommand(this));
         registerCommand(new RollCommand(this));
         registerCommand(new SaveGameCommand(this));
+        registerCommand(new LoadGameCommand(this));
         registerCommand(new SeeAllCommand(this));
         registerCommand(new SkipCommand(this));
         registerCommand(new VictoryCommand(this));
@@ -412,6 +414,17 @@ public class Server implements Runnable {
 
     }
 
+    /**
+     * Resets all the connections. The only use of this right now is when games are loaded after
+     * clients have connected
+     */
+    public void resetConnections() {
+        for (Enumeration<IConnection> i = connections.elements(); i.hasMoreElements();) {
+            final IConnection conn = i.nextElement();
+            send(conn.getId(), new Packet(Packet.COMMAND_RESET_CONNECTION));
+        }
+    }
+    
     /** Returns the current game object */
     public IGame getGame() {
         return game;

@@ -225,13 +225,16 @@
 			</manifest>
 		</jar>
 		<!-- generate current equipment.txt -->
-		<java classname="megamek.MegaMek" fork="true">
+		<java jar="${svndir}/MegaMek.jar" fork="true">
 			<arg line="-eqdb docs/equipment.txt" />
 			<classpath>
 				<pathelement path="${svndir}" />
-				<fileset dir="${libdir}" includes="*.jar" />
+				<fileset dir="${svndir}/${libdir}" includes="*.jar" />
 			</classpath>
 		</java>
+		<copy todir="${svndir}/docs" overwrite="true">
+			<fileset dir="${docdir}" includes="equipment.txt" />
+		</copy>
 
 		<!-- Ensure that the log directory exists. -->
 		<mkdir dir="${svndir}/${logdir}" />

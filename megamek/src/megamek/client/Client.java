@@ -975,6 +975,10 @@ public class Client implements IClientCommandHandler {
             case Packet.COMMAND_CLOSE_CONNECTION:
                 disconnected();
                 break;
+            case Packet.COMMAND_RESET_CONNECTION:
+                disconnected();
+                connect();
+                break;
             case Packet.COMMAND_SERVER_GREETING:
                 connected = true;
                 send(new Packet(Packet.COMMAND_CLIENT_NAME, name));

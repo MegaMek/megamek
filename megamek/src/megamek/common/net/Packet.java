@@ -21,6 +21,7 @@ package megamek.common.net;
 public class Packet {
 
     public static final int COMMAND_CLOSE_CONNECTION = 0;
+    public static final int COMMAND_RESET_CONNECTION = 5;
     public static final int COMMAND_SERVER_GREETING = 10;
     public static final int COMMAND_CLIENT_NAME = 20;
     public static final int COMMAND_LOCAL_PN = 30;

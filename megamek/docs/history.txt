@@ -6,6 +6,7 @@ v0.33.36-dev (SVN)
 + include equipment.txt in release built via ant
 + added /load command to load a game from the savegames directory
 + added safety check for filename in load command
++ added a /localload command to load a game from the client's savegames directory
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

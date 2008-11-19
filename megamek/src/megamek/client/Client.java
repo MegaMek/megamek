@@ -695,6 +695,13 @@ public class Client implements IClientCommandHandler {
         checkDuplicateNamesDuringDelete(id);
         send(new Packet(Packet.COMMAND_ENTITY_REMOVE, new Integer(id)));
     }
+    
+    /***
+     * sends a load game file to the server
+     */
+    public void sendLoadGame(File f) {
+        send(new Packet(Packet.COMMAND_LOAD_GAME, f));
+    }
 
     /**
      * Receives player information from the message packet.
@@ -1158,6 +1165,15 @@ public class Client implements IClientCommandHandler {
                 } catch (Exception e) {
                     System.err.println("Unable to save file: " + sFinalFile);
                     e.printStackTrace();
+                }
+                break;
+            case Packet.COMMAND_LOAD_SAVEGAME:
+                String loadFile = (String) c.getObject(0);
+                try {
+                    File f = new File("savegames", loadFile);
+                    sendLoadGame(f);
+                } catch (Exception e) {
+                    System.err.println("Unable to find the file: " + loadFile);
                 }
                 break;
             case Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY:

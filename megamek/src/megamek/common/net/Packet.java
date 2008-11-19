@@ -85,6 +85,8 @@ public class Packet {
     public static final int COMMAND_SERVER_CORRECT_NAME = 490;
 
     public static final int COMMAND_SEND_SAVEGAME = 500;
+    public static final int COMMAND_LOAD_SAVEGAME = 505;
+    public static final int COMMAND_LOAD_GAME = 506;
     public static final int COMMAND_SENDING_SPECIAL_HEX_DISPLAY = 510;
     public static final int COMMAND_CUSTOM_INITIATIVE = 520;
     public static final int COMMAND_SENDING_PLANETARY_CONDITIONS = 530;

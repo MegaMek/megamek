@@ -188,6 +188,7 @@ import megamek.server.commands.ExportListCommand;
 import megamek.server.commands.FixElevationCommand;
 import megamek.server.commands.HelpCommand;
 import megamek.server.commands.KickCommand;
+import megamek.server.commands.ListSavesCommand;
 import megamek.server.commands.LocalSaveGameCommand;
 import megamek.server.commands.LoadGameCommand;
 import megamek.server.commands.LocalLoadGameCommand;
@@ -361,6 +362,7 @@ public class Server implements Runnable {
         registerCommand(new FixElevationCommand(this));
         registerCommand(new HelpCommand(this));
         registerCommand(new KickCommand(this));
+        registerCommand(new ListSavesCommand(this));
         registerCommand(new LocalSaveGameCommand(this));
         registerCommand(new LocalLoadGameCommand(this));
         registerCommand(new ResetCommand(this));

@@ -27,7 +27,7 @@ import megamek.server.Server;
 /**
  * Resets the server
  * 
- * @author Ben
+ * @author Taharqa
  * @version
  */
 public class LoadGameCommand extends ServerCommand {
@@ -47,7 +47,11 @@ public class LoadGameCommand extends ServerCommand {
                     "Observers are restricted from loading games.");
             return;
         }
-        load(new File("savegames", args[1]), connId);
+        if (args.length > 1) {
+            load(new File("savegames", args[1]), connId);
+        } else {
+            server.sendServerChat(connId, "you must provide a file name");
+        }
     }
 
     private void load(File f, int connId) {

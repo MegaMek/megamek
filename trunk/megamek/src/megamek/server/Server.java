@@ -190,6 +190,7 @@ import megamek.server.commands.HelpCommand;
 import megamek.server.commands.KickCommand;
 import megamek.server.commands.LocalSaveGameCommand;
 import megamek.server.commands.LoadGameCommand;
+import megamek.server.commands.LocalLoadGameCommand;
 import megamek.server.commands.NukeCommand;
 import megamek.server.commands.ResetCommand;
 import megamek.server.commands.RollCommand;
@@ -361,6 +362,7 @@ public class Server implements Runnable {
         registerCommand(new HelpCommand(this));
         registerCommand(new KickCommand(this));
         registerCommand(new LocalSaveGameCommand(this));
+        registerCommand(new LocalLoadGameCommand(this));
         registerCommand(new ResetCommand(this));
         registerCommand(new RollCommand(this));
         registerCommand(new SaveGameCommand(this));
@@ -983,6 +985,22 @@ public class Server implements Runnable {
      */
     public void saveGame(String sFile) {
         saveGame(sFile, true);
+    }
+    
+    /**
+     * send a packet to the connection tells it load a locally saved game
+     * 
+     * @param connId
+     *            The <code>int</code> connection id to send to
+     * @param sFile
+     *            The <code>String</code> filename to use
+     */
+    public void sendLoadGame(int connId, String sFile) {
+        String sFinalFile = sFile;
+        if (!sFinalFile.endsWith(".sav")) {
+            sFinalFile = sFile + ".sav";
+        }
+        send(connId, new Packet(Packet.COMMAND_LOAD_SAVEGAME, new Object[] { sFinalFile}));
     }
 
     /**
@@ -20617,6 +20635,10 @@ public class Server implements Runnable {
             resetPlayersDone();
             transmitAllPlayerDones();
             break;
+        case Packet.COMMAND_LOAD_GAME:
+            if(loadGame((File) packet.getObject(0))) {
+                resetConnections();
+            }
         }
     }
 

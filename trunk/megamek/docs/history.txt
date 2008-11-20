@@ -9,6 +9,7 @@ v0.33.36-dev (SVN)
 + added a /localload command to load a game from the client's savegames directory
 + game option to disable local saves when double blind is in use
 + added /listSave command to list all *.sav files in the savegames directory
++ updated command line help
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

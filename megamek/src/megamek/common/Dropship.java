@@ -16,6 +16,7 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -28,12 +29,12 @@ import megamek.common.weapons.BayWeapon;
 /**
  * @author Jay Lawson
  */
-public class Dropship extends SmallCraft {
+public class Dropship extends SmallCraft implements Serializable {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -8102587793161001305L;
+    private static final long serialVersionUID = 1528728632696989565L;
     //escape pods and lifeboats
     int escapePods = 0;
     int lifeBoats = 0;

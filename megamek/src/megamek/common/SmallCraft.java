@@ -16,16 +16,17 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
+
 /**
  * @author Jay Lawson
  */
-public class SmallCraft extends Aero {
-    
-        
+public class SmallCraft extends Aero implements Serializable {
+           
     /**
      * 
      */
-    private static final long serialVersionUID = -9013512155929642136L;
+    private static final long serialVersionUID = 6708788176436555036L;
     protected static String[] LOCATION_ABBRS = { "NOS", "LS", "RS", "AFT" };
     protected static String[] LOCATION_NAMES = { "Nose", "Left Side", "Right Side", "Aft" };
     

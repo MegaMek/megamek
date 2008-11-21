@@ -16,6 +16,7 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -27,12 +28,12 @@ import megamek.common.weapons.BayWeapon;
 /**
  * @author Jay Lawson
  */
-public class Warship extends Jumpship {
-    
+public class Warship extends Jumpship implements Serializable { 
+
     /**
      * 
      */
-    private static final long serialVersionUID = -4362521770072253942L;
+    private static final long serialVersionUID = 4650692419224312511L;
     //     locations
     public static final int        LOC_NOSE               = 0;
     public static final int        LOC_FLS                = 1;

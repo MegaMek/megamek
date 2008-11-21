@@ -16,6 +16,7 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -28,12 +29,12 @@ import megamek.common.weapons.BayWeapon;
 /**
  * @author Jay Lawson
  */
-public class FighterSquadron extends Aero {
-    
+public class FighterSquadron extends Aero implements Serializable {
+   
     /**
      * 
      */
-    private static final long serialVersionUID = -8258929505993881445L;
+    private static final long serialVersionUID = 3491212296982370726L;
 
     public static int MAX_SIZE = 12;
     

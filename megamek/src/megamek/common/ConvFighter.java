@@ -16,13 +16,18 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
+
 /**
  * @author Jay Lawson
  */
-public class ConvFighter extends Aero {
+public class ConvFighter extends Aero implements Serializable {
     
-    private static final long serialVersionUID = -9013512155929642136L;
-    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6297668284292929409L;
+
     public boolean doomedInVacuum() {
         return true;
     }

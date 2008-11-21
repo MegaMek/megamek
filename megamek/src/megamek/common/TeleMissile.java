@@ -16,16 +16,18 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
+
 
 /**
  * @author Jay Lawson
  */
-public class TeleMissile extends Aero {
-    
+public class TeleMissile extends Aero implements Serializable {
+
     /**
      * 
      */
-    private static final long serialVersionUID = -7012204077292481371L;
+    private static final long serialVersionUID = -5932720323745597199L;
 
     public static final int        LOC_BODY               = 0;
 

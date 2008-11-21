@@ -16,16 +16,17 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
+
 /**
  * @author Jay Lawson
  */
-public class SpaceStation extends Jumpship {
-    
-    
+public class SpaceStation extends Jumpship implements Serializable {
+
     /**
      * 
      */
-    private static final long serialVersionUID = 4793706631842428123L;
+    private static final long serialVersionUID = -3160156173650960985L;
 
     public double getCost() {
         

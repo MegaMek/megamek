@@ -11,6 +11,7 @@ v0.33.36-dev (SVN)
 + added /listSave command to list all *.sav files in the savegames directory
 + updated command line help
 + added serialization to Aero sub-classes
++ Added missing Achileus (Flamer)
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

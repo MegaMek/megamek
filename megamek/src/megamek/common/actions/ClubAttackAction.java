@@ -392,7 +392,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 toHit.addModifier(2, "Lower arm actuator missing or destroyed");
             }
             if (hasClaws) {
-                toHit.addModifier(1, "Mek has claws");
+                toHit.addModifier(2, "Mek has claws");
             }
             if ( ae.hasFunctionalArmAES(Mech.LOC_RARM) && ae.hasFunctionalArmAES(Mech.LOC_LARM) ) {
                 toHit.addModifier(-1,"AES modifer");

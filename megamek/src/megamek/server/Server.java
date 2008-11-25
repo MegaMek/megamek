@@ -1803,7 +1803,6 @@ public class Server implements Runnable {
             }
             addReport(game.ageFlares());
             send(createFlarePacket());
-            resolveExtremeTempInfantryDeath();
             resolveAmmoDumps();
             resolveCrewWakeUp();
             resolveMechWarriorPickUp();
@@ -11649,12 +11648,28 @@ public class Server implements Runnable {
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction, boolean glancing, boolean throughFront) {
 
         // we hit...
+        
+        PilotingRollData chargePSR = null;
+        // If we're upright, we may fall down.
+        if (!ae.isProne()) {
+            chargePSR = new PilotingRollData(ae.getId(), 2, "charging");
+        }
+
+        // move attacker and target, if possible
+        Coords src = te.getPosition();
+        Coords dest = src.translated(direction);
+
+        if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
+            addNewLines();
+            addReport(doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 2, "was charged")));
+            addReport(doEntityDisplacement(ae, ae.getPosition(), src, chargePSR));
+        }
+        
         // Damage To Target
         int damage = ChargeAttackAction.getDamageFor(ae, te, game.getOptions().booleanOption("tacops_charge_damage"), toHit.getMoS());
 
         // Damage to Attacker
         int damageTaken = ChargeAttackAction.getDamageTakenBy(ae, te, game.getOptions().booleanOption("tacops_charge_damage"));
-        PilotingRollData chargePSR = null;
         if (glancing) {
             // Glancing Blow rule doesn't state whether damage to attacker on
             // charge
@@ -11680,11 +11695,6 @@ public class Server implements Runnable {
         int bldgAbsorbs = 0;
         if (targetInBuilding && bldg != null) {
             bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(te.getPosition()) / 10.0);
-        }
-
-        // If we're upright, we may fall down.
-        if (!ae.isProne()) {
-            chargePSR = new PilotingRollData(ae.getId(), 2, "charging");
         }
 
         Report r;
@@ -11788,16 +11798,6 @@ public class Server implements Runnable {
             addReport(damageEntity(ae, new HitData(Mech.LOC_CT), spikeDamage, false, DamageType.NONE, false, false, throughFront));
         else if (ae instanceof Tank)
             addReport(damageEntity(ae, new HitData(Tank.LOC_FRONT), spikeDamage, false, DamageType.NONE, false, false, throughFront));
-
-        // move attacker and target, if possible
-        Coords src = te.getPosition();
-        Coords dest = src.translated(direction);
-
-        if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
-            addNewLines();
-            addReport(doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 2, "was charged")));
-            addReport(doEntityDisplacement(ae, ae.getPosition(), src, chargePSR));
-        }
 
         addNewLines();
 
@@ -11979,11 +11979,10 @@ public class Server implements Runnable {
                 r.addDesc(ae);
                 r.add(dest.getBoardNum(), true);
                 addReport(r);
-                int height = 2 + (game.getBoard().getHex(dest).containsTerrain(Terrains.BLDG_ELEV) ? game.getBoard().getHex(dest).terrainLevel(Terrains.BLDG_ELEV) : 0);
-                addReport(doEntityFall(ae, dest, height, 3, ae.getBasePilotingRoll()));
-
                 // move target to preferred hex
                 addReport(doEntityDisplacement(te, dest, targetDest, null));
+                int height = 2 + (game.getBoard().getHex(dest).containsTerrain(Terrains.BLDG_ELEV) ? game.getBoard().getHex(dest).terrainLevel(Terrains.BLDG_ELEV) : 0);
+                addReport(doEntityFall(ae, dest, height, 3, ae.getBasePilotingRoll()));
             } else {
                 // attacker destroyed Tanks
                 // suffer an ammo/power plant hit.
@@ -11992,8 +11991,20 @@ public class Server implements Runnable {
             }
             return;
         }
-
+        
         // we hit...
+        // Target entities are pushed away or destroyed.
+        Coords dest = te.getPosition();
+        Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
+        if (targetDest != null) {
+            addReport(doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above")));
+        } else {
+            // ack! automatic death! Tanks
+            // suffer an ammo/power plant hit.
+            // TODO : a Mech suffers a Head Blown Off crit.
+            addReport(destroyEntity(te, "impossible displacement", te instanceof Mech, te instanceof Mech));
+        }
+
         // Can't DFA a target inside of a building.
         int damageTaken = DfaAttackAction.getDamageTakenBy(ae);
 
@@ -12108,18 +12119,6 @@ public class Server implements Runnable {
         // TODO: where do I put the attacker?!?
         if ((target.getTargetType() == Targetable.TYPE_BUILDING) || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             return;
-        }
-
-        // Target entities are pushed away or destroyed.
-        Coords dest = te.getPosition();
-        Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
-        if (targetDest != null) {
-            addReport(doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above")));
-        } else {
-            // ack! automatic death! Tanks
-            // suffer an ammo/power plant hit.
-            // TODO : a Mech suffers a Head Blown Off crit.
-            addReport(destroyEntity(te, "impossible displacement", te instanceof Mech, te instanceof Mech));
         }
         // HACK: to avoid automatic falls, displace from dest to dest
         addReport(doEntityDisplacement(ae, dest, dest, new PilotingRollData(ae.getId(), 4, "executed death from above")));
@@ -12935,38 +12934,6 @@ public class Server implements Runnable {
             // I guess nothing happened...
             addReport(new Report(1205, Report.PUBLIC));
         }
-    }
-
-    /**
-     * check to see if unarmored infantry is outside in extreme temperatures
-     * (crude fix because infantry shouldn't be able to be deployed outside of
-     * vehicles or buildings, but we can't do that because we don't know wether
-     * the map has buildings or not or wether the player has an apc No longer
-     * Used TacOps allows for infantry to easily equip Exteme Weather Gear.
-     */
-    @Deprecated
-    private void resolveExtremeTempInfantryDeath() {
-        /*
-         * int heat = game.getTemperatureDifference(); if (heat > 0) { for
-         * (Enumeration<Entity> i = game.getEntities(); i .hasMoreElements();) {
-         * Entity entity = i.nextElement(); if (null == entity.getPosition()) {
-         * continue; } IHex entityHex =
-         * game.getBoard().getHex(entity.getPosition()); if (entity instanceof
-         * Infantry && !(entity instanceof BattleArmor) &&
-         * !entityHex.containsTerrain(Terrains.BUILDING) &&
-         * entity.getTransportId() == Entity.NONE) { if
-         * (game.getOptions().booleanOption( "extreme_temperature_survival")) {
-         * Report r = new Report(5310); r.subject = entity.getId();
-         * r.addDesc(entity); r.add(heat); int roll = Compute.d6(); r.add(roll);
-         * addReport(r); if (roll <= heat) { if (entity instanceof MechWarrior) {
-         * addReport(damageCrew(entity, 1)); } else {
-         * addReport(damageEntity(entity, entity
-         * .rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), Compute
-         * .d6() + heat)); } r = new Report(1210, Report.PUBLIC); addReport(r); } }
-         * else { Report r = new Report(5090); r.subject = entity.getId();
-         * r.addDesc(entity); addReport(r); addReport(destroyEntity(entity,
-         * "heat/cold", false, false)); } } } }
-         */
     }
 
     /**

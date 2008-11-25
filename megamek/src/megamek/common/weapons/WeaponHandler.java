@@ -295,7 +295,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (missReported) {
             bMissed = true;
         }
-
+        
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget, bMissed)) {
             return false;

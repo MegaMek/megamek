@@ -19,6 +19,7 @@ v0.33.36-dev (SVN)
 + combined duplicate methods Mounted.howManyShots and Mounted.getCurrentShots
 + Bug: Do displacement due to charges/DFAs before dealing damage
 + Simplify MekMortarHandler
++ disabled Aero firing of rapid-fire weapons without enough ammo to fire at full rate
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

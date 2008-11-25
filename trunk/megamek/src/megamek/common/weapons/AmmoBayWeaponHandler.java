@@ -64,7 +64,8 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                 bayWAmmo = bayW.getLinked();
             }
             if(!bayW.isBreached() && !bayW.isDestroyed() && !bayW.isJammed()
-                    && bayWAmmo != null && bayWAmmo.getShotsLeft() > 0) {
+                    && bayWAmmo != null 
+                    && ae.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
                 WeaponType bayWType = ((WeaponType)bayW.getType());
                 //need to cycle through weapons and add av
                 double current_av = 0;                             
@@ -84,7 +85,17 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                 av = av + current_av;
                 //now use the ammo that we had loaded
                 if(current_av > 0) {
-                    bayWAmmo.setShotsLeft(bayWAmmo.getShotsLeft() - 1);
+                    int shots = bayW.getCurrentShots();
+                    for(int i = 0; i < shots; i++) {
+                        if(null == bayWAmmo || bayWAmmo.getShotsLeft() < 1) {
+                            //try loadinsg something else
+                            ae.loadWeaponWithSameAmmo(bayW);
+                            bayWAmmo = bayW.getLinked();
+                        }
+                        if(null != bayWAmmo) {
+                            bayWAmmo.setShotsLeft(bayWAmmo.getShotsLeft() - 1);
+                        }
+                    }
                 }
                 
                 //check for nukes and tele-missiles and if they are there then I will need to 

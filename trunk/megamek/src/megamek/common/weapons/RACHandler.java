@@ -142,26 +142,6 @@ public class RACHandler extends UltraWeaponHandler {
         return true;
     }
     
-    protected int calcAttackValue() {
-        int distance = ae.getPosition().distance(target.getPosition());
-        int av = 0;
-        int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
-        if(range == WeaponType.RANGE_SHORT) {
-            av = wtype.getRoundShortAV();
-        } else if(range == WeaponType.RANGE_MED) {
-            av = wtype.getRoundMedAV();
-        } else if (range == WeaponType.RANGE_LONG) {
-            av = wtype.getRoundLongAV();
-        } else if (range == WeaponType.RANGE_EXT) {
-            av = wtype.getRoundExtAV();
-        }
-        //if firing only one shot due to ammo limits, then multiply
-        //AV by the fraction of the six max shots 
-        //(not strictly by the rules, but makes sense).
-        av = (int)(((double)howManyShots / 6) * av);
-        return av;
-    }
-    
     protected boolean canDoDirectBlowDamage(){
         return false;
     }

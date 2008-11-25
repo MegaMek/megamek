@@ -15,6 +15,7 @@ v0.33.36-dev (SVN)
 + Bugs: wrong to-hit for club attacks with claws
 + Bug 2332664: engine hits counted twice for engine explosion when location destroyed
     and engince crits in that location critted in same phase
++ Bug: vehicle advanced front firing arc using turret arc
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

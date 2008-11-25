@@ -119,165 +119,21 @@ public class MekMortarHandler extends AmmoWeaponHandler {
     protected int calcnCluster() {
         return 2;
     }
-
+    
     /*
      * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
+     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector, megamek.common.Entity, boolean)
      */
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        if (!this.cares(phase)) {
+    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget, boolean bMissed) {
+        // targeting a hex for clearing
+        if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+            int nDamage = nDamPerHit *calcHits(vPhaseReport);
+            int[] damages = { nDamage };
+            Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+            handleClearDamage(vPhaseReport, bldg, nDamage, bSalvo);
+            server.doExplosion(damages, false, target.getPosition(), true, vPhaseReport, null, calcnCluster());
             return true;
         }
-        Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target: null;
-        final boolean targetInBuilding = Compute.isInBuilding(game,entityTarget);
-
-        if (entityTarget != null)
-            ae.setLastTarget(entityTarget.getId());
-
-        // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-
-        // Report weapon attack and its to-hit value.
-        r = new Report(3115);
-        r.indent();
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(wtype.getName());
-        if (entityTarget != null) {
-            r.addDesc(entityTarget);
-        } else {
-            r.messageId = 3120;
-            r.add(target.getDisplayName(), true);
-        }
-        vPhaseReport.addElement(r);
-
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-            r = new Report(3135);
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
-            return false;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
-            r = new Report(3140);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
-            r = new Report(3145);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
-        } else {
-            // roll to hit
-            r = new Report(3150);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getValue());
-            vPhaseReport.addElement(r);
-        }
-
-        // dice have been rolled, thanks
-        r = new Report(3155);
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(roll);
-        vPhaseReport.addElement(r);
-
-        // do we hit?
-        bMissed = roll < toHit.getValue();
-
-        // are we a glancing hit?
-        if (game.getOptions().booleanOption("tacops_glancing_blows")) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
-                r = new Report(3186);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                bGlancing = false;
-            }
-        } else {
-            bGlancing = false;
-        }
-
-        //Set Margin of Success/Failure.
-        toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && entityTarget != null;
-        if (bDirect) {
-            r = new Report(3189);
-            r.subject = ae.getId();
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-        } 
-
-        // Any necessary PSRs, jam checks, etc.
-        // If this boolean is true, don't report
-        // the miss later, as we already reported
-        // it in doChecks
-        boolean missReported = doChecks(vPhaseReport);
-
-        nDamPerHit = calcDamagePerHit();
-        addHeat();
-        
-        if (bMissed && !missReported) {
-            reportMiss(vPhaseReport);
-            return false;
-        }
-
-        // yeech. handle damage. . different weapons do this in very different
-        // ways
-        int hits = calcHits(vPhaseReport), nCluster = calcnCluster();
-
-        // The building shields all units from a certain amount of damage.
-        // The amount is based upon the building's CF at the phase's start.
-        int bldgAbsorbs = 0;
-        if (targetInBuilding && bldg != null) {
-            bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
-        }
-
-        // Make sure the player knows when his attack causes no damage.
-        if (hits == 0) {
-            r = new Report(3365);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-
-        // for each cluster of hits, do a chunk of damage
-        while (hits > 0) {
-            int nDamage;
-            // targeting a hex for igniting
-            if (target.getTargetType() == Targetable.TYPE_HEX_IGNITE
-                    || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE) {
-                handleIgnitionDamage(vPhaseReport, bldg, bSalvo, hits);
-                return false;
-            }
-            // targeting a hex for clearing
-            if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
-                nDamage = nDamPerHit * hits;
-                int[] damages = { nDamage };
-                handleClearDamage(vPhaseReport, bldg, nDamage, bSalvo);
-                server.doExplosion(damages, false, target.getPosition(), true, vPhaseReport, null,nCluster);
-                return false;
-            }
-            // Targeting a building.
-            if (target.getTargetType() == Targetable.TYPE_BUILDING) {
-                // The building takes the full brunt of the attack.
-                nDamage = nDamPerHit * hits;
-                handleBuildingDamage(vPhaseReport, bldg, nDamage, bSalvo, target.getPosition());
-                // And we're done!
-                return false;
-            }
-            if (entityTarget != null) {
-                handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, nDamPerHit, bldgAbsorbs);
-                server.creditKill(entityTarget, ae);
-                hits -= nCluster;
-            }
-        } // Handle the next cluster.
-        Report.addNewline(vPhaseReport);
         return false;
     }
 

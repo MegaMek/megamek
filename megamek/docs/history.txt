@@ -17,6 +17,8 @@ v0.33.36-dev (SVN)
     and engince crits in that location critted in same phase
 + Bug: vehicle advanced front firing arc using turret arc
 + combined duplicate methods Mounted.howManyShots and Mounted.getCurrentShots
++ Bug: Do displacement due to charges/DFAs before dealing damage
++ Simplify MekMortarHandler
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

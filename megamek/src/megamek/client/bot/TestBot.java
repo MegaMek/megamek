@@ -1921,7 +1921,7 @@ public class TestBot extends BotClient {
                             direct_fire = false;
                         }
                     }
-                    if (test_weapon.howManyShots() > 1) {
+                    if (test_weapon.getCurrentShots() > 1) {
                         direct_fire = false;
                     }
 

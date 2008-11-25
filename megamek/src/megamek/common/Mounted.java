@@ -403,7 +403,7 @@ public class Mounted implements Serializable, RoundUpdated {
     /**
      * Returns how many shots the weapon is using
      */
-    public int howManyShots() {
+    public int getCurrentShots() {
         final WeaponType wtype = (WeaponType) this.getType();
         int nShots = 1;
         // figure out # of shots for variable-shot weapons
@@ -930,32 +930,6 @@ public class Mounted implements Serializable, RoundUpdated {
             }   
         }
         return false;
-    }
-    
-    /*
-     * returns the number of shots that will be fired from weapon
-     * based on mode if a weapon
-     */
-    public int getCurrentShots() {
-        int shots = 1;
-        if(null != curMode()) {
-            if(curMode().equals("6-shot")) {
-                shots = 6;
-            } else if (curMode().equals("5-shot")) {
-                shots = 5;
-            } else if (curMode().equals("4-shot")) {
-                shots = 4;
-            } else if (curMode().equals("3-shot")) {
-                shots = 3;
-            } else if (curMode().equals("2-shot")) {
-                shots = 2;
-            } else if (curMode().equals("Single")) {
-                shots = 1;
-            } else if (curMode().equals("Ultra")) {
-                shots = 2;
-            }
-        }
-        return shots;
     }
     
     /*

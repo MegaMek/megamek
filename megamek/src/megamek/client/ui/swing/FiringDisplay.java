@@ -1869,7 +1869,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
                 if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE) || wtype.hasFlag(WeaponType.F_PULSE)) {
                     return false;
                 }
-                if (weapon.howManyShots() > 1) {
+                if (weapon.getCurrentShots() > 1) {
                     return false;
                 }
                 if ((atype != null)

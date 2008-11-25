@@ -16470,10 +16470,8 @@ public class Server implements Runnable {
                 Vector<Entity> passengers = t.getLoadedUnits();
                 Entity target = passengers.get(Compute.randomInt(passengers.size()));
                 hit = target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                vDesc.addAll(damageEntity(target, hit, 5)); // FIXME should
-                // be
-                // original weapon
-                // damage
+                // FIXME should be original weapon damage
+                vDesc.addAll(damageEntity(target, hit, 5));
                 break;
             case Tank.CRIT_COMMANDER:
                 if (en.crew.getOptions().booleanOption("vdni") || en.crew.getOptions().booleanOption("bvdni")) {
@@ -17218,8 +17216,11 @@ public class Server implements Runnable {
                     }
                     break;
                 case Mech.SYSTEM_ENGINE:
-                    en.engineHitsThisRound++;
-
+                    // if the slot is missing, the location was previously
+                    // destroyedd and the enginehit was then counted already
+                    if (!cs.isMissing()) {
+                        en.engineHitsThisRound++;
+                    }
                     boolean engineExploded = false;
 
                     int numEngineHits = 0;

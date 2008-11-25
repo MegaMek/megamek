@@ -5143,7 +5143,6 @@ public class Server implements Runnable {
             addReport(doSetLocationsExposure(entity, curHex, step.getMovementType() == IEntityMovementType.MOVE_JUMP, step.getElevation()));
 
             // check for breaking ice by breaking through from below
-            // FIXME: this does not work for first steps
             if (lastElevation < 0 && step.getElevation() == 0 
                     && lastHex.containsTerrain(Terrains.ICE) && lastHex.containsTerrain(Terrains.WATER) 
                     && step.getMovementType() != IEntityMovementType.MOVE_JUMP && !lastPos.equals(curPos)) {

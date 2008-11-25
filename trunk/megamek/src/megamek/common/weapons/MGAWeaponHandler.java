@@ -59,7 +59,7 @@ public class MGAWeaponHandler extends MGHandler {
         int shotsNeedFiring;
         setDone();
         checkAmmo();
-        howManyShots = weapon.howManyShots();
+        howManyShots = weapon.getCurrentShots();
         int total = ae.getTotalAmmoOfType(ammo.getType());
         if (total <= howManyShots) {
             howManyShots = total;

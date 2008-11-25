@@ -1878,7 +1878,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                         || wtype.hasFlag(WeaponType.F_PULSE)) {
                     return false;
                 }
-                if (weapon.howManyShots() > 1) {
+                if (weapon.getCurrentShots() > 1) {
                     return false;
                 }
                 if ((wtype.hasFlag(WeaponType.F_NO_AIM))

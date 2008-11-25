@@ -61,7 +61,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
             }
             return 1;
         }
-        int hits = weapon.howManyShots();
+        int hits = weapon.getCurrentShots();
         if (!this.allShotsHit()) {
             hits = Compute.missilesHit(hits);
         }
@@ -137,7 +137,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
         setDone();
         checkAmmo();
         // how many shots are we firing?
-        int nShots = weapon.howManyShots();
+        int nShots = weapon.getCurrentShots();
 
         // do we need to revert to single shot?
         if (nShots > 1) {

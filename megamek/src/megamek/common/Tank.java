@@ -408,17 +408,17 @@ public class Tank extends Entity implements Serializable {
             return Compute.ARC_360;
         }
         switch (mounted.getLocation()) {
+            case LOC_BODY:
+            // Body mounted C3Ms fire into the front arc,
+            // per
+            // http://forums.classicbattletech.com/index.php/topic,9400.0.html
             case LOC_FRONT:
+                if(game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                    return Compute.ARC_NOSE;
+                }
             case LOC_TURRET:
                 if(game.getOptions().booleanOption("tacops_vehicle_arcs")) {
                     return Compute.ARC_TURRET;
-                }
-            case LOC_BODY:
-                // Body mounted C3Ms fire into the front arc,
-                // per
-                // http://forums.classicbattletech.com/index.php/topic,9400.0.html
-                if(game.getOptions().booleanOption("tacops_vehicle_arcs")) {
-                    return Compute.ARC_NOSE;
                 }
                 return Compute.ARC_FORWARD;
             case LOC_RIGHT:

@@ -1737,6 +1737,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Weapon out of ammo.";
             }
             
+            //Aeros must have enough ammo for the maximum rate of fire because
+            //they cannot lower it
+            if(ae instanceof Aero && usesAmmo && ammo != null 
+                    && ae.getTotalAmmoOfType(ammo.getType()) < weapon.getCurrentShots()) {
+                return "weapon does not have enough ammo.";
+            }
+            
             if (ae instanceof Tank) {
                 sensorHits = ((Tank) ae).getSensorHits();
                 if (sensorHits > 3)

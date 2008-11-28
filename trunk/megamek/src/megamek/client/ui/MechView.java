@@ -18,12 +18,14 @@
  * Created on January 20, 2003 by Ryan McConnell
  */
 
-package megamek.client.ui.AWT;
+package megamek.client.ui;
 
 import java.text.DecimalFormat;
 import java.util.Iterator;
 
+import megamek.client.ui.AWT.Messages;
 import megamek.common.Aero;
+import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
@@ -53,6 +55,7 @@ public class MechView {
     private Entity entity;
     private boolean isMech;
     private boolean isInf;
+    private boolean isBA;
     private boolean isVehicle;
     private boolean isProto;
     private boolean isGunEmplacement;
@@ -73,6 +76,7 @@ public class MechView {
         this.entity = entity;
         isMech = entity instanceof Mech;
         isInf = entity instanceof Infantry;
+        isBA = entity instanceof BattleArmor;
         isVehicle = entity instanceof Tank;
         isProto = entity instanceof Protomech;
         isGunEmplacement = entity instanceof GunEmplacement;
@@ -108,6 +112,9 @@ public class MechView {
         if (!isInf) {
             sBasic.append(Math.round(entity.getWeight())).append(
                     Messages.getString("MechView.tons")); //$NON-NLS-1$
+        }
+        if (isBA && ((BattleArmor)entity).isBurdened()) {
+            sBasic.append(Messages.getString("MechView.Burdened")); //$NON-NLS-1$
         }
         if (entity.isMixedTech()) {
             if (entity.isClan()) {

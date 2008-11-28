@@ -1290,14 +1290,6 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         }
         retVal.append("\n");
 
-        retVal.append(Messages.getString("CustomBattleArmorDialog.bvEach"));
-        retVal.append(calcSuitBV());
-        retVal.append("\n");
-
-        retVal.append(Messages.getString("CustomBattleArmorDialog.bvSquad"));
-        retVal.append(calcSquadBV());
-        retVal.append("\n\n");
-
         retVal.append(Messages.getString("CustomBattleArmorDialog.costEach"));
         retVal.append(calcSuitCost());
         retVal.append("\n");
@@ -1646,133 +1638,6 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
                 + MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeRight];
     }
 
-    private int calcSuitBV() {
-        // Defensive BV Value...
-        // Starts at 1.5, for some reason.
-        float dBV = 1.5f;
-
-        // Add armor defensive BV value
-        // This is armor value times armor BV.
-        // Currently, all armor is BV 2 except fire resistant.
-        dBV += (stateArmorValue * (stateArmorType == 7 ? 3 : 2));
-
-        // Add 1 if the suit mounts ECM.
-        // FIXME
-        // if (???HAS ECM???)
-        // dBV += 1;
-
-        // Add devensive movement/stealth factor
-        // First, find its highest possible movement mod.
-        int groundMod = 0;
-        if (stateGroundMP >= 5)
-            groundMod = 2;
-        else if (stateGroundMP >= 3)
-            groundMod = 1;
-        int jumpMod = 0;
-        if (getTotalJumpMP() >= 7)
-            jumpMod = 3;
-        else if (getTotalJumpMP() >= 5)
-            jumpMod = 2;
-        else if (getTotalJumpMP() >= 3)
-            jumpMod = 1;
-        if (stateJumpType != JUMP_TYPE_UMU)
-            jumpMod += 1;
-        float bestMod = (groundMod > jumpMod ? groundMod : jumpMod);
-        // Next, add any potential stealth bonus from armor
-        if ((stateArmorType == 8) // Mimetic Armor
-                || (stateArmorType == 6)) // Improved Stealth Armor
-            bestMod += 3;
-        else if ((stateArmorType == 5) // Standard Stealth Armor
-                || (stateArmorType == 4) // Prototype Stealth Armor
-                || (stateArmorType == 3)) // Basic Stealth Armor
-            bestMod += 2;
-        // If it has a camo system but not mimetic...
-        // It gets a bonus for that too.
-        // This CAN combine with any stealth armor; just not mimetic.
-        // FIXME
-        // if ((stateArmorType != 8)
-        // && (???HAS CAMO???))
-        // bestMod += 2;
-        // This max movement mod is then used to find the Defensive BV
-        // multiplier.
-        bestMod /= 10;
-        bestMod += 1;
-        dBV *= bestMod;
-
-        float oBV = 0;
-        // Now, on to offensive BV value!
-        // Add the BV for all direct-fire weapons
-        // FIXME
-
-        // Then add all missile weapon BV
-        // FIXME
-
-        // Then add anti-'Mech attack BV
-        if (canDoAntiMech()) {
-            // FIXME
-        }
-
-        // Then add anti-personnel weapon BV, maybe
-        // FIXME
-
-        // Then add squad support weapon BV, maybe
-        // FIXME
-
-        // Add the BV for any other equipment
-        // FIXME
-
-        // Modify by the BA's speed factor...
-        int speedFactor = Math.max(stateGroundMP, getTotalJumpMP());
-        float speedFactorMult = 0;
-        switch (speedFactor) {
-            case 1:
-                speedFactorMult = 0.54f;
-                break;
-            case 2:
-                speedFactorMult = 0.65f;
-                break;
-            case 3:
-                speedFactorMult = 0.77f;
-                break;
-            case 4:
-                speedFactorMult = 0.88f;
-                break;
-            case 5:
-                speedFactorMult = 1f;
-                break;
-            case 6:
-                speedFactorMult = 1.12f;
-                break;
-            case 7:
-                speedFactorMult = 1.24f;
-                break;
-            case 8:
-                speedFactorMult = 1.37f;
-                break;
-            case 9:
-                speedFactorMult = 1.5f;
-                break;
-            case 10:
-                speedFactorMult = 1.63f;
-                break;
-            case 11:
-                speedFactorMult = 1.76f;
-                break;
-            case 12:
-                speedFactorMult = 1.89f;
-                break;
-        }
-        oBV *= speedFactorMult;
-
-        int retVal = Math.round(dBV + oBV);
-
-        return retVal;
-    }
-
-    private int calcSquadBV() {
-        return calcSuitBV() * stateMenPerSquad;
-    }
-
     private int calcSuitCost() {
         float retVal = 0;
 
@@ -1869,9 +1734,6 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         } else {
             retVal.setMovementMode(IEntityMovementMode.INF_LEG);
         }
-
-        // Set the BV of the squad...
-        retVal.setBattleValue(calcSquadBV());
 
         // And set its cost.
         retVal.setCost(calcSquadCost());

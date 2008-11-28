@@ -19,7 +19,13 @@ v0.33.36-dev (SVN)
 + combined duplicate methods Mounted.howManyShots and Mounted.getCurrentShots
 + Bug: Do displacement due to charges/DFAs before dealing damage
 + Simplify MekMortarHandler
-+ disabled Aero firing of rapid-fire weapons without enough ammo to fire at full rate
++ Finished BA BV.
++ Bug: IS BA with body-mounted missile launchers can't jump until the missile
+    launchers are jettisoned.
++ NOTE: To specify that a weapon is body mounted on a BA, add a ":Body" at the 
+    end of the equipment line in the BLK file. This is important for the jumping
+    with missiles on the body, and for swarm attacks
++ Bug: Body-mounted weapons usable in swarm attack
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

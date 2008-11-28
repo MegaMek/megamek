@@ -106,6 +106,9 @@ public class Mounted implements Serializable, RoundUpdated {
     //I need some way of tracking how many missiles are Santa Annas
     private int nSantaAnna = 0;
     
+    // for BA weapons, is this on the body of a trooper?
+    private boolean bodyMounted = false;
+
     /** Creates new Mounted */
     public Mounted(Entity entity, EquipmentType type) {
         this.entity = entity;
@@ -953,5 +956,13 @@ public class Mounted implements Serializable, RoundUpdated {
     
     public void setNSantaAnna(int n) {
         this.nSantaAnna = n;
+    }
+    
+    public boolean isBodyMounted() {
+        return bodyMounted;
+    }
+
+    public void setBodyMounted(boolean bodyMounted) {
+        this.bodyMounted = bodyMounted;
     }
 }

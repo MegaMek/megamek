@@ -2679,7 +2679,7 @@ public class MechDisplay extends BufferedPanel {
                 narcList.add(Messages.getString("MechDisplay.OnFire"));
             }
 
-            // Show electromagnic interference.
+            // Show electromagnetic interference.
             if (en.isSufferingEMI()) {
                 narcList.add(Messages.getString("MechDisplay.IsEMId")); //$NON-NLS-1$
             }
@@ -2696,6 +2696,11 @@ public class MechDisplay extends BufferedPanel {
             // Active Stealth Armor? If yes, we're under ECM
             if (en.isStealthActive()) {
                 narcList.add(Messages.getString("MechDisplay.UnderStealth")); //$NON-NLS-1$
+            }
+            
+            if (en instanceof BattleArmor &&
+                    ((BattleArmor)en).isBurdened()) {
+                narcList.add(Messages.getString("MechDisplay.Burdened")); //$NON-NLS-1$
             }
 
             // Show Turret Locked.

@@ -2899,6 +2899,12 @@ public class MechDisplay extends JPanel {
                 ((DefaultListModel) narcList.getModel()).addElement(Messages
                         .getString("MechDisplay.UnderStealth")); //$NON-NLS-1$
             }
+            
+            if (en instanceof BattleArmor &&
+                    ((BattleArmor)en).isBurdened()) {
+                ((DefaultListModel) narcList.getModel()).addElement(Messages
+                        .getString("MechDisplay.Burdened")); //$NON-NLS-1$
+            }
 
             // Show Turret Locked.
             if (en instanceof Tank && !((Tank) en).hasNoTurret()

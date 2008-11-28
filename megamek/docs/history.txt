@@ -28,6 +28,7 @@ v0.33.36-dev (SVN)
 + Bug: Body-mounted weapons usable in swarm attack
 + Show burdened status of BA in mechview and mechdisplay
 + AP infantry weapons shouldn't count for BA BV
++ Bug: Small Cockpit BV
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

@@ -2697,6 +2697,11 @@ public abstract class Mech extends Entity implements Serializable {
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;
+        
+        int finalBV = (int)Math.round(obv + dbv);
+        if ( this.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED ) {
+            finalBV *= 0.95;
+        }
 
         // we get extra bv from some stuff
         double xbv = 0.0;
@@ -2717,16 +2722,12 @@ public abstract class Mech extends Entity implements Serializable {
             xbv += totalForceBV *= 0.05;
         }
 
-        int finalBV = (int) Math.round(dbv + obv + xbv);
+        finalBV = (int) Math.round(finalBV + xbv);
 
-     // and then factor in pilot
+        // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
             pilotFactor = crew.getBVSkillMultiplier();
-        }
-        
-        if ( this.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED ) {
-            pilotFactor = crew.getBVImplantMultiplier() * Pilot.getBVSkillMultiplier(crew.getGunnery(), crew.getPiloting()+1);
         }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);

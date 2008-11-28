@@ -478,11 +478,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // Swarming infantry always hit their target, but
         // they can only target the Mek they're swarming.
         else if (te != null && ae.getSwarmTargetId() == te.getId()) {
-            // Only certain weapons can be used in a swarm attack.
-            if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Missile weapons can't be used in swarm attack");
-            }
             int side = te instanceof Tank ? ToHitData.SIDE_RANDOM
                     : ToHitData.SIDE_FRONT;
             if (ae instanceof BattleArmor) {
@@ -2275,6 +2270,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // Only certain weapons can be used in a swarm attack.
             if (wtype.getDamage() == 0) {
                 return "Weapon causes no damage.";
+            }
+            // Only certain weapons can be used in a swarm attack.
+            if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+                return "Missile weapons can't be used in swarm attack";
+            }
+            if (!weapon.isBodyMounted()) {
+                return "non-body mounted weapons can't be used in swarm attack";
             }
         } else if (Entity.NONE != ae.getSwarmTargetId()) {
             return "Must target the Mek being swarmed.";

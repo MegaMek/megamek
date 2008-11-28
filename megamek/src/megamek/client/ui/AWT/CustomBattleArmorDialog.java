@@ -1912,9 +1912,6 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
             retVal.setMovementMode(IEntityMovementMode.INF_LEG);
         }
 
-        // Set the BV of the squad...
-        retVal.setBattleValue(calcSquadBV());
-
         // And set its cost.
         retVal.setCost(calcSquadCost());
 

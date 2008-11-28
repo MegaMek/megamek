@@ -18,36 +18,28 @@ import megamek.common.TechConstants;
 /**
  * @author Sebastian Brocks
  */
-public class CLSRM2OS extends SRMWeapon {
+public class ISSRM3OS extends SRMWeapon {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 3798165725512473586L;
+    private static final long serialVersionUID = 8732407650030864483L;
 
     /**
      * 
      */
-    public CLSRM2OS() {
+    public ISSRM3OS() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
-        this.name = "SRM 2 (OS)";
-        this.setInternalName("CLSRM2 (OS)");
-        this.addLookupName("CLSRM2OS");
-        this.addLookupName("Clan OS SRM-2");
-        this.addLookupName("Clan SRM 2 (OS)");
-        this.heat = 2;
-        this.rackSize = 2;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.name = "SRM 3 (OS)";
+        this.setInternalName(this.name);
+        this.addLookupName("ISSRM3OS");
+        this.rackSize = 3;
         this.shortRange = 3;
         this.mediumRange = 6;
         this.longRange = 9;
         this.extremeRange = 12;
-        this.tonnage = 1.5f;
-        this.criticals = 1;
-        this.bv = 4;
+        this.bv = 6;
         this.flags |= F_NO_FIRES | F_ONESHOT;
-        this.cost = 10000;
-        this.shortAV = 2;
-        this.maxRange = RANGE_SHORT;
     }
 }

@@ -28,7 +28,10 @@ package megamek.common.loaders;
 
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.IEntityMovementMode;
+import megamek.common.LocationFullException;
+import megamek.common.TechConstants;
 import megamek.common.util.BuildingBlock;
 
 public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
@@ -58,10 +61,6 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("tonnage"))
             throw new EntityLoadingException("Could not find weight block.");
         t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
-
-        if (!dataFile.exists("BV"))
-            throw new EntityLoadingException("Could not find BV block.");
-        t.setBattleValue(dataFile.getDataAsInt("BV")[0]);
 
         if (!dataFile.exists("motion_type"))
             throw new EntityLoadingException("Could not find movement block.");
@@ -111,5 +110,44 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             loadEquipment(t, abbrs[loop], loop);
         }
         return t;
+    }
+
+    protected void loadEquipment(Entity t, String sName, int nLoc)
+    throws EntityLoadingException {
+        String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
+        if (saEquip == null)
+            return;
+
+        // prefix is "Clan " or "IS "
+        String prefix;
+        if (t.getTechLevel() == TechConstants.T_CLAN_TW) {
+            prefix = "Clan ";
+        } else {
+            prefix = "IS ";
+        }
+
+        if (saEquip[0] != null) {
+            for (int x = 0; x < saEquip.length; x++) {
+                boolean bodyMounted = saEquip[x].endsWith(":Body");
+                saEquip[x] = saEquip[x].replace(":Body", "");
+                String equipName = saEquip[x].trim();
+                EquipmentType etype = EquipmentType.get(equipName);
+
+                if (etype == null) {
+                    // try w/ prefix
+                    etype = EquipmentType.get(prefix + equipName);
+                }
+
+                if (etype != null) {
+                    try {
+                        t.addEquipment(etype, nLoc, false, bodyMounted);
+                    } catch (LocationFullException ex) {
+                        throw new EntityLoadingException(ex.getMessage());
+                    }
+                } else if (equipName != "0") {
+                    t.addFailedEquipment(equipName);
+                }
+            }
+        }
     }
 }

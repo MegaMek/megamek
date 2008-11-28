@@ -18,39 +18,29 @@ import megamek.common.TechConstants;
 /**
  * @author Sebastian Brocks
  */
-public class CLLRM5OS extends LRMWeapon {
+public class ISLRM1OS extends LRMWeapon {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 767564661100835293L;
+    private static final long serialVersionUID = -5976936994611000430L;
 
     /**
      * 
      */
-    public CLLRM5OS() {
+    public ISLRM1OS() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
-        this.name = "LRM 5 (OS)";
-        this.setInternalName("CLLRM5 (OS)");
-        this.addLookupName("CLLRM5OS");
-        this.addLookupName("Clan OS LRM-5");
-        this.addLookupName("Clan LRM 5 (OS)");
-        this.heat = 2;
-        this.rackSize = 5;
-        this.minimumRange = WEAPON_NA;
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.name = "LRM 1 (OS)";
+        this.setInternalName(this.name);
+        this.addLookupName("ISLRM1OS");
+        this.rackSize = 1;
+        this.minimumRange = 6;
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 21;
         this.extremeRange = 28;
-        this.tonnage = 1.5f;
-        this.criticals = 1;
-        this.bv = 11;
+        this.bv = 3;
         this.flags |= F_ONESHOT;
-        this.cost = 30000;
-        this.shortAV = 3;
-        this.medAV = 3;
-        this.longAV = 3;
-        this.maxRange = RANGE_LONG;
     }
 }

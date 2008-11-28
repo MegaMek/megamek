@@ -270,7 +270,11 @@ public class AmmoType extends EquipmentType {
         return capital;
     }
     
-    // Returns the first usable ammo type for the given oneshot launcher
+    /**
+     *  Returns the first usable ammo type for the given oneshot launcher
+     * @param mounted
+     * @return
+     */
     public static AmmoType getOneshotAmmo(Mounted mounted) {
         WeaponType wt = (WeaponType)mounted.getType();
         Vector<AmmoType> vAmmo = AmmoType.getMunitionsFor(wt.getAmmoType());
@@ -289,7 +293,6 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> srmAmmos = new ArrayList<AmmoType>(11);
         ArrayList<AmmoType> clanSrmAmmos = new ArrayList<AmmoType>();
         ArrayList<AmmoType> baSrmAmmos = new ArrayList<AmmoType>();
-        ArrayList<AmmoType> baMrmAmmos = new ArrayList<AmmoType>();
         ArrayList<AmmoType> clanBaLrmAmmos = new ArrayList<AmmoType>();
         ArrayList<AmmoType> isBaLrmAmmos = new ArrayList<AmmoType>();
         ArrayList<AmmoType> lrmAmmos = new ArrayList<AmmoType>(26);
@@ -692,21 +695,11 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType( createBARL3Ammo() );
         EquipmentType.addType( createBARL4Ammo() );
         EquipmentType.addType( createBARL5Ammo() );
-        base = createISMRM1Ammo();
-        baMrmAmmos.add(base);
-        EquipmentType.addType( base );
-        base = createISMRM2Ammo();
-        baMrmAmmos.add(base);
-        EquipmentType.addType( base );
-        base = createISMRM3Ammo();
-        baMrmAmmos.add(base);
-        EquipmentType.addType( base );
-        base = createISMRM4Ammo();
-        baMrmAmmos.add(base);
-        EquipmentType.addType( base );
-        base = createISMRM5Ammo();
-        baMrmAmmos.add(base);
-        EquipmentType.addType( base );
+        EquipmentType.addType(createISMRM1Ammo());
+        EquipmentType.addType(createISMRM2Ammo());
+        EquipmentType.addType(createISMRM3Ammo());
+        EquipmentType.addType(createISMRM4Ammo());
+        EquipmentType.addType(createISMRM5Ammo());
         base = createBAISLRM1Ammo();
         isBaLrmAmmos.add(base);
         EquipmentType.addType( base );
@@ -753,9 +746,6 @@ public class AmmoType extends EquipmentType {
         baSrmAmmos.add(base);
         EquipmentType.addType( base );
         base = createBASRM6Ammo();
-        baSrmAmmos.add(base);
-        EquipmentType.addType( base );
-        base = createBASRM2OSAmmo();
         baSrmAmmos.add(base);
         EquipmentType.addType( base );
 
@@ -898,15 +888,6 @@ public class AmmoType extends EquipmentType {
         // Walk through both the base types and the
         // mutators, and create munition types.
         createMunitions(baSrmAmmos,munitions);
-
-        // Create the munition types for BA MRM launchers.
-        munitions.clear();
-        munitions.add( new MunitionMutator( "Torpedo",
-                1, M_TORPEDO, TechConstants.T_IS_TW_NON_BOX ) );
-
-        // Walk through both the base types and the
-        // mutators, and create munition types.
-        createMunitions(baMrmAmmos,munitions);
 
         // Create the munition types for IS BA LRM launchers.
         munitions.clear();
@@ -4828,24 +4809,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 1;
-        ammo.bv = 3;
-        ammo.kgPerShot = 20;
-
-        return ammo;
-    }
-    private static AmmoType createBASRM2OSAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel = TechConstants.T_ALLOWED_ALL;
-        ammo.name = "BA Disposable SRM 2 Ammo";
-        ammo.shortName = "SRM";
-        ammo.setInternalName(BattleArmor.DISPOSABLE_SRM2_AMMO);
-        ammo.addLookupName("BASRM2OS Ammo");
-        ammo.damagePerShot = 2;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags |= F_BATTLEARMOR | F_ENCUMBERING;
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.kgPerShot = 20;

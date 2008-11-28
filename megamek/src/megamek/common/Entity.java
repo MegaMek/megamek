@@ -2039,6 +2039,14 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         addEquipment(mounted, loc, rearMounted, isBomb, points);
         return mounted;
     }
+    
+    // indicate whether this is bodymounted for BAs
+    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted, boolean bodyMounted) throws LocationFullException {
+        Mounted mounted = new Mounted(this, etype);
+        mounted.setBodyMounted(bodyMounted);
+        addEquipment(mounted, loc, rearMounted);
+        return mounted;
+    }
 
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted, int nAmmo) throws LocationFullException {
         if (mounted.getType() instanceof AmmoType && nAmmo > 1) {

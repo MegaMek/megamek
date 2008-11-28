@@ -81,7 +81,6 @@ public class BattleArmor extends Infantry implements Serializable {
      * The battle value of this unit. This value should be set when the unit's
      * file is read.
      */
-    private int myBV = 0;
     private int myCost = -1;
     private int weightClass = -1;
     private int chassisType = -1;
@@ -704,23 +703,30 @@ public class BattleArmor extends Infantry implements Serializable {
                 }
             }
             for (Mounted ammo : this.getAmmo()) {
-                if (ammo.getLocation() == LOC_SQUAD) {
+                int loc = ammo.getLocation();
+                // don't count oneshot ammo
+                if (loc == LOC_NONE) {
+                    continue;
+                }
+                if (loc == LOC_SQUAD || loc == i) {
                     double ammoBV =((AmmoType)ammo.getType()).getBABV(); 
                     oBV += ammoBV;
                 }
             }
             if (isAntiMek()) {
-                // all direct fire weapons counted again
+                // all non-missile and non-body mounted direct fire weapons
+                // counted again
                 for (Mounted weapon : this.getWeaponList()) {
-                    if (weapon.getLocation() == LOC_SQUAD) {
-                        if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
+                    if (weapon.getLocation() == LOC_SQUAD || weapon.getLocation() == i) {
+                        if (!weapon.getType().hasFlag(WeaponType.F_MISSILE) &&
+                                !weapon.isBodyMounted()) {
                             oBV += weapon.getType().getBV(this);
                         }
                     }
                 }
                 // magnetic claws and vibro claws counted again
                 for (Mounted misc : this.getMisc()) {
-                    if (misc.getLocation() == LOC_SQUAD) {
+                    if (misc.getLocation() == LOC_SQUAD || misc.getLocation() == i) {
                         if (misc.getType().hasFlag(MiscType.F_ASSAULT_CLAW)
                                 || misc.getType().hasFlag(MiscType.F_VIBROCLAW)) {
                             oBV += misc.getType().getBV(this);
@@ -808,16 +814,6 @@ public class BattleArmor extends Infantry implements Serializable {
         return troopersShooting;
     }
 
-    /**
-     * Sets the battle value of this unit. Please note that the BV of all Battle
-     * Armor units is dictated by the BMRr, page 155.
-     * 
-     * @param bv - the <code>int</code> battle value of this unit.
-     */
-    public void setBattleValue(int bv) {
-        myBV = bv;
-    }
-
     public void setCost(int inC) {
         myCost = inC;
     }
@@ -834,20 +830,24 @@ public class BattleArmor extends Infantry implements Serializable {
 
         // Clan Elemental points are never burdened by equipment.
         if (!this.isClan()) {
-
-            // As of 2006-10-10 any squad can be burdened.
-
-            // As of 2003-01-03, only ammo burdens the jump
-            // Loop through the squad's equipment.
+            
+            // if we have ammo left for a body mounted missile launcher,
+            // we are burdened
             for (Mounted mounted : this.getAmmo()) {
-                EquipmentType type = mounted.getType();
-
-                // Un-jettisoned ammo packs burden squads.
-                if (mounted.getShotsLeft() > 0
-                        && (type.hasFlag(AmmoType.F_ENCUMBERING))) {
+                if (mounted.getShotsLeft() == 0) {
+                    // no shots left, we don't count
+                    continue;
+                }
+                // first get the weapon we are linked by
+                // (so we basically only check the currently loaded
+                // ammo, but if the weapon has no currently loaded ammo, we're
+                // fine
+                Mounted weapon = mounted.getLinkedBy();
+                if (weapon != null
+                        && weapon.isBodyMounted()
+                        && weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
                     return true;
                 }
-
             } // Check the next piece of equipment
 
         } // End is-inner-sphere-squad

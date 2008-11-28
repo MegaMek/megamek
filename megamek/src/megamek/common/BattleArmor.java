@@ -695,6 +695,10 @@ public class BattleArmor extends Infantry implements Serializable {
             dBV *= tmmFactor;
             double oBV = 0;
             for (Mounted weapon : this.getWeaponList()) {
+                // infantry weapons don't count at all
+                if (weapon.getType().hasFlag(WeaponType.F_INFANTRY)) {
+                    continue;
+                }
                 if (weapon.getLocation() == LOC_SQUAD) {
                     oBV += weapon.getType().getBV(this);
                 } else {
@@ -717,6 +721,10 @@ public class BattleArmor extends Infantry implements Serializable {
                 // all non-missile and non-body mounted direct fire weapons
                 // counted again
                 for (Mounted weapon : this.getWeaponList()) {
+                    // infantry weapons don't count at all
+                    if (weapon.getType().hasFlag(WeaponType.F_INFANTRY)) {
+                        continue;
+                    }
                     if (weapon.getLocation() == LOC_SQUAD || weapon.getLocation() == i) {
                         if (!weapon.getType().hasFlag(WeaponType.F_MISSILE) &&
                                 !weapon.isBodyMounted()) {

@@ -35,7 +35,7 @@ public class ISSnubNosePPC extends PPCWeapon {
         super();
 
         this.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        this.name = "Snub Nose PPC";
+        this.name = "Snub-Nose PPC";
         this.setInternalName("ISSNPPC");
         this.addLookupName("ISSnubNosedPPC");
         this.heat = 10;

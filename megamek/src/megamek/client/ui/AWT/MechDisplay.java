@@ -2698,9 +2698,20 @@ public class MechDisplay extends BufferedPanel {
                 narcList.add(Messages.getString("MechDisplay.UnderStealth")); //$NON-NLS-1$
             }
             
+            // burdened due to unjettisoned body-mounted missiles on BA?
             if (en instanceof BattleArmor &&
                     ((BattleArmor)en).isBurdened()) {
                 narcList.add(Messages.getString("MechDisplay.Burdened")); //$NON-NLS-1$
+            }
+            
+            // suffering from taser feedback?
+            if (en.getTaserFeedBackRounds() > 0) {
+                narcList.add(en.getTaserFeedBackRounds()+" "+Messages.getString("MechDisplay.TaserFeedBack"));//$NON-NLS-1$
+            }
+            
+            // taser interference?
+            if (en.getTaserInterference() > 0) {
+                narcList.add("+"+en.getTaserInterference()+" "+Messages.getString("MechDisplay.TaserInterference"));//$NON-NLS-1$
             }
 
             // Show Turret Locked.

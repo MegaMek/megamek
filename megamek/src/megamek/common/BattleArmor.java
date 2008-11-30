@@ -1377,5 +1377,15 @@ public class BattleArmor extends Infantry implements Serializable {
         }
         return false;
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#canTransferCriticals(int)
+     */
+    public boolean canTransferCriticals(int loc) {
+        // BAs can never transfer crits
+        return false;
+    }
+
 
 } // End public class BattleArmor extends Infantry implements Serializable

@@ -18,6 +18,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -441,8 +443,11 @@ public class MechSummaryCache {
                 } catch (EntityLoadingException ex) {
                     loadReport.append("    Loading from ").append(f).append(
                             "\n");
-                    loadReport.append("***   Unable to load file: ").append(
-                            ex.getMessage()).append("\n");
+                    loadReport.append("***   Unable to load file: ");
+                    StringWriter stringWriter = new StringWriter();
+                    PrintWriter printWriter = new PrintWriter(stringWriter);
+                    ex.printStackTrace(printWriter);
+                    loadReport.append(stringWriter.getBuffer()).append("\n");
                     hFailedFiles.put(f.toString(), ex.getMessage());
                     continue;
                 }
@@ -464,8 +469,11 @@ public class MechSummaryCache {
             zFile = new ZipFile(fZipFile);
         } catch (Exception ex) {
             loadReport.append("  Unable to load file ").append(
-                    fZipFile.getName()).append(": ").append(ex.getMessage())
-                    .append("\n");
+                    fZipFile.getName()).append(": ");
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            ex.printStackTrace(printWriter);
+            loadReport.append(stringWriter.getBuffer()).append("\n");
             return false;
         }
         loadReport.append("  Looking in zip file ").append(fZipFile.getPath())
@@ -515,9 +523,11 @@ public class MechSummaryCache {
             } catch (Exception ex) {
                 loadReport.append("    Loading from zip file").append(" >> ")
                         .append(zEntry.getName()).append("\n");
-                loadReport.append("      Unable to load file: ").append(
-                        ex.getMessage()).append("\n");
-                ex.printStackTrace();
+                loadReport.append("      Unable to load file: ");
+                StringWriter stringWriter = new StringWriter();
+                PrintWriter printWriter = new PrintWriter(stringWriter);
+                ex.printStackTrace(printWriter);
+                loadReport.append(stringWriter.getBuffer()).append("\n");
                 if (!(ex.getMessage() == null))
                     hFailedFiles.put(zEntry.getName(), ex.getMessage());
                 continue;

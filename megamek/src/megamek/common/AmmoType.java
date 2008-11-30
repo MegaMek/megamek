@@ -97,8 +97,9 @@ public class AmmoType extends EquipmentType {
     public static final int     T_MANTA_RAY         = 71;
     public static final int     T_SWORDFISH         = 72;
     public static final int     T_STINGRAY          = 73;
-    public static final int     T_PIRANHA           = 74;   
-    public static final int     NUM_TYPES           = 75;
+    public static final int     T_PIRANHA           = 74;
+    public static final int     T_TASER             = 75;
+    public static final int     NUM_TYPES           = 76;
     
 
     // ammo flags
@@ -700,6 +701,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISMRM3Ammo());
         EquipmentType.addType(createISMRM4Ammo());
         EquipmentType.addType(createISMRM5Ammo());
+        EquipmentType.addType(createISBATaserAmmo());
         base = createBAISLRM1Ammo();
         isBaLrmAmmos.add(base);
         EquipmentType.addType( base );
@@ -5465,6 +5467,22 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    private static AmmoType createISBATaserAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
+        ammo.name = "BA Taser Ammo";
+        ammo.setInternalName(ammo.name);
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_TASER;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;

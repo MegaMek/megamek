@@ -89,7 +89,7 @@ public class WeaponType extends EquipmentType {
     public static final long F_BOMBAST_LASER = 1l << 34;
     public static final long F_CRUISE_MISSILE = 1l << 35;
     public static final long F_B_POD          = 1l << 36;
-    
+    public static final long F_TASER          = 1l << 37;
 
 //  add maximum range for AT2
     public static final int     RANGE_SHORT = 1;
@@ -867,6 +867,7 @@ public class WeaponType extends EquipmentType {
         addType(new CLBAAPGaussRifle());
         addType(new ISBAFlamer());
         addType(new CLBAFlamer());
+        addType(new ISBATaser());
         
         //Naval weapons
         addType(new NL35Weapon());

@@ -312,26 +312,9 @@ public class CEntity {
                                                             // attack
                 continue;
 
-            // This is bad stuff. Infantry/BA weapons that don't require ammo
-            // SHOULD return AmmoType.T_NA from getAmmoType. They don't, so
-            // in the meantime check against a list of all infantry/BA weapons
-            // that
-            // do use ammo
-            // TODO: Fix ammo type of all non-ammo using infantry/BA weapons and
-            // fix this code!
-            if (!(entity instanceof Infantry)) {
-                if (m.getLinked() == null
-                        & weapon.getAmmoType() != AmmoType.T_NA) {
-                    continue;
-                }
-            } else {
-                // ignore anything with the F_INFANTRY flag
-                if (!weapon.hasFlag(WeaponType.F_INFANTRY)
-                        & weapon.getAmmoType() != AmmoType.T_NA) {
-                    if (m.getLinked() == null) {
-                        continue;
-                    }
-                }
+            if (m.getLinked() == null
+                    & weapon.getAmmoType() != AmmoType.T_NA) {
+                continue;
             }
 
             num_weapons++;
@@ -342,6 +325,9 @@ public class CEntity {
 
             double ed;
             int gunnery = entity.getCrew().getGunnery();
+            if (entity.getTaserFeedBackRounds() > 0) {
+                gunnery += 1;
+            }
             // Range used to start at 1; updated to account for stacking
             for (int curRange = 0; curRange <= lr && curRange <= MAX_RANGE; curRange++) {
 
@@ -896,6 +882,9 @@ public class CEntity {
 
         // Use pilots gunnery skill, not the piloting skill...
         int base = entity.getCrew().getGunnery();
+        if (entity.getTaserFeedBackRounds() > 0) {
+            base += 1;
+        }
         int dist_mod = 0;
 
         // Check range brackets based on defined maximum possible

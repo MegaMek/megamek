@@ -12229,47 +12229,61 @@ public class Server implements Runnable {
 
                 // heat effects: start up
                 if (entity.heat < autoShutDownHeat && entity.isShutDown()) {
-                    if (entity.heat < 14) {
-                        // automatically starts up again
-                        entity.setShutDown(false);
-                        r = new Report(5045);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        addReport(r);
+                    // only start up if not shut down by taser
+                    if (entity.getTaserShutdownRounds() == 0) {
+                        if (entity.heat < 14) {
+                            // automatically starts up again
+                            entity.setShutDown(false);
+                            r = new Report(5045);
+                            r.subject = entity.getId();
+                            r.addDesc(entity);
+                            addReport(r);
+                        } else {
+                            // roll for startup
+                            int startup = 4 + (entity.heat - 14) / 4 * 2;
+                            if (mtHeat) {
+                                startup -= 5;
+                                switch (entity.crew.getPiloting()) {
+                                case 0:
+                                case 1:
+                                    startup -= 2;
+                                    break;
+                                case 2:
+                                case 3:
+                                    startup -= 1;
+                                    break;
+                                case 6:
+                                case 7:
+                                    startup += 1;
+                                    break;
+                                }
+                            }
+                            int suroll = Compute.d6(2);
+                            r = new Report(5050);
+                            r.subject = entity.getId();
+                            r.addDesc(entity);
+                            r.add(startup);
+                            r.add(suroll);
+                            if (suroll >= startup) {
+                                // start 'er back up
+                                entity.setShutDown(false);
+                                r.choose(true);
+                            } else {
+                                r.choose(false);
+                            }
+                            addReport(r);
+                        }
                     } else {
-                        // roll for startup
-                        int startup = 4 + (entity.heat - 14) / 4 * 2;
-                        if (mtHeat) {
-                            startup -= 5;
-                            switch (entity.crew.getPiloting()) {
-                            case 0:
-                            case 1:
-                                startup -= 2;
-                                break;
-                            case 2:
-                            case 3:
-                                startup -= 1;
-                                break;
-                            case 6:
-                            case 7:
-                                startup += 1;
-                                break;
+                        // if we're shutdown by a BA taser, we might activate
+                        // again
+                        if (entity.isBATaserShutdown()) {
+                            int roll = Compute.d6(2);
+                            if (roll >= 8) {
+                                entity.setTaserShutdownRounds(0);
+                                entity.setShutDown(false);
+                                entity.setBATaserShutdown(false);
                             }
                         }
-                        int suroll = Compute.d6(2);
-                        r = new Report(5050);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(startup);
-                        r.add(suroll);
-                        if (suroll >= startup) {
-                            // start 'er back up
-                            entity.setShutDown(false);
-                            r.choose(true);
-                        } else {
-                            r.choose(false);
-                        }
-                        addReport(r);
                     }
                 }
 
@@ -12430,6 +12444,22 @@ public class Server implements Runnable {
                 if (entity.infernos.isStillBurning()) {
                     doFlamingDamage(entity);
                 }
+                if (entity.getTaserShutdownRounds() == 0) {
+                    entity.setShutDown(false);
+                    entity.setBATaserShutdown(false);
+                } else {
+                    // if we're shutdown by a BA taser, we might activate
+                    // again
+                    if (entity.isBATaserShutdown()) {
+                        int roll = Compute.d6(2);
+                        if (roll >= 8) {
+                            entity.setTaserShutdownRounds(0);
+                            entity.setShutDown(false);
+                            entity.setBATaserShutdown(false);
+                        }
+                    }
+                }
+                
                 continue;
             }
             // Meks gain heat from inferno hits.
@@ -12660,48 +12690,61 @@ public class Server implements Runnable {
             }
             // heat effects: start up
             if (entity.heat < autoShutDownHeat && entity.isShutDown()) {
-                if (entity.heat < 14) {
-                    // automatically starts up again
-                    entity.setShutDown(false);
-                    r = new Report(5045);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    addReport(r);
-                } else {
-                    // roll for startup
-                    int startup = 4 + (entity.heat - 14) / 4 * 2;
-                    if (mtHeat) {
-                        startup -= 5;
-                        switch (entity.crew.getPiloting()) {
-                        case 0:
-                        case 1:
-                            startup -= 2;
-                            break;
-                        case 2:
-                        case 3:
-                            startup -= 1;
-                            break;
-                        case 6:
-                        case 7:
-                            startup += 1;
-                        }
-                        if (entity instanceof QuadMech)
-                            startup -= 2;
-                    }
-                    int suroll = Compute.d6(2);
-                    r = new Report(5050);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(startup);
-                    r.add(suroll);
-                    if (suroll >= startup) {
-                        // start 'er back up
+                if (entity.getTaserShutdownRounds() == 0) {
+                    if (entity.heat < 14) {
+                        // automatically starts up again
                         entity.setShutDown(false);
-                        r.choose(true);
+                        r = new Report(5045);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        addReport(r);
                     } else {
-                        r.choose(false);
+                        // roll for startup
+                        int startup = 4 + (entity.heat - 14) / 4 * 2;
+                        if (mtHeat) {
+                            startup -= 5;
+                            switch (entity.crew.getPiloting()) {
+                            case 0:
+                            case 1:
+                                startup -= 2;
+                                break;
+                            case 2:
+                            case 3:
+                                startup -= 1;
+                                break;
+                            case 6:
+                            case 7:
+                                startup += 1;
+                            }
+                            if (entity instanceof QuadMech)
+                                startup -= 2;
+                        }
+                        int suroll = Compute.d6(2);
+                        r = new Report(5050);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        r.add(startup);
+                        r.add(suroll);
+                        if (suroll >= startup) {
+                            // start 'er back up
+                            entity.setShutDown(false);
+                            r.choose(true);
+                        } else {
+                            r.choose(false);
+                        }
+                        addReport(r);
                     }
-                    addReport(r);
+                } else {
+                    // if we're shutdown by a BA taser, we might activate
+                    // again
+                    if (entity.isBATaserShutdown()) {
+                        int roll = Compute.d6(2);
+                        if (roll >= 7) {
+                            entity.setTaserShutdownRounds(0);
+                            entity.setShutDown(false);
+                            entity.setBATaserShutdown(false);
+                        }
+                    }
                 }
             }
 

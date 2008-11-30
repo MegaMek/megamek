@@ -172,6 +172,11 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         if (ae.isSpotting()) {
             toHit.addModifier(+1, "attacker is spotting");
         }
+        
+        // taser feedback
+        if (ae.getTaserFeedBackRounds() > 0) {
+            toHit.addModifier(1, "Taser feedback");
+        }
 
         // target immobile
         toHit.append(Compute.getImmobileMod(te));

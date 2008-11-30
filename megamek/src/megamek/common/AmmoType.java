@@ -1688,7 +1688,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "LB 2-X AC Ammo";
-        ammo.shortName = "LBX";
+        ammo.shortName = "LB-X";
         ammo.setInternalName("IS LB 2-X AC Ammo");
         ammo.addLookupName("IS Ammo 2-X");
         ammo.addLookupName("ISLBXAC2 Ammo");
@@ -1708,7 +1708,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "LB 5-X AC Ammo";
-        ammo.shortName = "LBX";
+        ammo.shortName = "LB-X";
         ammo.setInternalName("IS LB 5-X AC Ammo");
         ammo.addLookupName("IS Ammo 5-X");
         ammo.addLookupName("ISLBXAC5 Ammo");
@@ -1728,7 +1728,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "LB 10-X AC Ammo";
-        ammo.shortName = "LBX";
+        ammo.shortName = "LB-X";
         ammo.setInternalName("IS LB 10-X AC Ammo");
         ammo.addLookupName("IS Ammo 10-X");
         ammo.addLookupName("ISLBXAC10 Ammo");
@@ -1748,7 +1748,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "LB 20-X AC Ammo";
-        ammo.shortName = "LBX";
+        ammo.shortName = "LB-X";
         ammo.setInternalName("IS LB 20-X AC Ammo");
         ammo.addLookupName("IS Ammo 20-X");
         ammo.addLookupName("ISLBXAC20 Ammo");
@@ -1768,7 +1768,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "LB 2-X Cluster Ammo";
-        ammo.shortName = "LBX Cluster";
+        ammo.shortName = "LB-X Cluster";
         ammo.setInternalName("IS LB 2-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 2-X (CL)");
         // this isn't a true mtf code
@@ -1791,7 +1791,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "LB 5-X Cluster Ammo";
-        ammo.shortName = "LBX Cluster";
+        ammo.shortName = "LB-X Cluster";
         ammo.setInternalName("IS LB 5-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 5-X (CL)");
         // this isn't a true mtf code
@@ -1814,7 +1814,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "LB 10-X Cluster Ammo";
-        ammo.shortName = "LBX Cluster";
+        ammo.shortName = "LB-X Cluster";
         ammo.setInternalName("IS LB 10-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 10-X (CL)");
         // this isn't a true mtf code
@@ -1837,7 +1837,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "LB 20-X Cluster Ammo";
-        ammo.shortName = "LBX Cluster";
+        ammo.shortName = "LB-X Cluster";
         ammo.setInternalName("IS LB 20-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 20-X (CL)");
         // this isn't a true mtf code
@@ -1860,7 +1860,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_ADVANCED;
         ammo.name = "LB 2-X AC Ammo (THB)";
-        ammo.shortName = "LBX";
+        ammo.shortName = "LB-X";
         ammo.setInternalName("IS LB 2-X AC Ammo (THB)");
         ammo.addLookupName("IS Ammo 2-X (THB)");
         ammo.addLookupName("ISLBXAC2 Ammo (THB)");
@@ -1880,7 +1880,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_ADVANCED;
         ammo.name = "LB 5-X AC Ammo (THB)";
-        ammo.shortName = "LBX";
+        ammo.shortName = "LB-X";
         ammo.setInternalName("IS LB 5-X AC Ammo (THB)");
         ammo.addLookupName("IS Ammo 5-X (THB)");
         ammo.addLookupName("ISLBXAC5 Ammo (THB)");
@@ -1900,7 +1900,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "LB 20-X AC Ammo (THB)";
-        ammo.shortName = "LBX";
+        ammo.shortName = "LB-X";
         ammo.setInternalName("IS LB 20-X AC Ammo (THB)");
         ammo.addLookupName("IS Ammo 20-X (THB)");
         ammo.addLookupName("ISLBXAC20 Ammo (THB)");
@@ -1920,7 +1920,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "LB 2-X Cluster Ammo (THB)";
-        ammo.shortName = "LBX Cluster";
+        ammo.shortName = "LB-X Cluster";
         ammo.setInternalName("IS LB 2-X Cluster Ammo (THB)");
         ammo.addLookupName("IS Ammo 2-X (CL) (THB)");
         // this isn't a true mtf code
@@ -1943,7 +1943,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "LB 5-X Cluster Ammo (THB)";
-        ammo.shortName = "LBX Cluster";
+        ammo.shortName = "LB-X Cluster";
         ammo.setInternalName("IS LB 5-X Cluster Ammo (THB)");
         ammo.addLookupName("IS Ammo 5-X (CL) (THB)");
         // this isn't a true mtf code
@@ -1966,7 +1966,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "LB 20-X Cluster Ammo (THB)";
-        ammo.shortName = "LBX Cluster";
+        ammo.shortName = "LB-X Cluster";
         ammo.setInternalName("IS LB 20-X Cluster Ammo (THB)");
         ammo.addLookupName("IS Ammo 20-X (CL) (THB)");
         // this isn't a true mtf code
@@ -2611,7 +2611,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_TW;
         ammo.name = "LB 2-X AC Ammo";
-        ammo.shortName = "LBX";
+        ammo.shortName = "LB-X";
         ammo.setInternalName("Clan LB 2-X AC Ammo");
         ammo.addLookupName("Clan Ammo 2-X");
         ammo.addLookupName("CLLBXAC2 Ammo");
@@ -2632,7 +2632,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_TW;
         ammo.name = "LB 5-X AC Ammo";
-        ammo.shortName = "LBX";
+        ammo.shortName = "LB-X";
         ammo.setInternalName("Clan LB 5-X AC Ammo");
         ammo.addLookupName("Clan Ammo 5-X");
         ammo.addLookupName("CLLBXAC5 Ammo");
@@ -2653,7 +2653,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_TW;
         ammo.name = "LB 10-X AC Ammo";
-        ammo.shortName = "LBX";
+        ammo.shortName = "LB-X";
         ammo.setInternalName("Clan LB 10-X AC Ammo");
         ammo.addLookupName("Clan Ammo 10-X");
         ammo.addLookupName("CLLBXAC10 Ammo");
@@ -2673,7 +2673,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_TW;
         ammo.name = "LB 20-X AC Ammo";
-        ammo.shortName = "LBX";
+        ammo.shortName = "LB-X";
         ammo.setInternalName("Clan LB 20-X AC Ammo");
         ammo.addLookupName("Clan Ammo 20-X");
         ammo.addLookupName("CLLBXAC20 Ammo");
@@ -2693,7 +2693,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_TW;
         ammo.name = "LB 2-X Cluster Ammo";
-        ammo.shortName = "LBX Cluster";
+        ammo.shortName = "LB-X Cluster";
         ammo.setInternalName("Clan LB 2-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 2-X (CL)");
         // this isn't a true mtf code
@@ -2716,7 +2716,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_TW;
         ammo.name = "LB 5-X Cluster Ammo";
-        ammo.shortName = "LBX Cluster";
+        ammo.shortName = "LB-X Cluster";
         ammo.setInternalName("Clan LB 5-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 5-X (CL)");
         // this isn't a true mtf code
@@ -2739,7 +2739,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_TW;
         ammo.name = "LB 10-X Cluster Ammo";
-        ammo.shortName = "LBX Cluster";
+        ammo.shortName = "LB-X Cluster";
         ammo.setInternalName("Clan LB 10-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 10-X (CL)");
         // this isn't a true mtf code
@@ -2762,7 +2762,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_TW;
         ammo.name = "LB 20-X Cluster Ammo";
-        ammo.shortName = "LBX Cluster";
+        ammo.shortName = "LB-X Cluster";
         ammo.setInternalName("Clan LB 20-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 20-X (CL)");
         // this isn't a true mtf code
@@ -4312,7 +4312,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 3 LRM Ammo";
-        ammo.shortName = "LRM";
+        ammo.shortName = "MML/LRM";
         ammo.setInternalName("IS Ammo MML-3 LRM");
         ammo.addLookupName("ISMML3 LRM Ammo");
         ammo.addLookupName("IS MML-3 LRM Ammo");
@@ -4333,7 +4333,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 3 SRM Ammo";
-        ammo.shortName = "SRM";
+        ammo.shortName = "MML/SRM";
         ammo.setInternalName("IS Ammo MML-3 SRM");
         ammo.addLookupName("ISMML3 SRM Ammo");
         ammo.addLookupName("IS MML-3 SRM Ammo");
@@ -4352,7 +4352,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 5 LRM Ammo";
-        ammo.shortName = "LRM";
+        ammo.shortName = "MML/LRM";
         ammo.setInternalName("IS Ammo MML-5 LRM");
         ammo.addLookupName("ISMML5 LRM Ammo");
         ammo.addLookupName("IS MML-5 LRM Ammo");
@@ -4373,7 +4373,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 5 SRM Ammo";
-        ammo.shortName = "SRM";
+        ammo.shortName = "MML/SRM";
         ammo.setInternalName("IS Ammo MML-5 SRM");
         ammo.addLookupName("ISMML5 SRM Ammo");
         ammo.addLookupName("IS MML-5 SRM Ammo");
@@ -4392,7 +4392,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 7 LRM Ammo";
-        ammo.shortName = "LRM";
+        ammo.shortName = "MML/LRM";
         ammo.setInternalName("IS Ammo MML-7 LRM");
         ammo.addLookupName("ISMML7 LRM Ammo");
         ammo.addLookupName("IS MML-7 LRM Ammo");
@@ -4413,7 +4413,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 7 SRM Ammo";
-        ammo.shortName = "SRM";
+        ammo.shortName = "MML/SRM";
         ammo.setInternalName("IS Ammo MML-7 SRM");
         ammo.addLookupName("ISMML7 SRM Ammo");
         ammo.addLookupName("IS MML-7 SRM Ammo");
@@ -4432,7 +4432,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 9 LRM Ammo";
-        ammo.shortName = "LRM";
+        ammo.shortName = "MML/LRM";
         ammo.setInternalName("IS Ammo MML-9 LRM");
         ammo.addLookupName("ISMML9 LRM Ammo");
         ammo.addLookupName("IS MML-9 LRM Ammo");
@@ -4453,7 +4453,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 9 SRM Ammo";
-        ammo.shortName = "SRM";
+        ammo.shortName = "MML/SRM";
         ammo.setInternalName("IS Ammo MML-9 SRM");
         ammo.addLookupName("ISMML9 SRM Ammo");
         ammo.addLookupName("IS MML-9 SRM Ammo");

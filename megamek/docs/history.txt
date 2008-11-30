@@ -29,6 +29,7 @@ v0.33.36-dev (SVN)
 + Show burdened status of BA in mechview and mechdisplay
 + AP infantry weapons shouldn't count for BA BV
 + Bug: Small Cockpit BV
++ Updated Ammo Short Names for MML and LB-X
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

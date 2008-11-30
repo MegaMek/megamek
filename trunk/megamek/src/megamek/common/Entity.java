@@ -333,9 +333,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      */
     private Vector<Integer> hitBySwarmsWeapon = new Vector<Integer>();
 
-    // Whether this unit is canon;
     /**
-     * True if and only if this is a cannon (published) unit.
+     * True if and only if this is a canon (published) unit.
      */
     private boolean canon;
 
@@ -374,6 +373,18 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     //Tac Ops HeatSink Coolant Failure number
     protected int heatSinkCoolantFailureFactor;
     
+    // for how many rounds should this unit stay shutdown due to tasering
+    protected int taserShutdownRounds = 0;
+    
+    // is this unit shutdown by a BA taser?
+    protected boolean shutdownByBATaser = false;
+    
+    // for how many more rounds does this unit suffer from taser feedback?
+    protected int taserFeedBackRounds = 0;
+    
+    protected int taserInterference = 0;
+    protected int taserInterferenceRounds = 0;
+
     /**
      * Generates a new, blank, entity.
      */
@@ -3639,6 +3650,21 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         
         // Update the inferno tracker.
         this.infernos.newRound(roundNumber);
+        if (taserShutdownRounds > 0) {
+            taserShutdownRounds--;
+            if (taserShutdownRounds == 0) {
+                shutdownByBATaser = false;
+            }
+        }
+        if (taserInterferenceRounds > 0) {
+            taserInterferenceRounds--;
+            if (taserInterferenceRounds == 0) {
+                taserInterference = 0;
+            }
+        }
+        if (taserFeedBackRounds > 0) {
+            taserFeedBackRounds--;
+        }
     }
 
     /**
@@ -4047,6 +4073,10 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         
         if(game.getOptions().booleanOption("tacops_fatigue") && crew.isPilotingFatigued(game.getRoundCount())) {
             roll.addModifier(1,"fatigue");
+        }
+        
+        if (taserInterference > 0) {
+            roll.addModifier(taserInterference, "taser interference");
         }
         
         return roll;
@@ -7578,5 +7608,65 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public int getVibroClaws() {
         // generic entities can't carry vibroclaws
         return 0;
+    }
+
+    /**
+     * shut this unit down due to a BA Taser attack
+     * @param turns - the amount of rounds for which this Entity should be
+     *                shutdown
+     */
+    public void baTaserShutdown(int turns) {
+        setShutDown(true);
+        taserShutdownRounds = turns;
+        shutdownByBATaser = true;
+    }
+    
+    /**
+     * get the number of rounds for which this unit should be shutdown by taser
+     * @return
+     */
+    public int getTaserShutdownRounds() {
+        return taserShutdownRounds;
+    }
+    
+    public void setTaserShutdownRounds(int rounds) {
+        taserShutdownRounds = rounds;
+    }
+    
+    public boolean isBATaserShutdown() {
+        return shutdownByBATaser;
+    }
+    
+    public void setBATaserShutdown(boolean value) {
+        shutdownByBATaser = value;
+    }
+
+    /**
+     * set this entity to suffer from taser feedback
+     * @param rounds - the number of rounds to suffer from taserfeedback
+     */
+    public void setTaserFeedback(int rounds) {
+        taserFeedBackRounds = rounds;
+    }
+    
+    /**
+     * get the rounds for which this entity suffers from taser feedback
+     * @return
+     */
+    public int getTaserFeedBackRounds() {
+        return taserFeedBackRounds;
+    }
+    
+    public void setTaserInterference(int value, int rounds) {
+        taserInterference = value;
+        taserInterferenceRounds = rounds;
+    }
+    
+    public int getTaserInterference() {
+        return taserInterference;
+    }
+    
+    public int getTaserInterferenceRounds() {
+        return taserInterferenceRounds;
     }
 }

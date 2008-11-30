@@ -113,6 +113,9 @@ public class Mounted implements Serializable, RoundUpdated {
     public Mounted(Entity entity, EquipmentType type) {
         this.entity = entity;
         this.type = type;
+        if (type == null) {
+            type = null;
+        }
         this.typeName = type.getInternalName();
 
         if (type instanceof AmmoType) {

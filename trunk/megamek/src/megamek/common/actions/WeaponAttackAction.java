@@ -506,6 +506,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                             "gunnery (B) skill");
                 }
             }
+            if (ae.getTaserFeedBackRounds() > 0) {
+                toHit.addModifier(1, "Taser feedback");
+            }
         }
 
         // Engineer's fire extinguisher has fixed to hit number,
@@ -1527,6 +1530,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             boolean isArtilleryDirect, boolean isTargetECMAffected) {
         boolean isHoming = false;
         ToHitData toHit = null;
+        
+        // tasers only at non-flying units
+        if (wtype.hasFlag(WeaponType.F_TASER)) {
+            if (te != null) {
+                if (te.isFlying()) {
+                    return "Tasers can't be fired at flying units.";
+                }
+            } else {
+                return "Tasers can only fire at units.";
+            }
+        }
         
         // only leg mounted b-pods can be fired normally
         if (wtype.hasFlag(WeaponType.F_B_POD)) {

@@ -386,7 +386,7 @@ public class MiscType extends EquipmentType {
 
     public double getBV(Entity entity, Mounted mount) {
         
-        if ( hasFlag(F_PPC_CAPACITOR) && mount != null && mount.getLinked() == null ) {
+        if ( hasFlag(F_PPC_CAPACITOR) && mount != null && mount.getLinked() != null ) {
             
             if ( mount.getLinked().getType() instanceof ISLightPPC ) {
                 return 44;

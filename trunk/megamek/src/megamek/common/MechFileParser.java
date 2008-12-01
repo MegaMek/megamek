@@ -312,16 +312,12 @@ public class MechFileParser {
                     // check location
                     if (mWeapon.getLocation() == m.getLocation()) {
                         
-                        if ( (m.getType().getInternalName().equals("ISPPCCapacitor") 
-                                && mWeapon.getType() instanceof ISPPC)
-                                || (m.getType().getInternalName().equals("ISLightPPCCapacitor") 
-                                        && mWeapon.getType() instanceof ISLightPPC)
-                                || (m.getType().getInternalName().equals("ISHeavyPPCCapacitor") 
-                                        && mWeapon.getType() instanceof ISHeavyPPC)
-                                || (m.getType().getInternalName().equals("ISERPPCCapacitor") 
-                                        && mWeapon.getType() instanceof ISERPPC) 
-                                || (m.getType().getInternalName().equals("ISSNPPCCapacitor") 
-                                        && mWeapon.getType() instanceof ISSnubNosePPC)) {
+                        if ( m.getType().getInternalName().equals("ISPPCCapacitor") 
+                                && (mWeapon.getType() instanceof ISPPC
+                                ||  mWeapon.getType() instanceof ISLightPPC
+                                ||  mWeapon.getType() instanceof ISHeavyPPC
+                                ||  mWeapon.getType() instanceof ISERPPC 
+                                ||  mWeapon.getType() instanceof ISSnubNosePPC) ) {
                             m.setLinked(mWeapon);
                             break;
                         }

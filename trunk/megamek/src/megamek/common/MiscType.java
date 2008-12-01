@@ -21,6 +21,12 @@
 
 package megamek.common;
 
+import megamek.common.weapons.ISERPPC;
+import megamek.common.weapons.ISHeavyPPC;
+import megamek.common.weapons.ISLightPPC;
+import megamek.common.weapons.ISPPC;
+import megamek.common.weapons.ISSnubNosePPC;
+
 /**
  * @author Ben
  * @version
@@ -378,6 +384,34 @@ public class MiscType extends EquipmentType {
         return 1;
     }
 
+    public double getBV(Entity entity, Mounted mount) {
+        
+        if ( hasFlag(F_PPC_CAPACITOR) && mount != null && mount.getLinked() == null ) {
+            
+            if ( mount.getLinked().getType() instanceof ISLightPPC ) {
+                return 44;
+            }
+
+            if ( mount.getLinked().getType() instanceof ISPPC ) {
+                return 88;
+            }
+
+            if ( mount.getLinked().getType() instanceof ISHeavyPPC) {
+                return 53;
+            }
+
+            if ( mount.getLinked().getType() instanceof ISSnubNosePPC ) {
+                return 90;
+            }
+
+            if ( mount.getLinked().getType() instanceof ISERPPC ) {
+                return 114;
+            }
+        }
+        
+        return this.getBV(entity);
+    }
+    
     public double getBV(Entity entity) {
         if (bv != BV_VARIABLE) {
             return bv;
@@ -414,7 +448,7 @@ public class MiscType extends EquipmentType {
             return fRearBV * 0.2 + fFrontBV * 0.1;
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
             return (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
-        }
+        } 
         
         
         // maybe it's 0
@@ -530,10 +564,10 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLAES());
         EquipmentType.addType(createISModularArmor());
         EquipmentType.addType(createCLModularArmor());
-        EquipmentType.addType(createISHeavyPPCCapacitor());
+/*        EquipmentType.addType(createISHeavyPPCCapacitor());
         EquipmentType.addType(createISLightPPCCapacitor());
         EquipmentType.addType(createISSNPPCCapacitor());
-        EquipmentType.addType(createISERPPCCapacitor());
+        EquipmentType.addType(createISERPPCCapacitor());*/
         EquipmentType.addType(createCommsGear1());
         EquipmentType.addType(createCommsGear2());
         EquipmentType.addType(createCommsGear3());
@@ -2947,6 +2981,14 @@ public class MiscType extends EquipmentType {
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "PPC Capacitor";
         misc.setInternalName("ISPPCCapacitor");
+        misc.setInternalName("LPPC Capacitor");
+        misc.setInternalName("ISLightPPCCapacitor");
+        misc.setInternalName("SNPPC Capacitor");
+        misc.setInternalName("ISSNPPCCapacitor");
+        misc.setInternalName("ERPPC Capacitor");
+        misc.setInternalName("ISERPPCCapacitor");
+        misc.setInternalName("HPPC Capacitor");
+        misc.setInternalName("ISHeavyPPCCapacitor");
         misc.tonnage = 1.0f;
         misc.criticals = 1;
         misc.cost = 150000;
@@ -2954,12 +2996,12 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_PPC_CAPACITOR;
         misc.setInstantModeSwitch(false);
         misc.explosive = true;
-        misc.bv = 88;
-        
+        //misc.bv = 88;
+        misc.bv = 0;
         return misc;
     }
 
-    public static MiscType createISLightPPCCapacitor() {
+/*    public static MiscType createISLightPPCCapacitor() {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
@@ -2981,6 +3023,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.name = "SNPPC Capacitor";
+        misc.setInternalName("ISSNPPCCapacitor");
+        misc.name = "ERPPC Capacitor";
+        misc.setInternalName("ISERPPCCapacitor");
         misc.name = "HPPC Capacitor";
         misc.setInternalName("ISHeavyPPCCapacitor");
         misc.tonnage = 1.0f;
@@ -2999,6 +3045,8 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.name = "SNPPC Capacitor";
+        misc.setInternalName("ISSNPPCCapacitor");
         misc.name = "ERPPC Capacitor";
         misc.setInternalName("ISERPPCCapacitor");
         misc.tonnage = 1.0f;
@@ -3030,7 +3078,7 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-
+*/
 
     public static MiscType createReflective() {
         MiscType misc = new MiscType();

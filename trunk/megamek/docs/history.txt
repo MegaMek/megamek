@@ -31,6 +31,8 @@ v0.33.36-dev (SVN)
 + Bug: Small Cockpit BV
 + Updated Ammo Short Names for MML and LB-X
 + Implemented BA Taser Rifles
++ Moved all Capacitors to one MiscType
++ Updated BV for PPC Capacitors
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

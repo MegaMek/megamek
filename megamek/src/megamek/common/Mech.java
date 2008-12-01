@@ -2330,6 +2330,12 @@ public abstract class Mech extends Entity implements Serializable {
             if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 weaponHeat *= 0.5;
             }
+            
+            //check to see if the weapon is a PPC and has a Capacitor attached to it
+            if ( wtype.hasFlag(WeaponType.F_PPC) && mounted.getLinkedBy() != null ) {
+                weaponHeat += 5;
+            }
+            
             maximumHeat += weaponHeat;
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
@@ -2352,6 +2358,7 @@ public abstract class Mech extends Entity implements Serializable {
         for (Mounted weapon : weapons) {
             WeaponType wtype = (WeaponType) weapon.getType();
             double dBV = wtype.getBV(this);
+            
             // don't count destroyed equipment
             if (weapon.isDestroyed())
                 continue;
@@ -2371,6 +2378,11 @@ public abstract class Mech extends Entity implements Serializable {
                 }
                 dBV = mgaBV * 0.67;
             }
+            //check to see if the weapon is a PPC and has a Capacitor attached to it
+            if ( wtype.hasFlag(WeaponType.F_PPC) && weapon.getLinkedBy() != null ) {
+                dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this,weapon);
+            }
+
             if (weapon.isRearMounted())
                 bvRear += dBV;
             else
@@ -2408,6 +2420,11 @@ public abstract class Mech extends Entity implements Serializable {
                     dBV = mgaBV * 0.67;
                 }
                 
+                //check to see if the weapon is a PPC and has a Capacitor attached to it
+                if ( wtype.hasFlag(WeaponType.F_PPC) && weapon.getLinkedBy() != null ) {
+                    dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this,weapon);
+                }
+
                 // if linked to AES, multiply by 1.5
                 if (hasFunctionalArmAES(weapon.getLocation())) {
                     dBV *= 1.5;
@@ -2466,6 +2483,11 @@ public abstract class Mech extends Entity implements Serializable {
                     dBV = mgaBV * 0.67;
                 }
                 
+                //check to see if the weapon is a PPC and has a Capacitor attached to it
+                if ( wtype.hasFlag(WeaponType.F_PPC) && weapon.getLinkedBy() != null ) {
+                    dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this,weapon);
+                }
+
                 // if linked to AES, multiply by 1.5
                 if (hasFunctionalArmAES(weapon.getLocation())) {
                     dBV *= 1.5;

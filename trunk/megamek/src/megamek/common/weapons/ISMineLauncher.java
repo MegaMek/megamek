@@ -53,7 +53,7 @@ public class ISMineLauncher extends Weapon {
         this.extremeRange = 0;
         this.tonnage = 0.0f;
         this.criticals = 0;
-        this.bv = 0;
+        this.bv = 6;
         String[] modes = { "Single", "2-shot", "3-shot", "4-shot" };
         this.setModes(modes);
         this.flags |= F_DIRECT_FIRE | F_SOLO_ATTACK;

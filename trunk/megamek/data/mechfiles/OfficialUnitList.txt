@@ -1169,13 +1169,6 @@ Toyama TYM-1A|Word of Blake|BattleMech|3057
 Vanquisher VQR-2A|Word of Blake|BattleMech|3062
 Vanquisher VQR-2B|Word of Blake|BattleMech|3067
 White Flame WHF-3B|Word of Blake|BattleMech|3067
-Fa Shih (Flamer)|Capellan Confederation|Infantry|3062
-Fa Shih (Laser)|Capellan Confederation|Infantry|3062
-Fa Shih (MG)|Capellan Confederation|Infantry|3062
-Fa Shih (TAG)|Capellan Confederation|Infantry|3062
-Clan Elemental (Flamer)|Clan General|Infantry|2868
-Clan Elemental (MG)|Clan General|Infantry|2868
-Clan Elemental (Laser)|Clan General|Infantry|2868
 Clan Foot Point (Flamer)|Clan General|Infantry|2800
 Clan Foot Point (Laser)|Clan General|Infantry|2800
 Clan Foot Point (MG)|Clan General|Infantry|2800
@@ -1212,32 +1205,6 @@ Clan Anti-Mech Motorized Point (MG)|Clan General|Infantry|2800
 Clan Anti-Mech Motorized Point (Rifle)|Clan General|Infantry|2800
 Clan Anti-Mech Motorized Point (SRM)|Clan General|Infantry|2800
 Clan Anti-Mech Motorized Point (Inferno)|Clan General|Infantry|2800
-Clan Sylph|Cloud Cobra,Diamond Shark,Snow Raven|Infantry|3060
-Kage (Flamer)|Draconis Combine|Infantry|3056
-Kage (Laser)|Draconis Combine|Infantry|3056
-Kage (MG)|Draconis Combine|Infantry|3056
-Kage (TAG)|Draconis Combine|Infantry|3056
-Kanazuchi Assault|Draconis Combine|Infantry|3058
-Raiden (Flamer)|Draconis Combine|Infantry|3055
-Raiden (MG)|Draconis Combine|Infantry|3055
-Raiden (Laser)|Draconis Combine|Infantry|3055
-Raiden (SRM)|Draconis Combine|Infantry|3055
-Cavalier (Flamer)|Federated Suns|Infantry|3058
-Cavalier (Laser)|Federated Suns|Infantry|3060
-Cavalier (MG)|Federated Suns|Infantry|3060
-Cavalier (SRM)|Federated Suns|Infantry|3058
-Infiltrator Mk I|Federated Suns|Infantry|3057
-Infiltrator Mk II|Federated Suns|Infantry|3060
-Sloth Assault|Federated Suns,Lyran Alliance|Infantry|3057
-Clan Salamander|Fire Mandrill,Hell's Horses|Infantry|3058
-Achileus (Flamer)|Free Worlds League,Word of Blake|Infantry|3057
-Achileus (Laser)|Free Worlds League,Word of Blake|Infantry|3057
-Achileus (MG)|Free Worlds League,Word of Blake|Infantry|3057
-Longinus (Flamer)|Free Worlds League|Infantry|3059
-Longinus (MG)|Free Worlds League|Infantry|3059
-Longinus (Laser)|Free Worlds League|Infantry|3059
-Undine BA Point|Goliath Scorpion|Infantry|3061
-Clan Gnome|Hell's Horses|Infantry|3056
 Foot Platoon (Flamer)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Foot Platoon (Laser)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Foot Platoon (LRM)|Inner Sphere General,Periphery General|Infantry|3057
@@ -1284,34 +1251,6 @@ Anti-Mech Motorized Platoon (MG)|Inner Sphere General,Periphery General,SLDF 275
 Anti-Mech Motorized Platoon (Rifle)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Anti-Mech Motorized Platoon (SRM)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Anti-Mech Motorized Platoon (Inferno)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
-Fenrir (MG)|Lyran Alliance|Infantry|3060
-Fenrir (MPLAS)|Lyran Alliance|Infantry|3060
-Fenrir (SLAS)|Lyran Alliance|Infantry|3060
-Fenrir (SPLAS)|Lyran Alliance|Infantry|3060
-Fenrir (SRM)|Lyran Alliance|Infantry|3060
-Gray Death Light Scout (Laser)|Lyran Alliance,Mercenary General,SLDF 3061|Infantry|3051
-Gray Death Light Scout (SRM)|Lyran Alliance,Mercenary General,SLDF 3061|Infantry|3051
-Gray Death Light Scout (MG)|Lyran Alliance,Mercenary General,SLDF 3061|Infantry|3051
-Gray Death Light Scout (Rifle)|Lyran Alliance,Mercenary General,SLDF 3061|Infantry|3051
-Gray Death Light Scout (Flamer)|Lyran Alliance,Mercenary General,SLDF 3061|Infantry|3051
-Gray Death Light Scout (LRM)|Lyran Alliance,Mercenary General,SLDF 3061|Infantry|3051
-Gray Death Standard (Flamer)|Lyran Alliance,Mercenary General|Infantry|3051
-Gray Death Standard (Laser)|Lyran Alliance,Mercenary General|Infantry|3051
-Gray Death Standard (MG)|Lyran Alliance,Mercenary General|Infantry|3051
-Infiltrator Mk I|Lyran Alliance|Infantry|3060
-IS Standard (Flamer)|Magistracy of Canopus,Taurian Concordat|Infantry|3055
-IS Standard (MG)|Magistracy of Canopus,Taurian Concordat|Infantry|3055
-IS Standard (Laser)|Magistracy of Canopus,Taurian Concordat|Infantry|3055
-IS Standard (SRM)|Magistracy of Canopus,Taurian Concordat|Infantry|3055
-Clan Elemental (Flamer)|Wolf's Dragoons|Infantry|3050
-Clan Elemental (MG)|Wolf's Dragoons|Infantry|3050
-Clan Elemental (Laser)|Wolf's Dragoons|Infantry|3050
-Longinus (Flamer)|Word of Blake|Infantry|3057
-Longinus (MG)|Word of Blake|Infantry|3057
-Longinus (Laser)|Word of Blake|Infantry|3057
-Purifier (Laser)|Word of Blake|Infantry|3062
-Purifier (NARC)|Word of Blake|Infantry|3062
-Purifier (TAG)|Word of Blake|Infantry|3062
 Neptune (LRM Variant)|Federated Suns|Naval|2950
 Neptune (SRM Variant)|Federated Suns|Naval|2950
 Neptune Submarine|Federated Suns|Naval|2950
@@ -1708,177 +1647,176 @@ Zeus ZEU-X|MWDA|BattleMech|3132
 Zeus ZEU-X2|MWDA|BattleMech|3132
 Zeus ZEU-X3|MWDA|BattleMech|3132
 Preta Dominus|Word of Blake|BattleMech|3072
-
-Achileus (Flamer)
-Achileus (Laser)
-Achileus (MG)
-Achileus (WoB-Flamer)
-Achileus (WoB-Laser)
-Achileus (WoB-MG)
-Achileus (WoB-Scout)
-Aerie (Flamer)
-Aerie (Laser)
-Aerie (MG)
-Aerie (Rifle)
-Aerie (SRM)
-Afreet (HH)
-Afreet (JF)
-Afreet
-Asterion (PPC)
-Asterion
-Asura (Anti Infantry)
-Asura (SRM)
-Asura
-Blakist Phalanx (A)
-Blakist Phalanx (B)
-Blakist Phalanx (C)
-Cavalier (Flamer)
-Cavalier (Laser)
-Cavalier (MG)
-Cavalier (SRM)
-Clan Medium BA (Bär)
-Clan Medium BA (Volk)
-Clan Medium BA (Bär)
-Corona (SRM)
-Corona
-Djinn (Stealth)
-Djinn
-Clan Elemental (ER Laser)
-Clan Elemental (Flamer)
-Clan Elemental (HMG)
-Clan Elemental (Laser)
-Clan Elemental (MG)
-Clan Elemental (Pulse Laser)
-Fa Shih (Flamer)
-Fa Shih (Laser)
-Fa Shih (MG)
-Fa Shih (TAG)
-Fenrir (ERML)
-Fenrir (MG)
-Fenrir (Mortar)
-Fenrir (MPLAS)
-Fenrir (SLAS)
-Fenrir (SPLAS)
-Fenrir (SRM)
-Clan Gnome (Upgrade)
-Clan Gnome
-Golem (Fast Assault)
-Golem
-Gray Death Scout (Flamer)
-Gray Death Scout (Inferno)
-Gray Death Scout (Laser)
-Gray Death Scout (LRM)
-Gray Death Scout (MG)
-Gray Death Scout (Rifle)
-Gray Death Standard (Flamer)
-Gray Death Standard (Laser)
-Gray Death Standard (LRR)
-Gray Death Standard (MG)
-Gray Death Standard (SRM)
-Grenadier (Flamer)
-Grenadier (Gauss)
-Grenadier (H-K NARC)
-Grenadier (H-K)
-Grenadier (Laser)
-Grenadier (LRR)
-Grenadier (TAG)
-Hauberk II
-Hauberk
-Hurricane P12 (Flamer)
-Hurricane P12 (Laser)
-Hurricane P12 (MG)
-Hurricane P12 (Rifle)
-Hurricane P12 (SRM)
-InfiltratorMk I (Spec Ops)
-InfiltratorMk I
-InfiltratorMk II (Sensor)
-InfiltratorMk II
-IS Standard (Flamer)
-IS Standard (Laser)
-IS Standard (MG)
-IS Standard (SRM)
-Kage (Flamer)
-Kage (Laser)
-Kage (MG)
-Kage (TAG)
-Kage (Vibro)
-Kanazuchi (Upgrade)
-Kanazuchi
-Kobold (TAG)
-Kobold
-Longinus (Flamer)
-Longinus (Laser)
-Longinus (Lt Gauss)
-Longinus (MG)
-Longinus (WoB-Flamer)
-Longinus (WoB-Gauss)
-Longinus (WoB-Laser)
-Longinus (WoB-MG)
-Nephilim (Gauss)
-Nephilim (Seeker)
-Nephilim (Support)
-Nephilim
-Nighthawk XXI (Flamer)
-Nighthawk XXI (Laser)
-Nighthawk XXI (MG)
-Nighthawk XXI (Rifle)
-Nighthawk XXI (SRM)
-Nighthawk XXII (Flamer)
-Nighthawk XXII (Laser)
-Nighthawk XXII (MG)
-Nighthawk XXII (Rifle)
-Nighthawk XXII (SRM)
-Phalanx (A)
-Phalanx (B)
-Phalanx (C)
-Purifier (Laser)
-Purifier (NARC)
-Purifier (PPC)
-Purifier (TAG)
-Raiden (Flamer)
-Raiden (Laser)
-Raiden (MG)
-Rogue Bear
-Rottweiler (Close Combat)
-Rottweiler (Upgrade)
-Rottweiler
-Clan Salamander (HMG)
-Clan Salamander (Laser)
-Clan Salamander
-Se'irim (Anti Infantry)
-Se'irim
-Shedu (Recon)
-Shedu (Support)
-Shedu
-Sloth Assault
-Standard (CS-Flamer)
-Standard (CS-Laser)
-Standard (CS-MG)
-Standard (CS-SRM)
-Sylph (Upgrade)
-Sylph
-Tengu (Support)
-Tengu
-Theseus (RL)
-Theseus
-Tornado G12 (Flamer)
-Tornado G12 (Laser)
-Tornado G12 (MG)
-Tornado G12 (Rifle)
-Tornado G12 (SRM)
-Tornado G13 (Auto GL)
-Tornado G13 (Flamer)
-Tornado G13 (Gauss)
-Tornado G13 (Laser)
-Tornado G13 (MG)
-Tornado G14 (Flamer)
-Tornado G14 (Laser)
-Tornado G14 (MG)
-Tornado G14 (Rifle)
-Tornado G14 (SRM)
-Clan Undine (Upgrade)
-Clan Undine
-Void (DCA)
-Void (NC)
-Void
-Ying Long
+Achileus (Flamer)|
+Achileus (Laser)|
+Achileus (MG)|
+Achileus (WoB-Flamer)|
+Achileus (WoB-Laser)|
+Achileus (WoB-MG)|
+Achileus (WoB-Scout)|
+Aerie (Flamer)|
+Aerie (Laser)|
+Aerie (MG)|
+Aerie (Rifle)|
+Aerie (SRM)|
+Afreet (HH)|
+Afreet (JF)|
+Afreet|
+Asterion (PPC)|
+Asterion|
+Asura (Anti Infantry)|
+Asura (SRM)|
+Asura|
+Blakist Phalanx (A)|
+Blakist Phalanx (B)|
+Blakist Phalanx (C)|
+Cavalier (Flamer)|
+Cavalier (Laser)|
+Cavalier (MG)|
+Cavalier (SRM)|
+Clan Medium BA (Bär)|
+Clan Medium BA (Volk)|
+Clan Medium BA (Bär)|
+Corona (SRM)|
+Corona|
+Djinn (Stealth)|
+Djinn|
+Clan Elemental (ER Laser)|
+Clan Elemental (Flamer)|
+Clan Elemental (HMG)|
+Clan Elemental (Laser)|
+Clan Elemental (MG)|
+Clan Elemental (Pulse Laser)|
+Fa Shih (Flamer)|
+Fa Shih (Laser)|
+Fa Shih (MG)|
+Fa Shih (TAG)|
+Fenrir (ERML)|
+Fenrir (MG)|
+Fenrir (Mortar)|
+Fenrir (MPLAS)|
+Fenrir (SLAS)|
+Fenrir (SPLAS)|
+Fenrir (SRM)|
+Clan Gnome (Upgrade)|
+Clan Gnome|
+Golem (Fast Assault)|
+Golem|
+Gray Death Scout (Flamer)|
+Gray Death Scout (Inferno)|
+Gray Death Scout (Laser)|
+Gray Death Scout (LRM)|
+Gray Death Scout (MG)|
+Gray Death Scout (Rifle)|
+Gray Death Standard (Flamer)|
+Gray Death Standard (Laser)|
+Gray Death Standard (LRR)|
+Gray Death Standard (MG)|
+Gray Death Standard (SRM)|
+Grenadier (Flamer)|
+Grenadier (Gauss)|
+Grenadier (H-K NARC)|
+Grenadier (H-K)|
+Grenadier (Laser)|
+Grenadier (LRR)|
+Grenadier (TAG)|
+Hauberk II|
+Hauberk|
+Hurricane P12 (Flamer)|
+Hurricane P12 (Laser)|
+Hurricane P12 (MG)|
+Hurricane P12 (Rifle)|
+Hurricane P12 (SRM)|
+InfiltratorMk I (Spec Ops)|
+InfiltratorMk I|
+InfiltratorMk II (Sensor)|
+InfiltratorMk II|
+IS Standard (Flamer)|
+IS Standard (Laser)|
+IS Standard (MG)|
+IS Standard (SRM)|
+Kage (Flamer)|
+Kage (Laser)|
+Kage (MG)|
+Kage (TAG)|
+Kage (Vibro)|
+Kanazuchi (Upgrade)|
+Kanazuchi|
+Kobold (TAG)|
+Kobold|
+Longinus (Flamer)|
+Longinus (Laser)|
+Longinus (Lt Gauss)|
+Longinus (MG)|
+Longinus (WoB-Flamer)|
+Longinus (WoB-Gauss)|
+Longinus (WoB-Laser)|
+Longinus (WoB-MG)|
+Nephilim (Gauss)|
+Nephilim (Seeker)|
+Nephilim (Support)|
+Nephilim|
+Nighthawk XXI (Flamer)|
+Nighthawk XXI (Laser)|
+Nighthawk XXI (MG)|
+Nighthawk XXI (Rifle)|
+Nighthawk XXI (SRM)|
+Nighthawk XXII (Flamer)|
+Nighthawk XXII (Laser)|
+Nighthawk XXII (MG)|
+Nighthawk XXII (Rifle)|
+Nighthawk XXII (SRM)|
+Phalanx (A)|
+Phalanx (B)|
+Phalanx (C)|
+Purifier (Laser)|
+Purifier (NARC)|
+Purifier (PPC)|
+Purifier (TAG)|
+Raiden (Flamer)|
+Raiden (Laser)|
+Raiden (MG)|
+Rogue Bear|
+Rottweiler (Close Combat)|
+Rottweiler (Upgrade)|
+Rottweiler|
+Clan Salamander (HMG)|
+Clan Salamander (Laser)|
+Clan Salamander|
+Se'irim (Anti Infantry)|
+Se'irim|
+Shedu (Recon)|
+Shedu (Support)|
+Shedu|
+Sloth Assault|
+Standard (CS-Flamer)|
+Standard (CS-Laser)|
+Standard (CS-MG)|
+Standard (CS-SRM)|
+Sylph (Upgrade)|
+Sylph|
+Tengu (Support)|
+Tengu|
+Theseus (RL)|
+Theseus|
+Tornado G12 (Flamer)|
+Tornado G12 (Laser)|
+Tornado G12 (MG)|
+Tornado G12 (Rifle)|
+Tornado G12 (SRM)|
+Tornado G13 (Auto GL)|
+Tornado G13 (Flamer)|
+Tornado G13 (Gauss)|
+Tornado G13 (Laser)|
+Tornado G13 (MG)|
+Tornado G14 (Flamer)|
+Tornado G14 (Laser)|
+Tornado G14 (MG)|
+Tornado G14 (Rifle)|
+Tornado G14 (SRM)|
+Clan Undine (Upgrade)|
+Clan Undine|
+Void (DCA)|
+Void (NC)|
+Void|
+Ying Long|

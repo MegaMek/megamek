@@ -312,12 +312,12 @@ public class MechFileParser {
                     // check location
                     if (mWeapon.getLocation() == m.getLocation()) {
                         
-                        if ( m.getType().getInternalName().equals("ISPPCCapacitor") 
-                                && (mWeapon.getType() instanceof ISPPC
+                        //Only Legal IS PPC's are allowed.
+                        if ( mWeapon.getType() instanceof ISPPC
                                 ||  mWeapon.getType() instanceof ISLightPPC
                                 ||  mWeapon.getType() instanceof ISHeavyPPC
                                 ||  mWeapon.getType() instanceof ISERPPC 
-                                ||  mWeapon.getType() instanceof ISSnubNosePPC) ) {
+                                ||  mWeapon.getType() instanceof ISSnubNosePPC ) {
                             m.setLinked(mWeapon);
                             break;
                         }

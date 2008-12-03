@@ -703,7 +703,6 @@ public class BattleArmor extends Infantry implements Serializable {
                     oBV += weapon.getType().getBV(this);
                 } else {
                     // squad support, count at 1/troopercount
-                    double bv = weapon.getType().getBV(this)/getTotalOInternal();
                     oBV += weapon.getType().getBV(this)/getTotalOInternal();
                 }
             }
@@ -733,7 +732,6 @@ public class BattleArmor extends Infantry implements Serializable {
                         }
                     } else {
                         // squad support, count at 1/troopercount
-                        double bv = weapon.getType().getBV(this)/getTotalOInternal();
                         oBV += weapon.getType().getBV(this)/getTotalOInternal();
                     }
                 }

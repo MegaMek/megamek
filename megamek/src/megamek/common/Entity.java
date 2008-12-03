@@ -7669,4 +7669,12 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public int getTaserInterferenceRounds() {
         return taserInterferenceRounds;
     }
+      
+    /**
+     * returns whether the unit is a military unit (as opposed to a civilian unit).
+     * TODO: for now this just returns true, but at some point the database should be updated
+     */
+    public boolean isMilitary() {
+        return true;
+    }
 }

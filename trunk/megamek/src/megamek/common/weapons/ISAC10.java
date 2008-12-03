@@ -34,7 +34,7 @@ public class ISAC10 extends ACWeapon {
     public ISAC10() {
         super();
         this.techLevel = TechConstants.T_INTRO_BOXSET;
-        this.name = "Auto Cannon/10";
+        this.name = "Autocannon/10";
         this.setInternalName(this.name);
         this.addLookupName("IS Auto Cannon/10");
         this.addLookupName("ISAC10");

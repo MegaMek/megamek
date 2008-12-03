@@ -703,6 +703,7 @@ public class BattleArmor extends Infantry implements Serializable {
                     oBV += weapon.getType().getBV(this);
                 } else {
                     // squad support, count at 1/troopercount
+                    double bv = weapon.getType().getBV(this)/getTotalOInternal();
                     oBV += weapon.getType().getBV(this)/getTotalOInternal();
                 }
             }
@@ -725,11 +726,15 @@ public class BattleArmor extends Infantry implements Serializable {
                     if (weapon.getType().hasFlag(WeaponType.F_INFANTRY)) {
                         continue;
                     }
-                    if (weapon.getLocation() == LOC_SQUAD || weapon.getLocation() == i) {
+                    if (weapon.getLocation() == LOC_SQUAD) {
                         if (!weapon.getType().hasFlag(WeaponType.F_MISSILE) &&
                                 !weapon.isBodyMounted()) {
                             oBV += weapon.getType().getBV(this);
                         }
+                    } else {
+                        // squad support, count at 1/troopercount
+                        double bv = weapon.getType().getBV(this)/getTotalOInternal();
+                        oBV += weapon.getType().getBV(this)/getTotalOInternal();
                     }
                 }
                 // magnetic claws and vibro claws counted again

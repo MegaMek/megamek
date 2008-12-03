@@ -1369,6 +1369,9 @@ public class Compute {
 
     public static ToHitData getTargetMovementModifier(int distance, boolean jumped, boolean isVTOL) {
         ToHitData toHit = new ToHitData();
+        if (distance == 0) {
+            return toHit;
+        }
 
         if (distance >= 3 && distance <= 4) {
             toHit.addModifier(1, "target moved 3-4 hexes");

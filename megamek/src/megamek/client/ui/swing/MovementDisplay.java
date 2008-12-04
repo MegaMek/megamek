@@ -1735,8 +1735,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             return;
         }
         
-        if(client.game.getBoard().inSpace())
+        if(client.game.getBoard().inSpace() || client.game.getBoard().onGround()) {
             return;
+        }
         
         if(!(ce instanceof Aero))
             return;

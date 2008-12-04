@@ -1845,6 +1845,10 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             return;
         }
 
+        if(client.game.getBoard().inSpace() || client.game.getBoard().onGround()) {
+            return;
+        }
+        
         if (!(ce instanceof Aero))
             return;
 

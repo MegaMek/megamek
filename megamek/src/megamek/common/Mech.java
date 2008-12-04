@@ -2131,8 +2131,25 @@ public abstract class Mech extends Entity implements Serializable {
 
         // total armor points
         double armorMultiplier = 1.0;
-        if (getArmorType() == EquipmentType.T_ARMOR_COMMERCIAL) {
+        
+        switch ( getArmorType() ){
+        case EquipmentType.T_ARMOR_COMMERCIAL:
             armorMultiplier = 0.5;
+            break;
+        case EquipmentType.T_ARMOR_HARDENED:
+            armorMultiplier = 2.0;
+            break;
+        case EquipmentType.T_ARMOR_REACTIVE:
+        case EquipmentType.T_ARMOR_REFLECTIVE:
+            armorMultiplier = 1.5;
+            break;
+        case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
+            armorMultiplier = 1.2;
+            break;
+            default:
+                armorMultiplier = 1.0;
+            break;
+            
         }
         
         //BV for torso mounted cockpit.
@@ -2147,7 +2164,9 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
         
-        dbv += (getTotalArmor()+modularArmor) * 2.5 * armorMultiplier;
+        dbv += (getTotalArmor()+modularArmor);
+        
+        dbv  *= 2.5 * armorMultiplier;
 
         // total internal structure
         double internalMultiplier = 1.0;

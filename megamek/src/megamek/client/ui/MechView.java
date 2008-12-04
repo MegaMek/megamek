@@ -168,6 +168,11 @@ public class MechView {
                 .append( a.getHeatCapacity() )
                 .append( "]" ); //$NON-NLS-1$
             }
+            if (a.getCockpitType() != Mech.COCKPIT_STANDARD) {
+                sBasic.append("\n"); //$NON-NLS-1$
+                sBasic.append(Messages.getString("MechView.Cockpit"));
+                sBasic.append(a.getCockpitTypeString());
+            }
         }
         
         if (isMech) {

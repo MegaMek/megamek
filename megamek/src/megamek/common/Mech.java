@@ -2721,7 +2721,7 @@ public abstract class Mech extends Entity implements Serializable {
         obv = weaponBV * speedFactor;
         
         int finalBV = (int)Math.round(obv + dbv);
-        if ( this.getCockpitType() == Mech.COCKPIT_SMALL ) {
+        if ( this.getCockpitType() == Mech.COCKPIT_SMALL || this.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             finalBV *= 0.95;
         }
 

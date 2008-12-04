@@ -43,6 +43,8 @@ v0.33.36-dev (SVN)
 + Bug 2205567: (AERO) loaded fighters survive carrier destruction
 + Bug 2205569: (AERO) icon for loaded fighters on fleeing carriers show
 + Added Errata change to BV for Torso Mounted Cockpits. http://www.classicbattletech.com/forums/index.php/topic,44161.0.html
++ Added TacOps BV Armor modifiers
++ Bug: Armor Def BV value not being calculated correctly for Torso Mounted cockpit Units.
  
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

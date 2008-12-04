@@ -108,6 +108,11 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");   
         }
         
+        //set cockpit type if not default
+        if (dataFile.exists("cockpit_type"))
+            a.setCockpitType(dataFile.getDataAsInt("cockpit_type")[0]);
+        
+        
         a.initializeArmor( armor[BLKAeroFile.NOSE], Aero.LOC_NOSE );
         a.initializeArmor(armor[BLKAeroFile.RW], Aero.LOC_RWING );
         a.initializeArmor(armor[BLKAeroFile.LW], Aero.LOC_LWING );

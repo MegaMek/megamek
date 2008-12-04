@@ -38,6 +38,7 @@ v0.33.36-dev (SVN)
 + isMilitary method
 + Bug 2206429: (AERO) Fighters can do maneuvers in space
 + Bug 2385422: (AERO) Small Craft freeze game
++ Small Aerospace Cockpits
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

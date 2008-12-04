@@ -18204,6 +18204,11 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
+        //regardless of what was passed in, units loaded onto aeros not on the ground are destroyed
+        if(entity instanceof Aero && !game.getBoard().onGround()) {
+            survivable = false;
+        }
+        
         // The unit can suffer an ammo explosion after it has been destroyed.
         int condition = IEntityRemovalConditions.REMOVE_SALVAGEABLE;
         if (!canSalvage) {
@@ -18261,6 +18266,7 @@ public class Server implements Runnable {
                     other = transporter.nextElement();
 
                     // Can the other unit survive?
+                    //FIXME: the flat number 3 is no longer valid for all units in TW, see pg. 223
                     if (!survivable || (externalUnits.contains(other) && Compute.d6() >= 3)) {
 
                         // Nope.

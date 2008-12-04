@@ -40,6 +40,7 @@ v0.33.36-dev (SVN)
 + Bug 2385422: (AERO) Small Craft freeze game
 + Small Aerospace Cockpits
 + Bug 2205615: (AERO) Heat by bay losing attacks
++ Bug 2205567: (AERO) loaded fighters survive carrier destruction
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

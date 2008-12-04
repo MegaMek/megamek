@@ -4592,15 +4592,88 @@ public class Server implements Runnable {
                 }
 
                 if (step.getType() == MovePath.STEP_OFF) {
+                    //same as flee but different message.
+                    //we can't use flee because if the unit is out of control, it needs to go through its
+                    //to see if it collides with anything else
                     r = new Report(9370, Report.PUBLIC);
                     r.indent();
                     r.addDesc(entity);
                     addReport(r);
-                    game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED);
-                    send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED));
+                    Coords pos = entity.getPosition();
+                    int fleeDirection;
+                    if (pos.x == 0) {
+                        fleeDirection = IOffBoardDirections.WEST;
+                    } else if (pos.y == 0) {
+                        fleeDirection = IOffBoardDirections.SOUTH;
+                    } else if (pos.x == game.getBoard().getWidth()) {
+                        fleeDirection = IOffBoardDirections.EAST;
+                    } else {
+                        fleeDirection = IOffBoardDirections.NORTH;
+                    }
+
+                    // Is the unit carrying passengers?
+                    final Vector<Entity> passengers = entity.getLoadedUnits();
+                    if (!passengers.isEmpty()) {
+                        for (Entity passenger : passengers) {
+                            // Unit has fled the battlefield.
+                            r = new Report(2010, Report.PUBLIC);
+                            r.indent();
+                            r.addDesc(passenger);
+                            addReport(r);
+                            passenger.setRetreatedDirection(fleeDirection);
+                            game.removeEntity(passenger.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                            send(createRemoveEntityPacket(passenger.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
+                        }
+                    }
+
+                    // Handle any picked up MechWarriors
+                    for (Integer mechWarriorId : entity.getPickedUpMechWarriors()) {
+                        Entity mw = game.getEntity(mechWarriorId.intValue());
+
+                        // Is the MechWarrior an enemy?
+                        int condition = IEntityRemovalConditions.REMOVE_IN_RETREAT;
+                        r = new Report(2010);
+                        if (mw.isCaptured()) {
+                            r = new Report(2015);
+                            condition = IEntityRemovalConditions.REMOVE_CAPTURED;
+                        } else {
+                            mw.setRetreatedDirection(fleeDirection);
+                        }
+                        game.removeEntity(mw.getId(), condition);
+                        send(createRemoveEntityPacket(mw.getId(), condition));
+                        r.addDesc(mw);
+                        r.indent();
+                        addReport(r);
+                    }
+                    // Is the unit being swarmed?
+                    final int swarmerId = entity.getSwarmAttackerId();
+                    if (Entity.NONE != swarmerId) {
+                        final Entity swarmer = game.getEntity(swarmerId);
+
+                        // Has the swarmer taken a turn?
+                        if (!swarmer.isDone()) {
+
+                            // Dead entities don't take turns.
+                            game.removeTurnFor(swarmer);
+                            send(createTurnVectorPacket());
+
+                        } // End swarmer-still-to-move
+
+                        // Unit has fled the battlefield.
+                        swarmer.setSwarmTargetId(Entity.NONE);
+                        entity.setSwarmAttackerId(Entity.NONE);
+                        r = new Report(2015, Report.PUBLIC);
+                        r.indent();
+                        r.addDesc(swarmer);
+                        addReport(r);
+                        game.removeEntity(swarmerId, IEntityRemovalConditions.REMOVE_CAPTURED);
+                        send(createRemoveEntityPacket(swarmerId, IEntityRemovalConditions.REMOVE_CAPTURED));
+                    }
+                    entity.setRetreatedDirection(fleeDirection);
+                    game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                    send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
                     return;
                 }
-
             }
 
             // check piloting skill for getting up

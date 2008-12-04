@@ -59,6 +59,14 @@ public class Aero
     public static final int           HEAT_SINGLE              = 0;
     public static final int           HEAT_DOUBLE              = 1;
     
+    //cockpit types
+    public static final int COCKPIT_STANDARD = 0;
+    public static final int COCKPIT_SMALL = 1;
+    public static final int COCKPIT_COMMAND_CONSOLE = 2;
+    public static final String[] COCKPIT_STRING = { "Standard Cockpit", "Small Cockpit", "Command Console"};
+    public static final String[] COCKPIT_SHORT_STRING = { "Standard","Small", "Command Console"};
+
+    
     //critical hits
     public static final int CRIT_NONE             = -1;
     public static final int CRIT_CREW             = 0;
@@ -109,6 +117,7 @@ public class Aero
     private int potCrit = CRIT_NONE;
     //need to set up standard damage here
     private int[] standard_damage = {0,0,0,0};
+    private int cockpitType = COCKPIT_STANDARD;
     
     //track straight movement from last turn
     private int straightMoves = 0;
@@ -1375,7 +1384,10 @@ public class Aero
         }
 
         int finalBV = (int) Math.round(dbv + obv + xbv);
-
+        if ( this.getCockpitType() == Aero.COCKPIT_SMALL ) {
+            finalBV *= 0.95;
+        }
+        
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
@@ -1447,6 +1459,15 @@ public class Aero
             prd.addModifier(1,"Modular Armor");
         }
 
+        //VDNI bonus?
+        if (getCrew().getOptions().booleanOption("vdni") && !getCrew().getOptions().booleanOption("bvdni")) {
+            prd.addModifier(-1, "VDNI");
+        }
+
+        // Small/torso-mounted cockpit penalty?
+        if (getCockpitType() == Aero.COCKPIT_SMALL && !getCrew().getOptions().booleanOption("bvdni")) {
+            prd.addModifier(1, "Small Cockpit");
+        }
         
         return prd;
     }
@@ -2330,5 +2351,23 @@ public class Aero
      */
     public int getBadCriticals(int type, int index, int loc) {
         return 0;
+    }
+    
+    public int getCockpitType() {
+        return cockpitType;
+    }
+
+    public void setCockpitType(int type) {
+        cockpitType = type;
+    }
+
+    public String getCockpitTypeString() {
+        return getCockpitTypeString(getCockpitType());
+    }
+
+    public static String getCockpitTypeString(int inCockpitType) {
+        if ((inCockpitType < 0) || (inCockpitType >= COCKPIT_STRING.length))
+            return "Unknown";
+        return COCKPIT_STRING[inCockpitType];
     }
 }

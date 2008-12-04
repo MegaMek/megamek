@@ -41,6 +41,7 @@ v0.33.36-dev (SVN)
 + Small Aerospace Cockpits
 + Bug 2205615: (AERO) Heat by bay losing attacks
 + Bug 2205567: (AERO) loaded fighters survive carrier destruction
++ Bug 2205569: (AERO) icon for loaded fighters on fleeing carriers show
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

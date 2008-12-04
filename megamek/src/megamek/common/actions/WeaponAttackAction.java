@@ -1975,8 +1975,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             boolean rearMount = weapon.isRearMounted();
             int currentHeat = ae.getHeatInArc(loc, rearMount);
             if(game.getOptions().booleanOption("heat_by_bay")) {
+                currentHeat = 0;
                 for(int bwId: weapon.getBayWeapons()) {
-                    currentHeat = ae.getEquipment(bwId).getCurrentHeat();
+                    currentHeat += ae.getEquipment(bwId).getCurrentHeat();
                 }
             }
             //check to see if this is currently the only arc being fired

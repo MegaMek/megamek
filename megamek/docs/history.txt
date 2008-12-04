@@ -36,6 +36,7 @@ v0.33.36-dev (SVN)
 + Bug: PPC Caps not loading correctly
 + Bug: target movement mod of 1 for jumping 0 hexes in BV calculations
 + isMilitary method
++ Bug 2206429: (AERO) Fighters can do maneuvers in space
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

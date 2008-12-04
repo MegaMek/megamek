@@ -463,7 +463,7 @@ public abstract class TurnOrdered implements Serializable {
 
                 // If you have less than twice the lowest,
                 // move 1. Otherwise, move more.
-                int ntm = num_small_craft_turns[index] / minSS;
+                int ntm = num_small_craft_turns[index] / minSC;
                 for (int j = 0; j < ntm; j++) {
                     turns.addSmallCraft(order[index]);
                     num_small_craft_turns[index]--;

@@ -18,7 +18,6 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.Mounted;
-import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;

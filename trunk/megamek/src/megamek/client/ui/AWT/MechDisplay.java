@@ -2236,7 +2236,7 @@ public class MechDisplay extends BufferedPanel {
                                 en.getEquipmentNum(m), nMode);
 
                         // notify the player
-                        if (m.getType().hasInstantModeSwitch()) {
+                        if (m.canInstantSwitch(nMode)) {
                             clientgui
                                     .systemMessage(Messages
                                             .getString(

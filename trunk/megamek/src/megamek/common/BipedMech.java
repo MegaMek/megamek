@@ -427,26 +427,22 @@ public class BipedMech extends Mech {
     /**
      * Does the mech have any shields. a mech can have up to 2 shields.
      * 
-     * @return <code>true</code> if <code>shieldCount</code> is greater then
-     *         0 else <code>false</code>
+     * @return <code>true</code> if unit has a shield crit.
      */
     public boolean hasShield() {
-        int shieldCount = 0;
-
-        
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && ((MiscType) type).isShield() && this.getInternal(m.getLocation()) > 0) {
-                shieldCount++;
+            if ( (m.getLocation() == Mech.LOC_LARM || m.getLocation() == Mech.LOC_RARM) && type instanceof MiscType && ((MiscType) type).isShield() && this.getInternal(m.getLocation()) > 0) {
+                return true;
             }
         }
 
-        return shieldCount > 0;
+        return false;
     }
 
     /**
-     * Check to see how many shields of a certian size a mek has. you can have
-     * up to shields per mech. However they can be of different size and each
+     * Check to see how many shields of a certain size a mek has. you can have
+     * up to shields per mek. However they can be of different size and each
      * size has its own draw backs. So check each size and add modifers based on
      * the number shields of that size.
      */

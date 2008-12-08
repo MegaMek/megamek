@@ -49,6 +49,6 @@ public class ISBAFlamer extends FlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        this.flags = F_BA_WEAPON;
+        this.flags |= F_BA_WEAPON;
     }
 }

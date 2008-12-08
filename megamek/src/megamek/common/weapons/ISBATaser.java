@@ -49,8 +49,7 @@ public class ISBATaser extends AmmoWeapon {
         this.extremeRange = 4;
         this.bv = 15;
         this.toHitModifier = 1;
-        this.flags |= F_ONESHOT | F_TASER;
-        this.flags = F_BA_WEAPON;
+        this.flags |= F_ONESHOT | F_TASER | F_BA_WEAPON;
     }
     
     /*

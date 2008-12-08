@@ -50,6 +50,7 @@ public class ISBAHeavyMG extends BAMGWeapon {
         this.criticals = 1;
         this.bv = 6;
         this.cost = 7500;
+        this.flags = F_BA_WEAPON;
     }
 
 }

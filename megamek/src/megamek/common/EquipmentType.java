@@ -132,6 +132,11 @@ public class EquipmentType {
      * can modes be switched instantly, or at end of turn?
      */
     protected boolean instantModeSwitch = true;
+    /**
+     * sometimes some modes can be switched at the end of turn and some instantly
+     * In that case, the specific end of turn mode names can be added here
+     */
+    public Vector<String> endTurnModes = new Vector<String>();
 
     // static list of eq
     protected static Vector<EquipmentType> allTypes;
@@ -273,6 +278,26 @@ public class EquipmentType {
         } else {
             this.modes = new Vector<EquipmentMode>(0);
         }
+    }
+    
+    public void addEndTurnMode(String mode) {
+        endTurnModes.add(mode);
+    }
+    
+    /**
+     * Some equipment types might have both instant and next turn mode switching. This method
+     * checks for end of turn modes that are kept in a vector of names.  It is used by the {@link Mounted#setMode(int)}
+     * method to distinguish instant and end of turn switching.
+     * @param mode - the <code>String</code> of the mode name involved in the switch
+     * @return true if the mode name is found in the next turn mode vector
+     */
+    public boolean isNextTurnModeSwitch(String mode) {
+        for(String name : endTurnModes) {
+            if(name.equals(mode)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

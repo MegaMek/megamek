@@ -90,7 +90,8 @@ public class WeaponType extends EquipmentType {
     public static final long F_CRUISE_MISSILE = 1l << 35;
     public static final long F_B_POD          = 1l << 36;
     public static final long F_TASER          = 1l << 37;
-
+    public static final long F_BA_WEAPON      = 1l << 38; //Currently only used by MegaMekLab
+    
 //  add maximum range for AT2
     public static final int     RANGE_SHORT = 1;
     public static final int     RANGE_MED   = 2;

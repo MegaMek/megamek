@@ -243,11 +243,8 @@ public class Mounted implements Serializable, RoundUpdated {
                 /*megamek.debug.Assert.assertTrue(newMode >= 0
                     && newMode < type.getModesCount(), "Invalid mode, mode="
                     + newMode + ", modesCount=" + type.getModesCount());*/
-            String newModeName = type.getMode(newMode).getName();
-            String curModeName = this.curMode().getName();
-            if (type.hasInstantModeSwitch() 
-                    && !type.isNextTurnModeSwitch(newModeName) 
-                    && !type.isNextTurnModeSwitch(curModeName)) {
+            
+            if (canInstantSwitch(newMode)) {
                 mode = newMode;
                 pendingMode = -1;
             } else if (pendingMode != newMode) {
@@ -266,6 +263,17 @@ public class Mounted implements Serializable, RoundUpdated {
             }
         }
         return true;
+    }
+    
+    /**
+     * Can the switch from the current mode to the new mode happen instantly?
+     * @param newMode - integer for the new mode
+     * @return 
+     */
+    public boolean canInstantSwitch(int newMode) {
+        String newModeName = type.getMode(newMode).getName();
+        String curModeName = this.curMode().getName();
+        return this.getType().hasInstantModeSwitch() && !type.isNextTurnModeSwitch(newModeName) && !type.isNextTurnModeSwitch(curModeName);
     }
 
     public void newRound(int roundNumber) {

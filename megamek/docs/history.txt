@@ -49,6 +49,7 @@ v0.33.36-dev (SVN)
 + Added F_BA_WEAPON flag for informational purposes.
 + Bug: Shields not loading correctly for MegaMekLab
 + methods for including some end of turn modes and instant switch modes on the same equipment
++ Fixed reporting for mode switching
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

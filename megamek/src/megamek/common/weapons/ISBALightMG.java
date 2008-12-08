@@ -50,7 +50,7 @@ public class ISBALightMG extends BAMGWeapon {
         this.criticals = 1;
         this.bv = 5;
         this.cost = 5000;
-        this.flags = F_BA_WEAPON;
+        this.flags |= F_BA_WEAPON;
     }
 
 }

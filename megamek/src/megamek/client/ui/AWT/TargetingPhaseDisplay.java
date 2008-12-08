@@ -441,7 +441,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         client.sendModeChange(cen, wn, nMode);
 
         // notify the player
-        if (m.getType().hasInstantModeSwitch()) {
+        if (m.canInstantSwitch(nMode)) {
             clientgui
                     .systemMessage(Messages
                             .getString(

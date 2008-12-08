@@ -243,8 +243,13 @@ public class Mounted implements Serializable, RoundUpdated {
                 /*megamek.debug.Assert.assertTrue(newMode >= 0
                     && newMode < type.getModesCount(), "Invalid mode, mode="
                     + newMode + ", modesCount=" + type.getModesCount());*/
-            if (type.hasInstantModeSwitch()) {
+            String newModeName = type.getMode(newMode).getName();
+            String curModeName = this.curMode().getName();
+            if (type.hasInstantModeSwitch() 
+                    && !type.isNextTurnModeSwitch(newModeName) 
+                    && !type.isNextTurnModeSwitch(curModeName)) {
                 mode = newMode;
+                pendingMode = -1;
             } else if (pendingMode != newMode) {
                 pendingMode = newMode;
             }

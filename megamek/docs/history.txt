@@ -46,6 +46,7 @@ v0.33.36-dev (SVN)
 + Added TacOps BV Armor modifiers
 + Bug: Armor Def BV value not being calculated correctly for Torso Mounted cockpit Units.
 + Removed unused Imports
++ Added F_BA_WEAPON flag for informational purposes.
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

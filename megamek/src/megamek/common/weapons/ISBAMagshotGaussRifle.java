@@ -41,5 +41,6 @@ public class ISBAMagshotGaussRifle extends Weapon {
         this.criticals = 2;
         this.bv = 15;
         this.cost = 10500;
+        this.flags = F_BA_WEAPON;
     }
 }

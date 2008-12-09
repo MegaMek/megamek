@@ -110,7 +110,7 @@ public class MechDisplay extends JPanel {
     // buttons & gizmos for top level
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2060993542227677984L;
 
@@ -217,7 +217,7 @@ public class MechDisplay extends JPanel {
     /**
      * Adds the specified mech display listener to receive events from this
      * view.
-     * 
+     *
      * @param listener
      *            the listener.
      */
@@ -227,7 +227,7 @@ public class MechDisplay extends JPanel {
 
     /**
      * Notifies attached listeners of the event.
-     * 
+     *
      * @param event
      *            the mech display event.
      */
@@ -241,7 +241,7 @@ public class MechDisplay extends JPanel {
             default:
                 System.err.println("unknown event " + event.getType()
                         + " in processMechDisplayEvent");
-            break;
+                break;
             }
         }
     }
@@ -253,7 +253,7 @@ public class MechDisplay extends JPanel {
     private class MovementPanel extends PicMap {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 8284603003897415518L;
 
@@ -266,7 +266,7 @@ public class MechDisplay extends JPanel {
             gi = new GeneralInfoMapSet(this);
             addElement(gi.getContentGroup());
             Enumeration<BackGroundDrawer> iter = gi.getBackgroundDrawers()
-            .elements();
+                    .elements();
             while (iter.hasMoreElements()) {
                 addBgDrawer(iter.nextElement());
             }
@@ -307,7 +307,7 @@ public class MechDisplay extends JPanel {
      */
     private class ArmorPanel extends PicMap {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -3612396252172441104L;
         private TankMapSet tank;
@@ -484,7 +484,7 @@ public class MechDisplay extends JPanel {
             ams.setEntity(en);
             addElement(ams.getContentGroup());
             Enumeration<BackGroundDrawer> iter = ams.getBackgroundDrawers()
-            .elements();
+                    .elements();
             while (iter.hasMoreElements()) {
                 addBgDrawer(iter.nextElement());
             }
@@ -497,9 +497,9 @@ public class MechDisplay extends JPanel {
      * This class contains the all the gizmos for firing the mech's weapons.
      */
     public class WeaponPanel extends PicMap implements ItemListener,
-    ListSelectionListener {
+            ListSelectionListener {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -5728839963281503332L;
 
@@ -988,13 +988,13 @@ public class MechDisplay extends JPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-            | BackGroundDrawer.VALIGN_TOP;
+                    | BackGroundDrawer.VALIGN_TOP;
             tile = getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-            | BackGroundDrawer.VALIGN_BOTTOM;
+                    | BackGroundDrawer.VALIGN_BOTTOM;
             tile = getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -1005,31 +1005,31 @@ public class MechDisplay extends JPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_VERTICAL
-            | BackGroundDrawer.HALIGN_RIGHT;
+                    | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(IMAGE_DIR + "/v_line.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-            | BackGroundDrawer.HALIGN_LEFT;
+                    | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-            | BackGroundDrawer.HALIGN_LEFT;
+                    | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-            | BackGroundDrawer.HALIGN_RIGHT;
+                    | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-            | BackGroundDrawer.HALIGN_RIGHT;
+                    | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -1037,8 +1037,9 @@ public class MechDisplay extends JPanel {
         }
 
         /**
-         * updates fields for the specified mech <p/> fix the ammo when it's
-         * added
+         * updates fields for the specified mech
+         * <p/>
+         * fix the ammo when it's added
          */
         public void displayMech(Entity en) {
 
@@ -1049,10 +1050,10 @@ public class MechDisplay extends JPanel {
             entity = en;
 
             int currentHeatBuildup = en.heat // heat from last round
-            + en.getEngineCritHeat() // heat engine crits will add
-            + Math.min(15, en.heatFromExternal) // heat from external
-            // sources
-            + en.heatBuildup; // heat we're building up this round
+                    + en.getEngineCritHeat() // heat engine crits will add
+                    + Math.min(15, en.heatFromExternal) // heat from external
+                    // sources
+                    + en.heatBuildup; // heat we're building up this round
             if (en instanceof Mech) {
                 if (en.infernos.isStillBurning()) { // hit with inferno ammo
                     currentHeatBuildup += en.infernos.getHeat();
@@ -1060,9 +1061,11 @@ public class MechDisplay extends JPanel {
                 if (!((Mech) en).hasLaserHeatSinks()) {
                     // extreme temperatures.
                     if (game.getPlanetaryConditions().getTemperature() > 0) {
-                        currentHeatBuildup += game.getPlanetaryConditions().getTemperatureDifference(50,-30);
+                        currentHeatBuildup += game.getPlanetaryConditions()
+                                .getTemperatureDifference(50, -30);
                     } else {
-                        currentHeatBuildup -= game.getPlanetaryConditions().getTemperatureDifference(50,-30);
+                        currentHeatBuildup -= game.getPlanetaryConditions()
+                                .getTemperatureDifference(50, -30);
                     }
                 }
             }
@@ -1079,9 +1082,9 @@ public class MechDisplay extends JPanel {
                 }
             }
             if (en instanceof Mech && en.isStealthActive()
-                    || en.isNullSigActive()
-                    || en.isVoidSigActive()) {
-                currentHeatBuildup += 10; // active stealth/null sig/void sig heat
+                    || en.isNullSigActive() || en.isVoidSigActive()) {
+                currentHeatBuildup += 10; // active stealth/null sig/void sig
+                                          // heat
             }
 
             if (en instanceof Mech && en.isChameleonShieldActive()) {
@@ -1129,7 +1132,7 @@ public class MechDisplay extends JPanel {
                     }
 
                     int totalShotsLeft = entity
-                    .getTotalMunitionsOfType(typeUsed);
+                            .getTotalMunitionsOfType(typeUsed);
 
                     wn.append(" ("); //$NON-NLS-1$
                     wn.append(shotsLeft);
@@ -1164,7 +1167,7 @@ public class MechDisplay extends JPanel {
                         if (game.getOptions().booleanOption("heat_by_bay")) {
                             for (int wId : mounted.getBayWeapons()) {
                                 currentHeatBuildup += entity.getEquipment(wId)
-                                .getCurrentHeat();
+                                        .getCurrentHeat();
                             }
                         } else {
                             // check whether arc has fired
@@ -1212,7 +1215,7 @@ public class MechDisplay extends JPanel {
                 currentHeatBuildup = 0;
             }
             currentHeatBuildupR
-            .setText(heatText + " (" + heatCapacityStr + ')'); //$NON-NLS-1$
+                    .setText(heatText + " (" + heatCapacityStr + ')'); //$NON-NLS-1$
 
             // change what is visible based on type
             if (entity.usesWeaponBays()) {
@@ -1287,7 +1290,7 @@ public class MechDisplay extends JPanel {
             // short circuit if not selected
             if (weaponList.getSelectedIndex() == -1) {
                 ((DefaultComboBoxModel) m_chAmmo.getModel())
-                .removeAllElements();
+                        .removeAllElements();
                 m_chAmmo.setEnabled(false);
                 m_chBayWeapon.removeAllItems();
                 m_chBayWeapon.setEnabled(false);
@@ -1308,18 +1311,20 @@ public class MechDisplay extends JPanel {
             // update weapon display
             wNameR.setText(mounted.getDesc());
             if (mounted.hasChargedCapacitor()) {
-                wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted, wtype) + 5)));
-            } else if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes()
-                    && clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons") ){
-                wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted, wtype))));
-            }
-            else{
+                wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted,
+                        wtype) + 5)));
+            } else if (wtype.hasFlag(WeaponType.F_ENERGY)
+                    && wtype.hasModes()
+                    && clientgui.getClient().game.getOptions().booleanOption(
+                            "tacops_energy_weapons")) {
+                wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted,
+                        wtype))));
+            } else {
                 wHeatR.setText(Integer.toString(mounted.getCurrentHeat()));
             }
 
             wArcHeatR.setText(Integer.toString(entity.getHeatInArc(mounted
                     .getLocation(), mounted.isRearMounted())));
-
 
             if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
                 wDamR.setText(Messages.getString("MechDisplay.Missile")); //$NON-NLS-1$
@@ -1330,15 +1335,19 @@ public class MechDisplay extends JPanel {
             } else if (wtype.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
                 StringBuffer damage = new StringBuffer();
                 damage.append(Integer.toString(wtype.getRackSize()))
-                .append('/').append(
-                        Integer.toString(wtype.getRackSize() / 2));
+                        .append('/').append(
+                                Integer.toString(wtype.getRackSize() / 2));
                 wDamR.setText(damage.toString());
-            } else if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes()
-                    && clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons") ){
+            } else if (wtype.hasFlag(WeaponType.F_ENERGY)
+                    && wtype.hasModes()
+                    && clientgui.getClient().game.getOptions().booleanOption(
+                            "tacops_energy_weapons")) {
                 if (mounted.hasChargedCapacitor()) {
-                    wDamR.setText(Integer.toString(Compute.dialDownDamage(mounted, wtype) + 5));
+                    wDamR.setText(Integer.toString(Compute.dialDownDamage(
+                            mounted, wtype) + 5));
                 } else {
-                    wDamR.setText(Integer.toString(Compute.dialDownDamage(mounted, wtype)));
+                    wDamR.setText(Integer.toString(Compute.dialDownDamage(
+                            mounted, wtype)));
                 }
             } else {
                 wDamR.setText(Integer.toString(wtype.getDamage()));
@@ -1410,8 +1419,7 @@ public class MechDisplay extends JPanel {
             // update weapon bay selector
             int chosen = m_chBayWeapon.getSelectedIndex();
             m_chBayWeapon.removeAllItems();
-            if (!(wtype instanceof BayWeapon)
-                    || !entity.usesWeaponBays()) {
+            if (!(wtype instanceof BayWeapon) || !entity.usesWeaponBays()) {
                 m_chBayWeapon.setEnabled(false);
             } else {
                 m_chBayWeapon.setEnabled(true);
@@ -1453,7 +1461,8 @@ public class MechDisplay extends JPanel {
                     m_chAmmo.setEnabled(false);
                 }
             } else {
-                if (!(entity instanceof Infantry) || entity instanceof BattleArmor) {
+                if (!(entity instanceof Infantry)
+                        || entity instanceof BattleArmor) {
                     m_chAmmo.setEnabled(true);
                 } else {
                     m_chAmmo.setEnabled(false);
@@ -1527,8 +1536,12 @@ public class MechDisplay extends JPanel {
                 sb.append(m.getDesc().substring(ammoIndex + 4));
             }
             final String ammoString = sb.toString();
-            return new Object() { @Override
-                public String toString() { return ammoString; } };
+            return new Object() {
+                @Override
+                public String toString() {
+                    return ammoString;
+                }
+            };
         }
 
         private String formatBayWeapon(Mounted m) {
@@ -1539,9 +1552,9 @@ public class MechDisplay extends JPanel {
 
         /**
          * Update the range display for the selected ammo.
-         * 
-         * @param atype -
-         *            the <code>AmmoType</code> of the weapon's loaded ammo.
+         *
+         * @param atype
+         *            - the <code>AmmoType</code> of the weapon's loaded ammo.
          */
         private void updateRangeDisplayForAmmo(Mounted mAmmo) {
 
@@ -1809,7 +1822,7 @@ public class MechDisplay extends JPanel {
             if (entity instanceof FighterSquadron) {
                 FighterSquadron fs = (FighterSquadron) entity;
                 mult = ((double) fs.getNFighters())
-                / ((double) fs.getN0Fighters());
+                        / ((double) fs.getN0Fighters());
             }
             avShort = mult * avShort;
             avMed = mult * avMed;
@@ -1949,9 +1962,9 @@ public class MechDisplay extends JPanel {
      * This class shows the critical hits and systems for a mech
      */
     private class SystemPanel extends PicMap implements ItemListener,
-    ActionListener, ListSelectionListener {
+            ActionListener, ListSelectionListener {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 6660316427898323590L;
 
@@ -2143,7 +2156,7 @@ public class MechDisplay extends JPanel {
                     switch (cs.getType()) {
                     case CriticalSlot.TYPE_SYSTEM:
                         sb.append(cs.isDestroyed() ? "*" : "")//$NON-NLS-1$ //$NON-NLS-2$
-                        .append(cs.isBreached() ? "x" : ""); //$NON-NLS-1$ //$NON-NLS-2$
+                                .append(cs.isBreached() ? "x" : ""); //$NON-NLS-1$ //$NON-NLS-2$
                         // Protomechs have different systme names.
                         if (en instanceof Protomech) {
                             sb.append(Protomech.systemNames[cs.getIndex()]);
@@ -2154,14 +2167,14 @@ public class MechDisplay extends JPanel {
                     case CriticalSlot.TYPE_EQUIPMENT:
                         Mounted m = en.getEquipment(cs.getIndex());
                         sb
-                        .append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                .append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                         if (m.isHotLoaded()) {
                             sb.append(Messages
                                     .getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
                         }
                         if (m.getType().hasModes()) {
                             sb
-                            .append(" (").append(m.curMode().getDisplayableName()).append(')'); //$NON-NLS-1$
+                                    .append(" (").append(m.curMode().getDisplayableName()).append(')'); //$NON-NLS-1$
                             if (m.getType() instanceof MiscType
                                     && ((MiscType) m.getType()).isShield()) {
                                 sb.append(" " + m.getDamageAbsorption(en, loc)
@@ -2209,12 +2222,12 @@ public class MechDisplay extends JPanel {
 
                         if (m.getType() instanceof MiscType
                                 && ((MiscType) m.getType())
-                                .hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                                        .hasSubType(MiscType.S_RETRACTABLE_BLADE)
                                 && clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
                             clientgui
-                            .systemMessage(Messages
-                                    .getString(
-                                            "MechDisplay.RetractableBladeModePhase", null));//$NON-NLS-1$
+                                    .systemMessage(Messages
+                                            .getString(
+                                                    "MechDisplay.RetractableBladeModePhase", null));//$NON-NLS-1$
                             return;
                         }
 
@@ -2452,7 +2465,7 @@ public class MechDisplay extends JPanel {
     private class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -4907296187995261075L;
 

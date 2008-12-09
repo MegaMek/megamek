@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
  * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -54,6 +54,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
      */
+    @Override
     protected void useAmmo() {
         setDone();
         checkAmmo();
@@ -91,6 +92,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount UACS/RACs
@@ -106,10 +108,12 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
         int shotsHit;
         int nMod = 0;
-        if (bGlancing)
+        if (bGlancing) {
             nMod -= 4;
-        if (game.getPlanetaryConditions().hasEMI())
+        }
+        if (game.getPlanetaryConditions().hasEMI()) {
             nMod -= 2;
+        }
 
         if (bDirect) {
             nMod += (toHit.getMoS() / 3) * 2;
@@ -144,10 +148,11 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
             if (nMod != 0) {
-                if (nMod > 0)
+                if (nMod > 0) {
                     r = new Report(3340);
-                else
+                } else {
                     r = new Report(3341);
+                }
                 r.subject = subjectId;
                 r.add(nMod);
                 r.newlines = 0;
@@ -166,6 +171,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
+    @Override
     protected void addHeat() {// silly hack
         for (int x = 0; x < howManyShots; x++) {
             super.addHeat();
@@ -177,6 +183,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
+    @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll == 2 && howManyShots == 2) {
             r = new Report();
@@ -199,6 +206,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();
         // infantry get hit by all shots
@@ -212,17 +220,18 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         } else if ( bDirect ){
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
         }
-             
-        if (bGlancing) { 
-            toReturn = (int) Math.floor(toReturn / 2.0); 
+
+        if (bGlancing) {
+            toReturn = (int) Math.floor(toReturn / 2.0);
         }
-             
+
         if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         return (int) toReturn;
     }
 
+    @Override
     protected boolean usesClusterTable() {
         return true;
     }

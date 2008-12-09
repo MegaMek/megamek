@@ -100,11 +100,7 @@ import megamek.common.Terrains;
 import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
-import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.BayWeapon;
-import megamek.common.weapons.GaussWeapon;
-import megamek.common.weapons.RACWeapon;
-import megamek.common.weapons.UACWeapon;
 
 /**
  * Displays the info for a mech. This is also a sort of interface for special
@@ -245,7 +241,7 @@ public class MechDisplay extends JPanel {
             default:
                 System.err.println("unknown event " + event.getType()
                         + " in processMechDisplayEvent");
-                break;
+            break;
             }
         }
     }
@@ -270,24 +266,27 @@ public class MechDisplay extends JPanel {
             gi = new GeneralInfoMapSet(this);
             addElement(gi.getContentGroup());
             Enumeration<BackGroundDrawer> iter = gi.getBackgroundDrawers()
-                    .elements();
+            .elements();
             while (iter.hasMoreElements()) {
                 addBgDrawer(iter.nextElement());
             }
             onResize();
         }
 
+        @Override
         public void addNotify() {
             super.addNotify();
             update();
         }
 
+        @Override
         public void onResize() {
             int w = getSize().width;
             Rectangle r = getContentBounds();
             int dx = Math.round(((w - r.width) / 2));
-            if (dx < minLeftMargin)
+            if (dx < minLeftMargin) {
                 dx = minLeftMargin;
+            }
             int dy = minTopMargin;
             setContentMargins(dx, dy, dx, dy);
         }
@@ -344,6 +343,7 @@ public class MechDisplay extends JPanel {
         private static final int minAeroTopMargin = 8;
         private static final int minAeroLeftMargin = 8;
 
+        @Override
         public void addNotify() {
             super.addNotify();
             tank = new TankMapSet(this);
@@ -363,10 +363,12 @@ public class MechDisplay extends JPanel {
             squad = new SquadronMapSet(this);
         }
 
+        @Override
         public void onResize() {
             Rectangle r = getContentBounds();
-            if (r == null)
+            if (r == null) {
                 return;
+            }
             int w = Math.round(((getSize().width - r.width) / 2));
             int h = Math.round(((getSize().height - r.height) / 2));
             int dx = w < minLeftMargin ? minLeftMargin : w;
@@ -482,7 +484,7 @@ public class MechDisplay extends JPanel {
             ams.setEntity(en);
             addElement(ams.getContentGroup());
             Enumeration<BackGroundDrawer> iter = ams.getBackgroundDrawers()
-                    .elements();
+            .elements();
             while (iter.hasMoreElements()) {
                 addBgDrawer(iter.nextElement());
             }
@@ -495,7 +497,7 @@ public class MechDisplay extends JPanel {
      * This class contains the all the gizmos for firing the mech's weapons.
      */
     public class WeaponPanel extends PicMap implements ItemListener,
-            ListSelectionListener {
+    ListSelectionListener {
         /**
          * 
          */
@@ -964,14 +966,17 @@ public class MechDisplay extends JPanel {
             onResize();
         }
 
+        @Override
         public void onResize() {
             int w = getSize().width;
             Rectangle r = getContentBounds();
-            if (r == null)
+            if (r == null) {
                 return;
+            }
             int dx = Math.round(((w - r.width) / 2));
-            if (dx < minLeftMargin)
+            if (dx < minLeftMargin) {
                 dx = minLeftMargin;
+            }
             int dy = minTopMargin;
             setContentMargins(dx, dy, dx, dy);
         }
@@ -983,13 +988,13 @@ public class MechDisplay extends JPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-                    | BackGroundDrawer.VALIGN_TOP;
+            | BackGroundDrawer.VALIGN_TOP;
             tile = getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-                    | BackGroundDrawer.VALIGN_BOTTOM;
+            | BackGroundDrawer.VALIGN_BOTTOM;
             tile = getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -1000,31 +1005,31 @@ public class MechDisplay extends JPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_VERTICAL
-                    | BackGroundDrawer.HALIGN_RIGHT;
+            | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(IMAGE_DIR + "/v_line.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                    | BackGroundDrawer.HALIGN_LEFT;
+            | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                    | BackGroundDrawer.HALIGN_LEFT;
+            | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                    | BackGroundDrawer.HALIGN_RIGHT;
+            | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                    | BackGroundDrawer.HALIGN_RIGHT;
+            | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -1044,10 +1049,10 @@ public class MechDisplay extends JPanel {
             entity = en;
 
             int currentHeatBuildup = en.heat // heat from last round
-                    + en.getEngineCritHeat() // heat engine crits will add
-                    + Math.min(15, en.heatFromExternal) // heat from external
-                    // sources
-                    + en.heatBuildup; // heat we're building up this round
+            + en.getEngineCritHeat() // heat engine crits will add
+            + Math.min(15, en.heatFromExternal) // heat from external
+            // sources
+            + en.heatBuildup; // heat we're building up this round
             if (en instanceof Mech) {
                 if (en.infernos.isStillBurning()) { // hit with inferno ammo
                     currentHeatBuildup += en.infernos.getHeat();
@@ -1082,7 +1087,7 @@ public class MechDisplay extends JPanel {
             if (en instanceof Mech && en.isChameleonShieldActive()) {
                 currentHeatBuildup += 6;
             }
-            
+
             // update weapon list
             ((DefaultListModel) weaponList.getModel()).removeAllElements();
             ((DefaultComboBoxModel) m_chAmmo.getModel()).removeAllElements();
@@ -1105,10 +1110,10 @@ public class MechDisplay extends JPanel {
                 wn.append(" ["); //$NON-NLS-1$
                 wn.append(en.getLocationAbbr(mounted.getLocation()));
                 if (mounted.isSplit()) {
-                    wn.append('/'); //$NON-NLS-1$
+                    wn.append('/');
                     wn.append(en.getLocationAbbr(mounted.getSecondLocation()));
                 }
-                wn.append(']'); //$NON-NLS-1$
+                wn.append(']');
                 // determine shots left & total shots left
                 if (wtype.getAmmoType() != AmmoType.T_NA
                         && !wtype.hasFlag(WeaponType.F_ONESHOT)) {
@@ -1124,13 +1129,13 @@ public class MechDisplay extends JPanel {
                     }
 
                     int totalShotsLeft = entity
-                            .getTotalMunitionsOfType(typeUsed);
+                    .getTotalMunitionsOfType(typeUsed);
 
                     wn.append(" ("); //$NON-NLS-1$
                     wn.append(shotsLeft);
-                    wn.append('/'); //$NON-NLS-1$
+                    wn.append('/');
                     wn.append(totalShotsLeft);
-                    wn.append(')'); //$NON-NLS-1$
+                    wn.append(')');
                 }
 
                 // MG rapidfire
@@ -1146,7 +1151,7 @@ public class MechDisplay extends JPanel {
                 // Fire Mode - lots of things have variable modes
                 if (wtype.hasModes()) {
                     wn.append(' ');
-                    wn.append(mounted.curMode().getDisplayableName()); //$NON-NLS-1$
+                    wn.append(mounted.curMode().getDisplayableName());
                 }
                 ((DefaultListModel) weaponList.getModel()).addElement(wn
                         .toString());
@@ -1159,7 +1164,7 @@ public class MechDisplay extends JPanel {
                         if (game.getOptions().booleanOption("heat_by_bay")) {
                             for (int wId : mounted.getBayWeapons()) {
                                 currentHeatBuildup += entity.getEquipment(wId)
-                                        .getCurrentHeat();
+                                .getCurrentHeat();
                             }
                         } else {
                             // check whether arc has fired
@@ -1194,7 +1199,7 @@ public class MechDisplay extends JPanel {
             String heatCapacityStr = Integer.toString(heatCap);
 
             if (heatCap < heatCapWater) {
-                heatCapacityStr = heatCap + " [" + heatCapWater + ']'; //$NON-NLS-1$ //$NON-NLS-2$
+                heatCapacityStr = heatCap + " [" + heatCapWater + ']'; //$NON-NLS-1$
             }
             // end duplicate block
 
@@ -1207,7 +1212,7 @@ public class MechDisplay extends JPanel {
                 currentHeatBuildup = 0;
             }
             currentHeatBuildupR
-                    .setText(heatText + " (" + heatCapacityStr + ')'); //$NON-NLS-1$ //$NON-NLS-2$
+            .setText(heatText + " (" + heatCapacityStr + ')'); //$NON-NLS-1$
 
             // change what is visible based on type
             if (entity.usesWeaponBays()) {
@@ -1282,7 +1287,7 @@ public class MechDisplay extends JPanel {
             // short circuit if not selected
             if (weaponList.getSelectedIndex() == -1) {
                 ((DefaultComboBoxModel) m_chAmmo.getModel())
-                        .removeAllElements();
+                .removeAllElements();
                 m_chAmmo.setEnabled(false);
                 m_chBayWeapon.removeAllItems();
                 m_chBayWeapon.setEnabled(false);
@@ -1302,14 +1307,14 @@ public class MechDisplay extends JPanel {
             WeaponType wtype = (WeaponType) mounted.getType();
             // update weapon display
             wNameR.setText(mounted.getDesc());
-            if (mounted.hasChargedCapacitor())
-                wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted, wtype) + 5))); //$NON-NLS-1$
-            else if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes() 
+            if (mounted.hasChargedCapacitor()) {
+                wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted, wtype) + 5)));
+            } else if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes()
                     && clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons") ){
                 wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted, wtype))));
             }
             else{
-                wHeatR.setText(Integer.toString(mounted.getCurrentHeat())); //$NON-NLS-1$
+                wHeatR.setText(Integer.toString(mounted.getCurrentHeat()));
             }
 
             wArcHeatR.setText(Integer.toString(entity.getHeatInArc(mounted
@@ -1325,17 +1330,18 @@ public class MechDisplay extends JPanel {
             } else if (wtype.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
                 StringBuffer damage = new StringBuffer();
                 damage.append(Integer.toString(wtype.getRackSize()))
-                        .append('/').append(
-                                Integer.toString(wtype.getRackSize() / 2));
+                .append('/').append(
+                        Integer.toString(wtype.getRackSize() / 2));
                 wDamR.setText(damage.toString());
-            } else if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes() 
+            } else if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes()
                     && clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons") ){
                 if (mounted.hasChargedCapacitor()) {
                     wDamR.setText(Integer.toString(Compute.dialDownDamage(mounted, wtype) + 5));
-                } else
+                } else {
                     wDamR.setText(Integer.toString(Compute.dialDownDamage(mounted, wtype)));
+                }
             } else {
-                    wDamR.setText(Integer.toString(wtype.getDamage()));
+                wDamR.setText(Integer.toString(wtype.getDamage()));
             }
 
             // update range
@@ -1400,7 +1406,7 @@ public class MechDisplay extends JPanel {
                 }
 
             }
-            
+
             // update weapon bay selector
             int chosen = m_chBayWeapon.getSelectedIndex();
             m_chBayWeapon.removeAllItems();
@@ -1411,16 +1417,18 @@ public class MechDisplay extends JPanel {
                 m_chBayWeapon.setEnabled(true);
                 for (int wId : mounted.getBayWeapons()) {
                     Mounted curWeapon = entity.getEquipment(wId);
-                    if (null == curWeapon)
+                    if (null == curWeapon) {
                         continue;
+                    }
 
                     m_chBayWeapon.addItem(formatBayWeapon(curWeapon));
                 }
 
-                if (chosen == -1)
+                if (chosen == -1) {
                     m_chBayWeapon.setSelectedIndex(0);
-                else
+                } else {
                     m_chBayWeapon.setSelectedIndex(chosen);
+                }
             }
 
             // update ammo selector
@@ -1459,15 +1467,17 @@ public class MechDisplay extends JPanel {
                     // ammo must be located in the same place to be usable
                     boolean same = true;
                     if (entity instanceof SmallCraft
-                            || entity instanceof Jumpship)
+                            || entity instanceof Jumpship) {
                         same = (mounted.getLocation() == mountedAmmo
                                 .getLocation());
+                    }
 
                     boolean rightBay = true;
                     if (entity.usesWeaponBays()
-                            && !(entity instanceof FighterSquadron))
+                            && !(entity instanceof FighterSquadron)) {
                         rightBay = oldmount.ammoInBay(entity
                                 .getEquipmentNum(mountedAmmo));
+                    }
 
                     if (mountedAmmo.isAmmoUsable() && same && rightBay
                             && atype.getAmmoType() == wtype.getAmmoType()
@@ -1508,7 +1518,7 @@ public class MechDisplay extends JPanel {
                     Messages.getString("MechDisplay.0")); //$NON-NLS-1$
             int loc = m.getLocation();
             if (loc != Entity.LOC_NONE) {
-                sb.append('[').append(entity.getLocationAbbr(loc)).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
+                sb.append('[').append(entity.getLocationAbbr(loc)).append("] "); //$NON-NLS-1$
             }
             if (ammoIndex == -1) {
                 sb.append(m.getDesc());
@@ -1517,7 +1527,8 @@ public class MechDisplay extends JPanel {
                 sb.append(m.getDesc().substring(ammoIndex + 4));
             }
             final String ammoString = sb.toString();
-            return new Object() { public String toString() { return ammoString; } };
+            return new Object() { @Override
+                public String toString() { return ammoString; } };
         }
 
         private String formatBayWeapon(Mounted m) {
@@ -1574,8 +1585,9 @@ public class MechDisplay extends JPanel {
             }
 
             // Min range 0 for hotload
-            if (mAmmo.isHotLoaded())
+            if (mAmmo.isHotLoaded()) {
                 wMinR.setText("---");
+            }
 
             onResize();
         } // End private void updateRangeDisplayForAmmo( AmmoType )
@@ -1787,8 +1799,9 @@ public class MechDisplay extends JPanel {
                     avMed = avMed + mAVMed;
                     avLong = avLong + mAVLong;
                     avExt = avExt + mAVExt;
-                    if (mMaxR > maxr)
+                    if (mMaxR > maxr) {
                         maxr = mMaxR;
+                    }
                 }
             }
             // check for active fighters in fighter squadrons
@@ -1796,7 +1809,7 @@ public class MechDisplay extends JPanel {
             if (entity instanceof FighterSquadron) {
                 FighterSquadron fs = (FighterSquadron) entity;
                 mult = ((double) fs.getNFighters())
-                        / ((double) fs.getN0Fighters());
+                / ((double) fs.getN0Fighters());
             }
             avShort = mult * avShort;
             avMed = mult * avMed;
@@ -1848,8 +1861,9 @@ public class MechDisplay extends JPanel {
                     && m_chAmmo.getSelectedIndex() != -1) {
                 // only change our own units
                 if (!clientgui.getClient().getLocalPlayer().equals(
-                        entity.getOwner()))
+                        entity.getOwner())) {
                     return;
+                }
                 int n = weaponList.getSelectedIndex();
                 if (n == -1) {
                     return;
@@ -1935,7 +1949,7 @@ public class MechDisplay extends JPanel {
      * This class shows the critical hits and systems for a mech
      */
     private class SystemPanel extends PicMap implements ItemListener,
-            ActionListener, ListSelectionListener {
+    ActionListener, ListSelectionListener {
         /**
          * 
          */
@@ -2065,14 +2079,17 @@ public class MechDisplay extends JPanel {
             onResize();
         }
 
+        @Override
         public void onResize() {
             int w = getSize().width;
             Rectangle r = getContentBounds();
-            if (r == null)
+            if (r == null) {
                 return;
+            }
             int dx = Math.round(((w - r.width) / 2));
-            if (dx < minLeftMargin)
+            if (dx < minLeftMargin) {
                 dx = minLeftMargin;
+            }
             int dy = minTopMargin;
             setContentMargins(dx, dy, dx, dy);
         }
@@ -2126,7 +2143,7 @@ public class MechDisplay extends JPanel {
                     switch (cs.getType()) {
                     case CriticalSlot.TYPE_SYSTEM:
                         sb.append(cs.isDestroyed() ? "*" : "")//$NON-NLS-1$ //$NON-NLS-2$
-                                .append(cs.isBreached() ? "x" : ""); //$NON-NLS-1$ //$NON-NLS-2$
+                        .append(cs.isBreached() ? "x" : ""); //$NON-NLS-1$ //$NON-NLS-2$
                         // Protomechs have different systme names.
                         if (en instanceof Protomech) {
                             sb.append(Protomech.systemNames[cs.getIndex()]);
@@ -2137,13 +2154,14 @@ public class MechDisplay extends JPanel {
                     case CriticalSlot.TYPE_EQUIPMENT:
                         Mounted m = en.getEquipment(cs.getIndex());
                         sb
-                                .append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                        if (m.isHotLoaded())
+                        .append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                        if (m.isHotLoaded()) {
                             sb.append(Messages
                                     .getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
+                        }
                         if (m.getType().hasModes()) {
                             sb
-                                    .append(" (").append(m.curMode().getDisplayableName()).append(')'); //$NON-NLS-1$ //$NON-NLS-2$
+                            .append(" (").append(m.curMode().getDisplayableName()).append(')'); //$NON-NLS-1$
                             if (m.getType() instanceof MiscType
                                     && ((MiscType) m.getType()).isShield()) {
                                 sb.append(" " + m.getDamageAbsorption(en, loc)
@@ -2166,125 +2184,7 @@ public class MechDisplay extends JPanel {
         // ItemListener
         //
         public void itemStateChanged(ItemEvent ev) {
-            if (ev.getItemSelectable() == locList) {
-                ((DefaultComboBoxModel) m_chMode.getModel())
-                        .removeAllElements();
-                m_chMode.setEnabled(false);
-                displaySlots();
-            } else if (ev.getItemSelectable() == slotList) {
-                m_bDumpAmmo.setEnabled(false);
-                m_chMode.setEnabled(false);
-                Mounted m = getSelectedEquipment();
-                boolean carryingBAsOnBack = false;
-                if (en instanceof Mech && (
-                        en.getExteriorUnitAt(Mech.LOC_CT, true) != null ||
-                        en.getExteriorUnitAt(Mech.LOC_LT, true) != null ||
-                        en.getExteriorUnitAt(Mech.LOC_RT, true) != null))
-                    carryingBAsOnBack = true;
-
-                boolean bOwner = (clientgui.getClient().getLocalPlayer() == en
-                        .getOwner());
-                if (m != null
-                        && bOwner
-                        && m.getType() instanceof AmmoType
-                        && !(m.getType().hasInstantModeSwitch())
-                        && IGame.Phase.PHASE_DEPLOYMENT != clientgui
-                                .getClient().game.getPhase()
-                        && m.getShotsLeft() > 0
-                        && !m.isDumping()
-                        && en.isActive()
-                        && clientgui.getClient().game.getOptions().intOption(
-                                "dumping_from_round") <= clientgui.getClient().game
-                                .getRoundCount()
-                        && !carryingBAsOnBack) {
-                    m_bDumpAmmo.setEnabled(true);
-                    if (clientgui.getClient().game.getOptions().booleanOption(
-                            "tacops_hotload")
-                            && en instanceof Tank
-                            && m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
-                        m_bDumpAmmo.setEnabled(false);
-                        m_chMode.setEnabled(true);
-                        ((DefaultComboBoxModel) m_chMode.getModel())
-                                .removeAllElements();
-                        for (Enumeration<EquipmentMode> e = m.getType()
-                                .getModes(); e.hasMoreElements();) {
-                            EquipmentMode em = e.nextElement();
-                            m_chMode.addItem(em.getDisplayableName());
-                        }
-                        m_chMode.setSelectedItem(m.curMode()
-                                .getDisplayableName());
-                    }
-                } else if (m != null && bOwner && m.getType().hasModes()) {
-                    if (!m.isDestroyed() && en.isActive()) {
-                        m_chMode.setEnabled(true);
-                    }
-                    if (!m.isDestroyed()
-                            && m.getType().hasFlag(MiscType.F_STEALTH)) {
-                        m_chMode.setEnabled(true);
-                    }
-                    
-                    //If not using tacops Energy Weapon rule then remove all the dial down statements
-                    if (m.getType().hasFlag(WeaponType.F_ENERGY) 
-                            && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA) 
-                            && !clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons")) {
-                        m_chMode.removeAll();
-                        return;
-                    }
-
-                    //If not using tacops Gauss Weapon rule then remove all the power up/down modes
-                    if (m.getType() instanceof GaussWeapon 
-                            && !clientgui.getClient().game.getOptions().booleanOption("tacops_gauss_weapons")) {
-                        m_chMode.removeAll();
-                        return;
-                    }
-
-                    //disable rapid fire mode switching for Aeros
-                    if(en instanceof Aero && m.getType() instanceof ACWeapon 
-                            || m.getType() instanceof RACWeapon 
-                            || m.getType() instanceof UACWeapon) {
-                        ((DefaultComboBoxModel) m_chMode.getModel()).removeAllElements();
-                        return;
-                    }
-                    ((DefaultComboBoxModel) m_chMode.getModel())
-                            .removeAllElements();
-                    for (Enumeration<EquipmentMode> e = m.getType().getModes(); e
-                            .hasMoreElements();) {
-                        EquipmentMode em = e.nextElement();
-                        m_chMode.addItem(em.getDisplayableName());
-                    }
-                    m_chMode.setSelectedItem(m.curMode().getDisplayableName());
-                } else 
-                    //TacOps Energy Weapon rule allows you to dial down the damage, which will lower the heat
-                    //Damage can goto 0 but heat will always be a min of 1
-                    if ( m != null && bOwner && m.getType() instanceof WeaponType 
-                            && m.getType().hasFlag(WeaponType.F_ENERGY)
-                            && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA) 
-                            && clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons")){
-                        m_chMode.removeAll();
-                        m_chMode.setEnabled(true);
-                        
-                        for ( int damage = ((WeaponType) m.getType()).getDamage(); damage >= 0; damage-- ){
-                            m_chMode.addItem("Damage "+damage);
-                        }
-                        m_chMode.setSelectedIndex(0);
-                        m.getType().setInstantModeSwitch(true);
-                    } else {
-                    CriticalSlot cs = getSelectedCritical();
-                    if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM) {
-                        if (cs.getIndex() == Mech.SYSTEM_COCKPIT
-                                && en.hasEiCockpit() && en instanceof Mech) {
-                            ((DefaultComboBoxModel) m_chMode.getModel())
-                                    .removeAllElements();
-                            m_chMode.setEnabled(true);
-                            m_chMode.addItem("EI Off");
-                            m_chMode.addItem("EI On");
-                            m_chMode.addItem("Aimed shot");
-                            m_chMode.setSelectedItem(((Mech) en)
-                                    .getCockpitStatusNextRound());
-                        }
-                    }
-                }
-            } else if (ev.getItemSelectable() == m_chMode) {
+            if (ev.getItemSelectable() == m_chMode) {
                 Mounted m = getSelectedEquipment();
                 CriticalSlot cs = getSelectedCritical();
                 if (m != null && m.getType().hasModes()) {
@@ -2309,12 +2209,12 @@ public class MechDisplay extends JPanel {
 
                         if (m.getType() instanceof MiscType
                                 && ((MiscType) m.getType())
-                                        .hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                                .hasSubType(MiscType.S_RETRACTABLE_BLADE)
                                 && clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
                             clientgui
-                                    .systemMessage(Messages
-                                            .getString(
-                                                    "MechDisplay.RetractableBladeModePhase", null));//$NON-NLS-1$
+                            .systemMessage(Messages
+                                    .getString(
+                                            "MechDisplay.RetractableBladeModePhase", null));//$NON-NLS-1$
                             return;
                         }
 
@@ -2323,7 +2223,7 @@ public class MechDisplay extends JPanel {
                         if (m.getType() instanceof MiscType
                                 && m.getLinked() != null
                                 && ((MiscType) m.getType())
-                                        .hasFlag(MiscType.F_PPC_CAPACITOR)
+                                .hasFlag(MiscType.F_PPC_CAPACITOR)
                                 && m.getLinked().isUsedThisRound()
                                 && nMode == 1) {
                             clientgui.systemMessage(Messages.getString(
@@ -2338,21 +2238,21 @@ public class MechDisplay extends JPanel {
                         // notify the player
                         if (m.canInstantSwitch(nMode)) {
                             clientgui
-                                    .systemMessage(Messages
-                                            .getString(
-                                                    "MechDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName() }));//$NON-NLS-1$
+                            .systemMessage(Messages
+                                    .getString(
+                                            "MechDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName() }));//$NON-NLS-1$
                         } else {
                             if (IGame.Phase.PHASE_DEPLOYMENT == clientgui
                                     .getClient().game.getPhase()) {
                                 clientgui
-                                        .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.willSwitchAtStart", new Object[] { m.getName(), m.pendingMode().getDisplayableName() }));//$NON-NLS-1$
+                                .systemMessage(Messages
+                                        .getString(
+                                                "MechDisplay.willSwitchAtStart", new Object[] { m.getName(), m.pendingMode().getDisplayableName() }));//$NON-NLS-1$
                             } else {
                                 clientgui
-                                        .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.willSwitchAtEnd", new Object[] { m.getName(), m.pendingMode().getDisplayableName() }));//$NON-NLS-1$
+                                .systemMessage(Messages
+                                        .getString(
+                                                "MechDisplay.willSwitchAtEnd", new Object[] { m.getName(), m.pendingMode().getDisplayableName() }));//$NON-NLS-1$
                             }
                         }
                     }
@@ -2369,14 +2269,14 @@ public class MechDisplay extends JPanel {
                             if (mech.getCockpitStatus() == mech
                                     .getCockpitStatusNextRound()) {
                                 clientgui
-                                        .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.switched", new Object[] { "Cockpit", m_chMode.getSelectedItem() }));//$NON-NLS-1$
+                                .systemMessage(Messages
+                                        .getString(
+                                                "MechDisplay.switched", new Object[] { "Cockpit", m_chMode.getSelectedItem() }));//$NON-NLS-1$
                             } else {
                                 clientgui
-                                        .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.willSwitchAtEnd", new Object[] { "Cockpit", m_chMode.getSelectedItem() }));//$NON-NLS-1$
+                                .systemMessage(Messages
+                                        .getString(
+                                                "MechDisplay.willSwitchAtEnd", new Object[] { "Cockpit", m_chMode.getSelectedItem() }));//$NON-NLS-1$
                             }
                         }
                     }
@@ -2402,17 +2302,17 @@ public class MechDisplay extends JPanel {
                 if (m.isPendingDump()) {
                     bDumping = false;
                     String title = Messages
-                            .getString("MechDisplay.CancelDumping.title"); //$NON-NLS-1$
+                    .getString("MechDisplay.CancelDumping.title"); //$NON-NLS-1$
                     String body = Messages
-                            .getString(
-                                    "MechDisplay.CancelDumping.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                    .getString(
+                            "MechDisplay.CancelDumping.message", new Object[] { m.getName() }); //$NON-NLS-1$
                     bConfirmed = clientgui.doYesNoDialog(title, body);
                 } else {
                     bDumping = true;
                     String title = Messages.getString("MechDisplay.Dump.title"); //$NON-NLS-1$
                     String body = Messages
-                            .getString(
-                                    "MechDisplay.Dump.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                    .getString(
+                            "MechDisplay.Dump.message", new Object[] { m.getName() }); //$NON-NLS-1$
                     bConfirmed = clientgui.doYesNoDialog(title, body);
                 }
 
@@ -2432,13 +2332,13 @@ public class MechDisplay extends JPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-                    | BackGroundDrawer.VALIGN_TOP;
+            | BackGroundDrawer.VALIGN_TOP;
             tile = getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-                    | BackGroundDrawer.VALIGN_BOTTOM;
+            | BackGroundDrawer.VALIGN_BOTTOM;
             tile = getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -2449,31 +2349,31 @@ public class MechDisplay extends JPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_VERTICAL
-                    | BackGroundDrawer.HALIGN_RIGHT;
+            | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(IMAGE_DIR + "/v_line.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                    | BackGroundDrawer.HALIGN_LEFT;
+            | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                    | BackGroundDrawer.HALIGN_LEFT;
+            | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                    | BackGroundDrawer.HALIGN_RIGHT;
+            | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                    | BackGroundDrawer.HALIGN_RIGHT;
+            | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -2483,7 +2383,7 @@ public class MechDisplay extends JPanel {
         public void valueChanged(ListSelectionEvent event) {
             if (event.getSource().equals(locList)) {
                 ((DefaultComboBoxModel) m_chMode.getModel())
-                        .removeAllElements();
+                .removeAllElements();
                 m_chMode.setEnabled(false);
                 displaySlots();
             } else if (event.getSource().equals(slotList)) {
@@ -2512,15 +2412,15 @@ public class MechDisplay extends JPanel {
                     // should not show anything.
                     if (m.getType().hasFlag(MiscType.F_ECM)
                             && !clientgui.getClient().game.getOptions()
-                                    .booleanOption("tacops_eccm")) {
+                            .booleanOption("tacops_eccm")) {
                         ((DefaultComboBoxModel) m_chMode.getModel())
-                                .removeAllElements();
+                        .removeAllElements();
                         return;
                     }
                     ((DefaultComboBoxModel) m_chMode.getModel())
-                            .removeAllElements();
+                    .removeAllElements();
                     for (Enumeration<EquipmentMode> e = m.getType().getModes(); e
-                            .hasMoreElements();) {
+                    .hasMoreElements();) {
                         EquipmentMode em = e.nextElement();
                         m_chMode.addItem(em.getDisplayableName());
                     }
@@ -2531,7 +2431,7 @@ public class MechDisplay extends JPanel {
                         if (cs.getIndex() == Mech.SYSTEM_COCKPIT
                                 && en.hasEiCockpit() && en instanceof Mech) {
                             ((DefaultComboBoxModel) m_chMode.getModel())
-                                    .removeAllElements();
+                            .removeAllElements();
                             m_chMode.setEnabled(true);
                             m_chMode.addItem("EI Off");
                             m_chMode.addItem("EI On");
@@ -2575,7 +2475,7 @@ public class MechDisplay extends JPanel {
         private int myMechId;
 
         private JComboBox chSensors;
-        
+
         private Slider prompt;
 
         private int sinks;
@@ -2649,13 +2549,13 @@ public class MechDisplay extends JPanel {
                     SwingConstants.CENTER);
             targSysL.setForeground(Color.WHITE);
             targSysL.setOpaque(false);
-            
+
             curSensorsL = new JLabel((Messages
                     .getString("MechDisplay.CurrentSensors")).concat(" "),
                     SwingConstants.CENTER);
             curSensorsL.setForeground(Color.WHITE);
             curSensorsL.setOpaque(false);
-            
+
             chSensors = new JComboBox();
             chSensors.addItemListener(this);
 
@@ -2675,20 +2575,20 @@ public class MechDisplay extends JPanel {
 
             gridbag.setConstraints(curSensorsL, c);
             add(curSensorsL);
-            
+
             gridbag.setConstraints(chSensors, c);
             add(chSensors);
-            
+
             gridbag.setConstraints(narcLabel, c);
             add(narcLabel);
-            
+
             gridbag.setConstraints(narcLabel, c);
             add(narcLabel);
 
             c.insets = new Insets(1, 9, 1, 9);
             JScrollPane scrollPane = new JScrollPane(narcList);
             scrollPane
-                    .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
             gridbag.setConstraints(scrollPane, c);
             add(scrollPane);
 
@@ -2731,14 +2631,17 @@ public class MechDisplay extends JPanel {
             onResize();
         }
 
+        @Override
         public void onResize() {
             int w = getSize().width;
             Rectangle r = getContentBounds();
-            if (r == null)
+            if (r == null) {
                 return;
+            }
             int dx = Math.round(((w - r.width) / 2));
-            if (dx < minLeftMargin)
+            if (dx < minLeftMargin) {
                 dx = minLeftMargin;
+            }
             int dy = minTopMargin;
             setContentMargins(dx, dy, dx, dy);
         }
@@ -2750,13 +2653,13 @@ public class MechDisplay extends JPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-                    | BackGroundDrawer.VALIGN_TOP;
+            | BackGroundDrawer.VALIGN_TOP;
             tile = getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-                    | BackGroundDrawer.VALIGN_BOTTOM;
+            | BackGroundDrawer.VALIGN_BOTTOM;
             tile = getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -2767,31 +2670,31 @@ public class MechDisplay extends JPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_VERTICAL
-                    | BackGroundDrawer.HALIGN_RIGHT;
+            | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(IMAGE_DIR + "/v_line.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                    | BackGroundDrawer.HALIGN_LEFT;
+            | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                    | BackGroundDrawer.HALIGN_LEFT;
+            | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                    | BackGroundDrawer.HALIGN_RIGHT;
+            | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                    | BackGroundDrawer.HALIGN_RIGHT;
+            | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -2830,7 +2733,7 @@ public class MechDisplay extends JPanel {
                             .getString("MechDisplay.NARCedBy")); //$NON-NLS-1$
                     buff.append(player.getName());
                     buff.append(" [")//$NON-NLS-1$
-                            .append(Player.teamNames[team]).append(']'); //$NON-NLS-1$
+                    .append(Player.teamNames[team]).append(']');
                     ((DefaultListModel) narcList.getModel()).addElement(buff
                             .toString());
                 }
@@ -2839,9 +2742,9 @@ public class MechDisplay extends JPanel {
                             .getString("MechDisplay.INarcHoming")); //$NON-NLS-1$
                     buff.append(player.getName());
                     buff.append(" [")//$NON-NLS-1$
-                            .append(Player.teamNames[team]).append("] ")//$NON-NLS-1$
-                            .append(Messages.getString("MechDisplay.attached"))//$NON-NLS-1$
-                            .append('.'); //$NON-NLS-1$
+                    .append(Player.teamNames[team]).append("] ")//$NON-NLS-1$
+                    .append(Messages.getString("MechDisplay.attached"))//$NON-NLS-1$
+                    .append('.');
                     ((DefaultListModel) narcList.getModel()).addElement(buff
                             .toString());
                 }
@@ -2899,19 +2802,19 @@ public class MechDisplay extends JPanel {
                 ((DefaultListModel) narcList.getModel()).addElement(Messages
                         .getString("MechDisplay.UnderStealth")); //$NON-NLS-1$
             }
-            
+
             // burdened due to unjettisoned body-mounted missiles on BA?
             if (en instanceof BattleArmor &&
                     ((BattleArmor)en).isBurdened()) {
                 ((DefaultListModel) narcList.getModel()).addElement(Messages
                         .getString("MechDisplay.Burdened")); //$NON-NLS-1$
             }
-            
+
             // suffering from taser feedback?
             if (en.getTaserFeedBackRounds() > 0) {
                 ((DefaultListModel) narcList.getModel()).addElement(en.getTaserFeedBackRounds()+" "+Messages.getString("MechDisplay.TaserFeedBack"));//$NON-NLS-1$
             }
-            
+
             // taser interference?
             if (en.getTaserInterference() > 0) {
                 ((DefaultListModel) narcList.getModel()).addElement("+"+en.getTaserInterference()+" "+Messages.getString("MechDisplay.TaserInterference"));//$NON-NLS-1$
@@ -2950,7 +2853,9 @@ public class MechDisplay extends JPanel {
 
             // transport values
             String unused = en.getUnusedString();
-            if ("".equals(unused))unused = Messages.getString("MechDisplay.None"); //$NON-NLS-1$ //$NON-NLS-2$
+            if ("".equals(unused)) {
+                unused = Messages.getString("MechDisplay.None"); //$NON-NLS-1$
+            }
             unusedR.setText(unused);
             Enumeration<Entity> iter = en.getLoadedUnits().elements();
             carrysR.setText(null);
@@ -2968,12 +2873,13 @@ public class MechDisplay extends JPanel {
 
             // Show searchlight
             if (en.hasSpotlight()) {
-                if (en.isUsingSpotlight())
+                if (en.isUsingSpotlight()) {
                     carrysR.append(Messages
                             .getString("MechDisplay.SearchlightOn")); //$NON-NLS-1$
-                else
+                } else {
                     carrysR.append(Messages
                             .getString("MechDisplay.SearchlightOff")); //$NON-NLS-1$
+                }
             }
 
             // Show Heat Effects, but only for Mechs.
@@ -2998,11 +2904,12 @@ public class MechDisplay extends JPanel {
 
                 boolean hasTSM = false;
                 boolean mtHeat = false;
-                if (((Mech) en).hasTSM())
+                if (((Mech) en).hasTSM()) {
                     hasTSM = true;
+                }
 
                 if (clientgui.getClient().game.getOptions().booleanOption(
-                        "tacops_heat")) {
+                "tacops_heat")) {
                     mtHeat = true;
                 }
                 heatR.append(HeatEffects
@@ -3015,16 +2922,16 @@ public class MechDisplay extends JPanel {
             if (en instanceof Aero
                     && ((Aero) en).hasBombs()
                     && IGame.Phase.PHASE_DEPLOYMENT != clientgui.getClient().game
-                            .getPhase()) {
+                    .getPhase()) {
                 // TODO: I should at some point check and make sure that this
                 // unit has any bombs that it could dump
                 dumpBombs.setEnabled(!dontChange);
             } else {
                 dumpBombs.setEnabled(false);
             }
-            
+
             refreshSensorChoices(en);
-            
+
             if(null != en.getActiveSensor()) {
                 curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors"))
                         .concat(" ").concat(
@@ -3056,9 +2963,9 @@ public class MechDisplay extends JPanel {
             }
             chSensors.addItemListener(this);
         }
-        
+
         public void itemStateChanged(ItemEvent ev) {
-            if (ev.getItemSelectable() == chSensors) { 
+            if (ev.getItemSelectable() == chSensors) {
                 Entity en = clientgui.getClient().game.getEntity(myMechId);
                 en.setNextSensor(en.getSensors().elementAt(chSensors.getSelectedIndex()));
                 refreshSensorChoices(en);
@@ -3066,21 +2973,22 @@ public class MechDisplay extends JPanel {
                 clientgui.getClient().sendUpdateEntity(clientgui.getClient().game.getEntity(myMechId));
             }
         }
-        
+
         public void actionPerformed(ActionEvent ae) {
             if ("changeSinks".equals(ae.getActionCommand()) && !dontChange) { //$NON-NLS-1$
                 prompt = new Slider(clientgui.frame, Messages
                         .getString("MechDisplay.changeSinks"), Messages
                         .getString("MechDisplay.changeSinks"), sinks, 0,
                         ((Mech) clientgui.getClient().game.getEntity(myMechId))
-                                .getNumberOfSinks());
-                if (!prompt.showDialog())
+                        .getNumberOfSinks());
+                if (!prompt.showDialog()) {
                     return;
+                }
                 clientgui.menuBar.actionPerformed(ae);
                 int helper = prompt.getValue();
 
                 ((Mech) clientgui.getClient().game.getEntity(myMechId))
-                        .setActiveSinksNextRound(helper);
+                .setActiveSinksNextRound(helper);
                 clientgui.getClient().sendUpdateEntity(
                         clientgui.getClient().game.getEntity(myMechId));
                 displayMech(clientgui.getClient().game.getEntity(myMechId));
@@ -3092,9 +3000,9 @@ public class MechDisplay extends JPanel {
 
                 if (a.isPendingBombDump()) {
                     String title = Messages
-                            .getString("MechDisplay.CancelBombDumping.title"); //$NON-NLS-1$
+                    .getString("MechDisplay.CancelBombDumping.title"); //$NON-NLS-1$
                     String body = Messages
-                            .getString("MechDisplay.CancelBombDumping.message"); //$NON-NLS-1$
+                    .getString("MechDisplay.CancelBombDumping.message"); //$NON-NLS-1$
                     if (clientgui.doYesNoDialog(title, body)) {
                         a.setPendingBombDump(false);
                     }
@@ -3102,7 +3010,7 @@ public class MechDisplay extends JPanel {
                     BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(
                             clientgui.frame,
                             Messages
-                                    .getString("MechDisplay.BombDumpDialog.title"), //$NON-NLS-1$
+                            .getString("MechDisplay.BombDumpDialog.title"), //$NON-NLS-1$
                             a.getBombChoices(), false, true);
                     dumpBombsDialog.setVisible(true);
                     if (dumpBombsDialog.getAnswer()) {

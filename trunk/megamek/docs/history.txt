@@ -55,6 +55,7 @@ v0.33.36-dev (SVN)
 + Bug 2398701: Wrong VSPL ranges
 + Bug 2369839: TownSize wrong in generated maps
 + Bug 2310983: Laser AMS using wrong heat
++ Bug 2270412: Flak Ammo don't get -2 Bonus against VTOL
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -33,26 +33,27 @@ import megamek.server.Server;
 public abstract class ACWeapon extends AmmoWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1537808266032711407L;
 
     public ACWeapon() {
         super();
-        this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
-        this.ammoType = AmmoType.T_AC;
-        this.explosive = true; // when firing incendiary ammo
-        
-        this.atClass = CLASS_AC;
+        flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        ammoType = AmmoType.T_AC;
+        explosive = true; // when firing incendiary ammo
+
+        atClass = CLASS_AC;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
      *      megamek.server.Server)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
@@ -61,10 +62,10 @@ public abstract class ACWeapon extends AmmoWeapon {
                 waa.getWeaponId());
         if (weapon.curMode().equals("Rapid")) {
             return new RapidfireACWeaponHandler(toHit, waa, game, server);
-        } 
+        }
         if (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
             return new ACAPHandler(toHit, waa, game, server);
-        } 
+        }
 
         if (atype.getMunitionType() == AmmoType.M_FLECHETTE) {
             return new ACFlechetteHandler(toHit, waa, game, server);
@@ -76,6 +77,10 @@ public abstract class ACWeapon extends AmmoWeapon {
 
         if (atype.getMunitionType() == AmmoType.M_TRACER) {
             return new ACTracerHandler(toHit, waa, game, server);
+        }
+
+        if (atype.getMunitionType() == AmmoType.M_FLAK) {
+            return new ACFlakHandler(toHit, waa, game, server);
         }
 
         return new ACWeaponHandler(toHit, waa, game, server);

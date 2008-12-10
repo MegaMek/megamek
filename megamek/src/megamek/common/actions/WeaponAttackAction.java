@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -71,14 +71,14 @@ import megamek.common.WeaponType;
 public class WeaponAttackAction extends AbstractAttackAction implements
         Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -9096603813317359351L;
     private int weaponId;
     private int ammoId = -1;
     private int aimedLocation = Entity.LOC_NONE;
     private int aimMode = IAimingModes.AIM_MODE_NONE;
-    private int otherAttackInfo = -1; // 
+    private int otherAttackInfo = -1; //
     private boolean nemesisConfused;
     private boolean swarmingMissiles;
     private int oldTargetId = -1;
@@ -167,7 +167,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
     public static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, int aimingAt, int aimingMode) {
-        return toHit(game, attackerId, target, weaponId, aimingAt, aimingMode,
+        return WeaponAttackAction.toHit(game, attackerId, target, weaponId, aimingAt, aimingMode,
                 false, false, null);
     }
 
@@ -276,7 +276,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         ToHitData toHit = null;
         String reason = null;
 
-        reason = toHitIsImpossible(game, ae, target, weapon, atype, wtype,
+        reason = WeaponAttackAction.toHitIsImpossible(game, ae, target, weapon, atype, wtype,
                 ttype, exchangeSwarmTarget, usesAmmo, te, isTAG, isInferno,
                 isAttackerInfantry, isIndirect, attackerId, weaponId,
                 isArtilleryIndirect, ammo, isArtilleryFLAK, targetInBuilding,
@@ -284,13 +284,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (reason != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
         }
-        
-        
+
+
         //B-Pod firing at infantry in the same hex autohit
         if (wtype.hasFlag(WeaponType.F_B_POD) && target instanceof Infantry
-                && target.getPosition().equals(ae.getPosition()))
+                && target.getPosition().equals(ae.getPosition())) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "B-Pod firing at infantry");
-        
+        }
+
         long munition = AmmoType.M_STANDARD;
         if (atype != null) {
             munition = atype.getMunitionType();
@@ -359,10 +360,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             los = LosEffects.calculateLos(game, attackerId, target);
 
             if (ae.hasActiveEiCockpit()) {
-                if (los.getLightWoods() > 0)
+                if (los.getLightWoods() > 0) {
                     eistatus = 2;
-                else
+                } else {
                     eistatus = 1;
+                }
             }
 
             if (wtype instanceof MekMortarWeapon && isIndirect) {
@@ -387,10 +389,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             los.setAttackerCover(LosEffects.COVER_NONE);
 
             if (!narcSpotter && spotter.hasActiveEiCockpit()) {
-                if (los.getLightWoods() > 0)
+                if (los.getLightWoods() > 0) {
                     eistatus = 2;
-                else
+                } else {
                     eistatus = 1;
+                }
             }
 
             if (wtype instanceof MekMortarWeapon) {
@@ -408,8 +411,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // Mine Launchers don't use gunnery.
         if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
             toHit = Compute.getLegAttackBaseToHit(ae, te);
-            if (toHit.getValue() == TargetRoll.IMPOSSIBLE)
+            if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 return toHit;
+            }
 
             // If the attacker has Assault claws, give a -1 modifier.
             // We can stop looking when we find our first match.
@@ -422,8 +426,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
             toHit = Compute.getSwarmMekBaseToHit(ae, te);
-            if (toHit.getValue() == TargetRoll.IMPOSSIBLE)
+            if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 return toHit;
+            }
 
             if (te instanceof Tank) {
                 toHit.addModifier(-2, "target is vehicle");
@@ -447,16 +452,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     int def = ba.getShootingStrength();
                     int att = ((Infantry) ae).getShootingStrength();
                     if (!(ae instanceof BattleArmor)) {
-                        if (att >= 28)
+                        if (att >= 28) {
                             att = 5;
-                        else if (att >= 24)
+                        } else if (att >= 24) {
                             att = 4;
-                        else if (att >= 21)
+                        } else if (att >= 21) {
                             att = 3;
-                        else if (att >= 18)
+                        } else if (att >= 18) {
                             att = 2;
-                        else
+                        } else {
                             att = 1;
+                        }
                     }
                     def = def + 2 - att;
                     if (def > 0) {
@@ -537,12 +543,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if(game.getOptions().booleanOption("tacops_fatigue") && ae.crew.isGunneryFatigued(game.getRoundCount())) {
             toHit.addModifier(1,"fatigue");
         }
-        
+
         // If a unit is suffering from electromagnetic interference, they get a
         // blanket +2.
         // Sucks to be them.
-        if (ae.isSufferingEMI())
+        if (ae.isSufferingEMI()) {
             toHit.addModifier(+2, "electromagnetic interference");
+        }
 
         // evading bonuses (
         if (target.getTargetType() == Targetable.TYPE_ENTITY && te.isEvading()) {
@@ -556,8 +563,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (ghostTargetMod > -1
                     && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
                 int bapMod = 0;
-                if (ae.hasBAP())
+                if (ae.hasBAP()) {
                     bapMod = 1;
+                }
                 int tcMod = 0;
                 if (ae.hasTargComp()
                         && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
@@ -581,20 +589,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
             // sensor hits
             int sensors = aero.getSensorHits();
-            if (sensors > 0 && sensors < 3)
+            if (sensors > 0 && sensors < 3) {
                 toHit.addModifier(sensors, "sensor damage");
-            if (sensors > 2)
+            }
+            if (sensors > 2) {
                 toHit.addModifier(+5, "sensors destroyed");
+            }
 
             // FCS hits
             int fcs = aero.getFCSHits();
-            if (fcs > 0)
+            if (fcs > 0) {
                 toHit.addModifier(fcs * 2, "fcs damage");
+            }
 
             // pilot hits
             int pilothits = aero.getCrew().getHits();
-            if (pilothits > 0)
+            if (pilothits > 0) {
                 toHit.addModifier(pilothits, "pilot hits");
+            }
 
             // out of control
             if (aero.isOutControlTotal()) {
@@ -662,7 +674,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                             if (batype.getAmmoType() != AmmoType.T_PIRANHA && batype.getAmmoType() != AmmoType.T_BARRACUDA) {
                                 onlyPiranha = false;
                             }
-                        }      
+                        }
                     }
                     if (onlyBarracuda) {
                         toHit.addModifier(-2, "barracuda missile");
@@ -735,14 +747,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (ae instanceof Tank) {
             Tank tank = (Tank) ae;
             if (tank.isCommanderHit()) {
-                if (ae instanceof VTOL)
+                if (ae instanceof VTOL) {
                     toHit.addModifier(+1, "copilot injured");
-                else
+                } else {
                     toHit.addModifier(+1, "commander injured");
+                }
             }
             int sensors = tank.getSensorHits();
-            if (sensors > 0)
+            if (sensors > 0) {
                 toHit.addModifier(sensors, "sensor damage");
+            }
             if (tank.isStabiliserHit(weapon.getLocation())) {
                 toHit.addModifier(Compute.getAttackerMovementModifier(game,
                         tank.getId()).getValue(), "stabiliser damage");
@@ -759,10 +773,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // time to check passive defense and no defense
 
             if (ae.hasPassiveShield(weapon.getLocation(), weapon
-                    .isRearMounted()))
+                    .isRearMounted())) {
                 toHit.addModifier(+2, "weapon hampered by passive shield");
-            else if (ae.hasNoDefenseShield(weapon.getLocation()))
+            } else if (ae.hasNoDefenseShield(weapon.getLocation())) {
                 toHit.addModifier(+1, "weapon hampered by shield");
+            }
         }
         // if we have BAP with MaxTech rules, and there are woods in the
         // way, and we are within BAP range, we reduce the BTH by 1
@@ -841,7 +856,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         int tElev = target.getElevation();
         int distance = Compute.effectiveDistance(game, ae, target);
 
-        toHit.append(nightModifiers(game, target, atype, ae, true));
+        toHit.append(AbstractAttackAction.nightModifiers(game, target, atype, ae, true));
 
         // weather mods (not in space)
         int weatherMod = game.getPlanetaryConditions().getWeatherHitPenalty(ae);
@@ -894,10 +909,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_HEAVY) {
             toHit.addModifier(1, "heavy fog");
         }
-        
+
         //blowind sand mods
         if(wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
-                && game.getPlanetaryConditions().isSandBlowing() 
+                && game.getPlanetaryConditions().isSandBlowing()
                 && game.getPlanetaryConditions().getWindStrength() > PlanetaryConditions.WI_LIGHT_GALE) {
             toHit.addModifier(1, "blowing sand");
         }
@@ -975,16 +990,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     modifier -= RangeType.RANGE_MEDIUM;
                 } else if (nRange <= nRanges[RangeType.RANGE_LONG]) {
                     modifier -= RangeType.RANGE_LONG;
-                } else
+                } else {
                     modifier = 0;
+                }
 
                 toHit.addModifier(modifier, "weapon to-hit modifier");
             } else if (wtype instanceof ISBombastLaser) {
                 int damage = (int) Math.ceil((Compute.dialDownDamage(weapon,
                         wtype) - 7) / 2);
 
-                if (damage > 0)
+                if (damage > 0) {
                     toHit.addModifier(damage, "weapon to-hit modifier");
+                }
             } else if (wtype.getToHitModifier() != 0) {
                 toHit.addModifier(wtype.getToHitModifier(),
                         "weapon to-hit modifier");
@@ -1055,11 +1072,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // If it's an anti-air system, add mods for that
         if (ae.getTargSysType() == MiscType.T_TARGSYS_ANTI_AIR
                 && target instanceof Entity) {
-            if (target instanceof VTOL)
+            if (target instanceof VTOL) {
                 toHit.addModifier(-2, "anti-air targetting system vs. VTOL");
-            else
+            } else {
                 toHit.addModifier(1,
                         "anti-air targetting system vs. non-aerial unit");
+            }
         }
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
@@ -1079,8 +1097,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         if (wtype instanceof MekMortarWeapon) {
             if (isIndirect) {
-                if (spotter == null)
+                if (spotter == null) {
                     toHit.addModifier(2, "no spotter");
+                }
             } else {
                 toHit.addModifier(3, "direct fire");
             }
@@ -1141,9 +1160,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             } else if (!narcSpotter && spotter != null) {
                 toHit.append(Compute.getSpotterMovementModifier(game, spotter
                         .getId()));
-                if (spotter.isAttackingThisTurn())
+                if (spotter.isAttackingThisTurn()) {
                     toHit.addModifier(1,
                             "spotter is making an attack this turn");
+                }
             }
         }
 
@@ -1244,16 +1264,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 modifier += RangeType.RANGE_MEDIUM;
             } else if (nRange <= nRanges[RangeType.RANGE_LONG]) {
                 modifier += RangeType.RANGE_LONG;
-            } else
+            } else {
                 modifier = 0;
+            }
 
             toHit.addModifier(modifier, "weapon to-hit modifier");
         } else if (wtype instanceof ISBombastLaser) {
             double damage = Compute.dialDownDamage(weapon, wtype);
             damage = Math.ceil((damage - 7) / 2);
 
-            if (damage > 0)
+            if (damage > 0) {
                 toHit.addModifier((int) damage, "weapon to-hit modifier");
+            }
         } else if (wtype.getToHitModifier() != 0) {
             toHit.addModifier(wtype.getToHitModifier(),
                     "weapon to-hit modifier");
@@ -1269,12 +1291,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         .getMovementMode() == IEntityMovementMode.WIGE)
                 && atype != null
                 && (((atype.getAmmoType() == AmmoType.T_AC_LBX
-                        || atype.getAmmoType() == AmmoType.T_AC_LBX_THB || atype
-                        .getAmmoType() == AmmoType.T_SBGAUSS) && (atype
-                        .getMunitionType() == AmmoType.M_CLUSTER || atype
-                        .getMunitionType() == AmmoType.M_FLAK)) || atype
-                        .getAmmoType() == AmmoType.T_HAG)
-                && te.getElevation() > 0
+                        || atype.getAmmoType() == AmmoType.T_AC_LBX_THB
+                        || atype.getAmmoType() == AmmoType.T_SBGAUSS)
+                        && (atype.getMunitionType() == AmmoType.M_CLUSTER))
+                    || atype.getMunitionType() == AmmoType.M_FLAK
+                    || atype.getAmmoType() == AmmoType.T_HAG)
+                   && te.getElevation() > 0
                 && te.getElevation() > game.getBoard().getHex(te.getPosition())
                         .terrainLevel(Terrains.BLDG_ELEV)
                 && te.getElevation() != game.getBoard()
@@ -1352,7 +1374,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if(ae.isVoidSigActive()) {
             toHit.addModifier(1, "Void signature active");
         }
-        
+
         // add targeting computer (except with LBX cluster ammo)
         if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP
                 && aimingAt != Entity.LOC_NONE) {
@@ -1458,10 +1480,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     side = ((Entity) target).chooseSide(ae.getPosition(),
                             Compute.usePrior(ae, target));
                 }
-                if (side == ToHitData.SIDE_FRONT)
+                if (side == ToHitData.SIDE_FRONT) {
                     toHit.addModifier(+1, "attack against nose");
-                if (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
+                }
+                if (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT) {
                     toHit.addModifier(+2, "attack against side");
+                }
             }
         }
 
@@ -1470,14 +1494,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             int grapple = ((Entity) target).getGrappled();
             if (grapple != Entity.NONE) {
                 if (grapple == ae.getId()
-                        && ((Entity) target).getGrappleSide() == Entity.GRAPPLE_BOTH)
+                        && ((Entity) target).getGrappleSide() == Entity.GRAPPLE_BOTH) {
                     toHit.addModifier(-4, "target grappled");
-                else if (grapple == ae.getId()
-                        && ((Entity) target).getGrappleSide() != Entity.GRAPPLE_BOTH)
+                } else if (grapple == ae.getId()
+                        && ((Entity) target).getGrappleSide() != Entity.GRAPPLE_BOTH) {
                     toHit.addModifier(-2, "target grappled (Chain Whip)");
-                else if (!exchangeSwarmTarget)
+                } else if (!exchangeSwarmTarget) {
                     toHit.addModifier(1, "CQC, possible friendly fire");
-                else {
+                } else {
                     // this -1 cancels the original +1
                     toHit.addModifier(-1, "friendly fire");
                     return toHit;
@@ -1530,7 +1554,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             boolean isArtilleryDirect, boolean isTargetECMAffected) {
         boolean isHoming = false;
         ToHitData toHit = null;
-        
+
         // tasers only at non-flying units
         if (wtype.hasFlag(WeaponType.F_TASER)) {
             if (te != null) {
@@ -1541,7 +1565,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Tasers can only fire at units.";
             }
         }
-        
+
         // only leg mounted b-pods can be fired normally
         if (wtype.hasFlag(WeaponType.F_B_POD)) {
             if (!(target instanceof Infantry)) {
@@ -1576,8 +1600,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Sensors Completely Destroyed for Torso-Mounted Cockpit";
             }
         }
-        
-        
+
+
         //mechs can only be the target of one leg attack
         if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
             for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
@@ -1638,13 +1662,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         if (atype != null
-                && (atype.getAmmoType() == AmmoType.T_LRM 
+                && (atype.getAmmoType() == AmmoType.T_LRM
                         || atype.getAmmoType() == AmmoType.T_MML
                         || atype.getAmmoType() == AmmoType.T_MEK_MORTAR)
                 && (atype.getMunitionType() == AmmoType.M_THUNDER
                         || atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE
                         || atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO
-                        || atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB 
+                        || atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB
                         || atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED)
                 && (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER)) {
             return "Weapon can only deliver minefields";
@@ -1699,19 +1723,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Weapon can't make artillery attacks.";
             }
         }
-        
+
         // check the following only if we're not a flight of continuing swarm
         // missiles
         if (!exchangeSwarmTarget) {
-            
+
             if (!game.getOptions().booleanOption("friendly_fire")) {
                 // a friendly unit can never be the target of a direct attack.
                 if (target.getTargetType() == Targetable.TYPE_ENTITY
                         && (((Entity)target).getOwnerId() == ae.getOwnerId()
                                 || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
                                         && ae.getOwner().getTeam() != Player.TEAM_NONE
-                                        && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
+                                        && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam()))) {
                     return "A friendly unit can never be the target of a direct attack.";
+                }
             }
             // can't target yourself,
             if (ae.equals(te)) {
@@ -1721,7 +1746,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (ae.isShutDown() || !ae.getCrew().isActive()) {
                 return "Attacker is in no condition to fire weapons.";
             }
-            
+
             // sensors operational?
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                     Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
@@ -1729,8 +1754,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     && ((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
                 sensorHits += ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                         Mech.SYSTEM_SENSORS, Mech.LOC_CT);
-                if (sensorHits > 2)
+                if (sensorHits > 2) {
                     return "Attacker sensors destroyed.";
+                }
             } else if (sensorHits > 1) {
                 return "Attacker sensors destroyed.";
             }
@@ -1738,30 +1764,32 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (!weapon.canFire()) {
                 return "Weapon is not in a state where it can be fired";
             }
-            
+
              // got ammo?
-            if (usesAmmo && (ammo == null 
+            if (usesAmmo && (ammo == null
                     || ammo.getShotsLeft() == 0
                     || ammo.isBreached())) {
                 return "Weapon out of ammo.";
             }
-            
+
             //Aeros must have enough ammo for the maximum rate of fire because
             //they cannot lower it
-            if(ae instanceof Aero && usesAmmo && ammo != null 
+            if(ae instanceof Aero && usesAmmo && ammo != null
                     && ae.getTotalAmmoOfType(ammo.getType()) < weapon.getCurrentShots()) {
                 return "weapon does not have enough ammo.";
             }
-            
+
             if (ae instanceof Tank) {
                 sensorHits = ((Tank) ae).getSensorHits();
-                if (sensorHits > 3)
+                if (sensorHits > 3) {
                     return "Attacker sensors destroyed.";
-                if (((Tank) ae).getStunnedTurns() > 0)
+                }
+                if (((Tank) ae).getStunnedTurns() > 0) {
                     return "Crew stunned";
+                }
             }
         }
-        
+
         // Are we dumping that ammo?
         if (usesAmmo && ammo.isDumping()) {
             ae.loadWeaponWithSameAmmo(weapon);
@@ -1769,24 +1797,27 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Dumping remaining ammo.";
             }
         }
-        
-        if(ae.isEvading() && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) 
+
+        if(ae.isEvading() && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) {
             return "Attacker is evading.";
+        }
 
         if (ae instanceof Aero) {
             Aero aero = (Aero)ae;
             //FCS hits
             int fcs = aero.getFCSHits();
-            if(fcs > 2 )
+            if(fcs > 2 ) {
                 return "Fire control system destroyed.";
-            
+            }
+
             if(aero instanceof Jumpship) {
                 Jumpship js = (Jumpship)aero;
                 int cic = js.getCICHits();
-                if(cic > 2)
+                if(cic > 2) {
                     return "CIC destroyed.";
+                }
             }
-                        
+
             //if space bombing, then can't do other attacks
             for ( Enumeration<EntityAction> i = game.getActions();
                 i.hasMoreElements(); ) {
@@ -1796,8 +1827,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
                 WeaponAttackAction prevAttack = (WeaponAttackAction)o;
                 if (prevAttack.getEntityId() == attackerId) {
-                    if ( weaponId != prevAttack.getWeaponId() && 
-                            ae.getEquipment(prevAttack.getWeaponId()).getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {                       
+                    if ( weaponId != prevAttack.getWeaponId() &&
+                            ae.getEquipment(prevAttack.getWeaponId()).getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {
                         return "Already space bombing";
                     }
                 }
@@ -1846,19 +1877,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         //only screen launchers may launch screens (what a coincidence)
         if (Targetable.TYPE_HEX_SCREEN == target.getTargetType()) {
-            if(!(wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER || 
+            if(!(wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER ||
                     (wtype instanceof ScreenLauncherBayWeapon))) {
                 return "Only screen launchers may launch screens";
             }
         }
-        
+
         if (Targetable.TYPE_HEX_SCREEN != target.getTargetType() &&
-            (wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER || 
+            (wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER ||
                     wtype instanceof ScreenLauncherBayWeapon)) {
                 return "Screen launchers may only target hexes";
         }
-        
-        
+
+
         // Some weapons can't cause fires, but Infernos always can.
         if ((vf_cool || wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno)
                 && Targetable.TYPE_HEX_IGNITE == target.getTargetType()) {
@@ -1902,9 +1933,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && weapon.curMode().equals("Heat") && !(te instanceof Mech)) {
             return "Can only raise the heat level of Meks.";
         }
-        
+
         if(ae.usesWeaponBays() && weapon.getBayWeapons().size() > 0) {
-            
+
             //first check to see if there are any usable weapons
             boolean useable = false;
             for (int wId : weapon.getBayWeapons()) {
@@ -1924,14 +1955,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     }
                 }
             }
-            if(!useable)
+            if(!useable) {
                 return "weapon bay out of ammo or otherwise unusable";
-            
-            
+            }
+
+
             //limit large craft to zero net heat and to heat by arc
             int totalheat = 0;
             int heatcap = ae.getHeatCapacity();
-            
+
             //create an array of booleans of locations
             boolean[] usedFrontArc = new boolean[ae.locations()];
             boolean[] usedRearArc = new boolean[ae.locations()];
@@ -1939,14 +1971,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 usedFrontArc[i] = false;
                 usedRearArc[i] = false;
             }
-           
+
             for ( Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
                 Object o = i.nextElement();
                 if (!(o instanceof WeaponAttackAction)) {
                     continue;
                 }
                 WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-                if (prevAttack.getEntityId() == attackerId && weaponId != prevAttack.getWeaponId()) {                    
+                if (prevAttack.getEntityId() == attackerId && weaponId != prevAttack.getWeaponId()) {
                     Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
                     int loc = prevWeapon.getLocation();
                     boolean rearMount = prevWeapon.isRearMounted();
@@ -1965,11 +1997,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                                 totalheat += ae.getHeatInArc(loc, rearMount);
                                 usedRearArc[loc] = true;
                             }
-                        }                       
+                        }
                     }
                 }
             }
-            
+
             //now check the current heat
             int loc = weapon.getLocation();
             boolean rearMount = weapon.isRearMounted();
@@ -1992,13 +2024,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     }
                 }
             }
-            
+
             if(game.getOptions().booleanOption("heat_by_bay")) {
                 if((totalheat + currentHeat) > heatcap) {
                     //FIXME: This is causing weird problems (try firing all the Suffen's nose weapons)
                     return "heat exceeds capacity";
                 }
-            } else {            
+            } else {
                 if(!rearMount) {
                     if(!usedFrontArc[loc] && (totalheat + currentHeat) > heatcap && !onlyArc) {
                         return "heat exceeds capacity";
@@ -2016,8 +2048,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && weapon.curMode().equals("Off")) {
             return "MG Array is disabled";
         } else if (wtype.hasFlag(WeaponType.F_MG)) {
-            if (ae.hasLinkedMGA(weapon))
+            if (ae.hasLinkedMGA(weapon)) {
                 return "Machine gun is slaved to array equipment";
+            }
         }
 
         // Handle solo attack weapons.
@@ -2096,12 +2129,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if(windCond == PlanetaryConditions.WI_TORNADO_F13 && wtype.hasFlag(WeaponType.F_MISSILE) && !game.getBoard().inSpace()) {
             return "No missile fire in a tornado";
         }
-        
-        if(windCond == PlanetaryConditions.WI_TORNADO_F4 && !game.getBoard().inSpace() && 
+
+        if(windCond == PlanetaryConditions.WI_TORNADO_F4 && !game.getBoard().inSpace() &&
                 (wtype.hasFlag(WeaponType.F_MISSILE) || wtype.hasFlag(WeaponType.F_BALLISTIC))) {
             return "No missile or ballistic fire in an F4 tornado";
         }
-        
+
         // check if indirect fire is valid
         if (isIndirect && !game.getOptions().booleanOption("indirect_fire")) {
             return "Indirect fire option not enabled";
@@ -2147,7 +2180,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             } else {
                 spotter = Compute.findSpotter(game, ae, target);
             }
-            
+
             if (spotter == null && !(wtype instanceof MekMortarWeapon) ) {
                 return "No available spotter";
             }
@@ -2173,12 +2206,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             los = LosEffects.calculateLos(game, attackerId, target);
 
             if (ae.hasActiveEiCockpit()) {
-                if (los.getLightWoods() > 0)
+                if (los.getLightWoods() > 0) {
                     eistatus = 2;
-                else
+                } else {
                     eistatus = 1;
+                }
             }
-            
+
             if ( wtype instanceof MekMortarWeapon && isIndirect ){
                 los.setArcedAttack(true);
             }
@@ -2190,10 +2224,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             los.setAttackerCover(LosEffects.COVER_NONE);
 
             if (spotter.hasActiveEiCockpit()) {
-                if (los.getLightWoods() > 0)
+                if (los.getLightWoods() > 0) {
                     eistatus = 2;
-                else
+                } else {
                     eistatus = 1;
+                }
             }
 
             if ( wtype instanceof MekMortarWeapon && isIndirect ){
@@ -2201,8 +2236,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
 
             losMods = los.losModifiers(game);
-        } 
-        
+        }
+
         if (multiPurposeelevationHack) {
             // and descend back to depth 1
             ae.setElevation(-1);
@@ -2212,12 +2247,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (losMods.getValue() == TargetRoll.IMPOSSIBLE && !isArtilleryIndirect) {
             return losMods.getDesc();
         }
-        
+
         // Weapon in arc?
         if (!Compute.isInArc(game, attackerId, weaponId, target)) {
             return "Target not in arc.";
         }
-        
+
         //for spheroid dropships in atmosphere, nose and aft mounted weapons can only be fired
         //at units two elevations different
         //TODO: awaiting rules clarification on forums
@@ -2239,10 +2274,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         if (wtype.getAmmoType() == AmmoType.T_NARC
                 || wtype.getAmmoType() == AmmoType.T_INARC) {
-            if (targetInBuilding)
+            if (targetInBuilding) {
                 return "Narc pods cannot be fired into or inside buildings.";
-            if (target instanceof Infantry)
+            }
+            if (target instanceof Infantry) {
                 return "Narc pods cannot be used to attack infantry.";
+            }
         }
 
         // attacker partial cover means no leg weapons
@@ -2350,8 +2387,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 ae.getPosition() == target.getPosition()) {
             return "WiGE may not attack target in same hex";
         }
-        
-        if ( wtype instanceof GaussWeapon && wtype.hasModes() 
+
+        if ( wtype instanceof GaussWeapon && wtype.hasModes()
                 && weapon.curMode().equals("Powered Down") ) {
             return "Weapon is powered down";
         }

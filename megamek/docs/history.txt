@@ -51,6 +51,7 @@ v0.33.36-dev (SVN)
 + methods for including some end of turn modes and instant switch modes on the same equipment
 + Fixed reporting for mode switching
 + Fix 3058U IS Mechfiles that mount lvl 1 ACs
++ Bug: crash when buildings collapse
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles
@@ -120,7 +121,6 @@ v0.33.35 (2008-11-16)
     units in force
 + Bug: Leg attack possible against mech doing a DFA
 + Bug: Supercharger should be available to clan units
-+ Bug: crash when buildings collapse
 
 v0.33.34 (2008-10-28, 02:30 UTC)
 + Added Hephaestus image

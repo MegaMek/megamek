@@ -4929,7 +4929,7 @@ public class Server implements Runnable {
             }
 
             // Check for skid.
-            rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing, lastPos, curPos, isInfantry, distance);
+            rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing, lastPos, curPos, isInfantry, distance-1);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Have an entity-meaningful PSR message.
                 boolean psrFailed = true;
@@ -4946,7 +4946,7 @@ public class Server implements Runnable {
                     }
 
                     curPos = lastPos;
-                    int skidDistance = (distance + 1) / 2;
+                    int skidDistance = (int)Math.round((double)(distance-1)/2);
                     int skidDirection = prevFacing;
 
                     // All charge damage is based upon

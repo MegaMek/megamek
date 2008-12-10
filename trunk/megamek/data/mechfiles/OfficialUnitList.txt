@@ -1820,3 +1820,59 @@ Void (DCA)|
 Void (NC)|
 Void|
 Ying Long|
+Archer ARC-7S|
+Archer ARC-9K|
+BattleMaster BLR-10S|
+BattleMaster BLR-M3|
+BattleMaster C|
+Crusader CRD-7W|
+Goliath GOL-5W|
+Goliath GOL-6H|
+Griffin GRF-5K|
+Griffin GRF-5L|
+Griffin IIC 5|
+Locust IIC 6|
+Locust IIC 7|
+Locust LCT-5T|
+Locust LCT-6M|
+Longbow LGB-13C|
+Longbow LGB-13NAIS|
+Longbow LGB-14C|
+Marauder II MAD-4K|
+Marauder II MAD-5W|
+Marauder IIC MAD-IIC 4|
+Marauder IIC MAD-IIC 5|
+Marauder MAD-6L|
+Marauder MAD-9M2|
+Ostroc OSR-5W|
+Ostscout OTT-10CS|
+Ostsol OTL-8D|
+Phoenix Hawk IIC PXH-IIC 5|
+Phoenix Hawk PXH-5L|
+Phoenix Hawk PXH-7K|
+Phoenix Hawk PXH-IIC 6|
+Rifleman IIC RFL-IIC 5|
+Rifleman IIC RFL-IIC 6|
+Rifleman RFL-6D|
+Rifleman RFL-9T|
+Scorpion SCP-12K|
+Shadow Hawk IIC 5|
+Shadow Hawk IIC 6|
+Shadow Hawk SHD-11CS|
+Shadow Hawk SHD-9D|
+Stinger STG-3P|
+Stinger STG-5T|
+Stinger STG-6S|
+Thunderbolt TDR-11SE|
+Thunderbolt TDR-17S|
+Thunderbolt TDR-60-RLA|
+Valkyrie VLK-QD2|
+Valkyrie VLK-QS5|
+Warhammer IIC WHM-IIC 5|
+Warhammer IIC WHM-IIC 6|
+Warhammer WHM-10T|
+Warhammer WHM-8K|
+Warhammer WHM-8M|
+Wasp WSP-7MAF|
+Wolverine WVR-9K|
+Wolverine WVR-9M

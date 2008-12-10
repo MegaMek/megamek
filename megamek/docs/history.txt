@@ -3,6 +3,7 @@
 v0.33.37-dev (SVN)
 + Updated canon unit list
 + Bug: Thunderbolts in minimum range should do half damage, round down
++ Bug: physical attacks vs. flying VTOLs not possible at correct elevations
 
 v0.33.36 (2008-12-10, 19:00 UTC)
 + Bug in Mech BV calculation fixed

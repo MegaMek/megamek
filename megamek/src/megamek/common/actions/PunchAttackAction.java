@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -33,7 +33,7 @@ import megamek.common.VTOL;
  */
 public class PunchAttackAction extends PhysicalAttackAction {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3684646558944678180L;
     public static final int BOTH = 0;
@@ -41,7 +41,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
     public static final int RIGHT = 2;
 
     private int arm;
-    //booleans for rectractable blade extension
+    //booleans for retractable blade extension
     private boolean leftBlade = false;
     private boolean rightBlade = false;
 
@@ -64,7 +64,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
     public void setArm(int arm) {
         this.arm = arm;
     }
-    
+
     public boolean isBladeExtended(int arm) {
         if(arm == LEFT) {
             return leftBlade;
@@ -76,29 +76,86 @@ public class PunchAttackAction extends PhysicalAttackAction {
     }
 
     public ToHitData toHit(IGame game) {
-        return toHit(game, getEntityId(), game.getTarget(getTargetType(),
+        return PunchAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(),
                 getTargetId()), getArm());
     }
 
     /**
      * punches are impossible when physical attacks are impossible, or a
      * retractable blade is extended
-     * 
+     *
      * @param game
      * @param ae
      * @param target
      * @return
      */
     protected static String toHitIsImpossible(IGame game, Entity ae,
-            Targetable target) {
+            Targetable target, int arm) {
         String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(
                 game, ae, target);
-        String extendedBladeImpossible = null;
-        if (ae instanceof Mech && ((Mech) ae).hasExtendedRetractableBlade())
-            extendedBladeImpossible = "Extended retractable blade";
-        if (physicalImpossible != null)
+        if (physicalImpossible != null) {
             return physicalImpossible;
-        return extendedBladeImpossible;
+        }
+        IHex attHex = game.getBoard().getHex(ae.getPosition());
+        IHex targHex = game.getBoard().getHex(target.getPosition());
+        final int attackerHeight = ae.absHeight() + attHex.getElevation();
+        final int targetElevation = target.getElevation()
+                + targHex.getElevation();
+        final int targetHeight = targetElevation + target.getHeight();
+        final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
+                : Mech.LOC_LARM;
+        if (ae.getGrappled() != Entity.NONE
+                && ((ae.getGrappleSide() == Entity.GRAPPLE_LEFT && arm == Mech.LOC_LARM))
+                || (ae.getGrappleSide() == Entity.GRAPPLE_RIGHT && arm == Mech.LOC_RARM)) {
+            return "grappled with punching arm";
+        }
+        if (ae instanceof Mech && ((Mech) ae).hasExtendedRetractableBlade()) {
+            return "Extended retractable blade";
+        }
+        // non-mechs can't punch
+        if (!(ae instanceof Mech)) {
+            return "Non-mechs can't punch";
+        }
+
+        // Quads can't punch
+        if (ae.entityIsQuad()) {
+            return "Attacker is a quad";
+        }
+
+        // Can't punch with flipped arms
+        if (ae.getArmsFlipped()) {
+            return "Arms are flipped to the rear. Can not punch.";
+        }
+
+        // check if arm is present
+        if (ae.isLocationBad(armLoc)) {
+            return "Arm missing";
+        }
+
+        // check if shoulder is functional
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
+            return "Shoulder destroyed";
+        }
+
+        // check if attacker has fired arm-mounted weapons
+        if (ae.weaponFiredFrom(armLoc)) {
+            return "Weapons fired from arm this turn";
+        }
+
+        // check elevation
+        if (target instanceof VTOL && ((VTOL)target).isFlying()) {
+            if (targetElevation - attackerHeight > 2 || targetElevation - attackerHeight < 1) {
+                return "Target elevation not in range";
+            }
+        } else if (attackerHeight < targetElevation || attackerHeight > targetHeight) {
+            return "Target elevation not in range";
+        }
+
+        // Cannot punch with an arm that has an active shield on it.
+        if (ae.hasActiveShield(armLoc)) {
+            return "Cannot punch with shield in active mode";
+        }
+        return null;
     }
 
     /**
@@ -111,21 +168,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (ae == null || target == null) {
             throw new IllegalArgumentException("Attacker or target not valid");
         }
-        String impossible = toHitIsImpossible(game, ae, target);
+        String impossible = PunchAttackAction.toHitIsImpossible(game, ae, target, arm);
         if (impossible != null) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
-        }
-
-        if ( ae.getGrappled() != Entity.NONE && 
-                ae.getGrappleSide() == Entity.GRAPPLE_LEFT
-                && arm == Mech.LOC_LARM ) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
-        }
-        
-        if ( ae.getGrappled() != Entity.NONE && 
-                ae.getGrappleSide() == Entity.GRAPPLE_RIGHT
-                && arm == Mech.LOC_RARM ) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, impossible);
         }
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
@@ -133,9 +178,6 @@ public class PunchAttackAction extends PhysicalAttackAction {
         final int attackerHeight = ae.absHeight() + attHex.getElevation();
         final int targetElevation = target.getElevation()
                 + targHex.getElevation();
-        final int targetHeight = targetElevation + target.getHeight();
-        final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
-                : Mech.LOC_LARM;
         final int armArc = (arm == PunchAttackAction.RIGHT) ? Compute.ARC_RIGHTARM
                 : Compute.ARC_LEFTARM;
 
@@ -146,60 +188,14 @@ public class PunchAttackAction extends PhysicalAttackAction {
             throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
         }
 
-        // non-mechs can't punch
-        if (!(ae instanceof Mech)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't punch");
-        }
 
-        // Quads can't punch
-        if (ae.entityIsQuad()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is a quad");
-        }
-
-        // Can't punch with flipped arms
-        if (ae.getArmsFlipped()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Arms are flipped to the rear. Can not punch.");
-        }
-
-        // check if arm is present
-        if (ae.isLocationBad(armLoc)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
-        }
-
-        // check if shoulder is functional
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder destroyed");
-        }
-
-        // check if attacker has fired arm-mounted weapons
-        if (ae.weaponFiredFrom(armLoc)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Weapons fired from arm this turn");
-        }
-
-        // check elevation
-        if (target instanceof VTOL && ((VTOL)target).isFlying()) {
-            if (targetElevation - attackerHeight > 2 || targetElevation - attackerHeight < 1) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
-            }
-        } else if (attackerHeight < targetElevation || attackerHeight > targetHeight) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target elevation not in range");
-        }
-
-        // Cannot punch with an arm that has an active shield on it.
-        if (ae.hasActiveShield(armLoc)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Cannot punch with shield in active mode");
-        }
 
         // Set the base BTH
         int base = ae.getCrew().getPiloting();
 
         toHit = new ToHitData(base, "base");
 
-        setCommonModifiers(toHit, game, ae, target);
+        PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
         // Prone Meks can only punch vehicles in the same hex.
         if (ae.isProne()) {
@@ -229,6 +225,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
                     "Targeting adjacent building.");
         }
 
+        final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
+                : Mech.LOC_LARM;
+
         // damaged or missing actuators
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, armLoc)) {
             toHit.addModifier(2, "Upper arm actuator destroyed");
@@ -236,7 +235,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLoc)) {
             toHit.addModifier(2, "Lower arm actuator missing or destroyed");
         }
-        
+
         if ( ae.hasFunctionalArmAES(armLoc) ) {
             toHit.addModifier(-1,"AES modifer");
         }
@@ -262,10 +261,11 @@ public class PunchAttackAction extends PhysicalAttackAction {
                 toHit.setHitTable(ToHitData.HIT_KICK);
             }
         } else {
-            if ( ae.isHullDown() )
+            if ( ae.isHullDown() ) {
                 toHit.setHitTable(ToHitData.HIT_KICK);
-            else
+            } else {
                 toHit.setHitTable(ToHitData.HIT_PUNCH);
+            }
         }
 
         // factor in target side
@@ -285,8 +285,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
         int damage = (int) Math.ceil(entity.getWeight() / 10.0);
 
         // Rules state tonnage/7 for claws
-        if (((BipedMech) entity).hasClaw(armLoc))
+        if (((BipedMech) entity).hasClaw(armLoc)) {
             damage = (int) Math.ceil(entity.getWeight() / 7.0);
+        }
 
         float multiplier = 1.0f;
 

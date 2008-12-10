@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -35,7 +35,7 @@ import megamek.common.VTOL;
  */
 public class KickAttackAction extends PhysicalAttackAction {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1697321306815235635L;
     public static final int BOTH = 0;
@@ -95,11 +95,11 @@ public class KickAttackAction extends PhysicalAttackAction {
         if (entity.heat >= 9 && ((Mech) entity).hasTSM()) {
             multiplier *= 2.0f;
         }
-        
+
         if ( entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc) ){
             multiplier *= 1.5;
         }
-        
+
         int toReturn = (int) Math.floor(damage * multiplier)
                 + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
         // underwater damage is half, round up (see bug 1110692)
@@ -113,7 +113,7 @@ public class KickAttackAction extends PhysicalAttackAction {
     }
 
     public ToHitData toHit(IGame game) {
-        return toHit(game, getEntityId(), game.getTarget(getTargetType(),
+        return KickAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(),
                 getTargetId()), getLeg());
     }
 
@@ -123,11 +123,12 @@ public class KickAttackAction extends PhysicalAttackAction {
     public static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);
-        if (ae == null)
+        if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "You can't attack from a null entity!");
+        }
 
-        String impossible = toHitIsImpossible(game, ae, target);
+        String impossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
         if (impossible != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
@@ -138,7 +139,6 @@ public class KickAttackAction extends PhysicalAttackAction {
         final int targetElevation = target.getElevation()
                 + targHex.getElevation();
         final int targetHeight = targetElevation + target.getHeight();
-        final int attackerHeight = attackerElevation + ae.getHeight();
 
         int mule = 0;
         int[] kickLegs = new int[2];
@@ -199,7 +199,7 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         // check elevation
         if (target instanceof VTOL && ((VTOL)target).isFlying()) {
-            if (targetElevation - attackerHeight != 0) {
+            if (targetElevation - attackerElevation != 0) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
             }
         } else if (attackerElevation < targetElevation
@@ -233,7 +233,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         if ( ae.isHullDown() ){
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is hull down");
         }
-        
+
 
         // Attacks against adjacent buildings automatically hit.
         if (target.getTargetType() == Targetable.TYPE_BUILDING
@@ -249,7 +249,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         // Start the To-Hit
         toHit = new ToHitData(base, "base");
 
-        setCommonModifiers(toHit, game, ae, target);
+        PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
         // +3 modifier for kicking infantry in same hex
         // see bug 1749177
@@ -276,7 +276,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         if ( ae.hasFunctionalLegAES() ) {
             toHit.addModifier(-1, "AES bonus");
         }
-        
+
         // elevation
         if (attackerElevation < targetHeight) {
             toHit.setHitTable(ToHitData.HIT_KICK);

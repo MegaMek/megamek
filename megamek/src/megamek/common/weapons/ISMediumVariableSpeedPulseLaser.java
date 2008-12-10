@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -24,40 +24,40 @@ import megamek.common.TechConstants;
  */
 public class ISMediumVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 2676144961105838316L;
 
     /**
-     * 
+     *
      */
     public ISMediumVariableSpeedPulseLaser() {
         super();
-        this.techLevel = TechConstants.T_IS_ADVANCED;
-        this.name = "Medium VSP";
-        this.setInternalName("ISMediumVSPLaser");
-        this.setInternalName("ISMVSPL");
-        this.setInternalName("ISMediumVariableSpeedLaser");
-        this.heat = 7;
-        this.damage = DAMAGE_VARIABLE;
-        this.toHitModifier = -4;
-        this.shortRange = 3;
-        this.mediumRange = 6;
-        this.longRange = 9;
-        this.extremeRange = 12;
-        this.waterShortRange = 2;
-        this.waterMediumRange = 3;
-        this.waterLongRange = 4;
-        this.waterExtremeRange = 6;
-        this.damageShort = 9;
-        this.damageMedium = 7;
-        this.damageLong = 5;
-        this.tonnage = 4.0f;
-        this.criticals = 2;
-        this.bv = 56;
-        this.cost = 20000;
-        this.shortAV = 7;
-        this.maxRange = RANGE_SHORT;
+        techLevel = TechConstants.T_IS_ADVANCED;
+        name = "Medium VSP";
+        setInternalName("ISMediumVSPLaser");
+        setInternalName("ISMVSPL");
+        setInternalName("ISMediumVariableSpeedLaser");
+        heat = 7;
+        damage = DAMAGE_VARIABLE;
+        toHitModifier = -4;
+        shortRange = 2;
+        mediumRange = 2;
+        longRange = 9;
+        extremeRange = 10;
+        waterShortRange = 1;
+        waterMediumRange = 3;
+        waterLongRange = 6;
+        waterExtremeRange = 6;
+        damageShort = 9;
+        damageMedium = 7;
+        damageLong = 5;
+        tonnage = 4.0f;
+        criticals = 2;
+        bv = 56;
+        cost = 20000;
+        shortAV = 7;
+        maxRange = RANGE_SHORT;
     }
-    
+
 }

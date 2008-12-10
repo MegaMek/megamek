@@ -54,11 +54,11 @@ public class Board implements Serializable, IBoard {
     public static final int T_GROUND = 0;
     public static final int T_ATMOSPHERE = 1;
     public static final int T_SPACE = 2;
-    
+
     private static final String[] typeNames = { "Ground", "Low Atmosphere", "Space" };
-    
+
     private int mapType = T_GROUND;
-    
+
     private IHex[] data;
 
     /** Building data structures. */
@@ -87,7 +87,7 @@ public class Board implements Serializable, IBoard {
     /**
      * Creates a new board of the specified dimensions. All hexes in the board
      * will be null until otherwise set.
-     * 
+     *
      * @param width the width dimension.
      * @param height the height dimension.
      */
@@ -99,7 +99,7 @@ public class Board implements Serializable, IBoard {
 
     /**
      * Creates a new board of the specified dimensions and specified hex data.
-     * 
+     *
      * @param width the width dimension.
      * @param height the height dimension.
      * @param data
@@ -119,7 +119,7 @@ public class Board implements Serializable, IBoard {
      * Creates a new board of the specified dimensions, hexes, buildings, and
      * inferno trackers. Do *not* use this method unless you have carefully
      * examined this class.
-     * 
+     *
      * @param width The <code>int</code> width dimension in hexes.
      * @param height The <code>int</code> height dimension in hexes.
      * @param hexes The array of <code>Hex</code>es for this board. This
@@ -144,7 +144,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#getHeight()
      */
     public int getHeight() {
@@ -153,7 +153,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#getWidth()
      */
     public int getWidth() {
@@ -162,7 +162,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#newData(int, int, megamek.common.IHex[])
      */
     public void newData(int width, int height, IHex[] data) {
@@ -176,7 +176,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#newData(int, int)
      */
     public void newData(int width, int height) {
@@ -212,7 +212,7 @@ public class Board implements Serializable, IBoard {
     /**
      * Determines if this Board contains the (x, y) Coords, and if so, returns
      * the Hex at that position.
-     * 
+     *
      * @return the Hex, if this Board contains the (x, y) location; null
      *         otherwise.
      * @param x the x Coords.
@@ -385,7 +385,7 @@ public class Board implements Serializable, IBoard {
         hex.clearExits();
         for (int i = 0; i < 6; i++) {
             IHex other = getHexInDir(x, y, i);
-            hex.setExits(other, i, this.roadsAutoExit);
+            hex.setExits(other, i, roadsAutoExit);
         }
         processBoardEvent(new BoardEvent(this, new Coords(x, y),
                 BoardEvent.BOARD_CHANGED_HEX));
@@ -393,7 +393,7 @@ public class Board implements Serializable, IBoard {
 
     /**
      * Determines whether this Board "contains" the specified Coords.
-     * 
+     *
      * @param x the x Coords.
      * @param y the y Coords.
      */
@@ -403,30 +403,32 @@ public class Board implements Serializable, IBoard {
 
     /**
      * Determines whether this Board "contains" the specified Coords.
-     * 
+     *
      * @param c the Coords.
      */
     public boolean contains(Coords c) {
-        if (c == null)
+        if (c == null) {
             return false;
+        }
         return contains(c.x, c.y);
     }
 
     /**
      * Returns the Hex at the specified Coords.
-     * 
+     *
      * @param c the Coords.
      */
     public IHex getHex(Coords c) {
-        if (c == null)
+        if (c == null) {
             return null;
+        }
         return getHex(c.x, c.y);
     }
 
     /**
      * Determines if this Board contains the (x, y) Coords, and if so, sets the
      * specified Hex into that position and initializes it.
-     * 
+     *
      * @param x the x Coords.
      * @param y the y Coords.
      * @param hex the hex to be set into position.
@@ -438,7 +440,7 @@ public class Board implements Serializable, IBoard {
 
     /**
      * Sets the hex into the location specified by the Coords.
-     * 
+     *
      * @param c the Coords.
      * @param hex the hex to be set into position.
      */
@@ -486,8 +488,9 @@ public class Board implements Serializable, IBoard {
      * deployment phase (?!). I'm using 3 hexes from map edge.
      */
     public boolean isLegalDeployment(Coords c, Player p) {
-        if (c == null || p == null || !contains(c))
+        if (c == null || p == null || !contains(c)) {
             return false;
+        }
 
         int nLimit = 3;
         int nDir = p.getStartingPos();
@@ -502,8 +505,9 @@ public class Board implements Serializable, IBoard {
             maxx -= width / 5;
             miny = height / 5;
             maxy -= height / 5;
-            if (c.x < minx || c.y < miny || c.x >= maxx || c.y >= maxy)
+            if (c.x < minx || c.y < miny || c.x >= maxx || c.y >= maxy) {
                 return false;
+            }
         }
         switch (nDir) {
             case 0: // Any
@@ -607,9 +611,9 @@ public class Board implements Serializable, IBoard {
                     // Only expect certain options.
                     if (args[0].equalsIgnoreCase("exit_roads_to_pavement")) {
                         if (args[1].equalsIgnoreCase("false")) {
-                            this.roadsAutoExit = false;
+                            roadsAutoExit = false;
                         } else {
-                            this.roadsAutoExit = true;
+                            roadsAutoExit = true;
                         }
                     } // End exit_roads_to_pavement-option
                 } else if (st.ttype == StreamTokenizer.TT_WORD
@@ -661,8 +665,9 @@ public class Board implements Serializable, IBoard {
 
     private int indexFor(String hexNum, int width, int row) {
         int substringDiff = 2;
-        if (row > 99)
+        if (row > 99) {
             substringDiff = Integer.toString(width).length();
+        }
         int x = Integer.parseInt(hexNum.substring(0, hexNum.length()
                 - substringDiff)) - 1;
         int y = Integer.parseInt(hexNum.substring(hexNum.length()
@@ -678,7 +683,7 @@ public class Board implements Serializable, IBoard {
             Writer w = new OutputStreamWriter(os);
             // write
             w.write("size " + width + " " + height + "\r\n");
-            if (!this.roadsAutoExit) {
+            if (!roadsAutoExit) {
                 w.write("option exit_roads_to_pavement false\r\n");
             }
             for (int i = 0; i < data.length; i++) {
@@ -743,7 +748,7 @@ public class Board implements Serializable, IBoard {
 
     /**
      * Record that the given coordinates have recieved a hit from an inferno.
-     * 
+     *
      * @param coords - the <code>Coords</code> of the hit.
      * @param round - the kind of round that hit the hex.
      * @param hits - the <code>int</code> number of rounds that hit. If a
@@ -767,11 +772,11 @@ public class Board implements Serializable, IBoard {
         }
 
         // Do we already have a tracker for those coords?
-        tracker = this.infernos.get(coords);
+        tracker = infernos.get(coords);
         if (null == tracker) {
             // Nope. Make one.
             tracker = new InfernoTracker();
-            this.infernos.put(coords, tracker);
+            infernos.put(coords, tracker);
         }
 
         // Update the tracker.
@@ -789,7 +794,7 @@ public class Board implements Serializable, IBoard {
 
     /**
      * Determine if the given coordinates has a burning inferno.
-     * 
+     *
      * @param coords - the <code>Coords</code> being checked.
      * @return <code>true</code> if those coordinates have a burning inferno
      *         round. <code>false</code> if no inferno has hit those
@@ -801,7 +806,7 @@ public class Board implements Serializable, IBoard {
 
         // Get the tracker for those coordinates
         // and see if the fire is still burning.
-        tracker = this.infernos.get(coords);
+        tracker = infernos.get(coords);
         if (null != tracker) {
             if (tracker.isStillBurning()) {
                 result = true;
@@ -814,7 +819,7 @@ public class Board implements Serializable, IBoard {
     /**
      * Record that a new round of burning has passed for the given coordinates.
      * This routine also determines if the fire is still burning.
-     * 
+     *
      * @param coords - the <code>Coords</code> being checked.
      * @return <code>true</code> if those coordinates have a burning inferno
      *         round. <code>false</code> if no inferno has hit those
@@ -826,7 +831,7 @@ public class Board implements Serializable, IBoard {
 
         // Get the tracker for those coordinates, record the round
         // of burning and see if the fire is still burning.
-        tracker = this.infernos.get(coords);
+        tracker = infernos.get(coords);
         if (null != tracker) {
             tracker.newRound(-1);
             if (tracker.isStillBurning()) {
@@ -841,17 +846,17 @@ public class Board implements Serializable, IBoard {
 
     /**
      * Get an enumeration of all coordinates with infernos still burning.
-     * 
+     *
      * @return an <code>Enumeration</code> of <code>Coords</code> that have
      *         infernos still burning.
      */
     public Enumeration<Coords> getInfernoBurningCoords() {
         // Only include *burning* inferno trackers.
         Vector<Coords> burning = new Vector<Coords>();
-        Enumeration<Coords> iter = this.infernos.keys();
+        Enumeration<Coords> iter = infernos.keys();
         while (iter.hasMoreElements()) {
             final Coords coords = iter.nextElement();
-            if (this.isInfernoBurning(coords)) {
+            if (isInfernoBurning(coords)) {
                 burning.addElement(coords);
             }
         }
@@ -861,7 +866,7 @@ public class Board implements Serializable, IBoard {
     /**
      * Determine the remaining number of turns the given coordinates will have a
      * burning inferno.
-     * 
+     *
      * @param coords - the <code>Coords</code> being checked. This value must
      *            not be <code>null</code>. Unchecked.
      * @return the <code>int</code> number of burn turns left for all infernos
@@ -873,7 +878,7 @@ public class Board implements Serializable, IBoard {
 
         // Get the tracker for those coordinates
         // and see if the fire is still burning.
-        tracker = this.infernos.get(coords);
+        tracker = infernos.get(coords);
         if (null != tracker) {
             turns = tracker.getTurnsLeftToBurn();
         }
@@ -883,7 +888,7 @@ public class Board implements Serializable, IBoard {
     /**
      * Determine the remaining number of turns the given coordinates will have a
      * burning Inferno IV round.
-     * 
+     *
      * @param coords - the <code>Coords</code> being checked. This value must
      *            not be <code>null</code>. Unchecked.
      * @return the <code>int</code> number of burn turns left for Arrow IV
@@ -895,7 +900,7 @@ public class Board implements Serializable, IBoard {
 
         // Get the tracker for those coordinates
         // and see if the fire is still burning.
-        tracker = this.infernos.get(coords);
+        tracker = infernos.get(coords);
         if (null != tracker) {
             turns = tracker.getArrowIVTurnsLeftToBurn();
         }
@@ -904,28 +909,28 @@ public class Board implements Serializable, IBoard {
 
     /**
      * Get an enumeration of all buildings on the board.
-     * 
+     *
      * @return an <code>Enumeration</code> of <code>Building</code>s.
      */
     public Enumeration<Building> getBuildings() {
-        return this.buildings.elements();
+        return buildings.elements();
     }
 
     /**
      * Get the building at the given coordinates.
-     * 
+     *
      * @param coords - the <code>Coords</code> being examined.
      * @return a <code>Building</code> object, if there is one at the given
      *         coordinates, otherwise a <code>null</code> will be returned.
      */
     public Building getBuildingAt(Coords coords) {
-        return this.bldgByCoords.get(coords);
+        return bldgByCoords.get(coords);
     }
 
     /**
      * Get the local object for the given building. Call this routine any time
      * the input <code>Building</code> is suspect.
-     * 
+     *
      * @param other - a <code>Building</code> object which may or may not be
      *            represented on this board. This value may be <code>null</code>.
      * @return The local <code>Building</code> object if we can find a match.
@@ -955,7 +960,7 @@ public class Board implements Serializable, IBoard {
 
     /**
      * Collapse a vector of building hexes.
-     * 
+     *
      * @param bldgs - the <code>Vector</code> of <code>Coord</code>
      *            objects to be collapsed.
      */
@@ -976,7 +981,7 @@ public class Board implements Serializable, IBoard {
     /**
      * The given building hex has collapsed. Remove it from the board and
      * replace it with rubble.
-     * 
+     *
      * @param other - the <code>Building</code> that has collapsed.
      */
     public void collapseBuilding(Coords coords) {
@@ -985,18 +990,16 @@ public class Board implements Serializable, IBoard {
 
         // Remove the building from the building map.
         Building bldg = bldgByCoords.get(coords);
+        if (bldg == null) {
+            return;
+        }
         bldg.removeHex(coords);
         bldgByCoords.remove(coords);
-    
-        // if more than half of the hexes are gone, collapse all
-        if (bldg.getCollapsedHexCount() > bldg.getOriginalHexCount()/2) {
-            collapseBuilding(bldg);
-        }
 
         // determine type of rubble
         // Terrain type can be a max of 4 for harded building
         // 5 for walls, but the only place where we actually check
-        // for rubble type is resolveFindClub in Server, and we 
+        // for rubble type is resolveFindClub in Server, and we
         // make it impossible to find clubs in wallrubble there
         int type = curHex.terrainLevel(Terrains.BUILDING);
         type = Math.max(type, curHex.terrainLevel(Terrains.BRIDGE));
@@ -1036,13 +1039,13 @@ public class Board implements Serializable, IBoard {
     /**
      * The given building has collapsed. Remove it from the board and replace it
      * with rubble.
-     * 
+     *
      * @param other - the <code>Building</code> that has collapsed.
      */
     public void collapseBuilding(Building bldg) {
 
         // Remove the building from our building vector.
-        this.buildings.removeElement(bldg);
+        buildings.removeElement(bldg);
 
         // Walk through the building's hexes.
         Enumeration<Coords> bldgCoords = bldg.getCoords();
@@ -1055,7 +1058,7 @@ public class Board implements Serializable, IBoard {
 
     /**
      * Update the construction factors on an array of buildings.
-     * 
+     *
      * @param bldgs - the <code>Vector</code> of <code>Building</code>
      *            objects to be updated.
      */
@@ -1067,7 +1070,7 @@ public class Board implements Serializable, IBoard {
             final Building other = loop.nextElement();
 
             // Find the local object for the given building.
-            Building bldg = this.getLocalBuilding(other);
+            Building bldg = getLocalBuilding(other);
 
             // Handle garbage input.
             if (bldg == null) {
@@ -1089,23 +1092,23 @@ public class Board implements Serializable, IBoard {
 
     /**
      * Get the current value of the "road auto-exit" option.
-     * 
+     *
      * @return <code>true</code> if roads should automatically exit onto all
      *         adjacent pavement hexes. <code>false</code> otherwise.
      */
     public boolean getRoadsAutoExit() {
-        return this.roadsAutoExit;
+        return roadsAutoExit;
     }
 
     /**
      * Set the value of the "road auto-exit" option.
-     * 
+     *
      * @param value - The value to set for the option; <code>true</code> if
      *            roads should automatically exit onto all adjacent pavement
      *            hexes. <code>false</code> otherwise.
      */
     public void setRoadsAutoExit(boolean value) {
-        this.roadsAutoExit = value;
+        roadsAutoExit = value;
     }
 
     /**
@@ -1136,7 +1139,7 @@ public class Board implements Serializable, IBoard {
     /**
      * Override the default deserialization to populate the transient
      * <code>bldgByCoords</code> member.
-     * 
+     *
      * @param in - the <code>ObjectInputStream</code> to read.
      * @throws <code>IOException</code>
      * @throws <code>ClassNotFoundException</code>
@@ -1151,7 +1154,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#addBoardListener(megamek.common.BoardListener)
      */
     public void addBoardListener(BoardListener listener) {
@@ -1163,7 +1166,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#removeBoardListener(megamek.common.BoardListener)
      */
     public void removeBoardListener(BoardListener listener) {
@@ -1176,18 +1179,16 @@ public class Board implements Serializable, IBoard {
         if (boardListeners == null) {
             return;
         }
-        for (Enumeration<BoardListener> e = boardListeners.elements(); e
-                .hasMoreElements();) {
-            BoardListener l = e.nextElement();
-            switch (event.getType()) {
-                case BoardEvent.BOARD_CHANGED_HEX:
-                    l.boardChangedHex(event);
-                    break;
-                case BoardEvent.BOARD_NEW_BOARD:
-                    l.boardNewBoard(event);
-                    break;
-            }
-        }
+        for (BoardListener l : boardListeners) {
+         switch (event.getType()) {
+        case BoardEvent.BOARD_CHANGED_HEX:
+            l.boardChangedHex(event);
+            break;
+        case BoardEvent.BOARD_NEW_BOARD:
+            l.boardNewBoard(event);
+            break;
+         }
+      }
     }
 
     protected Vector<BoardListener> getListeners() {
@@ -1203,23 +1204,21 @@ public class Board implements Serializable, IBoard {
     }
 
     public void setBridgeCF(int value) {
-        for (Enumeration<Building> ebldg = buildings.elements(); ebldg
-                .hasMoreElements();) {
-            Building bldg = ebldg.nextElement();
-            for (Enumeration<Coords> coords = bldg.getCoords(); coords
-                    .hasMoreElements();) {
-                Coords c = coords.nextElement();
-                IHex h = getHex(c);
-                if (h.containsTerrain(Terrains.BRIDGE)) {
-                    bldg.setCurrentCF(value, c);
-                }
-            }
+        for (Building bldg : buildings) {
+         for (Enumeration<Coords> coords = bldg.getCoords(); coords
+            .hasMoreElements();) {
+        Coords c = coords.nextElement();
+        IHex h = getHex(c);
+        if (h.containsTerrain(Terrains.BRIDGE)) {
+            bldg.setCurrentCF(value, c);
         }
+         }
+      }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#getSpecialHexDisplay(megamek.common.Coords)
      */
     public Collection<SpecialHexDisplay> getSpecialHexDisplay(Coords coords) {
@@ -1228,7 +1227,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#addSpecialHexDisplay(megamek.common.Coords,
      *      megamek.common.SpecialHexDisplay)
      */
@@ -1246,7 +1245,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#getSpecialHexDisplayTable()
      */
     public Hashtable<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable() {
@@ -1255,37 +1254,37 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#setSpecialHexDisplayTable(java.util.Hashtable)
      */
     public void setSpecialHexDisplayTable(
             Hashtable<Coords, Collection<SpecialHexDisplay>> shd) {
         specialHexes = shd;
     }
-    
+
     public void setType(int t) {
-        this.mapType = t;
+        mapType = t;
     }
-    
+
     public int getType() {
         return mapType;
     }
-    
+
     public static String getTypeName(int t) {
         return typeNames[t];
     }
-    
-    //some convenience functions   
+
+    //some convenience functions
     public boolean onGround() {
         return (mapType == T_GROUND);
     }
-    
+
     public boolean inAtmosphere() {
         return (mapType == T_ATMOSPHERE);
     }
-    
+
     public boolean inSpace() {
         return (mapType == T_SPACE);
     }
-    
+
 }

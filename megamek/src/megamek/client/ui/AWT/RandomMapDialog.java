@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -44,7 +44,7 @@ import megamek.common.MapSettings;
 public class RandomMapDialog extends Dialog implements ActionListener,
         FocusListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1676096571134662220L;
     private static final String NONE = Messages
@@ -302,7 +302,7 @@ public class RandomMapDialog extends Dialog implements ActionListener,
             MapSettings mapSettings) {
         super(parent, Messages.getString("RandomMapDialog.title"), true); //$NON-NLS-1$
         this.mapSettings = mapSettings;
-        this.frame = parent;
+        frame = parent;
         this.bsd = bsd;
         setResizable(true);
 
@@ -329,7 +329,7 @@ public class RandomMapDialog extends Dialog implements ActionListener,
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butOK)) {
             if (applyValues()) {
-                this.setVisible(false);
+                setVisible(false);
             }
         } else if (e.getSource().equals(butSave)) {
             FileDialog fd = new FileDialog(
@@ -344,8 +344,9 @@ public class RandomMapDialog extends Dialog implements ActionListener,
             fd.setModal(true);
             fd.setVisible(true);
             String filename = fd.getDirectory() + File.separator + fd.getFile();
-            if (filename.indexOf('.') == -1)
+            if (filename.indexOf('.') == -1) {
                 filename = filename + ".xml";
+            }
             File f = new File(filename);
             try {
                 mapSettings.save(new FileOutputStream(f));
@@ -1296,6 +1297,7 @@ public class RandomMapDialog extends Dialog implements ActionListener,
                 mountainStyle = Integer.parseInt(texMountainStyle.getText());
                 mountainPeaks = Integer.parseInt(texMountainPeaks.getText());
                 invertNegative = Integer.parseInt(texInvertNegative.getText());
+                townSize = Integer.parseInt(texTownSize.getText());
 
             } catch (NumberFormatException ex) {
                 new AlertDialog(frame, INVALID_SETTING, Messages

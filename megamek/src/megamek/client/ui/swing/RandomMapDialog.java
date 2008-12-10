@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -48,7 +48,7 @@ import megamek.common.MapSettings;
 public class RandomMapDialog extends JDialog implements ActionListener,
         FocusListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1932447917045308611L;
     private static final String NONE = Messages
@@ -382,11 +382,13 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             fc.setDialogTitle(Messages
                     .getString("RandomMapDialog.FileSaveDialog"));
             fc.setFileFilter(new FileFilter() {
+                @Override
                 public boolean accept(File dir) {
                     return (null != dir.getName() && dir.getName().endsWith(
                             ".xml")); //$NON-NLS-1$
                 }
 
+                @Override
                 public String getDescription() {
                     return ".xml";
                 }
@@ -421,11 +423,13 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             fc.setDialogTitle(Messages
                     .getString("RandomMapDialog.FileLoadDialog"));
             fc.setFileFilter(new FileFilter() {
+                @Override
                 public boolean accept(File dir) {
                     return (null != dir.getName() && dir.getName().endsWith(
                             ".xml")); //$NON-NLS-1$
                 }
 
+                @Override
                 public String getDescription() {
                     return ".xml";
                 }
@@ -1358,6 +1362,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 mountainStyle = Integer.parseInt(texMountainStyle.getText());
                 mountainPeaks = Integer.parseInt(texMountainPeaks.getText());
                 invertNegative = Integer.parseInt(texInvertNegative.getText());
+                townSize = Integer.parseInt(texTownSize.getText());
 
             } catch (NumberFormatException ex) {
                 JOptionPane

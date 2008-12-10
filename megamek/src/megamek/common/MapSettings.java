@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2002,2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -34,7 +34,7 @@ import megamek.common.util.BuildingTemplate;
 
 /**
  * MapSettings.java Created on March 27, 2002, 1:07 PM
- * 
+ *
  * @author Ben
  */
 public class MapSettings implements Serializable {
@@ -53,15 +53,15 @@ public class MapSettings implements Serializable {
     public static final int MEDIUM_GROUND = 0;
     public static final int MEDIUM_ATMOSPHERE = 1;
     public static final int MEDIUM_SPACE = 2;
-    
+
     private static final String[] mediumNames = { "Ground", "Atmosphere", "Space" };
-    
+
     private int boardWidth = 16;
     private int boardHeight = 17;
     private int mapWidth = 1;
     private int mapHeight = 1;
     private int medium = MEDIUM_GROUND;
-    
+
     private ArrayList<String> boardsSelected = new ArrayList<String>();
     private ArrayList<String> boardsAvailable = new ArrayList<String>();
     private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<BuildingTemplate>();
@@ -241,83 +241,84 @@ public class MapSettings implements Serializable {
     /** Creates new MapSettings that is a duplicate of another */
     @SuppressWarnings("unchecked")
     public MapSettings(MapSettings other) {
-        this.boardWidth = other.getBoardWidth();
-        this.boardHeight = other.getBoardHeight();
-        this.mapWidth = other.getMapWidth();
-        this.mapHeight = other.getMapHeight();
+        boardWidth = other.getBoardWidth();
+        boardHeight = other.getBoardHeight();
+        mapWidth = other.getMapWidth();
+        mapHeight = other.getMapHeight();
 
-        this.boardsSelected = (ArrayList<String>) other
+        boardsSelected = (ArrayList<String>) other
                 .getBoardsSelectedVector().clone();
-        this.boardsAvailable = (ArrayList<String>) other
+        boardsAvailable = (ArrayList<String>) other
                 .getBoardsAvailableVector().clone();
 
-        this.invertNegativeTerrain = other.getInvertNegativeTerrain();
-        this.mountainHeightMin = other.getMountainHeightMin();
-        this.mountainHeightMax = other.getMountainHeightMax();
-        this.mountainPeaks = other.getMountainPeaks();
-        this.mountainStyle = other.getMountainStyle();
-        this.mountainWidthMin = other.getMountainWidthMin();
-        this.mountainWidthMax = other.getMountainWidthMax();
-        this.hilliness = other.getHilliness();
-        this.cliffs = other.getCliffs();
-        this.range = other.getRange();
-        this.probInvert = other.getProbInvert();
-        this.minWaterSpots = other.getMinWaterSpots();
-        this.maxWaterSpots = other.getMaxWaterSpots();
-        this.minWaterSize = other.getMinWaterSize();
-        this.maxWaterSize = other.getMaxWaterSize();
-        this.probDeep = other.getProbDeep();
-        this.minForestSpots = other.getMinForestSpots();
-        this.maxForestSpots = other.getMaxForestSpots();
-        this.minForestSize = other.getMinForestSize();
-        this.maxForestSize = other.getMaxForestSize();
-        this.probHeavy = other.getProbHeavy();
-        this.minRoughSpots = other.getMinRoughSpots();
-        this.maxRoughSpots = other.getMaxRoughSpots();
-        this.minRoughSize = other.getMinRoughSize();
-        this.maxRoughSize = other.getMaxRoughSize();
-        this.minSwampSpots = other.getMinSwampSpots();
-        this.maxSwampSpots = other.getMaxSwampSpots();
-        this.minSwampSize = other.getMinSwampSize();
-        this.maxSwampSize = other.getMaxSwampSize();
-        this.minPavementSpots = other.getMinPavementSpots();
-        this.maxPavementSpots = other.getMaxPavementSpots();
-        this.minPavementSize = other.getMinPavementSize();
-        this.maxPavementSize = other.getMaxPavementSize();
-        this.minRubbleSpots = other.getMinRubbleSpots();
-        this.maxRubbleSpots = other.getMaxRubbleSpots();
-        this.minRubbleSize = other.getMinRubbleSize();
-        this.maxRubbleSize = other.getMaxRubbleSize();
-        this.minFortifiedSpots = other.getMinFortifiedSpots();
-        this.maxFortifiedSpots = other.getMaxFortifiedSpots();
-        this.minFortifiedSize = other.getMinFortifiedSize();
-        this.maxFortifiedSize = other.getMaxFortifiedSize();
-        this.minIceSpots = other.getMinIceSpots();
-        this.maxIceSpots = other.getMaxIceSpots();
-        this.minIceSize = other.getMinIceSize();
-        this.maxIceSize = other.getMaxIceSize();
-        this.probRoad = other.getProbRoad();
-        this.probRiver = other.getProbRiver();
-        this.probCrater = other.getProbCrater();
-        this.minRadius = other.getMinRadius();
-        this.maxRadius = other.getMaxRadius();
-        this.minCraters = other.getMinCraters();
-        this.maxCraters = other.getMaxCraters();
-        this.algorithmToUse = other.getAlgorithmToUse();
-        this.theme = other.getTheme();
-        this.probFlood = other.getProbFlood();
-        this.probForestFire = other.getProbForestFire();
-        this.probFreeze = other.getProbFreeze();
-        this.probDrought = other.getProbDrought();
-        this.fxMod = other.getFxMod();
-        this.cityBlocks = other.getCityBlocks();
-        this.cityType = other.getCityType();
-        this.cityMinCF = other.getCityMinCF();
-        this.cityMaxCF = other.getCityMaxCF();
-        this.cityMinFloors = other.getCityMinFloors();
-        this.cityMaxFloors = other.getCityMaxFloors();
-        this.cityDensity = other.getCityDensity();
-        this.boardBuildings = other.getBoardBuildings();
+        invertNegativeTerrain = other.getInvertNegativeTerrain();
+        mountainHeightMin = other.getMountainHeightMin();
+        mountainHeightMax = other.getMountainHeightMax();
+        mountainPeaks = other.getMountainPeaks();
+        mountainStyle = other.getMountainStyle();
+        mountainWidthMin = other.getMountainWidthMin();
+        mountainWidthMax = other.getMountainWidthMax();
+        hilliness = other.getHilliness();
+        cliffs = other.getCliffs();
+        range = other.getRange();
+        probInvert = other.getProbInvert();
+        minWaterSpots = other.getMinWaterSpots();
+        maxWaterSpots = other.getMaxWaterSpots();
+        minWaterSize = other.getMinWaterSize();
+        maxWaterSize = other.getMaxWaterSize();
+        probDeep = other.getProbDeep();
+        minForestSpots = other.getMinForestSpots();
+        maxForestSpots = other.getMaxForestSpots();
+        minForestSize = other.getMinForestSize();
+        maxForestSize = other.getMaxForestSize();
+        probHeavy = other.getProbHeavy();
+        minRoughSpots = other.getMinRoughSpots();
+        maxRoughSpots = other.getMaxRoughSpots();
+        minRoughSize = other.getMinRoughSize();
+        maxRoughSize = other.getMaxRoughSize();
+        minSwampSpots = other.getMinSwampSpots();
+        maxSwampSpots = other.getMaxSwampSpots();
+        minSwampSize = other.getMinSwampSize();
+        maxSwampSize = other.getMaxSwampSize();
+        minPavementSpots = other.getMinPavementSpots();
+        maxPavementSpots = other.getMaxPavementSpots();
+        minPavementSize = other.getMinPavementSize();
+        maxPavementSize = other.getMaxPavementSize();
+        minRubbleSpots = other.getMinRubbleSpots();
+        maxRubbleSpots = other.getMaxRubbleSpots();
+        minRubbleSize = other.getMinRubbleSize();
+        maxRubbleSize = other.getMaxRubbleSize();
+        minFortifiedSpots = other.getMinFortifiedSpots();
+        maxFortifiedSpots = other.getMaxFortifiedSpots();
+        minFortifiedSize = other.getMinFortifiedSize();
+        maxFortifiedSize = other.getMaxFortifiedSize();
+        minIceSpots = other.getMinIceSpots();
+        maxIceSpots = other.getMaxIceSpots();
+        minIceSize = other.getMinIceSize();
+        maxIceSize = other.getMaxIceSize();
+        probRoad = other.getProbRoad();
+        probRiver = other.getProbRiver();
+        probCrater = other.getProbCrater();
+        minRadius = other.getMinRadius();
+        maxRadius = other.getMaxRadius();
+        minCraters = other.getMinCraters();
+        maxCraters = other.getMaxCraters();
+        algorithmToUse = other.getAlgorithmToUse();
+        theme = other.getTheme();
+        probFlood = other.getProbFlood();
+        probForestFire = other.getProbForestFire();
+        probFreeze = other.getProbFreeze();
+        probDrought = other.getProbDrought();
+        fxMod = other.getFxMod();
+        cityBlocks = other.getCityBlocks();
+        cityType = other.getCityType();
+        cityMinCF = other.getCityMinCF();
+        cityMaxCF = other.getCityMaxCF();
+        cityMinFloors = other.getCityMinFloors();
+        cityMaxFloors = other.getCityMaxFloors();
+        cityDensity = other.getCityDensity();
+        boardBuildings = other.getBoardBuildings();
+        townSize = other.getTownSize();
     }
 
     public int getBoardWidth() {
@@ -403,24 +404,26 @@ public class MapSettings implements Serializable {
     }
 
     public void setBoardBuildings(ArrayList<BuildingTemplate> buildings) {
-        this.boardBuildings = buildings;
+        boardBuildings = buildings;
     }
 
     /**
      * Replaces the specified type of board with random boards
      */
     public void replaceBoardWithRandom(String board) {
-        if (board == null)
+        if (board == null) {
             return;
+        }
         for (int i = 0; i < boardsSelected.size(); i++) {
             if (board.equals(boardsSelected.get(i))) {
                 int rindex;
                 // if we have no boards, set rindex to 0, so the generated board
                 // gets selected
-                if (boardsAvailable.size() == 1)
+                if (boardsAvailable.size() == 1) {
                     rindex = 0;
-                else
+                } else {
                     rindex = Compute.randomInt(boardsAvailable.size() - 3) + 3;
+                }
                 // Do a one pi rotation half of the time.
                 if (0 == Compute.randomInt(2)) {
                     boardsSelected.set(i, Board.BOARD_REQUEST_ROTATION
@@ -637,89 +640,90 @@ public class MapSettings implements Serializable {
     /**
      * Returns true if the this Mapsetting has the same mapgenerator settings
      * and size as the parameter.
-     * 
+     *
      * @param other The Mapsetting to which compare.
      * @return True if settings are the same.
      */
     public boolean equalMapGenParameters(MapSettings other) {
-        if ((this.boardWidth != other.getBoardWidth())
-                || (this.boardHeight != other.getBoardHeight())
-                || (this.mapWidth != other.getMapWidth())
-                || (this.mapHeight != other.getMapHeight())
-                || (this.invertNegativeTerrain != other
+        if ((boardWidth != other.getBoardWidth())
+                || (boardHeight != other.getBoardHeight())
+                || (mapWidth != other.getMapWidth())
+                || (mapHeight != other.getMapHeight())
+                || (invertNegativeTerrain != other
                         .getInvertNegativeTerrain())
-                || (this.hilliness != other.getHilliness())
-                || (this.cliffs != other.getCliffs())
-                || (this.range != other.getRange())
-                || (this.minWaterSpots != other.getMinWaterSpots())
-                || (this.maxWaterSpots != other.getMaxWaterSpots())
-                || (this.minWaterSize != other.getMinWaterSize())
-                || (this.maxWaterSize != other.getMaxWaterSize())
-                || (this.probDeep != other.getProbDeep())
-                || (this.minForestSpots != other.getMinForestSpots())
-                || (this.maxForestSpots != other.getMaxForestSpots())
-                || (this.minForestSize != other.getMinForestSize())
-                || (this.maxForestSize != other.getMaxForestSize())
-                || (this.probHeavy != other.getProbHeavy())
-                || (this.minRoughSpots != other.getMinRoughSpots())
-                || (this.maxRoughSpots != other.getMaxRoughSpots())
-                || (this.minRoughSize != other.getMinRoughSize())
-                || (this.maxRoughSize != other.getMaxRoughSize())
-                || (this.minSwampSpots != other.getMinSwampSpots())
-                || (this.maxSwampSpots != other.getMaxSwampSpots())
-                || (this.minSwampSize != other.getMinSwampSize())
-                || (this.maxSwampSize != other.getMaxSwampSize())
-                || (this.minPavementSpots != other.getMinPavementSpots())
-                || (this.maxPavementSpots != other.getMaxPavementSpots())
-                || (this.minPavementSize != other.getMinPavementSize())
-                || (this.maxPavementSize != other.getMaxPavementSize())
-                || (this.minRubbleSpots != other.getMinRubbleSpots())
-                || (this.maxRubbleSpots != other.getMaxRubbleSpots())
-                || (this.minRubbleSize != other.getMinRubbleSize())
-                || (this.maxRubbleSize != other.getMaxRubbleSize())
-                || (this.minFortifiedSpots != other.getMinFortifiedSpots())
-                || (this.maxFortifiedSpots != other.getMaxFortifiedSpots())
-                || (this.minFortifiedSize != other.getMinFortifiedSize())
-                || (this.maxFortifiedSize != other.getMaxFortifiedSize())
-                || (this.minIceSpots != other.getMinIceSpots())
-                || (this.maxIceSpots != other.getMaxIceSpots())
-                || (this.minIceSize != other.getMinIceSize())
-                || (this.maxIceSize != other.getMaxIceSize())
-                || (this.probRoad != other.getProbRoad())
-                || (this.probInvert != other.getProbInvert())
-                || (this.probRiver != other.getProbRiver())
-                || (this.probCrater != other.getProbCrater())
-                || (this.minRadius != other.getMinRadius())
-                || (this.maxRadius != other.getMaxRadius())
-                || (this.minCraters != other.getMinCraters())
-                || (this.maxCraters != other.getMaxCraters())
-                || (!this.theme.equals(other.getTheme()))
-                || (this.fxMod != other.getFxMod())
-                || (this.cityBlocks != other.getCityBlocks())
-                || (this.cityType != other.getCityType())
-                || (this.cityMinCF != other.getCityMinCF())
-                || (this.cityMaxCF != other.getCityMaxCF())
-                || (this.cityMinFloors != other.getCityMinFloors())
-                || (this.cityMaxFloors != other.getCityMaxFloors())
-                || (this.cityDensity != other.getCityDensity())
-                || (this.probFlood != other.getProbFlood())
-                || (this.probForestFire != other.getProbForestFire())
-                || (this.probFreeze != other.getProbFreeze())
-                || (this.probDrought != other.getProbDrought())
-                || (this.algorithmToUse != other.getAlgorithmToUse())
-                || (this.mountainHeightMin != other.getMountainHeightMin())
-                || (this.mountainHeightMax != other.getMountainHeightMax())
-                || (this.mountainPeaks != other.getMountainPeaks())
-                || (this.mountainStyle != other.getMountainStyle())
-                || (this.mountainWidthMin != other.getMountainWidthMin())
-                || (this.mountainWidthMax != other.getMountainWidthMax())
-                || (this.boardBuildings != other.getBoardBuildings())) {
+                || (hilliness != other.getHilliness())
+                || (cliffs != other.getCliffs())
+                || (range != other.getRange())
+                || (minWaterSpots != other.getMinWaterSpots())
+                || (maxWaterSpots != other.getMaxWaterSpots())
+                || (minWaterSize != other.getMinWaterSize())
+                || (maxWaterSize != other.getMaxWaterSize())
+                || (probDeep != other.getProbDeep())
+                || (minForestSpots != other.getMinForestSpots())
+                || (maxForestSpots != other.getMaxForestSpots())
+                || (minForestSize != other.getMinForestSize())
+                || (maxForestSize != other.getMaxForestSize())
+                || (probHeavy != other.getProbHeavy())
+                || (minRoughSpots != other.getMinRoughSpots())
+                || (maxRoughSpots != other.getMaxRoughSpots())
+                || (minRoughSize != other.getMinRoughSize())
+                || (maxRoughSize != other.getMaxRoughSize())
+                || (minSwampSpots != other.getMinSwampSpots())
+                || (maxSwampSpots != other.getMaxSwampSpots())
+                || (minSwampSize != other.getMinSwampSize())
+                || (maxSwampSize != other.getMaxSwampSize())
+                || (minPavementSpots != other.getMinPavementSpots())
+                || (maxPavementSpots != other.getMaxPavementSpots())
+                || (minPavementSize != other.getMinPavementSize())
+                || (maxPavementSize != other.getMaxPavementSize())
+                || (minRubbleSpots != other.getMinRubbleSpots())
+                || (maxRubbleSpots != other.getMaxRubbleSpots())
+                || (minRubbleSize != other.getMinRubbleSize())
+                || (maxRubbleSize != other.getMaxRubbleSize())
+                || (minFortifiedSpots != other.getMinFortifiedSpots())
+                || (maxFortifiedSpots != other.getMaxFortifiedSpots())
+                || (minFortifiedSize != other.getMinFortifiedSize())
+                || (maxFortifiedSize != other.getMaxFortifiedSize())
+                || (minIceSpots != other.getMinIceSpots())
+                || (maxIceSpots != other.getMaxIceSpots())
+                || (minIceSize != other.getMinIceSize())
+                || (maxIceSize != other.getMaxIceSize())
+                || (probRoad != other.getProbRoad())
+                || (probInvert != other.getProbInvert())
+                || (probRiver != other.getProbRiver())
+                || (probCrater != other.getProbCrater())
+                || (minRadius != other.getMinRadius())
+                || (maxRadius != other.getMaxRadius())
+                || (minCraters != other.getMinCraters())
+                || (maxCraters != other.getMaxCraters())
+                || (!theme.equals(other.getTheme()))
+                || (fxMod != other.getFxMod())
+                || (cityBlocks != other.getCityBlocks())
+                || (cityType != other.getCityType())
+                || (cityMinCF != other.getCityMinCF())
+                || (cityMaxCF != other.getCityMaxCF())
+                || (cityMinFloors != other.getCityMinFloors())
+                || (cityMaxFloors != other.getCityMaxFloors())
+                || (cityDensity != other.getCityDensity())
+                || (probFlood != other.getProbFlood())
+                || (probForestFire != other.getProbForestFire())
+                || (probFreeze != other.getProbFreeze())
+                || (probDrought != other.getProbDrought())
+                || (algorithmToUse != other.getAlgorithmToUse())
+                || (mountainHeightMin != other.getMountainHeightMin())
+                || (mountainHeightMax != other.getMountainHeightMax())
+                || (mountainPeaks != other.getMountainPeaks())
+                || (mountainStyle != other.getMountainStyle())
+                || (mountainWidthMin != other.getMountainWidthMin())
+                || (mountainWidthMax != other.getMountainWidthMax())
+                || (boardBuildings != other.getBoardBuildings())) {
             return false;
         }
         return true;
     } /* equalMapGenParameters */
 
     /** clone! */
+    @Override
     public Object clone() {
         return new MapSettings(this);
     }
@@ -1341,186 +1345,157 @@ public class MapSettings implements Serializable {
         }
         ParsedXML value = (ParsedXML) values.nextElement();
         String param = value.getContent();
-        if (null == param)
+        if (null == param) {
             return;
+        }
         String key = node.getName();
 
         // theme
-        if (key.equals("THEME"))
+        if (key.equals("THEME")) {
             theme = param;
-
-        // elevation params
-        else if (key.equals("INVERTNEGATIVETERRAIN"))
+        } else if (key.equals("INVERTNEGATIVETERRAIN")) {
             invertNegativeTerrain = Integer.valueOf(param);
-        else if (key.equals("HILLYNESS"))
+        } else if (key.equals("HILLYNESS")) {
             hilliness = Integer.valueOf(param);
-        else if (key.equals("HILLELEVATIONRANGE"))
+        } else if (key.equals("HILLELEVATIONRANGE")) {
             range = Integer.valueOf(param);
-        else if (key.equals("HILLINVERTPROB"))
+        } else if (key.equals("HILLINVERTPROB")) {
             probInvert = Integer.valueOf(param);
-
-        else if (key.equals("ALGORITHM"))
+        } else if (key.equals("ALGORITHM")) {
             algorithmToUse = Integer.valueOf(param);
-        else if (key.equals("CLIFFS"))
+        } else if (key.equals("CLIFFS")) {
             cliffs = Integer.valueOf(param);
-
-        // forest params
-        else if (key.equals("FORESTMINSPOTS"))
+        } else if (key.equals("FORESTMINSPOTS")) {
             minForestSpots = Integer.valueOf(param);
-        else if (key.equals("FORESTMAXSPOTS"))
+        } else if (key.equals("FORESTMAXSPOTS")) {
             maxForestSpots = Integer.valueOf(param);
-        else if (key.equals("FORESTMINHEXES"))
+        } else if (key.equals("FORESTMINHEXES")) {
             minForestSize = Integer.valueOf(param);
-        else if (key.equals("FORESTMAXHEXES"))
+        } else if (key.equals("FORESTMAXHEXES")) {
             maxForestSize = Integer.valueOf(param);
-        else if (key.equals("FORESTHEAVYPROB"))
+        } else if (key.equals("FORESTHEAVYPROB")) {
             probHeavy = Integer.valueOf(param);
-
-        // rough params
-        else if (key.equals("ROUGHMINSPOTS"))
+        } else if (key.equals("ROUGHMINSPOTS")) {
             minRoughSpots = Integer.valueOf(param);
-        else if (key.equals("ROUGHMAXSPOTS"))
+        } else if (key.equals("ROUGHMAXSPOTS")) {
             maxRoughSpots = Integer.valueOf(param);
-        else if (key.equals("ROUGHMINHEXES"))
+        } else if (key.equals("ROUGHMINHEXES")) {
             minRoughSize = Integer.valueOf(param);
-        else if (key.equals("ROUGHMAXHEXES"))
+        } else if (key.equals("ROUGHMAXHEXES")) {
             maxRoughSize = Integer.valueOf(param);
-
-        // Swamp params
-        else if (key.equals("SWAMPMINSPOTS"))
+        } else if (key.equals("SWAMPMINSPOTS")) {
             minSwampSpots = Integer.valueOf(param);
-        else if (key.equals("SWAMPMAXSPOTS"))
+        } else if (key.equals("SWAMPMAXSPOTS")) {
             maxSwampSpots = Integer.valueOf(param);
-        else if (key.equals("SWAMPMINHEXES"))
+        } else if (key.equals("SWAMPMINHEXES")) {
             minSwampSize = Integer.valueOf(param);
-        else if (key.equals("SWAMPMAXHEXES"))
+        } else if (key.equals("SWAMPMAXHEXES")) {
             maxSwampSize = Integer.valueOf(param);
-
-        // Road params
-        else if (key.equals("ROADPROB"))
+        } else if (key.equals("ROADPROB")) {
             probRoad = Integer.valueOf(param);
-
-        // water params
-        else if (key.equals("WATERMINSPOTS"))
+        } else if (key.equals("WATERMINSPOTS")) {
             minWaterSpots = Integer.valueOf(param);
-        else if (key.equals("WATERMAXSPOTS"))
+        } else if (key.equals("WATERMAXSPOTS")) {
             maxWaterSpots = Integer.valueOf(param);
-        else if (key.equals("WATERMINHEXES"))
+        } else if (key.equals("WATERMINHEXES")) {
             minWaterSize = Integer.valueOf(param);
-        else if (key.equals("WATERMAXHEXES"))
+        } else if (key.equals("WATERMAXHEXES")) {
             maxWaterSize = Integer.valueOf(param);
-        else if (key.equals("WATERDEEPPROB"))
+        } else if (key.equals("WATERDEEPPROB")) {
             probDeep = Integer.valueOf(param);
-
-        // River params
-        else if (key.equals("RIVERPROB"))
+        } else if (key.equals("RIVERPROB")) {
             probRiver = Integer.valueOf(param);
-
-        // Crater params
-        else if (key.equals("CRATERMINNUM"))
+        } else if (key.equals("CRATERMINNUM")) {
             minCraters = Integer.valueOf(param);
-        else if (key.equals("CRATERMAXNUM"))
+        } else if (key.equals("CRATERMAXNUM")) {
             maxCraters = Integer.valueOf(param);
-        else if (key.equals("CRATERMINRADIUS"))
+        } else if (key.equals("CRATERMINRADIUS")) {
             minRadius = Integer.valueOf(param);
-        else if (key.equals("CRATERMAXRADIUS"))
+        } else if (key.equals("CRATERMAXRADIUS")) {
             maxRadius = Integer.valueOf(param);
-        else if (key.equals("CRATEPROB"))
+        } else if (key.equals("CRATEPROB")) {
             probCrater = Integer.valueOf(param);
-
-        // Pavement params
-        else if (key.equals("PAVEMENTMINSPOTS"))
+        } else if (key.equals("PAVEMENTMINSPOTS")) {
             minPavementSpots = Integer.valueOf(param);
-        else if (key.equals("PAVEMENTMAXSPOTS"))
+        } else if (key.equals("PAVEMENTMAXSPOTS")) {
             maxPavementSpots = Integer.valueOf(param);
-        else if (key.equals("PAVEMENTMINHEXES"))
+        } else if (key.equals("PAVEMENTMINHEXES")) {
             minPavementSize = Integer.valueOf(param);
-        else if (key.equals("PAVEMENTMAXHEXES"))
+        } else if (key.equals("PAVEMENTMAXHEXES")) {
             maxPavementSize = Integer.valueOf(param);
-
-        // Rubble params
-        else if (key.equals("RUBBLEMINSPOTS"))
+        } else if (key.equals("RUBBLEMINSPOTS")) {
             minRubbleSpots = Integer.valueOf(param);
-        else if (key.equals("RUBBLEMAXSPOTS"))
+        } else if (key.equals("RUBBLEMAXSPOTS")) {
             maxRubbleSpots = Integer.valueOf(param);
-        else if (key.equals("RUBBLEMINHEXES"))
+        } else if (key.equals("RUBBLEMINHEXES")) {
             minRubbleSize = Integer.valueOf(param);
-        else if (key.equals("RUBBLEMAXHEXES"))
+        } else if (key.equals("RUBBLEMAXHEXES")) {
             maxRubbleSize = Integer.valueOf(param);
-
-        // Fortified params
-        else if (key.equals("FORTIFIEDMINSPOTS"))
+        } else if (key.equals("FORTIFIEDMINSPOTS")) {
             minFortifiedSpots = Integer.valueOf(param);
-        else if (key.equals("FORTIFIEDMAXSPOTS"))
+        } else if (key.equals("FORTIFIEDMAXSPOTS")) {
             maxFortifiedSpots = Integer.valueOf(param);
-        else if (key.equals("FORTIFIEDMINHEXES"))
+        } else if (key.equals("FORTIFIEDMINHEXES")) {
             minFortifiedSize = Integer.valueOf(param);
-        else if (key.equals("FORTIFIEDMAXHEXES"))
+        } else if (key.equals("FORTIFIEDMAXHEXES")) {
             maxFortifiedSize = Integer.valueOf(param);
-
-        // Ice params
-        else if (key.equals("ICEMINSPOTS"))
+        } else if (key.equals("ICEMINSPOTS")) {
             minIceSpots = Integer.valueOf(param);
-        else if (key.equals("ICEMAXSPOTS"))
+        } else if (key.equals("ICEMAXSPOTS")) {
             maxIceSpots = Integer.valueOf(param);
-        else if (key.equals("ICEMINHEXES"))
+        } else if (key.equals("ICEMINHEXES")) {
             minIceSize = Integer.valueOf(param);
-        else if (key.equals("ICEMAXHEXES"))
+        } else if (key.equals("ICEMAXHEXES")) {
             maxIceSize = Integer.valueOf(param);
-
-        // Special FX
-        else if (key.equals("FXMOD"))
+        } else if (key.equals("FXMOD")) {
             fxMod = Integer.valueOf(param);
-        else if (key.equals("PROBFREEZE"))
+        } else if (key.equals("PROBFREEZE")) {
             probFreeze = Integer.valueOf(param);
-        else if (key.equals("PROBFLOOD"))
+        } else if (key.equals("PROBFLOOD")) {
             probFlood = Integer.valueOf(param);
-        else if (key.equals("PROBFORESTFIRE"))
+        } else if (key.equals("PROBFORESTFIRE")) {
             probForestFire = Integer.valueOf(param);
-        else if (key.equals("PROBDROUGHT"))
+        } else if (key.equals("PROBDROUGHT")) {
             probDrought = Integer.valueOf(param);
-
-        // City
-        else if (key.equals("CITYTYPE"))
+        } else if (key.equals("CITYTYPE")) {
             cityType = param;
-        else if (key.equals("CITYBLOCKS"))
+        } else if (key.equals("CITYBLOCKS")) {
             cityBlocks = Integer.valueOf(param);
-        else if (key.equals("CITYDENSITY"))
+        } else if (key.equals("CITYDENSITY")) {
             cityDensity = Integer.valueOf(param);
-        else if (key.equals("MINCF"))
+        } else if (key.equals("MINCF")) {
             cityMinCF = Integer.valueOf(param);
-        else if (key.equals("MAXCF"))
+        } else if (key.equals("MAXCF")) {
             cityMaxCF = Integer.valueOf(param);
-        else if (key.equals("MINFLOORS"))
+        } else if (key.equals("MINFLOORS")) {
             cityMinFloors = Integer.valueOf(param);
-        else if (key.equals("MAXFLOORS"))
+        } else if (key.equals("MAXFLOORS")) {
             cityMaxFloors = Integer.valueOf(param);
-        else if (key.equals("TOWNSIZE"))
+        } else if (key.equals("TOWNSIZE")) {
             townSize = Integer.valueOf(param);
-
-        // mountain
-        else if (key.equals("MOUNTPEAKS"))
+        } else if (key.equals("MOUNTPEAKS")) {
             mountainPeaks = Integer.valueOf(param);
-        else if (key.equals("MOUNTWIDTHMIN"))
+        } else if (key.equals("MOUNTWIDTHMIN")) {
             mountainWidthMin = Integer.valueOf(param);
-        else if (key.equals("MOUNTWIDTHMAX"))
+        } else if (key.equals("MOUNTWIDTHMAX")) {
             mountainWidthMax = Integer.valueOf(param);
-        else if (key.equals("MOUNTHEIGHTMIN"))
+        } else if (key.equals("MOUNTHEIGHTMIN")) {
             mountainHeightMin = Integer.valueOf(param);
-        else if (key.equals("MOUNTHEIGHTMAX"))
+        } else if (key.equals("MOUNTHEIGHTMAX")) {
             mountainHeightMax = Integer.valueOf(param);
-        else if (key.equals("MOUNTSTYLE"))
+        } else if (key.equals("MOUNTSTYLE")) {
             mountainStyle = Integer.valueOf(param);
+        }
     }
-    
+
     public void setMedium(int m) {
-        this.medium = m;
+        medium = m;
     }
-    
+
     public int getMedium() {
         return medium;
     }
-    
+
     public static String getMediumName(int m) {
         return mediumNames[m];
     }

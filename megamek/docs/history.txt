@@ -53,6 +53,7 @@ v0.33.36-dev (SVN)
 + Fix 3058U IS Mechfiles that mount lvl 1 ACs
 + Bug: crash when buildings collapse
 + Bug 2398701: Wrong VSPL ranges
++ Bug 2369839: TownSize wrong in generated maps 
 
 v0.33.35 (2008-11-16)
 + Santa Anna ship-to-ship missiles

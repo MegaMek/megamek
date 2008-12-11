@@ -33,30 +33,32 @@ public class ISAC2 extends ACWeapon {
      */
     public ISAC2() {
         super();
-        this.techLevel = TechConstants.T_INTRO_BOXSET;
-        this.name = "Autocannon/2";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Auto Cannon/2");
-        this.addLookupName("ISAC2");
-        this.addLookupName("IS Autocannon/2");
-        this.heat = 1;
-        this.damage = 2;
-        this.rackSize = 2;
-        this.minimumRange = 4;
-        this.shortRange = 8;
-        this.mediumRange = 16;
-        this.longRange = 24;
-        this.extremeRange = 32;
-        this.tonnage = 6.0f;
-        this.criticals = 1;
-        this.bv = 37;
-        this.cost = 75000;
-        this.explosive = true; // when firing incendiary ammo
-        this.shortAV = 2;
-        this.medAV = 2;
-        this.longAV = 2;
-        this.extAV = 2;
-        this.maxRange = RANGE_LONG;
-        this.explosionDamage = damage;
+        techLevel = TechConstants.T_INTRO_BOXSET;
+        name = "Autocannon/2";
+        setInternalName(name);
+        addLookupName("IS Auto Cannon/2");
+        addLookupName("Auto Cannon/2");
+        addLookupName("AutoCannon/2");
+        addLookupName("ISAC2");
+        addLookupName("IS Autocannon/2");
+        heat = 1;
+        damage = 2;
+        rackSize = 2;
+        minimumRange = 4;
+        shortRange = 8;
+        mediumRange = 16;
+        longRange = 24;
+        extremeRange = 32;
+        tonnage = 6.0f;
+        criticals = 1;
+        bv = 37;
+        cost = 75000;
+        explosive = true; // when firing incendiary ammo
+        shortAV = 2;
+        medAV = 2;
+        longAV = 2;
+        extAV = 2;
+        maxRange = RANGE_LONG;
+        explosionDamage = damage;
     }
 }

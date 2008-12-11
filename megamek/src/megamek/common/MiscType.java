@@ -74,12 +74,12 @@ public class MiscType extends EquipmentType {
     public static final long F_LIFTHOIST = 1L << 38;
     public static final long F_ENVIRONMENTAL_SEALING = 1L << 39;
     public static final long F_ARMORED_CHASSIS = 1L << 40;
-    public static final long F_TRACTOR_MODIFICATION = 1L << 41;    
-    public static final long F_ACTUATOR_ENHANCEMENT_SYSTEM = 1L << 42;    
+    public static final long F_TRACTOR_MODIFICATION = 1L << 41;
+    public static final long F_ACTUATOR_ENHANCEMENT_SYSTEM = 1L << 42;
     public static final long F_ECM = 1L << 43;
     public static final long F_BAP = 1L << 44;
-    public static final long F_MODULAR_ARMOR = 1L << 45; 
-    public static final long F_TALON = 1L <<46;
+    public static final long F_MODULAR_ARMOR = 1L << 45;
+    public static final long F_TALON = 1L << 46;
     public static final long F_VISUAL_CAMO = 1L << 47;
     public static final long F_APOLLO = 1L << 48;
     public static final long F_INDUSTRIAL_TSM = 1L << 49;
@@ -95,8 +95,8 @@ public class MiscType extends EquipmentType {
     public static final long S_SWORD = 1L << 3; // BMR
     public static final long S_MACE_THB = 1L << 4;// Tac Handbook version
     public static final long S_CLAW_THB = 1L << 5; // Not used yet, but...
-                                                        // Hey, it's all for
-                                                        // fun.
+    // Hey, it's all for
+    // fun.
     public static final long S_MACE = 1L << 6; // Solaris 7
     public static final long S_DUAL_SAW = 1L << 7; // Solaris 7
     public static final long S_FLAIL = 1L << 8; // Solaris 7
@@ -113,7 +113,7 @@ public class MiscType extends EquipmentType {
     public static final long S_COMBINE = 1L << 19; // Miniatures Rulebook; TODO
     public static final long S_CHAINSAW = 1L << 20; // Miniatures Rulebook
     public static final long S_ROCK_CUTTER = 1L << 21; // Miniatures Rulebook;
-                                                        // TODO
+    // TODO
     public static final long S_BUZZSAW = 1L << 22; // Unbound;
     public static final long S_RETRACTABLE_BLADE = 1L << 23; // Total Warfare;
     public static final long S_CHAIN_WHIP = 1L << 24; // TacOps;
@@ -129,12 +129,12 @@ public class MiscType extends EquipmentType {
     // these are subtypes of F_HAND_WEAPON
     public static final long S_CLAW = 1L << 0; // Solaris 7
     public static final long S_MINING_DRILL = 1L << 1; // Miniatures
-                                                            // Rulebook; TODO
+    // Rulebook; TODO
 
     // Secondary flags for infantry tools
     public static final long S_VIBROSHOVEL = 1L << 0; // can fortify hexes
     public static final long S_DEMOLITION_CHARGE = 1L << 1; // can demolish
-                                                                // buildings
+    // buildings
     public static final long S_BRIDGE_KIT = 1L << 2; // can build a bridge
     public static final long S_MINESWEEPER = 1L << 3; // can clear mines
     public static final long S_HEAVY_ARMOR = 1L << 4;
@@ -145,7 +145,7 @@ public class MiscType extends EquipmentType {
     // Secondary flags for Jump Jets
     public static final long S_STANDARD = 1L << 0;
     public static final long S_IMPROVED = 1L << 1;
-    
+
     public static final int T_TARGSYS_UNKNOWN = -1;
     public static final int T_TARGSYS_STANDARD = 0;
     public static final int T_TARGSYS_TARGCOMP = 1;
@@ -156,11 +156,7 @@ public class MiscType extends EquipmentType {
     public static final int T_TARGSYS_MULTI_TRAC = 6;
     public static final int T_TARGSYS_MULTI_TRAC_II = 7;
     public static final int T_TARGSYS_HEAT_SEEKING_THB = 8;
-    public static final String[] targSysNames = { "Standard Targeting System",
-            "Targeting Computer", "Long-Range Targeting System",
-            "Short-Range Targeting System", "Variable-Range Taretting System",
-            "Anti-Air Targeting System", "Multi-Trac Targeting System",
-            "Multi-Trac II Targeting System" };
+    public static final String[] targSysNames = { "Standard Targeting System", "Targeting Computer", "Long-Range Targeting System", "Short-Range Targeting System", "Variable-Range Taretting System", "Anti-Air Targeting System", "Multi-Trac Targeting System", "Multi-Trac II Targeting System" };
 
     // New stuff for shields
     protected int baseDamageAbsorptionRate = 0;
@@ -172,25 +168,22 @@ public class MiscType extends EquipmentType {
     }
 
     public boolean isShield() {
-        if (this.hasFlag(MiscType.F_CLUB)
-                && (this.hasSubType(MiscType.S_SHIELD_LARGE)
-                        || this.hasSubType((MiscType.S_SHIELD_MEDIUM)) || this
-                        .hasSubType(MiscType.S_SHIELD_SMALL)))
+        if (hasFlag(MiscType.F_CLUB) && (hasSubType(MiscType.S_SHIELD_LARGE) || hasSubType((MiscType.S_SHIELD_MEDIUM)) || hasSubType(MiscType.S_SHIELD_SMALL))) {
             return true;
+        }
         // else
         return false;
     }
 
     public boolean isVibroblade() {
-        if (this.hasFlag(MiscType.F_CLUB)
-                && (this.hasSubType(MiscType.S_VIBRO_LARGE)
-                        || this.hasSubType((MiscType.S_VIBRO_MEDIUM)) || this
-                        .hasSubType(MiscType.S_VIBRO_SMALL)))
+        if (hasFlag(MiscType.F_CLUB) && (hasSubType(MiscType.S_VIBRO_LARGE) || hasSubType((MiscType.S_VIBRO_MEDIUM)) || hasSubType(MiscType.S_VIBRO_SMALL))) {
             return true;
+        }
         // else
         return false;
     }
 
+    @Override
     public float getTonnage(Entity entity) {
         if (tonnage != TONNAGE_VARIABLE) {
             return tonnage;
@@ -221,12 +214,11 @@ public class MiscType extends EquipmentType {
             } else {
                 return 2.0f;
             }
-        } else if (hasFlag(F_CLUB)
-                && (hasSubType(S_HATCHET) || hasSubType(S_MACE_THB))) {
+        } else if (hasFlag(F_CLUB) && (hasSubType(S_HATCHET) || hasSubType(S_MACE_THB))) {
             return (float) Math.ceil(entity.getWeight() / 15.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
             return (float) Math.ceil(entity.getWeight() / 20.0);
-        } else if (hasFlag(F_CLUB) && hasSubType(S_SWORD) ) {
+        } else if (hasFlag(F_CLUB) && hasSubType(S_SWORD)) {
             return (float) (Math.ceil(entity.getWeight() / 20.0 * 2.0) / 2.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {
             return (float) (Math.ceil(entity.getWeight() / 10.0));
@@ -235,14 +227,15 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_MASC)) {
             if (hasSubType(S_SUPERCHARGER)) {
                 Engine e = entity.getEngine();
-                if (e == null)
+                if (e == null) {
                     return 0.0f;
+                }
                 return (float) (Math.ceil(e.getWeightEngine() / 10.0 * 2.0) / 2.0);
             }
             if (entity.isClan()) {
-                return (float)Math.round(entity.getWeight() / 25.0f);
+                return Math.round(entity.getWeight() / 25.0f);
             }
-            return (float)Math.round(entity.getWeight() / 20.0f);
+            return Math.round(entity.getWeight() / 20.0f);
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
@@ -256,8 +249,7 @@ public class MiscType extends EquipmentType {
                 return (float) Math.ceil(fTons / 5.0f);
             }
             return (float) Math.ceil(fTons / 4.0f);
-        } else if (EquipmentType.getArmorTypeName(T_ARMOR_FERRO_FIBROUS)
-                .equals(internalName)) {
+        } else if (EquipmentType.getArmorTypeName(T_ARMOR_FERRO_FIBROUS).equals(internalName)) {
             double tons = 0.0;
             if (entity.isClanArmor()) {
                 tons = entity.getTotalOArmor() / (16 * 1.2);
@@ -266,72 +258,66 @@ public class MiscType extends EquipmentType {
             }
             tons = Math.ceil(tons * 2.0) / 2.0;
             return (float) tons;
-        } else if (EquipmentType.getArmorTypeName(T_ARMOR_LIGHT_FERRO).equals(
-                internalName)) {
+        } else if (EquipmentType.getArmorTypeName(T_ARMOR_LIGHT_FERRO).equals(internalName)) {
             double tons = entity.getTotalOArmor() / (16 * 1.06);
             tons = Math.ceil(tons * 2.0) / 2.0;
             return (float) tons;
-        } else if (EquipmentType.getArmorTypeName(T_ARMOR_HEAVY_FERRO).equals(
-                internalName)) {
+        } else if (EquipmentType.getArmorTypeName(T_ARMOR_HEAVY_FERRO).equals(internalName)) {
             double tons = entity.getTotalOArmor() / (16 * 1.24);
             tons = Math.ceil(tons * 2.0) / 2.0;
             return (float) tons;
-        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL)
-                .equals(internalName)) {
+        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName)) {
             double tons = 0.0;
             tons = Math.ceil(entity.getWeight() / 10.0) / 2.0;
             return (float) tons;
-        } else if (EquipmentType.getStructureTypeName(
-                T_STRUCTURE_ENDO_PROTOTYPE).equals(internalName)) {
+        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE).equals(internalName)) {
             double tons = 0.0;
             tons = Math.ceil(entity.getWeight() / 10.0) / 2.0;
             return (float) tons;
-        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED)
-                .equals(internalName)) {
+        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED).equals(internalName)) {
             double tons = 0.0;
             tons = Math.ceil(entity.getWeight() / 10.0) * 2.0;
             return (float) tons;
-        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE)
-                .equals(internalName)) {
+        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE).equals(internalName)) {
             double tons = 0.0;
             tons = Math.ceil(entity.getWeight() / 10.0) / 2.0;
             return (float) tons;
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
             return (float) Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_JUMP_BOOSTER)) {
-            return (float) (Math.ceil(entity.getWeight()
-                    * entity.getOriginalJumpMP() / 10.0) / 2.0);
+            return (float) (Math.ceil(entity.getWeight() * entity.getOriginalJumpMP() / 10.0) / 2.0);
         } else if ((hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) || hasFlag(F_TALON)) {
             return (int) Math.ceil(entity.getWeight() / 15);
-        } else if ( hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM) ) {
-            
+        } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+
             float tonnage = 0;
-            if ( entity instanceof BipedMech )
-                tonnage = entity.getWeight()/35;
-            else
-                tonnage = entity.getWeight()/50;
-            
-            if ( tonnage == Math.round(tonnage) ) {
+            if (entity instanceof BipedMech) {
+                tonnage = entity.getWeight() / 35;
+            } else {
+                tonnage = entity.getWeight() / 50;
+            }
+
+            if (tonnage == Math.round(tonnage)) {
                 return tonnage;
             }
-            
-            if ( Math.floor(tonnage) < Math.round(tonnage) ) {
+
+            if (Math.floor(tonnage) < Math.round(tonnage)) {
                 return Math.round(tonnage);
             }
-            
-            return (float)(Math.floor(tonnage)+0.5);
-        } 
+
+            return (float) (Math.floor(tonnage) + 0.5);
+        }
         // okay, I'm out of ideas
         return 1.0f;
     }
 
+    @Override
     public int getCriticals(Entity entity) {
         if (criticals != CRITICALS_VARIABLE) {
             return criticals;
         }
         // check for known formulas
-        if (hasFlag(F_CLUB)
-                && (hasSubType(S_HATCHET) || hasSubType(S_SWORD) || hasSubType(S_MACE_THB) || hasSubType(S_CHAIN_WHIP))) {
+        if (hasFlag(F_CLUB) && (hasSubType(S_HATCHET) || hasSubType(S_SWORD) || hasSubType(S_MACE_THB) || hasSubType(S_CHAIN_WHIP))) {
             return (int) Math.ceil(entity.getWeight() / 15.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
             return (int) Math.ceil(entity.getWeight() / 20.0);
@@ -341,9 +327,9 @@ public class MiscType extends EquipmentType {
             return 1 + (int) Math.ceil(entity.getWeight() / 20.0);
         } else if (hasFlag(F_MASC)) {
             if (entity.isClan()) {
-                return (int)Math.round(entity.getWeight() / 25.0);
+                return (int) Math.round(entity.getWeight() / 25.0);
             }
-            return (int)Math.round(entity.getWeight() / 20.0);
+            return (int) Math.round(entity.getWeight() / 20.0);
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
@@ -374,44 +360,45 @@ public class MiscType extends EquipmentType {
             return 14;
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return (entity instanceof QuadMech) ? 8 : 4; // all slots in all
-                                                            // legs
+            // legs
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
             return (int) Math.ceil(entity.getWeight() / 15);
-        } else if ( hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM) ) {
-            return entity.getWeightClass()+1;
+        } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+            return entity.getWeightClass() + 1;
         }
         // right, well I'll just guess then
         return 1;
     }
 
     public double getBV(Entity entity, Mounted mount) {
-        
-        if ( hasFlag(F_PPC_CAPACITOR) && mount != null && mount.getLinked() != null ) {
-            
-            if ( mount.getLinked().getType() instanceof ISLightPPC ) {
+
+        if (hasFlag(F_PPC_CAPACITOR) && mount != null && mount.getLinked() != null) {
+
+            if (mount.getLinked().getType() instanceof ISLightPPC) {
                 return 44;
             }
 
-            if ( mount.getLinked().getType() instanceof ISPPC ) {
+            if (mount.getLinked().getType() instanceof ISPPC) {
                 return 88;
             }
 
-            if ( mount.getLinked().getType() instanceof ISHeavyPPC) {
+            if (mount.getLinked().getType() instanceof ISHeavyPPC) {
                 return 53;
             }
 
-            if ( mount.getLinked().getType() instanceof ISSnubNosePPC ) {
+            if (mount.getLinked().getType() instanceof ISSnubNosePPC) {
                 return 90;
             }
 
-            if ( mount.getLinked().getType() instanceof ISERPPC ) {
+            if (mount.getLinked().getType() instanceof ISERPPC) {
                 return 114;
             }
         }
-        
+
         return this.getBV(entity);
     }
-    
+
+    @Override
     public double getBV(Entity entity) {
         if (bv != BV_VARIABLE) {
             return bv;
@@ -425,7 +412,7 @@ public class MiscType extends EquipmentType {
             return Math.ceil(entity.getWeight() / 5.0) * 1.0;
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {
             return Math.ceil(entity.getWeight() / 4.0);
-        } else if (hasFlag(F_CLUB) && (hasSubType(S_SWORD) || hasSubType(S_CHAIN_WHIP))  ) {
+        } else if (hasFlag(F_CLUB) && (hasSubType(S_SWORD) || hasSubType(S_CHAIN_WHIP))) {
             return (Math.ceil(entity.getWeight() / 10.0) + 1.0) * 1.725;
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
             return Math.ceil(entity.getWeight() / 10.0) * 1.725;
@@ -448,9 +435,8 @@ public class MiscType extends EquipmentType {
             return fRearBV * 0.2 + fFrontBV * 0.1;
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
             return (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
-        } 
-        
-        
+        }
+
         // maybe it's 0
         return 0;
     }
@@ -564,10 +550,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLAES());
         EquipmentType.addType(createISModularArmor());
         EquipmentType.addType(createCLModularArmor());
-/*        EquipmentType.addType(createISHeavyPPCCapacitor());
-        EquipmentType.addType(createISLightPPCCapacitor());
-        EquipmentType.addType(createISSNPPCCapacitor());
-        EquipmentType.addType(createISERPPCCapacitor());*/
+        /*
+         * EquipmentType.addType(createISHeavyPPCCapacitor()); EquipmentType.addType(createISLightPPCCapacitor()); EquipmentType.addType(createISSNPPCCapacitor()); EquipmentType.addType(createISERPPCCapacitor());
+         */
         EquipmentType.addType(createCommsGear1());
         EquipmentType.addType(createCommsGear2());
         EquipmentType.addType(createCommsGear3());
@@ -583,7 +568,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCommsGear13());
         EquipmentType.addType(createCommsGear14());
         EquipmentType.addType(createCommsGear15());
-        
 
         // Start BattleArmor equipment
         EquipmentType.addType(createBABoardingClaw());
@@ -605,8 +589,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createBAVibroClaw());
         EquipmentType.addType(createCLBALightActiveProbe());
         EquipmentType.addType(createISBALightActiveProbe());
-        
-        //support vee stuff
+
+        // support vee stuff
         EquipmentType.addType(createLiftHoist());
         EquipmentType.addType(createEnvironmentalSealing());
         EquipmentType.addType(createTractorModification());
@@ -674,7 +658,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createTractorModification() {
         MiscType misc = new MiscType();
 
@@ -860,7 +844,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.hittable = false;
-        misc.spreadable = true;
+        misc.spreadable = false;
         misc.flags |= F_MASC;
         misc.bv = 0;
 
@@ -881,7 +865,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.cost = COST_VARIABLE;
-        misc.spreadable = true;
+        misc.spreadable = false;
         misc.flags |= F_MASC;
         misc.bv = 0;
 
@@ -912,7 +896,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLSuperCharger() {
         MiscType misc = new MiscType();
 
@@ -1050,7 +1034,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM;
         misc.bv = 61;
-        misc.setModes(new String[] { "ECM"});
+        misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1070,7 +1054,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM;
         misc.bv = 61;
-        misc.setModes(new String[] { "ECM"});
+        misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1092,7 +1076,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
-        misc.setModes(new String[] { "ECM"});
+        misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1114,7 +1098,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
-        misc.setModes(new String[] { "ECM"});
+        misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1136,7 +1120,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
-        misc.setModes(new String[] { "ECM"});
+        misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1158,7 +1142,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM | F_BAP;
         misc.bv = 73;
-        misc.setModes(new String[] { "ECM"});
+        misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1263,19 +1247,19 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createLiftHoist() {
         MiscType misc = new MiscType();
-        
+
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Lifthoist";
         misc.setInternalName(misc.name);
         misc.tonnage = 3;
         misc.criticals = 3;
         misc.cost = 50000;
-        misc.flags |= F_LIFTHOIST;        
+        misc.flags |= F_LIFTHOIST;
         misc.bv = 0;
-        
+
         return misc;
     }
 
@@ -1327,7 +1311,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createArmoredChassis() {
         MiscType misc = new MiscType();
 
@@ -1358,13 +1342,7 @@ public class MiscType extends EquipmentType {
     }
 
     /**
-     * Targeting comps should NOT be spreadable. However, I've set them such as
-     * a temp measure to overcome the following bug: TC space allocation is
-     * calculated based on tonnage of direct-fire weaponry. However, since meks
-     * are loaded location-by-location, when the TC is loaded it's very unlikely
-     * that all of the weaponry will be attached, resulting in undersized comps.
-     * Any remaining TC crits after the last expected one are being handled as a
-     * 2nd TC, causing LocationFullExceptions.
+     * Targeting comps should NOT be spreadable. However, I've set them such as a temp measure to overcome the following bug: TC space allocation is calculated based on tonnage of direct-fire weaponry. However, since meks are loaded location-by-location, when the TC is loaded it's very unlikely that all of the weaponry will be attached, resulting in undersized comps. Any remaining TC crits after the last expected one are being handled as a 2nd TC, causing LocationFullExceptions.
      */
 
     public static MiscType createISTargComp() {
@@ -1576,7 +1554,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM;
         misc.bv = 0;
-        misc.setModes(new String[] { "ECM"});
+        misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1666,7 +1644,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createVoidSignatureSystem() {
         MiscType misc = new MiscType();
 
@@ -1687,7 +1665,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createChameleonLightPolarizationField() {
         MiscType misc = new MiscType();
 
@@ -1712,10 +1690,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createFerroFibrous() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS);
-        misc.setInternalName(EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS));
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS));
         misc.addLookupName("Ferro-Fibrous Armor");
         misc.addLookupName("Ferro Fibre");
         misc.tonnage = TONNAGE_VARIABLE;
@@ -1731,10 +1707,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createFerroFibrousPrototype() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO);
-        misc.setInternalName(EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO));
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO));
         misc.addLookupName("Ferro-Fibrous Armor Prototype");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 16;
@@ -1750,10 +1724,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createLightFerroFibrous() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO);
-        misc.setInternalName(EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO));
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO));
         misc.addLookupName("Light Ferro-Fibrous Armor");
         misc.addLookupName("LightFerro");
         misc.tonnage = TONNAGE_VARIABLE;
@@ -1770,10 +1742,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createHeavyFerroFibrous() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO);
-        misc.setInternalName(EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO));
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO));
         misc.addLookupName("Heavy Ferro-Fibrous Armor");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 21;
@@ -1789,10 +1759,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createHardened() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_HARDENED);
-        misc.setInternalName(EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_HARDENED));
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HARDENED);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HARDENED));
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.hittable = false;
@@ -1805,8 +1773,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL);
-        misc.setInternalName(EquipmentType
-                .getStructureTypeName(T_STRUCTURE_ENDO_STEEL));
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL));
         misc.addLookupName("Endo-Steel");
         misc.addLookupName("EndoSteel");
         misc.addLookupName("Endosteel");
@@ -1823,10 +1790,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createEndoSteelPrototype() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType
-                .getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE);
-        misc.setInternalName(EquipmentType
-                .getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE));
+        misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE);
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE));
         misc.addLookupName("Endo-Steel Prototype");
         misc.addLookupName("EndoSteelPrototype");
         misc.addLookupName("Endosteelprototype");
@@ -1845,8 +1810,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED);
-        misc.setInternalName(EquipmentType
-                .getStructureTypeName(T_STRUCTURE_REINFORCED));
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED));
         misc.addLookupName("Reinforced");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
@@ -1857,7 +1821,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear1() {
         MiscType misc = new MiscType();
 
@@ -1871,13 +1835,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear2() {
         MiscType misc = new MiscType();
 
@@ -1891,13 +1855,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear3() {
         MiscType misc = new MiscType();
 
@@ -1911,13 +1875,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear4() {
         MiscType misc = new MiscType();
 
@@ -1931,13 +1895,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear5() {
         MiscType misc = new MiscType();
 
@@ -1951,13 +1915,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear6() {
         MiscType misc = new MiscType();
 
@@ -1971,13 +1935,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear7() {
         MiscType misc = new MiscType();
 
@@ -1991,13 +1955,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear8() {
         MiscType misc = new MiscType();
 
@@ -2011,13 +1975,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear9() {
         MiscType misc = new MiscType();
 
@@ -2031,13 +1995,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear10() {
         MiscType misc = new MiscType();
 
@@ -2051,13 +2015,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear11() {
         MiscType misc = new MiscType();
 
@@ -2071,13 +2035,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear12() {
         MiscType misc = new MiscType();
 
@@ -2091,13 +2055,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear13() {
         MiscType misc = new MiscType();
 
@@ -2111,13 +2075,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear14() {
         MiscType misc = new MiscType();
 
@@ -2131,13 +2095,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-    
+
     public static MiscType createCommsGear15() {
         MiscType misc = new MiscType();
 
@@ -2151,7 +2115,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets"};
+        String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2162,8 +2126,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE);
-        misc.setInternalName(EquipmentType
-                .getStructureTypeName(T_STRUCTURE_COMPOSITE));
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE));
         misc.addLookupName("Composite");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
@@ -2350,7 +2313,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLBALightActiveProbe() {
         MiscType misc = new MiscType();
 
@@ -2367,7 +2330,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createISBALightActiveProbe() {
         MiscType misc = new MiscType();
 
@@ -2436,7 +2399,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createBAVibroClaw() {
         MiscType misc = new MiscType();
 
@@ -2465,7 +2428,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createEnvironmentalSealing() {
         MiscType misc = new MiscType();
 
@@ -2967,8 +2930,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD);
-        misc.setInternalName(EquipmentType
-                .getStructureTypeName(T_STRUCTURE_STANDARD));
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD));
         misc.addLookupName("Regular");
         misc.addLookupName("Standard Armor");
 
@@ -2996,97 +2958,22 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_PPC_CAPACITOR;
         misc.setInstantModeSwitch(false);
         misc.explosive = true;
-        //misc.bv = 88;
+        // misc.bv = 88;
         misc.bv = 0;
         return misc;
     }
 
-/*    public static MiscType createISLightPPCCapacitor() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        misc.name = "LPPC Capacitor";
-        misc.setInternalName("ISLightPPCCapacitor");
-        misc.tonnage = 1.0f;
-        misc.criticals = 1;
-        misc.cost = 150000;
-        misc.setModes(new String[] { "Off", "Charge" });
-        misc.flags |= F_PPC_CAPACITOR;
-        misc.setInstantModeSwitch(false);
-        misc.explosive = true;
-        misc.bv = 44;
-        
-        return misc;
-    }
-
-    public static MiscType createISHeavyPPCCapacitor() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        misc.name = "SNPPC Capacitor";
-        misc.setInternalName("ISSNPPCCapacitor");
-        misc.name = "ERPPC Capacitor";
-        misc.setInternalName("ISERPPCCapacitor");
-        misc.name = "HPPC Capacitor";
-        misc.setInternalName("ISHeavyPPCCapacitor");
-        misc.tonnage = 1.0f;
-        misc.criticals = 1;
-        misc.cost = 150000;
-        misc.setModes(new String[] { "Off", "Charge" });
-        misc.flags |= F_PPC_CAPACITOR;
-        misc.setInstantModeSwitch(false);
-        misc.explosive = true;
-        misc.bv = 53;
-        
-        return misc;
-    }
-
-    public static MiscType createISERPPCCapacitor() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        misc.name = "SNPPC Capacitor";
-        misc.setInternalName("ISSNPPCCapacitor");
-        misc.name = "ERPPC Capacitor";
-        misc.setInternalName("ISERPPCCapacitor");
-        misc.tonnage = 1.0f;
-        misc.criticals = 1;
-        misc.cost = 150000;
-        misc.setModes(new String[] { "Off", "Charge" });
-        misc.flags |= F_PPC_CAPACITOR;
-        misc.setInstantModeSwitch(false);
-        misc.explosive = true;
-        misc.bv = 114;
-        
-        return misc;
-    }
-
-    public static MiscType createISSNPPCCapacitor() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        misc.name = "SNPPC Capacitor";
-        misc.setInternalName("ISSNPPCCapacitor");
-        misc.tonnage = 1.0f;
-        misc.criticals = 1;
-        misc.cost = 150000;
-        misc.setModes(new String[] { "Off", "Charge" });
-        misc.flags |= F_PPC_CAPACITOR;
-        misc.setInstantModeSwitch(false);
-        misc.explosive = true;
-        misc.bv = 90;
-        
-        return misc;
-    }
-*/
+    /*
+     * public static MiscType createISLightPPCCapacitor() { MiscType misc = new MiscType(); misc.techLevel = TechConstants.T_IS_TW_NON_BOX; misc.name = "LPPC Capacitor"; misc.setInternalName("ISLightPPCCapacitor"); misc.tonnage = 1.0f; misc.criticals = 1; misc.cost = 150000; misc.setModes(new String[] { "Off", "Charge" }); misc.flags |= F_PPC_CAPACITOR; misc.setInstantModeSwitch(false); misc.explosive = true; misc.bv = 44; return misc; } public static MiscType createISHeavyPPCCapacitor() { MiscType misc = new MiscType(); misc.techLevel = TechConstants.T_IS_TW_NON_BOX; misc.name = "SNPPC Capacitor"; misc.setInternalName("ISSNPPCCapacitor"); misc.name = "ERPPC Capacitor"; misc.setInternalName("ISERPPCCapacitor"); misc.name = "HPPC Capacitor"; misc.setInternalName("ISHeavyPPCCapacitor"); misc.tonnage = 1.0f; misc.criticals = 1; misc.cost = 150000; misc.setModes(new String[] { "Off",
+     * "Charge" }); misc.flags |= F_PPC_CAPACITOR; misc.setInstantModeSwitch(false); misc.explosive = true; misc.bv = 53; return misc; } public static MiscType createISERPPCCapacitor() { MiscType misc = new MiscType(); misc.techLevel = TechConstants.T_IS_TW_NON_BOX; misc.name = "SNPPC Capacitor"; misc.setInternalName("ISSNPPCCapacitor"); misc.name = "ERPPC Capacitor"; misc.setInternalName("ISERPPCCapacitor"); misc.tonnage = 1.0f; misc.criticals = 1; misc.cost = 150000; misc.setModes(new String[] { "Off", "Charge" }); misc.flags |= F_PPC_CAPACITOR; misc.setInstantModeSwitch(false); misc.explosive = true; misc.bv = 114; return misc; } public static MiscType createISSNPPCCapacitor() { MiscType misc = new MiscType(); misc.techLevel = TechConstants.T_IS_TW_NON_BOX; misc.name = "SNPPC Capacitor"; misc.setInternalName("ISSNPPCCapacitor"); misc.tonnage = 1.0f; misc.criticals = 1; misc.cost =
+     * 150000; misc.setModes(new String[] { "Off", "Charge" }); misc.flags |= F_PPC_CAPACITOR; misc.setInstantModeSwitch(false); misc.explosive = true; misc.bv = 90; return misc; }
+     */
 
     public static MiscType createReflective() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE);
-        misc.setInternalName(EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE));
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE));
         misc.addLookupName("Reflective Armor");
         misc.addLookupName("Reflective");
         misc.tonnage = 0;
@@ -3102,10 +2989,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createReactive() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE);
-        misc.setInternalName(EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE));
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE));
         misc.addLookupName("Reactive Armor");
         misc.addLookupName("Reactive");
         misc.tonnage = 0;
@@ -3157,15 +3042,17 @@ public class MiscType extends EquipmentType {
     }
 
     public static String getTargetSysName(int targSysType) {
-        if ((targSysType < 0) || (targSysType >= targSysNames.length))
+        if ((targSysType < 0) || (targSysType >= targSysNames.length)) {
             return null;
+        }
         return targSysNames[targSysType];
     }
 
     public static int getTargetSysType(String targSysName) {
         for (int x = 0; x < targSysNames.length; x++) {
-            if (targSysNames[x].compareTo(targSysName) == 0)
+            if (targSysNames[x].compareTo(targSysName) == 0) {
                 return x;
+            }
         }
         return -1;
     }

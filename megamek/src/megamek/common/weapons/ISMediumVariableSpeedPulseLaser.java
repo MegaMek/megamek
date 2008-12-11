@@ -42,7 +42,7 @@ public class ISMediumVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeap
         damage = DAMAGE_VARIABLE;
         toHitModifier = -4;
         shortRange = 2;
-        mediumRange = 2;
+        mediumRange = 5;
         longRange = 9;
         extremeRange = 10;
         waterShortRange = 1;

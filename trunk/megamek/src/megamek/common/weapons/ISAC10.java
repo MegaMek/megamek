@@ -33,26 +33,28 @@ public class ISAC10 extends ACWeapon {
      */
     public ISAC10() {
         super();
-        this.techLevel = TechConstants.T_INTRO_BOXSET;
-        this.name = "Autocannon/10";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Auto Cannon/10");
-        this.addLookupName("ISAC10");
-        this.addLookupName("IS Autocannon/10");
-        this.heat = 3;
-        this.damage = 10;
-        this.rackSize = 10;
-        this.shortRange = 5;
-        this.mediumRange = 10;
-        this.longRange = 15;
-        this.extremeRange = 20;
-        this.tonnage = 12.0f;
-        this.criticals = 7;
-        this.bv = 123;
-        this.cost = 200000;
-        this.shortAV = 10;
-        this.medAV = 10;
-        this.maxRange = RANGE_MED;
-        this.explosionDamage = damage;
+        techLevel = TechConstants.T_INTRO_BOXSET;
+        name = "Autocannon/10";
+        setInternalName(name);
+        addLookupName("IS Auto Cannon/10");
+        addLookupName("Auto Cannon/10");
+        addLookupName("AutoCannon/10");
+        addLookupName("ISAC10");
+        addLookupName("IS Autocannon/10");
+        heat = 3;
+        damage = 10;
+        rackSize = 10;
+        shortRange = 5;
+        mediumRange = 10;
+        longRange = 15;
+        extremeRange = 20;
+        tonnage = 12.0f;
+        criticals = 7;
+        bv = 123;
+        cost = 200000;
+        shortAV = 10;
+        medAV = 10;
+        maxRange = RANGE_MED;
+        explosionDamage = damage;
     }
 }

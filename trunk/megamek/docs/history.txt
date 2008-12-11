@@ -7,6 +7,7 @@ v0.33.37-dev (SVN)
 + Bug 2129039: Skid distance and PSR calculated wrong
 + Bug: Fix MVSPL range correctly
 + Bug: MASC set as Splitable
++ Bug: Auto Cannon Internal names missing
 
 v0.33.36 (2008-12-10, 19:00 UTC)
 + Bug in Mech BV calculation fixed

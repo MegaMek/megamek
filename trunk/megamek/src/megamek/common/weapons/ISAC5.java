@@ -33,27 +33,29 @@ public class ISAC5 extends ACWeapon {
      */
     public ISAC5() {
         super();
-        this.techLevel = TechConstants.T_INTRO_BOXSET;
-        this.name = "Autocannon/5";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Auto Cannon/5");
-        this.addLookupName("ISAC5");
-        this.addLookupName("IS Autocannon/5");
-        this.heat = 1;
-        this.damage = 5;
-        this.rackSize = 5;
-        this.minimumRange = 3;
-        this.shortRange = 6;
-        this.mediumRange = 12;
-        this.longRange = 18;
-        this.extremeRange = 24;
-        this.tonnage = 8.0f;
-        this.criticals = 4;
-        this.bv = 70;
-        this.cost = 125000;
-        this.shortAV = 5;
-        this.medAV = 5;
-        this.maxRange = RANGE_MED;
-        this.explosionDamage = damage;
+        techLevel = TechConstants.T_INTRO_BOXSET;
+        name = "Autocannon/5";
+        setInternalName(name);
+        addLookupName("IS Auto Cannon/5");
+        addLookupName("Auto Cannon/5");
+        addLookupName("AutoCannon/5");
+        addLookupName("ISAC5");
+        addLookupName("IS Autocannon/5");
+        heat = 1;
+        damage = 5;
+        rackSize = 5;
+        minimumRange = 3;
+        shortRange = 6;
+        mediumRange = 12;
+        longRange = 18;
+        extremeRange = 24;
+        tonnage = 8.0f;
+        criticals = 4;
+        bv = 70;
+        cost = 125000;
+        shortAV = 5;
+        medAV = 5;
+        maxRange = RANGE_MED;
+        explosionDamage = damage;
     }
 }

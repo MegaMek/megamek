@@ -8,6 +8,8 @@ v0.33.37-dev (SVN)
 + Bug: Fix MVSPL range correctly
 + Bug: MASC set as Splitable
 + Bug: Auto Cannon Internal names missing
++ Bug: Small Cockpit crits placed wrong
++ Changed External Name for Rocket Launcher from RL to Rocket Launcher
 
 v0.33.36 (2008-12-10, 19:00 UTC)
 + Bug in Mech BV calculation fixed

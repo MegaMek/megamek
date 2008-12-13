@@ -47,6 +47,7 @@ import java.util.Vector;
 import megamek.client.Client;
 import megamek.client.ui.MechView;
 import megamek.client.ui.AWT.widget.BufferedPanel;
+import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
@@ -130,8 +131,7 @@ public class CustomFighterSquadronDialog
     List m_mechList = new List(10);
     
     private List listFightersSelected = new List();
-    private Vector<Entity> squadron = new Vector<Entity>();
-    //private FighterSquadron fs = new FighterSquadron();
+    private Vector<Aero> squadron = new Vector<Aero>();
     
     private Button m_bPick = new Button(Messages.getString("CustomFighterSquadronDialog.m_bPick")); //$NON-NLS-1$
     private Button m_bCancel = new Button(Messages.getString("Close")); //$NON-NLS-1$
@@ -889,7 +889,7 @@ public class CustomFighterSquadronDialog
                 Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                 //I need to add them to a list of entities, to eventually be processed
                 listFightersSelected.add(e.getDisplayName());
-                squadron.add(e);
+                squadron.add((Aero)e);
                 //fs.fighters.add(e);
             } catch (EntityLoadingException ex) {
                 System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -898,7 +898,7 @@ public class CustomFighterSquadronDialog
             }
             //preview the squadron
             clearSquadPreview();
-            FighterSquadron fs = Compute.compileSquadron(squadron);
+            FighterSquadron fs = new FighterSquadron();
             //fs.compileSquadron();
             previewSquad(fs);
             //if this hits the maximum squadron size then disable add button
@@ -916,7 +916,7 @@ public class CustomFighterSquadronDialog
             //fs.fighters.remove(x);
 //          preview the squadron
             clearSquadPreview();
-            FighterSquadron fs = Compute.compileSquadron(squadron);
+            FighterSquadron fs = new FighterSquadron();
             //fs.compileSquadron();
             previewSquad(fs);
             //make sure that this enables the add button
@@ -935,7 +935,7 @@ public class CustomFighterSquadronDialog
                 c = m_client;
             }
             //compile the fighter squadron
-            FighterSquadron fs = Compute.compileSquadron(squadron);
+            FighterSquadron fs = new FighterSquadron();
             //create a new fighter squadron entity
             //FighterSquadron chosen = fs;
             //fs.compileSquadron();

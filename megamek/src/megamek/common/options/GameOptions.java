@@ -80,14 +80,23 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(victory, "game_turn_limit", 10); //$NON-NLS-1$
         addOption(victory, "commander_killed", false); //$NON-NLS-1$
         
-        IBasicOptionGroup at2 = addGroup("AT2"); //$NON-NLS-1$
-        addOption(at2,"advanced_movement", false); //$NON-NLS-1$
-        addOption(at2,"fuel_consumption", false); //$NON-NLS-1$
-        addOption(at2,"variable_damage_thresh", false); //$NON-NLS-1$
-        addOption(at2,"ammo_explosions", false); //$NON-NLS-1$
-        addOption(at2,"air_breathers", false); //$NON-NLS-1$
-        addOption(at2,"heat_by_bay", false); //$NON-NLS-1$
-        addOption(at2,"at2_nukes", false); //$NON-NLS-1$
+        IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); //$NON-NLS-1$
+        addOption(advAeroRules,"stratops_capital_fighter", false); //$NON-NLS-1$
+        addOption(advAeroRules,"fuel_consumption", false); //$NON-NLS-1$
+        addOption(advAeroRules,"stratops_conv_fusion_bonus", false); //$NON-NLS-1$
+        addOption(advAeroRules,"stratops_harjel", false); //$NON-NLS-1$
+        addOption(advAeroRules,"stratops_grav_effects", false); //$NON-NLS-1$
+        addOption(advAeroRules,"advanced_movement", false); //$NON-NLS-1$
+        addOption(advAeroRules,"heat_by_bay", false); //$NON-NLS-1$
+        addOption(advAeroRules,"atmospheric_control", false); //$NON-NLS-1$
+        addOption(advAeroRules,"ammo_explosions", false); //$NON-NLS-1$
+        addOption(advAeroRules,"stratops_aaa_laser", false); //$NON-NLS-1$
+        addOption(advAeroRules,"stratops_bracket_fire", false); //$NON-NLS-1$
+        addOption(advAeroRules,"stratops_ecm", false); //$NON-NLS-1$
+        addOption(advAeroRules,"stratops_sensor_shadow", false); //$NON-NLS-1$
+        addOption(advAeroRules,"stratops_over_penetrate", false); //$NON-NLS-1$
+        addOption(advAeroRules,"variable_damage_thresh", false); //$NON-NLS-1$
+        addOption(advAeroRules,"at2_nukes", false); //$NON-NLS-1$
         
         IBasicOptionGroup advancedRules = addGroup("advancedRules"); //$NON-NLS-1$
         addOption(advancedRules, "minefields", false); //$NON-NLS-1$

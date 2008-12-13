@@ -24,6 +24,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.TreeMap;
 import java.util.Vector;
 
 /**
@@ -105,7 +106,7 @@ public class MoveStep implements Serializable {
     //for optional vector movement
     private int[] mv;
     private int recoveryUnit = -1;
-    Vector<Integer[]> launched = new Vector<Integer[]>();
+    TreeMap<Integer, Vector<Integer>> launched = new TreeMap<Integer, Vector<Integer>>();
     private boolean isEvading = false;
     private boolean isRolled = false;
     
@@ -187,7 +188,7 @@ public class MoveStep implements Serializable {
      *            currently checked.
      * @param targets - vector of integers identifying the entities to launch
      */
-    public MoveStep(MovePath path, int type, Vector<Integer[]> targets) {
+    public MoveStep(MovePath path, int type, TreeMap<Integer, Vector<Integer>> targets) {
         this(path, type);
         this.launched = targets;
         if (type==MovePath.STEP_UNLOAD || type==MovePath.STEP_LAUNCH) {
@@ -345,7 +346,7 @@ public class MoveStep implements Serializable {
         return game.getTarget(this.targetType, this.targetId);
     }
 
-    public Vector<Integer[]> getLaunched() {
+    public TreeMap<Integer, Vector<Integer>> getLaunched() {
         return launched;
     }
     
@@ -748,6 +749,9 @@ public class MoveStep implements Serializable {
                 setMp(0);
                 break;
             case MovePath.STEP_RECOVER:
+                setMp(0);
+                break;
+            case MovePath.STEP_JOIN:
                 setMp(0);
                 break;
             case MovePath.STEP_THRUST:
@@ -1404,23 +1408,16 @@ public class MoveStep implements Serializable {
                     return;
                 }
             }
+   
+            //if jumpships turn, they can't do anything else
+            if(entity instanceof Jumpship && !(entity instanceof Warship) && !isFirstStep()
+            		&& (prev.getParent().contains(MovePath.STEP_TURN_LEFT) || prev.getParent().contains(MovePath.STEP_TURN_RIGHT))) {
+            	return;
+            }
             
-            if (type == MovePath.STEP_ACC || type == MovePath.STEP_DEC) {
-                //either the previous had to be acceleration or deceleration or this is the first
-                //in atmosphere, acceleration can happen later as a result of elevation change
-                //I think I can safely comment this out, because acc/dec should be appropriately
-                //disabled in the MovementDisplay and this is getting complicated with the 
-                //addition of maneuvers
-                /*
-                if(!isFirstStep() && prev.getType() != MovePath.STEP_ACC && prev.getType() != MovePath.STEP_DEC 
-                        && !(game.getBoard().inAtmosphere() && prev.getType() == MovePath.STEP_DOWN && getNDown() == 1)) {
-                    return;
-                }
-                //if ASF acc/dec at the end of last turn, then can't accelerate/decelerate this turn
-                if(a.didAccLast()) {
-                    return;
-                }
-                */
+            //space stations can only turn
+            if(entity instanceof SpaceStation && !(type == MovePath.STEP_TURN_LEFT || type == MovePath.STEP_TURN_RIGHT)) {
+            	return;
             }
             
             //unless velocity is zero ASFs must move forward one hex before making turns
@@ -1505,6 +1502,11 @@ public class MoveStep implements Serializable {
             
             //no moves after being recovered
             if (!isFirstStep() && prev.getType() == MovePath.STEP_RECOVER) {
+                return;
+            }
+            
+            //no moves after joining
+            if (!isFirstStep() && prev.getType() == MovePath.STEP_JOIN) {
                 return;
             }
             
@@ -2454,6 +2456,11 @@ public class MoveStep implements Serializable {
     
     private int asfTurnCost(IGame game, int direction, Entity entity) {
         
+    	//jumpships (but not space stations and warships) never pay
+    	if(entity instanceof Jumpship && !(entity instanceof Warship) && !(entity instanceof SpaceStation)) {
+    		return 0;
+    	}
+    	
         //if in atmosphere, the rules are different
         if(game.getBoard().inAtmosphere()) {
             //if they are spheroid in atmosphere, then no cost to turn

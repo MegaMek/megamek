@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
@@ -82,6 +83,7 @@ public class MovePath implements Cloneable, Serializable {
     public static final int STEP_MANEUVER = 48;
     public static final int STEP_LOOP = 49;
     public static final int STEP_CAREFUL_STAND = 50;
+    public static final int STEP_JOIN = 51;
     
     public static class Key {
         private final Coords coords;
@@ -181,7 +183,7 @@ public class MovePath implements Cloneable, Serializable {
         return addStep(new MoveStep(this, type, recover, mineToLay));
     }
     
-    public MovePath addStep(int type, Vector<Integer[]> targets) {
+    public MovePath addStep(int type, TreeMap<Integer, Vector<Integer>> targets) {
         return addStep(new MoveStep(this, type, targets));
     }
     

@@ -100,16 +100,24 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
             //damage any entities in the hex
             for (Enumeration<Entity> impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
                 Entity entity = impactHexHits.nextElement();
-                //if fighter squadron multiply damage by active fighters
+                //if fighter squadron all fighters are damaged
                 if(entity instanceof FighterSquadron) {
-                    FighterSquadron fs = (FighterSquadron)entity;
-                    attackValue *= fs.getNFighters();
-                }          
-                ToHitData toHit = new ToHitData();
-                toHit.setHitTable(ToHitData.HIT_NORMAL);
-                HitData hit = entity.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
-                vPhaseReport.addAll( server.damageEntity(entity, hit, attackValue));
-                server.creditKill(entity, ae);
+                    for(Entity fighter : ((FighterSquadron)entity).getFighters()) {
+                    	ToHitData toHit = new ToHitData();
+                        toHit.setHitTable(ToHitData.HIT_NORMAL);
+                        HitData hit = fighter.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
+                        hit.setCapital(false);
+                        vPhaseReport.addAll( server.damageEntity(fighter, hit, attackValue));
+                        server.creditKill(fighter, ae);
+                    }
+                } else {  
+    	            ToHitData toHit = new ToHitData();
+    	            toHit.setHitTable(ToHitData.HIT_NORMAL);
+    	            HitData hit = entity.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
+    	            hit.setCapital(false);
+    	            vPhaseReport.addAll( server.damageEntity(entity, hit, attackValue));
+    	            server.creditKill(entity, ae);
+                }
             }
         }
         return false;

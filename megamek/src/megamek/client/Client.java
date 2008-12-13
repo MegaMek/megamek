@@ -45,6 +45,7 @@ import megamek.common.Building;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
+import megamek.common.FighterSquadron;
 import megamek.common.Flare;
 import megamek.common.Game;
 import megamek.common.GameLog;
@@ -658,6 +659,15 @@ public class Client implements IClientCommandHandler {
         checkDuplicateNamesDuringAdd(entity);
         send(new Packet(Packet.COMMAND_ENTITY_ADD, entity));
     }
+    
+    /**
+     * Sends an "add squadron" packet
+     * This is not working, don't use it
+     */
+    public void sendAddSquadron(Vector<Entity> fighters) {
+        //checkDuplicateNamesDuringAdd(fs);
+        send(new Packet(Packet.COMMAND_SQUADRON_ADD, fighters));
+    }
 
     /**
      * Sends an "deploy minefields" packet
@@ -1258,7 +1268,7 @@ public class Client implements IClientCommandHandler {
             int count = ((Integer) o).intValue();
             if (count > 1) {
                 ArrayList<Entity> myEntities = game.getPlayerEntities(game
-                        .getPlayer(local_pn));
+                        .getPlayer(local_pn), false);
                 for (int i = 0; i < myEntities.size(); i++) {
                     Entity e = myEntities.get(i);
                     if (e.getShortNameRaw().equals(entity.getShortNameRaw())

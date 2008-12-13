@@ -22,6 +22,8 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.weapons.GaussWeapon;
@@ -44,7 +46,7 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean fired = false; // Only true for used OS stuff.
     private boolean rapidfire = false; // MGs in rapid-fire mode
     private boolean hotloaded = false; // Hotloading for ammoType
-
+    
     private int mode; // Equipment's current state. On or Off. Sixshot or
                         // Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
@@ -67,8 +69,14 @@ public class Mounted implements Serializable, RoundUpdated {
 
     //A list of ids (equipment numbers) for the weapons  and ammo linked to
     //this bay (if the mounted is of the BayWeapon type)
+    //I can also use this for weapons of the same type on a capital fighter
     private Vector<Integer> bayWeapons = new Vector<Integer>();
     private Vector<Integer> bayAmmo = new Vector<Integer>();
+   
+	//on capital fighters and squadrons some weapon mounts actually represent multiple weapons of the same type
+    //provide a boolean indicating this type of mount and the number of weapons represented
+    private boolean weaponGroup = false;
+    private int nweapons = 1;
     
     //for ammo loaded by shot rather than ton, a boolean
     private boolean byShot = false;
@@ -315,6 +323,9 @@ public class Mounted implements Serializable, RoundUpdated {
             case -1:
             default:
                 desc = new StringBuffer(type.getDesc());
+        }
+        if(isWeaponGroup()) {
+        	desc.append(" Group (").append(getNWeapons()).append(")");
         }
         if (destroyed) {
             desc.insert(0, "*");
@@ -958,10 +969,9 @@ public class Mounted implements Serializable, RoundUpdated {
         if(this.getType() instanceof WeaponType) {
             WeaponType wtype = (WeaponType)this.getType();
             if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes() ){
-                return  Compute.dialDownHeat(this, wtype)*getCurrentShots();
+                return  Compute.dialDownHeat(this, wtype)*getCurrentShots()*getNWeapons();
             }
-
-            return ((WeaponType)this.getType()).getHeat()*getCurrentShots();
+            return ((WeaponType)this.getType()).getHeat()*getCurrentShots()*getNWeapons();
         }
         return 0;
     }
@@ -980,5 +990,32 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void setBodyMounted(boolean bodyMounted) {
         this.bodyMounted = bodyMounted;
+    }
+    
+    public boolean isWeaponGroup() {
+    	return weaponGroup;
+    }
+    
+    public void setWeaponGroup(boolean b) {
+    	this.weaponGroup = b;
+    }
+    
+    public int getNWeapons() {
+    	return nweapons;
+    }
+    
+    public void setNWeapons(int i) {
+    	//make sure this falls between 1 and 40
+    	if(i < 0) {
+    		i = 1;
+    	}
+    	if(i > 40) {
+    		i = 40;
+    	}
+    	this.nweapons = i;
+    }
+    
+    public void unlink() {
+    	this.linked = null;
     }
 }

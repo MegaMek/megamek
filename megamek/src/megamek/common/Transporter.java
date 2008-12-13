@@ -116,3 +116,4 @@ public interface Transporter extends Serializable {
     public int getCargoMpReduction();
 
 } // End public interface Transporter
+

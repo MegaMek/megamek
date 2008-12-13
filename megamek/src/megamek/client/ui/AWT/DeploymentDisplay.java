@@ -37,6 +37,7 @@ import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.FighterSquadron;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.event.GameListener;
@@ -58,6 +59,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     public static final String DEPLOY_UNLOAD = "deployUnload"; //$NON-NLS-1$
     public static final String DEPLOY_REMOVE = "deployRemove"; //$NON-NLS-1$
     public static final String DEPLOY_ASSAULTDROP = "assaultDrop"; //$NON-NLS-1$
+    public static final String DEPLOY_FORM_SQUADRON = "formSquadron"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -75,6 +77,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     private Button butUnload;
     private Button butRemove;
     private Button butAssaultDrop;
+    private Button butFormSquadron;
     private Button butDone;
 
     private int cen = Entity.NONE; // current entity number
@@ -130,6 +133,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         butRemove.addActionListener(this);
         butRemove.setActionCommand(DEPLOY_REMOVE);
         setRemoveEnabled(true);
+        
+        butFormSquadron = new Button(Messages.getString("DeploymentDisplay.FormSquadron")); //$NON-NLS-1$
+        butFormSquadron.addActionListener(this);
+        butFormSquadron.setActionCommand(DEPLOY_FORM_SQUADRON);
+        setFormSquadronEnabled(true);
 
         butAssaultDrop = new Button(Messages
                 .getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
@@ -150,6 +158,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         panButtons.add(butUnload);
         panButtons.add(butRemove);
         panButtons.add(butAssaultDrop);
+        //panButtons.add(butFormSquadron);
         // panButtons.add(butSpace);
         // panButtons.add(butSpace2);
         // panButtons.add(butSpace3);
@@ -291,6 +300,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         Player p = client.getLocalPlayer();
         // mark deployment hexes
         clientgui.bv.markDeploymentHexesFor(p);
+        if(client.getBoard().inSpace() && client.game.getOptions().booleanOption("stratops_capital_fighter")) {
+        	setFormSquadronEnabled(true);
+        }
     }
 
     /**
@@ -320,6 +332,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         butDone.setEnabled(false);
         setLoadEnabled(false);
         setUnloadEnabled(false);
+        setFormSquadronEnabled(false);
     }
 
     /**
@@ -619,6 +632,61 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                         .getString("DeploymentDisplay.AssaultDropOn"));
             }
         }
+        /*
+         * This is not working, don't use it
+         else if (ev.getActionCommand().equals(DEPLOY_FORM_SQUADRON)) {
+
+        	//What undeployed fighters can we add to the squadron?
+            Vector<Entity> choices = new Vector<Entity>();
+            Enumeration<Entity> entities = client.game.getEntities();
+            Entity other;
+            while (entities.hasMoreElements()) {
+                other = entities.nextElement();
+                if (other.isSelectableThisTurn() && other.isCapitalFighter()) {
+                    choices.addElement(other);
+                }
+            }
+
+            // Do we have anyone to load?
+            if (choices.size() > 0) {
+                String[] names = new String[choices.size()];
+                for (int loop = 0; loop < names.length; loop++) {
+                    names[loop] = choices.elementAt(loop).getShortName();
+                }
+                ChoiceDialog choiceDialog = new ChoiceDialog(
+                        clientgui.frame,
+                        Messages
+                                .getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
+                        Messages
+                                .getString(
+                                        "DeploymentDisplay.loadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
+                        names);
+                choiceDialog.setVisible(true);
+                if (choiceDialog.getAnswer() == true) {
+                    Vector<Entity> fighters = new Vector<Entity>();
+                    //fs.setOwner(client.getLocalPlayer());     
+                    int[] selections = choiceDialog.getChoices();
+                    for(int i = 0; i < selections.length; i++) {
+                    	//fs.load(choices.elementAt(selections[i]));
+                    	fighters.add(choices.elementAt(selections[i]));
+                    }
+                	client.sendAddSquadron(fighters); 
+                }
+                 
+          
+            } // End have-choices
+            else {
+                AlertDialog alert = new AlertDialog(
+                        clientgui.frame,
+                        Messages
+                                .getString("DeploymentDisplay.allertDialog1.title"), //$NON-NLS-1$
+                        Messages
+                                .getString(
+                                        "DeploymentDisplay.allertDialog1.message", new Object[] { ce().getShortName() })); //$NON-NLS-1$
+                alert.setVisible(true);
+            }      	
+        } // End form-squadron
+   */     
 
     } // End public void actionPerformed(ActionEvent ev)
 
@@ -711,6 +779,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     private void setAssaultDropEnabled(boolean enabled) {
         butAssaultDrop.setEnabled(enabled);
         clientgui.getMenuBar().setDeployAssaultDropEnabled(enabled);
+    }
+    
+    private void setFormSquadronEnabled(boolean enabled) {
+        butFormSquadron.setEnabled(enabled);
+        clientgui.getMenuBar().setDeployFormSquadronEnabled(enabled);
     }
 
     /**

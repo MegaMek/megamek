@@ -41,9 +41,13 @@ public class ConvFighter extends Aero implements Serializable {
     }
     
     public int getFuelUsed(int thrust) {
-        int used = (thrust + Math.max(thrust - getWalkMP(), 0));
-        if(game.getOptions().booleanOption("air_breathers") && !getEngine().isFusion()) {
-            used = (int)Math.floor(used / 2.0);
+    	int overThrust =  Math.max(thrust - getWalkMP(), 0);
+    	int safeThrust = thrust - overThrust;
+        int used = safeThrust + 2 * overThrust;
+        if(!getEngine().isFusion()) {
+            used = (int)Math.floor(safeThrust * 0.5) + overThrust;
+        } else if(game.getOptions().booleanOption("stratops_conv_fusion_bonus")) {
+        	used = (int)Math.floor(safeThrust * 0.5) + 2 * overThrust;
         }
         return used;
     }

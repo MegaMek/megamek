@@ -128,6 +128,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem moveRoll = null;
     private JMenuItem moveLaunch = null;
     private JMenuItem moveRecover = null;
+    private JMenuItem moveJoin = null;
     private JMenuItem moveDump = null;
     private JMenuItem moveRam = null;
     private JMenuItem moveHover = null;
@@ -466,6 +467,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
                 Messages.getString("CommonMenuBar.MoveUnload"), MovementDisplay.MOVE_UNLOAD); //$NON-NLS-1$
         moveLaunch = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveLaunch"), MovementDisplay.MOVE_LAUNCH); //$NON-NLS-1$
         moveRecover = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveRecover"), MovementDisplay.MOVE_RECOVER); //$NON-NLS-1$
+        moveJoin = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveJoin"), MovementDisplay.MOVE_JOIN); //$NON-NLS-1$
         submenu.addSeparator();
         moveCharge = createMenuItem(
                 submenu,
@@ -989,6 +991,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     }
     public synchronized void setMoveRecoverEnabled(boolean enabled) {
         moveRecover.setEnabled(enabled);
+    }
+    public synchronized void setMoveJoinEnabled(boolean enabled) {
+        moveJoin.setEnabled(enabled);
     }
     public synchronized void setMoveDumpEnabled(boolean enabled) {
         moveDump.setEnabled(enabled);

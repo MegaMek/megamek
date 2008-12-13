@@ -437,13 +437,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-
+        String number = nweapons > 1 ? " (" + nweapons + ")" : "";
         // Report weapon attack and its to-hit value.
         r = new Report(3115);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName());
+        r.add(wtype.getName() + number);
         if (entityTarget != null) {
             r.addDesc(entityTarget);
         } else {
@@ -583,19 +583,41 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         // yeech. handle damage. . different weapons do this in very different
         // ways
-        int hits = calcHits(vPhaseReport), nCluster = calcnCluster();
+        int hits = 1;
+        if(!(ae instanceof Aero)) {
+        	hits = calcHits(vPhaseReport);
+        }
+        int nCluster = calcnCluster();
 
-        //Now I need to adjust this for air-to-air attacks because they
-        //use attack value
+        //Now I need to adjust this for air-to-air attacks because they use attack value
         if(ae instanceof Aero && target instanceof Aero) {
-            if(hits == 1 && nCluster == 1) {
-                nDamPerHit = attackValue;
-            } else {
+        	//this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
+        	if(ae.isCapitalFighter()) { 
+        		bSalvo = true;
+        		int nhit = 1;
+        		if(nweapons > 1) {
+	        		nhit = Compute.missilesHit(nweapons);
+	        		r = new Report(3325);
+	                r.subject = subjectId;
+	                r.add(nhit);
+	                r.add(" weapon(s) ");
+	                r.add(" ");
+	                r.newlines = 0;
+	                vPhaseReport.add(r);
+        		}
+            	nDamPerHit = attackValue * nhit;
+            	hits = 1;
+            	nCluster = 1;
+        	} else if(usesClusterTable() && entityTarget != null && !entityTarget.isCapitalScale()) {
+        		bSalvo = true;
                 nDamPerHit = 1;
                 hits = attackValue;
                 nCluster = 5;
-            }
-            
+            } else {
+                nDamPerHit = attackValue;
+                hits = 1;
+                nCluster = 1;
+            }   
         }
         
         if (bMissed) {

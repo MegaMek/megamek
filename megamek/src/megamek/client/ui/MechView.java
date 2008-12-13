@@ -326,8 +326,14 @@ public class MechView {
         
         sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
             .append( entity.getTotalArmor() );
-        //sIntArm.append( "/" ) //$NON-NLS-1$
-            //.append( maxArmor );
+        
+        if(entity.isCapitalFighter()) {
+        	sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
+            .append( a.getCapArmor());
+        } else {
+        	sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
+            	.append( entity.getTotalArmor() );
+        }
         
         if(isJumpship) {
             sIntArm.append(Messages.getString("MechView.CapitalArmor"));
@@ -348,6 +354,15 @@ public class MechView {
             //skip broadsides on warships
             if(entity instanceof Warship && (loc == Warship.LOC_LBS || loc == Warship.LOC_RBS)) {
                 continue;
+            }
+            //skip the "Wings" location
+            if(!a.isLargeCraft() && loc == Aero.LOC_WINGS) {
+                continue;
+            }
+            
+            //skip armor locations for cap fighters
+            if(entity.isCapitalFighter()) {
+            	continue;
             }
             
             

@@ -87,6 +87,7 @@ public class MiscType extends EquipmentType {
     public static final long F_VOIDSIG = 1L << 51;
     public static final long F_CHAMELEON_SHIELD = 1L << 52;
     public static final long F_VIBROCLAW = 1L << 53;
+    public static final long F_SINGLE_HEX_ECM = 1l << 54;
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1552,14 +1553,14 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = false;
-        misc.flags |= F_ECM;
+        misc.flags |= F_ECM | F_SINGLE_HEX_ECM;
         misc.bv = 0;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
     }
-
+    
     public static MiscType createMimeticCamo() {
         MiscType misc = new MiscType();
 

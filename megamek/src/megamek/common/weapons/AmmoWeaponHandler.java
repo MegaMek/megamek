@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.AmmoType;
+import megamek.common.FighterSquadron;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
@@ -49,7 +51,6 @@ public class AmmoWeaponHandler extends WeaponHandler {
             Server s) {
         super(t, w, g, s);
         this.generalDamageType = HitData.DAMAGE_BALLISTIC;
-
     }
 
     /*
@@ -78,5 +79,18 @@ public class AmmoWeaponHandler extends WeaponHandler {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
         }
+    }
+    
+    /**
+     * For ammo weapons, this number can be less than the full number if the amount of ammo is not high enough
+     * @return the number of weapons of this type firing (for squadron weapon groups)
+     */
+    protected int getNumberWeapons() {
+    	if(ammo == null) {
+    		//shouldn't happen
+    		return weapon.getNWeapons();
+    	}
+    	int totalShots = ae.getTotalAmmoOfType(ammo.getType());
+    	return Math.min(weapon.getNWeapons(), (int)Math.floor((double)totalShots / (double)weapon.getCurrentShots()));
     }
 }

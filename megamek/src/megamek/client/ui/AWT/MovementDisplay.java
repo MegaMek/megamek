@@ -29,6 +29,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.client.Client;
@@ -45,12 +46,14 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
+import megamek.common.FighterSquadron;
 import megamek.common.GameTurn;
 import megamek.common.IEntityMovementMode;
 import megamek.common.IEntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
+import megamek.common.Jumpship;
 import megamek.common.LandAirMech;
 import megamek.common.ManeuverType;
 import megamek.common.Mech;
@@ -62,6 +65,7 @@ import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
 import megamek.common.Report;
+import megamek.common.SpaceStation;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -69,6 +73,7 @@ import megamek.common.TeleMissile;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
+import megamek.common.Warship;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
@@ -129,7 +134,8 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     public static final String MOVE_DUMP = "MoveDump"; //$NON-NLS-1$
     public static final String MOVE_RAM = "MoveRam"; //$NON-NLS-1$
     public static final String MOVE_HOVER = "MoveHover"; //$NON-NLS-1$
-    public static final String MOVE_MANEUVER = "MoveManeuver";
+    public static final String MOVE_MANEUVER = "MoveManeuver"; //$NON-NLS-1$
+    public static final String MOVE_JOIN = "MoveJoin"; //$NON-NLS-1$
     // Aero Vector Movement
     public static final String MOVE_TURN_LEFT = "MoveTurnLeft"; //$NON-NLS-1$
     public static final String MOVE_TURN_RIGHT = "MoveTurnRight"; //$NON-NLS-1$
@@ -200,6 +206,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     private Button butRam;
     private Button butHover;
     private Button butManeuver;
+    private Button butJoin;
 
     private Button butTurnLeft;
     private Button butTurnRight;
@@ -502,6 +509,12 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         butManeuver.setEnabled(false);
         butManeuver.setActionCommand(MOVE_MANEUVER);
         butManeuver.addKeyListener(this);
+        
+        butJoin = new Button(Messages.getString("MovementDisplay.butJoin")); //$NON-NLS-1$
+        butJoin.addActionListener(this);
+        butJoin.setEnabled(false);
+        butJoin.setActionCommand(MOVE_JOIN);
+        butJoin.addKeyListener(this);
 
         butTurnLeft = new Button(Messages.getString("MovementDisplay.butTurnLeft")); //$NON-NLS-1$
         butTurnLeft.addActionListener(this);
@@ -660,11 +673,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             buttonsAero.add(butFlee);
             buttonsAero.add(butLaunch);
             buttonsAero.add(butRecover);
+            buttonsAero.add(butJoin);
             buttonsAero.add(butHover);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
-            // not used
-            buttonsAero.add(butFortify);
+            // not used         
             buttonsAero.add(butHullDown);
             buttonsAero.add(butShakeOff);
         } else {
@@ -680,10 +693,10 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             buttonsAero.add(butFlee);
             buttonsAero.add(butLaunch);
             buttonsAero.add(butRecover);
+            buttonsAero.add(butJoin);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
-            // not used
-            buttonsAero.add(butDfa);
+            // not used         
             buttonsAero.add(butUp);
             buttonsAero.add(butDown);
             buttonsAero.add(butJump);
@@ -864,6 +877,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         setEvadeEnabled(isMech && client.game.getOptions().booleanOption("tacops_evade"));
         
         updateRecoveryButton();
+        updateJoinButton();
         updateDumpButton();
 
         if (ce instanceof Aero) {
@@ -878,6 +892,13 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if ((((Aero) ce).isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) 
                     && client.game.getBoard().inAtmosphere()) {
                 setTurnEnabled(false);
+            }
+            //jumpships and space stations can turn under different conditions
+            if(ce instanceof Jumpship && !(ce instanceof Warship) && !(ce instanceof SpaceStation)) {
+            	setTurnEnabled(true);
+            }
+            if(ce instanceof SpaceStation && ce.getRunMP() > 0) {
+            	setTurnEnabled(true);
             }
         }
 
@@ -1015,6 +1036,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         setHoverEnabled(false);
         setManeuverEnabled(false);
         setRecklessEnabled(false);
+        setJoinEnabled(false);
     }
 
     /**
@@ -1057,6 +1079,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         updateLoadButtons();
         updateElevationButtons();
         updateRecoveryButton();
+        updateJoinButton();
         updateSpeedButtons();
         updateThrustButton();
         updateRollButton();
@@ -1992,13 +2015,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
                     // must be done with its movement
                     // it also must be same heading and velocity
-                    if (other instanceof Aero && other.isDone() && other.canLoad(ce) && cmd.getFinalFacing() == other.getFacing()) {
-
+                    if (other instanceof Aero && other.isDone() && other.canLoad(ce) && cmd.getFinalFacing() == other.getFacing() && !other.isCapitalFighter()) {
                         // now lets check velocity
                         // depends on movement rules
                         Aero oa = (Aero) other;
                         if (client.game.useVectorMove()) {
-                            // can you do equality with vectors?
                             if (Compute.sameVectors(cmd.getFinalVectors(), oa.getVectors())) {
                                 setRecoverEnabled(true);
                                 isGood = true;
@@ -2018,6 +2039,61 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
 
     }
+    
+    /**
+     * Joining a squadron - Similar to fighter recovery. You can fly up and join a squadron or another solo fighter
+     */
+    private synchronized void updateJoinButton() {
+
+    	if(!client.game.getOptions().booleanOption("stratops_capital_fighter")) {
+    		return;
+    	}
+    	
+        final Entity ce = ce();
+        if (null == ce)
+            return;
+
+        if(!ce.isCapitalFighter()) {
+        	return;
+        }
+   
+        Coords loadeePos = cmd.getFinalCoords();
+        if (client.game.useVectorMove()) {
+        	// not where you are, but where you will be
+        	loadeePos = Compute.getFinalPosition(ce.getPosition(), cmd.getFinalVectors());
+        }
+        Entity other = null;
+        Enumeration<Entity> entities = client.game.getEntities(loadeePos);
+        boolean isGood = false;
+        while (entities.hasMoreElements()) {
+        	// Is the other unit friendly and not the current entity?
+        	other = entities.nextElement();
+        	if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
+        		// must be done with its movement
+        		// it also must be same heading and velocity
+        		if (other.isCapitalFighter() && other.isDone() && other.canLoad(ce) && cmd.getFinalFacing() == other.getFacing()) {      			
+        			// now lets check velocity
+        			// depends on movement rules
+        			Aero oa = (Aero) other;
+        			if (client.game.useVectorMove()) {
+        				// can you do equality with vectors?
+        				if (Compute.sameVectors(cmd.getFinalVectors(), oa.getVectors())) {
+        					setJoinEnabled(true);
+        					isGood = true;
+        				}
+        			} else if (cmd.getFinalVelocity() == oa.getCurrentVelocity()) {
+        				setJoinEnabled(true);
+        				isGood = true;
+        			}
+        		}
+        	}
+        	// Nope. Discard it.
+        	other = null;
+        } // Check the next entity in this position.
+        if (!isGood) {
+        	setJoinEnabled(false);
+        }
+    }
 
     /**
      * Get the unit that the player wants to unload. This method will remove the
@@ -2026,10 +2102,10 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
      * @return The <code>Entity</code> that the player wants to unload. This
      *         value will not be <code>null</code>.
      */
-    private Vector<Integer[]> getLaunchedUnits() {
+    private TreeMap<Integer, Vector<Integer>> getLaunchedUnits() {
         Entity ce = ce();
-        Vector<Integer[]> choices = new Vector<Integer[]>();
-
+        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
+        
         Vector<Entity> launchableFighters = ce.getLaunchableFighters();
         Vector<Entity> launchableSmallCraft = ce.getLaunchableSmallCraft();
 
@@ -2046,51 +2122,36 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             Vector<Bay> FighterBays = ce.getFighterBays();
             for (int i = 0; i < FighterBays.size(); i++) {
                 currentBay = FighterBays.elementAt(i);
+                Vector<Integer> bayChoices = new Vector<Integer>();
                 currentFighters = currentBay.getLaunchableUnits();
-                // crap, this has to be done by doors in order to get the right
-                // bonus to the control roll
+                /*
+                 * We will assume that if more fighters are launched than is safe, that these excess fighters
+                 * will be distributed equally among available doors
+                 */
                 doors = currentBay.getDoors();
-                for (int j = 0; j < doors; j++) {
-                    if (currentFighters.size() > 0) {
-                        String[] names = new String[currentFighters.size()];
-                        String question = Messages.getString("MovementDisplay.LaunchFighterDialog.message", new Object[] { //$NON-NLS-1$
-                                ce.getShortName(), bayNum, j + 1 });
-                        for (int loop = 0; loop < names.length; loop++) {
-                            names[loop] = currentFighters.elementAt(loop).getShortName();
-                        }
-                        ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.frame, Messages.getString("MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
-                                currentBay.getType(), bayNum, j + 1 }), //$NON-NLS-1$
-                                question, names);
-                        choiceDialog.setVisible(true);
-                        if (choiceDialog.getAnswer() == true) {
-                            // load up the choices
-                            int[] unitsLaunched = choiceDialog.getChoices();
-                            // get the bonus to the control roll for
-                            // overlaunching
-                            int bonus = unitsLaunched.length - 2;
-                            // I need to make the door check here, doesn't seem
-                            // right but can't figure out better way
-                            // Its a hack, I know
-                            int doorDamage = 0;
-                            boolean alreadyDamaged = false;
-                            for (int k = 0; k < unitsLaunched.length; k++) {
-                                // add these to the units chosen
-                                doorDamage = 0;
-                                if ((((Aero) ce).isOutControlTotal() || k > 1) && !alreadyDamaged) {
-                                    int doorroll = Compute.d6(2);
-                                    if (doorroll == 2) {
-                                        doorDamage = 1;
-                                        alreadyDamaged = true;
-                                    }
-                                }
-                                choices.add(new Integer[] { currentFighters.elementAt(unitsLaunched[k]).getId(), bonus, doorDamage });
-                            }
-                            // now remove them (must be a better way?)
-                            for (int l = unitsLaunched.length; l > 0; l--) {
-                                currentFighters.remove(unitsLaunched[l - 1]);
-                            }
-                        }
-                    }
+                if (currentFighters.size() > 0) {
+                	String[] names = new String[currentFighters.size()];
+                	String question = Messages.getString("MovementDisplay.LaunchFighterDialog.message", new Object[] { //$NON-NLS-1$
+                			ce.getShortName(), doors*2, bayNum});
+                	for(int loop = 0; loop < names.length; loop++) {
+                		names[loop] = currentFighters.elementAt(loop).getShortName();
+                	}
+                	ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.frame, Messages.getString("MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
+                			currentBay.getType(), bayNum}), //$NON-NLS-1$
+                			question, names);
+                	choiceDialog.setVisible(true);
+                	if (choiceDialog.getAnswer() == true) {
+                		// load up the choices
+                		int[] unitsLaunched = choiceDialog.getChoices();
+                		for (int k = 0; k < unitsLaunched.length; k++) {
+                                bayChoices.add(currentFighters.elementAt(unitsLaunched[k]).getId());
+                		}
+                		choices.put(i, bayChoices);
+                		// now remove them (must be a better way?)
+                		for (int l = unitsLaunched.length; l > 0; l--) {
+                			currentFighters.remove(unitsLaunched[l - 1]);
+                		}              
+                	}
                 }
                 bayNum++;
             }
@@ -2177,6 +2238,67 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
         return -1;
     }
+    
+    /**
+     * @return the unit id that the player wants to join
+     */
+    private int getUnitJoined() {
+        Entity ce = ce();
+        Vector<Integer> choices = new Vector<Integer>();
+
+        // collect all possible choices
+        Coords loadeePos = cmd.getFinalCoords();
+        if (client.game.useVectorMove()) {
+            // not where you are, but where you will be
+            loadeePos = Compute.getFinalPosition(ce.getPosition(), cmd.getFinalVectors());
+        }
+        Entity other = null;
+        Enumeration<Entity> entities = client.game.getEntities(loadeePos);
+        while (entities.hasMoreElements()) {
+            // Is the other unit friendly and not the current entity?
+            other = entities.nextElement();
+            if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
+                // must be done with its movement
+                // it also must be same heading and velocity
+                if (other instanceof Aero && !((Aero) other).isOutControlTotal() && other.isDone() && other.canLoad(ce) && ce.isLoadableThisTurn() && cmd.getFinalFacing() == other.getFacing()) {
+
+                    // now lets check velocity
+                    // depends on movement rules
+                    Aero oa = (Aero) other;
+                    if (client.game.useVectorMove()) {
+                        if (Compute.sameVectors(cmd.getFinalVectors(), oa.getVectors())) {
+                            choices.add(other.getId());
+                        }
+                    } else if (cmd.getFinalVelocity() == oa.getCurrentVelocity()) {
+                        choices.add(other.getId());
+                    }
+                }
+            }
+            // Nope. Discard it.
+            other = null;
+        } // Check the next entity in this position.
+
+        if (choices.size() < 1) {
+            return -1;
+        }
+
+        if (choices.size() == 1) {
+        	return choices.elementAt(0);
+        }
+
+        String[] names = new String[choices.size()];
+        for (int loop = 0; loop < names.length; loop++) {
+            names[loop] = client.game.getEntity(choices.elementAt(loop)).getShortName();
+        }
+        String question = Messages.getString("MovementDisplay.JoinSquadronDialog.message");
+        SingleChoiceDialog choiceDialog = new SingleChoiceDialog(clientgui.frame, Messages.getString("MovementDisplay.JoinSquadronDialog.title"), question, names);
+        choiceDialog.setVisible(true);
+
+        if (choiceDialog.getAnswer()) {
+        	return choices.elementAt(choiceDialog.getChoice());
+        }
+        return -1;
+    }
 
     // check for out of control and adjust buttons
     private void checkOOC() {
@@ -2217,6 +2339,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             butLaunch.setEnabled(true);
             updateRACButton();
             updateRecoveryButton();
+            updateJoinButton();
             updateDumpButton();
         }
         return;
@@ -2818,18 +2941,25 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_LAUNCH)) {
-            // The function will bring up a choice dialog that
-            // asks the user how many units of each type (small craft and
-            // ASF) he wants to launch
-            Vector<Integer[]> launched = getLaunchedUnits();
-            cmd.addStep(MovePath.STEP_LAUNCH, launched);
-            clientgui.bv.drawMovementData(ce, cmd);
+        	TreeMap<Integer, Vector<Integer>> launched = getLaunchedUnits();
+        	if(!launched.isEmpty()) {
+	            cmd.addStep(MovePath.STEP_LAUNCH, launched);
+	            clientgui.bv.drawMovementData(ce, cmd);
+        	}
         } else if (ev.getActionCommand().equals(MOVE_RECOVER)) {
             // if more than one unit is available as a carrier
             // then bring up an option dialog
             int recoverer = getRecoveryUnit();
             if (recoverer != -1) {
                 cmd.addStep(MovePath.STEP_RECOVER, recoverer, -1);
+                clientgui.bv.drawMovementData(ce, cmd);
+            }
+        } else if (ev.getActionCommand().equals(MOVE_JOIN)) {
+            // if more than one unit is available as a carrier
+            // then bring up an option dialog
+            int joined = getUnitJoined();
+            if (joined != -1) {
+                cmd.addStep(MovePath.STEP_JOIN, joined, -1);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_TURN_LEFT)) {
@@ -3214,6 +3344,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     private void setRecoverEnabled(boolean enabled) {
         butRecover.setEnabled(enabled);
         clientgui.getMenuBar().setMoveRecoverEnabled(enabled);
+    }
+    
+    private void setJoinEnabled(boolean enabled) {
+        butJoin.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveJoinEnabled(enabled);
     }
 
     private void setDumpEnabled(boolean enabled) {

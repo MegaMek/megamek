@@ -542,9 +542,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
         }
 
         // Aeros cannot switch modes under standard rules
+        /*
         if (ce() instanceof Aero) {
             return;
         }
+        */
 
         // send change to the server
         int nMode = m.switchMode();

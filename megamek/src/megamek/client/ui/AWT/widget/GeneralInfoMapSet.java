@@ -29,8 +29,10 @@ import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IEntityMovementType;
+import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.Tank;
+import megamek.common.Warship;
 import megamek.common.options.IOption;
 
 /**
@@ -342,6 +344,10 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         mpR1.setString(Integer.toString(en.getWalkMP()));
         mpR2.setString(en.getRunMPasString());
 
+        if(en instanceof Jumpship && !(en instanceof Warship)) {
+        	mpR2.setString(en.getRunMPasString() + " (" + Double.toString(((Jumpship)en).getAccumulatedThrust()) + ")");
+        }
+        
         if (en.hasUMU())
             mpR3.setString(Integer.toString(en.getActiveUMUCount()));
         else

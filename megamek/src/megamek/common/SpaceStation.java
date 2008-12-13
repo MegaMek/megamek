@@ -112,5 +112,37 @@ public class SpaceStation extends Jumpship implements Serializable {
         
     }
     
+    /**
+     * All military space stations automatically have ECM if in space
+     */
+    public boolean hasActiveECM() {
+    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+    		return super.hasActiveECM();
+    	}
+    	return getECMRange() >= 0;
+    }
+    
+    /**
+     * What's the range of the ECM equipment? 
+     * 
+     * @return the <code>int</code> range of this unit's ECM. This value will
+     *         be <code>Entity.NONE</code> if no ECM is active.
+     */
+    public int getECMRange() {
+    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+    		return super.getECMRange();
+    	}
+        if(!this.isMilitary()) {
+        	return Entity.NONE;
+        }
+    	int range = 2;  	
+        //the range might be affected by sensor/FCS damage
+        range = range - getSensorHits() - getCICHits();     
+        return range;
+    }
+    
+    public double getBVTypeModifier() {
+        return 0.7;
+    }
     
 }

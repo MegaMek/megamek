@@ -43,7 +43,7 @@ public class NL35Weapon extends NavalLaserWeapon {
         this.longRange = 33;
         this.extremeRange = 44;
         this.tonnage = 700.0f;
-        this.bv = 832;
+        this.bv = 830;
         this.cost = 500000;
         this.shortAV = 3.5;
         this.medAV = 3.5;

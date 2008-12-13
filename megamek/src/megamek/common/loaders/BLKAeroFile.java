@@ -25,12 +25,21 @@
  */
 package megamek.common.loaders;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+
 import megamek.common.Aero;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
+import megamek.common.Mounted;
 import megamek.common.TechConstants;
+import megamek.common.Warship;
 import megamek.common.util.BuildingBlock;
 
 public class BLKAeroFile extends BLKFile implements IMechLoader {    
@@ -117,7 +126,10 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         a.initializeArmor(armor[BLKAeroFile.RW], Aero.LOC_RWING );
         a.initializeArmor(armor[BLKAeroFile.LW], Aero.LOC_LWING );
         a.initializeArmor(armor[BLKAeroFile.AFT], Aero.LOC_AFT );
+        a.initializeArmor(0, Aero.LOC_WINGS);
         
+        a.autoSetCapArmor();
+        a.autoSetFatalThresh();
 
         a.autoSetInternal();
         a.autoSetSI();
@@ -129,6 +141,9 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         loadEquipment(a, "Left Wing", Aero.LOC_LWING );
         loadEquipment(a, "Aft", Aero.LOC_AFT );
        
+        //now organize the weapons into groups for capital fighters
+        organizeIntoGroups(a);
+        
         if(dataFile.exists("omni")) {
             a.setOmni(true);
         }
@@ -186,4 +201,44 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         }
     }
     
+    protected void organizeIntoGroups(Aero a) throws EntityLoadingException {
+    	//collect a hash of all the same weapons in each location by id
+    	Map<String, Integer> groups = new HashMap<String, Integer>();
+    	for (Mounted mounted : a.getTotalWeaponList()) {
+    		int loc = mounted.getLocation();
+    		if(loc == Aero.LOC_RWING || loc == Aero.LOC_LWING) {
+    			loc = Aero.LOC_WINGS;
+    		}
+    		if(mounted.isRearMounted()) {
+    			loc = Aero.LOC_AFT;
+    		}
+    		String key = mounted.getType().getInternalName() + ":" + loc;
+    		if(null == groups.get(key)) {
+    			groups.put(key, 1);
+    		} else {
+    			groups.put(key, groups.get(key) + 1);
+    		}
+    	}
+    	//now we just need to traverse the hash and add this new equipment
+    	Set<String> set= groups.keySet();
+        Iterator<String> iter = set.iterator();
+        while(iter.hasNext()) {
+            String key = iter.next();
+            String name = key.split(":")[0];
+            int loc = Integer.parseInt(key.split(":")[1]);
+            EquipmentType etype = EquipmentType.get(name);
+            Mounted newmount;
+            if (etype != null) {
+                try {
+                    newmount = a.addWeaponGroup(etype, loc);
+                    newmount.setNWeapons(groups.get(key));
+                } catch (LocationFullException ex) {
+                    throw new EntityLoadingException(ex.getMessage());
+                }
+            }
+            else if(name != "0"){
+                a.addFailedEquipment(name);
+            }
+        }  	
+    }
 }

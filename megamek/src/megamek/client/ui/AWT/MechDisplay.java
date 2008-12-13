@@ -43,6 +43,7 @@ import megamek.client.ui.AWT.widget.ArmlessMechMapSet;
 import megamek.client.ui.AWT.widget.BackGroundDrawer;
 import megamek.client.ui.AWT.widget.BattleArmorMapSet;
 import megamek.client.ui.AWT.widget.BufferedPanel;
+import megamek.client.ui.AWT.widget.CapitalFighterMapSet;
 import megamek.client.ui.AWT.widget.DisplayMapSet;
 import megamek.client.ui.AWT.widget.GeneralInfoMapSet;
 import megamek.client.ui.AWT.widget.GunEmplacementMapSet;
@@ -327,6 +328,7 @@ public class MechDisplay extends BufferedPanel {
         private ArmlessMechMapSet armless;
         private LargeSupportTankMapSet largeSupportTank;
         private AeroMapSet aero;
+        private CapitalFighterMapSet capFighter;
         private SquadronMapSet squad;
         private JumpshipMapSet jump;
         private SpheroidMapSet sphere;
@@ -362,6 +364,7 @@ public class MechDisplay extends BufferedPanel {
             armless = new ArmlessMechMapSet(this);
             largeSupportTank = new LargeSupportTankMapSet(this);
             aero = new AeroMapSet(this);
+            capFighter = new CapitalFighterMapSet(this);
             jump = new JumpshipMapSet(this);
             sphere = new SpheroidMapSet(this);
             warship = new WarshipMapSet(this);
@@ -474,6 +477,9 @@ public class MechDisplay extends BufferedPanel {
                     if (sc.isSpheroid()) {
                         ams = sphere;
                     }
+                }
+                if(en.isCapitalFighter()) {
+                	ams = capFighter;
                 }
                 minLeftMargin = minAeroLeftMargin;
                 minTopMargin = minAeroTopMargin;
@@ -1324,7 +1330,7 @@ public class MechDisplay extends BufferedPanel {
                 // if this is a weapons bay, then I need to compile it to get
                 // accurate results
                 if (wtype instanceof BayWeapon) {
-                    compileWeaponBay(mounted.getBayWeapons(), wtype.isCapital());
+                    compileWeaponBay(mounted, wtype.isCapital());
                 } else {
                     // otherwise I need to replace range display with standard
                     // ranges and attack values
@@ -1673,9 +1679,12 @@ public class MechDisplay extends BufferedPanel {
 
         }
 
-        private void compileWeaponBay(Vector<Integer> bayWeapons,
+        private void compileWeaponBay(Mounted weapon,
                 boolean isCapital) {
-
+        	
+        	Vector<Integer> bayWeapons = weapon.getBayWeapons();
+        	WeaponType wtype = (WeaponType)weapon.getType();
+        	
             // set default values in case if statement stops
             wShortAVR.setText("---"); //$NON-NLS-1$
             wMedAVR.setText("---"); //$NON-NLS-1$
@@ -1734,12 +1743,16 @@ public class MechDisplay extends BufferedPanel {
 
                 }
             }
-            // check for active fighters in fighter squadrons
+            // check for bracketing
             double mult = 1.0;
-            if (entity instanceof FighterSquadron) {
-                FighterSquadron fs = (FighterSquadron) entity;
-                mult = ((double) fs.getNFighters())
-                        / ((double) fs.getN0Fighters());
+            if(wtype.hasModes() && weapon.curMode().equals("Bracket 80%")) {
+            	mult = 0.8;
+            }
+            if(wtype.hasModes() && weapon.curMode().equals("Bracket 60%")) {
+            	mult = 0.6;
+            }
+            if(wtype.hasModes() && weapon.curMode().equals("Bracket 40%")) {
+            	mult = 0.4;
             }
             avShort = mult * avShort;
             avMed = mult * avMed;
@@ -1831,7 +1844,7 @@ public class MechDisplay extends BufferedPanel {
                 if (entity instanceof Aero) {
                     WeaponType wtype = (WeaponType) mWeap.getType();
                     if (isBay) {
-                        compileWeaponBay(oldWeap.getBayWeapons(), wtype
+                        compileWeaponBay(oldWeap, wtype
                                 .isCapital());
                     } else {
                         // otherwise I need to replace range display with
@@ -1877,9 +1890,10 @@ public class MechDisplay extends BufferedPanel {
 
         private static final String IMAGE_DIR = "data/images/widgets";
 
-        private TransparentLabel locLabel, slotLabel, modeLabel;
+        private TransparentLabel locLabel, slotLabel, modeLabel, unitLabel;
         public java.awt.List slotList;
         public java.awt.List locList;
+        public java.awt.List unitList;
 
         public Choice m_chMode;
         public Button m_bDumpAmmo;
@@ -1888,6 +1902,7 @@ public class MechDisplay extends BufferedPanel {
                 "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
 
         Entity en;
+        Vector<Entity> entities = new Vector<Entity>();
 
         public SystemPanel(ClientGUI clientgui) {
             super();
@@ -1898,6 +1913,8 @@ public class MechDisplay extends BufferedPanel {
                     Messages.getString("MechDisplay.Location"), fm, Color.white, TransparentLabel.CENTER); //$NON-NLS-1$
             slotLabel = new TransparentLabel(
                     Messages.getString("MechDisplay.Slot"), fm, Color.white, TransparentLabel.CENTER); //$NON-NLS-1$
+            unitLabel = new TransparentLabel(
+                    Messages.getString("MechDisplay.Unit"), fm, Color.white, TransparentLabel.CENTER); //$NON-NLS-1$
 
             locList = new List(8, false);
             locList.addItemListener(this);
@@ -1907,6 +1924,10 @@ public class MechDisplay extends BufferedPanel {
             slotList.addItemListener(this);
             slotList.addKeyListener(clientgui.menuBar);
             // slotList.setEnabled(false);
+            
+            unitList = new List(8, false);
+            unitList.addItemListener(this);
+            unitList.addKeyListener(clientgui.menuBar);
 
             m_chMode = new Choice();
             m_chMode.add("   "); //$NON-NLS-1$
@@ -1954,10 +1975,31 @@ public class MechDisplay extends BufferedPanel {
             c.gridy = 1;
             c.gridx = 0;
             c.gridwidth = 1;
-            c.insets = new Insets(1, 9, 15, 1);
-            c.gridheight = GridBagConstraints.REMAINDER;
+            c.insets = new Insets(15, 9, 1, 1);
+            c.gridheight = 1;
             gridbag.setConstraints(locList, c);
             add(locList);
+            
+            c.fill = GridBagConstraints.BOTH;
+            c.insets = new Insets(15, 9, 1, 1);
+            c.gridy = 2;
+            c.gridx = 0;
+            c.weightx = 0.5;
+            c.weighty = 0.0;
+            c.gridwidth = 1;
+            c.gridheight = 1;
+            gridbag.setConstraints(unitLabel, c);
+            add(unitLabel);
+            
+            c.weightx = 0.5;
+            // c.weighty = 1.0;
+            c.gridy = 3;
+            c.gridx = 0;
+            c.gridwidth = 1;
+            c.insets = new Insets(1, 9, 15, 1);
+            c.gridheight = GridBagConstraints.REMAINDER;
+            gridbag.setConstraints(unitList, c);
+            add(unitList);
 
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.gridheight = 1;
@@ -2020,24 +2062,44 @@ public class MechDisplay extends BufferedPanel {
             }
             return en.getEquipment(cs.getIndex());
         }
-
+        
+        private Entity getSelectedEntity() {
+        	int unit = unitList.getSelectedIndex();
+            if (unit == -1 || unit > entities.size()) {
+                return null;
+            }
+            return entities.elementAt(unit);
+        }
+        
         /**
          * updates fields for the specified mech
          */
         public void displayMech(Entity en) {
             this.en = en;
-
-            locList.removeAll();
+            entities.clear();
+            entities.add(en);
+            unitList.removeAll();
+            unitList.add(Messages.getString("MechDisplay.Ego"));
+            for (Entity loadee : en.getLoadedUnits()) {
+                unitList.add(loadee.getModel());
+                entities.add(loadee);
+            }
+            unitList.select(0);
+            displayLocations();
+            displaySlots();
+        }
+        
+        public void displayLocations() {
+        	locList.removeAll();
             for (int i = 0; i < en.locations(); i++) {
                 if (en.getNumberOfCriticals(i) > 0) {
                     locList.add(en.getLocationName(i), i);
                 }
             }
             locList.select(0);
-            displaySlots();
         }
 
-        public void displaySlots() {
+        private void displaySlots() {
             int loc = locList.getSelectedIndex();
             slotList.removeAll();
             for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
@@ -2086,7 +2148,15 @@ public class MechDisplay extends BufferedPanel {
         // ItemListener
         //
         public void itemStateChanged(ItemEvent ev) {
-            if (ev.getItemSelectable() == locList) {
+        	if (ev.getItemSelectable() == unitList) {              
+                if(null != getSelectedEntity()) {
+                	this.en = getSelectedEntity();
+                	m_chMode.removeAll();
+                    m_chMode.setEnabled(false);
+                	displayLocations();
+                	displaySlots();
+                }
+            } else if (ev.getItemSelectable() == locList) {
                 m_chMode.removeAll();
                 m_chMode.setEnabled(false);
                 displaySlots();
@@ -2134,6 +2204,9 @@ public class MechDisplay extends BufferedPanel {
                     }
                 } else if (m != null && bOwner && m.getType().hasModes()) {
                     if (!m.isDestroyed() && en.isActive()) {
+                        m_chMode.setEnabled(true);
+                    }
+                    if (!m.isDestroyed() && !en.isActive() && en.isCapitalFighter() && en.isPartOfFighterSquadron()) {
                         m_chMode.setEnabled(true);
                     }
                     if (!m.isDestroyed()

@@ -50,6 +50,9 @@ public class HitData {
     private boolean capital = false;
     private int capMisCritMod = 0;
     private boolean boxcars = false;
+    //need to keep track of the attack value for a single attack in the case of fighter squadrons
+    //probably not the best place for this, but I don't want to add another parameter to damageEntity
+    private int singleAV = -1;
     
     
     public HitData(int location) {
@@ -212,5 +215,13 @@ public class HitData {
     
     public boolean rolledBoxCars() {
         return boxcars;
+    }
+    
+    public void setSingleAV(int i) {
+    	this.singleAV = i;
+    }
+    
+    public int getSingleAV() {
+    	return singleAV;
     }
 }

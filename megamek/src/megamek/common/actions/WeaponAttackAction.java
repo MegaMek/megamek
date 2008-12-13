@@ -27,7 +27,6 @@ import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
@@ -583,28 +582,49 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
+        //Space ECM
+        if(game.getBoard().inSpace() && game.getOptions().booleanOption("stratops_ecm")) {
+        	int ecm = Compute.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
+        	if(!ae.isLargeCraft()) {
+        		ecm += Compute.getSmallCraftECM(ae, ae.getPosition(), target.getPosition());
+        	}
+        	ecm = Math.min(4,ecm);
+        	int eccm = 0;
+        	if(ae.isLargeCraft()) {
+        		eccm = ((Aero)ae).getECCMBonus();
+        	}
+        	if(ecm > 0) {
+        		toHit.addModifier(ecm, "ECM");
+        		if(eccm > 0) {
+        			toHit.addModifier(-1*Math.min(ecm, eccm), "ECCM");
+        		}
+        	}       	
+        }
+        
         // Aeros may suffer from criticals
         if (ae instanceof Aero) {
             Aero aero = (Aero) ae;
 
             // sensor hits
             int sensors = aero.getSensorHits();
-            if (sensors > 0 && sensors < 3) {
-                toHit.addModifier(sensors, "sensor damage");
-            }
-            if (sensors > 2) {
-                toHit.addModifier(+5, "sensors destroyed");
+
+            if(!aero.isCapitalFighter()) {
+	            if (sensors > 0 && sensors < 3)
+	                toHit.addModifier(sensors, "sensor damage");
+	            if (sensors > 2)
+	                toHit.addModifier(+5, "sensors destroyed");
             }
 
             // FCS hits
             int fcs = aero.getFCSHits();
-            if (fcs > 0) {
+
+            if (fcs > 0 && !aero.isCapitalFighter()) {
                 toHit.addModifier(fcs * 2, "fcs damage");
             }
 
             // pilot hits
             int pilothits = aero.getCrew().getHits();
-            if (pilothits > 0) {
+            if (pilothits > 0 && !aero.isCapitalFighter()) {
                 toHit.addModifier(pilothits, "pilot hits");
             }
 
@@ -626,6 +646,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 toHit.addModifier(+2, "attacker is evading");
             }
 
+           
+            
             // check for heavy gauss rifle on fighter of small craft
             if (weapon.getType() instanceof ISHGaussRifle && ae instanceof Aero
                     && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) {
@@ -734,13 +756,54 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (wtype.isCapital()
                     && wtype.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE
                     && wtype.getAtClass() != WeaponType.CLASS_AR10
-                    && (a.getWeight() < 500 || target instanceof FighterSquadron)) {
+                    && !te.isLargeCraft()) {
+            	//check to see if we are using AAA mode
+            	int aaaMod = 0;
+            	if(wtype.hasModes() && weapon.curMode().equals("AAA")) {
+            		aaaMod = 2;
+            	}
                 if(wtype.isSubCapital()) {
-                    toHit.addModifier(+3, "sub-capital weapon at small target");
+                    toHit.addModifier(3-aaaMod, "sub-capital weapon at small target");
                 } else {
-                    toHit.addModifier(+5, "capital weapon at small target");
+                    toHit.addModifier(5-aaaMod, "capital weapon at small target");
                 }
             }
+            
+            //AAA mode makes targeting large craft more difficult
+            if(wtype.hasModes() && weapon.curMode().equals("AAA") && te.isLargeCraft()) {
+            	toHit.addModifier(+1, "AAA mode at large craft");
+            }
+            
+            //check for bracketing mode
+            if(wtype.hasModes() && weapon.curMode().equals("Bracket 80%")) {
+            	toHit.addModifier(-1, "Bracketing 80%");
+            }
+            if(wtype.hasModes() && weapon.curMode().equals("Bracket 60%")) {
+            	toHit.addModifier(-2, "Bracketing 60%");
+            }
+            if(wtype.hasModes() && weapon.curMode().equals("Bracket 40%")) {
+            	toHit.addModifier(-3, "Bracketing 40%");
+            }
+            
+            //sensor shadows
+            if(game.getOptions().booleanOption("stratops_sensor_shadow") && game.getBoard().inSpace()) {
+            	for(Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
+            		if(!en.isEnemyOf(a) && en.isLargeCraft() 
+            				&& (en.getWeight() - a.getWeight()) >= -100000.0) {
+            			toHit.addModifier(+1, "Sensor Shadow");
+            			break;
+            		}
+            	}
+            	for (Enumeration<Entity> i = game.getEntities(target.getPosition()); i.hasMoreElements();) {
+                    Entity en = i.nextElement();
+                    if(!en.isEnemyOf(a) && en.isLargeCraft() && !en.equals(a)
+            				&& (en.getWeight() - a.getWeight()) >= -100000.0) {
+            			toHit.addModifier(+1, "Sensor Shadow");
+            			break;
+            		}
+            	}
+            }
+            
         }
 
         // Vehicles may suffer from criticals
@@ -1834,6 +1897,25 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         }
+        
+        //you cannot bracket small craft at short range
+        if(wtype.hasModes() 
+        		&& (weapon.curMode().equals("Bracket 80%") || weapon.curMode().equals("Bracket 60%") || weapon.curMode().equals("Bracket 40%"))
+        		&& target instanceof Aero && !te.isLargeCraft()
+        		&& RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(weapon), game.getOptions().booleanOption("tacops_range")) == RangeType.RANGE_SHORT) {
+        	return "small craft cannot be bracketed at short range";
+        }
+        
+        //you must have enough weapons in your bay to be able to use bracketing
+        if(wtype.hasModes() && weapon.curMode().equals("Bracket 80%") && weapon.getBayWeapons().size() < 2) {
+        	return "not enough weapons to bracket at this level";
+        }
+        if(wtype.hasModes() && weapon.curMode().equals("Bracket 60%") && weapon.getBayWeapons().size() < 3) {
+        	return "not enough weapons to bracket at this level";
+        }
+        if(wtype.hasModes() && weapon.curMode().equals("Bracket 40%") && weapon.getBayWeapons().size() < 4) {
+        	return "not enough weapons to bracket at this level";
+        }
 
         // Is the weapon blocked by a passenger?
         if (ae.isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted())) {
@@ -1934,6 +2016,25 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Can only raise the heat level of Meks.";
         }
 
+        //capital fighters cannot use more heat than they have heat sinks to dissipate
+        if(ae.isCapitalFighter()) {
+        	int totalheat = 0;
+        	for ( Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
+                Object o = i.nextElement();
+                if (!(o instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                if (prevAttack.getEntityId() == attackerId && weaponId != prevAttack.getWeaponId()) {                    
+                    Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
+                    totalheat += prevWeapon.getCurrentHeat();
+                }
+        	}
+        	if((totalheat + weapon.getCurrentHeat()) > ae.getHeatCapacity()) {
+        		return "attack would exceed heat sink capacity";
+        	}
+        }
+        
         if(ae.usesWeaponBays() && weapon.getBayWeapons().size() > 0) {
 
             //first check to see if there are any usable weapons
@@ -1942,7 +2043,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 Mounted m = ae.getEquipment(wId);
                 WeaponType bayWType = ((WeaponType) m.getType());
                 boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.T_NA);
-                if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+                if (m.canFire()) {
                     if(bayWUsesAmmo) {
                         if (m.getLinked() != null
                                     && m.getLinked().getShotsLeft() > 0) {

@@ -48,6 +48,7 @@ public class Aero
     public static final int        LOC_LWING              = 1;
     public static final int        LOC_RWING              = 2;
     public static final int        LOC_AFT                = 3;
+    public static final int        LOC_WINGS              = 4;
     
     //ramming angles
     public static final int        RAM_TOWARD_DIR         = 0;
@@ -90,14 +91,15 @@ public class Aero
     public static final int CRIT_CIC               = 18;
     public static final int CRIT_KF_DRIVE          = 19;
     public static final int CRIT_GRAV_DECK         = 20;
+    public static final int CRIT_WEAPON_BROAD      = 21;
     
     // aeros have no critical slot limitations  
     //this needs to be larger, it is too easy to go over when you get to warships
     //and bombs and such
     private static final int[] NUM_OF_SLOTS = {100, 100, 100, 100, 100, 100};
     
-    protected static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT" };
-    protected static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft" };
+    protected static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG" };
+    protected static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings" };
     
     public String[] getLocationAbbrs() { return LOCATION_ABBRS; }
     public String[] getLocationNames() { return LOCATION_NAMES; }
@@ -112,11 +114,13 @@ public class Aero
     private int structIntegrity;
     private int orig_structIntegrity;
     //set up damage threshold
-    private int damThresh[] = {0,0,0,0};
+    private int damThresh[] = {0,0,0,0,0};
     //set up an int for what the critical effect would be 
     private int potCrit = CRIT_NONE;
     //need to set up standard damage here
-    private int[] standard_damage = {0,0,0,0};
+    private int[] standard_damage = {0,0,0,0,0};
+    //ignored crew hit for harjel
+    private int ignoredCrewHits = 0;
     private int cockpitType = COCKPIT_STANDARD;
     
     //track straight movement from last turn
@@ -178,8 +182,18 @@ public class Aero
     private boolean failedManeuver = false;
     private boolean accDecNow = false;
     
+    //was the damage threshold exceeded this turn
+    boolean critThresh = false;
+    
     //vstol status
     boolean vstol = false;
+    
+    //Capital Fighter stuff
+    private int capitalArmor = 0;
+    private int capitalArmor_orig = 0;
+	private int fatalThresh = 2;
+	private int currentDamage = 0;
+	private boolean wingsHit = false;
     
     /*
      * According to the rules if two units of the same type and with the 
@@ -191,6 +205,8 @@ public class Aero
      * purposes.
      */
     private int whoFirst = 0;
+    
+    private int eccmRoll = 0;
     
     /**
     * Returns this entity's safe thrust, factored
@@ -219,7 +235,7 @@ public class Aero
      * Returns the number of locations in the entity
      */
     public int locations() {
-         return 4;
+         return 5;
     }
     
     public boolean canChangeSecondaryFacing() {
@@ -376,6 +392,30 @@ public class Aero
         return orig_structIntegrity;
     }
     
+    public int getCapArmor() {
+    	return capitalArmor;
+    }
+    
+    public void setCapArmor(int i) {
+    	this.capitalArmor = i;
+    }
+    
+    public int getCap0Armor() {
+    	return capitalArmor_orig;
+    }
+    
+    public int getFatalThresh() {
+    	return fatalThresh;
+    }
+    
+    public int getCurrentDamage() {
+    	return currentDamage;
+    }
+    
+    public void setCurrentDamage(int i) {
+    	this.currentDamage = i;
+    }
+    
     public void set0SI(int si) {
         this.orig_structIntegrity = si;
         this.structIntegrity = si;
@@ -386,6 +426,15 @@ public class Aero
         int siweight = (int)Math.floor(weight / 10.0);
         int sithrust = getOriginalWalkMP();
         initializeSI(Math.max(siweight,sithrust));
+    }
+    
+    public void autoSetCapArmor() {
+    	capitalArmor_orig = (int)Math.round(getTotalOArmor() / 10.0);
+    	capitalArmor = (int)Math.round(getTotalArmor() / 10.0);
+    }
+    
+    public void autoSetFatalThresh() {
+    	fatalThresh = Math.max(2, (int)Math.ceil(capitalArmor/4.0));
     }
     
     public void initializeSI(int val) {
@@ -402,6 +451,9 @@ public class Aero
     }
     
     public void setSensorHits(int hits) {
+    	if(hits > 3) {
+    		hits = 3;
+    	}
         sensorHits = hits;
     }
 
@@ -410,6 +462,9 @@ public class Aero
     }
     
     public void setFCSHits(int hits) {
+    	if(hits > 3) {
+    		hits = 3;
+    	}
         fcsHits = hits;
     }
     
@@ -419,6 +474,14 @@ public class Aero
     
     public int getCICHits() {
         return cicHits;
+    }
+    
+    public void setIgnoredCrewHits(int hits) {
+        this.ignoredCrewHits = hits;
+    }
+    
+    public int getIgnoredCrewHits() {
+        return ignoredCrewHits;
     }
     
     public int getEngineHits() {
@@ -485,6 +548,14 @@ public class Aero
         return heatType;
     }
     
+    public boolean wasCritThresh() {
+    	return critThresh;
+    }
+    
+    public void setCritThresh(boolean b) {
+    	this.critThresh = b;
+    }
+    
     public void immobilize()
     {
         m_bImmobileHit = true;
@@ -504,6 +575,9 @@ public class Aero
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
         
+        //reset threshold critted
+        this.setCritThresh(false);
+        
         //reset maneuver status
         this.setFailedManeuver(false);
         //reset acc/dec this turn
@@ -517,7 +591,7 @@ public class Aero
         }
 
         //if in atmosphere, then halve next turn's velocity
-        if(game.getBoard().inAtmosphere() && isDeployed()) {
+        if(game.getBoard().inAtmosphere() && isDeployed() && roundNumber > 0) {
             this.setNextVelocity((int)Math.floor(this.getNextVelocity() / 2.0));
         }
         
@@ -538,6 +612,9 @@ public class Aero
             setOutCtrlHeat(false);
         }
         
+        
+        //reset eccm bonus
+        this.setECCMRoll(Compute.d6(2));
         
         //get new random whofirst
         this.setWhoFirst();
@@ -624,6 +701,14 @@ public class Aero
                 break;
             default:
                 arc = Compute.ARC_360;
+        }
+        
+        //on capital fighters, wing arcs move either to nose or aft
+        if(isCapitalFighter() && (arc == Compute.ARC_LWING || arc == Compute.ARC_RWING)) {
+        	arc = Compute.ARC_NOSE;
+        }
+        if(isCapitalFighter() && (arc == Compute.ARC_LWINGA || arc == Compute.ARC_RWINGA)) {
+        	arc = Compute.ARC_AFT;
         }
         
         return rollArcs(arc);
@@ -1005,13 +1090,18 @@ public class Aero
         // and add up BVs for ammo-using weapon types for excessive ammo rule
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
         double maximumHeat = 0;
-        for (Mounted mounted : getWeaponList()) {
+        for (Mounted mounted : getTotalWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             double weaponHeat = wtype.getHeat();
 
             // only count non-damaged equipment
             if (mounted.isMissing() || mounted.isHit() || mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
+            }
+            
+            //do not count weapon groups
+            if(mounted.isWeaponGroup()) {
+            	continue;
             }
 
             // one shot weapons count 1/4
@@ -1051,7 +1141,7 @@ public class Aero
         // first, add up front-faced and rear-faced unmodified BV,
         // to know wether front- or rear faced BV should be halved
         double bvFront = 0, bvRear = 0;
-        ArrayList<Mounted> weapons = this.getWeaponList();
+        ArrayList<Mounted> weapons = this.getTotalWeaponList();
         for (Mounted weapon : weapons) {
             WeaponType wtype = (WeaponType) weapon.getType();
             double dBV = wtype.getBV(this);
@@ -1066,10 +1156,14 @@ public class Aero
             if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
                 continue;
             }
+            //do not count weapon groups
+            if(weapon.isWeaponGroup()) {
+            	continue;
+            }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
                 double mgaBV = 0;
-                for (Mounted possibleMG : this.getWeaponList()) {
+                for (Mounted possibleMG : this.getTotalWeaponList()) {
                     if (possibleMG.getType().hasFlag(WeaponType.F_MG)
                             && possibleMG.getLocation() == weapon
                                     .getLocation()) {
@@ -1090,7 +1184,7 @@ public class Aero
         if (maximumHeat <= aeroHeatEfficiency) {
             // count all weapons equal, adjusting for rear-firing and excessive
             // ammo
-            for (Mounted weapon : getWeaponList()) {
+            for (Mounted weapon : getTotalWeaponList()) {
                 WeaponType wtype = (WeaponType) weapon.getType();
                 double dBV = wtype.getBV(this);
 
@@ -1106,10 +1200,14 @@ public class Aero
                 if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
                     continue;
                 }
+                //do not count weapon groups
+                if(weapon.isWeaponGroup()) {
+                	continue;
+                }
                 // calc MG Array here:
                 if (wtype.hasFlag(WeaponType.F_MGA)) {
                     double mgaBV = 0;
-                    for (Mounted possibleMG : this.getWeaponList()) {
+                    for (Mounted possibleMG : this.getTotalWeaponList()) {
                         if (possibleMG.getType().hasFlag(WeaponType.F_MG)
                                 && possibleMG.getLocation() == weapon
                                         .getLocation()) {
@@ -1173,7 +1271,7 @@ public class Aero
                 // calc MG Array here:
                 if (wtype.hasFlag(WeaponType.F_MGA)) {
                     double mgaBV = 0;
-                    for (Mounted possibleMG : this.getWeaponList()) {
+                    for (Mounted possibleMG : this.getTotalWeaponList()) {
                         if (possibleMG.getType().hasFlag(WeaponType.F_MG) && possibleMG.getLocation() == weapon.getLocation()) {
                             mgaBV += possibleMG.getType().getBV(this);
                         }
@@ -1458,7 +1556,6 @@ public class Aero
         if ( hasModularArmor() ) {
             prd.addModifier(1,"Modular Armor");
         }
-
         //VDNI bonus?
         if (getCrew().getOptions().booleanOption("vdni") && !getCrew().getOptions().booleanOption("bvdni")) {
             prd.addModifier(-1, "VDNI");
@@ -1745,8 +1842,7 @@ public class Aero
      */
     public int getCriticalEffect(int roll, int target) {
         //just grab the latest potential crit
-        
-        if(roll < target) 
+    	if(roll < target) 
             return CRIT_NONE;
         
         int critical = getPotCrit();
@@ -2266,7 +2362,10 @@ public class Aero
     }
     
     public int getFuelUsed(int thrust) {
-        return (thrust + Math.max(thrust - getWalkMP(), 0));
+    	int overThrust =  Math.max(thrust - getWalkMP(), 0);
+    	int safeThrust = thrust - overThrust;
+        int used = safeThrust + 2 * overThrust;
+        return used;
     }
     
     public boolean didFailManeuver() {
@@ -2351,8 +2450,8 @@ public class Aero
      */
     public int getBadCriticals(int type, int index, int loc) {
         return 0;
-    }
-    
+    } 
+
     public int getCockpitType() {
         return cockpitType;
     }
@@ -2369,5 +2468,146 @@ public class Aero
         if ((inCockpitType < 0) || (inCockpitType >= COCKPIT_STRING.length))
             return "Unknown";
         return COCKPIT_STRING[inCockpitType];
+    }
+
+    public double getArmorRemainingPercent() {
+    	int armor0 = getTotalOArmor();
+    	int armor = getTotalArmor();
+    	if(isCapitalFighter()) {
+    		armor0 = getCap0Armor();
+    		armor = getCapArmor();
+    	}
+        if(armor0 == 0)
+            return IArmorState.ARMOR_NA;
+        return ((double)armor / (double)armor0);
+    }
+    
+    /**
+     * keep track of whether the wings have suffered a weapon critical hit
+     */
+    public boolean areWingsHit() {
+    	return wingsHit;
+    }
+    
+    public void setWingsHit(boolean b) {
+    	this.wingsHit = b;
+    }
+    
+    /**
+     * what location is opposite the given one
+     */
+    public int getOppositeLocation(int loc) {
+    	switch(loc) {
+    	case Aero.LOC_NOSE:
+    		return Aero.LOC_AFT;
+    	case Aero.LOC_LWING:
+    		return Aero.LOC_RWING;
+    	case Aero.LOC_RWING:
+    		return Aero.LOC_LWING;
+    	case Aero.LOC_AFT:
+    		return Aero.LOC_NOSE;
+    	default:
+    		return Aero.LOC_NOSE;
+    	}
+    }
+    
+    /**
+     * get modifications to the cluster hit table for critical hits
+     */
+    public int getClusterMods() {
+    	return -1*(getFCSHits() + getSensorHits());
+    }
+    
+    /**
+     * What's the range of the ECM equipment? 
+     * 
+     * @return the <code>int</code> range of this unit's ECM. This value will
+     *         be <code>Entity.NONE</code> if no ECM is active.
+     */
+    public int getECMRange() {
+    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+    		return super.getECMRange();
+    	}
+    	return Math.min(super.getECMRange(), 0);
+    }
+    
+    /**
+     * @return the strength of the ECCM field this unit emits
+     */
+    public double getECCMStrength() {
+    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+    		return super.getECCMStrength();
+    	}
+        if(this.hasActiveECCM()) {
+        	return 1;
+        }
+        return 0;
+    }
+    
+    public void setECCMRoll(int i) {
+    	this.eccmRoll = i;
+    }
+    
+    public int getECCMRoll() {
+    	return eccmRoll;
+    }
+    
+    public int getECCMTarget() {
+    	return this.crew.getPiloting() + getSensorHits() + getCICHits() + getFCSHits();
+    }
+    
+    public int getECCMBonus() {
+    	return Math.max(0, eccmRoll - this.getECCMTarget());
+    }
+    
+    /**
+     * @return is  the crew of this vessel protected from gravitational effects, see StratOps, pg. 36
+     */
+    public boolean isCrewProtected() {
+    	return true;
+    }
+
+    public int getGravSecondaryThreshold() {
+    	int thresh = 6;
+    	if(isCrewProtected()) {
+    		thresh = 12;
+    	}
+    	//TODO: clan phenotypes
+    	return thresh;
+    }
+    
+    public int getGravPrimaryThreshold() {
+    	int thresh = 12;
+    	if(isCrewProtected()) {
+    		thresh = 22;
+    	}
+    	//TODO: clan phenotypes
+    	return thresh;
+    }
+    
+    /**
+     * Determines if this object can accept the given unit.  The unit may
+     * not be of the appropriate type or there may be no room for the unit.
+     *
+     * @param   unit - the <code>Entity</code> to be loaded.
+     * @return  <code>true</code> if the unit can be loaded,
+     *          <code>false</code> otherwise.
+     */
+    public boolean canLoad( Entity unit ) {
+        // capital fighters can load other capital fighters (becoming squadrons)
+    	//but not in the deployment phase
+        if ( !unit.isEnemyOf(this) && unit.isCapitalFighter()  && this.isCapitalFighter()
+        		&& getId() != unit.getId() && game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) {
+            return true;
+        }
+        
+	    return false;
+    }
+    
+    /***
+     * use the specified amount of fuel for this Aero. The amount may be adjusted by certain game options
+     */
+    public void useFuel(int fuel) {
+    	setFuel(Math.max(0,getFuel()- fuel));
     }
 }

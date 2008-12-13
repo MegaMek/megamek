@@ -406,12 +406,16 @@ public class Dropship extends SmallCraft implements Serializable {
             }
             */
             String key = atype.getAmmoType() + ":" + atype.getRackSize() + ";" + arc;
+            double weight = mounted.getShotsLeft() / atype.getShots();
+            if(atype.isCapital()) {
+            	weight = mounted.getShotsLeft() * atype.getAmmoRatio();
+            }
             if (!keys.contains(key))
                 keys.add(key);
             if (!ammo.containsKey(key)) {
-                ammo.put(key, atype.getBV(this));
+                ammo.put(key, weight*atype.getBV(this));
             } else {
-                ammo.put(key, atype.getBV(this) + ammo.get(key));
+                ammo.put(key, weight*atype.getBV(this) + ammo.get(key));
             }
         }
 
@@ -647,5 +651,34 @@ public class Dropship extends SmallCraft implements Serializable {
         default:
             return Integer.MIN_VALUE;
         }
+    }
+    
+    /**
+     * All military dropships automatically have ECM if in space
+     */
+    public boolean hasActiveECM() {
+    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+    		return super.hasActiveECM();
+    	}
+    	return getECMRange() > Entity.NONE;
+    }
+    
+    /**
+     * What's the range of the ECM equipment? 
+     * 
+     * @return the <code>int</code> range of this unit's ECM. This value will
+     *         be <code>Entity.NONE</code> if no ECM is active.
+     */
+    public int getECMRange() {
+    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+    		return super.getECMRange();
+    	}
+        if(!this.isMilitary()) {
+        	return Entity.NONE;
+        }
+    	int range = 1;  	
+        //the range might be affected by sensor/FCS damage
+        range = range - getFCSHits() - getSensorHits();     
+        return range;
     }
 }

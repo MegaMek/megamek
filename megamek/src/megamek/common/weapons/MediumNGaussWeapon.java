@@ -45,7 +45,7 @@ public class MediumNGaussWeapon extends NavalGaussWeapon {
         this.longRange = 39;
         this.extremeRange = 52;
         this.tonnage = 5500.0f;
-        this.bv = 4806;
+        this.bv = 5040;
         this.cost = 30350000;
         this.shortAV = 25;
         this.medAV = 25;

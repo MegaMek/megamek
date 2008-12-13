@@ -45,7 +45,7 @@ public class LightNGaussWeapon extends NavalGaussWeapon {
         this.longRange = 40;
         this.extremeRange = 56;
         this.tonnage = 4500.0f;
-        this.bv = 2884;
+        this.bv = 3024;
         this.cost = 20300000;       
         this.shortAV = 15;
         this.medAV = 15;

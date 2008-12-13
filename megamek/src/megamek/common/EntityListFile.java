@@ -367,7 +367,7 @@ public class EntityListFile {
                     if(i > 0) {
                         output.write(":");
                     }
-                    output.write(fs.fighters.elementAt(i));
+                    //output.write(fs.fighters.elementAt(i));
                 }
             } else {
                 output.write(entity.getMovementModeAsString());

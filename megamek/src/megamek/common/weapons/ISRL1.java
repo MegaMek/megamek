@@ -31,8 +31,9 @@ public class ISRL1 extends RLWeapon {
     public ISRL1() {
         super();
         this.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        this.name = "RL 1";
+        this.name = "Rocket Launcher 1";
         this.setInternalName("RL1");
+        this.addLookupName("RL 1");
         this.addLookupName("ISRocketLauncher1");
         this.addLookupName("IS RLauncher-1");
         this.rackSize = 1;

@@ -1631,12 +1631,16 @@ public class Game implements Serializable, IGame {
      * Get the entities for the player.
      * 
      * @param player - the <code>Player</code> whose entities are required.
+     * @param hide - should fighters loaded into squadrons be excluded?
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
-    public ArrayList<Entity> getPlayerEntities(Player player) {
+    public ArrayList<Entity> getPlayerEntities(Player player, boolean hide) {
         ArrayList<Entity> output = new ArrayList<Entity>();
         for (Enumeration<Entity> i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = i.nextElement();
+            if(entity.isPartOfFighterSquadron() && hide) {
+            	continue;
+            }
             if (player.equals(entity.getOwner())) {
                 output.add(entity);
             }
@@ -2582,7 +2586,7 @@ public class Game implements Serializable, IGame {
      * options.
      */
     public boolean checkForValidNonInfantryAndOrProtomechs(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId))
+        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
                 .iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
@@ -2908,7 +2912,7 @@ public class Game implements Serializable, IGame {
      * maintained
      */
     public boolean checkForValidSpaceStations(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId)).iterator();
+        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if (entity instanceof SpaceStation && getTurn().isValidEntity(entity, this)) {
@@ -2919,7 +2923,7 @@ public class Game implements Serializable, IGame {
     }
     
     public boolean checkForValidJumpships(int playerId) {
-           Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId)).iterator();
+           Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if (entity instanceof Jumpship && !(entity instanceof Warship) && getTurn().isValidEntity(entity, this)) {
@@ -2930,7 +2934,7 @@ public class Game implements Serializable, IGame {
     }
     
     public boolean checkForValidWarships(int playerId) {
-           Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId)).iterator();
+           Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if (entity instanceof Warship && getTurn().isValidEntity(entity, this)) {
@@ -2941,7 +2945,7 @@ public class Game implements Serializable, IGame {
     }
     
     public boolean checkForValidDropships(int playerId) {
-           Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId)).iterator();
+           Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if (entity instanceof Dropship && getTurn().isValidEntity(entity, this)) {
@@ -2952,7 +2956,7 @@ public class Game implements Serializable, IGame {
     }
     
     public boolean checkForValidSmallCraft(int playerId) {
-           Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId)).iterator();
+           Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if (entity instanceof SmallCraft && getTurn().isValidEntity(entity, this)) {

@@ -58,6 +58,10 @@ public class SmallCraft extends Aero implements Serializable {
         return LOCATION_NAMES; 
     }
   
+    public int locations() {
+        return 4;
+   }
+    
     public void setEngine(Engine e) {
         engine = e;
     }
@@ -169,13 +173,13 @@ public class SmallCraft extends Aero implements Serializable {
                 return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             case 3:
                 setPotCrit(CRIT_FCS);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             case 4:
                 setPotCrit(CRIT_SENSOR);
                 return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             case 5:
                 setPotCrit(CRIT_LEFT_THRUSTER);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
             case 6:
                 setPotCrit(CRIT_CARGO);
                 return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
@@ -187,13 +191,13 @@ public class SmallCraft extends Aero implements Serializable {
                 return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
             case 9:
                 setPotCrit(CRIT_LEFT_THRUSTER);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
             case 10:
                 setPotCrit(CRIT_AVIONICS);
                 return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             case 11:
                 setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             case 12:
                 setPotCrit(CRIT_WEAPON);
                 return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -207,13 +211,13 @@ public class SmallCraft extends Aero implements Serializable {
                 return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             case 3:
                 setPotCrit(CRIT_FCS);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             case 4:
                 setPotCrit(CRIT_SENSOR);
                 return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             case 5:
                 setPotCrit(CRIT_RIGHT_THRUSTER);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
             case 6:
                 setPotCrit(CRIT_CARGO);
                 return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
@@ -225,13 +229,13 @@ public class SmallCraft extends Aero implements Serializable {
                 return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
             case 9:
                 setPotCrit(CRIT_RIGHT_THRUSTER);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
             case 10:
                 setPotCrit(CRIT_AVIONICS);
                 return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             case 11:
                 setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             case 12:
                 setPotCrit(CRIT_WEAPON);
                 return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -528,5 +532,55 @@ public class SmallCraft extends Aero implements Serializable {
      */
     public int getTotalCommGearTons() {
         return 3 + getExtraCommGearTons();
+    }
+    
+    /**
+     * All military small craft automatically have ECM if in space
+     */
+    public boolean hasActiveECM() {
+    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+    		return super.hasActiveECM();
+    	}
+    	return getECMRange() >= 0;
+    }
+    
+    /**
+     * What's the range of the ECM equipment? 
+     * 
+     * @return the <code>int</code> range of this unit's ECM. This value will
+     *         be <code>Entity.NONE</code> if no ECM is active.
+     */
+    public int getECMRange() {
+    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+    		return super.getECMRange();
+    	}
+        if(!this.isMilitary()) {
+        	return Entity.NONE;
+        }
+    	int range = -1;  	
+    	//if the unit has an ECM unit, then the range might be extended by one
+        if ( !isShutDown() ){
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM) && !m.isInoperable()) {
+                	if(type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+                		range += 1;
+                	} else {
+                		range += 2;
+                	}
+                    break;
+                }
+            }          
+        }
+        //the range might be affected by sensor/FCS damage
+        range = range - getFCSHits() - getSensorHits();     
+        return range;
+    }
+    
+    /**
+     * @return is  the crew of this vessel protected from gravitational effects, see StratOps, pg. 36
+     */
+    public boolean isCrewProtected() {
+    	return isMilitary() && this.getOriginalWalkMP() > 4;
     }
 }

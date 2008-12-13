@@ -102,7 +102,7 @@ public class UnitOverview implements IDisplayable {
 
         graph.setFont(FONT);
         ArrayList<Entity> v = clientgui.getClient().game
-                .getPlayerEntities(clientgui.getClient().getLocalPlayer());
+                .getPlayerEntities(clientgui.getClient().getLocalPlayer(), true);
         unitIds = new int[v.size()];
 
         scroll = v.size() > unitsPerPage;

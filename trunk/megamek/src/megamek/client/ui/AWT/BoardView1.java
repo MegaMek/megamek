@@ -4197,6 +4197,20 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.setColor(col);
                     graph.drawString(recover, recoverX - 1, recoverY);
                     break;
+                case MovePath.STEP_JOIN:
+                    //announce launch
+                    String join = Messages.getString("BoardView1.Join"); //$NON-NLS-1$
+                    if (step.isPastDanger()) {
+                        launch = "(" + join + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int joinX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(join) / 2);
+                    int joinY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(join, joinX, joinY + 1);
+                    graph.setColor(col);
+                    graph.drawString(join, joinX - 1, joinY);
+                    break;
                 case MovePath.STEP_UNLOAD:
                     // Announce unload.
                     String unload = Messages.getString("BoardView1.Unload"); //$NON-NLS-1$
@@ -5448,11 +5462,20 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         private static final long serialVersionUID = -1605350790342525964L;
         int range;
         int tint;
+        int direction;
 
         public EcmBubble(Coords c, int range, int tint) {
             super(c);
             this.range = range;
             this.tint = tint;
+            this.direction = -1;
+        }
+        
+        public EcmBubble(Coords c, int range, int tint, int direction) {
+        	super(c);
+        	this.range = range;
+        	this.tint = tint;
+        	this.direction = direction;
         }
     }
 
@@ -5461,15 +5484,39 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         ArrayList<EcmBubble> list = new ArrayList<EcmBubble>();
         for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
             Entity ent = e.nextElement();
-            if (ent.getPosition() == null || !ent.isDeployed()
-                    || ent.isOffBoard()) {
-                continue;
-            }
+            Coords entPos = ent.getPosition();
             int range = ent.getECMRange();
+            boolean deployed = ent.isDeployed();
+            boolean offboard = ent.isOffBoard();
+            if(entPos == null && ent.getTransportId() != Entity.NONE) {
+            	Entity carrier = game.getEntity(ent.getTransportId());
+            	if(null != carrier && carrier.loadedUnitsHaveActiveECM()) {
+            		entPos = carrier.getPosition();
+            		deployed = carrier.isDeployed();
+            		offboard = carrier.isOffBoard();
+            	}
+            }
+            if (entPos == null || !deployed
+                    || offboard) {
+                continue;
+            }           
             if (range != Entity.NONE) {
                 int tint = PlayerColors.getColorRGB(ent.getOwner()
                         .getColorIndex());
-                list.add(new EcmBubble(ent.getPosition(), range, tint));
+                list.add(new EcmBubble(entPos, range, tint));
+            }
+            if(game.getBoard().inSpace()) {
+            	//then BAP is also ECCM so it needs a bubble
+            	range = ent.getBAPRange();
+            	int direction = -1;
+            	if (range != Entity.NONE) {
+            		if(range > 6) {
+            			direction = ent.getFacing();
+            		}
+                    int tint = PlayerColors.getColorRGB(ent.getOwner()
+                            .getColorIndex());
+                    list.add(new EcmBubble(entPos, range, tint, direction));
+                }
             }
         }
         HashMap<Coords, Integer> table = new HashMap<Coords, Integer>();
@@ -5479,7 +5526,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 for (int y = -b.range; y <= b.range; y++) {
                     Coords c = new Coords(x + b.x, y + b.y);
                     // clip rectangle to hexagon
-                    if (b.distance(c) <= b.range) {
+                    if (b.distance(c) <= b.range && (b.direction == -1 || Compute.isInArc(b, b.direction, c, Compute.ARC_NOSE))) {
                         Integer tint = table.get(c);
                         if (tint == null) {
                             table.put(c, col);

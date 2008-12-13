@@ -388,12 +388,12 @@ public class XMLStreamParser implements XMLResponder {
                             String fighters = (String) attr.get(FIGHTERS);
                             //now I need to loop through them and add them to
                             //an entity vector that I can use to compile the squadron
-                            Vector<Entity> squadron = new Vector<Entity>();
+                            Vector<Aero> squadron = new Vector<Aero>();
                             for(String s : fighters.split(":")) {
                                 ms = MechSummaryCache.getInstance().getMech( s );
                                 //Try to add this fighter
                                 try {
-                                    squadron.add(new MechFileParser( ms.getSourceFile(), ms.getEntryName() ).getEntity());
+                                    squadron.add((Aero)new MechFileParser( ms.getSourceFile(), ms.getEntryName() ).getEntity());
                                 } catch (EntityLoadingException excep) {
                                     excep.printStackTrace( System.err );
                                     this.warning.append( "Unable to load mech: " )
@@ -405,7 +405,7 @@ public class XMLStreamParser implements XMLResponder {
                                 }
                             }                           
                             //now compile the squadron
-                            this.entity = Compute.compileSquadron(squadron);
+                            this.entity = new FighterSquadron();
                         } else {
                         
                             this.warning
@@ -907,7 +907,7 @@ public class XMLStreamParser implements XMLResponder {
             String value = (String) attr.get( FIGHTERS );
             try {
                 int newNFighters = Integer.parseInt(value);
-                ((FighterSquadron)this.entity).setNFighters(newNFighters);
+                //((FighterSquadron)this.entity).setNFighters(newNFighters);
             } catch (Exception e) {
                 this.warning.append
                     ( "Invalid active fighter value in active fighter tag.\n" );
@@ -924,7 +924,7 @@ public class XMLStreamParser implements XMLResponder {
             String value = (String) attr.get( ARMOR );
             try {
                 int newArmor = Integer.parseInt(value);
-                ((FighterSquadron)this.entity).setArmor(newArmor);
+                //((FighterSquadron)this.entity).setArmor(newArmor);
             } catch (Exception e) {
                 this.warning.append
                     ( "Invalid total armor value in total armor tag.\n" );

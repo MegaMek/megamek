@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -23,253 +23,288 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Entity;
+import megamek.common.Aero;
 import megamek.common.FighterSquadron;
+import megamek.common.Entity;
 
 /**
  * Class which keeps set of all areas required to 
- * represent Battle Armor unit in MechDsiplay.ArmorPanel class.
+ * represent Capital Fighter unit in MechDsiplay.ArmorPanel class.
  */
-
-
 public class SquadronMapSet implements DisplayMapSet{
 
-    private static final String IMAGE_DIR = "data/images/units";
+    private static final String IMAGE_DIR = "data/images/widgets";
     
-    //Picture with figure
-    private Image fighterImage;
-    //Images that shows how much armor + 1 internal damage left.
-    //private Image[] armorImage = new Image[BattleArmor.BA_MAX_MEN];
-    private Image armorImage;
-    //Reference to Component (required for Image handling)
     private JComponent comp;
-    //Set of areas to show BA figures
-    private PMPicArea[] unitAreas =  new PMPicArea[FighterSquadron.MAX_SIZE];
-    private PMSimpleLabel[] deadUnit = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
-    //Set of areas to show BA armor left
-    //private PMPicArea[] armorAreas = new PMPicArea[BattleArmor.BA_MAX_MEN];
-    private PMPicArea armorAreas;
-    //Set of labels to show BA armor left
-    private PMValueLabel   armorLabels;
-    private PMValueLabel   armorNameLabel;
-    
-    private PMSimpleLabel[] labels = new PMSimpleLabel[4];
-    private PMValueLabel[] vLabels = new PMValueLabel[4];
-    
-    //Content group which will be sent to PicMap component
+//  Images that shows how much armor left.
+    private Image[] armorImage = new Image[FighterSquadron.MAX_SIZE];
+    // Set of areas to show fighter armor left
+    private PMPicArea[] armorArea = new PMPicArea[FighterSquadron.MAX_SIZE];
+    // Set of labels to show fighter armor left
+    //images and areas for each crit tally
+    private Image[] avCritImage = new Image[FighterSquadron.MAX_SIZE];
+    private PMPicArea[] avCritArea = new PMPicArea[FighterSquadron.MAX_SIZE];
+    private Image[] engineCritImage = new Image[FighterSquadron.MAX_SIZE];
+    private PMPicArea[] engineCritArea = new PMPicArea[FighterSquadron.MAX_SIZE];
+    private Image[] fcsCritImage = new Image[FighterSquadron.MAX_SIZE];
+    private PMPicArea[] fcsCritArea = new PMPicArea[FighterSquadron.MAX_SIZE];
+    private Image[] sensorCritImage = new Image[FighterSquadron.MAX_SIZE];
+    private PMPicArea[] sensorCritArea = new PMPicArea[FighterSquadron.MAX_SIZE];
+    private Image[] pilotCritImage = new Image[FighterSquadron.MAX_SIZE];
+    private PMPicArea[] pilotCritArea = new PMPicArea[FighterSquadron.MAX_SIZE];
+    private PMSimpleLabel[] nameLabel = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
+    private PMValueLabel[] armorVLabel = new PMValueLabel[FighterSquadron.MAX_SIZE];
+    private PMSimpleLabel[] avCritLabel = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
+    private PMSimpleLabel[] engineCritLabel = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
+    private PMSimpleLabel[] fcsCritLabel = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
+    private PMSimpleLabel[] sensorCritLabel = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
+    private PMSimpleLabel[] pilotCritLabel = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
+    private Vector<BackGroundDrawer>  bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
-    //Set of Backgrpund drawers which will be sent to PicMap component
-    private Vector<BackGroundDrawer>    bgDrawers = new Vector<BackGroundDrawer>();
+
+    private int stepY = 11;
+    private int squareSize = 7;
+    private int armorRows = 6;
+    private int armorCols = 8;
     
-    private int stepY = 40;
-    private int stepX = 40;
-    
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, //$NON-NLS-1$ 
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
-    
-    private static final Font BIG_FONT_VALUE = new Font("SansSerif", Font.PLAIN, //$NON-NLS-1$ 
-            24);
-    
-    /**
-     * This constructor have to be called anly from addNotify() method
-     */
-    public SquadronMapSet( JComponent c){
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, 9); //$NON-NLS-1$
+ 
+    public SquadronMapSet(JComponent c){
         comp = c;
         setAreas();
+        setLabels();
         setBackGround();
+        translateAreas();
+        setContent();
     }
 
-    private void setAreas(){
-        FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
-        FontMetrics fmBig = comp.getFontMetrics(BIG_FONT_VALUE);
-        
-        fighterImage = comp.getToolkit().getImage(IMAGE_DIR+"/asf.gif"); //$NON-NLS-1$
-        PMUtil.setImage(fighterImage, comp);
-        armorImage = comp.createImage(120, 12);
-        armorAreas = new PMPicArea(armorImage);
-        armorAreas.translate(30, 0);
-        content.addArea(armorAreas);
-        armorLabels = new PMValueLabel(fm, Color.red.brighter());
-        armorLabels. moveTo(160, 12);
-        content.addArea(armorLabels);
-        armorNameLabel = new PMValueLabel(fm, Color.white);
-        armorNameLabel. moveTo(0, 12);
-        content.addArea(armorNameLabel);
-        for(int i = 0; i < FighterSquadron.MAX_SIZE; i++){
-            int shiftX = (i % 3) * stepX;
-            int shiftY = (i / 3) * stepY + 110;
-            unitAreas[i] = new PMPicArea(fighterImage);
-            unitAreas[i].translate(shiftX, shiftY);
-            content.addArea(unitAreas[i]);
-            int newx = shiftX + (stepX/2);
-            int newy = shiftY + (stepY/2);
-            deadUnit[i] = WidgetUtils.createLabel("X", fmBig, Color.red.brighter(),newx+10,newy); //$NON-NLS-1$
-            content.addArea(deadUnit[i]);
-        }
-        
-        labels[0] = WidgetUtils.createLabel("Avionics:", fm, Color.white,10,30); //$NON-NLS-1$
-        labels[1] = WidgetUtils.createLabel("Engine:", fm, Color.white,10,45); //$NON-NLS-1$
-        labels[2] = WidgetUtils.createLabel("FCS:", fm, Color.white,10,60); //$NON-NLS-1$
-        labels[3] = WidgetUtils.createLabel("Sensors:", fm, Color.white,10,75); //$NON-NLS-1$
-        
-        vLabels[0] = WidgetUtils.createValueLabel(40, 30, "", fm); //$NON-NLS-1$
-        vLabels[1] = WidgetUtils.createValueLabel(40, 45, "", fm); //$NON-NLS-1$
-        vLabels[2] = WidgetUtils.createValueLabel(40, 60, "", fm); //$NON-NLS-1$
-        vLabels[3] = WidgetUtils.createValueLabel(40, 75, "", fm); //$NON-NLS-1$
-        content.addArea(labels[0]);
-        content.addArea(vLabels[0]);
-        content.addArea(labels[1]);
-        content.addArea(vLabels[1]);
-        content.addArea(labels[2]);
-        content.addArea(vLabels[2]);
-        content.addArea(labels[3]);
-        content.addArea(vLabels[3]);
-        
-        
+    public void setRest(){
     }
-    
+
     public PMAreasGroup getContentGroup(){
         return content;
     }
-    
+
     public Vector<BackGroundDrawer> getBackgroundDrawers(){
         return bgDrawers;
     }
-    
-    
+
     public void setEntity(Entity e){
         FighterSquadron fs = (FighterSquadron) e;
-        int armor = 0;
-        int orig = 1;
-        int fighters = fs.getN0Fighters();
-        int active = fs.getNFighters();
-
-        armorAreas.setVisible(true);
-        armorLabels.setVisible(true);
-        armorNameLabel.setVisible(true);
         
-        for (int x=0; x<fighters; x++) {
-             unitAreas[x].setVisible(true);
-             deadUnit[x].setVisible(false);
+        for(int i = 0; i < fs.getN0Fighters(); i++) {
+        	Aero fighter = fs.getFighter(i);
+	        int armor = fighter.getCapArmor();
+	        int armorO = fighter.getCap0Armor();
+	        
+	        drawArmorImage(armorImage[i], armor, armorO);
+	        armorVLabel[i].setValue(Integer.toString(armor));
+	        drawCrits(avCritImage[i], fighter.getAvionicsHits());
+	        drawCrits(engineCritImage[i], fighter.getEngineHits());
+	        drawCrits(fcsCritImage[i], fighter.getFCSHits());
+	        drawCrits(sensorCritImage[i], fighter.getSensorHits());
+	        drawCrits(pilotCritImage[i], fighter.getCrew().getHits());
+	        
+	        nameLabel[i].setString(fighter.getDisplayName());
+	        
+	        armorArea[i].setVisible(true);
+        	armorVLabel[i].setVisible(true);
+        	avCritArea[i].setVisible(true);
+        	engineCritArea[i].setVisible(true);
+        	fcsCritArea[i].setVisible(true);
+        	sensorCritArea[i].setVisible(true);
+        	pilotCritArea[i].setVisible(true);
+        	nameLabel[i].setVisible(true);
+        	avCritLabel[i].setVisible(true);
+        	engineCritLabel[i].setVisible(true);
+        	fcsCritLabel[i].setVisible(true);
+        	sensorCritLabel[i].setVisible(true);
+        	pilotCritLabel[i].setVisible(true);
         }
-        for (int x=fighters; x<FighterSquadron.MAX_SIZE; x++) {
-             unitAreas[x].setVisible(false);
-             deadUnit[x].setVisible(false);
-        }
-
-        armor = (fs.getArmor() < 0) ? 0: fs.getArmor();
-        orig = fs.getTotalOArmor();
-        armorLabels.setValue(Integer.toString(armor));
-        //TODO: put this into messages
-        armorNameLabel.setValue("Armor:");
-        //      now for the vitals
-        vLabels[0].setValue(getCriticalHitTally(fs.getAvionicsHits(),3));
-        vLabels[1].setValue(getCriticalHitTally(fs.getEngineHits(),fs.getMaxEngineHits()));
-        vLabels[2].setValue(getCriticalHitTally(fs.getFCSHits(),3));
-        vLabels[3].setValue(getCriticalHitTally(fs.getSensorHits(),3));
         
-        drawArmorImage(armorImage, armor, orig);
-        for(int i = 0; i < fighters ; i++) {
-            if(i >= active){
-                //then this one is dead (put an X through it?)
-                deadUnit[i].setVisible(true);
-            }
+        for(int j = fs.getN0Fighters(); j < FighterSquadron.MAX_SIZE; j++) {
+        	armorArea[j].setVisible(false);
+        	armorVLabel[j].setVisible(false);
+        	avCritArea[j].setVisible(false);
+        	engineCritArea[j].setVisible(false);
+        	fcsCritArea[j].setVisible(false);
+        	sensorCritArea[j].setVisible(false);
+        	pilotCritArea[j].setVisible(false);
+        	nameLabel[j].setVisible(false);
+        	avCritLabel[j].setVisible(false);
+        	engineCritLabel[j].setVisible(false);
+        	fcsCritLabel[j].setVisible(false);
+        	sensorCritLabel[j].setVisible(false);
+        	pilotCritLabel[j].setVisible(false);
+        }
+        
+    }
+
+    private void setContent(){
+    	
+    	for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
+	    	content.addArea(nameLabel[i]);
+	    	content.addArea(armorArea[i]);
+	    	content.addArea(armorVLabel[i]);
+	        content.addArea(avCritLabel[i]);
+	        content.addArea(engineCritLabel[i]);
+	        content.addArea(fcsCritLabel[i]);
+	        content.addArea(sensorCritLabel[i]);
+	        content.addArea(pilotCritLabel[i]);     
+	        content.addArea(avCritArea[i]);
+	        content.addArea(engineCritArea[i]);
+	        content.addArea(fcsCritArea[i]);
+	        content.addArea(sensorCritArea[i]);
+	        content.addArea(pilotCritArea[i]);
+    	}
+    }
+
+    private void setAreas(){
+    	for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
+	    	armorImage[i] = comp.createImage(armorCols*(squareSize+1), armorRows*(squareSize+1));
+	    	armorArea[i] = new PMPicArea(armorImage[i]);
+	    	
+	    	avCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
+	    	avCritArea[i] = new PMPicArea(avCritImage[i]);
+	    	engineCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
+	    	engineCritArea[i] = new PMPicArea(engineCritImage[i]);
+	    	fcsCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
+	    	fcsCritArea[i] = new PMPicArea(fcsCritImage[i]);
+	    	sensorCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
+	    	sensorCritArea[i] = new PMPicArea(sensorCritImage[i]);
+	    	pilotCritImage[i] = comp.createImage(6*(squareSize+1), squareSize+1);
+	    	pilotCritArea[i] = new PMPicArea(pilotCritImage[i]);
+    	}
+    }
+
+    private void setLabels(){
+        FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
+        for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
+        	nameLabel[i] = new PMSimpleLabel("Unknown", fm, Color.white); //$NON-NLS-1$
+	        armorVLabel[i] = new PMValueLabel(fm, Color.red.brighter());	
+	        avCritLabel[i] = new PMSimpleLabel("Avionics:", fm, Color.white); //$NON-NLS-1$
+	        engineCritLabel[i] = new PMSimpleLabel("Engine:", fm, Color.white); //$NON-NLS-1$
+	        fcsCritLabel[i] = new PMSimpleLabel("FCS:", fm, Color.white); //$NON-NLS-1$
+	        sensorCritLabel[i] = new PMSimpleLabel("Sensors:", fm, Color.white); //$NON-NLS-1$
+	        pilotCritLabel[i] = new PMSimpleLabel("Pilot hits:", fm, Color.white); //$NON-NLS-1$
         }
     }
 
     private void setBackGround(){
         Image tile = comp.getToolkit().getImage(IMAGE_DIR+"/tile.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile, comp);
+        PMUtil.setImage(tile,comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-            b = BackGroundDrawer.TILING_HORIZONTAL | 
-                BackGroundDrawer.VALIGN_TOP;
+
+        b = BackGroundDrawer.TILING_HORIZONTAL | 
+        BackGroundDrawer.VALIGN_TOP;
         tile = comp.getToolkit().getImage(IMAGE_DIR+"/h_line.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile, comp);
+        PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));                
-        
-            b = BackGroundDrawer.TILING_HORIZONTAL | 
-                BackGroundDrawer.VALIGN_BOTTOM;
+
+        b = BackGroundDrawer.TILING_HORIZONTAL | 
+        BackGroundDrawer.VALIGN_BOTTOM;
         tile = comp.getToolkit().getImage(IMAGE_DIR+"/h_line.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile, comp);
+        PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-            b = BackGroundDrawer.TILING_VERTICAL | 
-                BackGroundDrawer.HALIGN_LEFT;
+
+        b = BackGroundDrawer.TILING_VERTICAL | 
+        BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR+"/v_line.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile, comp);
+        PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-            b = BackGroundDrawer.TILING_VERTICAL | 
-                BackGroundDrawer.HALIGN_RIGHT;
+
+        b = BackGroundDrawer.TILING_VERTICAL | 
+        BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR+"/v_line.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile, comp);
+        PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
-                
-        
-            b = BackGroundDrawer.NO_TILING | 
-                BackGroundDrawer.VALIGN_TOP |
-                BackGroundDrawer.HALIGN_LEFT;
+
+
+        b = BackGroundDrawer.NO_TILING | 
+        BackGroundDrawer.VALIGN_TOP |
+        BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR+"/tl_corner.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile, comp);
+        PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-            b = BackGroundDrawer.NO_TILING | 
-                BackGroundDrawer.VALIGN_BOTTOM |
-                BackGroundDrawer.HALIGN_LEFT;
+
+        b = BackGroundDrawer.NO_TILING | 
+        BackGroundDrawer.VALIGN_BOTTOM |
+        BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR+"/bl_corner.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile, comp);
+        PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-            b = BackGroundDrawer.NO_TILING | 
-                BackGroundDrawer.VALIGN_TOP |
-                BackGroundDrawer.HALIGN_RIGHT;
+
+        b = BackGroundDrawer.NO_TILING | 
+        BackGroundDrawer.VALIGN_TOP |
+        BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR+"/tr_corner.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile, comp);
+        PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-            b = BackGroundDrawer.NO_TILING | 
-                BackGroundDrawer.VALIGN_BOTTOM |
-                BackGroundDrawer.HALIGN_RIGHT;
+
+        b = BackGroundDrawer.NO_TILING | 
+        BackGroundDrawer.VALIGN_BOTTOM |
+        BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR+"/br_corner.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile, comp);
+        PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
-         
     }
     
-    //Redraws armor images
-    private void drawArmorImage(Image im, int a, int orig){
-        int w = im.getWidth(null);
-        int h= im.getHeight(null);
+    private void translateAreas() { 
+    	//get size of each fighter block
+    	int blockSize = 6*stepY;
+    	for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
+	    	nameLabel[i].translate(0, blockSize*i);
+	    	armorArea[i].translate(0, squareSize+blockSize*i);
+	    	armorVLabel[i].translate((armorCols*(squareSize+1))/2, blockSize*i+squareSize+(armorRows*(squareSize+1))/2);
+	    	
+	    	avCritLabel[i].translate(5+armorCols*(squareSize+1), stepY+blockSize*i);
+	    	engineCritLabel[i].translate(5+armorCols*(squareSize+1), 2*stepY+blockSize*i);
+	    	fcsCritLabel[i].translate(5+armorCols*(squareSize+1), 3*stepY+blockSize*i);
+	    	sensorCritLabel[i].translate(5+armorCols*(squareSize+1), 4*stepY+blockSize*i);
+	    	pilotCritLabel[i].translate(5+armorCols*(squareSize+1), 5*stepY+blockSize*i);
+	    	
+	    	avCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), stepY-(squareSize+1)+blockSize*i);
+	    	engineCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 2*stepY-(squareSize+1)+blockSize*i);
+	    	fcsCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 3*stepY-(squareSize+1)+blockSize*i);
+	    	sensorCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 4*stepY-(squareSize+1)+blockSize*i);
+	    	pilotCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 5*stepY-(squareSize+1)+blockSize*i);
+    	}
+    }
+
+    private void drawCrits(Image im, int crits) {
+    	int w = im.getWidth(null);
+        int h = im.getHeight(null);
         Graphics g = im.getGraphics();
         g.setColor(Color.black);
-        g.fillRect(0,0,w,h);
-        int percent = (int)Math.ceil(120.0 * a/orig);
-        g.setColor(Color.green.darker());
-        g.fillRect(0, 0, percent, 12);
+        g.fillRect(0, 0, w, h);
+        for (int i = 0; i < crits; i++) {
+            g.setColor(Color.red.darker());
+            g.fillRect(i*(squareSize+1), 0, squareSize, squareSize);
+        }
     }
     
-    private String getCriticalHitTally(int tally, int max) {
-        
-        String marks = "";
-        
-        if(tally < 1) {
-            return marks;
+//  Redraws armor images
+    private void drawArmorImage(Image im, int a, int initial) {
+        int w = im.getWidth(null);
+        int h = im.getHeight(null);
+        Graphics g = im.getGraphics();
+        g.setColor(Color.gray);
+        g.fillRect(0, 0, w, h);
+        //first fill up the initial armor area with black
+        for (int i = 0; i < initial; i++) {
+        	//6 across and 8 down
+        	int row = i / armorRows;
+        	int column = i - row * armorRows;
+            g.setColor(Color.black);
+            g.fillRect(row*(squareSize+1),column*(squareSize+1), (squareSize+1), (squareSize+1));
         }
-        
-        if(tally >= max) {
-            marks = "Out";
-            return marks;
+        for (int i = 0; i < a; i++) {
+        	int row = i / armorRows;
+        	int column = i - row * armorRows;
+            g.setColor(Color.green.darker());
+            g.fillRect(row*(squareSize+1),column*(squareSize+1), squareSize, squareSize);
         }
-        
-        while(tally > 0) {
-            marks = marks + "X";
-            tally--;
-        }
-        
-        return marks;
     }
 
 }

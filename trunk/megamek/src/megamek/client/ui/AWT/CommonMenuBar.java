@@ -105,6 +105,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     private MenuItem deployUnload = null;
     private MenuItem deployRemove = null;
     private MenuItem deployAssaultDrop = null;
+    private MenuItem deployFormSquadron = null;
 
     private MenuItem moveWalk = null;
     private MenuItem moveNext = null;
@@ -140,6 +141,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     private MenuItem moveRoll = null;
     private MenuItem moveLaunch = null;
     private MenuItem moveRecover = null;
+    private MenuItem moveJoin = null;
     private MenuItem moveDump = null;
     private MenuItem moveRam = null;
     private MenuItem moveHover = null;
@@ -398,6 +400,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         deployAssaultDrop = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.deployAssaultDrop"), DeploymentDisplay.DEPLOY_ASSAULTDROP); //$NON-NLS-1$
+        deployFormSquadron = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.deployFormSquadron"), DeploymentDisplay.DEPLOY_FORM_SQUADRON); //$NON-NLS-1$
 
         menu.addSeparator();
 
@@ -473,6 +478,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
                 Messages.getString("CommonMenuBar.MoveUnload"), MovementDisplay.MOVE_UNLOAD); //$NON-NLS-1$
         moveLaunch = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveLaunch"), MovementDisplay.MOVE_LAUNCH); //$NON-NLS-1$
         moveRecover = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveRecover"), MovementDisplay.MOVE_RECOVER); //$NON-NLS-1$
+        moveJoin = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveJoin"), MovementDisplay.MOVE_JOIN); //$NON-NLS-1$
         submenu.addSeparator();
         moveCharge = createMenuItem(
                 submenu,
@@ -1034,6 +1040,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     public synchronized void setMoveRecoverEnabled(boolean enabled) {
         moveRecover.setEnabled(enabled);
     }
+    public synchronized void setMoveJoinEnabled(boolean enabled) {
+        moveJoin.setEnabled(enabled);
+    }
     public synchronized void setMoveDumpEnabled(boolean enabled) {
         moveDump.setEnabled(enabled);
     }
@@ -1087,6 +1096,10 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         deployAssaultDrop.setEnabled(enabled);
     }
 
+    public synchronized void setDeployFormSquadronEnabled(boolean enabled) {
+        deployFormSquadron.setEnabled(enabled);
+    }
+    
     // Manages deploy minefield items...
     public synchronized void setDeployConventionalEnabled(int nbr) {
         deployMinesConventional.setLabel(Messages.getString(

@@ -51,6 +51,7 @@ import megamek.client.ui.swing.widget.AeroMapSet;
 import megamek.client.ui.swing.widget.ArmlessMechMapSet;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.BattleArmorMapSet;
+import megamek.client.ui.swing.widget.CapitalFighterMapSet;
 import megamek.client.ui.swing.widget.DisplayMapSet;
 import megamek.client.ui.swing.widget.GeneralInfoMapSet;
 import megamek.client.ui.swing.widget.GunEmplacementMapSet;
@@ -321,6 +322,7 @@ public class MechDisplay extends JPanel {
         private ArmlessMechMapSet armless;
         private LargeSupportTankMapSet largeSupportTank;
         private AeroMapSet aero;
+        private CapitalFighterMapSet capFighter;
         private SquadronMapSet squad;
         private JumpshipMapSet jump;
         private SpheroidMapSet sphere;
@@ -357,6 +359,7 @@ public class MechDisplay extends JPanel {
             armless = new ArmlessMechMapSet(this);
             largeSupportTank = new LargeSupportTankMapSet(this);
             aero = new AeroMapSet(this);
+            capFighter = new CapitalFighterMapSet(this);
             sphere = new SpheroidMapSet(this);
             jump = new JumpshipMapSet(this);
             warship = new WarshipMapSet(this);
@@ -471,6 +474,9 @@ public class MechDisplay extends JPanel {
                     if (sc.isSpheroid()) {
                         ams = sphere;
                     }
+                }
+                if(en.isCapitalFighter()) {
+                	ams = capFighter;
                 }
                 minLeftMargin = minAeroLeftMargin;
                 minTopMargin = minAeroTopMargin;
@@ -1407,7 +1413,7 @@ public class MechDisplay extends JPanel {
                 // if this is a weapons bay, then I need to compile it to get
                 // accurate results
                 if (wtype instanceof BayWeapon) {
-                    compileWeaponBay(mounted.getBayWeapons(), wtype.isCapital());
+                    compileWeaponBay(mounted, wtype.isCapital());
                 } else {
                     // otherwise I need to replace range display with standard
                     // ranges and attack values
@@ -1761,9 +1767,12 @@ public class MechDisplay extends JPanel {
 
         }
 
-        private void compileWeaponBay(Vector<Integer> bayWeapons,
+        private void compileWeaponBay(Mounted weapon,
                 boolean isCapital) {
 
+        	Vector<Integer> bayWeapons = weapon.getBayWeapons();
+        	WeaponType wtype = (WeaponType)weapon.getType();
+        	
             // set default values in case if statement stops
             wShortAVR.setText("---"); //$NON-NLS-1$
             wMedAVR.setText("---"); //$NON-NLS-1$
@@ -1817,12 +1826,16 @@ public class MechDisplay extends JPanel {
                     }
                 }
             }
-            // check for active fighters in fighter squadrons
+            //check for bracketing
             double mult = 1.0;
-            if (entity instanceof FighterSquadron) {
-                FighterSquadron fs = (FighterSquadron) entity;
-                mult = ((double) fs.getNFighters())
-                        / ((double) fs.getN0Fighters());
+            if(wtype.hasModes() && weapon.curMode().equals("Bracket 80%")) {
+            	mult = 0.8;
+            }
+            if(wtype.hasModes() && weapon.curMode().equals("Bracket 60%")) {
+            	mult = 0.6;
+            }
+            if(wtype.hasModes() && weapon.curMode().equals("Bracket 40%")) {
+            	mult = 0.4;
             }
             avShort = mult * avShort;
             avMed = mult * avMed;
@@ -1916,7 +1929,7 @@ public class MechDisplay extends JPanel {
                 if (entity instanceof Aero) {
                     WeaponType wtype = (WeaponType) mWeap.getType();
                     if (isBay) {
-                        compileWeaponBay(oldWeap.getBayWeapons(), wtype
+                        compileWeaponBay(oldWeap, wtype
                                 .isCapital());
                     } else {
                         // otherwise I need to replace range display with
@@ -1973,13 +1986,17 @@ public class MechDisplay extends JPanel {
         private JLabel locLabel;
         private JLabel slotLabel;
         private JLabel modeLabel;
+        private JLabel unitLabel;
         private JList slotList;
         private JList locList;
+        private JList unitList;
 
         private JComboBox m_chMode;
         private JButton m_bDumpAmmo;
 
         private Entity en;
+        private Vector<Entity> entities = new Vector<Entity>();
+        
 
         private int minTopMargin = 8;
         private int minLeftMargin = 8;
@@ -1994,6 +2011,11 @@ public class MechDisplay extends JPanel {
             slotLabel.setOpaque(false);
             slotLabel.setForeground(Color.WHITE);
 
+            unitLabel = new JLabel(
+                    Messages.getString("MechDisplay.Unit"), SwingConstants.CENTER); //$NON-NLS-1$
+            unitLabel.setOpaque(false);
+            unitLabel.setForeground(Color.WHITE);
+            
             locList = new JList(new DefaultListModel());
             locList.setOpaque(false);
             locList.addListSelectionListener(this);
@@ -2001,6 +2023,10 @@ public class MechDisplay extends JPanel {
             slotList = new JList(new DefaultListModel());
             slotList.setOpaque(false);
             slotList.addListSelectionListener(this);
+            
+            unitList = new JList(new DefaultListModel());
+            unitList.setOpaque(false);
+            unitList.addListSelectionListener(this);
 
             m_chMode = new JComboBox();
             m_chMode.addItem("   "); //$NON-NLS-1$
@@ -2049,10 +2075,31 @@ public class MechDisplay extends JPanel {
             c.gridx = 0;
             c.gridwidth = 1;
             c.insets = new Insets(1, 9, 15, 1);
-            c.gridheight = GridBagConstraints.REMAINDER;
+            c.gridheight = 1;
             gridbag.setConstraints(locList, c);
             add(locList);
 
+            c.fill = GridBagConstraints.BOTH;
+            c.insets = new Insets(15, 9, 1, 1);
+            c.gridy = 2;
+            c.gridx = 0;
+            c.weightx = 0.5;
+            c.weighty = 0.0;
+            c.gridwidth = 1;
+            c.gridheight = 1;
+            gridbag.setConstraints(unitLabel, c);
+            add(unitLabel);
+            
+            c.weightx = 0.5;
+            // c.weighty = 1.0;
+            c.gridy = 3;
+            c.gridx = 0;
+            c.gridwidth = 1;
+            c.insets = new Insets(1, 9, 15, 1);
+            c.gridheight = GridBagConstraints.REMAINDER;
+            gridbag.setConstraints(unitList, c);
+            add(unitList);
+            
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.gridheight = 1;
             c.gridy = 1;
@@ -2126,13 +2173,34 @@ public class MechDisplay extends JPanel {
             }
             return en.getEquipment(cs.getIndex());
         }
+        
+        private Entity getSelectedEntity() {
+        	int unit = unitList.getSelectedIndex();
+            if (unit == -1 || unit > entities.size()) {
+                return null;
+            }
+            return entities.elementAt(unit);
+        }
 
         /**
          * updates fields for the specified mech
          */
         public void displayMech(Entity en) {
-            this.en = en;
-
+        	this.en = en;
+            entities.clear();
+            entities.add(en);
+            ((DefaultListModel) unitList.getModel()).removeAllElements();
+            ((DefaultListModel) unitList.getModel()).addElement(Messages.getString("MechDisplay.Ego"));
+            for (Entity loadee : en.getLoadedUnits()) {
+            	((DefaultListModel) unitList.getModel()).addElement(loadee.getModel());
+                entities.add(loadee);
+            }
+            unitList.setSelectedIndex(0);
+            displayLocations();
+            displaySlots();
+        }
+        
+        private void displayLocations() {
             ((DefaultListModel) locList.getModel()).removeAllElements();
             for (int i = 0; i < en.locations(); i++) {
                 if (en.getNumberOfCriticals(i) > 0) {
@@ -2394,7 +2462,14 @@ public class MechDisplay extends JPanel {
         }
 
         public void valueChanged(ListSelectionEvent event) {
-            if (event.getSource().equals(locList)) {
+        	if (event.getSource().equals(unitList)) {     
+                if(null != getSelectedEntity()) {
+                	this.en = getSelectedEntity();
+                	((DefaultComboBoxModel) m_chMode.getModel()).removeAllElements();
+                    m_chMode.setEnabled(false);
+                	displayLocations();
+                }
+            } else if (event.getSource().equals(locList)) {
                 ((DefaultComboBoxModel) m_chMode.getModel())
                 .removeAllElements();
                 m_chMode.setEnabled(false);

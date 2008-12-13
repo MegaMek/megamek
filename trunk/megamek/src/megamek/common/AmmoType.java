@@ -114,6 +114,7 @@ public class AmmoType extends EquipmentType {
     public static final long     F_AR10_BARRACUDA    = 1l << 8; // barracuda type
     public static final long     F_NUCLEAR           = 1l << 9; // Nuclear missile
     public static final long     F_TELE_MISSILE      = 1l << 10; //Tele-Missile
+    public static final long     F_CAP_MISSILE      = 1l << 11; //Tele-Missile
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -6523,7 +6524,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_NAC;
         ammo.shots = 1;
-        ammo.bv = 238;
+        ammo.bv = 237;
         ammo.cost = 30000;
         ammo.ammoRatio = 0.2;
         ammo.capital = true;
@@ -6542,7 +6543,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_NAC;
         ammo.shots = 1;
-        ammo.bv = 475;
+        ammo.bv = 474;
         ammo.cost = 60000;
         ammo.ammoRatio = 0.4;
         ammo.capital = true;
@@ -6561,7 +6562,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 25;
         ammo.ammoType = AmmoType.T_NAC;
         ammo.shots = 1;
-        ammo.bv = 594;
+        ammo.bv = 593;
         ammo.cost = 75000;
         ammo.ammoRatio = 0.6;
         ammo.capital = true;
@@ -6580,7 +6581,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 30;
         ammo.ammoType = AmmoType.T_NAC;
         ammo.shots = 1;
-        ammo.bv = 713;
+        ammo.bv = 711;
         ammo.cost = 90000;
         ammo.ammoRatio = 0.8;
         ammo.capital = true;
@@ -6636,7 +6637,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 15;
         ammo.ammoType = AmmoType.T_LIGHT_NGAUSS;
         ammo.shots = 1;
-        ammo.bv = 360;
+        ammo.bv = 378;
         ammo.cost = 45000;
         ammo.ammoRatio = 0.2;
         ammo.capital = true;
@@ -6654,7 +6655,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 25;
         ammo.ammoType = AmmoType.T_MED_NGAUSS;
         ammo.shots = 1;
-        ammo.bv = 601;
+        ammo.bv = 630;
         ammo.cost = 75000;
         ammo.ammoRatio = 0.4;
         ammo.capital = true;
@@ -6672,7 +6673,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 40;
         ammo.ammoType = AmmoType.T_HEAVY_NGAUSS;
         ammo.shots = 1;
-        ammo.bv = 721;
+        ammo.bv = 756;
         ammo.cost = 90000;
         ammo.ammoRatio = 0.5;
         ammo.capital = true;
@@ -6693,7 +6694,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 288;
         ammo.cost = 55000;
         ammo.capital = true;
-        ammo.flags |=  F_TELE_MISSILE;
+        ammo.flags |=  F_TELE_MISSILE | F_CAP_MISSILE;
 
         return ammo;
     }
@@ -6711,6 +6712,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 96;
         ammo.cost = 20000;
         ammo.capital = true;
+        ammo.flags |=  F_CAP_MISSILE;
 
         return ammo;
     }
@@ -6729,7 +6731,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 20000;
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
-        ammo.flags |=  F_TELE_MISSILE;
+        ammo.flags |=  F_TELE_MISSILE | F_CAP_MISSILE;
 
         return ammo;
     }
@@ -6747,7 +6749,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
-        ammo.flags |=  F_NUCLEAR;
+        ammo.flags |=  F_NUCLEAR | F_CAP_MISSILE;
         ammo.capital = true;
               
         return ammo;
@@ -6766,7 +6768,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 72;
         ammo.cost = 14000;
         ammo.capital = true;
-
+        ammo.ammoRatio = 40;
+        ammo.flags |=  F_CAP_MISSILE;
+        
         return ammo;
     }
     
@@ -6784,7 +6788,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 14000;
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
-        ammo.flags |=  F_TELE_MISSILE;
+        ammo.flags |=  F_TELE_MISSILE | F_CAP_MISSILE;
         
         return ammo;
     }
@@ -6803,6 +6807,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 8000;
         ammo.toHitModifier = -2;
         ammo.capital = true;
+        ammo.flags |=  F_CAP_MISSILE;
 
         return ammo;
     }
@@ -6822,7 +6827,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -2;
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
-        ammo.flags |=  F_TELE_MISSILE;
+        ammo.flags |=  F_TELE_MISSILE | F_CAP_MISSILE;
 
         return ammo;
     }
@@ -6839,7 +6844,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 65;
         ammo.cost = 8000;
-        ammo.flags |=  F_AR10_BARRACUDA;
+        ammo.flags |=  F_AR10_BARRACUDA | F_CAP_MISSILE;
         ammo.toHitModifier = -2;
         ammo.capital = true;
 
@@ -6858,7 +6863,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
-        ammo.flags |=  F_AR10_KILLER_WHALE;
+        ammo.flags |=  F_AR10_KILLER_WHALE | F_CAP_MISSILE;
         ammo.capital = true;
         
 
@@ -6878,7 +6883,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
-        ammo.flags |=  F_AR10_KILLER_WHALE | F_NUCLEAR;
+        ammo.flags |=  F_AR10_KILLER_WHALE | F_NUCLEAR | F_CAP_MISSILE;
         ammo.capital = true;
 
         return ammo;
@@ -6896,7 +6901,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 72;
         ammo.cost = 14000;
-        ammo.flags |=  F_AR10_WHITE_SHARK;
+        ammo.flags |=  F_AR10_WHITE_SHARK | F_CAP_MISSILE;
         ammo.capital = true;
 
         return ammo;
@@ -6914,7 +6919,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 65;
         ammo.cost = 8000;
-        ammo.flags |=  F_AR10_BARRACUDA | F_TELE_MISSILE;
+        ammo.flags |=  F_AR10_BARRACUDA | F_TELE_MISSILE | F_CAP_MISSILE;
         ammo.toHitModifier = -2;
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
@@ -6934,7 +6939,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
-        ammo.flags |=  F_AR10_KILLER_WHALE | F_TELE_MISSILE;
+        ammo.flags |=  F_AR10_KILLER_WHALE | F_TELE_MISSILE | F_CAP_MISSILE;
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
 
@@ -6953,7 +6958,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 72;
         ammo.cost = 14000;
-        ammo.flags |=  F_AR10_WHITE_SHARK | F_TELE_MISSILE;
+        ammo.flags |=  F_AR10_WHITE_SHARK | F_TELE_MISSILE | F_CAP_MISSILE;
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
 
@@ -7065,6 +7070,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 50;
         ammo.cost = 30000;
         ammo.capital = true;
+        ammo.flags |=  F_CAP_MISSILE;
 
         return ammo;
     }
@@ -7082,6 +7088,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 40;
         ammo.cost = 25000;
         ammo.capital = true;
+        ammo.flags |=  F_CAP_MISSILE;
 
         return ammo;
     }
@@ -7099,6 +7106,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 62;
         ammo.cost = 19000;
         ammo.capital = true;
+        ammo.flags |=  F_CAP_MISSILE;
 
         return ammo;
     }
@@ -7116,6 +7124,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 84;
         ammo.cost = 15000;
         ammo.capital = true;
+        ammo.flags |=  F_CAP_MISSILE;
 
         return ammo;
     }

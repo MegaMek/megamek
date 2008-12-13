@@ -1432,7 +1432,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
 
             // Make a list of the player's living units.
             ArrayList<Entity> living = client.game.getPlayerEntities(client
-                    .getLocalPlayer());
+                    .getLocalPlayer(), false);
 
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter

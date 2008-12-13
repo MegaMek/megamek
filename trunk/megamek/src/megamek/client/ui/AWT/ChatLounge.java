@@ -56,6 +56,7 @@ import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.client.ui.AWT.widget.ImageButton;
 import megamek.common.Entity;
+import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IStartingPositions;
@@ -1440,7 +1441,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         Entity c3master = entity.getC3Master();
         Vector<Entity> c3members = new Vector<Entity>();
         Iterator<Entity> playerUnits = c.game.getPlayerEntities(
-                c.getLocalPlayer()).iterator();
+                c.getLocalPlayer(), false).iterator();
         while (playerUnits.hasNext()) {
             Entity unit = playerUnits.next();
             if (!entity.equals(unit) && entity.onSameC3NetworkAs(unit)) {
@@ -1535,9 +1536,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     public void loadCustomBA() {
         clientgui.getCustomBADialog().setVisible(true);
     }
-    
+    /*
+     * This button will now just load an empty fighter squadron which must be loaded with 
+     * fighters during the deployment phase
+     */
     public void loadCustomFS() {
+    	FighterSquadron fs = new FighterSquadron();
+        fs.setOwner(client.getLocalPlayer());
+        client.sendAddEntity(fs);
+    	/*
         clientgui.getCustomFSDialog().setVisible(true);
+        */
     }
 
     public void viewGroup() {
@@ -1735,7 +1744,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         } else if (ev.getSource() == butDeleteAll) {
             // Build a Vector of this player's entities.
             ArrayList<Entity> currentUnits = client.game
-                    .getPlayerEntities(client.getLocalPlayer());
+                    .getPlayerEntities(client.getLocalPlayer(), false);
 
             // Walk through the vector, deleting the entities.
             Iterator<Entity> entities = currentUnits.iterator();
@@ -1782,7 +1791,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             // Allow the player to save their current
             // list of entities to a file.
             clientgui.saveListFile(client.game.getPlayerEntities(client
-                    .getLocalPlayer()));
+                    .getLocalPlayer(), false));
         } else if (ev.getSource() == butMinefield) {
             updateMinefield();
         } else if (ev.getSource() == butCamo) {

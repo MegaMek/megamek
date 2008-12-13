@@ -21,647 +21,274 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.BayWeapon;
 
 /**
  * @author Jay Lawson
+ * Fighter squadrons are basically "containers" for a bunch of fighters. 
  */
-public class FighterSquadron extends Aero implements Serializable {
+public class FighterSquadron extends Aero implements Transporter, Serializable {
    
-    /**
-     * 
-     */
     private static final long serialVersionUID = 3491212296982370726L;
-
-    public static int MAX_SIZE = 12;
     
-    public Vector<String> fighters = new Vector<String>();
+	public static int MAX_SIZE = 6;
     
-    private int damThresh = 1;
+    public Vector<Aero> fighters = new Vector<Aero>();
+    //a hash map of the current weapon groups - the key is the location:internal name, and the value is the weapon id
+    Map<String, Integer> weaponGroups = new HashMap<String, Integer>();
     
-    private int standard_damage = 0;
+    //fighter squadrons need to keep track of heat capacity apart from their fighters
+    private int heatcap = 0;
     
-    //number of initial fighters
-    private int n0Fighters = 0;
-    //number of current fighters
-    private int nFighters = 0;
-//    just have a single armor value, no locations
-    private int armor = 0;
-    private int orig_armor = 0;
-    private boolean hasTC = false;
     
-    private int damageRound = 0;
+    public FighterSquadron() {
+    	this.setChassis("Squadron");
+    	this.setModel("");	
+    }
     
-    private double cost = 0.0;
-    
-    public void setCost(double d) {
-        this.cost = d;
+    /*
+     * construct fighter squadron with a specific name
+     */
+    public FighterSquadron(String name) {
+    	this.setChassis(name.trim() + " Squadron");
+    	this.setModel("");	
     }
     
     public double getCost() {
+        double cost = 0.0;
+        for(Aero fighter : fighters) {
+        	cost += fighter.getCost();
+        }
         return cost;
     }
     
-    public void setThresh(int val) {
-        this.damThresh = val;
-    }
-    
-    public int getThresh() {
-        return damThresh;
-    }
-    
-    public void autoSetThresh()
-    {
-        int nThresh = (int)Math.round(getArmor() / (1.0*getN0Fighters()));
-        setThresh(nThresh);
-    }
-    
-    public void setN0Fighters(int n) {
-        this.n0Fighters = n;
+    /**
+     * overrides the default {@link Entity#isCapitalFighter()} with true
+     */
+    public boolean isCapitalFighter() {
+    	return true;
     }
     
     public int getN0Fighters() {
-        return n0Fighters;
+        return fighters.size();
     }
     
-    public void setNFighters(int n) {
-        this.nFighters = n;
-    }
-    
+   
     public int getNFighters() {
-        return nFighters;
+    	int n = 0;
+        for(Aero fighter : fighters) {
+        	if(!fighter.isDestroyed() && !fighter.isDoomed()) {
+        		n++;
+        	}
+        }
+        return n;
     }
     
-    public void setArmor(int arm) {
-        this.armor = arm;
+    public int get0SI() {
+    	if(fighters.size() < 1) {
+    		return 0;
+    	}
+    	int si = Integer.MAX_VALUE;
+    	for(Aero fighter : fighters) {
+    		if(!fighter.isDestroyed() && !fighter.isDoomed()) {
+    			if(fighter.getSI() < si) {
+    				si = fighter.getSI();
+    			}
+    		}
+    	}
+    	return si;
     }
     
-    public void set0Armor(int arm) {
-        this.orig_armor = arm;
+    public int getSI() {
+    	if(fighters.size() < 1) {
+    		return 0;
+    	}
+    	int si = Integer.MAX_VALUE;
+    	for(Aero fighter : fighters) {
+    		if(!fighter.isDestroyed() && !fighter.isDoomed()) {
+    			if(fighter.getSI() < si) {
+    				si = fighter.getSI();
+    			}
+    		}
+    	}
+    	return si;
     }
     
-    public int getArmor() {
-        return armor;
+    public Aero getFighter(int loc) {
+    	if(loc > fighters.size()) {
+    		return fighters.firstElement();
+    	}
+    	return fighters.get(loc);
     }
     
-    public int getStandardDamage() {
-        return standard_damage;
-    }
-    
-    public void resetStandardDamage() {
-            standard_damage = 0;
-    }
-    
-    public void addStandardDamage(int damage, HitData hit) {
-        standard_damage = standard_damage + damage;
-    }
-    
-    public void addDamageRound(int dam) {
-        this.damageRound += dam;
-    }
-    
-    public int getDamageRound() {
-        return damageRound;
-    }
-    
-    public void resetDamageRound() {
-        this.damageRound = 0;
+    public Vector<Aero> getFighters() {
+    	return fighters;
     }
     
     public int getTotalArmor() {
+    	int armor = 0;
+        for(Aero fighter : fighters) {
+        	armor += fighter.getCapArmor();
+        }
         return armor;
     }
     
     public int getTotalOArmor() {
-        return orig_armor;
+    	int armor = 0;
+        for(Aero fighter : fighters) {
+        	armor += fighter.getCap0Armor();
+        }
+        return armor;
     }
     
+    /**
+     * Returns the percent of the armor remaining
+     */
     public double getArmorRemainingPercent() {
-        if(getTotalOArmor() == 0)
+        if (getTotalOArmor() == 0)
             return IArmorState.ARMOR_NA;
-        return ((double)getTotalArmor() / (double)getTotalOArmor());
+        return ((double) getTotalArmor() / (double) getTotalOArmor());
+    }
+    		
+    public int getWalkMP(boolean gravity, boolean ignoreheat) {
+    	if(fighters.size() < 1) {
+    		return 0;
+    	}
+    	int mp = Integer.MAX_VALUE;
+    	for(Aero fighter : fighters) {
+    		if(!fighter.isDestroyed() && !fighter.isDoomed()) {
+    			if(fighter.getWalkMP(gravity, ignoreheat) < mp) {
+    				mp = fighter.getWalkMP(gravity, ignoreheat);
+    			}
+    		}
+    	}
+    	return mp;
     }
     
+    public int getFuel() {
+    	if(fighters.size() < 1) {
+    		return 0;
+    	}
+    	int fuel = Integer.MAX_VALUE;
+    	for(Aero fighter : fighters) {
+    		if(!fighter.isDestroyed() && !fighter.isDoomed()) {
+    			if(fighter.getFuel() < fuel) {
+    				fuel = fighter.getFuel();
+    			}
+    		}
+    	}
+    	return fuel;
+    }
+    
+    /*
+     * base this on the max size of the fighter squadron, since the initial size can fluctuate due to joining
+     * and splitting
+     */
     public double getInternalRemainingPercent() {
-        return ((double)getNFighters() / (double)getN0Fighters());
+        return ((double)getNFighters() / (double)MAX_SIZE);
     }
     
     public boolean hasTargComp() {
         
-        /*for some reason
-         * equipment doesn't seem to be loaded for the fighters
-        for(Entity e : fighters) {
+    	int nTC = 0;
+        for(Entity fighter : fighters) {
             //if any fighter doesn't have it, then return false
-            if(e.hasTargComp()) {
-                return true;
+            if(fighter.hasTargComp() && !fighter.isDestroyed() && !fighter.isDoomed()) {
+                nTC++;
             }
         }
-        */
-        return hasTC;
+        double propTC = (double)nTC / (double)getNFighters();
+        return propTC >= 0.5;
+        
+    }
+
+    public boolean hasActiveECM() {
+    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+    		return super.hasActiveECM();
+    	}
+    	return getECMRange() > Entity.NONE;
     }
     
-    public void setHasTC(boolean b) {
-        this.hasTC = b;
+    /**
+	 * Do units loaded onto this entity still have active ECM/ECCM/etc.?
+	 */
+	public boolean loadedUnitsHaveActiveECM() {
+		return true;
+	}
+
+    public PilotingRollData addEntityBonuses(PilotingRollData prd)
+    {
+    	
+    	//movement effects
+        //some question as to whether "above safe thrust" applies to thrust or velocity
+        //I will treat it as thrust until it is resolved
+        if(this.moved == IEntityMovementType.MOVE_OVER_THRUST) 
+            prd.addModifier(+1, "Used more than safe thrust");
+        int vel = getCurrentVelocity();
+        int vmod = vel - (2*getWalkMP());
+        if(vmod > 0) 
+            prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
+        
+        //add in atmospheric effects later
+        if(game.getBoard().inAtmosphere()) {
+            prd.addModifier(+2, "Atmospheric operations");
+            
+            prd.addModifier(-1,"fighter/small craft");
+        }
+        
+        //according to personal communication with Welshman, the normal crit penalties are added up
+    	//across the fighter squadron
+    	for(Aero fighter : fighters) {
+    		if(fighter.isDestroyed() || fighter.isDoomed()) {
+    			continue;
+    		}
+	        int avihits = fighter.getAvionicsHits();
+
+	        if(avihits > 0 && avihits<3) 
+	            prd.addModifier(avihits, "Avionics Damage");
+	    
+	        //this should probably be replaced with some kind of AVI_DESTROYED boolean
+	        if(avihits >= 3) 
+	            prd.addModifier(5, "Avionics Destroyed");
+	        
+	        //life support (only applicable to non-ASFs
+	        if(!hasLifeSupport()) 
+	            prd.addModifier(+2,"No life support");
+	        
+	        if ( hasModularArmor() ) {
+	            prd.addModifier(1,"Modular Armor");
+	        }
+    	}
+        
+        return prd;
     }
     
-
-    
-    /*I am getting wierd naming stuff so I am going to disable this for the time being
-    * numbering of unique display names is off
-    public void compileSquadron() {
-        
-        //if no fighters here then return
-        if(fighters.size() <= 0) {
-            return;
-        }
-        
-        //cycle through the entity vector and create a fighter squadron
-        String chassis = fighters.elementAt(0).getChassis();
-        int si = 99;
-        boolean alike = true;
-        int armor = 0;
-        int heat = 0;
-        int safeThrust = 99;
-        int n = 0;
-        float weight = 0.0f;  
-        int bv = 0;
-        double cost = 0.0;
-        int nTC = 0;
-        for(Entity e : fighters) {      
-            if(!chassis.equals(e.getChassis())) {
-                alike = false;
-            }        
-            n++;
-            //armor
-            armor += e.getTotalArmor();
-            //heat
-            heat += e.getHeatCapacity();
-            //weight
-            weight += e.getWeight();
-            bv += e.calculateBattleValue();
-            cost += e.getCost();
-            //safe thrust
-            if(e.getWalkMP() < safeThrust) 
-                safeThrust = e.getWalkMP();
-            
-            Aero a = (Aero)e;
-            //si
-            if(a.getSI() < si) {
-                si = a.getSI();
-            }
-            
-            //weapons 
-            Mounted newmount;
-            for(Mounted m : e.getEquipment() ) {
-                
-                if(m.getType() instanceof WeaponType) {    
-                    //first load the weapon onto the squadron    
-                    WeaponType wtype = (WeaponType)m.getType();
-                    try{
-                        newmount = this.addEquipment(wtype, m.getLocation());
-                    } catch (LocationFullException ex) {
-                        System.out.println("Unable to compile weapons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        ex.printStackTrace();
-                        return;
-                    }
-                    //skip to the next if it has no AT class
-                    if(wtype.getAtClass() == WeaponType.CLASS_NONE) {
-                        continue;
-                    }
-                    
-                    //now find the right bay
-                    Mounted bay = this.getFirstBay(wtype, newmount.getLocation(), newmount.isRearMounted());
-                    //if this is null, then I should create a new bay
-                    if(bay == null) {
-                        EquipmentType newBay = WeaponBay.getBayType(wtype.getAtClass());
-                        try{
-                            bay = this.addEquipment(newBay, newmount.getLocation());
-                        } catch (LocationFullException ex) {
-                            System.out.println("Unable to compile weapons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                            ex.printStackTrace();
-                            return;
-                        }
-                    }
-                    //now add the weapon to the bay
-                    bay.addWeapon(newmount);
-                } else {
-                    //check if this is a TC
-                    if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP)) {
-                        nTC++;
-                    }
-                    //just add the equipment normally
-                    try{
-                        this.addEquipment(m.getType(), m.getLocation());
-                    } catch (LocationFullException ex) {
-                        System.out.println("Unable to add equipment"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        ex.printStackTrace();
-                        return;
-                    }
-                }
-            }
-        }
-        
-        armor = (int)Math.round(armor / 10.0);
-        
-        this.setArmor(armor);
-        this.set0Armor(armor);
-        this.setHeatSinks(heat);
-        this.setOriginalWalkMP(safeThrust);
-        this.setN0Fighters(n);
-        this.setNFighters(n);
-        this.autoSetThresh();
-        this.setWeight(weight);
-        this.set0SI(si);
-        
-        if(nTC >= n) {
-            this.hasTC = true;
-        }
-        
-        //if all the same chassis, name by chassis
-        //otherwise name by weight
-        if(alike) {
-            this.setChassis(chassis + " Squadron");
-        } else {
-            int aveWeight = Math.round(weight/n);
-            if(aveWeight <= 45) {
-                this.setChassis("Mixed Light Squadron");
-            } else if(aveWeight < 75) {
-                this.setChassis("Mixed Medium Squadron");
-            } else {
-                this.setChassis("Mixed Heavy Squadron");
-            }
-        }
-        this.setModel("");
-        
-        this.loadAllWeapons();
-        this.updateAllWeaponBays();
+    public int getClusterMods() {
+    	int penalty = 0;
+    	for(Aero fighter : fighters) {
+    		if(fighter.isDestroyed() || fighter.isDoomed() || fighter.getFCSHits() > 2) {
+    			continue;
+    		}
+    		penalty += fighter.getClusterMods();
+    	}
+    	return penalty;
     }
-    */
-
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Aero#calculateBattleValue(boolean, boolean)
-     */
-    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
-       /*
-        * No real Canon way to do this. I could just add up the BV of the individual
-        * fighters, but I want this to be able to adjust during the battle
-        * to account for damage. So I follow the procedure for other craft.
-        */
-        double dbv = 0; // defensive battle value
-        double obv = 0; // offensive bv
-
-        // total armor points
-        dbv += getTotalArmor() * 25;
-
-        // total internal structure  
-        //until I know better what to do with this
-        //dbv += getSI() * 2.0;
-
-        // add defensive equipment
-        double dEquipmentBV = 0;
-        for (Mounted mounted : getEquipment()){
-            EquipmentType etype = mounted.getType();
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed())
-                continue;
-
-            if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD))
-                    || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
-                    || (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM)
-                                            || etype.hasFlag(MiscType.F_AP_POD)
-               // not yet coded:            || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                                            || etype.hasFlag(MiscType.F_BAP)))) {
-                dEquipmentBV += etype.getBV(this);
-            }
-        }
-        dbv += dEquipmentBV;
-
-        //unit type multiplier
-        dbv *= 1.2;
-       
-        
-//      calculate heat efficiency
-        int aeroHeatEfficiency = this.getHeatCapacity();
-
-        // total up maximum heat generated
-        // and add up BVs for ammo-using weapon types for excessive ammo rule
-        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
-        double maximumHeat = 0;
-        for (Mounted mounted : getTotalWeaponList()) {
-            WeaponType wtype = (WeaponType)mounted.getType();
-            if(wtype instanceof BayWeapon) {
-                continue;
-            }
-            double weaponHeat = wtype.getHeat();
-            
-            // only count non-damaged equipment
-            if (mounted.isMissing() || mounted.isHit() ||
-                    mounted.isDestroyed() || mounted.isBreached()) {
-                continue;
-            }
-            
-            // one shot weapons count 1/4
-            if (wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER
-                    || wtype.hasFlag(WeaponType.F_ONESHOT)) {
-                weaponHeat *= 0.25;
-            }
-
-            // double heat for ultras
-            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
-                    || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
-                weaponHeat *= 2;
-            }
-
-            // Six times heat for RAC
-            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                weaponHeat *= 6;
-            }
-
-            // half heat for streaks
-            if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK)
-                    || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)){
-                weaponHeat *= 0.5;
-            }
-            maximumHeat += weaponHeat;
-            // add up BV of ammo-using weapons for each type of weapon,
-            // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA))
-                        || wtype.hasFlag(WeaponType.F_ONESHOT)
-                        || wtype.hasFlag(WeaponType.F_INFANTRY)
-                        || wtype.getAmmoType() == AmmoType.T_NA)) {
-                String key = wtype.getAmmoType()+":"+wtype.getRackSize();
-                if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
-                }
-                else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this)+weaponsForExcessiveAmmo.get(key));
-                }
-            }
-        }
-                
-        double weaponBV = 0;
-        double weaponsBVFront = 0;
-        double weaponsBVRear = 0;
-        boolean hasTargComp = hasTargComp();
-        
-        if (maximumHeat <= aeroHeatEfficiency) {
-            //count all weapons equal, adjusting for rear-firing and excessive ammo
-            for (Mounted mounted : getTotalWeaponList()) {
-                WeaponType wtype = (WeaponType)mounted.getType();
-                if(wtype instanceof BayWeapon) {
-                    continue;
-                }
-                double dBV = wtype.getBV(this);
-                
-                // don't count destroyed equipment
-                if (mounted.isDestroyed())
-                    continue;
-
-                // don't count AMS, it's defensive
-                if (wtype.hasFlag(WeaponType.F_AMS)) {
-                    continue;
-                }
-                
-                // and we'll add the tcomp here too
-                if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    if(hasTargComp)
-                        dBV *= 1.25;
-                }
-                
-                if (mounted.getLocation() == LOC_AFT) {
-                    weaponsBVRear += dBV;
-                } else {
-                    weaponsBVFront += dBV;
-                }
-            }
-        } else {
-            // count weapons at full BV until heatefficiency is reached or passed with one weapon
-            int heatAdded = 0;
-            ArrayList<Mounted> weapons = this.getTotalWeaponList();
-            Collections.sort(weapons, new WeaponComparator());
-            for (Mounted weapon : weapons) {
-                WeaponType wtype = (WeaponType)weapon.getType();
-                if(wtype instanceof BayWeapon) {
-                    continue;
-                }
-                double dBV = wtype.getBV(this);
-                // don't count destroyed equipment
-                if (weapon.isDestroyed())
-                    continue;
-                // don't count AMS, it's defensive
-                if (wtype.hasFlag(WeaponType.F_AMS)) {
-                    continue;
-                }
-                // calc MG Array here:
-                if (wtype.hasFlag(WeaponType.F_MGA)) {
-                    double mgaBV = 0;
-                    for (Mounted possibleMG : this.getTotalWeaponList()) {
-                        if (possibleMG.getType().hasFlag(WeaponType.F_MG) && possibleMG.getLocation() == weapon.getLocation()) {
-                            mgaBV += possibleMG.getType().getBV(this);
-                        }
-                    }
-                   dBV = mgaBV * 0.67;
-                }
-                // and we'll add the tcomp here too
-                if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
-                    dBV *= 1.25;
-                }
-                // artemis bumps up the value
-                if (weapon.getLinkedBy() != null) {
-                    Mounted mLinker = weapon.getLinkedBy();
-                    if (mLinker.getType() instanceof MiscType && 
-                            mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                        dBV *= 1.2;
-                    }
-                } 
-                
-                if (weapon.getLinkedBy() != null) {
-                    Mounted mLinker = weapon.getLinkedBy();
-                    if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                        dBV *= 1.15;
-                    }
-                }
-
-                heatAdded += ((WeaponType)weapon.getType()).getHeat();
-                //changed this to greater than rather than greater or equal
-                if (heatAdded > aeroHeatEfficiency && wtype.getHeat() > 0)
-                    dBV /= 2;
-                if (weapon.getLocation() == LOC_AFT) {
-                    weaponsBVRear += dBV;
-                } else {
-                    weaponsBVFront += dBV;
-                }
-                //To be consistent with 3050U, this should go first
-                //heatAdded += ((WeaponType)weapon.getType()).getHeat();
-            }
-        }
-        if (weaponsBVFront > weaponsBVRear) {
-            weaponBV += weaponsBVFront;
-            weaponBV += (weaponsBVRear * 0.5);
-        } else {
-            weaponBV += weaponsBVRear;
-            weaponBV += (weaponsBVFront * 0.5);
-        }   
-        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM - BMR p152)
-        double oEquipmentBV = 0;
-        for (Mounted mounted : getMisc()) {
-            MiscType mtype = (MiscType)mounted.getType();
  
-            // don't count destroyed equipment
-            if (mounted.isDestroyed())
-                continue;
-
-            if (mtype.hasFlag(MiscType.F_ECM)
-                    || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_AP_POD) 
-//not yet coded:    || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) //targ counted with weapons 
-                continue;
-            oEquipmentBV += mtype.getBV(this);
-            // need to do this here, a MiscType does not know the location
-            // where it's mounted
-            if (mtype.hasFlag(MiscType.F_HARJEL)) {
-                if (this.getArmor(mounted.getLocation(), false) != IArmorState.ARMOR_DESTROYED) {
-                    oEquipmentBV += this.getArmor(mounted.getLocation());
-                }
-                if (this.hasRearArmor(mounted.getLocation())
-                        && this.getArmor(mounted.getLocation(), true) != IArmorState.ARMOR_DESTROYED) {
-                    oEquipmentBV += this.getArmor(mounted.getLocation(), true);
-                }
-            }
-        }
-        weaponBV += oEquipmentBV;
-
-        // add ammo bv
-        double ammoBV = 0;
-        // extra BV for when we have semiguided LRMs and someone else has TAG on our team        
-        double tagBV = 0;
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>(); 
-        for (Mounted mounted : getAmmo()) {
-            AmmoType atype = (AmmoType)mounted.getType();
-
-            // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0)
-                continue;
-
-            // don't count AMS, it's defensive
-            if (atype.getAmmoType() == AmmoType.T_AMS) {
-                continue;
-            }
-
-            // don't count oneshot ammo, it's considered part of the launcher.
-            if (mounted.getLocation() == Entity.LOC_NONE) {
-                // assumption: ammo without a location is for a oneshot weapon
-                continue;
-            }
-            // semiguided ammo might count double
-            if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
-                Player tmpP = getOwner();
-                
-                if ( tmpP != null ){
-                    // Okay, actually check for friendly TAG.
-                    if (tmpP.hasTAG())
-                        tagBV += atype.getBV(this);
-                    else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-                       for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements(); ) {
-                            Team m = e.nextElement();
-                            if (m.getId() == tmpP.getTeam()) {
-                                if (m.hasTAG(game)) {
-                                    tagBV += atype.getBV(this);
-                                }
-                                // A player can't be on two teams.
-                                // If we check his team and don't give the penalty, that's it.
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            String key = atype.getAmmoType()+":"+atype.getRackSize();
-            if (!keys.contains(key))
-                keys.add(key);
-            if (!ammo.containsKey(key)) {
-                ammo.put(key, atype.getBV(this));
-            }
-            else {
-                ammo.put(key, atype.getBV(this)+ammo.get(key));
-            }
-        }
-
-        // Excessive ammo rule:
-        // Only count BV for ammo for a weapontype until the BV of all weapons of that 
-        // type on the mech is reached.
-        for (String key : keys) {
-            if (weaponsForExcessiveAmmo.get(key) != null) {
-                if (ammo.get(key) > weaponsForExcessiveAmmo.get(key))
-                    ammoBV += weaponsForExcessiveAmmo.get(key);
-                else
-                    ammoBV += ammo.get(key);
-            } else {
-                // Ammo with no matching weapons counts 0, unless it's a coolant pod
-                // because coolant pods have no matching weapon
-                if (key.equals(new Integer(AmmoType.T_COOLANT_POD).toString()+"1")) {
-                    ammoBV += ammo.get(key);
-                }
-            }
-        }
-        weaponBV += ammoBV;
-        
-        // adjust further for speed factor
-        // this is a bit weird, because the formula gives
-        // a different result than the table, because MASC/TSM
-        // is handled differently (page 315, TM, compare
-        // http://forums.classicbattletech.com/index.php/topic,20468.0.html
-        double speedFactor;
-        double speedFactorTableLookup = getOriginalRunMP();
-        speedFactor = Math.pow(1+((speedFactorTableLookup-5)/10), 1.2);
-        speedFactor = Math.round(speedFactor * 100) / 100.0;
-        
-        obv = weaponBV * speedFactor;
-
-        // we get extra bv from some stuff
-        double xbv = 0.0;
-        //extra BV for semi-guided lrm when TAG in our team
-        xbv += tagBV;
-        // extra from c3 networks. a valid network requires at least 2 members
-        // some hackery and magic numbers here.  could be better
-        // also, each 'has' loops through all equipment.  inefficient to do it 3 times
-        if (((hasC3MM() && calculateFreeC3MNodes() < 2) ||
-            (hasC3M() && calculateFreeC3Nodes() < 3) ||
-            (hasC3S() && C3Master > NONE) ||
-            (hasC3i() && calculateFreeC3Nodes() < 5))
-            && !ignoreC3 && (game != null)) {
-            int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(true, true);
-            for (Entity e : game.getC3NetworkMembers(this)) {
-                if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV+=e.calculateBattleValue(true, true);
-                }
-            }
-            xbv += totalForceBV *= 0.05;
-        }
-
-        int finalBV = (int)Math.round(dbv + obv + xbv);
-
-        // and then factor in pilot
-        double pilotFactor = 1;
-        if (!ignorePilot) {
-            pilotFactor = crew.getBVSkillMultiplier();
-        }
-        
-        int retVal = (int)Math.round((finalBV) * pilotFactor);
-        
-        // don't factor pilot in if we are just calculating BV for C3 extra BV
-        if (ignoreC3)
-            return finalBV;
-        return retVal;
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+    	int bv = 0;
+    	/*
+    	for(Aero fighter : fighters) {
+    		bv += fighter.calculateBattleValue(ignoreC3, ignorePilot);
+    	}
+    	*/
+    	return bv;
     }
     
     /*
@@ -672,9 +299,326 @@ public class FighterSquadron extends Aero implements Serializable {
         return calculateBattleValue(false, false);
     }
     
-    public boolean doomedInAtmosphere() {
-        return true;
+    public int getHeatSinks() {
+    	int sinks = 0;
+        for(Aero fighter : fighters) {
+        	if(!fighter.isDestroyed() && !fighter.isDoomed()) {
+        		sinks += fighter.getHeatSinks();
+        	}
+        }
+        return sinks;
+    }
+    
+    public int getHeatCapacity() {
+    	return heatcap;
+    }
+    
+    public void resetHeatCapacity() {
+    	int capacity = 0;
+        for(Aero fighter : fighters) {
+        	if(!fighter.isDestroyed() && !fighter.isDoomed()) {
+        		capacity += fighter.getHeatCapacity();
+        	}
+        }
+        this.heatcap = capacity;
+    }
+    
+    public float getWeight() {
+    	float weight = 0.0f;
+        for(Aero fighter : fighters) {
+        	if(!fighter.isDestroyed() && !fighter.isDoomed()) {
+        		weight += fighter.getWeight();
+        	}
+        }
+        return weight;
+    }
+    
+    public double getAveWeight() {
+    	return getWeight() / getNFighters();
     }
     
     
+    
+    /***
+     * rather than keeping track of weapons on each fighter, every new round just collect the current weapon groups 
+     * by cycling through each fighter and then create a new weaponGroupList. This will be trickier in terms of 
+     * using and keeping track of ammo, which is necessary in case squadron splits, but should work otherwise
+     */
+    
+    
+    /**
+     * Fighter Squadron units can only get hit in undestroyed fighters.
+     */
+    public HitData rollHitLocation(int table, int side, int aimedLocation,
+            int aimingMode) {
+
+        // If this squadron is doomed or is of size 1 then just return the first one
+        if (this.isDoomed() || getNFighters() < 2)
+            return new HitData(0);
+
+        // Pick a random number between 0 and the number of fighters in the squadron.
+        int loc = Compute.randomInt(getN0Fighters());
+
+        // Pick a new random number if that fighter is destroyed or never existed.
+        while (getFighter(loc).isDestroyed() || getFighter(loc).isDoomed()) {
+            loc = Compute.randomInt(getN0Fighters());;
+        }
+
+        return new HitData(loc);
+
+    }
+
+    public HitData rollHitLocation(int table, int side) {
+        return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
+    }
+    
+    public void newRound(int roundNumber) {
+        super.newRound(roundNumber);
+        updateWeaponGroups();
+        loadAllWeapons();
+        updateSkills();
+        resetHeatCapacity();
+    }
+    
+    /**
+     * instead of trying to track the individual units weapons, just recompile the weapon groups for this 
+     * squadron each round
+     */
+    public void updateWeaponGroups() {
+    	//first we need to reset all the weapons in our existing mounts to zero until proven otherwise
+    	Set<String> set= weaponGroups.keySet();
+        Iterator<String> iter = set.iterator();
+        while(iter.hasNext()) {
+            String key = iter.next();
+            this.getEquipment(weaponGroups.get(key)).setNWeapons(0);
+        } 	
+    	//now collect a hash of all the same weapons in each location by id
+    	Map<String, Integer> groups = new HashMap<String, Integer>();
+    	for(Aero fighter : fighters) {
+    		if(fighter.getFCSHits() > 2) {
+    			//can't fire with no more FCS
+    			continue;
+    		}
+	    	for (Mounted mounted : fighter.getWeaponGroupList()) {
+	    		int loc = mounted.getLocation();
+	    		String key = mounted.getType().getInternalName() + ":" + loc;
+	    		if(null == groups.get(key)) {
+	    			groups.put(key, mounted.getNWeapons());
+	    		} else {
+	    			groups.put(key, groups.get(key) + mounted.getNWeapons());
+	    		}
+	    	}
+    	}
+    	//now we just need to traverse the hash and either update our existing equipment or add new ones if there is none
+    	Set<String> newSet = groups.keySet();
+        Iterator<String> newIter = newSet.iterator();
+        while(newIter.hasNext()) {
+            String key = newIter.next();
+            if(null != weaponGroups.get(key)) {
+            	//then this equipment is already loaded, so we just need to correctly update the number of weapons
+            	this.getEquipment(weaponGroups.get(key)).setNWeapons(groups.get(key));
+            } else {
+            	//need to add a new weapon
+	            String name = key.split(":")[0];
+	            int loc = Integer.parseInt(key.split(":")[1]);
+	            EquipmentType etype = EquipmentType.get(name);
+	            Mounted newmount;
+	            if (etype != null) {
+	                try {
+	                    newmount = this.addWeaponGroup(etype, loc);
+	                    newmount.setNWeapons(groups.get(key));
+	                    weaponGroups.put(key, this.getEquipmentNum(newmount));
+	                } catch (LocationFullException ex) {
+	                	System.out.println("Unable to compile weapon groups"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	                    ex.printStackTrace();
+	                    return;
+	                }
+	            }
+	            else if(name != "0"){
+	                this.addFailedEquipment(name);
+	            }
+            }
+        }  	
+    }
+    
+    /**
+     * When fighters are removed it is necessary to unlink all ammo to the squadron's weapons and reload
+     * it to ensure that ammo from to the removed fighter does not remain linked
+     */
+    private void reloadAllWeapons() {
+    	for(Mounted weapon : getTotalWeaponList()) {
+    		if(((WeaponType)weapon.getType()).getAmmoType() != AmmoType.T_NA 
+    				&& null != weapon.getLinked() && weapon.getLinked().getType() instanceof AmmoType) {
+    			weapon.unlink();
+    		}
+    	}
+    }
+    
+    /**
+     * update the skills for this squadron
+     */
+    public void updateSkills() {
+    	if(getN0Fighters() == 0) {
+    		return;
+    	}
+    	int pilotingTotal = 0;
+    	int gunneryTotal = 0;
+    	int gunneryLTotal = 0;
+    	int gunneryMTotal = 0;
+    	int gunneryBTotal = 0;
+        for(Aero fighter : fighters) {
+        	if(!fighter.isDestroyed() && !fighter.isDoomed()) {
+        		pilotingTotal += fighter.crew.getPiloting();
+        		gunneryTotal += fighter.crew.getGunnery();
+        		gunneryLTotal += fighter.crew.getGunneryL();
+        		gunneryMTotal += fighter.crew.getGunneryM();
+        		gunneryBTotal += fighter.crew.getGunneryB();
+        	}
+        }
+        this.crew.setPiloting(pilotingTotal / getN0Fighters());
+        this.crew.setGunnery(gunneryTotal / getN0Fighters());
+        this.crew.setGunneryL(gunneryTotal / getN0Fighters());
+        this.crew.setGunneryM(gunneryTotal / getN0Fighters());
+        this.crew.setGunneryB(gunneryTotal / getN0Fighters());
+    }
+    
+    public ArrayList<Mounted> getAmmo() {
+    	ArrayList<Mounted> allAmmo = new ArrayList<Mounted>();
+    	for(Entity fighter : fighters) {
+    		allAmmo.addAll(fighter.getAmmo());
+    	}
+        return allAmmo;
+    } 
+   
+    public void useFuel(int fuel) {
+    	for(Aero fighter : fighters) {
+    		fighter.useFuel(fuel);
+    	}
+    }
+    
+    /*
+     * The transporter functions
+     */
+    
+    /**
+     * Determines if this object can accept the given unit.  The unit may
+     * not be of the appropriate type or there may be no room for the unit.
+     *
+     * @param   unit - the <code>Entity</code> to be loaded.
+     * @return  <code>true</code> if the unit can be loaded,
+     *          <code>false</code> otherwise.
+     */
+    public boolean canLoad( Entity unit ) {
+        // We must have enough space for the new fighter.
+        if ( !unit.isEnemyOf(this) && unit.isFighter()  && this.fighters.size() < MAX_SIZE) {
+            return true;
+        }
+        //fighter squadrons can also load other fighter squadrons provided there is enough space
+        //and the loadee is not empty
+        if(unit instanceof FighterSquadron &&  !unit.isEnemyOf(this) && getId() != unit.getId() 
+        		&& ((FighterSquadron)unit).getN0Fighters() > 0
+        		&& (this.fighters.size() + ((FighterSquadron)unit).getN0Fighters()) <= MAX_SIZE) {
+        	return true;
+        }
+        
+	    return false;
+    }
+    
+    /**
+     * Load the given unit.  
+     *
+     * @param   unit - the <code>Entity</code> to be loaded.
+     * @exception - If the unit can't be loaded, an
+     *          <code>IllegalArgumentException</code> exception will be thrown.
+     */
+    public void load( Entity unit ) throws IllegalArgumentException {
+        // If we can't load the unit, throw an exception.
+        if ( !this.canLoad(unit) ) {
+            throw new IllegalArgumentException( "Can not load " +
+                        unit.getShortName() +
+                        " into this squadron. ");
+        }       
+        //if this is a fighter squadron then we actually need to load the individual units
+        if(unit instanceof FighterSquadron) {
+        	this.fighters.addAll(((FighterSquadron)unit).getFighters());
+        } else {
+        	// Add the unit to our squadron.
+        	this.fighters.addElement( (Aero)unit );
+        }
+        updateWeaponGroups();
+        loadAllWeapons();
+        updateSkills();
+    }
+    
+    /**
+     * Unload the given unit.
+     * TODO: need to strip out ammo
+     * @param   unit - the <code>Entity</code> to be unloaded.
+     * @return  <code>true</code> if the unit was contained in this space,
+     *          <code>false</code> otherwise.
+     */
+    public boolean unload( Entity unit ) {
+        // Remove the unit if we are carrying it.
+        boolean success = this.fighters.removeElement( unit );
+        updateWeaponGroups();
+        reloadAllWeapons();
+        updateSkills();
+        return success;
+    }
+
+    /**
+     * Get a <code>List</code> of the units currently loaded into this payload.
+     *
+     * @return  A <code>List</code> of loaded <code>Entity</code> units.
+     *          This list will never be <code>null</code>, but it may be empty.
+     *          The returned <code>List</code> is independant from the under-
+     *          lying data structure; modifying one does not affect the other.
+     */
+    @SuppressWarnings("unchecked")
+    public Vector<Entity> getLoadedUnits() {
+        // Return a copy of our list of troops.
+        return (Vector<Entity>)this.fighters.clone();
+    }
+    
+    /**
+     * Return a string that identifies the unused capacity of this transporter.
+     *
+     * @return A <code>String</code> meant for a human.
+     */
+    public String getUnusedString() {
+        return " - " + (MAX_SIZE - this.fighters.size()) + " units";
+    }
+    
+    /**
+     * Determine if transported units prevent a weapon in the given location
+     * from firing.
+     *
+     * @param   loc - the <code>int</code> location attempting to fire.
+     * @param   isRear - a <code>boolean</code> value stating if the given
+     *          location is rear facing; if <code>false</code>, the location
+     *          is front facing.
+     * @return  <code>true</code> if a transported unit is in the way, 
+     *          <code>false</code> if the weapon can fire.
+     */
+    public boolean isWeaponBlockedAt( int loc, boolean isRear ) {return false;}
+
+    /**
+     * If a unit is being transported on the outside of the transporter, it
+     * can suffer damage when the transporter is hit by an attack.  Currently,
+     * no more than one unit can be at any single location; that same unit
+     * can be "spread" over multiple locations.
+     *
+     * @param   loc - the <code>int</code> location hit by attack.
+     * @param   isRear - a <code>boolean</code> value stating if the given
+     *          location is rear facing; if <code>false</code>, the location
+     *          is front facing.
+     * @return  The <code>Entity</code> being transported on the outside
+     *          at that location.  This value will be <code>null</code>
+     *          if no unit is transported on the outside at that location.
+     */
+    public Entity getExteriorUnitAt( int loc, boolean isRear ) { return null; }
+
+    public int getCargoMpReduction() {
+        return 0;
+    }
 }

@@ -27,6 +27,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Dropship;
 import megamek.common.Entity;
+import megamek.common.FighterSquadron;
 import megamek.common.IEntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -97,7 +98,11 @@ public class RamAttackAction extends AbstractAttackAction {
         
         if(!(target instanceof Aero)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not Aero");
-        }    
+        }   
+        
+        if(ae instanceof FighterSquadron || target instanceof FighterSquadron) {
+        	return new ToHitData(TargetRoll.IMPOSSIBLE, "fighter squadrons may not ram nor be the target of a ramming attc");
+        }
 
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -174,7 +179,7 @@ public class RamAttackAction extends AbstractAttackAction {
         } else if(target instanceof Dropship) {
             toHit.addModifier(+2,"target is a dropship");
         } else {
-            toHit.addModifier(+4,"target is a fighter");
+            toHit.addModifier(+4,"target is a fighter/small craft");
         }
         
         //attacker type
@@ -187,7 +192,7 @@ public class RamAttackAction extends AbstractAttackAction {
         } else if(a instanceof Dropship) {
             toHit.addModifier(-1,"attacker is a dropship");
         } else {
-            toHit.addModifier(-2,"target is a fighter");
+            toHit.addModifier(-2,"attacker is a fighter/small craft");
         }
         
         //can the target unit move
@@ -204,7 +209,12 @@ public class RamAttackAction extends AbstractAttackAction {
             avionics = 3;
         if(avionics > 0)
             toHit.addModifier(avionics, "avionics damage");
-            
+        
+        //evading bonuses
+        if (target.getTargetType() == Targetable.TYPE_ENTITY && te.isEvading()) {
+            toHit.addModifier(te.getEvasionBonus(), "target is evading");
+        }
+        
         //determine hit direction
         toHit.setSideTable(te.sideTable(priorSrc));
         

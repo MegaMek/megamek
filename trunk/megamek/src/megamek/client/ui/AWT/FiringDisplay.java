@@ -529,9 +529,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
 
         // Aeros are not allowed to switch modes under standard rules
+        /*
+         * TODO: This may cause problems, but now with StratOps some modes are legal
         if (ce() instanceof Aero) {
             return;
         }
+        */
 
         // send change to the server
         int nMode = m.switchMode();

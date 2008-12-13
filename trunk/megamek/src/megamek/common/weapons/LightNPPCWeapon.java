@@ -44,7 +44,7 @@ public class LightNPPCWeapon extends NavalPPCWeapon {
         this.longRange = 33;
         this.extremeRange = 44;
         this.tonnage = 1400.0f;
-        this.bv = 1633;
+        this.bv = 1659;
         this.cost = 2000000;
         this.shortAV = 7;
         this.medAV = 7;

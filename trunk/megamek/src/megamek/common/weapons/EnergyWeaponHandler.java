@@ -100,7 +100,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
 
             ae.heatBuildup += heat;
         }
-    }
-    
+    }   
 
+    
 }

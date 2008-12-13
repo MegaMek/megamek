@@ -229,7 +229,7 @@ public class MechFileParser {
         
         // Walk through the list of equipment.
         for (Mounted m : ent.getMisc()) {
-
+        	
             // Link Artemis IV fire-control systems to their missle racks.
             if (m.getType().hasFlag(MiscType.F_ARTEMIS)
                     && m.getLinked() == null) {

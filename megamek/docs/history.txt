@@ -10,6 +10,23 @@ v0.33.37-dev (SVN)
 + Bug: Auto Cannon Internal names missing
 + Bug: Small Cockpit crits placed wrong
 + Changed External Name for Rocket Launcher from RL to Rocket Launcher
++ StratOps Tactical Fuel Efficiency
++ StratOps Advanced Heat
++ StratOps Variable Damage Thresholds
++ StratOps Advanced Atmospheric Control Rolls
++ StratOps AAA Capital Laser Mode
++ StratOps Bracketing Fire Mode
++ StratOps Over-Penetrating Weapons Fire Mode
++ Standard to capital damage modified to follow example on pg. 33
++ StratOps Fighter Squadrons
++ StratOps Large Craft and Sensor Shadows
++ StratOps ECM
++ StratOps Harjel
++ simplified fighter launching (fighters above safe rate are distributed evenly among doors)
++ Jumpship and Space Station Movement
++ Jumpship/Warship/Space Station Hit Locations
++ Bug: Mule Kicks should be impossible with front leg destroyed or hip-critted
+
 
 v0.33.36 (2008-12-10, 19:00 UTC)
 + Bug in Mech BV calculation fixed

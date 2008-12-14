@@ -175,17 +175,22 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't kick");
         }
 
-        // check if both legs are present & working
-        if (ae.isLocationBad(kickLegs[0]) || ae.isLocationBad(kickLegs[1])) {
+        // check if all legs are present & working
+        if (ae.isLocationBad(Mech.LOC_LLEG) || ae.isLocationBad(Mech.LOC_LLEG)
+                || (ae.entityIsQuad()
+                        && (ae.isLocationBad(Mech.LOC_LARM)
+                                || ae.isLocationBad(Mech.LOC_RARM)))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
         }
 
-        // check if both hips are operational
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, kickLegs[0])
-                || !ae.hasWorkingSystem(Mech.ACTUATOR_HIP, kickLegs[1])) {
+        // check if all hips are operational
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_LLEG)
+                || !ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_RLEG)
+                || (ae.entityIsQuad()
+                        && (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_LARM)
+                                || !ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_RARM)))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
         }
-
         // check if attacker has fired leg-mounted weapons
         for (Mounted mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound() && mounted.getLocation() == legLoc) {

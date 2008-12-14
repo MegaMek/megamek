@@ -1875,4 +1875,4 @@ Warhammer WHM-8K|
 Warhammer WHM-8M|
 Wasp WSP-7MAF|
 Wolverine WVR-9K|
-Wolverine WVR-9M
+Wolverine WVR-9M|

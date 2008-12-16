@@ -141,7 +141,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     private static final long serialVersionUID = -7518808415074725538L;
 
     private static final int TRANSPARENT = 0xFFFF00FF;
-    
+
     private static final int BOARD_HEX_CLICK = 1;
     private static final int BOARD_HEX_DOUBLECLICK = 2;
     private static final int BOARD_HEX_DRAG = 3;
@@ -179,7 +179,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     private Font font_minefield = FONT_12;
 
     IGame game;
-    
+
     private Point mousePos = new Point();
     Rectangle view = new Rectangle();
     Point offset = new Point();
@@ -222,7 +222,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     // vector of sprites for all firing lines
     ArrayList<AttackSprite> attackSprites = new ArrayList<AttackSprite>();
-    
+
     //vector of sprites for all movement paths (using vectored movement)
     private ArrayList<MovementSprite> movementSprites = new ArrayList<MovementSprite>();
 
@@ -346,7 +346,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(
                 this);
-        
+
         SpecialHexDisplay.Type.ARTILLERY_HIT.init(getToolkit());
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init(getToolkit());
         SpecialHexDisplay.Type.ARTILLERY_TARGET.init(getToolkit());
@@ -358,6 +358,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     protected void scheduleRedrawTimer() {
         final TimerTask redraw = new TimerTask() {
+            @Override
             public void run() {
                 try {
                     SwingUtilities.invokeAndWait(redrawWorker);
@@ -384,7 +385,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     /**
      * Adds the specified board listener to receive board events from this
      * board.
-     * 
+     *
      * @param listener the board listener.
      */
     public void addBoardViewListener(BoardViewListener listener) {
@@ -395,7 +396,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     /**
      * Removes the specified board listener.
-     * 
+     *
      * @param listener the board listener.
      */
     public void removeBoardViewListener(BoardViewListener listener) {
@@ -404,7 +405,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     /**
      * Notifies attached board listeners of the event.
-     * 
+     *
      * @param event the board event.
      */
     public void processBoardViewEvent(BoardViewEvent event) {
@@ -468,21 +469,22 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     /**
      * Update ourself when a scroll bar is adjusted.
-     * 
+     *
      * @param event - the <code>AdjustmentEvent</code> that caused this call.
      */
     public void adjustmentValueChanged(AdjustmentEvent event) {
-        Point oldPt = this.scroll;
+        Point oldPt = scroll;
         Point newPt = new Point(oldPt.x, oldPt.y);
         if (event.getAdjustable().getOrientation() == Adjustable.VERTICAL) {
             newPt.y = event.getValue();
         } else {
             newPt.x = event.getValue();
         }
-        this.scroll.setLocation(newPt);
+        scroll.setLocation(newPt);
         this.repaint();
     }
 
+    @Override
     public void paint(Graphics g) {
         update(g);
     }
@@ -490,6 +492,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     /**
      * Draw the screen!
      */
+    @Override
     public synchronized void update(Graphics g) {
         // Limit our size to the viewport of the scroll pane.
         final Dimension size = getSize();
@@ -498,17 +501,17 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // Make sure our scrollbars have the right sizes.
         // N.B. A buggy Sun implementation makes me to do this here instead
         // of updateBoardSize() (which is where *I* think it belongs).
-        if (null != this.vScrollbar) {
-            this.vScrollbar.setVisibleAmount(size.height);
-            this.vScrollbar.setBlockIncrement(size.height);
-            this.vScrollbar.setUnitIncrement((int) (scale * HEX_H / 2.0));
-            this.vScrollbar.setMaximum(boardSize.height);
+        if (null != vScrollbar) {
+            vScrollbar.setVisibleAmount(size.height);
+            vScrollbar.setBlockIncrement(size.height);
+            vScrollbar.setUnitIncrement((int) (scale * HEX_H / 2.0));
+            vScrollbar.setMaximum(boardSize.height);
         }
-        if (null != this.hScrollbar) {
-            this.hScrollbar.setVisibleAmount(size.width);
-            this.hScrollbar.setBlockIncrement(size.width);
-            this.hScrollbar.setUnitIncrement((int) (scale * HEX_W / 2.0));
-            this.hScrollbar.setMaximum(boardSize.width);
+        if (null != hScrollbar) {
+            hScrollbar.setVisibleAmount(size.width);
+            hScrollbar.setBlockIncrement(size.width);
+            hScrollbar.setUnitIncrement((int) (scale * HEX_W / 2.0));
+            hScrollbar.setMaximum(boardSize.width);
         }
 
         // update view, offset
@@ -516,7 +519,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         view.setSize(getOptimalView(size));
         offset.setLocation(getOptimalOffset(size));
 
-        if (!this.isTileImagesLoaded()) {
+        if (!isTileImagesLoaded()) {
             g.drawString(
                 Messages.getString("BoardView1.loadingImages"), 20, 50); //$NON-NLS-1$
             if (!tileManager.isStarted()) {
@@ -541,7 +544,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         // draw onto the back buffer:
-        
+
         // redraw all the specials. This is an inneficient hack :/
         for(Coords c : game.getBoard().getSpecialHexDisplayTable().keySet()) {
             drawHex(c);
@@ -589,8 +592,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         // draw onscreen attacks
         drawSprites(attackSprites);
-        
-        //draw movement vectors. 
+
+        //draw movement vectors.
         if(game.useVectorMove() && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
             drawSprites(movementSprites);
         }
@@ -598,7 +601,6 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // draw movement, if valid
         drawSprites(pathSprites);
 
-        // added by kenn
         // draw the ruler line
         if (rulerStart != null) {
             Point start = getCentreHexLocation(rulerStart);
@@ -618,12 +620,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             backGraph.fillRect(start.x - boardRect.x - 1, start.y - boardRect.y
                     - 1, 2, 2);
         }
-        // end kenn
 
         // draw all the "displayables"
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
-            disp.draw(backGraph, backSize);
+            disp.draw(backGraph, new Point(backSize.width, backSize.height), backSize);
         }
 
         // draw the back buffer onto the screen
@@ -741,7 +742,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             int height = (int) (base.getHeight(null) * scale);
 
             //TODO: insert a check that width and height are > 0.
-            
+
             scaled = scale(base, width, height);
             tracker.addImage(scaled, 1);
             // Wait for image to load
@@ -1042,8 +1043,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // boardImage = createImage(boardSize.width, boardSize.height);
             /* ----- */
 
-            if (boardGraph != null)
+            if (boardGraph != null) {
                 boardGraph.dispose();
+            }
             boardGraph = boardImage.getGraphics();
 
             // Handle resizes correctly.
@@ -1194,7 +1196,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         int height = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex
                 .terrainLevel(Terrains.BRIDGE_ELEV));
         height = Math.max(height, hex.terrainLevel(Terrains.INDUSTRIAL));
-        
+
         // offset drawing point
 
         int drawX = hexLoc.x - boardRect.x;
@@ -1207,11 +1209,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         boardGraph.drawImage(scaledImage, drawX, drawY, this);
 
         if (tileManager.supersFor(hex) != null) {
-            for (Iterator<Image> i = tileManager.supersFor(hex).iterator(); i
-                    .hasNext();) {
-                scaledImage = getScaledImage(i.next());
-                boardGraph.drawImage(scaledImage, drawX, drawY, this);
-            }
+            for (Image image : tileManager.supersFor(hex)) {
+            scaledImage = getScaledImage(image);
+            boardGraph.drawImage(scaledImage, drawX, drawY, this);
+         }
         }
 
         if (ecmHexes != null) {
@@ -1257,7 +1258,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     boardGraph);
             return;
         }
-        
+
         // draw hex number
         if (scale >= 0.5) {
             drawCenteredString(c.getBoardNum(), drawX, drawY
@@ -1273,7 +1274,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 {
                     if(SpecialHexDisplay.Type.PLAYER_NOTE == shd.getType()) {
                         drawCenteredString(
-                                shd.getInfo(), //$NON-NLS-1$
+                                shd.getInfo(),
                                 drawX,
                                 drawY + (int)(ypos*scale),
                                 font_note,
@@ -1281,7 +1282,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                         ypos -= 10;
                     }
                 }
-                
+
                 boardGraph.setColor(oldColor);
             }
             if (level != 0) {
@@ -1467,7 +1468,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             // adjust horizontal location for the tipWindow if it goes off the
             // frame
-            if (this.getLocationOnScreen().x + this.getSize().width < tipLoc.x
+            if (getLocationOnScreen().x + this.getSize().width < tipLoc.x
                     + tipWindow.getSize().width + 10) {
                 if (this.getSize().width > tipWindow.getSize().width) {
                     // bound it by the right edge of the frame
@@ -1509,16 +1510,14 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         // check if it's on any entities
-        for (Iterator<EntitySprite> i = entitySprites.iterator(); i.hasNext();) {
-            final EntitySprite eSprite = i.next();
+        for (EntitySprite eSprite : entitySprites) {
             if (eSprite.isInside(point)) {
                 stringsSize += 3;
             }
         }
 
         // check if it's on any attacks
-        for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
-            final AttackSprite aSprite = i.next();
+        for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(point)) {
                 stringsSize += 1 + aSprite.weaponDescs.size();
             }
@@ -1528,12 +1527,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // Also if it contains other displayable terrain.
         if (mhex != null) {
             stringsSize += mhex.displayableTerrainsPresent();
-            if (mhex.containsTerrain(Terrains.BUILDING))
+            if (mhex.containsTerrain(Terrains.BUILDING)) {
                 stringsSize++;
-            if (mhex.containsTerrain(Terrains.FUEL_TANK))
+            }
+            if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
                 stringsSize++;
-            if (mhex.containsTerrain(Terrains.BRIDGE))
+            }
+            if (mhex.containsTerrain(Terrains.BRIDGE)) {
                 stringsSize++;
+            }
         }
 
         stringsSize += game.getNbrMinefields(mcoords);
@@ -1544,12 +1546,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         // Artillery fire adjustment
         final Mounted curWeapon = getSelectedArtilleryWeapon();
-        if (curWeapon != null)
+        if (curWeapon != null) {
             stringsSize++;
-        
+        }
+
         /*
          * Eventaul replacemtn for the artilery popup.
-         * 
+         *
         final Collection<SpecialHexDisplay> specials = game.getBoard().getSpecialHexDisplay(mcoords);
         if(specials != null)
                 stringsSize += specials.size();
@@ -1585,7 +1588,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     }
                 }
             }
-            
+
             /*
             if (mhex.containsTerrain(Terrains.JUNGLE)) {
                 int ttl = mhex.getTerrain(Terrains.JUNGLE).getLevel();
@@ -1732,8 +1735,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
         }
         // check if it's on any entities
-        for (Iterator<EntitySprite> i = entitySprites.iterator(); i.hasNext();) {
-            final EntitySprite eSprite = i.next();
+        for (EntitySprite eSprite : entitySprites) {
             if (eSprite.isInside(point)) {
                 final String[] entityStrings = eSprite.getTooltip();
                 System.arraycopy(entityStrings, 0, strings, stringsIndex,
@@ -1743,8 +1745,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         // check if it's on any attacks
-        for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
-            final AttackSprite aSprite = i.next();
+        for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(point)) {
                 final String[] attackStrings = aSprite.getTooltip();
                 System.arraycopy(attackStrings, 0, strings, stringsIndex,
@@ -1754,29 +1755,27 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         // check artillery attacks
-        for (Iterator<ArtilleryAttackAction> i = artilleryAttacks.iterator(); i
-                .hasNext();) {
-            final ArtilleryAttackAction aaa = i.next();
-            final Entity ae = game.getEntity(aaa.getEntityId());
-            String s = null;
-            if (ae != null) {
-                if (aaa.getWeaponId() > -1) {
-                    Mounted weap = ae.getEquipment(aaa.getWeaponId());
-                    s = weap.getName();
-                    if (aaa.getAmmoId() > -1) {
-                        Mounted ammo = ae.getEquipment(aaa.getAmmoId());
-                        s += "(" + ammo.getName() + ")";
-                    }
-                }
+        for (ArtilleryAttackAction aaa : artilleryAttacks) {
+         final Entity ae = game.getEntity(aaa.getEntityId());
+         String s = null;
+         if (ae != null) {
+        if (aaa.getWeaponId() > -1) {
+            Mounted weap = ae.getEquipment(aaa.getWeaponId());
+            s = weap.getName();
+            if (aaa.getAmmoId() > -1) {
+                Mounted ammo = ae.getEquipment(aaa.getAmmoId());
+                s += "(" + ammo.getName() + ")";
             }
-            if (s == null) {
-                s = Messages.getString("BoardView1.Artillery");
-            }
-            strings[stringsIndex++] = Messages.getString(
-                    "BoardView1.ArtilleryAttack", new Object[] { s,
-                            new Integer(aaa.turnsTilHit),
-                            aaa.toHit(game).getValueAsString() });
         }
+         }
+         if (s == null) {
+        s = Messages.getString("BoardView1.Artillery");
+         }
+         strings[stringsIndex++] = Messages.getString(
+            "BoardView1.ArtilleryAttack", new Object[] { s,
+                    new Integer(aaa.turnsTilHit),
+                    aaa.toHit(game).getValueAsString() });
+      }
 
         // check artillery fire adjustment
         if (curWeapon != null && selectedEntity != null) {
@@ -1905,8 +1904,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
         }
 
-        if (entity.hasC3() || entity.hasC3i())
+        if (entity.hasC3() || entity.hasC3i()) {
             addC3Link(entity);
+        }
 
         scheduleRedraw();
     }
@@ -1933,15 +1933,17 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         clearC3Networks();
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = i.nextElement();
-            if (entity.getPosition() == null)
+            if (entity.getPosition() == null) {
                 continue;
+            }
 
             EntitySprite sprite = new EntitySprite(entity);
             newSprites.add(sprite);
             newSpriteIds.put(new Integer(entity.getId()), sprite);
 
-            if (entity.hasC3() || entity.hasC3i())
+            if (entity.hasC3() || entity.hasC3i()) {
                 addC3Link(entity);
+            }
         }
 
         entitySprites = newSprites;
@@ -1968,8 +1970,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     }
 
     public void centerOnHex(Coords c) {
-        if (null == c)
+        if (null == c) {
             return;
+        }
         scroll.setLocation(getHexLocation(c));
         scroll.translate((int) (42 * scale) - (view.width / 2),
                 (int) (36 * scale) - (view.height / 2));
@@ -1992,7 +1995,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         //need to update the movement sprites based on the move path for this entity
         //only way to do this is to clear and refresh (seems wasteful)
-        
+
         //first get the color for the vector
         Color col = Color.blue;
         if(md.getLastStep() != null) {
@@ -2013,22 +2016,21 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 break;
             }
         }
-        
+
         refreshMoveVectors(entity, md, col);
-        
+
         for (Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
             // check old movement path for reusable step sprites
             boolean found = false;
-            for (Iterator<StepSprite> j = temp.iterator(); j.hasNext();) {
-                final StepSprite sprite = j.next();
+            for (StepSprite sprite : temp) {
                 if (sprite.getStep().canReuseSprite(step) && !(entity instanceof Aero)) {
                     pathSprites.add(sprite);
                     found = true;
                 }
             }
             if (!found) {
-                if (null != previousStep && 
+                if (null != previousStep &&
                         (step.getType() == MovePath.STEP_UP ||
                                 step.getType() == MovePath.STEP_DOWN ||
                                 step.getType() == MovePath.STEP_ACC ||
@@ -2040,13 +2042,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     // having overlap.
                     pathSprites.get(pathSprites.size() -1 ).hidden = true;
                 }
-                
+
                 //for advanced movement, we always need to hide prior
                 //because costs will overlap and we only want the current facing
                 if(previousStep != null && game.useVectorMove()) {
                     pathSprites.get(pathSprites.size() -1 ).hidden = true;
                 }
-                
+
                 pathSprites.add(new StepSprite(step));
             }
             previousStep = step;
@@ -2086,15 +2088,17 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * Adds a c3 line to the sprite list.
      */
     public void addC3Link(Entity e) {
-        if (e.getPosition() == null)
+        if (e.getPosition() == null) {
             return;
+        }
 
         if (e.hasC3i()) {
             for (java.util.Enumeration<Entity> i = game.getEntities(); i
                     .hasMoreElements();) {
                 final Entity fe = i.nextElement();
-                if (fe.getPosition() == null)
+                if (fe.getPosition() == null) {
                     return;
+                }
                 if (e.onSameC3NetworkAs(fe) && !fe.equals(e) &&
                         !Compute.isAffectedByECM(e, e.getPosition(), fe.getPosition())) {
                     C3Sprites.add(new C3Sprite(e, fe));
@@ -2102,8 +2106,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
         } else if (e.getC3Master() != null) {
             Entity eMaster = e.getC3Master();
-            if (eMaster.getPosition() == null)
+            if (eMaster.getPosition() == null) {
                 return;
+            }
 
             // ECM cuts off the network
             if (!Compute.isAffectedByECM(e, e.getPosition(), eMaster
@@ -2129,50 +2134,47 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             return;
         }
 
-        for (final Iterator<AttackSprite> i = attackSprites.iterator(); i
-                .hasNext();) {
-            final AttackSprite sprite = i.next();
-
-            // can we just add this attack to an existing one?
-            if (sprite.getEntityId() == aa.getEntityId()
-                    && sprite.getTargetId() == aa.getTargetId()) {
-                // use existing attack, but add this weapon
-                if (aa instanceof WeaponAttackAction) {
-                    WeaponAttackAction waa = (WeaponAttackAction) aa;
-                    if (aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
-                        sprite.addWeapon(waa);
-                    } else if (waa.getEntity(game).getOwner().getId() == localPlayer
-                            .getId()) {
-                        sprite.addWeapon(waa);
-                    }
-                }
-                if (aa instanceof KickAttackAction) {
-                    sprite.addWeapon((KickAttackAction) aa);
-                }
-                if (aa instanceof PunchAttackAction) {
-                    sprite.addWeapon((PunchAttackAction) aa);
-                }
-                if (aa instanceof PushAttackAction) {
-                    sprite.addWeapon((PushAttackAction) aa);
-                }
-                if (aa instanceof ClubAttackAction) {
-                    sprite.addWeapon((ClubAttackAction) aa);
-                }
-                if (aa instanceof ChargeAttackAction) {
-                    sprite.addWeapon((ChargeAttackAction) aa);
-                }
-                if (aa instanceof DfaAttackAction) {
-                    sprite.addWeapon((DfaAttackAction) aa);
-                }
-                if (aa instanceof ProtomechPhysicalAttackAction) {
-                    sprite.addWeapon((ProtomechPhysicalAttackAction) aa);
-                }
-                if (aa instanceof SearchlightAttackAction) {
-                    sprite.addWeapon((SearchlightAttackAction) aa);
-                }
-                return;
+        for (AttackSprite sprite : attackSprites) {
+         // can we just add this attack to an existing one?
+         if (sprite.getEntityId() == aa.getEntityId()
+            && sprite.getTargetId() == aa.getTargetId()) {
+        // use existing attack, but add this weapon
+        if (aa instanceof WeaponAttackAction) {
+            WeaponAttackAction waa = (WeaponAttackAction) aa;
+            if (aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
+                sprite.addWeapon(waa);
+            } else if (waa.getEntity(game).getOwner().getId() == localPlayer
+                    .getId()) {
+                sprite.addWeapon(waa);
             }
         }
+        if (aa instanceof KickAttackAction) {
+            sprite.addWeapon((KickAttackAction) aa);
+        }
+        if (aa instanceof PunchAttackAction) {
+            sprite.addWeapon((PunchAttackAction) aa);
+        }
+        if (aa instanceof PushAttackAction) {
+            sprite.addWeapon((PushAttackAction) aa);
+        }
+        if (aa instanceof ClubAttackAction) {
+            sprite.addWeapon((ClubAttackAction) aa);
+        }
+        if (aa instanceof ChargeAttackAction) {
+            sprite.addWeapon((ChargeAttackAction) aa);
+        }
+        if (aa instanceof DfaAttackAction) {
+            sprite.addWeapon((DfaAttackAction) aa);
+        }
+        if (aa instanceof ProtomechPhysicalAttackAction) {
+            sprite.addWeapon((ProtomechPhysicalAttackAction) aa);
+        }
+        if (aa instanceof SearchlightAttackAction) {
+            sprite.addWeapon((SearchlightAttackAction) aa);
+        }
+        return;
+         }
+      }
         // no re-use possible, add a new one
         // don't add a sprite for an artillery attack made by the other player
         if (aa instanceof WeaponAttackAction) {
@@ -2220,28 +2222,30 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
         }
     }
-    
+
     public void refreshMoveVectors() {
         clearAllMoveVectors();
         for(Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity e = i.nextElement();
-            if(e.getPosition() != null) 
+            if(e.getPosition() != null) {
                 movementSprites.add(new MovementSprite(e, e.getVectors(), Color.gray, false));
+            }
         }
     }
-    
+
     public void refreshMoveVectors(Entity en, MovePath md, Color col) {
         clearAllMoveVectors();
         //same as normal but when I find the active entity I used the MovePath
         //to get vector
         for(Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity e = i.nextElement();
-            if(e.getPosition() != null) 
+            if(e.getPosition() != null) {
                 if(e.getId() == en.getId()) {
                     movementSprites.add(new MovementSprite(e, md.getFinalVectors(), col, true));
                 } else {
                     movementSprites.add(new MovementSprite(e, e.getVectors(), col, false));
                 }
+            }
         }
     }
 
@@ -2255,7 +2259,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     public void clearAllAttacks() {
         attackSprites.clear();
     }
-    
+
     /**
      * Clears out all movement vectors that were being drawn
      */
@@ -2428,11 +2432,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         // Update our scroll bars.
-        if (null != this.vScrollbar) {
-            this.vScrollbar.setValue(scroll.y);
+        if (null != vScrollbar) {
+            vScrollbar.setValue(scroll.y);
         }
-        if (null != this.hScrollbar) {
-            this.hScrollbar.setValue(scroll.x);
+        if (null != hScrollbar) {
+            hScrollbar.setValue(scroll.x);
         }
     }
 
@@ -2628,8 +2632,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 break;
             case KeyEvent.VK_NUMPAD5:
                 // center on the selected entity
-                if (selectedEntity != null)
+                if (selectedEntity != null) {
                     centerOnHex(selectedEntity.getPosition());
+                }
                 break;
             case KeyEvent.VK_CONTROL:
                 ctlKeyHeld = true;
@@ -2679,7 +2684,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 return;
             }
         }
-        
+
         if (me.isPopupTrigger()) {
             mouseAction(getCoordsAt(point), BOARD_HEX_POPUP, me.getModifiers());
             return;
@@ -2741,14 +2746,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // is being scrolled.
         if (scrolled
                 && ((me.getModifiers() & InputEvent.BUTTON1_MASK) == 0 || !GUIPreferences
-                        .getInstance().getAutoEdgeScroll()))
+                        .getInstance().getAutoEdgeScroll())) {
             return;
-        
+        }
+
         if (me.isPopupTrigger()) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP, me.getModifiers());
             return;
         }
-        
+
         if (me.getClickCount() == 1) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_CLICK, me
                     .getModifiers());
@@ -2873,8 +2879,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * Increases zoomIndex and refreshes the map.
      */
     public void zoomIn() {
-        if (zoomIndex == ZOOM_FACTORS.length - 1)
+        if (zoomIndex == ZOOM_FACTORS.length - 1) {
             return;
+        }
         zoomIndex++;
         zoom();
     }
@@ -2883,8 +2890,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * Decreases zoomIndex and refreshes the map.
      */
     public void zoomOut() {
-        if (zoomIndex == 0)
+        if (zoomIndex == 0) {
             return;
+        }
         zoomIndex--;
         zoom();
     }
@@ -2895,7 +2903,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * scale of 1.0 (draws megamek images at normal size). To zoom out the index
      * needs to be set to a lower value. To zoom in make it larger. If only
      * zooming a step at a time use the zoomIn and zoomOut methods instead.
-     * 
+     *
      * @param zoomIndex
      */
     public void setZoomIndex(int zoomIndex) {
@@ -2911,8 +2919,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         if (zoomIndex > ZOOM_FACTORS.length - 1) {
             zoomIndex = ZOOM_FACTORS.length - 1;
         }
-        if (zoomIndex < 0)
+        if (zoomIndex < 0) {
             zoomIndex = 0;
+        }
     }
 
     //
@@ -2994,9 +3003,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // determine size
             final FontMetrics fm = getFontMetrics(getFont());
             int width = 0;
-            for (int i = 0; i < tipStrings.length; i++) {
-                if (fm.stringWidth(tipStrings[i]) > width) {
-                    width = fm.stringWidth(tipStrings[i]);
+            for (String tipString : tipStrings) {
+                if (fm.stringWidth(tipString) > width) {
+                    width = fm.stringWidth(tipString);
                 }
             }
             size = new Dimension(width + 5, fm.getAscent() * tipStrings.length
@@ -3004,6 +3013,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             setSize(size);
         }
 
+        @Override
         public void paint(Graphics g) {
             final FontMetrics fm = getFontMetrics(getFont());
             g.setColor(getBackground());
@@ -3120,14 +3130,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         public CursorSprite(Color color) {
             this.color = color;
-            this.bounds = new Rectangle(hexPoly.getBounds().width + 1, hexPoly
+            bounds = new Rectangle(hexPoly.getBounds().width + 1, hexPoly
                     .getBounds().height + 1);
-            this.image = null;
+            image = null;
 
             // start offscreen
             setOffScreen();
         }
 
+        @Override
         public void prepare() {
             // create image for buffer
             Image tempImage = createImage(bounds.width, bounds.height);
@@ -3162,8 +3173,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             bounds.setLocation(getHexLocation(hexLoc));
         }
 
+        @Override
         public Rectangle getBounds() {
-            this.bounds = new Rectangle(hexPoly.getBounds().width + 1, hexPoly
+            bounds = new Rectangle(hexPoly.getBounds().width + 1, hexPoly
                     .getBounds().height + 1);
             bounds.setLocation(getHexLocation(hexLoc));
 
@@ -3185,14 +3197,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
-            this.bounds = tempBounds;
-            this.image = null;
+            bounds = tempBounds;
+            image = null;
         }
 
         /**
          * Creates the sprite for this entity. It is an extra pain to create
          * transparent images in AWT.
          */
+        @Override
         public void prepare() {
             // create image for buffer
             Image tempImage;
@@ -3224,14 +3237,16 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             tempImage.flush();
         }
 
+        @Override
         public Rectangle getBounds() {
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
-            this.bounds = tempBounds;
+            bounds = tempBounds;
 
             return bounds;
         }
 
+        @Override
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             drawOnto(g, x, y, observer, true);
         }
@@ -3254,14 +3269,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(position));
 
-            this.bounds = tempBounds;
-            this.image = null;
+            bounds = tempBounds;
+            image = null;
         }
 
         /**
          * Creates the sprite for this entity. It is an extra pain to create
          * transparent images in AWT.
          */
+        @Override
         public void prepare() {
             // create image for buffer
             Image tempImage;
@@ -3313,14 +3329,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
-            this.bounds = tempBounds;
-            this.image = null;
+            bounds = tempBounds;
+            image = null;
         }
 
+        @Override
         public Rectangle getBounds() {
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
-            this.bounds = tempBounds;
+            bounds = tempBounds;
 
             return bounds;
         }
@@ -3329,6 +3346,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
          * Creates the sprite for this entity. It is an extra pain to create
          * transparent images in AWT.
          */
+        @Override
         public void prepare() {
             // figure out size
             String shortName = entity.getShortName();
@@ -3390,6 +3408,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         /**
          * Overrides to provide for a smaller sensitive area.
          */
+        @Override
         public boolean isInside(Point point) {
             return false;
         }
@@ -3426,28 +3445,30 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
-            this.bounds = tempBounds;
-            this.entityRect = new Rectangle(bounds.x + (int) (20 * scale),
+            bounds = tempBounds;
+            entityRect = new Rectangle(bounds.x + (int) (20 * scale),
                     bounds.y + (int) (14 * scale), (int) (44 * scale),
                     (int) (44 * scale));
-            this.image = null;
+            image = null;
         }
 
+        @Override
         public Rectangle getBounds() {
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
-            this.bounds = tempBounds;
+            bounds = tempBounds;
 
-            this.entityRect = new Rectangle(bounds.x + (int) (20 * scale),
+            entityRect = new Rectangle(bounds.x + (int) (20 * scale),
                     bounds.y + (int) (14 * scale), (int) (44 * scale),
                     (int) (44 * scale));
 
             return bounds;
         }
 
+        @Override
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
-            if (trackThisEntitiesVisibilityInfo(this.entity)
-                    && !this.entity.isVisibleToEnemy()
+            if (trackThisEntitiesVisibilityInfo(entity)
+                    && !entity.isVisibleToEnemy()
                     && GUIPreferences.getInstance().getBoolean(
                             GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS)) {
                 // create final image with translucency
@@ -3461,6 +3482,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
          * Creates the sprite for this entity. It is an extra pain to create
          * transparent images in AWT.
          */
+        @Override
         public void prepare() {
             // figure out size
             String shortName = entity.getShortName();
@@ -3527,7 +3549,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if (entity.getFacing() != -1
                     && !(entity instanceof Infantry && ((Infantry) entity)
                             .getDugIn() == Infantry.DUG_IN_NONE)
-                    && !(entity instanceof Aero && ((Aero)entity).isSpheroid() 
+                    && !(entity instanceof Aero && ((Aero)entity).isSpheroid()
                             && game.getBoard().inAtmosphere())) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
@@ -3561,17 +3583,17 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
 
             // draw condition strings
-            if(entity instanceof Aero) {    
-                Aero a = (Aero)entity;        
-                
+            if(entity instanceof Aero) {
+                Aero a = (Aero)entity;
+
 //                draw altitude if Aero in atmosphere
                 if(game.getBoard().inAtmosphere()) {
                     graph.setColor(Color.darkGray);
-                    graph.drawString(Integer.toString(a.getElevation()), 26, 15); //$NON-NLS-1$
+                    graph.drawString(Integer.toString(a.getElevation()), 26, 15);
                     graph.setColor(Color.PINK);
-                    graph.drawString(Integer.toString(a.getElevation()), 25, 14); //$NON-NLS-1$
+                    graph.drawString(Integer.toString(a.getElevation()), 25, 14);
                 }
-                
+
                 if(a.isRolled()) {
                     // draw "rolled"
                     graph.setColor(Color.darkGray);
@@ -3579,7 +3601,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.setColor(Color.red);
                     graph.drawString(Messages.getString("BoardView1.ROLLED"), 17, 14); //$NON-NLS-1$
                 }
-                
+
                 if(a.isOutControlTotal() & a.isRandomMove()) {
                     // draw "RANDOM"
                     graph.setColor(Color.darkGray);
@@ -3593,7 +3615,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.setColor(Color.red);
                     graph.drawString(Messages.getString("BoardView1.CONTROL"), 17, 38); //$NON-NLS-1$
                 }
-                
+
                 if(a.isEvading()) {
                     //draw "EVADE" - can't overlap with out of control
                     graph.setColor(Color.darkGray);
@@ -3602,7 +3624,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.drawString(Messages.getString("BoardView1.EVADE"), 17, 38); //$NON-NLS-1$
                 }
             }
-            
+
             if (entity.crew.isDead()) {
                 // draw "CREW DEAD"
                 graph.setColor(Color.darkGray);
@@ -3757,7 +3779,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), 15, 39); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
-                graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), 14, 38); //$NON-NLS-1$                
+                graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), 14, 38); //$NON-NLS-1$
             } else if (entity instanceof Infantry) {
                 int dig = ((Infantry) entity).getDugIn();
                 if (dig == Infantry.DUG_IN_COMPLETE) {
@@ -3765,13 +3787,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.setColor(Color.darkGray);
                     graph.drawString("D", 40, 71); //$NON-NLS-1$
                     graph.setColor(Color.black);
-                    graph.drawString("D", 39, 70); //$NON-NLS-1$                    
+                    graph.drawString("D", 39, 70); //$NON-NLS-1$
                 } else if (dig != Infantry.DUG_IN_NONE) {
                     // draw "W"
                     graph.setColor(Color.darkGray);
                     graph.drawString("W", 40, 71); //$NON-NLS-1$
                     graph.setColor(Color.black);
-                    graph.drawString("W", 39, 70); //$NON-NLS-1$                    
+                    graph.drawString("W", 39, 70); //$NON-NLS-1$
                 }
             }
 
@@ -3834,22 +3856,25 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         private Color getStatusBarColor(double percentRemaining) {
-            if (percentRemaining <= .25)
+            if (percentRemaining <= .25) {
                 return Color.red;
-            else if (percentRemaining <= .75)
+            } else if (percentRemaining <= .75) {
                 return Color.yellow;
-            else
+            } else {
                 return new Color(16, 196, 16);
+            }
         }
 
         /**
          * Overrides to provide for a smaller sensitive area.
          */
+        @Override
         public boolean isInside(Point point) {
             return entityRect.contains(point.x + view.x - offset.x, point.y
                     + view.y - offset.y);
         }
 
+        @Override
         public String[] getTooltip() {
             String[] tipStrings = new String[3];
             StringBuffer buffer;
@@ -3876,7 +3901,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if (entity instanceof GunEmplacement) {
                 ge = (GunEmplacement) entity;
             }
-            
+
             Aero a = null;
             if(entity instanceof Aero) {
                 a = (Aero) entity;
@@ -3912,7 +3937,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 if (entity.isCharging()) {
                     buffer.append(" ") //$NON-NLS-1$
                         .append( Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
-                } 
+                }
             } else {
                 if (ge.hasTurret() && ge.isTurretLocked()) {
                     buffer
@@ -3930,9 +3955,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     buffer.append(Messages.getString("BoardView1.Operational"));
                 }
             }
-            if (entity.isDone())
+            if (entity.isDone()) {
                 buffer.append(" (").append(
                         Messages.getString("BoardView1.done")).append(")");
+            }
             tipStrings[1] = buffer.toString();
 
             buffer = new StringBuffer();
@@ -3966,9 +3992,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             // step is the size of the hex that this step is in
             bounds = new Rectangle(getHexLocation(step.getPosition()), hex_size);
-            this.image = null;
+            image = null;
         }
 
+        @Override
         public void prepare() {
             // create image for buffer
             Image tempImage = createImage(bounds.width, bounds.height);
@@ -4017,11 +4044,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     }
                     break;
             }
-            
+
             if(game.useVectorMove()) {
                 drawActiveVectors(step, stepPos, graph);
             }
-            
+
             drawConditions(step, stepPos, graph, col);
 
             // draw arrows and cost for the step
@@ -4261,8 +4288,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         private void drawConditions(MoveStep step, Point stepPos, Graphics graph, Color col) {
-            //draw conditions separate from the step, This allows me to keep 
-            //conditions on the Aero even when that step is erased (as per advanced 
+            //draw conditions separate from the step, This allows me to keep
+            //conditions on the Aero even when that step is erased (as per advanced
             //movement). For now, just evading and rolling.
             //eventually loading and unloading as well
             if(step.isEvading()) {
@@ -4274,7 +4301,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 graph.setColor(col);
                 graph.drawString(evade, evadeX - 1, stepPos.y + 63);
             }
-            
+
             if(step.isRolled()) {
                 //Announce roll
                 String roll = Messages.getString("BoardView1.Roll"); //$NON-NLS-1$
@@ -4285,34 +4312,35 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 graph.setColor(col);
                 graph.drawString(roll, rollX - 1, stepPos.y + 17);
             }
-            
-            
+
+
         }
-        
+
         private void drawActiveVectors(MoveStep step, Point stepPos, Graphics graph) {
-            
+
             /*TODO: it might be better to move this to the MovementSprite
-             * so that it is visible before first step and you can't see it 
+             * so that it is visible before first step and you can't see it
              * for all entities
              */
-            
+
             int[] activeXpos = {39, 59, 59, 40, 19, 19};
             int[] activeYpos = {20, 28, 52, 59, 52, 28};
-            
+
             int[] v = step.getVectors();
             for(int i = 0; i < 6; i++) {
-                
+
                 String active = Integer.toString(v[i]);
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 graph.setColor(Color.darkGray);
                 graph.drawString(active, activeXpos[i] + stepPos.x, activeYpos[i] + stepPos.y);
                 graph.setColor(Color.red);
                 graph.drawString(active, activeXpos[i] + stepPos.x - 1, activeYpos[i] + stepPos.y - 1);
-                
+
             }
-            
+
         }
-        
+
+        @Override
         public Rectangle getBounds() {
             bounds = new Rectangle(getHexLocation(step.getPosition()), hex_size);
             return bounds;
@@ -4321,12 +4349,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         public MoveStep getStep() {
             return step;
         }
-        
+
         private void drawRemainingVelocity(MoveStep step, Point stepPos,
                 Graphics graph, boolean shiftFlag) {
             String velString = null;
             StringBuffer velStringBuf = new StringBuffer();
-            
+
             if (!game.useVectorMove() &&
                     (step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST
                 || step.getMovementType() == IEntityMovementType.MOVE_OVER_THRUST)) {
@@ -4341,7 +4369,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if(step.getVelocityLeft() > 0) {
                 col = Color.RED;
             }
-            
+
 //          Convert the buffer to a String and draw it.
             velString = velStringBuf.toString();
             graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
@@ -4354,7 +4382,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             graph.drawString(velString, costX, stepPos.y + 28);
             graph.setColor(col);
             graph.drawString(velString, costX - 1, stepPos.y + 27);
-            
+
         }
 
         private void drawMovementCost(MoveStep step, Point stepPos,
@@ -4426,11 +4454,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         Color spriteColor;
 
         public C3Sprite(Entity e, Entity m) {
-            this.entityE = e;
-            this.entityM = m;
-            this.entityId = e.getId();
-            this.masterId = m.getId();
-            this.spriteColor = PlayerColors.getColor(e.getOwner()
+            entityE = e;
+            entityM = m;
+            entityId = e.getId();
+            masterId = m.getId();
+            spriteColor = PlayerColors.getColor(e.getOwner()
                     .getColorIndex());
 
             if (e.getPosition() == null || m.getPosition() == null) {
@@ -4438,17 +4466,17 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 C3Poly.addPoint(0, 0);
                 C3Poly.addPoint(1, 0);
                 C3Poly.addPoint(0, 1);
-                this.bounds = new Rectangle(C3Poly.getBounds());
+                bounds = new Rectangle(C3Poly.getBounds());
                 bounds.setSize(bounds.getSize().width + 1,
                         bounds.getSize().height + 1);
-                this.image = null;
+                image = null;
                 return;
             }
 
             makePoly();
 
             // set bounds
-            this.bounds = new Rectangle(C3Poly.getBounds());
+            bounds = new Rectangle(C3Poly.getBounds());
             bounds.setSize(bounds.getSize().width + 1,
                     bounds.getSize().height + 1);
 
@@ -4458,9 +4486,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // set names & stuff
 
             // nullify image
-            this.image = null;
+            image = null;
         }
 
+        @Override
         public void prepare() {
         }
 
@@ -4505,24 +4534,27 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                             * lw)));
         }
 
+        @Override
         public Rectangle getBounds() {
             makePoly();
             // set bounds
-            this.bounds = new Rectangle(C3Poly.getBounds());
+            bounds = new Rectangle(C3Poly.getBounds());
             bounds.setSize(bounds.getSize().width + 1,
                     bounds.getSize().height + 1);
 
             // move poly to upper right of image
             C3Poly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
-            this.image = null;
+            image = null;
 
             return bounds;
         }
 
+        @Override
         public boolean isReady() {
             return true;
         }
 
+        @Override
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             // makePoly();
 
@@ -4539,6 +4571,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         /**
          * Return true if the point is inside our polygon
          */
+        @Override
         public boolean isInside(Point point) {
             return C3Poly.contains(point.x + view.x - bounds.x - offset.x,
                     point.y + view.y - bounds.y - offset.y);
@@ -4568,22 +4601,22 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         private final Targetable target;
 
         public AttackSprite(AttackAction attack) {
-            this.attacks.add(attack);
-            this.entityId = attack.getEntityId();
-            this.targetType = attack.getTargetType();
-            this.targetId = attack.getTargetId();
-            this.ae = game.getEntity(attack.getEntityId());
-            this.target = game.getTarget(targetType, targetId);
+            attacks.add(attack);
+            entityId = attack.getEntityId();
+            targetType = attack.getTargetType();
+            targetId = attack.getTargetId();
+            ae = game.getEntity(attack.getEntityId());
+            target = game.getTarget(targetType, targetId);
 
             // color?
             attackColor = PlayerColors.getColor(ae.getOwner().getColorIndex());
             // angle of line connecting two hexes
-            this.an = (ae.getPosition().radian(target.getPosition()) + (Math.PI * 1.5))
+            an = (ae.getPosition().radian(target.getPosition()) + (Math.PI * 1.5))
                     % (Math.PI * 2); // angle
             makePoly();
 
             // set bounds
-            this.bounds = new Rectangle(attackPoly.getBounds());
+            bounds = new Rectangle(attackPoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1,
                     bounds.getSize().height + 1);
             // move poly to upper right of image
@@ -4622,13 +4655,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
 
             // nullify image
-            this.image = null;
+            image = null;
         }
 
         private void makePoly() {
             // make a polygon
-            this.a = getHexLocation(ae.getPosition());
-            this.t = getHexLocation(target.getPosition());
+            a = getHexLocation(ae.getPosition());
+            t = getHexLocation(target.getPosition());
             // OK, that is actually not good. I do not like hard coded figures.
             // HEX_W/2 - x distance in pixels from origin of hex bounding box to
             // the center of hex.
@@ -4658,10 +4691,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
         }
 
+        @Override
         public Rectangle getBounds() {
             makePoly();
             // set bounds
-            this.bounds = new Rectangle(attackPoly.getBounds());
+            bounds = new Rectangle(attackPoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1,
                     bounds.getSize().height + 1);
             // move poly to upper right of image
@@ -4679,7 +4713,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             attackPoly = new StraightArrowPolygon(a, t, (int) (8 * scale),
                     (int) (12 * scale), true);
             // set bounds
-            this.bounds = new Rectangle(attackPoly.getBounds());
+            bounds = new Rectangle(attackPoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1,
                     bounds.getSize().height + 1);
             // move poly to upper right of image
@@ -4691,25 +4725,26 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
          * Cheking if attack is mutual and changing target arrow to half-arrow
          */
         private boolean isMutualAttack() {
-            for (final Iterator<AttackSprite> i = attackSprites.iterator(); i
-                    .hasNext();) {
-                final AttackSprite sprite = i.next();
-                if (sprite.getEntityId() == this.targetId
-                        && sprite.getTargetId() == this.entityId) {
-                    sprite.rebuildToHalvedPolygon();
-                    return true;
-                }
+            for (AttackSprite sprite : attackSprites) {
+            if (sprite.getEntityId() == targetId
+                && sprite.getTargetId() == entityId) {
+            sprite.rebuildToHalvedPolygon();
+            return true;
             }
+         }
             return false;
         }
 
+        @Override
         public void prepare() {
         }
 
+        @Override
         public boolean isReady() {
             return true;
         }
 
+        @Override
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             Polygon drawPoly = new Polygon(attackPoly.xpoints,
                     attackPoly.ypoints, attackPoly.npoints);
@@ -4724,6 +4759,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         /**
          * Return true if the point is inside our polygon
          */
+        @Override
         public boolean isInside(Point point) {
             return attackPoly.contains(point.x + view.x - bounds.x - offset.x,
                     point.y + view.y - bounds.y - offset.y);
@@ -4881,6 +4917,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             weaponDescs.add(Messages.getString("BoardView1.Searchlight"));
         }
 
+        @Override
         public String[] getTooltip() {
             String[] tipStrings = new String[1 + weaponDescs.size()];
             int tip = 1;
@@ -4894,15 +4931,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     }
 
     /**
-     * Sprite and info for movement vector (AT2 advanced movement). 
+     * Sprite and info for movement vector (AT2 advanced movement).
      *  Does not actually use the image buffer
      * as this can be horribly inefficient for long diagonal lines.
      *
      * Appears as an arrow pointing to the hex this entity will move to
      * based on current movement vectors.
-     * TODO: Different color depending upon whether entity has already moved 
+     * TODO: Different color depending upon whether entity has already moved
      * this turn
-     * 
+     *
      */
     private class MovementSprite extends Sprite
     {
@@ -4921,18 +4958,18 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         public MovementSprite(Entity e, int[] v, Color col, boolean isCurrent) {
             //this.mv = en.getMV();
 
-            this.en = e;
-            this.vectors = v;//en.getVectors();
+            en = e;
+            vectors = v;//en.getVectors();
             //get the starting and ending position
-            this.start = en.getPosition();
-            this.end = Compute.getFinalPosition(this.start, vectors);
-            
+            start = en.getPosition();
+            end = Compute.getFinalPosition(start, vectors);
+
             //what is the velocity
-            this.vel = 0;
-            for(int i =0; i < v.length; i++) {
-                this.vel += v[i];
+            vel = 0;
+            for (int element : v) {
+                vel += element;
             }
-            
+
             // color?
             //player colors
             moveColor = PlayerColors.getColor(en.getOwner().getColorIndex());
@@ -4944,7 +4981,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 moveColor = new Color(colour | (transparency << 24), true);
             }
             */
-            //red if offboard          
+            //red if offboard
             if(!game.getBoard().contains(end)) {
                 int colour = 0xff0000; //red
                 int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
@@ -4956,26 +4993,26 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
                 moveColor = new Color(colour | (transparency << 24), true);
             }
-            
+
             //moveColor = PlayerColors.getColor(en.getOwner().getColorIndex());
             //angle of line connecting two hexes
-            this.an = (start.radian(end) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
+            an = (start.radian(end) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
             makePoly();
 
             // set bounds
-            this.bounds = new Rectangle(movePoly.getBounds());
+            bounds = new Rectangle(movePoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
             // move poly to upper right of image
             movePoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
-            
+
             // nullify image
-            this.image = null;
+            image = null;
         }
 
         private void makePoly(){
             // make a polygon
-            this.a = getHexLocation(start);
-            this.t = getHexLocation(end);
+            a = getHexLocation(start);
+            t = getHexLocation(end);
             // OK, that is actually not good. I do not like hard coded figures.
             // HEX_W/2 - x distance in pixels from origin of hex bounding box to the center of hex.
             // HEX_H/2 - y distance in pixels from origin of hex bounding box to the center of hex.
@@ -4988,47 +5025,52 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             t.y = t.y + (int)(HEX_H/2*scale) - (int)Math.round(Math.sin(an) * (int)(18*scale));
             movePoly = new StraightArrowPolygon(a, t, (int)(4*scale), (int)(8*scale), false);
         }
-        
+
+        @Override
         public Rectangle getBounds(){
             makePoly();
             // set bounds
-            this.bounds = new Rectangle(movePoly.getBounds());
+            bounds = new Rectangle(movePoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
             // move poly to upper right of image
             movePoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
-            
+
             return bounds;
         }
 
+        @Override
         public void prepare() {
-            
+
         }
 
+        @Override
         public boolean isReady() {
             return true;
         }
 
+        @Override
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             //don't draw anything if the unit has no velocity
-            
-            if(this.vel == 0) {
+
+            if(vel == 0) {
                 return;
             }
-            
+
             Polygon drawPoly = new Polygon(movePoly.xpoints, movePoly.ypoints, movePoly.npoints);
             drawPoly.translate(x, y);
-            
+
             g.setColor(moveColor);
             g.fillPolygon(drawPoly);
             g.setColor(Color.gray.darker());
             g.drawPolygon(drawPoly);
-            
-            
+
+
         }
 
         /**
          * Return true if the point is inside our polygon
          */
+        @Override
         public boolean isInside(Point point) {
             return movePoly.contains(point.x + view.x - bounds.x - offset.x,
                                        point.y + view.y - bounds.y - offset.y);
@@ -5046,15 +5088,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
         */
     }
-    
+
     /**
      * Determine if the tile manager's images have been loaded.
-     * 
+     *
      * @return <code>true</code> if all images have been loaded.
      *         <code>false</code> if more need to be loaded.
      */
     public boolean isTileImagesLoaded() {
-        return this.tileManager.isLoaded();
+        return tileManager.isLoaded();
     }
 
     public void setUseLOSTool(boolean use) {
@@ -5136,7 +5178,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     /**
      * Determines if this Board contains the Coords, and if so, "selects" that
      * Coords.
-     * 
+     *
      * @param coords the Coords.
      */
     public void select(Coords coords) {
@@ -5152,7 +5194,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     /**
      * "Selects" the specified Coords.
-     * 
+     *
      * @param x the x coordinate.
      * @param y the y coordinate.
      */
@@ -5163,7 +5205,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     /**
      * Determines if this Board contains the Coords, and if so, highlights that
      * Coords.
-     * 
+     *
      * @param coords the Coords.
      */
     public void highlight(Coords coords) {
@@ -5179,7 +5221,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     /**
      * Highlights the specified Coords.
-     * 
+     *
      * @param x the x coordinate.
      * @param y the y coordinate.
      */
@@ -5190,7 +5232,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     /**
      * Determines if this Board contains the Coords, and if so, "cursors" that
      * Coords.
-     * 
+     *
      * @param coords the Coords.
      */
     public void cursor(Coords coords) {
@@ -5211,7 +5253,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     /**
      * "Cursors" the specified Coords.
-     * 
+     *
      * @param x the x coordinate.
      * @param y the y coordinate.
      */
@@ -5268,7 +5310,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     /**
      * Notifies listeners about the specified mouse action.
-     * 
+     *
      * @param coords the Coords.
      */
     public void mouseAction(Coords coords, int mtype, int modifiers) {
@@ -5285,7 +5327,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.BoardListener#boardNewBoard(megamek.common.BoardEvent)
      */
     public void boardNewBoard(BoardEvent b) {
@@ -5294,7 +5336,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
      */
     public synchronized void boardChangedHex(BoardEvent b) {
@@ -5308,6 +5350,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     private GameListener gameListener = new GameListenerAdapter() {
 
+        @Override
         public void gameEntityNew(GameEntityNewEvent e) {
             updateEcmList();
             redrawAllEntities();
@@ -5316,6 +5359,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
         }
 
+        @Override
         public void gameEntityRemove(GameEntityRemoveEvent e) {
             updateEcmList();
             redrawAllEntities();
@@ -5324,6 +5368,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
         }
 
+        @Override
         public void gameEntityChange(GameEntityChangeEvent e) {
             Vector<UnitLocation> mp = e.getMovePath();
             updateEcmList();
@@ -5341,6 +5386,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
         }
 
+        @Override
         public void gameNewAction(GameNewActionEvent e) {
             EntityAction ea = e.getAction();
             if (ea instanceof AttackAction) {
@@ -5348,6 +5394,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
         }
 
+        @Override
         public void gameBoardNew(GameBoardNewEvent e) {
             IBoard b = e.getOldBoard();
             if (b != null) {
@@ -5360,18 +5407,20 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             updateBoard();
         }
 
+        @Override
         public void gameBoardChanged(GameBoardChangeEvent e) {
             boardChanged();
         }
 
+        @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             refreshAttacks();
             switch (e.getNewPhase()) {
                 case PHASE_MOVEMENT:
                     refreshMoveVectors();
-                case PHASE_FIRING:       
+                case PHASE_FIRING:
                     clearAllMoveVectors();
-                case PHASE_PHYSICAL:                  
+                case PHASE_PHYSICAL:
                     refreshAttacks();
                     break;
                 case PHASE_INITIATIVE:
@@ -5400,14 +5449,16 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     protected synchronized void updateBoard() {
         updateBoardSize();
-        if (backGraph != null)
+        if (backGraph != null) {
             backGraph.dispose();
+        }
         backGraph = null;
         backImage = null;
         backSize = null;
         boardImage = null;
-        if (boardGraph != null)
+        if (boardGraph != null) {
             boardGraph.dispose();
+        }
         boardGraph = null;
         // tileManager.reset();
         redrawAllEntities();
@@ -5468,9 +5519,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             super(c);
             this.range = range;
             this.tint = tint;
-            this.direction = -1;
+            direction = -1;
         }
-        
+
         public EcmBubble(Coords c, int range, int tint, int direction) {
         	super(c);
         	this.range = range;
@@ -5499,7 +5550,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if (entPos == null || !deployed
                     || offboard) {
                 continue;
-            }           
+            }
             if (range != Entity.NONE) {
                 int tint = PlayerColors.getColorRGB(ent.getOwner()
                         .getColorIndex());
@@ -5556,7 +5607,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     /**
      * Have the player select an Entity from the entities at the given coords.
-     * 
+     *
      * @param pos - the <code>Coords</code> containing targets.
      */
     private Entity chooseEntity(Coords pos) {
@@ -5601,14 +5652,17 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // Return the chosen unit.
         return choice;
     }
-    
+
     public Component getComponent() {
         // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
         if (System.getProperty
                 ("megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
-                ("true")) //$NON-NLS-1$
+                ("true")) {
             return this;
-        if (scroller != null) return scroller;
+        }
+        if (scroller != null) {
+            return scroller;
+        }
 
         // Place the board viewer in a set of scrollbars.
         scroller = new Panel();
@@ -5627,7 +5681,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         return scroller;
     }
-    
+
     public void refreshDisplayables() {
         repaint();
     }
@@ -5636,7 +5690,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         Point p = getHexLocation(c);
         p.x += (int)(HEX_WC*scale)-view.x;
         p.y += (int)(HEX_H*scale/2)-view.y;
-        if (((PopupMenu)popup).getParent() == null) add((PopupMenu)popup);
+        if (((PopupMenu)popup).getParent() == null) {
+            add((PopupMenu)popup);
+        }
         ((PopupMenu)popup).show(this, p.x, p.y);
     }
 

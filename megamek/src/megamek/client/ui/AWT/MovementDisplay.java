@@ -1810,13 +1810,14 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
     private void updateDumpButton() {
 
+        /*
         if (ce() instanceof Aero) {
             Aero a = (Aero) ce();
             setDumpEnabled(a.hasBombs() && cmd.length() == 0);
         } else {
             setDumpEnabled(false);
         }
-
+    */
     }
 
     private void updateFleeButton() {
@@ -2472,6 +2473,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 a.getBombChoices(), false, true);
         dumpBombsDialog.setVisible(true);
         if (dumpBombsDialog.getAnswer()) {
+            /*
             int[] bombsDumped = dumpBombsDialog.getChoices();
             // first make a control roll
             PilotingRollData psr = ce().getBasePilotingRoll(overallMoveType);
@@ -2498,7 +2500,10 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 String body = Messages.getString("MovementDisplay.DumpSuccessful.message"); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
                 // addReport(r);
-            }
+                 * 
+                 */
+            //}
+            /*
             // now unload the bombs
             for (int j = 0; j < bombsDumped.length; j++) {
                 if (bombsDumped[j] > 0) {
@@ -2513,6 +2518,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             // update the bomb load immediately
             a.updateBombLoad();
             client.sendUpdateEntity(ce());
+            */
             // not sure how to update mech display, but everything else is
             // working
         }

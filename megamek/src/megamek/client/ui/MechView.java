@@ -26,6 +26,7 @@ import java.util.Iterator;
 import megamek.client.ui.AWT.Messages;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.BombType;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
@@ -94,6 +95,10 @@ public class MechView {
         if(!entity.usesWeaponBays() || !showDetail) {
             sLoadout.append(getAmmo())
                 .append("\r\n"); //$NON-NLS-1$
+        }
+        if(entity instanceof Aero) {
+            sLoadout.append(getBombs())
+            .append("\r\n"); //$NON-NLS-1$
         }
         sLoadout.append(getMisc()) //has to occur before basic is processed
         .append("\r\n") //$NON-NLS-1$
@@ -495,6 +500,18 @@ public class MechView {
             }
         }
         return sAmmo.toString();
+    }
+    
+    private String getBombs() {
+        StringBuffer sBombs = new StringBuffer();
+        Aero a = (Aero)entity;
+        int[] choices = a.getBombChoices();
+        for(int type = 0; type < BombType.B_NUM; type++) {
+            if(choices[type] > 0) {
+                sBombs.append(BombType.getBombName(type)).append(" (").append(Integer.toString(choices[type])).append(")\n");
+            }
+        }
+        return sBombs.toString();
     }
 
     private String getMisc() {

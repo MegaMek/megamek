@@ -135,8 +135,6 @@ public class XMLStreamParser implements XMLResponder {
     public static final String  KF = "KF";
     public static final String  SAIL = "sail";
     public static final String  AEROCRIT = "acriticals";
-    public static final String  ACTIVE = "active";
-    public static final String  TOTAL = "total";
  
 
     /**
@@ -179,7 +177,6 @@ public class XMLStreamParser implements XMLResponder {
     public static final String  RIGHT_THRUST = "rightThrust";
     public static final String  LIFE_SUPPORT = "lifeSupport";
     public static final String  GEAR = "gear";
-    public static final String  FIGHTERS = "fighters";
 
     /**
      * Special values recognized by this parser.
@@ -380,43 +377,14 @@ public class XMLStreamParser implements XMLResponder {
 
                     // We should have found the mech.
                     if (ms == null) {
-                        //check to see if this is a squadron
-                        String type = (String) attr.get(TYPE);
-                        if(type.equals("squadron")) {
-                            
-                            //then grab the names of the fighters
-                            String fighters = (String) attr.get(FIGHTERS);
-                            //now I need to loop through them and add them to
-                            //an entity vector that I can use to compile the squadron
-                            Vector<Aero> squadron = new Vector<Aero>();
-                            for(String s : fighters.split(":")) {
-                                ms = MechSummaryCache.getInstance().getMech( s );
-                                //Try to add this fighter
-                                try {
-                                    squadron.add((Aero)new MechFileParser( ms.getSourceFile(), ms.getEntryName() ).getEntity());
-                                } catch (EntityLoadingException excep) {
-                                    excep.printStackTrace( System.err );
-                                    this.warning.append( "Unable to load mech: " )
-                                        .append( ms.getSourceFile() )
-                                        .append( ": " )
-                                        .append( ms.getEntryName() )
-                                        .append( ": " )
-                                        .append( excep.getMessage());
-                                }
-                            }                           
-                            //now compile the squadron
-                            this.entity = new FighterSquadron();
-                        } else {
-                        
-                            this.warning
-                            .append("Could not find Entity with chassis: ");
-                            this.warning.append(chassis);
-                            if (model != null && model.length() > 0) {
-                                this.warning.append(", and model: ");
-                                this.warning.append(model);
-                            }
-                            this.warning.append(".\n");
+                        this.warning
+                        .append("Could not find Entity with chassis: ");
+                        this.warning.append(chassis);
+                        if (model != null && model.length() > 0) {
+                            this.warning.append(", and model: ");
+                            this.warning.append(model);
                         }
+                        this.warning.append(".\n");
                     } else {
 
                         // Try to load the new mech.
@@ -894,40 +862,6 @@ public class XMLStreamParser implements XMLResponder {
             } catch (Exception e) {
                 this.warning.append
                     ( "Invalid fuel value in fuel tag.\n" );
-            }
-        }
-        else if ( name.equals(ACTIVE)) {
-            if ( this.entity == null ) {
-                this.warning.append
-                    ( "Found active fighters outside of an Entity.\n" );
-            } else if (!(this.entity instanceof FighterSquadron)) {
-                this.warning.append
-                    ( "active fighter record found outside a Fighter Squadron.\n" );
-            }
-            String value = (String) attr.get( FIGHTERS );
-            try {
-                int newNFighters = Integer.parseInt(value);
-                //((FighterSquadron)this.entity).setNFighters(newNFighters);
-            } catch (Exception e) {
-                this.warning.append
-                    ( "Invalid active fighter value in active fighter tag.\n" );
-            }
-        }
-        else if ( name.equals(TOTAL)) {
-            if ( this.entity == null ) {
-                this.warning.append
-                    ( "Found total armor outside of an Entity.\n" );
-            } else if (!(this.entity instanceof FighterSquadron)) {
-                this.warning.append
-                    ( "total armor record found outside a Fighter Squadron.\n" );
-            }
-            String value = (String) attr.get( ARMOR );
-            try {
-                int newArmor = Integer.parseInt(value);
-                //((FighterSquadron)this.entity).setArmor(newArmor);
-            } catch (Exception e) {
-                this.warning.append
-                    ( "Invalid total armor value in total armor tag.\n" );
             }
         }
         else if ( name.equals(KF) ) {

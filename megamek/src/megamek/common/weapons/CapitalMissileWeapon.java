@@ -17,6 +17,11 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.IGame;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
+
 /**
  * @author Jay Lawson
  */
@@ -30,5 +35,16 @@ public abstract class CapitalMissileWeapon extends AmmoWeapon {
         super();
         this.atClass = CLASS_CAPITAL_MISSILE;
         this.capital = true;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     */
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new CapitalMissileHandler(toHit, waa, game, server);
     }
 }

@@ -324,7 +324,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
         //Now I need to adjust this for air-to-air attacks because they use attack values and different rules
         if(ae instanceof Aero && target instanceof Aero) {
             //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
-        	if(ae.isCapitalFighter()) {
+        	if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
+                bSalvo = true;
+                nDamPerHit = 1;
+                hits = attackValue;
+                nCluster = 5;
+            } else if(ae.isCapitalFighter()) {          
         		bSalvo = true;
         		int nhit = 1;
         		if(nweapons > 1) {
@@ -715,7 +720,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
     }
 
-    /*
+    /**
      * Does this attack use the cluster hit table?
      * necessary to determine how Aero damage should be applied
      */

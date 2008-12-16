@@ -3002,7 +3002,7 @@ public class MechDisplay extends JPanel {
                 // Non-Mechs cannot configure their heatsinks
                 sinks2B.setEnabled(false);
             }
-
+/*
             if (en instanceof Aero
                     && ((Aero) en).hasBombs()
                     && IGame.Phase.PHASE_DEPLOYMENT != clientgui.getClient().game
@@ -3011,8 +3011,9 @@ public class MechDisplay extends JPanel {
                 // unit has any bombs that it could dump
                 dumpBombs.setEnabled(!dontChange);
             } else {
+            */
                 dumpBombs.setEnabled(false);
-            }
+            //}
 
             refreshSensorChoices(en);
 
@@ -3084,35 +3085,6 @@ public class MechDisplay extends JPanel {
                 clientgui.getClient().sendUpdateEntity(
                         clientgui.getClient().game.getEntity(myMechId));
                 displayMech(clientgui.getClient().game.getEntity(myMechId));
-            }
-            if (ae.getActionCommand().equals("dumpBombs") && !dontChange) { //$NON-NLS-1$
-                // need a bomb dumping dialog
-
-                Aero a = (Aero) clientgui.getClient().game.getEntity(myMechId);
-
-                if (a.isPendingBombDump()) {
-                    String title = Messages
-                            .getString("MechDisplay.CancelBombDumping.title"); //$NON-NLS-1$
-                    String body = Messages
-                            .getString("MechDisplay.CancelBombDumping.message"); //$NON-NLS-1$
-                    if (clientgui.doYesNoDialog(title, body)) {
-                        a.setPendingBombDump(false);
-                    }
-                } else {
-                    BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(
-                            clientgui.frame,
-                            Messages
-                                    .getString("MechDisplay.BombDumpDialog.title"), //$NON-NLS-1$
-                            a.getBombChoices(), false, true);
-                    dumpBombsDialog.setVisible(true);
-                    if (dumpBombsDialog.getAnswer()) {
-                        a.setPendingBombDump(true);
-                        a.setPendingBombDumps(dumpBombsDialog.getChoices());
-
-                    }
-                }
-                clientgui.getClient().sendUpdateEntity(
-                        clientgui.getClient().game.getEntity(myMechId));
             }
         }
     }

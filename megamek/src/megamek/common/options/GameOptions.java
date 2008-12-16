@@ -95,6 +95,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(advAeroRules,"stratops_ecm", false); //$NON-NLS-1$
         addOption(advAeroRules,"stratops_sensor_shadow", false); //$NON-NLS-1$
         addOption(advAeroRules,"stratops_over_penetrate", false); //$NON-NLS-1$
+        addOption(advAeroRules,"stratops_space_bomb", false); //$NON-NLS-1$
         addOption(advAeroRules,"variable_damage_thresh", false); //$NON-NLS-1$
         addOption(advAeroRules,"at2_nukes", false); //$NON-NLS-1$
         

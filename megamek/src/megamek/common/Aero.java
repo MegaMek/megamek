@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.weapons.EnergyWeapon;
@@ -134,32 +136,9 @@ public class Aero
     
     //bombs
     public static final String  SPACE_BOMB_ATTACK      = "SpaceBombAttack";
-    
-    public static final int BOMB_HE    = 0;
-    public static final int BOMB_CL    = 1;
-    public static final int BOMB_LG    = 2;
-    public static final int BOMB_INF   = 3;
-    public static final int BOMB_MINE  = 4;
-    public static final int BOMB_TAG   = 5;
-    public static final int BOMB_ARROW = 6;
-    public static final int BOMB_RL    = 7;
-    public static final int BOMB_ALAMO = 8;
-    public static final int BOMB_NUM   = 9;
-    
-    public static final String[] bombNames = {"HE Bomb","Cluster Bomb","Laser-guided Bomb",
-                                              "Inferno Bomb", "Mine Bomb", "TAG", "Arrow IV",
-                                              "Rocket Launcher", "Alamo Missile"};
-    
-    public static final int[] bombCosts = {1,1,1,1,1,1,5,1,10};
-    
-    private int bombPoints = 0;
+  
     private int maxBombPoints = 0;
-    private int[] bombChoices = {0,0,0,0,0,0,0,0,0};
-    private boolean pendingBombDump = false;
-    private boolean dumpingBombs = false;
-    private int[] bombDumps = {0,0,0,0,0,0,0,0,0};
-    private int[] pendingBombDumps = {0,0,0,0,0,0,0,0,0};
-    private int[] bombCrits = {0,0,0,0,0,0,0,0,0};
+    private int[] bombChoices = new int[BombType.B_NUM];
     
     //fuel
     private int fuel = 0;
@@ -194,6 +173,8 @@ public class Aero
 	private int fatalThresh = 2;
 	private int currentDamage = 0;
 	private boolean wingsHit = false;
+	//a hash map of the current weapon groups - the key is the location:internal name, and the value is the weapon id
+    Map<String, Integer> weaponGroups = new HashMap<String, Integer>();
     
     /*
      * According to the rules if two units of the same type and with the 
@@ -304,35 +285,25 @@ public class Aero
     }
     
     public int getBombPoints() {
-        return bombPoints;
-    }
-    
-    public void setBombPoints(int b) {
-        this.bombPoints = b;
+        int points = 0;
+        for(Mounted bomb : getBombs()) {
+            if(bomb.getShotsLeft() > 0) {
+                points += BombType.getBombCost(((BombType)bomb.getType()).getBombType());
+            }
+        }
+        return points;
     }
     
     public int getMaxBombPoints() {
         return maxBombPoints;
     }
     
-    public void setMaxBombPoints(int b) {
-        this.maxBombPoints = b;
+    public void autoSetMaxBombPoints() {
+        this.maxBombPoints = Math.round(this.getWeight()/5);
     }
       
     public int[] getBombChoices() {
-        int[] temp = this.bombChoices.clone();
-        //check for crits
-        for(int j = 0; j < BOMB_NUM; j++) {
-            temp[j] = Math.max(temp[j] - bombCrits[j], 0);
-        }
-        //if aero is currently dumping bombs, then don't return the actual
-        //choices, but the bomb load minus what is being dumped
-        if(isDumpingBombs()) {    
-            for(int i = 0; i < BOMB_NUM; i++) {
-                temp[i] = Math.max(temp[i] - bombDumps[i], 0);
-            }
-        }       
-        return temp;
+        return this.bombChoices.clone();
     }
     
     public void setBombChoices(int[] bc) {
@@ -602,9 +573,6 @@ public class Aero
         if(game.getOptions().booleanOption("variable_damage_thresh")) {
             autoSetThresh();
         }
-        
-        //reset bomb payload
-        updateBombLoad();
         
         //if they are out of control due to heat, then apply this and reset
         if(isOutCtrlHeat()) {
@@ -2122,223 +2090,59 @@ public class Aero
     }
     
     //I need a function that takes the bombChoices variable and uses it to produce bombs
-    //for the moment let's just start with adding rocket launchers and alamo's
-    //I need some way of tracking this, so that once they fire, I lose the bomb points 
-    //(and gain the thrust)
     public void applyBombs() {
-        
-        updateBombLoad();
-        
+        int loc = LOC_NOSE;     
+        for(int type = 0; type < BombType.B_NUM; type++) {
+            for(int i = 0; i<bombChoices[type]; i++) {
+                if(type == BombType.B_ALAMO && !game.getOptions().booleanOption("at2_nukes")) {
+                    continue;
+                }
+                if(type > BombType.B_TAG && !game.getOptions().booleanOption("allow_level_3_ammo")) {
+                    continue;
+                }
+ 
+                //some bombs need an associated weapon and if so
+                //they need a weapon for each bomb
+                if(null != BombType.getBombWeaponName(type)) {
+                    try{
+                        addBomb(EquipmentType.get(BombType.getBombWeaponName(type)),loc);                  
+                    } catch (LocationFullException ex) {
+                        //throw new LocationFullException(ex.getMessage());
+                    } 
+                }
+                if(type != BombType.B_TAG) {
+                    try{
+                        addEquipment(EquipmentType.get(BombType.getBombInternalName(type)),loc,false);                  
+                    } catch (LocationFullException ex) {
+                        //throw new LocationFullException(ex.getMessage());
+                    } 
+                }
+            }
+        }
         //add the space bomb attack
         //TODO: I don't know where else to put this (where do infantry attacks get added)
-        try{
-            addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK),LOC_NOSE,false);                  
-        } catch (LocationFullException ex) {
-            //throw new LocationFullException(ex.getMessage());
-        } 
-        
-        //**Now add bombs that are actually weapons**
-        //for not these must have a location
-        int loc = LOC_NOSE;
-        
-        //add tag
-        if(bombChoices[BOMB_TAG] > 0) {
-            for(int i = 0; i<bombChoices[BOMB_TAG]; i++) {
-                String prefix = "IS";
-                if(isClan()) {
-                    prefix = "CL";
-                }
-                try{
-                    addEquipment(EquipmentType.get(prefix + "TAG"),loc,false,true,1);                  
-                } catch (LocationFullException ex) {
-                    //throw new LocationFullException(ex.getMessage());
-                } 
+        if(game.getOptions().booleanOption("stratops_space_bomb") && getSpaceBombs().size() > 0) {
+            try{
+                addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK),LOC_NOSE,false);                  
+            } catch (LocationFullException ex) {
+                //throw new LocationFullException(ex.getMessage());
+            } 
+        }       
+        updateWeaponGroups();
+        loadAllWeapons();
+    }
+    
+    public Vector<Mounted> getSpaceBombs() {
+        Vector<Mounted> bombs = new Vector<Mounted>();
+        for(Mounted bomb : getBombs()) {
+            BombType btype = (BombType)bomb.getType();
+            if(!bomb.isInoperable() 
+                    && (btype.getBombType() == BombType.B_HE || btype.getBombType() == BombType.B_CLUSTER 
+                            || btype.getBombType() == BombType.B_LG || btype.getBombType() == BombType.B_ARROW)) {
+                bombs.add(bomb);
             }
         }
-        
-        //add arrow IV missiles
-        if(bombChoices[BOMB_ARROW] > 0) {
-            for(int i = 0; i<bombChoices[BOMB_ARROW]; i++) {
-                String prefix = "IS";
-                if(isClan()) {
-                    prefix = "CL";
-                }
-                try{
-                    Mounted arrow = addEquipment(EquipmentType.get(prefix + "ArrowIVSystem"),loc,false,true,5);                  
-                    Mounted ammo = addEquipment(EquipmentType.get(prefix + "ArrowIVHoming Ammo"),loc,false,true,5);
-                    ammo.setShotsLeft(1);
-                    arrow.setLinked(ammo);
-                } catch (LocationFullException ex) {
-                    //throw new LocationFullException(ex.getMessage());
-                } 
-            }
-        }
-        
-        //add rocket launchers
-        if(bombChoices[BOMB_RL] > 0) {
-            //alternate wings
-            for(int i = 0; i<bombChoices[BOMB_RL]; i++) {
-                try{
-                    addEquipment(EquipmentType.get("ISRocketLauncher10"),loc,false,true,1);
-                } catch (LocationFullException ex) {
-                    //throw new LocationFullException(ex.getMessage());
-                } 
-            }
-        }
-        
-        //add alamos
-        if(bombChoices[BOMB_ALAMO] > 0) {
-            //alternate wings
-            for(int i = 0; i<bombChoices[BOMB_ALAMO]; i++) {
-                try{
-                    addEquipment(EquipmentType.get("Alamo"),loc,false,true,10);
-                } catch (LocationFullException ex) {
-                    //throw new LocationFullException(ex.getMessage());
-                } 
-            }
-        }
-    }
-    
-    //update bomb points based on current bomb choices
-    public void updateBombLoad() {
-        int points = 0;
-        for(int i = 0; i < bombChoices.length; i++) {
-            points += bombChoices[i] * bombCosts[i];
-        }
-        
-        setBombPoints(points);
-    }
-    
-    //remove bombs from the bomb load 
-    public void removeBombs(int number, int type) {
-        if(type >= BOMB_NUM) {
-            return;
-        }
-        this.bombChoices[type] = Math.max(this.bombChoices[type] - number, 0);
-        
-        //if this references an actual weapon, then I should go through and
-        //disable one
-        if(type == BOMB_TAG || type == BOMB_ARROW || type == BOMB_RL || type == BOMB_ALAMO) {
-            for(int i =0; i < number; i++) {
-                //loop through weapons and if you find the correct type
-                //get rid of its ammo
-                for(Mounted m:getWeaponList()) {
-                    WeaponType wtype = (WeaponType)m.getType();
-                    Mounted ammo = m.getLinked();
-                    boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA;
-                    if(usesAmmo && wtype.getAmmoType() == AmmoType.T_ARROW_IV && type == BOMB_ARROW
-                            && ammo.getShotsLeft() > 0 && !m.isDestroyed()) {
-                        ammo.setShotsLeft(0);
-                        break;
-                    }
-                    if(usesAmmo && wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER && type == BOMB_RL
-                            && ammo.getShotsLeft() > 0 && !m.isDestroyed()) {
-                        ammo.setShotsLeft(0);
-                        break;
-                    }
-                    if(usesAmmo && wtype.getAmmoType() == AmmoType.T_ALAMO && type == BOMB_ALAMO
-                            && ammo.getShotsLeft() > 0 && !m.isDestroyed()) {
-                        ammo.setShotsLeft(0);
-                        break;
-                    }
-                    //for tag, I just need to disable it
-                    if(wtype.hasFlag(WeaponType.F_TAG) && !m.isDestroyed()) {
-                        m.setDestroyed(true);
-                        break;
-                    }
-                }
-            }
-        }
-        
-    }
-    
-    //when bombs are critted increment the critical count
-    //and destroy it if it is a weapon
-    public void critBombs(int type) {
-        if(type >= BOMB_NUM) {
-            return;
-        }
-        this.bombCrits[type]++;
-        
-        if(type == BOMB_TAG || type == BOMB_ARROW || type == BOMB_RL || type == BOMB_ALAMO) {
-            for(Mounted m:getWeaponList()) {
-                WeaponType wtype = (WeaponType)m.getType();
-                Mounted ammo = m.getLinked();
-                boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA;
-                if(usesAmmo && wtype.getAmmoType() == AmmoType.T_ARROW_IV && type == BOMB_ARROW
-                        && ammo.getShotsLeft() > 0 && !m.isDestroyed()) {
-                    m.setDestroyed(true);
-                    break;
-                }    
-                if(usesAmmo && wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER && type == BOMB_RL
-                        && ammo.getShotsLeft() > 0 && !m.isDestroyed()) {
-                    m.setDestroyed(true);
-                    break;
-                }
-                if(usesAmmo && wtype.getAmmoType() == AmmoType.T_ALAMO && type == BOMB_ALAMO
-                        && ammo.getShotsLeft() > 0 && !m.isDestroyed()) {
-                    m.setDestroyed(true);
-                    break;
-                }
-                //for tag, I just need to disable it
-                if(wtype.hasFlag(WeaponType.F_TAG) && !m.isDestroyed()) {
-                    m.setDestroyed(true);
-                    break;
-                }
-            }
-        }
-    }
-    
-    //does this aero have bombs that can be used to space bomb
-    public boolean hasSpaceBombs() {
-        return this.bombChoices[BOMB_HE] > 0 || this.bombChoices[BOMB_CL] > 0 || this.bombChoices[BOMB_LG] > 0;
-    }
-    
-    public boolean hasBombs() {
-        //use getbombchoice
-        int[] bc = getBombChoices();
-        for(int i = 0; i < bc.length; i++) {
-            if(bc[i] > 0) {
-                return true;
-            }
-        }
-        return false;    
-    }
-    
-    public boolean isPendingBombDump() {
-        return pendingBombDump;
-    }
-    
-    public void setPendingBombDump(boolean b) {
-        this.pendingBombDump = b;
-    }
-    
-    public boolean isDumpingBombs() {
-        return dumpingBombs;
-    }
-    
-    public void setDumpingBombs(boolean b) {
-        this.dumpingBombs = b;
-    }
-    
-    public void setBombDumps(int[] b) {
-        this.bombDumps = b;
-    }
-    
-    public int[] getBombDumps() {
-        return bombDumps;
-    }
-    
-    public void setPendingBombDumps(int[] b) {
-        this.pendingBombDumps = b;
-    }
-    
-    public int[] getPendingBombDumps() {
-        return pendingBombDumps;
-    }
-    
-    public int[] getBombCrits() {
-        return bombCrits;
+        return bombs;
     }
     
     public int getExtremeRangeModifier() {
@@ -2609,5 +2413,63 @@ public class Aero
      */
     public void useFuel(int fuel) {
     	setFuel(Math.max(0,getFuel()- fuel));
+    }
+    
+    
+    public void updateWeaponGroups() {
+        //first we need to reset all the weapons in our existing mounts to zero until proven otherwise
+        Set<String> set= weaponGroups.keySet();
+        Iterator<String> iter = set.iterator();
+        while(iter.hasNext()) {
+            String key = iter.next();
+            this.getEquipment(weaponGroups.get(key)).setNWeapons(0);
+        }   
+        //now collect a hash of all the same weapons in each location by id
+        Map<String, Integer> groups = new HashMap<String, Integer>();
+        for (Mounted mounted : getTotalWeaponList()) {
+            int loc = mounted.getLocation();
+            if(loc == Aero.LOC_RWING || loc == Aero.LOC_LWING) {
+                loc = Aero.LOC_WINGS;
+            }
+            if(mounted.isRearMounted()) {
+                loc = Aero.LOC_AFT;
+            }
+            String key = mounted.getType().getInternalName() + ":" + loc;
+            if(null == groups.get(key)) {
+                groups.put(key, mounted.getNWeapons());
+            } else {
+                    groups.put(key, groups.get(key) + mounted.getNWeapons());
+            }
+        }
+        //now we just need to traverse the hash and either update our existing equipment or add new ones if there is none
+        Set<String> newSet = groups.keySet();
+        Iterator<String> newIter = newSet.iterator();
+        while(newIter.hasNext()) {
+            String key = newIter.next();
+            if(null != weaponGroups.get(key)) {
+                //then this equipment is already loaded, so we just need to correctly update the number of weapons
+                this.getEquipment(weaponGroups.get(key)).setNWeapons(groups.get(key));
+            } else {
+                //need to add a new weapon
+                String name = key.split(":")[0];
+                int loc = Integer.parseInt(key.split(":")[1]);
+                EquipmentType etype = EquipmentType.get(name);
+                Mounted newmount;
+                if (etype != null) {
+                    try {
+                        newmount = this.addWeaponGroup(etype, loc);
+                        newmount.setNWeapons(groups.get(key));
+                        weaponGroups.put(key, this.getEquipmentNum(newmount));
+                    } catch (LocationFullException ex) {
+                        System.out.println("Unable to compile weapon groups"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        ex.printStackTrace();
+                        return;
+                    }
+                }
+                else if(name != "0"){
+                    this.addFailedEquipment(name);
+                }
+            }
+        }   
     }
 }

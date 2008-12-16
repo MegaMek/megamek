@@ -188,7 +188,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private ArrayList<MovementSprite> movementSprites = new ArrayList<MovementSprite>();
 
     // vector of sprites for C3 network lines
-    private ArrayList<C3Sprite> C3Sprites = new ArrayList<C3Sprite>();
+    private ArrayList<C3Sprite> c3Sprites = new ArrayList<C3Sprite>();
 
     TilesetManager tileManager = null;
 
@@ -453,7 +453,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         }
 
         // draw C3 links
-        drawSprites(g, C3Sprites);
+        drawSprites(g, c3Sprites);
 
         // draw onscreen entities
         drawSprites(g, entitySprites);
@@ -475,7 +475,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         // draw movement, if valid
         drawSprites(g, pathSprites);
 
-        // added by kenn
         // draw the ruler line
         if (rulerStart != null) {
             Point start = getCentreHexLocation(rulerStart);
@@ -491,7 +490,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             g.setColor(rulerStartColor);
             g.fillRect(start.x - 1, start.y - 1, 2, 2);
         }
-        // end kenn
 
         // draw all the "displayables"
         for (int i = 0; i < displayables.size(); i++) {
@@ -976,7 +974,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         return getHexLocation(c.x, c.y);
     }
 
-    // added by kenn
     /**
      * Returns the absolute position of the centre of the hex graphic
      */
@@ -999,8 +996,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         repaint();
     }
-
-    // end kenn
 
     /**
      * Returns the coords at the specified point
@@ -1076,7 +1071,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
 
-        for (Iterator<C3Sprite> i = C3Sprites.iterator(); i.hasNext();) {
+        for (Iterator<C3Sprite> i = c3Sprites.iterator(); i.hasNext();) {
             final C3Sprite c3sprite = i.next();
             if (c3sprite.entityId == entity.getId() || c3sprite.masterId == entity.getId()) {
                 i.remove();
@@ -1137,7 +1132,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private void moveCursor(CursorSprite cursor, Coords newPos) {
         final Rectangle oldBounds = new Rectangle(cursor.getBounds());
         if (newPos != null) {
-            // cursor.setLocation(getHexLocation(newPos));
             cursor.setHexLocation(newPos);
         } else {
             cursor.setOffScreen();
@@ -1275,7 +1269,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 }
                 if (e.onSameC3NetworkAs(fe) && !fe.equals(e)
                         && !Compute.isAffectedByECM(e, e.getPosition(), fe.getPosition())) {
-                    C3Sprites.add(new C3Sprite(e, fe));
+                    c3Sprites.add(new C3Sprite(e, fe));
                 }
             }
         } else if (e.getC3Master() != null) {
@@ -1288,7 +1282,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             if (!Compute.isAffectedByECM(e, e.getPosition(), eMaster.getPosition())
                     && !Compute.isAffectedByECM(eMaster, eMaster.getPosition(), eMaster
                             .getPosition())) {
-                C3Sprites.add(new C3Sprite(e, e.getC3Master()));
+                c3Sprites.add(new C3Sprite(e, e.getC3Master()));
             }
         }
     }
@@ -1420,7 +1414,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     }
 
     public void clearC3Networks() {
-        C3Sprites.clear();
+        c3Sprites.clear();
     }
 
     /**
@@ -2569,7 +2563,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             tempImage.flush();
         }
 
-        /*
+        /**
          * We only want to show double-blind visibility indicators on our own mechs and teammates
          * mechs (assuming team vision option).
          */
@@ -2968,11 +2962,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             tempImage.flush();
         }
 
+        /**
+         * draw conditions separate from the step, This allows me to keep
+         * conditions on the Aero even when that step is erased (as per advanced
+         * movement). For now, just evading and rolling. eventually loading and
+         * unloading as well
+         */
         private void drawConditions(MoveStep step, Point stepPos, Graphics graph, Color col) {
-            // draw conditions separate from the step, This allows me to keep
-            // conditions on the Aero even when that step is erased (as per advanced
-            // movement). For now, just evading and rolling.
-            // eventually loading and unloading as well
+
             if (step.isEvading()) {
                 String evade = Messages.getString("BoardView1.Evade"); //$NON-NLS-1$
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
@@ -3120,7 +3117,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      * horribly inefficient for long diagonal lines.
      */
     private class C3Sprite extends Sprite {
-        private Polygon C3Poly;
+        private Polygon c3Poly;
 
         protected int entityId;
 
@@ -3140,11 +3137,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             spriteColor = PlayerColors.getColor(e.getOwner().getColorIndex());
 
             if (e.getPosition() == null || m.getPosition() == null) {
-                C3Poly = new Polygon();
-                C3Poly.addPoint(0, 0);
-                C3Poly.addPoint(1, 0);
-                C3Poly.addPoint(0, 1);
-                bounds = new Rectangle(C3Poly.getBounds());
+                c3Poly = new Polygon();
+                c3Poly.addPoint(0, 0);
+                c3Poly.addPoint(1, 0);
+                c3Poly.addPoint(0, 1);
+                bounds = new Rectangle(c3Poly.getBounds());
                 bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
                 image = null;
                 return;
@@ -3153,11 +3150,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             makePoly();
 
             // set bounds
-            bounds = new Rectangle(C3Poly.getBounds());
+            bounds = new Rectangle(c3Poly.getBounds());
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
 
             // move poly to upper right of image
-            C3Poly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
+            c3Poly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
 
             // set names & stuff
 
@@ -3178,17 +3175,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     % (Math.PI * 2); // angle
             final double lw = scale * C3_LINE_WIDTH; // line width
 
-            C3Poly = new Polygon();
-            C3Poly.addPoint(
+            c3Poly = new Polygon();
+            c3Poly.addPoint(
                     a.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), a.y
                             + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
-            C3Poly.addPoint(
+            c3Poly.addPoint(
                     a.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), a.y
                             + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
-            C3Poly.addPoint(
+            c3Poly.addPoint(
                     t.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), t.y
                             + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
-            C3Poly.addPoint(
+            c3Poly.addPoint(
                     t.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), t.y
                             + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
         }
@@ -3197,11 +3194,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         public Rectangle getBounds() {
             makePoly();
             // set bounds
-            bounds = new Rectangle(C3Poly.getBounds());
+            bounds = new Rectangle(c3Poly.getBounds());
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
 
             // move poly to upper right of image
-            C3Poly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
+            c3Poly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
             image = null;
 
             return bounds;
@@ -3214,9 +3211,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         @Override
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
-            // makePoly();
 
-            Polygon drawPoly = new Polygon(C3Poly.xpoints, C3Poly.ypoints, C3Poly.npoints);
+            Polygon drawPoly = new Polygon(c3Poly.xpoints, c3Poly.ypoints, c3Poly.npoints);
             drawPoly.translate(x, y);
 
             g.setColor(spriteColor);
@@ -3230,7 +3226,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
          */
         @Override
         public boolean isInside(Point point) {
-            return C3Poly.contains(point.x - bounds.x, point.y - bounds.y);
+            return c3Poly.contains(point.x - bounds.x, point.y - bounds.y);
         }
 
     }
@@ -4056,7 +4052,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     void clearSprites() {
         pathSprites.clear();
         attackSprites.clear();
-        C3Sprites.clear();
+        c3Sprites.clear();
         movementSprites.clear();
 
     }
@@ -4139,12 +4135,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             boolean deployed = ent.isDeployed();
             boolean offboard = ent.isOffBoard();
             if(entPos == null && ent.getTransportId() != Entity.NONE) {
-            	Entity carrier = game.getEntity(ent.getTransportId());
-            	if(null != carrier && carrier.loadedUnitsHaveActiveECM()) {
-            		entPos = carrier.getPosition();
-            		deployed = carrier.isDeployed();
-            		offboard = carrier.isOffBoard();
-            	}
+                Entity carrier = game.getEntity(ent.getTransportId());
+                if(null != carrier && carrier.loadedUnitsHaveActiveECM()) {
+                    entPos = carrier.getPosition();
+                    deployed = carrier.isDeployed();
+                    offboard = carrier.isOffBoard();
+                }
             }
             if (entPos == null || !deployed || offboard) {
                 continue;
@@ -4154,13 +4150,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 list.add(new EcmBubble(entPos, range, tint));
             }
             if(game.getBoard().inSpace()) {
-            	//then BAP is also ECCM so it needs a bubble
-            	range = ent.getBAPRange();
-            	int direction = -1;
-            	if (range != Entity.NONE) {
-            		if(range > 6) {
-            			direction = ent.getFacing();
-            		}
+                //then BAP is also ECCM so it needs a bubble
+                range = ent.getBAPRange();
+                int direction = -1;
+                if (range != Entity.NONE) {
+                    if(range > 6) {
+                        direction = ent.getFacing();
+                    }
                     int tint = PlayerColors.getColorRGB(ent.getOwner()
                             .getColorIndex());
                     list.add(new EcmBubble(entPos, range, tint, direction));
@@ -4372,61 +4368,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 }
             }
 
-            /*
-            if (mhex.containsTerrain(Terrains.JUNGLE)) {
-                int ttl = mhex.getTerrain(Terrains.JUNGLE).getLevel();
-                int tf = mhex.getTerrain(Terrains.JUNGLE).getTerrainFactor();
-                if (ttl == 1)
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipLightJungle",
-                            new Object[] { tf });
-                else if (ttl == 2)
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipHeavyJungle",
-                            new Object[] { tf });
-                else if (ttl == 3)
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipUltraJungle",
-                            new Object[] { tf });
-                else
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipJungle",
-                            new Object[] { tf });
-                stringsIndex += 1;
-            } else if (mhex.containsTerrain(Terrains.WOODS)) {
-                int ttl = mhex.getTerrain(Terrains.WOODS).getLevel();
-                int tf = mhex.getTerrain(Terrains.WOODS).getTerrainFactor();
-                if (ttl == 1)
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipLightWoods",
-                            new Object[] { tf });
-                else if (ttl == 2)
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipHeavyWoods",
-                            new Object[] { tf });
-                else if (ttl == 3)
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipUltraWoods",
-                            new Object[] { tf });
-                else
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipWoods",
-                            new Object[] { tf });
-                stringsIndex += 1;
-            }
-
-            if (mhex.containsTerrain(Terrains.ICE)) {
-                int tf = mhex.getTerrain(Terrains.ICE).getTerrainFactor();
-                strings[stringsIndex] = Messages
-                        .getString("BoardView1.TipIce", new Object[] { tf });
-                stringsIndex += 1;
-            }
-
-            // Do we have rubble?
-            if (mhex.containsTerrain(Terrains.RUBBLE)) {
-                strings[stringsIndex] = Messages.getString("BoardView1.Rubble"); //$NON-NLS-1$
-                stringsIndex += 1;
-            }
-
-            // Do we have swamp?
-            if (mhex.containsTerrain(Terrains.SWAMP)) {
-                strings[stringsIndex] = Messages.getString("BoardView1.TipSwamp");
-                stringsIndex += 1;
-            }
-            */
-
             // Do we have a building?
             if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
                 // Get the building.
@@ -4589,11 +4530,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     }
 
     public Component getComponent() {
-        // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
-        if (System.getProperty("megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
-                ("true")) {
-            return this;
-        }
         if (scrollpane != null) {
             return scrollpane;
         }
@@ -4602,7 +4538,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         scrollpane = new JScrollPane(this);
         scrollpane.setLayout(new ScrollPaneLayout());
         // we need to use the simple scroll mode because otherwise the
-        // IDisplayable that are drawn in fixed positions in the viewport
+        // IDisplayables that are drawn in fixed positions in the viewport
         // leave artifacts when scrolling
         scrollpane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 
@@ -4620,7 +4556,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         if (((JPopupMenu)popup).getParent() == null) {
             add((JPopupMenu)popup);
         }
-            ((JPopupMenu)popup).show(this, p.x, p.y);
+        ((JPopupMenu)popup).show(this, p.x, p.y);
     }
 
     public void refreshMinefields() {

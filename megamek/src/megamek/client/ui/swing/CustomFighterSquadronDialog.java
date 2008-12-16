@@ -1,19 +1,19 @@
 /*
  * MechSelectorDialog.java - Copyright (C) 2002,2004 Josh Yockey
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
- 
+
 package megamek.client.ui.swing;
- 
+
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Checkbox;
@@ -39,7 +39,6 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Vector;
@@ -49,7 +48,6 @@ import megamek.client.ui.MechView;
 import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
-import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
@@ -76,33 +74,33 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 
-/* 
+/*
  * Allows a user to sort through a list of MechSummaries and select one
  */
 
-public class CustomFighterSquadronDialog 
-    extends Dialog implements ActionListener, ItemListener, KeyListener, 
+public class CustomFighterSquadronDialog
+    extends Dialog implements ActionListener, ItemListener, KeyListener,
     Runnable, WindowListener
 {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4269883152911154774L;
 
     // how long after a key is typed does a new search begin
     private final static int KEY_TIMEOUT = 1000;
-     
+
     // these indices should match up with the static values in the MechSummaryComparator
     private String[] m_saSorts = { Messages.getString("MechSelectorDialog.0"), Messages.getString("MechSelectorDialog.1"), Messages.getString("MechSelectorDialog.2"), Messages.getString("MechSelectorDialog.3"), Messages.getString("MechSelectorDialog.4"), Messages.getString("MechSelectorDialog.5") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-    
+
     private MechSummary[] m_mechsCurrent;
     private Client m_client;
     private ClientGUI m_clientgui;
     private UnitLoadingDialog unitLoadingDialog;
-        
+
     private StringBuffer m_sbSearch = new StringBuffer();
     private long m_nLastSearch = 0;
-    
+
     private Label m_labelWeightClass = new Label(Messages.getString("MechSelectorDialog.m_labelWeightClass"), Label.RIGHT); //$NON-NLS-1$
     private Choice m_chWeightClass = new Choice();
     private Label m_labelType = new Label(Messages.getString("MechSelectorDialog.m_labelType"), Label.RIGHT); //$NON-NLS-1$
@@ -123,16 +121,16 @@ public class CustomFighterSquadronDialog
 
     private Button butRemove = new Button("<<"); //$NON-NLS-1$
     private Button butAdd = new Button(">>"); //$NON-NLS-1$
-    
+
     private Panel m_pOpenAdvanced = new Panel();
     private Button m_bToggleAdvanced = new Button("< Advanced Search >");
     private Panel m_pSouthParams = new Panel();
 
     List m_mechList = new List(10);
-    
+
     private List listFightersSelected = new List();
     private Vector<Aero> squadron = new Vector<Aero>();
-    
+
     private Button m_bPick = new Button(Messages.getString("CustomFighterSquadronDialog.m_bPick")); //$NON-NLS-1$
     private Button m_bCancel = new Button(Messages.getString("Close")); //$NON-NLS-1$
     private Panel m_pButtons = new Panel();
@@ -142,8 +140,8 @@ public class CustomFighterSquadronDialog
     private TextArea squadronView = new TextArea("",18,35);
     private Panel m_pLeft = new Panel();
     private Panel m_pMiddle = new Panel();
-    
-    
+
+
     private Choice m_cWalk = new Choice();
     private TextField m_tWalk = new TextField(2);
     private Choice m_cJump = new Choice();
@@ -169,12 +167,12 @@ public class CustomFighterSquadronDialog
     private Panel m_pUpper = new Panel();
     private Panel m_pLower = new Panel();
     BufferedPanel m_pPreview = new BufferedPanel();
-    
+
     private Label m_labelPlayer = new Label(Messages.getString("MechSelectorDialog.m_labelPlayer"), Label.RIGHT); //$NON-NLS-1$
     private Choice m_chPlayer = new Choice();
 
     private boolean includeMaxTech;
-    
+
     private EntityVerifier entityVerifier = new EntityVerifier(new File("data/mechfiles/UnitVerifierOptions.xml"));
 
     public CustomFighterSquadronDialog(ClientGUI cl, UnitLoadingDialog uld)
@@ -184,11 +182,11 @@ public class CustomFighterSquadronDialog
         m_clientgui = cl;
         unitLoadingDialog = uld;
 
-        for (int x = 0; x < m_saSorts.length; x++) {
-            m_chSort.addItem(m_saSorts[x]);
+        for (String sort : m_saSorts) {
+            m_chSort.addItem(sort);
         }
         updatePlayerChoice();
-        
+
         m_pParams.setLayout(new GridLayout(3, 2));
         m_pParams.add(m_labelWeightClass);
         m_pParams.add(m_chWeightClass);
@@ -200,7 +198,7 @@ public class CustomFighterSquadronDialog
         m_pChooseButtons.setLayout(new GridLayout(6, 2));
         m_pChooseButtons.add(butAdd);
         m_pChooseButtons.add(butRemove);
-        
+
         m_pListOptions.add(m_labelListOptions);
         m_cModel.addItemListener(this);
         m_pListOptions.add(m_cModel);
@@ -241,30 +239,30 @@ public class CustomFighterSquadronDialog
         m_pLower.add(m_mechList, BorderLayout.CENTER);
         m_pLower.add(m_pButtons, BorderLayout.SOUTH);
         m_pLower.add(m_pChooseButtons,BorderLayout.EAST);
-        
+
         m_pLeft.setLayout(new BorderLayout());
         m_pLeft.add(m_pUpper, BorderLayout.NORTH);
         m_pLeft.add(m_pLower, BorderLayout.CENTER);
-        
+
         m_pMiddle.setLayout(new BorderLayout());
         m_pMiddle.add(listFightersSelected, BorderLayout.CENTER);
         squadronView.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         m_pMiddle.add(squadronView, BorderLayout.SOUTH);
-      
+
         clearSquadPreview();
-        
+
         setLayout(new BorderLayout());
         add(m_pLeft, BorderLayout.WEST);
         add(m_pMiddle, BorderLayout.CENTER);
         m_mechView.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         add(m_mechView, BorderLayout.EAST);
-        
+
         clearMechPreview();
-        
-        
+
+
         listFightersSelected.addItemListener(this);
         listFightersSelected.addKeyListener(this);
-        
+
         m_chWeightClass.addItemListener(this);
         m_chType.addItemListener(this);
         m_chUnitType.addItemListener(this);
@@ -283,7 +281,7 @@ public class CustomFighterSquadronDialog
         addWindowListener(this);
         updateWidgetEnablements();
     }
-    
+
     private void buildSouthParams(boolean showAdvanced) {
         if (showAdvanced) {
             m_bToggleAdvanced.setLabel(Messages
@@ -384,8 +382,8 @@ public class CustomFighterSquadronDialog
             GUIPreferences.getInstance().setMechSelectorShowAdvanced(true);
         }
         m_pUpper.add(m_pSouthParams, BorderLayout.SOUTH);
-        this.invalidate();
-        this.pack();
+        invalidate();
+        pack();
     }
 
     private void updateTechChoice() {
@@ -408,10 +406,9 @@ public class CustomFighterSquadronDialog
         m_chPlayer.removeAll();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(m_clientgui.getClient().getName());
-        for (Iterator<Client> i = m_clientgui.getBots().values().iterator(); i
-                .hasNext();) {
-            m_chPlayer.addItem(i.next().getName());
-        }
+        for (Client client : m_clientgui.getBots().values()) {
+         m_chPlayer.addItem(client.getName());
+      }
         if (m_chPlayer.getItemCount() == 1) {
             m_chPlayer.setEnabled(false);
         } else {
@@ -557,7 +554,7 @@ public class CustomFighterSquadronDialog
         m_cWeapons1.invalidate();
         m_cWeapons2.invalidate();
         m_cEquipment.invalidate();
-        this.pack();
+        pack();
     }
 
     private void filterMechs(boolean calledByAdvancedSearch) {
@@ -570,24 +567,24 @@ public class CustomFighterSquadronDialog
             System.err.println("No units to filter!"); //$NON-NLS-1$
             return;
         }
-        for (int x = 0; x < mechs.length; x++) {
+        for (MechSummary mech : mechs) {
             if ( /* Weight */
-            (nClass == EntityWeightClass.SIZE || mechs[x].getWeightClass() == nClass)
+            (nClass == EntityWeightClass.SIZE || mech.getWeightClass() == nClass)
                     && /* Technology Level */
                     ((nType == TechConstants.T_ALL)
-                            || (nType == mechs[x].getType())
-                            || ((nType == TechConstants.T_TW_ALL) && ((mechs[x]
+                            || (nType == mech.getType())
+                            || ((nType == TechConstants.T_TW_ALL) && ((mech
                                     .getType() == TechConstants.T_INTRO_BOXSET)
-                                    || (mechs[x].getType() == TechConstants.T_IS_TW_NON_BOX) || (mechs[x]
-                                    .getType() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL) && ((mechs[x]
-                            .getType() == TechConstants.T_INTRO_BOXSET) || (mechs[x]
+                                    || (mech.getType() == TechConstants.T_IS_TW_NON_BOX) || (mech
+                                    .getType() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL) && ((mech
+                            .getType() == TechConstants.T_INTRO_BOXSET) || (mech
                             .getType() == TechConstants.T_IS_TW_NON_BOX))))
                     && /* Unit Type (Mek, Infantry, etc.) */
-                    (nUnitType == UnitType.SIZE || mechs[x].getUnitType()
+                    (nUnitType == UnitType.SIZE || mech.getUnitType()
                             .equals(UnitType.getTypeName(nUnitType)))
                     && /* canon required */(!m_client.game.getOptions()
-                            .booleanOption("canon_only") || mechs[x].isCanon())) {
-                vMechs.addElement(mechs[x]);
+                            .booleanOption("canon_only") || mech.isCanon())) {
+                vMechs.addElement(mech);
             }
         }
         m_mechsCurrent = new MechSummary[vMechs.size()];
@@ -608,13 +605,13 @@ public class CustomFighterSquadronDialog
         m_mechList.removeAll();
         try {
             m_mechList.setEnabled(false);
-            this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-            for (int x = 0; x < m_mechsCurrent.length; x++) {
-                m_mechList.add(formatMech(m_mechsCurrent[x]));
+            for (MechSummary element : m_mechsCurrent) {
+                m_mechList.add(formatMech(element));
             }
         } finally {
-            this.setCursor(Cursor.getDefaultCursor());
+            setCursor(Cursor.getDefaultCursor());
             m_mechList.setEnabled(true);
             // workaround for bug 1263380
             m_mechList.setFont(m_mechList.getFont());
@@ -647,8 +644,7 @@ public class CustomFighterSquadronDialog
         }
 
         Vector<MechSummary> vMatches = new Vector<MechSummary>();
-        for (int i = 0; i < m_mechsCurrent.length; i++) {
-            MechSummary ms = m_mechsCurrent[i];
+        for (MechSummary ms : m_mechsCurrent) {
             try {
                 Entity entity = new MechFileParser(ms.getSourceFile(), ms
                         .getEntryName()).getEntity();
@@ -673,14 +669,17 @@ public class CustomFighterSquadronDialog
         }
         if (walk > -1) {
             if (m_cWalk.getSelectedIndex() == 0) { // at least
-                if (entity.getWalkMP() < walk)
+                if (entity.getWalkMP() < walk) {
                     return false;
+                }
             } else if (m_cWalk.getSelectedIndex() == 1) { // equal to
-                if (walk != entity.getWalkMP())
+                if (walk != entity.getWalkMP()) {
                     return false;
+                }
             } else if (m_cWalk.getSelectedIndex() == 2) { // not more than
-                if (entity.getWalkMP() > walk)
+                if (entity.getWalkMP() > walk) {
                     return false;
+                }
             }
         }
 
@@ -691,14 +690,17 @@ public class CustomFighterSquadronDialog
         }
         if (jump > -1) {
             if (m_cJump.getSelectedIndex() == 0) { // at least
-                if (entity.getJumpMP() < jump)
+                if (entity.getJumpMP() < jump) {
                     return false;
+                }
             } else if (m_cJump.getSelectedIndex() == 1) { // equal to
-                if (jump != entity.getJumpMP())
+                if (jump != entity.getJumpMP()) {
                     return false;
+                }
             } else if (m_cJump.getSelectedIndex() == 2) { // not more than
-                if (entity.getJumpMP() > jump)
+                if (entity.getJumpMP() > jump) {
                     return false;
+                }
             }
         }
 
@@ -707,17 +709,21 @@ public class CustomFighterSquadronDialog
             int armor = entity.getTotalArmor();
             int maxArmor = entity.getTotalInternal() * 2 + 3;
             if (sel == 1) {
-                if (armor < (maxArmor * .25))
+                if (armor < (maxArmor * .25)) {
                     return false;
+                }
             } else if (sel == 2) {
-                if (armor < (maxArmor * .5))
+                if (armor < (maxArmor * .5)) {
                     return false;
+                }
             } else if (sel == 3) {
-                if (armor < (maxArmor * .75))
+                if (armor < (maxArmor * .75)) {
                     return false;
+                }
             } else if (sel == 4) {
-                if (armor < (maxArmor * .9))
+                if (armor < (maxArmor * .9)) {
                     return false;
+                }
             }
         }
 
@@ -741,8 +747,9 @@ public class CustomFighterSquadronDialog
                     count++;
                 }
             }
-            if (count >= weapon1)
+            if (count >= weapon1) {
                 foundWeapon1 = true;
+            }
         }
 
         count = 0;
@@ -760,8 +767,9 @@ public class CustomFighterSquadronDialog
                     count++;
                 }
             }
-            if (count >= weapon2)
+            if (count >= weapon2) {
                 foundWeapon2 = true;
+            }
         }
 
         int startYear = Integer.MIN_VALUE;
@@ -778,17 +786,21 @@ public class CustomFighterSquadronDialog
             return false;
         }
 
-        if (weaponLine1Active && !weaponLine2Active && !foundWeapon1)
+        if (weaponLine1Active && !weaponLine2Active && !foundWeapon1) {
             return false;
-        if (weaponLine2Active && !weaponLine1Active && !foundWeapon2)
+        }
+        if (weaponLine2Active && !weaponLine1Active && !foundWeapon2) {
             return false;
+        }
         if (weaponLine1Active && weaponLine2Active) {
             if (m_cOrAnd.getSelectedIndex() == 0 /* 0 is "or" choice */) {
-                if (!foundWeapon1 && !foundWeapon2)
+                if (!foundWeapon1 && !foundWeapon2) {
                     return false;
+                }
             } else { // "and" choice in effect
-                if (!foundWeapon1 || !foundWeapon2)
+                if (!foundWeapon1 || !foundWeapon2) {
                     return false;
+                }
             }
         }
 
@@ -800,8 +812,9 @@ public class CustomFighterSquadronDialog
                     count++;
                 }
             }
-            if (count < 1)
+            if (count < 1) {
                 return false;
+            }
         }
 
         return true;
@@ -827,15 +840,18 @@ public class CustomFighterSquadronDialog
     private Point computeDesiredLocation() {
         int desiredX = m_clientgui.frame.getLocation().x
                 + m_clientgui.frame.getSize().width / 2 - getSize().width / 2;
-        if (desiredX < 0)
+        if (desiredX < 0) {
             desiredX = 0;
+        }
         int desiredY = m_clientgui.frame.getLocation().y
                 + m_clientgui.frame.getSize().height / 2 - getSize().height / 2;
-        if (desiredY < 0)
+        if (desiredY < 0) {
             desiredY = 0;
+        }
         return new Point(desiredX, desiredY);
     }
 
+    @Override
     public void setVisible(boolean show) {
         if (show) {
             updatePlayerChoice();
@@ -854,30 +870,37 @@ public class CustomFighterSquadronDialog
         } else {
             levelOrValid = "F";
         }
-        if (GUIPreferences.getInstance().getMechSelectorIncludeModel())
-            val += makeLength(ms.getModel(), 10) + " "; //$NON-NLS-1$ //$NON-NLS-2$
-        if (GUIPreferences.getInstance().getMechSelectorIncludeName())
-            val += makeLength(ms.getChassis(), 20) + " "; //$NON-NLS-1$ //$NON-NLS-2$
-        if (GUIPreferences.getInstance().getMechSelectorIncludeTons())
+        if (GUIPreferences.getInstance().getMechSelectorIncludeModel()) {
+            val += makeLength(ms.getModel(), 10) + " "; //$NON-NLS-1$ 
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeName()) {
+            val += makeLength(ms.getChassis(), 20) + " "; //$NON-NLS-1$ 
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeTons()) {
             val += makeLength("" + ms.getTons(), 3) + " "; //$NON-NLS-1$ //$NON-NLS-2$
-        if (GUIPreferences.getInstance().getMechSelectorIncludeBV())
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeBV()) {
             val += makeLength("" + ms.getBV(), 5) + " "; //$NON-NLS-1$ //$NON-NLS-2$
-        if (GUIPreferences.getInstance().getMechSelectorIncludeYear())
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeYear()) {
             val += ms.getYear() + " ";
-        if (GUIPreferences.getInstance().getMechSelectorIncludeLevel())
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeLevel()) {
             val += levelOrValid + " ";
-        if (GUIPreferences.getInstance().getMechSelectorIncludeCost())
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeCost()) {
             val += ms.getCost() + " ";
+        }
         return val;
     }
-    
+
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == m_bCancel) {
             //clear squadron
             squadron.removeAllElements();
             //fs.fighters.removeAllElements();
             listFightersSelected.removeAll();
-            this.setVisible(false);
+            setVisible(false);
         }
         else if (ae.getSource() == butAdd) {
             int x = m_mechList.getSelectedIndex();
@@ -904,7 +927,7 @@ public class CustomFighterSquadronDialog
             //if this hits the maximum squadron size then disable add button
             if(squadron.size() == FighterSquadron.MAX_SIZE) {
                 butAdd.setEnabled(false);
-            }           
+            }
         }
         else if (ae.getSource() == butRemove) {
             int x = listFightersSelected.getSelectedIndex();
@@ -946,7 +969,7 @@ public class CustomFighterSquadronDialog
             squadron.removeAllElements();
             //fs.fighters.removeAllElements();
             listFightersSelected.removeAll();
-            this.setVisible(false);
+            setVisible(false);
         } else if (ae.getSource() == m_bSearch) {
             advancedSearch();
         } else if (ae.getSource() == m_bReset) {
@@ -955,7 +978,7 @@ public class CustomFighterSquadronDialog
             toggleAdvanced();
         }
     }
-    
+
     public void itemStateChanged(ItemEvent ie) {
         if (ie.getSource() == m_chSort) {
             clearMechPreview();
@@ -1006,23 +1029,23 @@ public class CustomFighterSquadronDialog
             setLocation(computeDesiredLocation());
         }
     }
-    
+
     void clearMechPreview() {
         m_mechView.setEditable(false);
         m_mechView.setText(""); //$NON-NLS-1$
 
-        // Remove preview image.        
+        // Remove preview image.
         if (MechSummaryCache.getInstance().isInitialized()) {
             m_pPreview.removeBgDrawers();
             m_pPreview.paint(m_pPreview.getGraphics());
         }
     }
-    
+
     void clearSquadPreview() {
         squadronView.setEditable(false);
         squadronView.setText(""); //$NON-NLS-1$
     }
-    
+
     void previewMech(Entity entity) {
         MechView mechView = new MechView(entity, m_client.game.getOptions().booleanOption("show_bay_detail"));
         m_mechView.setEditable(false);
@@ -1031,10 +1054,12 @@ public class CustomFighterSquadronDialog
         m_mechView.setText(readout);
         if(entity instanceof Mech || entity instanceof Tank) {
             TestEntity testEntity = null;
-            if (entity instanceof Mech)
+            if (entity instanceof Mech) {
                 testEntity = new TestMech((Mech)entity, entityVerifier.mechOption, null);
-            if (entity instanceof Tank)
+            }
+            if (entity instanceof Tank) {
                 testEntity = new TestTank((Tank)entity, entityVerifier.tankOption, null);
+            }
             if (!testEntity.correctEntity(sb, !m_clientgui.getClient().game.getOptions().booleanOption("is_eq_limits"))) {
                 m_mechView.setText(sb.toString());
             }
@@ -1045,7 +1070,7 @@ public class CustomFighterSquadronDialog
         //m_clientgui.loadPreviewImage(m_pPreview, entity, m_client.getLocalPlayer());
         m_pPreview.paint(m_pPreview.getGraphics());
     }
-    
+
     void previewSquad(Entity entity) {
         MechView mechView = new MechView(entity, m_client.game.getOptions().booleanOption("show_bay_detail"));
         squadronView.setEditable(false);
@@ -1066,10 +1091,10 @@ public class CustomFighterSquadronDialog
             return s + SPACES.substring(0, nLength - s.length());
         }
     }
-        
+
     public void keyReleased(java.awt.event.KeyEvent ke) {
     }
-    
+
     public void keyPressed(java.awt.event.KeyEvent ke) {
     if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
         ActionEvent event = new ActionEvent(m_bPick,ActionEvent.ACTION_PERFORMED,""); //$NON-NLS-1$
@@ -1083,26 +1108,26 @@ public class CustomFighterSquadronDialog
         m_sbSearch.append(ke.getKeyChar());
         searchFor(m_sbSearch.toString().toLowerCase());
     }
-    
+
     public void keyTyped(java.awt.event.KeyEvent ke) {
     }
-        
+
     //
     // WindowListener
     //
     public void windowActivated(java.awt.event.WindowEvent windowEvent) {
-    }    
+    }
     public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-    }    
+    }
     public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-        this.setVisible(false);
-    }    
+        setVisible(false);
+    }
     public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
-    }    
+    }
     public void windowDeiconified(java.awt.event.WindowEvent windowEvent) {
-    }    
+    }
     public void windowIconified(java.awt.event.WindowEvent windowEvent) {
-    }    
+    }
     public void windowOpened(java.awt.event.WindowEvent windowEvent) {
     }
 
@@ -1111,11 +1136,12 @@ public class CustomFighterSquadronDialog
         butAdd.setEnabled(enable);
         m_bPick.setEnabled(true);
     }
-    
+
     private void autoSetSkills(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        if(!cs.useAverageSkills())
+        if(!cs.useAverageSkills()) {
             return;
+        }
         int piloting=5;
         int gunnery=4;
         if(e.isClan()) {
@@ -1158,14 +1184,14 @@ public class CustomFighterSquadronDialog
         e.getCrew().setGunnery(gunnery);
         e.getCrew().setPiloting(piloting);
     }
-    
+
     /*
      * Now being done in Compute
     private FighterSquadron compileSquadron(Vector<Entity> squadron) {
-        
+
         //cycle through the entity vector and create a fighter squadron
         FighterSquadron fs = new FighterSquadron();
-        
+
         String chassis = squadron.elementAt(0).getChassis();
         int si = 99;
         boolean alike = true;
@@ -1173,17 +1199,17 @@ public class CustomFighterSquadronDialog
         int heat = 0;
         int safeThrust = 99;
         int n = 0;
-        float weight = 0.0f;  
+        float weight = 0.0f;
         int bv = 0;
         double cost = 0.0;
         int nTC = 0;
-        for(Entity e : squadron) {      
+        for(Entity e : squadron) {
             if(!chassis.equals(e.getChassis())) {
                 alike = false;
-            }        
+            }
             n++;
             //names
-            fs.fighters.add(e.getChassis() + " " + e.getModel());    
+            fs.fighters.add(e.getChassis() + " " + e.getModel());
             //armor
             armor += e.getTotalArmor();
             //heat
@@ -1193,21 +1219,21 @@ public class CustomFighterSquadronDialog
             bv += e.calculateBattleValue();
             cost += e.getCost();
             //safe thrust
-            if(e.getWalkMP() < safeThrust) 
+            if(e.getWalkMP() < safeThrust)
                 safeThrust = e.getWalkMP();
-            
+
             Aero a = (Aero)e;
             //si
             if(a.getSI() < si) {
                 si = a.getSI();
             }
-            
-            //weapons 
+
+            //weapons
             Mounted newmount;
             for(Mounted m : e.getEquipment() ) {
-                
-                if(m.getType() instanceof WeaponType) {    
-                    //first load the weapon onto the squadron    
+
+                if(m.getType() instanceof WeaponType) {
+                    //first load the weapon onto the squadron
                     WeaponType wtype = (WeaponType)m.getType();
                     try{
                         newmount = fs.addEquipment(wtype, m.getLocation());
@@ -1220,7 +1246,7 @@ public class CustomFighterSquadronDialog
                     if(wtype.getAtClass() == WeaponType.CLASS_NONE) {
                         continue;
                     }
-                    
+
                     //now find the right bay
                     Mounted bay = fs.getFirstBay(wtype, newmount.getLocation(), newmount.isRearMounted());
                     //if this is null, then I should create a new bay
@@ -1252,9 +1278,9 @@ public class CustomFighterSquadronDialog
                 }
             }
         }
-        
+
         armor = (int)Math.round(armor / 10.0);
-        
+
         fs.setArmor(armor);
         fs.set0Armor(armor);
         fs.setHeatSinks(heat);
@@ -1264,11 +1290,11 @@ public class CustomFighterSquadronDialog
         fs.autoSetThresh();
         fs.setWeight(weight);
         fs.set0SI(si);
-        
+
         if(nTC >= n) {
             fs.setHasTC(true);
         }
-        
+
         //if all the same chassis, name by chassis
         //otherwise name by weight
         if(alike) {
@@ -1284,11 +1310,11 @@ public class CustomFighterSquadronDialog
             }
         }
         fs.setModel("");
-        
+
         fs.loadAllWeapons();
         fs.updateAllWeaponBays();
-        
-        
+
+
         return fs;
     }
     */

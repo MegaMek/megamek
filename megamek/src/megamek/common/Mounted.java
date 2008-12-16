@@ -86,7 +86,6 @@ public class Mounted implements Serializable, RoundUpdated {
 
     //  bomb stuff
     private boolean bombMounted = false;
-    private int bombPoints = 0;
 
     // mine type
     private int mineType = MINE_NONE;
@@ -325,7 +324,7 @@ public class Mounted implements Serializable, RoundUpdated {
                 desc = new StringBuffer(type.getDesc());
         }
         if(isWeaponGroup()) {
-        	desc.append(" Group (").append(getNWeapons()).append(")");
+        	desc.append(" (").append(getNWeapons()).append(")");
         }
         if (destroyed) {
             desc.insert(0, "*");
@@ -969,14 +968,6 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void setBombMounted(boolean b) {
         bombMounted = b;
-    }
-
-    public int getBombPoints() {
-        return bombPoints;
-    }
-
-    public void setBombPoints(int b) {
-        bombPoints = b;
     }
 
     //is ammo in the same bay as the weapon

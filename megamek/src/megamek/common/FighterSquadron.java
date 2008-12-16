@@ -35,8 +35,6 @@ public class FighterSquadron extends Aero implements Transporter, Serializable {
     public static int MAX_SIZE = 6;
 
     public Vector<Aero> fighters = new Vector<Aero>();
-    //a hash map of the current weapon groups - the key is the location:internal name, and the value is the weapon id
-    Map<String, Integer> weaponGroups = new HashMap<String, Integer>();
 
     //fighter squadrons need to keep track of heat capacity apart from their fighters
     private int heatcap = 0;
@@ -428,7 +426,7 @@ public class FighterSquadron extends Aero implements Transporter, Serializable {
                 String key = mounted.getType().getInternalName() + ":" + loc;
                 if(null == groups.get(key)) {
                     groups.put(key, mounted.getNWeapons());
-                } else {
+                } else if (!mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
                     groups.put(key, groups.get(key) + mounted.getNWeapons());
                 }
             }
@@ -520,6 +518,15 @@ public class FighterSquadron extends Aero implements Transporter, Serializable {
         for(Aero fighter : fighters) {
             fighter.useFuel(fuel);
         }
+    }
+    
+    @Override
+    public ArrayList<Mounted> getBombs() {
+        ArrayList<Mounted> allBombs = new ArrayList<Mounted>();
+        for(Entity fighter : fighters) {
+            allBombs.addAll(fighter.getBombs());
+        }
+        return allBombs;
     }
 
     /*

@@ -33,6 +33,11 @@ v0.33.37-dev (SVN)
 + Bug 2095864: Indirectly Fired LRM's hitting Partial Cover
 + Bug 1725442: damage to mechanized infantry
 + Bug: collapsing buildings causing too much damage to BA and mechanized infantry
++ bomb loading
++ StratOps Space Bombing
++ TacOps AAA Missile Bomb Munitions
++ TacOps AS Missile Bomb Munitions
++ TacOps LAA Missile Bomb Munitions
 
 v0.33.36 (2008-12-10, 19:00 UTC)
 + Bug in Mech BV calculation fixed

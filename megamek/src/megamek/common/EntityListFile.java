@@ -354,24 +354,17 @@ public class EntityListFile {
         while (items.hasNext()) {
             final Entity entity = items.next();
 
+            if(entity instanceof FighterSquadron) {
+                continue;
+            }
+            
             // Start writing this entity to the file.
             output.write("   <entity chassis=\"");
             output.write(entity.getChassis().replaceAll("\"", "&quot;"));
             output.write("\" model=\"");
             output.write(entity.getModel().replaceAll("\"", "&quot;"));
             output.write("\" type=\"");
-            if(entity instanceof FighterSquadron) {
-                FighterSquadron fs = (FighterSquadron)entity;
-                output.write("squadron\" fighters=\"");
-                for(int i = 0; i < fs.fighters.size(); i++) {
-                    if(i > 0) {
-                        output.write(":");
-                    }
-                    //output.write(fs.fighters.elementAt(i));
-                }
-            } else {
-                output.write(entity.getMovementModeAsString());
-            }
+            output.write(entity.getMovementModeAsString());
             output.write("\">");
             output.write(CommonConstants.NL);
 
@@ -448,20 +441,6 @@ public class EntityListFile {
                 output.write(String.valueOf(a.getFuel()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
-                
-                if(a instanceof FighterSquadron) {
-                    FighterSquadron fs = (FighterSquadron)a;
-                    // active fighters
-                    output.write("      <active fighters=\"");
-                    output.write(String.valueOf(fs.getNFighters()));
-                    output.write("\"/>");
-                    output.write(CommonConstants.NL);
-                    //active fighters
-                    output.write("      <total armor=\"");
-                    output.write(String.valueOf(fs.getTotalArmor()));
-                    output.write("\"/>");
-                    output.write(CommonConstants.NL);
-                }
                 
                 //TODO: dropship docking collars, bays
                 

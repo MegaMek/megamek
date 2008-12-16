@@ -1678,14 +1678,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
     }
 
     private void updateDumpButton() {
-
+/*
         if (ce() instanceof Aero) {
             Aero a = (Aero) ce();
             setDumpEnabled(a.hasBombs() && cmd.length() == 0);
         } else {
             setDumpEnabled(false);
         }
-
+*/
     }
 
     private void updateFleeButton() {
@@ -2367,6 +2367,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
                 clientgui.doAlertDialog(title, body);
                 // addReport(r);
             }
+            /*
             // now unload the bombs
             for (int j = 0; j < bombsDumped.length; j++) {
                 if (bombsDumped[j] > 0) {
@@ -2381,6 +2382,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             // update the bomb load immediately
             a.updateBombLoad();
             client.sendUpdateEntity(ce());
+            */
             // not sure how to update mech display, but everything else is
             // working
         }

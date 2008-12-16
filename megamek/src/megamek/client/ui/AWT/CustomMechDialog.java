@@ -46,6 +46,7 @@ import megamek.client.ui.GBC;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
+import megamek.common.BombType;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
@@ -496,6 +497,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             disableMunitionEditing();
             disableMGSetting();
             disableMineSetting();
+            m_bombs.setEnabled(false);
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);
@@ -1014,357 +1016,119 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
          * 
          */
         private static final long serialVersionUID = 8294210679667925079L;
-        // private Vector<MiscType> b_vTypes;
-        private Choice b_choice_he;
-        private Choice b_choice_cl;
-        private Choice b_choice_lg;
-        private Choice b_choice_inf;
-        private Choice b_choice_mine;
-        private Choice b_choice_tag;
-        private Choice b_choice_arrow;
-        private Choice b_choice_rl;
-        private Choice b_choice_alamo;
+        private Choice[] b_choices = new Choice[BombType.B_NUM];
+        private Label[] b_labels = new Label[BombType.B_NUM];
         private int maxPoints = 0;
+        private int maxRows = (int)Math.ceil(BombType.B_NUM / 2.0);
 
         public BombChoicePanel(int[] bombChoices, int maxBombPoints) {
             // b_vTypes = vTypes;
             maxPoints = maxBombPoints;
-            b_choice_he = new Choice();
-            b_choice_cl = new Choice();
-            b_choice_lg = new Choice();
-            b_choice_inf = new Choice();
-            b_choice_mine = new Choice();
-            b_choice_tag = new Choice();
-            b_choice_arrow = new Choice();
-            b_choice_rl = new Choice();
-            b_choice_alamo = new Choice();
-
-            b_choice_he.addItemListener(this);
-            b_choice_cl.addItemListener(this);
-            b_choice_lg.addItemListener(this);
-            b_choice_inf.addItemListener(this);
-            b_choice_mine.addItemListener(this);
-            b_choice_tag.addItemListener(this);
-            b_choice_arrow.addItemListener(this);
-            b_choice_rl.addItemListener(this);
-            b_choice_alamo.addItemListener(this);
 
             // how many bomb points am I currently using?
             int curBombPoints = 0;
             for (int i = 0; i < bombChoices.length; i++) {
-                curBombPoints += bombChoices[i] * Aero.bombCosts[i];
+                curBombPoints += bombChoices[i] * BombType.getBombCost(i);
             }
             int availBombPoints = maxBombPoints - curBombPoints;
 
-            for (int x = 0; x <= Math.max(availBombPoints,
-                    bombChoices[Aero.BOMB_HE]); x++) {
-                b_choice_he.add(Integer.toString(x));
-            }
-
-            for (int x = 0; x <= Math.max(availBombPoints,
-                    bombChoices[Aero.BOMB_CL]); x++) {
-                b_choice_cl.add(Integer.toString(x));
-            }
-
-            for (int x = 0; x <= Math.max(availBombPoints,
-                    bombChoices[Aero.BOMB_LG]); x++) {
-                b_choice_lg.add(Integer.toString(x));
-            }
-
-            for (int x = 0; x <= Math.max(availBombPoints,
-                    bombChoices[Aero.BOMB_INF]); x++) {
-                b_choice_inf.add(Integer.toString(x));
-            }
-
-            for (int x = 0; x <= Math.max(availBombPoints,
-                    bombChoices[Aero.BOMB_MINE]); x++) {
-                b_choice_mine.add(Integer.toString(x));
-            }
-
-            for (int x = 0; x <= Math.max(availBombPoints,
-                    bombChoices[Aero.BOMB_TAG]); x++) {
-                b_choice_tag.add(Integer.toString(x));
-            }
-
-            for (int x = 0; x <= Math.max(availBombPoints,
-                    bombChoices[Aero.BOMB_RL]); x++) {
-                b_choice_rl.add(Integer.toString(x));
-            }
-
-            for (int y = 0; y <= Math.max(Math.round(availBombPoints / 5),
-                    bombChoices[Aero.BOMB_ARROW]); y++) {
-                b_choice_arrow.add(Integer.toString(y));
-            }
-
-            for (int z = 0; z <= Math.max(Math.round(availBombPoints / 10),
-                    bombChoices[Aero.BOMB_ALAMO]); z++) {
-                b_choice_alamo.add(Integer.toString(z));
-            }
-
-            b_choice_he.select(bombChoices[Aero.BOMB_HE]);
-            b_choice_cl.select(bombChoices[Aero.BOMB_CL]);
-            b_choice_lg.select(bombChoices[Aero.BOMB_LG]);
-            b_choice_inf.select(bombChoices[Aero.BOMB_INF]);
-            b_choice_mine.select(bombChoices[Aero.BOMB_MINE]);
-            b_choice_tag.select(bombChoices[Aero.BOMB_TAG]);
-            b_choice_arrow.select(bombChoices[Aero.BOMB_ARROW]);
-            b_choice_rl.select(bombChoices[Aero.BOMB_RL]);
-            b_choice_alamo.select(bombChoices[Aero.BOMB_ALAMO]);
-
-            String heDesc = Messages.getString("CustomMechDialog.labBombHE"); //$NON-NLS-1$
-            Label lhe = new Label(heDesc);
             GridBagLayout g = new GridBagLayout();
             setLayout(g);
             GridBagConstraints c = new GridBagConstraints();
-            c.gridx = 0;
-            c.gridy = 0;
-            c.anchor = GridBagConstraints.EAST;
-            g.setConstraints(lhe, c);
-            add(lhe);
-            c.gridx = 1;
-            c.gridy = 0;
-            c.anchor = GridBagConstraints.WEST;
-            g.setConstraints(b_choice_he, c);
-            add(b_choice_he);
-
-            String clDesc = Messages.getString("CustomMechDialog.labBombCL"); //$NON-NLS-1$
-            Label lcl = new Label(clDesc);
-            c.gridx = 0;
-            c.gridy = 1;
-            c.anchor = GridBagConstraints.EAST;
-            g.setConstraints(lcl, c);
-            add(lcl);
-            c.gridx = 1;
-            c.gridy = 1;
-            c.anchor = GridBagConstraints.WEST;
-            g.setConstraints(b_choice_cl, c);
-            add(b_choice_cl);
-
-            String lgDesc = Messages.getString("CustomMechDialog.labBombLG"); //$NON-NLS-1$
-            Label llg = new Label(lgDesc);
-            c.gridx = 0;
-            c.gridy = 2;
-            c.anchor = GridBagConstraints.EAST;
-            g.setConstraints(llg, c);
-            add(llg);
-            c.gridx = 1;
-            c.gridy = 2;
-            c.anchor = GridBagConstraints.WEST;
-            g.setConstraints(b_choice_lg, c);
-            add(b_choice_lg);
-
-            String infDesc = Messages.getString("CustomMechDialog.labBombInf"); //$NON-NLS-1$
-            Label linf = new Label(infDesc);
-            c.gridx = 0;
-            c.gridy = 3;
-            c.anchor = GridBagConstraints.EAST;
-            g.setConstraints(linf, c);
-            add(linf);
-            c.gridx = 1;
-            c.gridy = 3;
-            c.anchor = GridBagConstraints.WEST;
-            g.setConstraints(b_choice_inf, c);
-            add(b_choice_inf);
-
-            String mineDesc = Messages
-                    .getString("CustomMechDialog.labBombMine"); //$NON-NLS-1$
-            Label lmine = new Label(mineDesc);
-            c.gridx = 0;
-            c.gridy = 4;
-            c.anchor = GridBagConstraints.EAST;
-            g.setConstraints(lmine, c);
-            add(lmine);
-            c.gridx = 1;
-            c.gridy = 4;
-            c.anchor = GridBagConstraints.WEST;
-            g.setConstraints(b_choice_mine, c);
-            add(b_choice_mine);
-
-            String tagDesc = Messages.getString("CustomMechDialog.labBombTAG"); //$NON-NLS-1$
-            Label ltag = new Label(tagDesc);
-            c.gridx = 2;
-            c.gridy = 0;
-            c.anchor = GridBagConstraints.EAST;
-            g.setConstraints(ltag, c);
-            add(ltag);
-            c.gridx = 3;
-            c.gridy = 0;
-            c.anchor = GridBagConstraints.WEST;
-            g.setConstraints(b_choice_tag, c);
-            add(b_choice_tag);
-
-            String arrowDesc = Messages
-                    .getString("CustomMechDialog.labBombArrow"); //$NON-NLS-1$
-            Label larrow = new Label(arrowDesc);
-            c.gridx = 2;
-            c.gridy = 1;
-            c.anchor = GridBagConstraints.EAST;
-            g.setConstraints(larrow, c);
-            add(larrow);
-            c.gridx = 3;
-            c.gridy = 1;
-            c.anchor = GridBagConstraints.WEST;
-            g.setConstraints(b_choice_arrow, c);
-            add(b_choice_arrow);
-
-            String rlDesc = Messages.getString("CustomMechDialog.labBombRL"); //$NON-NLS-1$
-            Label lrl = new Label(rlDesc);
-            c.gridx = 2;
-            c.gridy = 2;
-            c.anchor = GridBagConstraints.EAST;
-            g.setConstraints(lrl, c);
-            add(lrl);
-            c.gridx = 3;
-            c.gridy = 2;
-            c.anchor = GridBagConstraints.WEST;
-            g.setConstraints(b_choice_rl, c);
-            add(b_choice_rl);
-
-            if (clientgui.getClient().game.getOptions().booleanOption(
-                    "at2_nukes")) {
-                String alamoDesc = Messages
-                        .getString("CustomMechDialog.labBombAlamo"); //$NON-NLS-1$
-                Label lalamo = new Label(alamoDesc);
-                c.gridx = 2;
-                c.gridy = 3;
+            
+            int column = 0;
+            int row = 0;
+            for(int type = 0; type < BombType.B_NUM; type++) {
+            
+                b_labels[type] = new Label();
+                b_choices[type] = new Choice();
+                
+                for (int x = 0; x <= Math.max(Math.round(availBombPoints / BombType.getBombCost(type)), 
+                        bombChoices[type]); x++) {
+                    b_choices[type].add(Integer.toString(x));
+                }
+                
+                b_choices[type].select(bombChoices[type]);
+                b_labels[type].setText(BombType.getBombName(type));
+                b_choices[type].addItemListener(this);
+                
+                if(type == BombType.B_ALAMO && !client.game.getOptions().booleanOption("at2_nukes")) {
+                    b_choices[type].setEnabled(false);
+                }
+                if(type > BombType.B_TAG && !client.game.getOptions().booleanOption("allow_level_3_ammo")) {
+                    b_choices[type].setEnabled(false);
+                }
+                if(type == BombType.B_ASEW || type == BombType.B_ALAMO) {
+                    b_choices[type].setEnabled(false);
+                }
+                
+                if(row >= maxRows) {
+                    row = 0;
+                    column += 2;
+                }
+                
+                c.gridx = column;
+                c.gridy = row;
                 c.anchor = GridBagConstraints.EAST;
-                g.setConstraints(lalamo, c);
-                add(lalamo);
-                c.gridx = 3;
-                c.gridy = 3;
+                g.setConstraints(b_labels[type], c);
+                add(b_labels[type]);
+                
+                c.gridx = column + 1;
+                c.gridy = row;
                 c.anchor = GridBagConstraints.WEST;
-                g.setConstraints(b_choice_alamo, c);
-                add(b_choice_alamo);
+                g.setConstraints(b_choices[type], c);
+                add(b_choices[type]);  
+                row++;
             }
-
         }
 
         public void itemStateChanged(ItemEvent ie) {
 
-            // reset the bombs available
-            int current_he = b_choice_he.getSelectedIndex();
-            int current_cl = b_choice_cl.getSelectedIndex();
-            int current_lg = b_choice_lg.getSelectedIndex();
-            int current_inf = b_choice_inf.getSelectedIndex();
-            int current_mine = b_choice_mine.getSelectedIndex();
-            int current_tag = b_choice_tag.getSelectedIndex();
-            int current_arrow = b_choice_arrow.getSelectedIndex();
-            int current_rl = b_choice_rl.getSelectedIndex();
-            int current_alamo = b_choice_alamo.getSelectedIndex();
-
-            int curPoints = current_he + current_cl + current_lg + current_inf
-                    + current_mine + current_tag + 5 * current_arrow
-                    + current_rl + 10 * current_alamo;
+            int[] current = new int[BombType.B_NUM];
+            int curPoints= 0;
+            for(int type = 0; type < BombType.B_NUM; type++) {
+                current[type] = b_choices[type].getSelectedIndex();
+                curPoints += current[type] * BombType.getBombCost(type);
+            }
 
             int availBombPoints = maxPoints - curPoints;
 
-            b_choice_he.removeItemListener(this);
-            b_choice_cl.removeItemListener(this);
-            b_choice_lg.removeItemListener(this);
-            b_choice_inf.removeItemListener(this);
-            b_choice_mine.removeItemListener(this);
-            b_choice_tag.removeItemListener(this);
-            b_choice_arrow.removeItemListener(this);
-            b_choice_rl.removeItemListener(this);
-            b_choice_alamo.removeItemListener(this);
-
-            b_choice_he.removeAll();
-            b_choice_cl.removeAll();
-            b_choice_lg.removeAll();
-            b_choice_inf.removeAll();
-            b_choice_mine.removeAll();
-            b_choice_tag.removeAll();
-            b_choice_arrow.removeAll();
-            b_choice_rl.removeAll();
-            b_choice_alamo.removeAll();
-
-            // re-calculate available bomb loads
-            for (int x = 0; x <= Math.max(availBombPoints, current_he); x++) {
-                b_choice_he.add(Integer.toString(x));
+            for(int type = 0; type < BombType.B_NUM; type++) {
+                b_choices[type].removeItemListener(this);
+                b_choices[type].removeAll();
+                for (int x = 0; x <= Math.max(Math.round(availBombPoints / BombType.getBombCost(type)), 
+                        current[type]); x++) {
+                    b_choices[type].add(Integer.toString(x));
+                }
+                b_choices[type].select(current[type]);
+                b_choices[type].addItemListener(this);
             }
-
-            for (int x = 0; x <= Math.max(availBombPoints, current_cl); x++) {
-                b_choice_cl.add(Integer.toString(x));
-            }
-
-            for (int x = 0; x <= Math.max(availBombPoints, current_lg); x++) {
-                b_choice_lg.add(Integer.toString(x));
-            }
-
-            for (int x = 0; x <= Math.max(availBombPoints, current_inf); x++) {
-                b_choice_inf.add(Integer.toString(x));
-            }
-
-            for (int x = 0; x <= Math.max(availBombPoints, current_mine); x++) {
-                b_choice_mine.add(Integer.toString(x));
-            }
-
-            for (int x = 0; x <= Math.max(availBombPoints, current_tag); x++) {
-                b_choice_tag.add(Integer.toString(x));
-            }
-
-            for (int x = 0; x <= Math.max(availBombPoints, current_rl); x++) {
-                b_choice_rl.add(Integer.toString(x));
-            }
-
-            for (int y = 0; y <= Math.max(Math.round(availBombPoints / 5),
-                    current_arrow); y++) {
-                b_choice_arrow.add(Integer.toString(y));
-            }
-
-            for (int z = 0; z <= Math.max(Math.round(availBombPoints / 10),
-                    current_alamo); z++) {
-                b_choice_alamo.add(Integer.toString(z));
-            }
-
-            // for some reason they are all resetting to zero at certain times
-            b_choice_he.select(current_he);
-            b_choice_cl.select(current_cl);
-            b_choice_lg.select(current_lg);
-            b_choice_inf.select(current_inf);
-            b_choice_mine.select(current_mine);
-            b_choice_tag.select(current_tag);
-            b_choice_arrow.select(current_arrow);
-            b_choice_rl.select(current_rl);
-            b_choice_alamo.select(current_alamo);
-
-            b_choice_he.addItemListener(this);
-            b_choice_cl.addItemListener(this);
-            b_choice_lg.addItemListener(this);
-            b_choice_inf.addItemListener(this);
-            b_choice_mine.addItemListener(this);
-            b_choice_tag.addItemListener(this);
-            b_choice_arrow.addItemListener(this);
-            b_choice_rl.addItemListener(this);
-            b_choice_alamo.addItemListener(this);
         }
 
         public void applyChoice() {
-            int[] choices = { b_choice_he.getSelectedIndex(),
-                    b_choice_cl.getSelectedIndex(),
-                    b_choice_lg.getSelectedIndex(),
-                    b_choice_inf.getSelectedIndex(),
-                    b_choice_mine.getSelectedIndex(),
-                    b_choice_tag.getSelectedIndex(),
-                    b_choice_arrow.getSelectedIndex(),
-                    b_choice_rl.getSelectedIndex(),
-                    b_choice_alamo.getSelectedIndex() };
-
+            int[] choices = new int[BombType.B_NUM];
+            for(int type = 0; type < BombType.B_NUM; type++) {
+                choices[type] = b_choices[type].getSelectedIndex();
+            }
             ((Aero) entity).setBombChoices(choices);
 
         }
 
         public void setEnabled(boolean enabled) {
-            b_choice_he.setEnabled(enabled);
-            b_choice_cl.setEnabled(enabled);
-            b_choice_lg.setEnabled(enabled);
-            b_choice_inf.setEnabled(enabled);
-            b_choice_mine.setEnabled(enabled);
-            b_choice_tag.setEnabled(enabled);
-            b_choice_arrow.setEnabled(enabled);
-            b_choice_rl.setEnabled(enabled);
-            b_choice_alamo.setEnabled(enabled);
-
+            for(int type = 0; type < BombType.B_NUM; type++) {
+                if(type == BombType.B_ALAMO && !client.game.getOptions().booleanOption("at2_nukes")) {
+                    b_choices[type].setEnabled(false);
+                }
+                else if(type > BombType.B_TAG && !client.game.getOptions().booleanOption("allow_level_3_ammo")) {
+                    b_choices[type].setEnabled(false);
+                }
+                else if(type == BombType.B_ASEW || type == BombType.B_ALAMO) {
+                    b_choices[type].setEnabled(false);
+                }
+                else {
+                    b_choices[type].setEnabled(false);
+                }
+            }
         }
 
     }

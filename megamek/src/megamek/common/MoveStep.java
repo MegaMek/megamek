@@ -1512,7 +1512,7 @@ public class MoveStep implements Serializable {
             
             //can only use safe thrust when ammo (or bomb) dumping
             //(unless out of control?)
-            boolean bDumping = a.isDumpingBombs();
+            boolean bDumping = false;//a.isDumpingBombs();
             for (Mounted mo : entity.getAmmo()) {
                 if (mo.isDumping()) {
                     bDumping = true;

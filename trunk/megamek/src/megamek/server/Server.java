@@ -2971,7 +2971,7 @@ public class Server implements Runnable {
             game.removeTurnFor(unit);
             send(createTurnVectorPacket());
         }
-        
+
         // Load the unit.
         loader.load(unit);
 
@@ -4610,7 +4610,7 @@ public class Server implements Runnable {
                         Vector<Integer> launches = launched.get(bayId);
                         int nLaunched = launches.size();
                         //need to make some decisions about how to handle the distribution
-                        //of fighters to doors beyond the launch rate. The most sensible thing 
+                        //of fighters to doors beyond the launch rate. The most sensible thing
                         //is probably to distribut them evenly.
                         int doors = currentBay.getDoors();
                         int[] distribution = new int[doors];
@@ -4653,7 +4653,7 @@ public class Server implements Runnable {
                                 System.err.println("Error! Server was told to unload " + fighter.getDisplayName() + " from " + entity.getDisplayName() + " into " + curPos.getBoardNum());
                             }
                         }
-                    }                                   
+                    }
                     // now apply any damage to bay doors
                     entity.resetBayDoors();
                 }
@@ -5410,7 +5410,7 @@ public class Server implements Runnable {
                     addReport(r);
                 }
             }
-            
+
             //handle fighter squadron joining
             if (step.getType() == MovePath.STEP_JOIN) {
                 loader = game.getEntity(step.getRecoveryUnit());
@@ -5645,7 +5645,7 @@ public class Server implements Runnable {
                 int fuelUsed = ((Aero) entity).getFuelUsed(thrust);
                 a.useFuel(fuelUsed);
             }
-            
+
             //jumpships and space stations need to reduce accumulated thrust if they spend some
             if(entity instanceof Jumpship) {
             	Jumpship js = (Jumpship)entity;
@@ -5655,9 +5655,9 @@ public class Server implements Runnable {
             		//I need to subtract the station keeping thrust from their accumulated thrust
             		//because they did not actually use it
             		penalty = js.getStationKeepingThrust();
-            	} 
+            	}
             	if(thrust > 0) {
-            		penalty = thrust;     		
+            		penalty = thrust;
             	}
             	if(penalty > 0.0) {
             		js.setAccumulatedThrust(Math.max(0, js.getAccumulatedThrust() - penalty));
@@ -6055,7 +6055,7 @@ public class Server implements Runnable {
 
         // recovered units should now be recovered and dealt with
         if (entity instanceof Aero && recovered && loader != null) {
-        	
+
         	if(loader.isCapitalFighter()) {
         		if(!(loader instanceof FighterSquadron)) {
         			//this is a solo capital fighter so we need to add a new squadron and load both the loader and loadee
@@ -8655,7 +8655,7 @@ public class Server implements Runnable {
             }
         }
     }
-    
+
     private void reportLargeCraftECCMRolls() {
         //run through an enumeration of deployed game entities. If they are large craft in space, then check the roll
         //and report it
@@ -12437,7 +12437,7 @@ public class Server implements Runnable {
 
             // put in ASF heat build-up first because there are few differences
             if (entity instanceof Aero) {
-            	
+
                 Aero a = (Aero) entity;
 
                 // should we even bother?
@@ -14050,7 +14050,7 @@ public class Server implements Runnable {
         if (e.crew.getOptions().booleanOption("pain_shunt")) {
             return vDesc;
         }
-        
+
         //no consciousness roll for capital fighter pilots
         if(e.isCapitalFighter()) {
         	return vDesc;
@@ -14156,7 +14156,7 @@ public class Server implements Runnable {
             	}
             }
         	ship.setCurrentDamage(0);
-            
+
         }
         return vDesc;
     }
@@ -14308,14 +14308,14 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
         int te_n = te.getId();
-        
+
         //if this is a fighter squadron then pick an active fighter and pass on the damage
         if(te instanceof FighterSquadron) {
         	FighterSquadron fs = (FighterSquadron)te;
         	if(fs.getFighters().size() < 1) {
         		return vDesc;
         	}
-        	Aero fighter = fs.getFighter(hit.getLocation());  
+        	Aero fighter = fs.getFighter(hit.getLocation());
         	HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
         	new_hit.setBoxCars(hit.rolledBoxCars());
         	new_hit.setGeneralDamageType(hit.getGeneralDamageType());
@@ -14324,7 +14324,7 @@ public class Server implements Runnable {
             new_hit.setSingleAV(hit.getSingleAV());
         	return damageEntity(fighter, new_hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, throughFront, nukeS2S);
         }
-        
+
         // This is good for shields if a shield absorps the hit it shouldn't
         // effect the pilot.
         // TC SRM's that hit the head do external and internal damage but its
@@ -14342,7 +14342,7 @@ public class Server implements Runnable {
     	if(hit.getSingleAV() > -1) {
     		threshDamage = hit.getSingleAV();
     	}
-        
+
         // is this capital-scale damage
         boolean isCapital = hit.isCapital();
 
@@ -14592,7 +14592,7 @@ public class Server implements Runnable {
 
             if (te instanceof Aero) {
                 // chance of a critical if damage greater than threshold
-                Aero a = (Aero) te;              
+                Aero a = (Aero) te;
                 if (threshDamage > a.getThresh(hit.getLocation()) && !te.isCapitalFighter()) {
                     critThresh = true;
                     a.setCritThresh(true);
@@ -14631,7 +14631,7 @@ public class Server implements Runnable {
                 checkAeroCrits(vDesc, (Aero)te, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
                 return vDesc;
             }
-            
+
             if (!(te instanceof Aero && ammoExplosion)) {
                 // report something different for Aero ammo explosions
                 r = new Report(6065);
@@ -15048,7 +15048,7 @@ public class Server implements Runnable {
                             r.newlines = 0;
                             vDesc.addElement(r);
                             int new_loc = a.getOppositeLocation(hit.getLocation());
-                            damage = Math.min(damage, te.getArmor(new_loc));                           
+                            damage = Math.min(damage, te.getArmor(new_loc));
                             r = new Report(6065);
                             r.subject = te_n;
                             r.indent(2);
@@ -15060,13 +15060,13 @@ public class Server implements Runnable {
                             te.setArmor(te.getArmor(new_loc) - damage, new_loc);
                             if(te instanceof Warship || te instanceof Jumpship) {
                             	damage = 1;
-                            } else { 
+                            } else {
                             	damage = 0;
                             }
                             //
                     	}
                     }
-                    
+
                     // divide damage in half
                     // do not divide by half if it is an ammo exposion
                     if (!ammoExplosion && !nukeS2S) {
@@ -15078,7 +15078,7 @@ public class Server implements Runnable {
                     if (damage > 0) {
                         critSI = true;
                     }
-                    
+
                     // Now apply damage to the structural integrity
                     a.setSI(a.getSI() - damage);
                     te.damageThisPhase += damage;
@@ -16948,7 +16948,7 @@ public class Server implements Runnable {
                 if (a instanceof SmallCraft || a instanceof Jumpship) {
                     r = new Report(9197);
                 }
-                if(a.isLargeCraft() && a.isClan() 
+                if(a.isLargeCraft() && a.isClan()
                 		&& game.getOptions().booleanOption("stratops_harjel") && a.getIgnoredCrewHits() < 2) {
                 	a.setIgnoredCrewHits(a.getIgnoredCrewHits() + 1);
                 	r = new Report(9198);
@@ -17021,7 +17021,7 @@ public class Server implements Runnable {
             		}
             	}
             case Aero.CRIT_WEAPON:
-            	if(a.isCapitalFighter()) {          		
+            	if(a.isCapitalFighter()) {
             		boolean destroyAll = false;
             		if(loc == Aero.LOC_NOSE || loc == Aero.LOC_AFT) {
             			destroyAll = true;
@@ -17031,7 +17031,7 @@ public class Server implements Runnable {
             				destroyAll = true;
             			} else {
             				a.setWingsHit(true);
-            			}           			
+            			}
             		}
             		for (Mounted weap : a.getWeaponList()) {
                         if (weap.getLocation() == loc) {
@@ -17069,7 +17069,7 @@ public class Server implements Runnable {
                 }
                 //add in in hittable misc equipment
                 for(Mounted misc : a.getMisc()) {
-                	if (misc.getType().isHittable() && misc.getLocation() == loc && !misc.isDestroyed() && !misc.isBombMounted() 
+                	if (misc.getType().isHittable() && misc.getLocation() == loc && !misc.isDestroyed() && !misc.isBombMounted()
                 			&& !misc.getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {
                         weapons.add(misc);
                     }
@@ -17876,7 +17876,7 @@ public class Server implements Runnable {
         vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType), true));
         return vDesc;
     }
-    
+
     /**
      * Checks for aero criticals
      * @param a - the entity being critted
@@ -17886,57 +17886,57 @@ public class Server implements Runnable {
      * @param critSI - did the attack damage SI
      * @param ammoExplosion - was the damage from an ammo explosion
      * @param nukeS2S - was this a ship 2 ship nuke attack
-     * @return 
+     * @return
      */
     private void checkAeroCrits(Vector<Report> vDesc, Aero a, HitData hit, int damage_orig,
     			boolean critThresh, boolean critSI, boolean ammoExplosion, boolean nukeS2S) {
-    	
+
     	Report r;
-    	
+
     	boolean isCapital = hit.isCapital();
         // get any capital missile critical mods
         int CapitalMissile = hit.getCapMisCritMod();
-    	
-    	 //check for nuclear critical 
-        if(nukeS2S) { 
-            //add a control roll 
+
+    	 //check for nuclear critical
+        if(nukeS2S) {
+            //add a control roll
             PilotingRollData nukePSR = new PilotingRollData( a.getId(), 4, "Nuclear attack" );
             nukePSR.setCumulative(false);
             game.addControlRoll(nukePSR);
-            
-            //need some kind of report 
+
+            //need some kind of report
             int nukeroll = Compute.d6(2);
-            r = new Report(9145); 
-            r.subject = a.getId(); 
-            r.newlines = 0; 
-            r.indent(3); 
-            r.add(CapitalMissile); 
+            r = new Report(9145);
+            r.subject = a.getId();
+            r.newlines = 0;
+            r.indent(3);
+            r.add(CapitalMissile);
             r.add(nukeroll);
-            vDesc.add(r); 
-            if(nukeroll >= CapitalMissile) {                      
+            vDesc.add(r);
+            if(nukeroll >= CapitalMissile) {
                 int nukeDamage = damage_orig;
-                a.setSI(a.getSI()-nukeDamage); 
-                a.damageThisPhase += nukeDamage; 
-                r = new Report(9146); 
+                a.setSI(a.getSI()-nukeDamage);
+                a.damageThisPhase += nukeDamage;
+                r = new Report(9146);
                 r.subject = a.getId();
-                r.newlines = 0; 
-                r.add(nukeDamage);
-                r.add(Math.max(a.getSI(),0)); 
-                vDesc.addElement(r);
-                if(a.getSI() <= 0) { 
-                    vDesc.addAll( destroyEntity(a,"structural integrity collapse")); 
-                    a.setSI(0); 
-                } else if(!critSI) { 
-                    critSI = true; 
-                }     
-            } else { 
-                r = new Report(9147); 
-                r.subject = a.getId(); 
                 r.newlines = 0;
-                vDesc.addElement(r); 
-            }     
+                r.add(nukeDamage);
+                r.add(Math.max(a.getSI(),0));
+                vDesc.addElement(r);
+                if(a.getSI() <= 0) {
+                    vDesc.addAll( destroyEntity(a,"structural integrity collapse"));
+                    a.setSI(0);
+                } else if(!critSI) {
+                    critSI = true;
+                }
+            } else {
+                r = new Report(9147);
+                r.subject = a.getId();
+                r.newlines = 0;
+                vDesc.addElement(r);
+            }
         }
-         
+
         // apply crits
         if (hit.rolledBoxCars()) {
         	Report.addNewline(vDesc);
@@ -18586,7 +18586,7 @@ public class Server implements Runnable {
                 int curFacing = transport.getFacing();
                 unloadUnit(transport, entity, curPos, curFacing, transport.getElevation());
                 entityUpdate(transport.getId());
-                
+
                 //if this is the last fighter in a fighter squadron then remove the squadron
                 if(transport instanceof FighterSquadron && ((FighterSquadron)transport).getFighters().size() < 1) {
                 	transport.setDestroyed(true);
@@ -18599,9 +18599,9 @@ public class Server implements Runnable {
                 	r.add("fighter destruction");
                 	vDesc.addElement(r);
                 }
-                
+
             } // End unit-is-transported
-            
+
             // Is this unit being swarmed?
             final int swarmerId = entity.getSwarmAttackerId();
             if (Entity.NONE != swarmerId) {
@@ -19958,7 +19958,7 @@ public class Server implements Runnable {
         game.addEntity(entity.getId(), entity);
         send(createAddEntityPacket(entity.getId()));
     }
-    
+
     /**
      * adds a squadron to the game
      * This is not working, don't use it
@@ -19974,15 +19974,15 @@ public class Server implements Runnable {
         // Only assign an entity ID when the client hasn't.
         if (Entity.NONE == fs.getId()) {
             fs.setId(getFreeEntityId());
-        }       
+        }
         game.addEntity(fs.getId(), fs);
         send(createAddEntityPacket(fs.getId()));
         for(Entity fighter : fighters) {
         	fs.load(fighter);
         	entityUpdate(fighter.getId());
-        }       
-        entityUpdate(fs.getId());   
-        */   
+        }
+        entityUpdate(fs.getId());
+        */
     }
 
 
@@ -21628,9 +21628,13 @@ public class Server implements Runnable {
                 // Calculate collapse damage for this entity.
                 int damage = (int) Math.ceil(phaseCF * (numFloors - floor) / 10.0);
 
-                // Infantry suffer triple damage.
+                // Infantry suffer more damage.
                 if (entity instanceof Infantry) {
-                    damage *= 3;
+                    if (entity instanceof BattleArmor || ((Infantry)entity).isMechanized()) {
+                        damage *= 2;
+                    } else {
+                        damage *= 3;
+                    }
                 }
 
                 // Apply collapse damage the entity.

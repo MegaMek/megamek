@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
-import megamek.common.FighterSquadron;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
@@ -31,7 +29,7 @@ import megamek.server.Server;
  */
 public class AmmoWeaponHandler extends WeaponHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4934490646657484486L;
     Mounted ammo;
@@ -50,14 +48,15 @@ public class AmmoWeaponHandler extends WeaponHandler {
     public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
             Server s) {
         super(t, w, g, s);
-        this.generalDamageType = HitData.DAMAGE_BALLISTIC;
+        generalDamageType = HitData.DAMAGE_BALLISTIC;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#UseAmmo()
      */
+    @Override
     protected void useAmmo() {
         checkAmmo();
         if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
@@ -80,11 +79,12 @@ public class AmmoWeaponHandler extends WeaponHandler {
             ammo = weapon.getLinked();
         }
     }
-    
+
     /**
      * For ammo weapons, this number can be less than the full number if the amount of ammo is not high enough
      * @return the number of weapons of this type firing (for squadron weapon groups)
      */
+    @Override
     protected int getNumberWeapons() {
     	if(ammo == null) {
     		//shouldn't happen

@@ -84,7 +84,7 @@ import megamek.common.util.StringUtil;
 public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener,
         KeyListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3913466735610109147L;
 
@@ -130,7 +130,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public MiniMap minimap;
 
-    private MapMenu popup;// = new JPopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
+    private MapMenu popup;// = new JPopupMenu(Messages.getString("ClientGUI.BoardPopup"));
 
     private UnitOverview uo;
 
@@ -249,8 +249,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Try to load the "bing" sound clip.
      */
     private void loadSoundClip() {
-        if (GUIPreferences.getInstance().getSoundBingFilename() == null)
+        if (GUIPreferences.getInstance().getSoundBingFilename() == null) {
             return;
+        }
         try {
             File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
             if (!file.exists()) {
@@ -275,7 +276,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     /**
      * Display a system message in the chat box.
-     * 
+     *
      * @param message
      *            the <code>String</code> message to be shown.
      */
@@ -293,11 +294,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         Rectangle virtualBounds = new Rectangle();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] gs = ge.getScreenDevices();
-        for (int j = 0; j < gs.length; j++) {
-            GraphicsDevice gd = gs[j];
+        for (GraphicsDevice gd : gs) {
             GraphicsConfiguration[] gc = gd.getConfigurations();
-            for (int i = 0; i < gc.length; i++) {
-                virtualBounds = virtualBounds.union(gc[i].getBounds());
+            for (GraphicsConfiguration element : gc) {
+                virtualBounds = virtualBounds.union(element.getBounds());
             }
         }
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
@@ -305,14 +305,18 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             int y = GUIPreferences.getInstance().getWindowPosY();
             int w = GUIPreferences.getInstance().getWindowSizeWidth();
             int h = GUIPreferences.getInstance().getWindowSizeHeight();
-            if (x < virtualBounds.getMinX() || x + w > virtualBounds.getMaxX())
+            if (x < virtualBounds.getMinX() || x + w > virtualBounds.getMaxX()) {
                 x = 0;
-            if (y < virtualBounds.getMinY() || y + h > virtualBounds.getMaxY())
+            }
+            if (y < virtualBounds.getMinY() || y + h > virtualBounds.getMaxY()) {
                 y = 0;
-            if (w > virtualBounds.getWidth())
+            }
+            if (w > virtualBounds.getWidth()) {
                 w = (int) virtualBounds.getWidth();
-            if (h > virtualBounds.getHeight())
+            }
+            if (h > virtualBounds.getHeight()) {
                 h = (int) virtualBounds.getHeight();
+            }
             frame.setLocation(x, y);
             frame.setSize(w, h);
         } else {
@@ -365,6 +369,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         menuBar.addActionListener(this);
         frame.addKeyListener(this);
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 frame.setVisible(false);
                 saveSettings();
@@ -405,7 +410,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         mechD.addMechDisplayListener(bv);
         mechW.add(mechD);
 
-        // added by kenn
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
         ruler = new Ruler(frame, client, bv);
@@ -423,8 +427,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         ruler.setLocation(x, y);
         ruler.setSize(w, h);
-        // end kenn
-
         // minimap
         minimapW = new JDialog(frame, Messages.getString("ClientGUI.MiniMap"), false); //$NON-NLS-1$
         x = GUIPreferences.getInstance().getMinimapPosX();
@@ -458,12 +460,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
-        new Thread(customBADialog, "Custom Battle Armor Dialog").start();
+        new Thread(customBADialog, "Custom Battle Armor Dialog").start(); //$NON-NLS-1$
     }
 
     /**
      * Get the menu bar for this client.
-     * 
+     *
      * @return the <code>CommonMenuBar</code> of this client.
      */
     public CommonMenuBar getMenuBar() {
@@ -549,10 +551,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
             fc.setFileFilter(new FileFilter() {
+                @Override
                 public boolean accept(File dir) {
                     return (dir.getName() != null && dir.getName().endsWith(".sav")); //$NON-NLS-1$
                 }
 
+                @Override
                 public String getDescription() {
                     return ".sav";
                 }
@@ -756,8 +760,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
 
         // Make the new panel the focus, if the Client option says so
-        if (GUIPreferences.getInstance().getFocus() && !(client instanceof TestBot))
+        if (GUIPreferences.getInstance().getFocus() && !(client instanceof TestBot)) {
             curPanel.requestFocus();
+        }
     }
 
     private JComponent initializePanel(IGame.Phase phase) {
@@ -967,7 +972,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     /**
      * Pops up a dialog box giving the player a series of choices that are not mutually exclusive.
-     * 
+     *
      * @param title
      *            the <code>String</code> title of the dialog box.
      * @param question
@@ -995,7 +1000,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     /**
      * Pops up a dialog box asking a yes/no question
-     * 
+     *
      * @param title
      *            the <code>String</code> title of the dialog box.
      * @param question
@@ -1012,7 +1017,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Pops up a dialog box asking a yes/no question <p/> The player will be given a chance to not
      * show the dialog again.
-     * 
+     *
      * @param title
      *            the <code>String</code> title of the dialog box.
      * @param question
@@ -1043,10 +1048,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             dlgLoadList
                     .setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
             dlgLoadList.setFileFilter(new FileFilter() {
+                @Override
                 public boolean accept(File dir) {
                     return (dir.getName() != null && dir.getName().endsWith(".mul")); //$NON-NLS-1$
                 }
 
+                @Override
                 public String getDescription() {
                     return ".mul";
                 }
@@ -1069,8 +1076,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 Vector<Entity> loadedUnits = EntityListFile.loadFrom(unitFile);
 
                 // Add the units from the file.
-                for (Enumeration<Entity> iter = loadedUnits.elements(); iter.hasMoreElements();) {
-                    final Entity entity = iter.nextElement();
+                for (Entity entity : loadedUnits) {
                     entity.setOwner(client.getLocalPlayer());
                     client.sendAddEntity(entity);
                 }
@@ -1087,7 +1093,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * can later load this file to quickly select the units for a new game. The file will record
      * damage sustained, non-standard munitions selected, and ammunition expended during the course
      * of the current engagement.
-     * 
+     *
      * @param unitList -
      *            the <code>Vector</code> of <code>Entity</code>s to be saved to a file. If
      *            this value is <code>null</code> or empty, the "Save As" dialog will not be
@@ -1106,10 +1112,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             dlgSaveList
                     .setDialogTitle(Messages.getString("ClientGUI.saveUnitListFileDialog.title"));
             dlgSaveList.setFileFilter(new FileFilter() {
+                @Override
                 public boolean accept(File dir) {
                     return (dir.getName() != null && dir.getName().endsWith(".mul")); //$NON-NLS-1$
                 }
 
+                @Override
                 public String getDescription() {
                     return ".mul";
                 }
@@ -1214,6 +1222,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     private GameListener gameListener = new GameListenerAdapter() {
+        @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
             JOptionPane
                     .showMessageDialog(
@@ -1223,10 +1232,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             die();
         }
 
+        @Override
         public void gamePlayerChat(GamePlayerChatEvent e) {
             bing();
         }
 
+        @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             // This is a really lame place for this, but I couldn't find a
             // better one without making massive changes (which didn't seem
@@ -1244,8 +1255,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 // this will get rid of old report tabs
                 ReportDisplay rD = (ReportDisplay) phaseComponents.get(String
                         .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
-                if (rD != null)
+                if (rD != null) {
                     rD.resetTabs();
+                }
                 break;
             case PHASE_DEPLOY_MINEFIELDS:
             case PHASE_DEPLOYMENT:
@@ -1278,6 +1290,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             cb.moveToEnd();
         }
 
+        @Override
         public void gamePlayerConnected(GamePlayerConnectedEvent e) {
             System.err.println("gamePlayerConnected");
             System.err.flush();
@@ -1288,6 +1301,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             }
         }
 
+        @Override
         public void gameReport(GameReportEvent e) {
             // Normally the Report Display is updated when the panel is
             // switched during a phase change.
@@ -1308,15 +1322,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 }
             } else {
                 // Continued movement after getting up
-                if (!(client instanceof TestBot))
+                if (!(client instanceof TestBot)) {
                     doAlertDialog("Movement Report", e.getReport());
+                }
             }
         }
 
+        @Override
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
-            for (Iterator<Client> i = getBots().values().iterator(); i.hasNext();) {
-                i.next().die();
+            for (Client client2 : getBots().values()) {
+                client2.die();
             }
             getBots().clear();
 
@@ -1340,6 +1356,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             } // End user-wants-a-MUL
         }
 
+        @Override
         public void gameSettingsChange(GameSettingsChangeEvent e) {
             if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
                 boardSelectionDialog.update(client.getMapSettings(), true);
@@ -1360,6 +1377,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             }
         }
 
+        @Override
         public void gameMapQuery(GameMapQueryEvent e) {
             if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
                 boardSelectionDialog.update(e.getSettings(), false);
@@ -1399,8 +1417,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void hexMoused(BoardViewEvent b) {
-        if (b.getType() == BoardViewEvent.BOARD_HEX_POPUP)
+        if (b.getType() == BoardViewEvent.BOARD_HEX_POPUP) {
             showBoardPopup(b.getCoords());
+        }
     }
 
     public void hexCursor(BoardViewEvent b) {

@@ -28,6 +28,7 @@ v0.33.37-dev (SVN)
 + Bug: Mule Kicks should be impossible with front leg destroyed or hip-critted
 + Bug 2429049: Quad Mech with 2 destroyed legs
 + Bug 2128991: UnitOverview in swing UI bugged
++ Bug 2165007: infinite loop in swing mekdisplay
 
 v0.33.36 (2008-12-10, 19:00 UTC)
 + Bug in Mech BV calculation fixed

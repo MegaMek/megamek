@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -56,13 +56,13 @@ class HoverInfo implements IDisplayable {
     private static final int WIDTH = 350;
 
     private FontMetrics fm;
-    
+
     IGame game;
     Entity entity;
     Mounted equipment;
     Player localPlayer;
     Coords coords, los;
-    
+
     HashMap<Integer, Vector<String>> sources = new HashMap<Integer, Vector<String>>();
     HashMap<Integer, Vector<String>> destinations = new HashMap<Integer, Vector<String>>();
 
@@ -71,8 +71,8 @@ class HoverInfo implements IDisplayable {
         coords = new Coords(0,0);
         fm = bv.getFontMetrics(FONT);
     }
-    
-    public void draw(Graphics g, Dimension size) {
+
+    public void draw(Graphics g, Point drawRelativeTo, Dimension size) {
         if (!(g instanceof Graphics2D)) {
             System.err.println("Warning: HoverInfo is meant to be used with Graphics2D");
             return;
@@ -80,7 +80,9 @@ class HoverInfo implements IDisplayable {
         Graphics2D gr = (Graphics2D)g;
 
         Vector<String> info = getTipText();
-        if (info == null) return;
+        if (info == null) {
+            return;
+        }
 
         for (int i = 0; i < info.size(); i++) {
             String s = info.elementAt(i);
@@ -90,21 +92,31 @@ class HoverInfo implements IDisplayable {
             }
             if (len != s.length()) {
                 int len2 = len;
-                while (len2 > 0 && " \t\r\n".indexOf(s.charAt(len2)) < 0) len2--;
-                if (len2 <= 0) len2 = len;
+                while (len2 > 0 && " \t\r\n".indexOf(s.charAt(len2)) < 0) {
+                    len2--;
+                }
+                if (len2 <= 0) {
+                    len2 = len;
+                }
                 info.removeElementAt(i);
                 len = len2;
-                while (len > 0 && " \t\r\n".indexOf(s.charAt(len)) >= 0) len--;
+                while (len > 0 && " \t\r\n".indexOf(s.charAt(len)) >= 0) {
+                    len--;
+                }
                 info.insertElementAt(s.substring(0, len+1), i);
                 len = s.length();
-                while (len2 < len && " \t\r\n".indexOf(s.charAt(len2)) >= 0) len2++;
-                if (len2 < len) info.insertElementAt("    "+s.substring(len2, len), i+1);
+                while (len2 < len && " \t\r\n".indexOf(s.charAt(len2)) >= 0) {
+                    len2++;
+                }
+                if (len2 < len) {
+                    info.insertElementAt("    "+s.substring(len2, len), i+1);
+                }
             }
         }
 
         gr.setFont(FONT);
         int height = info.size()*fm.getHeight()+PADDING*2;
-        
+
         gr.setColor(new Color(Color.DARK_GRAY.getRed(), Color.DARK_GRAY.getGreen(), Color.DARK_GRAY.getBlue(), 128));
         gr.fillRect(TOP, LEFT, WIDTH+2, height);
         gr.setColor(Color.LIGHT_GRAY);
@@ -124,22 +136,26 @@ class HoverInfo implements IDisplayable {
     void setLOS(Coords c1) {
         los = c1;
     }
-    
+
     Coords getLOS() {
         return los;
     }
-    
+
     private void checkLOS(Vector<String> out) {
         Coords src = los;
         if (los == null) {
-            if (entity == null) return;
+            if (entity == null) {
+                return;
+            }
             src = entity.getPosition();
         }
-        
+
         Entity s = entity;
         Entity t = null;
 
-        if (s != null) t = game.getFirstEnemyEntity(coords, s);
+        if (s != null) {
+            t = game.getFirstEnemyEntity(coords, s);
+        }
 
         // temporarily move the chosen source entity to the source hex and adjust
         // it to get the target into the front arc at the correct elevation
@@ -258,9 +274,11 @@ class HoverInfo implements IDisplayable {
             s.setGame(game);
         }
     }
-    
+
     void setSelected(Entity en, Mounted eq, Player pl) {
-        if (en != null && !game.getBoard().contains(en.getPosition())) en = null;
+        if (en != null && !game.getBoard().contains(en.getPosition())) {
+            en = null;
+        }
         entity = en;
         equipment = eq;
         localPlayer = pl;
@@ -272,27 +290,39 @@ class HoverInfo implements IDisplayable {
      */
     private Vector<String> getTipText() {
         IHex mhex = game.getBoard().getHex(coords);
-        if (mhex == null) return null;
+        if (mhex == null) {
+            return null;
+        }
 
         Vector<String> out = new Vector<String>();
-        
+
         out.add(Messages.getString("BoardView1.Hex") + coords.getBoardNum() //$NON-NLS-1$
                     + Messages.getString("BoardView1.level") + mhex.getElevation()); //$NON-NLS-1$
 
         if (mhex.containsTerrain(Terrains.JUNGLE)) {
             int ttl = mhex.getTerrain(Terrains.JUNGLE).getLevel();
             int tf = mhex.getTerrain(Terrains.JUNGLE).getTerrainFactor();
-            if (ttl == 1) out.add(Messages.getString("BoardView1.TipLightJungle", new Object[] { tf }));
-            else if (ttl == 2) out.add(Messages.getString("BoardView1.TipHeavyJungle", new Object[] { tf }));
-            else if (ttl == 3) out.add(Messages.getString("BoardView1.TipUltraJungle", new Object[] { tf }));
-            else out.add(Messages.getString("BoardView1.TipJungle", new Object[] { tf }));
+            if (ttl == 1) {
+                out.add(Messages.getString("BoardView1.TipLightJungle", new Object[] { tf }));
+            } else if (ttl == 2) {
+                out.add(Messages.getString("BoardView1.TipHeavyJungle", new Object[] { tf }));
+            } else if (ttl == 3) {
+                out.add(Messages.getString("BoardView1.TipUltraJungle", new Object[] { tf }));
+            } else {
+                out.add(Messages.getString("BoardView1.TipJungle", new Object[] { tf }));
+            }
         } else if (mhex.containsTerrain(Terrains.WOODS)) {
             int ttl = mhex.getTerrain(Terrains.WOODS).getLevel();
             int tf = mhex.getTerrain(Terrains.WOODS).getTerrainFactor();
-            if (ttl == 1) out.add(Messages.getString("BoardView1.TipLightWoods", new Object[] { tf }));
-            else if (ttl == 2) out.add(Messages.getString("BoardView1.TipHeavyWoods", new Object[] { tf }));
-            else if (ttl == 3) out.add(Messages.getString("BoardView1.TipUltraWoods", new Object[] { tf }));
-            else out.add(Messages.getString("BoardView1.TipWoods", new Object[] { tf }));
+            if (ttl == 1) {
+                out.add(Messages.getString("BoardView1.TipLightWoods", new Object[] { tf }));
+            } else if (ttl == 2) {
+                out.add(Messages.getString("BoardView1.TipHeavyWoods", new Object[] { tf }));
+            } else if (ttl == 3) {
+                out.add(Messages.getString("BoardView1.TipUltraWoods", new Object[] { tf }));
+            } else {
+                out.add(Messages.getString("BoardView1.TipWoods", new Object[] { tf }));
+            }
         }
 
         if (mhex.containsTerrain(Terrains.ICE)) {
@@ -398,7 +428,7 @@ class HoverInfo implements IDisplayable {
                 new Integer(aaa.turnsTilHit),
                 aaa.toHit(game).getValueAsString()
             }));
-            
+
         }
 
         if (equipment != null && entity != null && equipment.getType().hasFlag(WeaponType.F_ARTILLERY)) {
@@ -418,7 +448,7 @@ class HoverInfo implements IDisplayable {
         checkLOS(out);
         return out;
     }
-    
+
     private void addEntityText(Vector<String> out, Entity e) {
         StringBuffer buffer = new StringBuffer();
         buffer.append(e.getChassis()).append(" (") //$NON-NLS-1$
@@ -480,9 +510,10 @@ class HoverInfo implements IDisplayable {
                 buffer.append(Messages.getString("BoardView1.Operational"));
             }
         }
-        if (e.isDone())
+        if (e.isDone()) {
             buffer.append(" (").append(
                     Messages.getString("BoardView1.done")).append(")");
+        }
         out.add(buffer.toString());
 
         buffer = new StringBuffer();
@@ -498,16 +529,18 @@ class HoverInfo implements IDisplayable {
                     .append(ge.getCurrentTurretArmor());
         }
         out.add(buffer.toString());
-        
+
         Vector<String> strs = sources.get(new Integer(e.getId()));
-        if (strs != null) out.addAll(strs);
+        if (strs != null) {
+            out.addAll(strs);
+        }
         strs = destinations.get(new Integer(e.getId()));
         if (strs != null) {
             out.add("Incoming:");
             out.addAll(strs);
         }
     }
-    
+
     public void add(AttackAction aa) {
         int targetType = aa.getTargetType();
         int targetId = aa.getTargetId();
@@ -646,29 +679,33 @@ class HoverInfo implements IDisplayable {
         if (out != null) {
             Integer id = new Integer(ae.getId());
             Vector<String> strs = sources.get(id);
-            if (strs == null) strs = new Vector<String>();
+            if (strs == null) {
+                strs = new Vector<String>();
+            }
             strs.add(out + " " + Messages.getString("BoardView1.on") + " " + target.getDisplayName());
             sources.put(id, strs);
 
             id = new Integer(targetId);
             strs = destinations.get(id);
-            if (strs == null) strs = new Vector<String>();
+            if (strs == null) {
+                strs = new Vector<String>();
+            }
             strs.add(out + " [" + ae.getDisplayName()+"]");
             destinations.put(id, strs);
-        }     
+        }
     }
-    
+
     public void remove(Entity entity) {
         Integer id = new Integer(entity.getId());
         sources.remove(id);
         destinations.remove(id);
     }
-    
+
     public void clear() {
         sources.clear();
         destinations.clear();
     }
-    
+
     public void update() {
         clear();
         for (EntityAction ea : game.getActionsVector()) {

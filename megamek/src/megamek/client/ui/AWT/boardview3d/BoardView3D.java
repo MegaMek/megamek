@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This file also (C) 2008 Jörg Walter <j.walter@syntax-k.de>
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -24,12 +24,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.PopupMenu;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.util.Enumeration;
 import java.util.Vector;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
@@ -131,7 +131,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     /**
      * Construct a new board view for the specified game
-     * 
+     *
      * @param game
      * @throws java.io.IOException
      */
@@ -205,8 +205,9 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     }
 
     String setView(int index) {
-        if (currentView != null)
+        if (currentView != null) {
             currentView.remove();
+        }
         currentView = ViewTransform.create(index, universe);
         entities.setView(currentView);
         moves.setView(currentView);
@@ -215,15 +216,16 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     }
 
     public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(IClientPreferences.MAP_TILESET))
+        if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
             updateBoard();
-        else
+        } else {
             entities.update();
+        }
     }
 
     /**
      * Adds the specified board listener to receive board events from this board.
-     * 
+     *
      * @param listener
      *            the board listener.
      */
@@ -235,7 +237,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     /**
      * Removes the specified board listener.
-     * 
+     *
      * @param listener
      *            the board listener.
      */
@@ -245,16 +247,17 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     /**
      * Notifies attached board listeners of the event.
-     * 
+     *
      * @param event
      *            the board event.
      */
     public void processBoardViewEvent(BoardViewEvent event) {
-        if (boardListeners == null)
+        if (boardListeners == null) {
             return;
+        }
 
-        for (Enumeration<?> e = boardListeners.elements(); e.hasMoreElements();) {
-            BoardViewListener l = (BoardViewListener) e.nextElement();
+        for (Object name2 : boardListeners) {
+            BoardViewListener l = (BoardViewListener) name2;
             switch (event.getType()) {
             case BoardViewEvent.BOARD_HEX_CLICKED:
             case BoardViewEvent.BOARD_HEX_DOUBLECLICKED:
@@ -302,8 +305,9 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     }
 
     public void showPopup(Object popup, Coords c) {
-        if (((PopupMenu)popup).getParent() == null)
+        if (((PopupMenu)popup).getParent() == null) {
             add((PopupMenu)popup);
+        }
 
         IHex hex = game.getBoard().getHex(c);
         int level = 0;
@@ -325,8 +329,9 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     private Object pickSomething(MouseEvent me) {
         try {
-            if (pickEntities == null || pickBoard == null)
+            if (pickEntities == null || pickBoard == null) {
                 return null;
+            }
 
             PickInfo target;
             Node node;
@@ -338,14 +343,17 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
                 pickBoard.setShapeLocation(me);
                 target = pickBoard.pickClosest();
             }
-            if (target == null)
+            if (target == null) {
                 return null;
+            }
 
             node = target.getNode();
-            while (node != null && node.getUserData() == null)
+            while (node != null && node.getUserData() == null) {
                 node = node.getParent();
-            if (node == null)
+            }
+            if (node == null) {
                 return null;
+            }
 
             return node.getUserData();
 
@@ -357,10 +365,11 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     private Coords pickCoords(MouseEvent me) {
         Object target = pickSomething(me);
-        if (target instanceof Coords)
+        if (target instanceof Coords) {
             return (Coords) target;
-        else if (target instanceof Entity)
+        } else if (target instanceof Entity) {
             return ((Entity) target).getPosition();
+        }
 
         return null;
     }
@@ -377,8 +386,9 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     }
 
     public void centerOnHex(Coords c) {
-        if (c == null || currentView == null || !game.getBoard().contains(c))
+        if (c == null || currentView == null || !game.getBoard().contains(c)) {
             return;
+        }
 
         currentView.centerOnHex(c, game.getBoard().getHex(c));
     }
@@ -425,8 +435,9 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     public void mousePressed(MouseEvent me) {
         Coords c = pickCoords(me);
-        if (c == null)
+        if (c == null) {
             return;
+        }
         dragged = false;
 
         if (me.isPopupTrigger() && !me.isControlDown()) {
@@ -437,8 +448,9 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     public void mouseReleased(MouseEvent me) {
         Coords c = pickCoords(me);
-        if (c == null)
+        if (c == null) {
             return;
+        }
 
         if (me.isPopupTrigger() && !me.isControlDown() && !dragged) {
             processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_HEX_POPUP,
@@ -463,8 +475,9 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
         }
 
         Coords c = pickCoords(me);
-        if (c == null)
+        if (c == null) {
             return;
+        }
 
         if (me.isPopupTrigger() && !me.isControlDown()) {
             processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_HEX_POPUP,
@@ -493,13 +506,15 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     }
 
     public void drawRuler(Coords s, Coords e, Color sc, Color ec) {
-        if (ruler != null)
+        if (ruler != null) {
             ruler.detach();
+        }
         ruler = null;
         firstLOSCursor.hide();
         secondLOSCursor.hide();
-        if (s == null)
+        if (s == null) {
             return;
+        }
 
         IBoard gboard = game.getBoard();
         IHex sh = gboard.getHex(s);
@@ -507,8 +522,9 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
         firstLOSCursor.move(s, sh);
         firstLOSCursor.setColor(new Color3f(sc));
 
-        if (e == null)
+        if (e == null) {
             return;
+        }
 
         IHex eh = gboard.getHex(e);
 
@@ -539,13 +555,14 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     /**
      * Determines if this Board contains the Coords, and if so, "selects" that Coords.
-     * 
+     *
      * @param coords
      *            the Coords.
      */
     public void select(Coords coords) {
-        if (coords != null && !game.getBoard().contains(coords))
+        if (coords != null && !game.getBoard().contains(coords)) {
             return;
+        }
 
         selected = coords;
         selectCursor.move(coords, game.getBoard().getHex(coords));
@@ -557,13 +574,14 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     /**
      * Determines if this Board contains the Coords, and if so, highlights that Coords.
-     * 
+     *
      * @param coords
      *            the Coords.
      */
     public void highlight(Coords coords) {
-        if (coords != null && !game.getBoard().contains(coords))
+        if (coords != null && !game.getBoard().contains(coords)) {
             return;
+        }
 
         highlightCursor.move(coords, game.getBoard().getHex(coords));
         firstLOSCursor.hide();
@@ -574,13 +592,14 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     /**
      * Determines if this Board contains the Coords, and if so, "cursors" that Coords.
-     * 
+     *
      * @param coords
      *            the Coords.
      */
     public void cursor(Coords coords) {
-        if (coords != null && !game.getBoard().contains(coords))
+        if (coords != null && !game.getBoard().contains(coords)) {
             return;
+        }
 
         if (lastCursor == null || coords == null || !coords.equals(lastCursor)) {
             lastCursor = coords;
@@ -595,8 +614,9 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     }
 
     public void checkLOS(Coords coords) {
-        if (coords != null && !game.getBoard().contains(coords))
+        if (coords != null && !game.getBoard().contains(coords)) {
             return;
+        }
 
         if (hoverInfo.getLOS() == null) {
             hoverInfo.setLOS(coords);
@@ -613,7 +633,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.BoardListener#boardNewBoard(megamek.common.BoardEvent)
      */
     public void boardNewBoard(BoardEvent b) {
@@ -622,7 +642,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
      */
     public void boardChangedHex(BoardEvent b) {
@@ -632,8 +652,9 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     }
 
     public void gameEntityNew(GameEntityNewEvent e) {
-        for (Entity en : e.GetEntities())
+        for (Entity en : e.GetEntities()) {
             redrawEntity(en);
+        }
         refreshDisplayables();
     }
 
@@ -657,14 +678,17 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     public void gameBoardNew(GameBoardNewEvent e) {
         IBoard b = e.getOldBoard();
-        if (b != null)
+        if (b != null) {
             b.removeBoardListener(BoardView3D.this);
+        }
         b = e.getNewBoard();
-        if (b != null)
+        if (b != null) {
             b.addBoardListener(BoardView3D.this);
+        }
         updateBoard();
-        if (b != null)
+        if (b != null) {
             centerOnHex(new Coords(0, 0));
+        }
     }
 
     public void gameBoardChanged(GameBoardChangeEvent e) {
@@ -727,19 +751,22 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     public void refreshDisplayables() {
         Dimension size = getSize();
-        if (size.width <= 0 || size.height <= 0)
+        if (size.width <= 0 || size.height <= 0) {
             return;
+        }
 
         // common hardware limitation
-        if (size.width > 2048)
+        if (size.width > 2048) {
             size.width = 2048;
-        if (size.height > 1024)
+        }
+        if (size.height > 1024) {
             size.height = 1024;
+        }
 
         BufferedImage b = new BufferedImage(size.width, size.height, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics gr = b.getGraphics();
         for (int i = 0; i < displayables.size(); i++) {
-            displayables.elementAt(i).draw(gr, size);
+            displayables.elementAt(i).draw(gr, new Point(size.width, size.height), size);
         }
         BufferedImage b1 = new BufferedImage(size.width / 2, size.height,
                 BufferedImage.TYPE_4BYTE_ABGR);

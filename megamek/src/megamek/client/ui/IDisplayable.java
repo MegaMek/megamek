@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This file (C) 2008 Jörg Walter <j.walter@syntax-k.de>
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -23,6 +23,8 @@ import java.awt.Point;
 
 /**
  *
+ * An object that is displayed over the part of the IBoardView
+ * that is currently visible
  * @author jwalt
  */
 public interface IDisplayable {
@@ -37,7 +39,15 @@ public interface IDisplayable {
 
     public boolean isReleased();
 
-    public void draw(Graphics graph, Dimension size);
+    /**
+     * Draw this IDisplayable
+     * @param graph -           the <code>Graphics</code> to draw on
+     * @param drawRelativeTo -  the <code>Point</code> relative to which this
+     *                          should be drawn
+     * @param size -            the size of the viewport in
+     *                          which this should be draw
+     */
+    public void draw(Graphics graph, Point drawRelativeTo, Dimension size);
 
     public boolean isSliding();
 

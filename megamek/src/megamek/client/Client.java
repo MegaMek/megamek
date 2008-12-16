@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -45,7 +45,6 @@ import megamek.common.Building;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
-import megamek.common.FighterSquadron;
 import megamek.common.Flare;
 import megamek.common.Game;
 import megamek.common.GameLog;
@@ -89,11 +88,10 @@ import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
-// FIXME awnser the question in the documentation.
 /**
  * This class is instanciated for each client and for each bot running on that
- * client. I believe that non-local clients are not also instantiated on the
- * local server, but I am not sure.
+ * client. non-local clients are not also instantiated on the
+ * local server.
  */
 public class Client implements IClientCommandHandler {
     public static final String CLIENT_COMMAND = "#";
@@ -137,10 +135,12 @@ public class Client implements IClientCommandHandler {
         /**
          * Called when it is sensed that a connection has terminated.
          */
+        @Override
         public void disconnected(DisconnectedEvent e) {
             Client.this.disconnected();
         }
 
+        @Override
         public void packetReceived(PacketReceivedEvent e) {
             handlePacket(e.getPacket());
         }
@@ -150,7 +150,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Construct a client which will try to connect. If the connection fails, it
      * will alert the player, free resources and hide the frame.
-     * 
+     *
      * @param name the player name for this client
      * @param host the hostname
      * @param port the host port
@@ -183,6 +183,7 @@ public class Client implements IClientCommandHandler {
             }
         };
         final TimerTask packetUpdate2 = new TimerTask() {
+            @Override
             public void run() {
                 try {
                     SwingUtilities.invokeAndWait(packetUpdate);
@@ -197,8 +198,9 @@ public class Client implements IClientCommandHandler {
      * call this once to update the connection
      */
     protected void updateConnection() {
-        if (connection != null)
+        if (connection != null) {
             connection.update();
+        }
     }
 
     /**
@@ -355,7 +357,7 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Returns an emumeration of the entities in game.entities
+     * Returns an enumeration of the entities in game.entities
      */
     public Enumeration<Entity> getEntities() {
         return game.getEntities();
@@ -409,7 +411,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Adds the specified close client listener to receive close client events.
      * This is used by external programs running megamek
-     * 
+     *
      * @param l the game listener.
      */
     public void addCloseClientListener(CloseClientListener l) {
@@ -445,7 +447,7 @@ public class Client implements IClientCommandHandler {
         }
         return game.getTurn() != null && game.getTurn().isValid(local_pn, game);
     }
-    
+
     public GameTurn getMyTurn() {
         if(game.isPhaseSimultaneous()) {
             return game.getTurnForPlayer(local_pn);
@@ -518,7 +520,7 @@ public class Client implements IClientCommandHandler {
 
     /**
      * Maintain backwards compatability.
-     * 
+     *
      * @param id - the <code>int</code> ID of the deployed entity
      * @param c - the <code>Coords</code> where the entity should be deployed
      * @param nFacing - the <code>int</code> direction the entity should face
@@ -528,22 +530,9 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * BC with old version
-     * 
-     * @param id - the <code>int</code> ID of the deployed entity
-     * @param c - the <code>Coords</code> where the entity should be deployed
-     * @param nFacing - the <code>int</code> direction the entity should face
-     * @param loadedUnits - a <code>List</code> of units that start the game
-     *            being transported byt the deployed entity.
-     */
-    public void deploy(int id, Coords c, int nFacing, Vector<Entity> loadedUnits) {
-        deploy(id, c, nFacing, loadedUnits, false);
-    }
-
-    /**
      * Deploy an entity at the given coordinates, with the given facing, and
      * starting with the given units already loaded.
-     * 
+     *
      * @param id - the <code>int</code> ID of the deployed entity
      * @param c - the <code>Coords</code> where the entity should be deployed
      * @param nFacing - the <code>int</code> direction the entity should face
@@ -600,7 +589,7 @@ public class Client implements IClientCommandHandler {
     public void sendMapSettings(MapSettings settings) {
         send(new Packet(Packet.COMMAND_SENDING_MAP_SETTINGS, settings));
     }
-    
+
     /**
      * Send the planetary Conditions to the server
      */
@@ -659,7 +648,7 @@ public class Client implements IClientCommandHandler {
         checkDuplicateNamesDuringAdd(entity);
         send(new Packet(Packet.COMMAND_ENTITY_ADD, entity));
     }
-    
+
     /**
      * Sends an "add squadron" packet
      * This is not working, don't use it
@@ -705,7 +694,7 @@ public class Client implements IClientCommandHandler {
         checkDuplicateNamesDuringDelete(id);
         send(new Packet(Packet.COMMAND_ENTITY_REMOVE, new Integer(id)));
     }
-    
+
     /***
      * sends a load game file to the server
      */
@@ -811,7 +800,7 @@ public class Client implements IClientCommandHandler {
     protected void receiveSendingMinefields(Packet packet) {
         game.setMinefields((Vector<Minefield>) packet.getObject(0));
     }
-    
+
     protected void receiveRevealMinefield(Packet packet) {
         game.addMinefield((Minefield) packet.getObject(0));
     }
@@ -819,17 +808,19 @@ public class Client implements IClientCommandHandler {
     protected void receiveRemoveMinefield(Packet packet) {
         game.removeMinefield((Minefield) packet.getObject(0));
     }
-    
+
     @SuppressWarnings("unchecked")
     protected void receiveUpdateMinefields(Packet packet) {
         //only update information if you know about the minefield
         Vector<Minefield> newMines = new Vector<Minefield>();
         for(Minefield mf : (Vector<Minefield>)packet.getObject(0)) {
-            if(getLocalPlayer().containsMinefield(mf))
-                newMines.add(mf);    
+            if(getLocalPlayer().containsMinefield(mf)) {
+                newMines.add(mf);
+            }
         }
-        if(newMines.size() > 0)
+        if(newMines.size() > 0) {
             game.resetMinefieldDensity(newMines);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -852,9 +843,7 @@ public class Client implements IClientCommandHandler {
         Vector<EntityAction> vector = (Vector<EntityAction>) c.getObject(0);
         int charge = c.getIntValue(1);
         boolean addAction = true;
-        for (Enumeration<EntityAction> i = vector.elements(); i
-                .hasMoreElements();) {
-            EntityAction ea = i.nextElement();
+        for (EntityAction ea : vector) {
             int entityId = ea.getEntityId();
             if (ea instanceof TorsoTwistAction && game.hasEntity(entityId)) {
                 TorsoTwistAction tta = (TorsoTwistAction) ea;
@@ -915,15 +904,18 @@ public class Client implements IClientCommandHandler {
             doubleBlind = true;
             int startPos = report.indexOf(Report.OBSCURED_STRING);
             int endPos = report.indexOf("\n", startPos);
-            if (report.lastIndexOf("\n", startPos) != -1)
+            if (report.lastIndexOf("\n", startPos) != -1) {
                 startPos = report.lastIndexOf("\n", startPos);
+            }
 
             // In case we get obscured reports but not final \n
-            if (endPos <= 0)
+            if (endPos <= 0) {
                 endPos = report.length();
+            }
 
-            if (startPos < 0)
+            if (startPos < 0) {
                 startPos = 0;
+            }
 
             report.delete(startPos, endPos);
         }
@@ -956,7 +948,7 @@ public class Client implements IClientCommandHandler {
             if (PreferenceManager.getClientPreferences().stampFilenames()) {
                 fileName = StringUtil.addDateTimeStamp(fileName);
             }
-            FileWriter fw = new FileWriter(sLogDir + File.separator + fileName); //$NON-NLS-1$
+            FileWriter fw = new FileWriter(sLogDir + File.separator + fileName);
             fw.write(sStatus);
             fw.flush();
             fw.close();
@@ -1004,7 +996,7 @@ public class Client implements IClientCommandHandler {
                 correctName(c);
                 break;
             case Packet.COMMAND_LOCAL_PN:
-                this.local_pn = c.getIntValue(0);
+                local_pn = c.getIntValue(0);
                 break;
             case Packet.COMMAND_PLAYER_UPDATE:
                 receivePlayerInfo(c);
@@ -1019,8 +1011,9 @@ public class Client implements IClientCommandHandler {
                 game.removePlayer(c.getIntValue(0));
                 break;
             case Packet.COMMAND_CHAT:
-                if (log == null)
+                if (log == null) {
                     initGameLog();
+                }
                 if (log != null && keepGameLog()) {
                     log.append((String) c.getObject(0));
                 }
@@ -1086,10 +1079,12 @@ public class Client implements IClientCommandHandler {
             case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
                 phaseReport = receiveReport((Vector) c.getObject(0));
                 if (keepGameLog()) {
-                    if (log == null && game.getRoundCount() == 1)
+                    if (log == null && game.getRoundCount() == 1) {
                         initGameLog();
-                    if (log != null)
+                    }
+                    if (log != null) {
                         log.append(phaseReport);
+                    }
                 }
                 game.addReports((Vector<Report>) c.getObject(0));
                 roundReport = receiveReport(game.getReports(game
@@ -1200,7 +1195,7 @@ public class Client implements IClientCommandHandler {
      * tracking performance issues on various player's systems. You can activate
      * it by changing the "memorydumpon" setting to "true" in the MegaMek.cfg
      * file.
-     * 
+     *
      * @param where - a <code>String</code> indicating which part of the game
      *            is making this call.
      * @see megamek.common.Settings#memoryDumpOn
@@ -1242,9 +1237,11 @@ public class Client implements IClientCommandHandler {
         name = newN;
     }
 
-    // Before we officially "add" this unit to the game, check and see
-    // if this client (player) already has a unit in the game with the
-    // same name. If so, add an identifier to the units name.
+    /**
+     * Before we officially "add" this unit to the game, check and see if this
+     * client (player) already has a unit in the game with the same name. If so,
+     * add an identifier to the units name.
+     */
     private void checkDuplicateNamesDuringAdd(Entity entity) {
         if (duplicateNameHash.get(entity.getShortName()) == null) {
             duplicateNameHash.put(entity.getShortName(), new Integer(1));
@@ -1259,8 +1256,11 @@ public class Client implements IClientCommandHandler {
         }
     }
 
-    // If we remove an entity, we may need to update the duplicate identifier.
-    // TODO: This function is super slow :(
+    /**
+     *  If we remove an entity, we may need to update the duplicate identifier.
+     *  TODO: This function is super slow :(
+     * @param id
+     */
     private void checkDuplicateNamesDuringDelete(int id) {
         Entity entity = game.getEntity(id);
         Object o = duplicateNameHash.get(entity.getShortNameRaw());
@@ -1298,7 +1298,7 @@ public class Client implements IClientCommandHandler {
 
     /**
      * Runs the command
-     * 
+     *
      * @param args the command and it's arguments with the CLIENT_COMMAND
      *            already removed, and the string tokenized.
      */
@@ -1326,7 +1326,7 @@ public class Client implements IClientCommandHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.client.ui.IClientCommandHandler#getAllCommandNames()
      */
     public Enumeration<String> getAllCommandNames() {

@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -33,7 +33,7 @@ import megamek.server.Server;
 public class StreakLRMHandler extends StreakHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3848472655779311898L;
 
@@ -49,12 +49,13 @@ public class StreakLRMHandler extends StreakHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            int toReturn = (int)Compute.directBlowInfantryDamage(wtype.getRackSize()*2, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE);
+            int toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize()*2, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE, ((Infantry)target).isMechanized());
             return toReturn;
         }
         return 1;
@@ -62,9 +63,10 @@ public class StreakLRMHandler extends StreakHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
+    @Override
     protected int calcnCluster() {
         return 5;
     }
@@ -72,10 +74,11 @@ public class StreakLRMHandler extends StreakHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      *      megamek.common.Entity, boolean)
      */
+    @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
             Entity entityTarget, boolean bMissed) {
         if (!bMissed

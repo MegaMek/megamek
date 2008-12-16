@@ -1,11 +1,11 @@
 /**
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
+ *
  *  This program is distributed in the hope that it will be useful, but
  *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
@@ -35,7 +35,7 @@ import megamek.server.Server;
  */
 public class UltraWeaponHandler extends AmmoWeaponHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7551194199079004134L;
     int howManyShots;
@@ -51,7 +51,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
      */
     @Override
@@ -89,7 +89,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -168,7 +168,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     @Override
@@ -180,7 +180,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -203,7 +203,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -212,7 +212,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         // infantry get hit by all shots
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = wtype.getDamage() * howManyShots;
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS() / 3 : 0, Compute.WEAPON_DIRECT_FIRE);
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS() / 3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
             if (howManyShots > 1) {
                 // ok, more than 1 shot, +1 for cluster
                 toReturn += 1;

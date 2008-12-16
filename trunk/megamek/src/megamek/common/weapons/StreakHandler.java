@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -34,7 +34,7 @@ import megamek.server.Server;
 public class StreakHandler extends MissileWeaponHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4122111574368642492L;
     boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae
@@ -52,12 +52,13 @@ public class StreakHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            int toReturn = (int)Compute.directBlowInfantryDamage(wtype.getRackSize()*2, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE);
+            int toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize()*2, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE, ((Infantry)target).isMechanized());
             return toReturn;
         }
         return 2;
@@ -65,18 +66,20 @@ public class StreakHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
+    @Override
     protected int calcnCluster() {
         return 1;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
@@ -88,14 +91,15 @@ public class StreakHandler extends MissileWeaponHandler {
             return 1;
         }
         // no AMS when streak misses
-        if (bMissed)
+        if (bMissed) {
             return 0;
+        }
         int nMissilesModifier = nSalvoBonus;
 
         if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
             nMissilesModifier -= 2;
         }
-        
+
         if(game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
@@ -112,10 +116,11 @@ public class StreakHandler extends MissileWeaponHandler {
             missilesHit = Compute.missilesHit(wtype.getRackSize(),
                     amsMod, weapon.isHotLoaded(), true, advancedAMS);
             if (amsMod != 0) {
-                if (amsMod > 0)
+                if (amsMod > 0) {
                     r = new Report(3340);
-                else
+                } else {
                     r = new Report(3341);
+                }
                 r.subject = subjectId;
                 r.add(amsMod);
                 r.newlines = 0;
@@ -141,9 +146,10 @@ public class StreakHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#UseAmmo()
      */
+    @Override
     protected void useAmmo() {
         checkAmmo();
         if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
@@ -154,7 +160,7 @@ public class StreakHandler extends MissileWeaponHandler {
             ae.loadWeaponWithSameAmmo(weapon);
             ammo = weapon.getLinked();
         }
-        if (this.roll >= this.toHit.getValue()) {
+        if (roll >= toHit.getValue()) {
             ammo.setShotsLeft(ammo.getShotsLeft() - 1);
             setDone();
         }
@@ -162,9 +168,10 @@ public class StreakHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
+    @Override
     protected void reportMiss(Vector<Report> vPhaseReport) {
         //if (!isAngelECMAffected) {
             // no lock
@@ -178,34 +185,38 @@ public class StreakHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
+    @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)
-                && this.roll >= this.toHit.getValue()) {
+                && roll >= toHit.getValue()) {
             ae.heatBuildup += (wtype.getHeat());
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#allShotsHit()
      */
+    @Override
     protected boolean allShotsHit() {
         return super.allShotsHit() || !isAngelECMAffected;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.weapons.MissileWeaponHandler#handleSpecialMiss(megamek.common.Entity, boolean, megamek.common.Building, java.util.Vector)
      */
+    @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
         return false;
     }
-    
+
+    @Override
     protected boolean canDoDirectBlowDamage(){
         return false;
     }

@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -35,7 +35,7 @@ import megamek.server.Server;
 public class PrototypeGaussHandler extends AmmoWeaponHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -156828547249911617L;
 
@@ -50,9 +50,10 @@ public class PrototypeGaussHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage();
         int nRange = ae.getPosition().distance(target.getPosition());
@@ -62,8 +63,8 @@ public class PrototypeGaussHandler extends AmmoWeaponHandler {
         }
 
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = (float)Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE);
-        } else if (bDirect){            
+            toReturn = (float)Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
+        } else if (bDirect){
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
         } if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
@@ -73,9 +74,10 @@ public class PrototypeGaussHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
+    @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll == 2) {
             r = new Report(3165);

@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -37,7 +37,7 @@ import megamek.server.Server.DamageType;
 public class SRMTandemChargeHandler extends SRMHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6292692766500970690L;
     protected int generalDamageType = HitData.DAMAGE_ARMOR_PIERCING_MISSILE;
@@ -55,7 +55,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
     /**
      * Handle damage against an entity, called once per hit by default.
-     * 
+     *
      * @param entityTarget
      * @param vPhaseReport
      * @param bldg
@@ -64,6 +64,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
      * @param nDamPerHit
      * @param bldgAbsorbs
      */
+    @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster, int nDamPerHit, int bldgAbsorbs) {
         int nDamage;
         missed = false;
@@ -109,7 +110,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
         }
 
         nDamage = checkTerrain(nDamage, entityTarget,vPhaseReport);
-        
+
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             r = new Report(3415);
@@ -134,7 +135,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
                     hit = new HitData(loc, false, HitData.EFFECT_CRITICAL);
                 }
             }else if ( target instanceof Tank || target instanceof Mech ){
-                
+
                 if ( bGlancing ) {
                     hit.setSpecCritmod(-4);
                 }else if ( bDirect ) {
@@ -142,23 +143,24 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 }else {
                     hit.setSpecCritmod(-2);
                 }
-            } 
+            }
             vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : DamageType.NONE, false, false, throughFront));
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            int toReturn = (int) Compute.directBlowInfantryDamage(wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0, Compute.WEAPON_CLUSTER_MISSILE);
+            double toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0, Compute.WEAPON_CLUSTER_MISSILE, ((Infantry)target).isMechanized());
             if (bGlancing) {
                 toReturn /= 2;
             }
-            return toReturn;
+            return (int)Math.floor(toReturn);
         }
         return 2;
     }

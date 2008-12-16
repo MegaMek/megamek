@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -37,7 +37,6 @@ import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.FighterSquadron;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.event.GameListener;
@@ -48,7 +47,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         BoardViewListener, ActionListener, DoneButtoned, KeyListener,
         GameListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6264922297603128233L;
 
@@ -93,7 +92,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
      */
     public DeploymentDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        this.client = clientgui.getClient();
+        client = clientgui.getClient();
         client.game.addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
 
@@ -133,7 +132,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         butRemove.addActionListener(this);
         butRemove.setActionCommand(DEPLOY_REMOVE);
         setRemoveEnabled(true);
-        
+
         butFormSquadron = new Button(Messages.getString("DeploymentDisplay.FormSquadron")); //$NON-NLS-1$
         butFormSquadron.addActionListener(this);
         butFormSquadron.setActionCommand(DEPLOY_FORM_SQUADRON);
@@ -217,9 +216,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         // FIXME: Hack alert: remove C3 sprites from earlier here, or we might crash when
         // trying to draw a c3 sprite belonging to the previously selected,
         // but not deployed entity. BoardView1 should take care of that itself.
-        if (clientgui.bv instanceof BoardView1) ((BoardView1)clientgui.bv).clearC3Networks();
+        if (clientgui.bv instanceof BoardView1) {
+            ((BoardView1)clientgui.bv).clearC3Networks();
+        }
 
-        this.cen = en;
+        cen = en;
         clientgui.setSelectedEntityNum(en);
 
         setTurnEnabled(true);
@@ -356,7 +357,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         selectEntity(client.getNextDeployableEntityNum(cen));
         if (client.getNextDeployableEntityNum(cen) == -1) {
             butNext.setEnabled(false);
-            this.endMyTurn();
+            endMyTurn();
         }
     }
 
@@ -375,9 +376,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         client.game.removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
 
-        this.removeAll();
+        removeAll();
     }
 
+    @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -395,10 +397,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-        DeploymentDisplay.this.clientgui.bv.markDeploymentHexesFor(null);
+        clientgui.bv.markDeploymentHexesFor(null);
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -411,10 +414,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     //
     // BoardListener
     //
+    @Override
     public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -464,7 +468,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                                     "DeploymentDisplay.cantDeployInto", new Object[] { ce().getShortName(), moveto.getBoardNum() })); //$NON-NLS-1$
             dlg.setVisible(true);
             return;
-        } else if(ce() instanceof Aero && client.game.getBoard().inAtmosphere() && 
+        } else if(ce() instanceof Aero && client.game.getBoard().inAtmosphere() &&
                 ce().getElevation() <= client.game.getBoard().getHex(moveto).ceiling()) {
             //make sure aeros don't end up at a lower elevation than the current hex
             AlertDialog dlg = new AlertDialog(clientgui.frame,
@@ -475,7 +479,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
             dlg.setVisible(true);
             return;
         } else if (Compute.stackingViolation(client.game, ce().getId(), moveto) != null) {
-        
+
             // check if deployed unit violates stacking
             return;
         } else {
@@ -492,12 +496,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     public void actionPerformed(ActionEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
-        if (statusBarActionPerformed(ev, client))
+        if (statusBarActionPerformed(ev, client)) {
             return;
+        }
 
         if (!client.isMyTurn()) {
             // odd...
@@ -664,16 +669,16 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getAnswer() == true) {
                     Vector<Entity> fighters = new Vector<Entity>();
-                    //fs.setOwner(client.getLocalPlayer());     
+                    //fs.setOwner(client.getLocalPlayer());
                     int[] selections = choiceDialog.getChoices();
                     for(int i = 0; i < selections.length; i++) {
                     	//fs.load(choices.elementAt(selections[i]));
                     	fighters.add(choices.elementAt(selections[i]));
                     }
-                	client.sendAddSquadron(fighters); 
+                	client.sendAddSquadron(fighters);
                 }
-                 
-          
+
+
             } // End have-choices
             else {
                 AlertDialog alert = new AlertDialog(
@@ -684,9 +689,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                                 .getString(
                                         "DeploymentDisplay.allertDialog1.message", new Object[] { ce().getShortName() })); //$NON-NLS-1$
                 alert.setVisible(true);
-            }      	
+            }
         } // End form-squadron
-   */     
+   */
 
     } // End public void actionPerformed(ActionEvent ev)
 
@@ -705,14 +710,16 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     //
     // BoardViewListener
     //
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
     }
 
     // Selected a unit in the unit overview.
+    @Override
     public void unitSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -780,7 +787,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         butAssaultDrop.setEnabled(enabled);
         clientgui.getMenuBar().setDeployAssaultDropEnabled(enabled);
     }
-    
+
     private void setFormSquadronEnabled(boolean enabled) {
         butFormSquadron.setEnabled(enabled);
         clientgui.getMenuBar().setDeployFormSquadronEnabled(enabled);
@@ -788,7 +795,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Retrieve the "Done" button of this object.
-     * 
+     *
      * @return the <code>java.awt.Button</code> that activates this object's
      *         "Done" action.
      */

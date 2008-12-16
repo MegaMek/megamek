@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -34,7 +34,7 @@ import megamek.server.Server.DamageType;
  */
 public class ACFlechetteHandler extends AmmoWeaponHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7965585014230084304L;
 
@@ -51,11 +51,12 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
 
     /**
      * Calculate the damage per hit.
-     * 
+     *
      * @return an <code>int</code> representing the damage dealt per hit.
      */
+    @Override
     protected int calcDamagePerHit() {
-        float toReturn = wtype.getDamage();
+        double toReturn = wtype.getDamage();
 
         if ( bDirect ){
             toReturn += toHit.getMoS()/3;
@@ -72,10 +73,11 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
      *      megamek.common.Building, int, boolean)
      */
+    @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage, boolean bSalvo) {
         if (!bSalvo) {
@@ -103,7 +105,7 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
-        
+
         vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
         return;
     }

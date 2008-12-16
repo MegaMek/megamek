@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -44,7 +44,7 @@ import megamek.server.Server;
 public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4801130911083653548L;
     String sSalvoType = " missile(s) ";
@@ -67,9 +67,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
@@ -100,7 +101,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int missilesHit;
         int nMissilesModifier = nSalvoBonus;
         boolean tacopscluster = game.getOptions().booleanOption("tacops_clusterhitpen");
-        
+
         int[] ranges = wtype.getRanges(weapon);
         if (tacopscluster) {
             if (nRange <= 1) {
@@ -109,13 +110,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 nMissilesModifier += 0;
             } else {
                 nMissilesModifier -= 1;
-            } 
+            }
         }
-        
+
         if ( game.getOptions().booleanOption("tacops_range") && nRange > ranges[RangeType.RANGE_LONG] ) {
             nMissilesModifier -= 2;
         }
-        
+
         boolean bMekStealthActive = false;
         if (ae instanceof Mech) {
             bMekStealthActive = ae.isStealthActive();
@@ -130,7 +131,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
             bECMAffected = true;
         }
-        
+
         if ((mLinker != null && mLinker.getType() instanceof MiscType
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
@@ -148,8 +149,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
-            } else
+            } else {
                 nMissilesModifier += 2;
+            }
         } else if ((mLinker != null && mLinker.getType() instanceof MiscType
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
@@ -169,17 +171,18 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
-            } else
+            } else {
                 nMissilesModifier += 2;
+            }
         } else if (entityTarget != null
                 && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
                         .isINarcedBy(ae.getOwner().getTeam()))) {
             // only apply Narc bonus if we're not suffering ECM effect
             // and we are using narc ammo, and we're not firing indirectly.
-            // narc capable missiles are only affected if the narc pod, which 
+            // narc capable missiles are only affected if the narc pod, which
             // sits on the target, is ECM affected
             boolean bTargetECMAffected = false;
-            bTargetECMAffected = Compute.isAffectedByECM(ae, 
+            bTargetECMAffected = Compute.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.T_LRM) ||
                  (atype.getAmmoType() == AmmoType.T_SRM)) ||
@@ -193,8 +196,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     r.subject = subjectId;
                     r.newlines = 0;
                     vPhaseReport.addElement(r);
-                } else
+                } else {
                     nMissilesModifier += 2;
+                }
             }
         }
         if (bGlancing) {
@@ -208,23 +212,24 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if(game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
-        
+
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 
-        if (allShotsHit())
+        if (allShotsHit()) {
             missilesHit = wtype.getRackSize();
-        else {
-            if (ae instanceof BattleArmor)
+        } else {
+            if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength(),
-                        nMissilesModifier, 
+                        nMissilesModifier,
                         weapon.isHotLoaded(), false, advancedAMS);
-            else
+            } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
                         nMissilesModifier,
                         weapon.isHotLoaded(),
                         false, advancedAMS);
+            }
         }
 
         if (missilesHit > 0) {
@@ -236,10 +241,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
             if (nMissilesModifier != 0) {
-                if (nMissilesModifier > 0)
+                if (nMissilesModifier > 0) {
                     r = new Report(3340);
-                else
+                } else {
                     r = new Report(3341);
+                }
                 r.subject = subjectId;
                 r.add(nMissilesModifier);
                 r.newlines = 0;
@@ -256,36 +262,37 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
+    @Override
     protected int calcnCluster() {
         return 5;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
-        double toReturn;
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = wtype.getRackSize();
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE);
-            if (bGlancing)
+            double toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize(), bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE, ((Infantry)target).isMechanized());
+            if (bGlancing) {
                 toReturn /= 2;
-            toReturn = Math.ceil(toReturn);
-            return (int)toReturn;
+            }
+            return (int)Math.floor(toReturn);
         }
         return 1;
     }
 
     /**
      * Calculate the attack value based on range
-     * 
+     *
      * @return an <code>int</code> representing the attack value at that range.
      */
+    @Override
     protected int calcAttackValue() {
         int distance = ae.getPosition().distance(target.getPosition());
         int av = 0;
@@ -319,13 +326,14 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         return (av);
     }
 
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
      *      boolean, megamek.common.Building)
      */
+    @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
         // Shots that miss an entity can set fires.
@@ -340,7 +348,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         //shots that miss an entity can also potential cause explosions in a heavy industrial hex
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
-        
+
         // Report any AMS action.
         if (amsEnganged) {
             r = new Report(3230);
@@ -390,22 +398,24 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         }
 
                         // build up some heat (assume target is ams owner)
-                        if (counter.getType().hasFlag(WeaponType.F_HEATASDICE))
+                        if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
                             entityTarget.heatBuildup += Compute
                                     .d6(((WeaponType) counter.getType())
                                             .getHeat());
-                        else
+                        } else {
                             entityTarget.heatBuildup += ((WeaponType) counter
                                     .getType()).getHeat();
+                        }
 
                         // decrement the ammo
-                        if (mAmmo != null)
+                        if (mAmmo != null) {
                             mAmmo.setShotsLeft(Math.max(0,
                                     mAmmo.getShotsLeft() - 1));
+                        }
 
                         // set the ams as having fired
                         counter.setUsedThisRound(true);
-                        this.amsEnganged = true;
+                        amsEnganged = true;
                         r = new Report(3350);
                         r.newlines = 0;
                         vPhaseReport.add(r);
@@ -419,11 +429,12 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
+    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        if (!this.cares(phase)) {
+        if (!cares(phase)) {
             return true;
         }
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
@@ -432,8 +443,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 entityTarget);
         boolean bNemesisConfusable = isNemesisConfusable();
 
-        if (entityTarget != null)
+        if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
+        }
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -477,8 +489,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 // attack the new target, and if we hit it, return;
                 wh.handle(phase, vPhaseReport);
                 // if the new attack hit, we are finished.
-                if (!wh.bMissed)
+                if (!wh.bMissed) {
                     return false;
+                }
                 shotAtNemesisTarget = true;
             }
             if (shotAtNemesisTarget) {
@@ -490,19 +503,19 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;
@@ -550,7 +563,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             r.subject = ae.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
-        } 
+        }
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
@@ -592,7 +605,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         //Now I need to adjust this for air-to-air attacks because they use attack value
         if(ae instanceof Aero && target instanceof Aero) {
         	//this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
-        	if(ae.isCapitalFighter()) { 
+        	if(ae.isCapitalFighter()) {
         		bSalvo = true;
         		int nhit = 1;
         		if(nweapons > 1) {
@@ -617,9 +630,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 nDamPerHit = attackValue;
                 hits = 1;
                 nCluster = 1;
-            }   
+            }
         }
-        
+
         if (bMissed) {
             return false;
 
@@ -703,11 +716,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
         return isNemesisConfusable;
     }
-    
+
+    @Override
     protected boolean usesClusterTable() {
         return true;
     }
-    
+
+    @Override
     protected boolean canDoDirectBlowDamage(){
         return false;
     }

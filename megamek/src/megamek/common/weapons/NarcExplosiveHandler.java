@@ -119,7 +119,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
             toReturn = 4;
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE);
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
             toReturn = Math.ceil(toReturn);
         } if (bGlancing)
             return (int) Math.floor(toReturn / 2.0);

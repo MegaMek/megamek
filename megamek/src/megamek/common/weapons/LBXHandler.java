@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -35,7 +35,7 @@ import megamek.server.Server;
  */
 public class LBXHandler extends AmmoWeaponHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6803847280685526644L;
 
@@ -51,26 +51,28 @@ public class LBXHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            float toReturn = wtype.getDamage();
-            toReturn = (float)Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_BALLISTIC);            
-            if (bGlancing)
+            double toReturn = Compute.directBlowInfantryDamage(wtype.getDamage(), bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_BALLISTIC, ((Infantry)target).isMechanized());
+            if (bGlancing) {
                 toReturn /= 2;
-            return (int) Math.ceil(toReturn);
+            }
+            return (int) Math.floor(toReturn);
         }
         return 1;
     }
 
     /**
      * Calculate the attack value based on range
-     * 
+     *
      * @return an <code>int</code> representing the attack value at that
      *         range.
      */
+    @Override
     protected int calcAttackValue() {
         // basically 60% of racksize
         return (int) Math.floor(0.6 * wtype.getRackSize());
@@ -78,10 +80,11 @@ public class LBXHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      *      vPhaseReport)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount LBXs
@@ -120,7 +123,7 @@ public class LBXHandler extends AmmoWeaponHandler {
             if ( bDirect ){
                 nHitsModifier += (toHit.getMoS()/3)*2;
             }
-            
+
             if(game.getPlanetaryConditions().hasEMI()) {
                 nHitsModifier -= 2;
             }
@@ -137,10 +140,11 @@ public class LBXHandler extends AmmoWeaponHandler {
         r.newlines = 0;
         vPhaseReport.addElement(r);
         if (nHitsModifier != 0) {
-            if (nHitsModifier > 0)
+            if (nHitsModifier > 0) {
                 r = new Report(3340);
-            else
+            } else {
                 r = new Report(3341);
+            }
             r.subject = subjectId;
             r.add(nHitsModifier);
             r.newlines = 0;
@@ -154,10 +158,12 @@ public class LBXHandler extends AmmoWeaponHandler {
         return shotsHit;
     }
 
+    @Override
     protected boolean usesClusterTable() {
         return ((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_CLUSTER;
     }
-    
+
+    @Override
     protected boolean canDoDirectBlowDamage(){
         return false;
     }

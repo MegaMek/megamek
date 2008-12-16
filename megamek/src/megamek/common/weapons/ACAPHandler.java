@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -39,7 +39,7 @@ import megamek.server.Server.DamageType;
  */
 public class ACAPHandler extends AmmoWeaponHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4251291510045646817L;
     protected int generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
@@ -56,9 +56,10 @@ public class ACAPHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();
         // during a swarm, all damage gets applied as one block to one
@@ -68,12 +69,12 @@ public class ACAPHandler extends AmmoWeaponHandler {
         }
         // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE);
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
         } else if (bDirect){
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
         }
-        
-        
+
+
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
@@ -86,10 +87,11 @@ public class ACAPHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
      *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
@@ -129,7 +131,7 @@ public class ACAPHandler extends AmmoWeaponHandler {
             }
             vPhaseReport.addAll(buildingReport);
         }
-        
+
         nDamage = checkTerrain(nDamage, entityTarget,vPhaseReport);
 
         // A building may absorb the entire shot.
@@ -141,18 +143,18 @@ public class ACAPHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         } else {
-            
+
             int critModifer = 0;
-            
-            
+
+
             if (bGlancing) {
                 hit.makeGlancingBlow();
                 critModifer -= 2;
             }else if ( bDirect ) {
                 critModifer += toHit.getMoS()/3;
-                
+
             }
-            
+
             hit.makeArmorPiercing(atype,critModifer);
             vPhaseReport
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,

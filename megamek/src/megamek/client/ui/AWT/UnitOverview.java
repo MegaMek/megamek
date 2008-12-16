@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -90,14 +90,12 @@ public class UnitOverview implements IDisplayable {
         PMUtil.setImage(pageDown, clientgui);
     }
 
-    public void draw(Graphics graph, Dimension size) {
+    public void draw(Graphics graph, Point drawRelativeTo, Dimension size) {
         if (!visible) {
             return;
         }
 
-        if (unitsPerPage == UNKNOWN_UNITS_PER_PAGE) {
-            computeUnitsPerPage(size);
-        }
+        computeUnitsPerPage(size);
 
         graph.setFont(FONT);
         ArrayList<Entity> v = clientgui.getClient().game
@@ -316,12 +314,13 @@ public class UnitOverview implements IDisplayable {
     }
 
     private Color getStatusBarColor(double percentRemaining) {
-        if (percentRemaining <= .25)
+        if (percentRemaining <= .25) {
             return Color.red;
-        else if (percentRemaining <= .75)
+        } else if (percentRemaining <= .75) {
             return Color.yellow;
-        else
+        } else {
             return new Color(16, 196, 16);
+        }
     }
 
     private Color getFrameColor(Entity entity) {
@@ -332,7 +331,9 @@ public class UnitOverview implements IDisplayable {
     }
 
     private void printLine(Graphics g, int x, int y, String s) {
-        if (s == null || s.trim().length() < 0) return; // some Graphics objects don't like empty strings
+        if (s == null || s.trim().length() < 0) {
+            return; // some Graphics objects don't like empty strings
+        }
         g.setColor(Color.black);
         g.drawString(s, x + 1, y);
         g.drawString(s, x - 1, y);
@@ -344,20 +345,20 @@ public class UnitOverview implements IDisplayable {
 
     private void drawConditionStrings(Graphics graph, Entity entity, int x,
             int y) {
-        
+
         //out of control conditions for ASF
         if(entity instanceof Aero) {
-            Aero a = (Aero)entity;  
-            
-            
+            Aero a = (Aero)entity;
+
+
             //draw altitude if Aero in atmosphere
             if(clientgui.getClient().game.getBoard().inAtmosphere()) {
                 graph.setColor(Color.darkGray);
-                graph.drawString(Integer.toString(a.getElevation()), x + 36, y + 15); //$NON-NLS-1$
+                graph.drawString(Integer.toString(a.getElevation()), x + 36, y + 15);
                 graph.setColor(Color.PINK);
-                graph.drawString(Integer.toString(a.getElevation()), x + 35, y + 14); //$NON-NLS-1$
+                graph.drawString(Integer.toString(a.getElevation()), x + 35, y + 14);
             }
-            
+
             if(a.isRolled()) {
                 // draw "rolled"
                 graph.setColor(Color.darkGray);
@@ -365,7 +366,7 @@ public class UnitOverview implements IDisplayable {
                 graph.setColor(Color.red);
                 graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 10, y+28); //$NON-NLS-1$
             }
-            
+
             if(a.isOutControlTotal() && a.isRandomMove()) {
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 11, y + 24); //$NON-NLS-1$
@@ -378,7 +379,7 @@ public class UnitOverview implements IDisplayable {
                 graph.setColor(Color.red);
                 graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 10, y + 23); //$NON-NLS-1$
             }
-            
+
             //is the unit evading? - can't evade and be out of control so just draw on top
             if(a.isEvading()) {
                 //draw evasion
@@ -387,9 +388,9 @@ public class UnitOverview implements IDisplayable {
                 graph.setColor(Color.red);
                 graph.drawString(Messages.getString("UnitOverview.EVADE"), x + 10, y + 23); //$NON-NLS-1$
             }
-            
+
         }
-        
+
         // draw condition strings
         if (entity.isImmobile() && !entity.isProne()) {
             // draw "IMMOB"

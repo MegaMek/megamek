@@ -46,7 +46,6 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
-import megamek.common.FighterSquadron;
 import megamek.common.GameTurn;
 import megamek.common.IEntityMovementMode;
 import megamek.common.IEntityMovementType;
@@ -81,10 +80,10 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
-public class MovementDisplay extends StatusBarPhaseDisplay implements ActionListener, 
+public class MovementDisplay extends StatusBarPhaseDisplay implements ActionListener,
 DoneButtoned, KeyListener, GameListener, BoardViewListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 9136822404087057673L;
 
@@ -190,7 +189,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     private Button butFortify;
 
     private Button butShakeOff;
-    
+
     private Button butReckless;
     private Button butEvade;
 
@@ -255,7 +254,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
      */
     public MovementDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        this.client = clientgui.getClient();
+        client = clientgui.getClient();
         client.game.addGameListener(this);
 
         gear = MovementDisplay.GEAR_LAND;
@@ -425,7 +424,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         butShakeOff.setEnabled(false);
         butShakeOff.setActionCommand(MOVE_SHAKE_OFF);
         butShakeOff.addKeyListener(this);
-        
+
         butReckless = new Button(Messages.getString("MovementDisplay.butReckless")); //$NON-NLS-1$
         butReckless.addActionListener(this);
         butReckless.setEnabled(false);
@@ -437,7 +436,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         butEvade.setEnabled(false);
         butEvade.setActionCommand(MOVE_EVADE);
         butEvade.addKeyListener(this);
-        
+
         butAcc = new Button(Messages.getString("MovementDisplay.butAcc")); //$NON-NLS-1$
         butAcc.addActionListener(this);
         butAcc.setEnabled(false);
@@ -509,7 +508,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         butManeuver.setEnabled(false);
         butManeuver.setActionCommand(MOVE_MANEUVER);
         butManeuver.addKeyListener(this);
-        
+
         butJoin = new Button(Messages.getString("MovementDisplay.butJoin")); //$NON-NLS-1$
         butJoin.addActionListener(this);
         butJoin.setEnabled(false);
@@ -677,7 +676,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             buttonsAero.add(butHover);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
-            // not used         
+            // not used
             buttonsAero.add(butHullDown);
             buttonsAero.add(butShakeOff);
         } else {
@@ -696,7 +695,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             buttonsAero.add(butJoin);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
-            // not used         
+            // not used
             buttonsAero.add(butUp);
             buttonsAero.add(butDown);
             buttonsAero.add(butJump);
@@ -757,14 +756,15 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         ArrayList<Button> buttonList = buttonsMech;
         final Entity ce = ce();
         if (ce != null) {
-            if (ce instanceof Infantry)
+            if (ce instanceof Infantry) {
                 buttonList = buttonsInf;
-            else if (ce instanceof VTOL)
+            } else if (ce instanceof VTOL) {
                 buttonList = buttonsVtol;
-            else if (ce instanceof Tank)
+            } else if (ce instanceof Tank) {
                 buttonList = buttonsTank;
-            else if (ce instanceof Aero)
+            } else if (ce instanceof Aero) {
                 buttonList = buttonsAero;
+            }
         }
         // should this layout be skipped? (if nothing enabled)
         boolean ok = false;
@@ -778,8 +778,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if (!ok) {
                 // skip as nothing was enabled
                 buttonLayout++;
-                if (buttonLayout * 6 >= buttonList.size())
+                if (buttonLayout * 6 >= buttonList.size()) {
                     buttonLayout = 0;
+                }
             }
         }
 
@@ -804,7 +805,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             return;
         }
 
-        this.cen = en;
+        cen = en;
         clientgui.setSelectedEntityNum(en);
 
         clearAllMoves();
@@ -873,9 +874,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         updateSearchlightButton();
         updateLoadButtons();
         updateElevationButtons();
-        
+
         setEvadeEnabled(isMech && client.game.getOptions().booleanOption("tacops_evade"));
-        
+
         updateRecoveryButton();
         updateJoinButton();
         updateDumpButton();
@@ -889,7 +890,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             setEvadeAeroEnabled(true);
             setEjectEnabled(true);
             // no turning for spheroids in atmosphere
-            if ((((Aero) ce).isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) 
+            if ((((Aero) ce).isSpheroid() || client.game.getPlanetaryConditions().isVacuum())
                     && client.game.getBoard().inAtmosphere()) {
                 setTurnEnabled(false);
             }
@@ -914,15 +915,17 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         updateHoverButton();
         updateManeuverButton();
 
-        if (isInfantry && ce.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL))
+        if (isInfantry && ce.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL)) {
             butFortify.setEnabled(true);
-        else
+        } else {
             butFortify.setEnabled(false);
+        }
 
-        if (isInfantry && client.game.getOptions().booleanOption("tacops_dig_in"))
+        if (isInfantry && client.game.getOptions().booleanOption("tacops_dig_in")) {
             butDigIn.setEnabled(true);
-        else
+        } else {
             butDigIn.setEnabled(false);
+        }
 
         butShakeOff.setEnabled(ce instanceof Tank && ce.getSwarmAttackerId() != Entity.NONE);
 
@@ -942,7 +945,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
     /**
      * This funtcion is called to update the transformation buttons.
-     * 
+     *
      * @param ce
      *            the current entity
      */
@@ -1046,10 +1049,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         final Entity ce = ce();
 
         // switch back from swimming to normal mode.
-        if (ce.getMovementMode() == IEntityMovementMode.BIPED_SWIM)
+        if (ce.getMovementMode() == IEntityMovementMode.BIPED_SWIM) {
             ce.setMovementMode(IEntityMovementMode.BIPED);
-        else if (ce.getMovementMode() == IEntityMovementMode.QUAD_SWIM)
+        } else if (ce.getMovementMode() == IEntityMovementMode.QUAD_SWIM) {
             ce.setMovementMode(IEntityMovementMode.QUAD);
+        }
 
         // clear board cursors
         clientgui.getBoardView().select(null);
@@ -1220,8 +1224,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                     if (oldmd.contains(MovePath.STEP_LAUNCH) && !md.contains(MovePath.STEP_OFF)) {
                         // since launches have to be the last step
                         MoveStep lastStep = oldmd.getLastStep();
-                        if (lastStep.getType() == MovePath.STEP_LAUNCH)
+                        if (lastStep.getType() == MovePath.STEP_LAUNCH) {
                             md.addStep(lastStep.getType(), lastStep.getLaunched());
+                        }
                     }
 
                 } else {
@@ -1375,11 +1380,12 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     //
     // BoardListener
     //
+    @Override
     public synchronized void hexMoused(BoardViewEvent b) {
         final Entity ce = ce();
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1432,7 +1438,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
             if (gear == MovementDisplay.GEAR_RAM) {
                 // check if target is valid
-                final Targetable target = this.chooseTarget(b.getCoords());
+                final Targetable target = chooseTarget(b.getCoords());
                 if (target == null || target.equals(ce) || !(target instanceof Aero)) {
                     clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantRam"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
                     clearAllMoves();
@@ -1459,7 +1465,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
                     // Ask the player if they want to charge.
                     if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.RamDialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
-                            Messages.getString("MovementDisplay.RamDialog.message", new Object[] { //$NON-NLS-1$      
+                            Messages.getString("MovementDisplay.RamDialog.message", new Object[] { //$NON-NLS-1$
                                     toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())), toHit.getDesc(), new Integer(toDefender), toHit.getTableDesc(), new Integer(toAttacker) }))) {
                         // if they answer yes, charge the target.
                         cmd.getLastStep().setTarget(target);
@@ -1477,7 +1483,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 return;
             } else if (gear == MovementDisplay.GEAR_CHARGE) {
                 // check if target is valid
-                final Targetable target = this.chooseTarget(b.getCoords());
+                final Targetable target = chooseTarget(b.getCoords());
                 if (target == null || target.equals(ce)) {
                     clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantCharge"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
                     clearAllMoves();
@@ -1499,7 +1505,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
                     // Ask the player if they want to charge.
                     if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.ChargeDialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
-                            Messages.getString("MovementDisplay.ChargeDialog.message", new Object[] { //$NON-NLS-1$ 
+                            Messages.getString("MovementDisplay.ChargeDialog.message", new Object[] { //$NON-NLS-1$
                                     toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())), toHit.getDesc(), new Integer(ChargeAttackAction.getDamageFor(ce, client.game.getOptions().booleanOption("tacops_charge_damage"), cmd.getHexesMoved())), toHit.getTableDesc(), new Integer(toAttacker) }))) {
                         // if they answer yes, charge the target.
                         cmd.getLastStep().setTarget(target);
@@ -1517,7 +1523,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 return;
             } else if (gear == MovementDisplay.GEAR_DFA) {
                 // check if target is valid
-                final Targetable target = this.chooseTarget(b.getCoords());
+                final Targetable target = chooseTarget(b.getCoords());
                 if (target == null || target.equals(ce)) {
                     clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantDFA"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
                     clearAllMoves();
@@ -1578,10 +1584,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 setGoProneEnabled(false);
                 setHullDownEnabled(true);
             } else if (cmd.getFinalHullDown()) {
-                if (isMech)
+                if (isMech) {
                     setGetUpEnabled(!ce.isImmobile() && !ce.isStuck() && !((Mech)ce).cannotStandUpFromHullDown());
-                else
+                } else {
                     setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
+                }
                 setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck());
                 setHullDownEnabled(false);
             } else {
@@ -1633,8 +1640,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
     private void updateRollButton() {
         final Entity ce = ce();
-        if (null == ce)
+        if (null == ce) {
             return;
+        }
 
         if (!(ce instanceof Aero)) {
             return;
@@ -1656,8 +1664,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
     private void updateHoverButton() {
         final Entity ce = ce();
-        if (null == ce)
+        if (null == ce) {
             return;
+        }
 
         if (!(ce instanceof Aero)) {
             return;
@@ -1685,8 +1694,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
     private void updateThrustButton() {
         final Entity ce = ce();
-        if (null == ce)
+        if (null == ce) {
             return;
+        }
 
         if (!(ce instanceof Aero)) {
             return;
@@ -1697,8 +1707,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         // only allow thrust if there is thrust left to spend
         int mpUsed = 0;
         MoveStep last = cmd.getLastStep();
-        if (null != last)
+        if (null != last) {
             mpUsed = last.getMpUsed();
+        }
 
         if (mpUsed >= a.getRunMP()) {
             setThrustEnabled(false);
@@ -1711,8 +1722,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
     private synchronized void updateSpeedButtons() {
         final Entity ce = ce();
-        if (null == ce)
+        if (null == ce) {
             return;
+        }
 
         if (!(ce instanceof Aero)) {
             return;
@@ -1775,8 +1787,8 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             setDecNEnabled(false);
             setAccNEnabled(false);
         }
-        
-        
+
+
         //if in atmosphere, limit acceleration to 2x safe thrust
         if(!client.game.getBoard().inSpace() && vel == (2 * a.getWalkMP())) {
             setAccEnabled(false);
@@ -1844,7 +1856,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         setLaunchEnabled(ce.getLaunchableFighters().size() > 0 || ce.getLaunchableSmallCraft().size() > 0);
 
     }
-    
+
     private void updateRecklessButton() {
 
         final Entity ce = ce();
@@ -1852,7 +1864,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         if (null == ce) {
             return;
         }
-        
+
         if(ce instanceof Protomech) {
             setRecklessEnabled(false);
         } else {
@@ -1871,14 +1883,16 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         if(client.game.getBoard().inSpace() || client.game.getBoard().onGround()) {
             return;
         }
-        
-        if (!(ce instanceof Aero))
+
+        if (!(ce instanceof Aero)) {
             return;
+        }
 
         Aero a = (Aero) ce;
 
-        if (a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum())
+        if (a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) {
             return;
+        }
 
         if (!a.didFailManeuver() && (null == cmd || !cmd.contains(MovePath.STEP_MANEUVER))) {
             setManeuverEnabled(true);
@@ -1888,15 +1902,15 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
     private synchronized void updateLoadButtons() {
         final Entity ce = ce();
-        if (null == ce)
+        if (null == ce) {
             return;
+        }
 
         boolean legalGear = ((gear == MovementDisplay.GEAR_LAND) || (gear == MovementDisplay.GEAR_TURN) || (gear == MovementDisplay.GEAR_BACKUP));
         int unloadEl = cmd.getFinalElevation();
         IHex hex = ce.getGame().getBoard().getHex(cmd.getFinalCoords());
         boolean canUnloadHere = false;
-        for (Enumeration<Entity> e = loadedUnits.elements(); e.hasMoreElements();) {
-            Entity en = e.nextElement();
+        for (Entity en : loadedUnits) {
             if (en.isElevationValid(unloadEl, hex) || en.getJumpMP() > 0) {
                 canUnloadHere = true;
                 break;
@@ -1944,7 +1958,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     /**
      * Get the unit that the player wants to unload. This method will remove the
      * unit from our local copy of loaded units.
-     * 
+     *
      * @return The <code>Entity</code> that the player wants to unload. This
      *         value will not be <code>null</code>.
      */
@@ -1952,31 +1966,31 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         Entity ce = ce();
         Entity choice = null;
         // Handle error condition.
-        if (this.loadedUnits.size() == 0) {
+        if (loadedUnits.size() == 0) {
             System.err.println("MovementDisplay#getUnloadedUnit() called without loaded units."); //$NON-NLS-1$
 
         }
 
         // If we have multiple choices, display a selection dialog.
-        else if (this.loadedUnits.size() > 1) {
-            String[] names = new String[this.loadedUnits.size()];
+        else if (loadedUnits.size() > 1) {
+            String[] names = new String[loadedUnits.size()];
             String question = Messages.getString("MovementDisplay.UnloadUnitDialog.message", new Object[] { //$NON-NLS-1$
                     ce.getShortName(), ce.getUnusedString() });
             for (int loop = 0; loop < names.length; loop++) {
-                names[loop] = this.loadedUnits.elementAt(loop).getShortName();
+                names[loop] = loadedUnits.elementAt(loop).getShortName();
             }
             SingleChoiceDialog choiceDialog = new SingleChoiceDialog(clientgui.frame, Messages.getString("MovementDisplay.UnloadUnitDialog.title"), //$NON-NLS-1$
                     question, names);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer() == true) {
-                choice = this.loadedUnits.elementAt(choiceDialog.getChoice());
+                choice = loadedUnits.elementAt(choiceDialog.getChoice());
             }
         } // End have-choices
 
         // Only one choice.
         else {
-            choice = this.loadedUnits.elementAt(0);
-            this.loadedUnits.removeElementAt(0);
+            choice = loadedUnits.elementAt(0);
+            loadedUnits.removeElementAt(0);
         }
 
         // Return the chosen unit.
@@ -1992,8 +2006,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     private synchronized void updateRecoveryButton() {
 
         final Entity ce = ce();
-        if (null == ce)
+        if (null == ce) {
             return;
+        }
 
         // I also want to handle fighter recovery here. If using advanced
         // movement
@@ -2039,7 +2054,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
 
     }
-    
+
     /**
      * Joining a squadron - Similar to fighter recovery. You can fly up and join a squadron or another solo fighter
      */
@@ -2048,15 +2063,16 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     	if(!client.game.getOptions().booleanOption("stratops_capital_fighter")) {
     		return;
     	}
-    	
+
         final Entity ce = ce();
-        if (null == ce)
+        if (null == ce) {
             return;
+        }
 
         if(!ce.isCapitalFighter()) {
         	return;
         }
-   
+
         Coords loadeePos = cmd.getFinalCoords();
         if (client.game.useVectorMove()) {
         	// not where you are, but where you will be
@@ -2071,7 +2087,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         	if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
         		// must be done with its movement
         		// it also must be same heading and velocity
-        		if (other.isCapitalFighter() && other.isDone() && other.canLoad(ce) && cmd.getFinalFacing() == other.getFacing()) {      			
+        		if (other.isCapitalFighter() && other.isDone() && other.canLoad(ce) && cmd.getFinalFacing() == other.getFacing()) {
         			// now lets check velocity
         			// depends on movement rules
         			Aero oa = (Aero) other;
@@ -2098,14 +2114,14 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     /**
      * Get the unit that the player wants to unload. This method will remove the
      * unit from our local copy of loaded units.
-     * 
+     *
      * @return The <code>Entity</code> that the player wants to unload. This
      *         value will not be <code>null</code>.
      */
     private TreeMap<Integer, Vector<Integer>> getLaunchedUnits() {
         Entity ce = ce();
         TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
-        
+
         Vector<Entity> launchableFighters = ce.getLaunchableFighters();
         Vector<Entity> launchableSmallCraft = ce.getLaunchableSmallCraft();
 
@@ -2137,20 +2153,20 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 		names[loop] = currentFighters.elementAt(loop).getShortName();
                 	}
                 	ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.frame, Messages.getString("MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
-                			currentBay.getType(), bayNum}), //$NON-NLS-1$
+                			currentBay.getType(), bayNum}), 
                 			question, names);
                 	choiceDialog.setVisible(true);
                 	if (choiceDialog.getAnswer() == true) {
                 		// load up the choices
                 		int[] unitsLaunched = choiceDialog.getChoices();
-                		for (int k = 0; k < unitsLaunched.length; k++) {
-                                bayChoices.add(currentFighters.elementAt(unitsLaunched[k]).getId());
+                		for (int element : unitsLaunched) {
+                                bayChoices.add(currentFighters.elementAt(element).getId());
                 		}
                 		choices.put(i, bayChoices);
                 		// now remove them (must be a better way?)
                 		for (int l = unitsLaunched.length; l > 0; l--) {
                 			currentFighters.remove(unitsLaunched[l - 1]);
-                		}              
+                		}
                 	}
                 }
                 bayNum++;
@@ -2206,7 +2222,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         if (choices.size() == 1) {
             if (client.game.getEntity(choices.elementAt(0)).mpUsed > 0) {
                 if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.RecoverSureDialog.title"), //$NON-NLS-1$
-                        Messages.getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$      
+                        Messages.getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$
                         )) {
                     return choices.elementAt(0);
                 }
@@ -2228,7 +2244,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             // if this unit is thrusting, make sure they are aware
             if (client.game.getEntity(choices.elementAt(choiceDialog.getChoice())).mpUsed > 0) {
                 if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.RecoverSureDialog.title"), //$NON-NLS-1$
-                        Messages.getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$      
+                        Messages.getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$
                         )) {
                     return choices.elementAt(choiceDialog.getChoice());
                 }
@@ -2238,7 +2254,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
         return -1;
     }
-    
+
     /**
      * @return the unit id that the player wants to join
      */
@@ -2303,8 +2319,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     // check for out of control and adjust buttons
     private void checkOOC() {
         final Entity ce = ce();
-        if (null == ce)
+        if (null == ce) {
             return;
+        }
 
         if (!(ce instanceof Aero)) {
             return;
@@ -2324,8 +2341,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     // check for fuel and adjust buttons
     private void checkFuel() {
         final Entity ce = ce();
-        if (null == ce)
+        if (null == ce) {
             return;
+        }
 
         if (!(ce instanceof Aero)) {
             return;
@@ -2348,8 +2366,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     // check for atmosphere and adjust buttons
     private void checkAtmosphere() {
         final Entity ce = ce();
-        if (null == ce)
+        if (null == ce) {
             return;
+        }
 
         if (!(ce instanceof Aero)) {
             return;
@@ -2369,7 +2388,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
     /**
      * Have the player select a target from the entities at the given coords.
-     * 
+     *
      * @param pos -
      *            the <code>Coords</code> containing targets.
      */
@@ -2445,7 +2464,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         if(null != cmd) {
             overallMoveType = cmd.getLastStepMovementType();
         }
-        
+
         // bring up dialog to dump bombs, then make a control roll and report
         // success or failure
         // should update mp available
@@ -2554,10 +2573,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     //
     // GameListener
     //
+    @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -2585,10 +2605,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
     }
 
+    @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -2607,12 +2628,13 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         final Entity ce = ce();
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
-        if (statusBarActionPerformed(ev, client))
+        if (statusBarActionPerformed(ev, client)) {
             return;
+        }
 
         if (!client.isMyTurn()) {
             // odd...
@@ -2690,7 +2712,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 return;
             }
 
-            
+
             int clear = Minefield.CLEAR_NUMBER_INFANTRY;
             int boom = Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT;
             // Does the entity has a minesweeper?
@@ -2705,7 +2727,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 }
             }
             */
-            
+
             //need to choose a mine
             Vector<Minefield> mfs = client.game.getMinefields(ce.getPosition());
             String[] choices = new String[mfs.size()];
@@ -2750,14 +2772,14 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if(!cmd.contains(MovePath.STEP_HULL_DOWN)) {
                 clearAllMoves();
             }
-            
+
             if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                 cmd.addStep(MovePath.STEP_GET_UP);
             }
             clientgui.bv.drawMovementData(ce, cmd);
         }else if (ev.getActionCommand().equals(MOVE_CAREFUL_STAND)) {
             clearAllMoves();
-            
+
             ce.setCarefulStand(true);
             if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                 cmd.addStep(MovePath.STEP_CAREFUL_STAND);
@@ -2827,8 +2849,8 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             // if this movement path goes down more than two altitudes
             // then add acceleration.
             // TODO: Is there somewhere better to put this?
-            if (ce instanceof Aero && null != cmd.getLastStep() 
-                    && cmd.getLastStep().getNDown() == 1 && cmd.getLastStep().getVelocity() < 12 
+            if (ce instanceof Aero && null != cmd.getLastStep()
+                    && cmd.getLastStep().getNDown() == 1 && cmd.getLastStep().getVelocity() < 12
                     && !(((Aero) ce).isSpheroid() || client.game.getPlanetaryConditions().isVacuum())) {
                 cmd.addStep(MovePath.STEP_ACC, true);
             }
@@ -2836,12 +2858,13 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_CLIMB_MODE)) {
             MoveStep ms = cmd.getLastStep();
-            if (ms != null && (ms.getType() == MovePath.STEP_CLIMB_MODE_ON || ms.getType() == MovePath.STEP_CLIMB_MODE_OFF))
+            if (ms != null && (ms.getType() == MovePath.STEP_CLIMB_MODE_ON || ms.getType() == MovePath.STEP_CLIMB_MODE_OFF)) {
                 cmd.removeLastStep();
-            else if (cmd.getFinalClimbMode())
+            } else if (cmd.getFinalClimbMode()) {
                 cmd.addStep(MovePath.STEP_CLIMB_MODE_OFF);
-            else
+            } else {
                 cmd.addStep(MovePath.STEP_CLIMB_MODE_ON);
+            }
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_LAY_MINE)) {
             clearAllMoves();
@@ -3020,13 +3043,14 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         // Collect the stranded entities into the vector.
         // TODO : get a better interface to "game" and "turn"
         Enumeration<Entity> entities = client.getSelectedEntities(new EntitySelector() {
-            private final IGame game = MovementDisplay.this.client.game;
-            private final GameTurn turn = MovementDisplay.this.client.game.getTurn();
-            private final int ownerId = MovementDisplay.this.client.getLocalPlayer().getId();
+            private final IGame game = client.game;
+            private final GameTurn turn = client.game.getTurn();
+            private final int ownerId = client.getLocalPlayer().getId();
 
             public boolean accept(Entity entity) {
-                if (turn.isValid(ownerId, entity, game))
+                if (turn.isValid(ownerId, entity, game)) {
                     return true;
+                }
                 return false;
             }
         });
@@ -3043,7 +3067,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if (null == transport) {
                 buffer = entity.getDisplayName();
             } else {
-                buffer = Messages.getString("MovementDisplay.EntityAt", new Object[] { entity.getDisplayName(), transport.getPosition().getBoardNum() }); //$NON-NLS-1$ 
+                buffer = Messages.getString("MovementDisplay.EntityAt", new Object[] { entity.getDisplayName(), transport.getPosition().getBoardNum() }); //$NON-NLS-1$
             }
             names[index] = buffer.toString();
         }
@@ -3073,7 +3097,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         final Entity ce = ce();
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
         if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -3118,7 +3142,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     public void keyReleased(KeyEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -3137,11 +3161,12 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     }
 
     // board view listener
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
         final Entity ce = ce();
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -3151,10 +3176,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
     }
 
+    @Override
     public void unitSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -3251,10 +3277,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     }
 
     private void setSearchlightEnabled(boolean enabled, boolean state) {
-        if (state)
+        if (state) {
             butSearchlight.setLabel(Messages.getString("MovementDisplay.butSearchlightOff")); //$NON-NLS-1$
-        else
+        } else {
             butSearchlight.setLabel(Messages.getString("MovementDisplay.butSearchlightOn")); //$NON-NLS-1$
+        }
         butSearchlight.setEnabled(enabled);
         clientgui.getMenuBar().setMoveSearchlightEnabled(enabled);
     }
@@ -3283,7 +3310,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         butLower.setEnabled(enabled);
         clientgui.getMenuBar().setMoveLowerEnabled(enabled);
     }
-    
+
     private void setRecklessEnabled(boolean enabled) {
         butReckless.setEnabled(enabled);
         clientgui.getMenuBar().setMoveRecklessEnabled(enabled);
@@ -3345,7 +3372,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         butRecover.setEnabled(enabled);
         clientgui.getMenuBar().setMoveRecoverEnabled(enabled);
     }
-    
+
     private void setJoinEnabled(boolean enabled) {
         butJoin.setEnabled(enabled);
         clientgui.getMenuBar().setMoveJoinEnabled(enabled);
@@ -3398,7 +3425,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
     /**
      * Retrieve the "Done" button of this object.
-     * 
+     *
      * @return the <code>java.awt.Button</code> that activates this object's
      *         "Done" action.
      */

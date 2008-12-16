@@ -507,10 +507,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
         hit.setBoxCars(roll == 12);
         hit.setCapMisCritMod(getCapMisMod());
         if(weapon.isWeaponGroup()) {
-        	hit.setSingleAV(attackValue);
+            hit.setSingleAV(attackValue);
         }
+        boolean isIndirect = wtype.hasModes() && weapon.curMode().equals("Indirect");
 
-        if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
+        if (!isIndirect && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                 .getCover(), Compute.targetSideTable(ae, entityTarget))) {
             // Weapon strikes Partial Cover.
             r = new Report(3460);

@@ -1,19 +1,20 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -24,8 +25,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Panel;
-import java.awt.Scrollbar;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -79,13 +78,14 @@ public class BoardEditor extends JComponent implements ItemListener,
         ListSelectionListener, ActionListener, DocumentListener,
         IMapSettingsObserver {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4689863639249616192L;
     JFrame frame = new JFrame();
     private Game game = new Game();
     IBoard board = game.getBoard();
     BoardView1 bv;
+    private Component bvc;
     private CommonMenuBar menuBar = new CommonMenuBar();
     private CommonAboutDialog about;
     private CommonHelpDialog help;
@@ -135,6 +135,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     public BoardEditor() {
         try {
             bv = new BoardView1(game);
+            bvc = bv.getComponent();
         } catch (IOException e) {
             JOptionPane
                     .showMessageDialog(
@@ -143,10 +144,12 @@ public class BoardEditor extends JComponent implements ItemListener,
             frame.dispose();
         }
         bv.addBoardViewListener(new BoardViewListenerAdapter() {
+            @Override
             public void hexMoused(BoardViewEvent b) {
                 Coords c = b.getCoords();
-                if (c.equals(lastClicked))
+                if (c.equals(lastClicked)) {
                     return;
+                }
                 lastClicked = c;
                 bv.cursor(c);
                 if ((b.getModifiers() & InputEvent.ALT_MASK) != 0) {
@@ -187,17 +190,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
         frame.getContentPane().setLayout(new BorderLayout());
 
-        // Create a scroll bars to surround the board view.
-        Panel scrollPane = new Panel();
-        scrollPane.setLayout(new BorderLayout());
-        Scrollbar vertical = new Scrollbar(Scrollbar.VERTICAL);
-        Scrollbar horizontal = new Scrollbar(Scrollbar.HORIZONTAL);
-        scrollPane.add(bv, BorderLayout.CENTER);
-        scrollPane.add(vertical, BorderLayout.EAST);
-        scrollPane.add(horizontal, BorderLayout.SOUTH);
-        frame.add(scrollPane, BorderLayout.CENTER);
-
-        // Assign the scrollbars to the board viewer.
+        frame.getContentPane().add(bvc, BorderLayout.CENTER);
         frame.getContentPane().add(this, BorderLayout.EAST);
         menuBar.addActionListener(this);
         frame.setJMenuBar(menuBar);
@@ -214,6 +207,7 @@ public class BoardEditor extends JComponent implements ItemListener,
 
         // when frame is closing, just hide it
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 frame.setVisible(false);
                 setMapVisible(false);
@@ -403,7 +397,7 @@ public class BoardEditor extends JComponent implements ItemListener,
 
     /**
      * Sets the current hex
-     * 
+     *
      * @param hex hex to set.
      */
     void setCurrentHex(IHex hex) {
@@ -470,8 +464,9 @@ public class BoardEditor extends JComponent implements ItemListener,
      * terrain in the list.
      */
     private void refreshTerrainFromList() {
-        if (lisTerrain.getSelectedIndex() == -1)
+        if (lisTerrain.getSelectedIndex() == -1) {
             return;
+        }
         ITerrain terrain = Terrains.getTerrainFactory().createTerrain(
                 (String) lisTerrain.getSelectedValue());
         terrain = curHex.getTerrain(terrain.getType());
@@ -489,6 +484,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         curfile = null;
         frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
         menuBar.setBoard(true);
+        bvc.doLayout();
     }
 
     public void updateMapSettings(MapSettings newSettings) {
@@ -502,11 +498,13 @@ public class BoardEditor extends JComponent implements ItemListener,
                         frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
         fc.setFileFilter(new FileFilter() {
+            @Override
             public boolean accept(File dir) {
                 return null != dir.getName()
                         && dir.getName().endsWith(".board"); //$NON-NLS-1$
             }
 
+            @Override
             public String getDescription() {
                 return ".board";
             }
@@ -612,11 +610,13 @@ public class BoardEditor extends JComponent implements ItemListener,
                         frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
         fc.setFileFilter(new FileFilter() {
+            @Override
             public boolean accept(File dir) {
                 return null != dir.getName()
                         && dir.getName().endsWith(".board"); //$NON-NLS-1$
             }
 
+            @Override
             public String getDescription() {
                 return ".board";
             }
@@ -653,10 +653,12 @@ public class BoardEditor extends JComponent implements ItemListener,
                         frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveAsImage"));
         fc.setFileFilter(new FileFilter() {
+            @Override
             public boolean accept(File dir) {
                 return null != dir.getName() && dir.getName().endsWith(".png"); //$NON-NLS-1$
             }
 
+            @Override
             public String getDescription() {
                 return ".png";
             }
@@ -837,7 +839,7 @@ public class BoardEditor extends JComponent implements ItemListener,
      */
     private class HexCanvas extends JPanel {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 3201928357525361191L;
 
@@ -845,6 +847,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             setPreferredSize(new Dimension(90, 90));
         }
 
+        @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
             if (curHex != null) {

@@ -23,6 +23,7 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
+import megamek.common.BombType;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
@@ -85,7 +86,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     private int swarmMissiles = 0;
 
     //bomb stuff
-    private ArrayList<Mounted> bombPayload = new ArrayList<Mounted>();
+    private int[] bombPayload = new int[BombType.B_NUM];
     
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
@@ -2575,11 +2576,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         this.swarmMissiles = swarmMissiles;
     }
     
-    public void setBombPayload(ArrayList<Mounted> bombs) {
-        this.bombPayload = bombs;
+    public int[] getBombPayload() {
+        return bombPayload;
     }
     
-    public ArrayList<Mounted> getBombPayload() {
-        return bombPayload;
+    public void setBombPayload(int[] load) {
+        this.bombPayload = load;
     }
 }

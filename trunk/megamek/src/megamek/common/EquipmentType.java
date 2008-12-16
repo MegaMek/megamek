@@ -356,6 +356,7 @@ public class EquipmentType {
             WeaponType.initializeTypes();
             AmmoType.initializeTypes();
             MiscType.initializeTypes();
+            BombType.initializeTypes();
         }
     }
 

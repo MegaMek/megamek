@@ -2494,7 +2494,7 @@ public class MechDisplay extends BufferedPanel {
                 heatL, sinksL, targSysL;
         public Choice chSensors;
         public TextArea unusedR, carrysR, heatR, sinksR;
-        public Button sinks2B, dumpBombs;
+        public Button sinks2B;
         public java.awt.List narcList;
         private int myMechId;
 
@@ -2553,11 +2553,6 @@ public class MechDisplay extends BufferedPanel {
             sinks2B.setActionCommand("changeSinks");
             sinks2B.addActionListener(this);
 
-            dumpBombs = new Button(Messages
-                    .getString("MechDisplay.DumpBombsLabel"));
-            dumpBombs.setActionCommand("dumpBombs");
-            dumpBombs.addActionListener(this);
-
             heatL = new TransparentLabel(
                     Messages.getString("MechDisplay.HeatEffects"), fm, Color.white, TransparentLabel.CENTER); //$NON-NLS-1$
             heatR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
@@ -2615,10 +2610,6 @@ public class MechDisplay extends BufferedPanel {
             c.weighty = 1.0;
             gridbag.setConstraints(carrysR, c);
             add(carrysR);
-
-            c.weighty = 0.0;
-            gridbag.setConstraints(dumpBombs, c);
-            add(dumpBombs);
 
             c.weighty = 0.0;
             gridbag.setConstraints(sinksL, c);
@@ -2715,12 +2706,10 @@ public class MechDisplay extends BufferedPanel {
             if (clientgui.getClient().getLocalPlayer().getId() != en
                     .getOwnerId()) {
                 sinks2B.setEnabled(false);
-                dumpBombs.setEnabled(false);
                 chSensors.setEnabled(false);
                 dontChange = true;
             } else {
                 sinks2B.setEnabled(true);
-                dumpBombs.setEnabled(true);
                 chSensors.setEnabled(true);
                 dontChange = false;
             }
@@ -2861,29 +2850,6 @@ public class MechDisplay extends BufferedPanel {
                 carrysR.append("\n"); //$NON-NLS-1$
             }
 
-            // show bomb loadout
-            if (en instanceof Aero) {
-                Aero a = (Aero) en;
-                int[] bombs = a.getBombChoices();
-                int[] bombDumps = a.getBombDumps();
-                int[] bombCrits = a.getBombCrits();
-                for (int i = 0; i < Aero.BOMB_NUM; i++) {
-                    if (bombs[i] > 0) {
-                        carrysR.append("" + bombs[i] + " " + Aero.bombNames[i]);
-                    }
-                    if (bombs[i] > 0 && bombDumps[i] > 0 && a.isDumpingBombs()) {
-                        carrysR.append(" (" + bombDumps[i] + " dumping)");
-                    }
-                    if (bombCrits[i] > 0) {
-                        carrysR.append(" (" + bombCrits[i] + " "
-                                + Aero.bombNames[i] + " critical hits)");
-                    }
-                    if (bombs[i] > 0 || bombCrits[i] > 0) {
-                        carrysR.append("\n");
-                    }
-                }
-            }
-
             // Show club(s).
             for (Mounted club : en.getClubs()) {
                 carrysR.append(club.getName());
@@ -2936,17 +2902,6 @@ public class MechDisplay extends BufferedPanel {
             } else {
                 // Non-Mechs cannot configure their heatsinks
                 sinks2B.setEnabled(false);
-            }
-
-            if (en instanceof Aero
-                    && ((Aero) en).hasBombs()
-                    && IGame.Phase.PHASE_DEPLOYMENT != clientgui.getClient().game
-                            .getPhase()) {
-                // TODO: I should at some point check and make sure that this
-                // unit has any bombs that it could dump
-                dumpBombs.setEnabled(!dontChange);
-            } else {
-                dumpBombs.setEnabled(false);
             }
 
             refreshSensorChoices(en);
@@ -3017,35 +2972,6 @@ public class MechDisplay extends BufferedPanel {
                 clientgui.getClient().sendUpdateEntity(
                         clientgui.getClient().game.getEntity(myMechId));
                 displayMech(clientgui.getClient().game.getEntity(myMechId));
-            }
-            if (ae.getActionCommand().equals("dumpBombs") && !dontChange) { //$NON-NLS-1$
-                // need a bomb dumping dialog
-
-                Aero a = (Aero) clientgui.getClient().game.getEntity(myMechId);
-
-                if (a.isPendingBombDump()) {
-                    String title = Messages
-                            .getString("MechDisplay.CancelBombDumping.title"); //$NON-NLS-1$
-                    String body = Messages
-                            .getString("MechDisplay.CancelBombDumping.message"); //$NON-NLS-1$
-                    if (clientgui.doYesNoDialog(title, body)) {
-                        a.setPendingBombDump(false);
-                    }
-                } else {
-                    BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(
-                            clientgui.frame,
-                            Messages
-                                    .getString("MechDisplay.BombDumpDialog.title"), //$NON-NLS-1$
-                            a.getBombChoices(), false, true);
-                    dumpBombsDialog.setVisible(true);
-                    if (dumpBombsDialog.getAnswer()) {
-                        a.setPendingBombDump(true);
-                        a.setPendingBombDumps(dumpBombsDialog.getChoices());
-
-                    }
-                }
-                clientgui.getClient().sendUpdateEntity(
-                        clientgui.getClient().game.getEntity(myMechId));
             }
         }
     }

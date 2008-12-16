@@ -73,7 +73,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         a.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
 
         //how many bombs can it carry
-        a.setMaxBombPoints(Math.round(a.getWeight()/5));
+        a.autoSetMaxBombPoints();
 
         //get a movement mode - lets try Aerodyne
         int nMotion = 16;
@@ -158,7 +158,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         loadEquipment(a, "Aft", Aero.LOC_AFT );
 
         //now organize the weapons into groups for capital fighters
-        organizeIntoGroups(a);
+        a.updateWeaponGroups();
 
         if(dataFile.exists("omni")) {
             a.setOmni(true);
@@ -219,6 +219,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         }
     }
 
+    /*
     protected void organizeIntoGroups(Aero a) throws EntityLoadingException {
     	//collect a hash of all the same weapons in each location by id
     	Map<String, Integer> groups = new HashMap<String, Integer>();
@@ -259,4 +260,5 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             }
         }
     }
+    */
 }

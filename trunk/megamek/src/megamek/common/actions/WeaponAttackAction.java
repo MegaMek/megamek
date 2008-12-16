@@ -17,6 +17,7 @@ package megamek.common.actions;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -83,6 +84,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     private int oldTargetId = -1;
     private int swarmMissiles = 0;
 
+    //bomb stuff
+    private ArrayList<Mounted> bombPayload = new ArrayList<Mounted>();
+    
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
     private transient ArrayList<Mounted> vCounterEquipment;
@@ -282,6 +286,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 isArtilleryDirect, isTargetECMAffected);
         if (reason != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
+        }
+        
+        //if this is a bombing attack then get the to hit and return
+        //TODO: this should probably be its own kind of attack
+        if ( wtype.hasFlag(WeaponType.F_SPACE_BOMB) ) {
+            toHit = Compute.getSpaceBombBaseToHit( ae, te, game );
+            return toHit;
         }
 
 
@@ -743,6 +754,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
+        if(wtype.hasFlag(WeaponType.F_ANTI_SHIP) && target instanceof Entity && te.getWeight() < 500) {
+            toHit.addModifier(4, "Anti-ship missile at a small target");
+        }
+        
         if (target instanceof Aero) {
 
             Aero a = (Aero) target;
@@ -1743,6 +1758,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && (target.getTargetType() != Targetable.TYPE_FLARE_DELIVER)) {
             return "Weapon can only deliver flares";
         }
+        
+        if(wtype.hasFlag(WeaponType.F_ANTI_SHIP) && !game.getBoard().inSpace() && ae.getElevation() < 4) {
+            return "Anti-ship missiles can only be used above elevation 3";
+        }
 
         // some weapons can only target infantry
         if (wtype.hasFlag(WeaponType.F_INFANTRY_ONLY)) {
@@ -1891,7 +1910,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 WeaponAttackAction prevAttack = (WeaponAttackAction)o;
                 if (prevAttack.getEntityId() == attackerId) {
                     if ( weaponId != prevAttack.getWeaponId() &&
-                            ae.getEquipment(prevAttack.getWeaponId()).getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {
+                            ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
                         return "Already space bombing";
                     }
                 }
@@ -2389,6 +2408,30 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && ae.getLocationStatus(weapon.getLocation()) != ILocationExposureStatus.WET) {
             return "Nearby terrain blocks leg weapons.";
         }
+        
+        if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {         
+            //no space bombing if other attacks already declared
+            for ( Enumeration i = game.getActions();
+                i.hasMoreElements(); ) {
+                Object o = i.nextElement();
+                if (!(o instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                if (prevAttack.getEntityId() == attackerId) {
+        
+                    // If the attacker fires another weapon, this attack fails.
+                    if ( weaponId != prevAttack.getWeaponId() ) {
+                        return "Other weapon attacks declared.";
+                    }
+                }
+            }           
+            toHit = Compute.getSpaceBombBaseToHit( ae, te, game );
+            // Return if the attack is impossible.
+            if ( ToHitData.IMPOSSIBLE == toHit.getValue() ) {
+                return toHit.getDesc();
+            }
+        }
 
         // Leg attacks, Swarm attacks, and
         // Mine Launchers don't use gunnery.
@@ -2530,5 +2573,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
     public void setSwarmMissiles(int swarmMissiles) {
         this.swarmMissiles = swarmMissiles;
+    }
+    
+    public void setBombPayload(ArrayList<Mounted> bombs) {
+        this.bombPayload = bombs;
+    }
+    
+    public ArrayList<Mounted> getBombPayload() {
+        return bombPayload;
     }
 }

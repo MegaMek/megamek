@@ -99,7 +99,14 @@ public class AmmoType extends EquipmentType {
     public static final int     T_STINGRAY          = 73;
     public static final int     T_PIRANHA           = 74;
     public static final int     T_TASER             = 75;
-    public static final int     NUM_TYPES           = 76;
+    public static final int     T_BOMB              = 76;
+    public static final int     T_AAA_MISSILE       = 77;
+    public static final int     T_AS_MISSILE        = 78;
+    public static final int     T_ASEW_MISSILE      = 79;
+    public static final int     T_LAA_MISSILE       = 80;
+    public static final int     T_RL_BOMB           = 81;
+    public static final int     T_ARROW_IV_BOMB     = 82;
+    public static final int     NUM_TYPES           = 83;
     
 
     // ammo flags
@@ -206,15 +213,15 @@ public class AmmoType extends EquipmentType {
 
     protected int damagePerShot;
     protected int rackSize;
-    private int ammoType;
-    private long munitionType;
+    protected int ammoType;
+    protected long munitionType;
     protected int shots;
     private double kgPerShot = -1;
 //  ratio for capital ammo
     private double ammoRatio;
 
     //Short name of Ammo or RS Printing
-    private String shortName = "";
+    protected String shortName = "";
     
     public AmmoType() {
         criticals = 1;

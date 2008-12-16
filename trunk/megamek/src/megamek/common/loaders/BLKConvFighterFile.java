@@ -64,7 +64,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
         a.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
             
         //how many bombs can it carry
-        a.setMaxBombPoints(Math.round(a.getWeight()/5));
+        a.autoSetMaxBombPoints();
         
         //get a movement mode - lets try Aerodyne
         int nMotion = 16;

@@ -97,7 +97,7 @@ public class BombPayloadDialog
         b_choice_arrow = new Choice();
         b_choice_rl = new Choice();
         b_choice_alamo = new Choice();
-        
+        /*
         for (int x = 0; x<=bombs[Aero.BOMB_HE]; x++) {
             b_choice_he.add(Integer.toString(x));
         }
@@ -133,7 +133,7 @@ public class BombPayloadDialog
         for (int x = 0; x<=bombs[Aero.BOMB_ALAMO]; x++) {
             b_choice_alamo.add(Integer.toString(x));
         }
-        
+        */
         b_choice_he.select(0);
         b_choice_cl.select(0);
         b_choice_lg.select(0);
@@ -371,6 +371,7 @@ public class BombPayloadDialog
         
         int[] choices = null;
         if(this.confirm) {
+            /*
             int[] temp = new int[ Aero.BOMB_NUM ];
             temp[Aero.BOMB_HE] = b_choice_he.getSelectedIndex();
             temp[Aero.BOMB_CL] = b_choice_cl.getSelectedIndex();
@@ -382,6 +383,7 @@ public class BombPayloadDialog
             temp[Aero.BOMB_RL] = b_choice_rl.getSelectedIndex();
             temp[Aero.BOMB_ALAMO] = b_choice_alamo.getSelectedIndex();
             choices = temp;
+            */
         }
        
         return choices;

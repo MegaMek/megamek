@@ -210,6 +210,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * A list of all mounted ammo.
      */
     protected ArrayList<Mounted> ammoList = new ArrayList<Mounted>();
+    
+    /**
+     * A list of all mounted bombs.
+     */
+    protected ArrayList<Mounted> bombList = new ArrayList<Mounted>();
 
     /**
      * A list of all remaining equipment.
@@ -2077,9 +2082,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     // indicate whether this is a bomb mount
-    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted, boolean isBomb, int points) throws LocationFullException {
+    public Mounted addBomb(EquipmentType etype, int loc) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
-        addEquipment(mounted, loc, rearMounted, isBomb, points);
+        addBomb(mounted, loc);
         return mounted;
     }
 
@@ -2106,13 +2111,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         addEquipment(mounted, loc, rearMounted);
     }
 
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted, boolean isBomb, int points) throws LocationFullException {
-        if (isBomb) {
-            mounted.setBombMounted(true);
-            mounted.setBombPoints(points);
-        }
-
-        addEquipment(mounted, loc, rearMounted);
+    protected void addBomb(Mounted mounted, int loc) throws LocationFullException {
+        mounted.setBombMounted(true);
+        addEquipment(mounted, loc, false);
     }
 
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted, boolean isWeaponGroup) throws LocationFullException {
@@ -2151,6 +2152,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         }
         if (mounted.getType() instanceof AmmoType) {
             ammoList.add(mounted);
+        }
+        if(mounted.getType() instanceof BombType) {
+            bombList.add(mounted);
         }
         if (mounted.getType() instanceof MiscType) {
             miscList.add(mounted);
@@ -2376,7 +2380,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         WeaponType wtype = (WeaponType) mounted.getType();
         AmmoType atype = (AmmoType) mountedAmmo.getType();
 
-        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT) && atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
+        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT) 
+                && atype.getAmmoType() == wtype.getAmmoType() 
+                && atype.getRackSize() == wtype.getRackSize()) {
             mounted.setLinked(mountedAmmo);
             success = true;
         }
@@ -2424,6 +2430,10 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
 
     public ArrayList<Mounted> getMisc() {
         return miscList;
+    }
+    
+    public ArrayList<Mounted> getBombs() {
+        return bombList;
     }
 
     /**

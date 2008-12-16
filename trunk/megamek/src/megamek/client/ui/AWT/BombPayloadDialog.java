@@ -15,6 +15,7 @@
 package megamek.client.ui.AWT;
 
 import java.awt.Button;
+import java.awt.Checkbox;
 import java.awt.Choice;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -28,8 +29,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Vector;
 
 import megamek.common.Aero;
+import megamek.common.BombType;
+import megamek.common.Mounted;
 
 /**
  * A dialog to determine bomb payload
@@ -52,16 +56,9 @@ public class BombPayloadDialog
     private Button butOK = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
     
-    private Choice b_choice_he;
-    private Choice b_choice_cl;
-    private Choice b_choice_lg;
-    private Choice b_choice_inf;
-    private Choice b_choice_mine;
-    private Choice b_choice_tag;
-    private Choice b_choice_arrow;
-    private Choice b_choice_rl;
-    private Choice b_choice_alamo;
-    
+    private Checkbox[] b_choices;
+    private Label[] b_labels;
+    private int maxRows;
     
     /**
      * Create and initialize the dialog.
@@ -79,6 +76,9 @@ public class BombPayloadDialog
     {
         super.setResizable(false);
 
+        //b_choices = new Checkbox[bombs.size()];
+        //b_labels = new Label[bombs.size()];
+        
         GridBagLayout gridbag = new GridBagLayout();
         setLayout(gridbag);
 
@@ -87,186 +87,38 @@ public class BombPayloadDialog
         c.gridheight = 1;
         c.gridx = 0;
 
-        //add the bomb choices
-        b_choice_he = new Choice();
-        b_choice_cl = new Choice();
-        b_choice_lg = new Choice();
-        b_choice_inf = new Choice();
-        b_choice_mine = new Choice();
-        b_choice_tag = new Choice();
-        b_choice_arrow = new Choice();
-        b_choice_rl = new Choice();
-        b_choice_alamo = new Choice();
+        int column = 0;
+        int row = 0;
+        int i = 0;
+        /*
+        for(Mounted bomb : bombs) {
         
-        for (int x = 0; x<=bombs[Aero.BOMB_HE]; x++) {
-            b_choice_he.add(Integer.toString(x));
-        }
-        
-        for (int x = 0; x<=bombs[Aero.BOMB_CL]; x++) {
-            b_choice_cl.add(Integer.toString(x));
-        }
-               
-        for (int x = 0; x<=bombs[Aero.BOMB_LG]; x++) {
-            b_choice_lg.add(Integer.toString(x));
-        }
-        
-        for (int x = 0; x<=bombs[Aero.BOMB_INF]; x++) {
-            b_choice_inf.add(Integer.toString(x));
-        }
-        
-        for (int x = 0; x<=bombs[Aero.BOMB_MINE]; x++) {
-            b_choice_mine.add(Integer.toString(x));
-        }
-        
-        for (int x = 0; x<=bombs[Aero.BOMB_TAG]; x++) {
-            b_choice_tag.add(Integer.toString(x));
-        }
-        
-        for (int x = 0; x<=bombs[Aero.BOMB_ARROW]; x++) {
-            b_choice_arrow.add(Integer.toString(x));
-        }
-        
-        for (int x = 0; x<=bombs[Aero.BOMB_RL]; x++) {
-            b_choice_rl.add(Integer.toString(x));
-        }
-        
-        for (int x = 0; x<=bombs[Aero.BOMB_ALAMO]; x++) {
-            b_choice_alamo.add(Integer.toString(x));
-        }
-        
-        b_choice_he.select(0);
-        b_choice_cl.select(0);
-        b_choice_lg.select(0);
-        b_choice_inf.select(0);
-        b_choice_mine.select(0);
-        b_choice_tag.select(0);
-        b_choice_arrow.select(0);
-        b_choice_rl.select(0);
-        b_choice_alamo.select(0);
-        
-        String heDesc = Messages.getString("CustomMechDialog.labBombHE");
-        Label lhe = new Label(heDesc);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(lhe, c);
-        add(lhe);
-        c.gridx = 1;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(b_choice_he, c);
-        add(b_choice_he);
-        
-        String clDesc = Messages.getString("CustomMechDialog.labBombCL");
-        Label lcl = new Label(clDesc);
-        c.gridx = 0;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(lcl, c);
-        add(lcl);
-        c.gridx = 1;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(b_choice_cl, c);
-        add(b_choice_cl);
-        
-        String lgDesc = Messages.getString("CustomMechDialog.labBombLG");
-        Label llg = new Label(lgDesc);
-        c.gridx = 0;
-        c.gridy = 2;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(llg, c);
-        add(llg);
-        c.gridx = 1;
-        c.gridy = 2;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(b_choice_lg, c);
-        add(b_choice_lg);
-        
-        if(!spaceBomb) {
+            b_labels[i] = new Label();
+            b_choices[i] = new Checkbox();
             
-            String infDesc = Messages.getString("CustomMechDialog.labBombInf");
-            Label linf = new Label(infDesc);
-            c.gridx = 0;
-            c.gridy = 3;
-            c.anchor = GridBagConstraints.EAST;
-            gridbag.setConstraints(linf, c);
-            add(linf);
-            c.gridx = 1;
-            c.gridy = 3;
-            c.anchor = GridBagConstraints.WEST;
-            gridbag.setConstraints(b_choice_inf, c);
-            add(b_choice_inf);
+            b_choices[i].setState(false);
+            b_labels[type].setText(BombType.getBombName(type));
             
-            String mineDesc = Messages.getString("CustomMechDialog.labBombMine");
-            Label lmine = new Label(mineDesc);
-            c.gridx = 0;
-            c.gridy = 4;
-            c.anchor = GridBagConstraints.EAST;
-            gridbag.setConstraints(lmine, c);
-            add(lmine);
-            c.gridx = 1;
-            c.gridy = 4;
-            c.anchor = GridBagConstraints.WEST;
-            gridbag.setConstraints(b_choice_mine, c);
-            add(b_choice_mine);
-            
-            if(bombDump) {
-                
-                String tagDesc = Messages.getString("CustomMechDialog.labBombTAG");
-                Label ltag = new Label(tagDesc);
-                c.gridx = 2;
-                c.gridy = 0;
-                c.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(ltag, c);
-                add(ltag);
-                c.gridx = 3;
-                c.gridy = 0;
-                c.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(b_choice_tag, c);
-                add(b_choice_tag);
-                
-                String arrowDesc = Messages.getString("CustomMechDialog.labBombArrow");
-                Label larrow = new Label(arrowDesc);
-                c.gridx = 2;
-                c.gridy = 1;
-                c.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(larrow, c);
-                add(larrow);
-                c.gridx = 3;
-                c.gridy = 1;
-                c.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(b_choice_arrow, c);
-                add(b_choice_arrow);
-                
-                String rlDesc = Messages.getString("CustomMechDialog.labBombRL");
-                Label lrl = new Label(rlDesc);
-                c.gridx = 2;
-                c.gridy = 2;
-                c.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(lrl, c);
-                add(lrl);
-                c.gridx = 3;
-                c.gridy = 2;
-                c.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(b_choice_rl, c);
-                add(b_choice_rl);
-                
-                String alamoDesc = Messages.getString("CustomMechDialog.labBombAlamo");
-                Label lalamo = new Label(alamoDesc);
-                c.gridx = 2;
-                c.gridy = 3;
-                c.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(lalamo, c);
-                add(lalamo);
-                c.gridx = 3;
-                c.gridy = 3;
-                c.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(b_choice_alamo, c);
-                add(b_choice_alamo);
+            if(row >= maxRows) {
+                row = 0;
+                column += 2;
             }
+            
+            c.gridx = column;
+            c.gridy = row;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(b_labels[type], c);
+            add(b_labels[type]);
+            
+            c.gridx = column + 1;
+            c.gridy = row;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(b_choices[type], c);
+            add(b_choices[type]);  
+            row++;
+            i++;
         }
-        
+        */
         // Allow the player to confirm or abort the choice.
         setupButtons();
         c.gridy++;
@@ -367,23 +219,22 @@ public class BombPayloadDialog
      *          array of the <code>int</code> indexes from the input array
      *          that match the selected choices is returned.
      */
-    public int[] getChoices() {
+    public Vector<Mounted> getChoices() {
         
-        int[] choices = null;
+        Vector<Mounted> choices = new Vector<Mounted>();
+        /*
         if(this.confirm) {
-            int[] temp = new int[ Aero.BOMB_NUM ];
-            temp[Aero.BOMB_HE] = b_choice_he.getSelectedIndex();
-            temp[Aero.BOMB_CL] = b_choice_cl.getSelectedIndex();
-            temp[Aero.BOMB_LG] = b_choice_lg.getSelectedIndex();
-            temp[Aero.BOMB_INF] = b_choice_inf.getSelectedIndex();
-            temp[Aero.BOMB_MINE] = b_choice_mine.getSelectedIndex();
-            temp[Aero.BOMB_TAG] = b_choice_tag.getSelectedIndex();
-            temp[Aero.BOMB_ARROW] = b_choice_arrow.getSelectedIndex();
-            temp[Aero.BOMB_RL] = b_choice_rl.getSelectedIndex();
-            temp[Aero.BOMB_ALAMO] = b_choice_alamo.getSelectedIndex();
-            choices = temp;
-        }
-       
+            int[] temp = new int[ BombType.B_NUM ];
+            for(int type = 0; type < BombType.B_NUM; type++) {
+                temp[type] = b_choices[type].getSelectedIndex();
+                int chosen = 0;
+                for(Mounted bombs : getBombs()) {
+                    
+                }
+            }
+            temp = choices;
+        }    
+        */
         return choices;
     }
 

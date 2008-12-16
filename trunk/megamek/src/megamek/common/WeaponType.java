@@ -91,6 +91,8 @@ public class WeaponType extends EquipmentType {
     public static final long F_B_POD          = 1l << 36;
     public static final long F_TASER          = 1l << 37;
     public static final long F_BA_WEAPON      = 1l << 38; //Currently only used by MegaMekLab
+    public static final long F_ANTI_SHIP      = 1l << 39; //for anti-ship missiles
+    public static final long F_SPACE_BOMB     = 1l << 40;
     
 //  add maximum range for AT2
     public static final int     RANGE_SHORT = 1;
@@ -906,6 +908,16 @@ public class WeaponType extends EquipmentType {
         addType(new SwordfishWeapon());
         addType(new MantaRayWeapon());
         
+        //bomb-related weapons
+        addType(new AAAMissileWeapon());
+        addType(new ASMissileWeapon());
+        addType(new ASEWMissileWeapon());
+        addType(new LAAMissileWeapon());
+        addType(new BombArrowIV());
+        addType(new BombTAG());
+        addType(new BombISRL10());
+        addType(new AlamoMissileWeapon());
+        addType(new SpaceBombAttack());
         
         //Weapon Bays
         addType(new LaserBayWeapon());

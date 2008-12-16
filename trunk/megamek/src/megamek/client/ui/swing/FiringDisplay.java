@@ -43,7 +43,6 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.swing.widget.IndexedCheckbox;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -691,6 +690,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setBombPayload(waa.getBombPayload());
                     newAttacks.addElement(waa2);
                 }
             } else {
@@ -715,6 +715,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setBombPayload(waa.getBombPayload());
                     newAttacks.addElement(waa2);
                 }
             }
@@ -798,6 +799,32 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
         // refresh weapon panel, as bth will have changed
         updateTarget();
     }
+    
+    private ArrayList<Mounted> doSpaceBombing() {            
+        ArrayList<Mounted> payload = new ArrayList<Mounted>();
+        if(!(ce() instanceof Aero)) {
+            return payload;
+        }      
+        Vector<Mounted> bombs = ((Aero)ce()).getSpaceBombs();
+        String[] bnames = new String[bombs.size()];
+        for(int i = 0; i < bnames.length; i++) {
+            bnames[i] = bombs.elementAt(i).getDesc(); 
+        }
+        ChoiceDialog bombsDialog = new ChoiceDialog(clientgui.frame,
+                    Messages
+                            .getString("FiringDisplay.SpaceBombNumberDialog.title"), //$NON-NLS-1$
+                            Messages
+                            .getString("FiringDisplay.SpaceBombNumberDialog.message"), //$NON-NLS-1$ 
+                    bnames);
+        bombsDialog.setVisible(true);       
+        if(bombsDialog.getAnswer()) {      
+            int[] choices = bombsDialog.getChoices();   
+            for(int j = 0; j < choices.length; j++) {
+                payload.add(bombs.elementAt(choices[j]));
+            }
+         } 
+        return payload;
+    }
 
     /**
      * Adds a weapon attack with the currently selected weapon to the attack queue.
@@ -856,6 +883,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
                     weaponNum, client.game);
         }
 
+        //if this is a space bomb attack, then bring up the payload dialog
+        if(mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
+            //if the user cancels, then return
+            ArrayList<Mounted> payload = doSpaceBombing();
+            if(payload.size() < 1) {
+                return;
+            }
+            waa.setBombPayload(payload);
+        }
+        
         if (mounted.getLinked() != null
                 && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
             Mounted ammoMount = mounted.getLinked();

@@ -53,6 +53,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Bay;
 import megamek.common.BipedMech;
 import megamek.common.Board;
+import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.CommonConstants;
 import megamek.common.Compute;
@@ -1199,7 +1200,7 @@ public class Server implements Runnable {
                         entity.applySantaAnna();
                     }
                     if(!(entity instanceof SmallCraft || entity instanceof Jumpship)) {
-                        //a.applyBombs();
+                        ((Aero)entity).applyBombs();
                     }
                 }
             }
@@ -14582,7 +14583,8 @@ public class Server implements Runnable {
             // standard to capital damage conversions
             if (te instanceof Aero && hit.getLocation() == Aero.LOC_AFT && !damageIS) {
                 for (Mounted mAmmo : te.getAmmo()) {
-                    if (mAmmo.isDumping() && !mAmmo.isDestroyed() && !mAmmo.isHit()) {
+                    if (mAmmo.isDumping() && !mAmmo.isDestroyed() 
+                            && !mAmmo.isHit() && !(mAmmo.getType() instanceof BombType)) {
                         // doh. explode it
                         vDesc.addAll(explodeEquipment(te, mAmmo.getLocation(), mAmmo));
                         mAmmo.setHit(true);
@@ -16977,20 +16979,20 @@ public class Server implements Runnable {
             case Aero.CRIT_BOMB:
                 // bomb destroyed
                 // go through bomb list and choose one
-                ArrayList<Integer> bombList = new ArrayList<Integer>();
-                int[] bombs = a.getBombChoices();
-                for (int i = 0; i < Aero.BOMB_NUM; i++) {
-                    for (int j = 0; j < bombs[i]; j++) {
-                        bombList.add(i);
+                ArrayList<Mounted> bombs = new ArrayList<Mounted>();
+                for (Mounted bomb : a.getBombs()) {
+                    if (!bomb.isDestroyed() && bomb.getType().isHittable() && bomb.getShotsLeft() > 0) {
+                        bombs.add(bomb);
                     }
                 }
-                if (bombList.size() > 0) {
-                    int bombtype = bombList.get(Compute.randomInt(bombList.size()));
-                    a.critBombs(bombtype);
+                if (bombs.size() > 0) {
+                    Mounted hitbomb = bombs.get(Compute.randomInt(bombs.size()));
+                    hitbomb.setShotsLeft(0);
+                    hitbomb.setDestroyed(true);
                     r = new Report(9130);
                     r.subject = a.getId();
                     r.newlines = 0;
-                    r.add(Aero.bombNames[bombtype]);
+                    r.add(hitbomb.getDesc());
                     vDesc.add(r);
                 } else {
                     r = new Report(9131);
@@ -17063,18 +17065,16 @@ public class Server implements Runnable {
                 r.newlines = 0;
                 ArrayList<Mounted> weapons = new ArrayList<Mounted>();
                 for (Mounted weap : a.getWeaponList()) {
-                    if (weap.getLocation() == loc && !weap.isDestroyed() && !weap.isBombMounted() && !weap.getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {
+                    if (weap.getLocation() == loc && !weap.isDestroyed() && weap.getType().isHittable()) {
                         weapons.add(weap);
                     }
                 }
                 //add in in hittable misc equipment
                 for(Mounted misc : a.getMisc()) {
-                	if (misc.getType().isHittable() && misc.getLocation() == loc && !misc.isDestroyed() && !misc.isBombMounted()
-                			&& !misc.getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {
+                	if (misc.getType().isHittable() && misc.getLocation() == loc && !misc.isDestroyed()) {
                         weapons.add(misc);
                     }
                 }
-                // this is kind of hack but I don't know why null isn't working
                 if (weapons.size() > 0) {
                     Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
                     // possibly check for an ammo explosion

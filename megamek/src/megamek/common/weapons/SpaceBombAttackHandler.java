@@ -17,17 +17,12 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.Building;
-import megamek.common.Entity;
+import megamek.common.Aero;
+import megamek.common.BombType;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.Report;
 import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -39,6 +34,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
      * 
      */
     private static final long serialVersionUID = -2439937071168853215L;
+    //int[] payload;
 
     /**
      * @param toHit
@@ -49,6 +45,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
             Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_NONE;
+        //payload = waa.getBombPayload();
     }
 
     /**
@@ -56,22 +53,45 @@ public class SpaceBombAttackHandler extends WeaponHandler {
      * 
      * @return an <code>int</code> representing the attack value at that range.
      */
+    @Override
     protected int calcAttackValue() {
-        return waa.getBombPayload().size();
+        int[] payload = waa.getBombPayload();
+        if(null == payload) {
+            return 0;
+        }
+        int nbombs = 0;
+        for(int i = 0; i < payload.length; i++) {
+            nbombs += payload[i];
+        }
+        return nbombs;
     }
     
     /**
      * Does this attack use the cluster hit table?
      * necessary to determine how Aero damage should be applied
      */
+    @Override
     protected boolean usesClusterTable() {
         return true;
     }
     
     @Override
     protected void useAmmo() {
-        for(Mounted bomb : waa.getBombPayload()) {
-            bomb.setShotsLeft(0);
+        int[] payload = waa.getBombPayload();
+        if(!(ae instanceof Aero) || null == payload) {
+            return;
+        }
+        for(int type = 0; type < payload.length; type++) {
+            for(int i = 0; i < payload[type]; i++) {
+                //find the first mounted bomb of this type and drop it
+                for(Mounted bomb : ((Aero)ae).getSpaceBombs()) {
+                    if(!bomb.isDestroyed() && bomb.getShotsLeft() > 0
+                           && ((BombType)bomb.getType()).getBombType() == type) {
+                        bomb.setShotsLeft(0);
+                        break;
+                    }
+                }
+            }
         }
         super.useAmmo();
     }

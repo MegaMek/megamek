@@ -46,6 +46,7 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
+import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
@@ -786,8 +787,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         updateTarget();
     }
     
-    private ArrayList<Mounted> doSpaceBombing() {            
-        ArrayList<Mounted> payload = new ArrayList<Mounted>();
+    private int[] doSpaceBombing() {            
+        int[] payload = new int[BombType.B_NUM];
         if(!(ce() instanceof Aero)) {
             return payload;
         }      
@@ -806,7 +807,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if(bombsDialog.getAnswer()) {      
             int[] choices = bombsDialog.getChoices();   
             for(int j = 0; j < choices.length; j++) {
-                payload.add(bombs.elementAt(choices[j]));
+                int type = ((BombType)bombs.elementAt(choices[j]).getType()).getBombType();
+                payload[type] = payload[type] + 1;
             }
          } 
         return payload;
@@ -876,11 +878,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         
         //if this is a space bomb attack, then bring up the payload dialog
         if(mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
-            //if the user cancels, then return
-            ArrayList<Mounted> payload = doSpaceBombing();
-            if(payload.size() < 1) {
-                return;
-            }
+            int[] payload = doSpaceBombing();
+            //TODO: return if the user cancels
             waa.setBombPayload(payload);
         }
 

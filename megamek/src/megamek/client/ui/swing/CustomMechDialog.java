@@ -1045,7 +1045,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 if(type > BombType.B_TAG && !client.game.getOptions().booleanOption("allow_level_3_ammo")) {
                     b_choices[type].setEnabled(false);
                 }
-                if(type == BombType.B_ASEW || type == BombType.B_ALAMO) {
+                if(type == BombType.B_ASEW || type == BombType.B_ALAMO || type == BombType.B_TAG) {
                     b_choices[type].setEnabled(false);
                 }
                 
@@ -1110,7 +1110,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 else if(type > BombType.B_TAG && !client.game.getOptions().booleanOption("allow_level_3_ammo")) {
                     b_choices[type].setEnabled(false);
                 }
-                else if(type == BombType.B_ASEW || type == BombType.B_ALAMO) {
+                else if(type == BombType.B_ASEW || type == BombType.B_ALAMO || type == BombType.B_TAG) {
                     b_choices[type].setEnabled(false);
                 }
                 else {

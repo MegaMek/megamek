@@ -2136,7 +2136,7 @@ public class Aero
         Vector<Mounted> bombs = new Vector<Mounted>();
         for(Mounted bomb : getBombs()) {
             BombType btype = (BombType)bomb.getType();
-            if(!bomb.isInoperable() 
+            if(!bomb.isInoperable() && bomb.getShotsLeft() > 0 
                     && (btype.getBombType() == BombType.B_HE || btype.getBombType() == BombType.B_CLUSTER 
                             || btype.getBombType() == BombType.B_LG || btype.getBombType() == BombType.B_ARROW)) {
                 bombs.add(bomb);

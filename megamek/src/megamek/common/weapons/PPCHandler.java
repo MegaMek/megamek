@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -39,7 +39,7 @@ import megamek.server.Server.DamageType;
  */
 public class PPCHandler extends EnergyWeaponHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5545991061428671743L;
 
@@ -52,11 +52,12 @@ public class PPCHandler extends EnergyWeaponHandler {
     public PPCHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
+    @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             int heat = wtype.getHeat();
@@ -70,11 +71,12 @@ public class PPCHandler extends EnergyWeaponHandler {
             }
         }
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.weapons.EnergyWeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         int nRange = ae.getPosition().distance(target.getPosition());
         float toReturn = wtype.getDamage(nRange);
@@ -101,16 +103,16 @@ public class PPCHandler extends EnergyWeaponHandler {
                 // Do Nothing for Short and Medium Range
             } else if (nRange <= wtype.getLongRange()) {
                 toReturn--;
-            } 
+            }
         }
-        
+
         if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
             toReturn -= 1;
         }
 
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = (int)Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE);
-        } else if (bDirect){            
+            toReturn = (int)Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
+        } else if (bDirect){
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
         }
         if (bGlancing) {
@@ -123,9 +125,10 @@ public class PPCHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
+    @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         // Resolve roll for disengaged field inhibitors on PPCs, if needed
         if (game.getOptions().booleanOption("tacops_ppc_inhibitors")

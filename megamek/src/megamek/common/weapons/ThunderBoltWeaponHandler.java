@@ -57,7 +57,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             toReturn = Math.floor(toReturn);
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor)){
-            toReturn = (float)Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE);
+            toReturn = (float)Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE, ((Infantry)target).isMechanized());
         } else if (bDirect){
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
         }

@@ -74,7 +74,7 @@ public class ATMHandler extends MissileWeaponHandler {
             toReturn = 2;
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS() : 0, Compute.WEAPON_CLUSTER_MISSILE);
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS() : 0, Compute.WEAPON_CLUSTER_MISSILE, ((Infantry)target).isMechanized());
             return (int) toReturn;
         }
             

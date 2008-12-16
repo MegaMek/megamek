@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -34,7 +34,7 @@ import megamek.server.Server;
 public class MekMortarHandler extends AmmoWeaponHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2073773899108954657L;
     String sSalvoType =" shell(s) ";
@@ -51,16 +51,17 @@ public class MekMortarHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             return 1;
         }
-        
+
         boolean targetHex = target.getTargetType() == Targetable.TYPE_HEX_CLEAR
                             || target.getTargetType() == Targetable.TYPE_HEX_IGNITE;
         int missilesHit;
@@ -92,10 +93,11 @@ public class MekMortarHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
             if (nMissilesModifier != 0) {
-                if (nMissilesModifier > 0)
+                if (nMissilesModifier > 0) {
                     r = new Report(3340);
-                else
+                } else {
                     r = new Report(3341);
+                }
                 r.subject = subjectId;
                 r.add(nMissilesModifier);
                 r.newlines = 0;
@@ -109,21 +111,23 @@ public class MekMortarHandler extends AmmoWeaponHandler {
         bSalvo = true;
         return missilesHit;
     }
-    
+
     /**
      * Calculate the clustering of the hits
-     * 
+     *
      * @return a <code>int</code> value saying how much hits are in each
      *         cluster of damage.
      */
+    @Override
     protected int calcnCluster() {
         return 2;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector, megamek.common.Entity, boolean)
      */
+    @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget, boolean bMissed) {
         // targeting a hex for clearing
         if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
@@ -139,18 +143,17 @@ public class MekMortarHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
-        double toReturn;
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = wtype.getRackSize();
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE);
-            if (bGlancing)
+            double toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize(), bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE, ((Infantry)target).isMechanized());
+            if (bGlancing) {
                 toReturn /= 2;
-            toReturn = Math.ceil(toReturn);
-            return (int)toReturn;
+            }
+            return (int)Math.floor(toReturn);
         }
         return 2;
     }

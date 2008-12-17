@@ -728,7 +728,7 @@ public class Compute {
         if (range == RangeType.RANGE_OUT) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
         }
-        if (distance == 0 && !isAttackerInfantry
+        if (distance == 0 && !isAttackerInfantry && !(ae instanceof Aero)
                 && !(ae instanceof Mech && ((Mech) ae).getGrappled() == target.getTargetId())) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Only infantry shoot at zero range");
         }
@@ -2200,7 +2200,21 @@ public class Compute {
             return true;
         }
         int facing = ae.isSecondaryArcWeapon(weaponId) ? ae.getSecondaryFacing() : ae.getFacing();
-        return Compute.isInArc(ae.getPosition(), facing, t.getPosition(), ae.getWeaponArc(weaponId));
+        Coords aPos = ae.getPosition();
+        Coords tPos = t.getPosition();
+        
+        //aeros in the same hex in space may still be able to fire at one another. First I need to translate
+        //their positions to see who was further back
+        if(game.getBoard().inSpace() && ae.getPosition().equals(t.getPosition()) 
+                && ae instanceof Aero && t instanceof Aero) {
+            if(((Aero)ae).shouldMoveBackHex((Aero)t)) {
+                aPos = ae.getPriorPosition();
+            }
+            if(((Aero)t).shouldMoveBackHex((Aero)ae)) {
+                tPos = ((Entity)t).getPosition();
+            }
+        }     
+        return Compute.isInArc(aPos, facing, tPos, ae.getWeaponArc(weaponId));
     }
 
     /**
@@ -2439,56 +2453,20 @@ public class Compute {
 
     public static int targetSideTable(Entity attacker, Targetable target) {
         Coords attackPos = attacker.getPosition();
-        //check to see if they are in the same position, if so find which one should be farther
-        //back
-        boolean usePrior = Compute.usePrior(attacker, target);
-
+        
+        boolean usePrior = false;
+        //aeros in the same hex in space need to adjust position to get side table
+        if(attacker.game.getBoard().inSpace() && attacker.getPosition().equals(target.getPosition()) 
+                && attacker instanceof Aero && target instanceof Aero) {
+            if(((Aero)attacker).shouldMoveBackHex((Aero)target)) {
+                attackPos = attacker.getPriorPosition();
+            }
+            usePrior = ((Aero)target).shouldMoveBackHex((Aero)attacker);
+        }  
         if(target instanceof Aero && attacker instanceof Aero) {
             return ((Entity)target).sideTable(attackPos, usePrior);
         }
-
         return target.sideTable(attackPos);
-    }
-
-    //determine who got there first when attacker and target share the same hex
-    //FIXME: this causes problem for bot calculations
-    public static boolean usePrior(Entity attacker, Targetable target) {
-
-        Coords targetPos = target.getPosition();
-        Coords attackPos = attacker.getPosition();
-        boolean usePrior = false;
-        if(attacker instanceof Aero && target instanceof Aero && attackPos.equals(targetPos)) {
-            int AttackerType = UnitType.determineUnitTypeCode(attacker);
-            int TargetType = UnitType.determineUnitTypeCode((Entity)target);
-            if(AttackerType < TargetType) {
-                usePrior = true;
-                attackPos = attacker.getPriorPosition();
-            } else if(AttackerType > TargetType) {
-                usePrior = true;
-                targetPos = ((Entity)target).getPriorPosition();
-            } else {
-                //same type of unit, check velocity
-                int attackVelocity = ((Aero)attacker).getCurrentVelocity();
-                int targetVelocity = ((Aero)target).getCurrentVelocity();
-                if(attackVelocity > targetVelocity) {
-                    usePrior = true;
-                    attackPos = attacker.getPriorPosition();
-                } else if(targetVelocity > attackVelocity) {
-                    usePrior = true;
-                    targetPos = ((Entity)target).getPriorPosition();
-                } else {
-                    if(((Aero)attacker).getWhoFirst() > ((Aero)target).getWhoFirst()) {
-                        usePrior = true;
-                        attackPos = attacker.getPriorPosition();
-                    } else {
-                        usePrior = true;
-                        targetPos = ((Entity)target).getPriorPosition();
-                    }
-                }
-            }
-        }
-
-        return usePrior;
     }
 
     /**

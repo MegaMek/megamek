@@ -642,7 +642,7 @@ public class Aero
     //need to figure out new arcs
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-        if(mounted.getType().getInternalName().equals(SPACE_BOMB_ATTACK)) {
+        if(mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
             return Compute.ARC_360;
         }
         int arc = Compute.ARC_NOSE;
@@ -667,16 +667,11 @@ public class Aero
             case LOC_AFT:
                 arc = Compute.ARC_AFT;
                 break;
+            case LOC_WINGS:
+                arc = Compute.ARC_NOSE;
+                break;
             default:
                 arc = Compute.ARC_360;
-        }
-        
-        //on capital fighters, wing arcs move either to nose or aft
-        if(isCapitalFighter() && (arc == Compute.ARC_LWING || arc == Compute.ARC_RWING)) {
-        	arc = Compute.ARC_NOSE;
-        }
-        if(isCapitalFighter() && (arc == Compute.ARC_LWINGA || arc == Compute.ARC_RWINGA)) {
-        	arc = Compute.ARC_AFT;
         }
         
         return rollArcs(arc);
@@ -2471,5 +2466,44 @@ public class Aero
                 }
             }
         }   
+    }
+    
+    /**
+     * In cases where another unit occupies the same hex, determine if this Aero should be moved
+     * back a hex for targeting purposes
+     * @param otherPos
+     * @return
+     */
+    public boolean shouldMoveBackHex(Aero other) {
+        if(null == getPosition()) {
+            return false;
+        } 
+        if(null == other.getPosition()) {
+            return false;
+        }
+        if(!getPosition().equals(other.getPosition())) {
+            return false;
+        }
+        int type = UnitType.determineUnitTypeCode(this);
+        int otherType = UnitType.determineUnitTypeCode(other);
+        int vel = this.getCurrentVelocity();
+        int otherVel = other.getCurrentVelocity();
+        if(type > otherType) {
+            return false;
+        } else if(type < otherType) {
+            return true;
+        }
+        //if we are still here then type is the same so compare velocity       
+        if(vel < otherVel) {
+            return false;
+        } else if(vel > otherVel) {
+            return true;
+        }
+        //if we are still here then type and velocity same, so roll for it
+        if(this.getWhoFirst() < other.getWhoFirst()) {
+            return false;                
+        } else {
+            return true;
+        }
     }
 }

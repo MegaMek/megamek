@@ -95,7 +95,6 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     protected boolean destroyed = false;
 
     protected Coords position = null;
-    protected Coords priorPosition = null;
 
     protected int facing = 0;
     protected int sec_facing = 0;
@@ -944,13 +943,19 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         this.position = position;
     }
 
+    /**
+     * 
+     * @return the coords of the second to last position on the passed through vector or the current position
+     * if too small
+     */
+    
     public Coords getPriorPosition() {
-        return priorPosition;
+        if(passedThrough.size() < 2) {
+            return getPosition();
+        }
+        return passedThrough.elementAt(passedThrough.size() - 2);
     }
 
-    public void setPriorPosition(Coords c) {
-        priorPosition = c;
-    }
 
     /**
      * Sets the current elevation of this entity above the ground.
@@ -6772,8 +6777,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
 
     public int sideTable(Coords src, boolean usePrior, int face) {
         Coords effectivePos = position;
-        if (usePrior && null != priorPosition) {
-            effectivePos = priorPosition;
+        if (usePrior) {
+            effectivePos = getPriorPosition();
         }
 
         if (src.equals(effectivePos)) {

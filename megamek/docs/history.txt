@@ -41,6 +41,7 @@ v0.33.37-dev (SVN)
 + fixed space bombing bomb expenditure
 + Bug: Aeros can't fire at targets in the same hex
 + Fixed Black Lion warship ammo
++ Bug: Improved Heavy Small Laser to set to Experimental
 
 v0.33.36 (2008-12-10, 19:00 UTC)
 + Bug in Mech BV calculation fixed

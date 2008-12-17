@@ -33,27 +33,27 @@ public class CLImprovedHeavySmallLaser extends LaserWeapon {
      */
     public CLImprovedHeavySmallLaser() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
-        this.name = "Improved Small Heavy Laser";
-        this.setInternalName("CLImprovedSmallHeavyLaser");
-        this.addLookupName("Clan Improved Small Heavy Laser");
-        this.heat = 3;
-        this.damage = 6;
-        this.shortRange = 2;
-        this.mediumRange = 4;
-        this.longRange = 6;
-        this.extremeRange = 8;
-        this.waterShortRange = 2;
-        this.waterMediumRange = 3;
-        this.waterLongRange = 5;
-        this.waterExtremeRange = 6;
-        this.tonnage = 0.5f;
-        this.criticals = 1;
-        this.bv = 19;
-        this.cost = 30000;
-        this.shortAV = 6;
-        this.maxRange = RANGE_SHORT;
-        this.explosionDamage = 3;
-        this.explosive = true;
+        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        name = "Improved Small Heavy Laser";
+        setInternalName("CLImprovedSmallHeavyLaser");
+        addLookupName("Clan Improved Small Heavy Laser");
+        heat = 3;
+        damage = 6;
+        shortRange = 2;
+        mediumRange = 4;
+        longRange = 6;
+        extremeRange = 8;
+        waterShortRange = 2;
+        waterMediumRange = 3;
+        waterLongRange = 5;
+        waterExtremeRange = 6;
+        tonnage = 0.5f;
+        criticals = 1;
+        bv = 19;
+        cost = 30000;
+        shortAV = 6;
+        maxRange = RANGE_SHORT;
+        explosionDamage = 3;
+        explosive = true;
     }
 }

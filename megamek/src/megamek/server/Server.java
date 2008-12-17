@@ -4336,8 +4336,6 @@ public class Server implements Runnable {
                                                                     // Vector<Coords>();
         passedThrough.add(curPos);
 
-        entity.setPriorPosition(curPos);
-
         // Compile the move
         md.compile(game, entity);
 
@@ -5589,7 +5587,6 @@ public class Server implements Runnable {
             // through
             if (!curPos.equals(lastPos)) {
                 passedThrough.add(curPos);
-                entity.setPriorPosition(lastPos);
             }
 
             // update lastPos, prevStep, prevFacing & prevHex

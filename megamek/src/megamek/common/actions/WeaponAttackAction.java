@@ -25,6 +25,7 @@ import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.BombType;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
@@ -1556,8 +1557,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 // if this is an aero attack using advanced movement rules then
                 // determine side differently
                 if (target instanceof Aero && game.useVectorMove()) {
-                    side = ((Entity) target).chooseSide(ae.getPosition(),
-                            Compute.usePrior(ae, target));
+                    boolean usePrior = false;
+                    Coords attackPos = ae.getPosition();
+                    if(game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())) {                       
+                        if(((Aero)ae).shouldMoveBackHex((Aero)target)) {
+                            attackPos = ae.getPriorPosition();
+                        }
+                        usePrior = ((Aero)target).shouldMoveBackHex((Aero)ae);
+                    }
+                    side = ((Entity) target).chooseSide(attackPos,usePrior);
                 }
                 if (side == ToHitData.SIDE_FRONT) {
                     toHit.addModifier(+1, "attack against nose");

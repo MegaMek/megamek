@@ -40,7 +40,7 @@ v0.33.37-dev (SVN)
 + TacOps LAA Missile Bomb Munitions
 + fixed space bombing bomb expenditure
 + Bug: Aeros can't fire at targets in the same hex
-+ Fixed: 
++ Fixed Black Lion warship ammo
 
 v0.33.36 (2008-12-10, 19:00 UTC)
 + Bug in Mech BV calculation fixed

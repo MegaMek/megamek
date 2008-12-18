@@ -337,7 +337,7 @@ public class MtfFile implements IMechLoader {
             }
             for (int x = 0; x < locationOrder.length; x++) {
                 mech.initializeArmor(Integer.parseInt(armorValues[x]
-                        .substring(9)), locationOrder[x]);
+                        .substring(armorValues[x].indexOf(':')+1)), locationOrder[x]);
             }
             for (int x = 0; x < rearLocationOrder.length; x++) {
                 mech.initializeRearArmor(Integer.parseInt(armorValues[x
@@ -590,9 +590,9 @@ public class MtfFile implements IMechLoader {
 
         int loc = -1;
         boolean rear = false;
-        if (location.trim().toLowerCase().startsWith("la armor:"))
+        if (location.trim().toLowerCase().startsWith("la armor:") || location.trim().toLowerCase().startsWith("fll armor:"))
             loc = Mech.LOC_LARM;
-        else if (location.trim().toLowerCase().startsWith("ra armor:"))
+        else if (location.trim().toLowerCase().startsWith("ra armor:") || location.trim().toLowerCase().startsWith("frl armor:"))
             loc = Mech.LOC_RARM;
         else if (location.trim().toLowerCase().startsWith("lt armor:"))
             loc = Mech.LOC_LT;
@@ -602,9 +602,9 @@ public class MtfFile implements IMechLoader {
             loc = Mech.LOC_CT;
         else if (location.trim().toLowerCase().startsWith("hd armor:"))
             loc = Mech.LOC_HEAD;
-        else if (location.trim().toLowerCase().startsWith("ll armor:"))
+        else if (location.trim().toLowerCase().startsWith("ll armor:") || location.trim().toLowerCase().startsWith("rll armor:"))
             loc = Mech.LOC_LLEG;
-        else if (location.trim().toLowerCase().startsWith("rl armor:"))
+        else if (location.trim().toLowerCase().startsWith("rl armor:") || location.trim().toLowerCase().startsWith("rrl armor:"))
             loc = Mech.LOC_RLEG;
         else if (location.trim().toLowerCase().startsWith("rtl armor:")) {
             loc = Mech.LOC_LT;

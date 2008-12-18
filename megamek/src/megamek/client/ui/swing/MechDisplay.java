@@ -1508,8 +1508,9 @@ public class MechDisplay extends JPanel {
                 }
                 if (nCur == -1) {
                     m_chAmmo.setEnabled(false);
+                } else {
+                    m_chAmmo.setSelectedIndex(nCur);
                 }
-                m_chAmmo.setSelectedIndex(nCur);
             }
 
             // send event to other parts of the UI which care

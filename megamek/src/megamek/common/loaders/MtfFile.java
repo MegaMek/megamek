@@ -561,16 +561,16 @@ public class MtfFile implements IMechLoader {
 
     private int getLocation(String location) {
 
-        if (location.trim().equalsIgnoreCase("Left Arm:"))
+        if (location.trim().equalsIgnoreCase("Left Arm:") || location.trim().equalsIgnoreCase("Front Left Leg:"))
             return Mech.LOC_LARM;
 
-        if (location.trim().equalsIgnoreCase("Right Arm:"))
+        if (location.trim().equalsIgnoreCase("Right Arm:") || location.trim().equalsIgnoreCase("Front Right Leg:"))
             return Mech.LOC_RARM;
 
-        if (location.equalsIgnoreCase("Left Leg:"))
+        if (location.equalsIgnoreCase("Left Leg:") || location.equalsIgnoreCase("Rear Left Leg:"))
             return Mech.LOC_LLEG;
 
-        if (location.trim().equalsIgnoreCase("Right Leg:"))
+        if (location.trim().equalsIgnoreCase("Right Leg:") || location.trim().equalsIgnoreCase("Rear Right Leg:"))
             return Mech.LOC_RLEG;
 
         if (location.trim().equalsIgnoreCase("Left Torso:"))
@@ -643,6 +643,10 @@ public class MtfFile implements IMechLoader {
                 || location.trim().equalsIgnoreCase("Right Arm:")
                 || location.equalsIgnoreCase("Left Leg:")
                 || location.trim().equalsIgnoreCase("Right Leg:")
+                || location.trim().equalsIgnoreCase("Front Left Leg:")
+                || location.trim().equalsIgnoreCase("Front Right Leg:")
+                || location.trim().equalsIgnoreCase("Rear Left Leg:")
+                || location.trim().equalsIgnoreCase("Rear Right Leg:")
                 || location.trim().equalsIgnoreCase("Left Torso:")
                 || location.trim().equalsIgnoreCase("Right Torso:")
                 || location.trim().equalsIgnoreCase("Center Torso:")

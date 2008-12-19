@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.37-dev (SVN)
+v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list
 + Bug: Thunderbolts in minimum range should do half damage, round down
 + Bug: physical attacks vs. flying VTOLs not possible at correct elevations

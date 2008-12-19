@@ -2098,7 +2098,7 @@ public class Aero
  
                 //some bombs need an associated weapon and if so
                 //they need a weapon for each bomb
-                if(null != BombType.getBombWeaponName(type)) {
+                if(null != BombType.getBombWeaponName(type) && type != BombType.B_ARROW && type != BombType.B_HOMING) {
                     try{
                         addBomb(EquipmentType.get(BombType.getBombWeaponName(type)),loc);                  
                     } catch (LocationFullException ex) {

@@ -44,6 +44,7 @@ v0.33.37-dev (SVN)
 + Bug: Improved Heavy Small Laser to set to Experimental
 + Bug: Quad mtfs not being parsed correctly if saved with MM SaveMek method.
 + Bug: Bomb Arrow IV replacing IS Arrow IV
++ No Arrow IV bomb weapons
 
 v0.33.36 (2008-12-10, 19:00 UTC)
 + Bug in Mech BV calculation fixed

@@ -24,7 +24,7 @@ import megamek.common.TechConstants;
 /**
  * @author Jay Lawson
  */
-public class BombArrowIV extends ISArrowIV {
+public class BombArrowIV extends AmmoWeapon {
 
 
     /**

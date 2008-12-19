@@ -209,7 +209,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * A list of all mounted ammo.
      */
     protected ArrayList<Mounted> ammoList = new ArrayList<Mounted>();
-    
+
     /**
      * A list of all mounted bombs.
      */
@@ -944,11 +944,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     /**
-     * 
+     *
      * @return the coords of the second to last position on the passed through vector or the current position
      * if too small
      */
-    
+
     public Coords getPriorPosition() {
         if(passedThrough.size() < 2) {
             return getPosition();
@@ -2133,14 +2133,14 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
 
         // add it to the proper sub-list
         if (mounted.getType() instanceof WeaponType) {
-        	totalWeaponList.add(mounted);
-        	if(mounted.isWeaponGroup()) {
-        		weaponGroupList.add(mounted);
-        	} else if(mounted.getType() instanceof BayWeapon) {
-        		weaponBayList.add(mounted);
-        	} else {
-        		weaponList.add(mounted);
-        	}
+            totalWeaponList.add(mounted);
+            if(mounted.isWeaponGroup()) {
+                weaponGroupList.add(mounted);
+            } else if(mounted.getType() instanceof BayWeapon) {
+                weaponBayList.add(mounted);
+            } else {
+                weaponList.add(mounted);
+            }
             if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 aTracker.addWeapon(mounted);
             }
@@ -2385,8 +2385,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         WeaponType wtype = (WeaponType) mounted.getType();
         AmmoType atype = (AmmoType) mountedAmmo.getType();
 
-        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT) 
-                && atype.getAmmoType() == wtype.getAmmoType() 
+        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
+                && atype.getAmmoType() == wtype.getAmmoType()
                 && atype.getRackSize() == wtype.getRackSize()) {
             mounted.setLinked(mountedAmmo);
             success = true;
@@ -2436,7 +2436,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public ArrayList<Mounted> getMisc() {
         return miscList;
     }
-    
+
     public ArrayList<Mounted> getBombs() {
         return bombList;
     }
@@ -3878,7 +3878,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         for (Mounted mounted : getTotalWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
 
-            if (wtype.getAmmoType() != AmmoType.T_NA && (wtype.getFlags() & WeaponType.F_INFANTRY) != WeaponType.F_INFANTRY) {
+            if (wtype.getAmmoType() != AmmoType.T_NA) {
                 if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() <= 0 || mounted.getLinked().isDumping()) {
                     loadWeaponWithSameAmmo(mounted);
                 }

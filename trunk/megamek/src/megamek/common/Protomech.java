@@ -29,7 +29,7 @@ import megamek.common.preference.PreferenceManager;
  */
 public class Protomech extends Entity implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1376410042751538158L;
 
@@ -49,8 +49,8 @@ public class Protomech extends Entity implements Serializable {
     private boolean bHasTorsoBGun;
 
     // weapon indices
-    private int TorsoAGunNum;
-    private int TorsoBGunNum;
+    private int torsoAGunNum;
+    private int torsoBGunNum;
 
     // locations
 
@@ -138,6 +138,7 @@ public class Protomech extends Entity implements Serializable {
         m_bHasNoMainGun = true;
     }
 
+    @Override
     protected int[] getNoOfSlots() {
         return NUM_OF_SLOTS;
     }
@@ -152,7 +153,7 @@ public class Protomech extends Entity implements Serializable {
 
     /**
      * Get the weapon in the given torso location (if any).
-     * 
+     *
      * @param isTorsoA - a <code>boolean</code> that is <code>true</code> if
      *            the weapon in "Torso A" is needed; <code>false</code> if the
      *            weapon in "Torso B" is needed.
@@ -163,9 +164,9 @@ public class Protomech extends Entity implements Serializable {
     public Mounted getTorsoWeapon(boolean isTorsoA) {
         Mounted weapon = null;
         if (isTorsoA && bHasTorsoAGun) {
-            weapon = getEquipment(TorsoAGunNum);
+            weapon = getEquipment(torsoAGunNum);
         } else if (!isTorsoA && bHasTorsoBGun) {
-            weapon = getEquipment(TorsoBGunNum);
+            weapon = getEquipment(torsoBGunNum);
         }
         return weapon;
     }
@@ -182,8 +183,9 @@ public class Protomech extends Entity implements Serializable {
      * Protos don't take piloting skill rolls.
      */
     //TODO: this is no longer true in TacOps. Protos sometimes make PSRs using their gunnery skill
+    @Override
     public PilotingRollData getBasePilotingRoll() {
-        return new PilotingRollData(this.getId(), TargetRoll.CHECK_FALSE,
+        return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,
                 "Protomeks never take PSRs.");
     }
 
@@ -208,23 +210,26 @@ public class Protomech extends Entity implements Serializable {
         return false;
     }
 
+    @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int wmp = getOriginalWalkMP();
-        int legCrits = this.getCritsHit(LOC_LEG);
+        int legCrits = getCritsHit(LOC_LEG);
         int j;
         if(null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if(weatherMod != 0) {
                 wmp = Math.max(wmp + weatherMod, 0);
-            } 
-        }      
+            }
+        }
         // Gravity, Protos can't get faster
-        if (gravity)
+        if (gravity) {
             j = applyGravityEffectsOnMP(wmp);
-        else
+        } else {
             j = wmp;
-        if (j < wmp)
+        }
+        if (j < wmp) {
             wmp = j;
+        }
         switch (legCrits) {
             case 0:
                 break;
@@ -264,6 +269,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Add in any piloting skill mods
      */
+    @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         return roll;
     }
@@ -271,6 +277,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Returns the number of total critical slots in a location
      */
+    @Override
     public int getNumberOfCriticals(int loc) {
         switch (loc) {
             case LOC_MAINGUN:
@@ -289,6 +296,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Override Entity#newRound() method.
      */
+    @Override
     public void newRound(int roundNumber) {
 
         setSecondaryFacing(getFacing());
@@ -299,28 +307,32 @@ public class Protomech extends Entity implements Serializable {
     /**
      * This pmech's jumping MP modified for missing jump jets and gravity.
      */
+    @Override
     public int getJumpMP() {
-        int jump = this.jumpMP;
-        int torsoCrits = this.getCritsHit(LOC_TORSO);
+        int jump = jumpMP;
+        int torsoCrits = getCritsHit(LOC_TORSO);
         switch (torsoCrits) {
             case 0:
                 break;
             case 1:
-                if (jump > 0)
+                if (jump > 0) {
                     jump--;
+                }
                 break;
             case 2:
                 jump = jump / 2;
                 break;
         }
-        if (applyGravityEffectsOnMP(jump) > jump)
+        if (applyGravityEffectsOnMP(jump) > jump) {
             return jump;
+        }
         return applyGravityEffectsOnMP(jump);
     }
 
     /**
      * Returns this mech's jumping MP, modified for missing & underwater jets.
      */
+    @Override
     public int getJumpMPWithTerrain() {
         if (getPosition() == null) {
             return getJumpMP();
@@ -334,6 +346,7 @@ public class Protomech extends Entity implements Serializable {
         return 0;
     }
 
+    @Override
     public int getHeatCapacityWithWater() {
         return getHeatCapacity();
     }
@@ -343,11 +356,13 @@ public class Protomech extends Entity implements Serializable {
      * have no heat. //FIXME However, the number of heat sinks they have IS
      * importnat... For cost and validation purposes.
      */
+    @Override
     public int getHeatCapacity() {
 
         return 999;
     }
 
+    @Override
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
@@ -355,6 +370,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Returns the name of the type of movement used. This is pmech-specific.
      */
+    @Override
     public String getMovementString(int mtype) {
         switch (mtype) {
             case IEntityMovementType.MOVE_NONE:
@@ -373,6 +389,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Returns the name of the type of movement used. This is pmech-specific.
      */
+    @Override
     public String getMovementAbbr(int mtype) {
         switch (mtype) {
             case IEntityMovementType.MOVE_NONE:
@@ -388,10 +405,12 @@ public class Protomech extends Entity implements Serializable {
         }
     }
 
+    @Override
     public boolean canChangeSecondaryFacing() {
-        return !(this.getCritsHit(LOC_LEG) > 2);
+        return !(getCritsHit(LOC_LEG) > 2);
     }
 
+    @Override
     public int getEngineCritHeat() {
         return 0;
     }
@@ -399,6 +418,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Can this pmech torso twist in the given direction?
      */
+    @Override
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
@@ -410,6 +430,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Return the nearest valid direction to torso twist in
      */
+    @Override
     public int clipSecondaryFacing(int dir) {
         if (isValidSecondaryFacing(dir)) {
             return dir;
@@ -419,10 +440,12 @@ public class Protomech extends Entity implements Serializable {
         return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
     }
 
+    @Override
     public boolean hasRearArmor(int loc) {
         return false;
     }
 
+    @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
         return getRunMP(gravity, ignoreheat);
     }
@@ -430,6 +453,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Returns the Compute.ARC that the weapon fires into.
      */
+    @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
         // rear mounted?
@@ -455,6 +479,7 @@ public class Protomech extends Entity implements Serializable {
      * Returns true if this weapon fires into the secondary facing arc. If
      * false, assume it fires into the primary.
      */
+    @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
         return true;
     }
@@ -462,11 +487,13 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Rolls up a hit location
      */
+    @Override
     public HitData rollHitLocation(int table, int side) {
         return rollHitLocation(table, side, LOC_NONE,
                 IAimingModes.AIM_MODE_NONE);
     }
 
+    @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation,
             int aimingMode) {
         int roll = -1;
@@ -527,6 +554,7 @@ public class Protomech extends Entity implements Serializable {
      * Protos can't transfer crits.
      */
 
+    @Override
     public boolean canTransferCriticals(int loc) {
         return false;
     }
@@ -534,6 +562,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Gets the location that excess damage transfers to
      */
+    @Override
     public HitData getTransferLocation(HitData hit) {
         switch (hit.getLocation()) {
             case LOC_NMISS:
@@ -556,6 +585,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Gets the location that is destroyed recursively
      */
+    @Override
     public int getDependentLocation(int loc) {
 
         return LOC_NONE;
@@ -563,7 +593,7 @@ public class Protomech extends Entity implements Serializable {
 
     /**
      * Sets the internal structure for the pmech.
-     * 
+     *
      * @param head head
      * @param torso center torso
      * @param arm right/left arm
@@ -583,6 +613,7 @@ public class Protomech extends Entity implements Serializable {
      * Set the internal structure to the appropriate value for the pmech's
      * weight class
      */
+    @Override
     public void autoSetInternal() {
         int mainGunIS = hasMainGun() ? 1 : IArmorState.ARMOR_NA;
         switch ((int) weight) {
@@ -617,11 +648,13 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Creates a new mount for this equipment and adds it in.
      */
+    @Override
     public Mounted addEquipment(EquipmentType etype, int loc)
             throws LocationFullException {
         return addEquipment(etype, loc, false, -1);
     }
 
+    @Override
     public Mounted addEquipment(EquipmentType etype, int loc,
             boolean rearMounted) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
@@ -629,6 +662,7 @@ public class Protomech extends Entity implements Serializable {
         return mounted;
     }
 
+    @Override
     public Mounted addEquipment(EquipmentType etype, int loc,
             boolean rearMounted, int shots) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
@@ -640,6 +674,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Mounts the specified weapon in the specified location.
      */
+    @Override
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted,
             int shots) throws LocationFullException {
         if (mounted.getType() instanceof AmmoType) {
@@ -667,6 +702,7 @@ public class Protomech extends Entity implements Serializable {
                     mounted.setLocation(loc, rearMounted);
                     equipmentList.add(mounted);
                     weaponList.add(mounted);
+                    totalWeaponList.add(mounted);
                     break;
                 case LOC_LARM:
                     if (bHasLArmGun) {
@@ -676,6 +712,7 @@ public class Protomech extends Entity implements Serializable {
                     mounted.setLocation(loc, rearMounted);
                     equipmentList.add(mounted);
                     weaponList.add(mounted);
+                    totalWeaponList.add(mounted);
                     break;
                 case LOC_RARM:
                     if (bHasRArmGun) {
@@ -685,6 +722,7 @@ public class Protomech extends Entity implements Serializable {
                     mounted.setLocation(loc, rearMounted);
                     equipmentList.add(mounted);
                     weaponList.add(mounted);
+                    totalWeaponList.add(mounted);
                     break;
                 case LOC_TORSO:
                     if (bHasTorsoAGun) {
@@ -696,13 +734,15 @@ public class Protomech extends Entity implements Serializable {
                         mounted.setLocation(loc, rearMounted);
                         equipmentList.add(mounted);
                         weaponList.add(mounted);
-                        TorsoBGunNum = getEquipmentNum(mounted);
+                        totalWeaponList.add(mounted);
+                        torsoBGunNum = getEquipmentNum(mounted);
                     } else {
                         bHasTorsoAGun = true;
                         mounted.setLocation(loc, rearMounted);
                         equipmentList.add(mounted);
                         weaponList.add(mounted);
-                        TorsoAGunNum = getEquipmentNum(mounted);
+                        totalWeaponList.add(mounted);
+                        torsoAGunNum = getEquipmentNum(mounted);
                     }
                     break;
             }
@@ -710,11 +750,12 @@ public class Protomech extends Entity implements Serializable {
             super.addEquipment(mounted, loc, rearMounted);
         }
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#calculateBattleValue()
      */
+    @Override
     public int calculateBattleValue() {
         return calculateBattleValue(false, false);
     }
@@ -722,6 +763,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Calculates the battle value of this pmech.
      */
+    @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
@@ -738,8 +780,9 @@ public class Protomech extends Entity implements Serializable {
             EquipmentType etype = mounted.getType();
 
             // don't count destroyed equipment
-            if (mounted.isDestroyed())
+            if (mounted.isDestroyed()) {
                 continue;
+            }
 
             if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS))
                     || (etype instanceof AmmoType && ((AmmoType) etype)
@@ -769,8 +812,9 @@ public class Protomech extends Entity implements Serializable {
             double dBV = wtype.getBV(this);
 
             // don't count destroyed equipment
-            if (mounted.isDestroyed())
+            if (mounted.isDestroyed()) {
                 continue;
+            }
 
             // don't count AMS, it's defensive
             if (wtype.hasFlag(WeaponType.F_AMS)) {
@@ -825,8 +869,9 @@ public class Protomech extends Entity implements Serializable {
             AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0)
+            if (mounted.getShotsLeft() == 0) {
                 continue;
+            }
 
             // don't count AMS, it's defensive
             if (atype.getAmmoType() == AmmoType.T_AMS) {
@@ -843,9 +888,9 @@ public class Protomech extends Entity implements Serializable {
                     || atype.getMunitionType() == AmmoType.M_HOMING) {
                 Player tmpP = getOwner();
                 // Okay, actually check for friendly TAG.
-                if (tmpP.hasTAG())
+                if (tmpP.hasTAG()) {
                     tagBV += atype.getBV(this);
-                else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
+                } else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
                     for (Enumeration<Team> e = game.getTeams(); e
                             .hasMoreElements();) {
                         Team m = e.nextElement();
@@ -862,8 +907,9 @@ public class Protomech extends Entity implements Serializable {
                 }
             }
             String key = atype.getAmmoType() + ":" + atype.getRackSize();
-            if (!keys.contains(key))
+            if (!keys.contains(key)) {
                 keys.add(key);
+            }
             if (!ammo.containsKey(key)) {
                 ammo.put(key, atype.getProtoBV());
             } else {
@@ -876,10 +922,11 @@ public class Protomech extends Entity implements Serializable {
         // type on the mech is reached
         for (String key : keys) {
             if (weaponsForExcessiveAmmo.containsKey(key)
-                    && ammo.get(key) > weaponsForExcessiveAmmo.get(key))
+                    && ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
                 ammoBV += weaponsForExcessiveAmmo.get(key);
-            else
+            } else {
                 ammoBV += ammo.get(key);
+            }
         }
         weaponBV += ammoBV;
 
@@ -890,15 +937,17 @@ public class Protomech extends Entity implements Serializable {
             MiscType mtype = (MiscType) mounted.getType();
 
             // don't count destroyed equipment
-            if (mounted.isDestroyed())
+            if (mounted.isDestroyed()) {
                 continue;
+            }
 
             if (mtype.hasFlag(MiscType.F_ECM)
                     || mtype.hasFlag(MiscType.F_AP_POD)
                     || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) // targ counted with
-                                                            // weapons
+                    || mtype.hasFlag(MiscType.F_TARGCOMP)) {
+                // weapons
                 continue;
+            }
             oEquipmentBV += mtype.getBV(this);
         }
 
@@ -928,6 +977,7 @@ public class Protomech extends Entity implements Serializable {
         return retVal;
     }
 
+    @Override
     public Vector<Report> victoryReport() {
         Vector<Report> vDesc = new Vector<Report>();
 
@@ -963,10 +1013,12 @@ public class Protomech extends Entity implements Serializable {
         return vDesc;
     }
 
+    @Override
     public int getMaxElevationChange() {
         return 1;
     }
 
+    @Override
     public int getArmor(int loc, boolean rear) {
         if (loc == LOC_NMISS) {
             return IArmorState.ARMOR_NA;
@@ -974,6 +1026,7 @@ public class Protomech extends Entity implements Serializable {
         return super.getArmor(loc, rear);
     }
 
+    @Override
     public int getInternal(int loc) {
         if (loc == LOC_NMISS) {
             return IArmorState.ARMOR_NA;
@@ -981,10 +1034,12 @@ public class Protomech extends Entity implements Serializable {
         return super.getInternal(loc);
     }
 
+    @Override
     protected String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
 
+    @Override
     public String getLocationAbbr(int loc) {
         if (loc == LOC_NMISS) {
             return "a near miss";
@@ -1009,6 +1064,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Returns the number of locations in the entity
      */
+    @Override
     public int locations() {
         if (m_bHasNoMainGun) {
             return NUM_PMECH_LOCATIONS - 1;
@@ -1019,16 +1075,19 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Protomechs have no piloting skill (set to 5 for BV purposes)
      */
+    @Override
     public void setCrew(Pilot p) {
         super.setCrew(p);
-        this.getCrew().setPiloting(5);
+        getCrew().setPiloting(5);
     }
 
+    @Override
     public boolean canCharge() {
         // Protos can't Charge
         return false;
     }
 
+    @Override
     public boolean canDFA() {
         // Protos can't DFA
         return false;
@@ -1037,6 +1096,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * @return The cost in C-Bills of the ProtoMech in question.
      */
+    @Override
     public double getCost() {
         double retVal = 0;
 
@@ -1063,8 +1123,9 @@ public class Protomech extends Entity implements Serializable {
         retVal += 540 * weight;
 
         // Engine cost is based on tonnage and rating.
-        if (getEngine() != null)
+        if (getEngine() != null) {
             retVal += (5000 * weight * getEngine().getRating()) / 75;
+        }
 
         // Jump jet cost is based on tonnage and jump MP.
         retVal += weight * getJumpMP() * getJumpMP() * 200;
@@ -1087,75 +1148,91 @@ public class Protomech extends Entity implements Serializable {
         return retVal;
     }
 
+    @Override
     public boolean doomedInVacuum() {
         return false;
     }
-    
+
+    @Override
     public boolean doomedOnGround() {
         return false;
     }
-    
+
+    @Override
     public boolean doomedInAtmosphere() {
         return true;
     }
-    
+
+    @Override
     public boolean doomedInSpace() {
         return true;
     }
-    
+
+    @Override
     public boolean hasActiveEiCockpit() {
         return (super.hasActiveEiCockpit() && (getCritsHit(LOC_HEAD) == 0));
     }
 
+    @Override
     public boolean canAssaultDrop() {
         return true;
     }
-    
-    public boolean isHexProhibited(IHex hex) {
-        if (hex.containsTerrain(Terrains.IMPASSABLE))
-            return true;
 
-        if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+    @Override
+    public boolean isHexProhibited(IHex hex) {
+        if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
+        }
+
+        if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
+            return true;
+        }
 
         return hex.terrainLevel(Terrains.WOODS) > 2 || hex.terrainLevel(Terrains.JUNGLE) > 2;
     }
 
+    @Override
     public boolean isNuclearHardened() {
         return true;
     }
+    @Override
     public void setGrappled(int id, boolean attacker) {
         grappled_id = id;
         isGrappleAttacker = attacker;
     }
 
+    @Override
     public boolean isGrappleAttacker() {
         return isGrappleAttacker;
     }
 
+    @Override
     public int getGrappled() {
         return grappled_id;
     }
 
+    @Override
     public boolean isEligibleForMovement() {
         if (grappled_id != Entity.NONE) {
             return false;
         }
         return super.isEligibleForMovement();
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
+    @Override
     public int getTotalCommGearTons() {
         return 0;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#checkSkid(int, megamek.common.IHex, int, megamek.common.MoveStep, int, int, megamek.common.Coords, megamek.common.Coords, boolean, int)
      */
+    @Override
     public PilotingRollData checkSkid(int moveType, IHex prevHex, int overallMoveType, MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
         return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE, "ProtoMechs can't skid");
     }

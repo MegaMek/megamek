@@ -46,6 +46,7 @@ v0.33.37-dev (SVN)
 + Bug: Bomb Arrow IV replacing IS Arrow IV
 + No Arrow IV bomb weapons
 + Bug: protomechs not correctly loading ammo into weapons
++ Patch 2246602: More Weapons for CustomBattleArmor Dialog
 
 v0.33.36 (2008-12-10, 19:00 UTC)
 + Bug in Mech BV calculation fixed

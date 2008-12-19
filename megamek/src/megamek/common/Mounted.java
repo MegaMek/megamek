@@ -46,7 +46,7 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean hotloaded = false; // Hotloading for ammoType
 
     private int mode; // Equipment's current state. On or Off. Sixshot or
-                        // Fourshot, etc
+    // Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
 
     private int location;
@@ -71,7 +71,7 @@ public class Mounted implements Serializable, RoundUpdated {
     private Vector<Integer> bayWeapons = new Vector<Integer>();
     private Vector<Integer> bayAmmo = new Vector<Integer>();
 
-	//on capital fighters and squadrons some weapon mounts actually represent multiple weapons of the same type
+    //on capital fighters and squadrons some weapon mounts actually represent multiple weapons of the same type
     //provide a boolean indicating this type of mount and the number of weapons represented
     private boolean weaponGroup = false;
     private int nweapons = 1;
@@ -171,8 +171,8 @@ public class Mounted implements Serializable, RoundUpdated {
 
         if (type == null) {
             System.err
-                    .println("Mounted.restore: could not restore equipment type \""
-                            + typeName + "\"");
+            .println("Mounted.restore: could not restore equipment type \""
+                    + typeName + "\"");
         }
     }
 
@@ -247,7 +247,7 @@ public class Mounted implements Serializable, RoundUpdated {
             if ( newMode >= type.getModesCount() ){
                 return false;
             }
-                /*megamek.debug.Assert.assertTrue(newMode >= 0
+            /*megamek.debug.Assert.assertTrue(newMode >= 0
                     && newMode < type.getModesCount(), "Invalid mode, mode="
                     + newMode + ", modesCount=" + type.getModesCount());*/
 
@@ -301,30 +301,30 @@ public class Mounted implements Serializable, RoundUpdated {
     public String getDesc() {
         StringBuffer desc;
         switch (getMineType()) {
-            case MINE_CONVENTIONAL:
-                desc = new StringBuffer(Messages
-                        .getString("Mounted.ConventionalMine"));
-                break;
-            case MINE_VIBRABOMB:
-                desc = new StringBuffer(Messages
-                        .getString("Mounted.VibraBombMine"));
-                break;
-            case MINE_COMMAND_DETONATED:
-                desc = new StringBuffer(Messages
-                        .getString("Mounted.CommandDetonatedMine"));
-                break;
-            case MINE_ACTIVE:
-                desc = new StringBuffer(Messages.getString("Mounted.ActiveMine"));
-                break;
-            case MINE_INFERNO:
-                desc = new StringBuffer(Messages.getString("Mounted.InfernoMine"));
-                break;
-            case -1:
-            default:
-                desc = new StringBuffer(type.getDesc());
+        case MINE_CONVENTIONAL:
+            desc = new StringBuffer(Messages
+                    .getString("Mounted.ConventionalMine"));
+            break;
+        case MINE_VIBRABOMB:
+            desc = new StringBuffer(Messages
+                    .getString("Mounted.VibraBombMine"));
+            break;
+        case MINE_COMMAND_DETONATED:
+            desc = new StringBuffer(Messages
+                    .getString("Mounted.CommandDetonatedMine"));
+            break;
+        case MINE_ACTIVE:
+            desc = new StringBuffer(Messages.getString("Mounted.ActiveMine"));
+            break;
+        case MINE_INFERNO:
+            desc = new StringBuffer(Messages.getString("Mounted.InfernoMine"));
+            break;
+        case -1:
+        default:
+            desc = new StringBuffer(type.getDesc());
         }
         if(isWeaponGroup()) {
-        	desc.append(" (").append(getNWeapons()).append(")");
+            desc.append(" (").append(getNWeapons()).append(")");
         }
         if (destroyed) {
             desc.insert(0, "*");
@@ -470,7 +470,7 @@ public class Mounted implements Serializable, RoundUpdated {
                         && !m.isBreached()
                         && m.getType().hasFlag(WeaponType.F_MG)
                         && ((WeaponType) m.getType()).getRackSize() == ((WeaponType) getType())
-                                .getRackSize()) {
+                        .getRackSize()) {
                     nShots++;
                 }
             }
@@ -720,7 +720,7 @@ public class Mounted implements Serializable, RoundUpdated {
                 return 0;
             }
 
-           return wtype.getExplosionDamage();
+            return wtype.getExplosionDamage();
 
         }
 
@@ -1011,29 +1011,29 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public boolean isWeaponGroup() {
-    	return weaponGroup;
+        return weaponGroup;
     }
 
     public void setWeaponGroup(boolean b) {
-    	weaponGroup = b;
+        weaponGroup = b;
     }
 
     public int getNWeapons() {
-    	return nweapons;
+        return nweapons;
     }
 
     public void setNWeapons(int i) {
-    	//make sure this falls between 1 and 40
-    	if(i < 0) {
-    		i = 1;
-    	}
-    	if(i > 40) {
-    		i = 40;
-    	}
-    	nweapons = i;
+        //make sure this falls between 1 and 40
+        if(i < 0) {
+            i = 1;
+        }
+        if(i > 40) {
+            i = 40;
+        }
+        nweapons = i;
     }
 
     public void unlink() {
-    	linked = null;
+        linked = null;
     }
 }

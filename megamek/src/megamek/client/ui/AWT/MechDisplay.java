@@ -518,7 +518,7 @@ public class MechDisplay extends BufferedPanel {
 
         private static final String IMAGE_DIR = "data/images/widgets";
 
-        public java.awt.List weaponList;
+        public List weaponList;
         public Choice m_chAmmo;
         public Choice m_chBayWeapon;
 
@@ -1814,10 +1814,10 @@ public class MechDisplay extends BufferedPanel {
         // ItemListener
         //
         public void itemStateChanged(ItemEvent ev) {
-            if (ev.getItemSelectable() == weaponList) {
+            if (ev.getSource().equals(weaponList)) {
                 m_chBayWeapon.removeAll();
                 displaySelected();
-            } else if (ev.getItemSelectable() == m_chAmmo) {
+            } else if (ev.getSource().equals(m_chAmmo)) {
                 // only change our own units
                 if (!clientgui.getClient().getLocalPlayer().equals(
                         entity.getOwner())) {

@@ -1873,7 +1873,7 @@ public class MechDisplay extends JPanel {
             if (ev.getStateChange() != ItemEvent.SELECTED) {
                 return;
             }
-            if (ev.getItemSelectable().equals(m_chAmmo)
+            if (ev.getSource().equals(m_chAmmo)
                     && m_chAmmo.getSelectedIndex() != -1) {
                 // only change our own units
                 if (!clientgui.getClient().getLocalPlayer().equals(
@@ -1940,7 +1940,7 @@ public class MechDisplay extends JPanel {
                         entity.getEquipmentNum(mWeap),
                         entity.getEquipmentNum(mAmmo));
                 displaySelected();
-            } else if (ev.getItemSelectable().equals(m_chBayWeapon)
+            } else if (ev.getSource().equals(m_chBayWeapon)
                     && m_chBayWeapon.getItemCount() > 0) {
                 int n = weaponList.getSelectedIndex();
                 if (n == -1) {

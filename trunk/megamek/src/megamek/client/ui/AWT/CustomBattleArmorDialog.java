@@ -2252,6 +2252,24 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
             new BattleArmorEquipment("CL Semi-Portable Machine Gun",
                     "CLBALightMG", 75, 5000, 5, EQUIPMENT_TYPE_WEAPON, 1,
                     TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Ultra Heavy Support Laser", "BACLHeavyMediumLaser", 1000, 0, 0, EQUIPMENT_TYPE_WEAPON, 4, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Bomb Rack", "BAMicroBomb", 100, 0, 0, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("ER Semi-Portable Support Laser", "BACLERMicroLaser", 150, 0, 0, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Medium Pulse Laser", "BAISMediumPulseLaser", 800, 0, 0, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_IS, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Grenade Launcher", "BAAutoGL", 75, 0, 0, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_IS, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Compact NARC", "BACompactNARC", 150, 0, 0, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_IS, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Medium Laser", "BAISMediumLaser", 500, 0, 0, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_IS, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Popup Mine", "BAMineLauncher", 200, 0, 0, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_IS, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Medium Pulse Laser", "BACLMediumPulseLaser", 800, 0, 0, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Semi-Portable Heavy Laser", "BACLHeavySmallLaser", 500, 0, 0, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_IS, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("ER Support Laser", "BAISERSmallLaser", 350, 0, 0, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Support Particle Cannon", "BASupportPPC", 240, 0, 0, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Support Particle Cannon", "BASupportPPC", 250, 0, 0, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("ER Heavy Support Laser", "BACLERMediumLaser", 800, 0, 0, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Support Pulse Laser", "BACLSmallPulseLaser", 400, 0, 0, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Heavy Mortar", "BAISHeavyMortar", 400, 0, 0, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Light Mortar", "BSISLightMortar", 300, 0, 0, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY); //FIXME: Cost and BV
+            new BattleArmorEquipment("Heavy Grenade Launcher", "BAMicroGrenade", 100, 0, 0, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY); //FIXME: Cost and B
 
             new BattleArmorEquipment("Advanced SRM 1 Launcher",
                     "Clan Advanced SRM-1", 60, 15000, 15,

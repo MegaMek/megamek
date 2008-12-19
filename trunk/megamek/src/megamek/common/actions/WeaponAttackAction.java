@@ -17,8 +17,6 @@ package megamek.common.actions;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Vector;
-
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -88,7 +86,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
     //bomb stuff
     private int[] bombPayload = new int[BombType.B_NUM];
-    
+
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
     private transient ArrayList<Mounted> vCounterEquipment;
@@ -289,7 +287,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (reason != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
         }
-        
+
         //if this is a bombing attack then get the to hit and return
         //TODO: this should probably be its own kind of attack
         if ( wtype.hasFlag(WeaponType.F_SPACE_BOMB) ) {
@@ -611,9 +609,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         		if(eccm > 0) {
         			toHit.addModifier(-1*Math.min(ecm, eccm), "ECCM");
         		}
-        	}       	
+        	}
         }
-        
+
         // Aeros may suffer from criticals
         if (ae instanceof Aero) {
             Aero aero = (Aero) ae;
@@ -622,10 +620,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             int sensors = aero.getSensorHits();
 
             if(!aero.isCapitalFighter()) {
-	            if (sensors > 0 && sensors < 3)
-	                toHit.addModifier(sensors, "sensor damage");
-	            if (sensors > 2)
-	                toHit.addModifier(+5, "sensors destroyed");
+	            if (sensors > 0 && sensors < 3) {
+                    toHit.addModifier(sensors, "sensor damage");
+                }
+	            if (sensors > 2) {
+                    toHit.addModifier(+5, "sensors destroyed");
+                }
             }
 
             // FCS hits
@@ -659,8 +659,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 toHit.addModifier(+2, "attacker is evading");
             }
 
-           
-            
+
+
             // check for heavy gauss rifle on fighter of small craft
             if (weapon.getType() instanceof ISHGaussRifle && ae instanceof Aero
                     && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) {
@@ -759,7 +759,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if(wtype.hasFlag(WeaponType.F_ANTI_SHIP) && target instanceof Entity && te.getWeight() < 500) {
             toHit.addModifier(4, "Anti-ship missile at a small target");
         }
-        
+
         if (target instanceof Aero) {
 
             Aero a = (Aero) target;
@@ -785,12 +785,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     toHit.addModifier(5-aaaMod, "capital weapon at small target");
                 }
             }
-            
+
             //AAA mode makes targeting large craft more difficult
             if(wtype.hasModes() && weapon.curMode().equals("AAA") && te.isLargeCraft()) {
             	toHit.addModifier(+1, "AAA mode at large craft");
             }
-            
+
             //check for bracketing mode
             if(wtype.hasModes() && weapon.curMode().equals("Bracket 80%")) {
             	toHit.addModifier(-1, "Bracketing 80%");
@@ -801,11 +801,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if(wtype.hasModes() && weapon.curMode().equals("Bracket 40%")) {
             	toHit.addModifier(-3, "Bracketing 40%");
             }
-            
+
             //sensor shadows
             if(game.getOptions().booleanOption("stratops_sensor_shadow") && game.getBoard().inSpace()) {
             	for(Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-            		if(!en.isEnemyOf(a) && en.isLargeCraft() 
+            		if(!en.isEnemyOf(a) && en.isLargeCraft()
             				&& (en.getWeight() - a.getWeight()) >= -100000.0) {
             			toHit.addModifier(+1, "Sensor Shadow");
             			break;
@@ -820,7 +820,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             		}
             	}
             }
-            
+
         }
 
         // Vehicles may suffer from criticals
@@ -1559,7 +1559,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 if (target instanceof Aero && game.useVectorMove()) {
                     boolean usePrior = false;
                     Coords attackPos = ae.getPosition();
-                    if(game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())) {                       
+                    if(game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())) {
                         if(((Aero)ae).shouldMoveBackHex((Aero)target)) {
                             attackPos = ae.getPriorPosition();
                         }
@@ -1767,7 +1767,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && (target.getTargetType() != Targetable.TYPE_FLARE_DELIVER)) {
             return "Weapon can only deliver flares";
         }
-        
+
         if(wtype.hasFlag(WeaponType.F_ANTI_SHIP) && !game.getBoard().inSpace() && ae.getElevation() < 4) {
             return "Anti-ship missiles can only be used above elevation 3";
         }
@@ -1925,15 +1925,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         }
-        
+
         //you cannot bracket small craft at short range
-        if(wtype.hasModes() 
+        if(wtype.hasModes()
         		&& (weapon.curMode().equals("Bracket 80%") || weapon.curMode().equals("Bracket 60%") || weapon.curMode().equals("Bracket 40%"))
         		&& target instanceof Aero && !te.isLargeCraft()
         		&& RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(weapon), game.getOptions().booleanOption("tacops_range")) == RangeType.RANGE_SHORT) {
         	return "small craft cannot be bracketed at short range";
         }
-        
+
         //you must have enough weapons in your bay to be able to use bracketing
         if(wtype.hasModes() && weapon.curMode().equals("Bracket 80%") && weapon.getBayWeapons().size() < 2) {
         	return "not enough weapons to bracket at this level";
@@ -2053,7 +2053,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     continue;
                 }
                 WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-                if (prevAttack.getEntityId() == attackerId && weaponId != prevAttack.getWeaponId()) {                    
+                if (prevAttack.getEntityId() == attackerId && weaponId != prevAttack.getWeaponId()) {
                     Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
                     totalheat += prevWeapon.getCurrentHeat();
                 }
@@ -2062,7 +2062,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         		return "attack would exceed heat sink capacity";
         	}
         }
-        
+
         if(ae.usesWeaponBays() && weapon.getBayWeapons().size() > 0) {
 
             //first check to see if there are any usable weapons
@@ -2417,24 +2417,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && ae.getLocationStatus(weapon.getLocation()) != ILocationExposureStatus.WET) {
             return "Nearby terrain blocks leg weapons.";
         }
-        
-        if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {         
+
+        if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
             //no space bombing if other attacks already declared
-            for ( Enumeration i = game.getActions();
+            for ( Enumeration<EntityAction> i = game.getActions();
                 i.hasMoreElements(); ) {
-                Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
+                EntityAction ea = i.nextElement();
+                if (!(ea instanceof WeaponAttackAction)) {
                     continue;
                 }
-                WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                WeaponAttackAction prevAttack = (WeaponAttackAction)ea;
                 if (prevAttack.getEntityId() == attackerId) {
-        
+
                     // If the attacker fires another weapon, this attack fails.
                     if ( weaponId != prevAttack.getWeaponId() ) {
                         return "Other weapon attacks declared.";
                     }
                 }
-            }           
+            }
             toHit = Compute.getSpaceBombBaseToHit( ae, te, game );
             // Return if the attack is impossible.
             if ( ToHitData.IMPOSSIBLE == toHit.getValue() ) {
@@ -2583,12 +2583,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     public void setSwarmMissiles(int swarmMissiles) {
         this.swarmMissiles = swarmMissiles;
     }
-    
+
     public int[] getBombPayload() {
         return bombPayload;
     }
-    
+
     public void setBombPayload(int[] load) {
-        this.bombPayload = load;
+        bombPayload = load;
     }
 }

@@ -2202,10 +2202,10 @@ public class Compute {
         int facing = ae.isSecondaryArcWeapon(weaponId) ? ae.getSecondaryFacing() : ae.getFacing();
         Coords aPos = ae.getPosition();
         Coords tPos = t.getPosition();
-        
+
         //aeros in the same hex in space may still be able to fire at one another. First I need to translate
         //their positions to see who was further back
-        if(game.getBoard().inSpace() && ae.getPosition().equals(t.getPosition()) 
+        if(game.getBoard().inSpace() && ae.getPosition().equals(t.getPosition())
                 && ae instanceof Aero && t instanceof Aero) {
             if(((Aero)ae).shouldMoveBackHex((Aero)t)) {
                 aPos = ae.getPriorPosition();
@@ -2213,7 +2213,7 @@ public class Compute {
             if(((Aero)t).shouldMoveBackHex((Aero)ae)) {
                 tPos = ((Entity)t).getPosition();
             }
-        }     
+        }
         return Compute.isInArc(aPos, facing, tPos, ae.getWeaponArc(weaponId));
     }
 
@@ -2453,16 +2453,16 @@ public class Compute {
 
     public static int targetSideTable(Entity attacker, Targetable target) {
         Coords attackPos = attacker.getPosition();
-        
+
         boolean usePrior = false;
         //aeros in the same hex in space need to adjust position to get side table
-        if(attacker.game.getBoard().inSpace() && attacker.getPosition().equals(target.getPosition()) 
+        if(attacker.game.getBoard().inSpace() && attacker.getPosition().equals(target.getPosition())
                 && attacker instanceof Aero && target instanceof Aero) {
             if(((Aero)attacker).shouldMoveBackHex((Aero)target)) {
                 attackPos = attacker.getPriorPosition();
             }
             usePrior = ((Aero)target).shouldMoveBackHex((Aero)attacker);
-        }  
+        }
         if(target instanceof Aero && attacker instanceof Aero) {
             return ((Entity)target).sideTable(attackPos, usePrior);
         }
@@ -3159,7 +3159,7 @@ public class Compute {
     /**
      * Get the base to-hit number of a space bomb attack by the given attacker upon the
      * given defender
-     * 
+     *
      * @param attacker -
      *            the <code>Entity</code> conducting the leg attack.
      * @param defender -
@@ -3174,9 +3174,9 @@ public class Compute {
         if(!(attacker instanceof Aero)) {
             return new ToHitData(base, "attacker is not an Aero");
         }
-        
+
         Aero a = (Aero)attacker;
-        
+
         //the fighters nose must be aligned with its direction of travel
         boolean rightFacing = false;
         //using normal movement, I think this means that the last move can't be a turn
@@ -3192,26 +3192,26 @@ public class Compute {
                 }
             }
         }
-        
+
         boolean canTarget = false;
         Coords attackCoords = null;
         for(Coords c:attacker.getPassedThrough()) {
-            for (Enumeration e = game.getEntities(c); e.hasMoreElements(); ) {
-                Entity target = (Entity)e.nextElement();
+            for (Enumeration<Entity> e = game.getEntities(c); e.hasMoreElements(); ) {
+                Entity target = e.nextElement();
                 if(target.getId() == defender.getId()) {
                     canTarget = true;
-                } 
+                }
             }
             if(canTarget) {
                 break;
             } else {
                 attackCoords = c;
             }
-        }   
+        }
         if(null == attackCoords) {
             attackCoords = attacker.getPosition();
         }
-        
+
         //must be in control
         if(a.isOutControlTotal()) {
             reason.append("the attacker is out of control");
@@ -3233,16 +3233,16 @@ public class Compute {
         else if(defender.weight < 10000) {
             reason.append("the defender weighs less than 10,000 tons");
         }
-        
+
         //ok if we are still alive then lets calculate the tohit
         else {
             base = attacker.getCrew().getGunnery();
             reason.append("base");
-        } 
+        }
 
         ToHitData toHit = new ToHitData(base, reason.toString(), ToHitData.HIT_NORMAL,
                     defender.sideTable(attackCoords));
-        
+
         toHit.addModifier(+4,"space bomb attack");
         if(attacker.mpUsed > 0) {
             toHit.addModifier(attacker.mpUsed, "attacker thrust");
@@ -3257,11 +3257,11 @@ public class Compute {
             int penalty = (int)Math.ceil((100000 - defender.weight)/10000);
             toHit.addModifier(penalty, "defender weight");
         }
-        
+
         return toHit;
     }
-    
-    
+
+
     /**
      * Get the base to-hit number of a Leg Attack by the given attacker upon the
      * given defender

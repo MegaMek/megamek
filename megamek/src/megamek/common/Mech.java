@@ -3771,10 +3771,17 @@ public abstract class Mech extends Entity implements Serializable {
         if (getEmptyCriticals(LOC_CT) < 6) {
             return false;
         }
+        removeCriticals(LOC_CT, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
         addGyro();
-        addCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-        addCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        addCritical(LOC_CT, 7, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        addCritical(LOC_CT, 8, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         setGyroType(GYRO_XL);
+        
+        int[] centerSlots = { 0, 1, 2, 9, 10, 11 };
+        for (int i = 0; i < centerSlots.length; i++) {
+            addCritical(LOC_CT, centerSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        }
+
         return true;
     }
 

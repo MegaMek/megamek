@@ -3,6 +3,7 @@
 v0.33.38-dev (SVN)
 + New public method to compact engines and compact gyros
 + changed Mech.addXLGyro to make gyro contigious in the CT
++ Added Ballistic flag to B-Pods
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

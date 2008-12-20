@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.33.38-dev (SVN)
++ New public method to compact engines and compact gyros
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

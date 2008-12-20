@@ -3827,6 +3827,42 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     /**
+     * Add the critical slots necessary for the mek's engine when using a compact gyro. 
+     * Calling this method before setting a mek's engine object will result in a NPE. Note:
+     * This is part of the mek creation public API, and might not be referenced
+     * by any MegaMek code.
+     * 
+     * @return false if insufficient critical space
+     */
+    public boolean addEngineCritsWithCompactGyro() {
+        boolean success = true;
+
+        int centerSlots[] = { 0, 1, 2, 5, 6, 7 };
+
+        if (getEmptyCriticals(LOC_CT) < centerSlots.length) {
+            success = false;
+        } else {
+            for (int i = 0; i < centerSlots.length; i++) {
+                addCritical(LOC_CT, centerSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+            }
+        }
+
+        int sideSlots[] = getEngine().getSideTorsoCriticalSlots();
+        if (getEmptyCriticals(LOC_LT) < sideSlots.length || getEmptyCriticals(LOC_RT) < sideSlots.length || !success) {
+            success = false;
+        } else {
+            for (int i = 0; i < sideSlots.length; i++) {
+                addCritical(LOC_LT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+                addCritical(LOC_RT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+            }
+        }
+
+        return success;
+    }
+
+   
+   
+    /**
      * Remove all engine critical slots from the mek. Note: This is part of the
      * mek creation public API, and might not be referenced by any MegaMek code.
      */

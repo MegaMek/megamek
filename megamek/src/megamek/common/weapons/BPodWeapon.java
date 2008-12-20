@@ -50,7 +50,7 @@ public abstract class BPodWeapon extends AmmoWeapon {
         this.extremeRange = 0;
         this.tonnage = 1.0f;
         this.criticals = 1;
-        this.flags |=  F_ONESHOT | F_B_POD;
+        this.flags |=  F_ONESHOT | F_B_POD | F_BALLISTIC;
         this.explosive = true; 
         this.bv = 5;
         this.cost = 6000;

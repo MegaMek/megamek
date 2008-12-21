@@ -1,15 +1,15 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -38,7 +38,7 @@ import megamek.common.weapons.PPCWeapon;
  */
 public abstract class Mech extends Entity implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1929593228891136561L;
 
@@ -195,7 +195,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     private int grappledSide = Entity.GRAPPLE_BOTH;
 
-    private StringBuffer BVText = null;
+    private StringBuffer bvText = null;
     /**
      * Construct a new, blank, mech.
      */
@@ -228,12 +228,12 @@ public abstract class Mech extends Entity implements Serializable {
         setCritical(LOC_LLEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
         setCritical(LOC_LLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
         setCritical(LOC_LLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
-        
+
         // Player setting specify whether their Meks' automatic
         // ejection systems are disabled by default or not.
-        this.autoEject = !PreferenceManager.getClientPreferences().defaultAutoejectDisabled();
+        autoEject = !PreferenceManager.getClientPreferences().defaultAutoejectDisabled();
     }
-    
+
     /**
      * @return if this mech cannot stand up from hulldown
      */
@@ -245,8 +245,9 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     public int getCowlArmor() {
-        if (hasCowl)
+        if (hasCowl) {
             return cowlArmor;
+        }
         return 0;
     }
 
@@ -333,7 +334,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Get the number of turns MASC has been used continuously. <p/> This method
      * should <strong>only</strong> be used during serialization.
-     * 
+     *
      * @return the <code>int</code> number of turns MASC has been used.
      */
     public int getMASCTurns() {
@@ -343,7 +344,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Set the number of turns MASC has been used continuously. <p/> This method
      * should <strong>only</strong> be used during deserialization.
-     * 
+     *
      * @param turns
      *            The <code>int</code> number of turns MASC has been used.
      */
@@ -354,7 +355,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Determine if MASC has been used this turn. <p/> This method should
      * <strong>only</strong> be used during serialization.
-     * 
+     *
      * @return <code>true</code> if MASC has been used.
      */
     public boolean isMASCUsed() {
@@ -364,7 +365,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Set whether MASC has been used. <p/> This method should <strong>only</strong>
      * be used during deserialization.
-     * 
+     *
      * @param used
      *            The <code>boolean</code> whether MASC has been used.
      */
@@ -378,7 +379,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * This function cheks for masc failure.
-     * 
+     *
      * @param md
      *            the movement path.
      * @param vDesc
@@ -420,12 +421,12 @@ public abstract class Mech extends Entity implements Serializable {
 
             usedMASC = true;
             Report r = new Report(2365);
-            r.subject = this.getId();
+            r.subject = getId();
             r.addDesc(this);
             r.add(masc.getName());
             vDesc.addElement(r);
             r = new Report(2370);
-            r.subject = this.getId();
+            r.subject = getId();
             r.indent();
             r.add(getMASCTarget());
             r.add(nRoll);
@@ -509,6 +510,7 @@ public abstract class Mech extends Entity implements Serializable {
      * note, this method should only be called during this Mech's construction.
      * <p/> Overrides <code>Entity#setOmni(boolean)</code>
      */
+    @Override
     public void setOmni(boolean omni) {
 
         // Perform the superclass' action.
@@ -516,13 +518,14 @@ public abstract class Mech extends Entity implements Serializable {
 
         // Add BattleArmorHandles to OmniMechs.
         if (omni && !hasBattleArmorHandles()) {
-            this.addTransporter(new BattleArmorHandles());
+            addTransporter(new BattleArmorHandles());
         }
     }
 
     /**
      * Returns the number of locations in the entity
      */
+    @Override
     public int locations() {
         return NUM_MECH_LOCATIONS;
     }
@@ -531,6 +534,7 @@ public abstract class Mech extends Entity implements Serializable {
      * (non-Javadoc)
      * @see megamek.common.Entity#newRound(int)
      */
+    @Override
     public void newRound(int roundNumber) {
         // Walk through the Mech's miscellaneous equipment before
         // we apply our parent class' newRound() functionality
@@ -580,6 +584,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Returns true if the location in question is a leg
      */
+    @Override
     public boolean locationIsLeg(int loc) {
         return loc == LOC_LLEG || loc == LOC_RLEG;
     }
@@ -600,6 +605,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Returns true if the entity has a hip crit.
      */
+    @Override
     public boolean hasHipCrit() {
         for (int loc = 0; loc < NUM_MECH_LOCATIONS; loc++) {
             if (legHasHipCrit(loc)) {
@@ -626,7 +632,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * This function returns true iff the system is in perfect condition.
-     * 
+     *
      * @param system
      *            the system to check
      * @return false if the system is damaged.
@@ -699,8 +705,9 @@ public abstract class Mech extends Entity implements Serializable {
 
                 // one crit destroyed they all all screwed
                 // --Torren
-                if (mEquip.isBreached() || mEquip.isDestroyed() || mEquip.isMissing())
+                if (mEquip.isBreached() || mEquip.isDestroyed() || mEquip.isMissing()) {
                     return false;
+                }
                 jumpBoosters = true;
             }
         }
@@ -714,7 +721,7 @@ public abstract class Mech extends Entity implements Serializable {
     public Mounted getMASC() {
         for (Mounted m : getMisc()) {
             MiscType mtype = (MiscType) m.getType();
-            if (mtype.hasFlag(MiscType.F_MASC) && m.isReady() 
+            if (mtype.hasFlag(MiscType.F_MASC) && m.isReady()
                     && !mtype.hasSubType(MiscType.S_SUPERCHARGER)) {
                 return m;
             }
@@ -729,7 +736,7 @@ public abstract class Mech extends Entity implements Serializable {
     public Mounted getSuperCharger() {
         for (Mounted m : getMisc()) {
             MiscType mtype = (MiscType) m.getType();
-            if (mtype.hasFlag(MiscType.F_MASC) && m.isReady() 
+            if (mtype.hasFlag(MiscType.F_MASC) && m.isReady()
                     && mtype.hasSubType(MiscType.S_SUPERCHARGER)) {
                 return m;
             }
@@ -749,7 +756,7 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return false;
     }
-    
+
     /**
      * checks if a mech has both a normal armed MASC system and a armed super-
      * charger.
@@ -776,11 +783,11 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return false;
     }
-    
+
     /**
      * Does the entity have a retracted blade in the given location?
      * Only true for biped mechs
-     * 
+     *
      */
     public boolean hasRetractedBlade(int loc) {
         return false;
@@ -797,7 +804,7 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return false;
     }
-    
+
     public boolean hasIndustrialTSM() {
         for (Mounted m : getEquipment()) {
             if (m.getType() instanceof MiscType
@@ -818,7 +825,7 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return false;
     }
-    
+
     public boolean hasNullSig() {
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
@@ -840,7 +847,7 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return false;
     }
-    
+
     public boolean hasChameleonShield() {
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
@@ -855,6 +862,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Depends on engine type
      */
+    @Override
     public int getStandingHeat() {
         return engine.getStandingHeat();
     }
@@ -867,12 +875,13 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     protected int calculateWalk() {
-        return getEngine().getRating() / (int) this.weight;
+        return getEngine().getRating() / (int) weight;
     }
 
     /**
      * Depends on engine type
      */
+    @Override
     public int getWalkHeat() {
         return engine.getWalkHeat();
     }
@@ -881,6 +890,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Potentially adjust runMP for MASC
      */
 
+    @Override
     public int getRunMP(boolean gravity, boolean ignoreheat) {
         if (hasArmedMASCAndSuperCharger()) {
             return ((int)Math.ceil(getWalkMP(gravity, ignoreheat) * 2.5)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
@@ -895,6 +905,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Returns run MP without considering MASC
      */
 
+    @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
         return super.getRunMP(gravity, ignoreheat) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
     }
@@ -906,6 +917,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Returns this entity's running/flank mp as a string.
      */
+    @Override
     public String getRunMPasString() {
         if (hasArmedMASC()) {
             return getRunMPwithoutMASC() + "(" + getRunMP() + ")";
@@ -916,6 +928,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Depends on engine type
      */
+    @Override
     public int getRunHeat() {
         return engine.getRunHeat();
     }
@@ -923,6 +936,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * This mech's jumping MP modified for missing jump jets and gravity
      */
+    @Override
     public int getJumpMP() {
         return getJumpMP(true);
     }
@@ -931,16 +945,18 @@ public abstract class Mech extends Entity implements Serializable {
      * This mech's jumping MP modified for missing jump jets and possibly
      * gravity
      */
+    @Override
     public int getJumpMP(boolean gravity) {
         int jump = 0;
 
-        if (this.hasShield() && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
+        if (hasShield() && getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0) {
             return 0;
-        
+        }
+
         if ( hasModularArmor() ) {
             jump--;
         }
-        
+
         for (Mounted mounted : getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()) {
                 jump++;
@@ -949,16 +965,18 @@ public abstract class Mech extends Entity implements Serializable {
                 break;
             }
         }
-        
 
-        if (gravity)
+
+        if (gravity) {
             return applyGravityEffectsOnMP(jump);
+        }
         return jump;
     }
 
     /**
      * Returns the type of jump jet system the mech has.
      */
+    @Override
     public int getJumpType() {
         if (jumpType == JUMP_UNKNOWN) {
             jumpType = JUMP_NONE;
@@ -983,6 +1001,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * We need to override this here, because mechs generate heat when jumping.
      */
+    @Override
     public int getJumpHeat(int movedMP) {
         switch (getJumpType()) {
         case JUMP_IMPROVED:
@@ -1000,6 +1019,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Returns this mech's jumping MP, modified for missing & underwater jets
      * and gravity.
      */
+    @Override
     public int getJumpMPWithTerrain() {
         if (getPosition() == null || getJumpType() == JUMP_BOOSTER) {
             return getJumpMP();
@@ -1036,6 +1056,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Returns the elevation of this entity. Mechs do funny stuff in the middle
      * of a DFA.
      */
+    @Override
     public int getElevation() {
         int cElev = super.getElevation();
         if (!isMakingDfa()) {
@@ -1050,6 +1071,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Return the height of this mech above the terrain.
      */
+    @Override
     public int height() {
         IHex posHex = game.getBoard().getHex(getPosition());
         return (isProne() || ((posHex != null) && Compute.isInBuilding(game, this))) ? 0 : 1;
@@ -1074,7 +1096,7 @@ public abstract class Mech extends Entity implements Serializable {
             addEngineSinks(totalSinks,"Heat Sink");
         }
     }
-    
+
     public void addEngineSinks(int totalSinks, String sinkName){
         // this relies on these being the correct internalNames for these items
         EquipmentType sinkType = EquipmentType.get(sinkName);
@@ -1101,6 +1123,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Returns extra heat generated by engine crits
      */
+    @Override
     public int getEngineCritHeat() {
         int engineCritHeat = 0;
         if (!isShutDown() && getEngine().isFusion()) {
@@ -1128,13 +1151,15 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Returns the about of heat that the entity can sink each turn.
      */
+    @Override
     public int getHeatCapacity() {
         int capacity = 0;
         int activeCount = getActiveSinks();
 
         for (Mounted mounted : getMisc()) {
-            if (activeCount <= 0)
+            if (activeCount <= 0) {
                 break;
+            }
             if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
@@ -1154,6 +1179,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Returns the about of heat that the entity can sink each turn, factoring
      * for water.
      */
+    @Override
     public int getHeatCapacityWithWater() {
         if (hasLaserHeatSinks()) {
             return getHeatCapacity();
@@ -1198,6 +1224,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Returns the name of the type of movement used. This is mech-specific.
      */
+    @Override
     public String getMovementString(int mtype) {
         switch (mtype) {
         case IEntityMovementType.MOVE_SKID:
@@ -1219,6 +1246,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Returns the name of the type of movement used. This is mech-specific.
      */
+    @Override
     public String getMovementAbbr(int mtype) {
         switch (mtype) {
         case IEntityMovementType.MOVE_SKID:
@@ -1236,6 +1264,7 @@ public abstract class Mech extends Entity implements Serializable {
         }
     }
 
+    @Override
     public boolean canChangeSecondaryFacing() {
         return !isProne();
     }
@@ -1243,6 +1272,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Can this mech torso twist in the given direction?
      */
+    @Override
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
@@ -1254,6 +1284,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Return the nearest valid direction to torso twist in
      */
+    @Override
     public int clipSecondaryFacing(int dir) {
         if (isValidSecondaryFacing(dir)) {
             return dir;
@@ -1267,6 +1298,7 @@ public abstract class Mech extends Entity implements Serializable {
         return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
     }
 
+    @Override
     public boolean hasRearArmor(int loc) {
         return loc == LOC_CT || loc == LOC_RT || loc == LOC_LT;
     }
@@ -1275,6 +1307,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Returns the amount of armor in the location specified. Mech version,
      * handles rear armor.
      */
+    @Override
     public int getArmor(int loc, boolean rear) {
         if (rear && hasRearArmor(loc)) {
             return rearArmor[loc];
@@ -1286,6 +1319,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Returns the original amount of armor in the location specified. Mech
      * version, handles rear armor.
      */
+    @Override
     public int getOArmor(int loc, boolean rear) {
         if (rear && hasRearArmor(loc)) {
             return orig_rearArmor[loc];
@@ -1297,6 +1331,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Sets the amount of armor in the location specified. Mech version, handles
      * rear armor.
      */
+    @Override
     public void setArmor(int val, int loc, boolean rear) {
         if (rear && hasRearArmor(loc)) {
             rearArmor[loc] = val;
@@ -1317,9 +1352,10 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Returns the Compute.ARC that the weapon fires into.
      */
+    @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-        
+
         // B-Pods need to be special-cased, the have 360 firing arc
         if (mounted.getType() instanceof WeaponType &&
                 mounted.getType().hasFlag(WeaponType.F_B_POD)) {
@@ -1351,6 +1387,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Returns true if this weapon fires into the secondary facing arc. If
      * false, assume it fires into the primary.
      */
+    @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
         // leg-mounted weapons fire into the primary arc, always
         if (getEquipment(weaponId).getLocation() == LOC_RLEG || getEquipment(weaponId).getLocation() == LOC_LLEG) {
@@ -1363,10 +1400,12 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Rolls up a hit location
      */
+    @Override
     public HitData rollHitLocation(int table, int side) {
         return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
     }
 
+    @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
 
@@ -1395,40 +1434,40 @@ public abstract class Mech extends Entity implements Serializable {
             }
             if (side == ToHitData.SIDE_FRONT) {
                 // normal front hits
-                    switch (roll) {
-                    case 2:
-                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
-                            crew.decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, false));
-                            return result;
-                        } // if
-                        return tac(table, side, Mech.LOC_CT, false);
-                    case 3:
-                    case 4:
-                        return new HitData(Mech.LOC_RARM);
-                    case 5:
-                        return new HitData(Mech.LOC_RLEG);
-                    case 6:
-                        return new HitData(Mech.LOC_RT);
-                    case 7:
-                        return new HitData(Mech.LOC_CT);
-                    case 8:
-                        return new HitData(Mech.LOC_LT);
-                    case 9:
-                        return new HitData(Mech.LOC_LLEG);
-                    case 10:
-                    case 11:
-                        return new HitData(Mech.LOC_LARM);
-                    case 12:
-                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                            return result;
-                        } // if
-                        return new HitData(Mech.LOC_HEAD);
-                    }
+                switch (roll) {
+                case 2:
+                    if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                        crew.decreaseEdge();
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(tac(table, side, Mech.LOC_CT, false));
+                        return result;
+                    } // if
+                    return tac(table, side, Mech.LOC_CT, false);
+                case 3:
+                case 4:
+                    return new HitData(Mech.LOC_RARM);
+                case 5:
+                    return new HitData(Mech.LOC_RLEG);
+                case 6:
+                    return new HitData(Mech.LOC_RT);
+                case 7:
+                    return new HitData(Mech.LOC_CT);
+                case 8:
+                    return new HitData(Mech.LOC_LT);
+                case 9:
+                    return new HitData(Mech.LOC_LLEG);
+                case 10:
+                case 11:
+                    return new HitData(Mech.LOC_LARM);
+                case 12:
+                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                        return result;
+                    } // if
+                    return new HitData(Mech.LOC_HEAD);
+                }
             } else if (side == ToHitData.SIDE_LEFT) {
                 // normal left side hits
                 switch (roll) {
@@ -1450,12 +1489,14 @@ public abstract class Mech extends Entity implements Serializable {
                 case 7:
                     return new HitData(Mech.LOC_LT);
                 case 8:
-                    if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations"))
+                    if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
                         return new HitData(Mech.LOC_CT,true);
+                    }
                     return new HitData(Mech.LOC_CT);
                 case 9:
-                    if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations"))
+                    if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
                         return new HitData(Mech.LOC_RT,true);
+                    }
                     return new HitData(Mech.LOC_RT);
                 case 10:
                     return new HitData(Mech.LOC_RARM);
@@ -1491,12 +1532,14 @@ public abstract class Mech extends Entity implements Serializable {
                 case 7:
                     return new HitData(Mech.LOC_RT);
                 case 8:
-                    if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations"))
+                    if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
                         return new HitData(Mech.LOC_CT,true);
+                    }
                     return new HitData(Mech.LOC_CT);
                 case 9:
-                    if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations"))
+                    if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
                         return new HitData(Mech.LOC_LT,true);
+                    }
                     return new HitData(Mech.LOC_LT);
                 case 10:
                     return new HitData(Mech.LOC_LARM);
@@ -1728,10 +1771,11 @@ public abstract class Mech extends Entity implements Serializable {
         if (table == ToHitData.HIT_SWARM || table == ToHitData.HIT_SWARM_CONVENTIONAL) {
             roll = Compute.d6(2);
             int effects;
-            if (table == ToHitData.HIT_SWARM_CONVENTIONAL)
+            if (table == ToHitData.HIT_SWARM_CONVENTIONAL) {
                 effects = HitData.EFFECT_NONE;
-            else
+            } else {
                 effects = HitData.EFFECT_CRITICAL;
+            }
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
@@ -1870,6 +1914,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Gets the location that excess damage transfers to
      */
+    @Override
     public HitData getTransferLocation(HitData hit) {
         switch (hit.getLocation()) {
         case LOC_RT:
@@ -1882,8 +1927,9 @@ public abstract class Mech extends Entity implements Serializable {
         case LOC_RARM:
             return new HitData(LOC_RT, hit.isRear(), hit.getEffect(), hit.hitAimedLocation(), hit.getSpecCritMod(), hit.isFromFront(), hit.getGeneralDamageType(), hit.glancingMod());
         case LOC_HEAD:
-            if (getCockpitType() == COCKPIT_TORSO_MOUNTED)
+            if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
                 return new HitData(LOC_NONE); // not destroyed by head loss
+            }
             return new HitData(LOC_DESTROYED);
         case LOC_CT:
         default:
@@ -1894,6 +1940,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Gets the location that is destroyed recursively
      */
+    @Override
     public int getDependentLocation(int loc) {
         switch (loc) {
         case LOC_RT:
@@ -1913,7 +1960,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Sets the internal structure for the mech.
-     * 
+     *
      * @param head
      *            head
      * @param ct
@@ -1931,6 +1978,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Set the internal structure to the appropriate value for the mech's weight
      * class
      */
+    @Override
     public void autoSetInternal() {
         // stupid irregular table... grr.
         switch ((int) weight) {
@@ -2082,6 +2130,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Mounts the specified weapon in the specified location.
      */
+    @Override
     public void addEquipment(Mounted mounted, int loc, boolean rearMounted) throws LocationFullException {
         // if there's no actual location, then don't add criticals
         if (loc == LOC_NONE) {
@@ -2101,8 +2150,9 @@ public abstract class Mech extends Entity implements Serializable {
             throw new LocationFullException(mounted.getName() + " does not fit in " + getLocationAbbr(loc) + " on " + getDisplayName() + "\n        free criticals in location: " + getEmptyCriticals(loc) + ", criticals needed: " + slots);
         }
         // add it
-        if (getEquipmentNum(mounted) == -1)
+        if (getEquipmentNum(mounted) == -1) {
             super.addEquipment(mounted, loc, rearMounted);
+        }
 
         // add criticals
         int num = getEquipmentNum(mounted);
@@ -2117,6 +2167,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Calculates the battle value of this mech
      */
+    @Override
     public int calculateBattleValue() {
         return calculateBattleValue(false, false);
     }
@@ -2126,25 +2177,26 @@ public abstract class Mech extends Entity implements Serializable {
      * the battle value for c3 won't be added whether the mech is currently part
      * of a network or not.
      */
+    @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
 
-    	String nl = "\r\n"; // DOS friendly
-    	BVText = new StringBuffer("BATTLE VALUE CALCULATION FOR ");
-    	
-    	BVText.append(this.getChassis());
-    	BVText.append(" ");
-    	BVText.append(this.getModel());
-    	BVText.append(nl);
-    	
-    	BVText.append("DEFENSIVE BATTLE RATING CALCULATION:");
-    	BVText.append(nl);
-    	
-    	double dbv = 0; // defensive battle value
+        String nl = "\r\n"; // DOS friendly
+        bvText = new StringBuffer("BATTLE VALUE CALCULATION FOR ");
+
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append(nl);
+
+        bvText.append("DEFENSIVE BATTLE RATING CALCULATION:");
+        bvText.append(nl);
+
+        double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
         // total armor points
         double armorMultiplier = 1.0;
-        
+
         switch ( getArmorType() ){
         case EquipmentType.T_ARMOR_COMMERCIAL:
             armorMultiplier = 0.5;
@@ -2159,17 +2211,17 @@ public abstract class Mech extends Entity implements Serializable {
         case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
             armorMultiplier = 1.2;
             break;
-            default:
-                armorMultiplier = 1.0;
-            break;
-            
+        default:
+            armorMultiplier = 1.0;
+        break;
+
         }
-        BVText.append("Total Armor Factor x ");
-        BVText.append(armorMultiplier);
-        BVText.append("\t\t\t");
+        bvText.append("Total Armor Factor x ");
+        bvText.append(armorMultiplier);
+        bvText.append("\t\t\t");
 
         //BV for torso mounted cockpit.
-        if ( this.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED ) {
+        if ( getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED ) {
             dbv += this.getArmor(Mech.LOC_CT);
             dbv += this.getArmor(Mech.LOC_CT,true);
         }
@@ -2179,67 +2231,70 @@ public abstract class Mech extends Entity implements Serializable {
                 modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
             }
         }
-        
+
         dbv += (getTotalArmor()+modularArmor);
-        
-        BVText.append(dbv);
-        BVText.append(" x 2.5 x ");
-        BVText.append(armorMultiplier);
-        BVText.append(" = ");
-        
+
+        bvText.append(dbv);
+        bvText.append(" x 2.5 x ");
+        bvText.append(armorMultiplier);
+        bvText.append(" = ");
+
         dbv  *= 2.5 * armorMultiplier;
 
-        BVText.append(dbv);
-        BVText.append(nl);
-        
+        bvText.append(dbv);
+        bvText.append(nl);
+
         // total internal structure
         double internalMultiplier = 1.0;
-        if (getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL)
+        if (getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL) {
             internalMultiplier = 0.5;
+        }
 
         dbv += getTotalInternal() * internalMultiplier * 1.5 * getEngine().getBVMultiplier();
 
-        BVText.append("Total Internal Structure Points x ");
-        BVText.append(internalMultiplier);
-        BVText.append(" x 1.5 x ");
-        BVText.append(" Engine Multipler ");
-        
-        BVText.append("\t\t\t");
-        BVText.append(getTotalInternal());
-        BVText.append(" x ");
-        BVText.append(internalMultiplier);
-        BVText.append(" x 1.5 x ");
-        BVText.append(getEngine().getBVMultiplier());
-        BVText.append(" = ");
-        BVText.append(getTotalInternal() * internalMultiplier * 1.5 * getEngine().getBVMultiplier());
-        BVText.append(nl);
-        
+        bvText.append("Total Internal Structure Points x ");
+        bvText.append(internalMultiplier);
+        bvText.append(" x 1.5 x ");
+        bvText.append(" Engine Multipler ");
+
+        bvText.append("\t\t\t");
+        bvText.append(getTotalInternal());
+        bvText.append(" x ");
+        bvText.append(internalMultiplier);
+        bvText.append(" x 1.5 x ");
+        bvText.append(getEngine().getBVMultiplier());
+        bvText.append(" = ");
+        bvText.append(getTotalInternal() * internalMultiplier * 1.5 * getEngine().getBVMultiplier());
+        bvText.append(nl);
+
         // add gyro
         double gyroMultiplier = 0.5;
-        if (this.getGyroType() == GYRO_HEAVY_DUTY)
+        if (getGyroType() == GYRO_HEAVY_DUTY) {
             gyroMultiplier = 1.0;
+        }
         dbv += getWeight() * gyroMultiplier;
 
-        BVText.append("Weight x Gyro Multipler ");
-        BVText.append("\t\t\t");
-        BVText.append(getWeight());
-        BVText.append(" x ");
-        BVText.append(gyroMultiplier);
-        BVText.append(" = ");
-        BVText.append(getWeight() * gyroMultiplier);
-        BVText.append(nl);
-        
+        bvText.append("Weight x Gyro Multipler ");
+        bvText.append("\t\t\t");
+        bvText.append(getWeight());
+        bvText.append(" x ");
+        bvText.append(gyroMultiplier);
+        bvText.append(" = ");
+        bvText.append(getWeight() * gyroMultiplier);
+        bvText.append(nl);
+
         // add defensive equipment
         double dEquipmentBV = 0;
         for (Mounted mounted : getEquipment()) {
             EquipmentType etype = mounted.getType();
 
             // don't count destroyed equipment
-            if (mounted.isDestroyed())
+            if (mounted.isDestroyed()) {
                 continue;
+            }
 
             if ((etype instanceof WeaponType && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD))) || (etype instanceof AmmoType && ((AmmoType) etype).getAmmoType() == AmmoType.T_AMS) || (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
-            // not yet coded: ||
+                    // not yet coded: ||
                     // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
                     || etype.hasFlag(MiscType.F_BAP) ))) {
                 dEquipmentBV += etype.getBV(this);
@@ -2247,11 +2302,11 @@ public abstract class Mech extends Entity implements Serializable {
         }
         dbv += dEquipmentBV;
 
-        BVText.append("Total BV of all Defensive Equipment ");
-        BVText.append("\t\t\t");
-        BVText.append(dEquipmentBV);
-        BVText.append(nl);
-        
+        bvText.append("Total BV of all Defensive Equipment ");
+        bvText.append("\t\t\t");
+        bvText.append(dEquipmentBV);
+        bvText.append(nl);
+
         // subtract for explosive ammo
         double ammoPenalty = 0;
         for (Mounted mounted : getEquipment()) {
@@ -2268,7 +2323,7 @@ public abstract class Mech extends Entity implements Serializable {
             if (loc == LOC_NONE) {
                 continue;
             }
-            
+
             // CASE II means no subtraction
             if (hasCASEII(loc)) {
                 continue;
@@ -2317,7 +2372,7 @@ public abstract class Mech extends Entity implements Serializable {
             if (etype instanceof WeaponType && (((WeaponType) etype).getAmmoType() == AmmoType.T_AC || ((WeaponType) etype).getAmmoType() == AmmoType.T_LAC)) {
                 toSubtract = 0;
             }
-            
+
             // coolant pods subtract 1 each
             if (etype instanceof AmmoType && etype.hasFlag(AmmoType.T_COOLANT_POD)) {
                 toSubtract = 1;
@@ -2328,122 +2383,122 @@ public abstract class Mech extends Entity implements Serializable {
         }
         dbv = Math.max(1, dbv - ammoPenalty);
 
-        BVText.append("Explosive Weapons/Equipment Penalty ");
-        BVText.append("\t\t\t");
-        BVText.append(ammoPenalty);
-        BVText.append(nl);
-        
-        BVText.append("\t\t\t\t----------------");
-        BVText.append(nl);
-        BVText.append(dbv);
-        BVText.append(nl);
-        BVText.append(nl);
+        bvText.append("Explosive Weapons/Equipment Penalty ");
+        bvText.append("\t\t\t");
+        bvText.append(ammoPenalty);
+        bvText.append(nl);
+
+        bvText.append("\t\t\t\t----------------");
+        bvText.append(nl);
+        bvText.append(dbv);
+        bvText.append(nl);
+        bvText.append(nl);
 
         // adjust for target movement modifier
         // we use full possible movement, ignoring gravity and heat
         // but taking into account hit actuators
         int runMP = getRunMP(false, true);
-        BVText.append("Run MP ");
-        BVText.append(runMP);
-        BVText.append(nl);
+        bvText.append("Run MP ");
+        bvText.append(runMP);
+        bvText.append(nl);
         // factor in TSM or MASC
         if (hasTSM()) {
             runMP = (int) Math.ceil((getWalkMP(false, true) + 1) * 1.5) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
-            BVText.append("TSM Run MP ");
-            BVText.append(runMP);
-            BVText.append(nl);
+            bvText.append("TSM Run MP ");
+            bvText.append(runMP);
+            bvText.append(nl);
         }
         if (hasMASC()) {
             runMP = (getWalkMP(false, true) * 2) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
-            BVText.append("MASC Run MP ");
-            BVText.append(runMP);
-            BVText.append(nl);
+            bvText.append("MASC Run MP ");
+            bvText.append(runMP);
+            bvText.append(nl);
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
-        BVText.append("Target Movement Modifer For Run ");
-        BVText.append(tmmRan);
-        BVText.append(nl);
+        bvText.append("Target Movement Modifer For Run ");
+        bvText.append(tmmRan);
+        bvText.append(nl);
         // use UMU for JJ, unless we have more jump MP than UMU (then we have mechanical jumpboosters
         int jumpMP = Math.max(getActiveUMUCount(), getJumpMP(false));
         int tmmJumped = Compute.getTargetMovementModifier(jumpMP, true, false).getValue();
-        BVText.append("Target Movement Modifer For Jumping ");
-        BVText.append(tmmJumped);
-        BVText.append(nl);
+        bvText.append("Target Movement Modifer For Jumping ");
+        bvText.append(tmmJumped);
+        bvText.append(nl);
 
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
-        BVText.append("Target Movement Modifer ");
-        BVText.append(targetMovementModifier);
-        BVText.append(nl);
+        bvText.append("Target Movement Modifer ");
+        bvText.append(targetMovementModifier);
+        bvText.append(nl);
 
 
         // Try to find a Mek Stealth or similar system.
         if (hasStealth() || hasNullSig()){
             targetMovementModifier += 2;
-            BVText.append("+2 Stealth");
-            BVText.append(nl);
+            bvText.append("+2 Stealth");
+            bvText.append(nl);
         }
         if (hasChameleonShield()){
             targetMovementModifier += 2;
-            BVText.append("+2 Chameleon");
-            BVText.append(nl);
+            bvText.append("+2 Chameleon");
+            bvText.append(nl);
         }
         if (hasVoidSig()){
             targetMovementModifier += 3;
-            BVText.append("+3 Void Sig");
-            BVText.append(nl);
+            bvText.append("+3 Void Sig");
+            bvText.append(nl);
         }
         double tmmFactor = 1 + (targetMovementModifier / 10);
         dbv *= tmmFactor;
 
-        BVText.append("Multiply by Target Movement Factor of ");
-        BVText.append(tmmFactor);
-        BVText.append("\t\t\t");
-        BVText.append(" x ");
-        BVText.append(tmmFactor);
-        BVText.append(nl);
-        BVText.append("\t\t\t\t-----");
-        BVText.append(nl);
-        BVText.append("Defensive Battle Value = \t\t\t");
-        BVText.append(dbv);
-        BVText.append(nl);
-        BVText.append(nl);
-        
-        // calculate heat efficiency
-        int mechHeatEfficiency = 6 + this.getHeatCapacity();
+        bvText.append("Multiply by Target Movement Factor of ");
+        bvText.append(tmmFactor);
+        bvText.append("\t\t\t");
+        bvText.append(" x ");
+        bvText.append(tmmFactor);
+        bvText.append(nl);
+        bvText.append("\t\t\t\t-----");
+        bvText.append(nl);
+        bvText.append("Defensive Battle Value = \t\t\t");
+        bvText.append(dbv);
+        bvText.append(nl);
+        bvText.append(nl);
 
-        BVText.append("Base Heat Efficiency: ");
-        BVText.append(mechHeatEfficiency);
+        // calculate heat efficiency
+        int mechHeatEfficiency = 6 + getHeatCapacity();
+
+        bvText.append("Base Heat Efficiency: ");
+        bvText.append(mechHeatEfficiency);
         int coolantPods = 0;
-        for (Mounted ammo : this.getAmmo()) {
+        for (Mounted ammo : getAmmo()) {
             if (ammo.getType().hasFlag(AmmoType.T_COOLANT_POD)) {
                 coolantPods++;
             }
         }
-        
+
         // account for coolant pods
         if ( coolantPods > 0 ){
-	        mechHeatEfficiency += Math.min(2*getNumberOfSinks(), Math.ceil((double)(getNumberOfSinks()*coolantPods)/5));
-	        
-	        BVText.append(" + Coolant Pods ");
-	        BVText.append(Math.min(2*getNumberOfSinks(), Math.ceil((double)(getNumberOfSinks()*coolantPods)/5)));
-        }
-        
-        if (getJumpMP() > 0) {
-            mechHeatEfficiency -= getEngine().getJumpHeat(getJumpMP());
-            BVText.append(" - Jump Heat ");
-            BVText.append(getEngine().getJumpHeat(getJumpMP()));
-        } else {
-            mechHeatEfficiency -= getEngine().getRunHeat();
-            BVText.append(" - Run Heat ");
-            BVText.append(getEngine().getRunHeat());
+            mechHeatEfficiency += Math.min(2*getNumberOfSinks(), Math.ceil((double)(getNumberOfSinks()*coolantPods)/5));
+
+            bvText.append(" + Coolant Pods ");
+            bvText.append(Math.min(2*getNumberOfSinks(), Math.ceil((double)(getNumberOfSinks()*coolantPods)/5)));
         }
 
-        BVText.append(" = ");
-        BVText.append(mechHeatEfficiency);
-        BVText.append(nl);
-        
-        BVText.append("Weapon Heat:");
-        BVText.append(nl);
+        if (getJumpMP() > 0) {
+            mechHeatEfficiency -= getEngine().getJumpHeat(getJumpMP());
+            bvText.append(" - Jump Heat ");
+            bvText.append(getEngine().getJumpHeat(getJumpMP()));
+        } else {
+            mechHeatEfficiency -= getEngine().getRunHeat();
+            bvText.append(" - Run Heat ");
+            bvText.append(getEngine().getRunHeat());
+        }
+
+        bvText.append(" = ");
+        bvText.append(mechHeatEfficiency);
+        bvText.append(nl);
+
+        bvText.append("Weapon Heat:");
+        bvText.append(nl);
         // total up maximum heat generated
         // and add up BVs for ammo-using weapon types for excessive ammo rule
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
@@ -2476,18 +2531,18 @@ public abstract class Mech extends Entity implements Serializable {
             if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 weaponHeat *= 0.5;
             }
-            
+
             //check to see if the weapon is a PPC and has a Capacitor attached to it
             if ( wtype.hasFlag(WeaponType.F_PPC) && mounted.getLinkedBy() != null ) {
                 weaponHeat += 5;
             }
-            
-            
-            BVText.append(wtype.getName());
-            BVText.append(" Heat: " );
-            BVText.append(weaponHeat);
-            BVText.append(nl);
-            
+
+
+            bvText.append(wtype.getName());
+            bvText.append(" Heat: " );
+            bvText.append(weaponHeat);
+            bvText.append(nl);
+
             maximumHeat += weaponHeat;
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
@@ -2501,27 +2556,28 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
 
-        BVText.append(nl);
-        BVText.append("Total Heat: ");
-        BVText.append(maximumHeat);
-        BVText.append(nl);
-        
-        BVText.append("Weapons BV: ");
-        BVText.append(nl);
-        
+        bvText.append(nl);
+        bvText.append("Total Heat: ");
+        bvText.append(maximumHeat);
+        bvText.append(nl);
+
+        bvText.append("Weapons BV: ");
+        bvText.append(nl);
+
         double weaponBV = 0;
         boolean hasTargComp = hasTargComp();
         // first, add up front-faced and rear-faced unmodified BV,
         // to know wether front- or rear faced BV should be halved
         double bvFront = 0, bvRear = 0;
-        ArrayList<Mounted> weapons = this.getWeaponList();
+        ArrayList<Mounted> weapons = getWeaponList();
         for (Mounted weapon : weapons) {
             WeaponType wtype = (WeaponType) weapon.getType();
             double dBV = wtype.getBV(this);
-            
+
             // don't count destroyed equipment
-            if (weapon.isDestroyed())
+            if (weapon.isDestroyed()) {
                 continue;
+            }
             // don't count AMS, it's defensive
             if (wtype.hasFlag(WeaponType.F_AMS)) {
                 continue;
@@ -2529,10 +2585,10 @@ public abstract class Mech extends Entity implements Serializable {
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
                 double mgaBV = 0;
-                for (Mounted possibleMG : this.getWeaponList()) {
+                for (Mounted possibleMG : getWeaponList()) {
                     if (possibleMG.getType().hasFlag(WeaponType.F_MG)
                             && possibleMG.getLocation() == weapon
-                                    .getLocation()) {
+                            .getLocation()) {
                         mgaBV += possibleMG.getType().getBV(this);
                     }
                 }
@@ -2543,33 +2599,35 @@ public abstract class Mech extends Entity implements Serializable {
                 dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this,weapon);
             }
 
-            if (weapon.isRearMounted())
+            if (weapon.isRearMounted()) {
                 bvRear += dBV;
-            else
+            } else {
                 bvFront += dBV;
-            
-            BVText.append(wtype.getName());
-            BVText.append(" BV: ");
-            BVText.append(dbv);
-            BVText.append(nl);
+            }
+
+            bvText.append(wtype.getName());
+            bvText.append(" BV: ");
+            bvText.append(dbv);
+            bvText.append(nl);
         }
-        
-        BVText.append("Front BV: ");
-        BVText.append(bvFront);
-        BVText.append(nl);
-        
-        BVText.append("Rear BV: ");
-        BVText.append(bvRear);
-        BVText.append(nl);
-        
+
+        bvText.append("Front BV: ");
+        bvText.append(bvFront);
+        bvText.append(nl);
+
+        bvText.append("Rear BV: ");
+        bvText.append(bvRear);
+        bvText.append(nl);
+
         boolean halveRear = true;
-        if (bvFront <= bvRear)
+        if (bvFront <= bvRear) {
             halveRear = false;
-        
+        }
+
         if (maximumHeat <= mechHeatEfficiency) {
-        	
-        	BVText.append("Maximum Heat Less Then or Equal to Mech Heat Efficiency: ");
-        	BVText.append(nl);
+
+            bvText.append("Maximum Heat Less Then or Equal to Mech Heat Efficiency: ");
+            bvText.append(nl);
             // count all weapons equal, adjusting for rear-firing and excessive
             // ammo
             for (Mounted weapon : getWeaponList()) {
@@ -2577,8 +2635,9 @@ public abstract class Mech extends Entity implements Serializable {
                 double dBV = wtype.getBV(this);
 
                 // don't count destroyed equipment
-                if (weapon.isDestroyed())
+                if (weapon.isDestroyed()) {
                     continue;
+                }
 
                 // don't count AMS, it's defensive
                 if (wtype.hasFlag(WeaponType.F_AMS)) {
@@ -2587,16 +2646,16 @@ public abstract class Mech extends Entity implements Serializable {
                 // calc MG Array here:
                 if (wtype.hasFlag(WeaponType.F_MGA)) {
                     double mgaBV = 0;
-                    for (Mounted possibleMG : this.getWeaponList()) {
+                    for (Mounted possibleMG : getWeaponList()) {
                         if (possibleMG.getType().hasFlag(WeaponType.F_MG)
                                 && possibleMG.getLocation() == weapon
-                                        .getLocation()) {
+                                .getLocation()) {
                             mgaBV += possibleMG.getType().getBV(this);
                         }
                     }
                     dBV = mgaBV * 0.67;
                 }
-                
+
                 //check to see if the weapon is a PPC and has a Capacitor attached to it
                 if ( wtype.hasFlag(WeaponType.F_PPC) && weapon.getLinkedBy() != null ) {
                     dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this,weapon);
@@ -2609,8 +2668,9 @@ public abstract class Mech extends Entity implements Serializable {
 
                 // and we'll add the tcomp here too
                 if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    if (hasTargComp)
+                    if (hasTargComp) {
                         dBV *= 1.25;
+                    }
                 }
                 // artemis bumps up the value
                 if (weapon.getLinkedBy() != null) {
@@ -2628,21 +2688,21 @@ public abstract class Mech extends Entity implements Serializable {
                     dBV /= 2;
                 }
                 weaponBV += dBV;
-                
-                BVText.append(weapon.getName());
+
+                bvText.append(weapon.getName());
                 if ( weapon.isRearMounted() ){
-                	BVText.append("(R)");
+                    bvText.append("(R)");
                 }
-                BVText.append(" BV: ");
-                BVText.append(dBV);
-                BVText.append(nl);
+                bvText.append(" BV: ");
+                bvText.append(dBV);
+                bvText.append(nl);
             }
         } else {
-        	BVText.append("Maximum Heat Greater Then Mech Heat Efficiency: ");
-        	BVText.append(nl);
-            // this will count heat-generating weapons at full modified BV until 
+            bvText.append("Maximum Heat Greater Then Mech Heat Efficiency: ");
+            bvText.append(nl);
+            // this will count heat-generating weapons at full modified BV until
             // heatefficiency is reached or passed with one weapon
-            
+
             // here we store the modified BV and heat of all heat-using weapons,
             // to later be sorted by BV
             ArrayList<double[]> heatBVs = new ArrayList<double[]>();
@@ -2653,8 +2713,9 @@ public abstract class Mech extends Entity implements Serializable {
                 WeaponType wtype = (WeaponType) weapon.getType();
                 double dBV = wtype.getBV(this);
                 // don't count destroyed equipment
-                if (weapon.isDestroyed())
+                if (weapon.isDestroyed()) {
                     continue;
+                }
                 // don't count AMS, it's defensive
                 if (wtype.hasFlag(WeaponType.F_AMS)) {
                     continue;
@@ -2662,14 +2723,14 @@ public abstract class Mech extends Entity implements Serializable {
                 // calc MG Array here:
                 if (wtype.hasFlag(WeaponType.F_MGA)) {
                     double mgaBV = 0;
-                    for (Mounted possibleMG : this.getWeaponList()) {
+                    for (Mounted possibleMG : getWeaponList()) {
                         if (possibleMG.getType().hasFlag(WeaponType.F_MG) && possibleMG.getLocation() == weapon.getLocation()) {
                             mgaBV += possibleMG.getType().getBV(this);
                         }
                     }
                     dBV = mgaBV * 0.67;
                 }
-                
+
                 //check to see if the weapon is a PPC and has a Capacitor attached to it
                 if ( wtype.hasFlag(WeaponType.F_PPC) && weapon.getLinkedBy() != null ) {
                     dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this,weapon);
@@ -2699,13 +2760,13 @@ public abstract class Mech extends Entity implements Serializable {
                     dBV /= 2;
                 }
 
-                BVText.append(weapon.getName());
+                bvText.append(weapon.getName());
                 if ( weapon.isRearMounted() ){
-                	BVText.append("(R)");
+                    bvText.append("(R)");
                 }
-                BVText.append(" BV: ");
-                BVText.append(dBV);
-                BVText.append(nl);
+                bvText.append(" BV: ");
+                bvText.append(dBV);
+                bvText.append(nl);
 
                 int heat = ((WeaponType)weapon.getType()).getHeat();
                 double[] weaponValues = new double[2];
@@ -2725,8 +2786,9 @@ public abstract class Mech extends Entity implements Serializable {
             Collections.sort(heatBVs, new Comparator<double[]>() {
                 public int compare(double[] obj1, double[] obj2) {
                     // if same BV, lower heat first
-                    if (obj1[0] == obj2[0])
+                    if (obj1[0] == obj2[0]) {
                         return new Double(obj1[1] - obj2[1]).intValue();
+                    }
                     // higher BV first
                     return new Double(obj2[1] - obj1[1]).intValue();
                 }
@@ -2740,20 +2802,21 @@ public abstract class Mech extends Entity implements Serializable {
             int heatAdded = 0;
             for (double[] weaponValues : heatBVs) {
                 double dBV = weaponValues[0];
-                if (heatAdded >= mechHeatEfficiency)
+                if (heatAdded >= mechHeatEfficiency) {
                     dBV /= 2;
+                }
                 heatAdded += weaponValues[1];
                 weaponBV += dBV;
             }
         }
-        
-        BVText.append("Total Weapons BV Adjusted For Heat: ");
-        BVText.append(weaponBV);
-        BVText.append(nl);
-        
-        BVText.append("Misc Offensive Equipment: ");
-        BVText.append(nl);
-        
+
+        bvText.append("Total Weapons BV Adjusted For Heat: ");
+        bvText.append(weaponBV);
+        bvText.append(nl);
+
+        bvText.append("Misc Offensive Equipment: ");
+        bvText.append(nl);
+
         // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
         // BMR p152)
         double oEquipmentBV = 0;
@@ -2761,24 +2824,27 @@ public abstract class Mech extends Entity implements Serializable {
             MiscType mtype = (MiscType) mounted.getType();
 
             // don't count destroyed equipment
-            if (mounted.isDestroyed())
+            if (mounted.isDestroyed()) {
                 continue;
+            }
 
             if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_AP_POD)
-            // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) // targ counted with
+                    // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
+                    || mtype.hasFlag(MiscType.F_TARGCOMP)) {
                 // weapons
                 continue;
+            }
             double bv = mtype.getBV(this);
             // if physical weapon linked to AES, multiply by 1.5
             if ((mtype.hasFlag(MiscType.F_CLUB) || mtype.hasFlag(MiscType.F_HAND_WEAPON)) &&
-                    hasFunctionalArmAES(mounted.getLocation()))
+                    hasFunctionalArmAES(mounted.getLocation())) {
                 bv *= 1.5;
-        
-            BVText.append(mtype.getName());
-            BVText.append(" BV: ");
-            BVText.append(bv);
-            BVText.append(nl);
+            }
+
+            bvText.append(mtype.getName());
+            bvText.append(" BV: ");
+            bvText.append(bv);
+            bvText.append(nl);
 
             oEquipmentBV += bv;
             // need to do this here, a MiscType does not know the location
@@ -2787,16 +2853,16 @@ public abstract class Mech extends Entity implements Serializable {
                 if (this.getArmor(mounted.getLocation(), false) != IArmorState.ARMOR_DESTROYED) {
                     oEquipmentBV += this.getArmor(mounted.getLocation());
                 }
-                if (this.hasRearArmor(mounted.getLocation()) && this.getArmor(mounted.getLocation(), true) != IArmorState.ARMOR_DESTROYED) {
+                if (hasRearArmor(mounted.getLocation()) && this.getArmor(mounted.getLocation(), true) != IArmorState.ARMOR_DESTROYED) {
                     oEquipmentBV += this.getArmor(mounted.getLocation(), true);
                 }
             }
         }
-        
-        BVText.append("Total Misc Offensive Equipment BV: ");
-        BVText.append(oEquipmentBV);
-        BVText.append(nl);
-        
+
+        bvText.append("Total Misc Offensive Equipment BV: ");
+        bvText.append(oEquipmentBV);
+        bvText.append(nl);
+
         weaponBV += oEquipmentBV;
 
         // add ammo bv
@@ -2810,8 +2876,9 @@ public abstract class Mech extends Entity implements Serializable {
             AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0)
+            if (mounted.getShotsLeft() == 0) {
                 continue;
+            }
 
             // don't count AMS, it's defensive
             if (atype.getAmmoType() == AmmoType.T_AMS) {
@@ -2830,9 +2897,9 @@ public abstract class Mech extends Entity implements Serializable {
 
                 if (tmpP != null) {
                     // Okay, actually check for friendly TAG.
-                    if (tmpP.hasTAG())
+                    if (tmpP.hasTAG()) {
                         tagBV += atype.getBV(this);
-                    else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
+                    } else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
                         for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
                             Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
@@ -2849,8 +2916,9 @@ public abstract class Mech extends Entity implements Serializable {
                 }
             }
             String key = atype.getAmmoType() + ":" + atype.getRackSize();
-            if (!keys.contains(key))
+            if (!keys.contains(key)) {
                 keys.add(key);
+            }
             if (!ammo.containsKey(key)) {
                 ammo.put(key, atype.getBV(this));
             } else {
@@ -2862,21 +2930,21 @@ public abstract class Mech extends Entity implements Serializable {
         // Only count BV for ammo for a weapontype until the BV of all weapons
         // of that
         // type on the mech is reached.
-        BVText.append("Ammo BV: ");
-        BVText.append(nl);
+        bvText.append("Ammo BV: ");
+        bvText.append(nl);
         for (String key : keys) {
-        	
-        	BVText.append(key);
+
+            bvText.append(key);
             if (weaponsForExcessiveAmmo.get(key) != null) {
                 if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)){
                     ammoBV += weaponsForExcessiveAmmo.get(key);
-                    BVText.append(" BV: ");
-                    BVText.append(weaponsForExcessiveAmmo.get(key));
+                    bvText.append(" BV: ");
+                    bvText.append(weaponsForExcessiveAmmo.get(key));
                 }
                 else {
                     ammoBV += ammo.get(key);
-                    BVText.append(" BV: ");
-                    BVText.append(ammo.get(key));
+                    bvText.append(" BV: ");
+                    bvText.append(ammo.get(key));
                 }
             } else {
                 // Ammo with no matching weapons counts 0, unless it's a coolant
@@ -2884,18 +2952,18 @@ public abstract class Mech extends Entity implements Serializable {
                 // because coolant pods have no matching weapon
                 if (key.equals(new Integer(AmmoType.T_COOLANT_POD).toString() + "1")) {
                     ammoBV += ammo.get(key);
-                    BVText.append(" BV: ");
-                    BVText.append(ammo.get(key));
+                    bvText.append(" BV: ");
+                    bvText.append(ammo.get(key));
                 }
             }
-            BVText.append(nl);
+            bvText.append(nl);
         }
         weaponBV += ammoBV;
-        
-        BVText.append("Toal Ammo BV: ");
-        BVText.append(ammoBV);
-        BVText.append(nl);
-        
+
+        bvText.append("Toal Ammo BV: ");
+        bvText.append(ammoBV);
+        bvText.append(nl);
+
         double weight = getWeight();
         double aesMultiplier = 1;
         if (hasFunctionalArmAES(Mech.LOC_LARM)) {
@@ -2912,35 +2980,35 @@ public abstract class Mech extends Entity implements Serializable {
                 aesMultiplier += 0.4;
             }
         }
-            
+
         weight *= aesMultiplier;
 
-        BVText.append("Weight x AES Multiplier: ");
-        BVText.append(weight);
-        BVText.append(" x ");
-        BVText.append(aesMultiplier);
-        BVText.append(" = ");
-        BVText.append(weight);
-        BVText.append(nl);
-        
+        bvText.append("Weight x AES Multiplier: ");
+        bvText.append(weight);
+        bvText.append(" x ");
+        bvText.append(aesMultiplier);
+        bvText.append(" = ");
+        bvText.append(weight);
+        bvText.append(nl);
+
         // add tonnage, adjusted for TSM
         if (hasTSM()){
             weaponBV += weight * 1.5;
-            BVText.append("Add weight + TSM Modifier = ");
-            BVText.append(weight * 1.5);
-            BVText.append(nl);
+            bvText.append("Add weight + TSM Modifier = ");
+            bvText.append(weight * 1.5);
+            bvText.append(nl);
         }
         else if (hasIndustrialTSM()){
             weaponBV += weight * 1.15;
-            BVText.append("Add weight + Industrial TSM Modifier = ");
-            BVText.append(weight * 1.15);
-            BVText.append(nl);
+            bvText.append("Add weight + Industrial TSM Modifier = ");
+            bvText.append(weight * 1.15);
+            bvText.append(nl);
         }
         else{
             weaponBV += weight;
-            BVText.append("Add weight = ");
-            BVText.append(weight * 1.5);
-            BVText.append(nl);
+            bvText.append("Add weight = ");
+            bvText.append(weight * 1.5);
+            bvText.append(nl);
         }
 
         // adjust further for speed factor
@@ -2954,9 +3022,9 @@ public abstract class Mech extends Entity implements Serializable {
         // factor in TSM (flat +1)
         if (hasTSM()) {
             speedFactorTableLookup += 1;
-            BVText.append("Speed Factor + 1 for TSM = ");
-            BVText.append(speedFactorTableLookup);
-            BVText.append(nl);
+            bvText.append("Speed Factor + 1 for TSM = ");
+            bvText.append(speedFactorTableLookup);
+            bvText.append(nl);
         }
         // factor in MASC
         // recalculate normal run MP here, because we need normal run +1 for
@@ -2964,52 +3032,53 @@ public abstract class Mech extends Entity implements Serializable {
         // and MASC might be currently active, so we can't just use getRunMP
         if (hasMASC()) {
             speedFactorTableLookup = getWalkMP(false, true) * 1.5 + 1 - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
-            BVText.append("Speed Factor for MASC = ");
-            BVText.append(speedFactorTableLookup);
-            BVText.append(nl);
+            bvText.append("Speed Factor for MASC = ");
+            bvText.append(speedFactorTableLookup);
+            bvText.append(nl);
         }
         speedFactorTableLookup += Math.round((double)jumpMP / 2);
-        
-        BVText.append("Speed Factor + ");
-        BVText.append(Math.round((double)jumpMP / 2));
-        BVText.append(" for Jumping");
-        BVText.append(nl);
 
-        if (speedFactorTableLookup > 25)
+        bvText.append("Speed Factor + ");
+        bvText.append(Math.round((double)jumpMP / 2));
+        bvText.append(" for Jumping");
+        bvText.append(nl);
+
+        if (speedFactorTableLookup > 25) {
             speedFactor = Math.pow(1 + (((double) runMP + (Math.round((double) jumpMP / 2)) - 5) / 10), 1.2);
-        else
+        } else {
             speedFactor = Math.pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
+        }
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
-        
-        BVText.append("Final Speed Factor: ");
-        BVText.append(speedFactor);
-        BVText.append(nl);
+
+        bvText.append("Final Speed Factor: ");
+        bvText.append(speedFactor);
+        bvText.append(nl);
 
         obv = weaponBV * speedFactor;
-        
-        BVText.append("Offensive BV = Weapons BV + Speed Factor: ");
-        BVText.append(weaponBV);
-        BVText.append(" + ");
-        BVText.append(speedFactor);
-        BVText.append(" = ");
-        BVText.append(obv);
-        BVText.append(nl);
+
+        bvText.append("Offensive BV = Weapons BV + Speed Factor: ");
+        bvText.append(weaponBV);
+        bvText.append(" + ");
+        bvText.append(speedFactor);
+        bvText.append(" = ");
+        bvText.append(obv);
+        bvText.append(nl);
 
         int finalBV = (int)Math.round(obv + dbv);
-        if ( this.getCockpitType() == Mech.COCKPIT_SMALL || this.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+        if ( getCockpitType() == Mech.COCKPIT_SMALL || getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             finalBV *= 0.95;
-            BVText.append("Cockpit Modifer: 0.95");
-            BVText.append(nl);
+            bvText.append("Cockpit Modifer: 0.95");
+            bvText.append(nl);
         }
-        
-        BVText.append("Final BV: ");
-        BVText.append(dbv);
-        BVText.append(" + ");
-        BVText.append(obv);
-        BVText.append(" = ");
-        BVText.append(finalBV);
-        BVText.append(nl);
+
+        bvText.append("Final BV: ");
+        bvText.append(dbv);
+        bvText.append(" + ");
+        bvText.append(obv);
+        bvText.append(" = ");
+        bvText.append(finalBV);
+        bvText.append(nl);
 
         // we get extra bv from some stuff
         double xbv = 0.0;
@@ -3041,11 +3110,13 @@ public abstract class Mech extends Entity implements Serializable {
         int retVal = (int) Math.round((finalBV) * pilotFactor);
 
         // don't factor pilot in if we are just calculating BV for C3 extra BV
-        if (ignoreC3)
+        if (ignoreC3) {
             return finalBV;
+        }
         return retVal;
     }
 
+    @Override
     public double getCost() {
         return getCost(null);
     }
@@ -3053,7 +3124,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Calculate the C-bill cost of the mech. Passing null as the argument will
      * skip the detailed report processing.
-     * 
+     *
      * @param detail
      *            buffer to append the detailed cost report to
      * @return The cost in C-Bills of the 'Mech in question.
@@ -3077,12 +3148,13 @@ public abstract class Mech extends Entity implements Serializable {
         } else {
             cockpitCost = 200000;
         }
-        if (hasEiCockpit() && getCrew().getOptions().booleanOption("ei_implant"))
+        if (hasEiCockpit() && getCrew().getOptions().booleanOption("ei_implant")) {
             cockpitCost = 400000;
+        }
         costs[i++] = cockpitCost;
         costs[i++] = 50000;// life support
         costs[i++] = weight * 2000;// sensors
-        int muscCost = this.hasTSM() ? 16000 : 2000;
+        int muscCost = hasTSM() ? 16000 : 2000;
         costs[i++] = muscCost * weight;// musculature
         costs[i++] = EquipmentType.getStructureCost(structureType) * weight;// IS
         costs[i++] = getActuatorCost();// arm and/or leg actuators
@@ -3099,13 +3171,14 @@ public abstract class Mech extends Entity implements Serializable {
         }
         double jumpBaseCost = 200;
         // You cannot have JJ's and UMU's on the same unit.
-        if (this.hasUMU()) {
+        if (hasUMU()) {
             costs[i++] = Math.pow(getAllUMUCount(), 2.0) * weight * jumpBaseCost;
         } else {
-            if (getJumpType() == Mech.JUMP_BOOSTER)
+            if (getJumpType() == Mech.JUMP_BOOSTER) {
                 jumpBaseCost = 150;
-            else if (getJumpType() == Mech.JUMP_IMPROVED)
+            } else if (getJumpType() == Mech.JUMP_IMPROVED) {
                 jumpBaseCost = 500;
+            }
             costs[i++] = Math.pow(getOriginalJumpMP(), 2.0) * weight * jumpBaseCost;
         }
         int freeSinks = hasDoubleHeatSinks() ? 0 : 10;// num of sinks we don't
@@ -3130,8 +3203,9 @@ public abstract class Mech extends Entity implements Serializable {
         double weightMultiplier = 1 + (weight / 100f);
         costs[i++] = -weightMultiplier; // negative just marks it as multiplier
         cost = Math.round(cost * weightMultiplier);
-        if (detail != null)
+        if (detail != null) {
             addCostDetails(cost, detail, costs);
+        }
         return cost;
     }
 
@@ -3173,6 +3247,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     protected abstract double getLegActuatorCost();
 
+    @Override
     public Vector<Report> victoryReport() {
         Vector<Report> vDesc = new Vector<Report>();
 
@@ -3211,17 +3286,20 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Add in any piloting skill mods
      */
+    @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         // gyro hit?
         if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0) {
 
             if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
-                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) == 1)
+                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) == 1) {
                     roll.addModifier(1, "HD Gyro damaged once");
-                else
+                } else {
                     roll.addModifier(3, "HD Gyro damaged twice");
-            } else
+                }
+            } else {
                 roll.addModifier(3, "Gyro damaged");
+            }
         }
 
         // EI bonus?
@@ -3255,10 +3333,11 @@ public abstract class Mech extends Entity implements Serializable {
         if ( hasModularArmor() ) {
             roll.addModifier(1,"Modular Armor");
         }
-        
+
         return roll;
     }
 
+    @Override
     public int getMaxElevationChange() {
         return 2;
     }
@@ -3266,11 +3345,12 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Determine if this unit has an active stealth system. <p/> Sub-classes are
      * encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
      */
+    @Override
     public boolean isStealthActive() {
         // Try to find a Mek Stealth system.
         for (Mounted mEquip : getMisc()) {
@@ -3285,10 +3365,11 @@ public abstract class Mech extends Entity implements Serializable {
         // No Mek Stealth or system inactive. Return false.
         return false;
     }
-    
+
     /**
      * Does the mech have a functioning null signature system?
      */
+    @Override
     public boolean isNullSigActive() {
         if ( !isShutDown() ){
             for (Mounted m : getMisc()) {
@@ -3301,10 +3382,11 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return false;
     }
-    
+
     /**
      * Does the mech have a functioning void signature system?
      */
+    @Override
     public boolean isVoidSigActive() {
         if ( !isShutDown() ){
             for (Mounted m : getMisc()) {
@@ -3317,10 +3399,11 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return false;
     }
-    
+
     /**
      * Does the mech have a functioning Chameleon Light Polarization Field?
      */
+    @Override
     public boolean isChameleonShieldActive() {
         if ( !isShutDown() ){
             for (Mounted m : getMisc()) {
@@ -3340,7 +3423,7 @@ public abstract class Mech extends Entity implements Serializable {
      * <code>Entity</code> class range constants, an
      * <code>IllegalArgumentException</code> will be thrown. <p/> Sub-classes
      * are encouraged to override this method.
-     * 
+     *
      * @param range -
      *            an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
@@ -3349,6 +3432,7 @@ public abstract class Mech extends Entity implements Serializable {
      * @return a <code>TargetRoll</code> value that contains the stealth
      *         modifier for the given range.
      */
+    @Override
     public TargetRoll getStealthModifier(int range, Entity ae) {
         TargetRoll result = null;
 
@@ -3364,12 +3448,12 @@ public abstract class Mech extends Entity implements Serializable {
             }
             return new TargetRoll(mmod, "void signature");
         }
-        
+
         boolean isInfantry = ae instanceof Infantry && !(ae instanceof BattleArmor);
         // Stealth or null sig must be active.
         if (!isStealthActive() && !isNullSigActive() && !isChameleonShieldActive()) {
             result = new TargetRoll(0, "stealth not active");
-        } 
+        }
         // Determine the modifier based upon the range.
         else {
             switch (range) {
@@ -3438,7 +3522,7 @@ public abstract class Mech extends Entity implements Serializable {
                 throw new IllegalArgumentException("Unknown range constant: " + range);
             }
         }
-        
+
         // Return the result.
         return result;
 
@@ -3446,25 +3530,28 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     * 
+     *
      * @return A <code>boolean</code> that is <code>true</code> if the unit
      *         can be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
      * @see Entity#isSalvage()
      */
+    @Override
     public boolean isRepairable() {
         // A Mech is repairable if it is salvageable,
         // and its CT internals are not gone.
         int loc_is = this.getInternal(Mech.LOC_CT);
-        return this.isSalvage() && (loc_is != IArmorState.ARMOR_DOOMED) && (loc_is != IArmorState.ARMOR_DESTROYED);
+        return isSalvage() && (loc_is != IArmorState.ARMOR_DOOMED) && (loc_is != IArmorState.ARMOR_DESTROYED);
     }
 
+    @Override
     public boolean canCharge() {
         // Mechs can charge, unless they are Clan and the "no clan physicals"
         // option is set
         return super.canCharge() && !(game.getOptions().booleanOption("no_clan_physical") && isClan());
     }
 
+    @Override
     public boolean canDFA() {
         // Mechs can DFA, unless they are Clan and the "no clan physicals"
         // option is set
@@ -3509,8 +3596,9 @@ public abstract class Mech extends Entity implements Serializable {
                     break;
                 }
             }
-            if (hasLaserHeatSinks == HAS_UNKNOWN)
+            if (hasLaserHeatSinks == HAS_UNKNOWN) {
                 hasLaserHeatSinks = HAS_FALSE;
+            }
         }
         return hasLaserHeatSinks == HAS_TRUE;
     }
@@ -3528,8 +3616,9 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     public int getActiveSinksNextRound() {
-        if (sinksOnNextRound < 0)
+        if (sinksOnNextRound < 0) {
             return getActiveSinks();
+        }
         return sinksOnNextRound;
     }
 
@@ -3537,8 +3626,9 @@ public abstract class Mech extends Entity implements Serializable {
      * @return Returns the autoEject.
      */
     public boolean isAutoEject() {
-        if (getCockpitType() == COCKPIT_TORSO_MOUNTED)
+        if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
             return false;
+        }
         return autoEject;
     }
 
@@ -3550,58 +3640,76 @@ public abstract class Mech extends Entity implements Serializable {
         this.autoEject = autoEject;
     }
 
+    @Override
     public boolean removePartialCoverHits(int location, int cover, int side) {
         // left and right cover are from attacker's POV.
         // if hitting front arc, need to swap them
-        if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER) && (location == Mech.LOC_CT || location == Mech.LOC_HEAD))
+        if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER) && (location == Mech.LOC_CT || location == Mech.LOC_HEAD)) {
             return true;
+        }
         if (side == ToHitData.SIDE_FRONT) {
-            if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && location == Mech.LOC_LLEG)
+            if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && location == Mech.LOC_LLEG) {
                 return true;
-            if ((cover & LosEffects.COVER_LOWLEFT) != 0 && location == Mech.LOC_RLEG)
+            }
+            if ((cover & LosEffects.COVER_LOWLEFT) != 0 && location == Mech.LOC_RLEG) {
                 return true;
-            if ((cover & LosEffects.COVER_RIGHT) != 0 && (location == Mech.LOC_LARM || location == Mech.LOC_LT))
+            }
+            if ((cover & LosEffects.COVER_RIGHT) != 0 && (location == Mech.LOC_LARM || location == Mech.LOC_LT)) {
                 return true;
-            if ((cover & LosEffects.COVER_LEFT) != 0 && (location == Mech.LOC_RARM || location == Mech.LOC_RT))
+            }
+            if ((cover & LosEffects.COVER_LEFT) != 0 && (location == Mech.LOC_RARM || location == Mech.LOC_RT)) {
                 return true;
+            }
         } else {
-            if ((cover & LosEffects.COVER_LOWLEFT) != 0 && location == Mech.LOC_LLEG)
+            if ((cover & LosEffects.COVER_LOWLEFT) != 0 && location == Mech.LOC_LLEG) {
                 return true;
-            if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && location == Mech.LOC_RLEG)
+            }
+            if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && location == Mech.LOC_RLEG) {
                 return true;
-            if ((cover & LosEffects.COVER_LEFT) != 0 && (location == Mech.LOC_LARM || location == Mech.LOC_LT))
+            }
+            if ((cover & LosEffects.COVER_LEFT) != 0 && (location == Mech.LOC_LARM || location == Mech.LOC_LT)) {
                 return true;
-            if ((cover & LosEffects.COVER_RIGHT) != 0 && (location == Mech.LOC_RARM || location == Mech.LOC_RT))
+            }
+            if ((cover & LosEffects.COVER_RIGHT) != 0 && (location == Mech.LOC_RARM || location == Mech.LOC_RT)) {
                 return true;
+            }
         }
         return false;
     }
 
+    @Override
     public boolean doomedInVacuum() {
         return false;
     }
 
+    @Override
     public boolean doomedOnGround() {
         return false;
     }
 
+    @Override
     public boolean doomedInAtmosphere() {
         return true;
     }
 
+    @Override
     public boolean doomedInSpace() {
         return true;
     }
 
+    @Override
     public boolean hasEiCockpit() {
         return isClan() || super.hasEiCockpit();
     }
 
+    @Override
     public boolean hasActiveEiCockpit() {
-        if (cockpitStatus == COCKPIT_OFF)
+        if (cockpitStatus == COCKPIT_OFF) {
             return false;
-        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
+        }
+        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0) {
             return false;
+        }
         return super.hasActiveEiCockpit();
     }
 
@@ -3621,6 +3729,7 @@ public abstract class Mech extends Entity implements Serializable {
         }
     }
 
+    @Override
     public int getGyroType() {
         return gyroType;
     }
@@ -3638,56 +3747,65 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     public String getGyroTypeString() {
-        return getGyroTypeString(getGyroType());
+        return Mech.getGyroTypeString(getGyroType());
     }
 
     public String getCockpitTypeString() {
-        return getCockpitTypeString(getCockpitType());
+        return Mech.getCockpitTypeString(getCockpitType());
     }
 
     public static String getGyroTypeString(int inGyroType) {
-        if ((inGyroType < 0) || (inGyroType >= GYRO_STRING.length))
+        if ((inGyroType < 0) || (inGyroType >= GYRO_STRING.length)) {
             return "Unknown";
+        }
         return GYRO_STRING[inGyroType];
     }
 
     public static String getGyroTypeShortString(int inGyroType) {
-        if ((inGyroType < 0) || (inGyroType >= GYRO_SHORT_STRING.length))
+        if ((inGyroType < 0) || (inGyroType >= GYRO_SHORT_STRING.length)) {
             return "Unknown";
+        }
         return GYRO_SHORT_STRING[inGyroType];
     }
 
     public static String getCockpitTypeString(int inCockpitType) {
-        if ((inCockpitType < 0) || (inCockpitType >= COCKPIT_STRING.length))
+        if ((inCockpitType < 0) || (inCockpitType >= COCKPIT_STRING.length)) {
             return "Unknown";
+        }
         return COCKPIT_STRING[inCockpitType];
     }
 
     public static int getGyroTypeForString(String inType) {
-        if ((inType == null) || (inType.length() < 1))
+        if ((inType == null) || (inType.length() < 1)) {
             return GYRO_UNKNOWN;
+        }
         for (int x = 0; x < GYRO_STRING.length; x++) {
-            if ((inType.equals(GYRO_STRING[x])) || (inType.equals(GYRO_SHORT_STRING[x])))
+            if ((inType.equals(GYRO_STRING[x])) || (inType.equals(GYRO_SHORT_STRING[x]))) {
                 return x;
+            }
         }
         return GYRO_UNKNOWN;
     }
 
     public static int getCockpitTypeForString(String inType) {
-        if ((inType == null) || (inType.length() < 1))
+        if ((inType == null) || (inType.length() < 1)) {
             return COCKPIT_UNKNOWN;
+        }
         for (int x = 0; x < COCKPIT_STRING.length; x++) {
-            if ((inType.equals(COCKPIT_STRING[x])) || (inType.equals(COCKPIT_SHORT_STRING[x])))
+            if ((inType.equals(COCKPIT_STRING[x])) || (inType.equals(COCKPIT_SHORT_STRING[x]))) {
                 return x;
+            }
         }
         return COCKPIT_UNKNOWN;
     }
 
     public String getSystemName(int index) {
-        if (index == SYSTEM_GYRO)
-            return getGyroDisplayString(gyroType);
-        if (index == SYSTEM_COCKPIT)
-            return getCockpitDisplayString(cockpitType);
+        if (index == SYSTEM_GYRO) {
+            return Mech.getGyroDisplayString(gyroType);
+        }
+        if (index == SYSTEM_COCKPIT) {
+            return Mech.getCockpitDisplayString(cockpitType);
+        }
         return systemNames[index];
     }
 
@@ -3710,8 +3828,9 @@ public abstract class Mech extends Entity implements Serializable {
             inName = "GYRO_UNKNOWN";
         }
         String result = EquipmentMessages.getString("SystemType.Gyro." + inName);
-        if (result != null)
+        if (result != null) {
             return result;
+        }
         return inName;
     }
 
@@ -3737,21 +3856,26 @@ public abstract class Mech extends Entity implements Serializable {
             inName = "GYRO_UNKNOWN";
         }
         String result = EquipmentMessages.getString("SystemType.Cockpit." + inName);
-        if (result != null)
+        if (result != null) {
             return result;
+        }
         return inName;
     }
 
+    @Override
     public boolean canAssaultDrop() {
         return true;
     }
 
+    @Override
     public boolean isHexProhibited(IHex hex) {
-        if (hex.containsTerrain(Terrains.IMPASSABLE))
+        if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
+        }
 
-        if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+        if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
+        }
 
         return hex.terrainLevel(Terrains.WOODS) > 2 || hex.terrainLevel(Terrains.JUNGLE) > 2;
     }
@@ -3782,11 +3906,11 @@ public abstract class Mech extends Entity implements Serializable {
         else if (this instanceof QuadMech){
             sb.append("Quad");
         }
-        
-        if ( this.isOmni() ){
+
+        if ( isOmni() ){
             sb.append(" Omnimech");
         }
-        
+
         sb.append(nl);
         sb.append("TechBase:").append(TechConstants.getTechName(techLevel));
         sb.append(nl);
@@ -3804,10 +3928,11 @@ public abstract class Mech extends Entity implements Serializable {
         sb.append(nl);
 
         sb.append("Myomer:");
-        if (hasTSM())
+        if (hasTSM()) {
             sb.append("Triple-Strength");
-        else
+        } else {
             sb.append("Standard");
+        }
         sb.append(nl);
 
         if (!standard) {
@@ -3829,7 +3954,7 @@ public abstract class Mech extends Entity implements Serializable {
         }else{
             sb.append("Single");
         }
-        
+
         sb.append(nl);
         sb.append("Walk MP:").append(walkMP).append(nl);
         sb.append("Jump MP:").append(jumpMP).append(nl);
@@ -3838,13 +3963,13 @@ public abstract class Mech extends Entity implements Serializable {
         sb.append("Armor:").append(EquipmentType.getArmorTypeName(getArmorType()));
         sb.append(nl);
 
-        for (int x = 0; x < MtfFile.locationOrder.length; x++) {
-            sb.append(getLocationAbbr(MtfFile.locationOrder[x])).append(" Armor:");
-            sb.append(getOArmor(MtfFile.locationOrder[x], false)).append(nl);
+        for (int element : MtfFile.locationOrder) {
+            sb.append(getLocationAbbr(element)).append(" Armor:");
+            sb.append(getOArmor(element, false)).append(nl);
         }
-        for (int x = 0; x < MtfFile.rearLocationOrder.length; x++) {
-            sb.append("RT").append(getLocationAbbr(MtfFile.rearLocationOrder[x]).charAt(0)).append(" Armor:");
-            sb.append(getOArmor(MtfFile.rearLocationOrder[x], true)).append(nl);
+        for (int element : MtfFile.rearLocationOrder) {
+            sb.append("RT").append(getLocationAbbr(element).charAt(0)).append(" Armor:");
+            sb.append(getOArmor(element, true)).append(nl);
         }
         sb.append(nl);
 
@@ -3855,16 +3980,16 @@ public abstract class Mech extends Entity implements Serializable {
         }
         sb.append(nl);
 
-        for (int x = 0; x < MtfFile.locationOrder.length; x++) {
-            int l = MtfFile.locationOrder[x];
+        for (int l : MtfFile.locationOrder) {
             String locationName = getLocationName(l);
             sb.append(locationName + ":");
             sb.append(nl);
             for (int y = 0; y < 12; y++) {
-                if (y < getNumberOfCriticals(l))
+                if (y < getNumberOfCriticals(l)) {
                     sb.append(decodeCritical(getCritical(l, y))).append(nl);
-                else
+                } else {
                     sb.append(MtfFile.EMPTY).append(nl);
+                }
             }
             sb.append(nl);
         }
@@ -3873,17 +3998,19 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     private String decodeCritical(CriticalSlot cs) {
-        if (cs == null)
+        if (cs == null) {
             return MtfFile.EMPTY;
+        }
         int type = cs.getType();
         int index = cs.getIndex();
         if (type == CriticalSlot.TYPE_SYSTEM) {
-            if (systemNames[index].indexOf("Upper") != -1 || systemNames[index].indexOf("Lower") != -1 || systemNames[index].indexOf("Hand") != -1 || systemNames[index].indexOf("Foot") != -1)
+            if (systemNames[index].indexOf("Upper") != -1 || systemNames[index].indexOf("Lower") != -1 || systemNames[index].indexOf("Hand") != -1 || systemNames[index].indexOf("Foot") != -1) {
                 return systemNames[index] + " Actuator";
-            else if (systemNames[index].indexOf("Engine") != -1)
+            } else if (systemNames[index].indexOf("Engine") != -1) {
                 return "Fusion " + systemNames[index];
-            else
+            } else {
                 return systemNames[index];
+            }
         } else if (type == CriticalSlot.TYPE_EQUIPMENT) {
             Mounted m = getEquipment(cs.getIndex());
             return m.getType().getInternalName();
@@ -3896,7 +4023,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a standard cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addCockpit() {
@@ -3916,7 +4043,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a small cockpit. Note: This is part
      * of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addSmallCockpit() {
@@ -3961,7 +4088,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a torso-mounted cockpit. Note: This
      * is part of the mek creation public API, and might not be referenced by
      * any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addTorsoMountedCockpit() {
@@ -3987,8 +4114,9 @@ public abstract class Mech extends Entity implements Serializable {
             addCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         }
 
-        if (success)
+        if (success) {
             setCockpitType(COCKPIT_TORSO_MOUNTED);
+        }
         return success;
     }
 
@@ -3996,7 +4124,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a standard gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addGyro() {
@@ -4014,7 +4142,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a compact gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addCompactGyro() {
@@ -4031,7 +4159,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for an extra-light gyro. Also set the
      * gyro type variable. Note: This is part of the mek creation public API,
      * and might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addXLGyro() {
@@ -4043,10 +4171,10 @@ public abstract class Mech extends Entity implements Serializable {
         addCritical(LOC_CT, 7, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         addCritical(LOC_CT, 8, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         setGyroType(GYRO_XL);
-        
+
         int[] centerSlots = { 0, 1, 2, 9, 10, 11 };
-        for (int i = 0; i < centerSlots.length; i++) {
-            addCritical(LOC_CT, centerSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        for (int centerSlot : centerSlots) {
+            addCritical(LOC_CT, centerSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
         }
 
         return true;
@@ -4056,7 +4184,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a heavy-duty gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addHeavyDutyGyro() {
@@ -4072,7 +4200,7 @@ public abstract class Mech extends Entity implements Serializable {
      * method before setting a mek's engine object will result in a NPE. Note:
      * This is part of the mek creation public API, and might not be referenced
      * by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addEngineCrits() {
@@ -4082,8 +4210,8 @@ public abstract class Mech extends Entity implements Serializable {
         if (getEmptyCriticals(LOC_CT) < centerSlots.length) {
             success = false;
         } else {
-            for (int i = 0; i < centerSlots.length; i++) {
-                addCritical(LOC_CT, centerSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+            for (int centerSlot : centerSlots) {
+                addCritical(LOC_CT, centerSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
             }
         }
 
@@ -4091,9 +4219,9 @@ public abstract class Mech extends Entity implements Serializable {
         if (getEmptyCriticals(LOC_LT) < sideSlots.length || getEmptyCriticals(LOC_RT) < sideSlots.length || !success) {
             success = false;
         } else {
-            for (int i = 0; i < sideSlots.length; i++) {
-                addCritical(LOC_LT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-                addCritical(LOC_RT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+            for (int sideSlot : sideSlots) {
+                addCritical(LOC_LT, sideSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+                addCritical(LOC_RT, sideSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
             }
         }
 
@@ -4101,11 +4229,11 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     /**
-     * Add the critical slots necessary for the mek's engine when using a compact gyro. 
+     * Add the critical slots necessary for the mek's engine when using a compact gyro.
      * Calling this method before setting a mek's engine object will result in a NPE. Note:
      * This is part of the mek creation public API, and might not be referenced
      * by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addEngineCritsWithCompactGyro() {
@@ -4116,8 +4244,8 @@ public abstract class Mech extends Entity implements Serializable {
         if (getEmptyCriticals(LOC_CT) < centerSlots.length) {
             success = false;
         } else {
-            for (int i = 0; i < centerSlots.length; i++) {
-                addCritical(LOC_CT, centerSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+            for (int centerSlot : centerSlots) {
+                addCritical(LOC_CT, centerSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
             }
         }
 
@@ -4125,17 +4253,17 @@ public abstract class Mech extends Entity implements Serializable {
         if (getEmptyCriticals(LOC_LT) < sideSlots.length || getEmptyCriticals(LOC_RT) < sideSlots.length || !success) {
             success = false;
         } else {
-            for (int i = 0; i < sideSlots.length; i++) {
-                addCritical(LOC_LT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-                addCritical(LOC_RT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+            for (int sideSlot : sideSlots) {
+                addCritical(LOC_LT, sideSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+                addCritical(LOC_RT, sideSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
             }
         }
 
         return success;
     }
 
-   
-   
+
+
     /**
      * Remove all engine critical slots from the mek. Note: This is part of the
      * mek creation public API, and might not be referenced by any MegaMek code.
@@ -4174,21 +4302,25 @@ public abstract class Mech extends Entity implements Serializable {
             switch (location) {
             case Mech.LOC_CT:
             case Mech.LOC_HEAD:
-                if (this.hasActiveShield(Mech.LOC_RARM))
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
-                if (this.hasActiveShield(Mech.LOC_LARM))
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
+                if (this.hasActiveShield(Mech.LOC_RARM)) {
+                    damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
+                }
+                if (this.hasActiveShield(Mech.LOC_LARM)) {
+                    damageAbsorption = getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
+                }
                 break;
             case Mech.LOC_LARM:
             case Mech.LOC_LT:
             case Mech.LOC_LLEG:
-                if (this.hasActiveShield(Mech.LOC_LARM))
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
+                if (this.hasActiveShield(Mech.LOC_LARM)) {
+                    damageAbsorption = getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
+                }
                 break;
             default:
-                if (this.hasActiveShield(Mech.LOC_RARM))
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
-                break;
+                if (this.hasActiveShield(Mech.LOC_RARM)) {
+                    damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
+                }
+            break;
             }
         }
 
@@ -4196,27 +4328,31 @@ public abstract class Mech extends Entity implements Serializable {
             switch (location) {
             case Mech.LOC_LARM:
             case Mech.LOC_LT:
-                if (this.hasPassiveShield(Mech.LOC_LARM))
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
+                if (this.hasPassiveShield(Mech.LOC_LARM)) {
+                    damageAbsorption = getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
+                }
                 break;
             case Mech.LOC_RARM:
             case Mech.LOC_RT:
-                if (this.hasPassiveShield(Mech.LOC_RARM))
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
+                if (this.hasPassiveShield(Mech.LOC_RARM)) {
+                    damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
+                }
                 break;
             default:
                 break;
             }
         }
-        if (this.hasNoDefenseShield(location)) {
+        if (hasNoDefenseShield(location)) {
             switch (location) {
             case Mech.LOC_LARM:
-                if (this.hasNoDefenseShield(Mech.LOC_LARM))
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
+                if (hasNoDefenseShield(Mech.LOC_LARM)) {
+                    damageAbsorption = getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
+                }
                 break;
             case Mech.LOC_RARM:
-                if (this.hasNoDefenseShield(Mech.LOC_RARM))
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
+                if (hasNoDefenseShield(Mech.LOC_RARM)) {
+                    damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
+                }
                 break;
             default:
                 break;
@@ -4229,23 +4365,28 @@ public abstract class Mech extends Entity implements Serializable {
     private int getAbsorptionRate(int location, int damage) {
         int rate = damage;
 
-        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM)
+        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM) {
             return rate;
+        }
 
-        if (damage <= 0)
+        if (damage <= 0) {
             return 0;
+        }
 
         for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
-            CriticalSlot cs = this.getCritical(location, slot);
+            CriticalSlot cs = getCritical(location, slot);
 
-            if (cs == null)
+            if (cs == null) {
                 continue;
+            }
 
-            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
+            }
 
-            if (cs.isDamaged())
+            if (cs.isDamaged()) {
                 continue;
+            }
 
             Mounted m = this.getEquipment(cs.getIndex());
 
@@ -4262,14 +4403,15 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Does this mech have an undamaged HarJel system in this location?
-     * 
+     *
      * @param loc
      *            the <code>int</code> location to check
      * @return a <code>boolean</code> value indicating a present HarJel system
      */
     public boolean hasHarJelIn(int loc) {
-        if (loc == Mech.LOC_HEAD)
+        if (loc == Mech.LOC_HEAD) {
             return false;
+        }
         for (Mounted mounted : getMisc()) {
             if (mounted.getLocation() == loc && mounted.isReady() && mounted.getType().hasFlag(MiscType.F_HARJEL)) {
                 return true;
@@ -4278,19 +4420,23 @@ public abstract class Mech extends Entity implements Serializable {
         return false;
     }
 
+    @Override
     public void setGrappled(int id, boolean attacker) {
         grappled_id = id;
         isGrappleAttacker = attacker;
     }
 
+    @Override
     public boolean isGrappleAttacker() {
         return isGrappleAttacker;
     }
 
+    @Override
     public int getGrappled() {
         return grappled_id;
     }
 
+    @Override
     public boolean isEligibleForMovement() {
         if (grappled_id != Entity.NONE) {
             return false;
@@ -4298,10 +4444,12 @@ public abstract class Mech extends Entity implements Serializable {
         return super.isEligibleForMovement();
     }
 
+    @Override
     public boolean isNuclearHardened() {
         return true;
     }
 
+    @Override
     public void destroyLocation(int loc) {
         super.destroyLocation(loc);
         // if it's a leg, the entity falls
@@ -4310,38 +4458,42 @@ public abstract class Mech extends Entity implements Serializable {
         }
     }
 
+    @Override
     public boolean hasCASEII(int location) {
 
         for (Mounted mount : this.getEquipment()) {
-            if (mount.getLocation() == location && mount.getType() instanceof MiscType && ((MiscType) mount.getType()).hasFlag(MiscType.F_CASEII))
+            if (mount.getLocation() == location && mount.getType() instanceof MiscType && ((MiscType) mount.getType()).hasFlag(MiscType.F_CASEII)) {
                 return true;
+            }
         }
 
         return false;
     }
-    
+
+    @Override
     public void setGameOptions() {
         super.setGameOptions();
-        
-        for (Mounted mounted : this.getWeaponList()) {
-            if (mounted.getType() instanceof EnergyWeapon 
-                    && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA) 
+
+        for (Mounted mounted : getWeaponList()) {
+            if (mounted.getType() instanceof EnergyWeapon
+                    && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA)
                     && game != null && game.getOptions().booleanOption("tacops_energy_weapons")) {
 
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
-                
-                if ( mounted.getType() instanceof PPCWeapon 
+
+                if ( mounted.getType() instanceof PPCWeapon
                         && ((WeaponType)mounted.getType()).getMinimumRange() > 0
                         && game.getOptions().booleanOption("tacops_ppc_inhibitors") ) {
                     modes.add("Field Inhibitor ON");
                     modes.add("Field Inhibitor OFF");
                 }
                 int damage = ((WeaponType) mounted.getType()).getDamage();
-                
-                if ( damage == WeaponType.DAMAGE_VARIABLE )
+
+                if ( damage == WeaponType.DAMAGE_VARIABLE ) {
                     damage = ((WeaponType) mounted.getType()).damageShort;
-                
+                }
+
                 for (; damage >= 0; damage--) {
                     modes.add("Damage " + damage);
                 }
@@ -4350,69 +4502,80 @@ public abstract class Mech extends Entity implements Serializable {
                 }
                 ((WeaponType) mounted.getType()).setModes(modes.toArray(stringArray));
             }
-            
+
         }
 
     }
+    @Override
     public void setGrappleSide(int side) {
         grappledSide = side;
     }
-    
+
+    @Override
     public int getGrappleSide() {
         return grappledSide;
     }
 
+    @Override
     public boolean isCarefulStand() {
         return isCarefulStanding;
     }
 
+    @Override
     public boolean hasModularArmor() {
-        
+
         for (Mounted mount : this.getEquipment()) {
             if (!mount.isDestroyed()
-                    && mount.getType() instanceof MiscType 
-                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR))
+                    && mount.getType() instanceof MiscType
+                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
                 return true;
+            }
         }
 
         return false;
-        
+
     }
 
+    @Override
     public boolean hasModularArmor(int loc) {
-        
+
         for (Mounted mount : this.getEquipment()) {
-            if (mount.getLocation() == loc 
+            if (mount.getLocation() == loc
                     && !mount.isDestroyed()
-                    && mount.getType() instanceof MiscType 
-                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR))
+                    && mount.getType() instanceof MiscType
+                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
                 return true;
+            }
         }
 
         return false;
-        
+
     }
 
+    @Override
     public int getCoolantFailureAmount(){
         return heatSinkCoolantFailureFactor;
     }
 
+    @Override
     public void addCoolantFailureAmount(int amount){
         heatSinkCoolantFailureFactor += amount;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
+    @Override
     public int getTotalCommGearTons() {
         return 1 + getExtraCommGearTons();
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getIniBonus()
      */
+    @Override
     public int getIniBonus() {
         int bonus = super.getIniBonus();
         if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0
@@ -4422,13 +4585,13 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return bonus;
     }
-    
+
     public String getBVText(){
-    	if ( BVText == null ){
-    		return "";
-    	}
-    	
-    	return BVText.toString();
-    	
+        if ( bvText == null ){
+            return "";
+        }
+
+        return bvText.toString();
+
     }
 }

@@ -842,7 +842,7 @@ public class AmmoType extends EquipmentType {
                                                    1, M_FRAGMENTATION, TechConstants.T_IS_TW_NON_BOX ) );
         munitions.add( new MunitionMutator( "Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_IS_TW_NON_BOX ) );
-        munitions.add( new MunitionMutator( "Artemis-capable",
+        munitions.add( new MunitionMutator( "Artemis",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX ) );
         munitions.add( new MunitionMutator( "Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_IS_EXPERIMENTAL ) );
@@ -869,7 +869,7 @@ public class AmmoType extends EquipmentType {
                                                    1, M_FRAGMENTATION, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "(Clan) Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_TW ) );
-        munitions.add( new MunitionMutator( "(Clan) Artemis-capable",
+        munitions.add( new MunitionMutator( "(Clan) Artemis",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "(Clan) Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_CLAN_EXPERIMENTAL ) );
@@ -935,7 +935,7 @@ public class AmmoType extends EquipmentType {
                                                    2, M_THUNDER_VIBRABOMB, TechConstants.T_IS_ADVANCED ) );
         munitions.add( new MunitionMutator( "Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_IS_TW_NON_BOX ) );
-        munitions.add( new MunitionMutator( "Artemis-capable",
+        munitions.add( new MunitionMutator( "Artemis",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX ) );
         munitions.add( new MunitionMutator( "Semi-guided",
                                                    1, M_SEMIGUIDED, TechConstants.T_IS_TW_NON_BOX) );
@@ -974,7 +974,7 @@ public class AmmoType extends EquipmentType {
                                                    2, M_THUNDER_VIBRABOMB, TechConstants.T_CLAN_ADVANCED ) );
         munitions.add( new MunitionMutator( "(Clan) Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_TW ) );
-        munitions.add( new MunitionMutator( "(Clan) Artemis-capable",
+        munitions.add( new MunitionMutator( "(Clan) Artemis",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "(Clan) Semi-guided",
                                                    1, M_SEMIGUIDED, TechConstants.T_CLAN_TW) );
@@ -7563,6 +7563,7 @@ public class AmmoType extends EquipmentType {
                 nameBuf.insert( index, ' ' );
                 nameBuf.insert( index, this.name );
                 munition.setInternalName(nameBuf.toString());
+                munition.shortName = munition.name;
                 munition.addBeforeString(base, "Ammo", this.name + " ");
                 nameBuf = null;
                 break;
@@ -7586,6 +7587,7 @@ public class AmmoType extends EquipmentType {
                 index = base.internalName.lastIndexOf( "Ammo" );
                 nameBuf.insert( index, this.name );
                 munition.setInternalName(nameBuf.toString());
+                munition.shortName = munition.name;
 
                 munition.addBeforeString(base, "Ammo", this.name + " ");
                 munition.addToEnd(base, " - " + this.name);
@@ -7610,6 +7612,7 @@ public class AmmoType extends EquipmentType {
                 nameBuf.insert( index, this.name );
                 munition.name = nameBuf.toString();
                 nameBuf = null;
+                munition.shortName = munition.name;
                 munition.addBeforeString(base, "Ammo", this.name + " ");
                 break;
             case AmmoType.T_MRM:
@@ -7627,6 +7630,7 @@ public class AmmoType extends EquipmentType {
                 munition.setInternalName(base.internalName + nameBuf.toString());
                 munition.addToEnd(base, nameBuf.toString());
                 nameBuf.insert( 0, " -" );
+                munition.shortName = munition.name;
                 munition.addToEnd(base, nameBuf.toString());
                 break;
             case AmmoType.T_LONG_TOM:
@@ -7640,6 +7644,7 @@ public class AmmoType extends EquipmentType {
                 munition.setInternalName( munition.name );
                 munition.addToEnd( base, munition.name );
 
+                munition.shortName = munition.name;
                 // The munition name appears in the middle of the other names.
                 munition.addBeforeString(base, "Ammo", this.name + " ");
                 break;

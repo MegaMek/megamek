@@ -194,7 +194,8 @@ public abstract class Mech extends Entity implements Serializable {
     private static final NumberFormat commafy = NumberFormat.getInstance();
 
     private int grappledSide = Entity.GRAPPLE_BOTH;
-    
+
+    private StringBuffer BVText = null;
     /**
      * Construct a new, blank, mech.
      */
@@ -2126,7 +2127,19 @@ public abstract class Mech extends Entity implements Serializable {
      * of a network or not.
      */
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
-        double dbv = 0; // defensive battle value
+
+    	String nl = "\r\n"; // DOS friendly
+    	BVText = new StringBuffer("BATTLE VALUE CALCULATION FOR ");
+    	
+    	BVText.append(this.getChassis());
+    	BVText.append(" ");
+    	BVText.append(this.getModel());
+    	BVText.append(nl);
+    	
+    	BVText.append("DEFENSIVE BATTLE RATING CALCULATION:");
+    	BVText.append(nl);
+    	
+    	double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
         // total armor points
@@ -2151,7 +2164,10 @@ public abstract class Mech extends Entity implements Serializable {
             break;
             
         }
-        
+        BVText.append("Total Armor Factor x ");
+        BVText.append(armorMultiplier);
+        BVText.append("\t\t\t");
+
         //BV for torso mounted cockpit.
         if ( this.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED ) {
             dbv += this.getArmor(Mech.LOC_CT);
@@ -2166,8 +2182,16 @@ public abstract class Mech extends Entity implements Serializable {
         
         dbv += (getTotalArmor()+modularArmor);
         
+        BVText.append(dbv);
+        BVText.append(" x 2.5 x ");
+        BVText.append(armorMultiplier);
+        BVText.append(" = ");
+        
         dbv  *= 2.5 * armorMultiplier;
 
+        BVText.append(dbv);
+        BVText.append(nl);
+        
         // total internal structure
         double internalMultiplier = 1.0;
         if (getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL)
@@ -2175,12 +2199,36 @@ public abstract class Mech extends Entity implements Serializable {
 
         dbv += getTotalInternal() * internalMultiplier * 1.5 * getEngine().getBVMultiplier();
 
+        BVText.append("Total Internal Structure Points x ");
+        BVText.append(internalMultiplier);
+        BVText.append(" x 1.5 x ");
+        BVText.append(" Engine Multipler ");
+        
+        BVText.append("\t\t\t");
+        BVText.append(getTotalInternal());
+        BVText.append(" x ");
+        BVText.append(internalMultiplier);
+        BVText.append(" x 1.5 x ");
+        BVText.append(getEngine().getBVMultiplier());
+        BVText.append(" = ");
+        BVText.append(getTotalInternal() * internalMultiplier * 1.5 * getEngine().getBVMultiplier());
+        BVText.append(nl);
+        
         // add gyro
         double gyroMultiplier = 0.5;
         if (this.getGyroType() == GYRO_HEAVY_DUTY)
             gyroMultiplier = 1.0;
         dbv += getWeight() * gyroMultiplier;
 
+        BVText.append("Weight x Gyro Multipler ");
+        BVText.append("\t\t\t");
+        BVText.append(getWeight());
+        BVText.append(" x ");
+        BVText.append(gyroMultiplier);
+        BVText.append(" = ");
+        BVText.append(getWeight() * gyroMultiplier);
+        BVText.append(nl);
+        
         // add defensive equipment
         double dEquipmentBV = 0;
         for (Mounted mounted : getEquipment()) {
@@ -2199,6 +2247,11 @@ public abstract class Mech extends Entity implements Serializable {
         }
         dbv += dEquipmentBV;
 
+        BVText.append("Total BV of all Defensive Equipment ");
+        BVText.append("\t\t\t");
+        BVText.append(dEquipmentBV);
+        BVText.append(nl);
+        
         // subtract for explosive ammo
         double ammoPenalty = 0;
         for (Mounted mounted : getEquipment()) {
@@ -2275,48 +2328,122 @@ public abstract class Mech extends Entity implements Serializable {
         }
         dbv = Math.max(1, dbv - ammoPenalty);
 
+        BVText.append("Explosive Weapons/Equipment Penalty ");
+        BVText.append("\t\t\t");
+        BVText.append(ammoPenalty);
+        BVText.append(nl);
+        
+        BVText.append("\t\t\t\t----------------");
+        BVText.append(nl);
+        BVText.append(dbv);
+        BVText.append(nl);
+        BVText.append(nl);
+
         // adjust for target movement modifier
         // we use full possible movement, ignoring gravity and heat
         // but taking into account hit actuators
         int runMP = getRunMP(false, true);
+        BVText.append("Run MP ");
+        BVText.append(runMP);
+        BVText.append(nl);
         // factor in TSM or MASC
         if (hasTSM()) {
             runMP = (int) Math.ceil((getWalkMP(false, true) + 1) * 1.5) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+            BVText.append("TSM Run MP ");
+            BVText.append(runMP);
+            BVText.append(nl);
         }
         if (hasMASC()) {
             runMP = (getWalkMP(false, true) * 2) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+            BVText.append("MASC Run MP ");
+            BVText.append(runMP);
+            BVText.append(nl);
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
+        BVText.append("Target Movement Modifer For Run ");
+        BVText.append(tmmRan);
+        BVText.append(nl);
         // use UMU for JJ, unless we have more jump MP than UMU (then we have mechanical jumpboosters
         int jumpMP = Math.max(getActiveUMUCount(), getJumpMP(false));
         int tmmJumped = Compute.getTargetMovementModifier(jumpMP, true, false).getValue();
+        BVText.append("Target Movement Modifer For Jumping ");
+        BVText.append(tmmJumped);
+        BVText.append(nl);
+
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
+        BVText.append("Target Movement Modifer ");
+        BVText.append(targetMovementModifier);
+        BVText.append(nl);
+
+
         // Try to find a Mek Stealth or similar system.
-        if (hasStealth() || hasNullSig())
+        if (hasStealth() || hasNullSig()){
             targetMovementModifier += 2;
-        if (hasChameleonShield())
+            BVText.append("+2 Stealth");
+            BVText.append(nl);
+        }
+        if (hasChameleonShield()){
             targetMovementModifier += 2;
-        if (hasVoidSig())
+            BVText.append("+2 Chameleon");
+            BVText.append(nl);
+        }
+        if (hasVoidSig()){
             targetMovementModifier += 3;
+            BVText.append("+3 Void Sig");
+            BVText.append(nl);
+        }
         double tmmFactor = 1 + (targetMovementModifier / 10);
         dbv *= tmmFactor;
 
+        BVText.append("Multiply by Target Movement Factor of ");
+        BVText.append(tmmFactor);
+        BVText.append("\t\t\t");
+        BVText.append(" x ");
+        BVText.append(tmmFactor);
+        BVText.append(nl);
+        BVText.append("\t\t\t\t-----");
+        BVText.append(nl);
+        BVText.append("Defensive Battle Value = \t\t\t");
+        BVText.append(dbv);
+        BVText.append(nl);
+        BVText.append(nl);
+        
         // calculate heat efficiency
         int mechHeatEfficiency = 6 + this.getHeatCapacity();
+
+        BVText.append("Base Heat Efficiency: ");
+        BVText.append(mechHeatEfficiency);
         int coolantPods = 0;
         for (Mounted ammo : this.getAmmo()) {
             if (ammo.getType().hasFlag(AmmoType.T_COOLANT_POD)) {
                 coolantPods++;
             }
         }
+        
         // account for coolant pods
-        mechHeatEfficiency += Math.min(2*getNumberOfSinks(), Math.ceil((double)(getNumberOfSinks()*coolantPods)/5));
+        if ( coolantPods > 0 ){
+	        mechHeatEfficiency += Math.min(2*getNumberOfSinks(), Math.ceil((double)(getNumberOfSinks()*coolantPods)/5));
+	        
+	        BVText.append(" + Coolant Pods ");
+	        BVText.append(Math.min(2*getNumberOfSinks(), Math.ceil((double)(getNumberOfSinks()*coolantPods)/5)));
+        }
+        
         if (getJumpMP() > 0) {
             mechHeatEfficiency -= getEngine().getJumpHeat(getJumpMP());
+            BVText.append(" - Jump Heat ");
+            BVText.append(getEngine().getJumpHeat(getJumpMP()));
         } else {
             mechHeatEfficiency -= getEngine().getRunHeat();
+            BVText.append(" - Run Heat ");
+            BVText.append(getEngine().getRunHeat());
         }
 
+        BVText.append(" = ");
+        BVText.append(mechHeatEfficiency);
+        BVText.append(nl);
+        
+        BVText.append("Weapon Heat:");
+        BVText.append(nl);
         // total up maximum heat generated
         // and add up BVs for ammo-using weapon types for excessive ammo rule
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
@@ -2355,6 +2482,12 @@ public abstract class Mech extends Entity implements Serializable {
                 weaponHeat += 5;
             }
             
+            
+            BVText.append(wtype.getName());
+            BVText.append(" Heat: " );
+            BVText.append(weaponHeat);
+            BVText.append(nl);
+            
             maximumHeat += weaponHeat;
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
@@ -2368,6 +2501,14 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
 
+        BVText.append(nl);
+        BVText.append("Total Heat: ");
+        BVText.append(maximumHeat);
+        BVText.append(nl);
+        
+        BVText.append("Weapons BV: ");
+        BVText.append(nl);
+        
         double weaponBV = 0;
         boolean hasTargComp = hasTargComp();
         // first, add up front-faced and rear-faced unmodified BV,
@@ -2406,12 +2547,29 @@ public abstract class Mech extends Entity implements Serializable {
                 bvRear += dBV;
             else
                 bvFront += dBV;
+            
+            BVText.append(wtype.getName());
+            BVText.append(" BV: ");
+            BVText.append(dbv);
+            BVText.append(nl);
         }
+        
+        BVText.append("Front BV: ");
+        BVText.append(bvFront);
+        BVText.append(nl);
+        
+        BVText.append("Rear BV: ");
+        BVText.append(bvRear);
+        BVText.append(nl);
+        
         boolean halveRear = true;
         if (bvFront <= bvRear)
             halveRear = false;
         
         if (maximumHeat <= mechHeatEfficiency) {
+        	
+        	BVText.append("Maximum Heat Less Then or Equal to Mech Heat Efficiency: ");
+        	BVText.append(nl);
             // count all weapons equal, adjusting for rear-firing and excessive
             // ammo
             for (Mounted weapon : getWeaponList()) {
@@ -2470,8 +2628,18 @@ public abstract class Mech extends Entity implements Serializable {
                     dBV /= 2;
                 }
                 weaponBV += dBV;
+                
+                BVText.append(weapon.getName());
+                if ( weapon.isRearMounted() ){
+                	BVText.append("(R)");
+                }
+                BVText.append(" BV: ");
+                BVText.append(dBV);
+                BVText.append(nl);
             }
         } else {
+        	BVText.append("Maximum Heat Greater Then Mech Heat Efficiency: ");
+        	BVText.append(nl);
             // this will count heat-generating weapons at full modified BV until 
             // heatefficiency is reached or passed with one weapon
             
@@ -2530,6 +2698,15 @@ public abstract class Mech extends Entity implements Serializable {
                 if ((weapon.isRearMounted() && halveRear) || (!weapon.isRearMounted() && !halveRear)) {
                     dBV /= 2;
                 }
+
+                BVText.append(weapon.getName());
+                if ( weapon.isRearMounted() ){
+                	BVText.append("(R)");
+                }
+                BVText.append(" BV: ");
+                BVText.append(dBV);
+                BVText.append(nl);
+
                 int heat = ((WeaponType)weapon.getType()).getHeat();
                 double[] weaponValues = new double[2];
                 weaponValues[0] = dBV;
@@ -2570,6 +2747,13 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
         
+        BVText.append("Total Weapons BV Adjusted For Heat: ");
+        BVText.append(weaponBV);
+        BVText.append(nl);
+        
+        BVText.append("Misc Offensive Equipment: ");
+        BVText.append(nl);
+        
         // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
         // BMR p152)
         double oEquipmentBV = 0;
@@ -2590,6 +2774,12 @@ public abstract class Mech extends Entity implements Serializable {
             if ((mtype.hasFlag(MiscType.F_CLUB) || mtype.hasFlag(MiscType.F_HAND_WEAPON)) &&
                     hasFunctionalArmAES(mounted.getLocation()))
                 bv *= 1.5;
+        
+            BVText.append(mtype.getName());
+            BVText.append(" BV: ");
+            BVText.append(bv);
+            BVText.append(nl);
+
             oEquipmentBV += bv;
             // need to do this here, a MiscType does not know the location
             // where it's mounted
@@ -2602,6 +2792,11 @@ public abstract class Mech extends Entity implements Serializable {
                 }
             }
         }
+        
+        BVText.append("Total Misc Offensive Equipment BV: ");
+        BVText.append(oEquipmentBV);
+        BVText.append(nl);
+        
         weaponBV += oEquipmentBV;
 
         // add ammo bv
@@ -2667,22 +2862,39 @@ public abstract class Mech extends Entity implements Serializable {
         // Only count BV for ammo for a weapontype until the BV of all weapons
         // of that
         // type on the mech is reached.
+        BVText.append("Ammo BV: ");
+        BVText.append(nl);
         for (String key : keys) {
+        	
+        	BVText.append(key);
             if (weaponsForExcessiveAmmo.get(key) != null) {
-                if (ammo.get(key) > weaponsForExcessiveAmmo.get(key))
+                if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)){
                     ammoBV += weaponsForExcessiveAmmo.get(key);
-                else
+                    BVText.append(" BV: ");
+                    BVText.append(weaponsForExcessiveAmmo.get(key));
+                }
+                else {
                     ammoBV += ammo.get(key);
+                    BVText.append(" BV: ");
+                    BVText.append(ammo.get(key));
+                }
             } else {
                 // Ammo with no matching weapons counts 0, unless it's a coolant
                 // pod
                 // because coolant pods have no matching weapon
                 if (key.equals(new Integer(AmmoType.T_COOLANT_POD).toString() + "1")) {
                     ammoBV += ammo.get(key);
+                    BVText.append(" BV: ");
+                    BVText.append(ammo.get(key));
                 }
             }
+            BVText.append(nl);
         }
         weaponBV += ammoBV;
+        
+        BVText.append("Toal Ammo BV: ");
+        BVText.append(ammoBV);
+        BVText.append(nl);
         
         double weight = getWeight();
         double aesMultiplier = 1;
@@ -2703,13 +2915,33 @@ public abstract class Mech extends Entity implements Serializable {
             
         weight *= aesMultiplier;
 
+        BVText.append("Weight x AES Multiplier: ");
+        BVText.append(weight);
+        BVText.append(" x ");
+        BVText.append(aesMultiplier);
+        BVText.append(" = ");
+        BVText.append(weight);
+        BVText.append(nl);
+        
         // add tonnage, adjusted for TSM
-        if (hasTSM())
+        if (hasTSM()){
             weaponBV += weight * 1.5;
-        else if (hasIndustrialTSM())
+            BVText.append("Add weight + TSM Modifier = ");
+            BVText.append(weight * 1.5);
+            BVText.append(nl);
+        }
+        else if (hasIndustrialTSM()){
             weaponBV += weight * 1.15;
-        else
+            BVText.append("Add weight + Industrial TSM Modifier = ");
+            BVText.append(weight * 1.15);
+            BVText.append(nl);
+        }
+        else{
             weaponBV += weight;
+            BVText.append("Add weight = ");
+            BVText.append(weight * 1.5);
+            BVText.append(nl);
+        }
 
         // adjust further for speed factor
         // this is a bit weird, because the formula gives
@@ -2722,6 +2954,9 @@ public abstract class Mech extends Entity implements Serializable {
         // factor in TSM (flat +1)
         if (hasTSM()) {
             speedFactorTableLookup += 1;
+            BVText.append("Speed Factor + 1 for TSM = ");
+            BVText.append(speedFactorTableLookup);
+            BVText.append(nl);
         }
         // factor in MASC
         // recalculate normal run MP here, because we need normal run +1 for
@@ -2729,20 +2964,52 @@ public abstract class Mech extends Entity implements Serializable {
         // and MASC might be currently active, so we can't just use getRunMP
         if (hasMASC()) {
             speedFactorTableLookup = getWalkMP(false, true) * 1.5 + 1 - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+            BVText.append("Speed Factor for MASC = ");
+            BVText.append(speedFactorTableLookup);
+            BVText.append(nl);
         }
         speedFactorTableLookup += Math.round((double)jumpMP / 2);
+        
+        BVText.append("Speed Factor + ");
+        BVText.append(Math.round((double)jumpMP / 2));
+        BVText.append(" for Jumping");
+        BVText.append(nl);
+
         if (speedFactorTableLookup > 25)
             speedFactor = Math.pow(1 + (((double) runMP + (Math.round((double) jumpMP / 2)) - 5) / 10), 1.2);
         else
             speedFactor = Math.pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
+        
+        BVText.append("Final Speed Factor: ");
+        BVText.append(speedFactor);
+        BVText.append(nl);
+
         obv = weaponBV * speedFactor;
         
+        BVText.append("Offensive BV = Weapons BV + Speed Factor: ");
+        BVText.append(weaponBV);
+        BVText.append(" + ");
+        BVText.append(speedFactor);
+        BVText.append(" = ");
+        BVText.append(obv);
+        BVText.append(nl);
+
         int finalBV = (int)Math.round(obv + dbv);
         if ( this.getCockpitType() == Mech.COCKPIT_SMALL || this.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             finalBV *= 0.95;
+            BVText.append("Cockpit Modifer: 0.95");
+            BVText.append(nl);
         }
+        
+        BVText.append("Final BV: ");
+        BVText.append(dbv);
+        BVText.append(" + ");
+        BVText.append(obv);
+        BVText.append(" = ");
+        BVText.append(finalBV);
+        BVText.append(nl);
 
         // we get extra bv from some stuff
         double xbv = 0.0;
@@ -4154,5 +4421,14 @@ public abstract class Mech extends Entity implements Serializable {
             return 0;
         }
         return bonus;
+    }
+    
+    public String getBVText(){
+    	if ( BVText == null ){
+    		return "";
+    	}
+    	
+    	return BVText.toString();
+    	
     }
 }

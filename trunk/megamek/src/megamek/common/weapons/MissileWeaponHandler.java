@@ -689,7 +689,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     protected boolean isNemesisConfusable() {
         // Are we iNarc Nemesis Confusable?
         boolean isNemesisConfusable = false;
-        AmmoType atype = (AmmoType) weapon.getLinked().getType();
+        AmmoType atype = (AmmoType) ammo.getType();
         Mounted mLinker = weapon.getLinkedBy();
         if (wtype.getAmmoType() == AmmoType.T_ATM
                 || (mLinker != null && mLinker.getType() instanceof MiscType

@@ -2665,7 +2665,7 @@ public class Compute {
         if (vEnemyECMCoords.size() == 0) {
             return 0;
         }
-
+       
         // get intervening Coords.
         ArrayList<Coords> coords = Coords.intervening(a, b);
         // loop through all intervening coords, check each if they are ECM
@@ -3012,6 +3012,11 @@ public class Compute {
         // loop through all intervening coords, check each if they are ECM
         // affected
         int totalECM = 0;
+        //check for split hexes
+        boolean bDivided = (a.degree(b) % 60 == 30);
+        int x = 0;
+        int prevEcmStatus = 0;
+        boolean prevEccmPresent = false;
         for (Coords c : coords) {
             int ecmStatus = 0;
             boolean eccmPresent = false;
@@ -3052,9 +3057,23 @@ public class Compute {
                 }
             }
             // if any coords in the line are affected, the whole line is
-            if (ecmStatus > 0 && !eccmPresent) {
-                totalECM++;
+            if(!bDivided || (x % 3 == 0)) {
+                if (ecmStatus > 0 && !eccmPresent) {
+                    totalECM++;
+                }
+            } else if ((x % 3 == 2)) {
+                //if we are looking at the second split hex then both this one and the prior need to have ECM
+                //becaue the advantage should go to the defender
+                if (ecmStatus > 0 && !eccmPresent && prevEcmStatus > 0 && !prevEccmPresent) {
+                    totalECM++;
+                }
             }
+            x++;
+            prevEccmPresent = eccmPresent;
+            prevEcmStatus = ecmStatus;
+            
+            
+            
         }
         return totalECM;
     }
@@ -3111,6 +3130,9 @@ public class Compute {
         // loop through all intervening coords, check each if they are ECM
         // affected
         int totalECM = 0;
+        boolean bDivided = (a.degree(b) % 60 == 30);
+        int x = 0;
+        int prevEcmStatus = 0;
         for (Coords c : coords) {
             // > 0: in friendly ECCM
             // 0: unaffected by enemy ECM
@@ -3149,9 +3171,19 @@ public class Compute {
                 }
             }
             // if any coords in the line are affected, the whole line is
-            if (ecmStatus > 0) {
-                totalECM++;
+            if(!bDivided || (x % 3 == 0)) { 
+                if (ecmStatus > 0) {
+                    totalECM++;
+                }
+            } else if(x % 3 == 2) {
+                //if we are looking at the second split hex then both this one and the prior need to have ECM
+                //becaue the advantage should go to the defender
+                if (ecmStatus > 0 && prevEcmStatus > 0) {
+                    totalECM++;
+                }
             }
+            x++;
+            prevEcmStatus = ecmStatus;
         }
         return totalECM;
     }

@@ -12,6 +12,7 @@ v0.33.38-dev (SVN)
 + Fixed External name on TAG and A-Pod
 + Bug: direct fire artillery should be at +4, not +5
 + Bug 2457669: (AERO) Ammo fighter squadron weapons getting NPE
++ Bug 2459131: (AERO) ECM too high when LoS splits hexes
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

@@ -2470,7 +2470,7 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append(mechHeatEfficiency);
         int coolantPods = 0;
         for (Mounted ammo : getAmmo()) {
-            if (ammo.getType().hasFlag(AmmoType.T_COOLANT_POD)) {
+            if (((AmmoType)ammo.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
                 coolantPods++;
             }
         }
@@ -2495,73 +2495,6 @@ public abstract class Mech extends Entity implements Serializable {
 
         bvText.append(" = ");
         bvText.append(mechHeatEfficiency);
-        bvText.append(nl);
-
-        bvText.append("Weapon Heat:");
-        bvText.append(nl);
-        // total up maximum heat generated
-        // and add up BVs for ammo-using weapon types for excessive ammo rule
-        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
-        double maximumHeat = 0;
-        for (Mounted mounted : getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            double weaponHeat = wtype.getHeat();
-
-            // only count non-damaged equipment
-            if (mounted.isMissing() || mounted.isHit() || mounted.isDestroyed() || mounted.isBreached()) {
-                continue;
-            }
-
-            // one shot weapons count 1/4
-            if (wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER || wtype.hasFlag(WeaponType.F_ONESHOT)) {
-                weaponHeat *= 0.25;
-            }
-
-            // double heat for ultras
-            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
-                weaponHeat *= 2;
-            }
-
-            // Six times heat for RAC
-            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                weaponHeat *= 6;
-            }
-
-            // half heat for streaks
-            if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
-                weaponHeat *= 0.5;
-            }
-
-            //check to see if the weapon is a PPC and has a Capacitor attached to it
-            if ( wtype.hasFlag(WeaponType.F_PPC) && mounted.getLinkedBy() != null ) {
-                weaponHeat += 5;
-            }
-
-
-            bvText.append(wtype.getName());
-            bvText.append(" Heat: " );
-            bvText.append(weaponHeat);
-            bvText.append(nl);
-
-            maximumHeat += weaponHeat;
-            // add up BV of ammo-using weapons for each type of weapon,
-            // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || wtype.getAmmoType() == AmmoType.T_NA)) {
-                String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
-                if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
-                } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
-                }
-            }
-        }
-
-        bvText.append(nl);
-        bvText.append("Total Heat: ");
-        bvText.append(maximumHeat);
-        bvText.append(nl);
-
-        bvText.append("Weapons BV: ");
         bvText.append(nl);
 
         double weaponBV = 0;
@@ -2606,16 +2539,16 @@ public abstract class Mech extends Entity implements Serializable {
             }
 
             bvText.append(wtype.getName());
-            bvText.append(" BV: ");
+            bvText.append(" Unmodified BV: ");
             bvText.append(dBV);
             bvText.append(nl);
         }
 
-        bvText.append("Front BV: ");
+        bvText.append("Unmodified Front BV: ");
         bvText.append(bvFront);
         bvText.append(nl);
 
-        bvText.append("Rear BV: ");
+        bvText.append("Unmodfied Rear BV: ");
         bvText.append(bvRear);
         bvText.append(nl);
 
@@ -2624,78 +2557,164 @@ public abstract class Mech extends Entity implements Serializable {
             halveRear = false;
         }
 
+        bvText.append("Weapon Heat:");
+        bvText.append(nl);
+
+
+        // here we store the modified BV and heat of all heat-using weapons,
+        // to later be sorted by BV
+        ArrayList<ArrayList<Object>> heatBVs = new ArrayList<ArrayList<Object>>();
+        // BVs of non-heat-using weapons
+        ArrayList<ArrayList<Object>> nonHeatBVs = new ArrayList<ArrayList<Object>>();
+        // total up maximum heat generated
+        // and add up BVs for ammo-using weapon types for excessive ammo rule
+        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
+        int maximumHeat = 0;
+        for (Mounted mounted : getWeaponList()) {
+            WeaponType wtype = (WeaponType) mounted.getType();
+            int weaponHeat = wtype.getHeat();
+
+            // only count non-damaged equipment
+            if (mounted.isMissing() || mounted.isHit() || mounted.isDestroyed() || mounted.isBreached()) {
+                continue;
+            }
+
+            // one shot weapons count 1/4
+            if (wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER || wtype.hasFlag(WeaponType.F_ONESHOT)) {
+                weaponHeat *= 0.25;
+            }
+
+            // double heat for ultras
+            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+                weaponHeat *= 2;
+            }
+
+            // Six times heat for RAC
+            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                weaponHeat *= 6;
+            }
+
+            // half heat for streaks
+            if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
+                weaponHeat *= 0.5;
+            }
+
+            //check to see if the weapon is a PPC and has a Capacitor attached to it
+            if ( wtype.hasFlag(WeaponType.F_PPC) && mounted.getLinkedBy() != null ) {
+                weaponHeat += 5;
+            }
+
+
+            bvText.append(wtype.getName());
+            bvText.append(" Heat: " );
+            bvText.append(weaponHeat);
+            bvText.append(nl);
+
+            double dBV = wtype.getBV(this);
+
+            // don't count AMS, it's defensive
+            if (wtype.hasFlag(WeaponType.F_AMS)) {
+                continue;
+            }
+            // calc MG Array here:
+            if (wtype.hasFlag(WeaponType.F_MGA)) {
+                double mgaBV = 0;
+                for (Mounted possibleMG : getWeaponList()) {
+                    if (possibleMG.getType().hasFlag(WeaponType.F_MG) && possibleMG.getLocation() == mounted.getLocation()) {
+                        mgaBV += possibleMG.getType().getBV(this);
+                    }
+                }
+                dBV = mgaBV * 0.67;
+            }
+
+            // if linked to AES, multiply by 1.5
+            if (hasFunctionalArmAES(mounted.getLocation())) {
+                dBV *= 1.5;
+            }
+            // and we'll add the tcomp here too
+            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
+                dBV *= 1.25;
+            }
+            // artemis bumps up the value
+            // PPC caps do, too
+            if (mounted.getLinkedBy() != null) {
+                //check to see if the weapon is a PPC and has a Capacitor attached to it
+                if ( wtype.hasFlag(WeaponType.F_PPC)) {
+                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(this, mounted);
+                }
+                Mounted mLinker = mounted.getLinkedBy();
+                if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    dBV *= 1.2;
+                }
+                if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                    dBV *= 1.15;
+                }
+            }
+            // half for being rear mounted (or front mounted, when more rear-
+            // than front-mounted un-modded BV
+            if ((mounted.isRearMounted() && halveRear) || (!mounted.isRearMounted() && !halveRear)) {
+                dBV /= 2;
+            }
+
+            // ArrayList that stores weapon values
+            // stores a double first (BV), then an Integer (heat),
+            // then a String (weapon name)
+            // for 0 heat weapons, just stores BV and name
+            ArrayList<Object> weaponValues = new ArrayList<Object>();
+            if (weaponHeat > 0) {
+                // store heat and BV, for sorting a few lines down;
+                weaponValues.add(dBV);
+                weaponValues.add(weaponHeat);
+                weaponValues.add(mounted.getName()+(mounted.isRearMounted()?"(R)":""));
+                heatBVs.add(weaponValues);
+            }
+            else {
+                weaponValues.add(dBV);
+                weaponValues.add(mounted.getName()+(mounted.isRearMounted()?"(R)":""));
+                nonHeatBVs.add(weaponValues);
+            }
+
+            maximumHeat += weaponHeat;
+            // add up BV of ammo-using weapons for each type of weapon,
+            // to compare with ammo BV later for excessive ammo BV rule
+            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || wtype.getAmmoType() == AmmoType.T_NA)) {
+                String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
+                if (!weaponsForExcessiveAmmo.containsKey(key)) {
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
+                } else {
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
+                }
+            }
+        }
+
+        bvText.append(nl);
+        bvText.append("Total Heat: ");
+        bvText.append(maximumHeat);
+        bvText.append(nl);
+
+        bvText.append("Weapons BV: ");
+        bvText.append(nl);
+
+
         if (maximumHeat <= mechHeatEfficiency) {
 
             bvText.append("Maximum Heat Less Than or Equal to Mech Heat Efficiency: ");
             bvText.append(nl);
             // count all weapons equal, adjusting for rear-firing and excessive
             // ammo
-            for (Mounted weapon : getWeaponList()) {
-                WeaponType wtype = (WeaponType) weapon.getType();
-                double dBV = wtype.getBV(this);
+            for (ArrayList<Object> nonHeatWeapon : nonHeatBVs) {
+                weaponBV += (Double)nonHeatWeapon.get(0);
 
-                // don't count destroyed equipment
-                if (weapon.isDestroyed()) {
-                    continue;
-                }
-
-                // don't count AMS, it's defensive
-                if (wtype.hasFlag(WeaponType.F_AMS)) {
-                    continue;
-                }
-                // calc MG Array here:
-                if (wtype.hasFlag(WeaponType.F_MGA)) {
-                    double mgaBV = 0;
-                    for (Mounted possibleMG : getWeaponList()) {
-                        if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                                && possibleMG.getLocation() == weapon
-                                .getLocation()) {
-                            mgaBV += possibleMG.getType().getBV(this);
-                        }
-                    }
-                    dBV = mgaBV * 0.67;
-                }
-
-                //check to see if the weapon is a PPC and has a Capacitor attached to it
-                if ( wtype.hasFlag(WeaponType.F_PPC) && weapon.getLinkedBy() != null ) {
-                    dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this,weapon);
-                }
-
-                // if linked to AES, multiply by 1.5
-                if (hasFunctionalArmAES(weapon.getLocation())) {
-                    dBV *= 1.5;
-                }
-
-                // and we'll add the tcomp here too
-                if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    if (hasTargComp) {
-                        dBV *= 1.25;
-                    }
-                }
-                // artemis bumps up the value
-                if (weapon.getLinkedBy() != null) {
-                    Mounted mLinker = weapon.getLinkedBy();
-                    if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                        dBV *= 1.2;
-                    }
-                    if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                        dBV *= 1.15;
-                    }
-                }
-                // half for being rear mounted (or front mounted, when more rear-
-                // than front-mounted un-modded BV
-                if ((weapon.isRearMounted() && halveRear) || (!weapon.isRearMounted() && !halveRear)) {
-                    dBV /= 2;
-                }
-                weaponBV += dBV;
-
-                bvText.append(weapon.getName());
-                if ( weapon.isRearMounted() ){
-                    bvText.append("(R)");
-                }
+                // name
+                bvText.append(nonHeatWeapon.get(1));
                 bvText.append(" BV: ");
-                bvText.append(dBV);
+                bvText.append(nonHeatWeapon.get(0));
                 bvText.append(nl);
+            }
+            for (ArrayList<Object> weaponValues : heatBVs) {
+                // name
+                bvText.append(weaponValues.get(2));
+                weaponBV += (Double)weaponValues.get(0);
             }
         } else {
             bvText.append("Maximum Heat Greater Than Mech Heat Efficiency: ");
@@ -2703,82 +2722,6 @@ public abstract class Mech extends Entity implements Serializable {
             // this will count heat-generating weapons at full modified BV until
             // heatefficiency is reached or passed with one weapon
 
-            // here we store the modified BV and heat of all heat-using weapons,
-            // to later be sorted by BV
-            ArrayList<ArrayList<Object>> heatBVs = new ArrayList<ArrayList<Object>>();
-            // BVs of non-heat-using weapons
-            ArrayList<ArrayList<Object>> nonHeatBVs = new ArrayList<ArrayList<Object>>();
-            // loop through weapons, calc their modified BV
-            for (Mounted weapon : weapons) {
-                WeaponType wtype = (WeaponType) weapon.getType();
-                double dBV = wtype.getBV(this);
-                // don't count destroyed equipment
-                if (weapon.isDestroyed()) {
-                    continue;
-                }
-                // don't count AMS, it's defensive
-                if (wtype.hasFlag(WeaponType.F_AMS)) {
-                    continue;
-                }
-                // calc MG Array here:
-                if (wtype.hasFlag(WeaponType.F_MGA)) {
-                    double mgaBV = 0;
-                    for (Mounted possibleMG : getWeaponList()) {
-                        if (possibleMG.getType().hasFlag(WeaponType.F_MG) && possibleMG.getLocation() == weapon.getLocation()) {
-                            mgaBV += possibleMG.getType().getBV(this);
-                        }
-                    }
-                    dBV = mgaBV * 0.67;
-                }
-
-                //check to see if the weapon is a PPC and has a Capacitor attached to it
-                if ( wtype.hasFlag(WeaponType.F_PPC) && weapon.getLinkedBy() != null ) {
-                    dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this,weapon);
-                }
-
-                // if linked to AES, multiply by 1.5
-                if (hasFunctionalArmAES(weapon.getLocation())) {
-                    dBV *= 1.5;
-                }
-                // and we'll add the tcomp here too
-                if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
-                    dBV *= 1.25;
-                }
-                // artemis bumps up the value
-                if (weapon.getLinkedBy() != null) {
-                    Mounted mLinker = weapon.getLinkedBy();
-                    if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                        dBV *= 1.2;
-                    }
-                    if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                        dBV *= 1.15;
-                    }
-                }
-                // half for being rear mounted (or front mounted, when more rear-
-                // than front-mounted un-modded BV
-                if ((weapon.isRearMounted() && halveRear) || (!weapon.isRearMounted() && !halveRear)) {
-                    dBV /= 2;
-                }
-
-                int heat = ((WeaponType)weapon.getType()).getHeat();
-                // ArrayList that stores weapon values
-                // stores a double first (BV), then an Integer (heat),
-                // then a String (weapon name)
-                // for 0 heat weapons, just stores BV and name
-                ArrayList<Object> weaponValues = new ArrayList<Object>();
-                if (heat > 0) {
-                    // store heat and BV, for sorting a few lines down;
-                    weaponValues.add(dBV);
-                    weaponValues.add(heat);
-                    weaponValues.add(weapon.getName()+(weapon.isRearMounted()?"(R)":""));
-                    heatBVs.add(weaponValues);
-                }
-                else {
-                    weaponValues.add(dBV);
-                    weaponValues.add(weapon.getName()+(weapon.isRearMounted()?"(R)":""));
-                    nonHeatBVs.add(weaponValues);
-                }
-            }
             // sort the heat-using weapons by modified BV
             Collections.sort(heatBVs, new Comparator<ArrayList<Object>>() {
                 public int compare(ArrayList<Object> obj1, ArrayList<Object> obj2) {
@@ -2787,7 +2730,7 @@ public abstract class Mech extends Entity implements Serializable {
                         return new Integer((Integer)obj1.get(1) - (Integer)obj2.get(1));
                     }
                     // higher BV first
-                    return new Integer((Integer)obj2.get(1) - (Integer)obj1.get(1));
+                    return new Double((Double)obj2.get(0) - (Double)obj1.get(0)).intValue();
                 }
             });
             // count heat-free weapons at full modified BV
@@ -3090,6 +3033,8 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append(" = ");
         bvText.append(finalBV);
         bvText.append(nl);
+
+        System.out.println(bvText.toString());
 
         // we get extra bv from some stuff
         double xbv = 0.0;

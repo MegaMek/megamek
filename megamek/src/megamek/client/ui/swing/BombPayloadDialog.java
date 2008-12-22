@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -29,7 +29,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import megamek.common.Aero;
 
 /**
  * A dialog to determine bomb payload
@@ -42,7 +41,7 @@ public class BombPayloadDialog
     extends Dialog implements ActionListener
 {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4629867982571421459L;
 
@@ -51,7 +50,7 @@ public class BombPayloadDialog
     private Panel panButtons = new Panel();
     private Button butOK = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
-    
+
     private Choice b_choice_he;
     private Choice b_choice_cl;
     private Choice b_choice_lg;
@@ -61,8 +60,8 @@ public class BombPayloadDialog
     private Choice b_choice_arrow;
     private Choice b_choice_rl;
     private Choice b_choice_alamo;
-    
-    
+
+
     /**
      * Create and initialize the dialog.
      *
@@ -101,35 +100,35 @@ public class BombPayloadDialog
         for (int x = 0; x<=bombs[Aero.BOMB_HE]; x++) {
             b_choice_he.add(Integer.toString(x));
         }
-        
+
         for (int x = 0; x<=bombs[Aero.BOMB_CL]; x++) {
             b_choice_cl.add(Integer.toString(x));
         }
-               
+
         for (int x = 0; x<=bombs[Aero.BOMB_LG]; x++) {
             b_choice_lg.add(Integer.toString(x));
         }
-        
+
         for (int x = 0; x<=bombs[Aero.BOMB_INF]; x++) {
             b_choice_inf.add(Integer.toString(x));
         }
-        
+
         for (int x = 0; x<=bombs[Aero.BOMB_MINE]; x++) {
             b_choice_mine.add(Integer.toString(x));
         }
-        
+
         for (int x = 0; x<=bombs[Aero.BOMB_TAG]; x++) {
             b_choice_tag.add(Integer.toString(x));
         }
-        
+
         for (int x = 0; x<=bombs[Aero.BOMB_ARROW]; x++) {
             b_choice_arrow.add(Integer.toString(x));
         }
-        
+
         for (int x = 0; x<=bombs[Aero.BOMB_RL]; x++) {
             b_choice_rl.add(Integer.toString(x));
         }
-        
+
         for (int x = 0; x<=bombs[Aero.BOMB_ALAMO]; x++) {
             b_choice_alamo.add(Integer.toString(x));
         }
@@ -143,7 +142,7 @@ public class BombPayloadDialog
         b_choice_arrow.select(0);
         b_choice_rl.select(0);
         b_choice_alamo.select(0);
-        
+
         String heDesc = Messages.getString("CustomMechDialog.labBombHE");
         Label lhe = new Label(heDesc);
         c.gridx = 0;
@@ -156,7 +155,7 @@ public class BombPayloadDialog
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(b_choice_he, c);
         add(b_choice_he);
-        
+
         String clDesc = Messages.getString("CustomMechDialog.labBombCL");
         Label lcl = new Label(clDesc);
         c.gridx = 0;
@@ -169,7 +168,7 @@ public class BombPayloadDialog
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(b_choice_cl, c);
         add(b_choice_cl);
-        
+
         String lgDesc = Messages.getString("CustomMechDialog.labBombLG");
         Label llg = new Label(lgDesc);
         c.gridx = 0;
@@ -182,9 +181,9 @@ public class BombPayloadDialog
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(b_choice_lg, c);
         add(b_choice_lg);
-        
+
         if(!spaceBomb) {
-            
+
             String infDesc = Messages.getString("CustomMechDialog.labBombInf");
             Label linf = new Label(infDesc);
             c.gridx = 0;
@@ -197,7 +196,7 @@ public class BombPayloadDialog
             c.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(b_choice_inf, c);
             add(b_choice_inf);
-            
+
             String mineDesc = Messages.getString("CustomMechDialog.labBombMine");
             Label lmine = new Label(mineDesc);
             c.gridx = 0;
@@ -210,9 +209,9 @@ public class BombPayloadDialog
             c.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(b_choice_mine, c);
             add(b_choice_mine);
-            
+
             if(bombDump) {
-                
+
                 String tagDesc = Messages.getString("CustomMechDialog.labBombTAG");
                 Label ltag = new Label(tagDesc);
                 c.gridx = 2;
@@ -225,7 +224,7 @@ public class BombPayloadDialog
                 c.anchor = GridBagConstraints.WEST;
                 gridbag.setConstraints(b_choice_tag, c);
                 add(b_choice_tag);
-                
+
                 String arrowDesc = Messages.getString("CustomMechDialog.labBombArrow");
                 Label larrow = new Label(arrowDesc);
                 c.gridx = 2;
@@ -238,7 +237,7 @@ public class BombPayloadDialog
                 c.anchor = GridBagConstraints.WEST;
                 gridbag.setConstraints(b_choice_arrow, c);
                 add(b_choice_arrow);
-                
+
                 String rlDesc = Messages.getString("CustomMechDialog.labBombRL");
                 Label lrl = new Label(rlDesc);
                 c.gridx = 2;
@@ -251,7 +250,7 @@ public class BombPayloadDialog
                 c.anchor = GridBagConstraints.WEST;
                 gridbag.setConstraints(b_choice_rl, c);
                 add(b_choice_rl);
-                
+
                 String alamoDesc = Messages.getString("CustomMechDialog.labBombAlamo");
                 Label lalamo = new Label(alamoDesc);
                 c.gridx = 2;
@@ -266,18 +265,19 @@ public class BombPayloadDialog
                 add(b_choice_alamo);
             }
         }
-        
+
         // Allow the player to confirm or abort the choice.
         setupButtons();
         c.gridy++;
         c.insets = new Insets(5, 5, 5, 5);
         add(panButtons,c);
         butOK.requestFocus();
-        
+
         addWindowListener(new WindowAdapter() {
+                @Override
                 public void windowClosing(WindowEvent e) { setVisible(false); }
             });
-        
+
         pack();
         Dimension size = getSize();
         boolean updateSize = false;
@@ -334,16 +334,16 @@ public class BombPayloadDialog
     /* package */ BombPayloadDialog(Frame parent, String title, int[] bombs, boolean spaceBomb, boolean bombDump)
     {
         super(parent, title, true);
-        this.initialize( parent, title, bombs, spaceBomb, bombDump);
+        initialize( parent, title, bombs, spaceBomb, bombDump);
     }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butOK) {
             confirm = true;
-            this.setVisible(false);
+            setVisible(false);
         } else {
             confirm = false;
-            this.setVisible(false);
+            setVisible(false);
         }
     }
 
@@ -355,7 +355,7 @@ public class BombPayloadDialog
      *          did not select a choice, or if no choices were available.
      */
     public boolean getAnswer() {
-        return (null != this.getChoices());
+        return (null != getChoices());
     }
 
     /**
@@ -368,9 +368,9 @@ public class BombPayloadDialog
      *          that match the selected choices is returned.
      */
     public int[] getChoices() {
-        
+
         int[] choices = null;
-        if(this.confirm) {
+        if(confirm) {
             /*
             int[] temp = new int[ Aero.BOMB_NUM ];
             temp[Aero.BOMB_HE] = b_choice_he.getSelectedIndex();
@@ -385,7 +385,7 @@ public class BombPayloadDialog
             choices = temp;
             */
         }
-       
+
         return choices;
     }
 

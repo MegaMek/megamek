@@ -317,36 +317,36 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // ways
         int hits = 1;
         if(!(ae instanceof Aero)) {
-        	hits = calcHits(vPhaseReport);
+            hits = calcHits(vPhaseReport);
         }
         int nCluster = calcnCluster();
 
         //Now I need to adjust this for air-to-air attacks because they use attack values and different rules
         if(ae instanceof Aero && target instanceof Aero) {
             //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
-        	if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
+            if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
                 bSalvo = true;
                 nDamPerHit = 1;
                 hits = attackValue;
                 nCluster = 5;
             } else if(ae.isCapitalFighter()) {          
-        		bSalvo = true;
-        		int nhit = 1;
-        		if(nweapons > 1) {
-	        		nhit = Compute.missilesHit(nweapons, ((Aero)ae).getClusterMods());
-	        		r = new Report(3325);
-	                r.subject = subjectId;
-	                r.add(nhit);
-	                r.add(" weapon(s) ");
-	                r.add(" ");
-	                r.newlines = 0;
-	                vPhaseReport.add(r);
-        		}
-            	nDamPerHit = attackValue * nhit;
-            	hits = 1;
-            	nCluster = 1;
-        	} else if(usesClusterTable() && entityTarget != null && !entityTarget.isCapitalScale()) {
-        		bSalvo = true;
+                bSalvo = true;
+                int nhit = 1;
+                if(nweapons > 1) {
+                    nhit = Compute.missilesHit(nweapons, ((Aero)ae).getClusterMods());
+                    r = new Report(3325);
+                    r.subject = subjectId;
+                    r.add(nhit);
+                    r.add(" weapon(s) ");
+                    r.add(" ");
+                    r.newlines = 0;
+                    vPhaseReport.add(r);
+                }
+                nDamPerHit = attackValue * nhit;
+                hits = 1;
+                nCluster = 1;
+            } else if(usesClusterTable() && entityTarget != null && !entityTarget.isCapitalScale()) {
+                bSalvo = true;
                 nDamPerHit = 1;
                 hits = attackValue;
                 nCluster = 5;
@@ -470,13 +470,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected double getBracketingMultiplier() {
         double mult = 1.0;
         if(wtype.hasModes() && weapon.curMode().equals("Bracket 80%")) {
-        	mult = 0.8;
+            mult = 0.8;
         }
         if(wtype.hasModes() && weapon.curMode().equals("Bracket 60%")) {
-        	mult = 0.6;
+            mult = 0.6;
         }
         if(wtype.hasModes() && weapon.curMode().equals("Bracket 40%")) {
-        	mult = 0.4;
+            mult = 0.4;
         }
         return mult;
     }
@@ -701,7 +701,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // a unit has and we fire multiple weapons of the same type
         //TODO: need to adjust this for cases where not all the ammo is available
         for(int i=0;i<nweapons;i++) {
-        	useAmmo();
+            useAmmo();
         }
         attackValue = (int)Math.floor(getBracketingMultiplier() * calcAttackValue());
     }
@@ -803,6 +803,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return the number of weapons of this type firing (for squadron weapon groups)
      */
     protected int getNumberWeapons() {
-    	return weapon.getNWeapons();
+        return weapon.getNWeapons();
     }
 }

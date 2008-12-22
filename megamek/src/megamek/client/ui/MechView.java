@@ -333,11 +333,11 @@ public class MechView {
             .append( entity.getTotalArmor() );
         
         if(entity.isCapitalFighter()) {
-        	sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
+            sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
             .append( a.getCapArmor());
         } else {
-        	sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
-            	.append( entity.getTotalArmor() );
+            sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
+                .append( entity.getTotalArmor() );
         }
         
         if(isJumpship) {
@@ -367,7 +367,7 @@ public class MechView {
             
             //skip armor locations for cap fighters
             if(entity.isCapitalFighter()) {
-            	continue;
+                continue;
             }
             
             

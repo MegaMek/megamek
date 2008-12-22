@@ -2617,10 +2617,10 @@ public class Compute {
      * @return
      */
     public static double getECMFieldSize(Entity ae, Coords a, Coords b) {
-    	if(ae.getGame().getBoard().inSpace()) {
-    		//normal ECM effects don't apply in space
-    		return 0;
-    	}
+        if(ae.getGame().getBoard().inSpace()) {
+            //normal ECM effects don't apply in space
+            return 0;
+        }
         if (a == null || b == null) {
             return 0;
         }
@@ -2728,10 +2728,10 @@ public class Compute {
     }
 
     public static double getAngelECMFieldSize(Entity ae, Coords a, Coords b) {
-    	if(ae.getGame().getBoard().inSpace()) {
-    		//normal Angel ECM effects don't apply in space
-    		return 0;
-    	}
+        if(ae.getGame().getBoard().inSpace()) {
+            //normal Angel ECM effects don't apply in space
+            return 0;
+        }
         if (a == null || b == null) {
             return 0;
         }
@@ -2824,10 +2824,10 @@ public class Compute {
      * target roll. -1 if no Ghost Targets
      */
     public static int getGhostTargetNumber(Entity ae, Coords a, Coords b) {
-    	if(ae.getGame().getBoard().inSpace()) {
-    		//ghost targets don't work in space
-    		return 0;
-    	}
+        if(ae.getGame().getBoard().inSpace()) {
+            //ghost targets don't work in space
+            return 0;
+        }
         if (a == null || b == null) {
             return 0;
         }
@@ -2964,11 +2964,11 @@ public class Compute {
      * Check for the total number of fighter/small craft ECM bubbles in space along the path from a to b
      */
     public static int getSmallCraftECM(Entity ae, Coords a, Coords b) {
-    	if(!ae.getGame().getBoard().inSpace()) {
-    		//only matters in space
-    		return 0;
-    	}
-    	//Only grab enemies with active ECM
+        if(!ae.getGame().getBoard().inSpace()) {
+            //only matters in space
+            return 0;
+        }
+        //Only grab enemies with active ECM
         Vector<Coords> vEnemyECMCoords = new Vector<Coords>(16);
         Vector<Integer> vEnemyECMRanges = new Vector<Integer>(16);
         Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
@@ -2980,10 +2980,10 @@ public class Compute {
             Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             if(entPos == null && ent.getTransportId() != Entity.NONE) {
-            	Entity carrier = ae.game.getEntity(ent.getTransportId());
-            	if(null != carrier && carrier.loadedUnitsHaveActiveECM()) {
-            		entPos = carrier.getPosition();
-            	}
+                Entity carrier = ae.game.getEntity(ent.getTransportId());
+                if(null != carrier && carrier.loadedUnitsHaveActiveECM()) {
+                    entPos = carrier.getPosition();
+                }
             }
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && entPos != null && !ent.isLargeCraft()) {
                 vEnemyECMCoords.addElement(entPos);
@@ -2994,7 +2994,7 @@ public class Compute {
                 vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
             }
             if(!ent.isEnemyOf(ae) && ent.hasBAP(false) && entPos != null) {
-            	vFriendlyBAPCoords.addElement(entPos);
+                vFriendlyBAPCoords.addElement(entPos);
                 vFriendlyBAPRanges.addElement(new Integer(ent.getBAPRange()));
                 vFriendlyBAPFacings.addElement(new Integer(ent.getFacing()));
             }
@@ -3036,18 +3036,18 @@ public class Compute {
             }
             //if eccm still not present, check for BAP
             if(!eccmPresent) {
-            	ranges = vFriendlyBAPRanges.elements();
-            	Enumeration<Integer> facings = vFriendlyBAPFacings.elements();
-            	for (Coords friendlyBAPCoords : vFriendlyBAPCoords) {
+                ranges = vFriendlyBAPRanges.elements();
+                Enumeration<Integer> facings = vFriendlyBAPFacings.elements();
+                for (Coords friendlyBAPCoords : vFriendlyBAPCoords) {
                     int range = ranges.nextElement().intValue();
                     int nDist = c.distance(friendlyBAPCoords);
                     int facing = facings.nextElement().intValue();
                     if (nDist <= range) {
-                    	//still might need to check for right arc if using medium range
-                    	if(range < 7 || Compute.isInArc(friendlyBAPCoords, facing, c, ARC_NOSE)) {
-                    		eccmPresent = true;
-                    		break;
-                    	}
+                        //still might need to check for right arc if using medium range
+                        if(range < 7 || Compute.isInArc(friendlyBAPCoords, facing, c, ARC_NOSE)) {
+                            eccmPresent = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -3063,11 +3063,11 @@ public class Compute {
      * Check for the total number of fighter/small craft ECM bubbles in space along the path from a to b
      */
     public static int getLargeCraftECM(Entity ae, Coords a, Coords b) {
-    	if(!ae.getGame().getBoard().inSpace()) {
-    		//only matters in space
-    		return 0;
-    	}
-    	//Only grab enemies with active ECM
+        if(!ae.getGame().getBoard().inSpace()) {
+            //only matters in space
+            return 0;
+        }
+        //Only grab enemies with active ECM
         Vector<Coords> vEnemyECMCoords = new Vector<Coords>(16);
         Vector<Integer> vEnemyECMRanges = new Vector<Integer>(16);
         Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
@@ -3079,10 +3079,10 @@ public class Compute {
             Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             if(entPos == null && ent.getTransportId() != Entity.NONE) {
-            	Entity carrier = ae.game.getEntity(ent.getTransportId());
-            	if(null != carrier && carrier.loadedUnitsHaveActiveECM()) {
-            		entPos = carrier.getPosition();
-            	}
+                Entity carrier = ae.game.getEntity(ent.getTransportId());
+                if(null != carrier && carrier.loadedUnitsHaveActiveECM()) {
+                    entPos = carrier.getPosition();
+                }
             }
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && entPos != null && ent.isLargeCraft()) {
                 vEnemyECMCoords.addElement(entPos);
@@ -3093,7 +3093,7 @@ public class Compute {
                 vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
             }
             if(!ent.isEnemyOf(ae) && ent.hasBAP(false) && entPos != null) {
-            	vFriendlyBAPCoords.addElement(entPos);
+                vFriendlyBAPCoords.addElement(entPos);
                 vFriendlyBAPRanges.addElement(new Integer(ent.getBAPRange()));
                 vFriendlyBAPFacings.addElement(new Integer(ent.getFacing()));
 
@@ -3136,16 +3136,16 @@ public class Compute {
             }
             //now check BAP
             ranges = vFriendlyBAPRanges.elements();
-        	Enumeration<Integer> facings = vFriendlyBAPFacings.elements();
-        	for (Coords friendlyBAPCoords : vFriendlyBAPCoords) {
+            Enumeration<Integer> facings = vFriendlyBAPFacings.elements();
+            for (Coords friendlyBAPCoords : vFriendlyBAPCoords) {
                 int range = ranges.nextElement().intValue();
                 int nDist = c.distance(friendlyBAPCoords);
                 int facing = facings.nextElement().intValue();
                 if (nDist <= range) {
-                	//still might need to check for right arc if using medium range
-                	if(range < 7 || Compute.isInArc(friendlyBAPCoords, facing, c, ARC_NOSE)) {
-                		ecmStatus = ecmStatus - 2;
-                	}
+                    //still might need to check for right arc if using medium range
+                    if(range < 7 || Compute.isInArc(friendlyBAPCoords, facing, c, ARC_NOSE)) {
+                        ecmStatus = ecmStatus - 2;
+                    }
                 }
             }
             // if any coords in the line are affected, the whole line is
@@ -4285,21 +4285,21 @@ public class Compute {
      *         of attack
      */
     public static ArrayList<Entity> getAdjacentEntitiesAlongAttack(Coords aPos, Coords tPos, IGame game) {
-    	ArrayList<Entity> entities = new ArrayList<Entity>();
-    	ArrayList<Coords> coords = Coords.intervening(aPos, tPos);
-    	// loop through all intervening coords
-    	for (Coords c : coords) {
-    		//must be adjacent to the target
-    		if(c.distance(tPos) > 1 || c.equals(tPos)) {
-    			continue;
-    		}
-    		//now lets add all the entities here
-    		for (Enumeration<Entity> i = game.getEntities(c); i.hasMoreElements();) {
+        ArrayList<Entity> entities = new ArrayList<Entity>();
+        ArrayList<Coords> coords = Coords.intervening(aPos, tPos);
+        // loop through all intervening coords
+        for (Coords c : coords) {
+            //must be adjacent to the target
+            if(c.distance(tPos) > 1 || c.equals(tPos)) {
+                continue;
+            }
+            //now lets add all the entities here
+            for (Enumeration<Entity> i = game.getEntities(c); i.hasMoreElements();) {
                 Entity en = i.nextElement();
                 entities.add(en);
-    		}
-    	}
-    	return entities;
+            }
+        }
+        return entities;
     }
 } // End public class Compute
 

@@ -92,100 +92,100 @@ public class SquadronMapSet implements DisplayMapSet{
         FighterSquadron fs = (FighterSquadron) e;
         
         for(int i = 0; i < fs.getN0Fighters(); i++) {
-        	Aero fighter = fs.getFighter(i);
-	        int armor = fighter.getCapArmor();
-	        int armorO = fighter.getCap0Armor();
-	        
-	        drawArmorImage(armorImage[i], armor, armorO);
-	        armorVLabel[i].setValue(Integer.toString(armor));
-	        drawCrits(avCritImage[i], fighter.getAvionicsHits());
-	        drawCrits(engineCritImage[i], fighter.getEngineHits());
-	        drawCrits(fcsCritImage[i], fighter.getFCSHits());
-	        drawCrits(sensorCritImage[i], fighter.getSensorHits());
-	        drawCrits(pilotCritImage[i], fighter.getCrew().getHits());
-	        
-	        nameLabel[i].setString(fighter.getDisplayName());
-	        
-	        armorArea[i].setVisible(true);
-        	armorVLabel[i].setVisible(true);
-        	avCritArea[i].setVisible(true);
-        	engineCritArea[i].setVisible(true);
-        	fcsCritArea[i].setVisible(true);
-        	sensorCritArea[i].setVisible(true);
-        	pilotCritArea[i].setVisible(true);
-        	nameLabel[i].setVisible(true);
-        	avCritLabel[i].setVisible(true);
-        	engineCritLabel[i].setVisible(true);
-        	fcsCritLabel[i].setVisible(true);
-        	sensorCritLabel[i].setVisible(true);
-        	pilotCritLabel[i].setVisible(true);
+            Aero fighter = fs.getFighter(i);
+            int armor = fighter.getCapArmor();
+            int armorO = fighter.getCap0Armor();
+            
+            drawArmorImage(armorImage[i], armor, armorO);
+            armorVLabel[i].setValue(Integer.toString(armor));
+            drawCrits(avCritImage[i], fighter.getAvionicsHits());
+            drawCrits(engineCritImage[i], fighter.getEngineHits());
+            drawCrits(fcsCritImage[i], fighter.getFCSHits());
+            drawCrits(sensorCritImage[i], fighter.getSensorHits());
+            drawCrits(pilotCritImage[i], fighter.getCrew().getHits());
+            
+            nameLabel[i].setString(fighter.getDisplayName());
+            
+            armorArea[i].setVisible(true);
+            armorVLabel[i].setVisible(true);
+            avCritArea[i].setVisible(true);
+            engineCritArea[i].setVisible(true);
+            fcsCritArea[i].setVisible(true);
+            sensorCritArea[i].setVisible(true);
+            pilotCritArea[i].setVisible(true);
+            nameLabel[i].setVisible(true);
+            avCritLabel[i].setVisible(true);
+            engineCritLabel[i].setVisible(true);
+            fcsCritLabel[i].setVisible(true);
+            sensorCritLabel[i].setVisible(true);
+            pilotCritLabel[i].setVisible(true);
         }
         
         for(int j = fs.getN0Fighters(); j < FighterSquadron.MAX_SIZE; j++) {
-        	armorArea[j].setVisible(false);
-        	armorVLabel[j].setVisible(false);
-        	avCritArea[j].setVisible(false);
-        	engineCritArea[j].setVisible(false);
-        	fcsCritArea[j].setVisible(false);
-        	sensorCritArea[j].setVisible(false);
-        	pilotCritArea[j].setVisible(false);
-        	nameLabel[j].setVisible(false);
-        	avCritLabel[j].setVisible(false);
-        	engineCritLabel[j].setVisible(false);
-        	fcsCritLabel[j].setVisible(false);
-        	sensorCritLabel[j].setVisible(false);
-        	pilotCritLabel[j].setVisible(false);
+            armorArea[j].setVisible(false);
+            armorVLabel[j].setVisible(false);
+            avCritArea[j].setVisible(false);
+            engineCritArea[j].setVisible(false);
+            fcsCritArea[j].setVisible(false);
+            sensorCritArea[j].setVisible(false);
+            pilotCritArea[j].setVisible(false);
+            nameLabel[j].setVisible(false);
+            avCritLabel[j].setVisible(false);
+            engineCritLabel[j].setVisible(false);
+            fcsCritLabel[j].setVisible(false);
+            sensorCritLabel[j].setVisible(false);
+            pilotCritLabel[j].setVisible(false);
         }
         
     }
 
     private void setContent(){
-    	
-    	for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
-	    	content.addArea(nameLabel[i]);
-	    	content.addArea(armorArea[i]);
-	    	content.addArea(armorVLabel[i]);
-	        content.addArea(avCritLabel[i]);
-	        content.addArea(engineCritLabel[i]);
-	        content.addArea(fcsCritLabel[i]);
-	        content.addArea(sensorCritLabel[i]);
-	        content.addArea(pilotCritLabel[i]);     
-	        content.addArea(avCritArea[i]);
-	        content.addArea(engineCritArea[i]);
-	        content.addArea(fcsCritArea[i]);
-	        content.addArea(sensorCritArea[i]);
-	        content.addArea(pilotCritArea[i]);
-    	}
+        
+        for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
+            content.addArea(nameLabel[i]);
+            content.addArea(armorArea[i]);
+            content.addArea(armorVLabel[i]);
+            content.addArea(avCritLabel[i]);
+            content.addArea(engineCritLabel[i]);
+            content.addArea(fcsCritLabel[i]);
+            content.addArea(sensorCritLabel[i]);
+            content.addArea(pilotCritLabel[i]);     
+            content.addArea(avCritArea[i]);
+            content.addArea(engineCritArea[i]);
+            content.addArea(fcsCritArea[i]);
+            content.addArea(sensorCritArea[i]);
+            content.addArea(pilotCritArea[i]);
+        }
     }
 
     private void setAreas(){
-    	for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
-	    	armorImage[i] = comp.createImage(armorCols*(squareSize+1), armorRows*(squareSize+1));
-	    	armorArea[i] = new PMPicArea(armorImage[i]);
-	    	
-	    	avCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
-	    	avCritArea[i] = new PMPicArea(avCritImage[i]);
-	    	engineCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
-	    	engineCritArea[i] = new PMPicArea(engineCritImage[i]);
-	    	fcsCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
-	    	fcsCritArea[i] = new PMPicArea(fcsCritImage[i]);
-	    	sensorCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
-	    	sensorCritArea[i] = new PMPicArea(sensorCritImage[i]);
-	    	pilotCritImage[i] = comp.createImage(6*(squareSize+1), squareSize+1);
-	    	pilotCritArea[i] = new PMPicArea(pilotCritImage[i]);
-    	}
+        for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
+            armorImage[i] = comp.createImage(armorCols*(squareSize+1), armorRows*(squareSize+1));
+            armorArea[i] = new PMPicArea(armorImage[i]);
+            
+            avCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
+            avCritArea[i] = new PMPicArea(avCritImage[i]);
+            engineCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
+            engineCritArea[i] = new PMPicArea(engineCritImage[i]);
+            fcsCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
+            fcsCritArea[i] = new PMPicArea(fcsCritImage[i]);
+            sensorCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
+            sensorCritArea[i] = new PMPicArea(sensorCritImage[i]);
+            pilotCritImage[i] = comp.createImage(6*(squareSize+1), squareSize+1);
+            pilotCritArea[i] = new PMPicArea(pilotCritImage[i]);
+        }
     }
 
     private void setLabels(){
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
         for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
-        	nameLabel[i] = new PMSimpleLabel("Unknown", fm, Color.white); //$NON-NLS-1$
-	        armorVLabel[i] = new PMValueLabel(fm, Color.red.brighter());	
-	        avCritLabel[i] = new PMSimpleLabel("Avionics:", fm, Color.white); //$NON-NLS-1$
-	        engineCritLabel[i] = new PMSimpleLabel("Engine:", fm, Color.white); //$NON-NLS-1$
-	        fcsCritLabel[i] = new PMSimpleLabel("FCS:", fm, Color.white); //$NON-NLS-1$
-	        sensorCritLabel[i] = new PMSimpleLabel("Sensors:", fm, Color.white); //$NON-NLS-1$
-	        pilotCritLabel[i] = new PMSimpleLabel("Pilot hits:", fm, Color.white); //$NON-NLS-1$
+            nameLabel[i] = new PMSimpleLabel("Unknown", fm, Color.white); //$NON-NLS-1$
+            armorVLabel[i] = new PMValueLabel(fm, Color.red.brighter());    
+            avCritLabel[i] = new PMSimpleLabel("Avionics:", fm, Color.white); //$NON-NLS-1$
+            engineCritLabel[i] = new PMSimpleLabel("Engine:", fm, Color.white); //$NON-NLS-1$
+            fcsCritLabel[i] = new PMSimpleLabel("FCS:", fm, Color.white); //$NON-NLS-1$
+            sensorCritLabel[i] = new PMSimpleLabel("Sensors:", fm, Color.white); //$NON-NLS-1$
+            pilotCritLabel[i] = new PMSimpleLabel("Pilot hits:", fm, Color.white); //$NON-NLS-1$
         }
     }
 
@@ -250,29 +250,29 @@ public class SquadronMapSet implements DisplayMapSet{
     }
     
     private void translateAreas() { 
-    	//get size of each fighter block
-    	int blockSize = 6*stepY;
-    	for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
-	    	nameLabel[i].translate(0, blockSize*i);
-	    	armorArea[i].translate(0, squareSize+blockSize*i);
-	    	armorVLabel[i].translate((armorCols*(squareSize+1))/2, blockSize*i+squareSize+(armorRows*(squareSize+1))/2);
-	    	
-	    	avCritLabel[i].translate(5+armorCols*(squareSize+1), stepY+blockSize*i);
-	    	engineCritLabel[i].translate(5+armorCols*(squareSize+1), 2*stepY+blockSize*i);
-	    	fcsCritLabel[i].translate(5+armorCols*(squareSize+1), 3*stepY+blockSize*i);
-	    	sensorCritLabel[i].translate(5+armorCols*(squareSize+1), 4*stepY+blockSize*i);
-	    	pilotCritLabel[i].translate(5+armorCols*(squareSize+1), 5*stepY+blockSize*i);
-	    	
-	    	avCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), stepY-(squareSize+1)+blockSize*i);
-	    	engineCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 2*stepY-(squareSize+1)+blockSize*i);
-	    	fcsCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 3*stepY-(squareSize+1)+blockSize*i);
-	    	sensorCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 4*stepY-(squareSize+1)+blockSize*i);
-	    	pilotCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 5*stepY-(squareSize+1)+blockSize*i);
-    	}
+        //get size of each fighter block
+        int blockSize = 6*stepY;
+        for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
+            nameLabel[i].translate(0, blockSize*i);
+            armorArea[i].translate(0, squareSize+blockSize*i);
+            armorVLabel[i].translate((armorCols*(squareSize+1))/2, blockSize*i+squareSize+(armorRows*(squareSize+1))/2);
+            
+            avCritLabel[i].translate(5+armorCols*(squareSize+1), stepY+blockSize*i);
+            engineCritLabel[i].translate(5+armorCols*(squareSize+1), 2*stepY+blockSize*i);
+            fcsCritLabel[i].translate(5+armorCols*(squareSize+1), 3*stepY+blockSize*i);
+            sensorCritLabel[i].translate(5+armorCols*(squareSize+1), 4*stepY+blockSize*i);
+            pilotCritLabel[i].translate(5+armorCols*(squareSize+1), 5*stepY+blockSize*i);
+            
+            avCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), stepY-(squareSize+1)+blockSize*i);
+            engineCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 2*stepY-(squareSize+1)+blockSize*i);
+            fcsCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 3*stepY-(squareSize+1)+blockSize*i);
+            sensorCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 4*stepY-(squareSize+1)+blockSize*i);
+            pilotCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 5*stepY-(squareSize+1)+blockSize*i);
+        }
     }
 
     private void drawCrits(Image im, int crits) {
-    	int w = im.getWidth(null);
+        int w = im.getWidth(null);
         int h = im.getHeight(null);
         Graphics g = im.getGraphics();
         g.setColor(Color.black);
@@ -292,15 +292,15 @@ public class SquadronMapSet implements DisplayMapSet{
         g.fillRect(0, 0, w, h);
         //first fill up the initial armor area with black
         for (int i = 0; i < initial; i++) {
-        	//6 across and 8 down
-        	int row = i / armorRows;
-        	int column = i - row * armorRows;
+            //6 across and 8 down
+            int row = i / armorRows;
+            int column = i - row * armorRows;
             g.setColor(Color.black);
             g.fillRect(row*(squareSize+1),column*(squareSize+1), (squareSize+1), (squareSize+1));
         }
         for (int i = 0; i < a; i++) {
-        	int row = i / armorRows;
-        	int column = i - row * armorRows;
+            int row = i / armorRows;
+            int column = i - row * armorRows;
             g.setColor(Color.green.darker());
             g.fillRect(row*(squareSize+1),column*(squareSize+1), squareSize, squareSize);
         }

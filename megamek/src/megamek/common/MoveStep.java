@@ -1411,13 +1411,13 @@ public class MoveStep implements Serializable {
    
             //if jumpships turn, they can't do anything else
             if(entity instanceof Jumpship && !(entity instanceof Warship) && !isFirstStep()
-            		&& (prev.getParent().contains(MovePath.STEP_TURN_LEFT) || prev.getParent().contains(MovePath.STEP_TURN_RIGHT))) {
-            	return;
+                    && (prev.getParent().contains(MovePath.STEP_TURN_LEFT) || prev.getParent().contains(MovePath.STEP_TURN_RIGHT))) {
+                return;
             }
             
             //space stations can only turn
             if(entity instanceof SpaceStation && !(type == MovePath.STEP_TURN_LEFT || type == MovePath.STEP_TURN_RIGHT)) {
-            	return;
+                return;
             }
             
             //unless velocity is zero ASFs must move forward one hex before making turns
@@ -2456,11 +2456,11 @@ public class MoveStep implements Serializable {
     
     private int asfTurnCost(IGame game, int direction, Entity entity) {
         
-    	//jumpships (but not space stations and warships) never pay
-    	if(entity instanceof Jumpship && !(entity instanceof Warship) && !(entity instanceof SpaceStation)) {
-    		return 0;
-    	}
-    	
+        //jumpships (but not space stations and warships) never pay
+        if(entity instanceof Jumpship && !(entity instanceof Warship) && !(entity instanceof SpaceStation)) {
+            return 0;
+        }
+        
         //if in atmosphere, the rules are different
         if(game.getBoard().inAtmosphere()) {
             //if they are spheroid in atmosphere, then no cost to turn

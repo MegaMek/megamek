@@ -170,10 +170,10 @@ public class Aero
     //Capital Fighter stuff
     private int capitalArmor = 0;
     private int capitalArmor_orig = 0;
-	private int fatalThresh = 2;
-	private int currentDamage = 0;
-	private boolean wingsHit = false;
-	//a hash map of the current weapon groups - the key is the location:internal name, and the value is the weapon id
+    private int fatalThresh = 2;
+    private int currentDamage = 0;
+    private boolean wingsHit = false;
+    //a hash map of the current weapon groups - the key is the location:internal name, and the value is the weapon id
     Map<String, Integer> weaponGroups = new HashMap<String, Integer>();
     
     /*
@@ -364,27 +364,27 @@ public class Aero
     }
     
     public int getCapArmor() {
-    	return capitalArmor;
+        return capitalArmor;
     }
     
     public void setCapArmor(int i) {
-    	this.capitalArmor = i;
+        this.capitalArmor = i;
     }
     
     public int getCap0Armor() {
-    	return capitalArmor_orig;
+        return capitalArmor_orig;
     }
     
     public int getFatalThresh() {
-    	return fatalThresh;
+        return fatalThresh;
     }
     
     public int getCurrentDamage() {
-    	return currentDamage;
+        return currentDamage;
     }
     
     public void setCurrentDamage(int i) {
-    	this.currentDamage = i;
+        this.currentDamage = i;
     }
     
     public void set0SI(int si) {
@@ -400,12 +400,12 @@ public class Aero
     }
     
     public void autoSetCapArmor() {
-    	capitalArmor_orig = (int)Math.round(getTotalOArmor() / 10.0);
-    	capitalArmor = (int)Math.round(getTotalArmor() / 10.0);
+        capitalArmor_orig = (int)Math.round(getTotalOArmor() / 10.0);
+        capitalArmor = (int)Math.round(getTotalArmor() / 10.0);
     }
     
     public void autoSetFatalThresh() {
-    	fatalThresh = Math.max(2, (int)Math.ceil(capitalArmor/4.0));
+        fatalThresh = Math.max(2, (int)Math.ceil(capitalArmor/4.0));
     }
     
     public void initializeSI(int val) {
@@ -422,9 +422,9 @@ public class Aero
     }
     
     public void setSensorHits(int hits) {
-    	if(hits > 3) {
-    		hits = 3;
-    	}
+        if(hits > 3) {
+            hits = 3;
+        }
         sensorHits = hits;
     }
 
@@ -433,9 +433,9 @@ public class Aero
     }
     
     public void setFCSHits(int hits) {
-    	if(hits > 3) {
-    		hits = 3;
-    	}
+        if(hits > 3) {
+            hits = 3;
+        }
         fcsHits = hits;
     }
     
@@ -520,11 +520,11 @@ public class Aero
     }
     
     public boolean wasCritThresh() {
-    	return critThresh;
+        return critThresh;
     }
     
     public void setCritThresh(boolean b) {
-    	this.critThresh = b;
+        this.critThresh = b;
     }
     
     public void immobilize()
@@ -1064,7 +1064,7 @@ public class Aero
             
             //do not count weapon groups
             if(mounted.isWeaponGroup()) {
-            	continue;
+                continue;
             }
 
             // one shot weapons count 1/4
@@ -1121,7 +1121,7 @@ public class Aero
             }
             //do not count weapon groups
             if(weapon.isWeaponGroup()) {
-            	continue;
+                continue;
             }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
@@ -1165,7 +1165,7 @@ public class Aero
                 }
                 //do not count weapon groups
                 if(weapon.isWeaponGroup()) {
-                	continue;
+                    continue;
                 }
                 // calc MG Array here:
                 if (wtype.hasFlag(WeaponType.F_MGA)) {
@@ -1805,7 +1805,7 @@ public class Aero
      */
     public int getCriticalEffect(int roll, int target) {
         //just grab the latest potential crit
-    	if(roll < target) 
+        if(roll < target) 
             return CRIT_NONE;
         
         int critical = getPotCrit();
@@ -2161,8 +2161,8 @@ public class Aero
     }
     
     public int getFuelUsed(int thrust) {
-    	int overThrust =  Math.max(thrust - getWalkMP(), 0);
-    	int safeThrust = thrust - overThrust;
+        int overThrust =  Math.max(thrust - getWalkMP(), 0);
+        int safeThrust = thrust - overThrust;
         int used = safeThrust + 2 * overThrust;
         return used;
     }
@@ -2270,12 +2270,12 @@ public class Aero
     }
 
     public double getArmorRemainingPercent() {
-    	int armor0 = getTotalOArmor();
-    	int armor = getTotalArmor();
-    	if(isCapitalFighter()) {
-    		armor0 = getCap0Armor();
-    		armor = getCapArmor();
-    	}
+        int armor0 = getTotalOArmor();
+        int armor = getTotalArmor();
+        if(isCapitalFighter()) {
+            armor0 = getCap0Armor();
+            armor = getCapArmor();
+        }
         if(armor0 == 0)
             return IArmorState.ARMOR_NA;
         return ((double)armor / (double)armor0);
@@ -2285,36 +2285,36 @@ public class Aero
      * keep track of whether the wings have suffered a weapon critical hit
      */
     public boolean areWingsHit() {
-    	return wingsHit;
+        return wingsHit;
     }
     
     public void setWingsHit(boolean b) {
-    	this.wingsHit = b;
+        this.wingsHit = b;
     }
     
     /**
      * what location is opposite the given one
      */
     public int getOppositeLocation(int loc) {
-    	switch(loc) {
-    	case Aero.LOC_NOSE:
-    		return Aero.LOC_AFT;
-    	case Aero.LOC_LWING:
-    		return Aero.LOC_RWING;
-    	case Aero.LOC_RWING:
-    		return Aero.LOC_LWING;
-    	case Aero.LOC_AFT:
-    		return Aero.LOC_NOSE;
-    	default:
-    		return Aero.LOC_NOSE;
-    	}
+        switch(loc) {
+        case Aero.LOC_NOSE:
+            return Aero.LOC_AFT;
+        case Aero.LOC_LWING:
+            return Aero.LOC_RWING;
+        case Aero.LOC_RWING:
+            return Aero.LOC_LWING;
+        case Aero.LOC_AFT:
+            return Aero.LOC_NOSE;
+        default:
+            return Aero.LOC_NOSE;
+        }
     }
     
     /**
      * get modifications to the cluster hit table for critical hits
      */
     public int getClusterMods() {
-    	return -1*(getFCSHits() + getSensorHits());
+        return -1*(getFCSHits() + getSensorHits());
     }
     
     /**
@@ -2324,64 +2324,64 @@ public class Aero
      *         be <code>Entity.NONE</code> if no ECM is active.
      */
     public int getECMRange() {
-    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
-    		return super.getECMRange();
-    	}
-    	return Math.min(super.getECMRange(), 0);
+        if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+            return super.getECMRange();
+        }
+        return Math.min(super.getECMRange(), 0);
     }
     
     /**
      * @return the strength of the ECCM field this unit emits
      */
     public double getECCMStrength() {
-    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
-    		return super.getECCMStrength();
-    	}
+        if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+            return super.getECCMStrength();
+        }
         if(this.hasActiveECCM()) {
-        	return 1;
+            return 1;
         }
         return 0;
     }
     
     public void setECCMRoll(int i) {
-    	this.eccmRoll = i;
+        this.eccmRoll = i;
     }
     
     public int getECCMRoll() {
-    	return eccmRoll;
+        return eccmRoll;
     }
     
     public int getECCMTarget() {
-    	return this.crew.getPiloting() + getSensorHits() + getCICHits() + getFCSHits();
+        return this.crew.getPiloting() + getSensorHits() + getCICHits() + getFCSHits();
     }
     
     public int getECCMBonus() {
-    	return Math.max(0, eccmRoll - this.getECCMTarget());
+        return Math.max(0, eccmRoll - this.getECCMTarget());
     }
     
     /**
      * @return is  the crew of this vessel protected from gravitational effects, see StratOps, pg. 36
      */
     public boolean isCrewProtected() {
-    	return true;
+        return true;
     }
 
     public int getGravSecondaryThreshold() {
-    	int thresh = 6;
-    	if(isCrewProtected()) {
-    		thresh = 12;
-    	}
-    	//TODO: clan phenotypes
-    	return thresh;
+        int thresh = 6;
+        if(isCrewProtected()) {
+            thresh = 12;
+        }
+        //TODO: clan phenotypes
+        return thresh;
     }
     
     public int getGravPrimaryThreshold() {
-    	int thresh = 12;
-    	if(isCrewProtected()) {
-    		thresh = 22;
-    	}
-    	//TODO: clan phenotypes
-    	return thresh;
+        int thresh = 12;
+        if(isCrewProtected()) {
+            thresh = 22;
+        }
+        //TODO: clan phenotypes
+        return thresh;
     }
     
     /**
@@ -2394,20 +2394,20 @@ public class Aero
      */
     public boolean canLoad( Entity unit ) {
         // capital fighters can load other capital fighters (becoming squadrons)
-    	//but not in the deployment phase
+        //but not in the deployment phase
         if ( !unit.isEnemyOf(this) && unit.isCapitalFighter()  && this.isCapitalFighter()
-        		&& getId() != unit.getId() && game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) {
+                && getId() != unit.getId() && game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) {
             return true;
         }
         
-	    return false;
+        return false;
     }
     
     /***
      * use the specified amount of fuel for this Aero. The amount may be adjusted by certain game options
      */
     public void useFuel(int fuel) {
-    	setFuel(Math.max(0,getFuel()- fuel));
+        setFuel(Math.max(0,getFuel()- fuel));
     }
     
     

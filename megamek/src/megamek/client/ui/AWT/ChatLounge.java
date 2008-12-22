@@ -1541,10 +1541,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * fighters during the deployment phase
      */
     public void loadCustomFS() {
-    	FighterSquadron fs = new FighterSquadron();
+        FighterSquadron fs = new FighterSquadron();
         fs.setOwner(client.getLocalPlayer());
         client.sendAddEntity(fs);
-    	/*
+        /*
         clientgui.getCustomFSDialog().setVisible(true);
         */
     }

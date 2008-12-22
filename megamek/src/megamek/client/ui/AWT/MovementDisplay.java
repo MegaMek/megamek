@@ -894,10 +894,10 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             }
             //jumpships and space stations can turn under different conditions
             if(ce instanceof Jumpship && !(ce instanceof Warship) && !(ce instanceof SpaceStation)) {
-            	setTurnEnabled(true);
+                setTurnEnabled(true);
             }
             if(ce instanceof SpaceStation && ce.getRunMP() > 0) {
-            	setTurnEnabled(true);
+                setTurnEnabled(true);
             }
         }
 
@@ -2059,9 +2059,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
      */
     private synchronized void updateJoinButton() {
 
-    	if(!client.game.getOptions().booleanOption("stratops_capital_fighter")) {
-    		return;
-    	}
+        if(!client.game.getOptions().booleanOption("stratops_capital_fighter")) {
+            return;
+        }
 
         final Entity ce = ce();
         if (null == ce) {
@@ -2069,44 +2069,44 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
 
         if(!ce.isCapitalFighter()) {
-        	return;
+            return;
         }
 
         Coords loadeePos = cmd.getFinalCoords();
         if (client.game.useVectorMove()) {
-        	// not where you are, but where you will be
-        	loadeePos = Compute.getFinalPosition(ce.getPosition(), cmd.getFinalVectors());
+            // not where you are, but where you will be
+            loadeePos = Compute.getFinalPosition(ce.getPosition(), cmd.getFinalVectors());
         }
         Entity other = null;
         Enumeration<Entity> entities = client.game.getEntities(loadeePos);
         boolean isGood = false;
         while (entities.hasMoreElements()) {
-        	// Is the other unit friendly and not the current entity?
-        	other = entities.nextElement();
-        	if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
-        		// must be done with its movement
-        		// it also must be same heading and velocity
-        		if (other.isCapitalFighter() && other.isDone() && other.canLoad(ce) && cmd.getFinalFacing() == other.getFacing()) {
-        			// now lets check velocity
-        			// depends on movement rules
-        			Aero oa = (Aero) other;
-        			if (client.game.useVectorMove()) {
-        				// can you do equality with vectors?
-        				if (Compute.sameVectors(cmd.getFinalVectors(), oa.getVectors())) {
-        					setJoinEnabled(true);
-        					isGood = true;
-        				}
-        			} else if (cmd.getFinalVelocity() == oa.getCurrentVelocity()) {
-        				setJoinEnabled(true);
-        				isGood = true;
-        			}
-        		}
-        	}
-        	// Nope. Discard it.
-        	other = null;
+            // Is the other unit friendly and not the current entity?
+            other = entities.nextElement();
+            if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
+                // must be done with its movement
+                // it also must be same heading and velocity
+                if (other.isCapitalFighter() && other.isDone() && other.canLoad(ce) && cmd.getFinalFacing() == other.getFacing()) {
+                    // now lets check velocity
+                    // depends on movement rules
+                    Aero oa = (Aero) other;
+                    if (client.game.useVectorMove()) {
+                        // can you do equality with vectors?
+                        if (Compute.sameVectors(cmd.getFinalVectors(), oa.getVectors())) {
+                            setJoinEnabled(true);
+                            isGood = true;
+                        }
+                    } else if (cmd.getFinalVelocity() == oa.getCurrentVelocity()) {
+                        setJoinEnabled(true);
+                        isGood = true;
+                    }
+                }
+            }
+            // Nope. Discard it.
+            other = null;
         } // Check the next entity in this position.
         if (!isGood) {
-        	setJoinEnabled(false);
+            setJoinEnabled(false);
         }
     }
 
@@ -2145,28 +2145,28 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                  */
                 doors = currentBay.getDoors();
                 if (currentFighters.size() > 0) {
-                	String[] names = new String[currentFighters.size()];
-                	String question = Messages.getString("MovementDisplay.LaunchFighterDialog.message", new Object[] { //$NON-NLS-1$
-                			ce.getShortName(), doors*2, bayNum});
-                	for(int loop = 0; loop < names.length; loop++) {
-                		names[loop] = currentFighters.elementAt(loop).getShortName();
-                	}
-                	ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.frame, Messages.getString("MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
-                			currentBay.getType(), bayNum}),
-                			question, names);
-                	choiceDialog.setVisible(true);
-                	if (choiceDialog.getAnswer() == true) {
-                		// load up the choices
-                		int[] unitsLaunched = choiceDialog.getChoices();
-                		for (int element : unitsLaunched) {
+                    String[] names = new String[currentFighters.size()];
+                    String question = Messages.getString("MovementDisplay.LaunchFighterDialog.message", new Object[] { //$NON-NLS-1$
+                            ce.getShortName(), doors*2, bayNum});
+                    for(int loop = 0; loop < names.length; loop++) {
+                        names[loop] = currentFighters.elementAt(loop).getShortName();
+                    }
+                    ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.frame, Messages.getString("MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
+                            currentBay.getType(), bayNum}),
+                            question, names);
+                    choiceDialog.setVisible(true);
+                    if (choiceDialog.getAnswer() == true) {
+                        // load up the choices
+                        int[] unitsLaunched = choiceDialog.getChoices();
+                        for (int element : unitsLaunched) {
                                 bayChoices.add(currentFighters.elementAt(element).getId());
-                		}
-                		choices.put(i, bayChoices);
-                		// now remove them (must be a better way?)
-                		for (int l = unitsLaunched.length; l > 0; l--) {
-                			currentFighters.remove(unitsLaunched[l - 1]);
-                		}
-                	}
+                        }
+                        choices.put(i, bayChoices);
+                        // now remove them (must be a better way?)
+                        for (int l = unitsLaunched.length; l > 0; l--) {
+                            currentFighters.remove(unitsLaunched[l - 1]);
+                        }
+                    }
                 }
                 bayNum++;
             }
@@ -2298,7 +2298,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
 
         if (choices.size() == 1) {
-        	return choices.elementAt(0);
+            return choices.elementAt(0);
         }
 
         String[] names = new String[choices.size()];
@@ -2310,7 +2310,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         choiceDialog.setVisible(true);
 
         if (choiceDialog.getAnswer()) {
-        	return choices.elementAt(choiceDialog.getChoice());
+            return choices.elementAt(choiceDialog.getChoice());
         }
         return -1;
     }
@@ -2968,11 +2968,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_LAUNCH)) {
-        	TreeMap<Integer, Vector<Integer>> launched = getLaunchedUnits();
-        	if(!launched.isEmpty()) {
-	            cmd.addStep(MovePath.STEP_LAUNCH, launched);
-	            clientgui.bv.drawMovementData(ce, cmd);
-        	}
+            TreeMap<Integer, Vector<Integer>> launched = getLaunchedUnits();
+            if(!launched.isEmpty()) {
+                cmd.addStep(MovePath.STEP_LAUNCH, launched);
+                clientgui.bv.drawMovementData(ce, cmd);
+            }
         } else if (ev.getActionCommand().equals(MOVE_RECOVER)) {
             // if more than one unit is available as a carrier
             // then bring up an option dialog

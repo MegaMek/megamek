@@ -538,10 +538,10 @@ public class SmallCraft extends Aero implements Serializable {
      * All military small craft automatically have ECM if in space
      */
     public boolean hasActiveECM() {
-    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
-    		return super.hasActiveECM();
-    	}
-    	return getECMRange() >= 0;
+        if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+            return super.hasActiveECM();
+        }
+        return getECMRange() >= 0;
     }
     
     /**
@@ -551,23 +551,23 @@ public class SmallCraft extends Aero implements Serializable {
      *         be <code>Entity.NONE</code> if no ECM is active.
      */
     public int getECMRange() {
-    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
-    		return super.getECMRange();
-    	}
-        if(!this.isMilitary()) {
-        	return Entity.NONE;
+        if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+            return super.getECMRange();
         }
-    	int range = -1;  	
-    	//if the unit has an ECM unit, then the range might be extended by one
+        if(!this.isMilitary()) {
+            return Entity.NONE;
+        }
+        int range = -1;      
+        //if the unit has an ECM unit, then the range might be extended by one
         if ( !isShutDown() ){
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
                 if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM) && !m.isInoperable()) {
-                	if(type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
-                		range += 1;
-                	} else {
-                		range += 2;
-                	}
+                    if(type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+                        range += 1;
+                    } else {
+                        range += 2;
+                    }
                     break;
                 }
             }          
@@ -581,6 +581,6 @@ public class SmallCraft extends Aero implements Serializable {
      * @return is  the crew of this vessel protected from gravitational effects, see StratOps, pg. 36
      */
     public boolean isCrewProtected() {
-    	return isMilitary() && this.getOriginalWalkMP() > 4;
+        return isMilitary() && this.getOriginalWalkMP() > 4;
     }
 }

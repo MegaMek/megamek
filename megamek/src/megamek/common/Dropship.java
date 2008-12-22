@@ -408,7 +408,7 @@ public class Dropship extends SmallCraft implements Serializable {
             String key = atype.getAmmoType() + ":" + atype.getRackSize() + ";" + arc;
             double weight = mounted.getShotsLeft() / atype.getShots();
             if(atype.isCapital()) {
-            	weight = mounted.getShotsLeft() * atype.getAmmoRatio();
+                weight = mounted.getShotsLeft() * atype.getAmmoRatio();
             }
             if (!keys.contains(key))
                 keys.add(key);
@@ -657,10 +657,10 @@ public class Dropship extends SmallCraft implements Serializable {
      * All military dropships automatically have ECM if in space
      */
     public boolean hasActiveECM() {
-    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
-    		return super.hasActiveECM();
-    	}
-    	return getECMRange() > Entity.NONE;
+        if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+            return super.hasActiveECM();
+        }
+        return getECMRange() > Entity.NONE;
     }
     
     /**
@@ -670,13 +670,13 @@ public class Dropship extends SmallCraft implements Serializable {
      *         be <code>Entity.NONE</code> if no ECM is active.
      */
     public int getECMRange() {
-    	if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
-    		return super.getECMRange();
-    	}
-        if(!this.isMilitary()) {
-        	return Entity.NONE;
+        if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+            return super.getECMRange();
         }
-    	int range = 1;  	
+        if(!this.isMilitary()) {
+            return Entity.NONE;
+        }
+        int range = 1;      
         //the range might be affected by sensor/FCS damage
         range = range - getFCSHits() - getSensorHits();     
         return range;

@@ -215,25 +215,25 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
     /*
     protected void organizeIntoGroups(Aero a) throws EntityLoadingException {
-    	//collect a hash of all the same weapons in each location by id
-    	Map<String, Integer> groups = new HashMap<String, Integer>();
-    	for (Mounted mounted : a.getTotalWeaponList()) {
-    		int loc = mounted.getLocation();
-    		if(loc == Aero.LOC_RWING || loc == Aero.LOC_LWING) {
-    			loc = Aero.LOC_WINGS;
-    		}
-    		if(mounted.isRearMounted()) {
-    			loc = Aero.LOC_AFT;
-    		}
-    		String key = mounted.getType().getInternalName() + ":" + loc;
-    		if(null == groups.get(key)) {
-    			groups.put(key, 1);
-    		} else {
-    			groups.put(key, groups.get(key) + 1);
-    		}
-    	}
-    	//now we just need to traverse the hash and add this new equipment
-    	Set<String> set= groups.keySet();
+        //collect a hash of all the same weapons in each location by id
+        Map<String, Integer> groups = new HashMap<String, Integer>();
+        for (Mounted mounted : a.getTotalWeaponList()) {
+            int loc = mounted.getLocation();
+            if(loc == Aero.LOC_RWING || loc == Aero.LOC_LWING) {
+                loc = Aero.LOC_WINGS;
+            }
+            if(mounted.isRearMounted()) {
+                loc = Aero.LOC_AFT;
+            }
+            String key = mounted.getType().getInternalName() + ":" + loc;
+            if(null == groups.get(key)) {
+                groups.put(key, 1);
+            } else {
+                groups.put(key, groups.get(key) + 1);
+            }
+        }
+        //now we just need to traverse the hash and add this new equipment
+        Set<String> set= groups.keySet();
         Iterator<String> iter = set.iterator();
         while(iter.hasNext()) {
             String key = iter.next();

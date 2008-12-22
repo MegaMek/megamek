@@ -1639,7 +1639,7 @@ public class Game implements Serializable, IGame {
         for (Enumeration<Entity> i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = i.nextElement();
             if(entity.isPartOfFighterSquadron() && hide) {
-            	continue;
+                continue;
             }
             if (player.equals(entity.getOwner())) {
                 output.add(entity);

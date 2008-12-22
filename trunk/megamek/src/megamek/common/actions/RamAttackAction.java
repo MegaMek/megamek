@@ -101,7 +101,7 @@ public class RamAttackAction extends AbstractAttackAction {
         }   
         
         if(ae instanceof FighterSquadron || target instanceof FighterSquadron) {
-        	return new ToHitData(TargetRoll.IMPOSSIBLE, "fighter squadrons may not ram nor be the target of a ramming attc");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "fighter squadrons may not ram nor be the target of a ramming attc");
         }
 
         Entity te = null;

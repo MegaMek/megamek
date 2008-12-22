@@ -218,10 +218,10 @@ public class HitData {
     }
     
     public void setSingleAV(int i) {
-    	this.singleAV = i;
+        this.singleAV = i;
     }
     
     public int getSingleAV() {
-    	return singleAV;
+        return singleAV;
     }
 }

@@ -955,10 +955,10 @@ public class CustomFighterSquadronDialog
             c.sendAddEntity(fs);
             /*
             for(Entity e : squadron) {
-            	autoSetSkills(e);
-            	e.setOwner(c.getLocalPlayer());
-            	e.setTransportId(fs.getId());
-            	c.sendAddEntity(e);
+                autoSetSkills(e);
+                e.setOwner(c.getLocalPlayer());
+                e.setTransportId(fs.getId());
+                c.sendAddEntity(e);
             }
             */
             //clear the current squadron

@@ -103,7 +103,7 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
                 //if fighter squadron all fighters are damaged
                 if(entity instanceof FighterSquadron) {
                     for(Entity fighter : ((FighterSquadron)entity).getFighters()) {
-                    	ToHitData toHit = new ToHitData();
+                        ToHitData toHit = new ToHitData();
                         toHit.setHitTable(ToHitData.HIT_NORMAL);
                         HitData hit = fighter.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
                         hit.setCapital(false);
@@ -111,12 +111,12 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
                         server.creditKill(fighter, ae);
                     }
                 } else {  
-    	            ToHitData toHit = new ToHitData();
-    	            toHit.setHitTable(ToHitData.HIT_NORMAL);
-    	            HitData hit = entity.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
-    	            hit.setCapital(false);
-    	            vPhaseReport.addAll( server.damageEntity(entity, hit, attackValue));
-    	            server.creditKill(entity, ae);
+                    ToHitData toHit = new ToHitData();
+                    toHit.setHitTable(ToHitData.HIT_NORMAL);
+                    HitData hit = entity.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
+                    hit.setCapital(false);
+                    vPhaseReport.addAll( server.damageEntity(entity, hit, attackValue));
+                    server.creditKill(entity, ae);
                 }
             }
         }

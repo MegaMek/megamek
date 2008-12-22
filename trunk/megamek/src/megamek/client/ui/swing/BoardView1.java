@@ -4117,10 +4117,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         }
 
         public EcmBubble(Coords c, int range, int tint, int direction) {
-        	super(c);
-        	this.range = range;
-        	this.tint = tint;
-        	this.direction = direction;
+            super(c);
+            this.range = range;
+            this.tint = tint;
+            this.direction = direction;
         }
 
     }

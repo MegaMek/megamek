@@ -25,17 +25,11 @@
  */
 package megamek.common.loaders;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import megamek.common.Aero;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
-import megamek.common.Mounted;
 import megamek.common.TechConstants;
 import megamek.common.util.BuildingBlock;
 

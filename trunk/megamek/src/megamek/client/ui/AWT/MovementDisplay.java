@@ -61,9 +61,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
-import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
-import megamek.common.Report;
 import megamek.common.SpaceStation;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
@@ -2154,7 +2152,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 		names[loop] = currentFighters.elementAt(loop).getShortName();
                 	}
                 	ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.frame, Messages.getString("MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
-                			currentBay.getType(), bayNum}), 
+                			currentBay.getType(), bayNum}),
                 			question, names);
                 	choiceDialog.setVisible(true);
                 	if (choiceDialog.getAnswer() == true) {
@@ -2500,7 +2498,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 String body = Messages.getString("MovementDisplay.DumpSuccessful.message"); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
                 // addReport(r);
-                 * 
+                 *
                  */
             //}
             /*

@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -16,7 +16,6 @@ package megamek.client.ui.AWT;
 
 import java.awt.Button;
 import java.awt.Checkbox;
-import java.awt.Choice;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -31,8 +30,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
 
-import megamek.common.Aero;
-import megamek.common.BombType;
 import megamek.common.Mounted;
 
 /**
@@ -46,7 +43,7 @@ public class BombPayloadDialog
     extends Dialog implements ActionListener
 {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -9040626038371951886L;
 
@@ -55,11 +52,11 @@ public class BombPayloadDialog
     private Panel panButtons = new Panel();
     private Button butOK = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
-    
+
     private Checkbox[] b_choices;
     private Label[] b_labels;
     private int maxRows;
-    
+
     /**
      * Create and initialize the dialog.
      *
@@ -78,7 +75,7 @@ public class BombPayloadDialog
 
         //b_choices = new Checkbox[bombs.size()];
         //b_labels = new Label[bombs.size()];
-        
+
         GridBagLayout gridbag = new GridBagLayout();
         setLayout(gridbag);
 
@@ -92,29 +89,29 @@ public class BombPayloadDialog
         int i = 0;
         /*
         for(Mounted bomb : bombs) {
-        
+
             b_labels[i] = new Label();
             b_choices[i] = new Checkbox();
-            
+
             b_choices[i].setState(false);
             b_labels[type].setText(BombType.getBombName(type));
-            
+
             if(row >= maxRows) {
                 row = 0;
                 column += 2;
             }
-            
+
             c.gridx = column;
             c.gridy = row;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(b_labels[type], c);
             add(b_labels[type]);
-            
+
             c.gridx = column + 1;
             c.gridy = row;
             c.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(b_choices[type], c);
-            add(b_choices[type]);  
+            add(b_choices[type]);
             row++;
             i++;
         }
@@ -125,11 +122,12 @@ public class BombPayloadDialog
         c.insets = new Insets(5, 5, 5, 5);
         add(panButtons,c);
         butOK.requestFocus();
-        
+
         addWindowListener(new WindowAdapter() {
+                @Override
                 public void windowClosing(WindowEvent e) { setVisible(false); }
             });
-        
+
         pack();
         Dimension size = getSize();
         boolean updateSize = false;
@@ -186,16 +184,16 @@ public class BombPayloadDialog
     /* package */ BombPayloadDialog(Frame parent, String title, int[] bombs, boolean spaceBomb, boolean bombDump)
     {
         super(parent, title, true);
-        this.initialize( parent, title, bombs, spaceBomb, bombDump);
+        initialize( parent, title, bombs, spaceBomb, bombDump);
     }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butOK) {
             confirm = true;
-            this.setVisible(false);
+            setVisible(false);
         } else {
             confirm = false;
-            this.setVisible(false);
+            setVisible(false);
         }
     }
 
@@ -207,7 +205,7 @@ public class BombPayloadDialog
      *          did not select a choice, or if no choices were available.
      */
     public boolean getAnswer() {
-        return (null != this.getChoices());
+        return (null != getChoices());
     }
 
     /**
@@ -220,7 +218,7 @@ public class BombPayloadDialog
      *          that match the selected choices is returned.
      */
     public Vector<Mounted> getChoices() {
-        
+
         Vector<Mounted> choices = new Vector<Mounted>();
         /*
         if(this.confirm) {
@@ -229,11 +227,11 @@ public class BombPayloadDialog
                 temp[type] = b_choices[type].getSelectedIndex();
                 int chosen = 0;
                 for(Mounted bombs : getBombs()) {
-                    
+
                 }
             }
             temp = choices;
-        }    
+        }
         */
         return choices;
     }

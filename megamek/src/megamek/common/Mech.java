@@ -2695,22 +2695,21 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append("Weapons BV: ");
         bvText.append(nl);
 
+        // count heat-free weapons always at full modified BV
+        for (ArrayList<Object> nonHeatWeapon : nonHeatBVs) {
+            weaponBV += (Double)nonHeatWeapon.get(0);
+
+            bvText.append(nonHeatWeapon.get(1));
+            bvText.append(" BV: ");
+            bvText.append(nonHeatWeapon.get(0));
+            bvText.append(nl);
+        }
 
         if (maximumHeat <= mechHeatEfficiency) {
 
             bvText.append("Maximum Heat Less Than or Equal to Mech Heat Efficiency: ");
             bvText.append(nl);
-            // count all weapons equal, adjusting for rear-firing and excessive
-            // ammo
-            for (ArrayList<Object> nonHeatWeapon : nonHeatBVs) {
-                weaponBV += (Double)nonHeatWeapon.get(0);
-
-                // name
-                bvText.append(nonHeatWeapon.get(1));
-                bvText.append(" BV: ");
-                bvText.append(nonHeatWeapon.get(0));
-                bvText.append(nl);
-            }
+            // count all weapons equal
             for (ArrayList<Object> weaponValues : heatBVs) {
                 // name
                 bvText.append(weaponValues.get(2));
@@ -2733,17 +2732,6 @@ public abstract class Mech extends Entity implements Serializable {
                     return new Double((Double)obj2.get(0) - (Double)obj1.get(0)).intValue();
                 }
             });
-            // count heat-free weapons at full modified BV
-            bvText.append("Zero heat weapons count full:");
-            bvText.append(nl);
-            for (ArrayList<Object> nonHeatWeapon : nonHeatBVs) {
-                weaponBV += (Double)nonHeatWeapon.get(0);
-
-                bvText.append(nonHeatWeapon.get(1));
-                bvText.append(" BV: ");
-                bvText.append(nonHeatWeapon.get(0));
-                bvText.append(nl);
-            }
             // count heat-generating weapons at full modified BV until heatefficiency is reached or
             // passed with one weapon
             bvText.append("Heat generating weapons:");
@@ -3018,23 +3006,26 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append(" = ");
         bvText.append(obv);
         bvText.append(nl);
+        bvText.append("Final BV = (Offensive BV + Defensive BV) * Cockpit modifier");
 
         int finalBV = (int)Math.round(obv + dbv);
+        double cockpitMod = 1;
         if ( getCockpitType() == Mech.COCKPIT_SMALL || getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            finalBV *= 0.95;
+            cockpitMod = 0.95;
             bvText.append("Cockpit Modifer for small or torso mounted cockpit: 0.95");
             bvText.append(nl);
+            finalBV *= cockpitMod;
         }
 
-        bvText.append("Final BV: ");
+        bvText.append("Final BV: (");
         bvText.append(dbv);
         bvText.append(" + ");
         bvText.append(obv);
+        bvText.append(") * ");
+        bvText.append(cockpitMod);
         bvText.append(" = ");
         bvText.append(finalBV);
         bvText.append(nl);
-
-        System.out.println(bvText.toString());
 
         // we get extra bv from some stuff
         double xbv = 0.0;

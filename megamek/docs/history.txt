@@ -61,6 +61,8 @@ v0.33.37 (2008-12-19, 19:45 UTC)
 + No Arrow IV bomb weapons
 + Bug: protomechs not correctly loading ammo into weapons
 + Patch 2246602: More Weapons for CustomBattleArmor Dialog
++ Bug: Coolant pods being checked for incorrectly in BV Calculations
++ Changed BV Calcuations String to HTML Format
 
 v0.33.36 (2008-12-10, 19:00 UTC)
 + Bug in Mech BV calculation fixed

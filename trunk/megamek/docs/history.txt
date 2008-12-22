@@ -7,6 +7,8 @@ v0.33.38-dev (SVN)
 + Mech.CalculateBattleValue now creates a StringBuilder with the
     Steps printed out for easier debugging
 + Added ER Flamers
++ Fix Shedu MG
++ Improve BV calculation printout
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

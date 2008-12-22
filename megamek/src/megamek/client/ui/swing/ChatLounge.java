@@ -1542,11 +1542,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     public void loadCustomFS() {
-    	String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a squadron designation");   	
-    	if ((name == null) || (name.trim().length() == 0)) {
-    		name = "";
-    	}
-    	FighterSquadron fs = new FighterSquadron(name);
+        String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a squadron designation");       
+        if ((name == null) || (name.trim().length() == 0)) {
+            name = "";
+        }
+        FighterSquadron fs = new FighterSquadron(name);
         fs.setOwner(client.getLocalPlayer());
         client.sendAddEntity(fs);
         /*

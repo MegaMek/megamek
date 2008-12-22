@@ -86,11 +86,11 @@ public class AmmoWeaponHandler extends WeaponHandler {
      */
     @Override
     protected int getNumberWeapons() {
-    	if(ammo == null) {
-    		//shouldn't happen
-    		return weapon.getNWeapons();
-    	}
-    	int totalShots = ae.getTotalAmmoOfType(ammo.getType());
-    	return Math.min(weapon.getNWeapons(), (int)Math.floor((double)totalShots / (double)weapon.getCurrentShots()));
+        if(ammo == null) {
+            //shouldn't happen
+            return weapon.getNWeapons();
+        }
+        int totalShots = ae.getTotalAmmoOfType(ammo.getType());
+        return Math.min(weapon.getNWeapons(), (int)Math.floor((double)totalShots / (double)weapon.getCurrentShots()));
     }
 }

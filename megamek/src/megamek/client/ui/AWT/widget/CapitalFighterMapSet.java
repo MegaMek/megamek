@@ -104,9 +104,9 @@ public class CapitalFighterMapSet implements DisplayMapSet{
     }
 
     private void setContent(){
-    	content.addArea(armorLabel);
-    	content.addArea(armorArea);
-    	content.addArea(armorVLabel);
+        content.addArea(armorLabel);
+        content.addArea(armorArea);
+        content.addArea(armorVLabel);
         content.addArea(avCritLabel);
         content.addArea(engineCritLabel);
         content.addArea(fcsCritLabel);
@@ -120,19 +120,19 @@ public class CapitalFighterMapSet implements DisplayMapSet{
     }
 
     private void setAreas(){
-    	armorImage = comp.createImage(armorCols*(squareSize+1), armorRows*(squareSize+1));
-    	armorArea = new PMPicArea(armorImage);
-    	
-    	avCritImage = comp.createImage(3*(squareSize+1), squareSize+1);
-    	avCritArea = new PMPicArea(avCritImage);
-    	engineCritImage = comp.createImage(3*(squareSize+1), squareSize+1);
-    	engineCritArea = new PMPicArea(engineCritImage);
-    	fcsCritImage = comp.createImage(3*(squareSize+1), squareSize+1);
-    	fcsCritArea = new PMPicArea(fcsCritImage);
-    	sensorCritImage = comp.createImage(3*(squareSize+1), squareSize+1);
-    	sensorCritArea = new PMPicArea(sensorCritImage);
-    	pilotCritImage = comp.createImage(6*(squareSize+1), squareSize+1);
-    	pilotCritArea = new PMPicArea(pilotCritImage);
+        armorImage = comp.createImage(armorCols*(squareSize+1), armorRows*(squareSize+1));
+        armorArea = new PMPicArea(armorImage);
+        
+        avCritImage = comp.createImage(3*(squareSize+1), squareSize+1);
+        avCritArea = new PMPicArea(avCritImage);
+        engineCritImage = comp.createImage(3*(squareSize+1), squareSize+1);
+        engineCritArea = new PMPicArea(engineCritImage);
+        fcsCritImage = comp.createImage(3*(squareSize+1), squareSize+1);
+        fcsCritArea = new PMPicArea(fcsCritImage);
+        sensorCritImage = comp.createImage(3*(squareSize+1), squareSize+1);
+        sensorCritArea = new PMPicArea(sensorCritImage);
+        pilotCritImage = comp.createImage(6*(squareSize+1), squareSize+1);
+        pilotCritArea = new PMPicArea(pilotCritImage);
     }
 
     private void setLabels(){
@@ -208,25 +208,25 @@ public class CapitalFighterMapSet implements DisplayMapSet{
     }
     
     private void translateAreas() {  
-    	armorLabel.translate(0, 0);
-    	armorArea.translate(0, squareSize);
-    	armorVLabel.translate((armorCols*(squareSize+1))/2, squareSize+(armorRows*(squareSize+1))/2);
-    	
-    	avCritLabel.translate(5+armorCols*(squareSize+1), stepY);
-    	engineCritLabel.translate(5+armorCols*(squareSize+1), 2*stepY);
-    	fcsCritLabel.translate(5+armorCols*(squareSize+1), 3*stepY);
-    	sensorCritLabel.translate(5+armorCols*(squareSize+1), 4*stepY);
-    	pilotCritLabel.translate(5+armorCols*(squareSize+1), 5*stepY);
-    	
-    	avCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), stepY-(squareSize+1));
-    	engineCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), 2*stepY-(squareSize+1));
-    	fcsCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), 3*stepY-(squareSize+1));
-    	sensorCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), 4*stepY-(squareSize+1));
-    	pilotCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), 5*stepY-(squareSize+1));
+        armorLabel.translate(0, 0);
+        armorArea.translate(0, squareSize);
+        armorVLabel.translate((armorCols*(squareSize+1))/2, squareSize+(armorRows*(squareSize+1))/2);
+        
+        avCritLabel.translate(5+armorCols*(squareSize+1), stepY);
+        engineCritLabel.translate(5+armorCols*(squareSize+1), 2*stepY);
+        fcsCritLabel.translate(5+armorCols*(squareSize+1), 3*stepY);
+        sensorCritLabel.translate(5+armorCols*(squareSize+1), 4*stepY);
+        pilotCritLabel.translate(5+armorCols*(squareSize+1), 5*stepY);
+        
+        avCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), stepY-(squareSize+1));
+        engineCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), 2*stepY-(squareSize+1));
+        fcsCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), 3*stepY-(squareSize+1));
+        sensorCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), 4*stepY-(squareSize+1));
+        pilotCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), 5*stepY-(squareSize+1));
     }
 
     private void drawCrits(Image im, int crits) {
-    	int w = im.getWidth(null);
+        int w = im.getWidth(null);
         int h = im.getHeight(null);
         Graphics g = im.getGraphics();
         g.setColor(Color.black);
@@ -246,15 +246,15 @@ public class CapitalFighterMapSet implements DisplayMapSet{
         g.fillRect(0, 0, w, h);
         //first fill up the initial armor area with black
         for (int i = 0; i < initial; i++) {
-        	//6 across and 8 down
-        	int row = i / armorRows;
-        	int column = i - row * armorRows;
+            //6 across and 8 down
+            int row = i / armorRows;
+            int column = i - row * armorRows;
             g.setColor(Color.black);
             g.fillRect(row*(squareSize+1),column*(squareSize+1), (squareSize+1), (squareSize+1));
         }
         for (int i = 0; i < a; i++) {
-        	int row = i / armorRows;
-        	int column = i - row * armorRows;
+            int row = i / armorRows;
+            int column = i - row * armorRows;
             g.setColor(Color.green.darker());
             g.fillRect(row*(squareSize+1),column*(squareSize+1), squareSize, squareSize);
         }

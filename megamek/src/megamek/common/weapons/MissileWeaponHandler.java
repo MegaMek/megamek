@@ -598,31 +598,31 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // ways
         int hits = 1;
         if(!(ae instanceof Aero)) {
-        	hits = calcHits(vPhaseReport);
+            hits = calcHits(vPhaseReport);
         }
         int nCluster = calcnCluster();
 
         //Now I need to adjust this for air-to-air attacks because they use attack value
         if(ae instanceof Aero && target instanceof Aero) {
-        	//this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
-        	if(ae.isCapitalFighter()) {
-        		bSalvo = true;
-        		int nhit = 1;
-        		if(nweapons > 1) {
-	        		nhit = Compute.missilesHit(nweapons);
-	        		r = new Report(3325);
-	                r.subject = subjectId;
-	                r.add(nhit);
-	                r.add(" weapon(s) ");
-	                r.add(" ");
-	                r.newlines = 0;
-	                vPhaseReport.add(r);
-        		}
-            	nDamPerHit = attackValue * nhit;
-            	hits = 1;
-            	nCluster = 1;
-        	} else if(usesClusterTable() && entityTarget != null && !entityTarget.isCapitalScale()) {
-        		bSalvo = true;
+            //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
+            if(ae.isCapitalFighter()) {
+                bSalvo = true;
+                int nhit = 1;
+                if(nweapons > 1) {
+                    nhit = Compute.missilesHit(nweapons);
+                    r = new Report(3325);
+                    r.subject = subjectId;
+                    r.add(nhit);
+                    r.add(" weapon(s) ");
+                    r.add(" ");
+                    r.newlines = 0;
+                    vPhaseReport.add(r);
+                }
+                nDamPerHit = attackValue * nhit;
+                hits = 1;
+                nCluster = 1;
+            } else if(usesClusterTable() && entityTarget != null && !entityTarget.isCapitalScale()) {
+                bSalvo = true;
                 nDamPerHit = 1;
                 hits = attackValue;
                 nCluster = 5;

@@ -336,7 +336,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         mpR2.setString(en.getRunMPasString());
 
         if(en instanceof Jumpship && !(en instanceof Warship)) {
-        	mpR2.setString(en.getRunMPasString() + " (" + Double.toString(((Jumpship)en).getAccumulatedThrust()) + ")");
+            mpR2.setString(en.getRunMPasString() + " (" + Double.toString(((Jumpship)en).getAccumulatedThrust()) + ")");
         }
         
         if (en.hasUMU())

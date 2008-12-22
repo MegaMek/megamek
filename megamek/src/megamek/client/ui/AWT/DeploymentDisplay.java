@@ -302,7 +302,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         // mark deployment hexes
         clientgui.bv.markDeploymentHexesFor(p);
         if(client.getBoard().inSpace() && client.game.getOptions().booleanOption("stratops_capital_fighter")) {
-        	setFormSquadronEnabled(true);
+            setFormSquadronEnabled(true);
         }
     }
 
@@ -641,7 +641,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
          * This is not working, don't use it
          else if (ev.getActionCommand().equals(DEPLOY_FORM_SQUADRON)) {
 
-        	//What undeployed fighters can we add to the squadron?
+            //What undeployed fighters can we add to the squadron?
             Vector<Entity> choices = new Vector<Entity>();
             Enumeration<Entity> entities = client.game.getEntities();
             Entity other;
@@ -672,10 +672,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                     //fs.setOwner(client.getLocalPlayer());
                     int[] selections = choiceDialog.getChoices();
                     for(int i = 0; i < selections.length; i++) {
-                    	//fs.load(choices.elementAt(selections[i]));
-                    	fighters.add(choices.elementAt(selections[i]));
+                        //fs.load(choices.elementAt(selections[i]));
+                        fighters.add(choices.elementAt(selections[i]));
                     }
-                	client.sendAddSquadron(fighters);
+                    client.sendAddSquadron(fighters);
                 }
 
 

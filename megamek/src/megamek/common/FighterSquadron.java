@@ -298,9 +298,9 @@ public class FighterSquadron extends Aero implements Transporter, Serializable {
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         int bv = 0;
         /*
-    	for(Aero fighter : fighters) {
-    		bv += fighter.calculateBattleValue(ignoreC3, ignorePilot);
-    	}
+        for(Aero fighter : fighters) {
+            bv += fighter.calculateBattleValue(ignoreC3, ignorePilot);
+        }
          */
         return bv;
     }

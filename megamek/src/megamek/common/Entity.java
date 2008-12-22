@@ -1304,9 +1304,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * Returns the primary facing, or -1 if n/a
      */
     public int getFacing() {
-    	if(Entity.NONE != conveyance) {
-    		return game.getEntity(conveyance).getFacing();
-    	}
+        if(Entity.NONE != conveyance) {
+            return game.getEntity(conveyance).getFacing();
+        }
         return facing;
     }
 
@@ -2967,10 +2967,10 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveECM() {
-    	//no ECM in space unless strat op option enabled
-    	if(game.getBoard().inSpace() && !game.getOptions().booleanOption("stratops_ecm")) {
-    		return false;
-    	}
+        //no ECM in space unless strat op option enabled
+        if(game.getBoard().inSpace() && !game.getOptions().booleanOption("stratops_ecm")) {
+            return false;
+        }
         if ( !isShutDown() ){
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -2988,10 +2988,10 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveAngelECM() {
-    	//no ECM in space unless strat op option enabled
-    	if(game.getBoard().inSpace() && !game.getOptions().booleanOption("stratops_ecm")) {
-    		return false;
-    	}
+        //no ECM in space unless strat op option enabled
+        if(game.getBoard().inSpace() && !game.getOptions().booleanOption("stratops_ecm")) {
+            return false;
+        }
         if (game.getOptions().booleanOption("tacops_angel_ecm") && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -3011,10 +3011,10 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * Does the mech have a functioning ECM unit, tuned to ghost target generation?
      */
     public boolean hasGhostTargets(boolean active) {
-    	//no Ghost Targets in space unless strat op option enabled
-    	if(game.getBoard().inSpace()) {
-    		return false;
-    	}
+        //no Ghost Targets in space unless strat op option enabled
+        if(game.getBoard().inSpace()) {
+            return false;
+        }
 
         // if you failed your ghost target PSR, then it doesn't matter
         if ((active && getGhostTargetRollMoS() < 0) || isShutDown()) {
@@ -3048,10 +3048,10 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      *         or it is not in eccm mode or it is damaged.
      */
     public boolean hasActiveECCM() {
-    	//no ECM in space unless strat op option enabled
-    	if(game.getBoard().inSpace() && !game.getOptions().booleanOption("stratops_ecm")) {
-    		return false;
-    	}
+        //no ECM in space unless strat op option enabled
+        if(game.getBoard().inSpace() && !game.getOptions().booleanOption("stratops_ecm")) {
+            return false;
+        }
         if ((game.getOptions().booleanOption("tacops_eccm") || game.getOptions().booleanOption("stratops_ecm")) && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -3097,9 +3097,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      */
     public int getECMRange() {
         //no ECM in space unless strat op option enabled
-    	if(game.getBoard().inSpace() && !game.getOptions().booleanOption("stratops_ecm")) {
-    		return Entity.NONE;
-    	}
+        if(game.getBoard().inSpace() && !game.getOptions().booleanOption("stratops_ecm")) {
+            return Entity.NONE;
+        }
 
         if ( !isShutDown() ){
             for (Mounted m : getMisc()) {
@@ -3165,14 +3165,14 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             if (type instanceof MiscType && type.hasFlag(MiscType.F_BAP) && !m.isInoperable()) {
                 // System.err.println("BAP type name: "+m.getName()+"
                 // internalName: "+((MiscType)m.getType()).internalName);
-            	//in space the range of all BAPs is given by the mode
-            	if(game.getBoard().inSpace()) {
-            		if(m.curMode().equals("Medium")) {
-            			return 12;
-            		} else {
-            			return 6;
-            		}
-            	}
+                //in space the range of all BAPs is given by the mode
+                if(game.getBoard().inSpace()) {
+                    if(m.curMode().equals("Medium")) {
+                        return 12;
+                    } else {
+                        return 6;
+                    }
+                }
 
                 if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP)) {
                     return 8;
@@ -6601,9 +6601,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public int getWeaponsAndEquipmentCost() {
         int cost = 0;
         for (Mounted mounted : getEquipment()) {
-        	if(mounted.isWeaponGroup()) {
-        		continue;
-        	}
+            if(mounted.isWeaponGroup()) {
+                continue;
+            }
             int itemCost = (int) mounted.getType().getCost();
             if (itemCost == EquipmentType.COST_VARIABLE) {
                 itemCost = mounted.getType().resolveVariableCost(this);
@@ -7138,14 +7138,14 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     public boolean isFighter() {
-    	return this instanceof Aero && !(this instanceof SmallCraft || this instanceof Jumpship || this instanceof FighterSquadron);
+        return this instanceof Aero && !(this instanceof SmallCraft || this instanceof Jumpship || this instanceof FighterSquadron);
     }
 
     public boolean isCapitalFighter() {
-    	if(null == game) {
-    		return false;
-    	}
-    	return game.getOptions().booleanOption("stratops_capital_fighter") && isFighter();
+        if(null == game) {
+            return false;
+        }
+        return game.getOptions().booleanOption("stratops_capital_fighter") && isFighter();
     }
 
     // a function that let's us know if this entity has capital-scale armor
@@ -7443,7 +7443,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
 
         //if the small craft does not already have ECM, then give them a single hex ECM so they can change the mode
         if(this instanceof SmallCraft && !hasActiveECM() && isMilitary()) {
-        	try {
+            try {
                 this.addEquipment(EquipmentType.get(BattleArmor.SINGLE_HEX_ECM), Aero.LOC_NOSE, false);
             } catch (LocationFullException ex) {
 
@@ -7470,37 +7470,37 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 }
                 ((WeaponType) mounted.getType()).setModes(modes.toArray(stringArray));
             } else if(((WeaponType) mounted.getType()).isCapital()
-            			&& ((WeaponType) mounted.getType()).getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE
-            			&& ((WeaponType) mounted.getType()).getAtClass() != WeaponType.CLASS_AR10) {
-            	ArrayList<String> modes = new ArrayList<String>();
+                        && ((WeaponType) mounted.getType()).getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE
+                        && ((WeaponType) mounted.getType()).getAtClass() != WeaponType.CLASS_AR10) {
+                ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
                 modes.add("");
                 if(game.getOptions().booleanOption("stratops_bracket_fire")) {
-                	modes.add("Bracket 80%");
-                	modes.add("Bracket 60%");
-                	modes.add("Bracket 40%");
+                    modes.add("Bracket 80%");
+                    modes.add("Bracket 60%");
+                    modes.add("Bracket 40%");
                 }
                 if(mounted.getType() instanceof CapitalLaserBayWeapon
                         && game.getOptions().booleanOption("stratops_aaa_laser")) {
-                	modes.add("AAA");
-                	((WeaponType) mounted.getType()).addEndTurnMode("AAA");
+                    modes.add("AAA");
+                    ((WeaponType) mounted.getType()).addEndTurnMode("AAA");
                 }
                 if(modes.size() > 1) {
-                	((WeaponType) mounted.getType()).setModes(modes.toArray(stringArray));
+                    ((WeaponType) mounted.getType()).setModes(modes.toArray(stringArray));
                 }
             }
 
         }
 
         for (Mounted misc : getMisc()) {
-        	if(misc.getType().hasFlag(MiscType.F_BAP) && this instanceof Aero && game.getOptions().booleanOption("stratops_ecm")) {
-        		ArrayList<String> modes = new ArrayList<String>();
-        		String[] stringArray = {};
+            if(misc.getType().hasFlag(MiscType.F_BAP) && this instanceof Aero && game.getOptions().booleanOption("stratops_ecm")) {
+                ArrayList<String> modes = new ArrayList<String>();
+                String[] stringArray = {};
                 modes.add("Short");
                 modes.add("Medium");
                 ((MiscType) misc.getType()).setModes(modes.toArray(stringArray));
                 ((MiscType) misc.getType()).setInstantModeSwitch(false);
-        	}
+            }
             if (misc.getType().hasFlag(MiscType.F_ECM)) {
                 ArrayList<String> modes = new ArrayList<String>();
                 modes.add("ECM");
@@ -7936,30 +7936,30 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         return true;
     }
 
-	/**
-	 * is this entity a large craft? (dropship, jumpship, warship, or space station)
-	 */
-	public boolean isLargeCraft() {
-		return this instanceof Dropship || this instanceof Jumpship;
-	}
+    /**
+     * is this entity a large craft? (dropship, jumpship, warship, or space station)
+     */
+    public boolean isLargeCraft() {
+        return this instanceof Dropship || this instanceof Jumpship;
+    }
 
-	/**
-	 * Do units loaded onto this entity still have active ECM/ECCM/etc.?
-	 */
-	public boolean loadedUnitsHaveActiveECM() {
-		return false;
-	}
+    /**
+     * Do units loaded onto this entity still have active ECM/ECCM/etc.?
+     */
+    public boolean loadedUnitsHaveActiveECM() {
+        return false;
+    }
 
-	/**
-	 * is this entity loaded into a fighter squadron?
-	 */
-	public boolean isPartOfFighterSquadron() {
-		if(game == null) {
-			return false;
-		}
-		if(conveyance == Entity.NONE) {
-			return false;
-		}
-		return game.getEntity(conveyance) instanceof FighterSquadron;
-	}
+    /**
+     * is this entity loaded into a fighter squadron?
+     */
+    public boolean isPartOfFighterSquadron() {
+        if(game == null) {
+            return false;
+        }
+        if(conveyance == Entity.NONE) {
+            return false;
+        }
+        return game.getEntity(conveyance) instanceof FighterSquadron;
+    }
 }

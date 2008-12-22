@@ -24,28 +24,28 @@ import megamek.common.TechConstants;
  */
 public class ISTAG extends TAGWeapon {
 
-	/**
+    /**
      * 
      */
-	private static final long serialVersionUID = -2474477168563228542L;
+    private static final long serialVersionUID = -2474477168563228542L;
 
-	public ISTAG() {
-		super();
-		this.techLevel = TechConstants.T_IS_TW_NON_BOX;
-		this.name = "TAG";
-		this.setInternalName("ISTAG");
-		this.addLookupName("IS TAG");
-		this.tonnage = 1;
-		this.criticals = 1;
-		this.hittable = true;
-		this.spreadable = false;
-		this.heat = 0;
-		this.damage = 0;
-		this.shortRange = 5;
-		this.mediumRange = 10;
-		this.longRange = 15;
-		this.extremeRange = 20;
-		this.bv = 0;
-		this.cost = 50000;
-	}
+    public ISTAG() {
+        super();
+        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.name = "TAG";
+        this.setInternalName("ISTAG");
+        this.addLookupName("IS TAG");
+        this.tonnage = 1;
+        this.criticals = 1;
+        this.hittable = true;
+        this.spreadable = false;
+        this.heat = 0;
+        this.damage = 0;
+        this.shortRange = 5;
+        this.mediumRange = 10;
+        this.longRange = 15;
+        this.extremeRange = 20;
+        this.bv = 0;
+        this.cost = 50000;
+    }
 }

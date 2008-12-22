@@ -4614,7 +4614,7 @@ public class Server implements Runnable {
                         int doors = currentBay.getDoors();
                         int[] distribution = new int[doors];
                         for(int l = 0; l < nLaunched; l++) {
-                        	distribution[l % doors] = distribution[l % doors] + 1;
+                            distribution[l % doors] = distribution[l % doors] + 1;
                         }
                         //ok, now lets launch them
                         r = new Report(9380);
@@ -4627,28 +4627,28 @@ public class Server implements Runnable {
                         int fighterCount = 0;
                         boolean doorDamage = false;
                         for(int fighterId : launches) {
-                        	//check to see if we are in the same door
-                        	fighterCount++;
-                        	if(fighterCount > distribution[currentDoor]) {
-                        		//move to a new door
-                        		currentDoor++;
-                        		fighterCount = 0;
-                        		doorDamage = false;
-                        	}
-                        	int bonus = Math.max(0, distribution[currentDoor] - 2);
-                        	//check for door damage
-                        	if(!doorDamage && distribution[currentDoor] > 2 && Compute.d6(2) == 2) {
-                        		doorDamage = true;
-                        		r = new Report(9390);
+                            //check to see if we are in the same door
+                            fighterCount++;
+                            if(fighterCount > distribution[currentDoor]) {
+                                //move to a new door
+                                currentDoor++;
+                                fighterCount = 0;
+                                doorDamage = false;
+                            }
+                            int bonus = Math.max(0, distribution[currentDoor] - 2);
+                            //check for door damage
+                            if(!doorDamage && distribution[currentDoor] > 2 && Compute.d6(2) == 2) {
+                                doorDamage = true;
+                                r = new Report(9390);
                                 r.subject = entity.getId();
                                 r.indent(1);
                                 r.newlines = 0;
                                 r.add(currentBay.getType());
                                 addReport(r);
                                 currentBay.destroyDoorNext();
-                        	}
-                        	Entity fighter = game.getEntity(fighterId);
-                        	if (!launchUnit(entity, fighter, curPos, curFacing, step.getVelocity(), step.getElevation(), step.getVectors(), bonus)) {
+                            }
+                            Entity fighter = game.getEntity(fighterId);
+                            if (!launchUnit(entity, fighter, curPos, curFacing, step.getVelocity(), step.getElevation(), step.getVectors(), bonus)) {
                                 System.err.println("Error! Server was told to unload " + fighter.getDisplayName() + " from " + entity.getDisplayName() + " into " + curPos.getBoardNum());
                             }
                         }
@@ -5646,20 +5646,20 @@ public class Server implements Runnable {
 
             //jumpships and space stations need to reduce accumulated thrust if they spend some
             if(entity instanceof Jumpship) {
-            	Jumpship js = (Jumpship)entity;
-            	double penalty = 0.0;
-            	//jumpships do not accumulate thrust when they make a turn or change velocity
-            	if(md.contains(MovePath.STEP_TURN_LEFT) || md.contains(MovePath.STEP_TURN_RIGHT)) {
-            		//I need to subtract the station keeping thrust from their accumulated thrust
-            		//because they did not actually use it
-            		penalty = js.getStationKeepingThrust();
-            	}
-            	if(thrust > 0) {
-            		penalty = thrust;
-            	}
-            	if(penalty > 0.0) {
-            		js.setAccumulatedThrust(Math.max(0, js.getAccumulatedThrust() - penalty));
-            	}
+                Jumpship js = (Jumpship)entity;
+                double penalty = 0.0;
+                //jumpships do not accumulate thrust when they make a turn or change velocity
+                if(md.contains(MovePath.STEP_TURN_LEFT) || md.contains(MovePath.STEP_TURN_RIGHT)) {
+                    //I need to subtract the station keeping thrust from their accumulated thrust
+                    //because they did not actually use it
+                    penalty = js.getStationKeepingThrust();
+                }
+                if(thrust > 0) {
+                    penalty = thrust;
+                }
+                if(penalty > 0.0) {
+                    js.setAccumulatedThrust(Math.max(0, js.getAccumulatedThrust() - penalty));
+                }
             }
 
             // check to see if thrust exceeded SI
@@ -6054,33 +6054,33 @@ public class Server implements Runnable {
         // recovered units should now be recovered and dealt with
         if (entity instanceof Aero && recovered && loader != null) {
 
-        	if(loader.isCapitalFighter()) {
-        		if(!(loader instanceof FighterSquadron)) {
-        			//this is a solo capital fighter so we need to add a new squadron and load both the loader and loadee
-        			FighterSquadron fs = new FighterSquadron();
-        			fs.setDeployed(true);
-        			fs.setId(getFreeEntityId());
-        			fs.setCurrentVelocity(((Aero)loader).getCurrentVelocity());
-        			fs.setNextVelocity(((Aero)loader).getNextVelocity());
-        			fs.setVectors(loader.getVectors());
-        			fs.setFacing(loader.getFacing());
-        			fs.setOwner(entity.getOwner());
-        			// set velocity and heading the same as parent entity
-        			game.addEntity(fs.getId(), fs);
-        			send(createAddEntityPacket(fs.getId()));
-        			// make him not get a move this turn
-        			fs.setDone(true);
-        			// place on board
-        			fs.setPosition(loader.getPosition());
-        			loadUnit(fs, loader);
-        			loader = fs;
-        			entityUpdate(fs.getId());
-        		}
-        		loader.load(entity);
-        	} else {
-        		loader.recover(entity);
-        		entity.setRecoveryTurn(5);
-        	}
+            if(loader.isCapitalFighter()) {
+                if(!(loader instanceof FighterSquadron)) {
+                    //this is a solo capital fighter so we need to add a new squadron and load both the loader and loadee
+                    FighterSquadron fs = new FighterSquadron();
+                    fs.setDeployed(true);
+                    fs.setId(getFreeEntityId());
+                    fs.setCurrentVelocity(((Aero)loader).getCurrentVelocity());
+                    fs.setNextVelocity(((Aero)loader).getNextVelocity());
+                    fs.setVectors(loader.getVectors());
+                    fs.setFacing(loader.getFacing());
+                    fs.setOwner(entity.getOwner());
+                    // set velocity and heading the same as parent entity
+                    game.addEntity(fs.getId(), fs);
+                    send(createAddEntityPacket(fs.getId()));
+                    // make him not get a move this turn
+                    fs.setDone(true);
+                    // place on board
+                    fs.setPosition(loader.getPosition());
+                    loadUnit(fs, loader);
+                    loader = fs;
+                    entityUpdate(fs.getId());
+                }
+                loader.load(entity);
+            } else {
+                loader.recover(entity);
+                entity.setRecoveryTurn(5);
+            }
 
             // The loaded unit is being carried by the loader.
             entity.setTransportId(loader.getId());
@@ -8657,9 +8657,9 @@ public class Server implements Runnable {
     private void reportLargeCraftECCMRolls() {
         //run through an enumeration of deployed game entities. If they are large craft in space, then check the roll
         //and report it
-    	if(!game.getBoard().inSpace() || !game.getOptions().booleanOption("stratops_ecm")) {
-    		return;
-    	}
+        if(!game.getBoard().inSpace() || !game.getOptions().booleanOption("stratops_ecm")) {
+            return;
+        }
         Report r;
         for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
             Entity ent = e.nextElement();
@@ -13398,19 +13398,19 @@ public class Server implements Runnable {
             if (entity instanceof Aero && game.getBoard().inAtmosphere()) {
                 // if this aero has any damage, add another roll to the list.
                 if (entity.damageThisPhase > 0) {
-                	if(!game.getOptions().booleanOption("atmospheric_control")) {
-	                    int damMod = entity.damageThisPhase / 20;
-	                    StringBuffer reportStr = new StringBuffer();
-	                    reportStr.append(entity.damageThisPhase).append(" damage +").append(damMod);
-	                    PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod, reportStr.toString());
-	                    game.addControlRoll(damPRD);
-                	} else {
-                		//was the damage threshold exceeded this round?
-                		if(((Aero)entity).wasCritThresh()) {
-                			PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0, "damage threshold exceeded");
-                			game.addControlRoll(damThresh);
-                		}
-                	}
+                    if(!game.getOptions().booleanOption("atmospheric_control")) {
+                        int damMod = entity.damageThisPhase / 20;
+                        StringBuffer reportStr = new StringBuffer();
+                        reportStr.append(entity.damageThisPhase).append(" damage +").append(damMod);
+                        PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod, reportStr.toString());
+                        game.addControlRoll(damPRD);
+                    } else {
+                        //was the damage threshold exceeded this round?
+                        if(((Aero)entity).wasCritThresh()) {
+                            PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0, "damage threshold exceeded");
+                            game.addControlRoll(damThresh);
+                        }
+                    }
                 }
             }
         }
@@ -14051,7 +14051,7 @@ public class Server implements Runnable {
 
         //no consciousness roll for capital fighter pilots
         if(e.isCapitalFighter()) {
-        	return vDesc;
+            return vDesc;
         }
 
         for (int hit = totalHits - damage + 1; hit <= totalHits; hit++) {
@@ -14148,12 +14148,12 @@ public class Server implements Runnable {
             Aero ship = (Aero) en;
             int damage = ship.getCurrentDamage();
             if (damage >= ship.getFatalThresh()) {
-            	int roll = Compute.d6(2) + (int)Math.floor((damage - ship.getFatalThresh())/2.0);
-            	if(roll > 9) {
-            		vDesc.addAll(destroyEntity(ship, "fatal damage threshold"));
-            	}
+                int roll = Compute.d6(2) + (int)Math.floor((damage - ship.getFatalThresh())/2.0);
+                if(roll > 9) {
+                    vDesc.addAll(destroyEntity(ship, "fatal damage threshold"));
+                }
             }
-        	ship.setCurrentDamage(0);
+            ship.setCurrentDamage(0);
 
         }
         return vDesc;
@@ -14309,18 +14309,18 @@ public class Server implements Runnable {
 
         //if this is a fighter squadron then pick an active fighter and pass on the damage
         if(te instanceof FighterSquadron) {
-        	FighterSquadron fs = (FighterSquadron)te;
-        	if(fs.getFighters().size() < 1) {
-        		return vDesc;
-        	}
-        	Aero fighter = fs.getFighter(hit.getLocation());
-        	HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-        	new_hit.setBoxCars(hit.rolledBoxCars());
-        	new_hit.setGeneralDamageType(hit.getGeneralDamageType());
+            FighterSquadron fs = (FighterSquadron)te;
+            if(fs.getFighters().size() < 1) {
+                return vDesc;
+            }
+            Aero fighter = fs.getFighter(hit.getLocation());
+            HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            new_hit.setBoxCars(hit.rolledBoxCars());
+            new_hit.setGeneralDamageType(hit.getGeneralDamageType());
             new_hit.setCapital(hit.isCapital());
             new_hit.setCapMisCritMod(hit.getCapMisCritMod());
             new_hit.setSingleAV(hit.getSingleAV());
-        	return damageEntity(fighter, new_hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, throughFront, nukeS2S);
+            return damageEntity(fighter, new_hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, throughFront, nukeS2S);
         }
 
         // This is good for shields if a shield absorps the hit it shouldn't
@@ -14335,11 +14335,11 @@ public class Server implements Runnable {
         boolean critThresh = false;
 
         //get the relevant damage for damage thresholding
-    	int threshDamage = damage;
-    	//weapon groups only get the damage of one weapon
-    	if(hit.getSingleAV() > -1) {
-    		threshDamage = hit.getSingleAV();
-    	}
+        int threshDamage = damage;
+        //weapon groups only get the damage of one weapon
+        if(hit.getSingleAV() > -1) {
+            threshDamage = hit.getSingleAV();
+        }
 
         // is this capital-scale damage
         boolean isCapital = hit.isCapital();
@@ -14605,9 +14605,9 @@ public class Server implements Runnable {
 
             //Capital fighters receive damage differently
             if (te.isCapitalFighter()) {
-            	Aero a = (Aero)te;
-            	a.setCurrentDamage(a.getCurrentDamage() + damage);
-            	a.setCapArmor(a.getCapArmor() - damage);
+                Aero a = (Aero)te;
+                a.setCurrentDamage(a.getCurrentDamage() + damage);
+                a.setCapArmor(a.getCapArmor() - damage);
                 r = new Report(9065);
                 r.subject = te_n;
                 r.indent(2);
@@ -15037,11 +15037,11 @@ public class Server implements Runnable {
 
                     //check for overpenetration
                     if(game.getOptions().booleanOption("stratops_over_penetrate")) {
-                    	int opRoll = Compute.d6(1);
-                    	if(((te instanceof Jumpship || te instanceof SpaceStation) && !(te instanceof Warship) && opRoll > 3)
-                    			|| (te instanceof Dropship && opRoll > 4)
-                    			|| (te instanceof Warship && a.get0SI() <= 30 && opRoll > 5)) {
-                    		//over-penetration happened
+                        int opRoll = Compute.d6(1);
+                        if(((te instanceof Jumpship || te instanceof SpaceStation) && !(te instanceof Warship) && opRoll > 3)
+                                || (te instanceof Dropship && opRoll > 4)
+                                || (te instanceof Warship && a.get0SI() <= 30 && opRoll > 5)) {
+                            //over-penetration happened
                             r = new Report(9090);
                             r.subject = te_n;
                             r.newlines = 0;
@@ -15058,12 +15058,12 @@ public class Server implements Runnable {
                             vDesc.addElement(r);
                             te.setArmor(te.getArmor(new_loc) - damage, new_loc);
                             if(te instanceof Warship || te instanceof Jumpship) {
-                            	damage = 1;
+                                damage = 1;
                             } else {
-                            	damage = 0;
+                                damage = 0;
                             }
                             //
-                    	}
+                        }
                     }
 
                     // divide damage in half
@@ -16900,11 +16900,11 @@ public class Server implements Runnable {
                 vDesc.add(r);
                 a.setAvionicsHits(a.getAvionicsHits() + 1);
                 if(a.isPartOfFighterSquadron()) {
-                	game.addControlRoll(new PilotingRollData(a.getTransportId(), 1, "avionics hit"));
+                    game.addControlRoll(new PilotingRollData(a.getTransportId(), 1, "avionics hit"));
                 } else if(a.isCapitalFighter()) {
-                	game.addControlRoll(new PilotingRollData(a.getId(), 1, "avionics hit"));
+                    game.addControlRoll(new PilotingRollData(a.getId(), 1, "avionics hit"));
                 } else {
-                	game.addControlRoll(new PilotingRollData(a.getId(), 0, "avionics hit"));
+                    game.addControlRoll(new PilotingRollData(a.getId(), 0, "avionics hit"));
                 }
                 break;
             case Aero.CRIT_CONTROL:
@@ -16914,11 +16914,11 @@ public class Server implements Runnable {
                 r.newlines = 0;
                 vDesc.add(r);
                 if(a.isPartOfFighterSquadron()) {
-                	game.addControlRoll(new PilotingRollData(a.getTransportId(), 1, "critical hit"));
+                    game.addControlRoll(new PilotingRollData(a.getTransportId(), 1, "critical hit"));
                 } else if(a.isCapitalFighter()) {
-                	game.addControlRoll(new PilotingRollData(a.getId(), 1, "critical hit"));
+                    game.addControlRoll(new PilotingRollData(a.getId(), 1, "critical hit"));
                 } else {
-                	game.addControlRoll(new PilotingRollData(a.getId(), 0, "critical hit"));
+                    game.addControlRoll(new PilotingRollData(a.getId(), 0, "critical hit"));
                 }
                 break;
             case Aero.CRIT_FUEL_TANK:
@@ -16928,7 +16928,7 @@ public class Server implements Runnable {
                 r.newlines = 0;
                 int boomTarget = 9;
                 if(a.isLargeCraft() && a.isClan() && game.getOptions().booleanOption("stratops_harjel")) {
-                	boomTarget = 11;
+                    boomTarget = 11;
                 }
                 // check for possible explosion
                 int fuelroll = Compute.d6(2);
@@ -16948,10 +16948,10 @@ public class Server implements Runnable {
                     r = new Report(9197);
                 }
                 if(a.isLargeCraft() && a.isClan()
-                		&& game.getOptions().booleanOption("stratops_harjel") && a.getIgnoredCrewHits() < 2) {
-                	a.setIgnoredCrewHits(a.getIgnoredCrewHits() + 1);
-                	r = new Report(9198);
-                	r.subject = a.getId();
+                        && game.getOptions().booleanOption("stratops_harjel") && a.getIgnoredCrewHits() < 2) {
+                    a.setIgnoredCrewHits(a.getIgnoredCrewHits() + 1);
+                    r = new Report(9198);
+                    r.subject = a.getId();
                     r.newlines = 1;
                     vDesc.add(r);
                     break;
@@ -17012,51 +17012,51 @@ public class Server implements Runnable {
                 a.setHeatSinks(Math.max(0, a.getHeatSinks() - sinksLost));
                 break;
             case Aero.CRIT_WEAPON_BROAD:
-            	if(a instanceof Warship) {
-            		if(loc == Warship.LOC_ALS || loc == Warship.LOC_FLS) {
-            			loc = Warship.LOC_LBS;
-            		} else if(loc == Warship.LOC_ARS || loc == Warship.LOC_FRS) {
-            			loc = Warship.LOC_RBS;
-            		}
-            	}
+                if(a instanceof Warship) {
+                    if(loc == Warship.LOC_ALS || loc == Warship.LOC_FLS) {
+                        loc = Warship.LOC_LBS;
+                    } else if(loc == Warship.LOC_ARS || loc == Warship.LOC_FRS) {
+                        loc = Warship.LOC_RBS;
+                    }
+                }
             case Aero.CRIT_WEAPON:
-            	if(a.isCapitalFighter()) {
-            		boolean destroyAll = false;
-            		if(loc == Aero.LOC_NOSE || loc == Aero.LOC_AFT) {
-            			destroyAll = true;
-            		}
-            		if(loc == Aero.LOC_WINGS) {
-            			if(a.areWingsHit()) {
-            				destroyAll = true;
-            			} else {
-            				a.setWingsHit(true);
-            			}
-            		}
-            		for (Mounted weap : a.getWeaponList()) {
-                        if (weap.getLocation() == loc) {
-                        	if(destroyAll) {
-                        		weap.setHit(true);
-                        		weap.setDestroyed(true);
-                        	} else {
-                        		weap.setNWeapons(weap.getNWeapons() / 2);
-                        	}
+                if(a.isCapitalFighter()) {
+                    boolean destroyAll = false;
+                    if(loc == Aero.LOC_NOSE || loc == Aero.LOC_AFT) {
+                        destroyAll = true;
+                    }
+                    if(loc == Aero.LOC_WINGS) {
+                        if(a.areWingsHit()) {
+                            destroyAll = true;
+                        } else {
+                            a.setWingsHit(true);
                         }
-            		}
-            		//also destroy any ECM or BAP in this location
-            		for(Mounted misc : a.getMisc()) {
-            			if(misc.getType().hasFlag(MiscType.F_ECM) || misc.getType().hasFlag(MiscType.F_ANGEL_ECM)
-            					|| misc.getType().hasFlag(MiscType.F_BAP)) {
-            				misc.setHit(true);
-                    		misc.setDestroyed(true);
-            			}
-            		}
-            		r = new Report(9152);
-            		r.subject = a.getId();
-            		r.newlines = 0;
-            		r.add(a.getLocationName(loc));
-            		vDesc.add(r);
-            		break;
-            	}
+                    }
+                    for (Mounted weap : a.getWeaponList()) {
+                        if (weap.getLocation() == loc) {
+                            if(destroyAll) {
+                                weap.setHit(true);
+                                weap.setDestroyed(true);
+                            } else {
+                                weap.setNWeapons(weap.getNWeapons() / 2);
+                            }
+                        }
+                    }
+                    //also destroy any ECM or BAP in this location
+                    for(Mounted misc : a.getMisc()) {
+                        if(misc.getType().hasFlag(MiscType.F_ECM) || misc.getType().hasFlag(MiscType.F_ANGEL_ECM)
+                                || misc.getType().hasFlag(MiscType.F_BAP)) {
+                            misc.setHit(true);
+                            misc.setDestroyed(true);
+                        }
+                    }
+                    r = new Report(9152);
+                    r.subject = a.getId();
+                    r.newlines = 0;
+                    r.add(a.getLocationName(loc));
+                    vDesc.add(r);
+                    break;
+                }
                 r = new Report(9150);
                 r.subject = a.getId();
                 r.newlines = 0;
@@ -17068,7 +17068,7 @@ public class Server implements Runnable {
                 }
                 //add in in hittable misc equipment
                 for(Mounted misc : a.getMisc()) {
-                	if (misc.getType().isHittable() && misc.getLocation() == loc && !misc.isDestroyed()) {
+                    if (misc.getType().isHittable() && misc.getLocation() == loc && !misc.isDestroyed()) {
                         weapons.add(misc);
                     }
                 }
@@ -17148,7 +17148,7 @@ public class Server implements Runnable {
                 double percentDestroyed = 0.0;
                 double mult = 2.0;
                 if(a.isLargeCraft() && a.isClan() && game.getOptions().booleanOption("stratops_harjel")) {
-                	mult = 4.0;
+                    mult = 4.0;
                 }
                 if (damageCaused > 0) {
                     percentDestroyed = Math.min(damageCaused / (mult * a.getSI()), 1.0);
@@ -17886,15 +17886,15 @@ public class Server implements Runnable {
      * @return
      */
     private void checkAeroCrits(Vector<Report> vDesc, Aero a, HitData hit, int damage_orig,
-    			boolean critThresh, boolean critSI, boolean ammoExplosion, boolean nukeS2S) {
+                boolean critThresh, boolean critSI, boolean ammoExplosion, boolean nukeS2S) {
 
-    	Report r;
+        Report r;
 
-    	boolean isCapital = hit.isCapital();
+        boolean isCapital = hit.isCapital();
         // get any capital missile critical mods
         int CapitalMissile = hit.getCapMisCritMod();
 
-    	 //check for nuclear critical
+         //check for nuclear critical
         if(nukeS2S) {
             //add a control roll
             PilotingRollData nukePSR = new PilotingRollData( a.getId(), 4, "Nuclear attack" );
@@ -17936,21 +17936,21 @@ public class Server implements Runnable {
 
         // apply crits
         if (hit.rolledBoxCars()) {
-        	Report.addNewline(vDesc);
+            Report.addNewline(vDesc);
             vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit", 8, damage_orig, isCapital));
         }
         // ammo explosions shouldn't affect threshold because they
         // go right to SI
         if (critThresh && !ammoExplosion) {
-        	Report.addNewline(vDesc);
+            Report.addNewline(vDesc);
             vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(), "Damage threshold exceeded", 8, damage_orig, isCapital));
         }
         if (critSI && !ammoExplosion) {
-        	Report.addNewline(vDesc);
+            Report.addNewline(vDesc);
             vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(), "SI damaged", 8, damage_orig, isCapital));
         }
         if (CapitalMissile > 0 && !nukeS2S) {
-        	Report.addNewline(vDesc);
+            Report.addNewline(vDesc);
             vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(), "Capital Missile", CapitalMissile, damage_orig, isCapital));
         }
     }
@@ -18586,15 +18586,15 @@ public class Server implements Runnable {
 
                 //if this is the last fighter in a fighter squadron then remove the squadron
                 if(transport instanceof FighterSquadron && ((FighterSquadron)transport).getFighters().size() < 1) {
-                	transport.setDestroyed(true);
-                	game.moveToGraveyard(transport.getId());
-                	entityUpdate(transport.getId());
-                	send(createRemoveEntityPacket(transport.getId(), condition));
-                	r = new Report(6365);
-                	r.subject = transport.getId();
-                	r.addDesc(transport);
-                	r.add("fighter destruction");
-                	vDesc.addElement(r);
+                    transport.setDestroyed(true);
+                    game.moveToGraveyard(transport.getId());
+                    entityUpdate(transport.getId());
+                    send(createRemoveEntityPacket(transport.getId(), condition));
+                    r = new Report(6365);
+                    r.subject = transport.getId();
+                    r.addDesc(transport);
+                    r.add("fighter destruction");
+                    vDesc.addElement(r);
                 }
 
             } // End unit-is-transported
@@ -19961,11 +19961,11 @@ public class Server implements Runnable {
      * This is not working, don't use it
      */
     private void receiveSquadronAdd(Packet c, int connIndex) {
-    	/*
+        /*
         final FighterSquadron fs = new FighterSquadron();
         Vector<Entity> fighters = (Vector<Entity>)c.getObject(0);
         if(fighters.size() < 1) {
-        	return;
+            return;
         }
         fs.setOwner(fighters.firstElement().getOwner());
         // Only assign an entity ID when the client hasn't.
@@ -19975,8 +19975,8 @@ public class Server implements Runnable {
         game.addEntity(fs.getId(), fs);
         send(createAddEntityPacket(fs.getId()));
         for(Entity fighter : fighters) {
-        	fs.load(fighter);
-        	entityUpdate(fighter.getId());
+            fs.load(fighter);
+            entityUpdate(fighter.getId());
         }
         entityUpdate(fs.getId());
         */

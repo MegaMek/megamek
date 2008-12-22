@@ -2255,7 +2255,7 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append("Total Internal Structure Points x ");
         bvText.append(internalMultiplier);
         bvText.append(" x 1.5 x ");
-        bvText.append(" Engine Multipler ");
+        bvText.append("Engine Multipler ");
 
         bvText.append("\t\t\t");
         bvText.append(getTotalInternal());
@@ -2607,7 +2607,7 @@ public abstract class Mech extends Entity implements Serializable {
 
             bvText.append(wtype.getName());
             bvText.append(" BV: ");
-            bvText.append(dbv);
+            bvText.append(dBV);
             bvText.append(nl);
         }
 
@@ -2626,7 +2626,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         if (maximumHeat <= mechHeatEfficiency) {
 
-            bvText.append("Maximum Heat Less Then or Equal to Mech Heat Efficiency: ");
+            bvText.append("Maximum Heat Less Than or Equal to Mech Heat Efficiency: ");
             bvText.append(nl);
             // count all weapons equal, adjusting for rear-firing and excessive
             // ammo
@@ -2698,16 +2698,16 @@ public abstract class Mech extends Entity implements Serializable {
                 bvText.append(nl);
             }
         } else {
-            bvText.append("Maximum Heat Greater Then Mech Heat Efficiency: ");
+            bvText.append("Maximum Heat Greater Than Mech Heat Efficiency: ");
             bvText.append(nl);
             // this will count heat-generating weapons at full modified BV until
             // heatefficiency is reached or passed with one weapon
 
             // here we store the modified BV and heat of all heat-using weapons,
             // to later be sorted by BV
-            ArrayList<double[]> heatBVs = new ArrayList<double[]>();
+            ArrayList<ArrayList<Object>> heatBVs = new ArrayList<ArrayList<Object>>();
             // BVs of non-heat-using weapons
-            ArrayList<Double> nonHeatBVs = new ArrayList<Double>();
+            ArrayList<ArrayList<Object>> nonHeatBVs = new ArrayList<ArrayList<Object>>();
             // loop through weapons, calc their modified BV
             for (Mounted weapon : weapons) {
                 WeaponType wtype = (WeaponType) weapon.getType();
@@ -2760,52 +2760,63 @@ public abstract class Mech extends Entity implements Serializable {
                     dBV /= 2;
                 }
 
-                bvText.append(weapon.getName());
-                if ( weapon.isRearMounted() ){
-                    bvText.append("(R)");
-                }
-                bvText.append(" BV: ");
-                bvText.append(dBV);
-                bvText.append(nl);
-
                 int heat = ((WeaponType)weapon.getType()).getHeat();
-                double[] weaponValues = new double[2];
-                weaponValues[0] = dBV;
-                weaponValues[1] = heat;
+                // ArrayList that stores weapon values
+                // stores a double first (BV), then an Integer (heat),
+                // then a String (weapon name)
+                // for 0 heat weapons, just stores BV and name
+                ArrayList<Object> weaponValues = new ArrayList<Object>();
                 if (heat > 0) {
-                    // store heat and BV, for sorting a few lines down
-                    weaponValues[0] = dBV;
-                    weaponValues[1] = heat;
+                    // store heat and BV, for sorting a few lines down;
+                    weaponValues.add(dBV);
+                    weaponValues.add(heat);
+                    weaponValues.add(weapon.getName()+(weapon.isRearMounted()?"(R)":""));
                     heatBVs.add(weaponValues);
                 }
                 else {
-                    nonHeatBVs.add(dBV);
+                    weaponValues.add(dBV);
+                    weaponValues.add(weapon.getName()+(weapon.isRearMounted()?"(R)":""));
+                    nonHeatBVs.add(weaponValues);
                 }
             }
             // sort the heat-using weapons by modified BV
-            Collections.sort(heatBVs, new Comparator<double[]>() {
-                public int compare(double[] obj1, double[] obj2) {
+            Collections.sort(heatBVs, new Comparator<ArrayList<Object>>() {
+                public int compare(ArrayList<Object> obj1, ArrayList<Object> obj2) {
                     // if same BV, lower heat first
-                    if (obj1[0] == obj2[0]) {
-                        return new Double(obj1[1] - obj2[1]).intValue();
+                    if (obj1.get(0).equals(obj2.get(0))) {
+                        return new Integer((Integer)obj1.get(1) - (Integer)obj2.get(1));
                     }
                     // higher BV first
-                    return new Double(obj2[1] - obj1[1]).intValue();
+                    return new Integer((Integer)obj2.get(1) - (Integer)obj1.get(1));
                 }
             });
             // count heat-free weapons at full modified BV
-            for (double bv : nonHeatBVs) {
-                weaponBV += bv;
+            bvText.append("Zero heat weapons count full:");
+            bvText.append(nl);
+            for (ArrayList<Object> nonHeatWeapon : nonHeatBVs) {
+                weaponBV += (Double)nonHeatWeapon.get(0);
+
+                bvText.append(nonHeatWeapon.get(1));
+                bvText.append(" BV: ");
+                bvText.append(nonHeatWeapon.get(0));
+                bvText.append(nl);
             }
             // count heat-generating weapons at full modified BV until heatefficiency is reached or
             // passed with one weapon
+            bvText.append("Heat generating weapons:");
+            bvText.append(nl);
             int heatAdded = 0;
-            for (double[] weaponValues : heatBVs) {
-                double dBV = weaponValues[0];
+            for (ArrayList<Object> weaponValues : heatBVs) {
+                bvText.append(weaponValues.get(2));
+                bvText.append(" Heat counted so far: "+heatAdded);
+                double dBV = (Double)weaponValues.get(0);
                 if (heatAdded >= mechHeatEfficiency) {
+                    bvText.append(" Heat efficiency reached, half BV");
                     dBV /= 2;
                 }
-                heatAdded += weaponValues[1];
+                bvText.append(" BV: "+dBV);
+                bvText.append(nl);
+                heatAdded += (Integer)weaponValues.get(1);
                 weaponBV += dBV;
             }
         }
@@ -3057,9 +3068,9 @@ public abstract class Mech extends Entity implements Serializable {
 
         obv = weaponBV * speedFactor;
 
-        bvText.append("Offensive BV = Weapons BV + Speed Factor: ");
+        bvText.append("Offensive BV = Weapons BV * Speed Factor: ");
         bvText.append(weaponBV);
-        bvText.append(" + ");
+        bvText.append(" * ");
         bvText.append(speedFactor);
         bvText.append(" = ");
         bvText.append(obv);
@@ -3068,7 +3079,7 @@ public abstract class Mech extends Entity implements Serializable {
         int finalBV = (int)Math.round(obv + dbv);
         if ( getCockpitType() == Mech.COCKPIT_SMALL || getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             finalBV *= 0.95;
-            bvText.append("Cockpit Modifer: 0.95");
+            bvText.append("Cockpit Modifer for small or torso mounted cockpit: 0.95");
             bvText.append(nl);
         }
 
@@ -4586,6 +4597,10 @@ public abstract class Mech extends Entity implements Serializable {
         return bonus;
     }
 
+    /**
+     * Return a textual description of BV calculations
+     * @return a <code>String</code> explaining the BV calculation
+     */
     public String getBVText(){
         if ( bvText == null ){
             return "";

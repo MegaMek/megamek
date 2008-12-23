@@ -836,7 +836,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // //$NON-NLS-1$
             int loc;
             loc = m.getLocation();
-            String sDesc = '(' + entity.getLocationAbbr(loc) + ')'; 
+            String sDesc = '(' + entity.getLocationAbbr(loc) + ')';
             JLabel lLoc = new JLabel(sDesc);
             GridBagLayout g = new GridBagLayout();
             setLayout(g);
@@ -898,7 +898,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             } else {
                 loc = m.getLocation();
             }
-            String sDesc = '(' + entity.getLocationAbbr(loc) + ')'; 
+            String sDesc = '(' + entity.getLocationAbbr(loc) + ')';
             JLabel lLoc = new JLabel(sDesc);
             GridBagLayout g = new GridBagLayout();
             setLayout(g);
@@ -910,13 +910,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 add(chDump, GBC.eol());
                 if (clientgui.getClient().game.getOptions().booleanOption(
                         "tacops_hotload")
-                        && curType.hasFlag(AmmoType.F_HOTLOAD)) { 
+                        && curType.hasFlag(AmmoType.F_HOTLOAD)) {
                     add(labHotLoad, GBC.std());
                     add(chHotLoad, GBC.eol());
                 }
             } else if (clientgui.getClient().game.getOptions().booleanOption(
                     "tacops_hotload")
-                    && curType.hasFlag(AmmoType.F_HOTLOAD)) { 
+                    && curType.hasFlag(AmmoType.F_HOTLOAD)) {
                 add(labHotLoad, GBC.std());
                 add(chHotLoad, GBC.eol());
             }
@@ -1537,15 +1537,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                             .getString("CustomMechDialog.offboardDistanceTitle"),
                     Messages
                             .getString("CustomMechDialog.offboardDistanceQuestion"),
-                    entity.getOffBoardDistance(), 17, maxDistance);
+                    Math.min(Math.max(entity.getOffBoardDistance(), 17), maxDistance), 17, maxDistance);
             if (!sl.showDialog()) {
                 return;
             }
             distance = sl.getValue();
             butOffBoardDistance.setText(Integer.toString(distance));
-            // butOffBoardDistance = new JButton
-            // (Integer.toString(sl.getValue()));
-            // butOffBoardDistance.addActionListener(this);
             return;
         }
         if (!actionEvent.getSource().equals(butCancel)) {

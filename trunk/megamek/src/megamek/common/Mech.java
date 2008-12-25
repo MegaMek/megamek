@@ -195,8 +195,6 @@ public abstract class Mech extends Entity implements Serializable {
 
     private int grappledSide = Entity.GRAPPLE_BOTH;
 
-    private StringBuffer bvText = null;
-
     /**
      * Construct a new, blank, mech.
      */
@@ -2172,7 +2170,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         String nl = "<BR>";
 
-        bvText = new StringBuffer("<HTML><BODY><CENTER><b>Battle Calculations For ");
+        bvText = new StringBuffer("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
 
         bvText.append(getChassis());
         bvText.append(" ");
@@ -2566,7 +2564,7 @@ public abstract class Mech extends Entity implements Serializable {
             bvText.append(startRow);
             bvText.append(startColumn);
 
-            bvText.append("Void Sig (replaces");
+            bvText.append("Void Sig (replaces Target Movement Mod");
             bvText.append(endColumn);
             bvText.append(startColumn);
 
@@ -4991,19 +4989,5 @@ public abstract class Mech extends Entity implements Serializable {
             return 0;
         }
         return bonus;
-    }
-
-    /**
-     * Return a textual description of BV calculations
-     *
-     * @return a <code>String</code> explaining the BV calculation
-     */
-    public String getBVText() {
-        if (bvText == null) {
-            return "";
-        }
-
-        return bvText.toString();
-
     }
 }

@@ -400,6 +400,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     protected int taserInterference = 0;
     protected int taserInterferenceRounds = 0;
 
+    // contains a HTML string describing BV calculation
+    protected StringBuffer bvText = null;
+
     /**
      * Generates a new, blank, entity.
      */
@@ -7961,5 +7964,19 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             return false;
         }
         return game.getEntity(conveyance) instanceof FighterSquadron;
+    }
+
+    /**
+     * Return a HTML string that describes the BV calculations
+     *
+     * @return a <code>String</code> explaining the BV calculation
+     */
+    public String getBVText() {
+        if (bvText == null) {
+            return "";
+        }
+
+        return bvText.toString();
+
     }
 }

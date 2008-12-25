@@ -1,14 +1,14 @@
 /*
  * MechSelectorDialog.java - Copyright (C) 2002,2004 Josh Yockey
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -33,7 +33,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -42,8 +41,10 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -52,7 +53,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import megamek.client.Client;
 import megamek.client.ui.MechView;
 import megamek.common.BattleArmor;
@@ -88,7 +88,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         ItemListener, KeyListener, Runnable, WindowListener,
         ListSelectionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8428224408984372674L;
 
@@ -156,6 +156,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
     private JButton m_bPickClose = new JButton(Messages
             .getString("MechSelectorDialog.m_bPickClose")); //$NON-NLS-1$
     private JButton m_bCancel = new JButton(Messages.getString("Close")); //$NON-NLS-1$
+    private JButton m_bShowBV = new JButton(Messages.getString("MechSelectorDialog.BV")); //$NON-NLS-1$
     private JPanel m_pButtons = new JPanel();
 
     private JTextArea m_mechView = new JTextArea("", 36, 35);
@@ -203,8 +204,8 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         m_clientgui = cl;
         unitLoadingDialog = uld;
 
-        for (int x = 0; x < m_saSorts.length; x++) {
-            m_chSort.addItem(m_saSorts[x]);
+        for (String sort : m_saSorts) {
+            m_chSort.addItem(sort);
         }
         updatePlayerChoice();
 
@@ -246,6 +247,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         m_pButtons.add(m_bCancel);
         m_pButtons.add(m_labelPlayer);
         m_pButtons.add(m_chPlayer);
+        m_pButtons.add(m_bShowBV);
 
         m_pUpper.setLayout(new BorderLayout());
         m_pPreview.setPreferredSize(new Dimension(84, 72));
@@ -267,7 +269,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         m_mechView.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         m_mechView.setEditable(false);
         m_mechView.setOpaque(false);
-        getContentPane().add(m_mechView, BorderLayout.EAST);
+        getContentPane().add(new JScrollPane(m_mechView), BorderLayout.EAST);
         getContentPane().add(m_pButtons, BorderLayout.SOUTH);
 
         // clearMechPreview();
@@ -285,6 +287,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         m_bCancel.addActionListener(this);
         m_bSearch.addActionListener(this);
         m_bReset.addActionListener(this);
+        m_bShowBV.addActionListener(this);
         m_bToggleAdvanced.addActionListener(this);
         addWindowListener(this);
         updateWidgetEnablements();
@@ -415,16 +418,16 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         m_chPlayer.removeAllItems();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(clientName);
-        for (Iterator<Client> i = m_clientgui.getBots().values().iterator(); i
-                .hasNext();) {
-            m_chPlayer.addItem(i.next().getName());
-        }
+        for (Client client : m_clientgui.getBots().values()) {
+         m_chPlayer.addItem(client.getName());
+      }
         if (m_chPlayer.getItemCount() == 1) {
             m_chPlayer.setEnabled(false);
         }
         m_chPlayer.setSelectedItem(lastChoice);
-        if (m_chPlayer.getSelectedIndex() < 0)
+        if (m_chPlayer.getSelectedIndex() < 0) {
             m_chPlayer.setSelectedIndex(0);
+        }
     }
 
     public void run() {
@@ -578,24 +581,24 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
             System.err.println("No units to filter!"); //$NON-NLS-1$
             return;
         }
-        for (int x = 0; x < mechs.length; x++) {
+        for (MechSummary mech : mechs) {
             if (/* Weight */
-            (nClass == EntityWeightClass.SIZE || mechs[x].getWeightClass() == nClass)
+            (nClass == EntityWeightClass.SIZE || mech.getWeightClass() == nClass)
                     && /* Technology Level */
                     ((nType == TechConstants.T_ALL)
-                            || (nType == mechs[x].getType())
-                            || ((nType == TechConstants.T_TW_ALL) && ((mechs[x]
+                            || (nType == mech.getType())
+                            || ((nType == TechConstants.T_TW_ALL) && ((mech
                                     .getType() == TechConstants.T_INTRO_BOXSET)
-                                    || (mechs[x].getType() == TechConstants.T_IS_TW_NON_BOX) || (mechs[x]
-                                    .getType() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL) && ((mechs[x]
-                            .getType() == TechConstants.T_INTRO_BOXSET) || (mechs[x]
+                                    || (mech.getType() == TechConstants.T_IS_TW_NON_BOX) || (mech
+                                    .getType() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL) && ((mech
+                            .getType() == TechConstants.T_INTRO_BOXSET) || (mech
                             .getType() == TechConstants.T_IS_TW_NON_BOX))))
                     && /* Unit Type (Mek, Infantry, etc.) */
-                    (nUnitType == UnitType.SIZE || mechs[x].getUnitType()
+                    (nUnitType == UnitType.SIZE || mech.getUnitType()
                             .equals(UnitType.getTypeName(nUnitType)))
                     && /* canon required */(!m_client.game.getOptions()
-                            .booleanOption("canon_only") || mechs[x].isCanon())) {
-                vMechs.add(mechs[x]);
+                            .booleanOption("canon_only") || mech.isCanon())) {
+                vMechs.add(mech);
             }
         }
         m_mechsCurrent = vMechs.toArray(new MechSummary[0]);
@@ -617,9 +620,9 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
             m_mechList.setEnabled(false);
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-            for (int x = 0; x < m_mechsCurrent.length; x++) {
+            for (MechSummary element : m_mechsCurrent) {
                 ((DefaultComboBoxModel) m_mechList.getModel())
-                        .addElement(formatMech(m_mechsCurrent[x]));
+                        .addElement(formatMech(element));
             }
         } finally {
             setCursor(Cursor.getDefaultCursor());
@@ -657,8 +660,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         }
 
         ArrayList<MechSummary> vMatches = new ArrayList<MechSummary>();
-        for (int i = 0; i < m_mechsCurrent.length; i++) {
-            MechSummary ms = m_mechsCurrent[i];
+        for (MechSummary ms : m_mechsCurrent) {
             try {
                 Entity entity = new MechFileParser(ms.getSourceFile(), ms
                         .getEntryName()).getEntity();
@@ -683,14 +685,17 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         }
         if (walk > -1) {
             if (m_cWalk.getSelectedIndex() == 0) { // at least
-                if (entity.getWalkMP() < walk)
+                if (entity.getWalkMP() < walk) {
                     return false;
+                }
             } else if (m_cWalk.getSelectedIndex() == 1) { // equal to
-                if (walk != entity.getWalkMP())
+                if (walk != entity.getWalkMP()) {
                     return false;
+                }
             } else if (m_cWalk.getSelectedIndex() == 2) { // not more than
-                if (entity.getWalkMP() > walk)
+                if (entity.getWalkMP() > walk) {
                     return false;
+                }
             }
         }
 
@@ -702,14 +707,17 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         }
         if (jump > -1) {
             if (m_cJump.getSelectedIndex() == 0) { // at least
-                if (entity.getJumpMP() < jump)
+                if (entity.getJumpMP() < jump) {
                     return false;
+                }
             } else if (m_cJump.getSelectedIndex() == 1) { // equal to
-                if (jump != entity.getJumpMP())
+                if (jump != entity.getJumpMP()) {
                     return false;
+                }
             } else if (m_cJump.getSelectedIndex() == 2) { // not more than
-                if (entity.getJumpMP() > jump)
+                if (entity.getJumpMP() > jump) {
                     return false;
+                }
             }
         }
 
@@ -718,17 +726,21 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
             int armor = entity.getTotalArmor();
             int maxArmor = entity.getTotalInternal() * 2 + 3;
             if (sel == 1) {
-                if (armor < (maxArmor * .25))
+                if (armor < (maxArmor * .25)) {
                     return false;
+                }
             } else if (sel == 2) {
-                if (armor < (maxArmor * .5))
+                if (armor < (maxArmor * .5)) {
                     return false;
+                }
             } else if (sel == 3) {
-                if (armor < (maxArmor * .75))
+                if (armor < (maxArmor * .75)) {
                     return false;
+                }
             } else if (sel == 4) {
-                if (armor < (maxArmor * .9))
+                if (armor < (maxArmor * .9)) {
                     return false;
+                }
             }
         }
 
@@ -753,8 +765,9 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
                     count++;
                 }
             }
-            if (count >= weapon1)
+            if (count >= weapon1) {
                 foundWeapon1 = true;
+            }
         }
 
         count = 0;
@@ -773,8 +786,9 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
                     count++;
                 }
             }
-            if (count >= weapon2)
+            if (count >= weapon2) {
                 foundWeapon2 = true;
+            }
         }
 
         int startYear = Integer.MIN_VALUE;
@@ -791,17 +805,21 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
             return false;
         }
 
-        if (weaponLine1Active && !weaponLine2Active && !foundWeapon1)
+        if (weaponLine1Active && !weaponLine2Active && !foundWeapon1) {
             return false;
-        if (weaponLine2Active && !weaponLine1Active && !foundWeapon2)
+        }
+        if (weaponLine2Active && !weaponLine1Active && !foundWeapon2) {
             return false;
+        }
         if (weaponLine1Active && weaponLine2Active) {
             if (m_cOrAnd.getSelectedIndex() == 0 /* 0 is "or" choice */) {
-                if (!foundWeapon1 && !foundWeapon2)
+                if (!foundWeapon1 && !foundWeapon2) {
                     return false;
+                }
             } else { // "and" choice in effect
-                if (!foundWeapon1 || !foundWeapon2)
+                if (!foundWeapon1 || !foundWeapon2) {
                     return false;
+                }
             }
         }
 
@@ -813,8 +831,9 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
                     count++;
                 }
             }
-            if (count < 1)
+            if (count < 1) {
                 return false;
+            }
         }
 
         return true;
@@ -840,15 +859,18 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
     private Point computeDesiredLocation() {
         int desiredX = m_clientgui.frame.getLocation().x
                 + m_clientgui.frame.getSize().width / 2 - getSize().width / 2;
-        if (desiredX < 0)
+        if (desiredX < 0) {
             desiredX = 0;
+        }
         int desiredY = m_clientgui.frame.getLocation().y
                 + m_clientgui.frame.getSize().height / 2 - getSize().height / 2;
-        if (desiredY < 0)
+        if (desiredY < 0) {
             desiredY = 0;
+        }
         return new Point(desiredX, desiredY);
     }
 
+    @Override
     public void setVisible(boolean visible) {
         updatePlayerChoice();
         updateTechChoice();
@@ -865,20 +887,27 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         } else {
             levelOrValid = "F";
         }
-        if (GUIPreferences.getInstance().getMechSelectorIncludeModel())
-            val += makeLength(ms.getModel(), 10) + " "; //$NON-NLS-1$ //$NON-NLS-2$
-        if (GUIPreferences.getInstance().getMechSelectorIncludeName())
-            val += makeLength(ms.getChassis(), 20) + " "; //$NON-NLS-1$ //$NON-NLS-2$
-        if (GUIPreferences.getInstance().getMechSelectorIncludeTons())
+        if (GUIPreferences.getInstance().getMechSelectorIncludeModel()) {
+            val += makeLength(ms.getModel(), 10) + " "; //$NON-NLS-1$
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeName()) {
+            val += makeLength(ms.getChassis(), 20) + " "; //$NON-NLS-1$
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeTons()) {
             val += makeLength("" + ms.getTons(), 5) + " "; //$NON-NLS-1$ //$NON-NLS-2$
-        if (GUIPreferences.getInstance().getMechSelectorIncludeBV())
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeBV()) {
             val += makeLength("" + ms.getBV(), 6) + " "; //$NON-NLS-1$ //$NON-NLS-2$
-        if (GUIPreferences.getInstance().getMechSelectorIncludeYear())
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeYear()) {
             val += ms.getYear() + " ";
-        if (GUIPreferences.getInstance().getMechSelectorIncludeLevel())
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeLevel()) {
             val += levelOrValid + " ";
-        if (GUIPreferences.getInstance().getMechSelectorIncludeCost())
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeCost()) {
             val += ms.getCost() + " ";
+        }
         return val;
     }
 
@@ -921,6 +950,25 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
             resetSearch();
         } else if (ae.getSource().equals(m_bToggleAdvanced)) {
             toggleAdvanced();
+        } else if (ae.getSource().equals(m_bShowBV)) {
+            JEditorPane tEditorPane = new JEditorPane();
+            tEditorPane.setContentType("text/html");
+            tEditorPane.setEditable(false);
+            MechSummary ms = m_mechsCurrent[m_mechList.getSelectedIndex()];
+            try {
+                Entity e = new MechFileParser(ms.getSourceFile(), ms
+                        .getEntryName()).getEntity();
+                e.calculateBattleValue();
+                tEditorPane.setText(e.getBVText());
+            } catch (Exception e) {
+            }
+            tEditorPane.setCaretPosition(0);
+            JScrollPane tScroll = new JScrollPane(tEditorPane,
+                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            Dimension size = new Dimension(550, 300);
+            tScroll.setPreferredSize(size);
+            JOptionPane.showMessageDialog(this, tScroll, "BV", JOptionPane.INFORMATION_MESSAGE, null);
         }
     }
 
@@ -981,13 +1029,14 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         m_mechView.setText(readout);
         if (entity instanceof Mech || entity instanceof Tank) {
             TestEntity testEntity = null;
-            if (entity instanceof Mech)
+            if (entity instanceof Mech) {
                 testEntity = new TestMech((Mech) entity,
                         entityVerifier.mechOption, null);
-            else
+            } else {
                 // entity instanceof Tank
                 testEntity = new TestTank((Tank) entity,
                         entityVerifier.tankOption, null);
+            }
             if (!testEntity.correctEntity(sb, !m_clientgui.getClient().game
                     .getOptions().booleanOption("is_eq_limits"))) {
                 m_mechView.setText(sb.toString());
@@ -1067,8 +1116,9 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
 
     private void autoSetSkills(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        if (!cs.useAverageSkills())
+        if (!cs.useAverageSkills()) {
             return;
+        }
         int piloting = 5;
         int gunnery = 4;
         if (e.isClan()) {

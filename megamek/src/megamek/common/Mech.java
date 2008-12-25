@@ -334,7 +334,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Get the number of turns MASC has been used continuously.
      * <p/>
      * This method should <strong>only</strong> be used during serialization.
-     * 
+     *
      * @return the <code>int</code> number of turns MASC has been used.
      */
     public int getMASCTurns() {
@@ -345,7 +345,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Set the number of turns MASC has been used continuously.
      * <p/>
      * This method should <strong>only</strong> be used during deserialization.
-     * 
+     *
      * @param turns
      *            The <code>int</code> number of turns MASC has been used.
      */
@@ -357,7 +357,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Determine if MASC has been used this turn.
      * <p/>
      * This method should <strong>only</strong> be used during serialization.
-     * 
+     *
      * @return <code>true</code> if MASC has been used.
      */
     public boolean isMASCUsed() {
@@ -368,7 +368,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Set whether MASC has been used.
      * <p/>
      * This method should <strong>only</strong> be used during deserialization.
-     * 
+     *
      * @param used
      *            The <code>boolean</code> whether MASC has been used.
      */
@@ -382,7 +382,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * This function cheks for masc failure.
-     * 
+     *
      * @param md
      *            the movement path.
      * @param vDesc
@@ -412,7 +412,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * check one masc system for failure
-     * 
+     *
      * @param masc
      * @param vDesc
      * @param vCriticals
@@ -636,7 +636,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * This function returns true iff the system is in perfect condition.
-     * 
+     *
      * @param system
      *            the system to check
      * @return false if the system is damaged.
@@ -720,7 +720,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * get non-supercharger MASC mounted on this mech
-     * 
+     *
      * @return
      */
     public Mounted getMASC() {
@@ -735,7 +735,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * get a supercharger mounted on this mech
-     * 
+     *
      * @return
      */
     public Mounted getSuperCharger() {
@@ -1944,7 +1944,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Sets the internal structure for the mech.
-     * 
+     *
      * @param head
      *            head
      * @param ct
@@ -2562,11 +2562,11 @@ public abstract class Mech extends Entity implements Serializable {
 
         }
         if (hasVoidSig()) {
-            targetMovementModifier += 3;
+            targetMovementModifier = 3;
             bvText.append(startRow);
             bvText.append(startColumn);
 
-            bvText.append("Void Sig");
+            bvText.append("Void Sig (replaces");
             bvText.append(endColumn);
             bvText.append(startColumn);
 
@@ -3579,7 +3579,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Calculate the C-bill cost of the mech. Passing null as the argument will skip the detailed report processing.
-     * 
+     *
      * @param detail
      *            buffer to append the detailed cost report to
      * @return The cost in C-Bills of the 'Mech in question.
@@ -3801,7 +3801,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Determine if this unit has an active stealth system.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is currently active, <code>false</code> if there is no stealth system or if it is inactive.
      */
     @Override
@@ -3872,7 +3872,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Determine the stealth modifier for firing at this unit from the given range. If the value supplied for <code>range</code> is not one of the <code>Entity</code> class range constants, an <code>IllegalArgumentException</code> will be thrown.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @param range
      *            - an <code>int</code> value that must match one of the <code>Compute</code> class range constants.
      * @param ae
@@ -3977,7 +3977,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     * 
+     *
      * @return A <code>boolean</code> that is <code>true</code> if the unit can be repaired (given enough time and parts); if this value is <code>false</code>, the unit is only a source of spares.
      * @see Entity#isSalvage()
      */
@@ -4463,7 +4463,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Add the critical slots necessary for a standard cockpit. Note: This is part of the mek creation public API, and might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addCockpit() {
@@ -4481,7 +4481,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Add the critical slots necessary for a small cockpit. Note: This is part of the mek creation public API, and might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addSmallCockpit() {
@@ -4524,7 +4524,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Add the critical slots necessary for a torso-mounted cockpit. Note: This is part of the mek creation public API, and might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addTorsoMountedCockpit() {
@@ -4558,7 +4558,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Add the critical slots necessary for a standard gyro. Also set the gyro type variable. Note: This is part of the mek creation public API, and might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addGyro() {
@@ -4574,7 +4574,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Add the critical slots necessary for a compact gyro. Also set the gyro type variable. Note: This is part of the mek creation public API, and might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addCompactGyro() {
@@ -4589,7 +4589,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Add the critical slots necessary for an extra-light gyro. Also set the gyro type variable. Note: This is part of the mek creation public API, and might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addXLGyro() {
@@ -4612,7 +4612,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Add the critical slots necessary for a heavy-duty gyro. Also set the gyro type variable. Note: This is part of the mek creation public API, and might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addHeavyDutyGyro() {
@@ -4625,7 +4625,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Add the critical slots necessary for the mek's engine. Calling this method before setting a mek's engine object will result in a NPE. Note: This is part of the mek creation public API, and might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addEngineCrits() {
@@ -4655,7 +4655,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Add the critical slots necessary for the mek's engine when using a compact gyro. Calling this method before setting a mek's engine object will result in a NPE. Note: This is part of the mek creation public API, and might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addEngineCritsWithCompactGyro() {
@@ -4820,7 +4820,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Does this mech have an undamaged HarJel system in this location?
-     * 
+     *
      * @param loc
      *            the <code>int</code> location to check
      * @return a <code>boolean</code> value indicating a present HarJel system
@@ -4995,7 +4995,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Return a textual description of BV calculations
-     * 
+     *
      * @return a <code>String</code> explaining the BV calculation
      */
     public String getBVText() {

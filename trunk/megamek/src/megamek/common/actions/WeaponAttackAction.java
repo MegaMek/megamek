@@ -2480,8 +2480,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (wtype.hasFlag(WeaponType.F_MISSILE)) {
                 return "Missile weapons can't be used in swarm attack";
             }
-            if (!weapon.isBodyMounted()) {
-                return "non-body mounted weapons can't be used in swarm attack";
+            if (weapon.isBodyMounted()) {
+                return "body mounted weapons can't be used in swarm attack";
             }
         } else if (Entity.NONE != ae.getSwarmTargetId()) {
             return "Must target the Mek being swarmed.";

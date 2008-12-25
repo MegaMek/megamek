@@ -16,6 +16,8 @@ v0.33.38-dev (SVN)
 + Bug: Offboard distancesetting not working
 + Bug: Void sig BV problem
 + Added Show BV calculation button to swing MechSelectorDialog
++ Bug: non-body-mounted weapons instead of body-mounted weapons couldn't hit
+    during swarm attack
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

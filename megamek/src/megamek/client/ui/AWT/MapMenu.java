@@ -57,7 +57,7 @@ import megamek.common.weapons.ISFireExtinguisher;
 public class MapMenu extends PopupMenu implements ActionListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 2879345079968414986L;
 
@@ -74,13 +74,13 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
     public MapMenu(Coords coords, Client client, Component panel, ClientGUI gui) {
         this.coords = coords;
-        this.game = client.game;
-        this.currentPanel = panel;
-        this.board = client.getBoard();
-        this.options = client.game.getOptions();
+        game = client.game;
+        currentPanel = panel;
+        board = client.getBoard();
+        options = client.game.getOptions();
         this.client = client;
         this.gui = gui;
-        this.selectedEntity = this.myEntity = game.getEntity(gui.getSelectedEntityNum());
+        selectedEntity = myEntity = game.getEntity(gui.getSelectedEntityNum());
 
         createMenu();
     }
@@ -94,7 +94,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
     }
 
     private void createMenu() {
-        this.removeAll();
+        removeAll();
 
         Menu menu = createSelectMenu();
         if (menu.getItemCount() > 0) {
@@ -117,8 +117,8 @@ public class MapMenu extends PopupMenu implements ActionListener {
             if (currentPanel instanceof MovementDisplay) {
                 menu = createMovementMenu(myEntity.getPosition().equals(coords));
 
-                if (this.getItemCount() > 0) {
-                    this.addSeparator();
+                if (getItemCount() > 0) {
+                    addSeparator();
                 }
 
                 if (menu.getItemCount() > 0) {
@@ -140,14 +140,14 @@ public class MapMenu extends PopupMenu implements ActionListener {
                 menu = createPhysicalMenu(true);
 
                 if (menu.getItemCount() > 0) {
-                    this.addSeparator();
+                    addSeparator();
                     this.add(menu);
                 }
 
             } else if (currentPanel instanceof FiringDisplay && client.isMyTurn()) {
 
-                if (this.getItemCount() > 0) {
-                    this.addSeparator();
+                if (getItemCount() > 0) {
+                    addSeparator();
                 }
 
                 menu = createWeaponsFireMenu();
@@ -168,7 +168,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
                 menu = createPhysicalMenu(false);
 
                 if (menu.getItemCount() > 0) {
-                    this.addSeparator();
+                    addSeparator();
                     this.add(menu);
                 }
 
@@ -543,7 +543,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
         menu.add(createFireMenuItem());
         menu.add(createSkipMenuItem());
         menu.add(createAlphaStrikeMenuItem());
-        
+
         if ( myEntity.canFlipArms() ) {
             menu.add(createFlipArmsMenuItem());
         }
@@ -623,7 +623,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 try {
                     FiringDisplay display = (FiringDisplay)currentPanel;
-                    
+
                     int id = Integer.parseInt(e.getActionCommand());
                     display.updateFlipArms(!game.getEntity(id).getArmsFlipped());
                 } catch (Exception ex) {
@@ -690,8 +690,8 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
             }
 
-            if (myEntity instanceof BipedMech 
-                    && (!myEntity.isLocationBad(Mech.LOC_LARM) 
+            if (myEntity instanceof BipedMech
+                    && (!myEntity.isLocationBad(Mech.LOC_LARM)
                     || !myEntity.isLocationBad(Mech.LOC_RARM)) ) {
                 item = createPunchMenuItem();
 
@@ -701,7 +701,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
             }
 
-            if (myEntity instanceof BipedMech 
+            if (myEntity instanceof BipedMech
                     && !myEntity.isLocationBad(Mech.LOC_LARM) && !myEntity.isLocationBad(Mech.LOC_RARM) ) {
                 item = createPushMenuItem();
 
@@ -751,7 +751,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
                     menu.add(item);
                 }
             }
-            
+
             if (myTarget != null) {
                 ToHitData vibro = BAVibroClawAttackAction.toHit(client.game, myEntity.getId(), myTarget);
                 if (vibro.getValue() != TargetRoll.IMPOSSIBLE) {
@@ -956,8 +956,9 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
     private boolean hasAmmoType(int ammoType) {
 
-        if (myEntity.getAmmo().size() < 1)
+        if (myEntity.getAmmo().size() < 1) {
             return false;
+        }
 
         for (Mounted ammo : myEntity.getAmmo()) {
             if (((AmmoType) ammo.getType()).getAmmoType() == ammoType) {
@@ -970,8 +971,9 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
     private boolean hasMunitionType(long munition) {
 
-        if (myEntity.getAmmo().size() < 1)
+        if (myEntity.getAmmo().size() < 1) {
             return false;
+        }
 
         for (Mounted ammo : myEntity.getAmmo()) {
             if (((AmmoType) ammo.getType()).getMunitionType() == munition) {
@@ -1082,7 +1084,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
            // gui.getBoardView().select(myTarget.getPosition());
 
             if (currentPanel instanceof FiringDisplay) {
-                FiringDisplay panel = (FiringDisplay) currentPanel; 
+                FiringDisplay panel = (FiringDisplay) currentPanel;
                 panel.target(myTarget);
             } else if (currentPanel instanceof PhysicalDisplay) {
                 ((PhysicalDisplay) currentPanel).target(myTarget);
@@ -1200,10 +1202,10 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
         return item;
     }
-    
+
     private MenuItem createVibroClawMenuItem() {
         MenuItem item = new MenuItem("Vibro Claw Attack");
-        
+
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -1214,7 +1216,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
             }
         });
 
-        return item; 
+        return item;
     }
 
     private MenuItem createThrashMenuItem() {
@@ -1310,7 +1312,8 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
         return item;
     }
-    
+
+    @Override
     public void show(Component comp, int x, int y){
         if (client.isMyTurn() && myEntity != null) {
             selectTarget();

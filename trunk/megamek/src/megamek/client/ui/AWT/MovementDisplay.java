@@ -2522,7 +2522,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
     }
 
-    /*
+    /**
      * based on maneuver type add the appropriate steps return true if we should
      * redraw the movement data
      */

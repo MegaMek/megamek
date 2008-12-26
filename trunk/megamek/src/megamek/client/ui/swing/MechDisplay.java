@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -960,6 +961,8 @@ public class MechDisplay extends JPanel {
             // to-hit text
             toHitText = new JTextArea("", 2, 20); //$NON-NLS-1$
             toHitText.setEditable(false);
+            toHitText.setLineWrap(true);
+            toHitText.setFont(new Font("SansSerif", Font.PLAIN, 10)); //$NON-NLS-1$
 
             c.insets = new Insets(1, 9, 15, 9);
             c.gridx = 0;

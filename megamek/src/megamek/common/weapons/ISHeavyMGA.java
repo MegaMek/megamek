@@ -32,39 +32,37 @@ public class ISHeavyMGA extends AmmoWeapon {
 
     public ISHeavyMGA() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        this.name = "IS Heavy Machine Gun Array";
-        this.setInternalName("ISHMGA");
-        this.heat = 0;
-        this.damage = 3;
-        this.rackSize = 3;
-        this.ammoType = AmmoType.T_MG_HEAVY;
-        this.minimumRange = WEAPON_NA;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 2;
-        this.extremeRange = 4;
-        this.tonnage = 0.5f;
-        this.criticals = 1;
-        this.bv = 0; // we'll have to calculate this in calculateBV(),
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        name = "Heavy Machine Gun Array";
+        setInternalName("ISHMGA");
+        addLookupName("IS Heavy Machine Gun Array");
+        heat = 0;
+        damage = 3;
+        rackSize = 3;
+        ammoType = AmmoType.T_MG_HEAVY;
+        minimumRange = WEAPON_NA;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 2;
+        extremeRange = 4;
+        tonnage = 0.5f;
+        criticals = 1;
+        bv = 0; // we'll have to calculate this in calculateBV(),
         // because it depends on the number of MGs linked to
         // the MGA
-        this.flags |= F_BALLISTIC | F_BURST_FIRE | F_MGA;
-        this.cost = 5000;
+        flags |= F_BALLISTIC | F_BURST_FIRE | F_MGA;
+        cost = 5000;
         String[] modes = { "Linked", "Off" };
-        this.setModes(modes);
-        this.instantModeSwitch = false;
+        setModes(modes);
+        instantModeSwitch = false;
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData, megamek.common.actions.WeaponAttackAction, megamek.common.Game, megamek.server.Server)
      */
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return new MGAWeaponHandler(toHit, waa, game, server);
     }
 

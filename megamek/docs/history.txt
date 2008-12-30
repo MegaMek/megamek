@@ -20,6 +20,7 @@ v0.33.38-dev (SVN)
     during swarm attack
 + Bug: To-hit description in swing mechdisplay has no linebreaks
 + Bug: Rear facing weapons not printing '(R)' in getMTF() method.
++ Removed IS from External name of LMGA HMGA and MGA
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

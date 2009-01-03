@@ -316,7 +316,7 @@ public class MtfFile implements IMechLoader {
             
             boolean laserSinks = heatSinks.substring(14).equalsIgnoreCase("Laser");
             
-            int expectedSinks = Integer.parseInt(heatSinks.substring(11, 14)
+            int expectedSinks = Integer.parseInt(heatSinks.substring(11, 13)
                     .trim());
 
             String thisStructureType = internalType.substring(internalType

@@ -526,6 +526,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createEndoSteelPrototype());
         EquipmentType.addType(createReinforcedStructure());
         EquipmentType.addType(createCompositeStructure());
+        EquipmentType.addType(createIndustrialStructure());
         EquipmentType.addType(createIS1CompactHeatSink());
         EquipmentType.addType(createIS2CompactHeatSinks());
         EquipmentType.addType(createCLLaserHeatSink());
@@ -578,12 +579,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLAES());
         EquipmentType.addType(createISModularArmor());
         EquipmentType.addType(createCLModularArmor());
-        /*
-         * EquipmentType.addType(createISHeavyPPCCapacitor());
-         * EquipmentType.addType(createISLightPPCCapacitor());
-         * EquipmentType.addType(createISSNPPCCapacitor());
-         * EquipmentType.addType(createISERPPCCapacitor());
-         */
         EquipmentType.addType(createCommsGear1());
         EquipmentType.addType(createCommsGear2());
         EquipmentType.addType(createCommsGear3());
@@ -874,7 +869,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.hittable = false;
+        misc.hittable = true;
         misc.spreadable = false;
         misc.flags |= F_MASC;
         misc.bv = 0;
@@ -894,7 +889,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan MASC");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
-        misc.hittable = false;
+        misc.hittable = true;
         misc.cost = COST_VARIABLE;
         misc.spreadable = false;
         misc.flags |= F_MASC;
@@ -2190,6 +2185,23 @@ public class MiscType extends EquipmentType {
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
+    }
+    
+    public static MiscType createIndustrialStructure() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL);
+        misc.setInternalName(EquipmentType
+                .getStructureTypeName(T_STRUCTURE_INDUSTRIAL));
+        misc.addLookupName("Industrial");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.bv = 0;
+        misc.techLevel = TechConstants.T_TW_ALL;
+
+        return misc;        
     }
 
     public static MiscType createCLLaserHeatSink() {

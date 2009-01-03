@@ -836,6 +836,8 @@ class Structure {
             return TestEntity.ceilMaxHalf(weight / 5.0f, roundWeight);
         } else if (structureType == EquipmentType.T_STRUCTURE_COMPOSITE) {
             return TestEntity.ceilMaxHalf(weight / 20.0f, roundWeight);
+        } else if (structureType == EquipmentType.T_STRUCTURE_INDUSTRIAL) {
+            return TestEntity.ceilMaxHalf(weight / 5.0f, roundWeight);
         }
         return weight / 10.0f;
     }

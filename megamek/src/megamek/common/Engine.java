@@ -254,8 +254,6 @@ public class Engine implements Serializable {
      * @return the maximum number of heat sinks built into the engine.
      */
     public int integralHeatSinkCapacity() {
-        if (!isFusion())
-            return 0;
         return engineRating / 25;
     }
 

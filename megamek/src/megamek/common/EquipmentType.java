@@ -54,9 +54,11 @@ public class EquipmentType {
     public static final int T_ARMOR_STEALTH = 8;
     public static final int T_ARMOR_FERRO_FIBROUS_PROTO = 9;
     public static final int T_ARMOR_COMMERCIAL = 10;
-    public static final int T_ARMOR_FERRO_CARBIDE       = 11;
+    public static final int T_ARMOR_FERRO_CARBIDE = 11;
     public static final int T_ARMOR_LAMELLOR_FERRO_CARBIDE = 12;
-    public static final int T_ARMOR_FERRO_IMP           = 13;
+    public static final int T_ARMOR_FERRO_IMP = 13;
+    public static final int T_ARMOR_INDUSTRIAL = 14;
+    public static final int T_ARMOR_HEAVY_INDUSTRIAL = 14;
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
     public static final int T_STRUCTURE_STANDARD = 0;
@@ -72,31 +74,24 @@ public class EquipmentType {
             "Ferro-Fibrous Prototype", "Commercial",
             "Ferro-Carbide",
             "Lamellor Ferro-Carbide",
-            "Improved Ferro-Aluminum" };
+            "Improved Ferro-Aluminum", "Industrial", "Heavy Industrial" };
 
     public static final String[] structureNames = { "Standard", "Endo Steel",
-            "Endo Steel Prototype", "Reinforced", "Composite" };
+            "Endo Steel Prototype", "Reinforced", "Composite", "Industrial" };
 
     public static final int[] structureLevels = { 1, 2, 3, 3, 3 };
 
-    public static final double[] structureCosts = { 400, 1600, 1600, // Assume
-                                                                        // for
-                                                                        // now
-                                                                        // that
-                                                                        // prototype
-                                                                        // is
-                                                                        // not
-                                                                        // more
-                                                                        // expensive
+    public static final double[] structureCosts = { 400, 1600, 1600,
+    // Assume for nowt that prototype is not more expensive
             6400, 1600 };
 
     public static final double[] armorCosts = { 10000, 20000, 30000, 20000,
             15000, 15000, 25000, 10000, // This is obviously wrong...
-            50000, 20000, 75000, 100000, 50000 }; // Assume for now that prototype is not more
-                            // expensive
+            50000, 20000, 75000, 100000, 50000 };
+    // Assume for now that prototype is not more expensive
 
     public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 1,
-            1.06, 1.24, 1, 1, 1.12 };
+            1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0 };
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
 

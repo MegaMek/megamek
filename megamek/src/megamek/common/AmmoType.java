@@ -870,7 +870,7 @@ public class AmmoType extends EquipmentType {
                                                    1, M_FRAGMENTATION, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "(Clan) Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_TW ) );
-        munitions.add( new MunitionMutator( "(Clan) Artemis",
+        munitions.add( new MunitionMutator( "(Clan) Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "(Clan) Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_CLAN_EXPERIMENTAL ) );
@@ -936,7 +936,7 @@ public class AmmoType extends EquipmentType {
                                                    2, M_THUNDER_VIBRABOMB, TechConstants.T_IS_ADVANCED ) );
         munitions.add( new MunitionMutator( "Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_IS_TW_NON_BOX ) );
-        munitions.add( new MunitionMutator( "Artemis",
+        munitions.add( new MunitionMutator( "Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX ) );
         munitions.add( new MunitionMutator( "Semi-guided",
                                                    1, M_SEMIGUIDED, TechConstants.T_IS_TW_NON_BOX) );
@@ -975,7 +975,7 @@ public class AmmoType extends EquipmentType {
                                                    2, M_THUNDER_VIBRABOMB, TechConstants.T_CLAN_ADVANCED ) );
         munitions.add( new MunitionMutator( "(Clan) Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_TW ) );
-        munitions.add( new MunitionMutator( "(Clan) Artemis",
+        munitions.add( new MunitionMutator( "(Clan) Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "(Clan) Semi-guided",
                                                    1, M_SEMIGUIDED, TechConstants.T_CLAN_TW) );

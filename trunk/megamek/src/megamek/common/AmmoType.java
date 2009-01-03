@@ -7672,7 +7672,6 @@ public class AmmoType extends EquipmentType {
             // copy base ammoType
             munition.ammoType = base.ammoType;
             // check for cost
-            //TODO: ammo for weapons using artemis should cost double
             double cost = base.cost;
             double bv = base.bv;
 

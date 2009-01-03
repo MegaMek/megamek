@@ -3744,7 +3744,7 @@ public class Compute {
      */
     public static Coords scatter(Coords coords, int margin) {
         int scatterDirection = Compute.d6(1) - 1;
-        int scatterDistance = Compute.d6((int)Math.ceil(((double)margin)/2.0));
+        int scatterDistance = Compute.d6((int)Math.ceil((margin)/2.0));
         return coords.translated(scatterDirection, scatterDistance);
     }
 

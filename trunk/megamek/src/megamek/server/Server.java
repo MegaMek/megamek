@@ -513,7 +513,8 @@ public class Server implements Runnable {
         }
 
         // kill active connnections
-        for (IConnection conn : connections) {
+        for (Enumeration<IConnection> connEnum = connections.elements();connEnum.hasMoreElements();) {
+            IConnection conn = connEnum.nextElement();
             conn.close();
         }
         connections.removeAllElements();

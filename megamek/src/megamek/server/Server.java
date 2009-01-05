@@ -21782,11 +21782,13 @@ public class Server implements Runnable {
             Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
             for (Building bldg : update.keySet()) {
                 Vector<Coords> updateCoords = update.get(bldg);
+                Vector<Coords> coordsToRemove = new Vector<Coords>();
                 for (Coords coords : updateCoords) {
                     if (checkForCollapse(bldg, positionMap, coords)) {
-                        updateCoords.remove(coords);
+                        coordsToRemove.add(coords);
                     }
                 }
+                updateCoords.removeAll(coordsToRemove);
                 update.put(bldg, updateCoords);
             }
         }

@@ -89,8 +89,8 @@ public class PPCHandler extends EnergyWeaponHandler {
             toReturn += 5;
         }
         // during a swarm, all damage gets applied as one block to one location
-        if (ae instanceof BattleArmor
-                && weapon.getLocation() == BattleArmor.LOC_SQUAD
+        if ((ae instanceof BattleArmor)
+                && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
@@ -106,12 +106,12 @@ public class PPCHandler extends EnergyWeaponHandler {
             }
         }
 
-        if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
+        if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
             toReturn -= 1;
         }
 
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = (int)Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
         } else if (bDirect){
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
         }
@@ -161,8 +161,8 @@ public class PPCHandler extends EnergyWeaponHandler {
                 weapon.setDestroyed(true);
                 for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
                     CriticalSlot slot1 = ae.getCritical(wlocation, i);
-                    if (slot1 == null
-                            || slot1.getType() != CriticalSlot.TYPE_SYSTEM) {
+                    if ((slot1 == null)
+                            || (slot1.getType() != CriticalSlot.TYPE_SYSTEM)) {
                         continue;
                     }
                     Mounted mounted = ae.getEquipment(slot1.getIndex());
@@ -196,7 +196,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 weapon.setDestroyed (true);
                 for (int i=0; i<ae.getNumberOfCriticals(wlocation); i++) {
                     CriticalSlot slot = ae.getCritical (wlocation, i);
-                    if (slot == null || slot.getType() == CriticalSlot.TYPE_SYSTEM) {
+                    if ((slot == null) || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
                         continue;
                     }
                     //Only one Crit needs to be damaged.

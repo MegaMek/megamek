@@ -58,12 +58,12 @@ public class PrototypeGaussHandler extends AmmoWeaponHandler {
         float toReturn = wtype.getDamage();
         int nRange = ae.getPosition().distance(target.getPosition());
 
-        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn -= 1;
         }
 
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = (float)Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
         } else if (bDirect){
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
         } if (bGlancing) {

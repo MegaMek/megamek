@@ -45,11 +45,13 @@ public class TestTank extends TestEntity {
         int type = EquipmentType.T_STRUCTURE_STANDARD;
         int flag = 0;
 
-        if (tank.getStructureType() == 1)
+        if (tank.getStructureType() == 1) {
             type = EquipmentType.T_STRUCTURE_ENDO_STEEL;
+        }
 
-        if (tank.isClan())
+        if (tank.isClan()) {
             flag |= Structure.CLAN_STRUCTURE;
+        }
         return new Structure(type, flag);
     }
 
@@ -58,19 +60,23 @@ public class TestTank extends TestEntity {
         int flag = 0;
 
         type = tank.getArmorType();
-        if (tank.isClanArmor())
+        if (tank.isClanArmor()) {
             flag |= Armor.CLAN_ARMOR;
+        }
         return new Armor(type, flag);
     }
 
+    @Override
     public Entity getEntity() {
         return tank;
     }
 
+    @Override
     public boolean isTank() {
         return true;
     }
 
+    @Override
     public boolean isMech() {
         return false;
     }
@@ -78,21 +84,23 @@ public class TestTank extends TestEntity {
     public float getTankWeightTurret() {
         float weight = 0f;
         for (Mounted m : tank.getWeaponList()) {
-            if (m.getLocation() == Tank.LOC_TURRET)
+            if (m.getLocation() == Tank.LOC_TURRET) {
                 weight += ((WeaponType) m.getType()).getTonnage(tank);
+            }
         }
         return ceilMaxHalf(weight / 10.0f, getWeightCeilingTurret());
     }
 
     public float getTankWeightLifting() {
-        if (tank.getMovementMode() == IEntityMovementMode.HOVER)
+        if (tank.getMovementMode() == IEntityMovementMode.HOVER) {
             return tank.getWeight() / 10.0f;
-        else if (tank.getMovementMode() == IEntityMovementMode.VTOL)
+        } else if (tank.getMovementMode() == IEntityMovementMode.VTOL) {
             return tank.getWeight() / 10.0f;
-        else if (tank.getMovementMode() == IEntityMovementMode.HYDROFOIL)
+        } else if (tank.getMovementMode() == IEntityMovementMode.HYDROFOIL) {
             return tank.getWeight() / 10.0f;
-        else if (tank.getMovementMode() == IEntityMovementMode.SUBMARINE)
+        } else if (tank.getMovementMode() == IEntityMovementMode.SUBMARINE) {
             return tank.getWeight() / 10.0f;
+        }
         return 0f;
     }
 
@@ -103,10 +111,11 @@ public class TestTank extends TestEntity {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_LASER)
                         || wt.hasFlag(WeaponType.F_PPC)
-                        || (wt.hasFlag(WeaponType.F_FLAMER) && wt.getAmmoType() == AmmoType.T_NA))
+                        || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
                     weight += wt.getTonnage(tank);
-                if (m.getLinkedBy() != null && m.getLinkedBy().getType() instanceof
-                        MiscType && m.getLinkedBy().getType().
+                }
+                if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
+                        MiscType) && m.getLinkedBy().getType().
                         hasFlag(MiscType.F_PPC_CAPACITOR)) {
                     weight += ((MiscType)m.getLinkedBy().getType()).getTonnage(tank);
                 }
@@ -116,11 +125,13 @@ public class TestTank extends TestEntity {
         return 0f;
     }
 
+    @Override
     public float getWeightMisc() {
         return getTankWeightTurret() + getTankWeightLifting()
                 + getTankPowerAmplifier();
     }
 
+    @Override
     public float getWeightControls() {
         return TestEntity.ceilMaxHalf(tank.getWeight() / 20.0f,
                 getWeightCeilingControls());
@@ -130,10 +141,11 @@ public class TestTank extends TestEntity {
         int heat = 0;
         for (Mounted m : tank.getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
-            if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC))
+            if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
                 heat += wt.getHeat();
-            if (m.getLinkedBy() != null && m.getLinkedBy().getType() instanceof
-                    MiscType && m.getLinkedBy().getType().
+            }
+            if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
+                    MiscType) && m.getLinkedBy().getType().
                     hasFlag(MiscType.F_PPC_CAPACITOR)) {
                 heat += 5;
             }
@@ -141,32 +153,41 @@ public class TestTank extends TestEntity {
         return heat;
     }
 
+    @Override
     public boolean hasDoubleHeatSinks() {
-        if (!engine.isFusion())
+        if (!engine.isFusion()) {
             return false;
-        if (getTankCountHeatLaserWeapons() <= 10)
+        }
+        if (getTankCountHeatLaserWeapons() <= 10) {
             return false;
-        if (tank.getTechLevel() == TechConstants.T_INTRO_BOXSET)
+        }
+        if (tank.getTechLevel() == TechConstants.T_INTRO_BOXSET) {
             return false;
+        }
         return false;
         // return true;
     }
 
+    @Override
     public int getCountHeatSinks() {
         float heat = getTankCountHeatLaserWeapons();
-        if (hasDoubleHeatSinks())
+        if (hasDoubleHeatSinks()) {
             heat = heat / 2.0f;
+        }
         return Math.round(heat);
     }
 
+    @Override
     public int getWeightHeatSinks() {
         int heat = getCountHeatSinks();
-        heat -= engine.getCountEngineHeatSinks();
-        if (heat < 0)
+        heat -= engine.getWeightFreeEngineHeatSinks();
+        if (heat < 0) {
             heat = 0;
+        }
         return heat;
     }
 
+    @Override
     public String printWeightMisc() {
         return (!tank.hasNoTurret() ? StringUtil.makeLength("Turret:",
                 getPrintSize() - 5)
@@ -179,6 +200,7 @@ public class TestTank extends TestEntity {
                         + makeWeightString(getTankPowerAmplifier()) + "\n" : "");
     }
 
+    @Override
     public String printWeightControls() {
         return StringUtil.makeLength("Controls:", getPrintSize() - 5)
                 + makeWeightString(getWeightControls()) + "\n";
@@ -188,18 +210,21 @@ public class TestTank extends TestEntity {
         return tank;
     }
 
+    @Override
     public boolean correctEntity(StringBuffer buff) {
         return correctEntity(buff, true);
     }
 
+    @Override
     public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo) {
-        if (tank instanceof VTOL || tank instanceof SupportTank) {
+        if ((tank instanceof VTOL) || (tank instanceof SupportTank)) {
             return true;
         } // don't bother checking, won't work. Needs fixing (new class
             // needed.)
         boolean correct = true;
-        if (skip())
+        if (skip()) {
             return true;
+        }
         if (!correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation()).append("\n");
@@ -209,12 +234,15 @@ public class TestTank extends TestEntity {
             buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
-        if (showFailedEquip() && hasFailedEquipment(buff))
+        if (showFailedEquip() && hasFailedEquipment(buff)) {
             correct = false;
-        if (hasIllegalTechLevels(buff, ignoreAmmo))
+        }
+        if (hasIllegalTechLevels(buff, ignoreAmmo)) {
             correct = false;
-        if (hasIllegalEquipmentCombinations(buff))
+        }
+        if (hasIllegalEquipmentCombinations(buff)) {
             correct = false;
+        }
         // only tanks with fusion engine can be vacuum protected
         if (!tank.getEngine().isFusion() && !tank.doomedInVacuum()) {
             buff.append("Vacuum protection requires fusion engine.\n");
@@ -223,21 +251,24 @@ public class TestTank extends TestEntity {
         return correct;
     }
 
+    @Override
     public StringBuffer printEntity() {
         StringBuffer buff = new StringBuffer();
         buff.append("Tank: ").append(tank.getDisplayName()).append("\n");
-        buff.append("Found in: ").append(this.fileString).append("\n");
+        buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true))
+        if (correctWeight(buff, true, true)) {
             buff.append("Weight: ").append(getWeight()).append(" (").append(
                     calculateWeight()).append(")\n");
+        }
 
         buff.append(printWeightCalculation()).append("\n");
         printFailedEquipment(buff);
         return buff;
     }
 
+    @Override
     public String getName() {
         return "Tank: " + tank.getDisplayName();
     }

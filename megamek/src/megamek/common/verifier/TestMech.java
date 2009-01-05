@@ -20,7 +20,6 @@
 package megamek.common.verifier;
 
 import java.io.Serializable;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -45,31 +44,37 @@ public class TestMech extends TestEntity {
     private static Structure getStructure(Mech mech) {
         int type = mech.getStructureType();
         int flag = 0;
-        if (mech.isClan())
+        if (mech.isClan()) {
             flag |= Structure.CLAN_STRUCTURE;
+        }
         return new Structure(type, flag);
     }
 
     private static Armor getArmor(Mech mech) {
         int type = mech.getArmorType();
         int flag = 0;
-        if (mech.isClanArmor())
+        if (mech.isClanArmor()) {
             flag |= Armor.CLAN_ARMOR;
+        }
         return new Armor(type, flag);
     }
 
+    @Override
     public Entity getEntity() {
         return mech;
     }
 
+    @Override
     public boolean isTank() {
         return false;
     }
 
+    @Override
     public boolean isMech() {
         return true;
     }
 
+    @Override
     public float getWeightMisc() {
         return 0.0f;
     }
@@ -94,37 +99,45 @@ public class TestMech extends TestEntity {
 
     public float getWeightGyro() {
         float retVal = ceil(engine.getRating() / 100.0f, getWeightCeilingGyro());
-        if (mech.getGyroType() == Mech.GYRO_XL)
+        if (mech.getGyroType() == Mech.GYRO_XL) {
             retVal /= 2;
-        else if (mech.getGyroType() == Mech.GYRO_COMPACT)
+        } else if (mech.getGyroType() == Mech.GYRO_COMPACT) {
             retVal *= 1.5;
-        else if (mech.getGyroType() == Mech.GYRO_HEAVY_DUTY)
+        } else if (mech.getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             retVal *= 2;
+        }
         return retVal;
     }
 
+    @Override
     public float getWeightControls() {
         return getWeightCockpit() + getWeightGyro();
     }
 
+    @Override
     public int getCountHeatSinks() {
         return mech.heatSinks();
     }
 
+    @Override
     public int getWeightHeatSinks() {
-        return mech.heatSinks() - engine.getCountEngineHeatSinks();
+        return mech.heatSinks() - engine.getWeightFreeEngineHeatSinks();
     }
 
+    @Override
     public boolean hasDoubleHeatSinks() {
-        if (mech.heatSinks() != mech.getHeatCapacity())
+        if (mech.heatSinks() != mech.getHeatCapacity()) {
             return true;
+        }
         return false;
     }
 
+    @Override
     public String printWeightMisc() {
         return "";
     }
 
+    @Override
     public String printWeightControls() {
         StringBuffer retVal = new StringBuffer(StringUtil.makeLength(mech
                 .getCockpitTypeString()
@@ -147,11 +160,12 @@ public class TestMech extends TestEntity {
         int count = 0;
         for (int slots = 0; slots < entity.getNumberOfCriticals(location); slots++) {
             CriticalSlot slot = entity.getCritical(location, slots);
-            if (slot == null || slot.getType() == CriticalSlot.TYPE_SYSTEM) {
+            if ((slot == null) || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
                 continue;
             } else if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
-                if (slot.getIndex() == eNum)
+                if (slot.getIndex() == eNum) {
                     count++;
+                }
             } else {
                 // Ignore this?
             }
@@ -167,41 +181,46 @@ public class TestMech extends TestEntity {
         int criticals = 0;
         if (et instanceof MiscType) {
             criticals = calcMiscCrits((MiscType) et);
-        } else
+        } else {
             criticals = et.getCriticals(entity);
+        }
         int count = 0;
 
-        if (location == Entity.LOC_NONE)
+        if (location == Entity.LOC_NONE) {
             return true;
+        }
 
         if (et.isSpreadable() && !et.getName().equals("Targeting Computer")) {
             for (int locations = 0; locations < entity.locations(); locations++) {
                 count += countCriticalSlotsFromEquipInLocation(entity, eNum,
                         locations);
             }
-        } else
+        } else {
             count = countCriticalSlotsFromEquipInLocation(entity, eNum,
                     location);
+        }
 
-        if (et instanceof WeaponType && mounted.isSplit()) {
+        if ((et instanceof WeaponType) && mounted.isSplit()) {
             int secCound = 0;
             for (int locations = 0; locations < entity.locations(); locations++) {
-                if (locations == location)
+                if (locations == location) {
                     continue;
+                }
 
                 secCound = countCriticalSlotsFromEquipInLocation(entity, eNum,
                         locations);
-                if (secCound != 0
-                        && location == Mech.mostRestrictiveLoc(locations,
-                                location)) {
+                if ((secCound != 0)
+                        && (location == Mech.mostRestrictiveLoc(locations,
+                                location))) {
                     count += secCound;
                     break;
                 }
             }
         }
 
-        if (count == criticals)
+        if (count == criticals) {
             return true;
+        }
 
         allocation.addElement(mounted);
         allocation.addElement(new Integer(criticals));
@@ -215,7 +234,7 @@ public class TestMech extends TestEntity {
         int countInternalHeatSinks = 0;
         for (Mounted m : entity.getEquipment()) {
             if (m.getLocation() == Entity.LOC_NONE) {
-                if (m.getType() instanceof AmmoType && m.getShotsLeft() <= 1) {
+                if ((m.getType() instanceof AmmoType) && (m.getShotsLeft() <= 1)) {
                     continue;
                 }
                 if (!(m.getType() instanceof MiscType)) {
@@ -224,9 +243,9 @@ public class TestMech extends TestEntity {
                 }
                 MiscType mt = (MiscType) m.getType();
                 if (mt.hasFlag(MiscType.F_HEAT_SINK)
-                        || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK))
+                        || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                     countInternalHeatSinks++;
-                else {
+                } else {
                     unallocated.addElement(m);
                     continue;
                 }
@@ -235,9 +254,9 @@ public class TestMech extends TestEntity {
             }
         }
         if ((countInternalHeatSinks > engine.integralHeatSinkCapacity())
-                || (countInternalHeatSinks < engine.integralHeatSinkCapacity()
-                        && countInternalHeatSinks != ((Mech) entity)
-                                .heatSinks() && !entity.isOmni())) {
+                || ((countInternalHeatSinks < engine.integralHeatSinkCapacity())
+                        && (countInternalHeatSinks != ((Mech) entity)
+                                .heatSinks()) && !entity.isOmni())) {
             heatSinks.addElement(new Integer(countInternalHeatSinks));
         }
     }
@@ -257,25 +276,22 @@ public class TestMech extends TestEntity {
         boolean correct = true;
         if (!unallocated.isEmpty()) {
             buff.append("Unallocated Equipment:\n");
-            for (Enumeration<Mounted> e = unallocated.elements(); e
-                    .hasMoreElements();) {
-                Mounted m = e.nextElement();
-                buff.append(m.getType().getInternalName()).append("\n");
-            }
+            for (Mounted m : unallocated) {
+            buff.append(m.getType().getInternalName()).append("\n");
+         }
             correct = false;
         }
         if (!allocation.isEmpty()) {
             buff.append("Allocated Equipment:\n");
-            for (Enumeration<Serializable> e = allocation.elements(); e
-                    .hasMoreElements();) {
-                Mounted m = (Mounted) e.nextElement();
-                int needCrits = ((Integer) e.nextElement()).intValue();
-                int aktCrits = ((Integer) e.nextElement()).intValue();
-                buff.append(m.getType().getInternalName()).append(" has ")
-                        .append(needCrits).append(" Slots, but ").append(
-                                aktCrits).append(" Slots are allocated!")
-                        .append("\n");
-            }
+            for (Serializable serializable : allocation) {
+            Mounted m = (Mounted) serializable;
+            int needCrits = ((Integer) serializable).intValue();
+            int aktCrits = ((Integer) serializable).intValue();
+            buff.append(m.getType().getInternalName()).append(" has ")
+                .append(needCrits).append(" Slots, but ").append(
+                        aktCrits).append(" Slots are allocated!")
+                .append("\n");
+         }
             correct = false;
         }
         if (!heatSinks.isEmpty()) {
@@ -300,17 +316,21 @@ public class TestMech extends TestEntity {
                 CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT))
                 || (requiredSideCrits != mech.getNumberOfCriticals(
                         CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE,
-                        Mech.LOC_RT)))
+                        Mech.LOC_RT))) {
             engineCorrect = false;
+        }
         if (engine.getCenterTorsoCriticalSlots().length != mech
                 .getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.SYSTEM_ENGINE, Mech.LOC_CT))
+                        Mech.SYSTEM_ENGINE, Mech.LOC_CT)) {
             engineCorrect = false;
-        if (!engineCorrect)
+        }
+        if (!engineCorrect) {
             buff.append("Engine: Incorrect number of criticals allocated.\n");
+        }
 
-        if (!engineCorrect)
+        if (!engineCorrect) {
             return false;
+        }
 
         return true;
     }
@@ -344,27 +364,30 @@ public class TestMech extends TestEntity {
     public boolean correctMovement(StringBuffer buff) {
         // Mechanical Jump Boosts can be greater then Running as long as
         // the unit can handle the weight.
-        if (mech.getJumpMP(false) > mech.getOriginalRunMPwithoutMASC()
+        if ((mech.getJumpMP(false) > mech.getOriginalRunMPwithoutMASC())
                 && !mech.hasJumpBoosters()) {
             buff.append("Jump MP exceeds run MP\n");
             return false;
         }
-        if (mech.getJumpMP(false) > mech.getOriginalWalkMP() &&
-               mech.getJumpType() != Mech.JUMP_IMPROVED) {
+        if ((mech.getJumpMP(false) > mech.getOriginalWalkMP()) &&
+               (mech.getJumpType() != Mech.JUMP_IMPROVED)) {
           buff.append("Jump MP exceeds walk MP without IJJs");
           return false;
         }
         return true;
     }
 
+    @Override
     public boolean correctEntity(StringBuffer buff) {
         return correctEntity(buff, true);
     }
 
+    @Override
     public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo) {
         boolean correct = true;
-        if (skip())
+        if (skip()) {
             return true;
+        }
         if (!correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation());
@@ -374,36 +397,43 @@ public class TestMech extends TestEntity {
             buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
-        if (getCountHeatSinks() < engine.getCountEngineHeatSinks()) {
+        if (getCountHeatSinks() < engine.getMinimumEngineHeatSinks()) {
             buff.append("Heat Sinks:\n");
             buff.append(" Engine    "+engine.integralHeatSinkCapacity()+"\n");
             buff.append(" Total     "+getCountHeatSinks()+"\n");
-            buff.append(" Required  "+engine.getCountEngineHeatSinks()+"\n");
+            buff.append(" Required  "+engine.getMinimumEngineHeatSinks()+"\n");
             correct = false;
         }
-        if (showCorrectArmor() && !correctArmor(buff))
+        if (showCorrectArmor() && !correctArmor(buff)) {
             correct = false;
-        if (showCorrectCritical() && !correctCriticals(buff))
+        }
+        if (showCorrectCritical() && !correctCriticals(buff)) {
             correct = false;
-        if (showFailedEquip() && hasFailedEquipment(buff))
+        }
+        if (showFailedEquip() && hasFailedEquipment(buff)) {
             correct = false;
-        if (hasIllegalTechLevels(buff, ignoreAmmo))
+        }
+        if (hasIllegalTechLevels(buff, ignoreAmmo)) {
             correct = false;
-        if (hasIllegalEquipmentCombinations(buff))
+        }
+        if (hasIllegalEquipmentCombinations(buff)) {
             correct = false;
+        }
         correct = correct && correctMovement(buff);
         return correct;
     }
 
+    @Override
     public StringBuffer printEntity() {
         StringBuffer buff = new StringBuffer();
         buff.append("Mech: ").append(mech.getDisplayName()).append("\n");
-        buff.append("Found in: ").append(this.fileString).append("\n");
+        buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true))
+        if (correctWeight(buff, true, true)) {
             buff.append("Weight: ").append(getWeight()).append(" (").append(
                     calculateWeight()).append(")\n");
+        }
         buff.append(printWeightCalculation()).append("\n");
         buff.append(printArmorPlacement());
         correctArmor(buff);
@@ -415,6 +445,7 @@ public class TestMech extends TestEntity {
         return buff;
     }
 
+    @Override
     public String getName() {
         return "Mech: " + mech.getDisplayName();
     }

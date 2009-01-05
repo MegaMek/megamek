@@ -398,8 +398,8 @@ public class MiscType extends EquipmentType {
 
     public double getBV(Entity entity, Mounted mount) {
 
-        if (hasFlag(F_PPC_CAPACITOR) && mount != null
-                && mount.getLinked() != null) {
+        if (hasFlag(F_PPC_CAPACITOR) && (mount != null)
+                && (mount.getLinked() != null)) {
 
             if (mount.getLinked().getType() instanceof ISLightPPC) {
                 return 44;
@@ -522,7 +522,10 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createFerroFibrousPrototype());
         EquipmentType.addType(createLightFerroFibrous());
         EquipmentType.addType(createHeavyFerroFibrous());
-        EquipmentType.addType(createHardened());
+        EquipmentType.addType(createHardenedArmor());
+        EquipmentType.addType(createIndustrialArmor());
+        EquipmentType.addType(createHeavyIndustrialArmor());
+        EquipmentType.addType(createCommercialArmor());
         EquipmentType.addType(createEndoSteelPrototype());
         EquipmentType.addType(createReinforcedStructure());
         EquipmentType.addType(createCompositeStructure());
@@ -1798,13 +1801,58 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createHardened() {
+    public static MiscType createHardenedArmor() {
         MiscType misc = new MiscType();
 
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_HARDENED);
         misc.setInternalName(EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_HARDENED));
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createCommercialArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_COMMERCIAL);
+        misc.setInternalName(EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_COMMERCIAL));
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createIndustrialArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL);
+        misc.setInternalName(EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL));
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createHeavyIndustrialArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL);
+        misc.setInternalName(EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL));
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.hittable = false;
@@ -2186,7 +2234,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createIndustrialStructure() {
         MiscType misc = new MiscType();
 
@@ -2201,7 +2249,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.techLevel = TechConstants.T_TW_ALL;
 
-        return misc;        
+        return misc;
     }
 
     public static MiscType createCLLaserHeatSink() {
@@ -2606,7 +2654,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     * 
+     *
      * @return MiscType
      */
     public static MiscType createISClaw() {

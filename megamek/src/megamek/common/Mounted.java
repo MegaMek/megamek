@@ -118,18 +118,15 @@ public class Mounted implements Serializable, RoundUpdated {
     public Mounted(Entity entity, EquipmentType type) {
         this.entity = entity;
         this.type = type;
-        if (type == null) {
-            type = null;
-        }
         typeName = type.getInternalName();
 
         if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType) type).getShots();
         }
-        if (type instanceof MiscType && type.hasFlag(MiscType.F_MINE)) {
+        if ((type instanceof MiscType) && type.hasFlag(MiscType.F_MINE)) {
             mineType = MINE_CONVENTIONAL;
         }
-        if (type instanceof MiscType && ((MiscType) type).isShield() || type.hasFlag(MiscType.F_MODULAR_ARMOR) ) {
+        if (((type instanceof MiscType) && ((MiscType) type).isShield()) || type.hasFlag(MiscType.F_MODULAR_ARMOR) ) {
             MiscType shield = (MiscType) type;
             baseDamageAbsorptionRate = shield.baseDamageAbsorptionRate;
             baseDamageCapacity = shield.baseDamageCapacity;
@@ -185,7 +182,7 @@ public class Mounted implements Serializable, RoundUpdated {
      *         not available.
      */
     public EquipmentMode curMode() {
-        if (mode >= 0 && mode < type.getModesCount()) {
+        if ((mode >= 0) && (mode < type.getModesCount())) {
             return type.getMode(mode);
         }
         return EquipmentMode.getMode("None");
@@ -195,7 +192,7 @@ public class Mounted implements Serializable, RoundUpdated {
      * @return the pending mode of the equipment.
      */
     public EquipmentMode pendingMode() {
-        if (pendingMode < 0 || pendingMode >= type.getModesCount()) {
+        if ((pendingMode < 0) || (pendingMode >= type.getModesCount())) {
             return EquipmentMode.getMode("None");
         }
         return type.getMode(pendingMode);
@@ -260,7 +257,7 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         // all communicationsequipment mounteds need to have the same mode at
         // all times
-        if (getType() instanceof MiscType
+        if ((getType() instanceof MiscType)
                 && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
             for (Mounted m : entity.getMisc()) {
                 if (!m.equals(this)
@@ -285,7 +282,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void newRound(int roundNumber) {
         setUsedThisRound(false);
-        if ((type != null) && (type.hasModes() && pendingMode != -1)) {
+        if ((type != null) && (type.hasModes() && (pendingMode != -1))) {
             mode = pendingMode;
             pendingMode = -1;
         }
@@ -340,7 +337,7 @@ public class Mounted implements Serializable, RoundUpdated {
         if (rearMounted) {
             desc.append(" (R)");
         }
-        if (type instanceof AmmoType && location != Entity.LOC_NONE) {
+        if ((type instanceof AmmoType) && (location != Entity.LOC_NONE)) {
 
             desc.append(" (");
             desc.append(shotsLeft);
@@ -444,10 +441,10 @@ public class Mounted implements Serializable, RoundUpdated {
             nShots = 2;
         }
         // sets number of shots for AC rapid mode
-        else if ((wtype.getAmmoType() == AmmoType.T_AC || (wtype.getAmmoType() == AmmoType.T_LAC))
+        else if (((wtype.getAmmoType() == AmmoType.T_AC) || (wtype.getAmmoType() == AmmoType.T_LAC))
                 && wtype.hasModes() && curMode().equals("Rapid")) {
             nShots = 2;
-        } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY
+        } else if ((wtype.getAmmoType() == AmmoType.T_AC_ROTARY)
                 || wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
             if (curMode().equals("2-shot")) {
                 nShots = 2;
@@ -465,12 +462,12 @@ public class Mounted implements Serializable, RoundUpdated {
         else if (wtype.hasFlag(WeaponType.F_MGA)) {
             nShots = 0;
             for (Mounted m : entity.getWeaponList()) {
-                if (m.getLocation() == getLocation()
+                if ((m.getLocation() == getLocation())
                         && !m.isDestroyed()
                         && !m.isBreached()
                         && m.getType().hasFlag(WeaponType.F_MG)
-                        && ((WeaponType) m.getType()).getRackSize() == ((WeaponType) getType())
-                        .getRackSize()) {
+                        && (((WeaponType) m.getType()).getRackSize() == ((WeaponType) getType())
+                        .getRackSize())) {
                     nShots++;
                 }
             }
@@ -514,7 +511,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
         if (getType() instanceof WeaponType) {
             Mounted link = getLinked();
-            if (link == null || !(link.getType() instanceof AmmoType)) {
+            if ((link == null) || !(link.getType() instanceof AmmoType)) {
                 return false;
             }
 
@@ -564,7 +561,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
         if (getType() instanceof WeaponType) {
             Mounted link = getLinked();
-            if (link == null || !(link.getType() instanceof AmmoType)) {
+            if ((link == null) || !(link.getType() instanceof AmmoType)) {
                 return;
             }
             if (((AmmoType) link.getType()).hasFlag(AmmoType.F_HOTLOAD)) {
@@ -583,8 +580,8 @@ public class Mounted implements Serializable, RoundUpdated {
      * does this <code>Mounted</code> have a linked and charged PPC Capacitor?
      */
     public boolean hasChargedCapacitor() {
-        if (getLinkedBy() != null
-                && getLinkedBy().getType() instanceof MiscType
+        if ((getLinkedBy() != null)
+                && (getLinkedBy().getType() instanceof MiscType)
                 && !getLinkedBy().isDestroyed()) {
             MiscType cap = (MiscType) getLinkedBy().getType();
             if (cap.hasFlag(MiscType.F_PPC_CAPACITOR)
@@ -664,7 +661,7 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public boolean isSplitable() {
-        return (getType() instanceof WeaponType && getType().hasFlag(
+        return ((getType() instanceof WeaponType) && getType().hasFlag(
                 WeaponType.F_SPLITABLE));
     }
 
@@ -681,8 +678,8 @@ public class Mounted implements Serializable, RoundUpdated {
             // both Dead-Fire and Tandem-charge SRM's do 3 points of damage per
             // shot when critted
             // Dead-Fire LRM's do 2 points of damage per shot when critted.
-            if (atype.getMunitionType() == AmmoType.M_DEAD_FIRE
-                    || atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE) {
+            if ((atype.getMunitionType() == AmmoType.M_DEAD_FIRE)
+                    || (atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE)) {
                 damagePerShot++;
             }
 
@@ -692,10 +689,10 @@ public class Mounted implements Serializable, RoundUpdated {
         if (type instanceof WeaponType) {
             WeaponType wtype = (WeaponType) type;
             //TacOps Gauss Weapon rule p. 102
-            if ( type instanceof GaussWeapon && type.hasModes() && curMode().equals("Powered Down") ) {
+            if ( (type instanceof GaussWeapon) && type.hasModes() && curMode().equals("Powered Down") ) {
                 return 0;
             }
-            if (isHotLoaded() && getLinked().getShotsLeft() > 0) {
+            if (isHotLoaded() && (getLinked().getShotsLeft() > 0)) {
                 Mounted link = getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
                 int damagePerShot = atype.getDamagePerShot();
@@ -716,7 +713,7 @@ public class Mounted implements Serializable, RoundUpdated {
                 return 15;
             }
 
-            if ( wtype.getAmmoType() == AmmoType.T_MPOD && isFired() ){
+            if ( (wtype.getAmmoType() == AmmoType.T_MPOD) && isFired() ){
                 return 0;
             }
 
@@ -727,7 +724,7 @@ public class Mounted implements Serializable, RoundUpdated {
         if (type instanceof MiscType) {
             MiscType mtype = (MiscType) type;
             if (mtype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                if (curMode().equals("Charge") && linked != null
+                if (curMode().equals("Charge") && (linked != null)
                         && !linked.isFired()) {
                     return 15;
                 }
@@ -777,7 +774,7 @@ public class Mounted implements Serializable, RoundUpdated {
      */
     public boolean isAmmoUsable() {
         if (destroyed || m_bDumping || useless
-                || shotsLeft <= 0 || location == Entity.LOC_NONE) {
+                || (shotsLeft <= 0) || (location == Entity.LOC_NONE)) {
             return false;
         }
         return true;
@@ -846,7 +843,7 @@ public class Mounted implements Serializable, RoundUpdated {
         // Shields can only be used in arms so if you've got a shield in a
         // location
         // other then an arm your SOL --Torren.
-        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM) {
+        if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
             return 0;
         }
 
@@ -865,7 +862,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
             Mounted m = entity.getEquipment(cs.getIndex());
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && ((MiscType) type).isShield()) {
+            if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
                 if (cs.isDamaged()) {
                     base--;
                 }
@@ -905,7 +902,7 @@ public class Mounted implements Serializable, RoundUpdated {
         // Shields can only be used in arms so if you've got a shield in a
         // location
         // other then an arm your SOL --Torren.
-        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM) {
+        if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
             return 0;
         }
 
@@ -924,7 +921,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
             Mounted m = entity.getEquipment(cs.getIndex());
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && ((MiscType) type).isShield()) {
+            if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
                 if (cs.isDamaged()) {
                     base -= 5;
                 }

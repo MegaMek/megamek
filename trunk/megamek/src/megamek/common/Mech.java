@@ -2684,10 +2684,10 @@ public abstract class Mech extends Entity implements Serializable {
 		}
 
 		if (getJumpMP() > 0) {
-			mechHeatEfficiency -= getEngine().getJumpHeat(getJumpMP());
+			mechHeatEfficiency -= getJumpHeat(getJumpMP());
 			bvText.append(" - Jump Heat ");
 		} else {
-			mechHeatEfficiency -= getEngine().getRunHeat();
+			mechHeatEfficiency -= getRunHeat();
 			bvText.append(" - Run Heat ");
 		}
 
@@ -2702,9 +2702,9 @@ public abstract class Mech extends Entity implements Serializable {
 
 		bvText.append(" - ");
 		if (getJumpMP() > 0) {
-			bvText.append(getEngine().getJumpHeat(getJumpMP()));
+			bvText.append(getJumpHeat(getJumpMP()));
 		} else {
-			bvText.append(getEngine().getRunHeat());
+			bvText.append(getRunHeat());
 		}
 		bvText.append(endColumn);
 		bvText.append(startColumn);
@@ -4107,10 +4107,19 @@ public abstract class Mech extends Entity implements Serializable {
 	 * @return Returns the autoEject.
 	 */
 	public boolean isAutoEject() {
+	    boolean hasEjectSeat = true;
 		if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
-			return false;
+			hasEjectSeat = false;
 		}
-		return autoEject;
+		if (getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL) {
+		    // industrials can only eject when they have an ejection seat
+		    for (Mounted misc : miscList) {
+		        if (misc.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
+		            hasEjectSeat = true;
+		        }
+		    }
+		}
+		return autoEject && hasEjectSeat;
 	}
 
 	/**

@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -26,7 +26,7 @@ import java.util.Vector;
  */
 public class Tank extends Entity implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -857210851169206264L;
     protected boolean m_bHasNoTurret = false;
@@ -80,10 +80,12 @@ public class Tank extends Entity implements Serializable {
     public static String[] LOCATION_NAMES = { "Body", "Front", "Right",
             "Left", "Rear", "Turret" };
 
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
 
+    @Override
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
@@ -98,7 +100,7 @@ public class Tank extends Entity implements Serializable {
     private boolean driverHitPS = false;
     private boolean commanderHitPS = false;
     private boolean crewHitPS = false;
-    
+
     public boolean hasNoTurret() {
         return m_bHasNoTurret;
     }
@@ -111,6 +113,7 @@ public class Tank extends Entity implements Serializable {
      * Returns this entity's walking/cruising mp, factored for heat, extreme
      * temperatures, and gravity.
      */
+    @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
@@ -118,20 +121,21 @@ public class Tank extends Entity implements Serializable {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if(weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
-            } 
+            }
         }
-        
+
         if ( hasModularArmor() ) {
             j--;
         }
-        
-        if (gravity)
+
+        if (gravity) {
             j = applyGravityEffectsOnMP(j);
-        
-        
+        }
+
+
         return j;
-        
-        
+
+
     }
 
     public boolean isTurretLocked() {
@@ -145,23 +149,28 @@ public class Tank extends Entity implements Serializable {
     /**
      * Returns the number of locations in the entity
      */
+    @Override
     public int locations() {
         return m_bHasNoTurret ? 5 : 6;
         // return 6;
     }
 
+    @Override
     public boolean canChangeSecondaryFacing() {
         return !m_bHasNoTurret && !isTurretLocked();
     }
 
+    @Override
     public boolean isValidSecondaryFacing(int n) {
         return !isTurretLocked();
     }
 
+    @Override
     public int clipSecondaryFacing(int n) {
         return n;
     }
 
+    @Override
     public void setSecondaryFacing(int sec_facing) {
         if (!isTurretLocked()) {
             super.setSecondaryFacing(sec_facing);
@@ -171,6 +180,7 @@ public class Tank extends Entity implements Serializable {
         }
     }
 
+    @Override
     public void setFacing(int facing) {
         super.setFacing(facing);
         if (isTurretLocked()) {
@@ -248,6 +258,7 @@ public class Tank extends Entity implements Serializable {
         setOriginalWalkMP(0);
     }
 
+    @Override
     public boolean isImmobile() {
         if (game.getOptions().booleanOption("no_immobile_vehicles")) {
             return super.isImmobile();
@@ -258,36 +269,39 @@ public class Tank extends Entity implements Serializable {
     /**
      * Tanks have all sorts of prohibited terrain.
      */
+    @Override
     public boolean isHexProhibited(IHex hex) {
-        if (hex.containsTerrain(Terrains.IMPASSABLE))
+        if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
-        
-        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+        }
+
+        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
+        }
 
         switch (movementMode) {
             case IEntityMovementMode.TRACKED:
-                return hex.terrainLevel(Terrains.WOODS) > 1
-                        || (hex.terrainLevel(Terrains.WATER) > 0 && !hex
+                return (hex.terrainLevel(Terrains.WOODS) > 1)
+                        || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex
                                 .containsTerrain(Terrains.ICE))
                         || hex.containsTerrain(Terrains.JUNGLE)
-                        || hex.terrainLevel(Terrains.MAGMA) > 1
-                        || hex.terrainLevel(Terrains.ROUGH) > 1;
+                        || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                        || (hex.terrainLevel(Terrains.ROUGH) > 1);
             case IEntityMovementMode.WHEELED:
                 return hex.containsTerrain(Terrains.WOODS)
                         || hex.containsTerrain(Terrains.ROUGH)
-                        || (hex.terrainLevel(Terrains.WATER) > 0 && !hex
+                        || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex
                                 .containsTerrain(Terrains.ICE))
                         || hex.containsTerrain(Terrains.RUBBLE)
                         || hex.containsTerrain(Terrains.MAGMA)
                         || hex.containsTerrain(Terrains.JUNGLE)
-                        || hex.terrainLevel(Terrains.SNOW) > 1
-                        || hex.terrainLevel(Terrains.GEYSER) == 2;
+                        || (hex.terrainLevel(Terrains.SNOW) > 1)
+                        || (hex.terrainLevel(Terrains.GEYSER) == 2);
             case IEntityMovementMode.HOVER:
                 return hex.containsTerrain(Terrains.WOODS)
                         || hex.containsTerrain(Terrains.JUNGLE)
-                        || hex.terrainLevel(Terrains.MAGMA) > 1
-                        || hex.terrainLevel(Terrains.ROUGH) > 1;
+                        || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                        || (hex.terrainLevel(Terrains.ROUGH) > 1);
             case IEntityMovementMode.NAVAL:
             case IEntityMovementMode.HYDROFOIL:
                 return (hex.terrainLevel(Terrains.WATER) <= 0)
@@ -328,16 +342,19 @@ public class Tank extends Entity implements Serializable {
     }
 
     public void stunCrew() {
-        if (m_nStunnedTurns == 0)
+        if (m_nStunnedTurns == 0) {
             m_nStunnedTurns = 2;
-        else
+        } else {
             m_nStunnedTurns++;
+        }
     }
 
+    @Override
     public void applyDamage() {
         m_bImmobile |= m_bImmobileHit;
     }
 
+    @Override
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
 
@@ -355,6 +372,7 @@ public class Tank extends Entity implements Serializable {
     /**
      * Returns the name of the type of movement used. This is tank-specific.
      */
+    @Override
     public String getMovementString(int mtype) {
         switch (mtype) {
             case IEntityMovementType.MOVE_SKID:
@@ -375,6 +393,7 @@ public class Tank extends Entity implements Serializable {
     /**
      * Returns the name of the type of movement used. This is tank-specific.
      */
+    @Override
     public String getMovementAbbr(int mtype) {
         switch (mtype) {
             case IEntityMovementType.MOVE_SKID:
@@ -392,6 +411,7 @@ public class Tank extends Entity implements Serializable {
         }
     }
 
+    @Override
     public boolean hasRearArmor(int loc) {
         return false;
     }
@@ -399,11 +419,12 @@ public class Tank extends Entity implements Serializable {
     /**
      * Returns the Compute.ARC that the weapon fires into.
      */
+    @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-        
+
         // B-Pods need to be special-cased, the have 360 firing arc
-        if (mounted.getType() instanceof WeaponType &&
+        if ((mounted.getType() instanceof WeaponType) &&
                 mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
@@ -445,6 +466,7 @@ public class Tank extends Entity implements Serializable {
      * Returns true if this weapon fires into the secondary facing arc. If
      * false, assume it fires into the primary.
      */
+    @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
         if (getEquipment(weaponId).getLocation() == LOC_TURRET) {
             return true;
@@ -455,13 +477,14 @@ public class Tank extends Entity implements Serializable {
     /**
      * Rolls up a hit location
      */
+    @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation,
             int aimingMode) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRear = false;
         int motiveMod = 0;
-        if (side == ToHitData.SIDE_FRONT && isHullDown() && !m_bHasNoTurret) {
+        if ((side == ToHitData.SIDE_FRONT) && isHullDown() && !m_bHasNoTurret) {
             // on a hull down vee, all front hits go to turret if one exists.
             nArmorLoc = LOC_TURRET;
         }
@@ -477,7 +500,7 @@ public class Tank extends Entity implements Serializable {
             nArmorLoc = LOC_REAR;
             motiveMod = 1;
             bRear = true;
-        }        
+        }
         if(game.getOptions().booleanOption("tacops_vehicle_effective")) {
             motiveMod = 0;
         }
@@ -485,7 +508,7 @@ public class Tank extends Entity implements Serializable {
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE)
                 && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-            
+
             int roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
@@ -569,11 +592,13 @@ public class Tank extends Entity implements Serializable {
                 }
             }
         }
-        if (table == ToHitData.HIT_SWARM)
+        if (table == ToHitData.HIT_SWARM) {
             rv.setEffect(rv.getEffect() | HitData.EFFECT_CRITICAL);
+        }
         return rv;
     }
 
+    @Override
     public HitData rollHitLocation(int table, int side) {
         return rollHitLocation(table, side, LOC_NONE,
                 IAimingModes.AIM_MODE_NONE);
@@ -582,6 +607,7 @@ public class Tank extends Entity implements Serializable {
     /**
      * Gets the location that excess damage transfers to
      */
+    @Override
     public HitData getTransferLocation(HitData hit) {
         return new HitData(LOC_DESTROYED);
     }
@@ -589,6 +615,7 @@ public class Tank extends Entity implements Serializable {
     /**
      * Gets the location that is destroyed recursively
      */
+    @Override
     public int getDependentLocation(int loc) {
         return LOC_NONE;
     }
@@ -596,6 +623,7 @@ public class Tank extends Entity implements Serializable {
     /**
      * Calculates the battle value of this mech
      */
+    @Override
     public int calculateBattleValue() {
         return calculateBattleValue(false, false);
     }
@@ -603,13 +631,14 @@ public class Tank extends Entity implements Serializable {
     /**
      * Calculates the battle value of this tank
      */
+    @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
-        
+
         int modularArmor = 0;
         for (Mounted mounted : getEquipment()) {
-            if (mounted.getType() instanceof MiscType && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
+            if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
                 modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
             }
         }
@@ -626,13 +655,14 @@ public class Tank extends Entity implements Serializable {
             EquipmentType etype = mounted.getType();
 
             // don't count destroyed equipment
-            if (mounted.isDestroyed())
+            if (mounted.isDestroyed()) {
                 continue;
+            }
 
-            if ((etype instanceof WeaponType && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD)))
-                    || (etype instanceof AmmoType && ((AmmoType) etype)
-                            .getAmmoType() == AmmoType.T_AMS)
-                    || (etype instanceof MiscType && (etype
+            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD)))
+                    || ((etype instanceof AmmoType) && (((AmmoType) etype)
+                            .getAmmoType() == AmmoType.T_AMS))
+                    || ((etype instanceof MiscType) && (etype
                             .hasFlag(MiscType.F_ECM)
                             || etype.hasFlag(MiscType.F_AP_POD)
                             // not yet coded: ||
@@ -688,8 +718,9 @@ public class Tank extends Entity implements Serializable {
             double dBV = wtype.getBV(this);
 
             // don't count destroyed equipment
-            if (mounted.isDestroyed())
+            if (mounted.isDestroyed()) {
                 continue;
+            }
 
             // don't count AMS, it's defensive
             if (wtype.hasFlag(WeaponType.F_AMS)) {
@@ -699,7 +730,7 @@ public class Tank extends Entity implements Serializable {
             // artemis bumps up the value
             if (mounted.getLinkedBy() != null) {
                 Mounted mLinker = mounted.getLinkedBy();
-                if (mLinker.getType() instanceof MiscType
+                if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                 }
@@ -707,7 +738,7 @@ public class Tank extends Entity implements Serializable {
 
             if (mounted.getLinkedBy() != null) {
                 Mounted mLinker = mounted.getLinkedBy();
-                if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
                 }
             }
@@ -727,8 +758,8 @@ public class Tank extends Entity implements Serializable {
             // to compare with ammo BV later for excessive ammo BV rule
             if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA))
                     || wtype.hasFlag(WeaponType.F_ONESHOT)
-                    || wtype.hasFlag(WeaponType.F_INFANTRY) || wtype
-                    .getAmmoType() == AmmoType.T_NA)) {
+                    || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype
+                    .getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
@@ -757,8 +788,9 @@ public class Tank extends Entity implements Serializable {
             AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0)
+            if (mounted.getShotsLeft() == 0) {
                 continue;
+            }
 
             // don't count AMS, it's defensive
             if (atype.getAmmoType() == AmmoType.T_AMS) {
@@ -771,14 +803,14 @@ public class Tank extends Entity implements Serializable {
                 continue;
             }
             // semiguided or homing ammo might count double
-            if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED
-                    || atype.getMunitionType() == AmmoType.M_HOMING) {
+            if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
+                    || (atype.getMunitionType() == AmmoType.M_HOMING)) {
                 Player tmpP = getOwner();
                 // Okay, actually check for friendly TAG.
                 if (tmpP != null) {
-                    if (tmpP.hasTAG())
+                    if (tmpP.hasTAG()) {
                         tagBV += atype.getBV(this);
-                    else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
+                    } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (game != null)) {
                         for (Enumeration<Team> e = game.getTeams(); e
                                 .hasMoreElements();) {
                             Team m = e.nextElement();
@@ -796,8 +828,9 @@ public class Tank extends Entity implements Serializable {
                 }
             }
             String key = atype.getAmmoType() + ":" + atype.getRackSize();
-            if (!keys.contains(key))
+            if (!keys.contains(key)) {
                 keys.add(key);
+            }
             if (!ammo.containsKey(key)) {
                 ammo.put(key, atype.getBV(this));
             } else {
@@ -811,12 +844,14 @@ public class Tank extends Entity implements Serializable {
         for (String key : keys) {
             // They dont exist in either hash then dont bother adding nulls.
             if (!ammo.containsKey(key)
-                    || !weaponsForExcessiveAmmo.containsKey(key))
+                    || !weaponsForExcessiveAmmo.containsKey(key)) {
                 continue;
-            if (ammo.get(key) > weaponsForExcessiveAmmo.get(key))
+            }
+            if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
                 ammoBV += weaponsForExcessiveAmmo.get(key);
-            else
+            } else {
                 ammoBV += ammo.get(key);
+            }
         }
         weaponBV += ammoBV;
 
@@ -827,16 +862,18 @@ public class Tank extends Entity implements Serializable {
             MiscType mtype = (MiscType) mounted.getType();
 
             // don't count destroyed equipment
-            if (mounted.isDestroyed())
+            if (mounted.isDestroyed()) {
                 continue;
+            }
 
             if (mtype.hasFlag(MiscType.F_ECM)
                     || mtype.hasFlag(MiscType.F_AP_POD)
                     // not yet coded: || mtype.hasFlag(MiscType.F_BRIDGE_LAYING)
                     || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) // targ counted with
-                                                            // weapons
+                    || mtype.hasFlag(MiscType.F_TARGCOMP)) {
+                // weapons
                 continue;
+            }
             oEquipmentBV += mtype.getBV(this);
         }
 
@@ -859,9 +896,9 @@ public class Tank extends Entity implements Serializable {
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3
         // times
-        if (((hasC3MM() && calculateFreeC3MNodes() < 2)
-                || (hasC3M() && calculateFreeC3Nodes() < 3)
-                || (hasC3S() && C3Master > NONE) || (hasC3i() && calculateFreeC3Nodes() < 5))
+        if (((hasC3MM() && (calculateFreeC3MNodes() < 2))
+                || (hasC3M() && (calculateFreeC3Nodes() < 3))
+                || (hasC3S() && (C3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5)))
                 && !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
             totalForceBV += this.calculateBattleValue(true, true);
@@ -884,32 +921,36 @@ public class Tank extends Entity implements Serializable {
         int retVal = (int) Math.round((finalBV) * pilotFactor);
 
         // don't factor pilot in if we are just calculating BV for C3 extra BV
-        if (ignoreC3)
+        if (ignoreC3) {
             return finalBV;
+        }
         return retVal;
     }
 
+    @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         if (movementDamage > 0) {
             prd.addModifier(movementDamage, "Steering Damage");
         }
-        if (commanderHit)
+        if (commanderHit) {
             prd.addModifier(1, "commander injured");
-        if (driverHit)
+        }
+        if (driverHit) {
             prd.addModifier(2, "driver injured");
+        }
 
         //are we wheeled and in light snow?
         IHex hex = game.getBoard().getHex(getPosition());
-        if(null != hex && getMovementMode() == IEntityMovementMode.WHEELED && hex.terrainLevel(Terrains.SNOW) == 1) {
+        if((null != hex) && (getMovementMode() == IEntityMovementMode.WHEELED) && (hex.terrainLevel(Terrains.SNOW) == 1)) {
             prd.addModifier(1, "thin snow");
         }
-        
+
         // VDNI bonus?
         if (getCrew().getOptions().booleanOption("vdni")
                 && !getCrew().getOptions().booleanOption("bvdni")) {
             prd.addModifier(-1, "VDNI");
         }
-        
+
         if ( hasModularArmor() ) {
             prd.addModifier(1,"Modular Armor");
         }
@@ -917,6 +958,7 @@ public class Tank extends Entity implements Serializable {
         return prd;
     }
 
+    @Override
     public Vector<Report> victoryReport() {
         Vector<Report> vDesc = new Vector<Report>();
 
@@ -952,6 +994,7 @@ public class Tank extends Entity implements Serializable {
         return vDesc;
     }
 
+    @Override
     public int[] getNoOfSlots() {
         return NUM_OF_SLOTS;
     }
@@ -959,42 +1002,49 @@ public class Tank extends Entity implements Serializable {
     /**
      * Tanks don't have MASC
      */
+    @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
         return getRunMP(gravity, ignoreheat);
     }
 
+    @Override
     public int getHeatCapacity() {
         return 999;
     }
 
+    @Override
     public int getHeatCapacityWithWater() {
         return getHeatCapacity();
     }
 
+    @Override
     public int getEngineCritHeat() {
         return 0;
     }
 
+    @Override
     public void autoSetInternal() {
         int nInternal = (int) Math.ceil(weight / 10.0);
 
         // No internals in the body location.
-        this.initializeInternal(IArmorState.ARMOR_NA, LOC_BODY);
+        initializeInternal(IArmorState.ARMOR_NA, LOC_BODY);
 
         for (int x = 1; x < locations(); x++) {
             initializeInternal(nInternal, x);
         }
     }
 
+    @Override
     public int getMaxElevationChange() {
         return 1;
     }
-    
+
+    @Override
     public int getMaxElevationDown() {
         // WIGEs can go down as far as they want
         // 50 is a pretty arbitrary max amount, but that's also the
         // highest elevation for VTOLs, so I'll just use that
-        if (getElevation() > 0 && this.getMovementMode() == IEntityMovementMode.WIGE) {
+        if ((getElevation() > 0) && (getMovementMode() == IEntityMovementMode.WIGE)) {
             return 50;
         }
         return super.getMaxElevationDown();
@@ -1002,18 +1052,19 @@ public class Tank extends Entity implements Serializable {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     * 
+     *
      * @return A <code>boolean</code> that is <code>true</code> if the unit
      *         can be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
      * @see Entity#isSalvage()
      */
+    @Override
     public boolean isRepairable() {
         // A tank is repairable if it is salvageable,
         // and none of its body internals are gone.
-        boolean retval = this.isSalvage();
+        boolean retval = isSalvage();
         int loc = Tank.LOC_FRONT;
-        while (retval && loc < Tank.LOC_TURRET) {
+        while (retval && (loc < Tank.LOC_TURRET)) {
             int loc_is = this.getInternal(loc);
             loc++;
             retval = (loc_is != IArmorState.ARMOR_DOOMED)
@@ -1025,35 +1076,42 @@ public class Tank extends Entity implements Serializable {
     /**
      * Restores the entity after serialization
      */
+    @Override
     public void restore() {
         super.restore();
     }
 
+    @Override
     public boolean canCharge() {
         // Tanks can charge, except Hovers when the option is set, and WIGEs
         return super.canCharge()
-                && !(game.getOptions().booleanOption("no_hover_charge") && IEntityMovementMode.HOVER == getMovementMode())
+                && !(game.getOptions().booleanOption("no_hover_charge") && (IEntityMovementMode.HOVER == getMovementMode()))
                 && !(IEntityMovementMode.WIGE == getMovementMode())
                 && !(getStunnedTurns() > 0);
     }
 
+    @Override
     public boolean canDFA() {
         // Tanks can't DFA
         return false;
     }
 
+    @Override
     public int getArmorType() {
         return armorType;
     }
 
+    @Override
     public void setArmorType(int type) {
         armorType = type;
     }
 
+    @Override
     public int getStructureType() {
         return structureType;
     }
 
+    @Override
     public void setStructureType(int type) {
         structureType = type;
     }
@@ -1064,34 +1122,47 @@ public class Tank extends Entity implements Serializable {
     public int getSuspensionFactor() {
         switch (movementMode) {
             case IEntityMovementMode.HOVER:
-                if (weight <= 10)
+                if (weight <= 10) {
                     return 40;
-                if (weight <= 20)
+                }
+                if (weight <= 20) {
                     return 85;
-                if (weight <= 30)
+                }
+                if (weight <= 30) {
                     return 130;
-                if (weight <= 40)
+                }
+                if (weight <= 40) {
                     return 175;
+                }
                 return 235;
             case IEntityMovementMode.HYDROFOIL:
-                if (weight <= 10)
+                if (weight <= 10) {
                     return 60;
-                if (weight <= 20)
+                }
+                if (weight <= 20) {
                     return 105;
-                if (weight <= 30)
+                }
+                if (weight <= 30) {
                     return 150;
-                if (weight <= 40)
+                }
+                if (weight <= 40) {
                     return 195;
-                if (weight <= 50)
+                }
+                if (weight <= 50) {
                     return 255;
-                if (weight <= 60)
+                }
+                if (weight <= 60) {
                     return 300;
-                if (weight <= 70)
+                }
+                if (weight <= 70) {
                     return 345;
-                if (weight <= 80)
+                }
+                if (weight <= 80) {
                     return 390;
-                if (weight <= 90)
+                }
+                if (weight <= 90) {
                     return 435;
+                }
                 return 480;
             case IEntityMovementMode.NAVAL:
             case IEntityMovementMode.SUBMARINE:
@@ -1101,24 +1172,31 @@ public class Tank extends Entity implements Serializable {
             case IEntityMovementMode.WHEELED:
                 return 20;
             case IEntityMovementMode.VTOL:
-                if (weight <= 10)
+                if (weight <= 10) {
                     return 50;
-                if (weight <= 20)
+                }
+                if (weight <= 20) {
                     return 95;
+                }
                 return 140;
             case IEntityMovementMode.WIGE:
-                if (weight <= 15)
+                if (weight <= 15) {
                     return 45;
-                if (weight <= 30)
+                }
+                if (weight <= 30) {
                     return 80;
-                if (weight <= 45)
+                }
+                if (weight <= 45) {
                     return 115;
-                if (weight <= 80)
+                }
+                if (weight <= 80) {
                     return 140;
+                }
         }
         return 0;
     }
 
+    @Override
     public double getCost() {
         double cost = 0;
         Engine engine = getEngine();
@@ -1132,7 +1210,7 @@ public class Tank extends Entity implements Serializable {
                                                                         // half-ton
         cost += 10000 * controlWeight;
         cost += weight / 10.0 * 10000; // IS has no variations, no Endo etc.
-        double freeHeatSinks = engine.getCountEngineHeatSinks();
+        double freeHeatSinks = engine.getWeightFreeEngineHeatSinks();
         int sinks = 0;
         double turretWeight = 0;
         double paWeight = 0;
@@ -1142,7 +1220,7 @@ public class Tank extends Entity implements Serializable {
                 sinks += wt.getHeat();
                 paWeight += wt.getTonnage(this) / 10.0;
             }
-            if (!hasNoTurret() && m.getLocation() == Tank.LOC_TURRET) {
+            if (!hasNoTurret() && (m.getLocation() == Tank.LOC_TURRET)) {
                 turretWeight += wt.getTonnage(this) / 10.0;
             }
         }
@@ -1197,28 +1275,33 @@ public class Tank extends Entity implements Serializable {
         return Math.round(cost * multiplier);
     }
 
+    @Override
     public boolean doomedInVacuum() {
         for (Mounted m : getEquipment()) {
-            if (m.getType() instanceof MiscType
+            if ((m.getType() instanceof MiscType)
                     && m.getType().hasFlag(MiscType.F_VACUUM_PROTECTION)) {
                 return false;
             }
         }
         return true;
     }
-    
+
+    @Override
     public boolean doomedOnGround() {
         return false;
     }
-    
+
+    @Override
     public boolean doomedInAtmosphere() {
         return true;
     }
-    
+
+    @Override
     public boolean doomedInSpace() {
         return true;
     }
-    
+
+    @Override
     public boolean canGoHullDown() {
         return game.getOptions().booleanOption("tacops_hull_down");
     }
@@ -1282,8 +1365,8 @@ public class Tank extends Entity implements Serializable {
             }
         }
     }
-                    
-     
+
+
 
     public void setEngine(Engine e) {
         engine = e;
@@ -1294,13 +1377,15 @@ public class Tank extends Entity implements Serializable {
 
     protected int calculateWalk() {
         return (getEngine().getRating() + getSuspensionFactor())
-                / (int) this.weight;
+                / (int) weight;
     }
 
+    @Override
     public boolean isNuclearHardened() {
         return true;
     }
 
+    @Override
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
             throws LocationFullException {
         super.addEquipment(mounted, loc, rearMounted);
@@ -1312,19 +1397,22 @@ public class Tank extends Entity implements Serializable {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     * 
+     *
      * @param roll the final dice roll
      * @param loc the hit location
      * @return a critical type
      */
     public int getCriticalEffect(int roll, int loc) {
-        if (roll > 12)
+        if (roll > 12) {
             roll = 12;
-        if (roll < 6)
+        }
+        if (roll < 6) {
             return CRIT_NONE;
+        }
         for (int i = 0; i < 2; i++) {
-            if (i > 0)
+            if (i > 0) {
                 roll = 6;
+            }
             if (loc == LOC_FRONT) {
                 switch (roll) {
                     case 6:
@@ -1340,7 +1428,7 @@ public class Tank extends Entity implements Serializable {
                         }
                     case 7:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isJammed() && !m.isHit()) {
                                 return CRIT_WEAPON_JAM;
                             }
@@ -1354,8 +1442,9 @@ public class Tank extends Entity implements Serializable {
                             }
                         }
                     case 9:
-                        if (getSensorHits() < 4)
+                        if (getSensorHits() < 4) {
                             return CRIT_SENSOR;
+                        }
                     case 10:
                         if (!crew.isDead() && !crew.isDoomed()) {
                             if (!isCommanderHit()) {
@@ -1370,27 +1459,29 @@ public class Tank extends Entity implements Serializable {
                         }
                     case 11:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
                     case 12:
-                        if (!crew.isDead() && !crew.isDoomed())
+                        if (!crew.isDead() && !crew.isDoomed()) {
                             return CRIT_CREW_KILLED;
+                        }
                 }
             } else if (loc == LOC_REAR) {
                 switch (roll) {
                     case 6:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isJammed() && !m.isHit()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
                     case 7:
-                        if (getLoadedUnits().size() > 0)
+                        if (getLoadedUnits().size() > 0) {
                             return CRIT_CARGO;
+                        }
                     case 8:
                         if (!isStabiliserHit(loc)) {
                             for (Mounted m : getWeaponList()) {
@@ -1401,14 +1492,15 @@ public class Tank extends Entity implements Serializable {
                         }
                     case 9:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
                     case 10:
-                        if (!engineHit)
+                        if (!engineHit) {
                             return CRIT_ENGINE;
+                        }
                     case 11:
                         for (Mounted m : getAmmo()) {
                             if (!m.isDestroyed() && !m.isHit()) {
@@ -1416,10 +1508,11 @@ public class Tank extends Entity implements Serializable {
                             }
                         }
                     case 12:
-                        if (getEngine().isFusion() && !engineHit)
+                        if (getEngine().isFusion() && !engineHit) {
                             return CRIT_ENGINE;
-                        else if (!getEngine().isFusion())
+                        } else if (!getEngine().isFusion()) {
                             return CRIT_FUEL_TANK;
+                        }
                 }
             } else if (loc == LOC_TURRET) {
                 switch (roll) {
@@ -1432,21 +1525,23 @@ public class Tank extends Entity implements Serializable {
                             }
                         }
                     case 7:
-                        if (!isTurretLocked())
+                        if (!isTurretLocked()) {
                             return CRIT_TURRET_JAM;
+                        }
                     case 8:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isJammed()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
                     case 9:
-                        if (!isTurretLocked())
+                        if (!isTurretLocked()) {
                             return CRIT_TURRET_LOCK;
+                        }
                     case 10:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
@@ -1463,19 +1558,21 @@ public class Tank extends Entity implements Serializable {
             } else {
                 switch (roll) {
                     case 6:
-                        if (getLoadedUnits().size() > 0)
+                        if (getLoadedUnits().size() > 0) {
                             return CRIT_CARGO;
+                        }
                     case 7:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isJammed() && !m.isHit()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
                     case 8:
                         if (!crew.isDead() && !crew.isDoomed()) {
-                            if (isCommanderHit() && isDriverHit())
+                            if (isCommanderHit() && isDriverHit()) {
                                 return CRIT_CREW_KILLED;
+                            }
                             return CRIT_CREW_STUNNED;
                         }
                     case 9:
@@ -1488,19 +1585,21 @@ public class Tank extends Entity implements Serializable {
                         }
                     case 10:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
                     case 11:
-                        if (!engineHit)
+                        if (!engineHit) {
                             return CRIT_ENGINE;
+                        }
                     case 12:
-                        if (getEngine().isFusion() && !engineHit)
+                        if (getEngine().isFusion() && !engineHit) {
                             return CRIT_ENGINE;
-                        else if (!getEngine().isFusion())
+                        } else if (!getEngine().isFusion()) {
                             return CRIT_FUEL_TANK;
+                        }
                 }
             }
         }
@@ -1512,6 +1611,7 @@ public class Tank extends Entity implements Serializable {
      * note, this method should only be called during this Tank's construction.
      * <p/> Overrides <code>Entity#setOmni(boolean)</code>
      */
+    @Override
     public void setOmni(boolean omni) {
 
         // Perform the superclass' action.
@@ -1519,15 +1619,16 @@ public class Tank extends Entity implements Serializable {
 
         // Add BattleArmorHandles to OmniMechs.
         if (omni && !hasBattleArmorHandles()) {
-            this.addTransporter(new BattleArmorHandlesTank());
+            addTransporter(new BattleArmorHandlesTank());
         }
     }
 
     /**
      * Tanks can't spot when stunned.
      */
+    @Override
     public boolean canSpot() {
-        return super.canSpot() && this.getStunnedTurns() == 0;
+        return super.canSpot() && (getStunnedTurns() == 0);
     }
 
     public void addJammedWeapon(Mounted weapon) {
@@ -1537,62 +1638,69 @@ public class Tank extends Entity implements Serializable {
     public ArrayList<Mounted> getJammedWeapons() {
         return jammedWeapons;
     }
-    
+
     /**
      * apply the effects of an "engine hit" crit
      */
     public void engineHit() {
-        this.engineHit = true;
-        this.immobilize();
-        this.lockTurret();
-        for (Mounted m : this.getWeaponList()) {
+        engineHit = true;
+        immobilize();
+        lockTurret();
+        for (Mounted m : getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
-            if (wtype.hasFlag(WeaponType.F_ENERGY))
+            if (wtype.hasFlag(WeaponType.F_ENERGY)) {
                 m.setBreached(true); // not destroyed, just
                                         // unpowered
+            }
         }
     }
 
+    @Override
     public boolean hasModularArmor() {
-        
+
         for (Mounted mount : this.getEquipment()) {
             if (!mount.isDestroyed()
-                    && mount.getType() instanceof MiscType 
-                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR))
+                    && (mount.getType() instanceof MiscType)
+                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
                 return true;
+            }
         }
 
         return false;
-        
+
     }
 
+    @Override
     public boolean hasModularArmor(int loc) {
-        
+
         for (Mounted mount : this.getEquipment()) {
-            if (mount.getLocation() == loc 
-                    && mount.getType() instanceof MiscType 
-                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR))
+            if ((mount.getLocation() == loc)
+                    && (mount.getType() instanceof MiscType)
+                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
                 return true;
+            }
         }
 
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
+    @Override
     public int getTotalCommGearTons() {
         return 1 + getExtraCommGearTons();
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getIniBonus()
      */
+    @Override
     public int getIniBonus() {
         int bonus = super.getIniBonus();
-        if ((stabiliserHits > 0 && mpUsedLastRound > 0)
+        if (((stabiliserHits > 0) && (mpUsedLastRound > 0))
                 || commanderHit) {
             return 0;
         }

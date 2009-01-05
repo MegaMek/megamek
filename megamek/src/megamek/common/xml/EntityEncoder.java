@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -46,14 +46,14 @@ import megamek.common.TechConstants;
  * Objects of this class can encode a <code>Entity</code> object as XML into
  * an output writer and decode one from a parsed XML node. It is used when
  * saving games into a version- neutral format.
- * 
+ *
  * @author James Damour <suvarov454@users.sourceforge.net>
  */
 public class EntityEncoder {
 
     /**
      * Encode a <code>Entity</code> object to an output writer.
-     * 
+     *
      * @param entity - the <code>Entity</code> to be encoded. This value must
      *            not be <code>null</code>.
      * @param out - the <code>Writer</code> that will receive the XML. This
@@ -78,7 +78,7 @@ public class EntityEncoder {
         // Make sure any transported entities are written first.
         iter = entity.getLoadedUnits().elements();
         while (iter.hasMoreElements()) {
-            EntityEncoder.encode((Entity) iter.nextElement(), out);
+            EntityEncoder.encode(iter.nextElement(), out);
         }
 
         // Start writing this entity to the file.
@@ -111,7 +111,7 @@ public class EntityEncoder {
         out.write(String.valueOf(crew.getGunnery()));
         out.write("\" piloting=\"");
         out.write(String.valueOf(crew.getPiloting()));
-        if (crew.isDead() || crew.getHits() > 5) {
+        if (crew.isDead() || (crew.getHits() > 5)) {
             out.write("\" hits=\"Dead");
         } else if (crew.getHits() > 0) {
             out.write("\" hits=\"");
@@ -208,8 +208,9 @@ public class EntityEncoder {
 
         // Now save the entity's coordinates.
         coords = entity.getPosition();
-        if (null != coords)
+        if (null != coords) {
             CoordsEncoder.encode(coords, out);
+        }
 
         // Is the entity performing a displacement attack?
         if (entity.hasDisplacementAttack()) {
@@ -218,8 +219,9 @@ public class EntityEncoder {
 
         // Add the narc pods attached to this entity (if any are needed).
         substr = getNarcString(entity);
-        if (null != substr)
+        if (null != substr) {
             out.write(substr);
+        }
 
         // Encode the infernos burning on this entity.
         if (entity.infernos.isStillBurning()) {
@@ -245,7 +247,7 @@ public class EntityEncoder {
 
         // Do we have any transporters?
         String transporters = Entity.encodeTransporters(entity);
-        if (null != transporters && 0 == transporters.length()) {
+        if ((null != transporters) && (0 == transporters.length())) {
             out.write("<transporters value=\"");
             out.write(transporters);
             out.write("\" />");
@@ -256,7 +258,7 @@ public class EntityEncoder {
         if (iter.hasMoreElements()) {
             out.write("<loadedUnits>");
             while (iter.hasMoreElements()) {
-                Entity loaded = (Entity) iter.nextElement();
+                Entity loaded = iter.nextElement();
                 out.write("<entityRef gameId=\"");
                 out.write(String.valueOf(loaded.getId()));
                 out.write("\" />");
@@ -303,8 +305,9 @@ public class EntityEncoder {
             int index = 0;
             while (iter2.hasNext()) {
                 substr = EntityEncoder.formatEquipment(index,iter2.next(), entity);
-                if (null != substr)
+                if (null != substr) {
                     out.write(substr);
+                }
                 index++;
             }
             out.write("</entityEquipment>");
@@ -312,8 +315,9 @@ public class EntityEncoder {
 
         // Add the locations of this entity (if any are needed).
         substr = getLocString(entity);
-        if (null != substr)
+        if (null != substr) {
             out.write(substr);
+        }
 
         // Finish the XML stream for this entity.
         out.write("</entity>");
@@ -321,7 +325,7 @@ public class EntityEncoder {
 
     /**
      * Produce a string describing all NARC pods on the entity.
-     * 
+     *
      * @param entity - the <code>Entity</code> being examined. This value may
      *            be <code>null</code>.
      * @return a <code>String</code> describing the equipment. This value may
@@ -329,8 +333,9 @@ public class EntityEncoder {
      */
     private static String getNarcString(Entity entity) {
         // null in, null out
-        if (null == entity)
+        if (null == entity) {
             return null;
+        }
 
         // Show all teams that have NARCed the entity.
         StringBuffer output = new StringBuffer();
@@ -352,8 +357,9 @@ public class EntityEncoder {
         }
 
         // If the entity wasn't narced, return a null.
-        if (!narced)
+        if (!narced) {
             return null;
+        }
 
         // Finish off this section, and return the string.
         output.append("</narcs>");
@@ -362,7 +368,7 @@ public class EntityEncoder {
 
     /**
      * Produce a string describing a piece of equipment.
-     * 
+     *
      * @param index - the <code>int</code> index of this equipment on the
      *            given entity.
      * @param mount - the <code>Mounted</code> object of the equipment. This
@@ -376,8 +382,9 @@ public class EntityEncoder {
         StringBuffer output = new StringBuffer();
 
         // null in, null out.
-        if (null == mount)
+        if (null == mount) {
             return null;
+        }
 
         // Format this piece of equipment.
         output.append("<equipment index=\"");
@@ -434,7 +441,7 @@ public class EntityEncoder {
 
     /**
      * Produce a string describing the equipment in a critical slot.
-     * 
+     *
      * @param slot - the <code>CriticalSlot</code> being encoded.
      * @param mount - the <code>Mounted</code> object of the equipment. This
      *            value should be <code>null</code> for a slot with system
@@ -479,7 +486,7 @@ public class EntityEncoder {
     /**
      * Helper function that generates a string identifying the state of the
      * locations for an entity.
-     * 
+     *
      * @param entity - the <code>Entity</code> whose location state is needed
      */
     private static String getLocString(Entity entity) {
@@ -522,8 +529,8 @@ public class EntityEncoder {
 
                     // Nope. Record missing actuators on Biped Mechs.
                     if (isMech && !entity.entityIsQuad()
-                            && (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM)
-                            && (loop == 2 || loop == 3)) {
+                            && ((loc == Mech.LOC_RARM) || (loc == Mech.LOC_LARM))
+                            && ((loop == 2) || (loop == 3))) {
                         output.append("<slot index=\"");
                         output.append(String.valueOf(loop + 1));
                         output.append("\" type=\"Empty\"/>");
@@ -546,7 +553,7 @@ public class EntityEncoder {
 
             // Tanks don't have slots, and Protomechs only have
             // system slots, so we have to handle their ammo specially.
-            if (entity instanceof Tank || entity instanceof Protomech) {
+            if ((entity instanceof Tank) || (entity instanceof Protomech)) {
                 for (Mounted mount : entity.getAmmo()) {
 
                     // Is this ammo in the current location?
@@ -575,7 +582,7 @@ public class EntityEncoder {
     /**
      * Helper function to decode the pilot (crew) of an <code>Entity</code>
      * object from the passed node.
-     * 
+     *
      * @param node - the <code>ParsedXML</code> node for this object. This
      *            value must not be <code>null</code>.
      * @param entity - the <code>Entity</code> the decoded object belongs to.
@@ -590,7 +597,7 @@ public class EntityEncoder {
     /**
      * Helper function to decode the equipment of an <code>Entity</code>
      * object from the passed node.
-     * 
+     *
      * @param node - the <code>ParsedXML</code> node for this object. This
      *            value must not be <code>null</code>.
      * @param entity - the <code>Entity</code> the decoded object belongs to.
@@ -605,7 +612,7 @@ public class EntityEncoder {
     /**
      * Helper function to decode a location of an <code>Entity</code> object
      * from the passed node.
-     * 
+     *
      * @param node - the <code>ParsedXML</code> node for this object. This
      *            value must not be <code>null</code>.
      * @param entity - the <code>Entity</code> the decoded object belongs to.
@@ -620,7 +627,7 @@ public class EntityEncoder {
     /**
      * Helper function to decode the inferno rounds on an <code>Entity</code>
      * object from the passed node.
-     * 
+     *
      * @param node - the <code>ParsedXML</code> node for this object. This
      *            value must not be <code>null</code>.
      * @param entity - the <code>Entity</code> the decoded object belongs to.
@@ -700,7 +707,7 @@ public class EntityEncoder {
     /**
      * Helper function to decode a <code>Entity</code> object from the passed
      * node.
-     * 
+     *
      * @param node - the <code>ParsedXML</code> node for this object. This
      *            value must not be <code>null</code>.
      * @param game - the <code>IGame</code> the decoded object belongs to.
@@ -834,7 +841,7 @@ public class EntityEncoder {
 
     /**
      * Decode a <code>Entity</code> object from the passed node.
-     * 
+     *
      * @param node - the <code>ParsedXML</code> node for this object. This
      *            value must not be <code>null</code>.
      * @param game - the <code>IGame</code> the decoded object belongs to.

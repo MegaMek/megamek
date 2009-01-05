@@ -27,6 +27,7 @@ v0.33.38-dev (SVN)
 + Added Industrial Mech armor
 + Bug: Fix building hex collapse crash
 + Bug: with people placing , in the fuel strings like 18,000
++ Made Look for equipment names case insensitive.
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

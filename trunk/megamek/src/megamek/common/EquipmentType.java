@@ -1,25 +1,20 @@
 /*
  * MegaMek - Copyright (C) 2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later version.
  * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
 
 /*
  * EquipmentType.java
- *
+ * 
  * Created on April 1, 2002, 1:35 PM
  */
 
 package megamek.common;
-
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,8 +25,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 /**
- * Represents any type of equipment mounted on a mechs, excluding systems and
- * actuators.
+ * Represents any type of equipment mounted on a mechs, excluding systems and actuators.
  * 
  * @author Ben
  * @version
@@ -68,16 +62,9 @@ public class EquipmentType {
     public static final int T_STRUCTURE_COMPOSITE = 4;
     public static final int T_STRUCTURE_INDUSTRIAL = 5;
 
-    public static final String[] armorNames = { "Standard", "Ferro-Fibrous",
-            "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous",
-            "Heavy Ferro-Fibrous", "Patchwork", "Stealth",
-            "Ferro-Fibrous Prototype", "Commercial",
-            "Ferro-Carbide",
-            "Lamellor Ferro-Carbide",
-            "Improved Ferro-Aluminum", "Industrial", "Heavy Industrial" };
+    public static final String[] armorNames = { "Standard", "Ferro-Fibrous", "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous", "Heavy Ferro-Fibrous", "Patchwork", "Stealth", "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide", "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum", "Industrial", "Heavy Industrial" };
 
-    public static final String[] structureNames = { "Standard", "Endo Steel",
-            "Endo Steel Prototype", "Reinforced", "Composite", "Industrial" };
+    public static final String[] structureNames = { "Standard", "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite", "Industrial" };
 
     public static final int[] structureLevels = { 1, 2, 3, 3, 3 };
 
@@ -85,13 +72,11 @@ public class EquipmentType {
     // Assume for nowt that prototype is not more expensive
             6400, 1600 };
 
-    public static final double[] armorCosts = { 10000, 20000, 30000, 20000,
-            15000, 15000, 25000, 10000, // This is obviously wrong...
+    public static final double[] armorCosts = { 10000, 20000, 30000, 20000, 15000, 15000, 25000, 10000, // This is obviously wrong...
             50000, 20000, 75000, 100000, 50000 };
     // Assume for now that prototype is not more expensive
 
-    public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 1,
-            1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0 };
+    public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 1, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0 };
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
 
@@ -128,8 +113,7 @@ public class EquipmentType {
      */
     protected boolean instantModeSwitch = true;
     /**
-     * sometimes some modes can be switched at the end of turn and some instantly
-     * In that case, the specific end of turn mode names can be added here
+     * sometimes some modes can be switched at the end of turn and some instantly In that case, the specific end of turn mode names can be added here
      */
     public Vector<String> endTurnModes = new Vector<String>();
 
@@ -164,8 +148,9 @@ public class EquipmentType {
 
     public String getDesc() {
         String result = EquipmentMessages.getString("EquipmentType." + name);
-        if (result != null)
+        if (result != null) {
             return result;
+        }
         return name;
     }
 
@@ -215,26 +200,24 @@ public class EquipmentType {
     }
 
     /**
-     * @return <code>true</code> if this type of equipment has set of modes
-     *         that it can be in.
+     * @return <code>true</code> if this type of equipment has set of modes that it can be in.
      */
     public boolean hasModes() {
         return modes != null;
     }
 
     /**
-     * @return the number of modes that this type of equipment can be in or
-     *         <code>0</code> if it doesn't have modes.
+     * @return the number of modes that this type of equipment can be in or <code>0</code> if it doesn't have modes.
      */
     public int getModesCount() {
-        if (modes != null)
+        if (modes != null) {
             return modes.size();
+        }
         return 0;
     }
 
     /**
-     * @return <code>Enumeration</code> of the <code>EquipmentMode</code>
-     *         that this type of equipment can be in
+     * @return <code>Enumeration</code> of the <code>EquipmentMode</code> that this type of equipment can be in
      */
     public Enumeration<EquipmentMode> getModes() {
         if (modes != null) {
@@ -254,41 +237,40 @@ public class EquipmentType {
     }
 
     /**
-     * Sets the modes that this type of equipment can be in. By default the
-     * EquipmentType doesn't have the modes, so don't try to call this method
-     * with null or empty argument.
+     * Sets the modes that this type of equipment can be in. By default the EquipmentType doesn't have the modes, so don't try to call this method with null or
+     * empty argument.
      * 
-     * @param modes non null, non empty list of available mode names.
+     * @param modes
+     *            non null, non empty list of available mode names.
      */
     protected void setModes(String[] modes) {
-        megamek.debug.Assert.assertTrue(modes != null && modes.length >= 0,
-                "List of modes must not be null or empty");
+        megamek.debug.Assert.assertTrue(modes != null && modes.length >= 0, "List of modes must not be null or empty");
         if (modes != null) {
-            Vector<EquipmentMode> newModes = new Vector<EquipmentMode>(
-                    modes.length);
-            for (int i = 0, l = modes.length; i < l; i++) {
-                newModes.addElement(EquipmentMode.getMode(modes[i]));
+            Vector<EquipmentMode> newModes = new Vector<EquipmentMode>(modes.length);
+            for (String mode : modes) {
+                newModes.addElement(EquipmentMode.getMode(mode));
             }
             this.modes = newModes;
         } else {
             this.modes = new Vector<EquipmentMode>(0);
         }
     }
-    
+
     public void addEndTurnMode(String mode) {
         endTurnModes.add(mode);
     }
-    
+
     /**
-     * Some equipment types might have both instant and next turn mode switching. This method
-     * checks for end of turn modes that are kept in a vector of names.  It is used by the {@link Mounted#setMode(int)}
-     * method to distinguish instant and end of turn switching.
-     * @param mode - the <code>String</code> of the mode name involved in the switch
+     * Some equipment types might have both instant and next turn mode switching. This method checks for end of turn modes that are kept in a vector of names.
+     * It is used by the {@link Mounted#setMode(int)} method to distinguish instant and end of turn switching.
+     * 
+     * @param mode
+     *            - the <code>String</code> of the mode name involved in the switch
      * @return true if the mode name is found in the next turn mode vector
      */
     public boolean isNextTurnModeSwitch(String mode) {
-        for(String name : endTurnModes) {
-            if(name.equals(mode)) {
+        for (String name : endTurnModes) {
+            if (name.equals(mode)) {
                 return true;
             }
         }
@@ -297,20 +279,17 @@ public class EquipmentType {
 
     /**
      * <p>
-     * Returns the mode number <code>modeNum</code> from the list of modes
-     * available for this type of equipment. Modes are numbered from
-     * <code>0<code> to 
+     * Returns the mode number <code>modeNum</code> from the list of modes available for this type of equipment. Modes are numbered from <code>0<code> to 
      * <code>getModesCount()-1</code>
-     * <p>Fails if this type of the equipment doesn't have modes, or given mode is out of
-     * the valid range.    
+     * <p>
+     * Fails if this type of the equipment doesn't have modes, or given mode is out of the valid range.
+     * 
      * @param modeNum
-     * @return mode number <code>modeNum</code> from the list of modes available
-     * for this type of equipment.
+     * @return mode number <code>modeNum</code> from the list of modes available for this type of equipment.
      * @see #hasModes()
      */
     public EquipmentMode getMode(int modeNum) {
-        megamek.debug.Assert.assertTrue(modes != null && modeNum >= 0
-                && modeNum < modes.size());
+        megamek.debug.Assert.assertTrue(modes != null && modeNum >= 0 && modeNum < modes.size());
         return modes.elementAt(modeNum);
     }
 
@@ -328,7 +307,7 @@ public class EquipmentType {
     }
 
     public void addLookupName(String s) {
-        EquipmentType.lookupHash.put(s, this); // static variable
+        EquipmentType.lookupHash.put(s.toLowerCase(), this); // static variable
         namesVector.addElement(s); // member variable
     }
 
@@ -336,7 +315,7 @@ public class EquipmentType {
         if (null == EquipmentType.lookupHash) {
             EquipmentType.initializeTypes();
         }
-        return EquipmentType.lookupHash.get(key);
+        return EquipmentType.lookupHash.get(key.toLowerCase().trim());
     }
 
     public Enumeration<String> getNames() {
@@ -373,16 +352,18 @@ public class EquipmentType {
         EquipmentType et = EquipmentType.get(inType);
         if (et != null) {
             for (int x = 0; x < armorNames.length; x++) {
-                if (armorNames[x].equals(et.getInternalName()))
+                if (armorNames[x].equals(et.getInternalName())) {
                     return x;
+                }
             }
         }
         return T_ARMOR_UNKNOWN;
     }
 
     public static String getArmorTypeName(int armorType) {
-        if ((armorType < 0) || (armorType >= armorNames.length))
+        if ((armorType < 0) || (armorType >= armorNames.length)) {
             return "UNKNOWN";
+        }
         return armorNames[armorType];
     }
 
@@ -390,16 +371,18 @@ public class EquipmentType {
         EquipmentType et = EquipmentType.get(inType);
         if (et != null) {
             for (int x = 0; x < structureNames.length; x++) {
-                if (structureNames[x].equals(et.getInternalName()))
+                if (structureNames[x].equals(et.getInternalName())) {
                     return x;
+                }
             }
         }
         return T_STRUCTURE_UNKNOWN;
     }
 
     public static String getStructureTypeName(int structureType) {
-        if ((structureType < 0) || (structureType >= structureNames.length))
+        if ((structureType < 0) || (structureType >= structureNames.length)) {
             return "UNKNOWN";
+        }
         return structureNames[structureType];
     }
 
@@ -411,14 +394,16 @@ public class EquipmentType {
     }
 
     public static double getArmorCost(int inArmor) {
-        if ((inArmor < 0) || (inArmor >= armorCosts.length))
+        if ((inArmor < 0) || (inArmor >= armorCosts.length)) {
             return -1;
+        }
         return armorCosts[inArmor];
     }
 
     public static double getStructureCost(int inStructure) {
-        if ((inStructure < 0) || (inStructure >= structureCosts.length))
+        if ((inStructure < 0) || (inStructure >= structureCosts.length)) {
             return -1;
+        }
         return structureCosts[inStructure];
     }
 
@@ -427,30 +412,26 @@ public class EquipmentType {
     }
 
     public static double getArmorPointMultiplier(int inArmor, int inTechLevel) {
-        return getArmorPointMultiplier(
-                inArmor,
-                ((inTechLevel == TechConstants.T_CLAN_TW)
-                        || (inTechLevel == TechConstants.T_CLAN_ADVANCED))
-                        || (inTechLevel == TechConstants.T_CLAN_EXPERIMENTAL)
-                        || (inTechLevel == TechConstants.T_CLAN_UNOFFICIAL));
+        return getArmorPointMultiplier(inArmor, ((inTechLevel == TechConstants.T_CLAN_TW) || (inTechLevel == TechConstants.T_CLAN_ADVANCED)) || (inTechLevel == TechConstants.T_CLAN_EXPERIMENTAL) || (inTechLevel == TechConstants.T_CLAN_UNOFFICIAL));
     }
 
     public static double getArmorPointMultiplier(int inArmor, boolean clanArmor) {
-        if ((inArmor < 0) || (inArmor >= armorPointMultipliers.length))
+        if ((inArmor < 0) || (inArmor >= armorPointMultipliers.length)) {
             return POINT_MULTIPLIER_UNKNOWN;
-        if ((inArmor == T_ARMOR_FERRO_FIBROUS) && clanArmor)
+        }
+        if ((inArmor == T_ARMOR_FERRO_FIBROUS) && clanArmor) {
             return POINT_MULTIPLIER_CLAN_FF;
+        }
         return armorPointMultipliers[inArmor];
     }
 
     /**
-     * stuff like hatchets, which depend on an unknown quality (usually tonnage
-     * of the unit.) entity is whatever has this item
+     * stuff like hatchets, which depend on an unknown quality (usually tonnage of the unit.) entity is whatever has this item
      */
     public int resolveVariableCost(Entity entity) {
         int cost = 0;
         if (this instanceof MiscType) {
-            if (this.hasFlag(MiscType.F_MASC)) {
+            if (hasFlag(MiscType.F_MASC)) {
                 if (hasSubType(MiscType.S_SUPERCHARGER)) {
                     Engine e = entity.getEngine();
                     if (e == null) {
@@ -460,56 +441,51 @@ public class EquipmentType {
                     }
                 } else {
                     int mascTonnage = 0;
-                    if (this.getInternalName().equals("ISMASC")) {
+                    if (getInternalName().equals("ISMASC")) {
                         mascTonnage = Math.round(entity.getWeight() / 20.0f);
-                    } else if (this.getInternalName().equals("CLMASC")) {
+                    } else if (getInternalName().equals("CLMASC")) {
                         mascTonnage = Math.round(entity.getWeight() / 25.0f);
                     }
                     cost = entity.getEngine().getRating() * mascTonnage * 1000;
                 }
-            } else if (this.hasFlag(MiscType.F_TARGCOMP)) {
+            } else if (hasFlag(MiscType.F_TARGCOMP)) {
                 int tCompTons = 0;
                 float fTons = 0.0f;
                 for (Mounted mo : entity.getWeaponList()) {
                     WeaponType wt = (WeaponType) mo.getType();
-                    if (wt.hasFlag(WeaponType.F_DIRECT_FIRE))
+                    if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
                         fTons += wt.getTonnage(entity);
+                    }
                 }
-                if (this.getInternalName().equals("ISTargeting Computer")) {
+                if (getInternalName().equals("ISTargeting Computer")) {
                     tCompTons = (int) Math.ceil(fTons / 4.0f);
-                } else if (this.getInternalName()
-                        .equals("CLTargeting Computer")) {
+                } else if (getInternalName().equals("CLTargeting Computer")) {
                     tCompTons = (int) Math.ceil(fTons / 5.0f);
                 }
                 cost = tCompTons * 10000;
-            } else if (this.hasFlag(MiscType.F_CLUB)
-                    && (this.hasSubType(MiscType.S_HATCHET) || this
-                            .hasSubType(MiscType.S_MACE_THB))) {
+            } else if (hasFlag(MiscType.F_CLUB) && (hasSubType(MiscType.S_HATCHET) || hasSubType(MiscType.S_MACE_THB))) {
                 int hatchetTons = (int) Math.ceil(entity.getWeight() / 15.0);
                 cost = hatchetTons * 5000;
-            } else if (this.hasFlag(MiscType.F_CLUB)
-                    && this.hasSubType(MiscType.S_SWORD)) {
+            } else if (hasFlag(MiscType.F_CLUB) && hasSubType(MiscType.S_SWORD)) {
                 int swordTons = (int) Math.ceil(entity.getWeight() / 15.0);
                 cost = swordTons * 10000;
-            } else if (this.hasFlag(MiscType.F_CLUB)
-                    && this.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
-                int bladeTons = (int) Math.ceil(0.5f + Math.ceil(entity
-                        .getWeight() / 20.0));
+            } else if (hasFlag(MiscType.F_CLUB) && hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+                int bladeTons = (int) Math.ceil(0.5f + Math.ceil(entity.getWeight() / 20.0));
                 cost = (1 + bladeTons) * 10000;
             }
         } else {
             if (cost == 0) {
                 // if we don't know what it is...
-                System.out.println("I don't know how much " + this.name
-                        + " costs.");
+                System.out.println("I don't know how much " + name + " costs.");
             }
         }
         return cost;
     }
 
     public boolean equals(EquipmentType e) {
-        if (e != null && this.internalName.equals(e.internalName))
+        if (e != null && internalName.equals(e.internalName)) {
             return true;
+        }
         return false;
     }
 
@@ -523,8 +499,7 @@ public class EquipmentType {
             w.newLine();
             w.write("Type,Tech Base,Rules,Name,Aliases");
             w.newLine();
-            for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
-                    .hasMoreElements();) {
+            for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
                 EquipmentType type = e.nextElement();
                 if (type instanceof AmmoType) {
                     w.write("A,");
@@ -537,8 +512,7 @@ public class EquipmentType {
                 w.write(",");
                 w.write(TechConstants.getLevelName(type.getTechLevel()));
                 w.write(",");
-                for (Enumeration<String> names = type.getNames(); names
-                        .hasMoreElements();) {
+                for (Enumeration<String> names = type.getNames(); names.hasMoreElements();) {
                     String name = names.nextElement();
                     w.write(name + ",");
                 }

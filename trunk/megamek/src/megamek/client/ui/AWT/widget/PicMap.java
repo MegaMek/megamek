@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -50,7 +50,7 @@ import java.util.Vector;
  */
 public abstract class PicMap extends Component {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -822818427765592128L;
     // Vector of Background Drawers
@@ -84,7 +84,7 @@ public abstract class PicMap extends Component {
     private boolean bgIsOpaque = true;
 
     /**
-     * ?reates PicMap engine. If no areas, labels or Backround-drawers added
+     * creates PicMap engine. If no areas, labels or Backround-drawers added
      * this is just transparent layer over container.
      */
     public PicMap() {
@@ -136,8 +136,9 @@ public abstract class PicMap extends Component {
         if (e instanceof PMLabel) {
             labels.removeArea(e);
         } else if (e instanceof PMHotArea) {
-            if (hotAreas.removeArea(e))
+            if (hotAreas.removeArea(e)) {
                 areascount--;
+            }
         } else {
             otherAreas.removeArea(e);
         }
@@ -178,7 +179,7 @@ public abstract class PicMap extends Component {
     /**
      * Sets margins in pixels around Content of component. Does not affect
      * Backgroun Drawers.
-     * 
+     *
      * @param l Left margin
      * @param t Top margin
      * @param r Right margin
@@ -207,6 +208,7 @@ public abstract class PicMap extends Component {
      * Please remember to add super.addNotify() when overriding
      */
 
+    @Override
     public void addNotify() {
         super.addNotify();
         update();
@@ -221,8 +223,9 @@ public abstract class PicMap extends Component {
             int w = Math.max(getSize().width, minWidth);
             int h = Math.max(getSize().height, minHeight);
             offScr = createImage(w, h);
-            if (offScr == null)
+            if (offScr == null) {
                 return;
+            }
             Graphics g = offScr.getGraphics();
             drawInto(g);
             repaint();
@@ -232,10 +235,12 @@ public abstract class PicMap extends Component {
         }
     }
 
+    @Override
     public void update(Graphics g) {
         paint(g);
     }
 
+    @Override
     public void paint(Graphics g) {
         if (bgIsOpaque) {
             // If we want to use buffering Component will be with opaque
@@ -263,17 +268,20 @@ public abstract class PicMap extends Component {
 
         // Hot areas painting
         hotAreas.drawInto(g);
-        if (activeHotArea != null)
+        if (activeHotArea != null) {
             activeHotArea.drawInto(g);
+        }
         labels.drawInto(g);
         g.setClip(oldClip);
 
     }
 
+    @Override
     public Dimension getPreferredSize() {
         return getMinimumSize();
     }
 
+    @Override
     public Dimension getMinimumSize() {
         Rectangle r = rootGroup.getBounds();
         if (r != null) {
@@ -292,8 +300,9 @@ public abstract class PicMap extends Component {
         // from end to start. Compare against zero works faster.
         for (int i = (areascount - 1); i >= 0; i--) {
             PMHotArea ha = (PMHotArea) hotAreas.elementAt(i);
-            if ((ha != null) && intersects(ha.getAreaShape(), x, y))
+            if ((ha != null) && intersects(ha.getAreaShape(), x, y)) {
                 return ha;
+            }
         }
         return null;
     }
@@ -322,36 +331,42 @@ public abstract class PicMap extends Component {
         bgIsOpaque = v;
     }
 
+    @Override
     protected void processMouseEvent(MouseEvent e) {
         PMHotArea ha = getAreaUnder(e.getX(), e.getY());
         switch (e.getID()) {
             case MouseEvent.MOUSE_CLICKED:
-                if (ha != null)
+                if (ha != null) {
                     ha.onMouseClick(e);
+                }
                 break;
             case MouseEvent.MOUSE_PRESSED:
-                if (ha != null)
+                if (ha != null) {
                     ha.onMouseDown(e);
+                }
                 break;
             case MouseEvent.MOUSE_RELEASED:
-                if (ha != null)
+                if (ha != null) {
                     ha.onMouseUp(e);
+                }
                 break;
         }
         update();
     }
 
+    @Override
     protected void processMouseMotionEvent(MouseEvent e) {
         switch (e.getID()) {
             case MouseEvent.MOUSE_MOVED:
                 PMHotArea ha = getAreaUnder(e.getX(), e.getY());
                 if (ha != activeHotArea) {
-                    if (activeHotArea != null)
+                    if (activeHotArea != null) {
                         activeHotArea.onMouseExit(e);
+                    }
                     activeHotArea = ha;
                     if (ha != null) {
                         ha.onMouseOver(e);
-                        this.setCursor(ha.getCursor());
+                        setCursor(ha.getCursor());
                     } else {
                         setCursor(Cursor.getDefaultCursor());
                     }
@@ -361,6 +376,7 @@ public abstract class PicMap extends Component {
         }
     }
 
+    @Override
     protected void processComponentEvent(ComponentEvent e) {
         switch (e.getID()) {
             case ComponentEvent.COMPONENT_RESIZED:

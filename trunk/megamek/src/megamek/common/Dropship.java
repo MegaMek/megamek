@@ -1,13 +1,13 @@
 /*
 * MegaAero - Copyright (C) 2007 Jay Lawson
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -19,10 +19,10 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import megamek.common.weapons.BayWeapon;
 
@@ -32,45 +32,45 @@ import megamek.common.weapons.BayWeapon;
 public class Dropship extends SmallCraft implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1528728632696989565L;
     //escape pods and lifeboats
     int escapePods = 0;
     int lifeBoats = 0;
-    
+
     //what needs to go here?
     //loading and unloading of units?
     private boolean dockCollarDamaged = false;
-    
+
     public boolean isDockCollarDamaged() {
         return dockCollarDamaged;
     }
-    
+
     public void setDamageDockCollar(boolean b) {
-        this.dockCollarDamaged = b;
+        dockCollarDamaged = b;
     }
-    
+
     public void setEscapePods(int n) {
-        this.escapePods = n;
+        escapePods = n;
     }
-    
+
     public int getEscapePods() {
         return escapePods;
     }
-    
+
     public void setLifeBoats(int n) {
-        this.lifeBoats = n;
+        lifeBoats = n;
     }
-    
+
     public int getLifeBoats() {
         return lifeBoats;
     }
-    
+
     public int getFuelPerTon() {
-        
+
         int points = 80;
-        
+
         if(weight >= 40000) {
             points = 10;
             return points;
@@ -93,12 +93,13 @@ public class Dropship extends SmallCraft implements Serializable {
             points = 70;
             return points;
         }
-        
+
         return points;
     }
-    
+
+    @Override
     public double getCost() {
-        
+
         double cost = 0;
 
         //add in controls
@@ -114,16 +115,16 @@ public class Dropship extends SmallCraft implements Serializable {
         cost += 100000;
         //gunnery/control systems
         cost += 10000 * getArcswGuns();
-        
+
         //structural integrity
         cost += 100000 * getSI();
-        
+
         //additional flight systems (attitude thruster and landing gear)
         cost += 25000 + 10 * getWeight();
-        
+
         //docking collar
         cost += 10000;
-        
+
         //engine
         double engineMultiplier = 0.065;
         if(isClan()) {
@@ -133,57 +134,58 @@ public class Dropship extends SmallCraft implements Serializable {
         cost += engineWeight * 1000;
         //drive unit
         cost += 500 * getOriginalWalkMP() * weight / 100.0;
-  
+
         //fuel tanks
         cost += 200 * getFuel() / getFuelPerTon();
 
         //armor
         cost += getArmorWeight()*EquipmentType.getArmorCost(armorType);
-        
+
         //heat sinks
-        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000: 2000;    
+        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000: 2000;
         cost += sinkCost*getHeatSinks();
-        
-        //weapons 
+
+        //weapons
         cost += getWeaponsAndEquipmentCost();
-        
+
         //get bays
         int baydoors = 0;
         int bayCost = 0;
         for(Bay next:getTransportBays()) {
             baydoors += next.getDoors();
-            if(next instanceof MechBay || next instanceof ASFBay || next instanceof SmallCraftBay) {
+            if((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
                 bayCost += 20000 * next.totalSpace;
             }
-            if(next instanceof LightVehicleBay || next instanceof HeavyVehicleBay) {
+            if((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
                 bayCost += 10000 * next.totalSpace;
             }
         }
-        
+
         cost += bayCost + baydoors * 1000;
-        
+
         //life boats and escape pods
         cost += 5000 * (getLifeBoats() + getEscapePods());
-        
+
         double weightMultiplier = 36.0;
         if(isSpheroid() ) {
             weightMultiplier = 28.0;
         }
-        
+
         return Math.round(cost * weightMultiplier);
-        
+
     }
+    @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
         int modularArmor = 0;
         for (Mounted mounted : getEquipment()) {
-            if (mounted.getType() instanceof MiscType && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
+            if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
                 modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
             }
         }
-        
+
         dbv += (getTotalArmor()+modularArmor) * 2.5;
 
         dbv += getSI() * 2.0;
@@ -194,23 +196,24 @@ public class Dropship extends SmallCraft implements Serializable {
             EquipmentType etype = mounted.getType();
 
             // don't count destroyed equipment
-            if (mounted.isDestroyed())
+            if (mounted.isDestroyed()) {
                 continue;
+            }
 
-            if ((etype instanceof WeaponType && (etype.hasFlag(WeaponType.F_AMS)))
-                    || (etype instanceof AmmoType && ((AmmoType) etype).getAmmoType() == AmmoType.T_AMS) 
-                    || (etype instanceof AmmoType && ((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) 
-                    || (etype instanceof WeaponType && ((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
+            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))
+                    || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS))
+                    || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER))
+                    || ((etype instanceof WeaponType) && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN))) {
                 dEquipmentBV += etype.getBV(this);
             }
         }
         dbv += dEquipmentBV;
-        
+
         //unit type multiplier
-        dbv *= getBVTypeModifier();        
-        
+        dbv *= getBVTypeModifier();
+
         // calculate heat efficiency
-        int aeroHeatEfficiency = this.getHeatCapacity();
+        int aeroHeatEfficiency = getHeatCapacity();
 
         //get arc BV and heat
         // and add up BVs for ammo-using weapon types for excessive ammo rule
@@ -221,11 +224,11 @@ public class Dropship extends SmallCraft implements Serializable {
             WeaponType wtype = (WeaponType) mounted.getType();
             double weaponHeat = wtype.getHeat();
             int arc = getWeaponArc(getEquipmentNum(mounted));
-            double dBV = wtype.getBV(this);           
+            double dBV = wtype.getBV(this);
             //skip bays
             if(wtype instanceof BayWeapon) {
                 continue;
-            }          
+            }
             //don't count defensive weapons
             if (wtype.hasFlag(WeaponType.F_AMS)) {
                 continue;
@@ -246,10 +249,10 @@ public class Dropship extends SmallCraft implements Serializable {
             // Six times heat for RAC
             if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
                 weaponHeat *= 6;
-            }           
+            }
             //add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || wtype.getAmmoType() == AmmoType.T_NA)) {
+            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype.getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize() + ";" + arc;
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
@@ -260,9 +263,9 @@ public class Dropship extends SmallCraft implements Serializable {
             //calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
                 double mgaBV = 0;
-                for (Mounted possibleMG : this.getTotalWeaponList()) {
+                for (Mounted possibleMG : getTotalWeaponList()) {
                     if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && possibleMG.getLocation() == mounted.getLocation()) {
+                            && (possibleMG.getLocation() == mounted.getLocation())) {
                         mgaBV += possibleMG.getType().getBV(this);
                     }
                 }
@@ -270,20 +273,21 @@ public class Dropship extends SmallCraft implements Serializable {
             }
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                if (hasTargComp())
+                if (hasTargComp()) {
                     dBV *= 1.25;
+                }
             }
             // artemis bumps up the value
             if (mounted.getLinkedBy() != null) {
                 Mounted mLinker = mounted.getLinkedBy();
-                if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                 }
-                if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
                 }
             }
-            
+
             double currentArcBV = 0.0;
             double currentArcHeat = 0.0;
             if(null != arcBVs.get(arc)) {
@@ -321,13 +325,13 @@ public class Dropship extends SmallCraft implements Serializable {
             int adjArcCCW = getAdjacentArcCCW(highArc);
             double adjArcCWBV = 0.0;
             double adjArcCWHeat = 0.0;
-            if(adjArcCW > Integer.MIN_VALUE && null != arcBVs.get(adjArcCW)) {
+            if((adjArcCW > Integer.MIN_VALUE) && (null != arcBVs.get(adjArcCW))) {
                 adjArcCWBV = arcBVs.get(adjArcCW);
                 adjArcCWHeat = arcHeat.get(adjArcCW);
             }
             double adjArcCCWBV = 0.0;
             double adjArcCCWHeat = 0.0;
-            if(adjArcCCW > Integer.MIN_VALUE && null != arcBVs.get(adjArcCCW)) {
+            if((adjArcCCW > Integer.MIN_VALUE) && (null != arcBVs.get(adjArcCCW))) {
                 adjArcCCWBV = arcBVs.get(adjArcCCW);
                 adjArcCCWHeat = arcHeat.get(adjArcCCW);
             }
@@ -335,23 +339,23 @@ public class Dropship extends SmallCraft implements Serializable {
                 adjArc = adjArcCW;
                 if((heatUsed + adjArcCWHeat) > aeroHeatEfficiency) {
                     adjArcMult = 0.5;
-                } 
+                }
                 heatUsed += adjArcCWHeat;
                 oppArc = adjArcCCW;
                 if((heatUsed + adjArcCCWHeat) > aeroHeatEfficiency) {
                     oppArcMult = 0.25;
-                } 
+                }
             } else {
                 adjArc = adjArcCCW;
                 if((heatUsed + adjArcCCWHeat) > aeroHeatEfficiency) {
                     adjArcMult = 0.5;
-                } 
+                }
                 heatUsed += adjArcCCWHeat;
                 oppArc = adjArcCW;
                 if((heatUsed + adjArcCWHeat) > aeroHeatEfficiency) {
                     oppArcMult = 0.25;
-                } 
-            }     
+                }
+            }
         }
         //According to an email with Welshman, ammo should be now added into each arc BV
         //for the final calculation of BV, including the excessive ammo rule
@@ -362,8 +366,9 @@ public class Dropship extends SmallCraft implements Serializable {
             AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0)
+            if (mounted.getShotsLeft() == 0) {
                 continue;
+            }
 
             // don't count AMS, it's defensive
             if (atype.getAmmoType() == AmmoType.T_AMS) {
@@ -410,8 +415,9 @@ public class Dropship extends SmallCraft implements Serializable {
             if(atype.isCapital()) {
                 weight = mounted.getShotsLeft() * atype.getAmmoRatio();
             }
-            if (!keys.contains(key))
+            if (!keys.contains(key)) {
                 keys.add(key);
+            }
             if (!ammo.containsKey(key)) {
                 ammo.put(key, weight*atype.getBV(this));
             } else {
@@ -427,30 +433,30 @@ public class Dropship extends SmallCraft implements Serializable {
             int arc= Integer.parseInt(key.split(";")[1]);
             //get the arc
             if (weaponsForExcessiveAmmo.get(key) != null) {
-                if (ammo.get(key) > weaponsForExcessiveAmmo.get(key))
-                    
+                if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
                     ammoBV += weaponsForExcessiveAmmo.get(key);
-                else
+                } else {
                     ammoBV += ammo.get(key);
-            } 
+                }
+            }
             double currentArcBV = 0.0;
             if(null != arcBVs.get(arc)) {
                 currentArcBV = arcBVs.get(arc);
             }
-            arcBVs.put(arc, currentArcBV + ammoBV);           
+            arcBVs.put(arc, currentArcBV + ammoBV);
         }
-        
-        
+
+
         //ok now lets go in and add the arcs
         if(highArc > Integer.MIN_VALUE) {
             //ok now add the BV from this arc and reset to zero
             weaponBV += arcBVs.get(highArc);
             arcBVs.put(highArc, 0.0);
-            if(adjArc > Integer.MIN_VALUE && null != arcBVs.get(adjArc)) {
+            if((adjArc > Integer.MIN_VALUE) && (null != arcBVs.get(adjArc))) {
                 weaponBV += adjArcMult * arcBVs.get(adjArc);
                 arcBVs.put(adjArc, 0.0);
             }
-            if(oppArc > Integer.MIN_VALUE && null != arcBVs.get(oppArc)) {
+            if((oppArc > Integer.MIN_VALUE) && (null != arcBVs.get(oppArc))) {
                 weaponBV += oppArcMult * arcBVs.get(oppArc);
                 arcBVs.put(oppArc, 0.0);
             }
@@ -458,11 +464,11 @@ public class Dropship extends SmallCraft implements Serializable {
             set= arcBVs.keySet();
             iter = set.iterator();
             while(iter.hasNext()) {
-                int key = (Integer)iter.next();
+                int key = iter.next();
                 weaponBV += (0.25 * arcBVs.get(key));
-            }       
+            }
         }
-        
+
         // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
         // BMR p152)
         double oEquipmentBV = 0;
@@ -470,14 +476,16 @@ public class Dropship extends SmallCraft implements Serializable {
             MiscType mtype = (MiscType) mounted.getType();
 
             // don't count destroyed equipment
-            if (mounted.isDestroyed())
+            if (mounted.isDestroyed()) {
                 continue;
+            }
 
             if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_AP_POD)
             // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) // targ counted with
+                    || mtype.hasFlag(MiscType.F_TARGCOMP)) {
                 // weapons
                 continue;
+            }
             double bv = mtype.getBV(this);
             // if physical weapon linked to AES, multiply by 1.5
             oEquipmentBV += bv;
@@ -487,7 +495,7 @@ public class Dropship extends SmallCraft implements Serializable {
                 if (this.getArmor(mounted.getLocation(), false) != IArmorState.ARMOR_DESTROYED) {
                     oEquipmentBV += this.getArmor(mounted.getLocation());
                 }
-                if (this.hasRearArmor(mounted.getLocation()) && this.getArmor(mounted.getLocation(), true) != IArmorState.ARMOR_DESTROYED) {
+                if (hasRearArmor(mounted.getLocation()) && (this.getArmor(mounted.getLocation(), true) != IArmorState.ARMOR_DESTROYED)) {
                     oEquipmentBV += this.getArmor(mounted.getLocation(), true);
                 }
             }
@@ -498,10 +506,11 @@ public class Dropship extends SmallCraft implements Serializable {
         double speedFactor;
         // but taking into account hit actuators
         double speedFactorTableLookup = getRunMP();
-        if (speedFactorTableLookup > 25)
+        if (speedFactorTableLookup > 25) {
             speedFactor = Math.pow(1 + (((double) getRunMP() - 5) / 10), 1.2);
-        else
+        } else {
             speedFactor = Math.pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
+        }
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;
@@ -514,7 +523,7 @@ public class Dropship extends SmallCraft implements Serializable {
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3
         // times
-        if (((hasC3MM() && calculateFreeC3MNodes() < 2) || (hasC3M() && calculateFreeC3Nodes() < 3) || (hasC3S() && C3Master > NONE) || (hasC3i() && calculateFreeC3Nodes() < 5)) && !ignoreC3 && (game != null)) {
+        if (((hasC3MM() && (calculateFreeC3MNodes() < 2)) || (hasC3M() && (calculateFreeC3Nodes() < 3)) || (hasC3S() && (C3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5))) && !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
             totalForceBV += this.calculateBattleValue(true, true);
             for (Entity e : game.getC3NetworkMembers(this)) {
@@ -536,58 +545,63 @@ public class Dropship extends SmallCraft implements Serializable {
         int retVal = (int) Math.round((finalBV) * pilotFactor);
 
         // don't factor pilot in if we are just calculating BV for C3 extra BV
-        if (ignoreC3)
+        if (ignoreC3) {
             return finalBV;
+        }
         return retVal;
     }
 
     /**
      * need to check bay location before loading ammo
      */
+    @Override
     public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
         boolean success = false;
         WeaponType wtype = (WeaponType) mounted.getType();
         AmmoType atype = (AmmoType) mountedAmmo.getType();
-        
-        if(mounted.getLocation() != mountedAmmo.getLocation())
+
+        if(mounted.getLocation() != mountedAmmo.getLocation()) {
             return success;
-        
-        //for large craft, ammo must be in the same ba        
-        Mounted bay = whichBay(this.getEquipmentNum(mounted));
-        if(bay != null && !bay.ammoInBay(this.getEquipmentNum(mountedAmmo))) 
+        }
+
+        //for large craft, ammo must be in the same ba
+        Mounted bay = whichBay(getEquipmentNum(mounted));
+        if((bay != null) && !bay.ammoInBay(getEquipmentNum(mountedAmmo))) {
             return success;
-    
-        
+        }
+
+
         if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
-                && atype.getAmmoType() == wtype.getAmmoType()
-                && atype.getRackSize() == wtype.getRackSize()) {
+                && (atype.getAmmoType() == wtype.getAmmoType())
+                && (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
         }
         return success;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getIniBonus()
      */
+    @Override
     public int getIniBonus() {
         // large craft are considered to have > 7 tons comm equipment
         // hence they get +2 ini bonus as a mobile hq
         return 2;
     }
-    
+
     /**
      * find the adjacent firing arc on this vessel clockwise
      */
-    public int getAdjacentArcCW(int arc) {  
+    public int getAdjacentArcCW(int arc) {
         switch(arc) {
         case Compute.ARC_NOSE:
             if(isSpheroid()) {
                 return Compute.ARC_RIGHTSIDE_SPHERE;
             } else {
                 return Compute.ARC_RWING;
-            }     
+            }
         case Compute.ARC_LWING:
             return Compute.ARC_NOSE;
         case Compute.ARC_RWING:
@@ -614,18 +628,18 @@ public class Dropship extends SmallCraft implements Serializable {
             return Integer.MIN_VALUE;
         }
     }
-    
+
     /**
      * find the adjacent firing arc on this vessel counter-clockwise
      */
-    public int getAdjacentArcCCW(int arc) {  
+    public int getAdjacentArcCCW(int arc) {
         switch(arc) {
         case Compute.ARC_NOSE:
             if(isSpheroid()) {
                 return Compute.ARC_LEFTSIDE_SPHERE;
             } else {
                 return Compute.ARC_LWING;
-            }     
+            }
         case Compute.ARC_LWING:
             return Compute.ARC_LWINGA;
         case Compute.ARC_RWING:
@@ -652,33 +666,35 @@ public class Dropship extends SmallCraft implements Serializable {
             return Integer.MIN_VALUE;
         }
     }
-    
+
     /**
      * All military dropships automatically have ECM if in space
      */
+    @Override
     public boolean hasActiveECM() {
         if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
             return super.hasActiveECM();
         }
         return getECMRange() > Entity.NONE;
     }
-    
+
     /**
-     * What's the range of the ECM equipment? 
-     * 
+     * What's the range of the ECM equipment?
+     *
      * @return the <code>int</code> range of this unit's ECM. This value will
      *         be <code>Entity.NONE</code> if no ECM is active.
      */
+    @Override
     public int getECMRange() {
         if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
             return super.getECMRange();
         }
-        if(!this.isMilitary()) {
+        if(!isMilitary()) {
             return Entity.NONE;
         }
-        int range = 1;      
+        int range = 1;
         //the range might be affected by sensor/FCS damage
-        range = range - getFCSHits() - getSensorHits();     
+        range = range - getFCSHits() - getSensorHits();
         return range;
     }
 }

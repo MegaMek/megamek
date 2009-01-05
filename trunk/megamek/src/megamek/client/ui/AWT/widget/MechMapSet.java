@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -45,9 +45,9 @@ public class MechMapSet implements DisplayMapSet {
     // Array of polygonal areas - parts of mech body.
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[19];
     // Array of fixed labels - short names of body parts
-    private PMSimpleLabel[] labels = new PMSimpleLabel[19];
+    private PMSimpleLabel[] labels = new PMSimpleLabel[20];
     // Array of value labels to show armor and IS values
-    private PMValueLabel[] vLabels = new PMValueLabel[20];
+    private PMValueLabel[] vLabels = new PMValueLabel[21];
     // Heat control area
     private PMPicPolygonalArea heatHotArea;
     // Set of Background Drawers
@@ -172,7 +172,7 @@ public class MechMapSet implements DisplayMapSet {
     public void setEntity(Entity e) {
         Mech m = (Mech) e;
         boolean mtHeat = false;
-        if (e.getGame() != null
+        if ((e.getGame() != null)
                 && e.getGame().getOptions().booleanOption("tacops_heat")) {
             mtHeat = true;
         }
@@ -202,6 +202,17 @@ public class MechMapSet implements DisplayMapSet {
         // heat
         vLabels[19].setValue(Integer.toString(m.heat));
         drawHeatControl(m.heat, mtHeat);
+        //TODO: this messes up the layout a bit, but only for industrial
+        // mechs FIXME
+        if (m.hasBARArmor()) {
+            content.addArea(labels[19]);
+            content.addArea(vLabels[20]);
+            vLabels[20].setValue(String.valueOf(m.getBARRating()));
+        } else {
+            content.removeArea(labels[19]);
+            content.removeArea(vLabels[20]);
+        }
+
     }
 
     private void setAreas() {
@@ -294,6 +305,8 @@ public class MechMapSet implements DisplayMapSet {
         labels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = WidgetUtils
                 .createLabel(
                         Messages.getString("MechMapSet.l_RL"), fm, Color.black, 93, 210); //$NON-NLS-1$
+        labels[19] = WidgetUtils.createLabel(Messages
+                .getString("MechMapSet.BARRating"), fm, Color.white, 65, 343); //$NON-NLS-1$
 
         // Value labels for all parts of mek
         // front
@@ -334,6 +347,8 @@ public class MechMapSet implements DisplayMapSet {
                 .createValueLabel(92, 223, "", fm); //$NON-NLS-1$
         // heat
         vLabels[19] = WidgetUtils.createValueLabel(155, 90, "", fm); //$NON-NLS-1$
+        // BAR rating
+        vLabels[20] = WidgetUtils.createValueLabel(100, 345, "", fm); //$NON-NLS-1$
     }
 
     private void setGroups() {

@@ -88,6 +88,7 @@ public class MiscType extends EquipmentType {
     public static final long F_CHAMELEON_SHIELD = 1L << 52;
     public static final long F_VIBROCLAW = 1L << 53;
     public static final long F_SINGLE_HEX_ECM = 1l << 54;
+    public static final long F_EJECTION_SEAT = 1l << 55;
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -514,6 +515,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createRetractableBlade());
         EquipmentType.addType(createChainWhip());
         EquipmentType.addType(createISApolloFCS());
+        EquipmentType.addType(createEjectionSeat());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());
@@ -1340,6 +1342,21 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
+
+    public static MiscType createEjectionSeat() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Ejection Seat";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.cost = 0;
+        misc.flags |= F_EJECTION_SEAT;
+        misc.bv = 0;
+
+        return misc;
+    }
+
 
     public static MiscType createArmoredChassis() {
         MiscType misc = new MiscType();

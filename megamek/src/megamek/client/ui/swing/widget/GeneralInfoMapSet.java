@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -179,7 +179,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         heatR = createLabel(STAR3, fm, heatL.getSize().width + 10, getYCoord());
         content.addArea(heatR);
-        
+
         fuelL = createLabel( Messages.getString("GeneralInfoMapSet.fuelL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea( fuelL );
         fuelR = createLabel(STAR3, fm, fuelL.getSize().width + 10, getYCoord());
@@ -286,7 +286,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
         weightR.setString(Integer.toString((int) en.getWeight()));
 
-        if (en.getGame() != null
+        if ((en.getGame() != null)
                 && en.getGame().getOptions().booleanOption("rpg_gunnery")) {
             pilotR
                     .setString(en.crew.getDesc()
@@ -308,12 +308,10 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             }
         }
         elevationR.setString(Messages.getString("GeneralInfoMapSet.NA")); //$NON-NLS-1$
-        // if (en.getMovementMode() == IEntityMovementMode.VTOL) {
         elevationR.setString(Integer.toString(en.getElevation()));
-        // }
 
-        for (int i = 0; i < advantagesR.length; i++) {
-            advantagesR[i].setString(""); //$NON-NLS-1$
+        for (PMSimpleLabel element : advantagesR) {
+            element.setString(""); //$NON-NLS-1$
         }
         if (en.crew.countAdvantages() > 0) {
             int i = 0;
@@ -335,14 +333,15 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         mpR1.setString(Integer.toString(en.getWalkMP()));
         mpR2.setString(en.getRunMPasString());
 
-        if(en instanceof Jumpship && !(en instanceof Warship)) {
+        if((en instanceof Jumpship) && !(en instanceof Warship)) {
             mpR2.setString(en.getRunMPasString() + " (" + Double.toString(((Jumpship)en).getAccumulatedThrust()) + ")");
         }
-        
-        if (en.hasUMU())
+
+        if (en.hasUMU()) {
             mpR3.setString(Integer.toString(en.getActiveUMUCount()));
-        else
+        } else {
             mpR3.setString(Integer.toString(en.getJumpMPWithTerrain()));
+        }
 
         if(en instanceof Aero) {
             Aero a = (Aero)en;
@@ -351,7 +350,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         } else {
             curMoveR.setString(en.getMovementString(en.moved) + (en.moved == IEntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance)); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        
+
         int heatCap = en.getHeatCapacity();
         int heatCapWater = en.getHeatCapacityWithWater();
         String heatCapacityStr = Integer.toString(heatCap);
@@ -444,7 +443,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             buildingHeightL.setVisible(false);
             buildingHeightR.setVisible(false);
         }
-        
+
         if (en instanceof Aero) {
             heatL.setVisible(true);
             heatR.setVisible(true);

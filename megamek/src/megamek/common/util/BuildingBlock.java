@@ -291,11 +291,13 @@ public class BuildingBlock {
 
             try {
                 // Bug with people placing , in the fuel strings like 18,000
-                String fuelString = rawData.get(rawRecord).toString();
-                if (fuelString.indexOf(',') >= 0) {
-                    fuelString = fuelString.replaceAll(",", "");
+                // Should probably change this to a method to weed out all non-numeric
+                // variables but this is the most common.
+                String rawString = rawData.get(rawRecord).toString();
+                if (rawString.indexOf(',') >= 0) {
+                    rawString = rawString.replaceAll(",", "");
                 }
-                data[dataRecord] = Integer.parseInt(fuelString);
+                data[dataRecord] = Integer.parseInt(rawString);
                 dataRecord++;
             } catch (NumberFormatException oops) {
                 data[0] = 0;

@@ -25,6 +25,7 @@ v0.33.38-dev (SVN)
 + Some work for Idustrial Mechs
 + Bug: MASC should be critable
 + Added Industrial Mech armor
++ Bug: Fix building hex collapse crash
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

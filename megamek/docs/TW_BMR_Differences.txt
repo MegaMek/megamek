@@ -99,7 +99,7 @@ x16) MASC Failure now results in an instant critical hit to each leg.  It no lon
 *errata removed this* 17) Apparently standard Narc Missile Beacons can now use a Pod which has the same effect as the iNarc Homing Pod, and visa versa.  I am unsure whether or not this is simply a mistake which slipped through or if this was intentional and there is some difference in ammo cost or BV which is unaccounted for in this section.
 
 18) A Significant amount of New Equipment is added, including
-   B-Pods (improved A-Pods for attacking Battle Armor.  20 damage attack in 5 point clusters against Battle Armor or       1D6 damage against Conventional Infanty, forces swarming infantry off of the 'Mech, may be used as a       direct attack against infantry units in the same hex as the 'Mech with reduced damage effects)
+x   B-Pods (improved A-Pods for attacking Battle Armor.  20 damage attack in 5 point clusters against Battle Armor or       1D6 damage against Conventional Infanty, forces swarming infantry off of the 'Mech, may be used as a       direct attack against infantry units in the same hex as the 'Mech with reduced damage effects)
 x   Anti-Personnel Gauss Rifle (Clan Only, provides Burst Fire bonuses against Infantry)
 x   Hyper Assault Gauss Rifle (HAG) 20, 30, & 40 (Clan Only, fires 1 damage point shots that group in 5 point clusters       like LRMs, gain a +2 bonus on the Cluster Hits Table at Short Range and suffer a -2 penalty at Long       Range)
 x   Machine Gun Array (Clan & IS.  Not so much a weapon as a new piece of equipment which allows Machine Guns of
@@ -141,13 +141,13 @@ x24) Physical Attacks now use the attackers Piloting Skill as the Base To-Hit # 
 
 25) You may now punch two different targets in the same Physical Attack Phase without a secondary target penalty.
 
-26) Targets of a Push attack cannot Countercharge the Pushing ‘Mech. (Probably a clarification)
+x26) Targets of a Push attack cannot Countercharge the Pushing ‘Mech. (Probably a clarification)
 
 x27) Quads may now kick (Mule Kick) into their rear arc, but suffer a +1 to hit modifier when doing so.
 
 28) When a 'Mech is charging another 'Mech on terrain which may cause skidding, if the 'Mech's pilot fails a piloting skill roll and falls during the weapon attack face, the 'Mech will now skid into the target, performing an unintentional charge, instead of simply falling.   
 
-29) Vehicles must roll on the Motive System Damage Table when successfully performing or being hit by a charge (ram)      
+x29) Vehicles must roll on the Motive System Damage Table when successfully performing or being hit by a charge (ram)      
 30) Infantry now have a falling damage chart for if they are displaced from their hex
 
 31) Vehicles & Non-Aerospace  Airborne units can now be hit by accidental falls from above
@@ -162,17 +162,17 @@ x1) Multi-hex buildings now have a separate CF for each of their hexes, and each
 
 x3) ProtoMechs may now enter and move within Buildings as infantry, except that they inflict 1 point of CF damage to the building when they enter
 
-4) Area-Effect attacks such as artillery do additional damage to buildings.  In the case of an attack which is a single hex in size, Area Effect attacks do double CF damage.  In the case of multi-hex attacks (central hex and six surrounding hexes)  Buildings in the surrounding hexes take double CF damage and buildings in the central hex take triple CF damage.  In addition, units in the levels above and below where the Area Effect attack hit suffer ½ damage from that attack.  Weapons which scatter do so in targeted building level in addition to hex of impact when striking buildings.
+x4) Area-Effect attacks such as artillery do additional damage to buildings.  In the case of an attack which is a single hex in size, Area Effect attacks do double CF damage.  In the case of multi-hex attacks (central hex and six surrounding hexes)  Buildings in the surrounding hexes take double CF damage and buildings in the central hex take triple CF damage.  In addition, units in the levels above and below where the Area Effect attack hit suffer ½ damage from that attack.  Weapons which scatter do so in targeted building level in addition to hex of impact when striking buildings.
 
 
-5) When shooting at targets within a building, all units may fire at targets at a range of 0.  The to-hit number is modified by +1 for each hex or level of building between or containing the target, with two or more intervening hexes or levels blocking line of sight.  Rules for hitting vehicles and infantry    within buildings are provided
+x5) When shooting at targets within a building, all units may fire at targets at a range of 0.  The to-hit number is modified by +1 for each hex or level of building between or containing the target, with two or more intervening hexes or levels blocking line of sight.  Rules for hitting vehicles and infantry    within buildings are provided
 
-6) Battle Armor & Mechanized Infantry only suffer twice the standard damage from building collapse, as opposed to the three times suffered by Conventional Infantry.
+x6) Battle Armor & Mechanized Infantry only suffer twice the standard damage from building collapse, as opposed to the three times suffered by Conventional Infantry.
 
 PROTOMECHS
-1) ProtoMechs cannot skid.
+x1) ProtoMechs cannot skid.
 
-2) ProtoMechs do not use their standard near-miss hit location table when struck by area-effect attacks, collapsing buildings, falling, crashing Aerospace Fighters or skidding/sideslipping units.  They use the Special Hit Location Table without near misses instead
+x2) ProtoMechs do not use their standard near-miss hit location table when struck by area-effect attacks, collapsing buildings, falling, crashing Aerospace Fighters or skidding/sideslipping units.  They use the Special Hit Location Table without near misses instead
 
 x3) The ProtoMech physical attack is now called a “Frenzy”
 
@@ -228,9 +228,9 @@ x8 ) New rules make certain weapons very effective for killing conventional infa
 
 x9) Battle Armor weapons attacks, as with other multi-hit attacks, now are rolled on the Cluster Hit Table
 
-10) Battle Armor can fire as a Rifle (Ballistic) squad of Conventional Infantry using their AP weapons, if they possess any.
+x10) Battle Armor can fire as a Rifle (Ballistic) squad of Conventional Infantry using their AP weapons, if they possess any.
 
-11) Battle Armor may now make physical attacks with their Vibroclaws against other infantry in their hex in the Physical Attack phase, treating it as a standard attack, doing one damage per vibroclaw
+x11) Battle Armor may now make physical attacks with their Vibroclaws against other infantry in their hex in the Physical Attack phase, treating it as a standard attack, doing one damage per vibroclaw
 
 x12) Battle Armor may now split their fire between different targets for a +1 to hit modifier, same as ‘Mechs and Vehicles.
 
@@ -258,13 +258,13 @@ x23) Shots fired at units which are being swarmed may strike the swarming infant
 
 24) The Swarming unit and the defending Battle Armor unit may make standard attacks against each other, so you can literally have an Infantry vs. Infantry Battle raging on the outside of a BattleMech (!)
 
-25) Infantry now have a chance of surviving the destruction of the carrying unit.  Infantry carrying ECM equipment or other passive effect equipment have that equipment remain in effect while riding in a carrier.  Infantry riding inside a carrier may take damage from the vehicle's skid, sideslip, fall, collision or critical hit, however.
+x25) Infantry now have a chance of surviving the destruction of the carrying unit.  Infantry carrying ECM equipment or other passive effect equipment have that equipment remain in effect while riding in a carrier.  Infantry riding inside a carrier may take damage from the vehicle's skid, sideslip, fall, collision or critical hit, however.
 
 x26) Rules for using weapons while carrying Mechanized Battle Armor was changed from cannot fire any torso weapons while carrying to not being able to fire any weapons from a location which currently is carrying a Battle Armor, or no left, right, or rear side weapons for Omnivehicles.
 
 x27) -1 MP penalty for units carrying Mechanized Battle Armor using Magnetic Clamps
 
-28) Mechanized Battle Armor fall off the ‘Mech if it falls, but not if it intentionally goes prone.
+x28) Mechanized Battle Armor fall off the ‘Mech if it falls, but not if it intentionally goes prone.
 
 x29) ‘Mechs carrying Battle Armor on their backs cannot dump ammunition
 

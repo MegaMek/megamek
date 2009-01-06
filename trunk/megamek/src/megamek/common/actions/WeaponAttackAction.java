@@ -921,6 +921,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
+        // industrial cockpit: +1 to hit
+        if ((ae instanceof Mech) && (((Mech)ae).getCockpitType() == Mech.COCKPIT_INDUSTRIAL)) {
+            toHit.addModifier(1, "industrial cockpit without advanced fire control");
+        }
+
         // Do we use Listen-Kill ammo from War of 3039 sourcebook?
         if (!isECMAffected
                 && (atype != null)

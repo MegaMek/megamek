@@ -1,16 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
  * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
 
 /*
  * EquipmentType.java
- * 
+ *
  * Created on April 1, 2002, 1:35 PM
  */
 
@@ -26,7 +26,7 @@ import java.util.Vector;
 
 /**
  * Represents any type of equipment mounted on a mechs, excluding systems and actuators.
- * 
+ *
  * @author Ben
  * @version
  */
@@ -68,13 +68,12 @@ public class EquipmentType {
 
     public static final int[] structureLevels = { 1, 2, 3, 3, 3 };
 
-    public static final double[] structureCosts = { 400, 1600, 1600,
     // Assume for nowt that prototype is not more expensive
-            6400, 1600 };
+    public static final double[] structureCosts = { 400, 1600, 1600, 6400, 3200, 300};
 
-    public static final double[] armorCosts = { 10000, 20000, 30000, 20000, 15000, 15000, 25000, 10000, // This is obviously wrong...
-            50000, 20000, 75000, 100000, 50000 };
     // Assume for now that prototype is not more expensive
+    public static final double[] armorCosts = { 10000, 20000, 30000, 30000, 30000, 15000, 15000, 25000, /*patchwork?*/50000, 50000, 20000, 3000, 75000, 100000, 50000, 10000, 10000 };
+
 
     public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 1, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0 };
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
@@ -239,12 +238,12 @@ public class EquipmentType {
     /**
      * Sets the modes that this type of equipment can be in. By default the EquipmentType doesn't have the modes, so don't try to call this method with null or
      * empty argument.
-     * 
+     *
      * @param modes
      *            non null, non empty list of available mode names.
      */
     protected void setModes(String[] modes) {
-        megamek.debug.Assert.assertTrue(modes != null && modes.length >= 0, "List of modes must not be null or empty");
+        megamek.debug.Assert.assertTrue((modes != null) && (modes.length >= 0), "List of modes must not be null or empty");
         if (modes != null) {
             Vector<EquipmentMode> newModes = new Vector<EquipmentMode>(modes.length);
             for (String mode : modes) {
@@ -263,7 +262,7 @@ public class EquipmentType {
     /**
      * Some equipment types might have both instant and next turn mode switching. This method checks for end of turn modes that are kept in a vector of names.
      * It is used by the {@link Mounted#setMode(int)} method to distinguish instant and end of turn switching.
-     * 
+     *
      * @param mode
      *            - the <code>String</code> of the mode name involved in the switch
      * @return true if the mode name is found in the next turn mode vector
@@ -279,17 +278,17 @@ public class EquipmentType {
 
     /**
      * <p>
-     * Returns the mode number <code>modeNum</code> from the list of modes available for this type of equipment. Modes are numbered from <code>0<code> to 
+     * Returns the mode number <code>modeNum</code> from the list of modes available for this type of equipment. Modes are numbered from <code>0<code> to
      * <code>getModesCount()-1</code>
      * <p>
      * Fails if this type of the equipment doesn't have modes, or given mode is out of the valid range.
-     * 
+     *
      * @param modeNum
      * @return mode number <code>modeNum</code> from the list of modes available for this type of equipment.
      * @see #hasModes()
      */
     public EquipmentMode getMode(int modeNum) {
-        megamek.debug.Assert.assertTrue(modes != null && modeNum >= 0 && modeNum < modes.size());
+        megamek.debug.Assert.assertTrue((modes != null) && (modeNum >= 0) && (modeNum < modes.size()));
         return modes.elementAt(modeNum);
     }
 
@@ -483,7 +482,7 @@ public class EquipmentType {
     }
 
     public boolean equals(EquipmentType e) {
-        if (e != null && internalName.equals(e.internalName)) {
+        if ((e != null) && internalName.equals(e.internalName)) {
             return true;
         }
         return false;

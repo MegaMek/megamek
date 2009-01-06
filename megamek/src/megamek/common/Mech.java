@@ -4111,7 +4111,7 @@ public abstract class Mech extends Entity implements Serializable {
 		if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
 			hasEjectSeat = false;
 		}
-		if (getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL) {
+		if (isIndustrial()) {
 		    // industrials can only eject when they have an ejection seat
 		    for (Mounted misc : miscList) {
 		        if (misc.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
@@ -5082,5 +5082,13 @@ public abstract class Mech extends Entity implements Serializable {
 	        return 10;
 	    }
 	    return -1;
+	}
+
+	/**
+	 * Is this an Industrial Mech?
+	 * @return if this mech has an industrial inner structure
+	 */
+	public boolean isIndustrial() {
+	    return getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL;
 	}
 }

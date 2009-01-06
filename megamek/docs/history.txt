@@ -30,6 +30,7 @@ v0.33.38-dev (SVN)
 + Made Look for equipment names case insensitive.
 + Ejection seats for industrial mechs
 + Industrial Mechs with ICE engine don't generate heat for walking/running
++ Industrial Mech Sensors are knocked out after 1 hit
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

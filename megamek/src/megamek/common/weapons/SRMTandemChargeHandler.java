@@ -124,24 +124,27 @@ public class SRMTandemChargeHandler extends SRMHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
-            if ( bDirect && (!(target instanceof Infantry) || target instanceof BattleArmor)){
+            if ( bDirect && (!(target instanceof Infantry) || (target instanceof BattleArmor))){
                 hit.makeDirectBlow(toHit.getMoS()/3);
             }
 
-            if ( target instanceof BattleArmor && ((BattleArmor)target).getInternal(hit.getLocation()) != IArmorState.ARMOR_DOOMED ){
+            if ( (target instanceof BattleArmor) && (((BattleArmor)target).getInternal(hit.getLocation()) != IArmorState.ARMOR_DOOMED) ){
                 int roll = Compute.d6(2);
                 int loc = hit.getLocation();
                 if ( roll >= 10 ){
                     hit = new HitData(loc, false, HitData.EFFECT_CRITICAL);
                 }
-            }else if ( target instanceof Tank || target instanceof Mech ){
+            } else if ((target instanceof Tank) || (target instanceof Mech)) {
 
                 if ( bGlancing ) {
                     hit.setSpecCritmod(-4);
-                }else if ( bDirect ) {
+                } else if ( bDirect ) {
                     hit.setSpecCritmod((toHit.getMoS()/3)-2);
-                }else {
+                } else {
                     hit.setSpecCritmod(-2);
+                }
+                if (entityTarget.hasBARArmor() && (entityTarget.getBARRating() < 10)) {
+                    hit.setSpecCritmod(hit.getSpecCritMod()+2);
                 }
             }
             vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : DamageType.NONE, false, false, throughFront));
@@ -155,7 +158,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             double toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0, Compute.WEAPON_CLUSTER_MISSILE, ((Infantry)target).isMechanized());
             if (bGlancing) {
                 toReturn /= 2;

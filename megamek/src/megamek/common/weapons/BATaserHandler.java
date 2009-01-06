@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -31,9 +31,9 @@ import megamek.server.Server;
 
 public class BATaserHandler extends AmmoWeaponHandler {
 
-    
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1308895663099714573L;
 
@@ -51,18 +51,19 @@ public class BATaserHandler extends AmmoWeaponHandler {
     public BATaserHandler(ToHitData t, WeaponAttackAction w, IGame g,
             Server s) {
         super(t, w, g, s);
-        this.generalDamageType = HitData.DAMAGE_ENERGY;
+        generalDamageType = HitData.DAMAGE_ENERGY;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector, megamek.common.Entity, boolean)
      */
+    @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
             Entity entityTarget, boolean bMissed) {
         boolean done = false;
         if (bMissed) {
-            
+
         }
         else {
             Report r = new Report(3700);
@@ -83,15 +84,14 @@ public class BATaserHandler extends AmmoWeaponHandler {
                     done = true;
                 }
             } else if (entityTarget instanceof Mech) {
-                /*
-                if (entityTarget.isIndustrial()) {
+                if (((Mech)entityTarget).isIndustrial()) {
                     if (roll >= 11) {
                         entityTarget.baTaserShutdown(3);
                     } else {
                         // suffer +1 to piloting and gunnery for 3 rounds
                         entityTarget.setTaserInterference(1, 3);
                     }
-                } else */{
+                } else {
                     if (roll >= 12) {
                         r = new Report(3705);
                         r.addDesc(entityTarget);
@@ -107,9 +107,9 @@ public class BATaserHandler extends AmmoWeaponHandler {
                         entityTarget.setTaserInterference(1, 3);
                     }
                 }
-            } else if (entityTarget instanceof Protomech
-                    || entityTarget instanceof Tank
-                    || entityTarget instanceof Aero) {
+            } else if ((entityTarget instanceof Protomech)
+                    || (entityTarget instanceof Tank)
+                    || (entityTarget instanceof Aero)) {
                 if (roll >= 11) {
                     r = new Report(3705);
                     r.addDesc(entityTarget);

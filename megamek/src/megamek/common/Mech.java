@@ -126,9 +126,11 @@ public abstract class Mech extends Entity implements Serializable {
 
 	public static final int COCKPIT_DUAL = 4;
 
-	public static final String[] COCKPIT_STRING = { "Standard Cockpit", "Torso-Mounted Cockpit", "Small Cockpit", "Command Console", "Dual Cockpit" };
+	public static final int COCKPIT_INDUSTRIAL = 5;
 
-	public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Torso Mounted", "Small", "Command Console", "Dual" };
+	public static final String[] COCKPIT_STRING = { "Standard Cockpit", "Torso-Mounted Cockpit", "Small Cockpit", "Command Console", "Dual Cockpit", "Industrial Cockpit" };
+
+	public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Torso Mounted", "Small", "Command Console", "Dual", "Industrial" };
 
 	// jump types
 	public static final int JUMP_UNKNOWN = -1;
@@ -3627,6 +3629,8 @@ public abstract class Mech extends Entity implements Serializable {
 			cockpitCost = 700000;
 		} else if (getCockpitType() == Mech.COCKPIT_SMALL) {
 			cockpitCost = 175000;
+		} else if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
+		    cockpitCost = 100000;
 		} else {
 			cockpitCost = 200000;
 		}

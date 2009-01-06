@@ -32,6 +32,9 @@ v0.33.38-dev (SVN)
 + Industrial Mechs with ICE engine don't generate heat for walking/running
 + Industrial Mech Sensors are knocked out after 1 hit
 + -1 to-hit for anti-mech attacks against industrials
++ Flag illegal tech combinations on industrial mechs as illegal
++ Update armor and IS costs
++ Added Industrial Mech Cockpit (that has no advanced firing control)
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

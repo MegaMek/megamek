@@ -165,6 +165,7 @@ import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.UnloadStrandedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.containers.PlayerIDandList;
+import megamek.common.event.GameListener;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
@@ -967,11 +968,23 @@ public class Server implements Runnable {
             if (!sDir.exists()) {
                 sDir.mkdir();
             }
+
+            Vector<GameListener> gameListenersClone = new Vector<GameListener>();
+            for (GameListener listener : getGame().getGameListeners()) {
+                gameListenersClone.add(listener);
+            }
+            getGame().purgeGameListeners();
+
             sFinalFile = sDir + File.separator + sFinalFile;
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(sFinalFile));
+
             oos.writeObject(game);
             oos.flush();
             oos.close();
+
+            for ( GameListener listener : gameListenersClone ){
+                getGame().addGameListener(listener);
+            }
         } catch (Exception e) {
             System.err.println("Unable to save file: " + sFinalFile);
             e.printStackTrace();

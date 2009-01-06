@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -55,7 +55,7 @@ public class PushAttackAction extends DisplacementAttackAction {
     /**
      * pushes are impossible when physical attacks are impossible, or a
      * retractable blade is extended
-     * 
+     *
      * @param game
      * @param ae
      * @param target
@@ -66,29 +66,32 @@ public class PushAttackAction extends DisplacementAttackAction {
         String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(
                 game, ae, target);
         String extendedBladeImpossible = null;
-        if (ae instanceof Mech && ((Mech) ae).hasExtendedRetractableBlade())
+        if ((ae instanceof Mech) && ((Mech) ae).hasExtendedRetractableBlade()) {
             extendedBladeImpossible = "Extended retractable blade";
-        if (physicalImpossible != null)
+        }
+        if (physicalImpossible != null) {
             return physicalImpossible;
-        
+        }
+
         if ( ae.getGrappled() != Entity.NONE ) {
             return "Unit Grappled";
         }
-        
+
         if(ae.isEvading()) {
             return "attacker is evading.";
         }
-        
+
         if (!game.getOptions().booleanOption("friendly_fire")) {
             // a friendly unit can never be the target of a direct attack.
-            if (target.getTargetType() == Targetable.TYPE_ENTITY
-                    && (((Entity)target).getOwnerId() == ae.getOwnerId()
-                            || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
-                                    && ae.getOwner().getTeam() != Player.TEAM_NONE
-                                    && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
+            if ((target.getTargetType() == Targetable.TYPE_ENTITY)
+                    && ((((Entity)target).getOwnerId() == ae.getOwnerId())
+                            || ((((Entity)target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))) {
                 return "A friendly unit can never be the target of a direct attack.";
+            }
         }
-        
+
         return extendedBladeImpossible;
     }
 
@@ -105,19 +108,21 @@ public class PushAttackAction extends DisplacementAttackAction {
             targetId = target.getTargetId();
         }
 
-        if (ae == null)
+        if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "You can't attack from a null entity!");
-        if (te == null)
+        }
+        if (te == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "You can't target a null entity!");
+        }
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(te.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int targetElevation = target.getElevation()
                 + targHex.getElevation();
-        boolean inSameBuilding = te != null && game.getBoard().getBuildingAt(ae.getPosition()) != null
+        boolean inSameBuilding = (game.getBoard().getBuildingAt(ae.getPosition()) != null)
         && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         Building bldg = null;
@@ -196,22 +201,22 @@ public class PushAttackAction extends DisplacementAttackAction {
 
         // can't push mech pushing another, different mech
         if (te.isPushing()
-                && te.getDisplacementAttack().getTargetId() != ae.getId()) {
+                && (te.getDisplacementAttack().getTargetId() != ae.getId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is pushing another mech");
         }
 
         // can't do anything but counter-push if the target of another attack
         if (ae.isTargetOfDisplacementAttack()
-                && ae.findTargetedDisplacement().getEntityId() != target
-                        .getTargetId()) {
+                && (ae.findTargetedDisplacement().getEntityId() != target
+                        .getTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Attacker is the target of another push/charge/DFA");
         }
 
         // can't attack the target of another displacement attack
         if (te.isTargetOfDisplacementAttack()
-                && te.findTargetedDisplacement().getEntityId() != ae.getId()) {
+                && (te.findTargetedDisplacement().getEntityId() != ae.getId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is the target of another push/charge/DFA");
         }
@@ -253,9 +258,9 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // Can't target woods or ignite a building with a physical.
-        if (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
-                || target.getTargetType() == Targetable.TYPE_HEX_CLEAR
-                || target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
+        if ((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
+                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
@@ -290,8 +295,8 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // water partial cover?
-        if (te.height() > 0 && te.getElevation() == -1
-                && targHex.terrainLevel(Terrains.WATER) == te.height()) {
+        if ((te.height() > 0) && (te.getElevation() == -1)
+                && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
             toHit.addModifier(3, "target has partial cover");
         }
 
@@ -304,7 +309,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         if(te.isEvading()) {
             toHit.addModifier(te.getEvasionBonus(), "target is evading");
         }
-        
+
         toHit.append(nightModifiers(game, target, null, ae, false));
         // side and elevation shouldn't matter
 
@@ -324,7 +329,7 @@ public class PushAttackAction extends DisplacementAttackAction {
                         "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
-        
+
         //Attacking Weight Class Modifier.
         if ( game.getOptions().booleanOption("tacops_attack_physical_psr") ) {
             if ( ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT ) {

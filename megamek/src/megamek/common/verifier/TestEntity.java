@@ -760,6 +760,10 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append("industrial mechs can only mount standard jump jets");
                     illegal = true;
                 }
+                if (mech.getGyroType() != Mech.GYRO_STANDARD) {
+                    buff.append("industrial mechs can only mount standard gyros");
+                    illegal = true;
+                }
             }
         }
         return illegal;

@@ -2511,34 +2511,24 @@ public abstract class Mech extends Entity implements Serializable {
 		bvText.append(runMP);
 		bvText.append(endColumn);
 		bvText.append(endRow);
-		// factor in TSM or MASC
-		if (hasTSM()) {
-			runMP = (int) Math.ceil((getWalkMP(false, true) + 1) * 1.5) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
-			bvText.append(startRow);
-			bvText.append(startColumn);
-			bvText.append("TSM Run MP");
-			bvText.append(endColumn);
-			bvText.append(startColumn);
-			bvText.append(endColumn);
-			bvText.append(startColumn);
-			bvText.append(runMP);
-			bvText.append(endColumn);
-			bvText.append(endRow);
-		}
-		if (hasMASC()) {
-			runMP = (getWalkMP(false, true) * 2) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
-			bvText.append(startRow);
-			bvText.append(startColumn);
-
-			bvText.append("MASC Run MP");
-			bvText.append(endColumn);
-			bvText.append(startColumn);
-			bvText.append(endColumn);
-			bvText.append(startColumn);
-			bvText.append(runMP);
-			bvText.append(endColumn);
-			bvText.append(endRow);
-		}
+        // adjust further for speed factor
+        // according to TPTB, the formula should always be used,
+        // even if that gives different results for TSM/MASC
+        // than the table
+        int walkMP = getWalkMP(false, true);
+        if (hasTSM()) {
+            walkMP++;
+        }
+        if (hasMASCAndSuperCharger()) {
+            runMP = (int) Math.ceil(walkMP * 2.5);
+        } else if (hasMASC()) {
+            runMP = walkMP * 2;
+        } else {
+            runMP = (int) Math.ceil(walkMP * 1.5);
+        }
+        if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
+            runMP--;
+        }
 		int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
 		bvText.append(startRow);
 		bvText.append(startColumn);
@@ -3431,26 +3421,7 @@ public abstract class Mech extends Entity implements Serializable {
 			bvText.append(endRow);
 		}
 
-		// adjust further for speed factor
-		// according to TPTB, the formula should always be used,
-		// even if that gives different results for TSM/MASC
-		// than the table
-		int walkMP = getWalkMP(false, true);
-		if (hasTSM()) {
-		    walkMP++;
-		}
-		if (hasMASCAndSuperCharger()) {
-		    runMP = (int) Math.ceil(walkMP * 2.5);
-		} else if (hasMASC()) {
-		    runMP = walkMP * 2;
-		} else {
-		    runMP = (int)Math.ceil(walkMP * 1.5);
-		}
-		if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
-		    runMP--;
-		}
-		double speedFactor = Math.pow(1 + ((runMP + (Math.round((double) jumpMP / 2)) - 5) / 10), 1.2);
-
+		double speedFactor = Math.pow(1 + (((double) runMP + (Math.round((double) jumpMP / 2)) - 5) / 10), 1.2);
 		speedFactor = Math.round(speedFactor * 100) / 100.0;
 
 		bvText.append(startRow);

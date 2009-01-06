@@ -275,7 +275,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
                 hasEjectSeat = false;
             }
-            if (mech.getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL) {
+            if (mech.isIndustrial()) {
                 // industrials can only eject when they have an ejection seat
                 for (Mounted misc : mech.getMisc()) {
                     if (misc.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {

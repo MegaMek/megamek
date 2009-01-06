@@ -695,16 +695,42 @@ public abstract class Mech extends Entity implements Serializable {
 		return (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED);
 	}
 
+	/**
+	 * does this mech mount MASC?
+	 * @return
+	 */
 	public boolean hasMASC() {
 		for (Mounted mEquip : getMisc()) {
 			MiscType mtype = (MiscType) mEquip.getType();
-			if (mtype.hasFlag(MiscType.F_MASC)) {
+			if (mtype.hasFlag(MiscType.F_MASC) && !mEquip.isInoperable()) {
 				return true;
 			}
 		}
 		return false;
 	}
 
+	/**
+     * checks if a mech has both a normal MASC system and a supercharger,
+     * regardless of arming status
+     */
+    public boolean hasMASCAndSuperCharger() {
+        boolean hasMASC = false;
+        boolean hasSuperCharger = false;
+        for (Mounted m : getEquipment()) {
+            if (!m.isInoperable() && (m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_MASC) && m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
+                hasSuperCharger = true;
+            }
+            if (!m.isInoperable() && (m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_MASC) && !m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
+                hasMASC = true;
+            }
+        }
+        return hasMASC && hasSuperCharger;
+    }
+
+    /**
+     * does this mech have working jump boosters?
+     * @return
+     */
 	public boolean hasJumpBoosters() {
 		boolean jumpBoosters = false;
 		for (Mounted mEquip : getMisc()) {
@@ -783,9 +809,12 @@ public abstract class Mech extends Entity implements Serializable {
 		return hasMASC && hasSuperCharger;
 	}
 
+	/**
+	 * Does this mech have an extended retractable blade in working condition?
+	 */
 	public boolean hasExtendedRetractableBlade() {
 		for (Mounted m : getEquipment()) {
-			if (!m.isDestroyed() && !m.isBreached() && (m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) && m.curMode().equals("extended")) {
+			if (!m.isInoperable() && (m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) && m.curMode().equals("extended")) {
 				return true;
 			}
 		}
@@ -801,7 +830,7 @@ public abstract class Mech extends Entity implements Serializable {
 	}
 
 	/**
-	 * Same
+	 * does this mech have TSM?
 	 */
 	public boolean hasTSM() {
 		for (Mounted m : getEquipment()) {
@@ -865,8 +894,9 @@ public abstract class Mech extends Entity implements Serializable {
 		return false;
 	}
 
-	/**
-	 * Depends on engine type
+	/*
+	 * (non-Javadoc)
+	 * @see megamek.common.Entity#getStandingHeat()
 	 */
 	@Override
 	public int getStandingHeat() {
@@ -884,18 +914,19 @@ public abstract class Mech extends Entity implements Serializable {
 		return getEngine().getRating() / (int) weight;
 	}
 
-	/**
-	 * Depends on engine type
+	/*
+	 * (non-Javadoc)
+	 * @see megamek.common.Entity#getWalkHeat()
 	 */
 	@Override
 	public int getWalkHeat() {
 		return engine.getWalkHeat();
 	}
 
-	/**
-	 * Potentially adjust runMP for MASC
+	/*
+	 * (non-Javadoc)
+	 * @see megamek.common.Entity#getRunMP(boolean, boolean)
 	 */
-
 	@Override
 	public int getRunMP(boolean gravity, boolean ignoreheat) {
 		if (hasArmedMASCAndSuperCharger()) {
@@ -907,10 +938,10 @@ public abstract class Mech extends Entity implements Serializable {
 		return super.getRunMP(gravity, ignoreheat) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
 	}
 
-	/**
-	 * Returns run MP without considering MASC
+	/*
+	 * (non-Javadoc)
+	 * @see megamek.common.Entity#getRunMPwithoutMASC(boolean, boolean)
 	 */
-
 	@Override
 	public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
 		return super.getRunMP(gravity, ignoreheat) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
@@ -1003,8 +1034,9 @@ public abstract class Mech extends Entity implements Serializable {
 		return jumpType;
 	}
 
-	/**
-	 * We need to override this here, because mechs generate heat when jumping.
+	/*
+	 * (non-Javadoc)
+	 * @see megamek.common.Entity#getJumpHeat(int)
 	 */
 	@Override
 	public int getJumpHeat(int movedMP) {
@@ -3400,73 +3432,25 @@ public abstract class Mech extends Entity implements Serializable {
 		}
 
 		// adjust further for speed factor
-		// this is a bit weird, because the formula gives
-		// a different result than the table, because MASC/TSM
-		// is handled differently (page 315, TM, compare
-		// http://forums.classicbattletech.com/index.php/topic,20468.0.html
-		double speedFactor;
-		// but taking into account hit actuators
-		double speedFactorTableLookup = getRunMP(false, true);
-		// factor in TSM (flat +1)
+		// according to TPTB, the formula should always be used,
+		// even if that gives different results for TSM/MASC
+		// than the table
+		int walkMP = getWalkMP(false, true);
 		if (hasTSM()) {
-			// speedFactorTableLookup += 1;
-            speedFactorTableLookup = (int) Math.ceil((getWalkMP(false, true) + 1) * 1.5) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
-			bvText.append(startRow);
-			bvText.append(startColumn);
-
-			bvText.append("Speed Factor for TSM");
-			bvText.append(endColumn);
-			bvText.append(startColumn);
-			bvText.append(endColumn);
-			bvText.append(startColumn);
-
-			bvText.append("= ");
-			bvText.append(speedFactorTableLookup);
-			bvText.append(endColumn);
-			bvText.append(endRow);
+		    walkMP++;
 		}
-		// factor in MASC
-		// recalculate normal run MP here, because we need normal run +1 for
-		// MASC,
-		// and MASC might be currently active, so we can't just use getRunMP
-		if (hasMASC()) {
-			// speedFactorTableLookup = getWalkMP(false, true) * 1.5 + 1 - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
-            speedFactorTableLookup = (getWalkMP(false, true) * 2) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
-			bvText.append(startRow);
-			bvText.append(startColumn);
-
-			bvText.append("Speed Factor for MASC");
-			bvText.append(endColumn);
-			bvText.append(startColumn);
-			bvText.append(endColumn);
-			bvText.append(startColumn);
-
-			bvText.append("= ");
-			bvText.append(speedFactorTableLookup);
-			bvText.append(endColumn);
-			bvText.append(endRow);
-		}
-		speedFactorTableLookup += Math.round((double) jumpMP / 2);
-
-		if (Math.round((double) jumpMP / 2) > 0) {
-			bvText.append(startRow);
-			bvText.append(startColumn);
-			bvText.append("Speed Factor + ");
-			bvText.append(Math.round((double) jumpMP / 2));
-			bvText.append(" for Jumping");
-			bvText.append(endColumn);
-			bvText.append(startColumn);
-			bvText.append(endColumn);
-			bvText.append(startColumn);
-			bvText.append(endColumn);
-			bvText.append(endRow);
-		}
-
-		if (speedFactorTableLookup > 25) {
-			speedFactor = Math.pow(1 + (((double) runMP + (Math.round((double) jumpMP / 2)) - 5) / 10), 1.2);
+		if (hasMASCAndSuperCharger()) {
+		    runMP = (int) Math.ceil(walkMP * 2.5);
+		} else if (hasMASC()) {
+		    runMP = walkMP * 2;
 		} else {
-			speedFactor = Math.pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
+		    runMP = (int)Math.ceil(walkMP * 1.5);
 		}
+		if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
+		    runMP--;
+		}
+		double speedFactor = Math.pow(1 + ((runMP + (Math.round((double) jumpMP / 2)) - 5) / 10), 1.2);
+
 		speedFactor = Math.round(speedFactor * 100) / 100.0;
 
 		bvText.append(startRow);

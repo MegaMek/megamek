@@ -31,6 +31,7 @@ v0.33.38-dev (SVN)
 + Ejection seats for industrial mechs
 + Industrial Mechs with ICE engine don't generate heat for walking/running
 + Industrial Mech Sensors are knocked out after 1 hit
++ -1 to-hit for anti-mech attacks against industrials
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

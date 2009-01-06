@@ -37,6 +37,7 @@ v0.33.38-dev (SVN)
 + Added Industrial Mech Cockpit (that has no advanced firing control)
 + BV errata on TSM and MASC speed factors
 + Bug: Speed Factor rounding too soon when calculating BV
++ RFE: GameListeners are no longer saved to the save game files
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

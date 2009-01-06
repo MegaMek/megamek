@@ -107,29 +107,41 @@ public interface IGame {
 
     /**
      * Adds the specified game listener to receive board events from this Game.
-     * 
+     *
      * @param listener the game listener.
      */
     public abstract void addGameListener(GameListener listener);
 
     /**
      * Removes the specified game listener.
-     * 
+     *
      * @param listener the game listener.
      */
     public abstract void removeGameListener(GameListener listener);
 
     /**
+     * Returns all the GameListeners.
+     * 
+     * @return
+     */
+    public abstract Vector<GameListener> getGameListeners();
+
+    /**
+     * purges all Game Listener objects.
+     */
+    public abstract void purgeGameListeners();
+
+    /**
      * Processes game events by dispatching them to any registered GameListener
      * objects.
-     * 
+     *
      * @param event the game event.
      */
     public abstract void processGameEvent(GameEvent event);
 
     /**
      * Check if there is a minefield at given coords
-     * 
+     *
      * @param coords coords to check
      * @return <code>true</code> if there is a minefield at given coords or
      *         <code>false</code> otherwise
@@ -138,7 +150,7 @@ public interface IGame {
 
     /**
      * Get the minefields at specified coords
-     * 
+     *
      * @param coords
      * @return the <code>Vector</code> of minefields at specified coord
      */
@@ -146,7 +158,7 @@ public interface IGame {
 
     /**
      * Get the number of the minefields at specified coords
-     * 
+     *
      * @param coords
      * @return the number of the minefields at specified coord
      */
@@ -154,7 +166,7 @@ public interface IGame {
 
     /**
      * Get the coordinates of all mined hexes in the game.
-     * 
+     *
      * @return an <code>Enumeration</code> of the <code>Coords</code>
      *         containing minefilds. This will not be <code>null</code>.
      */
@@ -162,21 +174,21 @@ public interface IGame {
 
     /**
      * Addds the specified minefield
-     * 
+     *
      * @param mf minefield to add
      */
     public abstract void addMinefield(Minefield mf);
 
     /**
      * Adds a number of minefields
-     * 
+     *
      * @param minefields the <code>Vector</code> of the minefields to add
      */
     public abstract void addMinefields(Vector<Minefield> minefields);
 
     /**
      * Sets the minefields to the given <code>Vector</code> of the minefields
-     * 
+     *
      * @param minefields
      */
     public abstract void setMinefields(Vector<Minefield> minefields);
@@ -186,10 +198,10 @@ public interface IGame {
      * @param newMinefields
      */
     public abstract void resetMinefieldDensity(Vector<Minefield> newMinefields);
-    
+
     /**
      * Removes the specified minefield
-     * 
+     *
      * @param mf minefield to remove
      */
     public abstract void removeMinefield(Minefield mf);
@@ -206,21 +218,21 @@ public interface IGame {
 
     /**
      * Addds the specified vibrabomb
-     * 
+     *
      * @param mf Vibrabomb to add
      */
     public abstract void addVibrabomb(Minefield mf);
 
     /**
      * Removes the specified Vibrabomb
-     * 
+     *
      * @param mf Vibrabomb to remove
      */
     public abstract void removeVibrabomb(Minefield mf);
 
     /**
      * Checks if the game contains the specified Vibrabomb
-     * 
+     *
      * @param mf the Vibrabomb to ceck
      * @return true iff the minefield contains a vibrabomb.
      */
@@ -233,7 +245,7 @@ public interface IGame {
 
     /**
      * sets the game options
-     * 
+     *
      * @param options
      */
     public abstract void setOptions(GameOptions options);
@@ -245,7 +257,7 @@ public interface IGame {
 
     /**
      * Sets the new game board
-     * 
+     *
      * @param board
      */
     public abstract void setBoard(IBoard board);
@@ -354,7 +366,7 @@ public interface IGame {
      * @return true if the current phase can be played simultaneously
      */
     public abstract boolean isPhaseSimultaneous();
-    
+
     /**
      * Returns the current GameTurn object
      */
@@ -365,7 +377,7 @@ public interface IGame {
      * if the player has no turns to play
      */
     public abstract GameTurn getTurnForPlayer(int pn);
-    
+
     /**
      * Changes to the next turn, returning it.
      */
@@ -469,7 +481,7 @@ public interface IGame {
 
     /**
      * Returns an out-of-game entity.
-     * 
+     *
      * @param id the <code>int</code> ID of the out-of-game entity.
      * @return the out-of-game <code>Entity</code> with that ID. If no
      *         out-of-game entity has that ID, returns a <code>null</code>.
@@ -478,7 +490,7 @@ public interface IGame {
 
     /**
      * Swap out the current list of dead (or fled) units for a new one.
-     * 
+     *
      * @param vOutOfGame - the new <code>Vector</code> of dead or fled units.
      *            This value should <em>not</em> be <code>null</code>.
      * @throw <code>IllegalArgumentException</code> if the new list is
@@ -492,7 +504,7 @@ public interface IGame {
      * contain the passed-in unit, if the unit has a C3 computer. If the unit
      * has no C3 computer, the output will be empty (but it will never be
      * <code>null</code>).
-     * 
+     *
      * @param entity - the <code>Entity</code> whose C3 network co- members is
      *            required. This value may be <code>null</code>.
      * @return a <code>Vector</code> that will contain all other
@@ -511,7 +523,7 @@ public interface IGame {
      * <code>null</code>). If the passed-in unit is a company commander or a
      * member of a C3i network, this call is the same as
      * <code>getC3NetworkMembers</code>.
-     * 
+     *
      * @param entity - the <code>Entity</code> whose C3 network sub- members
      *            is required. This value may be <code>null</code>.
      * @return a <code>Vector</code> that will contain all other
@@ -527,7 +539,7 @@ public interface IGame {
      * each unit in this <code>Game</code> to a <code>Vector</code> of
      * <code>Entity</code>s at that positions. Units that have no position
      * (e.g. loaded units) will not be in the map.
-     * 
+     *
      * @return a <code>Hashtable</code> that maps the <code>Coords</code>
      *         positions or each unit in the game to a <code>Vector</code> of
      *         <code>Entity</code>s at that position.
@@ -596,12 +608,12 @@ public interface IGame {
      * Resets this game by removing all entities.
      */
     public abstract void reset();
-    
+
     /**
      * add a smoke cloud to the list of smoke clouds
      */
     public abstract void addSmokeCloud(SmokeCloud cloud);
-    
+
     /**
      * get the list of smokeclouds
      */
@@ -610,7 +622,7 @@ public interface IGame {
     /**
      * Returns the first entity at the given coordinate, if any. Only returns
      * targetable (non-dead) entities.
-     * 
+     *
      * @param c the coordinates to search at
      */
     public abstract Entity getFirstEntity(Coords c);
@@ -618,7 +630,7 @@ public interface IGame {
     /**
      * Returns the first enemy entity at the given coordinate, if any. Only
      * returns targetable (non-dead) entities.
-     * 
+     *
      * @param c the coordinates to search at
      * @param currentEntity the entity that is firing
      */
@@ -637,7 +649,7 @@ public interface IGame {
     /**
      * Returns a Target for an Accidental Fall From above, or null if no
      * possible target is there
-     * 
+     *
      * @param c The <code>Coords</code> of the hex in which the accidental
      *            fall from above happens
      * @param ignore The entity who is falling, so shouldn't be returned
@@ -648,7 +660,7 @@ public interface IGame {
     /**
      * Returns an <code>Enumeration</code> of the enemy's active entities at
      * the given coordinates.
-     * 
+     *
      * @param c the <code>Coords</code> of the hex being examined.
      * @param currentEntity the <code>Entity</code> whose enemies are needed.
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the
@@ -660,7 +672,7 @@ public interface IGame {
     /**
      * Returns an <code>Enumeration</code> of friendly active entities at the
      * given coordinates.
-     * 
+     *
      * @param c the <code>Coords</code> of the hex being examined.
      * @param currentEntity the <code>Entity</code> whose friends are needed.
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the
@@ -677,7 +689,7 @@ public interface IGame {
 
     /**
      * See if the <code>Entity</code> with the given ID is out of the game.
-     * 
+     *
      * @param id - the ID of the <code>Entity</code> to be checked.
      * @return <code>true</code> if the <code>Entity</code> is in the
      *         graveyard, <code>false</code> otherwise.
@@ -686,7 +698,7 @@ public interface IGame {
 
     /**
      * See if the <code>Entity</code> is out of the game.
-     * 
+     *
      * @param entity - the <code>Entity</code> to be checked.
      * @return <code>true</code> if the <code>Entity</code> is in the
      *         graveyard, <code>false</code> otherwise.
@@ -720,7 +732,7 @@ public interface IGame {
     /**
      * Returns the next selectable entity that can act this turn, or null if
      * none can.
-     * 
+     *
      * @param start the index number to start at
      */
     public abstract Entity getNextEntity(int start);
@@ -728,7 +740,7 @@ public interface IGame {
     /**
      * Returns the next selectable entity ID that can act this turn, or null if
      * none can.
-     * 
+     *
      * @param start the index number to start at
      */
     public abstract int getNextEntityNum(int start);
@@ -736,7 +748,7 @@ public interface IGame {
     /**
      * Returns the entity id of the next entity that can move during the
      * specified
-     * 
+     *
      * @param turn the turn to use
      * @param start the entity id to start at
      */
@@ -758,7 +770,7 @@ public interface IGame {
 
     /**
      * Get the entities for the player.
-     * 
+     *
      * @param player - the <code>Player</code> whose entities are required.
      * @param hide - should fighters loaded into squadrons be excluded from this list?
      * @return a <code>Vector</code> of <code>Entity</code>s.
@@ -771,7 +783,7 @@ public interface IGame {
      * href="http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart=">
      * Randall Bills</a>, the "minimum move" rule allow stranded units to
      * dismount at the start of the turn.
-     * 
+     *
      * @param entity the <code>Entity</code> that may be stranded
      * @return <code>true</code> if the entity is stranded <code>false</code>
      *         otherwise.
@@ -811,7 +823,7 @@ public interface IGame {
      * allow the squad to be transported. <p/> This method should be called
      * </b>*ONCE*</b> per game, after all units for all players have been
      * loaded.
-     * 
+     *
      * @return <code>true</code> if a unit was updated, <code>false</code>
      *         if no player has a Battle Armor squad equipped with a Magnetic
      *         Clamp.
@@ -857,7 +869,7 @@ public interface IGame {
 
     /**
      * Remove a specified action
-     * 
+     *
      * @param o The action to remove.
      */
     public abstract void removeAction(Object o);
@@ -897,7 +909,7 @@ public interface IGame {
      * charges to the client.
      */
     public abstract Vector<AttackAction> getChargesVector();
-    
+
     /**
      * Adds a pending ram attack to the list for this phase.
      */
@@ -1003,7 +1015,7 @@ public interface IGame {
 
     /**
      * Getter for property roundCount.
-     * 
+     *
      * @return Value of property roundCount.
      */
     public abstract int getRoundCount();
@@ -1018,28 +1030,28 @@ public interface IGame {
     /**
      * Getter for property forceVictory. this tells us that a claim for victory
      * is active.
-     * 
+     *
      * @return Value of property forceVictory.
      */
     public abstract boolean isForceVictory();
 
     /**
      * Setter for property forceVictory.
-     * 
+     *
      * @param forceVictory New value of property forceVictory.
      */
     public abstract void setForceVictory(boolean forceVictory);
 
     /**
      * Adds the given reports vector to the GameReport collection.
-     * 
+     *
      * @param v Vector of reports
      */
     public abstract void addReports(Vector<Report> v);
 
     /**
      * Returns a vector of reports for the given round.
-     * 
+     *
      * @param r Round number
      */
     public abstract Vector<Report> getReports(int r);
@@ -1066,14 +1078,14 @@ public interface IGame {
      * Getter for property victoryPlayerId. itmo: apparently this is the guy who
      * claims to have won the game also used to tell who won when the game is
      * won
-     * 
+     *
      * @return Value of property victoryPlayerId.
      */
     public abstract int getVictoryPlayerId();
 
     /**
      * Setter for property victoryPlayerId.
-     * 
+     *
      * @param victoryPlayerId New value of property victoryPlayerId.
      */
     public abstract void setVictoryPlayerId(int victoryPlayerId);
@@ -1081,14 +1093,14 @@ public interface IGame {
     /**
      * Getter for property victoryTeam. corresponding claiming/winning team if
      * the player is in a team
-     * 
+     *
      * @return Value of property victoryTeam.
      */
     public abstract int getVictoryTeam();
 
     /**
      * Setter for property victoryTeam.
-     * 
+     *
      * @param victoryTeam New value of property victoryTeam.
      */
     public abstract void setVictoryTeam(int victoryTeam);
@@ -1106,7 +1118,7 @@ public interface IGame {
 
     /**
      * Get all <code>Entity</code>s that pass the given selection criteria.
-     * 
+     *
      * @param selector the <code>EntitySelector</code> that implements test
      *            that an entity must pass to be included. This value may be
      *            <code>null</code> (in which case all entities in the game
@@ -1120,7 +1132,7 @@ public interface IGame {
 
     /**
      * Count all <code>Entity</code>s that pass the given selection criteria.
-     * 
+     *
      * @param selector the <code>EntitySelector</code> that implements test
      *            that an entity must pass to be included. This value may be
      *            <code>null</code> (in which case the count of all entities
@@ -1134,7 +1146,7 @@ public interface IGame {
     /**
      * Get all out-of-game <code>Entity</code>s that pass the given selection
      * criteria.
-     * 
+     *
      * @param selector the <code>EntitySelector</code> that implements test
      *            that an entity must pass to be included. This value may be
      *            <code>null</code> (in which case all entities in the game
@@ -1149,7 +1161,7 @@ public interface IGame {
     /**
      * Count all out-of-game<code>Entity</code>s that pass the given
      * selection criteria.
-     * 
+     *
      * @param selector the <code>EntitySelector</code> that implements test
      *            that an entity must pass to be included. This value may be
      *            <code>null</code> (in which case the count of all
@@ -1172,7 +1184,7 @@ public interface IGame {
     /**
      * Get Entities that have have a iNarc Nemesis pod attached and are situated
      * between two Coords
-     * 
+     *
      * @param attacker The attacking <code>Entity</code>.
      * @param target The <code>Coords</code> of the original target.
      * @return a <code>Enumeration</code> of entities that have nemesis pods
@@ -1185,7 +1197,7 @@ public interface IGame {
     /**
      * Returns the previous entity from the master list of entities. Will wrap
      * around to the end of the list if necessary.
-     * 
+     *
      * @param current The <code>Entity</code> whose list position you wish to
      *            start from.
      * @return The previous <code>Entity</code> in the list.
@@ -1195,7 +1207,7 @@ public interface IGame {
     /**
      * Returns the next entity from the master list of entities. Will wrap
      * around to the begining of the list if necessary.
-     * 
+     *
      * @param current The <code>Entity</code> whose list position you wish to
      *            start from.
      * @return The next <code>Entity</code> in the list.
@@ -1265,9 +1277,9 @@ public interface IGame {
     public abstract void createVictoryConditions();
 
     public abstract Victory getVictory();
-    
+
     public abstract boolean useVectorMove();
-    
+
     /**
      * Adds a pending control roll to the list for this phase.
      */
@@ -1287,19 +1299,19 @@ public interface IGame {
      * Resets the Control Roll list.
      */
     public abstract void resetControlRolls();
-    
+
     public abstract boolean checkForValidSpaceStations(int playerId);
-    
+
     public abstract boolean checkForValidJumpships(int playerId);
-    
+
     public abstract boolean checkForValidWarships(int playerId);
-    
+
     public abstract boolean checkForValidDropships(int playerId);
-    
+
     public abstract boolean checkForValidSmallCraft(int playerId);
-    
+
     public abstract PlanetaryConditions getPlanetaryConditions();
-    
+
     public abstract void setPlanetaryConditions(PlanetaryConditions conditions);
-    
+
 }

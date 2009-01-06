@@ -3409,11 +3409,12 @@ public abstract class Mech extends Entity implements Serializable {
 		double speedFactorTableLookup = getRunMP(false, true);
 		// factor in TSM (flat +1)
 		if (hasTSM()) {
-			speedFactorTableLookup += 1;
+			// speedFactorTableLookup += 1;
+            speedFactorTableLookup = (int) Math.ceil((getWalkMP(false, true) + 1) * 1.5) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
 			bvText.append(startRow);
 			bvText.append(startColumn);
 
-			bvText.append("Speed Factor + 1 for TSM");
+			bvText.append("Speed Factor for TSM");
 			bvText.append(endColumn);
 			bvText.append(startColumn);
 			bvText.append(endColumn);
@@ -3429,7 +3430,8 @@ public abstract class Mech extends Entity implements Serializable {
 		// MASC,
 		// and MASC might be currently active, so we can't just use getRunMP
 		if (hasMASC()) {
-			speedFactorTableLookup = getWalkMP(false, true) * 1.5 + 1 - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+			// speedFactorTableLookup = getWalkMP(false, true) * 1.5 + 1 - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+            speedFactorTableLookup = (getWalkMP(false, true) * 2) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
 			bvText.append(startRow);
 			bvText.append(startColumn);
 

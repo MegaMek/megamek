@@ -38,6 +38,8 @@ v0.33.38-dev (SVN)
 + BV errata on TSM and MASC speed factors
 + Bug: Speed Factor rounding too soon when calculating BV
 + RFE: GameListeners are no longer saved to the save game files
++ Bug: Apollo has not loading LRM 15 ammo
++ Bug: sorting of weapons wrong in BV calculation when BV difference is < 1
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

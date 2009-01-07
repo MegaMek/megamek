@@ -2626,7 +2626,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         bvText.append(startRow);
         bvText.append(startColumn);
-        bvText.append("Multiply by Target Movement Factor of ");
+        bvText.append("Multiply by Defensive Movement Factor of ");
         bvText.append(endColumn);
         bvText.append(startColumn);
 
@@ -2737,7 +2737,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         bvText.append(startRow);
         bvText.append(startColumn);
-        bvText.append("UnModified Weapon BV:");
+        bvText.append("Unmodified Weapon BV:");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -2922,6 +2922,7 @@ public abstract class Mech extends Entity implements Serializable {
             bvText.append(endRow);
 
             double dBV = wtype.getBV(this);
+            String weaponName = mounted.getName() + (mounted.isRearMounted() ? "(R)" : "");
 
             // don't count AMS, it's defensive
             if (wtype.hasFlag(WeaponType.F_AMS)) {
@@ -2957,9 +2958,11 @@ public abstract class Mech extends Entity implements Serializable {
                 Mounted mLinker = mounted.getLinkedBy();
                 if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
+                    weaponName = weaponName.concat(" with Artemis");
                 }
                 if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
+                    weaponName = weaponName.concat(" with Apollo");
                 }
             }
             // half for being rear mounted (or front mounted, when more rear-
@@ -2977,11 +2980,11 @@ public abstract class Mech extends Entity implements Serializable {
                 // store heat and BV, for sorting a few lines down;
                 weaponValues.add(dBV);
                 weaponValues.add(weaponHeat);
-                weaponValues.add(mounted.getName() + (mounted.isRearMounted() ? "(R)" : ""));
+                weaponValues.add(weaponName);
                 heatBVs.add(weaponValues);
             } else {
                 weaponValues.add(dBV);
-                weaponValues.add(mounted.getName() + (mounted.isRearMounted() ? "(R)" : ""));
+                weaponValues.add(weaponName);
                 nonHeatBVs.add(weaponValues);
             }
 
@@ -3024,6 +3027,30 @@ public abstract class Mech extends Entity implements Serializable {
 
         bvText.append(startRow);
         bvText.append(startColumn);
+        bvText.append("Weapons with no heat at full BV:");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        // count heat-free weapons always at full modified BV
+        for (ArrayList<Object> nonHeatWeapon : nonHeatBVs) {
+            weaponBV += (Double) nonHeatWeapon.get(0);
+
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(nonHeatWeapon.get(1));
+            if (nonHeatWeapon.get(1).toString().length() < 8) {
+                bvText.append("\t");
+            }
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(nonHeatWeapon.get(0));
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
         bvText.append("Heat Modified Weapons BV: ");
         bvText.append(endColumn);
         bvText.append(startColumn);
@@ -3037,31 +3064,12 @@ public abstract class Mech extends Entity implements Serializable {
             bvText.append(startRow);
             bvText.append(startColumn);
 
-            bvText.append("(Heat Exceeds Mech Efficiency) ");
+            bvText.append("(Heat Exceeds Mech Heat Efficiency) ");
 
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append(endColumn);
             bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-
-        // count heat-free weapons always at full modified BV
-        for (ArrayList<Object> nonHeatWeapon : nonHeatBVs) {
-            weaponBV += (Double) nonHeatWeapon.get(0);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(nonHeatWeapon.get(1));
-            if (nonHeatWeapon.get(1).toString().length() < 8) {
-                bvText.append("\t");
-            }
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append("+");
-            bvText.append(nonHeatWeapon.get(0));
             bvText.append(endColumn);
             bvText.append(endRow);
         }
@@ -3093,12 +3101,13 @@ public abstract class Mech extends Entity implements Serializable {
             // sort the heat-using weapons by modified BV
             Collections.sort(heatBVs, new Comparator<ArrayList<Object>>() {
                 public int compare(ArrayList<Object> obj1, ArrayList<Object> obj2) {
+                    // first element in the the ArrayList is BV, second is heat
                     // if same BV, lower heat first
                     if (obj1.get(0).equals(obj2.get(0))) {
                         return new Integer((Integer) obj1.get(1) - (Integer) obj2.get(1));
                     }
                     // higher BV first
-                    return new Double((Double) obj2.get(0) - (Double) obj1.get(0)).intValue();
+                    return (int)Math.ceil((Double) obj2.get(0) - (Double) obj1.get(0));
                 }
             });
             // count heat-generating weapons at full modified BV until

@@ -8005,14 +8005,12 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         return bvText.toString();
     }
     /**
-     * Return the BAR-rating of this Entity's armor, or -1, if no BAR
-     * Armor mounted
+     * Return the BAR-rating of this Entity's armor
      * @return the BAR rating
      */
     public int getBARRating() {
-        // normal entities don't have BAR armor, subclasses should
-        // override if they possibly have BAR armor
-        return -1;
+        // normal armor has a BAR rating of 10
+        return 10;
     }
 
     /**
@@ -8020,7 +8018,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * @return
      */
     public boolean hasBARArmor() {
-        return getBARRating() != -1;
+        return getBARRating() < 10;
     }
 
     /**

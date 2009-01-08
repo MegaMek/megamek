@@ -143,7 +143,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 } else {
                     hit.setSpecCritmod(-2);
                 }
-                if (entityTarget.hasBARArmor() && (entityTarget.getBARRating() < 10)) {
+                if (entityTarget.hasBARArmor()) {
                     hit.setSpecCritmod(hit.getSpecCritMod()+2);
                 }
             }

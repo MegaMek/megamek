@@ -5048,7 +5048,7 @@ public abstract class Mech extends Entity implements Serializable {
                 (armorType == EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
             return 10;
         }
-        return -1;
+        return 10;
     }
 
     /**

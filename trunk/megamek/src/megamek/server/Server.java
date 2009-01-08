@@ -514,8 +514,7 @@ public class Server implements Runnable {
         }
 
         // kill active connnections
-        for (Enumeration<IConnection> connEnum = connections.elements();connEnum.hasMoreElements();) {
-            IConnection conn = connEnum.nextElement();
+        for (IConnection conn : connections) {
             conn.close();
         }
         connections.removeAllElements();
@@ -14978,24 +14977,10 @@ public class Server implements Runnable {
                 // targets with BAR armor get crits, depending on damage and BAR rating
                 if (te.hasBARArmor()) {
                     if (origDamage > te.getBARRating()) {
-                        if (hit.getSpecCritMod() < 0) {
-                            // this is from AP rounds, auto crit
-                            if (te.getBARRating() < 10) {
-                                // crit roll with +2 mod
-                                Report.addNewline(vDesc);
-                                vDesc.addAll(criticalEntity(te, hit.getLocation(), 2 + hit.getSpecCritMod()));
-                            } else {
-                                Report.addNewline(vDesc);
-                                vDesc.addAll(criticalEntity(te, hit.getLocation(), 0 + hit.getSpecCritMod()));
-                            }
-                        }
                         if (te.hasArmoredChassis()) {
-                            if (te.getBARRating() < 10) {
-                                Report.addNewline(vDesc);
-                                // crit roll with -1 mod
-                                vDesc.addAll(criticalEntity(te, hit.getLocation(), -1));
-                            }
-                            // else no crit
+                            Report.addNewline(vDesc);
+                            // crit roll with -1 mod
+                            vDesc.addAll(criticalEntity(te, hit.getLocation(), -1));
                         } else {
                             Report.addNewline(vDesc);
                             vDesc.addAll(criticalEntity(te, hit.getLocation(), 0));
@@ -15501,7 +15486,17 @@ public class Server implements Runnable {
 
                 for (int i = 0; i < specCrits; i++) {
                     vDesc.elementAt(vDesc.size() - 1).newlines++;
-                    vDesc.addAll(criticalEntity(te, hit.getLocation(), (hardenedArmor ? -2 : hit.getSpecCritMod()) + hit.glancingMod()));
+                    // against BAR armor, we get a +2 mod
+                    int critMod = te.hasBARArmor()?2:0;
+                    if (hardenedArmor) {
+                        // against hardened armor, it's a flat -2 mod
+                        critMod = -2;
+                    } else {
+                        // otherwise, use the normal mods
+                        critMod += hit.getSpecCritMod();
+                        critMod += hit.glancingMod();
+                    }
+                    vDesc.addAll(criticalEntity(te, hit.getLocation(), critMod));
                 }
                 specCrits = 0;
             }
@@ -23517,21 +23512,20 @@ public class Server implements Runnable {
                         continue;
                     }
                     // only infantry and support vees with bar < 5 are affected
-                    if ((entity instanceof BattleArmor) || (!(entity instanceof Infantry) && !(((entity instanceof SupportTank) && (((SupportTank)entity).getBARRating() < 5))
-                            || ((entity instanceof SupportVTOL) && (((SupportVTOL)entity).getBARRating() < 5))))) {
+                    if ((entity instanceof BattleArmor) || (entity.getBARRating() > 4)) {
                         continue;
                     }
                     if (entity instanceof Infantry) {
                         hits = Compute.d6(damage);
                         hits *= 2;
                     }
-                    if (((entity instanceof SupportTank) && (((SupportTank)entity).getBARRating() < 5))) {
+                    if (entity.getBARRating() < 5) {
                         switch (ammo.getAmmoType()) {
                         case AmmoType.T_LONG_TOM:
                             // hack: check if damage is still at 4, so we're in the
                             // center hex. otherwise, do no damage
                             if (damage == 4) {
-                                damage = (5 - ((SupportTank)entity).getBARRating()) * 5;
+                                damage = (5 - entity.getBARRating()) * 5;
                             } else {
                                 continue;
                             }
@@ -23540,40 +23534,14 @@ public class Server implements Runnable {
                             // hack: check if damage is still at 2, so we're in the
                             // center hex. otherwise, do no damage
                             if (damage == 2) {
-                                damage = (5 - ((SupportTank)entity).getBARRating()) * 3;
+                                damage = (5 - entity.getBARRating()) * 3;
                             } else {
                                 continue;
                             }
                             break;
                         case AmmoType.T_THUMPER:
                             // no need to check for damage, because falloff = damage for the thumper
-                            damage = 5 - ((SupportTank)entity).getBARRating();
-                            break;
-                        }
-                    }
-                    if ((entity instanceof SupportVTOL) && (((SupportVTOL)entity).getBARRating() < 5)) {
-                        switch (ammo.getAmmoType()) {
-                        case AmmoType.T_LONG_TOM:
-                            // hack: check if damage is still at 4, so we're in the
-                            // center hex. otherwise, do no damage
-                            if (damage == 4) {
-                                damage = (5 - ((SupportTank)entity).getBARRating()) * 5;
-                            } else {
-                                continue;
-                            }
-                            break;
-                        case AmmoType.T_SNIPER:
-                            // hack: check if damage is still at 2, so we're in the
-                            // center hex. otherwise, do no damage
-                            if (damage == 2) {
-                                damage = (5 - ((SupportTank)entity).getBARRating()) * 3;
-                            } else {
-                                continue;
-                            }
-                            break;
-                        case AmmoType.T_THUMPER:
-                            // no need to check for damage, because falloff = damage for the thumper
-                            damage = (5 - ((SupportTank)entity).getBARRating());
+                            damage = 5 - entity.getBARRating();
                             break;
                         }
                     }

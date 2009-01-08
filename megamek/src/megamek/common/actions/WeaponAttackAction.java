@@ -1854,7 +1854,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 if (sensorHits > 2) {
                     return "Attacker sensors destroyed.";
                 }
-            } else if ((sensorHits > 1) || (((Mech)ae).isIndustrial() && (sensorHits == 1))) {
+            } else if ((sensorHits > 1) || ((ae instanceof Mech) &&(((Mech)ae).isIndustrial() && (sensorHits == 1)))) {
                 return "Attacker sensors destroyed.";
             }
             // weapon operational?

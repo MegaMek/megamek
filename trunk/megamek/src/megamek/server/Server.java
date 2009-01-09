@@ -18007,6 +18007,10 @@ public class Server implements Runnable {
             r = new Report(6310);
             r.subject = en.getId();
             String rollString = "";
+            // industrials get a +2 bonus on the roll
+            if ((en instanceof Mech) && ((Mech)en).isIndustrial()) {
+                critMod += 2;
+            }
             if (critMod != 0) {
                 rollString = "(" + roll;
                 if (critMod > 0) {
@@ -18101,6 +18105,10 @@ public class Server implements Runnable {
                 } else {
                     // torso hit
                     hits = 3;
+                    // industrials get 4 crits on a modified result of 14
+                    if ((roll >= 14) && (en instanceof Mech) && ((Mech)en).isIndustrial()) {
+                        hits = 4;
+                    }
                     r = new Report(6325);
                     r.subject = en.getId();
                     r.newlines = 0;

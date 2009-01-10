@@ -1166,9 +1166,9 @@ public class RandomMapDialog extends Dialog implements ActionListener,
         texMountainHeightMax.setText(Integer.toString(mapSettings
                 .getMountainHeightMax()));
         texMountainWidthMin.setText(Integer.toString(mapSettings
-                .getMountainHeightMin()));
+                .getMountainWidthMin()));
         texMountainWidthMax.setText(Integer.toString(mapSettings
-                .getMountainHeightMax()));
+                .getMountainWidthMax()));
         texAlgorithmToUse.setText(new Integer(mapSettings.getAlgorithmToUse())
                 .toString());
     }
@@ -1211,7 +1211,7 @@ public class RandomMapDialog extends Dialog implements ActionListener,
             return false;
         }
 
-        if (boardHeight <= 0 || boardHeight <= 0) {
+        if ((boardHeight <= 0) || (boardHeight <= 0)) {
             new AlertDialog(frame, INVALID_SETTING, Messages
                     .getString("RandomMapDialog.BoardSizeWarn")).setVisible(true); //$NON-NLS-1$
             return false;
@@ -1305,12 +1305,12 @@ public class RandomMapDialog extends Dialog implements ActionListener,
                 return false;
             }
 
-            if (hilliness < 0 || hilliness > 99) {
+            if ((hilliness < 0) || (hilliness > 99)) {
                 new AlertDialog(frame, INVALID_SETTING, Messages
                         .getString("RandomMapDialog.AmmountOfElevationWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
-            if (cliffs < 0 || cliffs > 100) {
+            if ((cliffs < 0) || (cliffs > 100)) {
                 new AlertDialog(frame, INVALID_SETTING, Messages
                         .getString("RandomMapDialog.CliffsWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
@@ -1320,7 +1320,7 @@ public class RandomMapDialog extends Dialog implements ActionListener,
                         .getString("RandomMapDialog.elevRangeWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
-            if (probInvert < 0 || probInvert > 100) {
+            if ((probInvert < 0) || (probInvert > 100)) {
                 new AlertDialog(frame, INVALID_SETTING, Messages
                         .getString("RandomMapDialog.depressionWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
@@ -1355,7 +1355,7 @@ public class RandomMapDialog extends Dialog implements ActionListener,
                         .getString("RandomMapDialog.MaxLakeSizeWarn1")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
-            if (probDeep < 0 || probDeep > 100) {
+            if ((probDeep < 0) || (probDeep > 100)) {
                 new AlertDialog(frame, INVALID_SETTING, Messages
                         .getString("RandomMapDialog.DeepWaterProbWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
@@ -1390,7 +1390,7 @@ public class RandomMapDialog extends Dialog implements ActionListener,
                         .getString("RandomMapDialog.MaxForestSizeWarn1")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
-            if (probHeavy < 0 || probHeavy > 100) {
+            if ((probHeavy < 0) || (probHeavy > 100)) {
                 new AlertDialog(frame, INVALID_SETTING, Messages
                         .getString("RandomMapDialog.HeavyForestProbWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
@@ -1575,17 +1575,17 @@ public class RandomMapDialog extends Dialog implements ActionListener,
                         .getString("RandomMapDialog.MaxIceSizeWarn1")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
-            if (probRiver < 0 || probRiver > 100) {
+            if ((probRiver < 0) || (probRiver > 100)) {
                 new AlertDialog(frame, INVALID_SETTING, Messages
                         .getString("RandomMapDialog.RiverProbWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
-            if (probRoad < 0 || probRoad > 100) {
+            if ((probRoad < 0) || (probRoad > 100)) {
                 new AlertDialog(frame, INVALID_SETTING, Messages
                         .getString("RandomMapDialog.RoadProbWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
-            if (probCrater < 0 || probCrater > 100) {
+            if ((probCrater < 0) || (probCrater > 100)) {
                 new AlertDialog(frame, INVALID_SETTING, Messages
                         .getString("RandomMapDialog.CratersProbWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
@@ -1620,32 +1620,32 @@ public class RandomMapDialog extends Dialog implements ActionListener,
                         .getString("RandomMapDialog.MaxCratersWarn1")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
-            if (algorithmToUse < 0 || algorithmToUse > 2) {
+            if ((algorithmToUse < 0) || (algorithmToUse > 2)) {
                 new AlertDialog(frame, INVALID_SETTING, Messages
                         .getString("RandomMapDialog.AlgorithmWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
 
-            if (cityMinCF < 1 || cityMaxCF > 150) {
+            if ((cityMinCF < 1) || (cityMaxCF > 150)) {
                 new AlertDialog(frame, INVALID_SETTING, Messages
                         .getString("RandomMapDialog.CFOutOfRangeWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
 
-            if (cityMinFloors < 1 || cityMaxFloors > 100) {
+            if ((cityMinFloors < 1) || (cityMaxFloors > 100)) {
                 new AlertDialog(frame, INVALID_SETTING, Messages
                         .getString("RandomMapDialog.FloorsOutOfRangeWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
 
-            if (cityDensity < 1 || cityDensity > 100) {
+            if ((cityDensity < 1) || (cityDensity > 100)) {
                 new AlertDialog(frame, INVALID_SETTING, Messages
                         .getString("RandomMapDialog.DensityOutOfRangeWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
 
-            if ((mountainWidthMin < 1 || mountainWidthMax < mountainWidthMin)
-                    && mountainPeaks > 0) {
+            if (((mountainWidthMin < 1) || (mountainWidthMax < mountainWidthMin))
+                    && (mountainPeaks > 0)) {
                 new AlertDialog(
                         frame,
                         INVALID_SETTING,

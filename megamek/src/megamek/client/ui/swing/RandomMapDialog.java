@@ -384,7 +384,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             fc.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File dir) {
-                    return (null != dir.getName() && dir.getName().endsWith(
+                    return ((null != dir.getName()) && dir.getName().endsWith(
                             ".xml")); //$NON-NLS-1$
                 }
 
@@ -394,8 +394,8 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 }
             });
             int returnVal = fc.showSaveDialog(frame);
-            if (returnVal != JFileChooser.APPROVE_OPTION
-                    || fc.getSelectedFile() == null) {
+            if ((returnVal != JFileChooser.APPROVE_OPTION)
+                    || (fc.getSelectedFile() == null)) {
                 // I want a file, y'know!
                 return;
             }
@@ -425,7 +425,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             fc.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File dir) {
-                    return (null != dir.getName() && dir.getName().endsWith(
+                    return ((null != dir.getName()) && dir.getName().endsWith(
                             ".xml")); //$NON-NLS-1$
                 }
 
@@ -435,8 +435,8 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 }
             });
             int returnVal = fc.showOpenDialog(frame);
-            if (returnVal != JFileChooser.APPROVE_OPTION
-                    || fc.getSelectedFile() == null) {
+            if ((returnVal != JFileChooser.APPROVE_OPTION)
+                    || (fc.getSelectedFile() == null)) {
                 // I want a file, y'know!
                 return;
             }
@@ -1226,9 +1226,9 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         texMountainHeightMax.setText(Integer.toString(mapSettings
                 .getMountainHeightMax()));
         texMountainWidthMin.setText(Integer.toString(mapSettings
-                .getMountainHeightMin()));
+                .getMountainWidthMin()));
         texMountainWidthMax.setText(Integer.toString(mapSettings
-                .getMountainHeightMax()));
+                .getMountainWidthMax()));
         texAlgorithmToUse.setText(Integer.toString(mapSettings
                 .getAlgorithmToUse()));
     }
@@ -1274,7 +1274,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             return false;
         }
 
-        if (boardHeight <= 0 || boardHeight <= 0) {
+        if ((boardHeight <= 0) || (boardHeight <= 0)) {
             JOptionPane
                     .showMessageDialog(
                             frame,
@@ -1373,7 +1373,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 return false;
             }
 
-            if (hilliness < 0 || hilliness > 99) {
+            if ((hilliness < 0) || (hilliness > 99)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -1381,7 +1381,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                                         .getString("RandomMapDialog.AmmountOfElevationWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
-            if (cliffs < 0 || cliffs > 100) {
+            if ((cliffs < 0) || (cliffs > 100)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -1397,7 +1397,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                                         .getString("RandomMapDialog.elevRangeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
-            if (probInvert < 0 || probInvert > 100) {
+            if ((probInvert < 0) || (probInvert > 100)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -1453,7 +1453,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                                         .getString("RandomMapDialog.MaxLakeSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
-            if (probDeep < 0 || probDeep > 100) {
+            if ((probDeep < 0) || (probDeep > 100)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -1509,7 +1509,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                                         .getString("RandomMapDialog.MaxForestSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
-            if (probHeavy < 0 || probHeavy > 100) {
+            if ((probHeavy < 0) || (probHeavy > 100)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -1805,7 +1805,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                                         .getString("RandomMapDialog.MaxIceSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
-            if (probRiver < 0 || probRiver > 100) {
+            if ((probRiver < 0) || (probRiver > 100)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -1813,7 +1813,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                                         .getString("RandomMapDialog.RiverProbWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
-            if (probRoad < 0 || probRoad > 100) {
+            if ((probRoad < 0) || (probRoad > 100)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -1821,7 +1821,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                                         .getString("RandomMapDialog.RoadProbWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
-            if (probCrater < 0 || probCrater > 100) {
+            if ((probCrater < 0) || (probCrater > 100)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -1877,7 +1877,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                                         .getString("RandomMapDialog.MaxCratersWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
-            if (algorithmToUse < 0 || algorithmToUse > 2) {
+            if ((algorithmToUse < 0) || (algorithmToUse > 2)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -1886,7 +1886,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 return false;
             }
 
-            if (cityMinCF < 1 || cityMaxCF > 150) {
+            if ((cityMinCF < 1) || (cityMaxCF > 150)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -1895,7 +1895,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 return false;
             }
 
-            if (cityMinFloors < 1 || cityMaxFloors > 100) {
+            if ((cityMinFloors < 1) || (cityMaxFloors > 100)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -1904,7 +1904,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 return false;
             }
 
-            if (cityDensity < 1 || cityDensity > 100) {
+            if ((cityDensity < 1) || (cityDensity > 100)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -1913,8 +1913,8 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 return false;
             }
 
-            if ((mountainWidthMin < 1 || mountainWidthMax < mountainWidthMin)
-                    && mountainPeaks > 0) {
+            if (((mountainWidthMin < 1) || (mountainWidthMax < mountainWidthMin))
+                    && (mountainPeaks > 0)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,

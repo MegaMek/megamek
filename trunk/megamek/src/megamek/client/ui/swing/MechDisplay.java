@@ -503,8 +503,7 @@ public class MechDisplay extends JPanel {
     /**
      * This class contains the all the gizmos for firing the mech's weapons.
      */
-    public class WeaponPanel extends PicMap implements ItemListener,
-            ListSelectionListener {
+    public class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener {
         /**
          *
          */
@@ -590,14 +589,14 @@ public class MechDisplay extends JPanel {
             wAmmo.setOpaque(false);
             wAmmo.setForeground(Color.WHITE);
             m_chAmmo = new JComboBox();
-            m_chAmmo.addItemListener(this);
+            m_chAmmo.addActionListener(this);
 
             wBayWeapon = new JLabel(
                     Messages.getString("MechDisplay.Weapon"), SwingConstants.LEFT); //$NON-NLS-1$
             wBayWeapon.setOpaque(false);
             wBayWeapon.setForeground(Color.WHITE);
             m_chBayWeapon = new JComboBox();
-            m_chBayWeapon.addItemListener(this);
+            m_chBayWeapon.addActionListener(this);
 
             c.insets = new Insets(1, 9, 1, 1);
             c.gridwidth = 1;
@@ -1079,9 +1078,9 @@ public class MechDisplay extends JPanel {
                 }
             }
             Coords position = entity.getPosition();
-            if (!en.isOffBoard() && position != null) {
+            if (!en.isOffBoard() && (position != null)) {
                 IHex hex = game.getBoard().getHex(position);
-                if (hex.containsTerrain(Terrains.FIRE) && hex.getFireTurn() > 0) {
+                if (hex.containsTerrain(Terrains.FIRE) && (hex.getFireTurn() > 0)) {
                     currentHeatBuildup += 5; // standing in fire
                 }
                 if (hex.terrainLevel(Terrains.MAGMA) == 1) {
@@ -1090,13 +1089,13 @@ public class MechDisplay extends JPanel {
                     currentHeatBuildup += 10;
                 }
             }
-            if (en instanceof Mech && en.isStealthActive()
+            if (((en instanceof Mech) && en.isStealthActive())
                     || en.isNullSigActive() || en.isVoidSigActive()) {
                 currentHeatBuildup += 10; // active stealth/null sig/void sig
                 // heat
             }
 
-            if (en instanceof Mech && en.isChameleonShieldActive()) {
+            if ((en instanceof Mech) && en.isChameleonShieldActive()) {
                 currentHeatBuildup += 6;
             }
 
@@ -1127,10 +1126,10 @@ public class MechDisplay extends JPanel {
                 }
                 wn.append(']');
                 // determine shots left & total shots left
-                if (wtype.getAmmoType() != AmmoType.T_NA
+                if ((wtype.getAmmoType() != AmmoType.T_NA)
                         && !wtype.hasFlag(WeaponType.F_ONESHOT)) {
                     int shotsLeft = 0;
-                    if (mounted.getLinked() != null
+                    if ((mounted.getLinked() != null)
                             && !mounted.getLinked().isDumping()) {
                         shotsLeft = mounted.getLinked().getShotsLeft();
                     }
@@ -1168,8 +1167,8 @@ public class MechDisplay extends JPanel {
                 ((DefaultListModel) weaponList.getModel()).addElement(wn
                         .toString());
                 if (mounted.isUsedThisRound()
-                        && game.getPhase() == mounted.usedInPhase()
-                        && game.getPhase() == IGame.Phase.PHASE_FIRING) {
+                        && (game.getPhase() == mounted.usedInPhase())
+                        && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
                     // add heat from weapons fire to heat tracker
                     if (entity.usesWeaponBays()) {
                         // if using bay heat option then don't add total arc
@@ -1258,7 +1257,7 @@ public class MechDisplay extends JPanel {
             }
 
             // If MaxTech range rules are in play, display the extreme range.
-            if (game.getOptions().booleanOption("tacops_range") || entity instanceof Aero) { //$NON-NLS-1$
+            if (game.getOptions().booleanOption("tacops_range") || (entity instanceof Aero)) { //$NON-NLS-1$
                 wExtL.setVisible(true);
                 wExtR.setVisible(true);
             } else {
@@ -1367,8 +1366,8 @@ public class MechDisplay extends JPanel {
             int mediumR = wtype.getMediumRange();
             int longR = wtype.getLongRange();
             int extremeR = wtype.getExtremeRange();
-            if (entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET
-                    || longR == 0) {
+            if ((entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET)
+                    || (longR == 0)) {
                 shortR = wtype.getWShortRange();
                 mediumR = wtype.getWMediumRange();
                 longR = wtype.getWLongRange();
@@ -1471,7 +1470,7 @@ public class MechDisplay extends JPanel {
                 }
             } else {
                 if (!(entity instanceof Infantry)
-                        || entity instanceof BattleArmor) {
+                        || (entity instanceof BattleArmor)) {
                     m_chAmmo.setEnabled(true);
                 } else {
                     m_chAmmo.setEnabled(false);
@@ -1484,8 +1483,8 @@ public class MechDisplay extends JPanel {
                     // for all aero units other than fighters,
                     // ammo must be located in the same place to be usable
                     boolean same = true;
-                    if (entity instanceof SmallCraft
-                            || entity instanceof Jumpship) {
+                    if ((entity instanceof SmallCraft)
+                            || (entity instanceof Jumpship)) {
                         same = (mounted.getLocation() == mountedAmmo
                                 .getLocation());
                     }
@@ -1498,8 +1497,8 @@ public class MechDisplay extends JPanel {
                     }
 
                     if (mountedAmmo.isAmmoUsable() && same && rightBay
-                            && atype.getAmmoType() == wtype.getAmmoType()
-                            && atype.getRackSize() == wtype.getRackSize()) {
+                            && (atype.getAmmoType() == wtype.getAmmoType())
+                            && (atype.getRackSize() == wtype.getRackSize())) {
 
                         vAmmo.add(mountedAmmo);
                         m_chAmmo.addItem(formatAmmo(mountedAmmo));
@@ -1709,8 +1708,8 @@ public class MechDisplay extends JPanel {
                     avExt = 0;
                 }
             } // end weapon is MML
-            else if (atype.getAmmoType() == AmmoType.T_LRM
-                    || atype.getAmmoType() == AmmoType.T_SRM) {
+            else if ((atype.getAmmoType() == AmmoType.T_LRM)
+                    || (atype.getAmmoType() == AmmoType.T_SRM)) {
 
                 if (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
                     if (atype.getAmmoType() == AmmoType.T_LRM) {
@@ -1788,8 +1787,8 @@ public class MechDisplay extends JPanel {
                 if (!m.isBreached()
                         && !m.isDestroyed()
                         && !m.isJammed()
-                        && (m.getLinked() == null || m.getLinked()
-                                .getShotsLeft() > 0)) {
+                        && ((m.getLinked() == null) || (m.getLinked()
+                                .getShotsLeft() > 0))) {
                     WeaponType bayWType = ((WeaponType) m.getType());
                     heat = heat + m.getCurrentHeat();
                     double mAVShort = bayWType.getShortAV();
@@ -1869,15 +1868,20 @@ public class MechDisplay extends JPanel {
             onResize();
         }
 
-        //
-        // ItemListener
-        //
-        public void itemStateChanged(ItemEvent ev) {
-            if (ev.getStateChange() != ItemEvent.SELECTED) {
+        public void valueChanged(ListSelectionEvent event) {
+            if (event.getValueIsAdjusting()) {
                 return;
             }
+            if (event.getSource().equals(weaponList)) {
+                m_chBayWeapon.removeAllItems();
+                displaySelected();
+            }
+            onResize();
+        }
+
+        public void actionPerformed(ActionEvent ev) {
             if (ev.getSource().equals(m_chAmmo)
-                    && m_chAmmo.getSelectedIndex() != -1) {
+                    && (m_chAmmo.getSelectedIndex() != -1)) {
                 // only change our own units
                 if (!clientgui.getClient().getLocalPlayer().equals(
                         entity.getOwner())) {
@@ -1907,9 +1911,9 @@ public class MechDisplay extends JPanel {
                 entity.loadWeapon(mWeap, mAmmo);
 
                 // Refresh for hot load change
-                if (((oldAmmo == null || !oldAmmo.isHotLoaded()) && mAmmo
+                if ((((oldAmmo == null) || !oldAmmo.isHotLoaded()) && mAmmo
                         .isHotLoaded())
-                        || (oldAmmo != null && oldAmmo.isHotLoaded() && !mAmmo
+                        || ((oldAmmo != null) && oldAmmo.isHotLoaded() && !mAmmo
                                 .isHotLoaded())) {
                     displayMech(entity);
                     weaponList.setSelectedIndex(n);
@@ -1944,22 +1948,11 @@ public class MechDisplay extends JPanel {
                         entity.getEquipmentNum(mAmmo));
                 displaySelected();
             } else if (ev.getSource().equals(m_chBayWeapon)
-                    && m_chBayWeapon.getItemCount() > 0) {
+                    && (m_chBayWeapon.getItemCount() > 0)) {
                 int n = weaponList.getSelectedIndex();
                 if (n == -1) {
                     return;
                 }
-                displaySelected();
-            }
-            onResize();
-        }
-
-        public void valueChanged(ListSelectionEvent event) {
-            if (event.getValueIsAdjusting()) {
-                return;
-            }
-            if (event.getSource().equals(weaponList)) {
-                m_chBayWeapon.removeAllItems();
                 displaySelected();
             }
             onResize();
@@ -2151,7 +2144,7 @@ public class MechDisplay extends JPanel {
         private CriticalSlot getSelectedCritical() {
             int loc = locList.getSelectedIndex();
             int slot = slotList.getSelectedIndex();
-            if (loc == -1 || slot == -1) {
+            if ((loc == -1) || (slot == -1)) {
                 return null;
             }
             return en.getCritical(loc, slot);
@@ -2170,7 +2163,7 @@ public class MechDisplay extends JPanel {
 
         private Entity getSelectedEntity() {
             int unit = unitList.getSelectedIndex();
-            if (unit == -1 || unit > entities.size()) {
+            if ((unit == -1) || (unit > entities.size())) {
                 return null;
             }
             return entities.elementAt(unit);
@@ -2239,7 +2232,7 @@ public class MechDisplay extends JPanel {
                         if (m.getType().hasModes()) {
                             sb
                                     .append(" (").append(m.curMode().getDisplayableName()).append(')'); //$NON-NLS-1$
-                            if (m.getType() instanceof MiscType
+                            if ((m.getType() instanceof MiscType)
                                     && ((MiscType) m.getType()).isShield()) {
                                 sb.append(" " + m.getDamageAbsorption(en, loc)
                                         + '/'
@@ -2264,30 +2257,30 @@ public class MechDisplay extends JPanel {
             if (ev.getItemSelectable() == m_chMode) {
                 Mounted m = getSelectedEquipment();
                 CriticalSlot cs = getSelectedCritical();
-                if (m != null && m.getType().hasModes()) {
+                if ((m != null) && m.getType().hasModes()) {
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
 
-                        if (m.getType() instanceof MiscType
+                        if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isShield()
-                                && clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_FIRING) {
+                                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_FIRING)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.ShieldModePhase", null));//$NON-NLS-1$
                             return;
                         }
 
-                        if (m.getType() instanceof MiscType
+                        if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isVibroblade()
-                                && clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_PHYSICAL) {
+                                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_PHYSICAL)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.VibrobladeModePhase", null));//$NON-NLS-1$
                             return;
                         }
 
-                        if (m.getType() instanceof MiscType
+                        if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType())
                                         .hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                                && clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
+                                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
                             clientgui
                                     .systemMessage(Messages
                                             .getString(
@@ -2297,12 +2290,12 @@ public class MechDisplay extends JPanel {
 
                         // Can only charge a capacitor if the weapon has not
                         // been fired.
-                        if (m.getType() instanceof MiscType
-                                && m.getLinked() != null
+                        if ((m.getType() instanceof MiscType)
+                                && (m.getLinked() != null)
                                 && ((MiscType) m.getType())
                                         .hasFlag(MiscType.F_PPC_CAPACITOR)
                                 && m.getLinked().isUsedThisRound()
-                                && nMode == 1) {
+                                && (nMode == 1)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.CapacitorCharging", null));//$NON-NLS-1$
                             return;
@@ -2333,12 +2326,12 @@ public class MechDisplay extends JPanel {
                             }
                         }
                     }
-                } else if (cs != null
-                        && cs.getType() == CriticalSlot.TYPE_SYSTEM) {
+                } else if ((cs != null)
+                        && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
-                        if (cs.getIndex() == Mech.SYSTEM_COCKPIT
-                                && en.hasEiCockpit() && en instanceof Mech) {
+                        if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
+                                && en.hasEiCockpit() && (en instanceof Mech)) {
                             Mech mech = (Mech) en;
                             mech.setCockpitStatus(nMode);
                             clientgui.getClient().sendSystemModeChange(
@@ -2368,8 +2361,8 @@ public class MechDisplay extends JPanel {
                 Mounted m = getSelectedEquipment();
                 boolean bOwner = clientgui.getClient().getLocalPlayer().equals(
                         en.getOwner());
-                if (m == null || !bOwner || !(m.getType() instanceof AmmoType)
-                        || m.getShotsLeft() <= 0) {
+                if ((m == null) || !bOwner || !(m.getType() instanceof AmmoType)
+                        || (m.getShotsLeft() <= 0)) {
                     return;
                 }
 
@@ -2478,15 +2471,15 @@ public class MechDisplay extends JPanel {
 
                 boolean bOwner = clientgui.getClient().getLocalPlayer().equals(
                         en.getOwner());
-                if (m != null
+                if ((m != null)
                         && bOwner
-                        && m.getType() instanceof AmmoType
+                        && (m.getType() instanceof AmmoType)
                         && !m.getType().hasInstantModeSwitch()
-                        && clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT
-                        && m.getShotsLeft() > 0 && !m.isDumping()
+                        && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
+                        && (m.getShotsLeft() > 0) && !m.isDumping()
                         && en.isActive()) {
                     m_bDumpAmmo.setEnabled(true);
-                } else if (m != null && bOwner && m.getType().hasModes()) {
+                } else if ((m != null) && bOwner && m.getType().hasModes()) {
                     if (!m.isDestroyed() && en.isActive()) {
                         m_chMode.setEnabled(true);
                     }
@@ -2512,9 +2505,9 @@ public class MechDisplay extends JPanel {
                     m_chMode.setSelectedItem(m.curMode().getDisplayableName());
                 } else {
                     CriticalSlot cs = getSelectedCritical();
-                    if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM) {
-                        if (cs.getIndex() == Mech.SYSTEM_COCKPIT
-                                && en.hasEiCockpit() && en instanceof Mech) {
+                    if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                        if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
+                                && en.hasEiCockpit() && (en instanceof Mech)) {
                             ((DefaultComboBoxModel) m_chMode.getModel())
                                     .removeAllElements();
                             m_chMode.setEnabled(true);
@@ -2862,7 +2855,7 @@ public class MechDisplay extends JPanel {
                 ((DefaultListModel) narcList.getModel()).addElement(buff
                         .toString());
             }
-            if (en instanceof Tank && ((Tank) en).isOnFire()) {
+            if ((en instanceof Tank) && ((Tank) en).isOnFire()) {
                 ((DefaultListModel) narcList.getModel()).addElement(Messages
                         .getString("MechDisplay.OnFire"));
             }
@@ -2890,7 +2883,7 @@ public class MechDisplay extends JPanel {
             }
 
             // burdened due to unjettisoned body-mounted missiles on BA?
-            if (en instanceof BattleArmor && ((BattleArmor) en).isBurdened()) {
+            if ((en instanceof BattleArmor) && ((BattleArmor) en).isBurdened()) {
                 ((DefaultListModel) narcList.getModel()).addElement(Messages
                         .getString("MechDisplay.Burdened")); //$NON-NLS-1$
             }
@@ -2909,7 +2902,7 @@ public class MechDisplay extends JPanel {
             }
 
             // Show Turret Locked.
-            if (en instanceof Tank && !((Tank) en).hasNoTurret()
+            if ((en instanceof Tank) && !((Tank) en).hasNoTurret()
                     && !en.canChangeSecondaryFacing()) {
                 ((DefaultListModel) narcList.getModel()).addElement(Messages
                         .getString("MechDisplay.Turretlocked")); //$NON-NLS-1$

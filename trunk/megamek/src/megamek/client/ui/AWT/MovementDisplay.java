@@ -766,8 +766,8 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
         // should this layout be skipped? (if nothing enabled)
         boolean ok = false;
-        while (!ok && buttonLayout != 0) {
-            for (int i = buttonLayout * 6; i < (buttonLayout + 1) * 6 && i < buttonList.size(); i++) {
+        while (!ok && (buttonLayout != 0)) {
+            for (int i = buttonLayout * 6; (i < (buttonLayout + 1) * 6) && (i < buttonList.size()); i++) {
                 if (buttonList.get(i).isEnabled()) {
                     ok = true;
                     break;
@@ -783,12 +783,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
 
         panButtons.add(butNext);
-        for (int i = buttonLayout * 6; i < (buttonLayout + 1) * 6 && i < buttonList.size(); i++) {
+        for (int i = buttonLayout * 6; (i < (buttonLayout + 1) * 6) && (i < buttonList.size()); i++) {
             panButtons.add(buttonList.get(i));
         }
         panButtons.add(butMore);
-
-        validate();
+        panButtons.validate();
     }
 
     /**
@@ -834,8 +833,8 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         // Entity.canCharge(), Entity.canDFA()...
 
         setWalkEnabled(!ce.isImmobile()
-                && (ce.getWalkMP() > 0 || ce.getRunMP() > 0) && !ce.isStuck());
-        setJumpEnabled(!isAero && !ce.isImmobile() && ce.getJumpMP() > 0 && !(ce.isStuck() && !ce.canUnstickByJumping()));
+                && ((ce.getWalkMP() > 0) || (ce.getRunMP() > 0)) && !ce.isStuck());
+        setJumpEnabled(!isAero && !ce.isImmobile() && (ce.getJumpMP() > 0) && !(ce.isStuck() && !ce.canUnstickByJumping()));
         setSwimEnabled(!isAero && !ce.isImmobile() && ce.hasUMU() && client.game.getBoard().getHex(ce.getPosition()).containsTerrain(Terrains.WATER));
         setBackUpEnabled(butWalk.isEnabled() && !isAero);
 
@@ -853,7 +852,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             setClearEnabled(false);
         }
 
-        if (ce.getMovementMode() == IEntityMovementMode.HYDROFOIL || ce.getMovementMode() == IEntityMovementMode.NAVAL || ce.getMovementMode() == IEntityMovementMode.SUBMARINE || ce.getMovementMode() == IEntityMovementMode.INF_UMU || ce.getMovementMode() == IEntityMovementMode.VTOL || ce.getMovementMode() == IEntityMovementMode.AIRMECH || ce.getMovementMode() == IEntityMovementMode.AREOSPACE || ce.getMovementMode() == IEntityMovementMode.BIPED_SWIM || ce.getMovementMode() == IEntityMovementMode.QUAD_SWIM) {
+        if ((ce.getMovementMode() == IEntityMovementMode.HYDROFOIL) || (ce.getMovementMode() == IEntityMovementMode.NAVAL) || (ce.getMovementMode() == IEntityMovementMode.SUBMARINE) || (ce.getMovementMode() == IEntityMovementMode.INF_UMU) || (ce.getMovementMode() == IEntityMovementMode.VTOL) || (ce.getMovementMode() == IEntityMovementMode.AIRMECH) || (ce.getMovementMode() == IEntityMovementMode.AREOSPACE) || (ce.getMovementMode() == IEntityMovementMode.BIPED_SWIM) || (ce.getMovementMode() == IEntityMovementMode.QUAD_SWIM)) {
             butClimbMode.setEnabled(false);
         } else {
             butClimbMode.setEnabled(true);
@@ -866,7 +865,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             butDigIn.setEnabled(false);
             butFortify.setEnabled(false);
         }
-        setTurnEnabled(!ce.isImmobile() && !ce.isStuck() && (ce.getWalkMP() > 0 || ce.getJumpMP() > 0));
+        setTurnEnabled(!ce.isImmobile() && !ce.isStuck() && ((ce.getWalkMP() > 0) || (ce.getJumpMP() > 0)));
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();
@@ -893,10 +892,10 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 setTurnEnabled(false);
             }
             //jumpships and space stations can turn under different conditions
-            if(ce instanceof Jumpship && !(ce instanceof Warship) && !(ce instanceof SpaceStation)) {
+            if((ce instanceof Jumpship) && !(ce instanceof Warship) && !(ce instanceof SpaceStation)) {
                 setTurnEnabled(true);
             }
-            if(ce instanceof SpaceStation && ce.getRunMP() > 0) {
+            if((ce instanceof SpaceStation) && (ce.getRunMP() > 0)) {
                 setTurnEnabled(true);
             }
         }
@@ -925,15 +924,15 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             butDigIn.setEnabled(false);
         }
 
-        butShakeOff.setEnabled(ce instanceof Tank && ce.getSwarmAttackerId() != Entity.NONE);
+        butShakeOff.setEnabled((ce instanceof Tank) && (ce.getSwarmAttackerId() != Entity.NONE));
 
         setLayMineEnabled(ce.canLayMine());
 
         setFleeEnabled(ce.canFlee());
         if (client.game.getOptions().booleanOption("vehicles_can_eject")) { //$NON-NLS-1$
-            setEjectEnabled((!isInfantry) && !(isMech && ((Mech) ce).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && ce.isActive());
+            setEjectEnabled((!isInfantry) && !(isMech && (((Mech) ce).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) && ce.isActive());
         } else {
-            setEjectEnabled(isMech && ((Mech) ce).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED && ce.isActive());
+            setEjectEnabled(isMech && (((Mech) ce).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) && ce.isActive());
         }
         setupButtonPanel();
 
@@ -985,7 +984,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         // end my turn, then.
         disableButtons();
         Entity next = client.game.getNextEntity(client.game.getTurnIndex());
-        if (IGame.Phase.PHASE_MOVEMENT == client.game.getPhase() && null != next && null != ce && next.getOwnerId() != ce.getOwnerId()) {
+        if ((IGame.Phase.PHASE_MOVEMENT == client.game.getPhase()) && (null != next) && (null != ce) && (next.getOwnerId() != ce.getOwnerId())) {
             clientgui.setDisplayVisible(false);
         }
         cen = Entity.NONE;
@@ -1121,7 +1120,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
             // first check for stalling
             if (client.game.getBoard().inAtmosphere() && !a.isVSTOL() && !a.isSpheroid()  && !client.game.getPlanetaryConditions().isVacuum()
-                    && ((md == null && a.getCurrentVelocity() == 0) || (md != null && md.getFinalVelocity() == 0))) {
+                    && (((md == null) && (a.getCurrentVelocity() == 0)) || ((md != null) && (md.getFinalVelocity() == 0)))) {
 
                 // add a stall to the movement path
                 md.addStep(MovePath.STEP_STALL);
@@ -1133,7 +1132,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if (md != null) {
 
                 boolean isRamming = false;
-                if (md.getLastStep() != null && md.getLastStep().getType() == MovePath.STEP_RAM) {
+                if ((md.getLastStep() != null) && (md.getLastStep().getType() == MovePath.STEP_RAM)) {
                     isRamming = true;
                 }
 
@@ -1162,7 +1161,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                     int vel = a.getCurrentVelocity();
 
                     // need to check for stall here as well
-                    if (vel == 0 && !(a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) && client.game.getBoard().inAtmosphere() && !a.isVSTOL()) {
+                    if ((vel == 0) && !(a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) && client.game.getBoard().inAtmosphere() && !a.isVSTOL()) {
                         // add a stall to the movement path
                         md.addStep(MovePath.STEP_STALL);
                     }
@@ -1179,7 +1178,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                             facing = step.getFacing();
                         }
                         boolean evenx = (position.x % 2) == 0;
-                        if (((position.x == 0 && (facing == 5 || facing == 4)) || (position.x == client.game.getBoard().getWidth() - 1 && (facing == 1 || facing == 2)) || (position.y == 0 && (facing == 1 || facing == 5 || facing == 0) && evenx) || (position.y == 0 && facing == 0) || (position.y == client.game.getBoard().getHeight() - 1 && (facing == 2 || facing == 3 || facing == 4) && !evenx) || (position.y == client.game.getBoard().getHeight() - 1 && facing == 3))) {
+                        if ((((position.x == 0) && ((facing == 5) || (facing == 4))) || ((position.x == client.game.getBoard().getWidth() - 1) && ((facing == 1) || (facing == 2))) || ((position.y == 0) && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx) || ((position.y == 0) && (facing == 0)) || ((position.y == client.game.getBoard().getHeight() - 1) && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.y == client.game.getBoard().getHeight() - 1) && (facing == 3)))) {
                             // then this birdie go bye-bye
                             // set the conditions for removal
                             md.addStep(MovePath.STEP_OFF);
@@ -1234,7 +1233,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                     // check to see if velocity left is zero
                     MoveStep step = md.getLastStep();
                     if (step != null) {
-                        if (step.getVelocityLeft() > 0 && !client.game.useVectorMove() && step.getType() != MovePath.STEP_FLEE) {
+                        if ((step.getVelocityLeft() > 0) && !client.game.useVectorMove() && (step.getType() != MovePath.STEP_FLEE)) {
                             // pop up some dialog telling the unit that it did
                             // not spend enough
                             String title = Messages.getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
@@ -1245,7 +1244,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                     } else {
                         // if the step is null then the unit didn't move. Make
                         // sure velocity is zero
-                        if (a.getCurrentVelocity() > 0 && !client.game.useVectorMove()) {
+                        if ((a.getCurrentVelocity() > 0) && !client.game.useVectorMove()) {
                             // pop up some dialog telling the unit that it did
                             // not spend enough
                             String title = Messages.getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
@@ -1258,7 +1257,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
                 // check for G-forces (not for vectored movement)
                 String check = SharedUtility.doThrustCheck(md);
-                if (!client.game.useVectorMove() && check.length() > 0 && GUIPreferences.getInstance().getNagForPSR()) {
+                if (!client.game.useVectorMove() && (check.length() > 0) && GUIPreferences.getInstance().getNagForPSR()) {
                     ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                             Messages.getString("MovementDisplay.ConfirmPilotingRoll") + //$NON-NLS-1$
                                     check, true);
@@ -1276,7 +1275,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
 
         md.clipToPossible();
-        if (md.length() == 0 && GUIPreferences.getInstance().getNagForNoAction()) {
+        if ((md.length() == 0) && GUIPreferences.getInstance().getNagForNoAction()) {
             // Hmm....no movement steps, comfirm this action
             String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title"); //$NON-NLS-1$
             String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message"); //$NON-NLS-1$
@@ -1311,7 +1310,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
 
         String check = SharedUtility.doPSRCheck(md, client);
-        if (check.length() > 0 && GUIPreferences.getInstance().getNagForPSR() && !dontCheckPSR) {
+        if ((check.length() > 0) && GUIPreferences.getInstance().getNagForPSR() && !dontCheckPSR) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                     Messages.getString("MovementDisplay.ConfirmPilotingRoll") + //$NON-NLS-1$
                             check, true);
@@ -1328,7 +1327,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
         disableButtons();
         clientgui.bv.clearMovementData();
-        if (ce().hasUMU() || ce() instanceof LandAirMech) {
+        if (ce().hasUMU() || (ce() instanceof LandAirMech)) {
             client.sendUpdateEntity(ce());
         }
         client.moveEntity(cen, md);
@@ -1345,9 +1344,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
      * Returns new MovePath for the currently selected movement type
      */
     private void currentMove(Coords dest) {
-        if (shiftheld || gear == GEAR_TURN) {
+        if (shiftheld || (gear == GEAR_TURN)) {
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
-        } else if (gear == GEAR_LAND || gear == GEAR_JUMP) {
+        } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP)) {
             cmd.findPathTo(dest, MovePath.STEP_FORWARDS);
         } else if (gear == GEAR_BACKUP) {
             cmd.findPathTo(dest, MovePath.STEP_BACKWARDS);
@@ -1388,15 +1387,15 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
 
         // don't make a movement path for aeros if advanced movement is on
-        boolean nopath = ce instanceof Aero && client.game.useVectorMove();
+        boolean nopath = (ce instanceof Aero) && client.game.useVectorMove();
 
         // ignore buttons other than 1
-        if (!client.isMyTurn() || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0 || (b.getModifiers() & InputEvent.ALT_MASK) != 0) {
+        if (((b.getModifiers() & InputEvent.CTRL_MASK) != 0) || ((b.getModifiers() & InputEvent.ALT_MASK) != 0)) {
             return;
         }
         // check for shifty goodness
@@ -1404,8 +1403,8 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
         }
 
-        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED && !nopath) {
-            if (!b.getCoords().equals(clientgui.getBoardView().getLastCursor()) || shiftheld || gear == MovementDisplay.GEAR_TURN) {
+        if ((b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) && !nopath) {
+            if (!b.getCoords().equals(clientgui.getBoardView().getLastCursor()) || shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
                 clientgui.getBoardView().cursor(b.getCoords());
 
                 // either turn or move
@@ -1421,7 +1420,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
             clientgui.getBoardView().select(b.getCoords());
 
-            if (shiftheld || gear == MovementDisplay.GEAR_TURN) {
+            if (shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
                 butDone.setLabel(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
 
                 // Set the button's label to "Done"
@@ -1437,7 +1436,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if (gear == MovementDisplay.GEAR_RAM) {
                 // check if target is valid
                 final Targetable target = chooseTarget(b.getCoords());
-                if (target == null || target.equals(ce) || !(target instanceof Aero)) {
+                if ((target == null) || target.equals(ce) || !(target instanceof Aero)) {
                     clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantRam"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
                     clearAllMoves();
                     return;
@@ -1445,7 +1444,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
                 // check if it's a valid ram
                 // First I need to add moves to the path if advanced
-                if (ce instanceof Aero && client.game.useVectorMove()) {
+                if ((ce instanceof Aero) && client.game.useVectorMove()) {
                     cmd.clipToPossible();
                     cmd = addSteps(cmd, ce);
                 }
@@ -1482,7 +1481,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             } else if (gear == MovementDisplay.GEAR_CHARGE) {
                 // check if target is valid
                 final Targetable target = chooseTarget(b.getCoords());
-                if (target == null || target.equals(ce)) {
+                if ((target == null) || target.equals(ce)) {
                     clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantCharge"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
                     clearAllMoves();
                     return;
@@ -1522,7 +1521,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             } else if (gear == MovementDisplay.GEAR_DFA) {
                 // check if target is valid
                 final Targetable target = chooseTarget(b.getCoords());
-                if (target == null || target.equals(ce)) {
+                if ((target == null) || target.equals(ce)) {
                     clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantDFA"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
                     clearAllMoves();
                     return;
@@ -1534,7 +1533,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                     // if yes, ask them if they want to DFA
                     if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.DFADialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
                             Messages.getString("MovementDisplay.DFADialog.message", new Object[] { //$NON-NLS-1$
-                                    toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())), toHit.getDesc(), new Integer(DfaAttackAction.getDamageFor(ce, target instanceof Infantry && !(target instanceof BattleArmor))), toHit.getTableDesc(), new Integer(DfaAttackAction.getDamageTakenBy(ce)) }))) {
+                                    toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())), toHit.getDesc(), new Integer(DfaAttackAction.getDamageFor(ce, (target instanceof Infantry) && !(target instanceof BattleArmor))), toHit.getTableDesc(), new Integer(DfaAttackAction.getDamageTakenBy(ce)) }))) {
                         // if they answer yes, DFA the target
                         cmd.getLastStep().setTarget(target);
                         moveTo(cmd);
@@ -1607,7 +1606,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         if (null == ce) {
             return;
         }
-        setUnjamEnabled(ce.canUnjamRAC() && (gear == MovementDisplay.GEAR_LAND || gear == MovementDisplay.GEAR_TURN || gear == MovementDisplay.GEAR_BACKUP) && cmd.getMpUsed() <= ce.getWalkMP());
+        setUnjamEnabled(ce.canUnjamRAC() && ((gear == MovementDisplay.GEAR_LAND) || (gear == MovementDisplay.GEAR_TURN) || (gear == MovementDisplay.GEAR_BACKUP)) && (cmd.getMpUsed() <= ce.getWalkMP()));
     }
 
     private void updateSearchlightButton() {
@@ -1626,7 +1625,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             return;
         }
 
-        if (ce instanceof Aero && ((Aero) ce).isOutControlTotal()) {
+        if ((ce instanceof Aero) && ((Aero) ce).isOutControlTotal()) {
             setRaiseEnabled(false);
             setLowerEnabled(false);
             return;
@@ -1752,7 +1751,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             }
         } else if (last.getType() == MovePath.STEP_ACC) {
             setAccEnabled(true);
-        } else if (last.getType() == MovePath.STEP_DEC && vel > 0) {
+        } else if ((last.getType() == MovePath.STEP_DEC) && (vel > 0)) {
             setDecEnabled(true);
         }
 
@@ -1775,7 +1774,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             setAccNEnabled(true);
         }
 
-        if (!cmd.contains(MovePath.STEP_ACC) && !cmd.contains(MovePath.STEP_DEC) && !cmd.contains(MovePath.STEP_ACCN) && veln > 0) {
+        if (!cmd.contains(MovePath.STEP_ACC) && !cmd.contains(MovePath.STEP_DEC) && !cmd.contains(MovePath.STEP_ACCN) && (veln > 0)) {
             setDecNEnabled(true);
         }
 
@@ -1788,11 +1787,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
 
         //if in atmosphere, limit acceleration to 2x safe thrust
-        if(!client.game.getBoard().inSpace() && vel == (2 * a.getWalkMP())) {
+        if(!client.game.getBoard().inSpace() && (vel == (2 * a.getWalkMP()))) {
             setAccEnabled(false);
         }
         //velocity next will get halved before next turn so allow up to 4 times
-        if(!client.game.getBoard().inSpace() && veln == (4 * a.getWalkMP())) {
+        if(!client.game.getBoard().inSpace() && (veln == (4 * a.getWalkMP()))) {
             setAccNEnabled(false);
         }
 
@@ -1836,7 +1835,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 velocityLeft = step.getVelocityLeft();
             }
             boolean evenx = (position.x % 2) == 0;
-            if (velocityLeft > 0 && ((position.x == 0 && (facing == 5 || facing == 4)) || (position.x == client.game.getBoard().getWidth() - 1 && (facing == 1 || facing == 2)) || (position.y == 0 && (facing == 1 || facing == 5 || facing == 0) && evenx) || (position.y == 0 && facing == 0) || (position.y == client.game.getBoard().getHeight() - 1 && (facing == 2 || facing == 3 || facing == 4) && !evenx) || (position.y == client.game.getBoard().getHeight() - 1 && facing == 3))) {
+            if ((velocityLeft > 0) && (((position.x == 0) && ((facing == 5) || (facing == 4))) || ((position.x == client.game.getBoard().getWidth() - 1) && ((facing == 1) || (facing == 2))) || ((position.y == 0) && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx) || ((position.y == 0) && (facing == 0)) || ((position.y == client.game.getBoard().getHeight() - 1) && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.y == client.game.getBoard().getHeight() - 1) && (facing == 3)))) {
                 setFleeEnabled(true);
             } else {
                 setFleeEnabled(false);
@@ -1852,7 +1851,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             return;
         }
 
-        setLaunchEnabled(ce.getLaunchableFighters().size() > 0 || ce.getLaunchableSmallCraft().size() > 0);
+        setLaunchEnabled((ce.getLaunchableFighters().size() > 0) || (ce.getLaunchableSmallCraft().size() > 0));
 
     }
 
@@ -1867,7 +1866,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         if(ce instanceof Protomech) {
             setRecklessEnabled(false);
         } else {
-            setRecklessEnabled(null == cmd || cmd.length() == 0);
+            setRecklessEnabled((null == cmd) || (cmd.length() == 0));
         }
     }
 
@@ -1893,7 +1892,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             return;
         }
 
-        if (!a.didFailManeuver() && (null == cmd || !cmd.contains(MovePath.STEP_MANEUVER))) {
+        if (!a.didFailManeuver() && ((null == cmd) || !cmd.contains(MovePath.STEP_MANEUVER))) {
             setManeuverEnabled(true);
         }
         return;
@@ -1910,20 +1909,20 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         IHex hex = ce.getGame().getBoard().getHex(cmd.getFinalCoords());
         boolean canUnloadHere = false;
         for (Entity en : loadedUnits) {
-            if (en.isElevationValid(unloadEl, hex) || en.getJumpMP() > 0) {
+            if (en.isElevationValid(unloadEl, hex) || (en.getJumpMP() > 0)) {
                 canUnloadHere = true;
                 break;
             }
         }
         // Disable the "Unload" button if we're in the wrong
         // gear or if the entity is not transporting units.
-        if (!legalGear || loadedUnits.size() == 0 || cen == Entity.NONE || (!canUnloadHere)) {
+        if (!legalGear || (loadedUnits.size() == 0) || (cen == Entity.NONE) || (!canUnloadHere)) {
             setUnloadEnabled(false);
         } else {
             setUnloadEnabled(true);
         }
         // If the current entity has moved, disable "Load" button.
-        if (cmd.length() > 0 || cen == Entity.NONE) {
+        if ((cmd.length() > 0) || (cen == Entity.NONE)) {
             setLoadEnabled(false);
         } else {
             // Check the other entities in the current hex for friendly units.
@@ -1937,7 +1936,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                     // Yup. If the current entity has at least 1 MP, if it can
                     // transport the other unit, and if the other hasn't moved
                     // then enable the "Load" button.
-                    if (ce.getWalkMP() > 0 && ce.canLoad(other) && other.isLoadableThisTurn()) {
+                    if ((ce.getWalkMP() > 0) && ce.canLoad(other) && other.isLoadableThisTurn()) {
                         setLoadEnabled(true);
                         isGood = true;
                     }
@@ -2029,7 +2028,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
                     // must be done with its movement
                     // it also must be same heading and velocity
-                    if (other instanceof Aero && other.isDone() && other.canLoad(ce) && cmd.getFinalFacing() == other.getFacing() && !other.isCapitalFighter()) {
+                    if ((other instanceof Aero) && other.isDone() && other.canLoad(ce) && (cmd.getFinalFacing() == other.getFacing()) && !other.isCapitalFighter()) {
                         // now lets check velocity
                         // depends on movement rules
                         Aero oa = (Aero) other;
@@ -2086,7 +2085,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
                 // must be done with its movement
                 // it also must be same heading and velocity
-                if (other.isCapitalFighter() && other.isDone() && other.canLoad(ce) && cmd.getFinalFacing() == other.getFacing()) {
+                if (other.isCapitalFighter() && other.isDone() && other.canLoad(ce) && (cmd.getFinalFacing() == other.getFacing())) {
                     // now lets check velocity
                     // depends on movement rules
                     Aero oa = (Aero) other;
@@ -2125,7 +2124,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         Vector<Entity> launchableSmallCraft = ce.getLaunchableSmallCraft();
 
         // Handle error condition.
-        if (launchableFighters.size() <= 0 && launchableSmallCraft.size() <= 0) {
+        if ((launchableFighters.size() <= 0) && (launchableSmallCraft.size() <= 0)) {
             System.err.println("MovementDisplay#getUnloadedUnit() called without loaded units."); //$NON-NLS-1$
 
         } else {
@@ -2196,7 +2195,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
                 // must be done with its movement
                 // it also must be same heading and velocity
-                if (other instanceof Aero && !((Aero) other).isOutControlTotal() && other.isDone() && other.canLoad(ce) && ce.isLoadableThisTurn() && cmd.getFinalFacing() == other.getFacing()) {
+                if ((other instanceof Aero) && !((Aero) other).isOutControlTotal() && other.isDone() && other.canLoad(ce) && ce.isLoadableThisTurn() && (cmd.getFinalFacing() == other.getFacing())) {
 
                     // now lets check velocity
                     // depends on movement rules
@@ -2275,7 +2274,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
                 // must be done with its movement
                 // it also must be same heading and velocity
-                if (other instanceof Aero && !((Aero) other).isOutControlTotal() && other.isDone() && other.canLoad(ce) && ce.isLoadableThisTurn() && cmd.getFinalFacing() == other.getFacing()) {
+                if ((other instanceof Aero) && !((Aero) other).isOutControlTotal() && other.isDone() && other.canLoad(ce) && ce.isLoadableThisTurn() && (cmd.getFinalFacing() == other.getFacing())) {
 
                     // now lets check velocity
                     // depends on movement rules
@@ -2601,7 +2600,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             }
 
         } else {
-            if (e.getPlayer() == null && client.game.getTurn() instanceof GameTurn.UnloadStrandedTurn) {
+            if ((e.getPlayer() == null) && (client.game.getTurn() instanceof GameTurn.UnloadStrandedTurn)) {
                 setStatusBarText(Messages.getString("MovementDisplay.waitForAnother")); //$NON-NLS-1$
             } else {
                 setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
@@ -2617,7 +2616,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             return;
         }
 
-        if (client.isMyTurn() && client.game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
+        if (client.isMyTurn() && (client.game.getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
             endMyTurn();
         }
         if (client.game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
@@ -2656,12 +2655,12 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
         } else if (ev.getActionCommand().equals(MOVE_UNJAM)) {
-            if (gear == MovementDisplay.GEAR_JUMP
-                    || gear == MovementDisplay.GEAR_CHARGE
-                    || gear == MovementDisplay.GEAR_DFA
-                    || cmd.getMpUsed() > ce.getWalkMP()
-                    || gear == MovementDisplay.GEAR_SWIM
-                    || gear == MovementDisplay.GEAR_RAM) {
+            if ((gear == MovementDisplay.GEAR_JUMP)
+                    || (gear == MovementDisplay.GEAR_CHARGE)
+                    || (gear == MovementDisplay.GEAR_DFA)
+                    || (cmd.getMpUsed() > ce.getWalkMP())
+                    || (gear == MovementDisplay.GEAR_SWIM)
+                    || (gear == MovementDisplay.GEAR_RAM)) {
                 // in the wrong gear
                 setUnjamEnabled(false);
             } else {
@@ -2671,12 +2670,12 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         } else if (ev.getActionCommand().equals(MOVE_SEARCHLIGHT)) {
             cmd.addStep(MovePath.STEP_SEARCHLIGHT);
         } else if (ev.getActionCommand().equals(MOVE_WALK)) {
-            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_SWIM) {
+            if ((gear == MovementDisplay.GEAR_JUMP) || (gear == MovementDisplay.GEAR_SWIM)) {
                 clearAllMoves();
             }
             gear = MovementDisplay.GEAR_LAND;
         } else if (ev.getActionCommand().equals(MOVE_JUMP)) {
-            if (ce instanceof LandAirMech && ((LandAirMech) ce).isInMode(LandAirMech.MODE_AIRMECH)) {
+            if ((ce instanceof LandAirMech) && ((LandAirMech) ce).isInMode(LandAirMech.MODE_AIRMECH)) {
 
                 if (cmd.isFlying()) {
                     cmd.addStep(MovePath.STEP_LAND);
@@ -2746,7 +2745,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 mf = mfs.elementAt(choiceDialog.getChoice());
             }
 
-            if (null != mf && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.ClearMinefieldDialog.title"), //$NON-NLS-1$
+            if ((null != mf) && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.ClearMinefieldDialog.title"), //$NON-NLS-1$
                     Messages.getString("MovementDisplay.ClearMinefieldDialog.message", new Object[] { //$NON-NLS-1$
                             new Integer(clear), new Integer(boom) }))) {
                 cmd.addStep(MovePath.STEP_CLEAR_MINEFIELD, mf);
@@ -2853,8 +2852,8 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             // if this movement path goes down more than two altitudes
             // then add acceleration.
             // TODO: Is there somewhere better to put this?
-            if (ce instanceof Aero && null != cmd.getLastStep()
-                    && cmd.getLastStep().getNDown() == 1 && cmd.getLastStep().getVelocity() < 12
+            if ((ce instanceof Aero) && (null != cmd.getLastStep())
+                    && (cmd.getLastStep().getNDown() == 1) && (cmd.getLastStep().getVelocity() < 12)
                     && !(((Aero) ce).isSpheroid() || client.game.getPlanetaryConditions().isVacuum())) {
                 cmd.addStep(MovePath.STEP_ACC, true);
             }
@@ -2862,7 +2861,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_CLIMB_MODE)) {
             MoveStep ms = cmd.getLastStep();
-            if (ms != null && (ms.getType() == MovePath.STEP_CLIMB_MODE_ON || ms.getType() == MovePath.STEP_CLIMB_MODE_OFF)) {
+            if ((ms != null) && ((ms.getType() == MovePath.STEP_CLIMB_MODE_ON) || (ms.getType() == MovePath.STEP_CLIMB_MODE_OFF))) {
                 cmd.removeLastStep();
             } else if (cmd.getFinalClimbMode()) {
                 cmd.addStep(MovePath.STEP_CLIMB_MODE_OFF);
@@ -2964,7 +2963,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             choiceDialog.checkPerformability(vel, elev, ceil, a.isVSTOL(), distance);
             choiceDialog.setVisible(true);
             int manType = choiceDialog.getChoice();
-            if (manType > ManeuverType.MAN_NONE && addManeuver(manType)) {
+            if ((manType > ManeuverType.MAN_NONE) && addManeuver(manType)) {
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_LAUNCH)) {
@@ -3112,14 +3111,14 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 removeLastStep();
             }
         }
-        if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
+        if ((ev.getKeyCode() == KeyEvent.VK_ENTER) && ev.isControlDown()) {
             if (client.isMyTurn()) {
                 moveTo(cmd);
             }
         }
-        if (ev.getKeyCode() == KeyEvent.VK_SHIFT && !shiftheld) {
+        if ((ev.getKeyCode() == KeyEvent.VK_SHIFT) && !shiftheld) {
             shiftheld = true;
-            if (client.isMyTurn() && clientgui.getBoardView().getLastCursor() != null && !clientgui.getBoardView().getLastCursor().equals(clientgui.getBoardView().getSelected())) {
+            if (client.isMyTurn() && (clientgui.getBoardView().getLastCursor() != null) && !clientgui.getBoardView().getLastCursor().equals(clientgui.getBoardView().getSelected())) {
                 // switch to turning
                 // clientgui.bv.clearMovementData();
                 currentMove(clientgui.getBoardView().getLastCursor());
@@ -3128,7 +3127,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
 
         // arrow can also rotate when shift is down
-        if (shiftheld && client.isMyTurn() && (ev.getKeyCode() == KeyEvent.VK_LEFT || ev.getKeyCode() == KeyEvent.VK_RIGHT)) {
+        if (shiftheld && client.isMyTurn() && ((ev.getKeyCode() == KeyEvent.VK_LEFT) || (ev.getKeyCode() == KeyEvent.VK_RIGHT))) {
             int curDir = cmd.getFinalFacing();
             int dir = curDir;
             if (ev.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -3150,9 +3149,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             return;
         }
 
-        if (ev.getKeyCode() == KeyEvent.VK_SHIFT && shiftheld) {
+        if ((ev.getKeyCode() == KeyEvent.VK_SHIFT) && shiftheld) {
             shiftheld = false;
-            if (client.isMyTurn() && clientgui.getBoardView().getLastCursor() != null && !clientgui.getBoardView().getLastCursor().equals(clientgui.getBoardView().getSelected())) {
+            if (client.isMyTurn() && (clientgui.getBoardView().getLastCursor() != null) && !clientgui.getBoardView().getLastCursor().equals(clientgui.getBoardView().getSelected())) {
                 // switch to movement
                 clientgui.bv.clearMovementData();
                 currentMove(clientgui.getBoardView().getLastCursor());
@@ -3174,7 +3173,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             return;
         }
 
-        if (client.isMyTurn() && ce != null) {
+        if (client.isMyTurn() && (ce != null)) {
             clientgui.setDisplayVisible(true);
             clientgui.bv.centerOnHex(ce.getPosition());
         }
@@ -3454,7 +3453,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         // if the last step is a launch or recovery, then I want to keep that at
         // the end
         MoveStep lastStep = md.getLastStep();
-        if (lastStep != null && (lastStep.getType() == MovePath.STEP_LAUNCH || lastStep.getType() == MovePath.STEP_RECOVER)) {
+        if ((lastStep != null) && ((lastStep.getType() == MovePath.STEP_LAUNCH) || (lastStep.getType() == MovePath.STEP_RECOVER))) {
             md.removeLastStep();
         }
 
@@ -3479,7 +3478,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
             // check for split hexes
             // check for some number after a multiple of 3 (1,4,7,etc)
-            if ((i % 3) == 1 && split) {
+            if (((i % 3) == 1) && split) {
 
                 Coords left = in.get(i);
                 Coords right = in.get(i + 1);
@@ -3527,15 +3526,15 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             int diff = dir - facing;
             if (diff == 0) {
                 md.addStep(MovePath.STEP_FORWARDS);
-            } else if (diff == 1 || diff == -5) {
+            } else if ((diff == 1) || (diff == -5)) {
                 md.addStep(MovePath.STEP_LATERAL_RIGHT);
-            } else if (diff == -2 || diff == 4) {
+            } else if ((diff == -2) || (diff == 4)) {
                 md.addStep(MovePath.STEP_LATERAL_RIGHT_BACKWARDS);
-            } else if (diff == -1 || diff == 5) {
+            } else if ((diff == -1) || (diff == 5)) {
                 md.addStep(MovePath.STEP_LATERAL_LEFT);
-            } else if (diff == 2 || diff == -4) {
+            } else if ((diff == 2) || (diff == -4)) {
                 md.addStep(MovePath.STEP_LATERAL_LEFT_BACKWARDS);
-            } else if (diff == 3 || diff == -3) {
+            } else if ((diff == 3) || (diff == -3)) {
                 md.addStep(MovePath.STEP_BACKWARDS);
             }
 
@@ -3544,11 +3543,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
 
         // do I now need to add on the last step again?
-        if (lastStep != null && lastStep.getType() == MovePath.STEP_LAUNCH) {
+        if ((lastStep != null) && (lastStep.getType() == MovePath.STEP_LAUNCH)) {
             md.addStep(MovePath.STEP_LAUNCH, lastStep.getLaunched());
         }
 
-        if (lastStep != null && lastStep.getType() == MovePath.STEP_RECOVER) {
+        if ((lastStep != null) && (lastStep.getType() == MovePath.STEP_RECOVER)) {
             md.addStep(MovePath.STEP_RECOVER, lastStep.getRecoveryUnit());
         }
 

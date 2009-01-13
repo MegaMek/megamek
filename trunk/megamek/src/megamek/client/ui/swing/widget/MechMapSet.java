@@ -46,9 +46,9 @@ public class MechMapSet implements DisplayMapSet {
     // Array of polygonal areas - parts of mech body.
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[19];
     // Array of fixed labels - short names of body parts
-    private PMSimpleLabel[] labels = new PMSimpleLabel[19];
+    private PMSimpleLabel[] labels = new PMSimpleLabel[20];
     // Array of value labels to show armor and IS values
-    private PMValueLabel[] vLabels = new PMValueLabel[20];
+    private PMValueLabel[] vLabels = new PMValueLabel[21];
     // Heat control area
     private PMPicPolygonalArea heatHotArea;
     // Set of Background Drawers

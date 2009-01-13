@@ -730,7 +730,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             panButtons.add(buttonList.get(i));
         }
         panButtons.add(butMore);
-        validate();
+        panButtons.validate();
     }
 
     /**

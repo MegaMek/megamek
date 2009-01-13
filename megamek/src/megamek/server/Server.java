@@ -502,7 +502,8 @@ public class Server implements Runnable {
         }
 
         // kill pending connnections
-        for (IConnection conn : connectionsPending) {
+        for (Enumeration<IConnection> connEnum = connectionsPending.elements();connEnum.hasMoreElements();) {
+            IConnection conn = connEnum.nextElement();
             conn.close();
         }
         connectionsPending.removeAllElements();
@@ -514,7 +515,8 @@ public class Server implements Runnable {
         }
 
         // kill active connnections
-        for (IConnection conn : connections) {
+        for (Enumeration<IConnection> connEnum = connections.elements();connEnum.hasMoreElements();) {
+            IConnection conn = connEnum.nextElement();
             conn.close();
         }
         connections.removeAllElements();

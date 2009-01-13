@@ -678,8 +678,9 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_CLAN_TW;
-        misc.name = "Clan Improved Jump Jet";
-        misc.setInternalName(misc.name);
+        misc.name = "Improved Jump Jet";
+        misc.setInternalName("Clan Improved Jump Jet");
+        misc.addLookupName("Clan Improved Jump Jet");
         misc.addLookupName("CLImprovedJump Jet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
@@ -1140,10 +1141,11 @@ public class MiscType extends EquipmentType {
 
         // Don't forget, this will eventually count double for ECCM.
         misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
-        misc.name = "Clan Angel ECM Suite";
+        misc.name = "Angel ECM Suite";
         misc.setInternalName("CLAngelECMSuite");
         misc.addLookupName("Clan Angel ECM Suite");
         misc.addLookupName("CLAngelECM");
+        misc.addLookupName("Clan Angel ECM Suite");
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.cost = 750000;
@@ -2410,7 +2412,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_CLAN_TW;
-        misc.name = "Clan Active Probe";
+        misc.name = "Active Probe";
         misc.setInternalName(Sensor.CLAN_AP);
         misc.addLookupName("Active Probe");
         misc.addLookupName("Clan Active Probe");
@@ -2740,8 +2742,9 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLHarJel() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
-        misc.name = "Clan HarJel";
-        misc.setInternalName(misc.getName());
+        misc.name = "HarJel";
+        misc.setInternalName("Clan HarJel");
+        misc.addLookupName("Clan HarJel");
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 120000;
@@ -2757,8 +2760,9 @@ public class MiscType extends EquipmentType {
     public static MiscType createISHarJel() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        misc.name = "IS HarJel";
-        misc.setInternalName(misc.getName());
+        misc.name = "HarJel";
+        misc.setInternalName("IS HarJel");
+        misc.addLookupName("IS HarJel");
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 120000;

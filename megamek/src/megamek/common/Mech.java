@@ -2350,6 +2350,17 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append(endColumn);
         bvText.append(endRow);
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Defensive Equipment:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(endColumn);
+        bvText.append(endRow);
         // add defensive equipment
         double dEquipmentBV = 0;
         for (Mounted mounted : getEquipment()) {
@@ -2364,7 +2375,21 @@ public abstract class Mech extends Entity implements Serializable {
                     // not yet coded: ||
                     // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
                     || etype.hasFlag(MiscType.F_BAP)))) {
-                dEquipmentBV += etype.getBV(this);
+                double bv = etype.getBV(this);
+                dEquipmentBV += bv;
+                bvText.append(startRow);
+                bvText.append(startColumn);
+
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+
+                bvText.append("+");
+                bvText.append(bv);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             }
         }
         dbv += dEquipmentBV;

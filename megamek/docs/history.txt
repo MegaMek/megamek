@@ -45,6 +45,7 @@ v0.33.38-dev (SVN)
 + IndustrialMechs get +2 on the determining critical hits roll and 4 crits on a
     result of 14 
 + MOUNTWIDTHMIN and MOUNTWIDTHMAX not correctly loading from XML files
++ RFE: Defensive Equipment BV printed out in list for BV Calculations
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

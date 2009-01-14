@@ -74,7 +74,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
                 r = new Report(3325);
@@ -113,7 +113,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
-        if ( game.getOptions().booleanOption("tacops_range") && nRange > ranges[RangeType.RANGE_LONG] ) {
+        if ( game.getOptions().booleanOption("tacops_range") && (nRange > ranges[RangeType.RANGE_LONG]) ) {
             nMissilesModifier -= 2;
         }
 
@@ -132,11 +132,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             bECMAffected = true;
         }
 
-        if ((mLinker != null && mLinker.getType() instanceof MiscType
+        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_ARTEMIS))
-                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 r = new Report(3330);
@@ -152,11 +152,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             } else {
                 nMissilesModifier += 2;
             }
-        } else if ((mLinker != null && mLinker.getType() instanceof MiscType
+        } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_APOLLO))
-                && atype.getAmmoType() == AmmoType.T_MRM) {
+                && (atype.getAmmoType() == AmmoType.T_MRM)) {
             nMissilesModifier -= 1;
         } else if (atype.getAmmoType() == AmmoType.T_ATM) {
             if (bECMAffected) {
@@ -174,7 +174,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             } else {
                 nMissilesModifier += 2;
             }
-        } else if (entityTarget != null
+        } else if ((entityTarget != null)
                 && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
                         .isINarcedBy(ae.getOwner().getTeam()))) {
             // only apply Narc bonus if we're not suffering ECM effect
@@ -186,10 +186,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.T_LRM) ||
                  (atype.getAmmoType() == AmmoType.T_SRM)) ||
-                 (atype.getAmmoType() == AmmoType.T_MML)
-                    && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE
-                    && (weapon.curMode() == null || !weapon.curMode().equals(
-                            "Indirect"))) {
+                 ((atype.getAmmoType() == AmmoType.T_MML)
+                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
+                    && ((weapon.curMode() == null) || !weapon.curMode().equals(
+                            "Indirect")))) {
                 if (bTargetECMAffected) {
                     // ECM prevents bonus
                     r = new Report(3330);
@@ -277,7 +277,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             double toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize(), bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE, ((Infantry)target).isMechanized());
             if (bGlancing) {
                 toReturn /= 2;
@@ -309,18 +309,18 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         Mounted mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
         int bonus = 0;
-        if ((mLinker != null && mLinker.getType() instanceof MiscType
+        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_ARTEMIS))
-                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
             bonus = (int)Math.ceil(atype.getRackSize() / 5.0);
             if(atype.getAmmoType() == AmmoType.T_SRM) {
                 bonus = 2;
             }
         }
         av = av + bonus;
-        if (atype.getAmmoType() == AmmoType.T_MML && !atype.hasFlag(AmmoType.F_MML_LRM)) {
+        if ((atype.getAmmoType() == AmmoType.T_MML) && !atype.hasFlag(AmmoType.F_MML_LRM)) {
             av = av * 2;
         }
         return (av);
@@ -339,8 +339,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // Shots that miss an entity can set fires.
         // Buildings can't be accidentally ignited,
         // and some weapons can't ignite fires.
-        if (entityTarget != null
-                && (bldg == null && wtype.getFireTN() != TargetRoll.IMPOSSIBLE)) {
+        if ((entityTarget != null)
+                && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
             server.tryIgniteHex(target.getPosition(), subjectId, false, false,
                     new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
                     vPhaseReport);
@@ -359,7 +359,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         // BMRr, pg. 51: "All shots that were aimed at a target inside
         // a building and miss do full damage to the building instead."
-        if (!targetInBuilding || toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+        if (!targetInBuilding || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
             return false;
         }
         return true;
@@ -383,9 +383,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         if (!(counter.getType() instanceof WeaponType)
                                 || !counter.isReady() || counter.isMissing()
                                 // no AMS when a shield in the AMS location
-                                || entityTarget.hasShield()
+                                || (entityTarget.hasShield()
                                 && entityTarget.hasActiveShield(counter.getLocation(),
-                                        false)
+                                        false))
                                 // shutdown means no AMS
                                 || entityTarget.isShutDown()
                                 // AMS only fires against attacks coming into
@@ -485,6 +485,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 AttackHandler ah = w.fire(newWaa, game, server);
                 // increase ammo by one, becaues we just incorrectly used one up
                 weapon.getLinked().setShotsLeft(weapon.getLinked().getShotsLeft()+1);
+                // if the new attack has an impossible to-hit, go on to next entity
+                if (ah == null) {
+                    continue;
+                }
                 WeaponHandler wh = (WeaponHandler) ah;
                 // attack the new target, and if we hit it, return;
                 wh.handle(phase, vPhaseReport);
@@ -557,7 +561,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         //Set Margin of Success/Failure.
         toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && entityTarget != null;
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
@@ -603,7 +607,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int nCluster = calcnCluster();
 
         //Now I need to adjust this for air-to-air attacks because they use attack value
-        if(ae instanceof Aero && target instanceof Aero) {
+        if((ae instanceof Aero) && (target instanceof Aero)) {
             //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
             if(ae.isCapitalFighter()) {
                 bSalvo = true;
@@ -621,7 +625,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 nDamPerHit = attackValue * nhit;
                 hits = 1;
                 nCluster = 1;
-            } else if(usesClusterTable() && entityTarget != null && !entityTarget.isCapitalScale()) {
+            } else if(usesClusterTable() && (entityTarget != null) && !entityTarget.isCapitalScale()) {
                 bSalvo = true;
                 nDamPerHit = 1;
                 hits = attackValue;
@@ -641,7 +645,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
-        if (targetInBuilding && bldg != null) {
+        if (targetInBuilding && (bldg != null)) {
             bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
         }
 
@@ -656,8 +660,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         while (hits > 0) {
             int nDamage;
             // targeting a hex for igniting
-            if (target.getTargetType() == Targetable.TYPE_HEX_IGNITE
-                    || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE) {
+            if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                    || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
                 handleIgnitionDamage(vPhaseReport, bldg, bSalvo, hits);
                 return false;
             }
@@ -691,26 +695,26 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         boolean isNemesisConfusable = false;
         AmmoType atype = (AmmoType) ammo.getType();
         Mounted mLinker = weapon.getLinkedBy();
-        if (wtype.getAmmoType() == AmmoType.T_ATM
-                || (mLinker != null && mLinker.getType() instanceof MiscType
+        if ((wtype.getAmmoType() == AmmoType.T_ATM)
+                || ((mLinker != null) && (mLinker.getType() instanceof MiscType)
                         && !mLinker.isDestroyed() && !mLinker.isMissing()
                         && !mLinker.isBreached() && mLinker.getType().hasFlag(
                         MiscType.F_ARTEMIS))) {
             if ((!weapon.getType().hasModes() || !weapon.curMode().equals(
                     "Indirect"))
-                    && (((atype.getAmmoType() == AmmoType.T_ATM) && (atype
-                            .getMunitionType() == AmmoType.M_STANDARD
-                            || atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE || atype
-                            .getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)) || ((atype
-                            .getAmmoType() == AmmoType.T_LRM || atype
-                            .getAmmoType() == AmmoType.T_SRM) && atype
-                            .getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE))) {
+                    && (((atype.getAmmoType() == AmmoType.T_ATM) && ((atype
+                            .getMunitionType() == AmmoType.M_STANDARD)
+                            || (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) || (atype
+                            .getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE))) || (((atype
+                            .getAmmoType() == AmmoType.T_LRM) || (atype
+                            .getAmmoType() == AmmoType.T_SRM)) && (atype
+                            .getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)))) {
                 isNemesisConfusable = true;
             }
-        } else if (wtype.getAmmoType() == AmmoType.T_LRM
-                || wtype.getAmmoType() == AmmoType.T_SRM) {
-            if (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE
-                    || atype.getMunitionType() == AmmoType.M_LISTEN_KILL) {
+        } else if ((wtype.getAmmoType() == AmmoType.T_LRM)
+                || (wtype.getAmmoType() == AmmoType.T_SRM)) {
+            if ((atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
+                    || (atype.getMunitionType() == AmmoType.M_LISTEN_KILL)) {
                 isNemesisConfusable = true;
             }
         }

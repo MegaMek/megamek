@@ -47,6 +47,7 @@ v0.33.38-dev (SVN)
 + MOUNTWIDTHMIN and MOUNTWIDTHMAX not correctly loading from XML files
 + RFE: Defensive Equipment BV printed out in list for BV Calculations
 + Removed Clan and IS enumeration from MiscType names.
++ Bug 2505813: Nemesis iNarc causing NPE
 
 v0.33.37 (2008-12-19, 19:45 UTC)
 + Updated canon unit list

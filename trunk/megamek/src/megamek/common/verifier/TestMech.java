@@ -20,6 +20,7 @@
 package megamek.common.verifier;
 
 import java.io.Serializable;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -283,15 +284,15 @@ public class TestMech extends TestEntity {
         }
         if (!allocation.isEmpty()) {
             buff.append("Allocated Equipment:\n");
-            for (Serializable serializable : allocation) {
-            Mounted m = (Mounted) serializable;
-            int needCrits = ((Integer) serializable).intValue();
-            int aktCrits = ((Integer) serializable).intValue();
-            buff.append(m.getType().getInternalName()).append(" has ")
+            for (Enumeration<Serializable> serializableEnum = allocation.elements();serializableEnum.hasMoreElements();) {
+                Mounted m = (Mounted) serializableEnum.nextElement();
+                int needCrits = ((Integer) serializableEnum.nextElement()).intValue();
+                int aktCrits = ((Integer) serializableEnum.nextElement()).intValue();
+                buff.append(m.getType().getInternalName()).append(" has ")
                 .append(needCrits).append(" Slots, but ").append(
                         aktCrits).append(" Slots are allocated!")
-                .append("\n");
-         }
+                        .append("\n");
+            }
             correct = false;
         }
         if (!heatSinks.isEmpty()) {

@@ -3138,7 +3138,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     public boolean hasBAP(boolean checkECM) {
-        if(game.getPlanetaryConditions().hasEMI() || isShutDown()) {
+        if(((game != null) && game.getPlanetaryConditions().hasEMI()) || isShutDown()) {
             return false;
         }
         for (Mounted m : getMisc()) {
@@ -8028,6 +8028,20 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public boolean hasArmoredChassis() {
         // normal entities don't, subclasses should
         // override
+        return false;
+    }
+
+    /**
+     * does this <code>Entity</code> have Environmental sealing?
+     * (only Support Vehicles or IndustrialMechs should mount this)
+     * @return
+     */
+    public boolean hasEnvironmentalSealing() {
+        for (Mounted misc : miscList) {
+            if (misc.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                return true;
+            }
+        }
         return false;
     }
 

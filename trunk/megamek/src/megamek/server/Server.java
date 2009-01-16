@@ -1813,17 +1813,9 @@ public class Server implements Runnable {
             // write End Phase header
             addReport(new Report(5005, Report.PUBLIC));
             checkForSuffocation();
+            checkForIndustrialWaterDeath();
             game.getPlanetaryConditions().determineWind();
             send(createPlanetaryConditionsPacket());
-            /*
-            checkForConditionDeath();
-            if (game.getBoard().inAtmosphere()) {
-                checkForAtmosphereDeath();
-            }
-            if (game.getBoard().inSpace()) {
-                checkForSpaceDeath();
-            }
-            */
             for (DynamicTerrainProcessor tp : terrainProcessors) {
                 tp.doEndPhaseChanges(vPhaseReport);
             }
@@ -6125,6 +6117,14 @@ public class Server implements Runnable {
         // if we generated a ram attack, report it now
         if (ram != null) {
             send(createAttackPacket(ram, 1));
+        }
+        if ((entity instanceof Mech) && ((Mech)entity).isIndustrial() && !((Mech)entity).hasEnvironmentalSealing() && (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
+            if ((!entity.isProne() && (game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) >= 2)) || (entity.isProne() && (game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) == 1))) {
+                ((Mech)entity).setJustMovedIntoIndustrialKillingWater(true);
+
+            } else {
+                ((Mech)entity).setJustMovedIntoIndustrialKillingWater(false);
+            }
         }
     }
 
@@ -13523,6 +13523,25 @@ public class Server implements Runnable {
                 addReport(r);
                 addReport(destroyEntity(entity, "being in atmosphere where it can't survive", true, true));
             }
+        }
+    }
+
+    /**
+     * checks if IndustrialMechs should die because they moved into to-deep
+     * water last round
+     */
+    private void checkForIndustrialWaterDeath() {
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            final Entity entity = i.nextElement();
+            if ((null == entity.getPosition()) || entity.isOffBoard()) {
+                // If it's not on the board - aboard something else, for
+                // example...
+                continue;
+            }
+            if ((entity instanceof Mech) && ((Mech)entity).isIndustrial() && ((Mech)entity).shouldDieAtEndOfTurn()) {
+                addReport(destroyEntity(entity, "being in water without environmental shielding", true, true));
+            }
+
         }
     }
 

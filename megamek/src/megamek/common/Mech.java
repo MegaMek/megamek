@@ -197,6 +197,10 @@ public abstract class Mech extends Entity implements Serializable {
 
     private int grappledSide = Entity.GRAPPLE_BOTH;
 
+    private boolean shouldDieAtEndOfTurnBecauseOfWater = false;
+
+    private boolean justMovedIntoIndustrialKillingWater = false;
+
     /**
      * Construct a new, blank, mech.
      */
@@ -580,6 +584,12 @@ public abstract class Mech extends Entity implements Serializable {
 
         // update cockpit status
         cockpitStatus = cockpitStatusNextRound;
+
+        if (isJustMovedIntoIndustrialKillingWater()) {
+            shouldDieAtEndOfTurnBecauseOfWater = true;
+        } else {
+            shouldDieAtEndOfTurnBecauseOfWater = false;
+        }
     } // End public void newRound()
 
     /**
@@ -4366,8 +4376,10 @@ public abstract class Mech extends Entity implements Serializable {
         case COCKPIT_STANDARD:
             inName = "COCKPIT_STANDARD";
             break;
+        case COCKPIT_INDUSTRIAL:
+            inName = "COCKPIT_INDUSTRIAL";
         default:
-            inName = "GYRO_UNKNOWN";
+            inName = "COCKPIT_UNKNOWN";
         }
         String result = EquipmentMessages.getString("SystemType.Cockpit." + inName);
         if (result != null) {
@@ -5116,5 +5128,17 @@ public abstract class Mech extends Entity implements Serializable {
      */
     public boolean isIndustrial() {
         return getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL;
+    }
+
+    public void setJustMovedIntoIndustrialKillingWater(boolean moved) {
+        justMovedIntoIndustrialKillingWater = moved;
+    }
+
+    public boolean isJustMovedIntoIndustrialKillingWater() {
+        return justMovedIntoIndustrialKillingWater;
+    }
+
+    public boolean shouldDieAtEndOfTurn() {
+        return shouldDieAtEndOfTurnBecauseOfWater;
     }
 }

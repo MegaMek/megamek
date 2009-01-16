@@ -2589,8 +2589,9 @@ public class MiscType extends EquipmentType {
         misc.name = "Environmental Sealing";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 0;
+        misc.criticals = 8;
         misc.cost = 0;
+        misc.spreadable = true;
         misc.flags |= F_VACUUM_PROTECTION | F_ENVIRONMENTAL_SEALING;
         misc.bv = 0;
 

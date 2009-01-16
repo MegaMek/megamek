@@ -192,6 +192,42 @@ public class TestMech extends TestEntity {
         }
 
         if (et.isSpreadable() && !et.getName().equals("Targeting Computer")) {
+            if ((et instanceof MiscType) && et.hasFlag(MiscType.F_STEALTH)) {
+                // stealth needs to have 2 crits in legs arm and side torso
+                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                        Mech.LOC_LARM) != 2) {
+                    return false;
+                }
+                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                        Mech.LOC_RARM) != 2) {
+                    return false;
+                }
+                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                        Mech.LOC_LLEG) != 2) {
+                    return false;
+                }
+                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                        Mech.LOC_RLEG) != 2) {
+                    return false;
+                }
+                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                        Mech.LOC_LT) != 2) {
+                    return false;
+                }
+                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                        Mech.LOC_RT) != 2) {
+                    return false;
+                }
+            }
+            if ((et instanceof MiscType) && et.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                // environmental sealing needs to have 1 crit per location
+                for (int locations = 0; locations < entity.locations(); locations++) {
+                    if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                            locations) != 1) {
+                        return false;
+                    }
+                }
+            }
             for (int locations = 0; locations < entity.locations(); locations++) {
                 count += countCriticalSlotsFromEquipInLocation(entity, eNum,
                         locations);

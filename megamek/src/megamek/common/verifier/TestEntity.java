@@ -774,9 +774,15 @@ public abstract class TestEntity implements TestEntityOption {
                         illegal = true;
                     }
                 }
-            } else if (mech.hasIndustrialTSM()) {
-                buff.append("standard mech can't mount industrial TSM");
-                illegal = true;
+            } else {
+                if (mech.hasIndustrialTSM()) {
+                    buff.append("standard mech can't mount industrial TSM");
+                    illegal = true;
+                }
+                if (mech.hasEnvironmentalSealing()) {
+                    buff.append("standard mech can't mount environmental sealing");
+                    illegal = true;
+                }
             }
         }
         return illegal;

@@ -109,15 +109,6 @@ public class SupportTank extends Tank implements Serializable {
         }
     }
 
-    public boolean hasEnvironmentalSealing() {
-        for (Mounted misc : miscList) {
-            if (misc.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getTotalCommGearTons()

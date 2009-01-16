@@ -852,7 +852,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             setClearEnabled(false);
         }
 
-        if ((ce.getMovementMode() == IEntityMovementMode.HYDROFOIL) || (ce.getMovementMode() == IEntityMovementMode.NAVAL) || (ce.getMovementMode() == IEntityMovementMode.SUBMARINE) || (ce.getMovementMode() == IEntityMovementMode.INF_UMU) || (ce.getMovementMode() == IEntityMovementMode.VTOL) || (ce.getMovementMode() == IEntityMovementMode.AIRMECH) || (ce.getMovementMode() == IEntityMovementMode.AREOSPACE) || (ce.getMovementMode() == IEntityMovementMode.BIPED_SWIM) || (ce.getMovementMode() == IEntityMovementMode.QUAD_SWIM)) {
+        if ((ce.getMovementMode() == IEntityMovementMode.HYDROFOIL) || (ce.getMovementMode() == IEntityMovementMode.NAVAL) || (ce.getMovementMode() == IEntityMovementMode.SUBMARINE) || (ce.getMovementMode() == IEntityMovementMode.INF_UMU) || (ce.getMovementMode() == IEntityMovementMode.VTOL) || (ce.getMovementMode() == IEntityMovementMode.AIRMECH) || (ce.getMovementMode() == IEntityMovementMode.AEROSPACE) || (ce.getMovementMode() == IEntityMovementMode.BIPED_SWIM) || (ce.getMovementMode() == IEntityMovementMode.QUAD_SWIM)) {
             butClimbMode.setEnabled(false);
         } else {
             butClimbMode.setEnabled(true);

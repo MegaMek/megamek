@@ -1372,7 +1372,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && ((te.getMovementMode() == IEntityMovementMode.VTOL)
                         || (te.getMovementMode() == IEntityMovementMode.AERODYNE)
                         || (te.getMovementMode() == IEntityMovementMode.AIRMECH)
-                        || (te.getMovementMode() == IEntityMovementMode.AREOSPACE)
+                        || (te.getMovementMode() == IEntityMovementMode.AEROSPACE)
                         || (te.getMovementMode() == IEntityMovementMode.SPHEROID) || (te
                         .getMovementMode() == IEntityMovementMode.WIGE))
                 && (atype != null)

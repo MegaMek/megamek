@@ -4,6 +4,8 @@ v0.33.39-dev (SVN)
 + Don't crash the server when trying to add newlines to emty Vector of Reports
 + Destruction of carried infantry when carrier dies according to TW rules
 + Industrial TSM
++ Industrial Mech Environmental Sealing
++ Fix some mechfiles ammo
 
 v0.33.38 (2009-01-15, 19:51 UTC+1)
 + New public method to compact engines and compact gyros

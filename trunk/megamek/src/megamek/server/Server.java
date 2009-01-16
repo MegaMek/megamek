@@ -18532,11 +18532,27 @@ public class Server implements Runnable {
                 int curFacing = entity.getFacing();
                 while (transporter.hasMoreElements()) {
                     other = transporter.nextElement();
-
                     // Can the other unit survive?
-                    //FIXME: the flat number 3 is no longer valid for all units in TW, see pg. 223
-                    if (!survivable || (externalUnits.contains(other) && (Compute.d6() >= 3))) {
-
+                    boolean survived = false;
+                    if (entity instanceof Tank) {
+                        if ((entity.getMovementMode() == IEntityMovementMode.NAVAL)
+                                || (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL)) {
+                            if (other.getMovementMode() == IEntityMovementMode.INF_UMU) {
+                                survived = Compute.d6() <= 3;
+                            } else if (other.getMovementMode() == IEntityMovementMode.INF_JUMP) {
+                                survived = Compute.d6() == 1;
+                            } else if (other.getMovementMode() == IEntityMovementMode.VTOL) {
+                                survived = Compute.d6() <= 2;
+                            }
+                        } else if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
+                            if (other.getMovementMode() == IEntityMovementMode.INF_UMU) {
+                                survived = Compute.d6() == 1;
+                            }
+                        } else {
+                            survived = Compute.d6() <= 4;
+                        }
+                    }
+                    if (!survivable || (externalUnits.contains(other) && !survived)) {
                         // Nope.
                         other.setDestroyed(true);
                         game.moveToGraveyard(other.getId());

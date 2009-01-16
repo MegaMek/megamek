@@ -841,6 +841,10 @@ public abstract class Mech extends Entity implements Serializable {
         return false;
     }
 
+    /**
+     * does this mech have industrial TSM=
+     * @return
+     */
     public boolean hasIndustrialTSM() {
         for (Mounted m : getEquipment()) {
             if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
@@ -850,6 +854,10 @@ public abstract class Mech extends Entity implements Serializable {
         return false;
     }
 
+    /**
+     * does this mech have stealth armor?
+     * @return
+     */
     public boolean hasStealth() {
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
@@ -861,6 +869,10 @@ public abstract class Mech extends Entity implements Serializable {
         return false;
     }
 
+    /**
+     * does this mech have a null-sig-system?
+     * @return
+     */
     public boolean hasNullSig() {
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
@@ -872,6 +884,10 @@ public abstract class Mech extends Entity implements Serializable {
         return false;
     }
 
+    /**
+     * does this mech have a void-sig-system?
+     * @return
+     */
     public boolean hasVoidSig() {
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
@@ -883,6 +899,10 @@ public abstract class Mech extends Entity implements Serializable {
         return false;
     }
 
+    /**
+     * does this mech have a chameleon light polarization shield?
+     * @return
+     */
     public boolean hasChameleonShield() {
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
@@ -903,6 +923,10 @@ public abstract class Mech extends Entity implements Serializable {
         return engine.getStandingHeat();
     }
 
+    /**
+     * set this mech's <code>Engine</code>
+     * @param e the <code>Engine</code> to set
+     */
     public void setEngine(Engine e) {
         engine = e;
         if (e.engineValid) {
@@ -910,6 +934,11 @@ public abstract class Mech extends Entity implements Serializable {
         }
     }
 
+    /**
+     * Used to set this Mech's original walk mp
+     * @return this units calculated walking speed, dependent on engine rating
+     * and weight
+     */
     protected int calculateWalk() {
         return getEngine().getRating() / (int) weight;
     }
@@ -3807,6 +3836,9 @@ public abstract class Mech extends Entity implements Serializable {
         if (hasModularArmor()) {
             roll.addModifier(1, "Modular Armor");
         }
+        if (hasIndustrialTSM()) {
+            roll.addModifier(1, "Industrial TSM");
+        }
 
         return roll;
     }
@@ -4411,6 +4443,8 @@ public abstract class Mech extends Entity implements Serializable {
         sb.append("Myomer:");
         if (hasTSM()) {
             sb.append("Triple-Strength");
+        } else if (hasIndustrialTSM()){
+            sb.append("Industrial Triple-Strength");
         } else {
             sb.append("Standard");
         }

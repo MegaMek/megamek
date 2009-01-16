@@ -516,6 +516,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createChainWhip());
         EquipmentType.addType(createISApolloFCS());
         EquipmentType.addType(createEjectionSeat());
+        EquipmentType.addType(createIndustrialTSM());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());
@@ -962,6 +963,24 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags |= F_TSM;
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createIndustrialTSM() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.name = "Industrial TSM";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("IS Industrial TSM");
+        misc.addLookupName("Industrial Triple Strength Myomer");
+        misc.tonnage = 0;
+        misc.criticals = 12;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags |= F_INDUSTRIAL_TSM;
         misc.bv = 0;
 
         return misc;

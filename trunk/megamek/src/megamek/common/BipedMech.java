@@ -18,7 +18,7 @@ package megamek.common;
 
 public class BipedMech extends Mech {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4166375446709772785L;
 
@@ -55,6 +55,7 @@ public class BipedMech extends Mech {
     /**
      * Returns true if the entity can flip its arms
      */
+    @Override
     public boolean canFlipArms() {
         boolean canFlip = !isProne();
 
@@ -71,6 +72,7 @@ public class BipedMech extends Mech {
         return canFlip;
     }
 
+    @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int wmp = getOriginalWalkMP();
         int legsDestroyed = 0;
@@ -82,7 +84,7 @@ public class BipedMech extends Mech {
                 if (!isLocationBad(i)) {
                     if (legHasHipCrit(i)) {
                         hipHits++;
-                        if (game == null || !game.getOptions().booleanOption("tacops_leg_damage")) {
+                        if ((game == null) || !game.getOptions().booleanOption("tacops_leg_damage")) {
                             continue;
                         }
                     }
@@ -98,7 +100,7 @@ public class BipedMech extends Mech {
             wmp = (legsDestroyed == 1) ? 1 : 0;
         } else {
             if (hipHits > 0) {
-                if (game != null && game.getOptions().booleanOption("tacops_leg_damage")) {
+                if ((game != null) && game.getOptions().booleanOption("tacops_leg_damage")) {
                     wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
                 } else {
                     wmp = (hipHits == 1) ? (int) Math.ceil(wmp / 2.0) : 0;
@@ -111,14 +113,14 @@ public class BipedMech extends Mech {
             wmp -= getNumberOfShields(MiscType.S_SHIELD_LARGE);
             wmp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
         }
-        
+
         if ( hasModularArmor() ) {
             wmp--;
         }
 
         if (!ignoreheat) {
             // factor in heat
-            if (game != null && game.getOptions().booleanOption("tacops_heat")) {
+            if ((game != null) && game.getOptions().booleanOption("tacops_heat")) {
                 if (heat < 30) {
                     wmp -= (heat / 5);
                 } else if (heat >= 49) {
@@ -136,7 +138,7 @@ public class BipedMech extends Mech {
                 wmp -= (heat / 5);
             }
             // TSM negates some heat
-            if (heat >= 9 && hasTSM()) {
+            if ((heat >= 9) && hasTSM()) {
                 wmp += 2;
             }
         }
@@ -145,11 +147,12 @@ public class BipedMech extends Mech {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if(weatherMod != 0) {
                 wmp = Math.max(wmp + weatherMod, 0);
-            } 
-        }      
+            }
+        }
         // gravity
-        if (gravity)
+        if (gravity) {
             wmp = applyGravityEffectsOnMP(wmp);
+        }
 
         // For sanity sake...
         wmp = Math.max(0, wmp);
@@ -160,6 +163,7 @@ public class BipedMech extends Mech {
     /**
      * Returns this mech's running/flank mp modified for leg loss & stuff.
      */
+    @Override
     public int getRunMP(boolean gravity, boolean ignoreheat) {
         if (countBadLegs() == 0) {
             return super.getRunMP(gravity, ignoreheat);
@@ -171,6 +175,7 @@ public class BipedMech extends Mech {
      * Returns run MP without considering MASC modified for leg loss & stuff.
      */
 
+    @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
         if (countBadLegs() == 0) {
             return super.getRunMPwithoutMASC(gravity, ignoreheat);
@@ -180,7 +185,7 @@ public class BipedMech extends Mech {
 
     /**
      * Sets the internal structure for the mech.
-     * 
+     *
      * @param head
      *            head
      * @param ct
@@ -192,6 +197,7 @@ public class BipedMech extends Mech {
      * @param leg
      *            right/left leg
      */
+    @Override
     public void setInternal(int head, int ct, int t, int arm, int leg) {
         initializeInternal(head, LOC_HEAD);
         initializeInternal(ct, LOC_CT);
@@ -206,6 +212,7 @@ public class BipedMech extends Mech {
     /**
      * Add in any piloting skill mods
      */
+    @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         int[] locsToCheck = new int[2];
 
@@ -215,7 +222,7 @@ public class BipedMech extends Mech {
         if ( hasFunctionalLegAES() ) {
             roll.addModifier(-2, "AES bonus");
         }
-        
+
         for (int i = 0; i < locsToCheck.length; i++) {
             int loc = locsToCheck[i];
 
@@ -225,8 +232,9 @@ public class BipedMech extends Mech {
                 // check for damaged hip actuators
                 if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
-                    if (!game.getOptions().booleanOption("tacops_leg_damage"))
+                    if (!game.getOptions().booleanOption("tacops_leg_damage")) {
                         continue;
+                    }
                 }
                 // upper leg actuators?
                 if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0) {
@@ -249,6 +257,7 @@ public class BipedMech extends Mech {
     /**
      * Returns a vector of slot counts for all locations
      */
+    @Override
     protected int[] getNoOfSlots() {
         return NUM_OF_SLOTS;
     }
@@ -256,6 +265,7 @@ public class BipedMech extends Mech {
     /**
      * Returns a vector of names for all locations
      */
+    @Override
     protected String[] getLocationNames() {
         return LOCATION_NAMES;
     }
@@ -263,10 +273,12 @@ public class BipedMech extends Mech {
     /**
      * Returns a vector of abbreviations for all locations
      */
+    @Override
     protected String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
 
+    @Override
     protected double getArmActuatorCost() {
         double cost = 0;
         int numOfUpperArmActuators = 0;
@@ -296,31 +308,35 @@ public class BipedMech extends Mech {
         return cost;
     }
 
+    @Override
     protected double getLegActuatorCost() {
         return weight * 150 * 2 + weight * 80 * 2 + weight * 120 * 2;
     }
 
     /**
      * Check to see if a Biped mech has a claw in one of its arms
-     * 
+     *
      * @param location
      *            (LOC_RARM or LOC_LARM)
      * @return True/False
      */
     public boolean hasClaw(int location) {
         // only arms have claws.
-        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM)
+        if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
             return false;
+        }
         for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
-            CriticalSlot cs = this.getCritical(location, slot);
+            CriticalSlot cs = getCritical(location, slot);
 
-            if (cs == null)
+            if (cs == null) {
                 continue;
-            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+            }
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
+            }
             Mounted m = this.getEquipment(cs.getIndex());
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && type.hasFlag(MiscType.F_HAND_WEAPON) && type.hasSubType(MiscType.S_CLAW)) {
+            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_HAND_WEAPON) && type.hasSubType(MiscType.S_CLAW)) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
             }
         }
@@ -329,24 +345,27 @@ public class BipedMech extends Mech {
 
     /**
      * Checks to see if this bipmech has any vibro blades on them.
-     * 
+     *
      * @return boolean <code>true</code> if the mech has vibroblades
      *         <code>false</code> if not.
      */
+    @Override
     public boolean hasVibroblades() {
         int count = 0;
 
-        if (this.hasVibrobladesInLocation(Mech.LOC_RARM))
+        if (hasVibrobladesInLocation(Mech.LOC_RARM)) {
             count++;
-        if (this.hasVibrobladesInLocation(Mech.LOC_LARM))
+        }
+        if (hasVibrobladesInLocation(Mech.LOC_LARM)) {
             count++;
+        }
 
         return count > 0;
     }
 
     /**
      * Checks to see if this bipedmech has a vibroblade in this location.
-     * 
+     *
      * @param location
      * @return boolean <code>true</code> if the mech has vibroblades
      *         <code>false</code> if not.
@@ -354,33 +373,37 @@ public class BipedMech extends Mech {
     public boolean hasVibrobladesInLocation(int location) {
 
         // Only arms have VibroBlades.
-        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM)
+        if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
             return false;
+        }
 
         for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
-            CriticalSlot cs = this.getCritical(location, slot);
+            CriticalSlot cs = getCritical(location, slot);
 
-            if (cs == null)
+            if (cs == null) {
                 continue;
-            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+            }
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
+            }
             Mounted m = this.getEquipment(cs.getIndex());
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && ((MiscType) type).isVibroblade()) {
+            if ((type instanceof MiscType) && ((MiscType) type).isVibroblade()) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
             }
         }
 
         return false;
     }
-    
+
     /**
      * Does the entity have a retracted blade in the given location
-     * 
+     *
      */
+    @Override
     public boolean hasRetractedBlade(int loc) {
         for (Mounted m : getEquipment()) {
-            if (m.getLocation() == loc && !m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) && !m.curMode().equals("extended")) {
+            if ((m.getLocation() == loc) && !m.isDestroyed() && !m.isBreached() && (m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) && !m.curMode().equals("extended")) {
                 return true;
             }
         }
@@ -390,31 +413,37 @@ public class BipedMech extends Mech {
     /**
      * Checks for Active Vibroblades in <code>location</code> and returns the
      * amount of heat genereated if active.
-     * 
+     *
      * @param location
      * @return <code>int</code> amount of heat genereated by an active
      *         vibroblade.
      */
+    @Override
     public int getActiveVibrobladeHeat(int location) {
         // Only arms have VibroBlades.
-        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM)
+        if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
             return 0;
+        }
 
         for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
-            CriticalSlot cs = this.getCritical(location, slot);
+            CriticalSlot cs = getCritical(location, slot);
 
-            if (cs == null)
+            if (cs == null) {
                 continue;
-            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+            }
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
+            }
             Mounted m = this.getEquipment(cs.getIndex());
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && ((MiscType) type).isVibroblade() && m.curMode().equals("Active") && !(m.isDestroyed() || m.isMissing() || m.isBreached())) {
+            if ((type instanceof MiscType) && ((MiscType) type).isVibroblade() && m.curMode().equals("Active") && !(m.isDestroyed() || m.isMissing() || m.isBreached())) {
                 MiscType blade = (MiscType) type;
-                if (blade.hasSubType(MiscType.S_VIBRO_LARGE))
+                if (blade.hasSubType(MiscType.S_VIBRO_LARGE)) {
                     return 7;
-                if (blade.hasSubType(MiscType.S_VIBRO_MEDIUM))
+                }
+                if (blade.hasSubType(MiscType.S_VIBRO_MEDIUM)) {
                     return 5;
+                }
                 // else
                 return 3;
             }
@@ -426,13 +455,14 @@ public class BipedMech extends Mech {
 
     /**
      * Does the mech have any shields. a mech can have up to 2 shields.
-     * 
+     *
      * @return <code>true</code> if unit has a shield crit.
      */
+    @Override
     public boolean hasShield() {
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
-            if ( (m.getLocation() == Mech.LOC_LARM || m.getLocation() == Mech.LOC_RARM) && type instanceof MiscType && ((MiscType) type).isShield() && this.getInternal(m.getLocation()) > 0) {
+            if ( ((m.getLocation() == Mech.LOC_LARM) || (m.getLocation() == Mech.LOC_RARM)) && (type instanceof MiscType) && ((MiscType) type).isShield() && (this.getInternal(m.getLocation()) > 0)) {
                 return true;
             }
         }
@@ -446,22 +476,26 @@ public class BipedMech extends Mech {
      * size has its own draw backs. So check each size and add modifers based on
      * the number shields of that size.
      */
+    @Override
     public int getNumberOfShields(long size) {
-        
+
         int raShield = 0;
         int laShield = 0;
 
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && type.hasFlag(MiscType.F_CLUB) && (type.hasSubType(size))) {
+            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_CLUB) && (type.hasSubType(size))) {
                 // ok so we have a shield of certain size. no which arm is it.
-                if (m.getLocation() == Mech.LOC_RARM)
+                if (m.getLocation() == Mech.LOC_RARM) {
                     raShield = 1;
-                if (m.getLocation() == Mech.LOC_LARM)
+                }
+                if (m.getLocation() == Mech.LOC_LARM) {
                     laShield = 1;
+                }
                 // break now.
-                if (raShield > 0 && laShield > 0)
+                if ((raShield > 0) && (laShield > 0)) {
                     return 2;
+                }
             }
         }
         return raShield + laShield;
@@ -471,6 +505,7 @@ public class BipedMech extends Mech {
      * Does the mech have an active shield This should only be called after
      * hasShield has been called.
      */
+    @Override
     public boolean hasActiveShield(int location, boolean rear) {
 
         switch (location) {
@@ -479,10 +514,12 @@ public class BipedMech extends Mech {
             // no rear head location so must be rear CT which is not
             // proected by
             // any shield
-            if (rear)
+            if (rear) {
                 return false;
-            if (hasActiveShield(Mech.LOC_LARM) || hasActiveShield(Mech.LOC_RARM))
+            }
+            if (hasActiveShield(Mech.LOC_LARM) || hasActiveShield(Mech.LOC_RARM)) {
                 return true;
+            }
             // else
             return false;
         case Mech.LOC_LARM:
@@ -498,29 +535,35 @@ public class BipedMech extends Mech {
      * Does the mech have an active shield This should only be called by
      * hasActiveShield(location,rear)
      */
+    @Override
     public boolean hasActiveShield(int location) {
 
-        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM)
+        if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
             return false;
+        }
 
-        if (this.isShutDown() || (this.getCrew().isKoThisRound() || this.getCrew().isUnconscious()))
+        if (isShutDown() || (getCrew().isKoThisRound() || getCrew().isUnconscious())) {
             return false;
+        }
 
         for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
-            CriticalSlot cs = this.getCritical(location, slot);
+            CriticalSlot cs = getCritical(location, slot);
 
-            if (cs == null)
+            if (cs == null) {
                 continue;
+            }
 
-            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
+            }
 
-            if (cs.isDamaged())
+            if (cs.isDamaged()) {
                 continue;
+            }
 
             Mounted m = this.getEquipment(cs.getIndex());
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && ((MiscType) type).isShield() && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
+            if ((type instanceof MiscType) && ((MiscType) type).isShield() && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
                 return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
@@ -531,6 +574,7 @@ public class BipedMech extends Mech {
      * Does the mech have a passive shield This should only be called after
      * hasShield has been called.
      */
+    @Override
     public boolean hasPassiveShield(int location, boolean rear) {
 
         switch (location) {
@@ -542,15 +586,17 @@ public class BipedMech extends Mech {
             return false;
         case Mech.LOC_LARM:
         case Mech.LOC_LT:
-            if (rear)// only LT has a rear and passive does not protect
+            if (rear) {
                 // that
                 return false;
+            }
             return hasPassiveShield(Mech.LOC_LARM);
             // RA RT
         default:
-            if (rear)// only RT has a rear and passive does not protect
+            if (rear) {
                 // that
                 return false;
+            }
             return hasPassiveShield(Mech.LOC_RARM);
         }
     }
@@ -559,29 +605,35 @@ public class BipedMech extends Mech {
      * Does the mech have a passive shield This should only be called by
      * hasPassiveShield(location,rear)
      */
+    @Override
     public boolean hasPassiveShield(int location) {
 
-        if (this.isShutDown() || (this.getCrew().isKoThisRound() || this.getCrew().isUnconscious()))
+        if (isShutDown() || (getCrew().isKoThisRound() || getCrew().isUnconscious())) {
             return false;
+        }
 
-        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM)
+        if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
             return false;
+        }
 
         for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
-            CriticalSlot cs = this.getCritical(location, slot);
+            CriticalSlot cs = getCritical(location, slot);
 
-            if (cs == null)
+            if (cs == null) {
                 continue;
+            }
 
-            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
+            }
 
-            if (cs.isDamaged())
+            if (cs.isDamaged()) {
                 continue;
+            }
 
             Mounted m = this.getEquipment(cs.getIndex());
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && ((MiscType) type).isShield() && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
+            if ((type instanceof MiscType) && ((MiscType) type).isShield() && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
                 return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
@@ -591,26 +643,31 @@ public class BipedMech extends Mech {
     /**
      * Does the mech have an shield in no defense mode
      */
+    @Override
     public boolean hasNoDefenseShield(int location) {
 
-        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM)
+        if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
             return false;
+        }
 
         for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
-            CriticalSlot cs = this.getCritical(location, slot);
+            CriticalSlot cs = getCritical(location, slot);
 
-            if (cs == null)
+            if (cs == null) {
                 continue;
+            }
 
-            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
+            }
 
-            if (cs.isDamaged())
+            if (cs.isDamaged()) {
                 continue;
+            }
 
             Mounted m = this.getEquipment(cs.getIndex());
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && ((MiscType) type).isShield() && (m.curMode().equals(MiscType.S_NO_SHIELD) || this.isShutDown() || // if
+            if ((type instanceof MiscType) && ((MiscType) type).isShield() && (m.curMode().equals(MiscType.S_NO_SHIELD) || isShutDown() || // if
                     // he
                     // has
                     // a
@@ -619,7 +676,7 @@ public class BipedMech extends Mech {
                     // the mek is SD or pilot
                     // KOed then it goes to no
                     // defense mode
-                    this.getCrew().isKoThisRound() || this.getCrew().isUnconscious())) {
+                    getCrew().isKoThisRound() || getCrew().isUnconscious())) {
                 return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
@@ -631,39 +688,42 @@ public class BipedMech extends Mech {
      * Checks is Biped Mek has functional AES in the location.
      * Only works for Arms
      */
+    @Override
     public boolean hasFunctionalArmAES(int location) {
-        
+
         boolean hasAES = false;
-        if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
+        if ( (location != Mech.LOC_RARM) && (location != Mech.LOC_LARM) ) {
             return false;
-        
-        for (Mounted mounted : this.getMisc() ) {
-            if ( mounted.getLocation() == location 
-                    && mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) 
+        }
+
+        for (Mounted mounted : getMisc() ) {
+            if ( (mounted.getLocation() == location)
+                    && mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
                     && !mounted.isDestroyed()
                     && !mounted.isBreached()
                     && !mounted.isMissing() ) {
                 hasAES = true;
             } //AES is destroyed their for it cannot be used.
-            else if ( mounted.getLocation() == location 
+            else if ( (mounted.getLocation() == location)
                     && mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) ) {
                 return false;
             }
         }
-        
+
         return hasAES;
     }
-    
+
     /**
      * Checks for functional AES in both legs
      */
+    @Override
     public boolean hasFunctionalLegAES() {
         boolean rightLeg = false;
         boolean leftLeg = false;
-        
-        for (Mounted mounted : this.getMisc()) {
-            if ( mounted.getLocation() == Mech.LOC_LLEG || mounted.getLocation() == Mech.LOC_RLEG ) {
-                if ( ((MiscType)mounted.getType()).hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) 
+
+        for (Mounted mounted : getMisc()) {
+            if ( (mounted.getLocation() == Mech.LOC_LLEG) || (mounted.getLocation() == Mech.LOC_RLEG) ) {
+                if ( ((MiscType)mounted.getType()).hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
                         && !mounted.isDestroyed()
                         && !mounted.isBreached()
                         && !mounted.isMissing()) {
@@ -679,10 +739,11 @@ public class BipedMech extends Mech {
                 }
             }
         }
-        
+
         return rightLeg && leftLeg;
     }
 
+    @Override
     public boolean canGoHullDown() {
         return game.getOptions().booleanOption("tacops_hull_down")
             && !isLocationBad(Mech.LOC_LLEG)
@@ -690,24 +751,25 @@ public class BipedMech extends Mech {
             && !isLocationDoomed(Mech.LOC_LLEG)
             && !isLocationDoomed(Mech.LOC_RLEG);
     }
-    
+
+    @Override
     public PilotingRollData checkGetUp(MoveStep step) {
-        
+
         PilotingRollData roll = super.checkGetUp(step);
-        
-        if ( game.getOptions().booleanOption("tacops_attempting_stand") 
-                && roll.getValue() != TargetRoll.CHECK_FALSE) {
+
+        if ( game.getOptions().booleanOption("tacops_attempting_stand")
+                && (roll.getValue() != TargetRoll.CHECK_FALSE)) {
             addStandingPenalties(roll);
             roll.setCumulative(true);
         }
-        
+
         return roll;
     }
-    
-    
+
+
     public PilotingRollData addStandingPenalties(PilotingRollData roll) {
 
-        
+
         int[] locsToCheck = new int[2];
 
         locsToCheck[0] = Mech.LOC_RARM;
@@ -737,14 +799,17 @@ public class BipedMech extends Mech {
     /**
      * @return if this mech cannot stand up from hulldown
      */
+    @Override
     public boolean cannotStandUpFromHullDown() {
         int i = 0;
-        if (isLocationBad(LOC_LLEG))
+        if (isLocationBad(LOC_LLEG)) {
             i++;
-        if (isLocationBad(LOC_RLEG))
+        }
+        if (isLocationBad(LOC_RLEG)) {
             i++;
-        return (i >= 1) 
-        || (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1 && getGyroType() != Mech.GYRO_HEAVY_DUTY) 
-        || (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 2 && getGyroType() == Mech.GYRO_HEAVY_DUTY);
+        }
+        return (i >= 1)
+        || ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) && (getGyroType() != Mech.GYRO_HEAVY_DUTY))
+        || ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 2) && (getGyroType() == Mech.GYRO_HEAVY_DUTY));
     }
 }

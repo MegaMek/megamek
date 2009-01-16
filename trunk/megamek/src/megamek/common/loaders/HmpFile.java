@@ -49,7 +49,7 @@ import megamek.common.WeaponType;
  * Based on the hmpread.c program and the MtfFile object. Note that this class
  * doubles as both a MM Heavy Metal Pro parser and a HMP to MTF file converter
  * (when the "main" method is used).
- * 
+ *
  * @author <a href="mailto:mnewcomb@sourceforge.net">Michael Newcomb</a>
  * @version $Revision$ Modified by Ryan McConnell (oscarmm) with lots of
  *          help from Ian Hamilton.
@@ -369,8 +369,9 @@ implements IMechLoader
 
             // just a catch all for small Fluffs anything well less then 10
             // characters, per section, isn't worth printing.
-            if (fluffSize <= 60)
+            if (fluffSize <= 60) {
                 fluff = null;
+            }
 
             // non printing notes
             dis.skipBytes(readUnsignedShort(dis));
@@ -433,8 +434,8 @@ implements IMechLoader
     public Entity getEntity() throws EntityLoadingException {
         try {
             Mech mech = null;
-            if (chassisType == ChassisType.QUADRAPED_OMNI
-                    || chassisType == ChassisType.QUADRAPED) {
+            if ((chassisType == ChassisType.QUADRAPED_OMNI)
+                    || (chassisType == ChassisType.QUADRAPED)) {
                 mech = new QuadMech(gyroType, cockpitType);
             } else if (chassisType == ChassisType.ARMLESS) {
                 mech = new ArmlessMech(gyroType, cockpitType);
@@ -447,8 +448,8 @@ implements IMechLoader
             mech.setYear(year);
             mech.setFluff(fluff);
 
-            mech.setOmni(chassisType == ChassisType.BIPED_OMNI
-                    || chassisType == ChassisType.QUADRAPED_OMNI);
+            mech.setOmni((chassisType == ChassisType.BIPED_OMNI)
+                    || (chassisType == ChassisType.QUADRAPED_OMNI));
 
             if (techType == TechType.INNER_SPHERE) {
                 switch (rulesLevel) {
@@ -477,12 +478,12 @@ implements IMechLoader
                         throw new EntityLoadingException(
                                 "Unsupported tech level: " + rulesLevel);
                 }
-            } else if (techType == TechType.MIXED
-                    && mixedBaseTechType == TechType.INNER_SPHERE) {
+            } else if ((techType == TechType.MIXED)
+                    && (mixedBaseTechType == TechType.INNER_SPHERE)) {
                 mech.setTechLevel(TechConstants.T_IS_ADVANCED);
                 mech.setMixedTech(true);
-            } else if (techType == TechType.MIXED
-                    && mixedBaseTechType == TechType.CLAN) {
+            } else if ((techType == TechType.MIXED)
+                    && (mixedBaseTechType == TechType.CLAN)) {
                 mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
                 mech.setMixedTech(true);
             } else {
@@ -493,8 +494,9 @@ implements IMechLoader
             mech.setWeight(tonnage);
 
             int engineFlags = 0;
-            if (techType == TechType.CLAN || engineTechType == TechType.CLAN)
+            if ((techType == TechType.CLAN) || (engineTechType == TechType.CLAN)) {
                 engineFlags = Engine.CLAN_ENGINE;
+            }
             mech.setEngine(new Engine(engineRating, Engine
                             .getEngineTypeByString(engineType.toString()),
                             engineFlags));
@@ -637,12 +639,13 @@ implements IMechLoader
                             CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
                 } else if (isJumpJet(critical)) {
                     try {
-                        if (jjType == 0)
+                        if (jjType == 0) {
                             mech.addEquipment(EquipmentType.get("Jump Jet"),
                                     location, false);
-                        else if (jjType == 1)
+                        } else if (jjType == 1) {
                             mech.addEquipment(EquipmentType
                                     .get("Improved Jump Jet"), location, false);
+                        }
                     } catch (LocationFullException ex) {
                         System.err
                                 .print("Location was full when adding jump jets to slot #");
@@ -661,17 +664,18 @@ implements IMechLoader
                             // for experimental or unofficial equipment, we need
                             // to adjust the mech's techlevel, because HMP only
                             // knows lvl1/2/3
-                            if (equipment.getTechLevel() > mech.getTechLevel()
-                                    && mech.getTechLevel() >= TechConstants.T_IS_ADVANCED) {
+                            if ((equipment.getTechLevel() > mech.getTechLevel())
+                                    && (mech.getTechLevel() >= TechConstants.T_IS_ADVANCED)) {
                                 boolean isClan = mech.isClan();
-                                if (equipment.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL ||
-                                        equipment.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)
+                                if ((equipment.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) ||
+                                        (equipment.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
                                     mech.setTechLevel(isClan?TechConstants.T_CLAN_EXPERIMENTAL:TechConstants.T_IS_EXPERIMENTAL);
-                                else if (equipment.getTechLevel() == TechConstants.T_IS_UNOFFICIAL ||
-                                        equipment.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)
+                                } else if ((equipment.getTechLevel() == TechConstants.T_IS_UNOFFICIAL) ||
+                                        (equipment.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
                                     mech.setTechLevel(isClan?TechConstants.T_CLAN_UNOFFICIAL:TechConstants.T_IS_UNOFFICIAL);
+                                }
                             }
-                            boolean rearMounted = equipment instanceof WeaponType
+                            boolean rearMounted = (equipment instanceof WeaponType)
                                     && isRearMounted(critical);
                             if (equipment.isSpreadable()) {
                                 Mounted m = spreadEquipment.get(equipment);
@@ -692,7 +696,7 @@ implements IMechLoader
                                             rearMounted);
                                     spreadEquipment.put(equipment, m);
                                 }
-                            } else if (equipment instanceof WeaponType
+                            } else if ((equipment instanceof WeaponType)
                                     && equipment
                                             .hasFlag(WeaponType.F_SPLITABLE)) {
                                 // do we already have this one in this or an
@@ -702,8 +706,8 @@ implements IMechLoader
                                 for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
                                     m = vSplitWeapons.elementAt(x);
                                     int nLoc = m.getLocation();
-                                    if ((nLoc == location || location == Mech
-                                            .getInnerLocation(nLoc))
+                                    if (((nLoc == location) || (location == Mech
+                                            .getInnerLocation(nLoc)))
                                             && m.getType().equals(equipment)) {
                                         bFound = true;
                                         break;
@@ -1695,8 +1699,8 @@ implements IMechLoader
             if (tType == TechType.MIXED) {
                 if (critical.intValue() == 0x0A) {
                     tType = heatSinkTechType;
-                } else if (critical.intValue() == 0x11
-                        || critical.intValue() == 0x1F) {
+                } else if ((critical.intValue() == 0x11)
+                        || (critical.intValue() == 0x1F)) {
                     tType = physicalWeaponTechType;
                 } else if (critical.intValue() == 0x12) {
                     tType = targetingComputerTechType;
@@ -1721,12 +1725,13 @@ implements IMechLoader
         // MG ammo can come in half ton increments, so we have to look
         // up the actual ammo count. Other weapons have their counts
         // hard-coded.
-        if (critName != null && critName.endsWith("MG Ammo")) {
+        if ((critName != null) && critName.endsWith("MG Ammo")) {
             critName += " (" + ammoCount + ")";
         }
-        
-        if (critName == null && critical.longValue() == 0)
+
+        if ((critName == null) && (critical.longValue() == 0)) {
             return "-Empty-";
+        }
 
         // Unexpected parsing failures should be passed on so that
         // they can be dealt with properly.
@@ -1758,7 +1763,7 @@ implements IMechLoader
                 if (criticals[slot] == 0) {
                     firstEmpty = slot;
                 }
-                if (firstEmpty != -1 && criticals[slot] != 0) {
+                if ((firstEmpty != -1) && (criticals[slot] != 0)) {
                     // move this to the first empty slot
                     criticals[firstEmpty] = criticals[slot];
                     // mark the old slot empty
@@ -1806,17 +1811,20 @@ implements IMechLoader
         sb.append("Mass:").append(tonnage).append(nl);
         sb.append("Engine:").append(engineRating).append(" ")
                 .append(engineType).append(" Engine");
-        if (mixedBaseTechType != engineTechType)
+        if (mixedBaseTechType != engineTechType) {
             sb.append(" (").append(engineTechType).append(")");
+        }
         sb.append(nl);
         sb.append("Structure:").append(internalStructureType).append(nl);
         sb.append("Myomer:").append(myomerType).append(nl);
-        if (gyroType != Mech.GYRO_STANDARD)
+        if (gyroType != Mech.GYRO_STANDARD) {
             sb.append("Gyro:").append(Mech.getGyroTypeString(gyroType)).append(
                     nl);
-        if (cockpitType != Mech.COCKPIT_STANDARD)
+        }
+        if (cockpitType != Mech.COCKPIT_STANDARD) {
             sb.append("Cockpit:")
                     .append(Mech.getCockpitTypeString(cockpitType)).append(nl);
+        }
         sb.append(nl);
 
         sb.append("Heat Sinks:").append(heatSinks).append(" ").append(
@@ -1826,55 +1834,68 @@ implements IMechLoader
         sb.append(nl);
 
         sb.append("Armor:").append(armorType);
-        if (mixedBaseTechType != armorTechType)
+        if (mixedBaseTechType != armorTechType) {
             sb.append(" (").append(armorTechType).append(")");
+        }
         sb.append(nl);
         boolean isPatchwork = false;
-        if (armorType == ArmorType.PATCHWORK)
+        if (armorType == ArmorType.PATCHWORK) {
             isPatchwork = true;
+        }
         sb.append("LA Armor:").append(laArmor);
-        if (isPatchwork)
+        if (isPatchwork) {
             sb.append(" (").append(laArmorType).append(")");
+        }
         sb.append(nl);
         sb.append("RA Armor:").append(raArmor);
-        if (isPatchwork)
+        if (isPatchwork) {
             sb.append(" (").append(raArmorType).append(")");
+        }
         sb.append(nl);
         sb.append("LT Armor:").append(ltArmor);
-        if (isPatchwork)
+        if (isPatchwork) {
             sb.append(" (").append(ltArmorType).append(")");
+        }
         sb.append(nl);
         sb.append("RT Armor:").append(rtArmor);
-        if (isPatchwork)
+        if (isPatchwork) {
             sb.append(" (").append(rtArmorType).append(")");
+        }
         sb.append(nl);
         sb.append("CT Armor:").append(ctArmor);
-        if (isPatchwork)
+        if (isPatchwork) {
             sb.append(" (").append(ctArmorType).append(")");
+        }
         sb.append(nl);
         sb.append("HD Armor:").append(headArmor);
-        if (isPatchwork)
+        if (isPatchwork) {
             sb.append(" (").append(headArmorType).append(")");
+        }
         sb.append(nl);
         sb.append("LL Armor:").append(llArmor);
-        if (isPatchwork)
+        if (isPatchwork) {
             sb.append(" (").append(llArmorType).append(")");
+        }
         sb.append(nl);
         sb.append("RL Armor:").append(rlArmor);
-        if (isPatchwork)
+        if (isPatchwork) {
             sb.append(" (").append(rlArmorType).append(")");
+        }
         sb.append(nl);
         sb.append("RTL Armor:").append(ltrArmor);
-        if (isPatchwork)
+        if (isPatchwork) {
             sb.append(" (").append(ltrArmorType).append(")");
+        }
         sb.append(nl);
         sb.append("RTR Armor:").append(rtrArmor);
-        if (isPatchwork)
+        if (isPatchwork) {
             sb.append(" (").append(rtrArmorType).append(")");
+        }
         sb.append(nl);
         sb.append("RTC Armor:").append(ctrArmor);
-        if (isPatchwork)
+        if (isPatchwork) {
             sb.append(" (").append(ctrArmorType).append(")");
+        }
         sb.append(nl);
         sb.append(nl);
 
@@ -1883,50 +1904,59 @@ implements IMechLoader
             sb.append(weaponArray[x][0]).append(" ").append(
                     getCriticalName(weaponArray[x][1])).append(", ").append(
                     WeaponLocation.getType(weaponArray[x][2]));
-            if (weaponArray[x][3] > 0)
+            if (weaponArray[x][3] > 0) {
                 sb.append(", Ammo:").append(weaponArray[x][3]);
+            }
             sb.append(nl);
         }
 
         sb.append(nl);
         sb.append("Left Arm:").append(nl);
-        for (int x = 0; x < 12; x++)
+        for (int x = 0; x < 12; x++) {
             sb.append(getCriticalName(laCriticals[x])).append(nl);
+        }
         sb.append(nl);
 
         sb.append("Right Arm:").append(nl);
-        for (int x = 0; x < 12; x++)
+        for (int x = 0; x < 12; x++) {
             sb.append(getCriticalName(raCriticals[x])).append(nl);
+        }
         sb.append(nl);
 
         sb.append("Left Torso:").append(nl);
-        for (int x = 0; x < 12; x++)
+        for (int x = 0; x < 12; x++) {
             sb.append(getCriticalName(ltCriticals[x])).append(nl);
+        }
         sb.append(nl);
 
         sb.append("Right Torso:").append(nl);
-        for (int x = 0; x < 12; x++)
+        for (int x = 0; x < 12; x++) {
             sb.append(getCriticalName(rtCriticals[x])).append(nl);
+        }
         sb.append(nl);
 
         sb.append("Center Torso:").append(nl);
-        for (int x = 0; x < 12; x++)
+        for (int x = 0; x < 12; x++) {
             sb.append(getCriticalName(ctCriticals[x])).append(nl);
+        }
         sb.append(nl);
 
         sb.append("Head:").append(nl);
-        for (int x = 0; x < 12; x++)
+        for (int x = 0; x < 12; x++) {
             sb.append(getCriticalName(headCriticals[x])).append(nl);
+        }
         sb.append(nl);
 
         sb.append("Left Leg:").append(nl);
-        for (int x = 0; x < 12; x++)
+        for (int x = 0; x < 12; x++) {
             sb.append(getCriticalName(llCriticals[x])).append(nl);
+        }
         sb.append(nl);
 
         sb.append("Right Leg:").append(nl);
-        for (int x = 0; x < 12; x++)
+        for (int x = 0; x < 12; x++) {
             sb.append(getCriticalName(rlCriticals[x])).append(nl);
+        }
 
         return sb.toString();
     }
@@ -2024,10 +2054,12 @@ abstract class HMPType {
         this.id = id;
     }
 
+    @Override
     public String toString() {
         return name;
     }
 
+    @Override
     public boolean equals(Object other) {
 
         // Assume the other object doesn't equal this one.
@@ -2044,7 +2076,7 @@ abstract class HMPType {
             HMPType cast = (HMPType) other;
 
             // The two objects match if their names and IDs match.
-            if (this.name.equals(cast.name) && this.id == cast.id) {
+            if (name.equals(cast.name) && (id == cast.id)) {
                 result = true;
             }
         }
@@ -2213,6 +2245,7 @@ class MyomerType extends HMPType {
     public static final MyomerType TRIPLE_STRENGTH = new MyomerType(
             "Triple-Strength", 1);
     public static final MyomerType MASC = new MyomerType("MASC", 2);
+    public static final MyomerType INDUSTRIAL_TRIPLE_STRENGTH =new MyomerType("Industrial Triple-Strength", 3);
 
     private MyomerType(String name, int id) {
         super(name, id);

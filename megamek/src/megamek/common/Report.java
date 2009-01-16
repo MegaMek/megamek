@@ -54,7 +54,7 @@ import java.util.Vector;
  * The example above might produce a report such as this when the
  * <code>getText</code> method was called:
  * <p> " Crusader (Bob) does 6 damage to the tank."
- * 
+ *
  * @author Ryan McConnell (oscarmm)
  * @version $Revision$
  * @since 0.30
@@ -158,50 +158,50 @@ public class Report implements Serializable {
 
     /**
      * Create a new report associated with the given report text.
-     * 
+     *
      * @param id the int value of the report from <i>report-messages.properties</i>
      */
     public Report(int id) {
-        this.messageId = id;
+        messageId = id;
     }
 
     /**
      * Create a new report associated with the given report text and having the
      * given type.
-     * 
+     *
      * @param id the int value of the report from <i>report-messages.properties</i>
      * @param type the constant specifying the visibility of the report (PUBLIC,
      *            OBSCURED, or HIDDEN)
      */
     public Report(int id, int type) {
-        this.messageId = id;
+        messageId = id;
         this.type = type;
     }
 
     /**
      * Create a new report which is an exact copy of the given report.
-     * 
+     *
      * @param r the report to be copied
      */
     @SuppressWarnings("unchecked")
     public Report(Report r) {
-        this.messageId = r.messageId;
-        this.indentation = r.indentation;
-        this.newlines = r.newlines;
-        this.tagData = (Vector<String>) r.tagData.clone();
-        this.type = r.type;
-        this.subject = r.subject;
-        this.obscuredIndexes = (Hashtable<Integer, Boolean>) r.obscuredIndexes
+        messageId = r.messageId;
+        indentation = r.indentation;
+        newlines = r.newlines;
+        tagData = (Vector<String>) r.tagData.clone();
+        type = r.type;
+        subject = r.subject;
+        obscuredIndexes = (Hashtable<Integer, Boolean>) r.obscuredIndexes
                 .clone();
-        this.obscuredRecipients = (Vector<String>) r.obscuredRecipients.clone();
-        this.tagCounter = r.tagCounter;
+        obscuredRecipients = (Vector<String>) r.obscuredRecipients.clone();
+        tagCounter = r.tagCounter;
     }
 
     /**
      * Add the given int to the list of data that will be substituted for the
      * &lt;data&gt; tags in the report. The order in which items are added must
      * match the order of the tags in the report text.
-     * 
+     *
      * @param data the int to be substituted
      */
     public void add(int data) {
@@ -213,25 +213,25 @@ public class Report implements Serializable {
      * &lt;data&gt; tags in the report, and mark it as double-blind sensitive
      * information if <code>obscure</code> is true. The order in which items
      * are added must match the order of the tags in the report text.
-     * 
+     *
      * @param data the int to be substituted
      * @param obscure boolean indicating whether the data is double-blind
      *            sensitive
      */
     public void add(int data, boolean obscure) {
         if (obscure) {
-            this.obscuredIndexes.put(new Integer(this.tagData.size()),
+            obscuredIndexes.put(new Integer(tagData.size()),
                     new Boolean(true));
         }
 
-        this.tagData.addElement(String.valueOf(data));
+        tagData.addElement(String.valueOf(data));
     }
 
     /**
      * Add the given String to the list of data that will be substituted for the
      * &lt;data&gt; tags in the report. The order in which items are added must
      * match the order of the tags in the report text.
-     * 
+     *
      * @param data the String to be substituted
      */
     public void add(String data) {
@@ -243,18 +243,18 @@ public class Report implements Serializable {
      * &lt;data&gt; tags in the report, and mark it as double-blind sensitive
      * information if <code>obscure</code> is true. The order in which items
      * are added must match the order of the tags in the report text.
-     * 
+     *
      * @param data the String to be substituted
      * @param obscure boolean indicating whether the data is double-blind
      *            sensitive
      */
     public void add(String data, boolean obscure) {
         if (obscure) {
-            this.obscuredIndexes.put(new Integer(this.tagData.size()),
+            obscuredIndexes.put(new Integer(tagData.size()),
                     new Boolean(true));
         }
 
-        this.tagData.addElement(data);
+        tagData.addElement(data);
     }
 
     /**
@@ -268,14 +268,14 @@ public class Report implements Serializable {
      * @param choice boolean indicating which message to substitute
      */
     public void choose(boolean choice) {
-        this.tagData.addElement(String.valueOf(choice));
+        tagData.addElement(String.valueOf(choice));
     }
 
     /**
      * Shortcut method for adding entity name and owner data at the same time.
      * Assumes that the entity name should be obscured, but the owner should
      * not.
-     * 
+     *
      * @param entity the entity you wish to add
      */
     public void addDesc(Entity entity) {
@@ -290,14 +290,15 @@ public class Report implements Serializable {
      * <p>
      * Tests wheter the data value at the given index has been marked as
      * obscured.
-     * 
+     *
      * @param index position of data value (indexes are chronological and start
      *            at zero)
      * @return true if the data value was marked obscured
      */
     public boolean isValueObscured(int index) {
-        if (this.obscuredIndexes.get(new Integer(index)) == null)
+        if (obscuredIndexes.get(new Integer(index)) == null) {
             return false;
+        }
         return true;
     }
 
@@ -305,12 +306,12 @@ public class Report implements Serializable {
      * Internal method. Not for typical use.
      * <p>
      * Remove the data value from the report. This operation is irreversible.
-     * 
+     *
      * @param index position of data value (indexes are chronological and start
      *            at zero
      */
     public void hideData(int index) {
-        this.tagData.setElementAt(null, index);
+        tagData.setElementAt(null, index);
     }
 
     /**
@@ -322,11 +323,11 @@ public class Report implements Serializable {
 
     /**
      * Indent the report <i>n</i> times.
-     * 
+     *
      * @param n the number of times to indent the report
      */
     public void indent(int n) {
-        this.indentation += (n * Report.DEFAULT_INDENTATION);
+        indentation += (n * Report.DEFAULT_INDENTATION);
     }
 
     /**
@@ -335,20 +336,20 @@ public class Report implements Serializable {
      * Get the total number of data values associated with this report. Note
      * that this includes the <code>true/false</code> values added for
      * &lt;msg&gt; tags as well.
-     * 
+     *
      * @return the number of data values
      */
     public int dataCount() {
-        return this.tagData.size();
+        return tagData.size();
     }
 
     private String getTag() {
-        return getTag(this.tagCounter);
+        return getTag(tagCounter);
     }
 
     private String getTag(int index) {
         try {
-            String value = this.tagData.elementAt(index);
+            String value = tagData.elementAt(index);
             if (value == null) {
                 return Report.OBSCURED_STRING;
             }
@@ -358,7 +359,7 @@ public class Report implements Serializable {
                     .println("Error: Report#getText --> Array Index out of Bounds Exception (index: "
                             + index
                             + ") for a report with ID "
-                            + this.messageId
+                            + messageId
                             + ".  Maybe Report#add wasn't called enough times for the amount of tags in the message?");
             return "[Reporting Error: see megameklog.txt for details]";
         }
@@ -367,12 +368,12 @@ public class Report implements Serializable {
     /**
      * Get the report in its final form, with all the necessary substitutions
      * made.
-     * 
+     *
      * @return a String with the final report
      */
     public String getText() {
         // The raw text of the message, with tags.
-        String raw = ReportMessages.getString(String.valueOf(this.messageId));
+        String raw = ReportMessages.getString(String.valueOf(messageId));
 
         // This will be the finished product, with data substituted for tags.
         StringBuffer text = new StringBuffer();
@@ -380,9 +381,9 @@ public class Report implements Serializable {
         if (raw == null) {
             // Should we handle this better? Check alternate language files?
             System.out.println("Error: No message found for ID "
-                    + this.messageId);
+                    + messageId);
             text.append("[Reporting Error for message ID ").append(
-                    this.messageId).append("]");
+                    messageId).append("]");
         } else {
             int i = 0;
             int mark = 0;
@@ -390,8 +391,8 @@ public class Report implements Serializable {
                 if (raw.charAt(i) == '<') {
                     // find end of tag
                     int endTagIdx = raw.indexOf('>', i);
-                    if (raw.indexOf('<', i + 1) != -1
-                            && raw.indexOf('<', i + 1) < endTagIdx) {
+                    if ((raw.indexOf('<', i + 1) != -1)
+                            && (raw.indexOf('<', i + 1) < endTagIdx)) {
                         // hmm...this must be a literal '<' character
                         i++;
                         continue;
@@ -402,9 +403,9 @@ public class Report implements Serializable {
                         text.append(getTag());
                         // System.out.println("Report-->getText(): " +
                         // this.tagData.elementAt(this.tagCounter));
-                        this.tagCounter++;
+                        tagCounter++;
                     } else if (raw.substring(i + 1, endTagIdx).equals("list")) {
-                        for (int j = tagCounter; j < this.tagData.size(); j++) {
+                        for (int j = tagCounter; j < tagData.size(); j++) {
                             text.append(getTag(j)).append(", ");
                         }
                         text.setLength(text.length() - 2); // trim last comma
@@ -435,29 +436,31 @@ public class Report implements Serializable {
             handleIndentation(text);
             text.append(getNewlines());
         }
-        this.tagCounter = 0;
+        tagCounter = 0;
         // debugReport
-        if (this.type == Report.TESTING) {
+        if (type == Report.TESTING) {
             Report.mark(text);
         }
         return text.toString();
     }
 
     private void handleIndentation(StringBuffer sb) {
-        if (this.indentation == 0 || sb.length() == 0)
+        if ((indentation == 0) || (sb.length() == 0)) {
             return;
+        }
         int i = 0;
         while (sb.charAt(i) == '\n') {
             i++;
-            if (i == sb.length())
+            if (i == sb.length()) {
                 continue;
+            }
         }
         sb.insert(i, getSpaces());
     }
 
     private String getSpaces() {
         StringBuffer spaces = new StringBuffer();
-        for (int i = 0; i < this.indentation; i++) {
+        for (int i = 0; i < indentation; i++) {
             spaces.append(" ");
         }
         return spaces.toString();
@@ -465,7 +468,7 @@ public class Report implements Serializable {
 
     private String getNewlines() {
         StringBuffer sbNewlines = new StringBuffer();
-        for (int i = 0; i < this.newlines; i++) {
+        for (int i = 0; i < newlines; i++) {
             sbNewlines.append("\n");
         }
         return sbNewlines.toString();
@@ -473,11 +476,16 @@ public class Report implements Serializable {
 
     /**
      * Adds a newline to the last report in the given Vector.
-     * 
+     *
      * @param v a Vector of Report objects
      */
     public static void addNewline(Vector<Report> v) {
-        v.elementAt(v.size() - 1).newlines++;
+        try {
+            v.elementAt(v.size() - 1).newlines++;
+        }
+        catch (ArrayIndexOutOfBoundsException ex) {
+            System.err.println("Report.addNewline failed, array index out of bounds");
+        }
     }
 
     /**
@@ -486,11 +494,11 @@ public class Report implements Serializable {
      * Adds the given player name to the report's list of players who received
      * an obscured version of this report from the server at some time in the
      * past.
-     * 
+     *
      * @param playerName the String containing the player's name
      */
     public void addObscuredRecipient(String playerName) {
-        this.obscuredRecipients.addElement(playerName);
+        obscuredRecipients.addElement(playerName);
     }
 
     /**
@@ -499,13 +507,13 @@ public class Report implements Serializable {
      * Tests whether the given player name is on the report's list of players
      * who received an obscured version of this report from the server at some
      * time in the past.
-     * 
+     *
      * @param playerName the String containing the player's name
      * @return true if the player was sent an obscured version of this report
      */
     public boolean isObscuredRecipient(String playerName) {
-        for (int i = 0; i < this.obscuredRecipients.size(); i++) {
-            String s = this.obscuredRecipients.elementAt(i);
+        for (int i = 0; i < obscuredRecipients.size(); i++) {
+            String s = obscuredRecipients.elementAt(i);
             if (s.equals(playerName)) {
                 return true;
             }
@@ -515,9 +523,10 @@ public class Report implements Serializable {
 
     /**
      * Useful for debugging purposes.
-     * 
+     *
      * @return a String of the form "Report(messageId=n)"
      */
+    @Override
     public String toString() {
         String val = new String();
         val = "Report(messageId=";
@@ -531,7 +540,7 @@ public class Report implements Serializable {
      */
     // debugReport method
     public void markForTesting() {
-        this.type = Report.TESTING;
+        type = Report.TESTING;
     }
 
     // debugReport method
@@ -540,8 +549,9 @@ public class Report implements Serializable {
         int i = sb.length() - 1;
         while (sb.charAt(i) == '\n') {
             i--;
-            if (i == 0)
+            if (i == 0) {
                 continue;
+            }
         }
         sb.insert(i + 1, "</hidden>");
         return sb;
@@ -549,8 +559,9 @@ public class Report implements Serializable {
 
     public static void indentAll(Vector<Report> vDesc, int amount) {
         // Just avoid an error condition.
-        if (vDesc == null)
+        if (vDesc == null) {
             return;
+        }
 
         Enumeration<Report> x = vDesc.elements();
         while (x.hasMoreElements()) {

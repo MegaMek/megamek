@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -28,7 +28,7 @@ import megamek.common.ToHitData;
 public class BreakGrappleAttackAction extends PhysicalAttackAction {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5615694825997720537L;
 
@@ -42,7 +42,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
 
     /**
      * Generates the to hit data for this action.
-     * 
+     *
      * @param game
      *            the game.
      * @return the to hit data object for this action.
@@ -57,14 +57,16 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
      */
     public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
-        if (ae == null)
+        if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
+        }
 
-        if (!game.getOptions().booleanOption("tacops_grappling"))
+        if (!game.getOptions().booleanOption("tacops_grappling")) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "grappling attack not allowed");
+        }
 
         String impossible = toHitIsImpossible(game, ae, target);
-        if (impossible != null && !impossible.equals("Locked in Grapple")) {
+        if ((impossible != null) && !impossible.equals("Locked in Grapple")) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
@@ -84,6 +86,8 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
 
         // Start the To-Hit
         toHit = new ToHitData(base, "base");
+
+        PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
         if (ae.isGrappleAttacker()) {
             toHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "original attacker");
@@ -127,11 +131,11 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
         // Weight class difference
         int wmod = te.getWeightClass() - ae.getWeightClass();
 
-        if (te instanceof Protomech && !(ae instanceof Protomech)) {
+        if ((te instanceof Protomech) && !(ae instanceof Protomech)) {
             wmod = ae.getWeightClass() * -1;
-        } else if (ae instanceof Protomech && !(te instanceof Protomech)) {
+        } else if ((ae instanceof Protomech) && !(te instanceof Protomech)) {
             wmod = te.getWeightClass();
-        } else if (te instanceof Protomech && ae instanceof Protomech) {
+        } else if ((te instanceof Protomech) && (ae instanceof Protomech)) {
             wmod = 0;
         }
 

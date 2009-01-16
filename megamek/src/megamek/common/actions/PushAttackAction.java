@@ -339,6 +339,10 @@ public class PushAttackAction extends DisplacementAttackAction {
             }
         }
 
+        if (((Mech)ae).hasIndustrialTSM()) {
+            toHit.addModifier(2, "industrial TSM");
+        }
+
         // done!
         return toHit;
     }

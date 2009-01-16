@@ -737,33 +737,46 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append("Unit mounts both chameleon-light-polarization-system and stealth armor\n");
                 illegal = true;
             }
-            if (mech.isIndustrial() && (mech.getCockpitType() == Mech.COCKPIT_INDUSTRIAL)) {
-                if (mech.hasC3()) {
-                    buff.append("industrial mech without advanced fire control can't use c3 computer");
+            if (mech.isIndustrial()) {
+                if (mech.hasTSM()) {
+                    buff.append("industrial mech can't mount normal TSM");
                     illegal = true;
                 }
-                if (mech.hasTargComp()) {
-                    buff.append("industrial mech without advanced fire control can't use targeting computer");
+                if (mech.hasMASC()) {
+                    buff.append("industrial mech can't mount MASC");
                     illegal = true;
                 }
-                if (mech.hasBAP()) {
-                    buff.append("industrial mech without advanced fire control can't use BAP");
-                    illegal = true;
-                }
-                for (Mounted mounted : mech.getMisc()) {
-                    if (mounted.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                        buff.append("industrial mech without advanced fire control can't use artemis");
+                if (mech.getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
+                    if (mech.hasC3()) {
+                        buff.append("industrial mech without advanced fire control can't use c3 computer");
+                        illegal = true;
+                    }
+                    if (mech.hasTargComp()) {
+                        buff.append("industrial mech without advanced fire control can't use targeting computer");
+                        illegal = true;
+                    }
+                    if (mech.hasBAP()) {
+                        buff.append("industrial mech without advanced fire control can't use BAP");
+                        illegal = true;
+                    }
+                    for (Mounted mounted : mech.getMisc()) {
+                        if (mounted.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                            buff.append("industrial mech without advanced fire control can't use artemis");
+                            illegal = true;
+                        }
+                    }
+                    if ((mech.getJumpType() != Mech.JUMP_STANDARD) && (mech.getJumpType() != Mech.JUMP_NONE)) {
+                        buff.append("industrial mechs can only mount standard jump jets");
+                        illegal = true;
+                    }
+                    if (mech.getGyroType() != Mech.GYRO_STANDARD) {
+                        buff.append("industrial mechs can only mount standard gyros");
                         illegal = true;
                     }
                 }
-                if ((mech.getJumpType() != Mech.JUMP_STANDARD) && (mech.getJumpType() != Mech.JUMP_NONE)) {
-                    buff.append("industrial mechs can only mount standard jump jets");
-                    illegal = true;
-                }
-                if (mech.getGyroType() != Mech.GYRO_STANDARD) {
-                    buff.append("industrial mechs can only mount standard gyros");
-                    illegal = true;
-                }
+            } else if (mech.hasIndustrialTSM()) {
+                buff.append("standard mech can't mount industrial TSM");
+                illegal = true;
             }
         }
         return illegal;

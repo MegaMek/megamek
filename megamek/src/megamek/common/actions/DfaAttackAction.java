@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -51,7 +51,7 @@ import megamek.common.VTOL;
 public class DfaAttackAction extends DisplacementAttackAction {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3953889779582616903L;
 
@@ -77,7 +77,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
      */
     public static int getDamageFor(Entity entity, boolean targetInfantry) {
         int toReturn = (int) Math.ceil((entity.getWeight() / 10.0) * 3.0);
-        
+
         if ( hasTalons(entity) ) {
             toReturn *= 1.5;
         }
@@ -132,18 +132,18 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         // Can't target a transported entity.
-        if (te != null && Entity.NONE != te.getTransportId()) {
+        if ((te != null) && (Entity.NONE != te.getTransportId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is a passenger.");
         }
-        
+
         //no evading
         if(md.contains(MovePath.STEP_EVADE)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No evading while charging");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if (te != null && Entity.NONE != te.getSwarmTargetId()) {
+        if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is swarming a Mek.");
         }
@@ -163,14 +163,14 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         // need to reach target
-        if (chargeStep == null
+        if ((chargeStep == null)
                 || !target.getPosition().equals(chargeStep.getPosition())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Could not reach target with movement");
         }
 
         // target must have moved already
-        if (te != null && !te.isDone()) {
+        if ((te != null) && !te.isDone()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target must be done with movement");
         }
@@ -208,28 +208,29 @@ public class DfaAttackAction extends DisplacementAttackAction {
             te = (Entity) target;
             targetId = target.getTargetId();
         }
-        
+
         if (!game.getOptions().booleanOption("friendly_fire")) {
             // a friendly unit can never be the target of a direct attack.
-            if (target.getTargetType() == Targetable.TYPE_ENTITY
-                    && (((Entity)target).getOwnerId() == ae.getOwnerId()
-                            || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
-                                    && ae.getOwner().getTeam() != Player.TEAM_NONE
-                                    && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
+            if ((target.getTargetType() == Targetable.TYPE_ENTITY)
+                    && ((((Entity)target).getOwnerId() == ae.getOwnerId())
+                            || ((((Entity)target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+            }
         }
 
-        
+
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         ToHitData toHit = null;
-        
+
         final int attackerElevation = ae.getElevation() + game.getBoard().getHex(ae.getPosition()).getElevation();
         final int targetElevation = target.getElevation()
                 + game.getBoard().getHex(target.getPosition()).getElevation();
         final int attackerHeight = attackerElevation + ae.getHeight();
-        
+
         // check elevation of target flying VTOL
-        if (target instanceof VTOL && ((VTOL)target).isFlying()) {
+        if ((target instanceof VTOL) && ((VTOL)target).isFlying()) {
             if (targetElevation - attackerHeight > ae.getJumpMP()) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Elevation difference to high");
@@ -248,13 +249,13 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         // Can't target a transported entity.
-        if (te != null && Entity.NONE != te.getTransportId()) {
+        if ((te != null) && (Entity.NONE != te.getTransportId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if (te != null && Entity.NONE != te.getSwarmTargetId()) {
+        if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is swarming a Mek.");
         }
@@ -270,14 +271,14 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         // can't attack mech making a different displacement attack
-        if (te != null && te.hasDisplacementAttack()) {
+        if ((te != null) && te.hasDisplacementAttack()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is already making a charge/DFA attack");
         }
 
         // can't attack the target of another displacement attack
-        if (te != null && te.isTargetOfDisplacementAttack()
-                && te.findTargetedDisplacement().getEntityId() != ae.getId()) {
+        if ((te != null) && te.isTargetOfDisplacementAttack()
+                && (te.findTargetedDisplacement().getEntityId() != ae.getId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is the target of another charge/DFA");
         }
@@ -289,17 +290,17 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if (target.getTargetType() == Targetable.TYPE_BUILDING
-                || target.getTargetType() == Targetable.TYPE_FUEL_TANK
-                || target instanceof GunEmplacement) {
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+                || (target instanceof GunEmplacement)) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                     "Targeting adjacent building.");
         }
 
         // Can't target woods or ignite a building with a physical.
-        if (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
-                || target.getTargetType() == Targetable.TYPE_HEX_CLEAR
-                || target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
+        if ((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
+                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
@@ -326,8 +327,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
         toHit.append(Compute.getTargetMovementModifier(game, targetId));
 
         // piloting skill differential
-        if (te != null
-                && ae.getCrew().getPiloting() != te.getCrew().getPiloting()) {
+        if ((te != null)
+                && (ae.getCrew().getPiloting() != te.getCrew().getPiloting())) {
             toHit
                     .addModifier(ae.getCrew().getPiloting()
                             - te.getCrew().getPiloting(),
@@ -340,7 +341,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         // target prone
-        if (te != null && te.isProne()) {
+        if ((te != null) && te.isProne()) {
             toHit.addModifier(-2, "target prone and adjacent");
         }
 
@@ -373,20 +374,17 @@ public class DfaAttackAction extends DisplacementAttackAction {
         if(te.isEvading()) {
             toHit.addModifier(te.getEvasionBonus(), "target is evading");
         }
-        
-        if (te != null) {
-            if (te instanceof Tank) {
-                toHit.setSideTable(ToHitData.SIDE_FRONT);
-                toHit.setHitTable(ToHitData.HIT_NORMAL);
-            } else if (te.isProne()) {
-                toHit.setSideTable(ToHitData.SIDE_REAR);
-                toHit.setHitTable(ToHitData.HIT_NORMAL);
-            } else {
-                toHit.setSideTable(te.sideTable(src));
-                toHit.setHitTable(ToHitData.HIT_PUNCH);
-            }
-        }
 
+        if (te instanceof Tank) {
+            toHit.setSideTable(ToHitData.SIDE_FRONT);
+            toHit.setHitTable(ToHitData.HIT_NORMAL);
+        } else if (te.isProne()) {
+            toHit.setSideTable(ToHitData.SIDE_REAR);
+            toHit.setHitTable(ToHitData.HIT_NORMAL);
+        } else {
+            toHit.setSideTable(te.sideTable(src));
+            toHit.setHitTable(ToHitData.HIT_PUNCH);
+        }
         //Attacking Weight Class Modifier.
         if ( game.getOptions().booleanOption("tacops_attack_physical_psr") ) {
             if ( ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT ) {
@@ -396,23 +394,27 @@ public class DfaAttackAction extends DisplacementAttackAction {
             }
         }
 
+        if ((ae instanceof Mech) && ((Mech)ae).hasIndustrialTSM()) {
+            toHit.addModifier(2, "industrial TSM");
+        }
+
         // done!
         return toHit;
     }
 
     public static boolean hasTalons(Entity entity){
-        
+
         if ( entity instanceof Mech ){
-        
+
             if ( entity instanceof BipedMech ){
-                
+
                 return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RLEG)) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LLEG));
             }else{
-                return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RLEG)) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LLEG)) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RARM)) && (entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RARM) || entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LARM) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LARM));
-                
+                return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RLEG)) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LLEG)) || ((entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RARM)) && (entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RARM) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LARM) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LARM))));
+
             }
         }
-        
+
         return false;
     }
 }

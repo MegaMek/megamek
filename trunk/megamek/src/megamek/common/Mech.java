@@ -201,6 +201,10 @@ public abstract class Mech extends Entity implements Serializable {
 
     private boolean justMovedIntoIndustrialKillingWater = false;
 
+    private boolean stalled = false;
+
+    private boolean stalledThisTurn = false;
+
     /**
      * Construct a new, blank, mech.
      */
@@ -506,6 +510,8 @@ public abstract class Mech extends Entity implements Serializable {
                         }
                     }
                 }
+                // failed a PSR, check for stalling
+                doCheckEngineStallRoll(vDesc);
             } else {
                 r.choose(true);
                 vDesc.addElement(r);
@@ -589,6 +595,9 @@ public abstract class Mech extends Entity implements Serializable {
             shouldDieAtEndOfTurnBecauseOfWater = true;
         } else {
             shouldDieAtEndOfTurnBecauseOfWater = false;
+        }
+        if (stalledThisTurn) {
+            stalledThisTurn = false;
         }
     } // End public void newRound()
 
@@ -5130,15 +5139,150 @@ public abstract class Mech extends Entity implements Serializable {
         return getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL;
     }
 
+    /**
+     * set if this mech just moved into water that would kill it because of the
+     * lack of environmental sealing
+     * @param moved
+     */
     public void setJustMovedIntoIndustrialKillingWater(boolean moved) {
         justMovedIntoIndustrialKillingWater = moved;
     }
 
+    /**
+     * did this mech just moved into water that would kill it because we lack
+     * environmental sealing?
+     * @return
+     */
     public boolean isJustMovedIntoIndustrialKillingWater() {
         return justMovedIntoIndustrialKillingWater;
     }
 
-    public boolean shouldDieAtEndOfTurn() {
+    /**
+     * should this mech die at the end of turn because it's an IndustrialMech
+     * without environmental sealing that moved into water last round and stayed there?
+     * @return
+     */
+    public boolean shouldDieAtEndOfTurnBecauseOfWater() {
         return shouldDieAtEndOfTurnBecauseOfWater;
+    }
+
+    /**
+     * Set if this Mech's ICE Engine is stalled or not
+     * should only be used for industrial mechs carrying an ICE engine
+     * @param stalled
+     */
+    public void setStalled(boolean stalled) {
+        this.stalled = stalled;
+        stalledThisTurn = true;
+    }
+
+    /**
+     * Is this Mech's ICE Engine stalled?
+     * @return if this Mech's ICE engine is stalled
+     */
+    public boolean isStalled() {
+        return stalled;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#isShutDown()
+     */
+    @Override
+    public boolean isShutDown() {
+        return super.isShutDown() || isStalled();
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#doCheckEngineStallRoll(java.util.Vector)
+     */
+    @Override
+    public Vector<Report> doCheckEngineStallRoll(Vector<Report> vPhaseReport) {
+        if (isIndustrial() && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
+            Report r = new Report(2280);
+            r.addDesc(this);
+            r.subject = getId();
+            r.add(1);
+            r.add("ICE-Engine Industrial Mech failed a PSR");
+            vPhaseReport.add(r);
+            r = new Report(2285);
+            r.subject = getId();
+            PilotingRollData base = getBasePilotingRoll();
+            r.add(base.getValueAsString());
+            r.add(base.getDesc());
+            vPhaseReport.add(r);
+            r = new Report(2290);
+            r.subject = getId();
+            r.indent();
+            r.newlines = 0;
+            r.add(1);
+            r.add(base.getPlainDesc());
+            vPhaseReport.add(r);
+            int diceRoll = Compute.d6(2);
+            r = new Report(2300);
+            r.subject = getId();
+            r.add(base.getValueAsString());
+            r.add(diceRoll);
+            if (diceRoll <= base.getValue()) {
+                r.choose(false);
+                setStalled(true);
+                r.newlines = 0;
+                vPhaseReport.add(r);
+                r = new Report(2303);
+                r.subject = getId();
+                vPhaseReport.add(r);
+            } else {
+                r.choose(true);
+                vPhaseReport.add(r);
+            }
+        }
+        return vPhaseReport;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#checkUnstall(java.util.Vector)
+     */
+    @Override
+    public void checkUnstall(Vector<Report> vPhaseReport) {
+        if (stalled && !stalledThisTurn && isIndustrial() && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
+            Report r = new Report(2280);
+            r.addDesc(this);
+            r.subject = getId();
+            r.add(1);
+            r.add("unstall stalled ICE engine");
+            vPhaseReport.add(r);
+            r = new Report(2285);
+            r.subject = getId();
+            PilotingRollData base = getBasePilotingRoll();
+            r.add(base.getValueAsString());
+            r.add(base.getDesc());
+            vPhaseReport.add(r);
+            r = new Report(2290);
+            r.subject = getId();
+            r.indent();
+            r.newlines = 0;
+            r.add(1);
+            r.add(base.getPlainDesc());
+            vPhaseReport.add(r);
+            int diceRoll = Compute.d6(2);
+            r = new Report(2300);
+            r.subject = getId();
+            r.add(base.getValueAsString());
+            r.add(diceRoll);
+            if (diceRoll <= base.getValue()) {
+                r.choose(false);
+                vPhaseReport.add(r);
+            } else {
+                r.choose(true);
+                r.newlines = 0;
+                vPhaseReport.add(r);
+                setStalled(false);
+                r = new Report(2304);
+                r.subject = getId();
+                vPhaseReport.add(r);
+            }
+        }
     }
 }

@@ -585,7 +585,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         buttonsTank.add(butSearchlight);
         buttonsTank.add(butHullDown);
         buttonsTank.add(butSwim);
-        buttonsMech.add(butEvade);
+        buttonsTank.add(butEvade);
         buttonsTank.add(butReckless);
         buttonsTank.add(butEject);
         buttonsTank.add(butFlee);
@@ -609,7 +609,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         buttonsVtol.add(butLoad);
         buttonsVtol.add(butUnload);
         buttonsVtol.add(butSearchlight);
-        buttonsMech.add(butEvade);
+        buttonsVtol.add(butEvade);
         buttonsVtol.add(butReckless);
         buttonsVtol.add(butEject);
         buttonsVtol.add(butFlee);
@@ -872,7 +872,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         updateLoadButtons();
         updateElevationButtons();
 
-        setEvadeEnabled((isMech || ce instanceof Tank) && client.game.getOptions().booleanOption("tacops_evade"));
+        setEvadeEnabled((isMech || (ce instanceof Tank)) && client.game.getOptions().booleanOption("tacops_evade"));
 
         updateRecoveryButton();
         updateJoinButton();

@@ -1814,6 +1814,7 @@ public class Server implements Runnable {
             addReport(new Report(5005, Report.PUBLIC));
             checkForSuffocation();
             checkForIndustrialWaterDeath();
+            checkForIndustrialUnstall();
             game.getPlanetaryConditions().determineWind();
             send(createPlanetaryConditionsPacket());
             for (DynamicTerrainProcessor tp : terrainProcessors) {
@@ -4339,8 +4340,7 @@ public class Server implements Runnable {
         // get a list of coordinates that the unit passed through this turn
         // so that I can later recover potential bombing targets
         // it may already have some values
-        Vector<Coords> passedThrough = entity.getPassedThrough();// new
-                                                                    // Vector<Coords>();
+        Vector<Coords> passedThrough = entity.getPassedThrough();
         passedThrough.add(curPos);
 
         // Compile the move
@@ -4416,7 +4416,7 @@ public class Server implements Runnable {
             // did the entity move?
             didMove = step.getDistance() > distance;
 
-            // check fore aero stuff
+            // check for aero stuff
             if (entity instanceof Aero) {
                 Aero a = (Aero) entity;
                 j++;
@@ -7589,6 +7589,8 @@ public class Server implements Runnable {
             }
 
             suc = false;
+            // failed a PSR, possibly check for engine stalling
+            entity.doCheckEngineStallRoll(vPhaseReport);
         } else {
             r.choose(true);
             addReport(r);
@@ -7627,6 +7629,8 @@ public class Server implements Runnable {
         if (diceRoll < roll.getValue()) {
             r.choose(false);
             addReport(r);
+            // failed a PSR, possibly check for engine stalling
+            entity.doCheckEngineStallRoll(vPhaseReport);
             return false;
         }
         // Dislodged swarmers don't get turns.
@@ -7708,6 +7712,8 @@ public class Server implements Runnable {
                 addReport(r);
                 entity.setPosition(fallsInPlace ? src : dest);
             }
+            // failed a PSR, possibly check for engine stalling
+            entity.doCheckEngineStallRoll(vPhaseReport);
             return roll.getValue() - diceRoll;
         }
         r.choose(true);
@@ -13538,10 +13544,17 @@ public class Server implements Runnable {
                 // example...
                 continue;
             }
-            if ((entity instanceof Mech) && ((Mech)entity).isIndustrial() && ((Mech)entity).shouldDieAtEndOfTurn()) {
+            if ((entity instanceof Mech) && ((Mech)entity).isIndustrial() && ((Mech)entity).shouldDieAtEndOfTurnBecauseOfWater()) {
                 addReport(destroyEntity(entity, "being in water without environmental shielding", true, true));
             }
 
+        }
+    }
+
+    private void checkForIndustrialUnstall() {
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            final Entity entity = i.nextElement();
+            entity.checkUnstall(vPhaseReport);
         }
     }
 
@@ -13694,6 +13707,8 @@ public class Server implements Runnable {
                         vPhaseReport.addAll(doExtremeGravityDamage(entity, damage));
                     }
                 }
+                // failed a PSR, check for ICE engine stalling
+                entity.doCheckEngineStallRoll(vPhaseReport);
             } else {
                 r.choose(true);
                 vPhaseReport.add(r);
@@ -13756,6 +13771,8 @@ public class Server implements Runnable {
             } else {
                 vPhaseReport.addAll(doEntityFall(entity, base));
             }
+            // failed a PSR, check for ICE engine stalling
+            entity.doCheckEngineStallRoll(vPhaseReport);
             return vPhaseReport;
         }
         // loop thru rolls we do have to make...
@@ -13824,6 +13841,8 @@ public class Server implements Runnable {
                         vPhaseReport.addAll(doEntityFall(entity, base));
                     }
                 }
+                // failed a PSR, check for ICE engine stalling
+                entity.doCheckEngineStallRoll(vPhaseReport);
                 return vPhaseReport;
             }
             r.choose(true);

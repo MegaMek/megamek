@@ -8045,4 +8045,26 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         return false;
     }
 
+    /**
+     * possibly do a ICE-Engine stall PSR, only industrialmechs will actually do
+     * such a roll
+     * @param vPhaseReport the <code>Vector<Report></code> containing the phase
+     * reports
+     * @return a Vector<Report> containing the passed in reports, and any additional
+     * ones
+     */
+    public Vector<Report> doCheckEngineStallRoll(Vector<Report> vPhaseReport) {
+        return vPhaseReport;
+    }
+
+    /**
+     * check for unstalling of this Entity's engine (only used for ICE
+     * industrial Mechs)
+     * @param vPhaseReport the <code>Vector<Report></code> containing the phase
+     * reports
+     */
+    public void checkUnstall(Vector<Report> vPhaseReport) {
+        return;
+    }
+
 }

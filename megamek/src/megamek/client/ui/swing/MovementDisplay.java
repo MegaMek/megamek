@@ -532,6 +532,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         buttonsTank.add(butClimbMode);
         buttonsTank.add(butSearchlight);
         buttonsTank.add(butHullDown);
+        buttonsMech.add(butEvade);
         buttonsTank.add(butReckless);
         buttonsTank.add(butSwim);
         buttonsTank.add(butEject);
@@ -539,9 +540,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         buttonsTank.add(butRAC);
         buttonsTank.add(butLayMine);
         buttonsTank.add(butShakeOff);
-
         // these are last, they won't be used by tanks
-        buttonsTank.add(butDfa);
         buttonsTank.add(butUp);
         buttonsTank.add(butDown);
         buttonsTank.add(butJump);
@@ -558,6 +557,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         buttonsVtol.add(butLoad);
         buttonsVtol.add(butUnload);
         buttonsVtol.add(butSearchlight);
+        buttonsMech.add(butEvade);
         buttonsVtol.add(butReckless);
         buttonsVtol.add(butEject);
         buttonsVtol.add(butFlee);
@@ -565,7 +565,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         buttonsVtol.add(butShakeOff);
 
         // these are last, they won't be used by vtol
-        buttonsVtol.add(butHullDown);
         buttonsVtol.add(butLayMine);
         buttonsVtol.add(butSwim);
         buttonsVtol.add(butClimbMode);
@@ -815,7 +814,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         updateRecoveryButton();
         updateDumpButton();
 
-        setEvadeEnabled(isMech && client.game.getOptions().booleanOption("tacops_evade"));
+        setEvadeEnabled((isMech || ce instanceof Tank) && client.game.getOptions().booleanOption("tacops_evade"));
         
         if (ce instanceof Aero) {
             butThrust.setEnabled(true);

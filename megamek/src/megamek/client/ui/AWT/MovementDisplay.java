@@ -585,6 +585,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         buttonsTank.add(butSearchlight);
         buttonsTank.add(butHullDown);
         buttonsTank.add(butSwim);
+        buttonsMech.add(butEvade);
         buttonsTank.add(butReckless);
         buttonsTank.add(butEject);
         buttonsTank.add(butFlee);
@@ -592,7 +593,6 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         buttonsTank.add(butLayMine);
         buttonsTank.add(butShakeOff);
         // these are last, they won't be used by tanks
-        buttonsTank.add(butDfa);
         buttonsTank.add(butUp);
         buttonsTank.add(butDown);
         buttonsTank.add(butJump);
@@ -609,13 +609,13 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         buttonsVtol.add(butLoad);
         buttonsVtol.add(butUnload);
         buttonsVtol.add(butSearchlight);
+        buttonsMech.add(butEvade);
         buttonsVtol.add(butReckless);
         buttonsVtol.add(butEject);
         buttonsVtol.add(butFlee);
         buttonsVtol.add(butRAC);
         buttonsVtol.add(butShakeOff);
         // these are last, they won't be used by vtol
-        buttonsVtol.add(butHullDown);
         buttonsVtol.add(butLayMine);
         buttonsVtol.add(butSwim);
         buttonsVtol.add(butClimbMode);
@@ -872,7 +872,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         updateLoadButtons();
         updateElevationButtons();
 
-        setEvadeEnabled(isMech && client.game.getOptions().booleanOption("tacops_evade"));
+        setEvadeEnabled((isMech || ce instanceof Tank) && client.game.getOptions().booleanOption("tacops_evade"));
 
         updateRecoveryButton();
         updateJoinButton();

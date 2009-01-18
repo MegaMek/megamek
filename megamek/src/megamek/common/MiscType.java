@@ -300,6 +300,11 @@ public class MiscType extends EquipmentType {
             double tons = 0.0;
             tons = Math.ceil(entity.getWeight() / 10.0) / 2.0;
             return (float) tons;
+        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL)
+                .equals(internalName)) {
+            double tons = 0.0;
+            tons = Math.ceil(entity.getWeight() / 10.0) * 2.0;
+            return (float) tons;
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
             return (float) Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_JUMP_BOOSTER)) {

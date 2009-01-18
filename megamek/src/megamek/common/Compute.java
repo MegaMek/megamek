@@ -3374,7 +3374,7 @@ public class Compute {
             reason.append("Attacker is not infantry.");
         }
         ToHitData toReturn = new ToHitData(base, reason.toString(), ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
-        if (((Mech)defender).isIndustrial()) {
+        if ((defender instanceof Mech) && ((Mech)defender).isIndustrial()) {
            toReturn.addModifier(-1, "targeting industrial mech");
         }
         // Return the ToHitData for this attack.

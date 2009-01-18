@@ -93,6 +93,10 @@ public class TestMech extends TestEntity {
             // This is wrong; I just don't remember the correct weight.
             // FIXME
             return 3.0f;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE) {
+            return 5.0f;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
+            return 5.0f;
         } else {
             return 3.0f;
         }

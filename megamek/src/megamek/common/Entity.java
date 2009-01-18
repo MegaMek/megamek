@@ -172,9 +172,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public ArtilleryTracker aTracker = new ArtilleryTracker();
     public TeleMissileTracker tmTracker = new TeleMissileTracker();
 
-    protected String C3NetIdString = null;
-    protected int C3Master = NONE;
-    protected int C3CompanyMasterIndex = LOC_DESTROYED;
+    protected String c3NetIdString = null;
+    protected int c3Master = NONE;
+    protected int c3CompanyMasterIndex = LOC_DESTROYED;
 
     protected int armorType = EquipmentType.T_ARMOR_UNKNOWN;
     protected int armorTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -1702,6 +1702,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      */
     public abstract HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode);
 
+    /**
+     * Rolls up a hit location
+     */
     public abstract HitData rollHitLocation(int table, int side);
 
     /**
@@ -2089,7 +2092,15 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         return mounted;
     }
 
-    // mounting weapons needs to take account of ammo
+    /**
+     *  mounting weapons needs to take account of ammo
+     * @param etype
+     * @param loc
+     * @param rearMounted
+     * @param nAmmo
+     * @return
+     * @throws LocationFullException
+     */
     public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted, int nAmmo) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         addEquipment(mounted, loc, rearMounted, nAmmo);
@@ -2097,7 +2108,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
 
     }
 
-    // indicate whether this is a bomb mount
+    /*
+     *  indicate whether this is a bomb mount
+     */
     public Mounted addBomb(EquipmentType etype, int loc) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         addBomb(mounted, loc);
@@ -2110,7 +2123,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         return mounted;
     }
 
-    // indicate whether this is bodymounted for BAs
+    /**
+     *  indicate whether this is bodymounted for BAs
+     */
     public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted, boolean bodyMounted) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         mounted.setBodyMounted(bodyMounted);
@@ -3285,7 +3300,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 // If this unit is configured as a company commander,
                 // and if this computer is the company master, then
                 // this unit does not have a lance master computer.
-                if (C3MasterIs(this) && (C3CompanyMasterIndex == getEquipmentNum(m))) {
+                if (C3MasterIs(this) && (c3CompanyMasterIndex == getEquipmentNum(m))) {
                     return false;
                 }
                 return true;
@@ -3300,34 +3315,34 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         }
 
         // Have we already determined that there's no company command master?
-        if (C3CompanyMasterIndex == LOC_NONE) {
+        if (c3CompanyMasterIndex == LOC_NONE) {
             return false;
         }
 
         // Do we need to determine that there's no company command master?
-        if (C3CompanyMasterIndex == LOC_DESTROYED) {
+        if (c3CompanyMasterIndex == LOC_DESTROYED) {
             Iterator<Mounted> e = getEquipment().iterator();
-            while ((C3CompanyMasterIndex == LOC_DESTROYED) && e.hasNext()) {
+            while ((c3CompanyMasterIndex == LOC_DESTROYED) && e.hasNext()) {
                 Mounted m = e.next();
                 if ((m.getType() instanceof WeaponType) && m.getType().hasFlag(WeaponType.F_C3M) && !m.isInoperable()) {
                     // Now look for the company command master.
-                    while ((C3CompanyMasterIndex == LOC_DESTROYED) && e.hasNext()) {
+                    while ((c3CompanyMasterIndex == LOC_DESTROYED) && e.hasNext()) {
                         m = e.next();
                         if ((m.getType() instanceof WeaponType) && m.getType().hasFlag(WeaponType.F_C3M) && !m.isInoperable()) {
                             // Found the comany command master
-                            C3CompanyMasterIndex = getEquipmentNum(m);
+                            c3CompanyMasterIndex = getEquipmentNum(m);
                         }
                     }
                 }
             }
             // If we haven't found the company command master, there is none.
-            if (C3CompanyMasterIndex == LOC_DESTROYED) {
-                C3CompanyMasterIndex = LOC_NONE;
+            if (c3CompanyMasterIndex == LOC_DESTROYED) {
+                c3CompanyMasterIndex = LOC_NONE;
                 return false;
             }
         }
 
-        Mounted m = getEquipment(C3CompanyMasterIndex);
+        Mounted m = getEquipment(c3CompanyMasterIndex);
         if (!m.isDestroyed() && !m.isBreached()) {
             return true;
         }
@@ -3356,21 +3371,21 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     public String getC3NetId() {
-        if (C3NetIdString == null) {
+        if (c3NetIdString == null) {
             if (hasC3()) {
-                C3NetIdString = "C3." + getId();
+                c3NetIdString = "C3." + getId();
             } else if (hasC3i()) {
-                C3NetIdString = "C3i." + getId();
+                c3NetIdString = "C3i." + getId();
             }
         }
-        return C3NetIdString;
+        return c3NetIdString;
     }
 
     public void setC3NetId(Entity e) {
         if (isEnemyOf(e)) {
             return;
         }
-        C3NetIdString = e.C3NetIdString;
+        c3NetIdString = e.c3NetIdString;
     }
 
     /**
@@ -3497,16 +3512,16 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      *         after the master unit restarts.
      */
     public Entity getC3Master() {
-        if (C3Master == NONE) {
+        if (c3Master == NONE) {
             return null;
         }
-        if (hasC3S() && (C3Master > NONE)) {
+        if (hasC3S() && (c3Master > NONE)) {
             // since we can't seem to get the check working in setC3Master(),
             // I'll just do it here, every time. This sucks.
-            Entity eMaster = game.getEntity(C3Master);
+            Entity eMaster = game.getEntity(c3Master);
             // Have we lost our C3Master?
             if (eMaster == null) {
-                C3Master = NONE;
+                c3Master = NONE;
             }
             // If our master is shut down, don't clear this slave's setting.
             else if (eMaster.isShutDown()) {
@@ -3514,43 +3529,43 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             }
             // Slave computers can't connect to single-computer company masters.
             else if (eMaster.C3MasterIs(eMaster) && !eMaster.hasC3MM()) {
-                C3Master = NONE;
+                c3Master = NONE;
             }
             // Has our lance master lost its computer?
             else if (!eMaster.hasC3M()) {
-                C3Master = NONE;
+                c3Master = NONE;
             }
-        } else if (hasC3M() && (C3Master > NONE)) {
-            Entity eMaster = game.getEntity(C3Master);
+        } else if (hasC3M() && (c3Master > NONE)) {
+            Entity eMaster = game.getEntity(c3Master);
             // Have we lost our C3Master?
             if (eMaster == null) {
-                C3Master = NONE;
+                c3Master = NONE;
             }
             // If our master is shut down, don't clear this slave's setting.
             else if (eMaster.isShutDown()) {
                 return null;
             }
             // Has our company commander lost his company command computer?
-            else if (((eMaster.C3CompanyMasterIndex > LOC_NONE) && !eMaster.hasC3MM()) || ((eMaster.C3CompanyMasterIndex <= LOC_NONE) && !eMaster.hasC3M())) {
-                C3Master = NONE;
+            else if (((eMaster.c3CompanyMasterIndex > LOC_NONE) && !eMaster.hasC3MM()) || ((eMaster.c3CompanyMasterIndex <= LOC_NONE) && !eMaster.hasC3M())) {
+                c3Master = NONE;
             }
             // maximum depth of a c3 network is 2 levels.
             else if (eMaster != this) {
                 Entity eCompanyMaster = eMaster.getC3Master();
                 if ((eCompanyMaster != null) && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
-                    C3Master = NONE;
+                    c3Master = NONE;
                 }
             }
         }
         // If we aren't shut down, and if we don't have a company master
         // computer, but have a C3Master, then we must have lost our network.
-        else if (!isShutDown() && !hasC3MM() && (C3Master > NONE)) {
-            C3Master = NONE;
+        else if (!isShutDown() && !hasC3MM() && (c3Master > NONE)) {
+            c3Master = NONE;
         }
-        if (C3Master == NONE) {
+        if (c3Master == NONE) {
             return null;
         }
-        return game.getEntity(C3Master);
+        return game.getEntity(c3Master);
     }
 
     /**
@@ -3567,7 +3582,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         // Make sure that this unit is still on a C3 network.
         // N.B. this call may set this.C3Master to NONE.
         getC3Master();
-        return C3Master;
+        return c3Master;
     }
 
     /**
@@ -3589,14 +3604,14 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      */
     public boolean C3MasterIs(Entity e) {
         if (e == null) {
-            if (C3Master == NONE) {
+            if (c3Master == NONE) {
                 return true;
             }
 
             return false; // if this entity has a C3Master then null is not
             // it's master.
         }
-        return (e.id == C3Master);
+        return (e.id == c3Master);
     }
 
     /**
@@ -3620,7 +3635,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * @param entityId
      */
     public void setC3Master(int entityId) {
-        if ((id == entityId) != (id == C3Master)) {
+        if ((id == entityId) != (id == c3Master)) {
             // this just changed from a company-level to lance-level (or vice
             // versa); have to disconnect all slaved units to maintain
             // integrity.
@@ -3632,19 +3647,19 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             }
         }
         if (hasC3()) {
-            C3Master = entityId;
+            c3Master = entityId;
         }
         if (hasC3() && (entityId == NONE)) {
-            C3NetIdString = "C3." + id;
+            c3NetIdString = "C3." + id;
         } else if (hasC3i() && (entityId == NONE)) {
-            C3NetIdString = "C3i." + id;
+            c3NetIdString = "C3i." + id;
         } else if (hasC3() || hasC3i()) {
-            C3NetIdString = game.getEntity(entityId).getC3NetId();
+            c3NetIdString = game.getEntity(entityId).getC3NetId();
         }
         for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = i.nextElement();
             if (e.C3MasterIs(this) && !equals(e)) {
-                e.C3NetIdString = C3NetIdString;
+                e.c3NetIdString = c3NetIdString;
             }
         }
     }

@@ -128,9 +128,13 @@ public abstract class Mech extends Entity implements Serializable {
 
     public static final int COCKPIT_INDUSTRIAL = 5;
 
-    public static final String[] COCKPIT_STRING = { "Standard Cockpit", "Torso-Mounted Cockpit", "Small Cockpit", "Command Console", "Dual Cockpit", "Industrial Cockpit" };
+    public static final int COCKPIT_PRIMITIVE = 6;
 
-    public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Torso Mounted", "Small", "Command Console", "Dual", "Industrial" };
+    public static final int COCKPIT_PRIMITIVE_INDUSTRIAL = 7;
+
+    public static final String[] COCKPIT_STRING = { "Standard Cockpit", "Torso-Mounted Cockpit", "Small Cockpit", "Command Console", "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit", "Primitive Industrial Cockpit" };
+
+    public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Torso Mounted", "Small", "Command Console", "Dual", "Industrial", "Primitive", "Primitive Industrial" };
 
     // jump types
     public static final int JUMP_UNKNOWN = -1;
@@ -205,6 +209,8 @@ public abstract class Mech extends Entity implements Serializable {
 
     private boolean stalledThisTurn = false;
 
+    private boolean isPrimitive = false;
+
     /**
      * Construct a new, blank, mech.
      */
@@ -264,7 +270,11 @@ public abstract class Mech extends Entity implements Serializable {
         return hasCowl;
     }
 
-    // Damage the cowl. Returns amount of excess damage
+    /**
+     *  Damage the cowl. Returns amount of excess damage
+     * @param amount
+     * @return
+     */
     public int damageCowl(int amount) {
         if (hasCowl) {
             if (amount < cowlArmor) {
@@ -311,6 +321,12 @@ public abstract class Mech extends Entity implements Serializable {
         }
     }
 
+    /**
+     * find the least restrictive location of the two locations passed in
+     * @param location1
+     * @param location2
+     * @return
+     */
     public static int leastRestrictiveLoc(int location1, int location2) {
         if (location1 == location2) {
             return location2;
@@ -706,10 +722,17 @@ public abstract class Mech extends Entity implements Serializable {
         return legCrits;
     }
 
+    /**
+     * does this mech have composite internal structure?
+     * @return
+     */
     public boolean hasCompositeStructure() {
         return (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE);
     }
-
+    /**
+     * does this mech have reinforced internal structure?
+     * @return
+     */
     public boolean hasReinforcedStructure() {
         return (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED);
     }
@@ -1182,6 +1205,12 @@ public abstract class Mech extends Entity implements Serializable {
         }
     }
 
+    /**
+     * add heat sinks into the engine
+     * @param totalSinks the amount of heatsinks to add to the engine
+     * @param sinkName the <code>String</code> determining the type of heatsink
+     * to add. must be a lookupname of a heatsinktype
+     */
     public void addEngineSinks(int totalSinks, String sinkName) {
         // this relies on these being the correct internalNames for these items
         EquipmentType sinkType = EquipmentType.get(sinkName);
@@ -1349,6 +1378,10 @@ public abstract class Mech extends Entity implements Serializable {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#canChangeSecondaryFacing()
+     */
     @Override
     public boolean canChangeSecondaryFacing() {
         return !isProne();
@@ -1383,6 +1416,10 @@ public abstract class Mech extends Entity implements Serializable {
         return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#hasRearArmor(int)
+     */
     @Override
     public boolean hasRearArmor(int loc) {
         return (loc == LOC_CT) || (loc == LOC_RT) || (loc == LOC_LT);
@@ -1481,14 +1518,19 @@ public abstract class Mech extends Entity implements Serializable {
         return true;
     }
 
-    /**
-     * Rolls up a hit location
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#rollHitLocation(int, int)
      */
     @Override
     public HitData rollHitLocation(int table, int side) {
         return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#rollHitLocation(int, int, int, int)
+     */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
@@ -3608,7 +3650,7 @@ public abstract class Mech extends Entity implements Serializable {
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3
         // times
-        if (((hasC3MM() && (calculateFreeC3MNodes() < 2)) || (hasC3M() && (calculateFreeC3Nodes() < 3)) || (hasC3S() && (C3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5))) && !ignoreC3 && (game != null)) {
+        if (((hasC3MM() && (calculateFreeC3MNodes() < 2)) || (hasC3M() && (calculateFreeC3Nodes() < 3)) || (hasC3S() && (c3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5))) && !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
             totalForceBV += this.calculateBattleValue(true, true);
             for (Entity e : game.getC3NetworkMembers(this)) {
@@ -5125,7 +5167,8 @@ public abstract class Mech extends Entity implements Serializable {
             return 5;
         }
         if ((armorType == EquipmentType.T_ARMOR_INDUSTRIAL) ||
-                (armorType == EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
+                (armorType == EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL) ||
+                (armorType == EquipmentType.T_ARMOR_PRIMITIVE)) {
             return 10;
         }
         return 10;

@@ -244,7 +244,7 @@ public class AmmoType extends EquipmentType {
         if ( !(other instanceof AmmoType) ) {
             return false;
         }
-        return (getAmmoType() == ( (AmmoType) other ).getAmmoType() && getRackSize() == ((AmmoType)other).getRackSize());
+        return ((getAmmoType() == ( (AmmoType) other ).getAmmoType()) && (getRackSize() == ((AmmoType)other).getRackSize()));
     }
 
     public int getAmmoType() {
@@ -7398,6 +7398,7 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    @Override
     public String toString() {
         return "Ammo: " + name;
     }
@@ -7405,36 +7406,32 @@ public class AmmoType extends EquipmentType {
     public static boolean canClearMinefield(AmmoType at) {
 
         //first the normal munition types
-        if (at != null &&
-            ( ((at.getAmmoType() == T_LRM ||
-              at.getAmmoType() == T_LRM_STREAK ||
-              at.getAmmoType() == T_EXLRM ||
-              at.getAmmoType() == T_PXLRM ||
-              at.getAmmoType() == T_MRM  ||
-              at.getAmmoType() == T_MRM_STREAK ||
-              at.getAmmoType() == T_ROCKET_LAUNCHER) &&
-                  at.getRackSize() >= 20) ||
-              at.getAmmoType() == T_TBOLT_20) &&
-             at.getMunitionType() == M_STANDARD) {
-            return true;
+        if (at != null) {
+            if ( (((at.getAmmoType() == T_LRM) ||
+                    (at.getAmmoType() == T_LRM_STREAK) ||
+                    (at.getAmmoType() == T_EXLRM) ||
+                    (at.getAmmoType() == T_PXLRM) ||
+                    (at.getAmmoType() == T_MRM)  ||
+                    (at.getAmmoType() == T_MRM_STREAK) ||
+                    (at.getAmmoType() == T_ROCKET_LAUNCHER)) &&
+                        (at.getRackSize() >= 20)) ||
+                    (((at.getAmmoType() == T_TBOLT_20)) &&
+                   (at.getMunitionType() == M_STANDARD))) {
+                  return true;
+            }
+            //ATMs
+            if (((at.getAmmoType() == T_ATM) && (at.getRackSize() >= 12) && (at.getMunitionType() != M_EXTENDED_RANGE)) ||
+            ((at.getAmmoType() == T_ATM) && (at.getRackSize() >= 9) && (at.getMunitionType() == M_HIGH_EXPLOSIVE))) {
+                return true;
+            }
+            //Artillery
+            if ((((at.getAmmoType() == T_ARROW_IV) ||
+                    (at.getAmmoType() == T_LONG_TOM) ||
+                    (at.getAmmoType() == T_SNIPER) ||
+                    (at.getAmmoType() == T_THUMPER)) && (at.getMunitionType() == M_STANDARD))) {
+                return true;
+            }
         }
-
-        //ATMs
-        if(at != null &&
-              (at.getAmmoType() == T_ATM && at.getRackSize() >= 12 && at.getMunitionType() != M_EXTENDED_RANGE) ||
-              (at.getAmmoType() == T_ATM && at.getRackSize() >= 9 && at.getMunitionType() == M_HIGH_EXPLOSIVE)) {
-            return true;
-        }
-
-        //Artillery
-        if(at != null &&
-                ((at.getAmmoType() == T_ARROW_IV ||
-                        at.getAmmoType() == T_LONG_TOM ||
-                        at.getAmmoType() == T_SNIPER ||
-                        at.getAmmoType() == T_THUMPER) && at.getMunitionType() == M_STANDARD)) {
-            return true;
-        }
-
         //TODO: mine clearance munitions
 
         return false;
@@ -7442,8 +7439,8 @@ public class AmmoType extends EquipmentType {
 
     public static boolean canDeliverMinefield(AmmoType at) {
 
-        if (at != null &&
-            (at.getAmmoType() == T_LRM || at.getAmmoType() == AmmoType.T_MML) &&
+        if ((at != null) &&
+            ((at.getAmmoType() == T_LRM) || (at.getAmmoType() == AmmoType.T_MML)) &&
             ( (at.getMunitionType() == M_THUNDER)
               || (at.getMunitionType() == M_THUNDER_INFERNO)
               || (at.getMunitionType() == M_THUNDER_AUGMENTED)
@@ -7675,12 +7672,12 @@ public class AmmoType extends EquipmentType {
             double cost = base.cost;
             double bv = base.bv;
 
-            if(munition.getAmmoType() == T_AC || munition.getAmmoType() == T_LAC) {
+            if((munition.getAmmoType() == T_AC) || (munition.getAmmoType() == T_LAC)) {
                 if (munition.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
                     cost *= 4;
                 }
-                if (munition.getMunitionType() == AmmoType.M_FLECHETTE
-                        || munition.getMunitionType() == AmmoType.M_FLAK) {
+                if ((munition.getMunitionType() == AmmoType.M_FLECHETTE)
+                        || (munition.getMunitionType() == AmmoType.M_FLAK)) {
                     cost *= 1.5;
                 }
 
@@ -7699,52 +7696,52 @@ public class AmmoType extends EquipmentType {
             if (((munition.getAmmoType() == AmmoType.T_LRM)
                     || (munition.getAmmoType() == AmmoType.T_MML)
                     || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && munition.getMunitionType() == AmmoType.M_AX_HEAD) {
+                    && (munition.getMunitionType() == AmmoType.M_AX_HEAD)) {
                 cost *= .5;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM)
                     || (munition.getAmmoType() == AmmoType.T_MML)
                     || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && munition.getMunitionType() == AmmoType.M_INCENDIARY_LRM) {
+                    && (munition.getMunitionType() == AmmoType.M_INCENDIARY_LRM)) {
                 cost *= 1.5;
             }
 
-            if ((munition.getAmmoType() == AmmoType.T_SRM || (munition.getAmmoType() == AmmoType.T_MML))
-                    && munition.getMunitionType() == AmmoType.M_INFERNO) {
+            if (((munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_MML))
+                    && (munition.getMunitionType() == AmmoType.M_INFERNO)) {
                 cost = 13500;
             }
-            if ((munition.getAmmoType() == AmmoType.T_LRM || (munition.getAmmoType() == AmmoType.T_MML))
-                    && munition.getMunitionType() == AmmoType.M_SEMIGUIDED) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML))
+                    && (munition.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
                 cost *= 3;
             }
-            if ((munition.getAmmoType() == AmmoType.T_LRM || (munition.getAmmoType() == AmmoType.T_MML))
-                    && munition.getMunitionType() == AmmoType.M_SWARM) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML))
+                    && (munition.getMunitionType() == AmmoType.M_SWARM)) {
                 cost *= 2;
             }
-            if ((munition.getAmmoType() == AmmoType.T_LRM || (munition.getAmmoType() == AmmoType.T_MML))
-                    && munition.getMunitionType() == AmmoType.M_SWARM_I) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML))
+                    && (munition.getMunitionType() == AmmoType.M_SWARM_I)) {
                 cost *= 3;
                 bv *= .2;
             }
-            if ((munition.getAmmoType() == AmmoType.T_LRM || (munition.getAmmoType() == AmmoType.T_MML))
-                    && munition.getMunitionType() == AmmoType.M_THUNDER) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML))
+                    && (munition.getMunitionType() == AmmoType.M_THUNDER)) {
                 cost *= 2;
             }
-            if ((munition.getAmmoType() == AmmoType.T_LRM || (munition.getAmmoType() == AmmoType.T_MML))
-                    && munition.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML))
+                    && (munition.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED)) {
                 cost *= 4;
             }
-            if ((munition.getAmmoType() == AmmoType.T_LRM || (munition.getAmmoType() == AmmoType.T_MML))
-                    && munition.getMunitionType() == AmmoType.M_THUNDER_INFERNO) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML))
+                    && (munition.getMunitionType() == AmmoType.M_THUNDER_INFERNO)) {
                 cost *= 1;
             }
-            if ((munition.getAmmoType() == AmmoType.T_LRM || (munition.getAmmoType() == AmmoType.T_MML))
-                    && munition.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML))
+                    && (munition.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)) {
                 cost *= 2.5;
             }
-            if ((munition.getAmmoType() == AmmoType.T_LRM || (munition.getAmmoType() == AmmoType.T_MML))
-                    && munition.getMunitionType() == AmmoType.M_THUNDER_ACTIVE) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML))
+                    && (munition.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)) {
                 cost *= 3;
             }
             if (munition.getMunitionType() == AmmoType.M_HOMING) {
@@ -7767,32 +7764,32 @@ public class AmmoType extends EquipmentType {
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM)|| (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && munition.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
+                    && (munition.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
                 cost *= 2;
             }
             if (((munition.getAmmoType() == AmmoType.T_LRM)|| (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && munition.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+                    && (munition.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
                 cost *= 2;
             }
             if (((munition.getAmmoType() == AmmoType.T_LRM)|| (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && munition.getMunitionType() == AmmoType.M_LISTEN_KILL) {
+                    && (munition.getMunitionType() == AmmoType.M_LISTEN_KILL)) {
                 cost *= 1.1;
             }
             if (((munition.getAmmoType() == AmmoType.T_LRM)|| (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && (munition.getMunitionType() == AmmoType.M_ANTI_TSM ||
-                         munition.getMunitionType() == AmmoType.M_DEAD_FIRE ||
-                         munition.getMunitionType() == AmmoType.M_FRAGMENTATION)) {
+                    && ((munition.getMunitionType() == AmmoType.M_ANTI_TSM) ||
+                         (munition.getMunitionType() == AmmoType.M_DEAD_FIRE) ||
+                         (munition.getMunitionType() == AmmoType.M_FRAGMENTATION))) {
                 cost *= 2;
             }
 
-            if ( (munition.getAmmoType() == AmmoType.T_MML || munition.getAmmoType() == AmmoType.T_SRM)
-                    && munition.getMunitionType() == AmmoType.M_TANDEM_CHARGE ){
+            if ( ((munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM))
+                    && (munition.getMunitionType() == AmmoType.M_TANDEM_CHARGE) ){
                 cost *= 5;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM)|| (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && (munition.getMunitionType() == AmmoType.M_HEAT_SEEKING ||
-                        munition.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER )) {
+                    && ((munition.getMunitionType() == AmmoType.M_HEAT_SEEKING) ||
+                        (munition.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER) )) {
                 cost *= 2;
                 bv *= .5;
             }
@@ -7819,11 +7816,11 @@ public class AmmoType extends EquipmentType {
      * get bv for protomech loads
      */
     public double getProtoBV() {
-        if (getAmmoType() == AmmoType.T_SRM ||
-            getAmmoType() == AmmoType.T_SRM_STREAK ||
-            getAmmoType() == AmmoType.T_LRM ||
-            getAmmoType() == AmmoType.T_SRM_TORPEDO ||
-            getAmmoType() == AmmoType.T_LRM_TORPEDO) {
+        if ((getAmmoType() == AmmoType.T_SRM) ||
+            (getAmmoType() == AmmoType.T_SRM_STREAK) ||
+            (getAmmoType() == AmmoType.T_LRM) ||
+            (getAmmoType() == AmmoType.T_SRM_TORPEDO) ||
+            (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
             return kgPerShot * rackSize * shots / 1000 * bv;
         }
         return kgPerShot * shots / 1000 * bv;

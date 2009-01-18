@@ -10,6 +10,8 @@ v0.33.39-dev (SVN)
 + ICE Industrial Mech engine stalling
 + Industrial structure weight
 + Fission and Fuel Cell engine weight
++ Starting with Primitive Mechs
++ some javadoc updates
 
 v0.33.38 (2009-01-15, 19:51 UTC+1)
 + New public method to compact engines and compact gyros

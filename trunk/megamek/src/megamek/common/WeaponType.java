@@ -250,13 +250,13 @@ public class WeaponType extends EquipmentType {
         int eRange = extremeRange;
         if (getAmmoType() == AmmoType.T_ATM) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_ATM) && atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+            if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
-            } else if ((atype.getAmmoType() == AmmoType.T_ATM) && atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+            } else if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)) {
                 minRange = 0;
                 sRange = 3;
                 mRange = 6;
@@ -266,7 +266,7 @@ public class WeaponType extends EquipmentType {
         }
         if (getAmmoType() == AmmoType.T_MML) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if (atype.hasFlag(AmmoType.F_MML_LRM) || getAmmoType() == AmmoType.T_LRM_TORPEDO) {
+            if (atype.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                 minRange = 6;
                 sRange = 7;
                 mRange = 14;
@@ -799,7 +799,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISRailGun());
         // MapPack Solaris VII
         EquipmentType.addType(new ISMagshotGaussRifle());
-        EquipmentType.addType(new CLMagshotGaussRifle());
         EquipmentType.addType(new ISMPod());
         EquipmentType.addType(new CLMPod());
         EquipmentType.addType(new ISBPod());

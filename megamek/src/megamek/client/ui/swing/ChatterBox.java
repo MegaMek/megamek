@@ -15,6 +15,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedList;
@@ -59,24 +60,29 @@ public class ChatterBox implements KeyListener {
     public ChatterBox(ClientGUI clientgui) {
         client = clientgui.getClient();
         client.game.addGameListener(new GameListenerAdapter() {
+            @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 chatArea.append('\n' + e.getMessage()); //$NON-NLS-1$
                 PlayerListDialog.refreshPlayerList(playerList, client);
                 moveToEnd();
             }
 
+            @Override
             public void gamePlayerChange(GamePlayerChangeEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
 
+            @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
 
+            @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
 
+            @Override
             public void gameEntityNew(GameEntityNewEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
                 if (PreferenceManager.getClientPreferences()
@@ -85,10 +91,12 @@ public class ChatterBox implements KeyListener {
                 }
             }
 
+            @Override
             public void gameEntityRemove(GameEntityRemoveEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
 
+            @Override
             public void gameEntityChange(GameEntityChangeEvent e) {
                 if (PreferenceManager.getClientPreferences()
                         .getPrintEntityChange()) {
@@ -101,6 +109,9 @@ public class ChatterBox implements KeyListener {
         chatArea = new JTextArea(
                 " \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40); //$NON-NLS-1$
         chatArea.setEditable(false);
+        chatArea.setLineWrap(true);
+        chatArea.setWrapStyleWord(true);
+        chatArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
         playerList = new JList(new DefaultListModel());
         playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(
                 "AdvancedChatboxSize"));
@@ -139,7 +150,7 @@ public class ChatterBox implements KeyListener {
 
     /**
      * Display a system message in the chat box.
-     * 
+     *
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
@@ -149,7 +160,7 @@ public class ChatterBox implements KeyListener {
 
     /**
      * Replace the "Done" button in the chat box.
-     * 
+     *
      * @param button the <code>JButton</code> that should be used for "Done".
      */
     public void setDoneButton(JButton button) {
@@ -187,7 +198,7 @@ public class ChatterBox implements KeyListener {
     }
 
     /**
-     * 
+     *
      */
     private void fetchHistory() {
         try {

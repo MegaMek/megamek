@@ -22,6 +22,9 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -41,6 +44,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
+import megamek.client.ui.GBC;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -49,14 +53,14 @@ import megamek.common.options.IOptionGroup;
 /**
  * Responsible for displaying the current game options and allowing the user to
  * change them.
- * 
+ *
  * @author Ben
  */
 public class GameOptionsDialog extends JDialog implements ActionListener,
         DialogOptionListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6072295678938594119L;
     private ClientGUI client;
@@ -71,7 +75,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     private JTabbedPane panOptions = new JTabbedPane();
     private JScrollPane scrOptions;
     private JPanel groupPanel;
-    
+
     private JTextArea texDesc = new JTextArea(Messages
             .getString("GameOptionsDialog.optionDescriptionHint"), 3, 35); //$NON-NLS-1$
 
@@ -90,7 +94,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
     /**
      * Initialize this dialog.
-     * 
+     *
      * @param frame - the <code>Frame</code> parent of this dialog.
      * @param options - the <code>GameOptions</code> to be displayed.
      */
@@ -98,34 +102,33 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         this.options = options;
         currentFrame = frame;
 
-        //scrOptions = new JScrollPane(panOptions);
-
+        texDesc.setFont(new Font("Sans Serif", Font.PLAIN, 12));
+        texDesc.setLineWrap(true);
+        texDesc.setWrapStyleWord(true);
         texDesc.setEditable(false);
         texDesc.setOpaque(false);
 
         setupButtons();
         setupPassword();
-        JPanel mainPanel = new JPanel();
-        
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+
         // layout
-        mainPanel.add(panOptions);
+        mainPanel.add(panOptions, GBC.eol().fill(GridBagConstraints.BOTH).insets(5, 5, 5, 5));
+        mainPanel.add(new JScrollPane(texDesc), GBC.eol().fill(GridBagConstraints.BOTH).insets(5, 0, 5, 0));
+        mainPanel.add(panPassword, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 5, 5, 5));
+        mainPanel.add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER));
 
-        mainPanel.add(new JScrollPane(texDesc));
+        getContentPane().add(mainPanel);
 
-        mainPanel.add(panPassword);
-
-        mainPanel.add(panButtons);
-
-        this.getContentPane().add(mainPanel);
-        
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
         });
 
         pack();
-        setSize(getSize().width, Math.max(getSize().height, 400));
+        setSize(mainPanel.getSize().width, Math.max(mainPanel.getSize().height, 400));
         setResizable(true);
         setLocation(frame.getLocation().x + frame.getSize().width / 2
                 - getSize().width / 2, frame.getLocation().y
@@ -139,7 +142,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
     /**
      * Creates new <code>GameOptionsDialog</code> for a <code>Client</code>
-     * 
+     *
      * @param client - the <code>Client</code> parent of this dialog.
      */
     public GameOptionsDialog(ClientGUI client) {
@@ -151,7 +154,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     /**
      * Creates new <code>GameOptionsDialog</code> for a given
      * <code>Frame</code>, with given set of options.
-     * 
+     *
      * @param frame - the <code>Frame</code> parent of this dialog.
      * @param options - the <code>GameOptions</code> to be displayed.
      */
@@ -178,7 +181,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             }
         }
 
-        if (client != null && changed.size() > 0) {
+        if ((client != null) && (changed.size() > 0)) {
             client.getClient().sendGameOptions(texPass.getText(), changed);
         }
     }
@@ -322,6 +325,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     // Gets called when one of the options gets moused over.
     public void showDescFor(IOption option) {
         texDesc.setText(option.getDescription());
+        texDesc.setCaretPosition(0);
     }
 
     // Gets called when one of the option checkboxes is clicked.
@@ -513,7 +517,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
     /**
      * Update the dialog so that it is editable or view-only.
-     * 
+     *
      * @param editable - <code>true</code> if the contents of the dialog are
      *            editable, <code>false</code> if they are view-only.
      */
@@ -537,7 +541,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
     /**
      * Determine whether the dialog is editable or view-only.
-     * 
+     *
      * @return <code>true</code> if the contents of the dialog are editable,
      *         <code>false</code> if they are view-only.
      */

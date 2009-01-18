@@ -41,6 +41,7 @@ import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.client.ui.GBC;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -49,7 +50,7 @@ import megamek.common.options.IOptionGroup;
 /**
  * Responsible for displaying the current game options and allowing the user to
  * change them.
- * 
+ *
  * @author Ben
  * @version
  */
@@ -57,7 +58,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         DialogOptionListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4076751608068469452L;
     private ClientGUI client;
@@ -91,49 +92,32 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
 
     /**
      * Initialize this dialog.
-     * 
+     *
      * @param frame - the <code>Frame</code> parent of this dialog.
      * @param options - the <code>GameOptions</code> to be displayed.
      */
     private void init(Frame frame, GameOptions options) {
         this.options = options;
-        this.currentFrame = frame;
-
-        //scrOptions.add(panOptions);
-        //scrOptions.getVAdjustable().setUnitIncrement(10);
+        currentFrame = frame;
 
         panOptions = new TabPanel();
-        
+
         texDesc.setEditable(false);
 
         setupButtons();
         setupPassword();
 
         // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        setLayout(new GridBagLayout());
 
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(panOptions, c);
-        add(panOptions);
-
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(texDesc, c);
-        add(texDesc);
-
-        gridbag.setConstraints(panPassword, c);
-        add(panPassword);
-
-        gridbag.setConstraints(panButtons, c);
-        add(panButtons);
+        // layout
+        add(panOptions, GBC.eol().fill(GridBagConstraints.BOTH).insets(4, 4, 4, 4));
+        add(texDesc, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(4, 0, 4, 0));
+        add(panPassword, GBC.eol().anchor(GridBagConstraints.CENTER).insets(4, 4, 4, 4));
+        add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER));
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -150,25 +134,25 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
 
     /**
      * Creates new <code>GameOptionsDialog</code> for a <code>Client</code>
-     * 
+     *
      * @param client - the <code>Client</code> parent of this dialog.
      */
     public GameOptionsDialog(ClientGUI client) {
         super(client.frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$
         this.client = client;
-        this.init(client.frame, client.getClient().game.getOptions());
+        init(client.frame, client.getClient().game.getOptions());
     }
 
     /**
      * Creates new <code>GameOptionsDialog</code> for a given
      * <code>Frame</code>, with given set of options.
-     * 
+     *
      * @param frame - the <code>Frame</code> parent of this dialog.
      * @param options - the <code>GameOptions</code> to be displayed.
      */
     public GameOptionsDialog(Frame frame, GameOptions options) {
         super(frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$
-        this.init(frame, options);
+        init(frame, options);
         butOkay.setEnabled(false);
     }
 
@@ -189,7 +173,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
             }
         }
 
-        if (client != null && changed.size() > 0) {
+        if ((client != null) && (changed.size() > 0)) {
             client.getClient().sendGameOptions(texPass.getText(), changed);
         }
     }
@@ -490,7 +474,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                 }
             }
         }
-        
+
         if (option.getName().equals("tacops_hull_down") ){
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
@@ -553,12 +537,12 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
             refreshOptions();
         }
 
-        this.setVisible(false);
+        setVisible(false);
     }
 
     /**
      * Update the dialog so that it is editable or view-only.
-     * 
+     *
      * @param editable - <code>true</code> if the contents of the dialog are
      *            editable, <code>false</code> if they are view-only.
      */
@@ -582,12 +566,12 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
 
     /**
      * Determine whether the dialog is editable or view-only.
-     * 
+     *
      * @return <code>true</code> if the contents of the dialog are editable,
      *         <code>false</code> if they are view-only.
      */
     public boolean isEditable() {
-        return this.editable;
+        return editable;
     }
 
 }

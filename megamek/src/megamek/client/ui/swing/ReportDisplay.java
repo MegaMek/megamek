@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -39,7 +39,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 public class ReportDisplay extends StatusBarPhaseDisplay implements
         ActionListener, KeyListener, DoneButtoned {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6185643976857892270L;
 
@@ -121,7 +121,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Show or hide the "reroll inititiative" button in this report display.
-     * 
+     *
      * @param show a <code>boolean</code> that indicates that the button
      *            should be shown in this report display.
      */
@@ -157,7 +157,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
 
     public void resetButtons() {
         resetReadyButton();
-        if (client.game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT
+        if ((client.game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT)
                 && client.game.hasTacticalGenius(client.getLocalPlayer())) {
             showRerollButton(true);
         } else {
@@ -185,10 +185,12 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
 
             // get rid of phase tab
             int phaseTab = tabs.indexOfTab("Phase");
-            if (phaseTab >= 0)
+            if (phaseTab >= 0) {
                 tabs.removeTabAt(phaseTab);
-            if (phaseTab == -1)
+            }
+            if (phaseTab == -1) {
                 phaseTab += 1; // special handling for round 0
+            }
 
             // add as many round tabs as necessary to catch us up
             JTextArea ta;
@@ -208,6 +210,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
                 }
                 ta = new JTextArea(text, 40, 25);
                 ta.setEditable(false);
+                ta.setFont(new Font("Sans Serif", Font.PLAIN, 12));
                 tabs.add("Round " + catchup, new JScrollPane(ta));
             }
 
@@ -215,6 +218,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
             ta = new JTextArea(phaseText, 40, 25);
             ta.setEditable(false);
             ta.setOpaque(false);
+            ta.setFont(new Font("Sans Serif", Font.PLAIN, 12));
             JScrollPane sp = new JScrollPane(ta);
             tabs.add("Phase", sp);
             tabs.setSelectedComponent(sp);
@@ -231,9 +235,10 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
 
     public void appendReportTab(String additionalText) {
         int phaseTab = tabs.indexOfTab("Phase");
-        if (phaseTab > 0)
+        if (phaseTab > 0) {
             ((JTextArea) ((JScrollPane) tabs.getComponentAt(phaseTab - 1))
                     .getViewport().getView()).append(additionalText);
+        }
         ((JTextArea) ((JScrollPane) tabs.getComponentAt(phaseTab))
                 .getViewport().getView()).append(additionalText);
     }
@@ -260,7 +265,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
     public void keyPressed(KeyEvent ev) {
         if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
         }
-        if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
+        if ((ev.getKeyCode() == KeyEvent.VK_ENTER) && ev.isControlDown()) {
             ready();
         }
     }
@@ -271,6 +276,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
     public void keyTyped(KeyEvent ev) {
     }
 
+    @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
@@ -293,7 +299,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Retrieve the "Done" button of this object.
-     * 
+     *
      * @return the <code>javax.swing.JButton</code> that activates this
      *         object's "Done" action.
      */
@@ -303,7 +309,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Get the secondary display section of this phase.
-     * 
+     *
      * @return the <code>Component</code> which is displayed in the secondary
      *         section during this phase.
      */

@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2008 Ben Mazur (bmazur@sev.org)
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -25,7 +25,7 @@ import java.awt.Insets;
  */
 public class GBC extends GridBagConstraints {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6653886439201996453L;
 
@@ -61,8 +61,8 @@ public class GBC extends GridBagConstraints {
 
     /**
      * change the anchor of this <code>GridBagConstraints</code> to
-     * @param a 
-     * and 
+     * @param a
+     * and
      * @return <code>this</code>
      */
     public GBC anchor(int a) {
@@ -99,18 +99,20 @@ public class GBC extends GridBagConstraints {
      * @param value
      * either <code>GridBagConstraints.HORIZONTAL</code>,
      * <code>GridBagConstraints.VERTICAL</code> or
-     * <code>GridBagConstraints.BOTH</code> and  
+     * <code>GridBagConstraints.BOTH</code> and
      * @return <code>this</code>
      */
     public GBC fill(int value) {
         fill = value;
-        if (value == HORIZONTAL || value == BOTH)
+        if ((value == HORIZONTAL) || (value == BOTH)) {
             weightx = 1.0;
-        if (value == VERTICAL || value == BOTH)
+        }
+        if ((value == VERTICAL) || (value == BOTH)) {
             weighty = 1.0;
+        }
         return this;
     }
-    
+
     /**
      * set the gridwidth of this <code>GridBagConstraints</code>
      * @param value the <code>int</code> gridwidth to set
@@ -118,6 +120,18 @@ public class GBC extends GridBagConstraints {
      */
     public GBC width(int value) {
         gridwidth = value;
+        return this;
+    }
+
+    /**
+     * Set the padding of this <code>GridBagConstraints</code>
+     * @param padx the <code>int</code> ipadx to set
+     * @param pady the <code>int</code> ipady to set
+     * @return <code>this</code>
+     */
+    public GBC pad(int padx, int pady) {
+        ipadx = padx;
+        ipady = pady;
         return this;
     }
 }

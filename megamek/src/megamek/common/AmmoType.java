@@ -585,7 +585,6 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLLRT18Ammo());
         EquipmentType.addType(AmmoType.createCLLRT19Ammo());
         EquipmentType.addType(AmmoType.createCLLRT20Ammo());
-        EquipmentType.addType(AmmoType.createCLMagshotGRAmmo());
         EquipmentType.addType(AmmoType.createCLMPodAmmo());
         EquipmentType.addType(AmmoType.createCLBPodAmmo());
         EquipmentType.addType(AmmoType.createCLHAG20Ammo());
@@ -6100,23 +6099,6 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Magshot";
         ammo.setInternalName("ISMagshotGR Ammo");
         ammo.addLookupName("IS Magshot GR Ammo");
-        ammo.damagePerShot = 2;
-        ammo.explosive = false;
-        ammo.ammoType = AmmoType.T_MAGSHOT;
-        ammo.shots = 50;
-        ammo.bv = 2;
-        ammo.cost = 1000;
-        return ammo;
-    }
-
-    private static AmmoType createCLMagshotGRAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
-        ammo.name = "Magshot GR Ammo";
-        ammo.shortName = "Magshot";
-        ammo.setInternalName("CLMagshotGR Ammo");
-        ammo.addLookupName("Clan Magshot GR Ammo");
         ammo.damagePerShot = 2;
         ammo.explosive = false;
         ammo.ammoType = AmmoType.T_MAGSHOT;

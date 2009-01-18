@@ -239,7 +239,7 @@ public class Engine implements Serializable {
                 break;
             case FISSION:
                 weight *= 1.75;
-                weight = Math.min(5, weight);
+                weight = Math.max(5, weight);
                 break;
             case FUEL_CELL:
                 weight *= 1.2;

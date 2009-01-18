@@ -238,8 +238,11 @@ public class Engine implements Serializable {
                 weight *= 1.5f;
                 break;
             case FISSION:
+                weight *= 1.75;
+                weight = Math.min(5, weight);
+                break;
             case FUEL_CELL:
-                //TODO FIXME, TM page 49, master engine table
+                weight *= 1.2;
                 break;
         }
 

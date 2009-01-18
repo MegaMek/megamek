@@ -510,8 +510,8 @@ public class Server implements Runnable {
 
         // Send "kill" commands to all connections
         // N.B. I may be starting a race here.
-        for (IConnection conn : connections) {
-            send(conn.getId(), new Packet(Packet.COMMAND_CLOSE_CONNECTION));
+        for (Enumeration<IConnection> connEnum = connections.elements();connEnum.hasMoreElements();) {
+            send(connEnum.nextElement().getId(), new Packet(Packet.COMMAND_CLOSE_CONNECTION));
         }
 
         // kill active connnections
@@ -13027,7 +13027,7 @@ public class Server implements Runnable {
             }
 
             // heat effects: shutdown!
-            // 2003-01-26 JAD - Don't shut down if you just restarted.
+            // Don't shut down if you just restarted.
             else if ((entity.heat >= 14) && !entity.isShutDown()) {
                 if (entity.heat >= autoShutDownHeat) {
                     r = new Report(5055);

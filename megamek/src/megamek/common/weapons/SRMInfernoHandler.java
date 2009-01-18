@@ -1,30 +1,26 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
@@ -39,7 +35,7 @@ import megamek.server.Server;
 public class SRMInfernoHandler extends SRMHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 826674238068613732L;
 
@@ -58,7 +54,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
     //TAHARQA: I don't think this should be in here. Why isn't it in special miss?
@@ -72,17 +68,18 @@ public class SRMInfernoHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
      *      boolean, megamek.common.Building)
      */
+    @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
         // Shots that miss an entity can set fires.
         // Buildings can't be accidentally ignited,
         // and some weapons can't ignite fires.
-        if (entityTarget != null
-                && (bldg == null && wtype.getFireTN() != TargetRoll.IMPOSSIBLE)) {
+        if ((entityTarget != null)
+                && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
             server.tryIgniteHex(target.getPosition(), subjectId, false, true,
                     new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
                     vPhaseReport);
@@ -90,7 +87,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
         //shots that miss an entity can also potential cause explosions in a heavy industrial hex
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
-        
+
         // Report any AMS action.
         if (amsEnganged) {
             r = new Report(3230);
@@ -101,23 +98,25 @@ public class SRMInfernoHandler extends SRMHandler {
 
         // BMRr, pg. 51: "All shots that were aimed at a target inside
         // a building and miss do full damage to the building instead."
-        if (!targetInBuilding || toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+        if (!targetInBuilding || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
             return false;
         }
         return true;
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         return 0;
     }
 
+    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        if (!this.cares(phase)) {
+        if (!cares(phase)) {
             return true;
         }
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
@@ -141,19 +140,19 @@ public class SRMInfernoHandler extends SRMHandler {
             r.add(target.getDisplayName(), true);
         }
         vPhaseReport.addElement(r);
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;
@@ -195,13 +194,13 @@ public class SRMInfernoHandler extends SRMHandler {
 
         //Set Margin of Success/Failure.
         toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && entityTarget != null;
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
-        } 
+        }
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
@@ -241,15 +240,16 @@ public class SRMInfernoHandler extends SRMHandler {
         }
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.weapons.MissileWeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit with all missiles
         // BAs do one lump of damage per BA suit
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
                 r = new Report(3325);
@@ -271,8 +271,6 @@ public class SRMInfernoHandler extends SRMHandler {
             vPhaseReport.add(r);
             return wtype.getRackSize();
         }
-        Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                : null;
         int missilesHit;
         int nMissilesModifier = nSalvoBonus;
         boolean tacopscluster = game.getOptions().booleanOption("tacops_clusterhitpen");
@@ -285,94 +283,18 @@ public class SRMInfernoHandler extends SRMHandler {
                 nMissilesModifier -= 1;
             }
         }
-        
-        if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
-            nMissilesModifier -= 2;
-        }
 
-        boolean bMekStealthActive = false;
-        if (ae instanceof Mech) {
-            bMekStealthActive = ae.isStealthActive();
-        }
-        Mounted mLinker = weapon.getLinkedBy();
-        AmmoType atype = (AmmoType) ammo.getType();
-        // is any hex in the flight path of the missile ECM affected?
-        boolean bECMAffected = false;
-        // if the attacker is affected by ECM or the target is protected by ECM
-        // then
-        // act as if effected.
-        if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
-            bECMAffected = true;
-        }
-        
-        if ((mLinker != null && mLinker.getType() instanceof MiscType
-                && !mLinker.isDestroyed() && !mLinker.isMissing()
-                && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS))
-                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
-            if (bECMAffected) {
-                // ECM prevents bonus
-                r = new Report(3330);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else if (bMekStealthActive) {
-                // stealth prevents bonus
-                r = new Report(3335);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else
-                nMissilesModifier += 2;
-        } else if (atype.getAmmoType() == AmmoType.T_ATM) {
-            if (bECMAffected) {
-                // ECM prevents bonus
-                r = new Report(3330);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else if (bMekStealthActive) {
-                // stealth prevents bonus
-                r = new Report(3335);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else
-                nMissilesModifier += 2;
-        } else if (entityTarget != null
-                && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
-                        .isINarcedBy(ae.getOwner().getTeam()))) {
-            // only apply Narc bonus if we're not suffering ECM effect
-            // and we are using narc ammo, and we're not firing indirectly.
-            // narc capable missiles are only affected if the narc pod, which 
-            // sits on the target, is ECM affected
-            boolean bTargetECMAffected = false;
-            bTargetECMAffected = Compute.isAffectedByECM(ae, 
-                    target.getPosition(), target.getPosition());
-            if (((atype.getAmmoType() == AmmoType.T_LRM) ||
-                 (atype.getAmmoType() == AmmoType.T_SRM)) ||
-                 (atype.getAmmoType() == AmmoType.T_MML)
-                    && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE
-                    && (weapon.curMode() == null || !weapon.curMode().equals(
-                            "Indirect"))) {
-                if (bTargetECMAffected) {
-                    // ECM prevents bonus
-                    r = new Report(3330);
-                    r.subject = subjectId;
-                    r.newlines = 0;
-                    vPhaseReport.addElement(r);
-                } else
-                    nMissilesModifier += 2;
-            }
+        if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
+            nMissilesModifier -= 2;
         }
         if (bGlancing) {
             nMissilesModifier -= 4;
         }
-        
+
         if ( bDirect ){
             nMissilesModifier += (toHit.getMoS()/3)*2;
         }
-        
+
         if(game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
@@ -380,16 +302,17 @@ public class SRMInfernoHandler extends SRMHandler {
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 
-        if (allShotsHit())
+        if (allShotsHit()) {
             missilesHit = wtype.getRackSize();
-        else {
-            if (ae instanceof BattleArmor)
+        } else {
+            if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength(),
                         nMissilesModifier, weapon.isHotLoaded());
-            else
+            } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
                         nMissilesModifier, weapon.isHotLoaded());
+            }
         }
 
         if (missilesHit > 0) {
@@ -401,10 +324,11 @@ public class SRMInfernoHandler extends SRMHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
             if (nMissilesModifier != 0) {
-                if (nMissilesModifier > 0)
+                if (nMissilesModifier > 0) {
                     r = new Report(3340);
-                else
+                } else {
                     r = new Report(3341);
+                }
                 r.subject = subjectId;
                 r.add(nMissilesModifier);
                 r.newlines = 0;
@@ -418,7 +342,8 @@ public class SRMInfernoHandler extends SRMHandler {
         bSalvo = true;
         return missilesHit;
     }
-    
+
+    @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage, boolean bSalvo) {
         if (!bSalvo) {
@@ -440,7 +365,7 @@ public class SRMInfernoHandler extends SRMHandler {
         // Buildings can't be accidentally ignited.
         //TODO: change this for TacOps - now you roll another 2d6 first and on a 5 or less
         //you do a normal ignition as though for intentional fires
-        if (bldg != null
+        if ((bldg != null)
                 && server.tryIgniteHex(target.getPosition(), subjectId, false, true,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;

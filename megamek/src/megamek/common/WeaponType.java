@@ -797,6 +797,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLRAC20());
         // misc lvl3 stuff
         EquipmentType.addType(new ISRailGun());
+        EquipmentType.addType(new ISFluidGun());
+        EquipmentType.addType(new CLFluidGun());
         // MapPack Solaris VII
         EquipmentType.addType(new ISMagshotGaussRifle());
         EquipmentType.addType(new ISMPod());

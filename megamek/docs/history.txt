@@ -22,6 +22,7 @@ v0.33.39-dev (SVN)
 + Removed Mech Clan Magshot Gauss, it does not exist
 + Primitive BattleMech construction
 + Added Dervish DV-1S from Jihad Secrets: Blake Documents
++ Added Fluid Guns. Only construction data, no rules
 
 v0.33.38 (2009-01-15, 19:51 UTC+1)
 + New public method to compact engines and compact gyros

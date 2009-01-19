@@ -4624,6 +4624,68 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     /**
+     * Add the critical slots necessary for an industrial cockpit. Note: This is
+     * part of the mek creation public API, and might not be referenced by any
+     * MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addIndustrialCockpit() {
+        if (getEmptyCriticals(LOC_HEAD) < 5) {
+            return false;
+        }
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        setCockpitType(COCKPIT_INDUSTRIAL);
+        return true;
+    }
+
+    /**
+     * Add the critical slots necessary for an industrial cockpit. Note: This is
+     * part of the mek creation public API, and might not be referenced by any
+     * MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addPrimitiveCockpit() {
+        if (getEmptyCriticals(LOC_HEAD) < 5) {
+            return false;
+        }
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        setCockpitType(COCKPIT_PRIMITIVE);
+        return true;
+    }
+
+    /**
+     * Add the critical slots necessary for an industrial primitive cockpit. Note: This is
+     * part of the mek creation public API, and might not be referenced by any
+     * MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addIndustrialPrimitiveCockpit() {
+        if (getEmptyCriticals(LOC_HEAD) < 5) {
+            return false;
+        }
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        setCockpitType(COCKPIT_PRIMITIVE_INDUSTRIAL);
+        return true;
+    }
+
+
+
+    /**
      * Add the critical slots necessary for a small cockpit. Note: This is part
      * of the mek creation public API, and might not be referenced by any
      * MegaMek code.

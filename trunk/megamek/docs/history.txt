@@ -20,6 +20,7 @@ v0.33.39-dev (SVN)
 + Fix ConcurrentModificationException on Server closing
 + Bug: Mech Magshot Gauss had wrong tech level
 + Removed Mech Clan Magshot Gauss, it does not exist
++ Primitive BattleMech construction
 
 v0.33.38 (2009-01-15, 19:51 UTC+1)
 + New public method to compact engines and compact gyros

@@ -257,7 +257,7 @@ public class Engine implements Serializable {
      * Returns the minimum number of heat sinks that must be included in a mech
      * with this type of engine.
      *
-     * @return The minimum number of heat sinks in a desing.
+     * @return The minimum number of heat sinks in a design.
      */
     public int getMinimumEngineHeatSinks() {
         if (!isFusion()) {

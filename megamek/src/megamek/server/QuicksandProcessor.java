@@ -29,7 +29,7 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
 
     private IGame game;
     Vector<Report> vPhaseReport;
-    
+
     public QuicksandProcessor(Server server) {
         super(server);
     }
@@ -40,7 +40,7 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
         this.vPhaseReport = vPhaseReport;
         resolveQuicksand();
         this.vPhaseReport = null;
-        
+
     }
 
     /**
@@ -59,21 +59,22 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
     private void debugTime(String s, boolean collectGarbage) {
         //Change the "false" below to "true" to enable this function
         if (false) {
-            if (collectGarbage)
+            if (collectGarbage) {
                 System.gc();
+            }
             System.out.println(s + ": " + System.currentTimeMillis());
         }
     }
 
     /**
-     * Check to see if screen clears
+     * Check or quicksand stuff
      */
     private void resolveQuicksand() {
         IBoard board = game.getBoard();
         int width = board.getWidth();
         int height = board.getHeight();
         // Cycle through all hexes, checking for screens
-        debugTime("resolve screen 1", true);
+        debugTime("resolve quicksand 1", true);
 
         for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
 
@@ -95,13 +96,13 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
                 // check for any quicksand created this turn
                 else if (currentHex.terrainLevel(Terrains.SWAMP) == 2){
                     currentHex.removeTerrain(Terrains.SWAMP);
-                    currentHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SWAMP, 3));                   
+                    currentHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SWAMP, 3));
                     server.sendChangedHex(currentCoords);
                 }
             }
 
         }
-        debugTime("resolve screen 1 end", true);
+        debugTime("resolve quicksand 1 end", true);
     }
 
 }

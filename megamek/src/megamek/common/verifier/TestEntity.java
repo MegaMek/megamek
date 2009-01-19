@@ -784,6 +784,39 @@ public abstract class TestEntity implements TestEntityOption {
                     illegal = true;
                 }
             }
+            if (mech.isPrimitive()) {
+                if (mech.isOmni()) {
+                    buff.append("primitive mechs can't be omnis");
+                    illegal = true;
+                }
+                if (!((mech.getStructureType() == EquipmentType.T_STRUCTURE_STANDARD) || (mech.getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL))) {
+                    buff.append("primitive mechs can't mount advanced inner structure");
+                    illegal = true;
+                }
+                if ((mech.getEngine().getEngineType() == Engine.XL_ENGINE) ||
+                        (mech.getEngine().getEngineType() == Engine.LIGHT_ENGINE) ||
+                        (mech.getEngine().getEngineType() == Engine.COMPACT_ENGINE) ||
+                        mech.getEngine().hasFlag(Engine.LARGE_ENGINE) ||
+                        (mech.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
+                    buff.append("primitive mechs can't mount XL, Light, Compact, XXL or Large Engines");
+                    illegal = true;
+                }
+                if (mech.hasMASC() || mech.hasTSM()) {
+                    buff.append("primitive mechs can't mount advanced myomers");
+                    illegal = true;
+                }
+                if (mech.isIndustrial()) {
+                    if (mech.getArmorType() != EquipmentType.T_ARMOR_COMMERCIAL) {
+                        buff.append("primitive industrialmechs must mount commercial armor");
+                        illegal = true;
+                    }
+                } else {
+                    if (mech.getArmorType() != EquipmentType.T_ARMOR_INDUSTRIAL) {
+                        buff.append("primitive battlemechs must mount primitive battlemech (industrial) armor");
+                        illegal = true;
+                    }
+                }
+            }
         }
         return illegal;
     }

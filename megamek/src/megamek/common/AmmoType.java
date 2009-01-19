@@ -106,7 +106,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_LAA_MISSILE       = 80;
     public static final int     T_RL_BOMB           = 81;
     public static final int     T_ARROW_IV_BOMB     = 82;
-    public static final int     NUM_TYPES           = 83;
+    public static final int     T_FLUID_GUN         = 83;
+    public static final int     NUM_TYPES           = 84;
 
 
     // ammo flags
@@ -168,6 +169,8 @@ public class AmmoType extends EquipmentType {
     public static final long     M_FOLLOW_THE_LEADER = 1l << 27;
     public static final long     M_MULTI_PURPOSE     = 1l << 28;
     // SRM Munition Types
+    // TODO: Inferno should be available to fluid guns and vehicle flamers
+    // TO page 362
     public static final long     M_INFERNO           = 1l << 29;
     public static final long     M_AX_HEAD           = 1l << 30;
 
@@ -195,6 +198,20 @@ public class AmmoType extends EquipmentType {
 
     //tele-missile
     public static final long     M_TELE              = 1l << 44;
+
+    //fluid gun
+    //TODO: implement all of these
+    // coolant and water should also be used for vehicle flamers
+    // TO page 361-363
+    public static final long     M_WATER             = 11 << 45;
+    public static final long     M_PAINT_OBSCURANT   = 11 << 46;
+    public static final long     M_OIL_SLICK         = 11 << 47;
+    public static final long     M_ANTI_FLAME_FOAM   = 11 << 48;
+    public static final long     M_CORROSIVE         = 11 << 49;
+    public static final long     M_COOLANT           = 11 << 50;
+
+
+
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
@@ -833,6 +850,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISCruiseMissile90Ammo());
         EquipmentType.addType(AmmoType.createISCruiseMissile120Ammo());
 
+        EquipmentType.addType(AmmoType.createISFluidGunAmmo());
+        EquipmentType.addType(AmmoType.createCLFluidGunAmmo());
 
         // Create the munition types for IS SRM launchers.
         munitions.clear();
@@ -2592,6 +2611,38 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 0;
         ammo.cost = 10000;
+
+        return ammo;
+    }
+
+    private static AmmoType createISFluidGunAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
+        ammo.name = "Fluid Gun Ammo";
+        ammo.shortName = "Fluid Gun";
+        ammo.setInternalName("ISFluidGun Ammo");
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_FLUID_GUN;
+        ammo.shots = 20;
+        ammo.bv = 1;
+        ammo.cost = 500;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLFluidGunAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
+        ammo.name = "Fluid Gun Ammo";
+        ammo.shortName = "Fluid Gun";
+        ammo.setInternalName("CLFluidGun Ammo");
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_FLUID_GUN;
+        ammo.shots = 20;
+        ammo.bv = 1;
+        ammo.cost = 500;
 
         return ammo;
     }

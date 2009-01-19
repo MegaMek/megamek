@@ -209,8 +209,6 @@ public abstract class Mech extends Entity implements Serializable {
 
     private boolean stalledThisTurn = false;
 
-    private boolean isPrimitive = false;
-
     /**
      * Construct a new, blank, mech.
      */
@@ -982,6 +980,11 @@ public abstract class Mech extends Entity implements Serializable {
      * and weight
      */
     protected int calculateWalk() {
+        if (isPrimitive()) {
+            double rating = getEngine().getRating();
+            rating /= 1.2;
+            return (int)(rating - rating % 5 + 5)/(int) weight;
+        }
         return getEngine().getRating() / (int) weight;
     }
 
@@ -5327,5 +5330,13 @@ public abstract class Mech extends Entity implements Serializable {
                 vPhaseReport.add(r);
             }
         }
+    }
+
+    /**
+     * Is this a primitive Mech?
+     * @return
+     */
+    public boolean isPrimitive() {
+        return (getCockpitType() == Mech.COCKPIT_PRIMITIVE) || (getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL);
     }
 }

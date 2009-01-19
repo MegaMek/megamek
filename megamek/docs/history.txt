@@ -23,6 +23,8 @@ v0.33.39-dev (SVN)
 + Primitive BattleMech construction
 + Added Dervish DV-1S from Jihad Secrets: Blake Documents
 + Added Fluid Guns. Only construction data, no rules
++ fixed verifier tonnage rounding
++ fixed Zeus 9WD Stacy tech level
 
 v0.33.38 (2009-01-15, 19:51 UTC+1)
 + New public method to compact engines and compact gyros

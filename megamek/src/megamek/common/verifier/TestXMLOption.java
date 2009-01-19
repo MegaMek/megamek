@@ -49,15 +49,15 @@ public class TestXMLOption implements TestEntityOption {
     public final static String GYRO = "gyro";
     public final static String PRINTSIZE = "printSize";
 
-    private float ceilEngine = TestEntity.CEIL_QUARTERTON;
-    private float ceilStructure = TestEntity.CEIL_QUARTERTON;
-    private float ceilArmor = TestEntity.CEIL_QUARTERTON;
-    private float ceilControls = TestEntity.CEIL_QUARTERTON;
+    private float ceilEngine = TestEntity.CEIL_HALFTON;
+    private float ceilStructure = TestEntity.CEIL_HALFTON;
+    private float ceilArmor = TestEntity.CEIL_HALFTON;
+    private float ceilControls = TestEntity.CEIL_HALFTON;
     private float ceilWeapons = TestEntity.CEIL_TON;
     private float ceilTargComp = TestEntity.CEIL_TON;
-    private float ceilTurret = TestEntity.CEIL_QUARTERTON;
-    private float ceilPowerAmp = TestEntity.CEIL_QUARTERTON;
-    private float ceilGyro = TestEntity.CEIL_TON;
+    private float ceilTurret = TestEntity.CEIL_HALFTON;
+    private float ceilPowerAmp = TestEntity.CEIL_TENTHTON;
+    private float ceilGyro = TestEntity.CEIL_HALFTON;
 
     private float maxOverweight = 0.25f;
     private boolean showOverweighted = true;
@@ -76,32 +76,36 @@ public class TestXMLOption implements TestEntityOption {
     }
 
     private static String getContent(ParsedXML node) {
-        if (node.elements().hasMoreElements())
+        if (node.elements().hasMoreElements()) {
             return ((ParsedXML) node.elements().nextElement()).getContent();
+        }
         return "";
     }
 
     private static float getContentAsFloat(ParsedXML node) {
-        if (node.elements().hasMoreElements())
+        if (node.elements().hasMoreElements()) {
             return Float.valueOf(
                     ((ParsedXML) node.elements().nextElement()).getContent()
                             .trim()).floatValue();
+        }
         return 0;
     }
 
     private static boolean getContentAsBoolean(ParsedXML node) {
-        if (node.elements().hasMoreElements())
+        if (node.elements().hasMoreElements()) {
             return (new Boolean(((ParsedXML) node.elements().nextElement())
                     .getContent().trim())).booleanValue();
+        }
         // return Boolean.parseBoolean(
         // ((ParsedXML) node.elements().nextElement()).getContent().trim());
         return false;
     }
 
     private static int getContentAsInteger(ParsedXML node) {
-        if (node.elements().hasMoreElements())
+        if (node.elements().hasMoreElements()) {
             return Integer.parseInt(((ParsedXML) node.elements().nextElement())
                     .getContent().trim());
+        }
         return 0;
     }
 
@@ -110,35 +114,37 @@ public class TestXMLOption implements TestEntityOption {
             ParsedXML child = (ParsedXML) e.nextElement();
             if (child.getName().equals(CEIL_WEIGHT)) {
                 readCeilWeight(child);
-            } else if (child.getName().equals(MAX_OVERWEIGHT))
+            } else if (child.getName().equals(MAX_OVERWEIGHT)) {
                 maxOverweight = getContentAsFloat(child);
-            else if (child.getName().equals(SHOW_OVERWEIGHTED))
+            } else if (child.getName().equals(SHOW_OVERWEIGHTED)) {
                 showOverweighted = getContentAsBoolean(child);
-            else if (child.getName().equals(MIN_UNDERWEIGHT))
+            } else if (child.getName().equals(MIN_UNDERWEIGHT)) {
                 minUnderweight = getContentAsFloat(child);
-            else if (child.getName().equals(SHOW_UNDERWEIGHTED))
+            } else if (child.getName().equals(SHOW_UNDERWEIGHTED)) {
                 showUnderweighted = getContentAsBoolean(child);
-            else if (child.getName().equals(SHOW_CORRECTARMOR))
+            } else if (child.getName().equals(SHOW_CORRECTARMOR)) {
                 showCorrectArmor = getContentAsBoolean(child);
-            else if (child.getName().equals(SHOW_CORRECTCRITICAL))
+            } else if (child.getName().equals(SHOW_CORRECTCRITICAL)) {
                 showCorrectCritical = getContentAsBoolean(child);
-            else if (child.getName().equals(SHOW_FAILEDEQUIP))
+            } else if (child.getName().equals(SHOW_FAILEDEQUIP)) {
                 showFailedEquip = getContentAsBoolean(child);
-            else if (child.getName().equals(IGNORE_FAILED_EQUIP)) {
+            } else if (child.getName().equals(IGNORE_FAILED_EQUIP)) {
                 StringTokenizer st = new StringTokenizer(getContent(child), ",");
                 while (st.hasMoreTokens()) {
                     ignoreFailedEquip.addElement(st.nextToken());
                 }
 
-                for (int i = 0; i < ignoreFailedEquip.size(); i++)
+                for (int i = 0; i < ignoreFailedEquip.size(); i++) {
                     ignoreFailedEquip.setElementAt(ignoreFailedEquip.elementAt(
                             i).trim(), i);
-            } else if (child.getName().equals(SKIP))
+                }
+            } else if (child.getName().equals(SKIP)) {
                 skip = getContentAsBoolean(child);
-            else if (child.getName().equals(TARGCOMP_CRITS))
+            } else if (child.getName().equals(TARGCOMP_CRITS)) {
                 targCompCrits = getContentAsInteger(child);
-            else if (child.getName().equals(PRINTSIZE))
+            } else if (child.getName().equals(PRINTSIZE)) {
                 printSize = getContentAsInteger(child);
+            }
         }
     }
 
@@ -146,24 +152,25 @@ public class TestXMLOption implements TestEntityOption {
         for (Enumeration<?> e = node.elements(); e.hasMoreElements();) {
             ParsedXML child = (ParsedXML) e.nextElement();
             String name = child.getName();
-            if (name.equals(ENGINE))
+            if (name.equals(ENGINE)) {
                 ceilEngine = 1 / getContentAsFloat(child);
-            else if (name.equals(STRUCTURE))
+            } else if (name.equals(STRUCTURE)) {
                 ceilStructure = 1 / getContentAsFloat(child);
-            else if (name.equals(ARMOR))
+            } else if (name.equals(ARMOR)) {
                 ceilArmor = 1 / getContentAsFloat(child);
-            else if (name.equals(CONTROLS))
+            } else if (name.equals(CONTROLS)) {
                 ceilControls = 1 / getContentAsFloat(child);
-            else if (name.equals(WEAPONS))
+            } else if (name.equals(WEAPONS)) {
                 ceilWeapons = 1 / getContentAsFloat(child);
-            else if (name.equals(TARGCOMP))
+            } else if (name.equals(TARGCOMP)) {
                 ceilTargComp = 1 / getContentAsFloat(child);
-            else if (name.equals(TURRET))
+            } else if (name.equals(TURRET)) {
                 ceilTurret = 1 / getContentAsFloat(child);
-            else if (name.equals(POWERAMP))
+            } else if (name.equals(POWERAMP)) {
                 ceilPowerAmp = 1 / getContentAsFloat(child);
-            else if (name.equals(GYRO))
+            } else if (name.equals(GYRO)) {
                 ceilGyro = 1 / getContentAsFloat(child);
+            }
         }
     }
 
@@ -220,9 +227,11 @@ public class TestXMLOption implements TestEntityOption {
     }
 
     public boolean ignoreFailedEquip(String name) {
-        for (int i = 0; i < ignoreFailedEquip.size(); i++)
-            if (ignoreFailedEquip.elementAt(i).equals(name))
+        for (int i = 0; i < ignoreFailedEquip.size(); i++) {
+            if (ignoreFailedEquip.elementAt(i).equals(name)) {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -253,8 +262,9 @@ public class TestXMLOption implements TestEntityOption {
     public String printIgnoredFailedEquip() {
         System.out.println("--->printIgnoredFailedEquip");
         String ret = "";
-        for (int i = 0; i < ignoreFailedEquip.size(); i++)
+        for (int i = 0; i < ignoreFailedEquip.size(); i++) {
             ret += "  " + ignoreFailedEquip.elementAt(i) + "\n";
+        }
         return ret;
     }
 

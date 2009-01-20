@@ -4432,6 +4432,13 @@ public abstract class Mech extends Entity implements Serializable {
             break;
         case COCKPIT_INDUSTRIAL:
             inName = "COCKPIT_INDUSTRIAL";
+            break;
+        case COCKPIT_PRIMITIVE:
+            inName = "COCKPIT_PRIMITIVE";
+            break;
+        case COCKPIT_PRIMITIVE_INDUSTRIAL:
+            inName = "COCKPIT_PRIMITIVE_INDUSTRIAL";
+            break;
         default:
             inName = "COCKPIT_UNKNOWN";
         }

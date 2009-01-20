@@ -5239,8 +5239,7 @@ public abstract class Mech extends Entity implements Serializable {
             return 5;
         }
         if ((armorType == EquipmentType.T_ARMOR_INDUSTRIAL) ||
-                (armorType == EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL) ||
-                (armorType == EquipmentType.T_ARMOR_PRIMITIVE)) {
+                (armorType == EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
             return 10;
         }
         return 10;

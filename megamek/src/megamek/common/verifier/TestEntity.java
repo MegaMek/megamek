@@ -747,7 +747,7 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append("industrial mech can't mount MASC");
                     illegal = true;
                 }
-                if (mech.getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
+                if ((mech.getCockpitType() == Mech.COCKPIT_INDUSTRIAL) || (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
                     if (mech.hasC3()) {
                         buff.append("industrial mech without advanced fire control can't use c3 computer");
                         illegal = true;

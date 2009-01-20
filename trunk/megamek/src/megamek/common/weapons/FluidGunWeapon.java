@@ -35,6 +35,7 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
     public FluidGunWeapon() {
         super();
         ammoType = AmmoType.T_FLUID_GUN;
+        flags |= F_BALLISTIC;
     }
 
     /*

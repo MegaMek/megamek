@@ -898,18 +898,14 @@ class Armor {
     public static float getWeightArmor(int armorType, int armorFlags,
             int totalOArmor, float roundWeight) {
         float points = totalOArmor;
-        if ((armorType == EquipmentType.T_ARMOR_FERRO_FIBROUS)
-                || (armorType == EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO)) {
-            if ((armorFlags & CLAN_ARMOR) != 0) {
-                points /= 1.2f;
-            } else {
-                points /= 1.12f;
-            }
-        } else if (armorType == EquipmentType.T_ARMOR_LIGHT_FERRO) {
-            points /= 1.06f;
-        } else if (armorType == EquipmentType.T_ARMOR_HEAVY_FERRO) {
-            points /= 1.24f;
+        int techLevel;
+        if ((armorFlags & CLAN_ARMOR) != 0) {
+            techLevel = TechConstants.T_CLAN_TW;
+        } else {
+            techLevel = TechConstants.T_IS_TW_NON_BOX;
         }
+        float multiplier = (float)EquipmentType.getArmorPointMultiplier(armorType, techLevel);
+        points /= multiplier;
         float pointsPerTon = 16.0f;
         if (armorType == EquipmentType.T_ARMOR_HARDENED) {
             pointsPerTon = 8.0f;

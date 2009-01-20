@@ -52,8 +52,7 @@ public class EquipmentType {
     public static final int T_ARMOR_LAMELLOR_FERRO_CARBIDE = 12;
     public static final int T_ARMOR_FERRO_IMP = 13;
     public static final int T_ARMOR_INDUSTRIAL = 14;
-    public static final int T_ARMOR_HEAVY_INDUSTRIAL = 14;
-    public static final int T_ARMOR_PRIMITIVE = 15;
+    public static final int T_ARMOR_HEAVY_INDUSTRIAL = 15;
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
     public static final int T_STRUCTURE_STANDARD = 0;
@@ -73,10 +72,10 @@ public class EquipmentType {
     public static final double[] structureCosts = { 400, 1600, 1600, 6400, 3200, 300};
 
     // Assume for now that prototype is not more expensive
-    public static final double[] armorCosts = { 10000, 20000, 30000, 30000, 30000, 15000, 15000, 25000, /*patchwork?*/50000, 50000, 20000, 3000, 75000, 100000, 50000, 10000, 10000, 5000 };
+    public static final double[] armorCosts = { 10000, 20000, 30000, 30000, 15000, 15000, 25000, /*patchwork)*/50000, 50000, 20000, 3000, 75000, 100000, 50000, 5000, 10000 };
 
 
-    public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 1, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.67 };
+    public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 1, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0};
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
 

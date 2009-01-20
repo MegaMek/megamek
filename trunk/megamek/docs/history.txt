@@ -29,6 +29,8 @@ v0.33.39-dev (SVN)
 + Fix some industrial engine stuff
 + Fix environmental sealing flags for MMLab
 + Fix primitive Mech engine ratings
++ industrial mech cockpit equipment restrictions should also apply to primitive
+    industrial cockpits
 
 v0.33.38 (2009-01-15, 19:51 UTC+1)
 + New public method to compact engines and compact gyros

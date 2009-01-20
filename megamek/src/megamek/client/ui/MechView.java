@@ -40,8 +40,6 @@ import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.SmallCraft;
 import megamek.common.SpaceStation;
-import megamek.common.SupportTank;
-import megamek.common.SupportVTOL;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.Warship;
@@ -60,9 +58,7 @@ public class MechView {
     private boolean isVehicle;
     private boolean isProto;
     private boolean isGunEmplacement;
-    private boolean isSupportVehicle;
     private boolean isLargeSupportVehicle;
-    private boolean isSupportVTOL;
     private boolean isAero;
     private boolean isSquadron;
     private boolean isSmallCraft;
@@ -81,9 +77,7 @@ public class MechView {
         isVehicle = entity instanceof Tank;
         isProto = entity instanceof Protomech;
         isGunEmplacement = entity instanceof GunEmplacement;
-        isSupportVehicle = entity instanceof SupportTank;
         isLargeSupportVehicle = entity instanceof LargeSupportTank;
-        isSupportVTOL = entity instanceof SupportVTOL;
         isAero = entity instanceof Aero;
         isSquadron = entity instanceof FighterSquadron;
         isSmallCraft = entity instanceof SmallCraft;
@@ -153,18 +147,13 @@ public class MechView {
             sBasic.append(entity.getEngine().getShortEngineName());
             sBasic.append("\n"); //$NON-NLS-1$
         }
-        if (isSupportVehicle) {
+        if (entity.hasBARArmor()) {
             sBasic.append(Messages.getString("MechView.BARRating")); //$NON-NLS-1$
-            sBasic.append(((SupportTank)entity).getBARRating());
-            sBasic.append("\n"); //$NON-NLS-1$
-        }
-        if (isSupportVTOL) {
-            sBasic.append(Messages.getString("MechView.BARRating")); //$NON-NLS-1$
-            sBasic.append(((SupportVTOL)entity).getBARRating());
+            sBasic.append(entity.getBARRating());
             sBasic.append("\n"); //$NON-NLS-1$
         }
 
-        if( isAero ) {
+        if (isAero ) {
             Aero a = (Aero)entity;
             sBasic.append( Messages.getString("MechView.HeatSinks") ) //$NON-NLS-1$
             .append( a.getHeatSinks() );

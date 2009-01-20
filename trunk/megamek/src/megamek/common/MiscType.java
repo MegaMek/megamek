@@ -307,7 +307,9 @@ public class MiscType extends EquipmentType {
             return (float) tons;
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
             return (float) Math.ceil(entity.getWeight() / 10.0);
-        } else if (hasFlag(F_JUMP_BOOSTER)) {
+        } else if (hasFlag(F_ENVIRONMENTAL_SEALING)) {
+            return (float) Math.ceil(entity.getWeight() / 10.0);
+        }  else if (hasFlag(F_JUMP_BOOSTER)) {
             return (float) (Math.ceil(entity.getWeight()
                     * entity.getOriginalJumpMP() / 10.0) / 2.0);
         } else if ((hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW))
@@ -2597,7 +2599,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 8;
         misc.cost = 0;
         misc.spreadable = true;
-        misc.flags |= F_VACUUM_PROTECTION | F_ENVIRONMENTAL_SEALING;
+        misc.flags |= F_ENVIRONMENTAL_SEALING;
         misc.bv = 0;
 
         return misc;

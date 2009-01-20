@@ -57,10 +57,10 @@ public class Engine implements Serializable {
     public final static int COMBUSTION_ENGINE = 0;
     public final static int NORMAL_ENGINE = 1;
     public final static int XL_ENGINE = 2;
-    public final static int LIGHT_ENGINE = 3;
-    public final static int XXL_ENGINE = 4;
-    public final static int COMPACT_ENGINE = 5;
-    public final static int FUEL_CELL = 6;
+    public final static int XXL_ENGINE = 3;
+    public final static int FUEL_CELL = 4;
+    public final static int LIGHT_ENGINE = 5;
+    public final static int COMPACT_ENGINE = 6;
     public final static int FISSION = 7;
 
     public boolean engineValid;
@@ -132,6 +132,7 @@ public class Engine implements Serializable {
             case NORMAL_ENGINE:
             case XL_ENGINE:
             case XXL_ENGINE:
+            case FUEL_CELL:
                 break;
             case COMPACT_ENGINE:
                 if (hasFlag(TANK_ENGINE)) {
@@ -146,6 +147,7 @@ public class Engine implements Serializable {
                 }
                 break;
             case LIGHT_ENGINE:
+            case FISSION:
                 if (hasFlag(CLAN_ENGINE)) {
                     problem.append(Messages
                             .getString("Engine.invalidSphereOnly"));
@@ -251,19 +253,6 @@ public class Engine implements Serializable {
         }
 
         return TestEntity.ceilMaxHalf(weight, roundWeight);
-    }
-
-    /**
-     * Returns the minimum number of heat sinks that must be included in a mech
-     * with this type of engine.
-     *
-     * @return The minimum number of heat sinks in a design.
-     */
-    public int getMinimumEngineHeatSinks() {
-        if (!isFusion()) {
-            return 0;
-        }
-        return 10;
     }
 
     /**

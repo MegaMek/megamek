@@ -983,7 +983,11 @@ public abstract class Mech extends Entity implements Serializable {
         if (isPrimitive()) {
             double rating = getEngine().getRating();
             rating /= 1.2;
-            return (int)(rating - rating % 5 + 5)/(int) weight;
+            if (rating % 5 != 0) {
+                return (int)(rating - rating % 5 + 5)/(int) weight;
+            }
+            return (int)(rating/(int)weight);
+
         }
         return getEngine().getRating() / (int) weight;
     }

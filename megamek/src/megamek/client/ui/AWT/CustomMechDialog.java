@@ -686,9 +686,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     bTechMatch = true;
                 }
 
-                // Possibly allow level 3 ammos, possibly not.
+                // Possibly allow advanced/experimental ammos, possibly not.
                 if (clientgui.getClient().game.getOptions().booleanOption(
-                        "allow_level_3_ammo")) {
+                        "allow_advanced_ammo")) {
                     if (!clientgui.getClient().game.getOptions().booleanOption(
                             "is_eq_limits")) {
                         if ((entity.getTechLevel() == TechConstants.T_CLAN_TW)
@@ -1075,7 +1075,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 if((type == BombType.B_ALAMO) && !client.game.getOptions().booleanOption("at2_nukes")) {
                     b_choices[type].setEnabled(false);
                 }
-                if((type > BombType.B_TAG) && !client.game.getOptions().booleanOption("allow_level_3_ammo")) {
+                if((type > BombType.B_TAG) && !client.game.getOptions().booleanOption("allow_advanced_ammo")) {
                     b_choices[type].setEnabled(false);
                 }
                 if((type == BombType.B_ASEW) || (type == BombType.B_ALAMO) || (type == BombType.B_TAG)) {
@@ -1140,7 +1140,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 if((type == BombType.B_ALAMO) && !client.game.getOptions().booleanOption("at2_nukes")) {
                     b_choices[type].setEnabled(false);
                 }
-                else if((type > BombType.B_TAG) && !client.game.getOptions().booleanOption("allow_level_3_ammo")) {
+                else if((type > BombType.B_TAG) && !client.game.getOptions().booleanOption("allow_advanced_ammo")) {
                     b_choices[type].setEnabled(false);
                 }
                 else if((type == BombType.B_ASEW) || (type == BombType.B_ALAMO) || (type == BombType.B_TAG)) {

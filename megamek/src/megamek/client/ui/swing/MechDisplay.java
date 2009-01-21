@@ -2661,9 +2661,6 @@ public class MechDisplay extends JPanel {
             gridbag.setConstraints(narcLabel, c);
             add(narcLabel);
 
-            gridbag.setConstraints(narcLabel, c);
-            add(narcLabel);
-
             c.insets = new Insets(1, 9, 1, 9);
             JScrollPane scrollPane = new JScrollPane(narcList);
             scrollPane

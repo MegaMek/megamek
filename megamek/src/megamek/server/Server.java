@@ -9895,7 +9895,6 @@ public class Server implements Runnable {
 
         if ((te.getMovementMode() == IEntityMovementMode.BIPED) || (te.getMovementMode() == IEntityMovementMode.QUAD)) {
             PilotingRollData kickPRD = getKickPushPSR(te, ae, te, "was kicked");
-            kickPRD.setCumulative(false); // see Bug# 811987 for more info
             game.addPSR(kickPRD);
         }
 
@@ -11050,10 +11049,7 @@ public class Server implements Runnable {
                 r.addDesc(ae);
                 addReport(r);
                 PilotingRollData targetPushPRD = getKickPushPSR(te, ae, te, "was pushed");
-                targetPushPRD.setCumulative(false); // see Bug# 811987 for more
-                // info
                 PilotingRollData pushPRD = getKickPushPSR(ae, ae, te, "was pushed");
-                pushPRD.setCumulative(false); // see Bug# 811987 for more info
                 game.addPSR(pushPRD);
                 game.addPSR(targetPushPRD);
                 return;
@@ -11084,7 +11080,6 @@ public class Server implements Runnable {
         Coords dest = src.translated(direction);
 
         PilotingRollData pushPRD = getKickPushPSR(te, ae, te, "was pushed");
-        pushPRD.setCumulative(false); // see Bug# 811987 for more info
 
         if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
             r = new Report(4170);
@@ -11175,7 +11170,6 @@ public class Server implements Runnable {
 
         // we hit...
         PilotingRollData pushPRD = getKickPushPSR(te, ae, te, "was tripped");
-        pushPRD.setCumulative(false); // see Bug# 811987 for more info
 
         game.addPSR(pushPRD);
 
@@ -12411,7 +12405,7 @@ public class Server implements Runnable {
      */
     private PilotingRollData getKickPushPSR(Entity psrEntity, Entity attacker, Entity target, String reason) {
         int mod = 0;
-
+        PilotingRollData psr = new PilotingRollData(psrEntity.getId(), mod, reason);
         if (game.getOptions().booleanOption("tacops_physical_psr")) {
 
             switch (target.getWeightClass()) {
@@ -12428,15 +12422,15 @@ public class Server implements Runnable {
                 mod = -2;
                 break;
             }
+            String reportStr;
+            if (mod > 0) {
+                reportStr = ("weight class modifier +")+mod;
+            } else {
+                reportStr = ("weight class modifier ")+mod;
+            }
+            psr.addModifier(mod, reportStr, false);
         }
-        StringBuffer reportStr = new StringBuffer();
-        reportStr.append(reason);
-        if (mod > 0) {
-            reportStr.append(", weight class modifier +").append(mod);
-        } else {
-            reportStr.append(", weight class modifier ").append(mod);
-        }
-        return new PilotingRollData(psrEntity.getId(), mod, reportStr.toString());
+        return psr;
     }
 
     /**
@@ -13377,40 +13371,28 @@ public class Server implements Runnable {
                 // if this mech has 20+ damage, add another roll to the list.
                 if (entity.damageThisPhase >= 20) {
                     if (game.getOptions().booleanOption("tacops_taking_damage")) {
+                        PilotingRollData damPRD = new PilotingRollData(entity.getId());
                         int damMod = entity.damageThisPhase / 20;
+                        damPRD.addModifier(damMod, damMod*20+"+ damage");
                         int weightMod = 0;
-                        StringBuffer reportStr = new StringBuffer();
-                        reportStr.append(entity.damageThisPhase).append(" damage +").append(damMod);
-
                         if (game.getOptions().booleanOption("tacops_physical_psr")) {
                             switch (entity.getWeightClass()) {
                             case EntityWeightClass.WEIGHT_LIGHT:
                                 weightMod = 1;
                                 break;
-
                             case EntityWeightClass.WEIGHT_MEDIUM:
                                 weightMod = 0;
                                 break;
-
                             case EntityWeightClass.WEIGHT_HEAVY:
                                 weightMod = -1;
                                 break;
-
                             case EntityWeightClass.WEIGHT_ASSAULT:
                                 weightMod = -2;
                                 break;
                             }
-                        }
-                        if (weightMod > 0) {
-                            reportStr.append(", weight class modifier +").append(weightMod);
-                        } else {
-                            reportStr.append(", weight class modifier ").append(weightMod);
-                        }
-
-                        PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod + weightMod, reportStr.toString());
-                        damPRD.setCumulative(false); // see Bug# 811987 for
-                        // more info
-                        game.addPSR(damPRD);
+                            // the weight class PSR modifier is not cumulative
+                            damPRD.addModifier(weightMod, "weight class modifier", false);
+                        }game.addPSR(damPRD);
                     } else {
                         game.addPSR(new PilotingRollData(entity.getId(), 1, "20+ damage"));
                     }
@@ -13731,27 +13713,36 @@ public class Server implements Runnable {
                 game.addPSR(new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "lost buoyancy"));
             }
         }
-
-        // add all cumulative rolls, count all rolls
+        // add all cumulative mods from other rolls to each PSR
+        // holds all rolls to make
         Vector<PilotingRollData> rolls = new Vector<PilotingRollData>();
+        // holds the initial reason for each roll
         StringBuffer reasons = new StringBuffer();
         PilotingRollData base = entity.getBasePilotingRoll();
         entity.addPilotingModifierForTerrain(base);
         for (Enumeration<PilotingRollData> i = game.getPSRs(); i.hasMoreElements();) {
-            final PilotingRollData modifier = i.nextElement();
-            if (modifier.getEntityId() != entity.getId()) {
+            PilotingRollData psr = i.nextElement();
+            if (psr.getEntityId() != entity.getId()) {
                 continue;
             }
-            // found a roll, add it
-            rolls.addElement(modifier);
+            // found a roll
             if (reasons.length() > 0) {
                 reasons.append("; ");
             }
-            reasons.append(modifier.getPlainDesc());
-            // only cumulative rolls get added to the base roll
-            if (modifier.isCumulative()) {
-                base.append(modifier);
+            reasons.append(psr.getPlainDesc());
+            PilotingRollData toUse = entity.getBasePilotingRoll();
+            entity.addPilotingModifierForTerrain(toUse);
+            toUse.append(psr);
+            // now, append all other roll's cumulative mods, not the non-cumulative
+            // ones
+            for (Enumeration<PilotingRollData> j = game.getPSRs(); j.hasMoreElements();) {
+                final PilotingRollData other = j.nextElement();
+                if ((other.getEntityId() != entity.getId()) || other.equals(psr)) {
+                    continue;
+                }
+                toUse.append(other, false);
             }
+            rolls.add(toUse);
         }
         // any rolls needed?
         if (rolls.size() == 0) {
@@ -13789,30 +13780,19 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         for (int i = 0; i < rolls.size(); i++) {
             PilotingRollData modifier = rolls.elementAt(i);
-            PilotingRollData target = base;
             r = new Report(2290);
             r.subject = entity.getId();
             r.indent();
             r.newlines = 0;
             r.add(i + 1);
-            r.add(modifier.getPlainDesc()); // international issue
+            r.add(modifier.getDesc()); // international issue
             vPhaseReport.add(r);
-            if (!modifier.isCumulative()) {
-                // non-cumulative rolls only happen due to weight class adj.
-                r = new Report(2295);
-                r.subject = entity.getId();
-                r.newlines = 0;
-                r.add(modifier.getValueAsString()); // international issue
-                target = new PilotingRollData(entity.getId());
-                target.append(base);
-                target.append(modifier);
-            }
             int diceRoll = Compute.d6(2);
             r = new Report(2300);
             r.subject = entity.getId();
-            r.add(target.getValueAsString());
+            r.add(modifier.getValueAsString());
             r.add(diceRoll);
-            if (diceRoll < target.getValue()) {
+            if (diceRoll < modifier.getValue()) {
                 r.choose(false);
                 vPhaseReport.add(r);
                 if (moving) {
@@ -13823,9 +13803,9 @@ public class Server implements Runnable {
                             && (entity.getCrew().getPiloting() < 6)
                             && !entity.isHullDown()
                             && entity.canGoHullDown()){
-                        if ( (entity.getCrew().getPiloting() > 1) && (target.getValue() - diceRoll < 2)){
+                        if ( (entity.getCrew().getPiloting() > 1) && (modifier.getValue() - diceRoll < 2)){
                             entity.setHullDown(true);
-                        }else if ( (entity.getCrew().getPiloting() <= 1) && (target.getValue() - diceRoll < 3) ){
+                        }else if ( (entity.getCrew().getPiloting() <= 1) && (modifier.getValue() - diceRoll < 3) ){
                             entity.setHullDown(true);
                         }
                         if ( entity.isHullDown() && entity.canGoHullDown() ){
@@ -13904,19 +13884,8 @@ public class Server implements Runnable {
                     if (reasons.length() > 0) {
                         reasons.append("; ");
                     }
-                    reasons.append(modifier.getPlainDesc());
-                    // only cumulative rolls get added to the base roll
-                    // FIXME: nuclear attacks are not resetting to
-                    // non-cumulative for some reason
-                    // when they are added. Until I resolve this, the following
-                    // hack will have
-                    // to suffice
-                    if (modifier.getPlainDesc().contains("Nuclear")) {
-                        modifier.setCumulative(false);
-                    }
-                    if (modifier.isCumulative()) {
-                        base.append(modifier);
-                    }
+                    reasons.append(modifier.getCumulativePlainDesc());
+                    base.append(modifier);
                 }
                 // any rolls needed?
                 if (rolls.size() > 0) {
@@ -13942,18 +13911,6 @@ public class Server implements Runnable {
                         r.add(j + 1);
                         r.add(modifier.getPlainDesc()); // international issue
                         vReport.add(r);
-                        if (!modifier.isCumulative()) {
-                            // only for nuclear attacks
-                            r = new Report(2296);
-                            r.subject = e.getId();
-                            r.newlines = 0;
-                            r.add(modifier.getValueAsString()); // international
-                                                                // issue
-                            target = new PilotingRollData(e.getId());
-                            target.append(base);
-                            target.append(modifier);
-                            vReport.add(r);
-                        }
                         int diceRoll = Compute.d6(2);
                         // different reports depending on out-of-control status
                         if (a.isOutControl()) {
@@ -14006,7 +13963,6 @@ public class Server implements Runnable {
                                         a.setElevation(a.getElevation() - loss);
                                     }
                                 }
-
                             } else {
                                 r.choose(true);
                                 vReport.add(r);
@@ -17921,8 +17877,7 @@ public class Server implements Runnable {
          //check for nuclear critical
         if(nukeS2S) {
             //add a control roll
-            PilotingRollData nukePSR = new PilotingRollData( a.getId(), 4, "Nuclear attack" );
-            nukePSR.setCumulative(false);
+            PilotingRollData nukePSR = new PilotingRollData( a.getId(), 4, "Nuclear attack", false);
             game.addControlRoll(nukePSR);
 
             //need some kind of report

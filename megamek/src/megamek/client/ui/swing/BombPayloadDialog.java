@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 
 import java.awt.Button;
 import java.awt.Choice;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -29,6 +28,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JDialog;
+
 
 /**
  * A dialog to determine bomb payload
@@ -38,7 +39,7 @@ import java.awt.event.WindowEvent;
  * @version $version: $
  */
 public class BombPayloadDialog
-    extends Dialog implements ActionListener
+    extends JDialog implements ActionListener
 {
     /**
      *

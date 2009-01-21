@@ -760,7 +760,6 @@ public class BipedMech extends Mech {
         if ( game.getOptions().booleanOption("tacops_attempting_stand")
                 && (roll.getValue() != TargetRoll.CHECK_FALSE)) {
             addStandingPenalties(roll);
-            roll.setCumulative(true);
         }
 
         return roll;

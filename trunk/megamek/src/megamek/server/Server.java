@@ -649,7 +649,16 @@ public class Server implements Runnable {
 
         // add and validate the player info
         if (!returning) {
-            game.addPlayer(connId, new Player(connId, name));
+            int team = Player.TEAM_NONE;
+            for (Player p : game.getPlayersVector()) {
+                if (p.getTeam() > team) {
+                    team = p.getTeam();
+                }
+            }
+            team++;
+            Player newPlayer = new Player(connId, name);
+            newPlayer.setTeam(Math.min(team, 5));
+            game.addPlayer(connId, newPlayer);
             validatePlayerInfo(connId);
         }
 

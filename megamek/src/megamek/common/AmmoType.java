@@ -7491,8 +7491,8 @@ public class AmmoType extends EquipmentType {
 
         //ATMs
         if(((at != null) &&
-              ((at.getAmmoType() == T_ATM) && (at.getRackSize() >= 12) && (at.getMunitionType() != M_EXTENDED_RANGE))) ||
-              ((at.getAmmoType() == T_ATM) && (at.getRackSize() >= 9) && (at.getMunitionType() == M_HIGH_EXPLOSIVE))) {
+              (((at.getAmmoType() == T_ATM) && (at.getRackSize() >= 12) && (at.getMunitionType() != M_EXTENDED_RANGE)) ||
+              ((at.getAmmoType() == T_ATM) && (at.getRackSize() >= 9) && (at.getMunitionType() == M_HIGH_EXPLOSIVE))))) {
             return true;
         }
 

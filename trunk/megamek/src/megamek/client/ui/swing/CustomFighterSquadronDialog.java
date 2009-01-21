@@ -19,7 +19,6 @@ import java.awt.Button;
 import java.awt.Checkbox;
 import java.awt.Choice;
 import java.awt.Cursor;
-import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -42,6 +41,8 @@ import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Vector;
+
+import javax.swing.JDialog;
 
 import megamek.client.Client;
 import megamek.client.ui.MechView;
@@ -79,7 +80,7 @@ import megamek.common.verifier.TestTank;
  */
 
 public class CustomFighterSquadronDialog
-    extends Dialog implements ActionListener, ItemListener, KeyListener,
+    extends JDialog implements ActionListener, ItemListener, KeyListener,
     Runnable, WindowListener
 {
     /**
@@ -429,7 +430,7 @@ public class CustomFighterSquadronDialog
 
         final Map<String, String> hFailedFiles = MechSummaryCache.getInstance()
                 .getFailedFiles();
-        if (hFailedFiles != null && hFailedFiles.size() > 0) {
+        if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
             new UnitFailureDialog(m_clientgui.frame, hFailedFiles); // self-showing
                                                                     // dialog
         }
@@ -512,12 +513,12 @@ public class CustomFighterSquadronDialog
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
                 .hasMoreElements();) {
             EquipmentType et = e.nextElement();
-            if (et instanceof WeaponType
-                    && (et.getTechLevel() == nType
+            if ((et instanceof WeaponType)
+                    && ((et.getTechLevel() == nType)
                             || ((nType == TechConstants.T_TW_ALL) && ((et
                                     .getTechLevel() == TechConstants.T_INTRO_BOXSET)
                                     || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (et
-                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL || nType == TechConstants.T_IS_TW_NON_BOX) && ((et
+                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || (((nType == TechConstants.T_IS_TW_ALL) || (nType == TechConstants.T_IS_TW_NON_BOX)) && ((et
                             .getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et
                             .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
                 if (!(nUnitType == UnitType.SIZE)
@@ -528,17 +529,17 @@ public class CustomFighterSquadronDialog
                 }
                 weapons.add(et.getName());
                 if (et.hasFlag(WeaponType.F_C3M)
-                        && (nType == TechConstants.T_TW_ALL
-                                || nType == TechConstants.T_IS_TW_NON_BOX || nType == TechConstants.T_IS_TW_ALL)) {
+                        && ((nType == TechConstants.T_TW_ALL)
+                                || (nType == TechConstants.T_IS_TW_NON_BOX) || (nType == TechConstants.T_IS_TW_ALL))) {
                     equipment.add(et.getName());
                 }
             }
-            if (et instanceof MiscType
-                    && (et.getTechLevel() == nType
+            if ((et instanceof MiscType)
+                    && ((et.getTechLevel() == nType)
                             || ((nType == TechConstants.T_TW_ALL) && ((et
                                     .getTechLevel() == TechConstants.T_INTRO_BOXSET)
                                     || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (et
-                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL || nType == TechConstants.T_IS_TW_NON_BOX) && ((et
+                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || (((nType == TechConstants.T_IS_TW_ALL) || (nType == TechConstants.T_IS_TW_NON_BOX)) && ((et
                             .getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et
                             .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
                 equipment.add(et.getName());
@@ -569,7 +570,7 @@ public class CustomFighterSquadronDialog
         }
         for (MechSummary mech : mechs) {
             if ( /* Weight */
-            (nClass == EntityWeightClass.SIZE || mech.getWeightClass() == nClass)
+            ((nClass == EntityWeightClass.SIZE) || (mech.getWeightClass() == nClass))
                     && /* Technology Level */
                     ((nType == TechConstants.T_ALL)
                             || (nType == mech.getType())
@@ -580,7 +581,7 @@ public class CustomFighterSquadronDialog
                             .getType() == TechConstants.T_INTRO_BOXSET) || (mech
                             .getType() == TechConstants.T_IS_TW_NON_BOX))))
                     && /* Unit Type (Mek, Infantry, etc.) */
-                    (nUnitType == UnitType.SIZE || mech.getUnitType()
+                    ((nUnitType == UnitType.SIZE) || mech.getUnitType()
                             .equals(UnitType.getTypeName(nUnitType)))
                     && /* canon required */(!m_client.game.getOptions()
                             .booleanOption("canon_only") || mech.isCanon())) {
@@ -591,7 +592,7 @@ public class CustomFighterSquadronDialog
         vMechs.copyInto(m_mechsCurrent);
         m_count = vMechs.size();
         if (!calledByAdvancedSearch
-                && (m_old_nType != nType || m_old_nUnitType != nUnitType)) {
+                && ((m_old_nType != nType) || (m_old_nUnitType != nUnitType))) {
             populateWeaponsAndEquipmentChoices();
         }
         m_old_nType = nType;
@@ -782,7 +783,7 @@ public class CustomFighterSquadronDialog
             endYear = Integer.parseInt(m_tEndYear.getText());
         } catch (NumberFormatException ne) {
         }
-        if (entity.getYear() < startYear || entity.getYear() > endYear) {
+        if ((entity.getYear() < startYear) || (entity.getYear() > endYear)) {
             return false;
         }
 
@@ -871,10 +872,10 @@ public class CustomFighterSquadronDialog
             levelOrValid = "F";
         }
         if (GUIPreferences.getInstance().getMechSelectorIncludeModel()) {
-            val += makeLength(ms.getModel(), 10) + " "; //$NON-NLS-1$ 
+            val += makeLength(ms.getModel(), 10) + " "; //$NON-NLS-1$
         }
         if (GUIPreferences.getInstance().getMechSelectorIncludeName()) {
-            val += makeLength(ms.getChassis(), 20) + " "; //$NON-NLS-1$ 
+            val += makeLength(ms.getChassis(), 20) + " "; //$NON-NLS-1$
         }
         if (GUIPreferences.getInstance().getMechSelectorIncludeTons()) {
             val += makeLength("" + ms.getTons(), 3) + " "; //$NON-NLS-1$ //$NON-NLS-2$
@@ -984,9 +985,9 @@ public class CustomFighterSquadronDialog
             clearMechPreview();
             sortMechs();
         }
-        else if (ie.getSource() == m_chWeightClass
-                 || ie.getSource() == m_chType
-                 || ie.getSource() == m_chUnitType) {
+        else if ((ie.getSource() == m_chWeightClass)
+                 || (ie.getSource() == m_chType)
+                 || (ie.getSource() == m_chUnitType)) {
             clearMechPreview();
             filterMechs(false);
         } else if (ie.getSource() == m_mechList) {
@@ -1008,13 +1009,13 @@ public class CustomFighterSquadronDialog
                 clearMechPreview();
                 return;
             }
-        } else if (ie.getSource() == m_cModel ||
-                   ie.getSource() == m_cName ||
-                   ie.getSource() == m_cTons ||
-                   ie.getSource() == m_cBV ||
-                   ie.getSource() == m_cYear ||
-                   ie.getSource() == m_cLevel ||
-                   ie.getSource() == m_cCost) {
+        } else if ((ie.getSource() == m_cModel) ||
+                   (ie.getSource() == m_cName) ||
+                   (ie.getSource() == m_cTons) ||
+                   (ie.getSource() == m_cBV) ||
+                   (ie.getSource() == m_cYear) ||
+                   (ie.getSource() == m_cLevel) ||
+                   (ie.getSource() == m_cCost)) {
             GUIPreferences.getInstance().setMechSelectorIncludeModel(m_cModel.getState());
             GUIPreferences.getInstance().setMechSelectorIncludeName(m_cName.getState());
             GUIPreferences.getInstance().setMechSelectorIncludeTons(m_cTons.getState());
@@ -1052,7 +1053,7 @@ public class CustomFighterSquadronDialog
         String readout = mechView.getMechReadout();
         StringBuffer sb = new StringBuffer(readout);
         m_mechView.setText(readout);
-        if(entity instanceof Mech || entity instanceof Tank) {
+        if((entity instanceof Mech) || (entity instanceof Tank)) {
             TestEntity testEntity = null;
             if (entity instanceof Mech) {
                 testEntity = new TestMech((Mech)entity, entityVerifier.mechOption, null);
@@ -1145,8 +1146,8 @@ public class CustomFighterSquadronDialog
         int piloting=5;
         int gunnery=4;
         if(e.isClan()) {
-            if(e instanceof Mech
-                    || e instanceof BattleArmor) {
+            if((e instanceof Mech)
+                    || (e instanceof BattleArmor)) {
                 gunnery = 3;
                 piloting = 4;
                 if(m_client.game.getOptions().booleanOption("pilot_advantages")) {
@@ -1171,8 +1172,8 @@ public class CustomFighterSquadronDialog
         }
         else if(e instanceof Infantry) {
             //IS crews are 4/5 except infantry
-            if(e.getMovementMode() == IEntityMovementMode.INF_LEG
-                    || e instanceof BattleArmor) {
+            if((e.getMovementMode() == IEntityMovementMode.INF_LEG)
+                    || (e instanceof BattleArmor)) {
                 gunnery = 4;
                 piloting = 5;
             }

@@ -365,7 +365,7 @@ public class Game implements Serializable, IGame {
         // players are on their own teams for initiative purposes.
         for (Enumeration<Player> i = getPlayers(); i.hasMoreElements();) {
             final Player player = i.nextElement();
-            if (!useTeamInit || player.getTeam() == Player.TEAM_NONE) {
+            if (!useTeamInit || (player.getTeam() == Player.TEAM_NONE)) {
                 Team new_team = new Team(Player.TEAM_NONE);
                 new_team.addPlayer(player);
                 initTeams.addElement(new_team);
@@ -566,10 +566,10 @@ public class Game implements Serializable, IGame {
 
             // Even if friendly fire is acceptable, do not shoot yourself
             // Enemy units not on the board can not be shot.
-            if (otherEntity.getPosition() != null
+            if ((otherEntity.getPosition() != null)
                     && !otherEntity.isOffBoard()
-                    && (entity.isEnemyOf(otherEntity) || (friendlyFire && entity
-                            .getId() != otherEntity.getId()))) {
+                    && (entity.isEnemyOf(otherEntity) || (friendlyFire && (entity
+                            .getId() != otherEntity.getId())))) {
                 ents.addElement(otherEntity);
             }
         }
@@ -617,7 +617,7 @@ public class Game implements Serializable, IGame {
      * Returns the current GameTurn object
      */
     public GameTurn getTurn() {
-        if (turnIndex < 0 || turnIndex >= turnVector.size()) {
+        if ((turnIndex < 0) || (turnIndex >= turnVector.size())) {
             return null;
         }
         return turnVector.elementAt(turnIndex);
@@ -822,7 +822,7 @@ public class Game implements Serializable, IGame {
     }
 
     public Entity getPreviousEntityFromList(Entity current) {
-        if (current != null && entities != null && entities.contains(current)) {
+        if ((current != null) && (entities != null) && entities.contains(current)) {
             int prev = entities.indexOf(current) - 1;
             if (prev < 0) {
                 prev = entities.size() - 1; // wrap around to end
@@ -833,7 +833,7 @@ public class Game implements Serializable, IGame {
     }
 
     public Entity getNextEntityFromList(Entity current) {
-        if (current != null && entities != null && entities.contains(current)) {
+        if ((current != null) && (entities != null) && entities.contains(current)) {
             int next = entities.indexOf(current) + 1;
             if (next >= entities.size()) {
                 next = 0; // wrap-around to begining
@@ -881,7 +881,7 @@ public class Game implements Serializable, IGame {
                     .hasMoreElements();) {
                 final Entity entity = i.nextElement();
                 int ownerId = entity.getOwnerId();
-                if (ownerId != Entity.NONE && getPlayer(ownerId) != null) {
+                if ((ownerId != Entity.NONE) && (getPlayer(ownerId) != null)) {
                     entity.setGame(this);
                     newOutOfGame.addElement(entity);
                 }
@@ -901,7 +901,7 @@ public class Game implements Serializable, IGame {
     public Entity getOutOfGameEntity(int id) {
         Entity match = null;
         Enumeration<Entity> iter = vOutOfGame.elements();
-        while (null == match && iter.hasMoreElements()) {
+        while ((null == match) && iter.hasMoreElements()) {
             Entity entity = iter.nextElement();
             if (id == entity.getId()) {
                 match = entity;
@@ -929,7 +929,7 @@ public class Game implements Serializable, IGame {
         Vector<Entity> members = new Vector<Entity>();
 
         // Does the unit have a C3 computer?
-        if (entity != null && (entity.hasC3() || entity.hasC3i())) {
+        if ((entity != null) && (entity.hasC3() || entity.hasC3i())) {
 
             // Walk throught the entities in the game, and add all
             // members of the C3 network to the output Vector.
@@ -966,7 +966,7 @@ public class Game implements Serializable, IGame {
     public Vector<Entity> getC3SubNetworkMembers(Entity entity) {
 
         // Handle null, C3i, and company commander units.
-        if (entity == null || entity.hasC3i() || entity.C3MasterIs(entity)) {
+        if ((entity == null) || entity.hasC3i() || entity.C3MasterIs(entity)) {
             return getC3NetworkMembers(entity);
         }
 
@@ -1038,8 +1038,8 @@ public class Game implements Serializable, IGame {
 
         for (Enumeration<Entity> i = vOutOfGame.elements(); i.hasMoreElements();) {
             Entity entity = i.nextElement();
-            if (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE
-                    || entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED) {
+            if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)
+                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED)) {
                 graveyard.addElement(entity);
             }
         }
@@ -1054,9 +1054,9 @@ public class Game implements Serializable, IGame {
         Vector<Entity> wrecks = new Vector<Entity>();
         for (Enumeration<Entity> i = vOutOfGame.elements(); i.hasMoreElements();) {
             Entity entity = i.nextElement();
-            if (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE
-                    || entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED
-                    || entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED) {
+            if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)
+                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED)
+                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED)) {
                 wrecks.addElement(entity);
             }
         }
@@ -1072,9 +1072,9 @@ public class Game implements Serializable, IGame {
 
         for (Enumeration<Entity> i = vOutOfGame.elements(); i.hasMoreElements();) {
             Entity entity = i.nextElement();
-            if (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT
-                    || entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_CAPTURED
-                    || entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_PUSHED) {
+            if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT)
+                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_CAPTURED)
+                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_PUSHED)) {
                 sanctuary.addElement(entity);
             }
         }
@@ -1225,8 +1225,8 @@ public class Game implements Serializable, IGame {
         toRemove.setRemovalCondition(condition);
 
         // do not keep never-joined entities
-        if (vOutOfGame != null
-                && condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED) {
+        if ((vOutOfGame != null)
+                && (condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED)) {
             vOutOfGame.addElement(toRemove);
         }
 
@@ -1413,7 +1413,7 @@ public class Game implements Serializable, IGame {
                     .hasMoreElements();) {
                 final Entity entity = i.nextElement();
                 if (c.equals(entity.getPosition()) && entity.isTargetable()
-                        && !(entity instanceof Infantry) && entity != ignore) {
+                        && !(entity instanceof Infantry) && (entity != ignore)) {
                     vector.addElement(entity);
                 }
             }
@@ -1674,10 +1674,10 @@ public class Game implements Serializable, IGame {
         // Is the entity being transported?
         final int transportId = entity.getTransportId();
         Entity transport = getEntity(transportId);
-        if (Entity.NONE != transportId && null != transport) {
+        if ((Entity.NONE != transportId) && (null != transport)) {
 
             // Can that transport unload the unit?
-            if (transport.isImmobile() || 0 == transport.getWalkMP()) {
+            if (transport.isImmobile() || (0 == transport.getWalkMP())) {
                 return true;
             }
         }
@@ -1695,7 +1695,7 @@ public class Game implements Serializable, IGame {
             final Entity entity = i.nextElement();
             if (player.equals(entity.getOwner())
                     && entity.isSelectableThisTurn()
-                    && entity instanceof Infantry) {
+                    && (entity instanceof Infantry)) {
                 remaining++;
             }
         }
@@ -1714,7 +1714,7 @@ public class Game implements Serializable, IGame {
             final Entity entity = i.nextElement();
             if (player.equals(entity.getOwner())
                     && entity.isSelectableThisTurn()
-                    && entity instanceof Protomech) {
+                    && (entity instanceof Protomech)) {
                 remaining++;
             }
         }
@@ -1736,7 +1736,7 @@ public class Game implements Serializable, IGame {
             final Entity entity = i.nextElement();
             if (player.equals(entity.getOwner())
                     && entity.isSelectableThisTurn()
-                    && entity instanceof Tank) {
+                    && (entity instanceof Tank)) {
                 remaining++;
             }
         }
@@ -1769,7 +1769,7 @@ public class Game implements Serializable, IGame {
         // A turn only needs to be removed when going from 4 inf (2 turns) to
         // 3 inf (1 turn)
         if (getOptions().booleanOption("inf_move_multi")
-                && entity instanceof Infantry && phase == Phase.PHASE_MOVEMENT) {
+                && (entity instanceof Infantry) && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getInfantryLeft(entity.getOwnerId()) % getOptions().intOption(
                     "inf_proto_move_multi")) != 1) {
                 // exception, if the _next_ turn is an infantry turn, remove
@@ -1791,7 +1791,7 @@ public class Game implements Serializable, IGame {
         }
         // Same thing but for protos
         if (getOptions().booleanOption("protos_move_multi")
-                && entity instanceof Protomech && phase == Phase.PHASE_MOVEMENT) {
+                && (entity instanceof Protomech) && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getProtomechsLeft(entity.getOwnerId()) % getOptions()
                     .intOption("inf_proto_move_multi")) != 1) {
                 // exception, if the _next_ turn is an protomek turn, remove
@@ -1814,7 +1814,7 @@ public class Game implements Serializable, IGame {
 
         // Same thing but for vehicles
         if (getOptions().booleanOption("vehicle_lance_movement")
-                && entity instanceof Tank && phase == Phase.PHASE_MOVEMENT) {
+                && (entity instanceof Tank) && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getProtomechsLeft(entity.getOwnerId()) % getOptions()
                     .intOption("vehicle_lance_movement_number")) != 1) {
                 // exception, if the _next_ turn is an tank turn, remove
@@ -1909,9 +1909,9 @@ public class Game implements Serializable, IGame {
                 if (Boolean.TRUE.equals(playerFlags.get(player))) {
 
                     // Add the appropriate transporter to the unit.
-                    if (!unit.isOmni() && unit instanceof Mech) {
+                    if (!unit.isOmni() && (unit instanceof Mech)) {
                         unit.addTransporter(new ClampMountMech());
-                    } else if (unit instanceof Tank && !(unit instanceof VTOL)) {
+                    } else if ((unit instanceof Tank) && !(unit instanceof VTOL)) {
                         unit.addTransporter(new ClampMountTank());
                     }
 
@@ -2421,7 +2421,7 @@ public class Game implements Serializable, IGame {
                     if (null == current) {
 
                         // Find the first acceptable entity
-                        while (null == current && iter.hasMoreElements()) {
+                        while ((null == current) && iter.hasMoreElements()) {
                             current = iter.nextElement();
                             if (!entitySelector.accept(current)) {
                                 current = null;
@@ -2522,7 +2522,7 @@ public class Game implements Serializable, IGame {
                     if (null == current) {
 
                         // Find the first acceptable entity
-                        while (null == current && iter.hasMoreElements()) {
+                        while ((null == current) && iter.hasMoreElements()) {
                             current = iter.nextElement();
                             if (!entitySelector.accept(current)) {
                                 current = null;
@@ -2601,10 +2601,10 @@ public class Game implements Serializable, IGame {
         while (iter.hasNext()) {
             Entity entity = iter.next();
             boolean excluded = false;
-            if (entity instanceof Infantry
+            if ((entity instanceof Infantry)
                     && getOptions().booleanOption("inf_move_later")) {
                 excluded = true;
-            } else if (entity instanceof Protomech
+            } else if ((entity instanceof Protomech)
                     && getOptions().booleanOption("protos_move_later")) {
                 excluded = true;
             }
@@ -2942,7 +2942,7 @@ public class Game implements Serializable, IGame {
         Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
-            if (entity instanceof SpaceStation && getTurn().isValidEntity(entity, this)) {
+            if ((entity instanceof SpaceStation) && getTurn().isValidEntity(entity, this)) {
                 return true;
             }
         }
@@ -2953,7 +2953,7 @@ public class Game implements Serializable, IGame {
            Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
-            if (entity instanceof Jumpship && !(entity instanceof Warship) && getTurn().isValidEntity(entity, this)) {
+            if ((entity instanceof Jumpship) && !(entity instanceof Warship) && getTurn().isValidEntity(entity, this)) {
                 return true;
             }
         }
@@ -2964,7 +2964,7 @@ public class Game implements Serializable, IGame {
            Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
-            if (entity instanceof Warship && getTurn().isValidEntity(entity, this)) {
+            if ((entity instanceof Warship) && getTurn().isValidEntity(entity, this)) {
                 return true;
             }
         }
@@ -2975,7 +2975,7 @@ public class Game implements Serializable, IGame {
            Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
-            if (entity instanceof Dropship && getTurn().isValidEntity(entity, this)) {
+            if ((entity instanceof Dropship) && getTurn().isValidEntity(entity, this)) {
                 return true;
             }
         }
@@ -2986,7 +2986,7 @@ public class Game implements Serializable, IGame {
            Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
-            if (entity instanceof SmallCraft && getTurn().isValidEntity(entity, this)) {
+            if ((entity instanceof SmallCraft) && getTurn().isValidEntity(entity, this)) {
                 return true;
             }
         }

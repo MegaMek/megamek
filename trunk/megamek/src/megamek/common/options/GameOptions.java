@@ -35,7 +35,7 @@ import megamek.common.CommonConstants;
 
 /**
  * Contains the options determining play in the current game.
- * 
+ *
  * @author Ben
  */
 public class GameOptions extends AbstractOptions implements Serializable {
@@ -47,6 +47,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         super();
     }
 
+    @Override
     public void initialize() {
         IBasicOptionGroup base = addGroup("basic"); //$NON-NLS-1$
         addOption(base, "friendly_fire", false); //$NON-NLS-1$
@@ -79,7 +80,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(victory, "use_game_turn_limit", false); //$NON-NLS-1$
         addOption(victory, "game_turn_limit", 10); //$NON-NLS-1$
         addOption(victory, "commander_killed", false); //$NON-NLS-1$
-        
+
         IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); //$NON-NLS-1$
         addOption(advAeroRules,"stratops_capital_fighter", false); //$NON-NLS-1$
         addOption(advAeroRules,"fuel_consumption", false); //$NON-NLS-1$
@@ -98,7 +99,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(advAeroRules,"stratops_space_bomb", false); //$NON-NLS-1$
         addOption(advAeroRules,"variable_damage_thresh", false); //$NON-NLS-1$
         addOption(advAeroRules,"at2_nukes", false); //$NON-NLS-1$
-        
+
         IBasicOptionGroup advancedRules = addGroup("advancedRules"); //$NON-NLS-1$
         addOption(advancedRules, "minefields", false); //$NON-NLS-1$
 //        addOption(advancedRules, "hidden_units", false); //$NON-NLS-1$
@@ -115,11 +116,11 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(advancedRules, "assault_drop", false); //$NON-NLS-1$
         addOption(advancedRules, "paratroopers", false); //$NON-NLS-1$
         addOption(advancedRules, "allow_advanced_units", false);
-        addOption(advancedRules, "allow_level_3_targsys", false); //$NON-NLS-1$ 
-        addOption(advancedRules, "allow_level_3_ammo", false); //$NON-NLS-1$ 
-        addOption(advancedRules, "allow_nukes", false); //$NON-NLS-1$ 
-        addOption(advancedRules, "really_allow_nukes", false); //$NON-NLS-1$ 
-        addOption(advancedRules, "tacops_battle_wreck", false); //$NON-NLS-1$ 
+        addOption(advancedRules, "allow_level_3_targsys", false); //$NON-NLS-1$
+        addOption(advancedRules, "allow_advanced_ammo", false); //$NON-NLS-1$
+        addOption(advancedRules, "allow_nukes", false); //$NON-NLS-1$
+        addOption(advancedRules, "really_allow_nukes", false); //$NON-NLS-1$
+        addOption(advancedRules, "tacops_battle_wreck", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_skin_of_the_teeth_ejection", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_mobile_hqs", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_fatigue", false); //$NON-NLS-1$
@@ -156,7 +157,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(advancedCombat, "tacops_vehicle_arcs", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_advanced_mech_hit_locations", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_coolant_failure", false); //$NON-NLS-1$
-        
+
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_standing_still", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_evade", false); //$NON-NLS-1$
@@ -263,8 +264,9 @@ public class GameOptions extends AbstractOptions implements Serializable {
                 IOption option = parseOptionNode((ParsedXML) children
                         .nextElement());
 
-                if (null != option)
+                if (null != option) {
                     changedOptions.addElement(option);
+                }
             }
 
             return changedOptions;
@@ -295,7 +297,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
             }
 
             if ((null != name) && (null != value)) {
-                IOption tempOption = this.getOption(name);
+                IOption tempOption = getOption(name);
 
                 if (null != tempOption) {
                     if (!tempOption.getValue().toString().equals(
@@ -343,7 +345,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
 
     /**
      * Saves the given <code>Vector</code> of <code>IBasicOption</code>
-     * 
+     *
      * @param options <code>Vector</code> of <code>IBasicOption</code>
      */
     public static void saveOptions(Vector<IBasicOption> options) {
@@ -388,9 +390,10 @@ public class GameOptions extends AbstractOptions implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.options.AbstractOptions#getOptionsInfoImp()
      */
+    @Override
     protected AbstractOptionsInfo getOptionsInfoImp() {
         return GameOptionsInfo.getInstance();
     }

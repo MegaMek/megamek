@@ -2170,7 +2170,7 @@ public class Aero
                 if((type == BombType.B_ALAMO) && !game.getOptions().booleanOption("at2_nukes")) {
                     continue;
                 }
-                if((type > BombType.B_TAG) && !game.getOptions().booleanOption("allow_level_3_ammo")) {
+                if((type > BombType.B_TAG) && !game.getOptions().booleanOption("allow_advanced_ammo")) {
                     continue;
                 }
 

@@ -41,7 +41,7 @@ public class ISLaserAMS extends LaserWeapon {
         ammoType = AmmoType.T_NA;
         tonnage = 1.5f;
         criticals = 2;
-        bv = 105;
+        bv = 45;
         flags |= F_AUTO_TARGET | F_AMS;
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);

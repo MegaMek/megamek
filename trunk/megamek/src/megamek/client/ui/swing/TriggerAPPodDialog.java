@@ -34,6 +34,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.MiscType;
 import megamek.common.Mounted;

@@ -22,6 +22,7 @@ import java.awt.event.ItemListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Player;
 

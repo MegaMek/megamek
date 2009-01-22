@@ -38,6 +38,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.SimpleLine;
 import megamek.common.MapSettings;
 

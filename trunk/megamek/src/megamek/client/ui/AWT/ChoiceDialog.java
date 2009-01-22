@@ -32,6 +32,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import megamek.client.ui.Messages;
+
 /**
  * A (somewhat primitive) dialog that asks a question and lets the player select
  * from the available choices. The question string is tokenised on "\n". <p/>

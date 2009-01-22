@@ -38,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.IOffBoardDirections;

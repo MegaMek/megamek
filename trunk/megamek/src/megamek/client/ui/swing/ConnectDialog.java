@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import megamek.client.ui.Messages;
 import megamek.common.preference.PreferenceManager;
 
 /**

@@ -26,7 +26,8 @@ import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.*;
-import megamek.client.ui.AWT.Messages;
+
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.common.Entity;
 import megamek.common.IGame;

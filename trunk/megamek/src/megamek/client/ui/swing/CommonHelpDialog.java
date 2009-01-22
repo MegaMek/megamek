@@ -31,6 +31,8 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import megamek.client.ui.Messages;
+
 /**
  * Every about dialog in MegaMek should have an identical look-and-feel.
  */

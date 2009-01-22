@@ -27,6 +27,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.IndexedCheckbox;
 
 public class AimedShotDialog extends JDialog {

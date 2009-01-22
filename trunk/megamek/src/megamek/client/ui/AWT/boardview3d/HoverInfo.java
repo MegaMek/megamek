@@ -26,8 +26,8 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import megamek.client.ui.IDisplayable;
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.GUIPreferences;
-import megamek.client.ui.AWT.Messages;
 import megamek.common.Player;
 import megamek.common.actions.*;
 import megamek.common.Building;

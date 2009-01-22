@@ -10,6 +10,8 @@ import java.awt.Label;
 import java.awt.Panel;
 import java.awt.event.ActionListener;
 
+import megamek.client.ui.Messages;
+
 /**
  * A dialog of which exits are connected for terrain.
  */

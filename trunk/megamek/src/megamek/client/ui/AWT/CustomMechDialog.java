@@ -44,6 +44,7 @@ import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.ui.GBC;
+import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;

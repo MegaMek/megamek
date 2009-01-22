@@ -33,6 +33,7 @@ import java.awt.event.KeyListener;
 import java.util.Vector;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.common.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
 

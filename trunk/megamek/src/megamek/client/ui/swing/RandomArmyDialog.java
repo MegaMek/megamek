@@ -39,6 +39,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;

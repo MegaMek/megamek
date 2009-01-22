@@ -58,10 +58,8 @@ import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.swing.BotGUI;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.MechView;
-import megamek.client.ui.AWT.AlertDialog;
-import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
@@ -76,13 +74,12 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
-        ItemListener, BoardViewListener, GameListener, DoneButtoned,
+        ItemListener, DoneButtoned,
         ListSelectionListener {
     /**
      *
@@ -143,7 +140,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     JButton butArmy;
     JButton butSkills;
     JButton butLoadCustomBA;
-    private JButton butLoadCustomFS;
+    JButton butLoadCustomFS;
     private JButton butDelete;
     private JButton butCustom;
     private JButton butMechReadout;
@@ -1806,10 +1803,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             // alert about teams
             if (clientgui.client.game.getOptions().booleanOption(
                     "team_initiative")) {
-                AlertDialog id = new AlertDialog(
+            	JOptionPane.showMessageDialog(
                         clientgui.frame,
-                        Messages.getString("ChatLounge.InitiativeAlert.title"), Messages.getString("ChatLounge.InitiativeAlert.message")); //$NON-NLS-1$ //$NON-NLS-2$
-                id.setVisible(true);
+                        Messages.getString("ChatLounge.InitiativeAlert.message"),
+                        Messages.getString("ChatLounge.InitiativeAlert.title"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             }
             Client c = getPlayerListSelected(lisPlayerInfo);
             if (c == null) {

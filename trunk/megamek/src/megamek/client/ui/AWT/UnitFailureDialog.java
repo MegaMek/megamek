@@ -36,6 +36,8 @@ import java.awt.event.WindowEvent;
 import java.util.Iterator;
 import java.util.Map;
 
+import megamek.client.ui.Messages;
+
 public class UnitFailureDialog extends Dialog implements ActionListener,
         ItemListener, KeyListener {
 

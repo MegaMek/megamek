@@ -18,7 +18,7 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Frame;
+import javax.swing.JFrame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -32,12 +32,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import megamek.client.ui.AWT.AlertDialog;
-import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.Messages;
 import megamek.common.PlanetaryConditions;
 
 /**
@@ -96,8 +96,8 @@ public class PlanetaryConditionsDialog extends JDialog implements ActionListener
      * @param frame - the <code>Frame</code> parent of this dialog.
      * @param options - the <code>GameOptions</code> to be displayed.
      */
-    private void init(Frame frame, PlanetaryConditions conditions) {
-        this.conditions = (PlanetaryConditions)conditions.clone();
+    private void init(JFrame frame, PlanetaryConditions planetConditions) {
+        this.conditions = (PlanetaryConditions)planetConditions.clone();
         
         setupConditions();
         setupButtons();
@@ -122,7 +122,8 @@ public class PlanetaryConditionsDialog extends JDialog implements ActionListener
         add(panButtons);
 
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
+            @Override
+			public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
         });
@@ -278,8 +279,8 @@ public class PlanetaryConditionsDialog extends JDialog implements ActionListener
 
     }
     
-    public void update(PlanetaryConditions conditions) {
-        this.conditions = (PlanetaryConditions)conditions.clone();
+    public void update(PlanetaryConditions planetConditions) {
+        this.conditions = (PlanetaryConditions)planetConditions.clone();
         refreshConditions();
     }
     
@@ -356,35 +357,39 @@ public class PlanetaryConditionsDialog extends JDialog implements ActionListener
             try {
                 temper = Integer.parseInt(fldTemp.getText());
             } catch (NumberFormatException er) {
-                new AlertDialog(
+            	JOptionPane.showMessageDialog(
                         client.frame,
-                        Messages
-                                .getString("PlanetaryConditionsDialog.NumberFormatError"), Messages.getString("PlanetaryConditionsDialog.EnterValidTemperature")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        Messages.getString("PlanetaryConditionsDialog.EnterValidTemperature"),
+                        Messages.getString("PlanetaryConditionsDialog.NumberFormatError"),
+                        JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             try {
                 grav = Float.parseFloat(fldGrav.getText());
             } catch (NumberFormatException er) {
-                new AlertDialog(
+            	JOptionPane.showMessageDialog(
                         client.frame,
-                        Messages
-                                .getString("PlanetaryConditionsDialog.NumberFormatError"), Messages.getString("PlanetaryConditionsDialog.EnterValidGravity")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        Messages.getString("PlanetaryConditionsDialog.EnterValidGravity"),
+                        Messages.getString("PlanetaryConditionsDialog.NumberFormatError"),
+                        JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             
             if(temper > 200 || temper < -200) {
-                new AlertDialog(
+            	JOptionPane.showMessageDialog(
                         client.frame,
-                        Messages
-                                .getString("PlanetaryConditionsDialog.NumberFormatError"), Messages.getString("PlanetaryConditionsDialog.EnterValidTemperature")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        Messages.getString("PlanetaryConditionsDialog.EnterValidTemperature"),
+                        Messages.getString("PlanetaryConditionsDialog.NumberFormatError"),
+                        JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
    
             if(grav < 0.1 || grav > 10.0) {
-                new AlertDialog(
+            	JOptionPane.showMessageDialog(
                         client.frame,
-                        Messages
-                                .getString("PlanetaryConditionsDialog.NumberFormatError"), Messages.getString("PlanetaryConditionsDialog.EnterValidGravity")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        Messages.getString("PlanetaryConditionsDialog.EnterValidGravity"),
+                        Messages.getString("PlanetaryConditionsDialog.NumberFormatError"),
+                        JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             
@@ -392,24 +397,27 @@ public class PlanetaryConditionsDialog extends JDialog implements ActionListener
             int wind = choWind.getSelectedIndex();
             int atmo = choAtmosphere.getSelectedIndex();
             if(atmo == PlanetaryConditions.ATMO_VACUUM && wind > PlanetaryConditions.WI_NONE) {
-                new AlertDialog(
+            	JOptionPane.showMessageDialog(
                         client.frame,
-                        Messages
-                                .getString("PlanetaryConditionsDialog.Incompatible"), Messages.getString("PlanetaryConditionsDialog.VacuumWind")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        Messages.getString("PlanetaryConditionsDialog.VacuumWind"),
+                        Messages.getString("PlanetaryConditionsDialog.Incompatible"),
+                        JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             if(atmo == PlanetaryConditions.ATMO_TRACE && wind > PlanetaryConditions.WI_STORM) {
-                new AlertDialog(
+            	JOptionPane.showMessageDialog(
                         client.frame,
-                        Messages
-                                .getString("PlanetaryConditionsDialog.Incompatible"), Messages.getString("PlanetaryConditionsDialog.TraceWind")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        Messages.getString("PlanetaryConditionsDialog.TraceWind"),
+                        Messages.getString("PlanetaryConditionsDialog.Incompatible"),
+                        JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             if(atmo == PlanetaryConditions.ATMO_THIN && wind > PlanetaryConditions.WI_TORNADO_F13) {
-                new AlertDialog(
+            	JOptionPane.showMessageDialog(
                         client.frame,
-                        Messages
-                                .getString("PlanetaryConditionsDialog.Incompatible"), Messages.getString("PlanetaryConditionsDialog.ThinWind")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        Messages.getString("PlanetaryConditionsDialog.ThinWind"),
+                        Messages.getString("PlanetaryConditionsDialog.Incompatible"),
+                        JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             if (client != null) {

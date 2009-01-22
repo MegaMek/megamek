@@ -58,6 +58,7 @@ import java.util.Iterator;
 import keypoint.PngEncoder;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
+import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Hex;

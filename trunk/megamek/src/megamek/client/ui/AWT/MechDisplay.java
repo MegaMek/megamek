@@ -37,6 +37,7 @@ import java.util.Vector;
 
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.AeroMapSet;
 import megamek.client.ui.AWT.widget.ArmlessMechMapSet;
 import megamek.client.ui.AWT.widget.BackGroundDrawer;

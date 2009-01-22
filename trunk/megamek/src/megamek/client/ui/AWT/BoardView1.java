@@ -70,6 +70,7 @@ import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.util.ImageCache;
 import megamek.client.ui.AWT.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.AWT.util.KeyAlphaFilter;

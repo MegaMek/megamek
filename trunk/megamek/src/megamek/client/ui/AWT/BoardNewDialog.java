@@ -11,6 +11,8 @@ import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import megamek.client.ui.Messages;
+
 /**
  * a quick class for the new map diaglogue box
  */

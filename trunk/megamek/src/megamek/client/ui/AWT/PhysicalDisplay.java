@@ -36,6 +36,7 @@ import java.util.Vector;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.IndexedCheckbox;
 import megamek.common.BattleArmor;
 import megamek.common.Building;

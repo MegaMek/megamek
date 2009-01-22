@@ -35,6 +35,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import megamek.client.ui.Messages;
+
 /**
  * A (somewhat primitive) dialog that asks a question and lets the player select
  * from the available choices. The question string is tokenised on "\n". <p/>

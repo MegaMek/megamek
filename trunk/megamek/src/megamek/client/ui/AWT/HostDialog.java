@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import megamek.client.ui.Messages;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 

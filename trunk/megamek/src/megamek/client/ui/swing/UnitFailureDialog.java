@@ -38,6 +38,8 @@ import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import megamek.client.ui.Messages;
+
 public class UnitFailureDialog extends JDialog implements ActionListener,
         ListSelectionListener, KeyListener {
 

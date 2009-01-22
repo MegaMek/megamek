@@ -17,7 +17,6 @@ package megamek.client.ui;
 import java.util.Enumeration;
 
 import megamek.client.Client;
-import megamek.client.ui.AWT.Messages;
 import megamek.common.Aero;
 import megamek.common.Building;
 import megamek.common.Coords;

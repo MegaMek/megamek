@@ -52,6 +52,7 @@ import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.AWT.BotGUI;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.MechView;
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.client.ui.AWT.widget.ImageButton;

@@ -30,6 +30,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import megamek.client.ui.Messages;
+
 // Allows the player to select the type of entity in the hexes used
 // by the LOS tool.
 public class LOSDialog extends Dialog implements ActionListener {

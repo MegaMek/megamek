@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.AdvancedLabel;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;

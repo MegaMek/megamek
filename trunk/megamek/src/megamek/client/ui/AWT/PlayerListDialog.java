@@ -26,6 +26,7 @@ import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 
 public class PlayerListDialog extends Dialog implements ActionListener {

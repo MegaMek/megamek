@@ -16,7 +16,7 @@ package megamek.client.ui.swing.util;
 
 import java.awt.Color;
 
-import megamek.client.ui.AWT.GUIPreferences;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Player;
 
 public class PlayerColors {

@@ -1,5 +1,7 @@
 package megamek.client.ui.swing;
 
+import megamek.client.ui.Messages;
+
 public class HeatEffects {
 
     public static String getHeatEffects(int heat, boolean mtHeat, boolean hasTSM) {

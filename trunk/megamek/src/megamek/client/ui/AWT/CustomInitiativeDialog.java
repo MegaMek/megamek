@@ -29,6 +29,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 
 public class CustomInitiativeDialog extends Dialog implements ActionListener,
         WindowListener {

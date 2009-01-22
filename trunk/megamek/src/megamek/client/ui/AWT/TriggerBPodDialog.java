@@ -30,9 +30,9 @@ import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.AdvancedLabel;
 import megamek.client.ui.AWT.ClientGUI;
-import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.AWT.SingleChoiceDialog;
 import megamek.common.Coords;
 import megamek.common.Entity;

@@ -18,8 +18,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.Messages;
 import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Entity;

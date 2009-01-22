@@ -47,7 +47,7 @@ import javax.swing.event.ListSelectionListener;
 
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
-import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.AeroMapSet;
 import megamek.client.ui.swing.widget.ArmlessMechMapSet;
 import megamek.client.ui.swing.widget.BackGroundDrawer;

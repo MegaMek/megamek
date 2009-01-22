@@ -25,6 +25,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
+import megamek.client.ui.Messages;
+
 /**
  * Shows a Report, with an Okay JButton
  */

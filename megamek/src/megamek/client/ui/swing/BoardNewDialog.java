@@ -13,8 +13,10 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import megamek.client.ui.Messages;
+
 /**
- * a quick class for the new map diaglogue box
+ * a quick class for the new map dialogue box
  */
 public class BoardNewDialog extends JDialog implements ActionListener {
     /**
@@ -95,10 +97,12 @@ public class BoardNewDialog extends JDialog implements ActionListener {
         }
     }
 
+    @Override
     public int getX() {
         return xvalue;
     }
 
+    @Override
     public int getY() {
         return yvalue;
     }

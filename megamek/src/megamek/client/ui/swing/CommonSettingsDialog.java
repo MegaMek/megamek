@@ -44,6 +44,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import megamek.client.ui.Messages;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 

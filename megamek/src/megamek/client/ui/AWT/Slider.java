@@ -27,6 +27,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 
+import megamek.client.ui.Messages;
+
 /**
  * A simple prompt.
  */

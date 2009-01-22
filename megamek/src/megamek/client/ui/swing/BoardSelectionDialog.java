@@ -48,7 +48,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.Messages;
 import megamek.common.Board;
 import megamek.common.IBoard;
 import megamek.common.MapSettings;
@@ -172,13 +172,15 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
                 .getString("BoardSelectionDialog.MapPreview"), false); //$NON-NLS-1$
 
         mapPreviewW.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
+            @Override
+			public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
         });
 
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
+            @Override
+			public void windowClosing(WindowEvent e) {
                 setVisible(false);
                 mapPreviewW.setVisible(false);
             }
@@ -475,8 +477,8 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
      * Updates to show the map settings that have, presumably, just been sent by
      * the server.
      */
-    public void update(MapSettings mapSettings, boolean updateSize) {
-        this.mapSettings = (MapSettings) mapSettings.clone();
+    public void update(MapSettings newSettings, boolean updateSize) {
+        this.mapSettings = (MapSettings) newSettings.clone();
         if (updateSize) {
             refreshMapSize();
             refreshMapButtons();
@@ -539,8 +541,8 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
     public void previewBoard() {
         String boardName = (String) lisBoardsAvailable.getSelectedValue();
         if (lisBoardsAvailable.getSelectedIndex() > 2) {
-            IBoard board = new Board(new Integer(texBoardWidth.getText()),
-                    new Integer(texBoardHeight.getText()));
+            IBoard board = new Board(Integer.parseInt(texBoardWidth.getText()),
+            		Integer.parseInt(texBoardHeight.getText()));
             board.load(boardName + ".board");
             if (chkRotateBoard.isSelected()) {
                 BoardUtilities.flip(board, true, true);
@@ -591,13 +593,15 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
                 int board = Integer.parseInt(e.getActionCommand());
                 this.lisBoardsSelected.setSelectedIndex(board);
             } catch (NumberFormatException n) {
+            	//ignore
             } catch (ArrayIndexOutOfBoundsException a) {
+            	//ignore
             }
         }
     }
 
-    public void updateMapSettings(MapSettings mapSettings) {
-        this.mapSettings = mapSettings;
+    public void updateMapSettings(MapSettings newSettings) {
+        this.mapSettings = newSettings;
         refreshMapSize();
         refreshMapButtons();
 
@@ -609,7 +613,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(Messages
                 .getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
 
-        client.getClient().sendMapQuery(mapSettings);
+        client.getClient().sendMapQuery(newSettings);
     }
 
     public void valueChanged(ListSelectionEvent event) {

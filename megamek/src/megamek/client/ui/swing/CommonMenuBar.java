@@ -24,8 +24,8 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 import megamek.client.Client;
-import megamek.client.ui.AWT.Messages;
-import megamek.client.ui.AWT.MovementDisplay;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.MovementDisplay;
 import megamek.common.Entity;
 import megamek.common.IGame;
 

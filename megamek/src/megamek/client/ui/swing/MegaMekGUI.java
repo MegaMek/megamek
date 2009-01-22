@@ -50,6 +50,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
+import megamek.client.ui.Messages;
 import megamek.common.IGame;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;

@@ -27,7 +27,7 @@ import java.util.Vector;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.IDisplayable;
-import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;

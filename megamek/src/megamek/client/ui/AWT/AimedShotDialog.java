@@ -25,6 +25,7 @@ import java.awt.Label;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.IndexedCheckbox;
 
 public class AimedShotDialog extends Dialog {

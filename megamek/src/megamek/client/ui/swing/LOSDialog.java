@@ -32,6 +32,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import megamek.client.ui.Messages;
+
 // Allows the player to select the type of entity in the hexes used
 // by the LOS tool.
 

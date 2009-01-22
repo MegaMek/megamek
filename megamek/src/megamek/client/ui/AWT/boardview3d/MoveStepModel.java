@@ -25,8 +25,9 @@ import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.*;
+
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.GUIPreferences;
-import megamek.client.ui.AWT.Messages;
 import megamek.common.IEntityMovementMode;
 import megamek.common.IEntityMovementType;
 import megamek.common.IHex;

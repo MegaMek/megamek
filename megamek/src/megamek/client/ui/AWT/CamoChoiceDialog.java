@@ -37,6 +37,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.util.ImageFileFactory;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.widget.AdvancedLabel;

@@ -33,7 +33,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import megamek.client.ui.swing.Messages;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.SingleChoiceDialog;
 import megamek.common.Coords;
 import megamek.common.Entity;

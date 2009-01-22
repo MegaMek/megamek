@@ -26,7 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.Messages;
 
 /**
  * Ask for the setting for a vibrabomb.

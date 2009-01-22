@@ -32,6 +32,7 @@ import java.util.Vector;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.Board;
 import megamek.common.Compute;

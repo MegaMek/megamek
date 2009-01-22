@@ -12,6 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import megamek.client.ui.Messages;
+
 /**
  * A dialog of which exits are connected for terrain.
  */

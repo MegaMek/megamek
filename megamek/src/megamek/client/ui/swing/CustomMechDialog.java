@@ -24,8 +24,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Label;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -51,7 +49,7 @@ import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.client.ui.GBC;
-import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -198,12 +196,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JComboBox choTargSys = new JComboBox();
 
     private JLabel labStartVelocity = new JLabel(Messages
-            .getString("CustomMechDialog.labStartVelocity"), Label.RIGHT); //$NON-NLS-1$
+            .getString("CustomMechDialog.labStartVelocity"), SwingConstants.RIGHT); //$NON-NLS-1$
 
     private JTextField fldStartVelocity = new JTextField(3);
 
     private JLabel labStartElevation = new JLabel(Messages
-            .getString("CustomMechDialog.labStartElevation"), Label.RIGHT); //$NON-NLS-1$
+            .getString("CustomMechDialog.labStartElevation"), SwingConstants.RIGHT); //$NON-NLS-1$
 
     private JTextField fldStartElevation = new JTextField(3);
 
@@ -243,7 +241,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     ClientGUI clientgui;
 
-    private Client client;
+    Client client;
 
     private PilotOptions options;
 
@@ -408,7 +406,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             tempPanel.add(labOffBoardDistance, GBC.std());
 
-            butOffBoardDistance.addActionListener(this);;
+            butOffBoardDistance.addActionListener(this);
             butOffBoardDistance.setText(Integer.toString(distance));
             tempPanel.add(butOffBoardDistance, GBC.eol());
         }
@@ -458,10 +456,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         private final char unitNumber = CustomMechDialog.this.entity
                                 .getUnitNumber();
 
-                        public boolean accept(Entity entity) {
-                            if ((entity instanceof Protomech)
-                                    && (ownerId == entity.getOwnerId())
-                                    && (unitNumber != entity.getUnitNumber())) {
+                        public boolean accept(Entity unitEntity) {
+                            if ((unitEntity instanceof Protomech)
+                                    && (ownerId == unitEntity.getOwnerId())
+                                    && (unitNumber != unitEntity.getUnitNumber())) {
                                 return true;
                             }
                             return false;
@@ -516,7 +514,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         // Set up commanders for commander killed victory condition
         if (clientgui.getClient().game.getOptions().booleanOption(
                 "commander_killed")) { //$NON-NLS-1$
-            tempPanel.add(labCommander, GBC.std());;
+            tempPanel.add(labCommander, GBC.std());
             tempPanel.add(chCommander, GBC.eol());
             chCommander.setSelected(entity.isCommander());
         }
@@ -975,7 +973,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
 
     // a choice panel for determining number of santa anna warheads
-    class SantaAnnaChoicePanel extends Panel {
+    class SantaAnnaChoicePanel extends JPanel {
         /**
          *
          */
@@ -994,7 +992,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             int loc;
             loc = m.getLocation();
             String sDesc = "Nuclear warheads for " + m_mounted.getName() + " (" + entity.getLocationAbbr(loc) + "):"; //$NON-NLS-1$ //$NON-NLS-2$
-            Label lLoc = new Label(sDesc);
+            JLabel lLoc = new JLabel(sDesc);
             GridBagLayout g = new GridBagLayout();
             setLayout(g);
             add(lLoc, GBC.std());
@@ -1016,7 +1014,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
     }
 
-    class BombChoicePanel extends Panel implements ItemListener {
+    class BombChoicePanel extends JPanel implements ItemListener {
         /**
          *
          */

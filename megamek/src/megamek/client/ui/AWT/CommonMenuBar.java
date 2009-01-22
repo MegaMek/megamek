@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.IGame;
 

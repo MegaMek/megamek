@@ -42,6 +42,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.client.ui.GBC;
+import megamek.client.ui.Messages;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;

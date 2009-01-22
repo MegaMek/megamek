@@ -16,7 +16,7 @@ package megamek.client.ui.swing;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dialog;
+import javax.swing.JDialog;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -30,6 +30,7 @@ import java.io.StreamTokenizer;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.common.IBoard;
 import megamek.common.IHex;
 import megamek.common.Terrains;
@@ -60,7 +61,7 @@ public class MapPreview extends Canvas {
     private final static int NBR_MODES = 3;
 
     private Image m_mapImage;
-    private Dialog m_dialog;
+    private JDialog m_dialog;
     private IBoard m_board;
     private static final int margin = 6;
     private int topMargin;
@@ -82,12 +83,13 @@ public class MapPreview extends Canvas {
     /**
      * Creates and lays out a new map preview.
      */
-    public MapPreview(Dialog d, IBoard board) throws IOException {
+    public MapPreview(JDialog d, IBoard board) throws IOException {
         m_board = board;
         m_dialog = d;
         initializeColors();
         m_dialog.setResizable(false);
         addMouseListener(new MouseAdapter() {
+        	@Override
             public void mousePressed(MouseEvent me) {
                 processMouseClick(me.getX(), me.getY(), me);
             }
@@ -307,6 +309,7 @@ public class MapPreview extends Canvas {
         repaint();
     }
 
+    @Override
     public void paint(Graphics g) {
         if (m_mapImage != null) {
             g.drawImage(m_mapImage, 0, 0, this);
@@ -650,7 +653,7 @@ public class MapPreview extends Canvas {
 
     }
 
-    private void processMouseClick(int x, int y, MouseEvent me) {
+    void processMouseClick(int x, int y, MouseEvent me) {
         if (y > (getSize().height - 14)) {
 
             if (x < 14) {

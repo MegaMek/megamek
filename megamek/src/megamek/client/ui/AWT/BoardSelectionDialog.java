@@ -43,6 +43,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Iterator;
 
+import megamek.client.ui.Messages;
 import megamek.common.Board;
 import megamek.common.IBoard;
 import megamek.common.MapSettings;

@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Player;
 

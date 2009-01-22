@@ -23,7 +23,6 @@ package megamek.client.ui;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 
-import megamek.client.ui.AWT.Messages;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BombType;

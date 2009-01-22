@@ -26,6 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import megamek.client.ui.Messages;
+
 /**
  * Ask for the setting for a vibrabomb.
  */

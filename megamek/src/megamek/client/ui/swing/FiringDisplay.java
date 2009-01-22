@@ -43,6 +43,7 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.IndexedCheckbox;
 import megamek.common.Aero;
 import megamek.common.AmmoType;

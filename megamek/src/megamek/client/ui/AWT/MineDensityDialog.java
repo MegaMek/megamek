@@ -25,6 +25,8 @@ import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import megamek.client.ui.Messages;
+
 /**
  * Ask for the density of all mines.
  */

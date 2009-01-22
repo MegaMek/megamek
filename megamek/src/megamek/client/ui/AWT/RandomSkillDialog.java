@@ -37,6 +37,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.Tank;

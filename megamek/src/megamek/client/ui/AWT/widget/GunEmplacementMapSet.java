@@ -23,8 +23,8 @@ import java.awt.Image;
 import java.awt.Polygon;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.GUIPreferences;
-import megamek.client.ui.AWT.Messages;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 

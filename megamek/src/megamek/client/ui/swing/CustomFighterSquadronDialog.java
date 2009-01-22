@@ -15,16 +15,12 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Checkbox;
-import java.awt.Choice;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Label;
 import java.awt.List;
-import java.awt.Panel;
 import java.awt.Point;
 import java.awt.TextArea;
 import java.awt.TextField;
@@ -42,10 +38,16 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.client.ui.MechView;
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
@@ -102,16 +104,16 @@ public class CustomFighterSquadronDialog
     private StringBuffer m_sbSearch = new StringBuffer();
     private long m_nLastSearch = 0;
 
-    private Label m_labelWeightClass = new Label(Messages.getString("MechSelectorDialog.m_labelWeightClass"), Label.RIGHT); //$NON-NLS-1$
-    private Choice m_chWeightClass = new Choice();
-    private Label m_labelType = new Label(Messages.getString("MechSelectorDialog.m_labelType"), Label.RIGHT); //$NON-NLS-1$
-    private Choice m_chType = new Choice();
-    private Choice m_chUnitType = new Choice();
-    private Label m_labelSort = new Label(Messages.getString("MechSelectorDialog.m_labelSort"), Label.RIGHT); //$NON-NLS-1$
-    private Choice m_chSort = new Choice();
-    private Panel m_pParams = new Panel();
-    private Panel m_pListOptions = new Panel();
-    private Label m_labelListOptions = new Label(Messages.getString("MechSelectorDialog.m_labelListOptions"));
+    private JLabel m_labelWeightClass = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JComboBox m_chWeightClass = new JComboBox();
+    private JLabel m_labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JComboBox m_chType = new JComboBox();
+    private JComboBox m_chUnitType = new JComboBox();
+    private JLabel m_labelSort = new JLabel(Messages.getString("MechSelectorDialog.m_labelSort"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JComboBox m_chSort = new JComboBox();
+    private JPanel m_pParams = new JPanel();
+    private JPanel m_pListOptions = new JPanel();
+    private JLabel m_labelListOptions = new JLabel(Messages.getString("MechSelectorDialog.m_labelListOptions"));
     private Checkbox m_cModel = new Checkbox(Messages.getString("MechSelectorDialog.m_cModel"), GUIPreferences.getInstance().getMechSelectorIncludeModel());
     private Checkbox m_cName = new Checkbox(Messages.getString("MechSelectorDialog.m_cName"), GUIPreferences.getInstance().getMechSelectorIncludeName());
     private Checkbox m_cTons = new Checkbox(Messages.getString("MechSelectorDialog.m_cTons"), GUIPreferences.getInstance().getMechSelectorIncludeTons());
@@ -120,57 +122,57 @@ public class CustomFighterSquadronDialog
     private Checkbox m_cLevel = new Checkbox(Messages.getString("MechSelectorDialog.m_cLevel"), GUIPreferences.getInstance().getMechSelectorIncludeLevel());
     private Checkbox m_cCost = new Checkbox(Messages.getString("MechSelectorDialog.m_cCost"), GUIPreferences.getInstance().getMechSelectorIncludeCost());
 
-    private Button butRemove = new Button("<<"); //$NON-NLS-1$
-    private Button butAdd = new Button(">>"); //$NON-NLS-1$
+    private JButton butRemove = new JButton("<<"); //$NON-NLS-1$
+    private JButton butAdd = new JButton(">>"); //$NON-NLS-1$
 
-    private Panel m_pOpenAdvanced = new Panel();
-    private Button m_bToggleAdvanced = new Button("< Advanced Search >");
-    private Panel m_pSouthParams = new Panel();
+    private JPanel m_pOpenAdvanced = new JPanel();
+    private JButton m_bToggleAdvanced = new JButton("< Advanced Search >");
+    private JPanel m_pSouthParams = new JPanel();
 
     List m_mechList = new List(10);
 
     private List listFightersSelected = new List();
     private Vector<Aero> squadron = new Vector<Aero>();
 
-    private Button m_bPick = new Button(Messages.getString("CustomFighterSquadronDialog.m_bPick")); //$NON-NLS-1$
-    private Button m_bCancel = new Button(Messages.getString("Close")); //$NON-NLS-1$
-    private Panel m_pButtons = new Panel();
-    private Panel m_pChooseButtons = new Panel();
+    private JButton m_bPick = new JButton(Messages.getString("CustomFighterSquadronDialog.m_bPick")); //$NON-NLS-1$
+    private JButton m_bCancel = new JButton(Messages.getString("Close")); //$NON-NLS-1$
+    private JPanel m_pButtons = new JPanel();
+    private JPanel m_pChooseButtons = new JPanel();
 
     private TextArea m_mechView = new TextArea("",36,35);
     private TextArea squadronView = new TextArea("",18,35);
-    private Panel m_pLeft = new Panel();
-    private Panel m_pMiddle = new Panel();
+    private JPanel m_pLeft = new JPanel();
+    private JPanel m_pMiddle = new JPanel();
 
 
-    private Choice m_cWalk = new Choice();
+    private JComboBox m_cWalk = new JComboBox();
     private TextField m_tWalk = new TextField(2);
-    private Choice m_cJump = new Choice();
+    private JComboBox m_cJump = new JComboBox();
     private TextField m_tJump = new TextField(2);
-    private Choice m_cArmor = new Choice();
+    private JComboBox m_cArmor = new JComboBox();
     private TextField m_tWeapons1 = new TextField(2);
-    private Choice m_cWeapons1 = new Choice();
-    private Choice m_cOrAnd = new Choice();
+    private JComboBox m_cWeapons1 = new JComboBox();
+    private JComboBox m_cOrAnd = new JComboBox();
     private TextField m_tWeapons2 = new TextField(2);
-    private Choice m_cWeapons2 = new Choice();
+    private JComboBox m_cWeapons2 = new JComboBox();
     private Checkbox m_chkEquipment = new Checkbox();
-    private Choice m_cEquipment = new Choice();
+    private JComboBox m_cEquipment = new JComboBox();
     private TextField m_tStartYear = new TextField(4);
     private TextField m_tEndYear = new TextField(4);
-    private Button m_bSearch = new Button(Messages.getString("MechSelectorDialog.Search.Search"));
-    private Button m_bReset = new Button(Messages.getString("MechSelectorDialog.Search.Reset"));
-    private Label m_lCount = new Label();
+    private JButton m_bSearch = new JButton(Messages.getString("MechSelectorDialog.Search.Search"));
+    private JButton m_bReset = new JButton(Messages.getString("MechSelectorDialog.Search.Reset"));
+    private JLabel m_lCount = new JLabel();
 
     private int m_count;
     private int m_old_nType;
     private int m_old_nUnitType;
 
-    private Panel m_pUpper = new Panel();
-    private Panel m_pLower = new Panel();
+    private JPanel m_pUpper = new JPanel();
+    private JPanel m_pLower = new JPanel();
     BufferedPanel m_pPreview = new BufferedPanel();
 
-    private Label m_labelPlayer = new Label(Messages.getString("MechSelectorDialog.m_labelPlayer"), Label.RIGHT); //$NON-NLS-1$
-    private Choice m_chPlayer = new Choice();
+    private JLabel m_labelPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JComboBox m_chPlayer = new JComboBox();
 
     private boolean includeMaxTech;
 
@@ -260,6 +262,7 @@ public class CustomFighterSquadronDialog
 
         clearMechPreview();
 
+        populateChoices();
 
         listFightersSelected.addItemListener(this);
         listFightersSelected.addKeyListener(this);
@@ -278,14 +281,13 @@ public class CustomFighterSquadronDialog
         butRemove.addActionListener(this);
         setSize(1100, 350);
         setLocation(computeDesiredLocation());
-        populateChoices();
         addWindowListener(this);
         updateWidgetEnablements();
     }
 
     private void buildSouthParams(boolean showAdvanced) {
         if (showAdvanced) {
-            m_bToggleAdvanced.setLabel(Messages
+            m_bToggleAdvanced.setText(Messages
                     .getString("MechSelectorDialog.Search.Hide"));
             m_pOpenAdvanced.add(m_bToggleAdvanced);
 
@@ -293,76 +295,76 @@ public class CustomFighterSquadronDialog
             m_pSouthParams.add(m_pListOptions);
             m_pSouthParams.add(m_pOpenAdvanced);
 
-            Panel row1 = new Panel();
+            JPanel row1 = new JPanel();
             row1.setLayout(new FlowLayout(FlowLayout.LEFT));
-            row1.add(new Label(Messages
+            row1.add(new JLabel(Messages
                     .getString("MechSelectorDialog.Search.Walk")));
             row1.add(m_cWalk);
             row1.add(m_tWalk);
             m_pSouthParams.add(row1);
 
-            Panel row2 = new Panel();
+            JPanel row2 = new JPanel();
             row2.setLayout(new FlowLayout(FlowLayout.LEFT));
-            row2.add(new Label(Messages
+            row2.add(new JLabel(Messages
                     .getString("MechSelectorDialog.Search.Jump")));
             row2.add(m_cJump);
             row2.add(m_tJump);
             m_pSouthParams.add(row2);
 
-            Panel row3 = new Panel();
+            JPanel row3 = new JPanel();
             row3.setLayout(new FlowLayout(FlowLayout.LEFT));
-            row3.add(new Label(Messages
+            row3.add(new JLabel(Messages
                     .getString("MechSelectorDialog.Search.Armor")));
             row3.add(m_cArmor);
             m_pSouthParams.add(row3);
 
-            Panel row4 = new Panel();
+            JPanel row4 = new JPanel();
             row4.setLayout(new FlowLayout(FlowLayout.LEFT));
-            row4.add(new Label(Messages
+            row4.add(new JLabel(Messages
                     .getString("MechSelectorDialog.Search.Weapons")));
             m_pSouthParams.add(row4);
 
-            Panel row5 = new Panel();
+            JPanel row5 = new JPanel();
             row5.setLayout(new FlowLayout(FlowLayout.LEFT));
-            row5.add(new Label(Messages
+            row5.add(new JLabel(Messages
                     .getString("MechSelectorDialog.Search.WeaponsAtLeast")));
             row5.add(m_tWeapons1);
             row5.add(m_cWeapons1);
             m_pSouthParams.add(row5);
 
-            Panel row6 = new Panel();
+            JPanel row6 = new JPanel();
             row6.setLayout(new FlowLayout(FlowLayout.LEFT));
             row6.add(m_cOrAnd);
-            row6.add(new Label(Messages
+            row6.add(new JLabel(Messages
                     .getString("MechSelectorDialog.Search.WeaponsAtLeast")));
             row6.add(m_tWeapons2);
             row6.add(m_cWeapons2);
             m_pSouthParams.add(row6);
 
-            Panel row7 = new Panel();
+            JPanel row7 = new JPanel();
             row7.setLayout(new FlowLayout(FlowLayout.LEFT));
-            row7.add(new Label(Messages
+            row7.add(new JLabel(Messages
                     .getString("MechSelectorDialog.Search.Equipment")));
             row7.add(m_chkEquipment);
             row7.add(m_cEquipment);
             m_pSouthParams.add(row7);
 
-            Panel row8 = new Panel();
+            JPanel row8 = new JPanel();
             row8.setLayout(new FlowLayout(FlowLayout.LEFT));
-            row8.add(new Label(Messages
+            row8.add(new JLabel(Messages
                     .getString("MechSelectorDialog.Search.Year")));
             row8.add(m_tStartYear);
-            row8.add(new Label("-"));
+            row8.add(new JLabel("-"));
             row8.add(m_tEndYear);
             m_pSouthParams.add(row8);
 
-            Panel row9 = new Panel();
+            JPanel row9 = new JPanel();
             row9.add(m_bSearch);
             row9.add(m_bReset);
             row9.add(m_lCount);
             m_pSouthParams.add(row9);
         } else {
-            m_bToggleAdvanced.setLabel(Messages
+            m_bToggleAdvanced.setText(Messages
                     .getString("MechSelectorDialog.Search.Show"));
             m_pOpenAdvanced.add(m_bToggleAdvanced);
 
@@ -374,7 +376,7 @@ public class CustomFighterSquadronDialog
 
     private void toggleAdvanced() {
         m_pUpper.remove(m_pSouthParams);
-        m_pSouthParams = new Panel();
+        m_pSouthParams = new JPanel();
         if (GUIPreferences.getInstance().getMechSelectorShowAdvanced()) {
             buildSouthParams(false);
             GUIPreferences.getInstance().setMechSelectorShowAdvanced(false);
@@ -403,7 +405,7 @@ public class CustomFighterSquadronDialog
     }
 
     private void updatePlayerChoice() {
-        String lastChoice = m_chPlayer.getSelectedItem();
+        String lastChoice = (String)m_chPlayer.getSelectedItem();
         m_chPlayer.removeAll();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(m_clientgui.getClient().getName());
@@ -413,7 +415,7 @@ public class CustomFighterSquadronDialog
         if (m_chPlayer.getItemCount() == 1) {
             m_chPlayer.setEnabled(false);
         } else {
-            m_chPlayer.select(lastChoice);
+            m_chPlayer.setSelectedItem(lastChoice);
         }
     }
 
@@ -442,7 +444,7 @@ public class CustomFighterSquadronDialog
             m_chWeightClass.addItem(EntityWeightClass.getClassName(i));
         }
         m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
-        m_chWeightClass.select(0);
+        m_chWeightClass.setSelectedIndex(0);
 
         includeMaxTech = m_client.game.getOptions().booleanOption(
                 "allow_advanced_units");
@@ -451,23 +453,23 @@ public class CustomFighterSquadronDialog
         for (int i = 0; i < maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }
-        // m_chType.addItem(Messages.getString("MechSelectorDialog.ISAll"));
+        m_chType.addItem(Messages.getString("MechSelectorDialog.ISAll"));
         // //$NON-NLS-1$
-        // m_chType.addItem(Messages.getString("MechSelectorDialog.ISAndClan"));
+        m_chType.addItem(Messages.getString("MechSelectorDialog.ISAndClan"));
         // //$NON-NLS-1$
         // More than 8 items causes the drop down to sprout a vertical
         // scroll bar. I guess we'll sacrifice this next one to stay
-        // under the limit. Stupid AWT Choice class!
-        // m_chType.addItem("Mixed All");
-        // m_chType.addItem(Messages.getString("MechSelectorDialog.All"));
+        // under the limit. Stupid AWT JComboBox class!
+        m_chType.addItem("Mixed All");
+        m_chType.addItem(Messages.getString("MechSelectorDialog.All"));
         // //$NON-NLS-1$
-        m_chType.select(0);
+        m_chType.setSelectedIndex(0);
 
         for (int i = 0; i < UnitType.SIZE; i++) {
             m_chUnitType.addItem(UnitType.getTypeDisplayableName(i));
         }
         m_chUnitType.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
-        m_chUnitType.select(UnitType.AERO);
+        m_chUnitType.setSelectedIndex(0);
 
         m_cWalk
                 .addItem(Messages
@@ -509,7 +511,9 @@ public class CustomFighterSquadronDialog
         m_tWeapons2.setText("");
         m_chkEquipment.setState(false);
         int nType = m_chType.getSelectedIndex();
+        if (nType == -1) nType = 0;
         int nUnitType = m_chUnitType.getSelectedIndex();
+        if (nUnitType == -1) nUnitType = 0;
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
                 .hasMoreElements();) {
             EquipmentType et = e.nextElement();
@@ -546,11 +550,11 @@ public class CustomFighterSquadronDialog
             }
         }
         for (String weaponName : weapons) {
-            m_cWeapons1.add(weaponName);
-            m_cWeapons2.add(weaponName);
+            m_cWeapons1.addItem(weaponName);
+            m_cWeapons2.addItem(weaponName);
         }
         for (String equipName : equipment) {
-            m_cEquipment.add(equipName);
+            m_cEquipment.addItem(equipName);
         }
         m_cWeapons1.invalidate();
         m_cWeapons2.invalidate();
@@ -822,18 +826,18 @@ public class CustomFighterSquadronDialog
     }
 
     private void resetSearch() {
-        m_cWalk.select(0);
+        m_cWalk.setSelectedIndex(0);
         m_tWalk.setText("");
-        m_cJump.select(0);
+        m_cJump.setSelectedIndex(0);
         m_tJump.setText("");
-        m_cArmor.select(0);
+        m_cArmor.setSelectedIndex(0);
         m_tWeapons1.setText("");
-        m_cWeapons1.select(0);
-        m_cOrAnd.select(0);
+        m_cWeapons1.setSelectedIndex(0);
+        m_cOrAnd.setSelectedIndex(0);
         m_tWeapons2.setText("");
-        m_cWeapons2.select(0);
+        m_cWeapons2.setSelectedIndex(0);
         m_chkEquipment.setState(false);
-        m_cEquipment.select(0);
+        m_cEquipment.setSelectedIndex(0);
 
         filterMechs(false);
     }
@@ -952,7 +956,7 @@ public class CustomFighterSquadronDialog
             }
             Client c = null;
             if (m_chPlayer.getSelectedIndex() > 0) {
-                String name = m_chPlayer.getSelectedItem();
+                String name = (String)m_chPlayer.getSelectedItem();
                 c = m_clientgui.getBots().get(name);
             }
             if (c == null) {

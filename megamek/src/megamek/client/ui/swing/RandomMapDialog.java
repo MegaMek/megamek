@@ -42,6 +42,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.SimpleLine;
 import megamek.common.MapSettings;
 

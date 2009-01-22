@@ -26,6 +26,7 @@ import java.awt.event.KeyListener;
 import java.util.LinkedList;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GameListenerAdapter;

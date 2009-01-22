@@ -28,6 +28,7 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 
 public class PlayerListDialog extends JDialog implements ActionListener {

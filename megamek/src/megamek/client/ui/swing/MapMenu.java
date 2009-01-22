@@ -26,6 +26,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.common.AmmoType;
 import megamek.common.BipedMech;
 import megamek.common.BuildingTarget;

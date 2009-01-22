@@ -46,6 +46,7 @@ import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.ui.MechView;
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;

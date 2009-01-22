@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.AdvancedLabel;
 
 /**

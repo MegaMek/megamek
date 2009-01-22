@@ -30,6 +30,7 @@ import java.awt.event.KeyListener;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.Player;

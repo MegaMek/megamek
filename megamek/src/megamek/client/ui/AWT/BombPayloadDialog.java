@@ -30,6 +30,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.common.Mounted;
 
 /**

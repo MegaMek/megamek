@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client.ui.swing;
+package megamek.client.ui;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
@@ -28,6 +28,7 @@ public class Messages {
                     .getLocale());
 
     private Messages() {
+    	//All static class, should never be instantiated
     }
 
     public static String getString(String key) {

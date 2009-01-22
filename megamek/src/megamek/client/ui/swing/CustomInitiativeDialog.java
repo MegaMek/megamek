@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 
 public class CustomInitiativeDialog extends JDialog implements ActionListener,
         WindowListener {

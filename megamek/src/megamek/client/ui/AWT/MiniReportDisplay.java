@@ -24,6 +24,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import megamek.client.ui.Messages;
+
 /**
  * Shows a Report, with an Okay Button
  */

@@ -26,6 +26,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import megamek.client.ui.Messages;
 import megamek.common.MechSummaryCache;
 
 public class UnitLoadingDialog extends JDialog {

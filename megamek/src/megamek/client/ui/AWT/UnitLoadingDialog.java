@@ -25,6 +25,7 @@ import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Label;
 
+import megamek.client.ui.Messages;
 import megamek.common.MechSummaryCache;
 
 public class UnitLoadingDialog extends Dialog {

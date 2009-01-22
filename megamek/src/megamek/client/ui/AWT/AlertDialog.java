@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.AdvancedLabel;
 
 /**

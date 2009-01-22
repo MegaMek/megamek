@@ -29,6 +29,8 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import megamek.client.ui.Messages;
+
 /**
  * A simple prompt.
  */

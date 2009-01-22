@@ -30,6 +30,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.MiscType;
 import megamek.common.Mounted;

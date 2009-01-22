@@ -30,6 +30,7 @@ import java.io.StreamTokenizer;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.common.IBoard;
 import megamek.common.IHex;
 import megamek.common.Terrains;

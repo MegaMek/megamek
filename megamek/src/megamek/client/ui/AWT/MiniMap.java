@@ -44,6 +44,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.IBoardView;
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.common.Coords;
 import megamek.common.Entity;

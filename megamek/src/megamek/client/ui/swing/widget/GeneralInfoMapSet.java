@@ -23,8 +23,8 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.Messages;
 import megamek.common.Aero;
 import megamek.common.Building;
 import megamek.common.Entity;

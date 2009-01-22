@@ -22,8 +22,8 @@ import java.awt.Image;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.GUIPreferences;
-import megamek.client.ui.AWT.Messages;
 import megamek.common.Aero;
 import megamek.common.Building;
 import megamek.common.Entity;

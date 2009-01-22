@@ -45,6 +45,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
 import megamek.client.ui.GBC;
+import megamek.client.ui.Messages;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;

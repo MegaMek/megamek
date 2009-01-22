@@ -35,6 +35,7 @@ v0.33.39-dev (SVN)
 + Rename "allow level 3 ammunition" game option to "allow advanced ammunition"
 + Bug 2517886: TacOps PSR weightclass mod not stacking correctly
 + Default players to a team, instead of "No Team"
++ Laser AMS should have BV of 45, not 105 
 
 v0.33.38 (2009-01-15, 19:51 UTC+1)
 + New public method to compact engines and compact gyros

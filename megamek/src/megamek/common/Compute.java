@@ -985,37 +985,19 @@ public class Compute {
         if (!attacker.isProne()) {
             return null; // no modifier
         }
-
         ToHitData mods = new ToHitData();
         Mounted weapon = attacker.getEquipment(weaponId);
         if (attacker.entityIsQuad()) {
             int legsDead = ((Mech) attacker).countBadLegs();
-            if (legsDead == 0) {
+            boolean hasHipCrit = ((Mech)attacker).hasHipCrit();
+            if ((legsDead == 0) && !hasHipCrit) {
                 // No legs destroyed: no penalty and can fire all weapons
                 return null; // no modifier
-            } else if (legsDead >= 3) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with three or more legs destroyed.");
+            } else {
+                // a bad leg or hip, no firing according to
+                // http://www.classicbattletech.com/forums/index.php/topic,44690.msg1076915.html#msg1076915
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with a destroyed leg or hip.");
             }
-            // we have one or two dead legs...
-
-            // Need an intact front leg
-            if (attacker.isLocationBad(Mech.LOC_RARM) && attacker.isLocationBad(Mech.LOC_LARM)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with both front legs destroyed.");
-            }
-
-            // front leg-mounted weapons have addidional trouble
-            if ((weapon.getLocation() == Mech.LOC_RARM) || (weapon.getLocation() == Mech.LOC_LARM)) {
-                int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
-                // check previous attacks for weapons fire from the other arm
-                if (Compute.isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone and firing from other front leg already.");
-                }
-            }
-            // can't fire rear leg weapons
-            if ((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
-            }
-            mods.addModifier(2, "attacker prone");
         } else {
             int l3ProneFiringArm = Entity.LOC_NONE;
 

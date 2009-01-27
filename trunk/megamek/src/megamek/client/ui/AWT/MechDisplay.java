@@ -1445,9 +1445,7 @@ public class MechDisplay extends BufferedPanel {
                         i++;
                     }
                 }
-                if (nCur == -1) {
-                    m_chAmmo.setEnabled(false);
-                } else {
+                if (nCur != -1) {
                     m_chAmmo.select(nCur);
                 }
             }

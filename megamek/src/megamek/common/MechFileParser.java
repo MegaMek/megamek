@@ -81,7 +81,7 @@ public class MechFileParser {
         if (entryName == null) {
             // try normal file
             try {
-                parse(new FileInputStream(f), f.getName());
+                parse(new FileInputStream(f.getAbsolutePath()), f.getName());
             } catch (Exception ex) {
                 ex.printStackTrace();
                 if (ex instanceof EntityLoadingException) {
@@ -92,10 +92,11 @@ public class MechFileParser {
                         + ex.getClass() + ": " + ex.getMessage());
             }
         } else {
+
             // try zip file
             ZipFile zFile;
             try {
-                zFile = new ZipFile(f);
+                zFile = new ZipFile(f.getAbsolutePath());
                 parse(zFile.getInputStream(zFile.getEntry(entryName)),
                         entryName);
             } catch (EntityLoadingException ele) {
@@ -182,9 +183,10 @@ public class MechFileParser {
                     loader = new BLKWarshipFile(bb);
                 } else if (sType.equals("SpaceStation")) {
                     loader = new BLKSpaceStationFile(bb);
-                } else
+                } else {
                     throw new EntityLoadingException("Unknown UnitType: "
                             + sType);
+                }
             } else {
                 loader = new BLKMechFile(bb);
             }
@@ -226,10 +228,10 @@ public class MechFileParser {
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_SEISMIC));
             ent.setNextSensor(ent.getSensors().firstElement());
         }
-        
+
         // Walk through the list of equipment.
         for (Mounted m : ent.getMisc()) {
-            
+
             // Link Artemis IV fire-control systems to their missle racks.
             if (m.getType().hasFlag(MiscType.F_ARTEMIS)
                     && m.getLinked() == null) {
@@ -311,12 +313,12 @@ public class MechFileParser {
 
                     // check location
                     if (mWeapon.getLocation() == m.getLocation()) {
-                        
+
                         //Only Legal IS PPC's are allowed.
                         if ( mWeapon.getType() instanceof ISPPC
                                 ||  mWeapon.getType() instanceof ISLightPPC
                                 ||  mWeapon.getType() instanceof ISHeavyPPC
-                                ||  mWeapon.getType() instanceof ISERPPC 
+                                ||  mWeapon.getType() instanceof ISERPPC
                                 ||  mWeapon.getType() instanceof ISSnubNosePPC ) {
                             m.setLinked(mWeapon);
                             break;
@@ -353,7 +355,7 @@ public class MechFileParser {
                         m.setLinked(mWeapon);
                         break;
                     }
-                    
+
                 }
 
                 if (m.getLinked() == null) {
@@ -388,7 +390,7 @@ public class MechFileParser {
                     ent.setNextSensor(ent.getSensors().lastElement());
                 }
             }
-            
+
             if (ent instanceof Mech
                     && (m.getType().hasFlag(MiscType.F_CASE) || m.getType()
                             .hasFlag(MiscType.F_CASEII))) {
@@ -396,35 +398,35 @@ public class MechFileParser {
             }
 
             if ( ent instanceof Mech && m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
-                
-                if ( ent.hasTargComp() 
-                        || ((Mech)ent).hasTSM() 
+
+                if ( ent.hasTargComp()
+                        || ((Mech)ent).hasTSM()
                         || (((Mech)ent).hasMASC() && !ent.hasWorkingMisc(MiscType.F_MASC, MiscType.S_SUPERCHARGER)) ) {
                     throw new EntityLoadingException("Unable to load AES due to incompatible systems");
                 }
-                
+
                 if ( m.getLocation() != Mech.LOC_LARM && m.getLocation() != Mech.LOC_LLEG
                         && m.getLocation() != Mech.LOC_RARM && m.getLocation() != Mech.LOC_RLEG) {
                     throw new EntityLoadingException("Unable to load AES due to incompatible location");
                 }
-                
+
             }
-            
+
             if ( m.getType().hasFlag(MiscType.F_HARJEL) && m.getLocation() == Mech.LOC_HEAD ) {
                 throw new EntityLoadingException("Unable to load harjel in head.");
             }
-            
-            if ( m.getType().hasFlag(MiscType.F_MODULAR_ARMOR) 
+
+            if ( m.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
                     && ( (ent instanceof Mech && m.getLocation() == Mech.LOC_HEAD) || (ent instanceof VTOL && m.getLocation() == VTOL.LOC_ROTOR) )) {
                 throw new EntityLoadingException("Unable to load Modular Armor in Rotor/Head location");
             }
-            
+
             if ( m.getType().hasFlag(MiscType.F_TALON) ){
                if ( ent instanceof BipedMech ){
                    if ( m.getLocation() != Mech.LOC_LLEG && m.getLocation() != Mech.LOC_RLEG ){
                        throw new EntityLoadingException("Talons are only legal in the Legs");
                    }
-                   
+
                    if ( !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LLEG) ){
                        throw new EntityLoadingException("Talons must be in all legs");
                    }
@@ -433,24 +435,24 @@ public class MechFileParser {
                            m.getLocation() != Mech.LOC_LARM && m.getLocation() != Mech.LOC_RARM){
                        throw new EntityLoadingException("Talons are only legal in the Legs");
                    }
-                   
-                   if ( !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LLEG) || 
+
+                   if ( !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LLEG) ||
                            !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LARM) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LARM)){
                        throw new EntityLoadingException("Talons must be in all legs");
                    }
-                   
+
                }else {
                    throw new EntityLoadingException("Unable to load talons in non-Mek entity");
                }
             }
-            
+
         } // Check the next piece of equipment.
-        
+
         //need to load all those weapons in the weapon bays
-        if(ent.usesWeaponBays()) {    
+        if(ent.usesWeaponBays()) {
             ent.loadAllWeapons();
         }
-                   
+
         if(ent instanceof Aero) {
             //set RACs and UACs at maximum firing rate if aero
             ent.setRapidFire();
@@ -458,7 +460,7 @@ public class MechFileParser {
             //in space during deployment
             ent.setElevation(10);
         }
-        
+
         // Check if it's canon; if it is, mark it as such.
         ent.setCanon(false);// Guilty until proven innocent
         try {
@@ -523,19 +525,23 @@ public class MechFileParser {
                     File outFile = new File(outFilename);
                     if (outFile.exists()) {
                         if (!MechFileParser
-                                .getResponse("File already exists, overwrite? "))
+                                .getResponse("File already exists, overwrite? ")) {
                             return;
+                        }
                     }
                     out = new BufferedWriter(new FileWriter(outFile));
                     out.write(((Mech) e).getMtf());
                 } else if (e instanceof Tank) {
                     outFilename += ".blk";
-                    if (e instanceof SupportTank)
-                        if (e instanceof LargeSupportTank)
+                    if (e instanceof SupportTank) {
+                        if (e instanceof LargeSupportTank) {
                             BLKLargeSupportTankFile.encode(outFilename, (LargeSupportTank)e);
-                        else BLKSupportTankFile.encode(outFilename, (SupportTank)e);
-                    else
+                        } else {
+                            BLKSupportTankFile.encode(outFilename, (SupportTank)e);
+                        }
+                    } else {
                         BLKTankFile.encode(outFilename, (Tank) e);
+                    }
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -560,8 +566,9 @@ public class MechFileParser {
             response = in.readLine();
         } catch (IOException ioe) {
         }
-        if (response != null && response.toLowerCase().indexOf("y") == 0)
+        if (response != null && response.toLowerCase().indexOf("y") == 0) {
             return true;
+        }
         return false;
     }
 

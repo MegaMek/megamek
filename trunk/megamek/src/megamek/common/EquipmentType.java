@@ -165,7 +165,7 @@ public class EquipmentType {
         return tonnage;
     }
 
-    public void setTonange(float tonnage) {
+    public void setTonnage(float tonnage) {
         this.tonnage = tonnage;
     }
 

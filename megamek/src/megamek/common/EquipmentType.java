@@ -523,4 +523,62 @@ public class EquipmentType {
             e.printStackTrace();
         }
     }
+
+    public static void writeEquipmentExtendedDatabase(File f) {
+        try {
+            BufferedWriter w = new BufferedWriter(new FileWriter(f));
+            w.write("Megamek Equipment Extended Database");
+            w.newLine();
+            w.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
+            w.write(f.toString());
+            w.newLine();
+            w.write("Type,Tech Base,Rules,Name,Tonnage,Crits,Cost,BV");
+            w.newLine();
+            for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
+                EquipmentType type = e.nextElement();
+                if (type instanceof AmmoType) {
+                    w.write("A,");
+                } else if (type instanceof WeaponType) {
+                    w.write("W,");
+                } else {
+                    w.write("M,");
+                }
+                w.write(TechConstants.getTechName(type.getTechLevel()));
+                w.write(",");
+                w.write(TechConstants.getLevelName(type.getTechLevel()));
+                w.write(",");
+                w.write(type.getName());
+                w.write(",");
+                if ( type.tonnage == EquipmentType.TONNAGE_VARIABLE ){
+                    w.write("Variable");
+                } else {
+                    w.write(Float.toString(type.tonnage));
+                }
+                w.write(",");
+                if ( type.criticals == EquipmentType.CRITICALS_VARIABLE ){
+                    w.write("Variable");
+                } else{
+                    w.write(Integer.toString(type.criticals));
+                }
+                w.write(",");
+                if ( type.cost == EquipmentType.COST_VARIABLE ){
+                    w.write("Variable");
+                } else {
+                    w.write(Double.toString(type.getCost()));
+                }
+                w.write(",");
+                if (type.bv == EquipmentType.BV_VARIABLE) {
+                    w.write("Variable");
+                } else {
+                    w.write(Double.toString(type.bv));
+                }
+                w.newLine();
+            }
+            w.flush();
+            w.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

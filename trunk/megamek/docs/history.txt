@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.33.40-dev (SVN)
+
 v0.33.39 (2009-01-28, UTC+1)
 + Don't crash the server when trying to add newlines to empty Vector of Reports
 + Destruction of carried infantry when carrier dies according to TW rules

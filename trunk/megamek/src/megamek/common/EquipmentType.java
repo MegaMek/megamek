@@ -165,6 +165,10 @@ public class EquipmentType {
         return tonnage;
     }
 
+    public void setTonange(float tonnage) {
+        this.tonnage = tonnage;
+    }
+
     public int getCriticals(Entity entity) {
         return criticals;
     }

@@ -48,7 +48,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.33.39-dev"; //$NON-NLS-1$
+    public static String VERSION = "0.33.39"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator + "timestamp").lastModified(); //$NON-NLS-1$
@@ -371,34 +371,34 @@ public class MegaMek {
         @Override
         protected void start() throws ParseException {
 
-            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_LOG)) {
+            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_LOG)) {
                 nextToken();
                 parseLog();
             }
-            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_EQUIPMENT_DB)) {
+            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_EQUIPMENT_DB)) {
                 nextToken();
                 processEquipmentDb();
             }
 
-            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_EQUIPMENT_EXTENDED_DB)) {
+            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_EQUIPMENT_EXTENDED_DB)) {
                 nextToken();
                 processExtendedEquipmentDb();
             }
 
-            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_UNIT_VALIDATOR)) {
+            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_UNIT_VALIDATOR)) {
                 nextToken();
                 processUnitValidator();
             }
 
-            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_UNIT_EXPORT)) {
+            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_UNIT_EXPORT)) {
                 nextToken();
                 processUnitExporter();
             }
 
-            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_DEDICATED)) {
+            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_DEDICATED)) {
                 nextToken();
                 dedicatedServer = true;
-            } else if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_GUI)) {
+            } else if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_GUI)) {
                 nextToken();
                 parseGUI();
             }
@@ -487,7 +487,7 @@ public class MegaMek {
                                         "data/mechfiles/UnitVerifierOptions.xml"));
                         MechView mechView = new MechView(entity, false);
                         StringBuffer sb = new StringBuffer(mechView.getMechReadout());
-                        if (entity instanceof Mech || entity instanceof Tank) {
+                        if ((entity instanceof Mech) || (entity instanceof Tank)) {
                             TestEntity testEntity = null;
                             if (entity instanceof Mech) {
                                 testEntity = new TestMech((Mech) entity,entityVerifier.mechOption, null);

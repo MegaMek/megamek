@@ -38,6 +38,7 @@ v0.33.39-dev (SVN)
 + Laser AMS should have BV of 45, not 105 
 + RFE: Check for defaulthexset if selected hexset does not exist
 + RFE: Create defaulthexset if it does not exist and is needed
++ Bug: Not able to Load more then 1 mul at a time using MegaMekLab
 
 v0.33.38 (2009-01-15, 19:51 UTC+1)
 + New public method to compact engines and compact gyros

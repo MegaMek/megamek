@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2008 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -31,7 +31,7 @@ import megamek.common.ToHitData;
 public class BAVibroClawAttackAction extends AbstractAttackAction {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1432011536091665084L;
 
@@ -61,7 +61,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         int targetId = Entity.NONE;
         Entity te = null;
         // arguments legal?
-        if (ae == null || target == null) {
+        if ((ae == null) || (target == null)) {
             throw new IllegalArgumentException("Attacker or target not valid");
         }
 
@@ -72,26 +72,27 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
 
         if (!game.getOptions().booleanOption("friendly_fire")) {
             // a friendly unit can never be the target of a direct attack.
-            if (target.getTargetType() == Targetable.TYPE_ENTITY
-                    && (((Entity)target).getOwnerId() == ae.getOwnerId()
-                            || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
-                                    && ae.getOwner().getTeam() != Player.TEAM_NONE
-                                    && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
+            if ((target.getTargetType() == Targetable.TYPE_ENTITY)
+                    && ((((Entity)target).getOwnerId() == ae.getOwnerId())
+                            || ((((Entity)target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+            }
         }
 
         final IHex attHex = game.getBoard().getHex(ae.getPosition());
         final IHex targHex = game.getBoard().getHex(target.getPosition());
-        if (attHex == null || targHex == null) {
+        if ((attHex == null) || (targHex == null)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "off board");
         }
-        boolean inSameBuilding = te != null && game.getBoard().getBuildingAt(ae.getPosition()) != null
-        && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
+        boolean inSameBuilding = (te != null) && (game.getBoard().getBuildingAt(ae.getPosition()) != null)
+            && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
 
         ToHitData toHit;
 
         // can't target yourself
-        if (ae.equals(te)) {
+        if ((te != null) && ae.equals(te)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "You can't target yourself");
         }
@@ -101,8 +102,8 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Non-BA can't make vibroclaw-physicalattacks");
         }
-        
-        if (!(te instanceof Infantry)) {
+
+        if ((te != null) && !((te instanceof Infantry))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "can't target non-infantry");
         }
@@ -114,13 +115,13 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         }
 
         // Can't target a transported entity.
-        if (te != null && Entity.NONE != te.getTransportId()) {
+        if ((te != null) && (Entity.NONE != te.getTransportId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if (te != null && Entity.NONE != te.getSwarmTargetId()) {
+        if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is swarming a Mek.");
         }
@@ -132,21 +133,21 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         }
 
         // check elevation
-        if (te.getElevation() > 0) {
+        if ((te != null) && (te.getElevation() > 0)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target elevation not in range");
         }
 
         // can't physically attack mechs making dfa attacks
-        if (te != null && te.isMakingDfa()) {
+        if ((te != null) && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is making a DFA attack");
         }
 
         // Can't target woods or ignite a building with a physical.
-        if (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
-                || target.getTargetType() == Targetable.TYPE_HEX_CLEAR
-                || target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
+        if ((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
+                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
@@ -172,7 +173,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         if (ae.isSpotting()) {
             toHit.addModifier(+1, "attacker is spotting");
         }
-        
+
         // taser feedback
         if (ae.getTaserFeedBackRounds() > 0) {
             toHit.addModifier(1, "Taser feedback");

@@ -55,7 +55,7 @@ public class MegaMek {
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
-    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek [-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)|(-export)|(-eqdb)] [<args>]";
+    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek [-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)|(-export)|(-eqdb)|(-eqedb] [<args>]";
     private static final String UNKNOWN_GUI_MESSAGE = "Unknown GUI:";
     private static final String GUI_CLASS_NOT_FOUND_MESSAGE = "Couldn't find the GUI Class:";
     private static final String DEFAULT_LOG_FILE_NAME = "megameklog.txt"; //$NON-NLS-1$
@@ -321,6 +321,7 @@ public class MegaMek {
         private static final String OPTION_GUI = "gui"; //$NON-NLS-1$
         private static final String OPTION_LOG = "log"; //$NON-NLS-1$
         private static final String OPTION_EQUIPMENT_DB = "eqdb"; //$NON-NLS-1$
+        private static final String OPTION_EQUIPMENT_EXTENDED_DB = "eqedb"; //$NON-NLS-1$
         private static final String OPTION_UNIT_VALIDATOR = "validate"; //$NON-NLS-1$
         private static final String OPTION_UNIT_EXPORT = "export"; //$NON-NLS-1$
 
@@ -374,30 +375,30 @@ public class MegaMek {
                 nextToken();
                 parseLog();
             }
-            if (getToken() == TOK_OPTION
-                    && getTokenValue().equals(OPTION_EQUIPMENT_DB)) {
+            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_EQUIPMENT_DB)) {
                 nextToken();
                 processEquipmentDb();
             }
 
-            if (getToken() == TOK_OPTION
-                    && getTokenValue().equals(OPTION_UNIT_VALIDATOR)) {
+            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_EQUIPMENT_EXTENDED_DB)) {
+                nextToken();
+                processExtendedEquipmentDb();
+            }
+
+            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_UNIT_VALIDATOR)) {
                 nextToken();
                 processUnitValidator();
             }
 
-            if (getToken() == TOK_OPTION
-                    && getTokenValue().equals(OPTION_UNIT_EXPORT)) {
+            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_UNIT_EXPORT)) {
                 nextToken();
                 processUnitExporter();
             }
 
-            if (getToken() == TOK_OPTION
-                    && getTokenValue().equals(OPTION_DEDICATED)) {
+            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_DEDICATED)) {
                 nextToken();
                 dedicatedServer = true;
-            } else if (getToken() == TOK_OPTION
-                    && getTokenValue().equals(OPTION_GUI)) {
+            } else if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_GUI)) {
                 nextToken();
                 parseGUI();
             }
@@ -432,6 +433,18 @@ public class MegaMek {
                 nextToken();
                 megamek.common.EquipmentType.writeEquipmentDatabase(new File(
                         filename));
+            } else {
+                error("file name expected"); //$NON-NLS-1$
+            }
+            System.exit(0);
+        }
+
+        private void processExtendedEquipmentDb() throws ParseException {
+            String filename;
+            if (getToken() == TOK_LITERAL) {
+                filename = getTokenValue();
+                nextToken();
+                megamek.common.EquipmentType.writeEquipmentExtendedDatabase(new File(filename));
             } else {
                 error("file name expected"); //$NON-NLS-1$
             }

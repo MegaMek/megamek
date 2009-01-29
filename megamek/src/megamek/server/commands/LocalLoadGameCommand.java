@@ -24,7 +24,7 @@ import megamek.server.Server;
 
 /**
  * Saves the current game.
- * 
+ *
  * @author Taharqa
  */
 public class LocalLoadGameCommand extends ServerCommand {
@@ -32,12 +32,13 @@ public class LocalLoadGameCommand extends ServerCommand {
     /** Creates a new instance of SaveGameCommand */
     public LocalLoadGameCommand(Server server) {
         super(server, "localload",
-                "loads a game from the savegame directory of the client.  Usage: /localload [filename]");
+                "loads a game from the savegame directory of the client. ATTENTION: This will overwrite a savegame on the server of the same filename. Usage: /localload [filename]");
     }
 
     /**
      * Run this command with the arguments supplied
      */
+    @Override
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
             server.sendServerChat(connId,

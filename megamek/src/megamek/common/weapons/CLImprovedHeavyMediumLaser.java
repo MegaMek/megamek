@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -24,36 +24,37 @@ import megamek.common.TechConstants;
  */
 public class CLImprovedHeavyMediumLaser extends LaserWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4467522144065588079L;
 
     /**
-     * 
+     *
      */
     public CLImprovedHeavyMediumLaser() {
         super();
-        this.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
-        this.name = "Improved Medium Heavy Laser";
-        this.setInternalName("CLImprovedMediumHeavyLaser");
-        this.addLookupName("Clan Improved Heavy Medium Laser");
-        this.heat = 7;
-        this.damage = 10;
-        this.shortRange = 3;
-        this.mediumRange = 6;
-        this.longRange = 9;
-        this.extremeRange = 12;
-        this.waterShortRange = 2;
-        this.waterMediumRange = 5;
-        this.waterLongRange = 8;
-        this.waterExtremeRange = 10;
-        this.tonnage = 1.0f;
-        this.criticals = 2;
-        this.bv = 93;
-        this.cost = 150000;
-        this.shortAV = 10;
-        this.maxRange = RANGE_SHORT;
-        this.explosionDamage = 5;
-        this.explosive = true;
+        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        name = "Improved Heavy Medium Laser";
+        setInternalName("CLImprovedMediumHeavyLaser");
+        addLookupName("Clan Improved Heavy Medium Laser");
+        addLookupName("CLImprovedHeavyMediumLaser");
+        heat = 7;
+        damage = 10;
+        shortRange = 3;
+        mediumRange = 6;
+        longRange = 9;
+        extremeRange = 12;
+        waterShortRange = 2;
+        waterMediumRange = 5;
+        waterLongRange = 8;
+        waterExtremeRange = 10;
+        tonnage = 1.0f;
+        criticals = 2;
+        bv = 93;
+        cost = 150000;
+        shortAV = 10;
+        maxRange = RANGE_SHORT;
+        explosionDamage = 5;
+        explosive = true;
     }
 }

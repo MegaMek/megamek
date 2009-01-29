@@ -21000,9 +21000,18 @@ public class Server implements Runnable {
             transmitAllPlayerDones();
             break;
         case Packet.COMMAND_LOAD_GAME:
-            if(loadGame((File) packet.getObject(0))) {
-                resetConnections();
+            try {
+                ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream((File)packet.getObject(0)));
+                oos.writeObject(packet.getObject(1));
+                oos.flush();
+                oos.close();
+                if(loadGame((File) packet.getObject(0))) {
+                    resetConnections();
+                }
+            } catch (Exception e) {
+                System.out.println("Error loading savegame sent from client");
             }
+
         case Packet.COMMAND_SQUADRON_ADD:
             receiveSquadronAdd(packet, connId);
             resetPlayersDone();

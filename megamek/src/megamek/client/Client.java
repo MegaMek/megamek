@@ -16,9 +16,11 @@
 package megamek.client;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -425,7 +427,7 @@ public class Client implements IClientCommandHandler {
     public void retrieveServerInfo() {
         updateConnection();
         int retry = 50;
-        while (retry-- > 0 && !connected) {
+        while ((retry-- > 0) && !connected) {
             synchronized (this) {
                 flushConn();
                 updateConnection();
@@ -445,7 +447,7 @@ public class Client implements IClientCommandHandler {
         if(game.isPhaseSimultaneous()) {
             return game.getTurnForPlayer(local_pn) != null;
         }
-        return game.getTurn() != null && game.getTurn().isValid(local_pn, game);
+        return (game.getTurn() != null) && game.getTurn().isValid(local_pn, game);
     }
 
     public GameTurn getMyTurn() {
@@ -459,7 +461,7 @@ public class Client implements IClientCommandHandler {
      * Can I unload entities stranded on immobile transports?
      */
     public boolean canUnloadStranded() {
-        return game.getTurn() instanceof GameTurn.UnloadStrandedTurn
+        return (game.getTurn() instanceof GameTurn.UnloadStrandedTurn)
                 && game.getTurn().isValid(local_pn, game);
     }
 
@@ -699,7 +701,13 @@ public class Client implements IClientCommandHandler {
      * sends a load game file to the server
      */
     public void sendLoadGame(File f) {
-        send(new Packet(Packet.COMMAND_LOAD_GAME, f));
+        ObjectInputStream ois;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(f));
+            send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { f, ois.readObject() }));
+        } catch (Exception e) {
+            System.out.println("Can't find local savegame "+f);
+        }
     }
 
     /**
@@ -845,15 +853,15 @@ public class Client implements IClientCommandHandler {
         boolean addAction = true;
         for (EntityAction ea : vector) {
             int entityId = ea.getEntityId();
-            if (ea instanceof TorsoTwistAction && game.hasEntity(entityId)) {
+            if ((ea instanceof TorsoTwistAction) && game.hasEntity(entityId)) {
                 TorsoTwistAction tta = (TorsoTwistAction) ea;
                 Entity entity = game.getEntity(entityId);
                 entity.setSecondaryFacing(tta.getFacing());
-            } else if (ea instanceof FlipArmsAction && game.hasEntity(entityId)) {
+            } else if ((ea instanceof FlipArmsAction) && game.hasEntity(entityId)) {
                 FlipArmsAction faa = (FlipArmsAction) ea;
                 Entity entity = game.getEntity(entityId);
                 entity.setArmsFlipped(faa.getIsFlipped());
-            } else if (ea instanceof DodgeAction && game.hasEntity(entityId)) {
+            } else if ((ea instanceof DodgeAction) && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
                 entity.dodging = true;
                 addAction = false;
@@ -900,7 +908,7 @@ public class Client implements IClientCommandHandler {
          */
         while (game.getOptions().booleanOption(
                 "supress_all_double_blind_messages")
-                && report.indexOf(Report.OBSCURED_STRING) != -1) {
+                && (report.indexOf(Report.OBSCURED_STRING) != -1)) {
             doubleBlind = true;
             int startPos = report.indexOf(Report.OBSCURED_STRING);
             int endPos = report.indexOf("\n", startPos);
@@ -924,7 +932,7 @@ public class Client implements IClientCommandHandler {
 
         // Get rid of some extra double spaces that the pasing can sometimes
         // cause.
-        while (endReport.indexOf("\n\n") != -1 && doubleBlind) {
+        while ((endReport.indexOf("\n\n") != -1) && doubleBlind) {
             // Looks silly but it slows the proccess down enough to keep an
             // Inf Loop from happening. -- Torren
             endReport = endReport.replaceAll("\n\n", "\n");
@@ -1014,7 +1022,7 @@ public class Client implements IClientCommandHandler {
                 if (log == null) {
                     initGameLog();
                 }
-                if (log != null && keepGameLog()) {
+                if ((log != null) && keepGameLog()) {
                     log.append((String) c.getObject(0));
                 }
                 game.processGameEvent(new GamePlayerChatEvent(this, null,
@@ -1079,7 +1087,7 @@ public class Client implements IClientCommandHandler {
             case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
                 phaseReport = receiveReport((Vector) c.getObject(0));
                 if (keepGameLog()) {
-                    if (log == null && game.getRoundCount() == 1) {
+                    if ((log == null) && (game.getRoundCount() == 1)) {
                         initGameLog();
                     }
                     if (log != null) {
@@ -1272,7 +1280,7 @@ public class Client implements IClientCommandHandler {
                 for (int i = 0; i < myEntities.size(); i++) {
                     Entity e = myEntities.get(i);
                     if (e.getShortNameRaw().equals(entity.getShortNameRaw())
-                            && e.duplicateMarker > entity.duplicateMarker) {
+                            && (e.duplicateMarker > entity.duplicateMarker)) {
                         e.duplicateMarker--;
                         e.generateShortName();
                         e.generateDisplayName();
@@ -1303,7 +1311,7 @@ public class Client implements IClientCommandHandler {
      *            already removed, and the string tokenized.
      */
     public String runCommand(String[] args) {
-        if (args != null && args.length > 0
+        if ((args != null) && (args.length > 0)
                 && commandsHash.containsKey(args[0])) {
             return commandsHash.get(args[0]).run(args);
         }

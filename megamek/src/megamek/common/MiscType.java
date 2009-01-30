@@ -89,6 +89,8 @@ public class MiscType extends EquipmentType {
     public static final long F_VIBROCLAW = 1L << 53;
     public static final long F_SINGLE_HEX_ECM = 1l << 54;
     public static final long F_EJECTION_SEAT = 1l << 55;
+    public static final long F_SALVAGE_ARM = 11 << 56;
+    public static final long F_TRACKS = 11 << 57; // TODO: Implement me, so far only construction data
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -99,26 +101,27 @@ public class MiscType extends EquipmentType {
     public static final long S_CLAW_THB = 1L << 5; // Not used yet, but...
     // Hey, it's all for
     // fun.
-    public static final long S_MACE = 1L << 6; // Solaris 7
-    public static final long S_DUAL_SAW = 1L << 7; // Solaris 7
-    public static final long S_FLAIL = 1L << 8; // Solaris 7
-    public static final long S_PILE_DRIVER = 1L << 9; // Solaris 7
-    public static final long S_SHIELD_SMALL = 1L << 10; // Solaris 7
-    public static final long S_SHIELD_MEDIUM = 1L << 11; // Solaris 7
-    public static final long S_SHIELD_LARGE = 1L << 12; // Solaris 7
-    public static final long S_LANCE = 1L << 13; // Solaris 7
-    public static final long S_VIBRO_SMALL = 1L << 14; // Solaris 7
-    public static final long S_VIBRO_MEDIUM = 1L << 15; // Solaris 7
-    public static final long S_VIBRO_LARGE = 1L << 16; // Solaris 7
-    public static final long S_WRECKING_BALL = 1L << 17; // Solaris 7
-    public static final long S_BACKHOE = 1L << 18; // Miniatures Rulebook
-    public static final long S_COMBINE = 1L << 19; // Miniatures Rulebook; TODO
-    public static final long S_CHAINSAW = 1L << 20; // Miniatures Rulebook
-    public static final long S_ROCK_CUTTER = 1L << 21; // Miniatures Rulebook;
+    public static final long S_MACE = 1L << 6;
+    public static final long S_DUAL_SAW = 1L << 7;
+    public static final long S_FLAIL = 1L << 8;
+    public static final long S_PILE_DRIVER = 1L << 9;
+    public static final long S_SHIELD_SMALL = 1L << 10;
+    public static final long S_SHIELD_MEDIUM = 1L << 11;
+    public static final long S_SHIELD_LARGE = 1L << 12;
+    public static final long S_LANCE = 1L << 13;
+    public static final long S_VIBRO_SMALL = 1L << 14;
+    public static final long S_VIBRO_MEDIUM = 1L << 15;
+    public static final long S_VIBRO_LARGE = 1L << 16;
+    public static final long S_WRECKING_BALL = 1L << 17;
+    public static final long S_BACKHOE = 1L << 18;
+    public static final long S_COMBINE = 1L << 19; // TODO
+    public static final long S_CHAINSAW = 1L << 20;
+    public static final long S_ROCK_CUTTER = 1L << 21;
     // TODO
     public static final long S_BUZZSAW = 1L << 22; // Unbound;
-    public static final long S_RETRACTABLE_BLADE = 1L << 23; // Total Warfare;
-    public static final long S_CHAIN_WHIP = 1L << 24; // TacOps;
+    public static final long S_RETRACTABLE_BLADE = 1L << 23;
+    public static final long S_CHAIN_WHIP = 1L << 24;
+    public static final long S_SPOT_WELDER = 1L << 25; // TODO: add game rules
 
     public static final String S_ACTIVE_SHIELD = "Active";
     public static final String S_PASSIVE_SHIELD = "Passive";
@@ -333,6 +336,8 @@ public class MiscType extends EquipmentType {
             }
 
             return (float) (Math.floor(tonnage) + 0.5);
+        } else if (hasFlag(F_TRACKS)) {
+            return entity.getWeight() / 10;
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -399,6 +404,13 @@ public class MiscType extends EquipmentType {
             return (int) Math.ceil(entity.getWeight() / 15);
         } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
             return entity.getWeightClass() + 1;
+        } else if (hasFlag(F_TRACKS)) {
+            if (entity instanceof QuadMech) {
+                return 4;
+            }
+            if (entity instanceof BipedMech) {
+                return 2;
+            }
         }
         // right, well I'll just guess then
         return 1;
@@ -524,6 +536,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISApolloFCS());
         EquipmentType.addType(createEjectionSeat());
         EquipmentType.addType(createIndustrialTSM());
+        EquipmentType.addType(createSalvageArm());
+        EquipmentType.addType(createSpotWelder());
+        EquipmentType.addType(createLiftHoist());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());
@@ -630,7 +645,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISBALightActiveProbe());
 
         // support vee stuff
-        EquipmentType.addType(createLiftHoist());
         EquipmentType.addType(createEnvironmentalSealing());
         EquipmentType.addType(createTractorModification());
         EquipmentType.addType(createArmoredChassis());
@@ -1226,7 +1240,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createChainWhip() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Chain Whip";
         misc.setInternalName(misc.name);
         misc.tonnage = 3;
@@ -1254,6 +1268,22 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(true);
         String[] modes = { "retracted", "extended" };
         misc.setModes(modes);
+
+        return misc;
+    }
+
+    public static MiscType createSpotWelder() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Spot Welder";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 2;
+        misc.criticals = 1;
+        misc.cost = 75000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_SPOT_WELDER;
+        misc.bv = 5;
 
         return misc;
     }
@@ -1294,7 +1324,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBackhoe() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Backhoe";
         misc.setInternalName(misc.name);
         misc.tonnage = 5;
@@ -1311,7 +1341,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        misc.name = "Lifthoist";
+        misc.name = "Lift Hoist";
         misc.setInternalName(misc.name);
         misc.tonnage = 3;
         misc.criticals = 3;
@@ -1325,7 +1355,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createDualSaw() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Dual Saw";
         misc.setInternalName(misc.name);
         misc.tonnage = 7;
@@ -1341,7 +1371,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createPileDriver() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Pile Driver";
         misc.setInternalName(misc.name);
         misc.addLookupName("PileDriver");
@@ -1358,7 +1388,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createChainsaw() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Chainsaw";
         misc.setInternalName(misc.name);
         misc.tonnage = 5;
@@ -3200,6 +3230,41 @@ public class MiscType extends EquipmentType {
         misc.damageTaken = 0;
         misc.baseDamageAbsorptionRate = 10;
         misc.baseDamageCapacity = 10;
+
+        return misc;
+    }
+
+    public static MiscType createSalvageArm() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Salvage Arm";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("SalvageArm");
+        misc.tonnage = 3;
+        misc.criticals = 2;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.cost = 50000;
+        misc.flags |= F_SALVAGE_ARM;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createTracks() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Tracks";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 0;
+        misc.cost = COST_VARIABLE;
+        misc.flags |= F_TRACKS;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
 
         return misc;
     }

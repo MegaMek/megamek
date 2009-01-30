@@ -87,10 +87,10 @@ public class MiscType extends EquipmentType {
     public static final long F_VOIDSIG = 1L << 51;
     public static final long F_CHAMELEON_SHIELD = 1L << 52;
     public static final long F_VIBROCLAW = 1L << 53;
-    public static final long F_SINGLE_HEX_ECM = 1l << 54;
-    public static final long F_EJECTION_SEAT = 1l << 55;
-    public static final long F_SALVAGE_ARM = 11 << 56;
-    public static final long F_TRACKS = 11 << 57; // TODO: Implement me, so far only construction data
+    public static final long F_SINGLE_HEX_ECM = 1L << 54;
+    public static final long F_EJECTION_SEAT = 1L << 55;
+    public static final long F_SALVAGE_ARM = 1L << 56;
+    public static final long F_TRACKS = 1L << 57; // TODO: Implement me, so far only construction data
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR

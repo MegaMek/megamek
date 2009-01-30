@@ -10,6 +10,7 @@ v0.33.40-dev (SVN)
 + Added construction data for spot welder, tracks, salvage arm
 + Gyro weight rounding wrong
 + Added searchlights as a construction option+
++ Bug: Enviromental Sealing rounding when getting weight
 
 v0.33.39 (2009-01-28, UTC+1)
 + Don't crash the server when trying to add newlines to empty Vector of Reports

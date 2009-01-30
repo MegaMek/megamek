@@ -311,7 +311,7 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
             return (float) Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_ENVIRONMENTAL_SEALING)) {
-            return (float) Math.ceil(entity.getWeight() / 10.0);
+            return entity.getWeight() / 10.0f;
         }  else if (hasFlag(F_JUMP_BOOSTER)) {
             return (float) (Math.ceil(entity.getWeight()
                     * entity.getOriginalJumpMP() / 10.0) / 2.0);

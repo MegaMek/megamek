@@ -539,6 +539,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createSalvageArm());
         EquipmentType.addType(createSpotWelder());
         EquipmentType.addType(createLiftHoist());
+        EquipmentType.addType(createTracks());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());

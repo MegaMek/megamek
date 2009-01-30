@@ -638,7 +638,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createMimeticCamo());
         EquipmentType.addType(createSimpleCamo());
         EquipmentType.addType(createParafoil());
-        EquipmentType.addType(createBASearchlight());
+        EquipmentType.addType(createSearchlight());
         EquipmentType.addType(createISImprovedSensors());
         EquipmentType.addType(createCLImprovedSensors());
         EquipmentType.addType(createBAVibroClaw());
@@ -2577,20 +2577,21 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createBASearchlight() {
+    public static MiscType createSearchlight() {
         MiscType misc = new MiscType();
 
         misc.name = "Searchlight";
-        misc.setInternalName("BASearchlight");
-        misc.tonnage = 0.0f;
-        misc.criticals = 0;
-        misc.hittable = false;
+        misc.setInternalName("Searchlight");
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.hittable = true;
         misc.spreadable = false;
         misc.flags |= F_SEARCHLIGHT;
         misc.bv = 0;
 
         return misc;
     }
+
 
     public static MiscType createBAVibroClaw() {
         MiscType misc = new MiscType();

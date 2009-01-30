@@ -4553,6 +4553,7 @@ public abstract class Mech extends Entity implements Serializable {
         sb.append(nl);
 
         sb.append("Armor:").append(EquipmentType.getArmorTypeName(getArmorType()));
+        sb.append("("+TechConstants.getTechName(getArmorTechLevel())+")");
         sb.append(nl);
 
         for (int element : MtfFile.locationOrder) {

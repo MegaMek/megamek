@@ -2588,6 +2588,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_SEARCHLIGHT;
         misc.bv = 0;
+        misc.cost = 2000;
 
         return misc;
     }

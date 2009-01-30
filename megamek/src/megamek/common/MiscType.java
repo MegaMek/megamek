@@ -3128,39 +3128,6 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    /*
-     * public static MiscType createISLightPPCCapacitor() { MiscType misc = new
-     * MiscType(); misc.techLevel = TechConstants.T_IS_TW_NON_BOX; misc.name =
-     * "LPPC Capacitor"; misc.setInternalName("ISLightPPCCapacitor");
-     * misc.tonnage = 1.0f; misc.criticals = 1; misc.cost = 150000;
-     * misc.setModes(new String[] { "Off", "Charge" }); misc.flags |=
-     * F_PPC_CAPACITOR; misc.setInstantModeSwitch(false); misc.explosive = true;
-     * misc.bv = 44; return misc; } public static MiscType
-     * createISHeavyPPCCapacitor() { MiscType misc = new MiscType();
-     * misc.techLevel = TechConstants.T_IS_TW_NON_BOX; misc.name =
-     * "SNPPC Capacitor"; misc.setInternalName("ISSNPPCCapacitor"); misc.name =
-     * "ERPPC Capacitor"; misc.setInternalName("ISERPPCCapacitor"); misc.name =
-     * "HPPC Capacitor"; misc.setInternalName("ISHeavyPPCCapacitor");
-     * misc.tonnage = 1.0f; misc.criticals = 1; misc.cost = 150000;
-     * misc.setModes(new String[] { "Off", "Charge" }); misc.flags |=
-     * F_PPC_CAPACITOR; misc.setInstantModeSwitch(false); misc.explosive = true;
-     * misc.bv = 53; return misc; } public static MiscType
-     * createISERPPCCapacitor() { MiscType misc = new MiscType(); misc.techLevel
-     * = TechConstants.T_IS_TW_NON_BOX; misc.name = "SNPPC Capacitor";
-     * misc.setInternalName("ISSNPPCCapacitor"); misc.name = "ERPPC Capacitor";
-     * misc.setInternalName("ISERPPCCapacitor"); misc.tonnage = 1.0f;
-     * misc.criticals = 1; misc.cost = 150000; misc.setModes(new String[] {
-     * "Off", "Charge" }); misc.flags |= F_PPC_CAPACITOR;
-     * misc.setInstantModeSwitch(false); misc.explosive = true; misc.bv = 114;
-     * return misc; } public static MiscType createISSNPPCCapacitor() { MiscType
-     * misc = new MiscType(); misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
-     * misc.name = "SNPPC Capacitor"; misc.setInternalName("ISSNPPCCapacitor");
-     * misc.tonnage = 1.0f; misc.criticals = 1; misc.cost = 150000;
-     * misc.setModes(new String[] { "Off", "Charge" }); misc.flags |=
-     * F_PPC_CAPACITOR; misc.setInstantModeSwitch(false); misc.explosive = true;
-     * misc.bv = 90; return misc; }
-     */
-
     public static MiscType createReflective() {
         MiscType misc = new MiscType();
 

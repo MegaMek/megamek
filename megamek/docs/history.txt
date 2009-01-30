@@ -6,6 +6,7 @@ v0.33.40-dev (SVN)
 + RFE: Added new internal names for Improved Heavy Medium and Improved Heavy Small Lasers
 + Bug: /localload not working correctly
 + Correctly set armor tech level
++ Fix armor weight calculation to work correctly with armor tech level
 
 v0.33.39 (2009-01-28, UTC+1)
 + Don't crash the server when trying to add newlines to empty Vector of Reports

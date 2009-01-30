@@ -6721,7 +6721,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public double getArmorWeight() {
         // this roundabout method is actually necessary to avoid rounding
         // weirdness. Yeah, it's dumb.
-        double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(armorType, techLevel);
+        double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(armorType, armorTechLevel);
         if (armorType == EquipmentType.T_ARMOR_HARDENED) {
             armorPerTon = 8.0;
         }

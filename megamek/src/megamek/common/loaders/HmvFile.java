@@ -37,7 +37,7 @@ import megamek.common.WeaponType;
 /**
  * Based on the hmpread.c program and the MtfFile object. This class can not
  * load any Mixed tech or Level 3 vehicles.
- * 
+ *
  * @author <a href="mailto:mnewcomb@sourceforge.net">Michael Newcomb</a>
  */
 public class HmvFile implements IMechLoader {
@@ -61,6 +61,7 @@ public class HmvFile implements IMechLoader {
     private int jumpMP;
 
     private HMVArmorType armorType;
+    private HMVTechType armorTechType;
 
     private int roundedInternalStructure;
 
@@ -136,20 +137,17 @@ public class HmvFile implements IMechLoader {
                 targetingComputerTechType = HMVTechType
                         .getType(readUnsignedShort(dis));
 
-                // Even if we aren't using the armorTechType, we need to read
-                // past its location.
-                readUnsignedShort(dis);
-                // armorTechType = HMVTechType.getType(readUnsignedShort(dis));
+                armorTechType = HMVTechType.getType(readUnsignedShort(dis));
             } else if (techType.equals(HMVTechType.CLAN)) {
                 engineTechType = HMVTechType.CLAN;
                 baseTechType = HMVTechType.CLAN;
                 targetingComputerTechType = HMVTechType.CLAN;
-                // armorTechType = HMVTechType.CLAN;
+                armorTechType = HMVTechType.CLAN;
             } else {
                 engineTechType = HMVTechType.INNER_SPHERE;
                 baseTechType = HMVTechType.INNER_SPHERE;
                 targetingComputerTechType = HMVTechType.INNER_SPHERE;
-                // armorTechType = HMVTechType.INNER_SPHERE;
+                armorTechType = HMVTechType.INNER_SPHERE;
             }
 
             // ??
@@ -170,8 +168,9 @@ public class HmvFile implements IMechLoader {
 
             turretArmor = readUnsignedShort(dis);
 
-            if (turretArmor > 0)
+            if (turretArmor > 0) {
                 hasTurret = true;
+            }
 
             // internal structure again ??
             dis.skipBytes(2);
@@ -219,8 +218,9 @@ public class HmvFile implements IMechLoader {
 
                 HMVWeaponLocation weaponLocation = HMVWeaponLocation
                         .getType(readUnsignedShort(dis));
-                if (weaponLocation == HMVWeaponLocation.TURRET)
+                if (weaponLocation == HMVWeaponLocation.TURRET) {
                     hasTurret = true;
+                }
 
                 int weaponAmmo = readUnsignedShort(dis);
 
@@ -234,8 +234,8 @@ public class HmvFile implements IMechLoader {
 
                         if (ammoType != null) {
                             // Need to play games for half ton MG ammo.
-                            if (weaponAmmo < ammoType.getShots()
-                                    || weaponAmmo % ammoType.getShots() > 0) {
+                            if ((weaponAmmo < ammoType.getShots())
+                                    || (weaponAmmo % ammoType.getShots() > 0)) {
                                 switch (ammoType.getAmmoType()) {
                                     case AmmoType.T_MG:
                                         if (ammoType.getTechLevel() == TechConstants.T_INTRO_BOXSET) {
@@ -304,21 +304,23 @@ public class HmvFile implements IMechLoader {
             dis.skipBytes(12);
             int CASE = readUnsignedShort(dis);
             if (CASE == 0xFFFF) {
-                if (techType.equals(HMVTechType.INNER_SPHERE))
+                if (techType.equals(HMVTechType.INNER_SPHERE)) {
                     addEquipmentType(EquipmentType.get("ISCASE"), 1,
                             HMVWeaponLocation.REAR);
-                else
+                } else {
                     addEquipmentType(EquipmentType.get("CLCASE"), 1,
                             HMVWeaponLocation.REAR);
+                }
             }
             int targetingComp = readUnsignedShort(dis);
             if (targetingComp == 1) {
-                if (targetingComputerTechType.equals(HMVTechType.CLAN))
+                if (targetingComputerTechType.equals(HMVTechType.CLAN)) {
                     addEquipmentType(EquipmentType.get("CLTargeting Computer"),
                             1, HMVWeaponLocation.BODY);
-                else
+                } else {
                     addEquipmentType(EquipmentType.get("ISTargeting Computer"),
                             1, HMVWeaponLocation.BODY);
+                }
             }
 
             artemisType = readUnsignedShort(dis);
@@ -337,20 +339,22 @@ public class HmvFile implements IMechLoader {
             // Mast mounted equipment is not supported - put it in the rotor and
             // hope for the best
             if (mastEq == 1) {
-                if (baseTechType.equals(HMVTechType.CLAN))
+                if (baseTechType.equals(HMVTechType.CLAN)) {
                     addEquipmentType(EquipmentType.get("CLActiveProbe"), 1,
                             HMVWeaponLocation.TURRET);
-                else
+                } else {
                     addEquipmentType(EquipmentType.get("BeagleActiveProbe"), 1,
                             HMVWeaponLocation.TURRET);
+                }
             } else if (mastEq == 2) {
-                if (baseTechType.equals(HMVTechType.CLAN))
+                if (baseTechType.equals(HMVTechType.CLAN)) {
                     addEquipmentType(EquipmentType.get("CLLightActiveProbe"),
                             1, HMVWeaponLocation.TURRET);
-                else
+                } else {
                     addEquipmentType(
                             EquipmentType.get("BloodhoundActiveProbe"), 1,
                             HMVWeaponLocation.TURRET);
+                }
             } else if (mastEq == 3) {
                 addEquipmentType(EquipmentType.get("ISC3SlaveUnit"), 1,
                         HMVWeaponLocation.TURRET);
@@ -398,8 +402,9 @@ public class HmvFile implements IMechLoader {
 
             // just a catch all for small Fluffs anything well less then 10
             // characters, per section, isn't worth printing.
-            if (fluffSize <= 60)
+            if (fluffSize <= 60) {
                 fluff = null;
+            }
 
             int supercharger = readUnsignedShort(dis);
             if (supercharger > 0) {
@@ -431,7 +436,7 @@ public class HmvFile implements IMechLoader {
 
     /**
      * Read a single precision float from a file in little endian format
-     * 
+     *
      * @param dis
      * @return
      * @throws IOException
@@ -447,7 +452,7 @@ public class HmvFile implements IMechLoader {
 
     /**
      * Determine if the buffer contains the "is omni" flag.
-     * 
+     *
      * @param buffer the array of <code>byte</code>s to be scanned.
      * @return <code>true</code> if the buffer contains the "is omni" flag.
      */
@@ -456,10 +461,10 @@ public class HmvFile implements IMechLoader {
 
         // Look for the 4 byte flag.
         for (index = buffer.length - 4; index >= 0; index--) {
-            if (0x6f == buffer[index] && // 'o'
-                    0x6d == buffer[index + 1] && // 'm'
-                    0x6e == buffer[index + 2] && // 'n'
-                    0x69 == buffer[index + 3]) { // 'i'
+            if ((0x6f == buffer[index]) && // 'o'
+                    (0x6d == buffer[index + 1]) && // 'm'
+                    (0x6e == buffer[index + 2]) && // 'n'
+                    (0x69 == buffer[index + 3])) { // 'i'
 
                 // We found it!
                 return true;
@@ -474,12 +479,12 @@ public class HmvFile implements IMechLoader {
         try {
             Tank vehicle = null;
 
-            if (movementType == HMVMovementType.TRACKED
-                    || movementType == HMVMovementType.WHEELED
-                    || movementType == HMVMovementType.HOVER
-                    || movementType == HMVMovementType.DISPLACEMENT_HULL
-                    || movementType == HMVMovementType.HYDROFOIL
-                    || movementType == HMVMovementType.SUBMARINE) {
+            if ((movementType == HMVMovementType.TRACKED)
+                    || (movementType == HMVMovementType.WHEELED)
+                    || (movementType == HMVMovementType.HOVER)
+                    || (movementType == HMVMovementType.DISPLACEMENT_HULL)
+                    || (movementType == HMVMovementType.HYDROFOIL)
+                    || (movementType == HMVMovementType.SUBMARINE)) {
                 vehicle = new Tank();
             } else if (movementType == HMVMovementType.VTOL) {
                 vehicle = new VTOL();
@@ -527,9 +532,10 @@ public class HmvFile implements IMechLoader {
             vehicle.setWeight((engineRating + suspensionFactor) / cruiseMP);
 
             int engineFlags = Engine.TANK_ENGINE;
-            if (techType == HMVTechType.CLAN
-                    || engineTechType == HMVTechType.CLAN)
+            if ((techType == HMVTechType.CLAN)
+                    || (engineTechType == HMVTechType.CLAN)) {
                 engineFlags |= Engine.CLAN_ENGINE;
+            }
             vehicle
                     .setEngine(new Engine(engineRating, Engine
                             .getEngineTypeByString(engineType.toString()),
@@ -542,6 +548,34 @@ public class HmvFile implements IMechLoader {
 
             vehicle.autoSetInternal();
             vehicle.setArmorType(armorType.toString());
+            if (armorTechType == HMVTechType.CLAN) {
+                switch (rulesLevel) {
+                case 2:
+                    vehicle.setArmorTechLevel(TechConstants.T_CLAN_TW);
+                    break;
+                case 3:
+                    vehicle.setArmorTechLevel(TechConstants.T_CLAN_ADVANCED);
+                    break;
+                default:
+                    throw new EntityLoadingException(
+                            "Unsupported tech level: " + rulesLevel);
+                }
+            } else {
+                switch (rulesLevel) {
+                case 1:
+                    vehicle.setArmorTechLevel(TechConstants.T_INTRO_BOXSET);
+                    break;
+                case 2:
+                    vehicle.setArmorTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                    break;
+                case 3:
+                    vehicle.setArmorTechLevel(TechConstants.T_IS_ADVANCED);
+                    break;
+                default:
+                    throw new EntityLoadingException(
+                            "Unsupported tech level: " + rulesLevel);
+                }
+            }
 
             vehicle.initializeArmor(frontArmor, Tank.LOC_FRONT);
             vehicle.initializeArmor(leftArmor, Tank.LOC_LEFT);
@@ -607,15 +641,16 @@ public class HmvFile implements IMechLoader {
                     // for experimental or unofficial equipment, we need
                     // to adjust the mech's techlevel, because HMV only
                     // knows lvl1/2/3
-                    if (equipmentType.getTechLevel() > tank.getTechLevel()
-                            && tank.getTechLevel() >= TechConstants.T_IS_ADVANCED) {
+                    if ((equipmentType.getTechLevel() > tank.getTechLevel())
+                            && (tank.getTechLevel() >= TechConstants.T_IS_ADVANCED)) {
                         boolean isClan = tank.isClan();
-                        if (equipmentType.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL ||
-                                equipmentType.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)
+                        if ((equipmentType.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) ||
+                                (equipmentType.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
                             tank.setTechLevel(isClan?TechConstants.T_CLAN_EXPERIMENTAL:TechConstants.T_IS_EXPERIMENTAL);
-                        else if (equipmentType.getTechLevel() == TechConstants.T_IS_UNOFFICIAL ||
-                                equipmentType.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)
+                        } else if ((equipmentType.getTechLevel() == TechConstants.T_IS_UNOFFICIAL) ||
+                                (equipmentType.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
                             tank.setTechLevel(isClan?TechConstants.T_CLAN_UNOFFICIAL:TechConstants.T_IS_UNOFFICIAL);
+                        }
                     }
                     Mounted weapon = tank.addEquipment(equipmentType, location);
 
@@ -624,7 +659,7 @@ public class HmvFile implements IMechLoader {
                     // LRM with artemis
                     // can be in the same location on a tank. (and might be
                     // mislinked)
-                    if (artemisType != 0 && equipmentType instanceof WeaponType) {
+                    if ((artemisType != 0) && (equipmentType instanceof WeaponType)) {
                         String artemis = null;
                         int ammoType = ((WeaponType) equipmentType)
                                 .getAmmoType();
@@ -643,8 +678,8 @@ public class HmvFile implements IMechLoader {
                         }
                         if (artemis != null) {
                             EquipmentType artEq;
-                            if (equipmentType.getTechLevel() == TechConstants.T_CLAN_TW
-                                    || equipmentType.getTechLevel() == TechConstants.T_CLAN_ADVANCED) {
+                            if ((equipmentType.getTechLevel() == TechConstants.T_CLAN_TW)
+                                    || (equipmentType.getTechLevel() == TechConstants.T_CLAN_ADVANCED)) {
                                 artEq = EquipmentType.get("CL" + artemis);
                             } else {
                                 artEq = EquipmentType.get("IS" + artemis);
@@ -1169,10 +1204,10 @@ public class HmvFile implements IMechLoader {
         }
 
         // Report unexpected parsing failures.
-        if (equipName == null && value != 0 && // 0x00 Empty
-                value != 7 && // 0x07 Lower Leg Actuator (on a quad)
-                value != 8 && // 0x08 Foot Actuator (on a quad)
-                value != 15) { // 0x0F Fusion Engine
+        if ((equipName == null) && (value != 0) && // 0x00 Empty
+                (value != 7) && // 0x07 Lower Leg Actuator (on a quad)
+                (value != 8) && // 0x08 Foot Actuator (on a quad)
+                (value != 15)) { // 0x0F Fusion Engine
             System.out.print("unknown critical: 0x");
             System.out.print(Integer.toHexString(equipment.intValue())
                     .toUpperCase());
@@ -1226,7 +1261,7 @@ public class HmvFile implements IMechLoader {
         }
 
         // Report unexpected parsing failures.
-        if (ammoName == null && value != 0) {
+        if ((ammoName == null) && (value != 0)) {
             System.out.print("unknown critical: 0x");
             System.out
                     .print(Integer.toHexString(ammo.intValue()).toUpperCase());
@@ -1265,10 +1300,12 @@ abstract class HMVType {
         this.id = id;
     }
 
+    @Override
     public String toString() {
         return name;
     }
 
+    @Override
     public boolean equals(Object other) {
 
         // Assume the other object doesn't equal this one.
@@ -1285,7 +1322,7 @@ abstract class HMVType {
             HMVType cast = (HMVType) other;
 
             // The two objects match if their names and IDs match.
-            if (this.name.equals(cast.name) && this.id == cast.id) {
+            if (name.equals(cast.name) && (id == cast.id)) {
                 result = true;
             }
         }

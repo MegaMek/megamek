@@ -507,6 +507,34 @@ implements IMechLoader
             mech.autoSetInternal();
 
             mech.setArmorType(armorType.toString());
+            if (armorTechType == TechType.CLAN) {
+                switch (rulesLevel) {
+                case 2:
+                    mech.setArmorTechLevel(TechConstants.T_CLAN_TW);
+                    break;
+                case 3:
+                    mech.setArmorTechLevel(TechConstants.T_CLAN_ADVANCED);
+                    break;
+                default:
+                    throw new EntityLoadingException(
+                            "Unsupported tech level: " + rulesLevel);
+                }
+            } else {
+                switch (rulesLevel) {
+                case 1:
+                    mech.setArmorTechLevel(TechConstants.T_INTRO_BOXSET);
+                    break;
+                case 2:
+                    mech.setArmorTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                    break;
+                case 3:
+                    mech.setArmorTechLevel(TechConstants.T_IS_ADVANCED);
+                    break;
+                default:
+                    throw new EntityLoadingException(
+                            "Unsupported tech level: " + rulesLevel);
+                }
+            }
             mech.initializeArmor(laArmor, Mech.LOC_LARM);
             mech.initializeArmor(ltArmor, Mech.LOC_LT);
             mech.initializeRearArmor(ltrArmor, Mech.LOC_LT);

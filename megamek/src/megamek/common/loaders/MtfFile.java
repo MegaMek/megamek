@@ -130,8 +130,9 @@ public class MtfFile implements IMechLoader {
         int armorLocation = -1;
         while (r.ready()) {
             crit = r.readLine();
-            if (crit.trim().length() < 1)
+            if (crit.trim().length() < 1) {
                 continue;
+            }
 
             if (isValidLocation(crit)) {
                 loc = getLocation(crit);
@@ -139,8 +140,9 @@ public class MtfFile implements IMechLoader {
                 continue;
             }
 
-            if (isProcessedComponent(crit))
+            if (isProcessedComponent(crit)) {
                 continue;
+            }
 
             weaponsCount = weaponsList(crit);
 
@@ -175,8 +177,9 @@ public class MtfFile implements IMechLoader {
             int iGyroType = Mech.GYRO_STANDARD;
             try {
                 iGyroType = Mech.getGyroTypeForString(gyroType.substring(5));
-                if (iGyroType == Mech.GYRO_UNKNOWN)
+                if (iGyroType == Mech.GYRO_UNKNOWN) {
                     iGyroType = Mech.GYRO_STANDARD;
+                }
             } catch (Exception e) {
                 iGyroType = Mech.GYRO_STANDARD;
             }
@@ -184,8 +187,9 @@ public class MtfFile implements IMechLoader {
             try {
                 iCockpitType = Mech.getCockpitTypeForString(cockpitType
                         .substring(8));
-                if (iCockpitType == Mech.COCKPIT_UNKNOWN)
+                if (iCockpitType == Mech.COCKPIT_UNKNOWN) {
                     iCockpitType = Mech.COCKPIT_STANDARD;
+                }
             } catch (Exception e) {
                 iCockpitType = Mech.COCKPIT_STANDARD;
             }
@@ -207,7 +211,7 @@ public class MtfFile implements IMechLoader {
                 mech.setChassis(name.substring(0, pindex - 1).trim());
             }
             mech.setModel(model.trim());
-            mech.setYear(Integer.parseInt(this.techYear.substring(4).trim()));
+            mech.setYear(Integer.parseInt(techYear.substring(4).trim()));
             if (chassisConfig.indexOf("Omni") != -1) {
                 mech.setOmni(true);
             }
@@ -247,7 +251,7 @@ public class MtfFile implements IMechLoader {
                         break;
                     case 5:
                         mech.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
-                        break;    
+                        break;
                     default:
                         throw new EntityLoadingException(
                                 "Unsupported tech level: "
@@ -264,7 +268,7 @@ public class MtfFile implements IMechLoader {
                     break;
                 case 5:
                     mech.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
-                    break;    
+                    break;
                 default:
                     throw new EntityLoadingException(
                             "Unsupported tech level: "
@@ -282,7 +286,7 @@ public class MtfFile implements IMechLoader {
                     break;
                 case 5:
                     mech.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
-                    break;    
+                    break;
                 default:
                     throw new EntityLoadingException(
                             "Unsupported tech level: "
@@ -313,9 +317,9 @@ public class MtfFile implements IMechLoader {
             mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
 
             boolean dblSinks = (heatSinks.substring(14).equalsIgnoreCase("Double"));
-            
+
             boolean laserSinks = heatSinks.substring(14).equalsIgnoreCase("Laser");
-            
+
             int expectedSinks = Integer.parseInt(heatSinks.substring(11, 13)
                     .trim());
 
@@ -330,6 +334,53 @@ public class MtfFile implements IMechLoader {
 
             String thisArmorType = armorType
                     .substring(armorType.indexOf(':') + 1);
+            if (thisArmorType.indexOf('(') != -1) {
+                if (thisArmorType.toLowerCase().indexOf("clan") != -1) {
+                    switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                    case 2:
+                        mech.setArmorTechLevel(TechConstants.T_CLAN_TW);
+                        break;
+                    case 3:
+                        mech.setArmorTechLevel(TechConstants.T_CLAN_ADVANCED);
+                        break;
+                    case 4:
+                        mech.setArmorTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
+                        break;
+                    case 5:
+                        mech.setArmorTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
+                        break;
+                    default:
+                        throw new EntityLoadingException(
+                                "Unsupported tech level: "
+                                + rulesLevel.substring(12).trim());
+                    }
+                } else if (thisArmorType.toLowerCase().indexOf("inner sphere") != -1) {
+                    switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                    case 1:
+                        mech.setArmorTechLevel(TechConstants.T_INTRO_BOXSET);
+                        break;
+                    case 2:
+                        mech.setArmorTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                        break;
+                    case 3:
+                        mech.setArmorTechLevel(TechConstants.T_IS_ADVANCED);
+                        break;
+                    case 4:
+                        mech.setArmorTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+                        break;
+                    case 5:
+                        mech.setArmorTechLevel(TechConstants.T_IS_UNOFFICIAL);
+                        break;
+                    default:
+                        throw new EntityLoadingException(
+                                "Unsupported tech level: "
+                                + rulesLevel.substring(12).trim());
+                    }
+                }
+                thisArmorType = thisArmorType.substring(0, thisArmorType.indexOf('('));
+            } else {
+                mech.setArmorTechLevel(mech.getTechLevel());
+            }
             if (thisArmorType.length() > 0) {
                 mech.setArmorType(thisArmorType);
             } else {
@@ -383,7 +434,7 @@ public class MtfFile implements IMechLoader {
     private void parseCrits(Mech mech, int loc) throws EntityLoadingException {
         // check for removed arm actuators
         if (!(mech instanceof QuadMech)) {
-            if (loc == Mech.LOC_LARM || loc == Mech.LOC_RARM) {
+            if ((loc == Mech.LOC_LARM) || (loc == Mech.LOC_RARM)) {
                 if (!critData[loc][3].equals("Hand Actuator")) {
                     mech.setCritical(loc, 3, null);
                 }
@@ -456,7 +507,7 @@ public class MtfFile implements IMechLoader {
                         }
                         m = mech.addEquipment(etype, loc, rearMounted);
                         hSharedEquip.put(etype, m);
-                    } else if (etype instanceof WeaponType
+                    } else if ((etype instanceof WeaponType)
                             && etype.hasFlag(WeaponType.F_SPLITABLE)) {
                         // do we already have this one in this or an outer
                         // location?
@@ -465,14 +516,14 @@ public class MtfFile implements IMechLoader {
                         for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
                             m = vSplitWeapons.elementAt(x);
                             int nLoc = m.getLocation();
-                            if ((nLoc == loc || loc == Mech
-                                    .getInnerLocation(nLoc))
-                                    && m.getType() == etype) {
+                            if (((nLoc == loc) || (loc == Mech
+                                    .getInnerLocation(nLoc)))
+                                    && (m.getType() == etype)) {
                                 bFound = true;
                                 break;
                             }
                         }
-                        if (bFound && m != null) {
+                        if (bFound && (m != null)) {
                             m.setFoundCrits(m.getFoundCrits() + 1);
                             if (m.getFoundCrits() >= etype.getCriticals(mech)) {
                                 vSplitWeapons.removeElement(m);
@@ -541,13 +592,14 @@ public class MtfFile implements IMechLoader {
         }
         int firstEmpty = -1;
         for (int slot = 0; slot < mech.getNumberOfCriticals(loc); slot++) {
-            if (critData[loc][slot] == null)
+            if (critData[loc][slot] == null) {
                 critData[loc][slot] = MtfFile.EMPTY;
+            }
 
             if (critData[loc][slot].equals(MtfFile.EMPTY)) {
                 firstEmpty = slot;
             }
-            if (firstEmpty != -1 && !critData[loc][slot].equals(MtfFile.EMPTY)) {
+            if ((firstEmpty != -1) && !critData[loc][slot].equals(MtfFile.EMPTY)) {
                 // move this to the first empty slot
                 critData[loc][firstEmpty] = critData[loc][slot];
                 // mark the old slot empty
@@ -561,26 +613,33 @@ public class MtfFile implements IMechLoader {
 
     private int getLocation(String location) {
 
-        if (location.trim().equalsIgnoreCase("Left Arm:") || location.trim().equalsIgnoreCase("Front Left Leg:"))
+        if (location.trim().equalsIgnoreCase("Left Arm:") || location.trim().equalsIgnoreCase("Front Left Leg:")) {
             return Mech.LOC_LARM;
+        }
 
-        if (location.trim().equalsIgnoreCase("Right Arm:") || location.trim().equalsIgnoreCase("Front Right Leg:"))
+        if (location.trim().equalsIgnoreCase("Right Arm:") || location.trim().equalsIgnoreCase("Front Right Leg:")) {
             return Mech.LOC_RARM;
+        }
 
-        if (location.equalsIgnoreCase("Left Leg:") || location.equalsIgnoreCase("Rear Left Leg:"))
+        if (location.equalsIgnoreCase("Left Leg:") || location.equalsIgnoreCase("Rear Left Leg:")) {
             return Mech.LOC_LLEG;
+        }
 
-        if (location.trim().equalsIgnoreCase("Right Leg:") || location.trim().equalsIgnoreCase("Rear Right Leg:"))
+        if (location.trim().equalsIgnoreCase("Right Leg:") || location.trim().equalsIgnoreCase("Rear Right Leg:")) {
             return Mech.LOC_RLEG;
+        }
 
-        if (location.trim().equalsIgnoreCase("Left Torso:"))
+        if (location.trim().equalsIgnoreCase("Left Torso:")) {
             return Mech.LOC_LT;
+        }
 
-        if (location.trim().equalsIgnoreCase("Right Torso:"))
+        if (location.trim().equalsIgnoreCase("Right Torso:")) {
             return Mech.LOC_RT;
+        }
 
-        if (location.trim().equalsIgnoreCase("Center Torso:"))
+        if (location.trim().equalsIgnoreCase("Center Torso:")) {
             return Mech.LOC_CT;
+        }
 
         // else
         return Mech.LOC_HEAD;
@@ -590,23 +649,23 @@ public class MtfFile implements IMechLoader {
 
         int loc = -1;
         boolean rear = false;
-        if (location.trim().toLowerCase().startsWith("la armor:") || location.trim().toLowerCase().startsWith("fll armor:"))
+        if (location.trim().toLowerCase().startsWith("la armor:") || location.trim().toLowerCase().startsWith("fll armor:")) {
             loc = Mech.LOC_LARM;
-        else if (location.trim().toLowerCase().startsWith("ra armor:") || location.trim().toLowerCase().startsWith("frl armor:"))
+        } else if (location.trim().toLowerCase().startsWith("ra armor:") || location.trim().toLowerCase().startsWith("frl armor:")) {
             loc = Mech.LOC_RARM;
-        else if (location.trim().toLowerCase().startsWith("lt armor:"))
+        } else if (location.trim().toLowerCase().startsWith("lt armor:")) {
             loc = Mech.LOC_LT;
-        else if (location.trim().toLowerCase().startsWith("rt armor:"))
+        } else if (location.trim().toLowerCase().startsWith("rt armor:")) {
             loc = Mech.LOC_RT;
-        else if (location.trim().toLowerCase().startsWith("ct armor:"))
+        } else if (location.trim().toLowerCase().startsWith("ct armor:")) {
             loc = Mech.LOC_CT;
-        else if (location.trim().toLowerCase().startsWith("hd armor:"))
+        } else if (location.trim().toLowerCase().startsWith("hd armor:")) {
             loc = Mech.LOC_HEAD;
-        else if (location.trim().toLowerCase().startsWith("ll armor:") || location.trim().toLowerCase().startsWith("rll armor:"))
+        } else if (location.trim().toLowerCase().startsWith("ll armor:") || location.trim().toLowerCase().startsWith("rll armor:")) {
             loc = Mech.LOC_LLEG;
-        else if (location.trim().toLowerCase().startsWith("rl armor:") || location.trim().toLowerCase().startsWith("rrl armor:"))
+        } else if (location.trim().toLowerCase().startsWith("rl armor:") || location.trim().toLowerCase().startsWith("rrl armor:")) {
             loc = Mech.LOC_RLEG;
-        else if (location.trim().toLowerCase().startsWith("rtl armor:")) {
+        } else if (location.trim().toLowerCase().startsWith("rtl armor:")) {
             loc = Mech.LOC_LT;
             rear = true;
         } else if (location.trim().toLowerCase().startsWith("rtr armor:")) {
@@ -650,8 +709,9 @@ public class MtfFile implements IMechLoader {
                 || location.trim().equalsIgnoreCase("Left Torso:")
                 || location.trim().equalsIgnoreCase("Right Torso:")
                 || location.trim().equalsIgnoreCase("Center Torso:")
-                || location.trim().equalsIgnoreCase("Head:"))
+                || location.trim().equalsIgnoreCase("Head:")) {
             return true;
+        }
 
         // else
         return false;

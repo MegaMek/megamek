@@ -3261,7 +3261,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = true;
-        misc.spreadable = false;
+        misc.spreadable = true;
         misc.bv = 0;
         misc.cost = COST_VARIABLE;
         misc.flags |= F_TRACKS;

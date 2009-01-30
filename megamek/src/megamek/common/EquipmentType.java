@@ -475,6 +475,8 @@ public class EquipmentType {
             } else if (hasFlag(MiscType.F_CLUB) && hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
                 int bladeTons = (int) Math.ceil(0.5f + Math.ceil(entity.getWeight() / 20.0));
                 cost = (1 + bladeTons) * 10000;
+            } else if (hasFlag(MiscType.F_TRACKS)) {
+                cost = (int)Math.ceil(500 * entity.getEngine().getRating() * entity.getWeight() / 75);
             }
         } else {
             if (cost == 0) {

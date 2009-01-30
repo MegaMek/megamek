@@ -940,6 +940,21 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     /**
+     * does this mech have tracks?
+     * @return
+     */
+    public boolean hasTracks() {
+        for (Mounted mEquip : getMisc()) {
+            MiscType mtype = (MiscType) mEquip.getType();
+            if (mtype.hasFlag(MiscType.F_TRACKS)) {
+                // The Mek has tracks
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * does this mech have a chameleon light polarization shield?
      * @return
      */

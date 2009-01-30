@@ -6388,6 +6388,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     public boolean hasSpotlight() {
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_SEARCHLIGHT) && !m.isInoperable()) {
+                return true;
+            }
+        }
         return hasSpotlight;
     }
 

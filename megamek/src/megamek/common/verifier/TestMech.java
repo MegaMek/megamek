@@ -103,7 +103,7 @@ public class TestMech extends TestEntity {
     }
 
     public float getWeightGyro() {
-        float retVal = ceil(engine.getRating() / 100.0f, getWeightCeilingGyro());
+        float retVal = (float) Math.ceil(engine.getRating() / 100.0f);
         if (mech.getGyroType() == Mech.GYRO_XL) {
             retVal /= 2;
         } else if (mech.getGyroType() == Mech.GYRO_COMPACT) {
@@ -111,6 +111,7 @@ public class TestMech extends TestEntity {
         } else if (mech.getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             retVal *= 2;
         }
+        retVal = ceil(retVal, getWeightCeilingGyro());
         return retVal;
     }
 

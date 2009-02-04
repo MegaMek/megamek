@@ -54,7 +54,7 @@ public class ISMekTaser extends AmmoWeapon {
         criticals = 3;
         explosionDamage = 6;
         explosive = true;
-        flags |= F_TASER;
+        flags |= F_TASER | F_DIRECT_FIRE | F_BALLISTIC;
     }
 
     /*

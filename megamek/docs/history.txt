@@ -11,6 +11,9 @@ v0.33.40-dev (SVN)
 + Gyro weight rounding wrong
 + Added searchlights as a construction option+
 + Bug: Enviromental Sealing rounding when getting weight
++ Added ProtoMech AC 2,4,8
++ Added Mek Taser, Not fully Tested.
++ Bug: NPE when calculating BV for HarJel when mounted has Location None
 
 v0.33.39 (2009-01-28, UTC+1)
 + Don't crash the server when trying to add newlines to empty Vector of Reports

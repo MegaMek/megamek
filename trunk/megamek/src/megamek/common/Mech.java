@@ -3358,7 +3358,7 @@ public abstract class Mech extends Entity implements Serializable {
             oEquipmentBV += bv;
             // need to do this here, a MiscType does not know the location
             // where it's mounted
-            if (mtype.hasFlag(MiscType.F_HARJEL)) {
+            if (mtype.hasFlag(MiscType.F_HARJEL) && mounted.getLocation() != Mech.LOC_NONE) {
                 if (this.getArmor(mounted.getLocation(), false) != IArmorState.ARMOR_DESTROYED) {
                     oEquipmentBV += this.getArmor(mounted.getLocation());
                 }

@@ -681,6 +681,8 @@ public class Mounted implements Serializable, RoundUpdated {
             if ((atype.getMunitionType() == AmmoType.M_DEAD_FIRE)
                     || (atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE)) {
                 damagePerShot++;
+            } else if (atype.getAmmoType() == AmmoType.T_TASER) {
+                damagePerShot = 6;
             }
 
             return damagePerShot * rackSize * shotsLeft;

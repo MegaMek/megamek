@@ -480,6 +480,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISHVAC10Ammo());
         EquipmentType.addType(AmmoType.createISHVAC5Ammo());
         EquipmentType.addType(AmmoType.createISHVAC2Ammo());
+        EquipmentType.addType(AmmoType.createISMekTaserAmmo());
 
         base = AmmoType.createISMML3LRMAmmo();
         lrmAmmos.add( base );
@@ -780,6 +781,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLPROHeavyMGAmmo());
         EquipmentType.addType(AmmoType.createCLPROMGAmmo());
         EquipmentType.addType(AmmoType.createCLPROLightMGAmmo());
+        EquipmentType.addType(AmmoType.createCLPROAC2Ammo());
+        EquipmentType.addType(AmmoType.createCLPROAC4Ammo());
+        EquipmentType.addType(AmmoType.createCLPROAC8Ammo());
 
         //naval ammo
         EquipmentType.addType(AmmoType.createNAC10Ammo());
@@ -5009,6 +5013,66 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createCLPROAC2Ammo() {
+        // Need special processing to allow non-standard ammo loads.
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
+        ammo.name = "ProtoMech AC/2 Ammo";
+        ammo.shortName = "ProtoMech AC/2";
+        ammo.setInternalName("Clan ProtoMech AC/2 Ammo");
+        ammo.addLookupName("CLProtoAC2Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_AC;
+        ammo.flags |= F_PROTOMECH;
+        ammo.shots = 40;
+        ammo.bv = 4;
+        ammo.cost = 1200;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLPROAC4Ammo() {
+        // Need special processing to allow non-standard ammo loads.
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
+        ammo.name = "ProtoMech AC/4 Ammo";
+        ammo.shortName = "ProtoMech AC/4";
+        ammo.setInternalName("Clan ProtoMech AC/4 Ammo");
+        ammo.addLookupName("CLProtoAC4Ammo");
+        ammo.damagePerShot = 4;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_AC;
+        ammo.flags |= F_PROTOMECH;
+        ammo.shots = 20;
+        ammo.bv = 6;
+        ammo.cost = 4800;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLPROAC8Ammo() {
+        // Need special processing to allow non-standard ammo loads.
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
+        ammo.name = "ProtoMech AC/8 Ammo";
+        ammo.shortName = "ProtoMech AC/8";
+        ammo.setInternalName("Clan ProtoMech AC/8 Ammo");
+        ammo.addLookupName("CLProtoAC8Ammo");
+        ammo.damagePerShot = 8;
+        ammo.rackSize = 8;
+        ammo.ammoType = AmmoType.T_AC;
+        ammo.flags |= F_PROTOMECH;
+        ammo.shots = 10;
+        ammo.bv = 8;
+        ammo.cost = 6300;
+
+        return ammo;
+    }
+
     private static AmmoType createISArrowIVAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -5549,6 +5613,24 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createISMekTaserAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "Taser Ammo";
+        ammo.shortName = "Taser";
+        ammo.setInternalName(ammo.name);
+        ammo.addLookupName("MekTaserAmmo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_TASER;
+        ammo.shots = 5;
+        ammo.bv = 5;
+        ammo.cost = 2000;
+
+        return ammo;
+    }
+
     private static AmmoType createBARL2Ammo() {
         AmmoType ammo = new AmmoType();
 
@@ -5907,9 +5989,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        ammo.name = "IS Coolant Pod";
+        ammo.name = "Coolant Pod";
         ammo.shortName = "Coolant Pod";
-        ammo.setInternalName(ammo.name);
+        ammo.setInternalName("IS Coolant Pod");
         ammo.damagePerShot = 10;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_COOLANT_POD;
@@ -5929,9 +6011,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
-        ammo.name = "Clan Coolant Pod";
+        ammo.name = "Coolant Pod";
         ammo.shortName = "Coolant Pod";
-        ammo.setInternalName(ammo.name);
+        ammo.setInternalName("Clan Coolant Pod");
         ammo.damagePerShot = 10;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_COOLANT_POD;

@@ -15,6 +15,8 @@ v0.33.40-dev (SVN)
 + Added Mek Taser, Not fully Tested.
 + Bug: NPE when calculating BV for HarJel when mounted has Location None
 + RFE: Added the ability to save and load base chassie heat sinks for omnis
++ Bug: Industrial Mechs without advanced targeting system should get 0.9 mod
+    to offensive BV
 
 v0.33.39 (2009-01-28, UTC+1)
 + Don't crash the server when trying to add newlines to empty Vector of Reports

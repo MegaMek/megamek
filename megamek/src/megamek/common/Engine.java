@@ -67,7 +67,7 @@ public class Engine implements Serializable {
     private int engineRating;
     private int engineType;
     private int engineFlags;
-    private int baseChassieHeatSinks = -1;
+    private int baseChassisHeatSinks = -1;
     public StringBuffer problem = new StringBuffer("Illegal engine: ");
 
     /**
@@ -554,16 +554,16 @@ public class Engine implements Serializable {
      * @param amount
      * @return
      */
-    public void setBaseChassieHeatSinks(int amount) {
-        baseChassieHeatSinks = amount;
+    public void setBaseChassisHeatSinks(int amount) {
+        baseChassisHeatSinks = amount;
     }
 
     /**
      * Return the Base Chassies Engine heat Sinks or intergalHeatSinkCapacity which ever is less.
-     * 
+     *
      * @return
      */
-    public int getBaseChassieHeatSinks() {
-        return Math.min(integralHeatSinkCapacity(), baseChassieHeatSinks);
+    public int getBaseChassisHeatSinks() {
+        return Math.min(integralHeatSinkCapacity(), baseChassisHeatSinks);
     }
 } // End class Engine

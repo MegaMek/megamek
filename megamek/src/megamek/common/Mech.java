@@ -1231,26 +1231,30 @@ public abstract class Mech extends Entity implements Serializable {
      * base for adding engine sinks. Newer method allows externals to say how much are engine HS.
      *
      * @param totalSinks
+     *            the amount of heatsinks to add to the engine
      * @param sinkName
+     *            the <code>String</code> determining the type of heatsink to add. must be a lookupname of a heatsinktype
      */
     public void addEngineSinks(int totalSinks, String sinkName) {
         int toAllocate = Math.min(totalSinks, getEngine().integralHeatSinkCapacity());
-        addEngineSinks(totalSinks, sinkName, toAllocate);
+        addEngineSinks(sinkName, toAllocate);
     }
+
     /**
      * add heat sinks into the engine
-     * @param totalSinks the amount of heatsinks to add to the engine
-     * @param sinkName the <code>String</code> determining the type of heatsink
-     * to add. must be a lookupname of a heatsinktype
+     *
+     * @param sinkName
+     *            the <code>String</code> determining the type of heatsink to add. must be a lookupname of a heatsinktype
+     * @param toAllocate
+     *            Number of hs to add to the Engine.
      */
-    public void addEngineSinks(int totalSinks, String sinkName, int toAllocate) {
+    public void addEngineSinks(String sinkName, int toAllocate) {
         // this relies on these being the correct internalNames for these items
         EquipmentType sinkType = EquipmentType.get(sinkName);
 
         if (sinkType == null) {
             System.out.println("Mech: can't find heat sink to add to engine");
         }
-
 
         if ((toAllocate == 0) && getEngine().isFusion()) {
             System.out.println("Mech: not putting any heat sinks in the engine?!?!");
@@ -4590,8 +4594,8 @@ public abstract class Mech extends Entity implements Serializable {
         sb.append(nl);
 
         if (isOmni()) {
-            sb.append("Base Chassie Heat Sinks:");
-            sb.append(getEngine().getBaseChassieHeatSinks());
+            sb.append("Base Chassis Heat Sinks:");
+            sb.append(getEngine().getBaseChassisHeatSinks());
             sb.append(nl);
         }
 
@@ -4801,15 +4805,15 @@ public abstract class Mech extends Entity implements Serializable {
         if (getEmptyCriticals(LOC_HEAD) < 2) {
             success = false;
         } else {
+            addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
             addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-            addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
         }
 
         if ((getEmptyCriticals(LOC_CT) < 2) || !success) {
             success = false;
         } else {
-            addCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-            addCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+            addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
         }
 
         if ((getEmptyCriticals(LOC_LT) < 1) || (getEmptyCriticals(LOC_RT) < 1) || !success) {
@@ -5458,5 +5462,14 @@ public abstract class Mech extends Entity implements Serializable {
      */
     public boolean isPrimitive() {
         return (getCockpitType() == Mech.COCKPIT_PRIMITIVE) || (getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL);
+    }
+
+    private int getFirstEmptyCrit(int Location) {
+        for (int i = 0; i < getNumberOfCriticals(Location); i++) {
+            if (getCritical(Location, i) == null) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

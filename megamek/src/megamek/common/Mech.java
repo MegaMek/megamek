@@ -1228,12 +1228,22 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     /**
+     * base for adding engine sinks. Newer method allows externals to say how much are engine HS.
+     *
+     * @param totalSinks
+     * @param sinkName
+     */
+    public void addEngineSinks(int totalSinks, String sinkName) {
+        int toAllocate = Math.min(totalSinks, getEngine().integralHeatSinkCapacity());
+        addEngineSinks(totalSinks, sinkName, toAllocate);
+    }
+    /**
      * add heat sinks into the engine
      * @param totalSinks the amount of heatsinks to add to the engine
      * @param sinkName the <code>String</code> determining the type of heatsink
      * to add. must be a lookupname of a heatsinktype
      */
-    public void addEngineSinks(int totalSinks, String sinkName) {
+    public void addEngineSinks(int totalSinks, String sinkName, int toAllocate) {
         // this relies on these being the correct internalNames for these items
         EquipmentType sinkType = EquipmentType.get(sinkName);
 
@@ -1241,7 +1251,6 @@ public abstract class Mech extends Entity implements Serializable {
             System.out.println("Mech: can't find heat sink to add to engine");
         }
 
-        int toAllocate = Math.min(totalSinks, getEngine().integralHeatSinkCapacity());
 
         if ((toAllocate == 0) && getEngine().isFusion()) {
             System.out.println("Mech: not putting any heat sinks in the engine?!?!");
@@ -4561,8 +4570,14 @@ public abstract class Mech extends Entity implements Serializable {
         } else {
             sb.append("Single");
         }
-
         sb.append(nl);
+
+        if (isOmni()) {
+            sb.append("Base Chassie Heat Sinks:");
+            sb.append(getEngine().getBaseChassieHeatSinks());
+            sb.append(nl);
+        }
+
         sb.append("Walk MP:").append(walkMP).append(nl);
         sb.append("Jump MP:").append(jumpMP).append(nl);
         sb.append(nl);

@@ -1880,10 +1880,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createHardenedArmor() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_HARDENED);
-        misc.setInternalName(EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_HARDENED));
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HARDENED);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HARDENED));
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.hittable = false;
@@ -1895,10 +1893,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createCommercialArmor() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_COMMERCIAL);
-        misc.setInternalName(EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_COMMERCIAL));
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_COMMERCIAL);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_COMMERCIAL));
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.hittable = false;
@@ -1910,10 +1906,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createIndustrialArmor() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL);
-        misc.setInternalName(EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL));
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL));
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.hittable = false;
@@ -1941,11 +1935,9 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL);
-        misc.setInternalName(EquipmentType
-                .getStructureTypeName(T_STRUCTURE_ENDO_STEEL));
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL));
         misc.addLookupName("Endo-Steel");
         misc.addLookupName("EndoSteel");
-        misc.addLookupName("Endosteel");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
@@ -1959,13 +1951,10 @@ public class MiscType extends EquipmentType {
     public static MiscType createEndoSteelPrototype() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType
-                .getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE);
-        misc.setInternalName(EquipmentType
-                .getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE));
+        misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE);
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE));
         misc.addLookupName("Endo-Steel Prototype");
         misc.addLookupName("EndoSteelPrototype");
-        misc.addLookupName("Endosteelprototype");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 16;
         misc.hittable = false;

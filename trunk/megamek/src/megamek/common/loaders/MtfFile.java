@@ -66,6 +66,7 @@ public class MtfFile implements IMechLoader {
     String heatSinks;
     String walkMP;
     String jumpMP;
+    String baseChassieHeatSinks = "base chassie heat sinks:-1";
 
     String armorType;
     String[] armorValues = new String[11];
@@ -320,11 +321,11 @@ public class MtfFile implements IMechLoader {
 
             boolean laserSinks = heatSinks.substring(14).equalsIgnoreCase("Laser");
 
-            int expectedSinks = Integer.parseInt(heatSinks.substring(11, 13)
-                    .trim());
+            int expectedSinks = Integer.parseInt(heatSinks.substring(11, 13).trim());
 
-            String thisStructureType = internalType.substring(internalType
-                    .indexOf(':') + 1);
+            int baseHeatSinks = Integer.parseInt(baseChassieHeatSinks.substring("base chassie heat sinks:".length()).trim());
+
+            String thisStructureType = internalType.substring(internalType.indexOf(':') + 1);
             if (thisStructureType.length() > 0) {
                 mech.setStructureType(thisStructureType);
             } else {
@@ -415,6 +416,13 @@ public class MtfFile implements IMechLoader {
                 mech.addEngineSinks(expectedSinks - mech.heatSinks(), dblSinks);
             }
 
+            if (mech.isOmni()) {
+                if (baseHeatSinks >= 10) {
+                    mech.getEngine().setBaseChassieHeatSinks(baseHeatSinks);
+                } else {
+                    mech.getEngine().setBaseChassieHeatSinks(expectedSinks);
+                }
+            }
             return mech;
         } catch (NumberFormatException ex) {
             ex.printStackTrace();
@@ -771,6 +779,11 @@ public class MtfFile implements IMechLoader {
 
         if (line.trim().toLowerCase().startsWith("heat sinks:")) {
             heatSinks = line;
+            return true;
+        }
+
+        if (line.trim().toLowerCase().startsWith("base chassie heat sinks:")) {
+            baseChassieHeatSinks = line;
             return true;
         }
 

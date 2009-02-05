@@ -67,6 +67,7 @@ public class Engine implements Serializable {
     private int engineRating;
     private int engineType;
     private int engineFlags;
+    private int baseChassieHeatSinks = -1;
     public StringBuffer problem = new StringBuffer("Illegal engine: ");
 
     /**
@@ -547,4 +548,22 @@ public class Engine implements Serializable {
         return engineType;
     }
 
+    /**
+     * For omnis set the base Chassies HS any variants will only use this and the reset will have to be added.
+     *
+     * @param amount
+     * @return
+     */
+    public void setBaseChassieHeatSinks(int amount) {
+        baseChassieHeatSinks = amount;
+    }
+
+    /**
+     * Return the Base Chassies Engine heat Sinks or intergalHeatSinkCapacity which ever is less.
+     * 
+     * @return
+     */
+    public int getBaseChassieHeatSinks() {
+        return Math.min(integralHeatSinkCapacity(), baseChassieHeatSinks);
+    }
 } // End class Engine

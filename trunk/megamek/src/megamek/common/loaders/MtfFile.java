@@ -66,7 +66,7 @@ public class MtfFile implements IMechLoader {
     String heatSinks;
     String walkMP;
     String jumpMP;
-    String baseChassieHeatSinks = "base chassie heat sinks:-1";
+    String baseChassieHeatSinks = "base chassis heat sinks:-1";
 
     String armorType;
     String[] armorValues = new String[11];
@@ -323,7 +323,7 @@ public class MtfFile implements IMechLoader {
 
             int expectedSinks = Integer.parseInt(heatSinks.substring(11, 13).trim());
 
-            int baseHeatSinks = Integer.parseInt(baseChassieHeatSinks.substring("base chassie heat sinks:".length()).trim());
+            int baseHeatSinks = Integer.parseInt(baseChassieHeatSinks.substring("base chassis heat sinks:".length()).trim());
 
             String thisStructureType = internalType.substring(internalType.indexOf(':') + 1);
             if (thisStructureType.length() > 0) {
@@ -418,9 +418,9 @@ public class MtfFile implements IMechLoader {
 
             if (mech.isOmni()) {
                 if (baseHeatSinks >= 10) {
-                    mech.getEngine().setBaseChassieHeatSinks(baseHeatSinks);
+                    mech.getEngine().setBaseChassisHeatSinks(baseHeatSinks);
                 } else {
-                    mech.getEngine().setBaseChassieHeatSinks(expectedSinks);
+                    mech.getEngine().setBaseChassisHeatSinks(expectedSinks);
                 }
             }
             return mech;

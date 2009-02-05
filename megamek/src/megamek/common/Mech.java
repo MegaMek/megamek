@@ -4547,7 +4547,16 @@ public abstract class Mech extends Entity implements Serializable {
         }
 
         sb.append(nl);
-        sb.append("TechBase:").append(TechConstants.getTechName(techLevel));
+        sb.append("TechBase:");
+        if ( isMixedTech() ){
+            if (isClan()) {
+                sb.append("Mixed (Clan Chassis)");
+            } else {
+                sb.append("Mixed (IS Chassis)");
+            }
+        }else {
+            sb.append(TechConstants.getTechName(techLevel));
+        }
         sb.append(nl);
         sb.append("Era:").append(year).append(nl);
         sb.append("Rules Level:").append(TechConstants.T_SIMPLE_LEVEL[techLevel]);

@@ -416,6 +416,10 @@ public class MechFileParser {
                 throw new EntityLoadingException("Unable to load harjel in head.");
             }
 
+            if (m.getType().hasFlag(MiscType.F_MASS) && (m.getLocation() != Mech.LOC_HEAD || ((Mech) ent).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED && m.getLocation() != Mech.LOC_CT)) {
+                throw new EntityLoadingException("Unable to load MASS!  Must be located in the same location as the cockpit.");
+            }
+
             if ( m.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
                     && ( (ent instanceof Mech && m.getLocation() == Mech.LOC_HEAD) || (ent instanceof VTOL && m.getLocation() == VTOL.LOC_ROTOR) )) {
                 throw new EntityLoadingException("Unable to load Modular Armor in Rotor/Head location");

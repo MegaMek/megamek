@@ -3269,6 +3269,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "MASS";
         misc.setInternalName("ISMASS");
+        misc.addLookupName("IS Mass");
         misc.tonnage = 1.5f;
         misc.criticals = 1;
         misc.hittable = true;
@@ -3286,6 +3287,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "MASS";
         misc.setInternalName("CLMASS");
+        misc.addLookupName("Clan Mass");
         misc.tonnage = 1.5f;
         misc.criticals = 1;
         misc.hittable = true;

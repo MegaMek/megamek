@@ -91,6 +91,7 @@ public class MiscType extends EquipmentType {
     public static final long F_EJECTION_SEAT = 1L << 55;
     public static final long F_SALVAGE_ARM = 1L << 56;
     public static final long F_TRACKS = 1L << 57; // TODO: Implement me, so far only construction data
+    public static final long F_MASS = 1L << 58; // TODO: Implement me, so far only construction data
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -540,6 +541,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createSpotWelder());
         EquipmentType.addType(createLiftHoist());
         EquipmentType.addType(createTracks());
+        EquipmentType.addType(createISMASS());
+        EquipmentType.addType(createCLMASS());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());
@@ -3257,6 +3260,40 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags |= F_TRACKS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createISMASS() {
+        MiscType misc = new MiscType();
+
+        misc.name = "MASS";
+        misc.setInternalName("ISMASS");
+        misc.tonnage = 1.5f;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 9;
+        misc.cost = 4000;
+        misc.flags |= F_MASS;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+
+        return misc;
+    }
+
+    public static MiscType createCLMASS() {
+        MiscType misc = new MiscType();
+
+        misc.name = "MASS";
+        misc.setInternalName("CLMASS");
+        misc.tonnage = 1.5f;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.bv = 9;
+        misc.cost = 4000;
+        misc.flags |= F_MASS;
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
 
         return misc;
     }

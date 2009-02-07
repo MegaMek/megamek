@@ -13763,11 +13763,23 @@ public class Server implements Runnable {
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(rolls.size());
-            r.add(reasons.toString()); // international issue
             r.add(base.getDesc()); // international issue
             vPhaseReport.add(r);
             if (moving) {
                 vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, base));
+            } else if ( (entity instanceof Mech)
+                    && game.getOptions().booleanOption("tacops_falling_expanded")
+                    && (entity.getCrew().getPiloting() < 6)
+                    && !entity.isHullDown()
+                    && entity.canGoHullDown()){
+                if ( entity.isHullDown() && entity.canGoHullDown() ){
+                    r = new Report (2317);
+                    r.subject = entity.getId();
+                    r.add(entity.getDisplayName());
+                    vPhaseReport.add(r);
+                }else{
+                    vPhaseReport.addAll(doEntityFall(entity, base));
+                }
             } else {
                 vPhaseReport.addAll(doEntityFall(entity, base));
             }
@@ -13788,54 +13800,81 @@ public class Server implements Runnable {
         r.add(base.getDesc()); // international issue
         vPhaseReport.add(r);
         for (int i = 0; i < rolls.size(); i++) {
-            PilotingRollData modifier = rolls.elementAt(i);
+            PilotingRollData roll = rolls.elementAt(i);
             r = new Report(2290);
             r.subject = entity.getId();
             r.indent();
             r.newlines = 0;
             r.add(i + 1);
-            r.add(modifier.getDesc()); // international issue
+            r.add(roll.getDesc()); // international issue
             vPhaseReport.add(r);
-            int diceRoll = Compute.d6(2);
-            r = new Report(2300);
-            r.subject = entity.getId();
-            r.add(modifier.getValueAsString());
-            r.add(diceRoll);
-            if (diceRoll < modifier.getValue()) {
-                r.choose(false);
+            if ((roll.getValue() == TargetRoll.AUTOMATIC_FAIL) || (roll.getValue() == TargetRoll.IMPOSSIBLE)) {
+                r = new Report(2295);
+                r.subject = entity.getId();
                 vPhaseReport.add(r);
                 if (moving) {
-                    vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, base));
+                    vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, roll));
                 } else {
                     if ( (entity instanceof Mech)
                             && game.getOptions().booleanOption("tacops_falling_expanded")
                             && (entity.getCrew().getPiloting() < 6)
                             && !entity.isHullDown()
                             && entity.canGoHullDown()){
-                        if ( (entity.getCrew().getPiloting() > 1) && (modifier.getValue() - diceRoll < 2)){
-                            entity.setHullDown(true);
-                        }else if ( (entity.getCrew().getPiloting() <= 1) && (modifier.getValue() - diceRoll < 3) ){
-                            entity.setHullDown(true);
-                        }
                         if ( entity.isHullDown() && entity.canGoHullDown() ){
                             r = new Report (2317);
                             r.subject = entity.getId();
                             r.add(entity.getDisplayName());
                             vPhaseReport.add(r);
                         }else{
-                            vPhaseReport.addAll(doEntityFall(entity, base));
+                            vPhaseReport.addAll(doEntityFall(entity, roll));
                         }
-
                     }else {
-                        vPhaseReport.addAll(doEntityFall(entity, base));
+                        vPhaseReport.addAll(doEntityFall(entity, roll));
                     }
                 }
                 // failed a PSR, check for ICE engine stalling
                 entity.doCheckEngineStallRoll(vPhaseReport);
                 return vPhaseReport;
+            } else {
+                int diceRoll = Compute.d6(2);
+                r = new Report(2300);
+                r.add(roll.getValueAsString());
+                r.add(diceRoll);
+                if (diceRoll < roll.getValue()) {
+                    r.choose(false);
+                    vPhaseReport.add(r);
+                    if (moving) {
+                        vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, roll));
+                    } else {
+                        if ( (entity instanceof Mech)
+                                && game.getOptions().booleanOption("tacops_falling_expanded")
+                                && (entity.getCrew().getPiloting() < 6)
+                                && !entity.isHullDown()
+                                && entity.canGoHullDown()){
+                            if ( (entity.getCrew().getPiloting() > 1) && (roll.getValue() - diceRoll < 2)){
+                                entity.setHullDown(true);
+                            }else if ( (entity.getCrew().getPiloting() <= 1) && (roll.getValue() - diceRoll < 3) ){
+                                entity.setHullDown(true);
+                            }
+                            if ( entity.isHullDown() && entity.canGoHullDown() ){
+                                r = new Report (2317);
+                                r.subject = entity.getId();
+                                r.add(entity.getDisplayName());
+                                vPhaseReport.add(r);
+                            }else{
+                                vPhaseReport.addAll(doEntityFall(entity, roll));
+                            }
+                        }else {
+                            vPhaseReport.addAll(doEntityFall(entity, roll));
+                        }
+                    }
+                    // failed a PSR, check for ICE engine stalling
+                    entity.doCheckEngineStallRoll(vPhaseReport);
+                    return vPhaseReport;
+                }
+                r.choose(true);
+                vPhaseReport.add(r);
             }
-            r.choose(true);
-            vPhaseReport.add(r);
         }
         return vPhaseReport;
     }

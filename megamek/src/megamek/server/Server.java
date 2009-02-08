@@ -19101,41 +19101,45 @@ public class Server implements Runnable {
         // check for location exposure
         vPhaseReport.addAll(doSetLocationsExposure(entity, fallHex, false, -waterDepth));
 
-        // we want to be able to avoid pilot damage even when it was
-        // an automatic fall, only unconsciousness should cause auto-damage
-        roll.removeAutos();
+        // only mechs should roll to avoid pilot damage
+        // vehicles may fall due to sideslips
+        if (entity instanceof Mech) {
+            // we want to be able to avoid pilot damage even when it was
+            // an automatic fall, only unconsciousness should cause auto-damage
+            roll.removeAutos();
 
-        if (height > 1) {
-            roll.addModifier(height - 1, "height of fall");
-        }
+            if (height > 1) {
+                roll.addModifier(height - 1, "height of fall");
+            }
 
-        entity.addPilotingModifierForTerrain(roll, fallPos);
+            entity.addPilotingModifierForTerrain(roll, fallPos);
 
-        if (roll.getValue() == TargetRoll.IMPOSSIBLE) {
-            r = new Report(2320);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            r.add(entity.crew.getName());
-            r.indent();
-            vPhaseReport.add(r);
-            vPhaseReport.addAll(damageCrew(entity, 1));
-            Report.addNewline(vPhaseReport);
-        } else {
-            int diceRoll = Compute.d6(2);
-            r = new Report(2325);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            r.add(entity.crew.getName());
-            r.add(roll.getValueAsString());
-            r.add(diceRoll);
-            if (diceRoll >= roll.getValue()) {
-                r.choose(true);
-                vPhaseReport.add(r);
-            } else {
-                r.choose(false);
+            if (roll.getValue() == TargetRoll.IMPOSSIBLE) {
+                r = new Report(2320);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.add(entity.crew.getName());
+                r.indent();
                 vPhaseReport.add(r);
                 vPhaseReport.addAll(damageCrew(entity, 1));
                 Report.addNewline(vPhaseReport);
+            } else {
+                int diceRoll = Compute.d6(2);
+                r = new Report(2325);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.add(entity.crew.getName());
+                r.add(roll.getValueAsString());
+                r.add(diceRoll);
+                if (diceRoll >= roll.getValue()) {
+                    r.choose(true);
+                    vPhaseReport.add(r);
+                } else {
+                    r.choose(false);
+                    vPhaseReport.add(r);
+                    vPhaseReport.addAll(damageCrew(entity, 1));
+                    Report.addNewline(vPhaseReport);
+                }
             }
         }
 

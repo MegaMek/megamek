@@ -23,6 +23,7 @@ v0.33.40-dev (SVN)
 + Added MASS
 + Bug 2561154: Leg Destroyed - Avoiding Damage
 + Bug 2549302: Warrior C VTOL has no SRM-4 ammo
++ Bug 2495763: tanks falling due to sideslips should not take pilot damage
 
 v0.33.39 (2009-01-28, UTC+1)
 + Don't crash the server when trying to add newlines to empty Vector of Reports

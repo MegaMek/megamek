@@ -570,6 +570,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createMace());
         EquipmentType.addType(createDualSaw());
         EquipmentType.addType(createChainsaw());
+        EquipmentType.addType(createRockCutter());
         EquipmentType.addType(createBackhoe());
         EquipmentType.addType(createPileDriver());
         EquipmentType.addType(createArmoredCowl());
@@ -1401,6 +1402,22 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_CLUB;
         misc.subType |= S_CHAINSAW;
         misc.bv = 7;
+
+        return misc;
+    }
+
+    public static MiscType createRockCutter() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Rock Cutter";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 5;
+        misc.criticals = 5;
+        misc.cost = 100000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_ROCK_CUTTER;
+        misc.bv = 6;
 
         return misc;
     }

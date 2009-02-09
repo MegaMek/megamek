@@ -120,6 +120,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
             }
         }else if (mType.hasSubType(MiscType.S_CHAIN_WHIP)){
             nDamage = 3;
+        } else if (mType.hasSubType(MiscType.S_ROCK_CUTTER)) {
+            nDamage = 5;
         }
 
         // TSM doesn't apply to some weapons, including Saws.

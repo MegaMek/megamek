@@ -8087,4 +8087,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         return;
     }
 
+    public boolean hasArmoredEngine() {
+        return false;
+    }
+
 }

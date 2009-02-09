@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 public class CriticalSlot implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -8744251501251495923L;
     public final static int TYPE_SYSTEM = 0;
@@ -27,7 +27,7 @@ public class CriticalSlot implements Serializable {
     private int type;
     private int index;
     private Mounted mount;
-    
+
     private boolean hit; // hit
     private boolean missing; // location destroyed
     private boolean destroyed;
@@ -35,27 +35,34 @@ public class CriticalSlot implements Serializable {
     private boolean breached; // true = breached
     private boolean repairing = false; // true = currently being repaired
 
+    private boolean armored = false; // Armored Component Rule
+
     public CriticalSlot(int type, int index) {
         this(type, index, true);
     }
 
     public CriticalSlot(int type, int index, boolean hittable) {
+        this(type, index, hittable, false);
+    }
+
+    public CriticalSlot(int type, int index, boolean hittable, boolean armored) {
         this.type = type;
         this.index = index;
         this.hittable = hittable;
+        this.armored = armored;
     }
 
     public CriticalSlot(int type, Mounted mount) {
         this(type,mount,true);
     }
-    
+
     public CriticalSlot(int type, Mounted mount, boolean hittable) {
         this.type = type;
-        this.index = -1;
+        index = -1;
         this.hittable = hittable;
-        this.setMount(mount);
+        setMount(mount);
     }
-    
+
     public int getType() {
         return type;
     }
@@ -125,7 +132,7 @@ public class CriticalSlot implements Serializable {
      * is the slot being repaired?
      */
     public boolean isRepairing() {
-        return this.repairing;
+        return repairing;
     }
 
     public void setRepairing(boolean repairing) {
@@ -135,6 +142,7 @@ public class CriticalSlot implements Serializable {
     /**
      * Two CriticalSlots are equal if their type and index are equal
      */
+    @Override
     public boolean equals(Object object) {
         if (this == object) {
             return true;
@@ -142,7 +150,7 @@ public class CriticalSlot implements Serializable {
             return false;
         }
         CriticalSlot other = (CriticalSlot) object;
-        return other.getType() == this.type && other.getIndex() == this.index;
+        return other.getType() == type && other.getIndex() == index;
     }
 
     /**
@@ -157,5 +165,13 @@ public class CriticalSlot implements Serializable {
      */
     public Mounted getMount() {
         return mount;
+    }
+
+    public void setArmored(boolean armored) {
+        this.armored = armored;
+    }
+
+    public boolean isArmored() {
+        return armored;
     }
 }

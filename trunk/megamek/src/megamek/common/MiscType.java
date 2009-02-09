@@ -1313,7 +1313,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createMace() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Mace";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;

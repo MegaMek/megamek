@@ -81,37 +81,47 @@ public class TestMech extends TestEntity {
     }
 
     public float getWeightCockpit() {
+        float weight = 3.0f;
         if (mech.getCockpitType() == Mech.COCKPIT_SMALL) {
-            return 2.0f;
+            weight = 2.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            return 4.0f;
+            weight = 4.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
             // Technically, it's two separate 3-ton pieces of equipment.
             // We're ignoring that and returning the total, because it's easier.
-            return 6.0f;
+            weight = 6.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_DUAL) {
             // This is wrong; I just don't remember the correct weight.
             // FIXME
-            return 3.0f;
+            weight = 3.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE) {
-            return 5.0f;
+            weight = 5.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
-            return 5.0f;
-        } else {
-            return 3.0f;
+            weight = 5.0f;
         }
+
+        if (mech.hasArmoredCockpit()) {
+            weight += 1.0f;
+        }
+        return weight;
     }
 
     public float getWeightGyro() {
         float retVal = (float) Math.ceil(engine.getRating() / 100.0f);
+        float slots = 4;
         if (mech.getGyroType() == Mech.GYRO_XL) {
             retVal /= 2;
+            slots = 6;
         } else if (mech.getGyroType() == Mech.GYRO_COMPACT) {
             retVal *= 1.5;
+            slots = 2;
         } else if (mech.getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             retVal *= 2;
         }
         retVal = ceil(retVal, getWeightCeilingGyro());
+        if ( mech.hasArmoredGyro() ){
+            retVal *= (0.5f * slots);
+        }
         return retVal;
     }
 

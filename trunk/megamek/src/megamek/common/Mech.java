@@ -2321,6 +2321,7 @@ public abstract class Mech extends Entity implements Serializable {
         for (int i = 0; i < slots; i++) {
             CriticalSlot cs = new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num, mounted.getType().isHittable());
             cs.setMount(mounted);
+            cs.setArmored(mounted.isArmored());
             addCritical(loc, cs);
         }
     }
@@ -5481,4 +5482,40 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return -1;
     }
+
+    public boolean hasArmoredCockpit() {
+
+        int location = getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED ? Mech.LOC_CT: Mech.LOC_HEAD;
+
+        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+            CriticalSlot cs = getCritical(location, slot);
+            if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == Mech.SYSTEM_COCKPIT) {
+                return cs.isArmored();
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasArmoredGyro() {
+        for (int slot = 0; slot < getNumberOfCriticals(LOC_CT); slot++) {
+            CriticalSlot cs = getCritical(LOC_CT, slot);
+            if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == Mech.SYSTEM_GYRO) {
+                return cs.isArmored();
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasArmoredEngine() {
+        for (int slot = 0; slot < getNumberOfCriticals(LOC_CT); slot++) {
+            CriticalSlot cs = getCritical(LOC_CT, slot);
+            if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == Mech.SYSTEM_ENGINE) {
+                return cs.isArmored();
+            }
+        }
+        return false;
+    }
+
 }

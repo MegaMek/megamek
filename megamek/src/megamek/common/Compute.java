@@ -889,7 +889,7 @@ public class Compute {
             Entity friend = i.nextElement();
 
             // TODO : can units being transported be used for C3 spotting?
-            if (attacker.equals(friend) || !friend.isActive() || !attacker.onSameC3NetworkAs(friend)) {
+            if (attacker.equals(friend) || !friend.isActive() || !attacker.onSameC3NetworkAs(friend) || !friend.isDeployed()) {
                 continue; // useless to us...
             }
 
@@ -921,7 +921,7 @@ public class Compute {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity friend = i.nextElement();
 
-            if (attacker.equals(friend) || !attacker.onSameC3NetworkAs(friend, true) ) {
+            if (attacker.equals(friend) || !attacker.onSameC3NetworkAs(friend, true) || !friend.isDeployed()) {
                 continue; // useless to us...
             }
 

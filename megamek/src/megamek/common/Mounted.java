@@ -114,6 +114,9 @@ public class Mounted implements Serializable, RoundUpdated {
     // for BA weapons, is this on the body of a trooper?
     private boolean bodyMounted = false;
 
+    // for Armored components
+    private boolean armoredComponent = false;
+
     /** Creates new Mounted */
     public Mounted(Entity entity, EquipmentType type) {
         this.entity = entity;
@@ -1034,5 +1037,13 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void unlink() {
         linked = null;
+    }
+
+    public void setArmored(boolean armored) {
+        armoredComponent = armored;
+    }
+
+    public boolean isArmored() {
+        return armoredComponent;
     }
 }

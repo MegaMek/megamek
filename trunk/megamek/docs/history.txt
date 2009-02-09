@@ -1,5 +1,8 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.33.41-dev (SVN)
++ Bug: prevent NPE when c3/c3i team mate is not yet deployed
+
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs
 + revert Bug 2538487: Firing with a prone quad, was not actually a bug

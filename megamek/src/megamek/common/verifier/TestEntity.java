@@ -244,7 +244,12 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public float getWeightEngine() {
-        return engine.getWeightEngine(getWeightCeilingEngine());
+        float weight = engine.getWeightEngine(getWeightCeilingEngine());
+        
+        if ( getEntity().hasArmoredEngine() ){
+            weight += (0.5f * (engine.getCenterTorsoCriticalSlots().length+(engine.getSideTorsoCriticalSlots().length*2)));
+        }
+        return weight;
     }
 
     public String printWeightStructure() {

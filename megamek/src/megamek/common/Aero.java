@@ -2549,7 +2549,7 @@ public class Aero
                         newmount.setNWeapons(groups.get(key));
                         weaponGroups.put(key, getEquipmentNum(newmount));
                     } catch (LocationFullException ex) {
-                        System.out.println("Unable to compile weapon groups"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        System.out.println("Unable to compile weapon groups"); //$NON-NLS-1$
                         ex.printStackTrace();
                         return;
                     }
@@ -2599,4 +2599,16 @@ public class Aero
             return true;
         }
     }
+
+    @Override
+    public boolean hasArmoredEngine() {
+        for (int slot = 0; slot < getNumberOfCriticals(LOC_AFT); slot++) {
+            CriticalSlot cs = getCritical(LOC_AFT, slot);
+            if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == Mech.SYSTEM_ENGINE) {
+                return cs.isArmored();
+            }
+        }
+        return false;
+    }
+
 }

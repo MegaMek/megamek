@@ -1312,7 +1312,7 @@ public class Aero
                 public int compare(double[] obj1, double[] obj2) {
                     // if same BV, lower heat first
                     if (obj1[0] == obj2[0]) {
-                        return new Double(obj1[1] - obj2[1]).intValue();
+                        return (int)Math.ceil(obj1[1] - obj2[1]);
                     }
                     // higher BV first
                     return (int)Math.ceil(obj2[0] - obj1[0]);
@@ -1324,7 +1324,7 @@ public class Aero
             }
             // count heat-generating weapons at full modified BV until heatefficiency is reached or
             // passed with one weapon
-            int heatAdded = 0;
+            double heatAdded = 0;
             for (double[] weaponValues : heatBVs) {
                 double dBV = weaponValues[0];
                 if (heatAdded >= aeroHeatEfficiency) {

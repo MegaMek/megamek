@@ -3023,10 +3023,10 @@ public abstract class Mech extends Entity implements Serializable {
         // total up maximum heat generated
         // and add up BVs for ammo-using weapon types for excessive ammo rule
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
-        int maximumHeat = 0;
+        double maximumHeat = 0;
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
-            int weaponHeat = wtype.getHeat();
+            double weaponHeat = wtype.getHeat();
 
             // only count non-damaged equipment
             if (mounted.isMissing() || mounted.isHit() || mounted.isDestroyed() || mounted.isBreached()) {
@@ -3255,7 +3255,7 @@ public abstract class Mech extends Entity implements Serializable {
                     // first element in the the ArrayList is BV, second is heat
                     // if same BV, lower heat first
                     if (obj1.get(0).equals(obj2.get(0))) {
-                        return new Integer((Integer) obj1.get(1) - (Integer) obj2.get(1));
+                        return (int)Math.ceil((Double) obj1.get(1) - (Double) obj2.get(1));
                     }
                     // higher BV first
                     return (int)Math.ceil((Double) obj2.get(0) - (Double) obj1.get(0));
@@ -3264,7 +3264,7 @@ public abstract class Mech extends Entity implements Serializable {
             // count heat-generating weapons at full modified BV until
             // heatefficiency is reached or
             // passed with one weapon
-            int heatAdded = 0;
+            double heatAdded = 0;
             for (ArrayList<Object> weaponValues : heatBVs) {
                 bvText.append(startRow);
                 bvText.append(startColumn);
@@ -3280,7 +3280,7 @@ public abstract class Mech extends Entity implements Serializable {
                 if (heatAdded >= mechHeatEfficiency) {
                     bvText.append("Heat efficiency reached, half BV");
                 }
-                heatAdded += (Integer) weaponValues.get(1);
+                heatAdded += (Double) weaponValues.get(1);
                 weaponBV += dBV;
                 bvText.append(endColumn);
                 bvText.append(startColumn);
@@ -3372,7 +3372,7 @@ public abstract class Mech extends Entity implements Serializable {
             oEquipmentBV += bv;
             // need to do this here, a MiscType does not know the location
             // where it's mounted
-            if (mtype.hasFlag(MiscType.F_HARJEL) && mounted.getLocation() != Mech.LOC_NONE) {
+            if (mtype.hasFlag(MiscType.F_HARJEL) && (mounted.getLocation() != Entity.LOC_NONE)) {
                 if (this.getArmor(mounted.getLocation(), false) != IArmorState.ARMOR_DESTROYED) {
                     oEquipmentBV += this.getArmor(mounted.getLocation());
                 }

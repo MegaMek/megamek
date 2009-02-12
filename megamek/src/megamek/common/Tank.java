@@ -1702,8 +1702,8 @@ public class Tank extends Entity implements Serializable {
      * @see megamek.common.Entity#getIniBonus()
      */
     @Override
-    public int getIniBonus() {
-        int bonus = super.getIniBonus();
+    public int getHQIniBonus() {
+        int bonus = super.getHQIniBonus();
         if (((stabiliserHits > 0) && (mpUsedLastRound > 0))
                 || commanderHit) {
             return 0;

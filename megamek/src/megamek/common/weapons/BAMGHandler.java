@@ -28,6 +28,7 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brockxs
@@ -47,6 +48,7 @@ public class BAMGHandler extends WeaponHandler {
      */
     public BAMGHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
+        damageType = DamageType.ANTI_INFANTRY;
     }
 
     /*

@@ -610,6 +610,16 @@ public class BattleArmor extends Infantry implements Serializable {
         // to one less than the number of locations in the unit.
         troopersShooting = locations() - 1;
     }
+    
+    /**
+    * Set the troopers in the unit to the given values.
+    */
+    public void setInternal(int value) {
+        // Initialize the troopers.
+        for (int loop = 1; loop < this.locations(); loop++) {
+            this.initializeInternal(value, loop);
+        }
+    }
 
     /**
      * Mounts the specified equipment in the specified location.

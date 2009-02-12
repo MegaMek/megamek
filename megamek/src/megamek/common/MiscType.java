@@ -92,6 +92,7 @@ public class MiscType extends EquipmentType {
     public static final long F_SALVAGE_ARM = 1L << 56;
     public static final long F_TRACKS = 1L << 57; // TODO: Implement me, so far only construction data
     public static final long F_MASS = 1L << 58; // TODO: Implement me, so far only construction data
+    public static final long F_BA_EQUIPMENT = 1L << 59;
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1677,7 +1678,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_ECM | F_SINGLE_HEX_ECM;
+        misc.flags |= F_ECM | F_SINGLE_HEX_ECM | F_BA_EQUIPMENT;
         misc.bv = 0;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
@@ -2350,7 +2351,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("BAP (2 Hex)");
         misc.tonnage = 0.0f;
         misc.cost = 200000;
-        misc.flags |= F_BAP;
+        misc.flags |= F_BAP | F_BA_EQUIPMENT;
 
         return misc;
     }
@@ -2364,7 +2365,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("BAP (3 Hex)");
         misc.tonnage = 0.0f;
         misc.cost = 200000;
-        misc.flags |= F_BAP;
+        misc.flags |= F_BAP | F_BA_EQUIPMENT;
 
         return misc;
     }
@@ -2467,7 +2468,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.15f;
         misc.criticals = 1;
         misc.cost = 50000;
-        misc.flags |= F_BAP;
+        misc.flags |= F_BAP | F_BA_EQUIPMENT;
         misc.bv = 0;
 
         return misc;
@@ -2482,7 +2483,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.25f;
         misc.criticals = 1;
         misc.cost = 50000;
-        misc.flags |= F_BAP;
+        misc.flags |= F_BAP | F_BA_EQUIPMENT;
         misc.bv = 0;
 
         return misc;

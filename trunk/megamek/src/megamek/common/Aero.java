@@ -1010,7 +1010,7 @@ public class Aero
                     || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS))
                     || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER))
                     || ((etype instanceof WeaponType) && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN))) {
-                dEquipmentBV += etype.getBV(this);
+                dEquipmentBV += etype.getBV(this, mounted.isArmored());
             }
         }
         dbv += dEquipmentBV;
@@ -1114,9 +1114,9 @@ public class Aero
             if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype.getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this, mounted.isArmored()));
                 } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this, mounted.isArmored()) + weaponsForExcessiveAmmo.get(key));
                 }
             }
         }
@@ -1129,7 +1129,7 @@ public class Aero
         ArrayList<Mounted> weapons = getTotalWeaponList();
         for (Mounted weapon : weapons) {
             WeaponType wtype = (WeaponType) weapon.getType();
-            double dBV = wtype.getBV(this);
+            double dBV = wtype.getBV(this, weapon.isArmored());
             // don't count destroyed equipment
             if (weapon.isDestroyed()) {
                 continue;
@@ -1153,7 +1153,7 @@ public class Aero
                     if (possibleMG.getType().hasFlag(WeaponType.F_MG)
                             && (possibleMG.getLocation() == weapon
                                     .getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                        mgaBV += possibleMG.getType().getBV(this, possibleMG.isArmored());
                     }
                 }
                 dBV = mgaBV * 0.67;
@@ -1174,7 +1174,7 @@ public class Aero
             // ammo
             for (Mounted weapon : getTotalWeaponList()) {
                 WeaponType wtype = (WeaponType) weapon.getType();
-                double dBV = wtype.getBV(this);
+                double dBV = wtype.getBV(this, weapon.isArmored());
 
                 // don't count destroyed equipment
                 if (weapon.isDestroyed()) {
@@ -1200,7 +1200,7 @@ public class Aero
                         if (possibleMG.getType().hasFlag(WeaponType.F_MG)
                                 && (possibleMG.getLocation() == weapon
                                         .getLocation())) {
-                            mgaBV += possibleMG.getType().getBV(this);
+                            mgaBV += possibleMG.getType().getBV(this, possibleMG.isArmored());
                         }
                     }
                     dBV = mgaBV * 0.67;
@@ -1246,7 +1246,7 @@ public class Aero
             // loop through weapons, calc their modified BV
             for (Mounted weapon : weapons) {
                 WeaponType wtype = (WeaponType) weapon.getType();
-                double dBV = wtype.getBV(this);
+                double dBV = wtype.getBV(this, weapon.isArmored());
                 // don't count destroyed equipment
                 if (weapon.isDestroyed()) {
                     continue;
@@ -1264,7 +1264,7 @@ public class Aero
                     double mgaBV = 0;
                     for (Mounted possibleMG : getTotalWeaponList()) {
                         if (possibleMG.getType().hasFlag(WeaponType.F_MG) && (possibleMG.getLocation() == weapon.getLocation())) {
-                            mgaBV += possibleMG.getType().getBV(this);
+                            mgaBV += possibleMG.getType().getBV(this, possibleMG.isArmored());
                         }
                     }
                     dBV = mgaBV * 0.67;
@@ -1352,7 +1352,7 @@ public class Aero
                 // weapons
                 continue;
             }
-            double bv = mtype.getBV(this);
+            double bv = mtype.getBV(this, mounted.isArmored());
             // if physical weapon linked to AES, multiply by 1.5
             oEquipmentBV += bv;
             // need to do this here, a MiscType does not know the location

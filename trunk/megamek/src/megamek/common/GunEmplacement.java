@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *           Copyright (C) 2005 Mike Gratton <mike@vee.net>
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -25,7 +25,7 @@ import java.util.Vector;
 public class GunEmplacement extends Entity implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8561738092216598248L;
     private String name = null;
@@ -63,26 +63,26 @@ public class GunEmplacement extends Entity implements Serializable {
     }
 
     public boolean hasTurret() {
-        return !this.turretNotExists;
+        return !turretNotExists;
     }
 
     public void setTurret(boolean turret) {
-        this.turretNotExists = !turret;
+        turretNotExists = !turret;
         if (!turret) {
             super.setSecondaryFacing(-1);
         }
     }
 
     public boolean isTurretLocked() {
-        return this.turretLocked;
+        return turretLocked;
     }
 
     public void setTurretLocked(boolean locked) {
-        this.turretLocked = locked;
+        turretLocked = locked;
     }
 
     public int getConstructionFactor() {
-        return this.cf;
+        return cf;
     }
 
     public void setConstructionFactor(int cf) {
@@ -125,16 +125,16 @@ public class GunEmplacement extends Entity implements Serializable {
     }
 
     public int getConstructionType() {
-        if (this.cf <= 15) {
+        if (cf <= 15) {
             return Building.LIGHT;
         }
-        if (this.cf <= 40) {
+        if (cf <= 40) {
             return Building.MEDIUM;
         }
-        if (this.cf <= 90) {
+        if (cf <= 90) {
             return Building.HEAVY;
         }
-        if (this.cf <= 150) {
+        if (cf <= 150) {
             return Building.HARDENED;
         }
         return Building.UNKNOWN;
@@ -170,7 +170,7 @@ public class GunEmplacement extends Entity implements Serializable {
     }
 
     public boolean isBurning() {
-        return this.burning;
+        return burning;
     }
 
     public void setBurning(boolean burning) {
@@ -179,55 +179,67 @@ public class GunEmplacement extends Entity implements Serializable {
 
     // ///////// Entity methods ///////////
 
+    @Override
     public int height() {
-        return this.height;
+        return height;
     }
 
     public void setHeight(int height) {
         this.height = height;
     }
 
+    @Override
     public boolean isImmobile() {
         return true;
     }
 
+    @Override
     public boolean isEligibleForMovement() {
         return false;
     }
 
+    @Override
     public String getMovementString(int mtype) {
         return "Not possible!";
     }
 
+    @Override
     public String getMovementAbbr(int mtype) {
         return "!";
     }
 
+    @Override
     public boolean isHexProhibited(IHex hex) {
-        
-        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+
+        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
-        
+        }
+
         // can't put on top of an existing building
         return hex.containsTerrain(Terrains.BUILDING);
     }
 
+    @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         return 0;
     }
 
+    @Override
     public boolean canChangeSecondaryFacing() {
         return hasTurret() && !turretLocked;
     }
 
+    @Override
     public boolean isValidSecondaryFacing(int n) {
         return hasTurret() && !turretLocked;
     }
 
+    @Override
     public int clipSecondaryFacing(int n) {
         return n;
     }
 
+    @Override
     public void setSecondaryFacing(int sec_facing) {
         if (!turretLocked) {
             super.setSecondaryFacing(sec_facing);
@@ -237,6 +249,7 @@ public class GunEmplacement extends Entity implements Serializable {
         }
     }
 
+    @Override
     public void setFacing(int facing) {
         super.setFacing(facing);
         if (isTurretLocked()) {
@@ -245,22 +258,27 @@ public class GunEmplacement extends Entity implements Serializable {
         }
     }
 
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
 
+    @Override
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
 
+    @Override
     public int locations() {
         return hasTurret() ? LOCATION_ABBRS.length : LOCATION_ABBRS.length - 1;
     }
 
+    @Override
     public boolean hasRearArmor(int loc) {
         return false;
     }
 
+    @Override
     public int getWeaponArc(int weaponId) {
         switch (getEquipment(weaponId).getLocation()) {
             case LOC_NORTH:
@@ -280,6 +298,7 @@ public class GunEmplacement extends Entity implements Serializable {
         }
     }
 
+    @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
         if (getEquipment(weaponId).getLocation() == LOC_TURRET) {
             return true;
@@ -287,10 +306,12 @@ public class GunEmplacement extends Entity implements Serializable {
         return false;
     }
 
+    @Override
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
     }
 
+    @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation,
             int aimingMode) {
 
@@ -308,6 +329,7 @@ public class GunEmplacement extends Entity implements Serializable {
         return rollHitLocation(table, side);
     }
 
+    @Override
     public HitData rollHitLocation(int table, int side) {
         int armorLoc = LOC_BUILDING;
         int effect = HitData.EFFECT_NONE;
@@ -345,6 +367,7 @@ public class GunEmplacement extends Entity implements Serializable {
     /**
      * Gets the location that excess damage transfers to
      */
+    @Override
     public HitData getTransferLocation(HitData hit) {
         return (hit.getLocation() == LOC_TURRET) ? new HitData(LOC_BUILDING)
                 : new HitData(LOC_DESTROYED);
@@ -353,6 +376,7 @@ public class GunEmplacement extends Entity implements Serializable {
     /**
      * Gets the location that is destroyed recursively
      */
+    @Override
     public int getDependentLocation(int loc) {
         return (loc == LOC_BUILDING) ? LOC_TURRET : LOC_NONE;
     }
@@ -360,6 +384,7 @@ public class GunEmplacement extends Entity implements Serializable {
     /**
      * Calculates the battle value of this emplacement
      */
+    @Override
     public int calculateBattleValue() {
         return calculateBattleValue(false, false);
     }
@@ -367,6 +392,7 @@ public class GunEmplacement extends Entity implements Serializable {
     /**
      * Calculates the battle value of this emplacement
      */
+    @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         // using structures BV rules from MaxTech
 
@@ -382,14 +408,15 @@ public class GunEmplacement extends Entity implements Serializable {
             EquipmentType etype = mounted.getType();
 
             // don't count destroyed equipment
-            if (mounted.isDestroyed())
+            if (mounted.isDestroyed()) {
                 continue;
+            }
 
             if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS))
                     || (etype instanceof AmmoType && ((AmmoType) etype)
                             .getAmmoType() == AmmoType.T_AMS)
                     || etype.hasFlag(MiscType.F_ECM)) {
-                dEquipmentBV += etype.getBV(this);
+                dEquipmentBV += etype.getBV(this, mounted.isArmored());
             }
         }
         dbv += dEquipmentBV;
@@ -404,11 +431,12 @@ public class GunEmplacement extends Entity implements Serializable {
         boolean hasTargComp = hasTargComp();
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
-            double dBV = wtype.getBV(this);
+            double dBV = wtype.getBV(this, mounted.isArmored());
 
             // don't count destroyed equipment
-            if (mounted.isDestroyed())
+            if (mounted.isDestroyed()) {
                 continue;
+            }
 
             // don't count AMS, it's defensive
             if (wtype.hasFlag(WeaponType.F_AMS)) {
@@ -438,8 +466,9 @@ public class GunEmplacement extends Entity implements Serializable {
             }
 
             // if not turret mounted, 1/2 BV
-            if (mounted.getLocation() != LOC_TURRET)
+            if (mounted.getLocation() != LOC_TURRET) {
                 dBV *= 0.5;
+            }
 
             weaponBV += dBV;
         }
@@ -451,8 +480,9 @@ public class GunEmplacement extends Entity implements Serializable {
             AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0)
+            if (mounted.getShotsLeft() == 0) {
                 continue;
+            }
 
             // don't count AMS, it's defensive
             if (atype.getAmmoType() == AmmoType.T_AMS) {
@@ -499,10 +529,12 @@ public class GunEmplacement extends Entity implements Serializable {
         return retVal;
     }
 
+    @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         return prd;
     }
 
+    @Override
     public Vector<Report> victoryReport() {
         Vector<Report> vDesc = new Vector<Report>();
 
@@ -538,26 +570,32 @@ public class GunEmplacement extends Entity implements Serializable {
         return vDesc;
     }
 
+    @Override
     public int[] getNoOfSlots() {
         return CRITICAL_SLOTS;
     }
 
+    @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
         return 0;
     }
 
+    @Override
     public int getHeatCapacity() {
         return 999;
     }
 
+    @Override
     public int getHeatCapacityWithWater() {
         return getHeatCapacity();
     }
 
+    @Override
     public int getEngineCritHeat() {
         return 0;
     }
 
+    @Override
     public void autoSetInternal() {
         initializeInternal(0, LOC_BUILDING);
         if (hasTurret()) {
@@ -565,12 +603,14 @@ public class GunEmplacement extends Entity implements Serializable {
         }
     }
 
+    @Override
     public int getMaxElevationChange() {
         return 0;
     }
 
+    @Override
     public boolean isRepairable() {
-        boolean retval = this.isSalvage();
+        boolean retval = isSalvage();
         int loc = 0;
         while (retval && loc < LOC_TURRET) {
             int loc_is = this.getInternal(loc);
@@ -581,35 +621,43 @@ public class GunEmplacement extends Entity implements Serializable {
         return retval;
     }
 
+    @Override
     public boolean canCharge() {
         return false;
     }
 
+    @Override
     public boolean canDFA() {
         return false;
     }
 
+    @Override
     public boolean canFlee() {
         return false;
     }
 
+    @Override
     public boolean canFlipArms() {
         return false;
     }
 
+    @Override
     public boolean canGoDown() {
         return false;
     }
 
+    @Override
     public boolean canGoDown(int assumed, Coords coords) {
         return false;
     }
 
+    @Override
     public double getCost() {
         // XXX no idea
         return 0;
     }
 
+    @Override
     public boolean doomedInVacuum() {
         for (Mounted m : getEquipment()) {
             if (m.getType() instanceof MiscType
@@ -619,23 +667,28 @@ public class GunEmplacement extends Entity implements Serializable {
         }
         return true;
     }
-    
+
+    @Override
     public boolean doomedOnGround() {
         return false;
     }
-    
+
+    @Override
     public boolean doomedInAtmosphere() {
         return true;
     }
-    
+
+    @Override
     public boolean doomedInSpace() {
         return true;
     }
 
+    @Override
     public boolean isNuclearHardened() {
         return true;
     }
 
+    @Override
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
             throws LocationFullException {
         super.addEquipment(mounted, loc, rearMounted);
@@ -648,6 +701,7 @@ public class GunEmplacement extends Entity implements Serializable {
      * (non-Javadoc)
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
+    @Override
     public int getTotalCommGearTons() {
         return getExtraCommGearTons();
     }

@@ -245,10 +245,6 @@ public abstract class TestEntity implements TestEntityOption {
 
     public float getWeightEngine() {
         float weight = engine.getWeightEngine(getWeightCeilingEngine());
-        
-        if ( getEntity().hasArmoredEngine() ){
-            weight += (0.5f * (engine.getCenterTorsoCriticalSlots().length+(engine.getSideTorsoCriticalSlots().length*2)));
-        }
         return weight;
     }
 
@@ -607,6 +603,8 @@ public abstract class TestEntity implements TestEntityOption {
         weight += getWeightAmmo();
 
         weight += getWeightCarryingSpace();
+
+        weight += getArmoredComponentWeight();
         return weight;
     }
 
@@ -904,6 +902,10 @@ public abstract class TestEntity implements TestEntityOption {
                 + MOVEMENT_CHASSIS_NAMES[getEntity().getMovementMode()] + " - "
                 + TechConstants.getLevelName(getEntity().getTechLevel()) + " ("
                 + Integer.toString(getEntity().getYear()) + ")\n";
+    }
+
+    public float getArmoredComponentWeight() {
+        return 0.0f;
     }
 
 } // End class TestEntity

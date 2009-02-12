@@ -76,6 +76,7 @@ public class MtfFile implements IMechLoader {
 
     String[][] critData;
 
+
     Hashtable<EquipmentType, Mounted> hSharedEquip = new Hashtable<EquipmentType, Mounted>();
     Vector<Mounted> vSplitWeapons = new Vector<Mounted>();
 
@@ -86,6 +87,7 @@ public class MtfFile implements IMechLoader {
             Mech.LOC_CT };
 
     public static final String EMPTY = "-Empty-";
+    public static final String ARMORED = "(armored)";
 
     /** Creates new MtfFile */
     public MtfFile(InputStream is) throws EntityLoadingException {
@@ -310,6 +312,7 @@ public class MtfFile implements IMechLoader {
                             .itemOppositeTech(engine))) {
                 engineFlags = Engine.CLAN_ENGINE;
             }
+
             int engineRating = Integer.parseInt(engine.substring(engine
                     .indexOf(":") + 1, engine.indexOf(" ")));
             mech.setEngine(new Engine(engineRating, Engine
@@ -454,37 +457,45 @@ public class MtfFile implements IMechLoader {
 
         // go thru file, add weapons
         for (int i = 0; i < mech.getNumberOfCriticals(loc); i++) {
-            // if the slot's full already, skip it.
-            if (mech.getCritical(loc, i) != null) {
-                continue;
-            }
 
             // parse out and add the critical
             String critName = critData[loc][i];
 
             critName.trim();
             boolean rearMounted = false;
+            boolean isArmored = false;
 
-            if (critName.equalsIgnoreCase("Fusion Engine")
-                    || critName.equalsIgnoreCase("Engine")) {
+            // Check for Armored Actuators
+            if (critName.toLowerCase().trim().endsWith(ARMORED)) {
+                critName = critName.substring(0, critName.length() - ARMORED.length()).trim();
+                isArmored = true;
+            } // if the slot's full already, skip it.
+            else if (mech.getCritical(loc, i) != null) {
+                continue;
+            }
+
+            if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
                 mech.setCritical(loc, i, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Life Support")) {
                 mech.setCritical(loc, i, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT));
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Sensors")) {
                 mech.setCritical(loc, i, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Cockpit")) {
                 mech.setCritical(loc, i, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Gyro")) {
                 mech.setCritical(loc, i, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO));
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, true, isArmored));
+                continue;
+            } else if (critName.indexOf("Actuator") != -1 || critName.equalsIgnoreCase("Shoulder") || critName.equalsIgnoreCase("Hip")) {
+                mech.getCritical(loc, i).setArmored(isArmored);
                 continue;
             }
 
@@ -510,10 +521,11 @@ public class MtfFile implements IMechLoader {
                             mech.addCritical(loc, new CriticalSlot(
                                     CriticalSlot.TYPE_EQUIPMENT, mech
                                             .getEquipmentNum(m), etype
-                                            .isHittable()));
+                                            .isHittable(), isArmored));
                             continue;
                         }
                         m = mech.addEquipment(etype, loc, rearMounted);
+                        m.setArmored(isArmored);
                         hSharedEquip.put(etype, m);
                     } else if ((etype instanceof WeaponType)
                             && etype.hasFlag(WeaponType.F_SPLITABLE)) {
@@ -552,11 +564,13 @@ public class MtfFile implements IMechLoader {
                             // make a new one
                             m = new Mounted(mech, etype);
                             m.setFoundCrits(1);
+                            m.setArmored(isArmored);
                             vSplitWeapons.addElement(m);
                         }
+                        m.setArmored(isArmored);
                         mech.addEquipment(m, loc, rearMounted);
                     } else {
-                        mech.addEquipment(etype, loc, rearMounted);
+                        mech.addEquipment(etype, loc, rearMounted).setArmored(isArmored);
                     }
                 } else {
                     if (!critName.equals(MtfFile.EMPTY)) {

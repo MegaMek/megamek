@@ -198,7 +198,7 @@ public class EquipmentType {
         return (flags & flag) != 0;
     }
 
-    public double getBV(Entity entity) {
+    public double getBV(Entity entity, boolean isArmored) {
         return bv;
     }
 
@@ -392,7 +392,7 @@ public class EquipmentType {
     /**
      * @return The C-Bill cost of the piece of equipment.
      */
-    public double getCost() {
+    public double getCost(Entity entity, boolean isArmored) {
         return cost;
     }
 
@@ -431,7 +431,7 @@ public class EquipmentType {
     /**
      * stuff like hatchets, which depend on an unknown quality (usually tonnage of the unit.) entity is whatever has this item
      */
-    public int resolveVariableCost(Entity entity) {
+    public int resolveVariableCost(Entity entity, boolean isArmored) {
         int cost = 0;
         if (this instanceof MiscType) {
             if (hasFlag(MiscType.F_MASC)) {
@@ -483,6 +483,10 @@ public class EquipmentType {
                 // if we don't know what it is...
                 System.out.println("I don't know how much " + name + " costs.");
             }
+        }
+
+        if (isArmored) {
+            cost += 150000 * getCriticals(entity);
         }
         return cost;
     }
@@ -570,7 +574,7 @@ public class EquipmentType {
                 if ( type.cost == EquipmentType.COST_VARIABLE ){
                     w.write("Variable");
                 } else {
-                    w.write(Double.toString(type.getCost()));
+                    w.write(Double.toString(type.getCost(null, false)));
                 }
                 w.write(",");
                 if (type.bv == EquipmentType.BV_VARIABLE) {

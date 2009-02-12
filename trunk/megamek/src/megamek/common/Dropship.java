@@ -204,7 +204,7 @@ public class Dropship extends SmallCraft implements Serializable {
                     || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS))
                     || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER))
                     || ((etype instanceof WeaponType) && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN))) {
-                dEquipmentBV += etype.getBV(this);
+                dEquipmentBV += etype.getBV(this, mounted.isArmored());
             }
         }
         dbv += dEquipmentBV;
@@ -224,7 +224,7 @@ public class Dropship extends SmallCraft implements Serializable {
             WeaponType wtype = (WeaponType) mounted.getType();
             double weaponHeat = wtype.getHeat();
             int arc = getWeaponArc(getEquipmentNum(mounted));
-            double dBV = wtype.getBV(this);
+            double dBV = wtype.getBV(this, mounted.isArmored());
             //skip bays
             if(wtype instanceof BayWeapon) {
                 continue;
@@ -255,9 +255,9 @@ public class Dropship extends SmallCraft implements Serializable {
             if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype.getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize() + ";" + arc;
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this, mounted.isArmored()));
                 } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this, mounted.isArmored()) + weaponsForExcessiveAmmo.get(key));
                 }
             }
             //calc MG Array here:
@@ -266,7 +266,7 @@ public class Dropship extends SmallCraft implements Serializable {
                 for (Mounted possibleMG : getTotalWeaponList()) {
                     if (possibleMG.getType().hasFlag(WeaponType.F_MG)
                             && (possibleMG.getLocation() == mounted.getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                        mgaBV += possibleMG.getType().getBV(this, possibleMG.isArmored());
                     }
                 }
                 dBV = mgaBV * 0.67;
@@ -486,7 +486,7 @@ public class Dropship extends SmallCraft implements Serializable {
                 // weapons
                 continue;
             }
-            double bv = mtype.getBV(this);
+            double bv = mtype.getBV(this, mounted.isArmored());
             // if physical weapon linked to AES, multiply by 1.5
             oEquipmentBV += bv;
             // need to do this here, a MiscType does not know the location

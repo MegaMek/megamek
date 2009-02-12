@@ -6636,9 +6636,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             if(mounted.isWeaponGroup()) {
                 continue;
             }
-            int itemCost = (int) mounted.getType().getCost();
+            int itemCost = (int) mounted.getType().getCost(this, mounted.isArmored());
             if (itemCost == EquipmentType.COST_VARIABLE) {
-                itemCost = mounted.getType().resolveVariableCost(this);
+                itemCost = mounted.getType().resolveVariableCost(this, mounted.isArmored());
             }
             cost += itemCost;
         }

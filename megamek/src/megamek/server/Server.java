@@ -18093,6 +18093,17 @@ public class Server implements Runnable {
                     r.newlines = 0;
                     vDesc.addElement(r);
                 } else if (en.locationIsLeg(loc)) {
+
+                    CriticalSlot cs = en.getCritical(loc, 0);
+                    if (cs != null && cs.isArmored()) {
+                        r = new Report(6700);
+                        r.subject = en.getId();
+                        r.add(en.getLocationName(loc));
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+                        cs.setArmored(false);
+                        return vDesc;
+                    }
                     // limb blown off
                     r = new Report(6120);
                     r.subject = en.getId();
@@ -18112,6 +18123,17 @@ public class Server implements Runnable {
                     sendChangedHex(en.getPosition());
                     return vDesc;
                 } else if ((loc == Mech.LOC_RARM) || (loc == Mech.LOC_LARM)) {
+                    CriticalSlot cs = en.getCritical(loc, 0);
+                    if (cs != null && cs.isArmored()) {
+                        r = new Report(6700);
+                        r.subject = en.getId();
+                        r.add(en.getLocationName(loc));
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+                        cs.setArmored(false);
+                        return vDesc;
+                    }
+
                     // limb blown off
                     r = new Report(6120);
                     r.subject = en.getId();
@@ -18194,6 +18216,17 @@ public class Server implements Runnable {
             // includes all previously hit slots).
 
             if ((slot != null) && slot.isHittable()) {
+
+                if (slot.isArmored()) {
+                    r = new Report(6710);
+                    r.subject = en.getId();
+                    r.add(en.getLocationName(loc));
+                    r.newlines = 0;
+                    vDesc.addElement(r);
+                    slot.setArmored(false);
+                    hits--;
+                    continue;
+                }
                 // if explosive use edge
                 if ((en instanceof Mech) && (en.crew.hasEdgeRemaining() && en.crew.getOptions().booleanOption("edge_when_explosion")) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) && en.getEquipment(slot.getIndex()).getType().isExplosive()) {
                     en.crew.decreaseEdge();

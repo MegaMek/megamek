@@ -964,4 +964,29 @@ public class WeaponType extends EquipmentType {
     public int getExplosionDamage() {
         return explosionDamage;
     }
+
+    @Override
+    public double getCost(Entity entity, boolean isArmored) {
+        if (isArmored) {
+            double armoredCost = cost;
+            armoredCost += 150000 * getCriticals(entity);
+
+            return armoredCost;
+        }
+
+        return super.getCost(entity, isArmored);
+    }
+
+    @Override
+    public double getBV(Entity entity, boolean isArmored) {
+        double returnBV = bv;
+        if (isArmored) {
+            returnBV += (bv * .05) * getCriticals(entity);
+            if (Math.floor(returnBV) < 1) {
+                returnBV = 5;
+            }
+        }
+
+        return returnBV;
+    }
 }

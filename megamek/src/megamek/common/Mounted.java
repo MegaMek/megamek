@@ -1040,7 +1040,12 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public void setArmored(boolean armored) {
-        armoredComponent = armored;
+        // Ammobins cannot be armored.
+        if (!(getType() instanceof AmmoType)) {
+            armoredComponent = armored;
+        } else {
+            armoredComponent = false;
+        }
     }
 
     public boolean isArmored() {

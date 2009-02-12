@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -24,7 +24,7 @@ import java.util.Vector;
  * represents unarmored infantry platoons as described by CitiTech (c) 1986.
  * I've never seen the rules for powered armor, "anti-mech" troops, or
  * Immortals.
- * 
+ *
  * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $revision:$
  */
@@ -36,7 +36,7 @@ public class Infantry extends Entity implements Serializable {
     // Private attributes and helper functions.
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -8706716079307721282L;
 
@@ -114,10 +114,12 @@ public class Infantry extends Entity implements Serializable {
     public static final String SWARM_MEK = "SwarmMek";
     public static final String STOP_SWARM = "StopSwarm";
 
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
 
+    @Override
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
@@ -125,6 +127,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Returns the number of locations in this platoon (i.e. one).
      */
+    @Override
     public int locations() {
         return 1;
     }
@@ -137,17 +140,18 @@ public class Infantry extends Entity implements Serializable {
         // Instantiate the superclass.
         super();
         // Create a "dead" leg rifle platoon.
-        this.menStarting = 0;
-        this.menShooting = 0;
-        this.men = 0;
+        menStarting = 0;
+        menShooting = 0;
+        men = 0;
         setMovementMode(IEntityMovementMode.INF_LEG);
         // Determine the number of MPs.
-        this.setOriginalWalkMP(1);
+        setOriginalWalkMP(1);
     }
 
     /**
      * Infantry can face freely (except when dug in)
      */
+    @Override
     public boolean canChangeSecondaryFacing() {
         return (dugIn == DUG_IN_NONE);
     }
@@ -155,6 +159,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry can face freely
      */
+    @Override
     public boolean isValidSecondaryFacing(int dir) {
         return true;
     }
@@ -162,6 +167,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry can face freely
      */
+    @Override
     public int clipSecondaryFacing(int dir) {
         return dir;
     }
@@ -169,23 +175,25 @@ public class Infantry extends Entity implements Serializable {
     /**
      * return this infantry's walk mp, adjusted for planetary conditions
      */
+    @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int mp = getOriginalWalkMP();
         if(null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if(weatherMod != 0) {
                 mp = Math.max(mp + weatherMod, 0);
-            } 
-        }      
+            }
+        }
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);
         }
         return mp;
     }
-    
+
     /**
      * Return this Infantry's run MP, which is identical to its walk MP
      */
+    @Override
     public int getRunMP(boolean gravity, boolean ignoreheat) {
         return getWalkMP(gravity, ignoreheat);
     }
@@ -193,15 +201,17 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry don't have MASC
      */
+    @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
         return getRunMP(gravity, ignoreheat);
     }
 
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getJumpMP(boolean)
      */
+    @Override
     public int getJumpMP(boolean gravity) {
         int mp = getOriginalJumpMP();
         if (gravity) {
@@ -221,33 +231,39 @@ public class Infantry extends Entity implements Serializable {
         return mp;
     }
 
-    
+
 
     /**
      * Infantry can not enter water unless they have UMU mp or hover.
      */
+    @Override
     public boolean isHexProhibited(IHex hex) {
-        if (hex.containsTerrain(Terrains.IMPASSABLE))
+        if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
-        if (hex.containsTerrain(Terrains.MAGMA))
+        }
+        if (hex.containsTerrain(Terrains.MAGMA)) {
             return true;
-        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+        }
+        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
-        
+        }
+
         if (hex.terrainLevel(Terrains.WOODS) > 0) {
             if (hex.terrainLevel(Terrains.WOODS) > 1 && getMovementMode() == IEntityMovementMode.TRACKED) {
-                return true;                
+                return true;
             }
             if (getMovementMode() == IEntityMovementMode.HOVER
-                    || getMovementMode() == IEntityMovementMode.WHEELED)
-            return true;
+                    || getMovementMode() == IEntityMovementMode.WHEELED) {
+                return true;
+            }
         }
         if (hex.terrainLevel(Terrains.WATER) > 0
                 && !hex.containsTerrain(Terrains.ICE)) {
             if (getMovementMode() == IEntityMovementMode.HOVER
                     || getMovementMode() == IEntityMovementMode.INF_UMU
-                    || getMovementMode() == IEntityMovementMode.VTOL)
+                    || getMovementMode() == IEntityMovementMode.VTOL) {
                 return false;
+            }
             return true;
         }
         return false;
@@ -256,13 +272,14 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Returns the name of the type of movement used. This is Infantry-specific.
      */
+    @Override
     public String getMovementString(int mtype) {
         switch (mtype) {
             case IEntityMovementType.MOVE_NONE:
                 return "None";
             case IEntityMovementType.MOVE_WALK:
             case IEntityMovementType.MOVE_RUN:
-                switch (this.getMovementMode()) {
+                switch (getMovementMode()) {
                     case IEntityMovementMode.INF_LEG:
                         return "Walked";
                     case IEntityMovementMode.INF_MOTORIZED:
@@ -289,6 +306,7 @@ public class Infantry extends Entity implements Serializable {
      * Returns the abbreviation of the type of movement used. This is
      * Infantry-specific.
      */
+    @Override
     public String getMovementAbbr(int mtype) {
         switch (mtype) {
             case IEntityMovementType.MOVE_NONE:
@@ -296,7 +314,7 @@ public class Infantry extends Entity implements Serializable {
             case IEntityMovementType.MOVE_WALK:
                 return "W";
             case IEntityMovementType.MOVE_RUN:
-                switch (this.getMovementMode()) {
+                switch (getMovementMode()) {
                     case IEntityMovementMode.INF_LEG:
                         return "R";
                     case IEntityMovementMode.INF_MOTORIZED:
@@ -318,11 +336,13 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry only have one hit location.
      */
+    @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation,
             int aimingMode) {
         return rollHitLocation(table, side);
     }
 
+    @Override
     public HitData rollHitLocation(int table, int side) {
         return new HitData(0);
     }
@@ -330,6 +350,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry only have one hit location.
      */
+    @Override
     public HitData getTransferLocation(HitData hit) {
         return new HitData(Entity.LOC_DESTROYED);
     }
@@ -337,6 +358,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Gets the location that is destroyed recursively.
      */
+    @Override
     public int getDependentLocation(int loc) {
         return Entity.LOC_NONE;
     }
@@ -344,6 +366,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry have no rear armor.
      */
+    @Override
     public boolean hasRearArmor(int loc) {
         return false;
     }
@@ -351,7 +374,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry platoons do wierd and wacky things with armor and internals, but
      * not all Infantry objects are platoons.
-     * 
+     *
      * @see megamek.common.BattleArmor#isPlatoon()
      */
     protected boolean isPlatoon() {
@@ -362,49 +385,54 @@ public class Infantry extends Entity implements Serializable {
      * Returns the number of men left in the platoon, or
      * IArmorState.ARMOR_DESTROYED.
      */
+    @Override
     public int getInternal(int loc) {
-        if (!this.isPlatoon()) {
+        if (!isPlatoon()) {
             return super.getInternal(loc);
         }
-        return (this.men > 0 ? this.men : IArmorState.ARMOR_DESTROYED);
+        return (men > 0 ? men : IArmorState.ARMOR_DESTROYED);
     }
 
     /**
      * Returns the number of men originally the platoon.
      */
+    @Override
     public int getOInternal(int loc) {
-        if (!this.isPlatoon()) {
+        if (!isPlatoon()) {
             return super.getOInternal(loc);
         }
-        return this.menStarting;
+        return menStarting;
     }
 
     /**
      * Sets the amount of men remaining in the platoon.
      */
+    @Override
     public void setInternal(int val, int loc) {
         super.setInternal(val, loc);
-        this.men = val;
+        men = val;
     }
 
     /**
      * Returns the percent of the men remaining in the platoon.
      */
+    @Override
     public double getInternalRemainingPercent() {
-        if (!this.isPlatoon()) {
+        if (!isPlatoon()) {
             return super.getInternalRemainingPercent();
         }
-        int menTotal = this.men > 0 ? this.men : 0; // Handle "DESTROYED"
-        return ((double) menTotal / this.menStarting);
+        int menTotal = men > 0 ? men : 0; // Handle "DESTROYED"
+        return ((double) menTotal / menStarting);
     }
 
     /**
      * Initializes the number of men in the platoon. Sets the original and
      * starting point of the platoon to the same number.
      */
+    @Override
     public void initializeInternal(int val, int loc) {
-        this.menStarting = val;
-        this.menShooting = val;
+        menStarting = val;
+        menShooting = val;
         super.initializeInternal(val, loc);
     }
 
@@ -412,26 +440,27 @@ public class Infantry extends Entity implements Serializable {
      * Set the men in the platoon to the appropriate value for the platoon's
      * movement type.
      */
+    @Override
     public void autoSetInternal() {
 
         // Clan platoons have 25 men.
-        if (this.isClan()) {
-            this.initializeInternal(INF_PLT_CLAN_MAX_MEN, LOC_INFANTRY);
+        if (isClan()) {
+            initializeInternal(INF_PLT_CLAN_MAX_MEN, LOC_INFANTRY);
             return;
         }
 
         // IS platoon strength is based upon movement type.
-        switch (this.getMovementMode()) {
+        switch (getMovementMode()) {
             case IEntityMovementMode.INF_LEG:
             case IEntityMovementMode.INF_MOTORIZED:
-                this.initializeInternal(INF_PLT_FOOT_MAX_MEN, LOC_INFANTRY);
+                initializeInternal(INF_PLT_FOOT_MAX_MEN, LOC_INFANTRY);
                 break;
             case IEntityMovementMode.INF_JUMP:
-                this.initializeInternal(INF_PLT_JUMP_MAX_MEN, LOC_INFANTRY);
+                initializeInternal(INF_PLT_JUMP_MAX_MEN, LOC_INFANTRY);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown movement type: "
-                        + this.getMovementMode());
+                        + getMovementMode());
         }
 
         if (hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
@@ -443,13 +472,14 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry weapons are dictated by their type.
      */
+    @Override
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
             throws LocationFullException {
         EquipmentType equip = mounted.getType();
 
         // If the infantry can swarm, they're anti-mek infantry.
         if (Infantry.SWARM_MEK.equals(equip.getInternalName())) {
-            this.antiMek = true;
+            antiMek = true;
         }
         // N.B. Clan Undine BattleArmor can leg attack, but aren't
         // classified as "anti-mek" in the BMRr, pg. 155).
@@ -465,9 +495,11 @@ public class Infantry extends Entity implements Serializable {
      * Infantry can fire all around themselves. But field guns are set up to a
      * facing
      */
+    @Override
     public int getWeaponArc(int wn) {
-        if (this instanceof BattleArmor && dugIn == DUG_IN_NONE)
+        if (this instanceof BattleArmor && dugIn == DUG_IN_NONE) {
             return Compute.ARC_360;
+        }
         Mounted mounted = getEquipment(wn);
         WeaponType wtype = (WeaponType) mounted.getType();
         if ((wtype.hasFlag(WeaponType.F_INFANTRY)
@@ -475,8 +507,9 @@ public class Infantry extends Entity implements Serializable {
                 || wtype.getInternalName() == LEG_ATTACK
                 || wtype.getInternalName() == SWARM_MEK || wtype
                 .getInternalName() == STOP_SWARM)
-                && dugIn == DUG_IN_NONE)
+                && dugIn == DUG_IN_NONE) {
             return Compute.ARC_360;
+        }
         return Compute.ARC_FORWARD;
     }
 
@@ -484,19 +517,23 @@ public class Infantry extends Entity implements Serializable {
      * Infantry can fire all around themselves. But field guns act like turret
      * mounted on a tank
      */
+    @Override
     public boolean isSecondaryArcWeapon(int wn) {
-        if (this instanceof BattleArmor)
+        if (this instanceof BattleArmor) {
             return false;
+        }
         Mounted mounted = getEquipment(wn);
         WeaponType wtype = (WeaponType) mounted.getType();
-        if (wtype.hasFlag(WeaponType.F_INFANTRY))
+        if (wtype.hasFlag(WeaponType.F_INFANTRY)) {
             return false;
+        }
         return true;
     }
 
     /**
      * Infantry build no heat.
      */
+    @Override
     public int getHeatCapacity() {
         return 999;
     }
@@ -504,6 +541,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry build no heat.
      */
+    @Override
     public int getHeatCapacityWithWater() {
         return getHeatCapacity();
     }
@@ -511,6 +549,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry build no heat.
      */
+    @Override
     public int getEngineCritHeat() {
         return 0;
     }
@@ -518,6 +557,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry have no critical slots.
      */
+    @Override
     protected int[] getNoOfSlots() {
         return NUM_OF_SLOTS;
     }
@@ -528,11 +568,12 @@ public class Infantry extends Entity implements Serializable {
     public boolean hasHittableCriticals(int loc) {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#calculateBattleValue()
      */
+    @Override
     public int calculateBattleValue() {
         return calculateBattleValue(false, false);
     }
@@ -540,6 +581,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Calculates the battle value of this platoon.
      */
+    @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv;
         dbv = this.getInternal(Entity.LOC_NONE) * 1.5;
@@ -560,14 +602,15 @@ public class Infantry extends Entity implements Serializable {
         double speedFactor;
         double speedFactorTableLookup = getRunMP(false, true)
                 + Math.round((double) getJumpMP(false) / 2);
-        if (speedFactorTableLookup > 25)
+        if (speedFactorTableLookup > 25) {
             speedFactor = Math.pow(1 + (((double) walkMP
                     + (Math.round((double) getJumpMP(false) / 2)) - 5) / 10), 1.2);
-        else
+        } else {
             speedFactor = Math
                     .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
+        }
         speedFactor = Math.round(speedFactor * 100) / 100.0;
-        ArrayList<Mounted> weapons = this.getWeaponList();
+        ArrayList<Mounted> weapons = getWeaponList();
         double wbv = 0;
         for (Mounted weapon : weapons) {
             WeaponType wtype = (WeaponType) weapon.getType();
@@ -579,11 +622,11 @@ public class Infantry extends Entity implements Serializable {
                 // stupid assumption to at least get a value:
                 // each weapon is carried once by each platoon member
                 // if an antiMek platoon, count twice
-                wbv += wtype.getBV(this) * this.getInternal(Entity.LOC_NONE)
+                wbv += wtype.getBV(this, weapon.isArmored()) * this.getInternal(Entity.LOC_NONE)
                         * (antiMek ? 2 : 0);
             } else {
                 // field guns count only once
-                wbv += wtype.getBV(this);
+                wbv += wtype.getBV(this, weapon.isArmored());
             }
         }
         obv = wbv * speedFactor;
@@ -597,6 +640,7 @@ public class Infantry extends Entity implements Serializable {
 
     } // End public int calculateBattleValue()
 
+    @Override
     public Vector<Report> victoryReport() {
         Vector<Report> vDesc = new Vector<Report>();
 
@@ -635,6 +679,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry don't need piloting rolls.
      */
+    @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         return prd;
     }
@@ -642,6 +687,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Infantry can only change 1 elevation level at a time.
      */
+    @Override
     public int getMaxElevationChange() {
         return 1;
     }
@@ -649,6 +695,7 @@ public class Infantry extends Entity implements Serializable {
     /**
      * Update the platoon to reflect damages taken in this phase.
      */
+    @Override
     public void applyDamage() {
         super.applyDamage();
         menShooting = men;
@@ -663,11 +710,13 @@ public class Infantry extends Entity implements Serializable {
         return menShooting;
     }
 
+    @Override
     public boolean canCharge() {
         // Infantry can't Charge
         return false;
     }
 
+    @Override
     public boolean canDFA() {
         // Infantry can't DFA
         return false;
@@ -680,11 +729,11 @@ public class Infantry extends Entity implements Serializable {
      */
     public PilotingRollData checkBogDown(MoveStep step, IHex curHex,
             Coords lastPos, Coords curPos, boolean isPavementStep) {
-        PilotingRollData roll = new PilotingRollData(this.getId(), 5,
+        PilotingRollData roll = new PilotingRollData(getId(), 5,
                 "entering boggy terrain");
         int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
-        if (!lastPos.equals(curPos) && bgMod != TargetRoll.AUTOMATIC_SUCCESS && step.getMovementType() != IEntityMovementType.MOVE_JUMP && (this.getMovementMode() != IEntityMovementMode.HOVER) && (this.getMovementMode() != IEntityMovementMode.VTOL) && (this.getMovementMode() != IEntityMovementMode.WIGE) && step.getElevation() == 0 && !isPavementStep) {
-            roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));       
+        if (!lastPos.equals(curPos) && bgMod != TargetRoll.AUTOMATIC_SUCCESS && step.getMovementType() != IEntityMovementType.MOVE_JUMP && (getMovementMode() != IEntityMovementMode.HOVER) && (getMovementMode() != IEntityMovementMode.VTOL) && (getMovementMode() != IEntityMovementMode.WIGE) && step.getElevation() == 0 && !isPavementStep) {
+            roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Not entering bog-down terrain, or jumping/hovering over such terrain");
         }
@@ -694,11 +743,12 @@ public class Infantry extends Entity implements Serializable {
     /**
      * @return The cost in C-Bills of the 'Mech in question.
      */
+    @Override
     public double getCost() {
         double cost = 0;
         double multiplier = 0;
 
-        int mm = this.getMovementMode();
+        int mm = getMovementMode();
 
         if (IEntityMovementMode.WHEELED == mm
                 || IEntityMovementMode.TRACKED == mm
@@ -707,7 +757,7 @@ public class Infantry extends Entity implements Serializable {
             mm = IEntityMovementMode.INF_MOTORIZED;
         }
 
-        if (this.antiMek) {
+        if (antiMek) {
             multiplier = 5;
         } else {
             multiplier = 1;
@@ -754,6 +804,7 @@ public class Infantry extends Entity implements Serializable {
         return cost * multiplier;
     }
 
+    @Override
     public boolean doomedInVacuum() {
         // We're assuming that infantry have environmental suits of some sort.
         // Vac suits, battle armor, whatever.
@@ -761,37 +812,45 @@ public class Infantry extends Entity implements Serializable {
         // FIXME
         return false;
     }
-    
+
+    @Override
     public boolean doomedOnGround() {
         return false;
     }
-    
+
+    @Override
     public boolean doomedInAtmosphere() {
         return true;
     }
-    
+
+    @Override
     public boolean doomedInSpace() {
         return true;
     }
+    @Override
     public boolean canAssaultDrop() {
         return game.getOptions().booleanOption("paratroopers");
     }
 
+    @Override
     public boolean isEligibleFor(IGame.Phase phase) {
-        if (turnsLayingExplosives > 0 && phase != IGame.Phase.PHASE_PHYSICAL)
+        if (turnsLayingExplosives > 0 && phase != IGame.Phase.PHASE_PHYSICAL) {
             return false;
+        }
         if (dugIn != DUG_IN_COMPLETE && dugIn != DUG_IN_NONE) {
             return false;
         }
         return super.isEligibleFor(phase);
     }
 
+    @Override
     public void newRound(int roundNumber) {
         if (turnsLayingExplosives >= 0) {
             turnsLayingExplosives++;
-            if (!(Compute.isInBuilding(game, this)))
+            if (!(Compute.isInBuilding(game, this))) {
                 turnsLayingExplosives = -1; // give up if no longer in a
                                             // building
+            }
         }
         if (dugIn != DUG_IN_COMPLETE && dugIn != DUG_IN_NONE) {
             dugIn++;
@@ -802,22 +861,26 @@ public class Infantry extends Entity implements Serializable {
         super.newRound(roundNumber);
     }
 
+    @Override
     public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
         if (!(this instanceof BattleArmor)) {
             // field guns don't share ammo, and infantry weapons dont have ammo
             if (mounted.getLinked() != null
-                    || mountedAmmo.getLinkedBy() != null)
+                    || mountedAmmo.getLinkedBy() != null) {
                 return false;
+            }
         }
         return super.loadWeapon(mounted, mountedAmmo);
     }
 
+    @Override
     public boolean loadWeaponWithSameAmmo(Mounted mounted, Mounted mountedAmmo) {
         if (!(this instanceof BattleArmor)) {
             // field guns don't share ammo, and infantry weapons dont have ammo
             if (mounted.getLinked() != null
-                    || mountedAmmo.getLinkedBy() != null)
+                    || mountedAmmo.getLinkedBy() != null) {
                 return false;
+            }
         }
         return super.loadWeaponWithSameAmmo(mounted, mountedAmmo);
     }
@@ -830,6 +893,7 @@ public class Infantry extends Entity implements Serializable {
         return dugIn;
     }
 
+    @Override
     public boolean isNuclearHardened() {
         return false;
     }
@@ -838,7 +902,7 @@ public class Infantry extends Entity implements Serializable {
      * This function is called when loading a unit into a transport. This is
      * overridden to ensure infantry are no longer considered dug in when they
      * are being transported.
-     * 
+     *
      * @param transportID
      */
     public void setTransportID(int transportID) {
@@ -850,7 +914,7 @@ public class Infantry extends Entity implements Serializable {
     public boolean isAntiMek() {
         return antiMek;
     }
-    
+
     public boolean isMechanized() {
         if (getMovementMode() == IEntityMovementMode.WHEELED ||
                 getMovementMode() == IEntityMovementMode.HOVER ||
@@ -859,11 +923,12 @@ public class Infantry extends Entity implements Serializable {
         }
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
+    @Override
     public int getTotalCommGearTons() {
         return 0;
     }

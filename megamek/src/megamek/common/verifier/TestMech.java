@@ -100,28 +100,19 @@ public class TestMech extends TestEntity {
             weight = 5.0f;
         }
 
-        if (mech.hasArmoredCockpit()) {
-            weight += 1.0f;
-        }
         return weight;
     }
 
     public float getWeightGyro() {
         float retVal = (float) Math.ceil(engine.getRating() / 100.0f);
-        float slots = 4;
         if (mech.getGyroType() == Mech.GYRO_XL) {
             retVal /= 2;
-            slots = 6;
         } else if (mech.getGyroType() == Mech.GYRO_COMPACT) {
             retVal *= 1.5;
-            slots = 2;
         } else if (mech.getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             retVal *= 2;
         }
         retVal = ceil(retVal, getWeightCeilingGyro());
-        if ( mech.hasArmoredGyro() ){
-            retVal *= (0.5f * slots);
-        }
         return retVal;
     }
 
@@ -501,4 +492,28 @@ public class TestMech extends TestEntity {
     public String getName() {
         return "Mech: " + mech.getDisplayName();
     }
+
+    /**
+     * calculates the total weight of all armored components.
+     */
+    @Override
+    public float getArmoredComponentWeight() {
+        float weight = 0.0f;
+
+        for (int location = Mech.LOC_HEAD; location <= Mech.LOC_LLEG; location++) {
+            for (int slot = 0; slot < mech.getNumberOfCriticals(location); slot++) {
+                CriticalSlot cs = mech.getCritical(location, slot);
+                if (cs != null && cs.isArmored()) {
+                    weight += 0.5f;
+
+                    if (cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == Mech.SYSTEM_COCKPIT) {
+                        weight += 0.5f;
+                    }
+                }
+            }
+        }
+        return weight;
+    }
+
+
 }

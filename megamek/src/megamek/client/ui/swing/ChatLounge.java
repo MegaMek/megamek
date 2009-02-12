@@ -1579,6 +1579,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             return;
         }
         refreshDoneButton();
+        clientgui.client.game.setupTeams();
         refreshBVs();
         refreshPlayerInfo();
         refreshStarts();

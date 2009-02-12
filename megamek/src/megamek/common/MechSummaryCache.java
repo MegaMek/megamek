@@ -63,8 +63,9 @@ public class MechSummaryCache {
     private Thread loader;
 
     public static synchronized MechSummaryCache getInstance() {
-        if (m_instance == null)
+        if (m_instance == null) {
             m_instance = new MechSummaryCache();
+        }
         if (!m_instance.initialized && !m_instance.initializing) {
             m_instance.initializing = true;
             m_instance.loader = new Thread(new Runnable() {
@@ -140,8 +141,9 @@ public class MechSummaryCache {
 
     public MechSummary getMech(String sRef) {
         block();
-        if (m_nameMap.containsKey(sRef))
+        if (m_nameMap.containsKey(sRef)) {
             return m_nameMap.get(sRef);
+        }
         return m_fileNameMap.get(sRef);
     }
 
@@ -165,7 +167,7 @@ public class MechSummaryCache {
         // check the cache
         try {
             if (CACHE.exists()
-                    && CACHE.lastModified() >= megamek.MegaMek.TIMESTAMP) {
+                    && (CACHE.lastModified() >= megamek.MegaMek.TIMESTAMP)) {
                 loadReport.append("  Reading from unit cache file...\n");
                 lLastCheck = CACHE.lastModified();
                 BufferedReader br = new BufferedReader(new FileReader(CACHE));
@@ -228,9 +230,9 @@ public class MechSummaryCache {
                     // Verify that this file still exists and is older than
                     // the cache.
                     File fSource = ms.getSourceFile();
-                    if (fSource.exists() && fSource.lastModified() < lLastCheck) {
+                    if (fSource.exists() && (fSource.lastModified() < lLastCheck)) {
                         vMechs.addElement(ms);
-                        sKnownFiles.add(ms.getSourceFile().toString());
+                        sKnownFiles.add(fSource.toString());
                         cacheCount++;
                     }
                 }
@@ -251,19 +253,22 @@ public class MechSummaryCache {
         // store map references
         for (int x = 0; x < m_data.length; x++) {
             m_nameMap.put(m_data[x].getName(), m_data[x]);
-            if (m_data[x].getEntryName() == null)
+            String entryName = m_data[x].getEntryName();
+            if (entryName == null) {
                 m_fileNameMap.put(m_data[x].getSourceFile().getName(),
                         m_data[x]);
-            else {
-                String unitName = m_data[x].getEntryName();
+            } else {
+                String unitName = entryName;
 
-                if (unitName.indexOf("\\") > -1)
+                if (unitName.indexOf("\\") > -1) {
                     unitName = unitName
                             .substring(unitName.lastIndexOf("\\") + 1);
+                }
 
-                if (unitName.indexOf("/") > -1)
+                if (unitName.indexOf("/") > -1) {
                     unitName = unitName
                             .substring(unitName.lastIndexOf("/") + 1);
+                }
 
                 m_fileNameMap.put(unitName, m_data[x]);
             }
@@ -345,14 +350,15 @@ public class MechSummaryCache {
         ms.setCost((int) e.getCost());
         ms.setCanon(e.isCanon());
         // we can only test meks and vehicles right now
-        if (e instanceof Mech || e instanceof Tank) {
+        if ((e instanceof Mech) || (e instanceof Tank)) {
             TestEntity testEntity = null;
-            if (e instanceof Mech)
+            if (e instanceof Mech) {
                 testEntity = new TestMech((Mech) e, entityVerifier.mechOption,
                         null);
-            else
+            } else {
                 testEntity = new TestTank((Tank) e, entityVerifier.tankOption,
                         null);
+            }
             if (!testEntity.correctEntity(new StringBuffer())) {
                 ms.setLevel("F");
             }
@@ -417,7 +423,7 @@ public class MechSummaryCache {
                             lLastCheck, f);
                     continue;
                 }
-                if (f.lastModified() < lLastCheck
+                if ((f.lastModified() < lLastCheck)
                         && sKnownFiles.contains(f.toString())) {
                     continue;
                 }
@@ -496,7 +502,7 @@ public class MechSummaryCache {
             if (zEntry.getName().toLowerCase().endsWith(".txt")) {
                 continue;
             }
-            if (Math.max(fZipFile.lastModified(), zEntry.getTime()) < lLastCheck
+            if ((Math.max(fZipFile.lastModified(), zEntry.getTime()) < lLastCheck)
                     && sKnownFiles.contains(fZipFile.toString())) {
                 continue;
             }
@@ -528,8 +534,9 @@ public class MechSummaryCache {
                 PrintWriter printWriter = new PrintWriter(stringWriter);
                 ex.printStackTrace(printWriter);
                 loadReport.append(stringWriter.getBuffer()).append("\n");
-                if (!(ex.getMessage() == null))
+                if (!(ex.getMessage() == null)) {
                     hFailedFiles.put(zEntry.getName(), ex.getMessage());
+                }
                 continue;
             }
         }

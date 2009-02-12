@@ -929,8 +929,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.flags |= F_MASC;
         misc.bv = 0;
 
@@ -949,12 +947,8 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan MASC");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
-        misc.hittable = true;
         misc.cost = COST_VARIABLE;
-        misc.spreadable = false;
-        misc.flags |= F_MASC;
         misc.bv = 0;
-
         String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
 
@@ -1048,8 +1042,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS C3 Slave");
         misc.tonnage = 1;
         misc.criticals = 1;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.cost = 250000;
         misc.flags |= F_C3S;
         misc.bv = 0;
@@ -1067,8 +1059,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS C3i Computer");
         misc.tonnage = 2.5f;
         misc.criticals = 2;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.cost = 750000;
         misc.flags |= F_C3I;
         misc.bv = 0;
@@ -1133,9 +1123,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Guardian ECM Suite");
         misc.tonnage = 1.5f;
         misc.criticals = 2;
-        misc.hittable = true;
         misc.cost = 200000;
-        misc.spreadable = false;
         misc.flags |= F_ECM;
         misc.bv = 61;
         misc.setModes(new String[] { "ECM" });
@@ -1155,7 +1143,6 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 200000;
         misc.hittable = true;
-        misc.spreadable = false;
         misc.flags |= F_ECM;
         misc.bv = 61;
         misc.setModes(new String[] { "ECM" });
@@ -1176,8 +1163,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticals = 2;
         misc.cost = 750000;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.flags |= F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
         misc.setModes(new String[] { "ECM" });
@@ -1198,8 +1183,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.cost = 1000000;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.flags |= F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
         misc.setModes(new String[] { "ECM" });
@@ -1221,8 +1204,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.cost = 750000;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.flags |= F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
         misc.setModes(new String[] { "ECM" });
@@ -1243,8 +1224,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 500000;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.flags |= F_ECM | F_BAP;
         misc.bv = 73;
         misc.setModes(new String[] { "ECM" });
@@ -1552,7 +1531,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_BOARDING_CLAW;
         misc.bv = 0;
 
@@ -1567,7 +1545,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_ASSAULT_CLAW;
         misc.bv = 3;
 
@@ -1582,7 +1559,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_FIRE_RESISTANT;
         misc.bv = 0;
 
@@ -1597,7 +1573,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_STEALTH;
         misc.bv = 0;
 
@@ -1612,7 +1587,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_STEALTH;
         misc.bv = 0;
 
@@ -1627,7 +1601,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_STEALTH;
         misc.bv = 0;
 
@@ -1641,8 +1614,6 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("Mine");
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.flags |= F_MINE;
         misc.bv = 0;
 
@@ -1657,7 +1628,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_TOOLS;
         misc.subType |= S_MINESWEEPER;
         misc.bv = 0;
@@ -1674,7 +1644,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_TOOLS;
         misc.subType |= S_MINESWEEPER;
         misc.toHitModifier = 1;
@@ -1691,7 +1660,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_MAGNETIC_CLAMP;
         String[] saModes = { "On", "Off" };
         misc.setModes(saModes);
@@ -1709,7 +1677,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_ECM | F_SINGLE_HEX_ECM;
         misc.bv = 0;
         misc.setModes(new String[] { "ECM" });
@@ -1726,7 +1693,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_STEALTH | F_VISUAL_CAMO;
         misc.bv = 0;
 
@@ -1741,7 +1707,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_STEALTH | F_VISUAL_CAMO;
         misc.bv = 0;
 
@@ -1756,7 +1721,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_PARAFOIL;
         misc.bv = 0;
 
@@ -1793,7 +1757,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("NullSignatureSystem");
         misc.tonnage = 0;
         misc.criticals = 7;
-        misc.hittable = true;
         misc.spreadable = true;
         misc.flags |= F_NULLSIG;
         String[] saModes = { "Off", "On" };
@@ -1814,7 +1777,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("VoidSignatureSystem");
         misc.tonnage = 0;
         misc.criticals = 7;
-        misc.hittable = true;
         misc.spreadable = true;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
@@ -1835,7 +1797,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ChameleonLightPolarizationField");
         misc.tonnage = 0;
         misc.criticals = 6;
-        misc.hittable = true;
         misc.spreadable = true;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
@@ -2038,8 +1999,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:1");
         misc.tonnage = 1;
         misc.criticals = 1;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2058,8 +2017,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:2");
         misc.tonnage = 2;
         misc.criticals = 2;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2078,8 +2035,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:3");
         misc.tonnage = 3;
         misc.criticals = 3;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2098,8 +2053,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:4");
         misc.tonnage = 4;
         misc.criticals = 4;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2118,8 +2071,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:51");
         misc.tonnage = 5;
         misc.criticals = 5;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2138,8 +2089,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:6");
         misc.tonnage = 6;
         misc.criticals = 6;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2158,8 +2107,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:7");
         misc.tonnage = 7;
         misc.criticals = 7;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2178,8 +2125,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:8");
         misc.tonnage = 8;
         misc.criticals = 8;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2198,8 +2143,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:9");
         misc.tonnage = 9;
         misc.criticals = 9;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2218,8 +2161,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:10");
         misc.tonnage = 10;
         misc.criticals = 10;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2238,8 +2179,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:11");
         misc.tonnage = 11;
         misc.criticals = 11;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2258,8 +2197,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:12");
         misc.tonnage = 12;
         misc.criticals = 12;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2278,8 +2215,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:13");
         misc.tonnage = 13;
         misc.criticals = 13;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2298,8 +2233,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:14");
         misc.tonnage = 14;
         misc.criticals = 14;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2318,8 +2251,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:15");
         misc.tonnage = 15;
         misc.criticals = 15;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.flags |= F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -2340,7 +2271,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = true;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
@@ -2356,8 +2286,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Industrial");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
-        misc.hittable = false;
-        misc.spreadable = true;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_TW_ALL;
 
@@ -2452,9 +2380,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Beagle Active Probe");
         misc.tonnage = 1.5f;
         misc.criticals = 2;
-        misc.hittable = true;
         misc.cost = 200000;
-        misc.spreadable = false;
         misc.flags |= F_BAP;
         misc.bv = 10;
 
@@ -2472,9 +2398,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Bloodhound Active Probe");
         misc.tonnage = 2;
         misc.criticals = 3;
-        misc.hittable = true;
         misc.cost = 500000;
-        misc.spreadable = false;
         misc.flags |= F_BAP;
         misc.bv = 25;
 
@@ -2492,9 +2416,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS THB Bloodhound Active Probe");
         misc.tonnage = 5;
         misc.criticals = 2;
-        misc.hittable = true;
         misc.cost = 750000;
-        misc.spreadable = false;
         misc.flags |= F_BAP;
         misc.bv = 25;
 
@@ -2511,8 +2433,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan Active Probe");
         misc.tonnage = 1;
         misc.criticals = 1;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.cost = 200000;
         misc.flags |= F_BAP;
         misc.bv = 12;
@@ -2531,9 +2451,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan Light Active Probe");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
-        misc.hittable = true;
         misc.cost = 150000;
-        misc.spreadable = false;
         misc.flags |= F_BAP;
         misc.bv = 7;
 
@@ -2548,9 +2466,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(Sensor.CLBALIGHT_AP);
         misc.tonnage = 0.15f;
         misc.criticals = 1;
-        misc.hittable = true;
         misc.cost = 50000;
-        misc.spreadable = false;
         misc.flags |= F_BAP;
         misc.bv = 0;
 
@@ -2565,9 +2481,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(Sensor.ISBALIGHT_AP);
         misc.tonnage = 0.25f;
         misc.criticals = 1;
-        misc.hittable = true;
         misc.cost = 50000;
-        misc.spreadable = false;
         misc.flags |= F_BAP;
         misc.bv = 0;
 
@@ -2585,9 +2499,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS AP Pod");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
-        misc.hittable = true;
         misc.cost = 1500;
-        misc.spreadable = false;
         misc.flags |= F_AP_POD;
         misc.bv = 1;
 
@@ -2604,9 +2516,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CL AP Pod");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
-        misc.hittable = true;
         misc.cost = 1500;
-        misc.spreadable = false;
         misc.flags |= F_AP_POD;
         misc.bv = 1;
 
@@ -2620,8 +2530,6 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("Searchlight");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.flags |= F_SEARCHLIGHT;
         misc.bv = 0;
         misc.cost = 2000;
@@ -2638,7 +2546,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.0f;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_VIBROCLAW;
         misc.bv = 1;
 
@@ -2699,7 +2606,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_TOOLS;
         misc.subType |= S_DEMOLITION_CHARGE;
         misc.toHitModifier = 1;
@@ -2717,7 +2623,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_TOOLS;
         misc.subType |= S_VIBROSHOVEL;
         misc.toHitModifier = 1;
@@ -2735,7 +2640,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = false;
         misc.flags |= F_TOOLS;
         misc.subType |= S_BRIDGE_KIT;
         misc.toHitModifier = 1;
@@ -3227,7 +3131,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Reactive");
         misc.tonnage = 0;
         misc.criticals = CRITICALS_VARIABLE;
-        misc.hittable = true;
         misc.spreadable = true;
         misc.flags |= F_REACTIVE;
         misc.bv = 0;
@@ -3281,8 +3184,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("SalvageArm");
         misc.tonnage = 3;
         misc.criticals = 2;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 0;
         misc.cost = 50000;
         misc.flags |= F_SALVAGE_ARM;
@@ -3298,7 +3199,6 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
-        misc.hittable = true;
         misc.spreadable = true;
         misc.bv = 0;
         misc.cost = COST_VARIABLE;
@@ -3316,8 +3216,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Mass");
         misc.tonnage = 1.5f;
         misc.criticals = 1;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 9;
         misc.cost = 4000;
         misc.flags |= F_MASS;
@@ -3334,8 +3232,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan Mass");
         misc.tonnage = 1.5f;
         misc.criticals = 1;
-        misc.hittable = true;
-        misc.spreadable = false;
         misc.bv = 9;
         misc.cost = 4000;
         misc.flags |= F_MASS;

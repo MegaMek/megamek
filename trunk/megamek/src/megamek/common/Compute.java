@@ -2310,9 +2310,9 @@ public class Compute {
     }
 
     /**
-     * LOS check from ae to te.
+     * checks to see whether the target is within visual range of the entity, but not necessarily LoS
      */
-    public static boolean canSee(IGame game, Entity ae, Targetable target) {
+    public static boolean inVisualRange(IGame game, Entity ae, Targetable target) {
         boolean teSpotlight = false;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
@@ -2322,6 +2322,11 @@ public class Compute {
             }
         }
 
+        //if either does not have a position then return false
+        if((ae.getPosition() == null) || (target.getPosition() == null)) {
+            return false;
+        }
+        
         //check visual range based on planetary conditions
         int visualRange = game.getPlanetaryConditions().getVisualRange(ae, teSpotlight);
 
@@ -2347,7 +2352,21 @@ public class Compute {
         }
 
         visualRange = Math.max(visualRange, 1);
+        
+        return ae.getPosition().distance(target.getPosition()) <= visualRange;
 
+    }
+    
+    /**
+     * Checks to see whether the target is within sensor range (but not necessarily LoS or visual range)
+     */
+    public static boolean inSensorRange(IGame game, Entity ae, Targetable target) {
+        
+        //if either does not have a position then return false
+        if((ae.getPosition() == null) || (target.getPosition() == null)) {
+            return false;
+        }
+        
         int bracket = Compute.getSensorRangeBracket(ae, target);
         int range = Compute.getSensorRangeByBracket(game, ae, target);
 
@@ -2356,14 +2375,22 @@ public class Compute {
         if(game.getOptions().booleanOption("inclusive_sensor_range")) {
             minSensorRange = 0;
         }
-
-        boolean inSensorRange = (ae.getPosition() != null) && (target.getPosition() != null) && (ae.getPosition().distance(target.getPosition()) > minSensorRange) && (ae.getPosition().distance(target.getPosition()) <= maxSensorRange);
-
-        if (!inSensorRange && (ae.getPosition() != null) && (target.getPosition() != null) && (ae.getPosition().distance(target.getPosition()) > visualRange)) {
+        
+        int distance = ae.getPosition().distance(target.getPosition());
+        
+        return distance > minSensorRange && distance <= maxSensorRange;
+    }
+    
+    /**
+     * Slightly misnamed. Checks to see if the target is visible to the unit, either visually or through sensors
+     */
+    public static boolean canSee(IGame game, Entity ae, Targetable target) {
+        
+        if(!ae.getCrew().isActive()) {
             return false;
         }
 
-        return (LosEffects.calculateLos(game, ae.getId(), target).canSee() && ae.getCrew().isActive()) || inSensorRange;
+        return (LosEffects.calculateLos(game, ae.getId(), target).canSee() && inVisualRange(game, ae, target)) || inSensorRange(game, ae, target);
     }
 
     private static int getSensorRangeBracket(Entity ae, Targetable target) {

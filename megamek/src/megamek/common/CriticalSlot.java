@@ -49,7 +49,10 @@ public class CriticalSlot implements Serializable {
         this.type = type;
         this.index = index;
         this.hittable = hittable;
-        this.armored = armored;
+        // non-hittable crits cannot be armored.
+        if (hittable) {
+            this.armored = armored;
+        }
     }
 
     public CriticalSlot(int type, Mounted mount) {

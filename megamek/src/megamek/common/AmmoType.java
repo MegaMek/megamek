@@ -7996,4 +7996,8 @@ public class AmmoType extends EquipmentType {
 
         return shortName;
     }
+
+    public double getBV(Entity entity) {
+        return this.getBV(entity, false);
+    }
 }

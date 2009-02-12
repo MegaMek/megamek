@@ -345,6 +345,19 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
+    public double getCost(Entity entity, boolean isArmored) {
+        if (isArmored) {
+            double armoredCost = cost;
+
+            armoredCost += 150000 * getCriticals(entity);
+
+            return armoredCost;
+        }
+
+        return super.getCost(entity, isArmored);
+    }
+
+    @Override
     public int getCriticals(Entity entity) {
         if (criticals != CRITICALS_VARIABLE) {
             return criticals;
@@ -417,7 +430,7 @@ public class MiscType extends EquipmentType {
         return 1;
     }
 
-    public double getBV(Entity entity, Mounted mount) {
+    public double getBV(Entity entity, Mounted mount, boolean isArmored) {
 
         if (hasFlag(F_PPC_CAPACITOR) && (mount != null)
                 && (mount.getLinked() != null)) {
@@ -443,28 +456,36 @@ public class MiscType extends EquipmentType {
             }
         }
 
-        return this.getBV(entity);
+        return this.getBV(entity, isArmored);
     }
 
     @Override
-    public double getBV(Entity entity) {
+    public double getBV(Entity entity, boolean isArmored) {
+        double returnBV = 0.0;
         if (bv != BV_VARIABLE) {
-            return bv;
+            returnBV = bv;
+            if (isArmored) {
+                returnBV += (bv * .05) * getCriticals(entity);
+                if (Math.floor(returnBV) < 1) {
+                    returnBV = 5;
+                }
+            }
+            return returnBV;
         }
         // check for known formulas
         if (hasFlag(F_CLUB) && hasSubType(S_HATCHET)) {
-            return Math.ceil(entity.getWeight() / 5.0) * 1.5;
+            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5;
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE_THB)) {
-            return Math.ceil(entity.getWeight() / 5.0) * 1.5;
+            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5;
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
-            return Math.ceil(entity.getWeight() / 5.0) * 1.0;
+            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.0;
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {
-            return Math.ceil(entity.getWeight() / 4.0);
+            returnBV = Math.ceil(entity.getWeight() / 4.0);
         } else if (hasFlag(F_CLUB)
                 && (hasSubType(S_SWORD) || hasSubType(S_CHAIN_WHIP))) {
-            return (Math.ceil(entity.getWeight() / 10.0) + 1.0) * 1.725;
+            returnBV = (Math.ceil(entity.getWeight() / 10.0) + 1.0) * 1.725;
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
-            return Math.ceil(entity.getWeight() / 10.0) * 1.725;
+            returnBV = Math.ceil(entity.getWeight() / 10.0) * 1.725;
         } else if (hasFlag(F_TARGCOMP)) {
             // 20% of direct_fire weaponry BV (half for rear-facing)
             double fFrontBV = 0.0, fRearBV = 0.0;
@@ -472,22 +493,28 @@ public class MiscType extends EquipmentType {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     if (m.isRearMounted()) {
-                        fRearBV += wt.getBV(entity);
+                        fRearBV += wt.getBV(entity, false);
                     } else {
-                        fFrontBV += wt.getBV(entity);
+                        fFrontBV += wt.getBV(entity, false);
                     }
                 }
             }
             if (fFrontBV > fRearBV) {
-                return fFrontBV * 0.2 + fRearBV * 0.1;
+                returnBV = fFrontBV * 0.2 + fRearBV * 0.1;
             }
-            return fRearBV * 0.2 + fFrontBV * 0.1;
+            returnBV = fRearBV * 0.2 + fFrontBV * 0.1;
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
-            return (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
+            returnBV = (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
         }
 
-        // maybe it's 0
-        return 0;
+        if (isArmored) {
+            int crits = getCriticals(entity);
+            returnBV += (returnBV * 0.5) * crits;
+            if (Math.floor(returnBV) < 1) {
+                returnBV = 5 * crits;
+            }
+        }
+        return returnBV;
     }
 
     /**
@@ -3332,5 +3359,4 @@ public class MiscType extends EquipmentType {
         }
         return -1;
     }
-
 }

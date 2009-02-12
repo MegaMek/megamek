@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -22,7 +22,7 @@ import java.util.Vector;
  * sometimes referred to as "Elementals". Much of the behaviour of a battle
  * armor unit is identical to that of an infantry platoon, and is rather
  * different than that of a Mek or Tank.
- * 
+ *
  * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $revision:$
  */
@@ -32,7 +32,7 @@ import java.util.Vector;
  */
 public class BattleArmor extends Infantry implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4594311535026187825L;
     /*
@@ -115,7 +115,7 @@ public class BattleArmor extends Infantry implements Serializable {
     private int mediumStealthMod = 0;
     private int longStealthMod = 0;
     private String stealthName = null;
-    
+
     // Public and Protected constants, constructors, and methods.
 
     /**
@@ -205,15 +205,17 @@ public class BattleArmor extends Infantry implements Serializable {
     public static final int LOC_TROOPER_5 = 5;
     public static final int LOC_TROOPER_6 = 6;
 
+    @Override
     public String[] getLocationAbbrs() {
-        if (!this.isInitialized || this.isClan()) {
+        if (!isInitialized || isClan()) {
             return CLAN_LOCATION_ABBRS;
         }
         return IS_LOCATION_ABBRS;
     }
 
+    @Override
     public String[] getLocationNames() {
-        if (!this.isInitialized || this.isClan()) {
+        if (!isInitialized || isClan()) {
             return CLAN_LOCATION_NAMES;
         }
         return IS_LOCATION_NAMES;
@@ -222,13 +224,14 @@ public class BattleArmor extends Infantry implements Serializable {
     /**
      * Returns the number of locations in this unit.
      */
+    @Override
     public int locations() {
         int retVal = Math.round(getWeight());
         if (retVal == 0) {
             // Return one more than the maximum number of men in the unit.
-            if (!this.isInitialized) {
+            if (!isInitialized) {
                 retVal = 6 + 1;
-            } else if (this.isClan()) {
+            } else if (isClan()) {
                 retVal = 5 + 1;
             }
             retVal = 4 + 1;
@@ -247,37 +250,41 @@ public class BattleArmor extends Infantry implements Serializable {
         super();
 
         // All Battle Armor squads are Clan until specified otherwise.
-        this.setTechLevel(TechConstants.T_CLAN_TW);
+        setTechLevel(TechConstants.T_CLAN_TW);
 
         // Construction complete.
-        this.isInitialized = true;
+        isInitialized = true;
     }
 
     /**
      * Returns this entity's original jumping mp.
      */
+    @Override
     public int getOriginalJumpMP() {
         return jumpMP;
     }
 
+    @Override
     public int getWalkMP() {
         return getWalkMP(true, true);
     }
-    
+
     /**
      * Returns this entity's walking mp, factored for extreme temperatures and
      * gravity.
      */
+    @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int j = getOriginalWalkMP();
         if(null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if(weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
-            } 
-        }      
-        if (gravity)
+            }
+        }
+        if (gravity) {
             j = applyGravityEffectsOnMP(j);
+        }
         return j;
     }
 
@@ -285,18 +292,20 @@ public class BattleArmor extends Infantry implements Serializable {
      * Returns this entity's running mp, factored for extreme temperatures and
      * gravity.
      */
+    @Override
     public int getRunMP(boolean gravity, boolean ignoreheat) {
         return getWalkMP(gravity, ignoreheat);
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Infantry#getJumpMP(boolean)
      */
+    @Override
     public int getJumpMP(boolean gravity) {
         return getJumpMP(gravity, false);
     }
-    
+
     /**
      * get this BA's jump MP, possibly ignoring gravity and burden
      * @param gravity
@@ -304,9 +313,9 @@ public class BattleArmor extends Infantry implements Serializable {
      * @return
      */
     public int getJumpMP(boolean gravity, boolean ignoreBurden) {
-        if (this.isBurdened() && !ignoreBurden) {
+        if (isBurdened() && !ignoreBurden) {
             return 0;
-        }      
+        }
         if(null != game) {
             int windCond = game.getPlanetaryConditions().getWindStrength();
             if(windCond >= PlanetaryConditions.WI_STORM) {
@@ -323,6 +332,7 @@ public class BattleArmor extends Infantry implements Serializable {
     /**
      * Returns the name of the type of movement used. This is Infantry-specific.
      */
+    @Override
     public String getMovementString(int mtype) {
         switch (mtype) {
             case IEntityMovementType.MOVE_NONE:
@@ -344,6 +354,7 @@ public class BattleArmor extends Infantry implements Serializable {
      * Returns the abbreviation of the type of movement used. This is
      * Infantry-specific.
      */
+    @Override
     public String getMovementAbbr(int mtype) {
         switch (mtype) {
             case IEntityMovementType.MOVE_NONE:
@@ -365,16 +376,18 @@ public class BattleArmor extends Infantry implements Serializable {
     /**
      * Battle Armor units can only get hit in undestroyed troopers.
      */
+    @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation,
             int aimingMode) {
 
         // If this squad was killed, target trooper 1 (just because).
-        if (this.isDoomed())
+        if (isDoomed()) {
             return new HitData(1);
-        
+        }
+
         if ((aimedLocation != LOC_NONE)
                 && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-            
+
             int roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
@@ -386,10 +399,10 @@ public class BattleArmor extends Infantry implements Serializable {
         // Pick a random number between 1 and 6.
         int loc = Compute.d6();
 
-        
+
 /*        if ((aimedLocation != LOC_NONE)
                 && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-            
+
             int roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
@@ -404,7 +417,7 @@ public class BattleArmor extends Infantry implements Serializable {
         // "previously destroyed includes the current phase" for rolling hits on
         // a squad,
         // modifying previous ruling in the AskThePM FAQ.
-        while (loc >= this.locations()
+        while (loc >= locations()
                 || IArmorState.ARMOR_NA == this.getInternal(loc)
                 || IArmorState.ARMOR_DESTROYED == this.getInternal(loc)
                 || (IArmorState.ARMOR_DOOMED == this.getInternal(loc) && !isDoomed())) {
@@ -412,7 +425,7 @@ public class BattleArmor extends Infantry implements Serializable {
         }
 
         int critLocation = Compute.d6();
-        //TacOps p. 108 Trooper takes a crit if a second roll is the same location as the first. 
+        //TacOps p. 108 Trooper takes a crit if a second roll is the same location as the first.
         if (game.getOptions().booleanOption("tacops_ba_criticals") && loc == critLocation) {
             return new HitData(loc, false, HitData.EFFECT_CRITICAL);
         }
@@ -421,6 +434,7 @@ public class BattleArmor extends Infantry implements Serializable {
 
     }
 
+    @Override
     public HitData rollHitLocation(int table, int side) {
         return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
     }
@@ -429,63 +443,72 @@ public class BattleArmor extends Infantry implements Serializable {
      * For level 3 rules, each trooper occupies a specific location
      * precondition: hit is a location covered by BA
      */
+    @Override
     public HitData getTrooperAtLocation(HitData hit, Entity transport) {
         if (transport instanceof Mech) {
             int loc = 99;
             switch (hit.getLocation()) {
                 case Mech.LOC_RT:
-                    if (hit.isRear())
+                    if (hit.isRear()) {
                         loc = 3;
-                    else
+                    } else {
                         loc = 1;
+                    }
                     break;
                 case Mech.LOC_LT:
-                    if (hit.isRear())
+                    if (hit.isRear()) {
                         loc = 4;
-                    else
+                    } else {
                         loc = 2;
+                    }
                     break;
                 case Mech.LOC_CT:
-                    if (hit.isRear())
+                    if (hit.isRear()) {
                         loc = 5;
-                    else
+                    } else {
                         loc = 6;
+                    }
                     break;
             }
-            if (loc < locations())
+            if (loc < locations()) {
                 return new HitData(loc);
+            }
         } else if (transport instanceof Tank) {
             int loc = 99;
             switch (hit.getLocation()) {
                 case Tank.LOC_RIGHT:
                     // There are 2 troopers on each location, so pick
                     // one randomly if both are alive.
-                    if (getInternal(1) > 0 && getInternal(2) > 0)
+                    if (getInternal(1) > 0 && getInternal(2) > 0) {
                         loc = Compute.randomInt(2) + 1;
-                    else if (getInternal(1) > 0)
+                    } else if (getInternal(1) > 0) {
                         loc = 1;
-                    else
+                    } else {
                         loc = 2;
+                    }
                     break;
                 case Tank.LOC_LEFT:
-                    if (getInternal(3) > 0 && getInternal(4) > 0)
+                    if (getInternal(3) > 0 && getInternal(4) > 0) {
                         loc = Compute.randomInt(2) + 3;
-                    else if (getInternal(3) > 0)
+                    } else if (getInternal(3) > 0) {
                         loc = 3;
-                    else
+                    } else {
                         loc = 4;
+                    }
                     break;
                 case Tank.LOC_REAR:
-                    if (getInternal(5) > 0 && getInternal(6) > 0)
+                    if (getInternal(5) > 0 && getInternal(6) > 0) {
                         loc = Compute.randomInt(2) + 5;
-                    else if (getInternal(5) > 0)
+                    } else if (getInternal(5) > 0) {
                         loc = 5;
-                    else
+                    } else {
                         loc = 6;
+                    }
                     break;
             }
-            if (loc < locations())
+            if (loc < locations()) {
                 return new HitData(loc);
+            }
         }
         // otherwise roll a random location
         return rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
@@ -494,10 +517,11 @@ public class BattleArmor extends Infantry implements Serializable {
     /**
      * Battle Armor units don't transfer damage.
      */
+    @Override
     public HitData getTransferLocation(HitData hit) {
 
         // If any trooper lives, the unit isn't destroyed.
-        for (int loop = 1; loop < this.locations(); loop++) {
+        for (int loop = 1; loop < locations(); loop++) {
             if (0 < this.getInternal(loop)) {
                 return new HitData(Entity.LOC_NONE);
             }
@@ -509,18 +533,20 @@ public class BattleArmor extends Infantry implements Serializable {
 
     /**
      * Battle Armor units use default behavior for armor and internals.
-     * 
+     *
      * @see megamek.common.Infantry#isPlatoon()
      */
+    @Override
     protected boolean isPlatoon() {
         return false;
     }
 
     /**
      * Battle Armor units have no armor on their squad location.
-     * 
+     *
      * @see megamek.common.Infantry#getArmor( int, boolean )
      */
+    @Override
     public int getArmor(int loc, boolean rear) {
         if (BattleArmor.LOC_SQUAD != loc) {
             return super.getArmor(loc, rear);
@@ -530,9 +556,10 @@ public class BattleArmor extends Infantry implements Serializable {
 
     /**
      * Battle Armor units have no armor on their squad location.
-     * 
+     *
      * @see megamek.common.Infantry#getOArmor( int, boolean )
      */
+    @Override
     public int getOArmor(int loc, boolean rear) {
         if (BattleArmor.LOC_SQUAD != loc) {
             return super.getOArmor(loc, rear);
@@ -542,9 +569,10 @@ public class BattleArmor extends Infantry implements Serializable {
 
     /**
      * Battle Armor units have no internals on their squad location.
-     * 
+     *
      * @see megamek.common.Infantry#getInternal( int )
      */
+    @Override
     public int getInternal(int loc) {
         if (BattleArmor.LOC_SQUAD != loc) {
             return super.getInternal(loc);
@@ -554,9 +582,10 @@ public class BattleArmor extends Infantry implements Serializable {
 
     /**
      * Battle Armor units have no internals on their squad location.
-     * 
+     *
      * @see megamek.common.Infantry#getOInternal( int )
      */
+    @Override
     public int getOInternal(int loc) {
         if (BattleArmor.LOC_SQUAD != loc) {
             return super.getOInternal(loc);
@@ -567,23 +596,25 @@ public class BattleArmor extends Infantry implements Serializable {
     /**
      * Set the troopers in the unit to the appropriate values.
      */
+    @Override
     public void autoSetInternal() {
         // No troopers in the squad location.
-        this.initializeInternal(IArmorState.ARMOR_NA, LOC_SQUAD);
+        initializeInternal(IArmorState.ARMOR_NA, LOC_SQUAD);
 
         // Initialize the troopers.
-        for (int loop = 1; loop < this.locations(); loop++) {
-            this.initializeInternal(1, loop);
+        for (int loop = 1; loop < locations(); loop++) {
+            initializeInternal(1, loop);
         }
 
         // Set the initial number of troopers that can shoot
         // to one less than the number of locations in the unit.
-        this.troopersShooting = this.locations() - 1;
+        troopersShooting = locations() - 1;
     }
 
     /**
      * Mounts the specified equipment in the specified location.
      */
+    @Override
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
             throws LocationFullException {
         // Implement parent's behavior.
@@ -597,27 +628,27 @@ public class BattleArmor extends Infantry implements Serializable {
         // TODO: what's the *real* extreme range modifier?
         String name = mounted.getType().getInternalName();
         if (BattleArmor.STEALTH.equals(name)) {
-            this.isStealthy = true;
-            this.shortStealthMod = 0;
-            this.mediumStealthMod = 1;
-            this.longStealthMod = 2;
-            this.stealthName = name;
+            isStealthy = true;
+            shortStealthMod = 0;
+            mediumStealthMod = 1;
+            longStealthMod = 2;
+            stealthName = name;
         } else if (BattleArmor.ADVANCED_STEALTH.equals(name)) {
-            this.isStealthy = true;
-            this.shortStealthMod = 1;
-            this.mediumStealthMod = 1;
-            this.longStealthMod = 2;
-            this.stealthName = name;
+            isStealthy = true;
+            shortStealthMod = 1;
+            mediumStealthMod = 1;
+            longStealthMod = 2;
+            stealthName = name;
         } else if (BattleArmor.EXPERT_STEALTH.equals(name)) {
-            this.isStealthy = true;
-            this.shortStealthMod = 1;
-            this.mediumStealthMod = 2;
-            this.longStealthMod = 3;
-            this.stealthName = name;
+            isStealthy = true;
+            shortStealthMod = 1;
+            mediumStealthMod = 2;
+            longStealthMod = 3;
+            stealthName = name;
         } else if (BattleArmor.MIMETIC_CAMO.equals(name)) {
-            this.isMimetic = true;
+            isMimetic = true;
         } else if (BattleArmor.SIMPLE_CAMO.equals(name)) {
-            this.isSimpleCamo = true;
+            isSimpleCamo = true;
         }
     }
 
@@ -625,8 +656,9 @@ public class BattleArmor extends Infantry implements Serializable {
      * Battle Armor units have as many critical slots as they need to hold their
      * equipment.
      */
+    @Override
     protected int[] getNoOfSlots() {
-        if (!this.isInitialized || this.isClan()) {
+        if (!isInitialized || isClan()) {
             return CLAN_NUM_OF_SLOTS;
         }
         return IS_NUM_OF_SLOTS;
@@ -635,15 +667,18 @@ public class BattleArmor extends Infantry implements Serializable {
     /**
      * Trooper's equipment dies when they do.
      */
+    @Override
     public boolean hasHittableCriticals(int loc) {
-        if (LOC_SQUAD == loc)
+        if (LOC_SQUAD == loc) {
             return false;
+        }
         return super.hasHittableCriticals(loc);
     }
 
     /**
      * Calculates the battle value of this platoon.
      */
+    @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         // we do this per trooper, then add up
         double squadBV = 0;
@@ -691,36 +726,36 @@ public class BattleArmor extends Infantry implements Serializable {
             if (isMimetic) {
                 tmmFactor += 0.3;
             }
-                
+
             dBV *= tmmFactor;
             double oBV = 0;
-            for (Mounted weapon : this.getWeaponList()) {
+            for (Mounted weapon : getWeaponList()) {
                 // infantry weapons don't count at all
                 if (weapon.getType().hasFlag(WeaponType.F_INFANTRY)) {
                     continue;
                 }
                 if (weapon.getLocation() == LOC_SQUAD) {
-                    oBV += weapon.getType().getBV(this);
+                    oBV += weapon.getType().getBV(this, weapon.isArmored());
                 } else {
                     // squad support, count at 1/troopercount
-                    oBV += weapon.getType().getBV(this)/getTotalOInternal();
+                    oBV += weapon.getType().getBV(this, weapon.isArmored()) / getTotalOInternal();
                 }
             }
-            for (Mounted ammo : this.getAmmo()) {
+            for (Mounted ammo : getAmmo()) {
                 int loc = ammo.getLocation();
                 // don't count oneshot ammo
                 if (loc == LOC_NONE) {
                     continue;
                 }
                 if (loc == LOC_SQUAD || loc == i) {
-                    double ammoBV =((AmmoType)ammo.getType()).getBABV(); 
+                    double ammoBV =((AmmoType)ammo.getType()).getBABV();
                     oBV += ammoBV;
                 }
             }
             if (isAntiMek()) {
                 // all non-missile and non-body mounted direct fire weapons
                 // counted again
-                for (Mounted weapon : this.getWeaponList()) {
+                for (Mounted weapon : getWeaponList()) {
                     // infantry weapons don't count at all
                     if (weapon.getType().hasFlag(WeaponType.F_INFANTRY)) {
                         continue;
@@ -728,19 +763,19 @@ public class BattleArmor extends Infantry implements Serializable {
                     if (weapon.getLocation() == LOC_SQUAD) {
                         if (!weapon.getType().hasFlag(WeaponType.F_MISSILE) &&
                                 !weapon.isBodyMounted()) {
-                            oBV += weapon.getType().getBV(this);
+                            oBV += weapon.getType().getBV(this, weapon.isArmored());
                         }
                     } else {
                         // squad support, count at 1/troopercount
-                        oBV += weapon.getType().getBV(this)/getTotalOInternal();
+                        oBV += weapon.getType().getBV(this, weapon.isArmored()) / getTotalOInternal();
                     }
                 }
                 // magnetic claws and vibro claws counted again
-                for (Mounted misc : this.getMisc()) {
+                for (Mounted misc : getMisc()) {
                     if (misc.getLocation() == LOC_SQUAD || misc.getLocation() == i) {
                         if (misc.getType().hasFlag(MiscType.F_ASSAULT_CLAW)
                                 || misc.getType().hasFlag(MiscType.F_VIBROCLAW)) {
-                            oBV += misc.getType().getBV(this);
+                            oBV += misc.getType().getBV(this, misc.isArmored());
                         }
                     }
                 }
@@ -780,7 +815,7 @@ public class BattleArmor extends Infantry implements Serializable {
         case 6:
             squadBV *= 9;
             break;
-        } 
+        }
 
         // Adjust BV for crew skills.
         double pilotFactor = 1;
@@ -795,6 +830,7 @@ public class BattleArmor extends Infantry implements Serializable {
     /**
      * Prepare the entity for a new round of action.
      */
+    @Override
     public void newRound(int roundNumber) {
         // Perform all base-class behavior.
         super.newRound(roundNumber);
@@ -812,16 +848,18 @@ public class BattleArmor extends Infantry implements Serializable {
     /**
      * Update the unit to reflect damages taken in this phase.
      */
+    @Override
     public void applyDamage() {
         super.applyDamage();
-        troopersShooting = this.getTotalInternal();
+        troopersShooting = getTotalInternal();
     }
 
     /**
      * Get the number of men in the unit (before damage is applied).
-     * 
+     *
      * @see megamek.common.Infantry#getShootingStrength
      */
+    @Override
     public int getShootingStrength() {
         return troopersShooting;
     }
@@ -834,18 +872,18 @@ public class BattleArmor extends Infantry implements Serializable {
      * Determines if the battle armor unit is burdened with un-jettisoned
      * equipment. This can prevent the unit from jumping or using their special
      * Anti-Mek attacks.
-     * 
+     *
      * @return <code>true</code> if the unit hasn't jettisoned its equipment
      *         yet, <code>false</code> if it has.
      */
     public boolean isBurdened() {
 
         // Clan Elemental points are never burdened by equipment.
-        if (!this.isClan()) {
-            
+        if (!isClan()) {
+
             // if we have ammo left for a body mounted missile launcher,
             // we are burdened
-            for (Mounted mounted : this.getAmmo()) {
+            for (Mounted mounted : getAmmo()) {
                 if (mounted.getShotsLeft() == 0) {
                     // no shots left, we don't count
                     continue;
@@ -871,11 +909,12 @@ public class BattleArmor extends Infantry implements Serializable {
     /**
      * Determine if this unit has an active stealth system. <p/> Sub-classes are
      * encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
      */
+    @Override
     public boolean isStealthActive() {
         return (isStealthy || isMimetic || isSimpleCamo);
     }
@@ -886,13 +925,14 @@ public class BattleArmor extends Infantry implements Serializable {
      * <code>Entity</code> class range constants, an
      * <code>IllegalArgumentException</code> will be thrown. <p/> Sub-classes
      * are encouraged to override this method.
-     * 
+     *
      * @param range - an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
      * @param ae - the entity making the attack.
      * @return a <code>TargetRoll</code> value that contains the stealth
      *         modifier for the given range.
      */
+    @Override
     public TargetRoll getStealthModifier(int range, Entity ae) {
         TargetRoll result = null;
 
@@ -1011,18 +1051,18 @@ public class BattleArmor extends Infantry implements Serializable {
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
                     case RangeType.RANGE_SHORT:
-                        result = new TargetRoll(this.shortStealthMod,
-                                this.stealthName);
+                        result = new TargetRoll(shortStealthMod,
+                                stealthName);
                         break;
                     case RangeType.RANGE_MEDIUM:
-                        result = new TargetRoll(this.mediumStealthMod,
-                                this.stealthName);
+                        result = new TargetRoll(mediumStealthMod,
+                                stealthName);
                         break;
                     case RangeType.RANGE_LONG:
                     case RangeType.RANGE_EXTREME: // TODO : what's the *real*
                                                     // modifier?
-                        result = new TargetRoll(this.longStealthMod,
-                                this.stealthName);
+                        result = new TargetRoll(longStealthMod,
+                                stealthName);
                         break;
                     default:
                         throw new IllegalArgumentException(
@@ -1038,14 +1078,16 @@ public class BattleArmor extends Infantry implements Serializable {
         // This can also be in addition to any armor except Mimetic!
         if (isSimpleCamo && delta_distance < 2) {
             int mod = Math.max(2 - delta_distance, 0);
-            if (result == null)
+            if (result == null) {
                 result = new TargetRoll(mod, "camoflage");
-            else
+            } else {
                 result.append(new TargetRoll(mod, "camoflage"));
+            }
         }
 
-        if (result == null)
+        if (result == null) {
             result = new TargetRoll(0, "stealth not active");
+        }
 
         // Return the result.
         return result;
@@ -1053,51 +1095,71 @@ public class BattleArmor extends Infantry implements Serializable {
 
     public double getCost() {
         // Hopefully the cost is correctly set.
-        if (myCost > 0)
+        if (myCost > 0) {
             return myCost;
+        }
 
         // If it's not, I guess we default to the book values...
-        if (chassis.equals("Clan Elemental"))
+        if (chassis.equals("Clan Elemental")) {
             return 3500000;
-        if (chassis.equals("Clan Gnome"))
+        }
+        if (chassis.equals("Clan Gnome")) {
             return 5250000;
-        if (chassis.equals("Clan Salamander"))
+        }
+        if (chassis.equals("Clan Salamander")) {
             return 3325000;
-        if (chassis.equals("Clan Sylph"))
+        }
+        if (chassis.equals("Clan Sylph")) {
             return 3325000;
-        if (chassis.equals("Clan Undine"))
+        }
+        if (chassis.equals("Clan Undine")) {
             return 3500000;
-        if (chassis.equals("IS Standard"))
+        }
+        if (chassis.equals("IS Standard")) {
             return 2400000;
-        if (chassis.equals("Achileus"))
+        }
+        if (chassis.equals("Achileus")) {
             return 1920000;
-        if (chassis.equals("Cavalier"))
+        }
+        if (chassis.equals("Cavalier")) {
             return 2400000;
-        if (chassis.equals("Fa Shih"))
+        }
+        if (chassis.equals("Fa Shih")) {
             return 2250000;
-        if (chassis.equals("Fenrir"))
+        }
+        if (chassis.equals("Fenrir")) {
             return 2250000;
-        if (chassis.equals("Gray Death Light Scout"))
+        }
+        if (chassis.equals("Gray Death Light Scout")) {
             return 1650000;
-        if (chassis.equals("Gray Death Standard"))
+        }
+        if (chassis.equals("Gray Death Standard")) {
             return 2400000;
+        }
         if (chassis.equals("Infiltrator")) {
-            if (model.equals("Mk I"))
+            if (model.equals("Mk I")) {
                 return 1800000;
+            }
             return 2400000; // Mk II
         }
-        if (chassis.equals("Kage"))
+        if (chassis.equals("Kage")) {
             return 1850000;
-        if (chassis.equals("Kanazuchi"))
+        }
+        if (chassis.equals("Kanazuchi")) {
             return 3300000;
-        if (chassis.equals("Longinus"))
+        }
+        if (chassis.equals("Longinus")) {
             return 2550000;
-        if (chassis.equals("Purifier"))
+        }
+        if (chassis.equals("Purifier")) {
             return 2400000;
-        if (chassis.equals("Raiden"))
+        }
+        if (chassis.equals("Raiden")) {
             return 2400000;
-        if (chassis.equals("Sloth"))
+        }
+        if (chassis.equals("Sloth")) {
             return 1800000;
+        }
 
         return 0;
     }
@@ -1137,17 +1199,21 @@ public class BattleArmor extends Infantry implements Serializable {
     public int getNumberActiverTroopers() {
         int count = 0;
         // Initialize the troopers.
-        for (int loop = 1; loop < this.locations(); loop++)
-            if (isTrooperActive(loop))
+        for (int loop = 1; loop < locations(); loop++) {
+            if (isTrooperActive(loop)) {
                 count++;
+            }
+        }
         return count;
     }
 
     public int getRandomTrooper() {
         Vector<Integer> activeTroops = new Vector<Integer>();
-        for (int loop = 1; loop < this.locations(); loop++)
-            if (isTrooperActive(loop))
+        for (int loop = 1; loop < locations(); loop++) {
+            if (isTrooperActive(loop)) {
                 activeTroops.add(loop);
+            }
+        }
         int locInt = Compute.randomInt(activeTroops.size());
         return activeTroops.elementAt(locInt);
     }
@@ -1159,8 +1225,9 @@ public class BattleArmor extends Infantry implements Serializable {
         // such as NARC and the support weapons in TW/TO
         AmmoType at = (AmmoType) mountedAmmo.getType();
         if (!(at.getAmmoType() == AmmoType.T_MINE)
-                && mounted.getLocation() != mountedAmmo.getLocation())
+                && mounted.getLocation() != mountedAmmo.getLocation()) {
             return false;
+        }
         return super.loadWeapon(mounted, mountedAmmo);
     }
 
@@ -1171,8 +1238,9 @@ public class BattleArmor extends Infantry implements Serializable {
         // such as NARC and the support weapons in TW/TO
         AmmoType at = (AmmoType) mountedAmmo.getType();
         if (!(at.getAmmoType() == AmmoType.T_MINE)
-                && mounted.getLocation() != mountedAmmo.getLocation())
+                && mounted.getLocation() != mountedAmmo.getLocation()) {
             return false;
+        }
         return super.loadWeaponWithSameAmmo(mounted, mountedAmmo);
     }
 
@@ -1317,7 +1385,7 @@ public class BattleArmor extends Infantry implements Serializable {
 
         return buff.toString();
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getVibroClaws()
@@ -1331,7 +1399,7 @@ public class BattleArmor extends Infantry implements Serializable {
         }
         return claws;
     }
-    
+
     /**
      * return if this BA has fire resistant armor
      * @return
@@ -1350,7 +1418,7 @@ public class BattleArmor extends Infantry implements Serializable {
         }
         return false;
     }
-    
+
     /**
      * return if this BA has improved sensors
      * @return
@@ -1366,7 +1434,7 @@ public class BattleArmor extends Infantry implements Serializable {
         }
         return false;
     }
-    
+
     /**
      * return if the BA has a light active probe
      * @return
@@ -1375,13 +1443,14 @@ public class BattleArmor extends Infantry implements Serializable {
         for (Mounted equip : getMisc()) {
             if (equip.getType().hasFlag(MiscType.F_BAP)) {
                 if (equip.getType().getInternalName().equals(Sensor.CLBALIGHT_AP)
-                        || equip.getType().getInternalName().equals(Sensor.ISBALIGHT_AP))
-                return true;
+                        || equip.getType().getInternalName().equals(Sensor.ISBALIGHT_AP)) {
+                    return true;
+                }
             }
         }
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#canTransferCriticals(int)

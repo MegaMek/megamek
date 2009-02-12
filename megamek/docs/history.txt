@@ -9,6 +9,8 @@ v0.33.41-dev (SVN)
 + RFE: Armored Components
 + Bug 1642025: VTOL Sideslip and Crash Bug
 + Blowing sand visual range limit
++ Updated Mechfiles from RS PPU
++ Warhawk C should have right arm lower arm actuator
 
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs

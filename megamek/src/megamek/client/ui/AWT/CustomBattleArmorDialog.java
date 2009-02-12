@@ -1,14 +1,14 @@
 /*
  * MechSelectorDialog.java - Copyright (C) 2002,2004 Josh Yockey
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -61,7 +61,7 @@ import megamek.common.TechConstants;
 public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         ItemListener, KeyListener, Runnable, TextListener, WindowListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5195200950623503842L;
     private Client m_client;
@@ -686,8 +686,9 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
     private void updateJumpMPChoices() {
         int tmp = m_chJumpValue.getSelectedIndex();
         m_chJumpValue.removeAll();
-        for (int x = 0; x <= JUMP_MP_LIMITS[stateJumpType][stateWeightClass]; x++)
+        for (int x = 0; x <= JUMP_MP_LIMITS[stateJumpType][stateWeightClass]; x++) {
             m_chJumpValue.add(Integer.toString(x));
+        }
         if (tmp >= m_chJumpValue.getItemCount()) {
             m_chJumpValue.select(m_chJumpValue.getItemCount() - 1);
             stateJumpMP = m_chJumpValue.getSelectedIndex();
@@ -737,15 +738,18 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
     private Point computeDesiredLocation() {
         int desiredX = m_clientgui.frame.getLocation().x
                 + m_clientgui.frame.getSize().width / 2 - getSize().width / 2;
-        if (desiredX < 0)
+        if (desiredX < 0) {
             desiredX = 0;
+        }
         int desiredY = m_clientgui.frame.getLocation().y
                 + m_clientgui.frame.getSize().height / 2 - getSize().height / 2;
-        if (desiredY < 0)
+        if (desiredY < 0) {
             desiredY = 0;
+        }
         return new Point(desiredX, desiredY);
     }
 
+    @Override
     public void setVisible(boolean show) {
         super.setVisible(show);
         if (show) {
@@ -762,8 +766,9 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         } else if (ae.getSource() == m_buttonAddTorso) {
             BattleArmorEquipment tmpBAE = equipmentTypes.get(equipmentNames
                     .indexOf(m_chTorsoEquipment.getSelectedItem()));
-            if (torsoEquipment == null)
+            if (torsoEquipment == null) {
                 torsoEquipment = new Vector<BattleArmorEquipment>();
+            }
             torsoEquipment.add(tmpBAE);
             stateConflictFlags |= tmpBAE.conflictFlag;
 
@@ -779,8 +784,9 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         } else if (ae.getSource() == m_buttonAddRightArm) {
             BattleArmorEquipment tmpBAE = equipmentTypes.get(equipmentNames
                     .indexOf(m_chRightArmEquipment.getSelectedItem()));
-            if (rightArmEquipment == null)
+            if (rightArmEquipment == null) {
                 rightArmEquipment = new Vector<BattleArmorEquipment>();
+            }
             rightArmEquipment.add(tmpBAE);
             stateConflictFlags |= tmpBAE.conflictFlag;
 
@@ -796,8 +802,9 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         } else if (ae.getSource() == m_buttonAddLeftArm) {
             BattleArmorEquipment tmpBAE = equipmentTypes.get(equipmentNames
                     .indexOf(m_chLeftArmEquipment.getSelectedItem()));
-            if (leftArmEquipment == null)
+            if (leftArmEquipment == null) {
                 leftArmEquipment = new Vector<BattleArmorEquipment>();
+            }
             leftArmEquipment.add(tmpBAE);
             stateConflictFlags |= tmpBAE.conflictFlag;
 
@@ -822,8 +829,9 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
                         break;
                     }
                 }
-                if (torsoEquipment.size() <= 0)
+                if (torsoEquipment.size() <= 0) {
                     torsoEquipment = null;
+                }
 
                 // Make sure the BA preview is now correct...
                 previewBA();
@@ -848,8 +856,9 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
                         break;
                     }
                 }
-                if (rightArmEquipment.size() <= 0)
+                if (rightArmEquipment.size() <= 0) {
                     rightArmEquipment = null;
+                }
 
                 // Make sure the BA preview is now correct...
                 previewBA();
@@ -874,8 +883,9 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
                         break;
                     }
                 }
-                if (leftArmEquipment.size() <= 0)
+                if (leftArmEquipment.size() <= 0) {
                     leftArmEquipment = null;
+                }
 
                 // Make sure the BA preview is now correct...
                 previewBA();
@@ -891,7 +901,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
                 || (ae.getSource() == m_bPickClose)) {
             // Here, we need to add the current BA as a new entity, if it can
             // legally do so...
-            if (!isValid()) {
+            if (!isOK()) {
                 new megamek.client.ui.AWT.AlertDialog(m_clientgui.frame,
                         "Can't do that!", "You can't add an invalid unit.")
                         .setVisible(true);
@@ -929,8 +939,9 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
             fd.setModal(true);
             fd.setVisible(true);
             String filename = fd.getDirectory() + File.separator + fd.getFile();
-            if (filename.indexOf('.') == -1)
+            if (filename.indexOf('.') == -1) {
                 filename = filename + ".blk";
+            }
             File f = new File(filename);
             try {
                 BattleArmor ba = getEntity();
@@ -945,7 +956,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         // Specifically NOT an else/if, because this can happen at the same time
         // as one option above.
         if ((ae.getSource() == m_bCancel) || (ae.getSource() == m_bPickClose)) {
-            this.setVisible(false);
+            setVisible(false);
         }
     }
 
@@ -1111,7 +1122,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
     }
 
     public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-        this.setVisible(false);
+        setVisible(false);
     }
 
     public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
@@ -1137,7 +1148,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
 
     public String generateBattleArmorPreview() {
         StringBuffer retVal = new StringBuffer("");
-        if (isValid()) {
+        if (isOK()) {
             retVal.append(">>>");
             retVal.append(Messages.getString("CustomBattleArmorDialog.valid"));
             retVal.append("<<<");
@@ -1155,10 +1166,11 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
 
         retVal.append(Messages
                 .getString("CustomBattleArmorDialog.m_labelBAName"));
-        if (m_tfBAName.getText().trim().length() < 1)
+        if (m_tfBAName.getText().trim().length() < 1) {
             retVal.append("<NONE>");
-        else
+        } else {
             retVal.append(m_tfBAName.getText());
+        }
         retVal.append("\n");
 
         retVal.append(Messages
@@ -1245,15 +1257,16 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         retVal.append(")");
         retVal.append("\n");
 
-        if (stateJumpType == JUMP_TYPE_JUMP)
+        if (stateJumpType == JUMP_TYPE_JUMP) {
             retVal.append(Messages
                     .getString("CustomBattleArmorDialog.m_labelJumpValue"));
-        else if (stateJumpType == JUMP_TYPE_VTOL)
+        } else if (stateJumpType == JUMP_TYPE_VTOL) {
             retVal.append(Messages
                     .getString("CustomBattleArmorDialog.m_labelVTOLValue"));
-        else if (stateJumpType == JUMP_TYPE_UMU)
+        } else if (stateJumpType == JUMP_TYPE_UMU) {
             retVal.append(Messages
                     .getString("CustomBattleArmorDialog.m_labelUMUValue"));
+        }
         retVal.append(getTotalJumpMP());
         retVal.append(" (");
         retVal.append(Messages.getString("CustomBattleArmorDialog.weight"));
@@ -1388,7 +1401,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         // Needs to finish updating stateCurrentWeight!
     }
 
-    public boolean isValid() {
+    public boolean isOK() {
         // We need to check a whole bunch of crap to make sure this is valid.
 
         // Calculate the weight up front, just to make sure it's been calculated
@@ -1533,8 +1546,9 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON)
-                            || (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON_AP))
+                            || (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON_AP)) {
                         totalWeapons++;
+                    }
                 }
                 if (totalWeapons > 4) {
                     invalidReason = "Unit has more weapons than it is allowed (limit of 4).";
@@ -1703,28 +1717,32 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         // Add devensive movement/stealth factor
         // First, find its highest possible movement mod.
         int groundMod = 0;
-        if (stateGroundMP >= 5)
+        if (stateGroundMP >= 5) {
             groundMod = 2;
-        else if (stateGroundMP >= 3)
+        } else if (stateGroundMP >= 3) {
             groundMod = 1;
+        }
         int jumpMod = 0;
-        if (getTotalJumpMP() >= 7)
+        if (getTotalJumpMP() >= 7) {
             jumpMod = 3;
-        else if (getTotalJumpMP() >= 5)
+        } else if (getTotalJumpMP() >= 5) {
             jumpMod = 2;
-        else if (getTotalJumpMP() >= 3)
+        } else if (getTotalJumpMP() >= 3) {
             jumpMod = 1;
-        if (stateJumpType != JUMP_TYPE_UMU)
+        }
+        if (stateJumpType != JUMP_TYPE_UMU) {
             jumpMod += 1;
+        }
         float bestMod = (groundMod > jumpMod ? groundMod : jumpMod);
         // Next, add any potential stealth bonus from armor
         if ((stateArmorType == 8) // Mimetic Armor
-                || (stateArmorType == 6)) // Improved Stealth Armor
+                || (stateArmorType == 6)) {
             bestMod += 3;
-        else if ((stateArmorType == 5) // Standard Stealth Armor
+        } else if ((stateArmorType == 5) // Standard Stealth Armor
                 || (stateArmorType == 4) // Prototype Stealth Armor
-                || (stateArmorType == 3)) // Basic Stealth Armor
+                || (stateArmorType == 3)) {
             bestMod += 2;
+        }
         // If it has a camo system but not mimetic...
         // It gets a bonus for that too.
         // This CAN combine with any stealth armor; just not mimetic.
@@ -1849,18 +1867,20 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         retVal += MANIPULATOR_TYPE_COSTS[stateManipulatorTypeRight];
 
         // Technology Modifier
-        if (stateTechBase == TECH_BASE_CLAN)
+        if (stateTechBase == TECH_BASE_CLAN) {
             retVal *= 1.1;
+        }
 
         // Weapons and Equipment Cost
         // FIXME
         // Not implemented yet...
 
         // Trooper Training Cost
-        if (stateTechBase == TECH_BASE_IS)
+        if (stateTechBase == TECH_BASE_IS) {
             retVal += 150000;
-        else
+        } else {
             retVal += 200000;
+        }
 
         return Math.round(retVal);
     }
@@ -1889,10 +1909,11 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         }
 
         // Set the tech base.
-        if (stateTechBase == TECH_BASE_IS)
+        if (stateTechBase == TECH_BASE_IS) {
             retVal.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-        else
+        } else {
             retVal.setTechLevel(TechConstants.T_CLAN_TW);
+        }
 
         // Set the ground movement.
         retVal.setOriginalWalkMP(stateGroundMP);
@@ -2085,8 +2106,9 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
 
     public boolean canMountMech() {
         // Anything capable of leg/swarm attacks can also ride an OmniMech.
-        if (canDoAntiMech())
+        if (canDoAntiMech()) {
             return true;
+        }
 
         // Heavies can sometimes ride 'Mechs even when they can't do anti-'Mech
         // attacks.
@@ -2156,7 +2178,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
             allowedLocation = inAL;
             conflictFlag = inCF;
             CustomBattleArmorDialog.equipmentTypes.add(this);
-            CustomBattleArmorDialog.equipmentNames.add(this.name);
+            CustomBattleArmorDialog.equipmentNames.add(name);
         }
 
         void initialize() {

@@ -635,8 +635,7 @@ public class PlanetaryConditions implements Serializable {
             return 1;
         } else if (((lightConditions == L_MOONLESS) && !Spotlight && !targetSpotlight)
                 || ((lightConditions == L_FULL_MOON) && !Spotlight && !targetSpotlight)
-                || ((weatherConditions == WE_HEAVY_SNOW) && (windStrength >= WI_STRONG_GALE))
-                || (blowingSand && (windStrength >= WI_MOD_GALE))) {
+                || ((weatherConditions == WE_HEAVY_SNOW) && (windStrength >= WI_STRONG_GALE))) {
             if(isMechVee) {
                 return 5;
             }
@@ -653,7 +652,8 @@ public class PlanetaryConditions implements Serializable {
                 || (weatherConditions == WE_SLEET)
                 || (weatherConditions == WE_ICE_STORM)
                 || (weatherConditions == WE_HEAVY_HAIL)
-                || (fog == FOG_HEAVY)) {
+                || (fog == FOG_HEAVY)
+                || (blowingSand && (windStrength >= WI_MOD_GALE))) {
             if(isMechVee) {
                 return 10;
             }

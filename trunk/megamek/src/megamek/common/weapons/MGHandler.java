@@ -30,6 +30,7 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter
@@ -40,7 +41,7 @@ public class MGHandler extends AmmoWeaponHandler {
      * 
      */
     private static final long serialVersionUID = 5635871269404561702L;
-
+    
     private int nRapidDamHeatPerHit;
 
     /**
@@ -51,6 +52,7 @@ public class MGHandler extends AmmoWeaponHandler {
      */
     public MGHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
+        damageType = DamageType.ANTI_INFANTRY;
     }
 
     /*

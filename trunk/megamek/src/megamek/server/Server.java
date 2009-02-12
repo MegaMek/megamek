@@ -221,7 +221,7 @@ public class Server implements Runnable {
      * The DamageType enumeration is used for the damageEntity function.
      */
     public enum DamageType {
-        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, IGNORE_PASSENGER, ANTI_TSM
+        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, IGNORE_PASSENGER, ANTI_TSM, ANTI_INFANTRY
     }
 
     // public final static String LEGAL_CHARS =
@@ -14363,7 +14363,7 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
         int te_n = te.getId();
-
+        
         //if this is a fighter squadron then pick an active fighter and pass on the damage
         if(te instanceof FighterSquadron) {
             FighterSquadron fs = (FighterSquadron)te;
@@ -14512,7 +14512,9 @@ public class Server implements Runnable {
         }
 
         // Is the infantry in the open?
-        if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)) {
+        if (isPlatoon && !te.isDestroyed() 
+                && !te.isDoomed() && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)
+                && !te.crew.getOptions().booleanOption("dermal_armor")) {
             te_hex = game.getBoard().getHex(te.getPosition());
             if ((te_hex != null) && !te_hex.containsTerrain(Terrains.WOODS) && !te_hex.containsTerrain(Terrains.JUNGLE) && !te_hex.containsTerrain(Terrains.ROUGH) && !te_hex.containsTerrain(Terrains.RUBBLE) && !te_hex.containsTerrain(Terrains.SWAMP) && !te_hex.containsTerrain(Terrains.BUILDING) && !te_hex.containsTerrain(Terrains.FUEL_TANK) && !te_hex.containsTerrain(Terrains.FORTIFIED) && !ammoExplosion) {
                 // PBI. Damage is doubled.
@@ -14540,6 +14542,19 @@ public class Server implements Runnable {
         // We're actually going to abuse this for AX-head warheads, too, so as
         // to not add another parameter.
         switch (bFrag) {
+        case ANTI_INFANTRY:
+            if(isPlatoon && te.crew.getOptions().booleanOption("dermal_armor")) {
+                int reduce = Math.min(damage - 1, Compute.d6());
+                damage -= reduce;
+                r = new Report(6042);
+                r.subject = te_n;
+                r.add(reduce);
+                r.add(damage);
+                r.indent(2);
+                r.newlines = 0;
+                vDesc.addElement(r);
+            }
+            break;
         case FRAGMENTATION:
             if (!isPlatoon) {
                 damage = 0;
@@ -14600,7 +14615,20 @@ public class Server implements Runnable {
             // We can ignore this.
             break;
         }
-
+        
+        //check for infantry armor
+    /*
+        if(isPlatoon) {
+            damage = (int)Math.ceil(damage / 2.0);
+            r = new Report(6043);
+            r.subject = te_n;
+            r.indent(2);
+            r.newlines = 0;
+            r.add(damage);
+            vDesc.addElement(r);
+        }
+*/
+        
         // adjust VTOL rotor damage
         if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)) {
             damage = (damage + 9) / 10;
@@ -15550,7 +15578,7 @@ public class Server implements Runnable {
                 checkAeroCrits(vDesc, (Aero)te, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
             }
 
-            if (isHeadHit) {
+            if (isHeadHit && !te.crew.getOptions().booleanOption("dermal_armor")) {
                 Report.addNewline(vDesc);
                 vDesc.addAll(damageCrew(te, 1));
             }
@@ -16640,7 +16668,8 @@ public class Server implements Runnable {
                     vDesc.add(r);
                     vDesc.addAll(damageCrew(en, 1));
                 } else {
-                    if (en.crew.getOptions().booleanOption("pain_shunt")) {
+                    if (en.crew.getOptions().booleanOption("pain_shunt") 
+                            || en.crew.getOptions().booleanOption("dermal_armor")) {
                         r = new Report(6186);
                         r.subject = t.getId();
                         vDesc.add(r);
@@ -16972,6 +17001,12 @@ public class Server implements Runnable {
             case Aero.CRIT_CREW:
                 // pilot hit
                 r = new Report(6650);
+                if (en.crew.getOptions().booleanOption("dermal_armor")) {
+                    r = new Report(6651);
+                    r.subject = a.getId();
+                    vDesc.add(r);
+                    break;
+                }
                 if ((a instanceof SmallCraft) || (a instanceof Jumpship)) {
                     r = new Report(9197);
                 }
@@ -19136,7 +19171,7 @@ public class Server implements Runnable {
 
         // only mechs should roll to avoid pilot damage
         // vehicles may fall due to sideslips
-        if (entity instanceof Mech) {
+        if (entity instanceof Mech && !entity.crew.getOptions().booleanOption("dermal_armor")) {
             // we want to be able to avoid pilot damage even when it was
             // an automatic fall, only unconsciousness should cause auto-damage
             roll.removeAutos();
@@ -19146,7 +19181,6 @@ public class Server implements Runnable {
             }
 
             entity.addPilotingModifierForTerrain(roll, fallPos);
-
             if (roll.getValue() == TargetRoll.IMPOSSIBLE) {
                 r = new Report(2320);
                 r.subject = entity.getId();

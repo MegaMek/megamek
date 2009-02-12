@@ -455,6 +455,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
 
+            //MD Infantry with grappler/magnets get bonus
+            if(ae.crew.getOptions().booleanOption("grappler")) {
+                toHit.addModifier(-2, "MD Grapple/Magnet");
+            }
+            
             // If the defender carries mechanized BA, they can fight off the
             // swarm
             for (Entity e : te.getExternalUnits()) {
@@ -906,6 +911,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (ae.crew.getOptions().booleanOption("vdni")
                 || ae.crew.getOptions().booleanOption("bvdni")) {
             toHit.addModifier(-1, "VDNI");
+        }
+        
+        //check for pl-masc
+        if (ae.crew.getOptions().booleanOption("pl_masc") 
+                && ae.getMovementMode() == IEntityMovementMode.INF_LEG) {
+            toHit.addModifier(+1, "PL-MASC");
+        }
+        
+        //check for cyber eye laser sighting
+        if (ae.crew.getOptions().booleanOption("cyber_eye_tele")) {
+            toHit.addModifier(-1, "MD laser-sighting");
         }
 
         // If it has a torso-mounted cockpit and two head sensor hits or three

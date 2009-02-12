@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -34,11 +34,11 @@ public class ToHitData extends TargetRoll {
     public static final int SIDE_REAR = 1;
     public static final int SIDE_LEFT = 2;
     public static final int SIDE_RIGHT = 3;
-    public static final int SIDE_RANDOM = 4;
-    public static final int SIDE_FRONTLEFT = 5;
-    public static final int SIDE_FRONTRIGHT = 6;
-    public static final int SIDE_REARLEFT = 7;
-    public static final int SIDE_REARRIGHT = 8;
+    public static final int SIDE_FRONTLEFT = 4;
+    public static final int SIDE_FRONTRIGHT = 5;
+    public static final int SIDE_REARLEFT = 6;
+    public static final int SIDE_REARRIGHT = 7;
+    public static final int SIDE_RANDOM = 8;
 
     private int hitTable = HIT_NORMAL;
     private int sideTable = SIDE_FRONT;
@@ -79,13 +79,13 @@ public class ToHitData extends TargetRoll {
     /**
      * Get the side being targeted. If the targeted side is determined randomly,
      * the calculation occurs each time the side is requested.
-     * 
+     *
      * @return an <code>int</code> that represents the side being targeted;
      *         the value will be one of SIDE_FRONT, SIDE_REAR, SIDE_LEFT, or
      *         SIDE_RIGHT, and *never* SIDE_RANDOM.
      */
     public int getSideTable() {
-        int side = this.sideTable;
+        int side = sideTable;
         if (side == SIDE_RANDOM) {
             side = Compute.randomInt(4);
         }
@@ -100,9 +100,9 @@ public class ToHitData extends TargetRoll {
      * Describes the table and side we'return hitting on
      */
     public String getTableDesc() {
-        if (this.sideTable != SIDE_FRONT || this.hitTable != HIT_NORMAL) {
+        if ((sideTable != SIDE_FRONT) || (hitTable != HIT_NORMAL)) {
             String tdesc = new String();
-            switch (this.sideTable) {
+            switch (sideTable) {
                 case SIDE_RANDOM:
                     tdesc += "Random Side ";
                     break;
@@ -116,7 +116,7 @@ public class ToHitData extends TargetRoll {
                     tdesc += "Rear ";
                     break;
             }
-            switch (this.hitTable) {
+            switch (hitTable) {
                 case HIT_PUNCH:
                     tdesc += "Punch ";
                     break;
@@ -149,12 +149,12 @@ public class ToHitData extends TargetRoll {
     public void setCover(int cover) {
         this.cover = cover;
     }
-    
+
     public int getMoS() {
         return margineOfSuccess;
     }
-    
+
     public void setMoS(int moS) {
-        this.margineOfSuccess = moS;
+        margineOfSuccess = moS;
     }
 }

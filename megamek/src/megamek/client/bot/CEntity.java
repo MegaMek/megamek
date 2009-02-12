@@ -1,12 +1,12 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
@@ -44,7 +44,7 @@ public class CEntity {
     static class Table extends HashMap<Integer, CEntity> {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 6437109733397107056L;
         private TestBot tb;
@@ -172,8 +172,8 @@ public class CEntity {
 
     // A subjective measure of the armor quality indexed by ToHitData
     // location static variables (front, rear, left, right)
-    double[] armor_health = { 0, 0, 0, 0 };
-    double[] armor_percent = { 0, 0, 0, 0 };
+    double[] armor_health = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    double[] armor_percent = { 0, 0, 0, 0, 0, 0, 0, 0 };
     // Armor averaged over all locations
     // TODO: replace with array, one element per arc
     double avg_armor = 0;
@@ -182,8 +182,8 @@ public class CEntity {
     double avg_iarmor = 0;
 
     // used to determine the utility of combining attacks
-    double[] expected_damage = { 0, 0, 0, 0 };
-    double[] possible_damage = { 0, 0, 0, 0 };
+    double[] expected_damage = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    double[] possible_damage = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
     double[] leg_health = { 0, 0 };
 
@@ -208,9 +208,9 @@ public class CEntity {
     int[] minRangeMods = new int[MIN_BRACKET + 1];
 
     public CEntity(Entity en, TestBot tb) {
-        this.entity = en;
+        entity = en;
         this.tb = tb;
-        this.reset();
+        reset();
     }
 
     public Entity getEntity() {
@@ -219,7 +219,7 @@ public class CEntity {
 
     public boolean canMove() {
         return (entity.isSelectableThisTurn()
-                && !(entity.isProne() && base_psr_odds < .2) && !entity
+                && !(entity.isProne() && (base_psr_odds < .2)) && !entity
                 .isImmobile());
     }
 
@@ -228,28 +228,28 @@ public class CEntity {
     }
 
     public void reset() {
-        this.entity = tb.game.getEntity(this.entity.getId()); // fresh entity
+        entity = tb.game.getEntity(entity.getId()); // fresh entity
         for (int a = FIRST_ARC; a <= LAST_ARC; a++) {
-            Arrays.fill(this.damages[a], 0);
+            Arrays.fill(damages[a], 0);
         }
-        this.characterize();
-        this.resetPossibleDamage();
-        this.moves = null;
-        this.hasTakenDamage = false;
+        characterize();
+        resetPossibleDamage();
+        moves = null;
+        hasTakenDamage = false;
         Arrays.fill(expected_damage, 0);
-        this.engaged = false;
-        this.moved = false;
-        this.isPhysicalTarget = false;
+        engaged = false;
+        moved = false;
+        isPhysicalTarget = false;
     }
 
     public void refresh() {
-        this.entity = tb.game.getEntity(this.entity.getId());
+        entity = tb.game.getEntity(entity.getId());
         if (justMoved()) {
             for (int a = FIRST_ARC; a <= LAST_ARC; a++) {
-                Arrays.fill(this.damages[a], 0);
+                Arrays.fill(damages[a], 0);
             }
-            this.characterize();
-            this.resetPossibleDamage();
+            characterize();
+            resetPossibleDamage();
         }
     }
 
@@ -258,39 +258,42 @@ public class CEntity {
     }
 
     public void characterize() {
-        this.entity = tb.game.getEntity(this.entity.getId());
-        this.current = new MoveOption(tb.game, this);
-        this.bv = entity.calculateBattleValue();
-        this.runMP = entity.getRunMP();
-        this.jumpMP = entity.getJumpMP();
-        this.overall_armor_percent = entity.getArmorRemainingPercent();
-        this.base_psr_odds = Compute.oddsAbove(entity.getBasePilotingRoll()
+        entity = tb.game.getEntity(entity.getId());
+        current = new MoveOption(tb.game, this);
+        bv = entity.calculateBattleValue();
+        runMP = entity.getRunMP();
+        jumpMP = entity.getJumpMP();
+        overall_armor_percent = entity.getArmorRemainingPercent();
+        base_psr_odds = Compute.oddsAbove(entity.getBasePilotingRoll()
                 .getValue()) / 100;
 
         // If this is a Mech equipped with TSM, push for the sweet spot at 9
         // heat
-        if (this.entity instanceof Mech) {
-            if (((Mech) tb.game.getEntity(this.entity.getId())).hasTSM()) {
-                this.tsm_offset = true;
+        if (entity instanceof Mech) {
+            if (((Mech) tb.game.getEntity(entity.getId())).hasTSM()) {
+                tsm_offset = true;
             }
         }
 
         // Calculate a modifer to damage based on the units current heat level
         double heat_mod = .9; // these estimates are consistently too high
-        if (entity.heat > 7)
+        if (entity.heat > 7) {
             heat_mod = .8; // reduce effectiveness
-        if (entity.heat > 12)
+        }
+        if (entity.heat > 12) {
             heat_mod = .5;
-        if (this.tsm_offset) {
+        }
+        if (tsm_offset) {
             if (entity.heat == 9) {
                 heat_mod = 1.0;
             }
-            if (entity.heat < 12 && entity.heat > 9) {
+            if ((entity.heat < 12) && (entity.heat > 9)) {
                 heat_mod = 0.8;
             }
         }
-        if (entity.heat > 16)
+        if (entity.heat > 16) {
             heat_mod = .35;
+        }
         int capacity = entity.getHeatCapacity();
 
         int heat_total = 0;
@@ -304,16 +307,19 @@ public class CEntity {
             WeaponType weapon = (WeaponType) m.getType();
 
             // Don't count weapons that don't have ammo, are destroyed/jammed
-            if (m.isDestroyed())
+            if (m.isDestroyed()) {
                 continue;
-            if (m.isJammed())
+            }
+            if (m.isJammed()) {
                 continue;
-            if (weapon.getName() == "Stop Swarm Attack") // This isn't an
-                                                            // attack
+            }
+            if (weapon.getName() == "Stop Swarm Attack") {
+                // attack
                 continue;
+            }
 
-            if (m.getLinked() == null
-                    & weapon.getAmmoType() != AmmoType.T_NA) {
+            if ((m.getLinked() == null)
+                    & (weapon.getAmmoType() != AmmoType.T_NA)) {
                 continue;
             }
 
@@ -329,49 +335,50 @@ public class CEntity {
                 gunnery += 1;
             }
             // Range used to start at 1; updated to account for stacking
-            for (int curRange = 0; curRange <= lr && curRange <= MAX_RANGE; curRange++) {
+            for (int curRange = 0; (curRange <= lr) && (curRange <= MAX_RANGE); curRange++) {
 
                 ed = CEntity.getExpectedDamage(entity, m, curRange, gunnery);
-                if (curRange <= min & curRange <= MIN_BRACKET) {
-                    this.minRangeMods[curRange] += 1 + min - curRange;
+                if ((curRange <= min) & (curRange <= MIN_BRACKET)) {
+                    minRangeMods[curRange] += 1 + min - curRange;
                 }
 
                 // Weapons that generate heat are derated based on the
                 // units current heat level, 'cause building more heat is bad
-                this.addDamage(arc, entity.isSecondaryArcWeapon(entity
+                addDamage(arc, entity.isSecondaryArcWeapon(entity
                         .getEquipmentNum(m)), curRange, ed
                         * ((weapon.getHeat() > 0) ? heat_mod : 1));
             }
-            this.long_range = Math
-                    .max(this.long_range, Math.min(lr, MAX_RANGE));
+            long_range = Math
+                    .max(long_range, Math.min(lr, MAX_RANGE));
         }
 
         // Add in approximate physical damages from Mechs
 
-        if (this.entity instanceof Mech) {
-            this.addDamage(Compute.ARC_LEFTARM, true, 1, (tsm_offset ? 1.0
+        if (entity instanceof Mech) {
+            addDamage(Compute.ARC_LEFTARM, true, 1, (tsm_offset ? 1.0
                     : 0.5)
-                    * this.entity.getWeight()
+                    * entity.getWeight()
                     / 10
-                    * Compute.oddsAbove(this.entity.getCrew().getPiloting())
+                    * Compute.oddsAbove(entity.getCrew().getPiloting())
                     / 100);
-            this.addDamage(Compute.ARC_RIGHTARM, true, 1, (tsm_offset ? 1.0
+            addDamage(Compute.ARC_RIGHTARM, true, 1, (tsm_offset ? 1.0
                     : 0.5)
-                    * this.entity.getWeight()
+                    * entity.getWeight()
                     / 10
-                    * Compute.oddsAbove(this.entity.getCrew().getPiloting())
+                    * Compute.oddsAbove(entity.getCrew().getPiloting())
                     / 100);
         }
 
         // Average out the minimum range modifiers
-        for (int r = 1; r < this.minRangeMods.length; r++) {
-            if (num_weapons > 0)
-                this.minRangeMods[r] = (int) Math
-                        .round(((double) this.minRangeMods[r])
+        for (int r = 1; r < minRangeMods.length; r++) {
+            if (num_weapons > 0) {
+                minRangeMods[r] = (int) Math
+                        .round(((double) minRangeMods[r])
                                 / (double) num_weapons);
+            }
         }
 
-        this.computeRange(Compute.ARC_FORWARD);
+        computeRange(Compute.ARC_FORWARD);
 
         // Heat characterization - how badly will it overheat this round
 
@@ -379,12 +386,12 @@ public class CEntity {
         if (entity instanceof Mech) {
             heat = heat_total - capacity;
             // Include heat from active stealth armor
-            if (entity instanceof Mech && (entity.isStealthActive()
+            if ((entity instanceof Mech) && (entity.isStealthActive()
                     || entity.isNullSigActive()
                     || entity.isVoidSigActive())) {
                 heat += 10;
             }
-            if (entity instanceof Mech && entity.isChameleonShieldActive()) {
+            if ((entity instanceof Mech) && entity.isChameleonShieldActive()) {
                 heat += 6;
             }
             // Include heat from infernos
@@ -400,7 +407,7 @@ public class CEntity {
                 if (tb.game.getBoard().getHex(entity.getPosition()) != null) {
                     if (tb.game.getBoard().getHex(entity.getPosition())
                             .containsTerrain(Terrains.FIRE) &&
-                            tb.game.getBoard().getHex(entity.getPosition()).getFireTurn() > 0) {
+                            (tb.game.getBoard().getHex(entity.getPosition()).getFireTurn() > 0)) {
                         heat += 5;
                     }
                 }
@@ -410,16 +417,16 @@ public class CEntity {
         }
 
         if (heat <= 4) {
-            this.overheat = OVERHEAT_NONE;
+            overheat = OVERHEAT_NONE;
         }
         if (heat > 3) {
-            this.overheat = OVERHEAT_LOW;
+            overheat = OVERHEAT_LOW;
         }
-        if (heat > 9 & !this.tsm_offset) {
-            this.overheat = OVERHEAT_HIGH;
+        if ((heat > 9) & !tsm_offset) {
+            overheat = OVERHEAT_HIGH;
         }
-        if (heat > 12 & this.tsm_offset) {
-            this.overheat = OVERHEAT_HIGH;
+        if ((heat > 12) & tsm_offset) {
+            overheat = OVERHEAT_HIGH;
         }
 
         // Make a guess as to whether MASC should be turned on or off
@@ -442,7 +449,7 @@ public class CEntity {
         // Initialize armor values
         double armor[][] = MECH_ARMOR;
 
-        if (this.entity instanceof Tank) {
+        if (entity instanceof Tank) {
             if (((Tank) entity).hasNoTurret()) {
                 armor = TANK_ARMOR;
             } else {
@@ -450,11 +457,11 @@ public class CEntity {
             }
         }
 
-        if (this.entity instanceof Infantry) {
-            if (!(this.entity instanceof BattleArmor)) {
+        if (entity instanceof Infantry) {
+            if (!(entity instanceof BattleArmor)) {
                 armor = INFANTRY_ARMOR;
             } else {
-                if (this.entity.isClan()) {
+                if (entity.isClan()) {
                     armor = CLBA_ARMOR;
                 } else {
                     armor = ISBA_ARMOR;
@@ -462,7 +469,7 @@ public class CEntity {
             }
         }
 
-        if (this.entity instanceof Protomech) {
+        if (entity instanceof Protomech) {
             if (((Protomech) entity).hasMainGun()) {
                 armor = PROTOMECH_MG_ARMOR;
             } else {
@@ -470,7 +477,7 @@ public class CEntity {
             }
         }
 
-        if (this.entity instanceof GunEmplacement) {
+        if (entity instanceof GunEmplacement) {
             armor = ((GunEmplacement) entity).hasTurret() ? GUN_EMPLACEMENT_TURRET_ARMOR
                     : GUN_EMPLACEMENT_ARMOR;
         }
@@ -478,11 +485,11 @@ public class CEntity {
         // Arcs for the outside loop are those used for incoming damage:
         // front, rear, left, right as per static variables in ToHitData
         for (int arc = FIRST_ARC; arc <= LAST_PRIMARY_ARC; arc++) {
-            this.armor_health[arc] = 0.0;
+            armor_health[arc] = 0.0;
             // "i" is a location index. It matches the location static variables
             // for each sub-entity type (Mech, Tank, etc)
             for (int i = 0; i < armor[arc].length; i++) {
-                this.armor_health[arc] += armor[arc][i]
+                armor_health[arc] += armor[arc][i]
                         * getArmorValue(i, arc == ToHitData.SIDE_REAR);
             }
 
@@ -491,37 +498,37 @@ public class CEntity {
             // the hit-table-probability array. Rolling 3 or 11 on 2d6 is 4/36.
 
             if (entity instanceof Protomech) {
-                this.armor_health[arc] *= 1.22;
+                armor_health[arc] *= 1.22;
             }
             max = Math.max(armor_health[arc], max);
-            this.armor_percent[arc] = this.armor_health[arc] / max;
+            armor_percent[arc] = armor_health[arc] / max;
         }
 
         // Calculate an average armor value for the entire entity
         // TODO: Change to array, with an entry for each arc
-        this.avg_armor = (armor_health[0] + armor_health[1] + armor_health[2] + armor_health[3]) / 4;
+        avg_armor = (armor_health[0] + armor_health[1] + armor_health[2] + armor_health[3]) / 4;
 
         // Calculate average internal structure across the unit
         // Default to Mech unit, which has 7 locations plus the head (ignored
         // due to low
         // hit probability and low standard IS)
-        this.avg_iarmor = this.entity.getTotalInternal() / 7.0;
+        avg_iarmor = entity.getTotalInternal() / 7.0;
 
         if (entity instanceof Infantry) {
-            this.avg_iarmor = entity instanceof BattleArmor ? ((BattleArmor) entity)
+            avg_iarmor = entity instanceof BattleArmor ? ((BattleArmor) entity)
                     .getShootingStrength()
                     : 1.0;
         }
         if (entity instanceof Tank) {
-            this.avg_iarmor = this.entity.getTotalInternal()
+            avg_iarmor = entity.getTotalInternal()
                     / (((Tank) entity).hasNoTurret() ? 4.0 : 5.0);
         }
         if (entity instanceof Protomech) {
-            this.avg_iarmor = this.entity.getTotalInternal()
+            avg_iarmor = entity.getTotalInternal()
                     / (((Protomech) entity).hasMainGun() ? 5.0 : 6.0);
         }
         if (entity instanceof GunEmplacement) {
-            this.avg_iarmor = 1.0;
+            avg_iarmor = 1.0;
         }
 
     }
@@ -534,7 +541,7 @@ public class CEntity {
      */
     private void addDamage(int arc, boolean secondary, int r, double ed) {
 
-        if (arc == Compute.ARC_360 | arc == Compute.ARC_MAINGUN) {
+        if ((arc == Compute.ARC_360) | (arc == Compute.ARC_MAINGUN)) {
             for (int i = FIRST_ARC; i <= LAST_ARC; i++) {
                 damages[i][r] += ed;
             }
@@ -550,16 +557,16 @@ public class CEntity {
                 // Flipping arms allows both arms to fire into the rear arc.
                 // Otherwise, its limited to one. Approximate with a 50/50
                 // split.
-                if (arc == Compute.ARC_LEFTARM | arc == Compute.ARC_LEFTSIDE) {
+                if ((arc == Compute.ARC_LEFTARM) | (arc == Compute.ARC_LEFTSIDE)) {
                     damages[Compute.ARC_FORWARD][r] += ed;
                     damages[Compute.ARC_LEFTARM][r] += ed;
-                    damages[Compute.ARC_REAR][r] += this.entity.canFlipArms() ? ed
+                    damages[Compute.ARC_REAR][r] += entity.canFlipArms() ? ed
                             : (0.5 * ed);
                 }
-                if (arc == Compute.ARC_RIGHTARM | arc == Compute.ARC_RIGHTSIDE) {
+                if ((arc == Compute.ARC_RIGHTARM) | (arc == Compute.ARC_RIGHTSIDE)) {
                     damages[Compute.ARC_FORWARD][r] += ed;
                     damages[Compute.ARC_RIGHTARM][r] += ed;
-                    damages[Compute.ARC_REAR][r] += this.entity.canFlipArms() ? ed
+                    damages[Compute.ARC_REAR][r] += entity.canFlipArms() ? ed
                             : (0.5 * ed);
                 }
                 if (arc == Compute.ARC_REAR) {
@@ -572,11 +579,11 @@ public class CEntity {
                 if (arc == Compute.ARC_FORWARD) {
                     damages[Compute.ARC_FORWARD][r] += ed;
                 }
-                if (arc == Compute.ARC_LEFTARM | arc == Compute.ARC_LEFTSIDE) {
+                if ((arc == Compute.ARC_LEFTARM) | (arc == Compute.ARC_LEFTSIDE)) {
                     damages[Compute.ARC_FORWARD][r] += ed;
                     damages[Compute.ARC_LEFTARM][r] += ed;
                 }
-                if (arc == Compute.ARC_RIGHTARM | arc == Compute.ARC_RIGHTSIDE) {
+                if ((arc == Compute.ARC_RIGHTARM) | (arc == Compute.ARC_RIGHTSIDE)) {
                     damages[Compute.ARC_FORWARD][r] += ed;
                     damages[Compute.ARC_RIGHTARM][r] += ed;
                 }
@@ -600,44 +607,44 @@ public class CEntity {
 
         // Create short, medium, and long range values for each arc
 
-        this.rd_bracket = this.long_range / 4;
+        rd_bracket = long_range / 4;
 
-        for (int range_walk = (this.entity instanceof Infantry ? 0 : 1); range_walk < this.long_range; range_walk++) {
-            if (range_walk <= this.rd_bracket) {
-                optimizer[RANGE_SHORT] += this.damages[arc][range_walk];
-                range_damages[RANGE_SHORT] += this.damages[arc][range_walk];
+        for (int range_walk = (entity instanceof Infantry ? 0 : 1); range_walk < long_range; range_walk++) {
+            if (range_walk <= rd_bracket) {
+                optimizer[RANGE_SHORT] += damages[arc][range_walk];
+                range_damages[RANGE_SHORT] += damages[arc][range_walk];
             }
-            if (range_walk > this.rd_bracket
-                    & range_walk <= 2 * this.rd_bracket) {
-                optimizer[RANGE_MEDIUM] += this.getModifiedDamage(arc,
+            if ((range_walk > rd_bracket)
+                    & (range_walk <= 2 * rd_bracket)) {
+                optimizer[RANGE_MEDIUM] += getModifiedDamage(arc,
                         range_walk, -2);
-                range_damages[RANGE_MEDIUM] += this.damages[arc][range_walk];
+                range_damages[RANGE_MEDIUM] += damages[arc][range_walk];
             }
-            if (range_walk > 2 * this.rd_bracket
-                    & range_walk <= 3 * this.rd_bracket) {
-                optimizer[RANGE_LONG] += this.getModifiedDamage(arc,
+            if ((range_walk > 2 * rd_bracket)
+                    & (range_walk <= 3 * rd_bracket)) {
+                optimizer[RANGE_LONG] += getModifiedDamage(arc,
                         range_walk, -4);
-                range_damages[RANGE_LONG] += this.damages[arc][range_walk];
+                range_damages[RANGE_LONG] += damages[arc][range_walk];
             }
-            range_damages[RANGE_ALL] += this.damages[arc][range_walk];
+            range_damages[RANGE_ALL] += damages[arc][range_walk];
         }
 
         if (rd_bracket > 0) {
-            range_damages[RANGE_SHORT] /= this.rd_bracket;
-            optimizer[RANGE_SHORT] /= this.rd_bracket;
-            range_damages[RANGE_MEDIUM] /= this.rd_bracket;
-            optimizer[RANGE_MEDIUM] /= this.rd_bracket;
-            range_damages[RANGE_LONG] /= this.rd_bracket;
-            optimizer[RANGE_LONG] /= this.rd_bracket;
-            range_damages[RANGE_ALL] /= (this.rd_bracket * 3);
+            range_damages[RANGE_SHORT] /= rd_bracket;
+            optimizer[RANGE_SHORT] /= rd_bracket;
+            range_damages[RANGE_MEDIUM] /= rd_bracket;
+            optimizer[RANGE_MEDIUM] /= rd_bracket;
+            range_damages[RANGE_LONG] /= rd_bracket;
+            optimizer[RANGE_LONG] /= rd_bracket;
+            range_damages[RANGE_ALL] /= (rd_bracket * 3);
         } else {
-            range_damages[RANGE_SHORT] = this.damages[arc][0];
-            optimizer[RANGE_SHORT] = this.damages[arc][0];
-            range_damages[RANGE_MEDIUM] = this.damages[arc][0];
-            optimizer[RANGE_MEDIUM] = this.damages[arc][0];
-            range_damages[RANGE_LONG] = this.damages[arc][0];
-            optimizer[RANGE_LONG] = this.damages[arc][0];
-            range_damages[RANGE_ALL] = this.damages[arc][0];
+            range_damages[RANGE_SHORT] = damages[arc][0];
+            optimizer[RANGE_SHORT] = damages[arc][0];
+            range_damages[RANGE_MEDIUM] = damages[arc][0];
+            optimizer[RANGE_MEDIUM] = damages[arc][0];
+            range_damages[RANGE_LONG] = damages[arc][0];
+            optimizer[RANGE_LONG] = damages[arc][0];
+            range_damages[RANGE_ALL] = damages[arc][0];
         }
 
         // Now determine the preferred range. Use damage values based on no
@@ -646,12 +653,12 @@ public class CEntity {
 
         int best_range = RANGE_ALL;
 
-        for (this.range = RANGE_SHORT; this.range <= RANGE_LONG; this.range++) {
-            if (optimizer[this.range] > optimizer[best_range]) {
-                best_range = this.range;
+        for (range = RANGE_SHORT; range <= RANGE_LONG; range++) {
+            if (optimizer[range] > optimizer[best_range]) {
+                best_range = range;
             }
         }
-        this.range = best_range;
+        range = best_range;
     }
 
     /**
@@ -666,7 +673,7 @@ public class CEntity {
         // troopers
         // TODO: This will probably need some revamping when Total Warfare is
         // released.
-        if (entity instanceof Infantry & !(entity instanceof BattleArmor)) {
+        if ((entity instanceof Infantry) & !(entity instanceof BattleArmor)) {
             result = ((Infantry) entity).getShootingStrength();
         }
 
@@ -676,8 +683,9 @@ public class CEntity {
             result = ((BattleArmor) entity).getArmor(loc, false);
         }
 
-        if (result <= 0)
+        if (result <= 0) {
             result = 0;
+        }
 
         return result;
     }
@@ -699,17 +707,17 @@ public class CEntity {
         } else if (armor_percent[arc] < .25) {
             t1 *= 1.5;
         }
-        t1 *= this.strategy.target;
+        t1 *= strategy.target;
 
         // absolute bonus for damage that is likely to do critical
-        if (t2 + this.expected_damage[arc] > this.armor_health[arc]) {
+        if (t2 + expected_damage[arc] > armor_health[arc]) {
 
             // expected_damage[] is set on the fly; it tracks damage
             // the entity expects to take
-            if ((t2 + this.expected_damage[0] + this.expected_damage[1]
-                    + this.expected_damage[2] + this.expected_damage[3] > 3 * (this.avg_armor + this.avg_iarmor) || (this.entity
+            if (((t2 + expected_damage[0] + expected_damage[1]
+                    + expected_damage[2] + expected_damage[3] > 3 * (avg_armor + avg_iarmor)) || (entity
                     .isProne()
-                    && this.base_psr_odds < .1 && !this.entity.isImmobile()))) { // If I
+                    && (base_psr_odds < .1) && !entity.isImmobile()))) { // If I
                                                                                     // have
                                                                                     // more
                                                                                     // friends,
@@ -717,19 +725,19 @@ public class CEntity {
                                                                                     // isn't
                                                                                     // so
                                                                                     // bad
-                if (this.entity.isEnemyOf(tb.getEntitiesOwned().get(0))) {
-                    return Math.sqrt(t2) * this.strategy.target;
+                if (entity.isEnemyOf(tb.getEntitiesOwned().get(0))) {
+                    return Math.sqrt(t2) * strategy.target;
                 }
             }
             t2 *= 1.5; // Damage that penetrates armor is bad for me
             // Even if damage doesn't penetrate, some damage to this arc isn't
             // that great
-        } else if (this.expected_damage[arc] > 0) {
+        } else if (expected_damage[arc] > 0) {
             t2 *= 1.3;
 
             // Even if this arc is still good, taking additional damage isn't a
             // good thing
-        } else if (this.hasTakenDamage) {
+        } else if (hasTakenDamage) {
             t2 *= 1.1;
         }
 
@@ -740,12 +748,12 @@ public class CEntity {
     }
 
     public Integer getKey() {
-        return new Integer(this.entity.getId());
+        return new Integer(entity.getId());
     }
 
     public MoveOption.Table getAllMoves(Client client) {
         if (moves == null) {
-            moves = calculateMoveOptions(this.current, client);
+            moves = calculateMoveOptions(current, client);
         }
         return moves;
     }
@@ -783,7 +791,7 @@ public class CEntity {
                     discovered.put(next);
                 } else if (next.isMoveLegal()) {
                     // relax edges;
-                    if (discovered.get(next) == null
+                    if ((discovered.get(next) == null)
                             || (next.getDistUtility() < discovered.get(next)
                                     .getDistUtility())) {
                         discovered.put(next);
@@ -821,24 +829,24 @@ public class CEntity {
                 i.remove();
             }
             if (entity.heat > 4) {
-                next.movement_threat += this.bv / 1000
+                next.movement_threat += bv / 1000
                         * next.getMovementheatBuildup();
                 if (entity.heat > 7) {
-                    next.movement_threat += this.bv / 500
+                    next.movement_threat += bv / 500
                             * next.getMovementheatBuildup();
                 }
-                if (this.tsm_offset) {
+                if (tsm_offset) {
                     if (entity.heat == 9) {
-                        next.movement_threat -= this.bv / 100
+                        next.movement_threat -= bv / 100
                                 * next.getMovementheatBuildup();
                     }
-                    if (entity.heat < 12 && entity.heat > 9) {
-                        next.movement_threat -= this.bv / 500
+                    if ((entity.heat < 12) && (entity.heat > 9)) {
+                        next.movement_threat -= bv / 500
                                 * next.getMovementheatBuildup();
                     }
                 }
                 if (entity.heat > 12) {
-                    next.movement_threat += this.bv / 100
+                    next.movement_threat += bv / 100
                             * next.getMovementheatBuildup();
                 }
             }
@@ -876,9 +884,10 @@ public class CEntity {
      * returned damage value.
      */
     public double getModifiedDamage(int arc, int a_range, int modifier) {
-        if (a_range > MAX_RANGE)
+        if (a_range > MAX_RANGE) {
             return 0.0;
-        double damage = this.damages[arc][a_range];
+        }
+        double damage = damages[arc][a_range];
 
         // Use pilots gunnery skill, not the piloting skill...
         int base = entity.getCrew().getGunnery();
@@ -889,11 +898,11 @@ public class CEntity {
 
         // Check range brackets based on defined maximum possible
         // range of weapon
-        double range_bracket = this.long_range / 4.0;
+        double range_bracket = long_range / 4.0;
 
         // Inside minimum range, penalties must be observed
         if (a_range <= MIN_BRACKET) {
-            dist_mod += this.minRangeMods[a_range];
+            dist_mod += minRangeMods[a_range];
         }
 
         // Medium range is +2
@@ -913,10 +922,12 @@ public class CEntity {
         }
 
         if ((base + dist_mod + modifier > tb.ignore)
-                | (base + dist_mod + modifier > 12))
+                | (base + dist_mod + modifier > 12)) {
             return 0.0;
-        if (base + dist_mod + modifier == tb.ignore)
+        }
+        if (base + dist_mod + modifier == tb.ignore) {
             damage *= 0.5;
+        }
 
         // Factor out the to-hit odds and re-factor in new odds with the passed
         // modifier
@@ -957,7 +968,7 @@ public class CEntity {
 
         // Only infantry can fire into their own hex
 
-        if (!(attacker instanceof Infantry) & range == 0) {
+        if (!(attacker instanceof Infantry) & (range == 0)) {
             return 0.0;
         }
 
@@ -997,11 +1008,11 @@ public class CEntity {
         // hits table. This method is used for an approximation, so
         // assume LBX cannon are using cluster rounds, Ultra-cannon
         // are firing double rate, and RACs are fired in quad mode.
-        if (wt.getDamage() == WeaponType.DAMAGE_MISSILE
-                && (wt.getAmmoType() != AmmoType.T_TBOLT_5 ||
-                    wt.getAmmoType() != AmmoType.T_TBOLT_10 ||
-                    wt.getAmmoType() != AmmoType.T_TBOLT_15 ||
-                    wt.getAmmoType() != AmmoType.T_TBOLT_20)) {
+        if ((wt.getDamage() == WeaponType.DAMAGE_MISSILE)
+                && ((wt.getAmmoType() != AmmoType.T_TBOLT_5) ||
+                    (wt.getAmmoType() != AmmoType.T_TBOLT_10) ||
+                    (wt.getAmmoType() != AmmoType.T_TBOLT_15) ||
+                    (wt.getAmmoType() != AmmoType.T_TBOLT_20))) {
             use_table = true;
         }
         if ((wt.getAmmoType() == AmmoType.T_AC_LBX)
@@ -1030,8 +1041,9 @@ public class CEntity {
         if (use_table == true) {
             double fHits = 0.0;
             if (!(attacker instanceof BattleArmor)) {
-                if (weapon.getLinked() == null)
+                if (weapon.getLinked() == null) {
                     return 0.0;
+                }
             }
             AmmoType at = null;
             if (weapon.getLinked() != null) {
@@ -1042,30 +1054,30 @@ public class CEntity {
                 // Artemis)
 
                 fDamage = at.getDamagePerShot();
-                if (wt.getAmmoType() == AmmoType.T_SRM_STREAK
-                        || wt.getAmmoType() == AmmoType.T_SRM) {
+                if ((wt.getAmmoType() == AmmoType.T_SRM_STREAK)
+                        || (wt.getAmmoType() == AmmoType.T_SRM)) {
                     fDamage = 2.0;
                 }
                 if (wt.getAmmoType() == AmmoType.T_ATM) {
                     fDamage = 2.4;
                 }
-                if (wt.getAmmoType() == AmmoType.T_LRM_STREAK
-                        || wt.getAmmoType() == AmmoType.T_LRM
-                        || wt.getAmmoType() == AmmoType.T_MRM) {
+                if ((wt.getAmmoType() == AmmoType.T_LRM_STREAK)
+                        || (wt.getAmmoType() == AmmoType.T_LRM)
+                        || (wt.getAmmoType() == AmmoType.T_MRM)) {
                     fDamage = 1.0;
                 }
             }
-            if (wt.getRackSize() != 40 && wt.getRackSize() != 30) {
+            if ((wt.getRackSize() != 40) && (wt.getRackSize() != 30)) {
                 fHits = expectedHitsByRackSize[wt.getRackSize()];
             } else {
                 fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];
             }
-            if (wt.getAmmoType() == AmmoType.T_SRM_STREAK
-                    || wt.getAmmoType() == AmmoType.T_LRM_STREAK) {
+            if ((wt.getAmmoType() == AmmoType.T_SRM_STREAK)
+                    || (wt.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 fHits = wt.getRackSize();
             }
-            if (wt.getAmmoType() == AmmoType.T_AC_ULTRA
-                    || wt.getAmmoType() == AmmoType.T_AC_ULTRA_THB) {
+            if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA)
+                    || (wt.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
                 fHits = expectedHitsByRackSize[2];
             }
             if (wt.getAmmoType() == AmmoType.T_AC_ROTARY) {
@@ -1075,11 +1087,11 @@ public class CEntity {
                     || (wt.getAmmoType() == AmmoType.T_AC_LBX_THB)) {
                 fHits = expectedHitsByRackSize[wt.getDamage()];
             }
-            if (wt.getAmmoType() == AmmoType.T_LRM
-                    || wt.getAmmoType() == AmmoType.T_SRM) {
+            if ((wt.getAmmoType() == AmmoType.T_LRM)
+                    || (wt.getAmmoType() == AmmoType.T_SRM)) {
                 lnk_guide = weapon.getLinkedBy();
-                if (lnk_guide != null
-                        && lnk_guide.getType() instanceof MiscType
+                if ((lnk_guide != null)
+                        && (lnk_guide.getType() instanceof MiscType)
                         && !lnk_guide.isDestroyed() && !lnk_guide.isMissing()
                         && !lnk_guide.isBreached()
                         && lnk_guide.getType().hasFlag(MiscType.F_ARTEMIS)) {
@@ -1089,8 +1101,8 @@ public class CEntity {
 
             if (wt.getAmmoType() == AmmoType.T_MRM) {
                 lnk_guide = weapon.getLinkedBy();
-                if (lnk_guide != null
-                        && lnk_guide.getType() instanceof MiscType
+                if ((lnk_guide != null)
+                        && (lnk_guide.getType() instanceof MiscType)
                         && !lnk_guide.isDestroyed() && !lnk_guide.isMissing()
                         && !lnk_guide.isBreached()
                         && lnk_guide.getType().hasFlag(MiscType.F_APOLLO)) {
@@ -1144,10 +1156,10 @@ public class CEntity {
                     fDamage = 10.0;
                 }
             }
-            if (wt.getAmmoType() == AmmoType.T_TBOLT_5 ||
-                wt.getAmmoType() == AmmoType.T_TBOLT_10 ||
-                wt.getAmmoType() == AmmoType.T_TBOLT_15 ||
-                wt.getAmmoType() == AmmoType.T_TBOLT_20) {
+            if ((wt.getAmmoType() == AmmoType.T_TBOLT_5) ||
+                (wt.getAmmoType() == AmmoType.T_TBOLT_10) ||
+                (wt.getAmmoType() == AmmoType.T_TBOLT_15) ||
+                (wt.getAmmoType() == AmmoType.T_TBOLT_20)) {
                 if (range <= wt.getMinimumRange()) {
                     fDamage *= 0.5;
                 }
@@ -1229,12 +1241,15 @@ public class CEntity {
 
     public static int getThreatHitArc(Coords dest, int dest_facing, Coords src) {
         int fa = getFiringAngle(dest, dest_facing, src);
-        if (fa >= 300 || fa <= 60)
+        if ((fa >= 300) || (fa <= 60)) {
             return ToHitData.SIDE_FRONT;
-        if (fa >= 60 && fa <= 120)
+        }
+        if ((fa >= 60) && (fa <= 120)) {
             return ToHitData.SIDE_RIGHT;
-        if (fa >= 240 && fa <= 300)
+        }
+        if ((fa >= 240) && (fa <= 300)) {
             return ToHitData.SIDE_LEFT;
+        }
         return ToHitData.SIDE_REAR;
     }
 
@@ -1256,13 +1271,15 @@ public class CEntity {
         return 0;
     }
 
+    @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Entity || obj instanceof CEntity) {
+        if ((obj instanceof Entity) || (obj instanceof CEntity)) {
             return obj.hashCode() == hashCode();
         }
         return false;
     }
 
+    @Override
     public int hashCode() {
         return entity.getId();
     }

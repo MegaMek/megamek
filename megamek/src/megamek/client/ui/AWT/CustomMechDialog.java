@@ -1316,13 +1316,24 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption option = j.nextElement();
-
-                // disallow VDNI for non-vehicle units (what about Protomechs?)
-                // TODO: Allow pain shunt abilities for infantry and BA
-                if (((entity instanceof Infantry)
-                        || (entity instanceof BattleArmor) || (entity instanceof GunEmplacement))
-                        && (option.getName().equals("vdni") || option.getName()
-                                .equals("bvdni"))) {
+                
+                if(entity instanceof GunEmplacement) {
+                    continue;
+                }
+                
+                // a bunch of stuf should get disabled for conv infantry
+                if (((entity instanceof Infantry && !(entity instanceof BattleArmor)))
+                        && (option.getName().equals("vdni") 
+                                || option.getName().equals("bvdni"))) {
+                    continue;
+                }
+                
+                //a bunch of stuff should get disabled for all but conventional infantry
+                if(!(entity instanceof Infantry && !(entity instanceof BattleArmor)) 
+                        && (option.getName().equals("grappler") 
+                                || option.getName().equals("pl_masc")
+                                || option.getName().equals("cyber_eye_im")
+                                || option.getName().equals("cyber_eye_tele"))) {
                     continue;
                 }
 
@@ -1698,33 +1709,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 a.setNextVelocity(velocity);
                 a.setElevation(elev);
             }
-            if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
-                Entity chosen = client.getEntity(entityCorrespondance[choC3
-                        .getSelectedIndex()]);
-                int entC3nodeCount = client.game.getC3SubNetworkMembers(entity)
-                        .size();
-                int choC3nodeCount = client.game.getC3NetworkMembers(chosen)
-                        .size();
-                if (entC3nodeCount + choC3nodeCount <= Entity.MAX_C3_NODES) {
-                    entity.setC3Master(chosen);
-                } else {
-                    String message = Messages
-                            .getString(
-                                    "CustomMechDialog.NetworkTooBig.message", new Object[] { //$NON-NLS-1$
-                                    entity.getShortName(),
-                                            chosen.getShortName(),
-                                            new Integer(entC3nodeCount),
-                                            new Integer(choC3nodeCount),
-                                            new Integer(Entity.MAX_C3_NODES) });
-                    clientgui.doAlertDialog(Messages
-                            .getString("CustomMechDialog.NetworkTooBig.title"), //$NON-NLS-1$
-                            message);
-                    refreshC3();
-                }
-            } else if (entity.hasC3i() && (choC3.getSelectedIndex() > -1)) {
-                entity.setC3NetId(client.getEntity(entityCorrespondance[choC3
-                        .getSelectedIndex()]));
-            }
 
             // Update the entity's targeting system type.
             if (!(entity.hasTargComp())
@@ -1788,6 +1772,50 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             entity.setCommander(chCommander.getState());
 
             setOptions();
+            
+            if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
+                Entity chosen = client.getEntity(entityCorrespondance[choC3
+                        .getSelectedIndex()]);
+                int entC3nodeCount = client.game.getC3SubNetworkMembers(entity)
+                        .size();
+                int choC3nodeCount = client.game.getC3NetworkMembers(chosen)
+                        .size();
+                if (entC3nodeCount + choC3nodeCount <= Entity.MAX_C3_NODES) {
+                    entity.setC3Master(chosen);
+                } else {
+                    String message = Messages
+                            .getString(
+                                    "CustomMechDialog.NetworkTooBig.message", new Object[] { //$NON-NLS-1$
+                                    entity.getShortName(),
+                                            chosen.getShortName(),
+                                            new Integer(entC3nodeCount),
+                                            new Integer(choC3nodeCount),
+                                            new Integer(Entity.MAX_C3_NODES) });
+                    clientgui.doAlertDialog(Messages
+                            .getString("CustomMechDialog.NetworkTooBig.title"), //$NON-NLS-1$
+                            message);
+                    refreshC3();
+                }
+            } else if (entity.hasC3i() && (choC3.getSelectedIndex() > -1)) {
+                entity.setC3NetId(client.getEntity(entityCorrespondance[choC3
+                        .getSelectedIndex()]));
+            }
+            
+            if(entity instanceof BattleArmor) {
+                //have to reset internals because of dermal armor option
+                if(entity.crew.getOptions().booleanOption("dermal_armor")) {
+                    ((BattleArmor)entity).setInternal(2);
+                } else {
+                    ((BattleArmor)entity).setInternal(1);
+                }
+            } else if(entity instanceof Infantry) {
+                //need to reset armor on conventional infantry
+                if(entity.crew.getOptions().booleanOption("dermal_armor")) {
+                    entity.initializeArmor(entity.getOInternal(Infantry.LOC_INFANTRY), Infantry.LOC_INFANTRY);
+                } else {
+                    entity.initializeArmor(0, Infantry.LOC_INFANTRY);
+                }
+            }
 
             okay = true;
             clientgui.chatlounge.refreshEntities();

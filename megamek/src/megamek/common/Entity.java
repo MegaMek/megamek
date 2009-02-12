@@ -3173,6 +3173,15 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 }
             }
         }
+        //check for Manei Domini implants
+        if(((this.crew.getOptions().booleanOption("cyber_eye_im") || this.crew.getOptions().booleanOption("mm_eye_im")) 
+                && this instanceof Infantry && !(this instanceof BattleArmor))
+                || (this.crew.getOptions().booleanOption("mm_eye_im") 
+                        && (this.crew.getOptions().booleanOption("vdni") 
+                                || this.crew.getOptions().booleanOption("bvdni")))) {
+            return !checkECM || !Compute.isAffectedByECM(this, getPosition(), getPosition());
+        }
+        
         return false;
     }
 
@@ -3186,6 +3195,16 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         if(game.getPlanetaryConditions().hasEMI() || isShutDown()) {
             return Entity.NONE;
         }
+        //check for Manei Domini implants
+        int cyberBonus = 0;
+        if(((this.crew.getOptions().booleanOption("cyber_eye_im") || this.crew.getOptions().booleanOption("mm_eye_im")) 
+                && this instanceof Infantry && !(this instanceof BattleArmor))
+                || (this.crew.getOptions().booleanOption("mm_eye_im") 
+                        && (this.crew.getOptions().booleanOption("vdni") 
+                                || this.crew.getOptions().booleanOption("bvdni")))) {
+            cyberBonus = 1;
+        }
+        
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP) && !m.isInoperable()) {
@@ -3194,27 +3213,31 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 //in space the range of all BAPs is given by the mode
                 if(game.getBoard().inSpace()) {
                     if(m.curMode().equals("Medium")) {
-                        return 12;
+                        return 12 + cyberBonus;
                     } else {
-                        return 6;
+                        return 6 + cyberBonus;
                     }
                 }
 
                 if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP)) {
-                    return 8;
+                    return 8 + cyberBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP) || (m.getType()).getInternalName().equals(Sensor.WATCHDOG) || (m.getType().getInternalName().equals(Sensor.CLBALIGHT_AP))) {
-                    return 5;
+                    return 5 + cyberBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP) || m.getType().getInternalName().equals(Sensor.CLIMPROVED)) {
-                    return 3;
+                    return 3 + cyberBonus;
                 }
                 if (m.getType().getInternalName().equals(Sensor.ISIMPROVED)) {
-                    return 2;
+                    return 2 + cyberBonus;
                 }
-                return 4;// everthing else should be range 4
+                return 4 + cyberBonus;// everthing else should be range 4
             }
         }
+        if(cyberBonus > 0) {
+            return 2;
+        }
+        
         return Entity.NONE;
     }
 
@@ -3366,6 +3389,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_C3I) && !m.isInoperable()) {
                 return true;
             }
+        }
+        //check for Manei Domini implants
+        if(this instanceof Infantry && this.crew.getOptions().booleanOption("mm_eye_im") 
+                && this.crew.getOptions().booleanOption("boost_comm_implant")) {
+            return true;
         }
         return false;
     }
@@ -7816,9 +7844,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public abstract int getTotalCommGearTons();
 
     /**
-     * @return the initiative bonus this Entity grants
+     * @return the initiative bonus this Entity grants for HQ
      */
-    public int getIniBonus() {
+    public int getHQIniBonus() {
         int bonus = 0;
         for (Mounted misc : getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_COMMUNICATIONS)
@@ -7831,9 +7859,21 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 }
             }
         }
+        
         return bonus;
     }
-
+    
+    /**
+     * @return the initiative bonus this Entity grants for MD implants
+     */
+    public int getMDIniBonus() {
+        if(this.crew.getOptions().booleanOption("comm_implant") 
+                || this.crew.getOptions().booleanOption("boost_comm_implant")) {
+            return 1;
+        }
+        return 0;
+    }
+    
     /**
      * Apply any pending Santa Anna allocations to Killer Whale ammo bins
      * effectively "splitting" the ammo bins in two

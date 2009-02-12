@@ -585,7 +585,7 @@ public class Dropship extends SmallCraft implements Serializable {
      * @see megamek.common.Entity#getIniBonus()
      */
     @Override
-    public int getIniBonus() {
+    public int getHQIniBonus() {
         // large craft are considered to have > 7 tons comm equipment
         // hence they get +2 ini bonus as a mobile hq
         return 2;

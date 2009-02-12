@@ -5304,8 +5304,8 @@ public abstract class Mech extends Entity implements Serializable {
      * @see megamek.common.Entity#getIniBonus()
      */
     @Override
-    public int getIniBonus() {
-        int bonus = super.getIniBonus();
+    public int getHQIniBonus() {
+        int bonus = super.getHQIniBonus();
         if (((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0) || hasHipCrit()) && (mpUsedLastRound > 0)) {
             return 0;
         }

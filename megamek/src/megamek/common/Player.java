@@ -434,15 +434,21 @@ public final class Player extends TurnOrdered implements Serializable {
      * @return the bonus to this player's initiative rolls granted by his units
      */
     public int getTurnInitBonus() {
-        if (game.getOptions().booleanOption("tacops_mobile_hqs")) {
-            for (Entity entity : game.getEntitiesVector()) {
-                if (entity.getOwner().equals(this)) {
-                    if (entity.getIniBonus() > 0)
-                        return entity.getIniBonus();;
+        int bonusHQ = 0;
+        int bonusMD = 0;      
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.getOwner().equals(this)) {
+                if (game.getOptions().booleanOption("tacops_mobile_hqs") 
+                        && bonusHQ == 0 && entity.getHQIniBonus() > 0) {
+                            bonusHQ = entity.getHQIniBonus();
+                }
+                if (game.getOptions().booleanOption("manei_domini") 
+                        && bonusMD == 0 && entity.getMDIniBonus() > 0) {
+                            bonusMD = entity.getMDIniBonus();
                 }
             }
-        }
-        return 0;
+        }     
+        return bonusHQ + bonusMD;
     }
     
     /**

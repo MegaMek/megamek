@@ -3444,7 +3444,7 @@ public class Server implements Runnable {
             distance -= nextHex.movementCost(entity.getMovementMode()) + 1;
             // By default, the unit is going to fall to the floor of the next
             // hex
-            int curAltitude = entity.getElevation() + curHex.getElevation();
+            int curAltitude = elevation + curHex.getElevation();
             int nextAltitude = nextHex.floor();
 
             // but VTOL keep altitude
@@ -5005,7 +5005,7 @@ public class Server implements Runnable {
                         skidDirection = (skidDirection + 3) % 6;
                     }
 
-                    if (processSkid(entity, curPos, step.getElevation(), skidDirection, skidDistance, step)) {
+                    if (processSkid(entity, curPos, prevStep.getElevation(), skidDirection, skidDistance, prevStep)) {
                         return;
                     }
 
@@ -5049,7 +5049,7 @@ public class Server implements Runnable {
                             r.add(sideslipDistance);
                             addReport(r);
 
-                            if (processSkid(entity, lastPos, step.getElevation(), skidDirection, sideslipDistance, step)) {
+                            if (processSkid(entity, lastPos, prevStep.getElevation(), skidDirection, sideslipDistance, prevStep)) {
                                 return;
                             }
 
@@ -5062,7 +5062,7 @@ public class Server implements Runnable {
                                 turnOver = true;
                             }
                             // set entity parameters
-                            curFacing = entity.getFacing();
+                            curFacing = step.getFacing();
                             curPos = entity.getPosition();
                             entity.setSecondaryFacing(curFacing);
                             break;

@@ -949,6 +949,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.bv = 0;
+        misc.flags |= F_MASC;
         String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
 
@@ -1142,7 +1143,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 200000;
-        misc.hittable = true;
         misc.flags |= F_ECM;
         misc.bv = 61;
         misc.setModes(new String[] { "ECM" });

@@ -17,6 +17,7 @@ v0.33.41-dev (SVN)
 + Cybernetic Eye/Ear (including MM) Manei Domini Option
 + Comm Implant (including boosted) Manei Domini Option
 + Dermal Armor Manei Domini Option
++ Bug: Blowing sand visual ranges too short
 
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs

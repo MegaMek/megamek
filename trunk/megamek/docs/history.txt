@@ -5,6 +5,7 @@ v0.33.41-dev (SVN)
 + Minor fix in BV calculations
 + Bug 2499328: german AMS report string needs to be updated
 + Bug 1986904: Bot Freezes When Fighting Large Tank Support Vehicle
++ Bug 1878789: Game over before it even Begins
 
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs

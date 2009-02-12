@@ -502,15 +502,16 @@ public class Game implements Serializable, IGame {
     }
 
     /**
-     * Returns the number of non-destroyed deployed entities owned by the
-     * player. Ignore offboard units and captured Mek pilots.
+     * Returns the number of non-destroyed entities owned by the
+     * player, including entities not yet deployed.
+     *  Ignore offboard units and captured Mek pilots.
      */
     public int getLiveDeployedEntitiesOwnedBy(Player player) {
         int count = 0;
         for (Enumeration<Entity> i = entities.elements(); i.hasMoreElements();) {
             Entity entity = i.nextElement();
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
-                    && entity.isDeployed() && !entity.isOffBoard()
+                    &&  !entity.isOffBoard()
                     && !entity.isCaptured()) {
                 count++;
             }

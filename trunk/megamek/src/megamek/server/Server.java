@@ -1796,6 +1796,10 @@ public class Server implements Runnable {
             break;
         case PHASE_MOVEMENT:
         case PHASE_DEPLOYMENT:
+            //Update visibility indications if using double blind.
+            if (doBlind()) {
+                updateVisibilityIndicator();
+            }
         case PHASE_FIRING:
         case PHASE_PHYSICAL:
         case PHASE_TARGETING:

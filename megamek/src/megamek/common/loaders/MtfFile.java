@@ -621,7 +621,7 @@ public class MtfFile implements IMechLoader {
                 critData[loc][slot] = MtfFile.EMPTY;
             }
 
-            if (critData[loc][slot].equals(MtfFile.EMPTY)) {
+            if (critData[loc][slot].equals(MtfFile.EMPTY) && firstEmpty == -1) {
                 firstEmpty = slot;
             }
             if ((firstEmpty != -1) && !critData[loc][slot].equals(MtfFile.EMPTY)) {

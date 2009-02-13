@@ -22,6 +22,7 @@ v0.33.41-dev (SVN)
 + Bug 2564316: client not starting with Java6U12
 + Separated visual and sensor checks in Compute.java
 + Bug: Visibility (for double-blind) is not updated at the beginning of the turn
++ RFE: Added Fluff Source for MTF files
 
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs

@@ -209,6 +209,8 @@ public abstract class Mech extends Entity implements Serializable {
 
     private boolean stalledThisTurn = false;
 
+    private String source;
+
     /**
      * Construct a new, blank, mech.
      */
@@ -4560,6 +4562,9 @@ public abstract class Mech extends Entity implements Serializable {
         }
         sb.append(nl);
         sb.append("Era:").append(year).append(nl);
+        if (source.trim().length() > 0) {
+            sb.append("Source:").append(source).append(nl);
+        }
         sb.append("Rules Level:").append(TechConstants.T_SIMPLE_LEVEL[techLevel]);
         sb.append(nl);
         sb.append(nl);
@@ -5535,4 +5540,16 @@ public abstract class Mech extends Entity implements Serializable {
         return false;
     }
 
+    /**
+     * used to set the source of the creation of this mek, i.e RS PPU Custom what not Fluff for MMLab
+     *
+     * @param source
+     */
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getSource() {
+        return source;
+    }
 }

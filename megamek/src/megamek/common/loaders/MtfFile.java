@@ -55,6 +55,7 @@ public class MtfFile implements IMechLoader {
     String techBase;
     String techYear;
     String rulesLevel;
+    String source = "Source:";
 
     String tonnage;
     String engine;
@@ -215,6 +216,8 @@ public class MtfFile implements IMechLoader {
             }
             mech.setModel(model.trim());
             mech.setYear(Integer.parseInt(techYear.substring(4).trim()));
+            mech.setSource(source.substring("Source:".length()).trim());
+
             if (chassisConfig.indexOf("Omni") != -1) {
                 mech.setOmni(true);
             }
@@ -783,6 +786,11 @@ public class MtfFile implements IMechLoader {
 
         if (line.trim().toLowerCase().startsWith("era:")) {
             techYear = line;
+            return true;
+        }
+
+        if (line.trim().toLowerCase().startsWith("source:")) {
+            source = line;
             return true;
         }
 

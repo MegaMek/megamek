@@ -24,6 +24,7 @@ v0.33.41-dev (SVN)
 + Bug: Visibility (for double-blind) is not updated at the beginning of the turn
 + RFE: Added Fluff Source for MTF files
 + Bug 2596796:  MTF parser sensitive to crit arrangement (DHS issue?)
++ Bug: lookupnames for PPC capacitors missing
 
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs

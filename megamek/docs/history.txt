@@ -26,6 +26,7 @@ v0.33.41-dev (SVN)
 + Bug 2596796:  MTF parser sensitive to crit arrangement (DHS issue?)
 + Bug: lookupnames for PPC capacitors missing
 + Bug: armored components screw up loading of multi-crit items>
++ Bug 2594423: Compact Gyro Weighs Too Much
 
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs

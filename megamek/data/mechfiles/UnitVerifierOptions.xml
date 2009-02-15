@@ -8,7 +8,7 @@
       <controls>0.5</controls>
       <weapons>1.0</weapons>
       <targcomp>1.0</targcomp>
-      <gyro>1.0</gyro>
+      <gyro>0.5</gyro>
     </ceilWeight>
     <showOverweighted>
     true

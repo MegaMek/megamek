@@ -472,9 +472,6 @@ public class MtfFile implements IMechLoader {
             if (critName.toLowerCase().trim().endsWith(ARMORED)) {
                 critName = critName.substring(0, critName.length() - ARMORED.length()).trim();
                 isArmored = true;
-            } // if the slot's full already, skip it.
-            else if (mech.getCritical(loc, i) != null) {
-                continue;
             }
 
             if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
@@ -497,8 +494,12 @@ public class MtfFile implements IMechLoader {
                 mech.setCritical(loc, i, new CriticalSlot(
                         CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, true, isArmored));
                 continue;
-            } else if (critName.indexOf("Actuator") != -1 || critName.equalsIgnoreCase("Shoulder") || critName.equalsIgnoreCase("Hip")) {
+            } else if ((critName.indexOf("Actuator") != -1) || critName.equalsIgnoreCase("Shoulder") || critName.equalsIgnoreCase("Hip")) {
                 mech.getCritical(loc, i).setArmored(isArmored);
+                continue;
+            }
+            // if the slot's full already, skip it.
+            if (mech.getCritical(loc, i) != null) {
                 continue;
             }
 
@@ -621,7 +622,7 @@ public class MtfFile implements IMechLoader {
                 critData[loc][slot] = MtfFile.EMPTY;
             }
 
-            if (critData[loc][slot].equals(MtfFile.EMPTY) && firstEmpty == -1) {
+            if (critData[loc][slot].equals(MtfFile.EMPTY) && (firstEmpty == -1)) {
                 firstEmpty = slot;
             }
             if ((firstEmpty != -1) && !critData[loc][slot].equals(MtfFile.EMPTY)) {

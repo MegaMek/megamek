@@ -3081,15 +3081,15 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "PPC Capacitor";
-        misc.setInternalName("ISPPCCapacitor");
-        misc.setInternalName("LPPC Capacitor");
-        misc.setInternalName("ISLightPPCCapacitor");
-        misc.setInternalName("SNPPC Capacitor");
-        misc.setInternalName("ISSNPPCCapacitor");
-        misc.setInternalName("ERPPC Capacitor");
-        misc.setInternalName("ISERPPCCapacitor");
-        misc.setInternalName("HPPC Capacitor");
-        misc.setInternalName("ISHeavyPPCCapacitor");
+        misc.addLookupName("ISPPCCapacitor");
+        misc.addLookupName("LPPC Capacitor");
+        misc.addLookupName("ISLightPPCCapacitor");
+        misc.addLookupName("SNPPC Capacitor");
+        misc.addLookupName("ISSNPPCCapacitor");
+        misc.addLookupName("ERPPC Capacitor");
+        misc.addLookupName("ISERPPCCapacitor");
+        misc.addLookupName("HPPC Capacitor");
+        misc.addLookupName("ISHeavyPPCCapacitor");
         misc.tonnage = 1.0f;
         misc.criticals = 1;
         misc.cost = 150000;

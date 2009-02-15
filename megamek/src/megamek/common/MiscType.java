@@ -2529,6 +2529,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Searchlight";
         misc.setInternalName("Searchlight");
+        misc.addLookupName("BASearchlight");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.flags |= F_SEARCHLIGHT;

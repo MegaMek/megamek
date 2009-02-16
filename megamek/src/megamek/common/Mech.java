@@ -4562,7 +4562,7 @@ public abstract class Mech extends Entity implements Serializable {
         }
         sb.append(nl);
         sb.append("Era:").append(year).append(nl);
-        if (source.trim().length() > 0) {
+        if (source != null && source.trim().length() > 0) {
             sb.append("Source:").append(source).append(nl);
         }
         sb.append("Rules Level:").append(TechConstants.T_SIMPLE_LEVEL[techLevel]);

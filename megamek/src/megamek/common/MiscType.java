@@ -3082,6 +3082,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "PPC Capacitor";
+        misc.setInternalName(misc.name);
         misc.addLookupName("ISPPCCapacitor");
         misc.addLookupName("LPPC Capacitor");
         misc.addLookupName("ISLightPPCCapacitor");

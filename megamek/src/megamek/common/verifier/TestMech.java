@@ -362,7 +362,7 @@ public class TestMech extends TestEntity {
                         Mech.LOC_RT))) {
             engineCorrect = false;
         }
-        if (engine.getCenterTorsoCriticalSlots().length != mech
+        if (engine.getCenterTorsoCriticalSlots(mech.getGyroType()).length != mech
                 .getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
                         Mech.SYSTEM_ENGINE, Mech.LOC_CT)) {
             engineCorrect = false;
@@ -503,10 +503,10 @@ public class TestMech extends TestEntity {
         for (int location = Mech.LOC_HEAD; location <= Mech.LOC_LLEG; location++) {
             for (int slot = 0; slot < mech.getNumberOfCriticals(location); slot++) {
                 CriticalSlot cs = mech.getCritical(location, slot);
-                if (cs != null && cs.isArmored()) {
+                if ((cs != null) && cs.isArmored()) {
                     weight += 0.5f;
 
-                    if (cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == Mech.SYSTEM_COCKPIT) {
+                    if ((cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mech.SYSTEM_COCKPIT)) {
                         weight += 0.5f;
                     }
                 }

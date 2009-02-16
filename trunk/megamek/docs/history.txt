@@ -28,6 +28,8 @@ v0.33.41-dev (SVN)
 + Bug: armored components screw up loading of multi-crit items>
 + Bug 2594423: Compact Gyro Weighs Too Much
 + Bug: NPE in Mech#getMtf if source is null
++ Reworked public gyro/engine creation API
++ Added missing internal name for PPC capacitors
 
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs

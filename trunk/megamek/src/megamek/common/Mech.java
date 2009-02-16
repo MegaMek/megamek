@@ -4562,7 +4562,7 @@ public abstract class Mech extends Entity implements Serializable {
         }
         sb.append(nl);
         sb.append("Era:").append(year).append(nl);
-        if (source != null && source.trim().length() > 0) {
+        if ((source != null) && (source.trim().length() > 0)) {
             sb.append("Source:").append(source).append(nl);
         }
         sb.append("Rules Level:").append(TechConstants.T_SIMPLE_LEVEL[techLevel]);
@@ -4907,16 +4907,12 @@ public abstract class Mech extends Entity implements Serializable {
         if (getEmptyCriticals(LOC_CT) < 6) {
             return false;
         }
-        removeCriticals(LOC_CT, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        clearEngineCrits();
         addGyro();
         addCritical(LOC_CT, 7, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         addCritical(LOC_CT, 8, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         setGyroType(GYRO_XL);
-
-        int[] centerSlots = { 0, 1, 2, 9, 10, 11 };
-        for (int centerSlot : centerSlots) {
-            addCritical(LOC_CT, centerSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        }
+        addEngineCrits();
 
         return true;
     }
@@ -4947,41 +4943,7 @@ public abstract class Mech extends Entity implements Serializable {
     public boolean addEngineCrits() {
         boolean success = true;
 
-        int centerSlots[] = getEngine().getCenterTorsoCriticalSlots();
-        if (getEmptyCriticals(LOC_CT) < centerSlots.length) {
-            success = false;
-        } else {
-            for (int centerSlot : centerSlots) {
-                addCritical(LOC_CT, centerSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-            }
-        }
-
-        int sideSlots[] = getEngine().getSideTorsoCriticalSlots();
-        if ((getEmptyCriticals(LOC_LT) < sideSlots.length) || (getEmptyCriticals(LOC_RT) < sideSlots.length) || !success) {
-            success = false;
-        } else {
-            for (int sideSlot : sideSlots) {
-                addCritical(LOC_LT, sideSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-                addCritical(LOC_RT, sideSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-            }
-        }
-
-        return success;
-    }
-
-    /**
-     * Add the critical slots necessary for the mek's engine when using a
-     * compact gyro. Calling this method before setting a mek's engine object
-     * will result in a NPE. Note: This is part of the mek creation public API,
-     * and might not be referenced by any MegaMek code.
-     *
-     * @return false if insufficient critical space
-     */
-    public boolean addEngineCritsWithCompactGyro() {
-        boolean success = true;
-
-        int centerSlots[] = { 0, 1, 2, 5, 6, 7 };
-
+        int centerSlots[] = getEngine().getCenterTorsoCriticalSlots(getGyroType());
         if (getEmptyCriticals(LOC_CT) < centerSlots.length) {
             success = false;
         } else {
@@ -5511,7 +5473,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
             CriticalSlot cs = getCritical(location, slot);
-            if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == Mech.SYSTEM_COCKPIT) {
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mech.SYSTEM_COCKPIT)) {
                 return cs.isArmored();
             }
         }
@@ -5522,7 +5484,7 @@ public abstract class Mech extends Entity implements Serializable {
     public boolean hasArmoredGyro() {
         for (int slot = 0; slot < getNumberOfCriticals(LOC_CT); slot++) {
             CriticalSlot cs = getCritical(LOC_CT, slot);
-            if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == Mech.SYSTEM_GYRO) {
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mech.SYSTEM_GYRO)) {
                 return cs.isArmored();
             }
         }
@@ -5530,10 +5492,11 @@ public abstract class Mech extends Entity implements Serializable {
         return false;
     }
 
+    @Override
     public boolean hasArmoredEngine() {
         for (int slot = 0; slot < getNumberOfCriticals(LOC_CT); slot++) {
             CriticalSlot cs = getCritical(LOC_CT, slot);
-            if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == Mech.SYSTEM_ENGINE) {
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mech.SYSTEM_ENGINE)) {
                 return cs.isArmored();
             }
         }

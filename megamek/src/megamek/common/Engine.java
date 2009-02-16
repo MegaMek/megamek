@@ -382,16 +382,29 @@ public class Engine implements Serializable {
      *
      * @return
      */
-    public int[] getCenterTorsoCriticalSlots() {
+    public int[] getCenterTorsoCriticalSlots(int gyroType) {
         if (engineType == COMPACT_ENGINE) {
             int[] slots = { 0, 1, 2 };
             return slots;
         } else if (hasFlag(LARGE_ENGINE)) {
-            int[] slots = { 0, 1, 2, 7, 8, 9, 10, 11 };
-            return slots;
+            if (gyroType == Mech.GYRO_COMPACT) {
+                int[] slots = { 0, 1, 2, 5, 6, 7, 8, 9 };
+                return slots;
+            } else {
+                int[] slots = { 0, 1, 2, 7, 8, 9, 10, 11 };
+                return slots;
+            }
         } else {
-            int[] slots = { 0, 1, 2, 7, 8, 9 };
-            return slots;
+            if (gyroType == Mech.GYRO_COMPACT) {
+                int[] slots = { 0, 1, 2, 5, 6, 7 };
+                return slots;
+            } else if (gyroType == Mech.GYRO_XL) {
+                int[] slots = { 0, 1, 2, 9, 10, 11 };
+                return slots;
+            } else {
+                int[] slots = { 0, 1, 2, 7, 8, 9 };
+                return slots;
+            }
         }
     }
 

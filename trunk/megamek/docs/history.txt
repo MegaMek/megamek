@@ -30,6 +30,7 @@ v0.33.41-dev (SVN)
 + Bug: NPE in Mech#getMtf if source is null
 + Reworked public gyro/engine creation API
 + Added missing internal name for PPC capacitors
++ initalized Source as empty string
 
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs

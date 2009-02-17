@@ -209,7 +209,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     private boolean stalledThisTurn = false;
 
-    private String source;
+    private String source = "";
 
     /**
      * Construct a new, blank, mech.
@@ -5509,10 +5509,15 @@ public abstract class Mech extends Entity implements Serializable {
      * @param source
      */
     public void setSource(String source) {
-        this.source = source;
+        if (source != null) {
+            this.source = source;
+        }
     }
 
     public String getSource() {
+        if (source == null) {
+            return "";
+        }
         return source;
     }
 }

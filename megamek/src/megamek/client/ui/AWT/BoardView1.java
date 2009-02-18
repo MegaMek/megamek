@@ -531,7 +531,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         // make sure back buffer is valid
-        if (backGraph == null || !view.getSize().equals(backSize)) {
+        if ((backGraph == null) || !view.getSize().equals(backSize)) {
             // make new back buffer
             backSize = view.getSize();
             backImage = createImage(backSize.width, backSize.height);
@@ -539,7 +539,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         // make sure board rectangle contains our current view rectangle
-        if (boardImage == null || !boardRect.union(view).equals(boardRect)
+        if ((boardImage == null) || !boardRect.union(view).equals(boardRect)
                 || dirtyBoard) {
             updateBoardImage();
         }
@@ -592,7 +592,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         drawSprites(attackSprites);
 
         //draw movement vectors.
-        if(game.useVectorMove() && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+        if(game.useVectorMove() && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
             drawSprites(movementSprites);
         }
 
@@ -722,7 +722,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         Image scaled = scaledImageCache.get(base);
         if (scaled == null) {
             MediaTracker tracker = new MediaTracker(this);
-            if (base.getWidth(null) == -1 || base.getHeight(null) == -1) {
+            if ((base.getWidth(null) == -1) || (base.getHeight(null) == -1)) {
                 tracker.addImage(base, 0);
                 try {
                     tracker.waitForID(0);
@@ -802,7 +802,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * or it is not artillery or null if the selected entity is not owned
      */
     private Mounted getSelectedArtilleryWeapon() {
-        if (selectedEntity == null || selectedWeapon == null) {
+        if ((selectedEntity == null) || (selectedWeapon == null)) {
             return null;
         }
 
@@ -814,7 +814,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             return null; // inconsistent state - weapon not on entity
         }
 
-        if (!(selectedWeapon.getType() instanceof WeaponType && selectedWeapon
+        if (!((selectedWeapon.getType() instanceof WeaponType) && selectedWeapon
                 .getType().hasFlag(WeaponType.F_ARTILLERY))) {
             return null; // not artillery
         }
@@ -944,8 +944,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      */
     private void updateBoardImage() {
         // check to make sure image is big enough
-        if (boardGraph == null || view.width > boardRect.width
-                || view.height > boardRect.height) {
+        if ((boardGraph == null) || (view.width > boardRect.width)
+                || (view.height > boardRect.height)) {
             /*
              * Ok, some history here. Before the zoom patch, the boardImage was
              * created with the same size as the view. After the zoom patch, the
@@ -1143,7 +1143,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         if (GUIPreferences.getInstance().getBoolean(
                 GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
-                && game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY
+                && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)
                 && !game.isPositionIlluminated(c)) {
             scaledImage = getScaledImage(tileManager.getNightFog());
             boardGraph.drawImage(scaledImage, drawX, drawY, this);
@@ -1314,7 +1314,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     private final boolean drawElevationLine(Coords src, int direction) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHexInDir(src, direction);
-        return destHex != null && srcHex.floor() != destHex.floor();
+        return (destHex != null) && (srcHex.floor() != destHex.floor());
     }
 
     /**
@@ -1630,7 +1630,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         // check artillery fire adjustment
-        if (curWeapon != null && selectedEntity != null) {
+        if ((curWeapon != null) && (selectedEntity != null)) {
             // process targetted hexes
             int amod = 0;
             // Check the predesignated hexes
@@ -1677,8 +1677,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 hideTooltip();
             }
         } else if (isTipPossible
-                && System.currentTimeMillis() - lastIdle > GUIPreferences
-                .getInstance().getTooltipDelay()) {
+                && (System.currentTimeMillis() - lastIdle > GUIPreferences
+                .getInstance().getTooltipDelay())) {
             showTooltip();
         }
     }
@@ -1750,8 +1750,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         entitySpriteIds = newSpriteIds;
         for (Iterator<C3Sprite> i = C3Sprites.iterator(); i.hasNext();) {
             final C3Sprite c3sprite = i.next();
-            if (c3sprite.entityId == entity.getId()
-                    || c3sprite.masterId == entity.getId()) {
+            if ((c3sprite.entityId == entity.getId())
+                    || (c3sprite.masterId == entity.getId())) {
                 i.remove();
             }
         }
@@ -1882,13 +1882,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 }
             }
             if (!found) {
-                if (null != previousStep &&
-                        (step.getType() == MovePath.STEP_UP ||
-                                step.getType() == MovePath.STEP_DOWN ||
-                                step.getType() == MovePath.STEP_ACC ||
-                                step.getType() == MovePath.STEP_DEC ||
-                                step.getType() == MovePath.STEP_ACCN ||
-                                step.getType() == MovePath.STEP_DECN)) {
+                if ((null != previousStep) &&
+                        ((step.getType() == MovePath.STEP_UP) ||
+                                (step.getType() == MovePath.STEP_DOWN) ||
+                                (step.getType() == MovePath.STEP_ACC) ||
+                                (step.getType() == MovePath.STEP_DEC) ||
+                                (step.getType() == MovePath.STEP_ACCN) ||
+                                (step.getType() == MovePath.STEP_DECN))) {
                     //Mark the previous elevation change sprite hidden
                     // so that we can draw a new one in it's place without
                     // having overlap.
@@ -1897,7 +1897,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
                 //for advanced movement, we always need to hide prior
                 //because costs will overlap and we only want the current facing
-                if(previousStep != null && game.useVectorMove()) {
+                if((previousStep != null) && game.useVectorMove()) {
                     pathSprites.get(pathSprites.size() -1 ).hidden = true;
                 }
 
@@ -1980,16 +1980,16 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // this is not a great solution but better than a crash
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
-        if (ae == null || t == null
-                || t.getTargetType() == Targetable.TYPE_INARC_POD
-                || t.getPosition() == null || ae.getPosition() == null) {
+        if ((ae == null) || (t == null)
+                || (t.getTargetType() == Targetable.TYPE_INARC_POD)
+                || (t.getPosition() == null) || (ae.getPosition() == null)) {
             return;
         }
 
         for (AttackSprite sprite : attackSprites) {
             // can we just add this attack to an existing one?
-            if (sprite.getEntityId() == aa.getEntityId()
-                    && sprite.getTargetId() == aa.getTargetId()) {
+            if ((sprite.getEntityId() == aa.getEntityId())
+                    && (sprite.getTargetId() == aa.getTargetId())) {
                 // use existing attack, but add this weapon
                 if (aa instanceof WeaponAttackAction) {
                     WeaponAttackAction waa = (WeaponAttackAction) aa;
@@ -2135,7 +2135,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             StringBuffer message = new StringBuffer();
             LosEffects le;
-            if (ae == null || te == null) {
+            if ((ae == null) || (te == null)) {
                 boolean mechInFirst = GUIPreferences.getInstance()
                 .getMechInFirst();
                 boolean mechInSecond = GUIPreferences.getInstance()
@@ -2226,7 +2226,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         boolean s = false;
 
         if (isScrolling && GUIPreferences.getInstance().getRightDragScroll()) {
-            if (!(oldMousePosition == null || mousePos.equals(oldMousePosition))) {
+            if (!((oldMousePosition == null) || mousePos.equals(oldMousePosition))) {
                 scroll.x -= GUIPreferences.getInstance().getScrollSensitivity()
                 * (mousePos.x - oldMousePosition.x);
                 scroll.y -= GUIPreferences.getInstance().getScrollSensitivity()
@@ -2547,7 +2547,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
         if (!GUIPreferences.getInstance().getRightDragScroll()
                 && !GUIPreferences.getInstance().getAlwaysRightClickScroll()
-                && (game.getPhase() == IGame.Phase.PHASE_FIRING || game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
+                && ((game.getPhase() == IGame.Phase.PHASE_FIRING) || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD))) {
             // In the firing phase, also disable scrolling if
             // the right or middle buttons are clicked, since
             // this means the user wants to activate the
@@ -2597,7 +2597,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // mouse button, no click action should be triggered if the map
         // is being scrolled.
         if (scrolled
-                && ((me.getModifiers() & InputEvent.BUTTON1_MASK) == 0 || !GUIPreferences
+                && (((me.getModifiers() & InputEvent.BUTTON1_MASK) == 0) || !GUIPreferences
                         .getInstance().getAutoEdgeScroll())) {
             return;
         }
@@ -2656,7 +2656,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         if (!GUIPreferences.getInstance().getRightDragScroll()
                 && !GUIPreferences.getInstance().getAlwaysRightClickScroll()
-                && (game.getPhase() == IGame.Phase.PHASE_FIRING || game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
+                && ((game.getPhase() == IGame.Phase.PHASE_FIRING) || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD))) {
             // In the firing phase, also disable scrolling if
             // the right or middle buttons are clicked, since
             // this means the user wants to activate the
@@ -2814,7 +2814,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             font_hexnum = FONT_7;
             font_minefield = FONT_7;
         }
-        if (zoomIndex <= 5 & zoomIndex > 4) {
+        if ((zoomIndex <= 5) & (zoomIndex > 4)) {
             font_elev = FONT_8;
             font_hexnum = FONT_8;
             font_minefield = FONT_8;
@@ -3398,23 +3398,23 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             // draw facing
             graph.setColor(Color.white);
-            if (entity.getFacing() != -1
-                    && !(entity instanceof Infantry && ((Infantry) entity)
-                            .getDugIn() == Infantry.DUG_IN_NONE)
-                            && !(entity instanceof Aero && ((Aero)entity).isSpheroid()
+            if ((entity.getFacing() != -1)
+                    && !((entity instanceof Infantry) && (((Infantry) entity)
+                            .getDugIn() == Infantry.DUG_IN_NONE))
+                            && !((entity instanceof Aero) && ((Aero)entity).isSpheroid()
                                     && game.getBoard().inAtmosphere())) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
 
             // determine secondary facing for non-mechs & flipped arms
             int secFacing = entity.getFacing();
-            if (!(entity instanceof Mech || entity instanceof Protomech)) {
+            if (!((entity instanceof Mech) || (entity instanceof Protomech))) {
                 secFacing = entity.getSecondaryFacing();
             } else if (entity.getArmsFlipped()) {
                 secFacing = (entity.getFacing() + 3) % 6;
             }
             // draw red secondary facing arrow if necessary
-            if (secFacing != -1 && secFacing != entity.getFacing()) {
+            if ((secFacing != -1) && (secFacing != entity.getFacing())) {
                 graph.setColor(Color.red);
                 graph.drawPolygon(facingPolys[secFacing]);
             }
@@ -3699,9 +3699,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
 
             if (game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
-                    && (e.getOwner().getId() == getLocalPlayer().getId() || (game
+                    && ((e.getOwner().getId() == getLocalPlayer().getId()) || (game
                             .getOptions().booleanOption("team_vision") //$NON-NLS-1$
-                            && e.getOwner().getTeam() == getLocalPlayer().getTeam()))) {
+                            && (e.getOwner().getTeam() == getLocalPlayer().getTeam())))) {
                 return true;
             }
             return false;
@@ -3760,7 +3760,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
 
             buffer = new StringBuffer();
-            if (ge == null && a == null) {
+            if ((ge == null) && (a == null)) {
                 buffer.append(Messages.getString("BoardView1.move")) //$NON-NLS-1$
                 .append(entity.getMovementAbbr(entity.moved)).append(
                 ":") //$NON-NLS-1$
@@ -4210,8 +4210,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             StringBuffer velStringBuf = new StringBuffer();
 
             if (!game.useVectorMove() &&
-                    (step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST
-                            || step.getMovementType() == IEntityMovementType.MOVE_OVER_THRUST)) {
+                    ((step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST)
+                            || (step.getMovementType() == IEntityMovementType.MOVE_OVER_THRUST))) {
                 velStringBuf.append("(")
                 .append(step.getVelocityLeft())
                 .append("/")
@@ -4247,7 +4247,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             // If the step is using a road bonus, mark it.
             if (step.isOnlyPavement()
-                    && step.getParent().getEntity() instanceof Tank) {
+                    && (step.getParent().getEntity() instanceof Tank)) {
                 costStringBuf.append("+"); //$NON-NLS-1$
             }
 
@@ -4268,11 +4268,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 costStringBuf.append("+]"); //$NON-NLS-1$
             }
 
-            if (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK
-                    || step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN
-                    || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_WALK
-                    || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN
-                    || step.getElevation() != 0) {
+            if ((step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
+                    || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)
+                    || (step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_WALK)
+                    || (step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN)
+                    || (step.getElevation() != 0)) {
                 costStringBuf.append("{").append(step.getElevation()).append(
                 "}");
             }
@@ -4315,7 +4315,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             spriteColor = PlayerColors.getColor(e.getOwner()
                     .getColorIndex());
 
-            if (e.getPosition() == null || m.getPosition() == null) {
+            if ((e.getPosition() == null) || (m.getPosition() == null)) {
                 C3Poly = new Polygon();
                 C3Poly.addPoint(0, 0);
                 C3Poly.addPoint(1, 0);
@@ -4580,8 +4580,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
          */
         private boolean isMutualAttack() {
             for (AttackSprite sprite : attackSprites) {
-                if (sprite.getEntityId() == targetId
-                        && sprite.getTargetId() == entityId) {
+                if ((sprite.getEntityId() == targetId)
+                        && (sprite.getTargetId() == entityId)) {
                     sprite.rebuildToHalvedPolygon();
                     return true;
                 }
@@ -5033,7 +5033,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * @param coords the Coords.
      */
     public void select(Coords coords) {
-        if (coords == null || game.getBoard().contains(coords)) {
+        if ((coords == null) || game.getBoard().contains(coords)) {
             setSelected(coords);
             moveCursor(selectedSprite, coords);
             moveCursor(firstLOSSprite, null);
@@ -5060,7 +5060,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * @param coords the Coords.
      */
     public void highlight(Coords coords) {
-        if (coords == null || game.getBoard().contains(coords)) {
+        if ((coords == null) || game.getBoard().contains(coords)) {
             setHighlighted(coords);
             moveCursor(highlightSprite, coords);
             moveCursor(firstLOSSprite, null);
@@ -5087,8 +5087,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * @param coords the Coords.
      */
     public void cursor(Coords coords) {
-        if (coords == null || game.getBoard().contains(coords)) {
-            if (getLastCursor() == null || coords == null
+        if ((coords == null) || game.getBoard().contains(coords)) {
+            if ((getLastCursor() == null) || (coords == null)
                     || !coords.equals(getLastCursor())) {
                 setLastCursor(coords);
                 moveCursor(cursorSprite, coords);
@@ -5113,7 +5113,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     }
 
     public void checkLOS(Coords c) {
-        if (c == null || game.getBoard().contains(c)) {
+        if ((c == null) || game.getBoard().contains(c)) {
             if (getFirstLOS() == null) {
                 setFirstLOS(c);
                 firstLOSHex(c);
@@ -5229,7 +5229,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if(game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
             }
-            if (mp != null && mp.size() > 0
+            if ((mp != null) && (mp.size() > 0)
                     && GUIPreferences.getInstance().getShowMoveStep()) {
                 addMovingUnit(e.getEntity(), mp);
             } else {
@@ -5387,15 +5387,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             int range = ent.getECMRange();
             boolean deployed = ent.isDeployed();
             boolean offboard = ent.isOffBoard();
-            if(entPos == null && ent.getTransportId() != Entity.NONE) {
+            if((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
                 Entity carrier = game.getEntity(ent.getTransportId());
-                if(null != carrier && carrier.loadedUnitsHaveActiveECM()) {
+                if((null != carrier) && carrier.loadedUnitsHaveActiveECM()) {
                     entPos = carrier.getPosition();
                     deployed = carrier.isDeployed();
                     offboard = carrier.isOffBoard();
                 }
             }
-            if (entPos == null || !deployed
+            if ((entPos == null) || !deployed
                     || offboard) {
                 continue;
             }
@@ -5425,7 +5425,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 for (int y = -b.range; y <= b.range; y++) {
                     Coords c = new Coords(x + b.x, y + b.y);
                     // clip rectangle to hexagon
-                    if (b.distance(c) <= b.range && (b.direction == -1 || Compute.isInArc(b, b.direction, c, Compute.ARC_NOSE))) {
+                    if ((b.distance(c) <= b.range) && ((b.direction == -1) || Compute.isInArc(b, b.direction, c, Compute.ARC_NOSE))) {
                         Integer tint = table.get(c);
                         if (tint == null) {
                             table.put(c, col);

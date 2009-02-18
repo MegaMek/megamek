@@ -24,13 +24,12 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
@@ -129,7 +128,7 @@ import megamek.common.preference.PreferenceManager;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardListener,
-        MouseListener, KeyEventDispatcher, MechDisplayListener, IPreferenceChangeListener {
+        MouseListener, KeyListener, MechDisplayListener, IPreferenceChangeListener {
 
     private static final long serialVersionUID = -5582195884759007416L;
 
@@ -257,6 +256,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         game.getBoard().addBoardListener(this);
         scheduleRedrawTimer();// call only once
         addMouseListener(this);
+        addKeyListener(this);
         MouseMotionListener doScrollRectToVisible = new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -265,7 +265,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         };
         addMouseMotionListener(doScrollRectToVisible);
         setAutoscrolls(true);
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
 
         updateBoardSize();
 
@@ -468,7 +467,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         drawSprites(g, attackSprites);
 
         // draw movement vectors.
-        if (game.useVectorMove() && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+        if (game.useVectorMove() && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
             drawSprites(g, movementSprites);
         }
 
@@ -574,7 +573,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      * artillery or null if the selected entity is not owned
      */
     private Mounted getSelectedArtilleryWeapon() {
-        if (selectedEntity == null || selectedWeapon == null) {
+        if ((selectedEntity == null) || (selectedWeapon == null)) {
             return null;
         }
 
@@ -586,7 +585,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             return null; // inconsistent state - weapon not on entity
         }
 
-        if (!(selectedWeapon.getType() instanceof WeaponType && selectedWeapon.getType().hasFlag(
+        if (!((selectedWeapon.getType() instanceof WeaponType) && selectedWeapon.getType().hasFlag(
                 WeaponType.F_ARTILLERY))) {
             return null; // not artillery
         }
@@ -602,7 +601,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         Mounted weapon = getSelectedArtilleryWeapon();
         Rectangle view = g.getClipBounds();
 
-        if (game.getArtillerySize() == 0 && weapon == null) {
+        if ((game.getArtillerySize() == 0) && (weapon == null)) {
             return; // nothing to do
         }
 
@@ -831,7 +830,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         }
 
         if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
-                && game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY
+                && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)
                 && !game.isPositionIlluminated(c)) {
             boardGraph.drawImage(tileManager.getNightFog(), drawX, drawY, this);
         }
@@ -959,7 +958,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private final boolean drawElevationLine(Coords src, int direction) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHexInDir(src, direction);
-        return destHex != null && srcHex.floor() != destHex.floor();
+        return (destHex != null) && (srcHex.floor() != destHex.floor());
     }
 
     /**
@@ -1073,7 +1072,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         for (Iterator<C3Sprite> i = c3Sprites.iterator(); i.hasNext();) {
             final C3Sprite c3sprite = i.next();
-            if (c3sprite.entityId == entity.getId() || c3sprite.masterId == entity.getId()) {
+            if ((c3sprite.entityId == entity.getId()) || (c3sprite.masterId == entity.getId())) {
                 i.remove();
             }
         }
@@ -1202,12 +1201,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 }
             }
             if (!found) {
-                if (null != previousStep
-                        && (step.getType() == MovePath.STEP_UP
-                                || step.getType() == MovePath.STEP_DOWN
-                                || step.getType() == MovePath.STEP_ACC
-                                || step.getType() == MovePath.STEP_DEC
-                                || step.getType() == MovePath.STEP_ACCN || step.getType() == MovePath.STEP_DECN)) {
+                if ((null != previousStep)
+                        && ((step.getType() == MovePath.STEP_UP)
+                                || (step.getType() == MovePath.STEP_DOWN)
+                                || (step.getType() == MovePath.STEP_ACC)
+                                || (step.getType() == MovePath.STEP_DEC)
+                                || (step.getType() == MovePath.STEP_ACCN) || (step.getType() == MovePath.STEP_DECN))) {
                     // Mark the previous elevation change sprite hidden
                     // so that we can draw a new one in it's place without
                     // having overlap.
@@ -1216,7 +1215,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
                 // for advanced movement, we always need to hide prior
                 // because costs will overlap and we only want the current facing
-                if (previousStep != null && game.useVectorMove()) {
+                if ((previousStep != null) && game.useVectorMove()) {
                     pathSprites.get(pathSprites.size() - 1).hidden = true;
                 }
 
@@ -1295,16 +1294,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         // this is not a great solution but better than a crash
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
-        if (ae == null || t == null || t.getTargetType() == Targetable.TYPE_INARC_POD
-                || t.getPosition() == null || ae.getPosition() == null) {
+        if ((ae == null) || (t == null) || (t.getTargetType() == Targetable.TYPE_INARC_POD)
+                || (t.getPosition() == null) || (ae.getPosition() == null)) {
             return;
         }
 
         repaint(100);
         for (AttackSprite sprite : attackSprites) {
             // can we just add this attack to an existing one?
-            if (sprite.getEntityId() == aa.getEntityId()
-                    && sprite.getTargetId() == aa.getTargetId()) {
+            if ((sprite.getEntityId() == aa.getEntityId())
+                    && (sprite.getTargetId() == aa.getTargetId())) {
                 // use existing attack, but add this weapon
                 if (aa instanceof WeaponAttackAction) {
                     WeaponAttackAction waa = (WeaponAttackAction) aa;
@@ -1446,7 +1445,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
             StringBuffer message = new StringBuffer();
             LosEffects le;
-            if (ae == null || te == null) {
+            if ((ae == null) || (te == null)) {
                 boolean mechInFirst = GUIPreferences.getInstance().getMechInFirst();
                 boolean mechInSecond = GUIPreferences.getInstance().getMechInSecond();
                 LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
@@ -1659,63 +1658,60 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     }
 
     //
-    // KeyEventDispatcher
+    // KeyListener
     //
-    public boolean dispatchKeyEvent(KeyEvent ke) {
+    public void keyPressed(KeyEvent ke) {
         JScrollBar vbar = scrollpane.getVerticalScrollBar();
         JScrollBar hbar = scrollpane.getHorizontalScrollBar();
         switch (ke.getKeyCode()) {
         case KeyEvent.VK_NUMPAD7:
             hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
             vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
-            ke.consume();
             break;
         case KeyEvent.VK_NUMPAD8:
         case KeyEvent.VK_UP:
             vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
-            ke.consume();
             break;
         case KeyEvent.VK_NUMPAD9:
             hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
             vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
-            ke.consume();
             break;
         case KeyEvent.VK_NUMPAD1:
             hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
             vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
-            ke.consume();
             break;
         case KeyEvent.VK_NUMPAD2:
         case KeyEvent.VK_DOWN:
             vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
-            ke.consume();
             break;
         case KeyEvent.VK_NUMPAD3:
             hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
             vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
-            ke.consume();
             break;
         case KeyEvent.VK_NUMPAD4:
         case KeyEvent.VK_LEFT:
             hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
-            ke.consume();
             break;
         case KeyEvent.VK_NUMPAD6:
         case KeyEvent.VK_RIGHT:
             hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
-            ke.consume();
             break;
         case KeyEvent.VK_NUMPAD5:
             // center on the selected entity
             if (selectedEntity != null) {
                 centerOnHex(selectedEntity.getPosition());
             }
-            ke.consume();
             break;
         }
 
         repaint();
-        return false;
+        return;
+    }
+
+    public void keyReleased(KeyEvent ke) {
+    }
+
+    public void keyTyped(KeyEvent ke) {
     }
 
     //
@@ -1746,7 +1742,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
         if (!GUIPreferences.getInstance().getRightDragScroll()
                 && !GUIPreferences.getInstance().getAlwaysRightClickScroll()
-                && game.getPhase() == IGame.Phase.PHASE_FIRING) {
+                && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
             // In the firing phase, also disable scrolling if
             // the right or middle buttons are clicked, since
             // this means the user wants to activate the
@@ -2314,22 +2310,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
             // draw facing
             graph.setColor(Color.white);
-            if (entity.getFacing() != -1
-                    && !(entity instanceof Infantry && ((Infantry) entity).getDugIn() == Infantry.DUG_IN_NONE)
-                    && !(entity instanceof Aero && ((Aero) entity).isSpheroid() && game.getBoard()
+            if ((entity.getFacing() != -1)
+                    && !((entity instanceof Infantry) && (((Infantry) entity).getDugIn() == Infantry.DUG_IN_NONE))
+                    && !((entity instanceof Aero) && ((Aero) entity).isSpheroid() && game.getBoard()
                             .inAtmosphere())) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
 
             // determine secondary facing for non-mechs & flipped arms
             int secFacing = entity.getFacing();
-            if (!(entity instanceof Mech || entity instanceof Protomech)) {
+            if (!((entity instanceof Mech) || (entity instanceof Protomech))) {
                 secFacing = entity.getSecondaryFacing();
             } else if (entity.getArmsFlipped()) {
                 secFacing = (entity.getFacing() + 3) % 6;
             }
             // draw red secondary facing arrow if necessary
-            if (secFacing != -1 && secFacing != entity.getFacing()) {
+            if ((secFacing != -1) && (secFacing != entity.getFacing())) {
                 graph.setColor(Color.red);
                 graph.drawPolygon(facingPolys[secFacing]);
             }
@@ -2573,9 +2569,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             }
 
             if (game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
-                    && (e.getOwner().getId() == getLocalPlayer().getId() || (game.getOptions()
+                    && ((e.getOwner().getId() == getLocalPlayer().getId()) || (game.getOptions()
                             .booleanOption("team_vision") //$NON-NLS-1$
-                    && e.getOwner().getTeam() == getLocalPlayer().getTeam()))) {
+                    && (e.getOwner().getTeam() == getLocalPlayer().getTeam())))) {
                 return true;
             }
             return false;
@@ -3036,8 +3032,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             StringBuffer velStringBuf = new StringBuffer();
 
             if (!game.useVectorMove()
-                    && (step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST || step
-                            .getMovementType() == IEntityMovementType.MOVE_OVER_THRUST)) {
+                    && ((step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST) || (step
+                            .getMovementType() == IEntityMovementType.MOVE_OVER_THRUST))) {
                 velStringBuf.append("(").append(step.getVelocityLeft()).append("/").append(
                         step.getVelocity()).append(")");
             }
@@ -3068,7 +3064,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             costStringBuf.append(step.getMpUsed());
 
             // If the step is using a road bonus, mark it.
-            if (step.isOnlyPavement() && step.getParent().getEntity() instanceof Tank) {
+            if (step.isOnlyPavement() && (step.getParent().getEntity() instanceof Tank)) {
                 costStringBuf.append("+"); //$NON-NLS-1$
             }
 
@@ -3089,11 +3085,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 costStringBuf.append("+]"); //$NON-NLS-1$
             }
 
-            if (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK
-                    || step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN
-                    || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_WALK
-                    || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN
-                    || step.getElevation() != 0) {
+            if ((step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
+                    || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)
+                    || (step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_WALK)
+                    || (step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN)
+                    || (step.getElevation() != 0)) {
                 costStringBuf.append("{").append(step.getElevation()).append("}");
             }
 
@@ -3136,7 +3132,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             masterId = m.getId();
             spriteColor = PlayerColors.getColor(e.getOwner().getColorIndex());
 
-            if (e.getPosition() == null || m.getPosition() == null) {
+            if ((e.getPosition() == null) || (m.getPosition() == null)) {
                 c3Poly = new Polygon();
                 c3Poly.addPoint(0, 0);
                 c3Poly.addPoint(1, 0);
@@ -3384,7 +3380,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
          */
         private boolean isMutualAttack() {
             for (AttackSprite sprite : attackSprites) {
-                if (sprite.getEntityId() == targetId && sprite.getTargetId() == entityId) {
+                if ((sprite.getEntityId() == targetId) && (sprite.getTargetId() == entityId)) {
                     sprite.rebuildToHalvedPolygon();
                     return true;
                 }
@@ -3796,7 +3792,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      *            the Coords.
      */
     public void select(Coords coords) {
-        if (coords == null || game.getBoard().contains(coords)) {
+        if ((coords == null) || game.getBoard().contains(coords)) {
             setSelected(coords);
             moveCursor(selectedSprite, coords);
             moveCursor(firstLOSSprite, null);
@@ -3825,7 +3821,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      *            the Coords.
      */
     public void highlight(Coords coords) {
-        if (coords == null || game.getBoard().contains(coords)) {
+        if ((coords == null) || game.getBoard().contains(coords)) {
             setHighlighted(coords);
             moveCursor(highlightSprite, coords);
             moveCursor(firstLOSSprite, null);
@@ -3854,8 +3850,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      *            the Coords.
      */
     public void cursor(Coords coords) {
-        if (coords == null || game.getBoard().contains(coords)) {
-            if (getLastCursor() == null || coords == null || !coords.equals(getLastCursor())) {
+        if ((coords == null) || game.getBoard().contains(coords)) {
+            if ((getLastCursor() == null) || (coords == null) || !coords.equals(getLastCursor())) {
                 setLastCursor(coords);
                 moveCursor(cursorSprite, coords);
                 moveCursor(firstLOSSprite, null);
@@ -3881,7 +3877,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     }
 
     public void checkLOS(Coords c) {
-        if (c == null || game.getBoard().contains(c)) {
+        if ((c == null) || game.getBoard().contains(c)) {
             if (getFirstLOS() == null) {
                 setFirstLOS(c);
                 firstLOSHex(c);
@@ -3990,7 +3986,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
             }
-            if (mp != null && mp.size() > 0 && GUIPreferences.getInstance().getShowMoveStep()) {
+            if ((mp != null) && (mp.size() > 0) && GUIPreferences.getInstance().getShowMoveStep()) {
                 addMovingUnit(e.getEntity(), mp);
             } else {
                 redrawEntity(e.getEntity());
@@ -4134,15 +4130,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             int range = ent.getECMRange();
             boolean deployed = ent.isDeployed();
             boolean offboard = ent.isOffBoard();
-            if(entPos == null && ent.getTransportId() != Entity.NONE) {
+            if((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
                 Entity carrier = game.getEntity(ent.getTransportId());
-                if(null != carrier && carrier.loadedUnitsHaveActiveECM()) {
+                if((null != carrier) && carrier.loadedUnitsHaveActiveECM()) {
                     entPos = carrier.getPosition();
                     deployed = carrier.isDeployed();
                     offboard = carrier.isOffBoard();
                 }
             }
-            if (entPos == null || !deployed || offboard) {
+            if ((entPos == null) || !deployed || offboard) {
                 continue;
             }
             if (range != Entity.NONE) {
@@ -4170,7 +4166,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 for (int y = -b.range; y <= b.range; y++) {
                     Coords c = new Coords(x + b.x, y + b.y);
                     // clip rectangle to hexagon
-                    if (b.distance(c) <= b.range && (b.direction == -1 || Compute.isInArc(b, b.direction, c, Compute.ARC_NOSE))) {
+                    if ((b.distance(c) <= b.range) && ((b.direction == -1) || Compute.isInArc(b, b.direction, c, Compute.ARC_NOSE))) {
                         Integer tint = table.get(c);
                         if (tint == null) {
                             table.put(c, col);
@@ -4489,7 +4485,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         }
 
         // check artillery fire adjustment
-        if (curWeapon != null && selectedEntity != null) {
+        if ((curWeapon != null) && (selectedEntity != null)) {
             // process targetted hexes
             int amod = 0;
             // Check the predesignated hexes

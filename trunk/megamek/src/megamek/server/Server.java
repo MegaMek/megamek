@@ -5510,21 +5510,13 @@ public class Server implements Runnable {
 
                     // If we're moving within the same building, just handle
                     // the "within".
-                    else if (bldgExited.equals(bldgEntered)) {
+                    else if (bldgExited.equals(bldgEntered) && !(entity instanceof Protomech) && !(entity instanceof Infantry)) {
                         collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, "moving in", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), true);
                         addAffectedBldg(bldgEntered, collapsed);
                     }
 
                     // If we have different buildings, roll for each.
                     else if (bldgEntered != null) {
-                        if (entity instanceof Protomech) {
-                            // protos entering a building cause 1 damage
-                            Vector<Report> vBuildingReport = damageBuilding(bldgEntered, 1, curPos);
-                            for (Report report : vBuildingReport) {
-                                report.subject = entity.getId();
-                            }
-                            addReport(vBuildingReport);
-                        }
                         collapsed = passBuildingWall(entity, bldgExited, lastPos, curPos, distance, "exiting", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), false);
                         addAffectedBldg(bldgExited, collapsed);
                         collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, "entering", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), true);
@@ -5532,7 +5524,7 @@ public class Server implements Runnable {
                     }
 
                     // Otherwise, just handle the "exited".
-                    else {
+                    else if (!(entity instanceof Protomech) && !(entity instanceof Infantry)) {
                         collapsed = passBuildingWall(entity, bldgExited, lastPos, curPos, distance, "exiting", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), false);
                         addAffectedBldg(bldgExited, collapsed);
                     }
@@ -14367,7 +14359,7 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
         int te_n = te.getId();
-        
+
         //if this is a fighter squadron then pick an active fighter and pass on the damage
         if(te instanceof FighterSquadron) {
             FighterSquadron fs = (FighterSquadron)te;
@@ -14516,7 +14508,7 @@ public class Server implements Runnable {
         }
 
         // Is the infantry in the open?
-        if (isPlatoon && !te.isDestroyed() 
+        if (isPlatoon && !te.isDestroyed()
                 && !te.isDoomed() && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)
                 && !te.crew.getOptions().booleanOption("dermal_armor")) {
             te_hex = game.getBoard().getHex(te.getPosition());
@@ -14619,7 +14611,7 @@ public class Server implements Runnable {
             // We can ignore this.
             break;
         }
-        
+
         //check for infantry armor
     /*
         if(isPlatoon) {
@@ -14632,7 +14624,7 @@ public class Server implements Runnable {
             vDesc.addElement(r);
         }
 */
-        
+
         // adjust VTOL rotor damage
         if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)) {
             damage = (damage + 9) / 10;
@@ -16672,7 +16664,7 @@ public class Server implements Runnable {
                     vDesc.add(r);
                     vDesc.addAll(damageCrew(en, 1));
                 } else {
-                    if (en.crew.getOptions().booleanOption("pain_shunt") 
+                    if (en.crew.getOptions().booleanOption("pain_shunt")
                             || en.crew.getOptions().booleanOption("dermal_armor")) {
                         r = new Report(6186);
                         r.subject = t.getId();
@@ -21385,46 +21377,61 @@ public class Server implements Runnable {
 
         Report r;
 
-        // Need to roll based on building type.
-        PilotingRollData psr = entity.rollMovementInBuilding(bldg, distance, why, overallMoveType);
-
-        // Did the entity make the roll?
-        if (0 < doSkillCheckWhileMoving(entity, lastPos, curPos, psr, false)) {
-
-            // Divide the building's current CF by 10, round up.
-            int damage = (int) Math.ceil(bldg.getCurrentCF(entering?curPos:lastPos) / 10.0);
-
-            // It is possible that the unit takes no damage.
-            if (damage == 0) {
-                r = new Report(6440);
-                r.add(entity.getDisplayName());
-                r.subject = entity.getId();
-                r.indent(2);
-                addReport(r);
-            } else {
-                // TW, pg. 268: if unit moves forward, damage from front,
-                // if backwards, damage from rear.
-                int side = ToHitData.SIDE_FRONT;
-                if (backwards) {
-                    side = ToHitData.SIDE_REAR;
-                }
-                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, side);
-                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-                addReport(damageEntity(entity, hit, damage));
+        if (entity instanceof Protomech) {
+            Vector<Report> vBuildingReport = damageBuilding(bldg, 1, curPos);
+            for (Report report : vBuildingReport) {
+                report.subject = entity.getId();
             }
+            addReport(vBuildingReport);
+        } else {
+            // Need to roll based on building type.
+            PilotingRollData psr = entity.rollMovementInBuilding(bldg, distance, why, overallMoveType);
+
+            // Did the entity make the roll?
+            if (0 < doSkillCheckWhileMoving(entity, lastPos, curPos, psr, false)) {
+
+                // Divide the building's current CF by 10, round up.
+                int damage = (int) Math.ceil(bldg.getCurrentCF(entering ? curPos : lastPos) / 10.0);
+
+                // Infantry and Battle armor take different amounts of damage then Meks and vehicles.
+                if (entity instanceof Infantry) {
+                    damage = bldg.getType() + 1;
+                }
+                // It is possible that the unit takes no damage.
+                if (damage == 0) {
+                    r = new Report(6440);
+                    r.add(entity.getDisplayName());
+                    r.subject = entity.getId();
+                    r.indent(2);
+                    addReport(r);
+                } else {
+                    // TW, pg. 268: if unit moves forward, damage from front,
+                    // if backwards, damage from rear.
+                    int side = ToHitData.SIDE_FRONT;
+                    if (backwards) {
+                        side = ToHitData.SIDE_REAR;
+                    }
+                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, side);
+                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    addReport(damageEntity(entity, hit, damage));
+                }
+            }
+
+            // Infantry and BA are damaged by buildings but do not damage them
+            if (entity instanceof Infantry) {
+                return false;
+            }
+            // Damage the building. The CF can never drop below 0.
+            int toBldg = (int) Math.ceil(entity.getWeight() / 10.0);
+            int curCF = bldg.getCurrentCF(entering ? curPos : lastPos);
+            curCF -= Math.min(curCF, toBldg);
+            bldg.setCurrentCF(curCF, entering ? curPos : lastPos);
+
+            // Apply the correct amount of damage to infantry in the building.
+            // ASSUMPTION: We inflict toBldg damage to infantry and
+            // not the amount to bring building to 0 CF.
+            damageInfantryIn(bldg, toBldg, entering ? curPos : lastPos);
         }
-
-        // Damage the building. The CF can never drop below 0.
-        int toBldg = (int) Math.ceil(entity.getWeight() / 10.0);
-        int curCF = bldg.getCurrentCF(entering?curPos:lastPos);
-        curCF -= Math.min(curCF, toBldg);
-        bldg.setCurrentCF(curCF, entering?curPos:lastPos);
-
-        // Apply the correct amount of damage to infantry in the building.
-        // ASSUMPTION: We inflict toBldg damage to infantry and
-        // not the amount to bring building to 0 CF.
-        damageInfantryIn(bldg, toBldg, entering?curPos:lastPos);
-
         return checkBuildingCollapseWhileMoving(bldg, entity, entering?curPos:lastPos);
     }
 
@@ -22039,6 +22046,8 @@ public class Server implements Runnable {
                     r.messageId = 3440;
                 }
             }
+
+            vPhaseReport.add(r);
         }
         Report.indentAll(vPhaseReport, 2);
         return vPhaseReport;

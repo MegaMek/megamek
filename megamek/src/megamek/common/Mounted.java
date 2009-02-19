@@ -1041,10 +1041,12 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void setArmored(boolean armored) {
         // Ammobins cannot be armored.
-        if (!(getType() instanceof AmmoType)) {
-            armoredComponent = armored;
-        } else {
+        if (getType() instanceof AmmoType) {
             armoredComponent = false;
+        } else if (getType() instanceof MiscType && (getType().hasFlag(MiscType.F_HARJEL) || getType().hasFlag(MiscType.F_SPIKES) || getType().hasFlag(MiscType.F_REACTIVE) || getType().hasFlag(MiscType.F_MODULAR_ARMOR) || ((MiscType) getType()).isShield())) {
+                armoredComponent = false;
+        } else {
+            armoredComponent = armored;
         }
     }
 

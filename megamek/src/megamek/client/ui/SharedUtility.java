@@ -29,6 +29,7 @@ import megamek.common.Mech;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
+import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Terrains;
@@ -217,7 +218,7 @@ public class SharedUtility {
 
             // Handle non-infantry moving into a building.
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
-            if (buildingMove > 0) {
+            if (buildingMove > 0 && !(entity instanceof Protomech)) {
 
                 // Get the building being exited.
                 Building bldgExited = null;

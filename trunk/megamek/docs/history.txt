@@ -32,6 +32,7 @@ v0.33.41-dev (SVN)
 + Added missing internal name for PPC capacitors
 + initalized Source as empty string
 + Bug: escape does not always clear movement plot in MovementDisplay
++ Bug: Direct-fire artillery is +4 to-hit, not +5 (TacOps, pg. 185)
 
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs

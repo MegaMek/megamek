@@ -3174,14 +3174,14 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             }
         }
         //check for Manei Domini implants
-        if(((this.crew.getOptions().booleanOption("cyber_eye_im") || this.crew.getOptions().booleanOption("mm_eye_im")) 
+        if(((crew.getOptions().booleanOption("cyber_eye_im") || crew.getOptions().booleanOption("mm_eye_im"))
                 && this instanceof Infantry && !(this instanceof BattleArmor))
-                || (this.crew.getOptions().booleanOption("mm_eye_im") 
-                        && (this.crew.getOptions().booleanOption("vdni") 
-                                || this.crew.getOptions().booleanOption("bvdni")))) {
+                || (crew.getOptions().booleanOption("mm_eye_im")
+                        && (crew.getOptions().booleanOption("vdni")
+                                || crew.getOptions().booleanOption("bvdni")))) {
             return !checkECM || !Compute.isAffectedByECM(this, getPosition(), getPosition());
         }
-        
+
         return false;
     }
 
@@ -3197,14 +3197,14 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         }
         //check for Manei Domini implants
         int cyberBonus = 0;
-        if(((this.crew.getOptions().booleanOption("cyber_eye_im") || this.crew.getOptions().booleanOption("mm_eye_im")) 
+        if(((crew.getOptions().booleanOption("cyber_eye_im") || crew.getOptions().booleanOption("mm_eye_im"))
                 && this instanceof Infantry && !(this instanceof BattleArmor))
-                || (this.crew.getOptions().booleanOption("mm_eye_im") 
-                        && (this.crew.getOptions().booleanOption("vdni") 
-                                || this.crew.getOptions().booleanOption("bvdni")))) {
+                || (crew.getOptions().booleanOption("mm_eye_im")
+                        && (crew.getOptions().booleanOption("vdni")
+                                || crew.getOptions().booleanOption("bvdni")))) {
             cyberBonus = 1;
         }
-        
+
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP) && !m.isInoperable()) {
@@ -3237,7 +3237,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         if(cyberBonus > 0) {
             return 2;
         }
-        
+
         return Entity.NONE;
     }
 
@@ -3391,8 +3391,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             }
         }
         //check for Manei Domini implants
-        if(this instanceof Infantry && this.crew.getOptions().booleanOption("mm_eye_im") 
-                && this.crew.getOptions().booleanOption("boost_comm_implant")) {
+        if(this instanceof Infantry && crew.getOptions().booleanOption("mm_eye_im")
+                && crew.getOptions().booleanOption("boost_comm_implant")) {
             return true;
         }
         return false;
@@ -4665,7 +4665,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         IHex curHex = game.getBoard().getHex(curPos);
         IHex prevHex = game.getBoard().getHex(prevPos);
         // ineligable because of movement type or unit type
-        if ((this instanceof Infantry) || (this instanceof Protomech)) {
+        if (this instanceof Infantry && step.getMovementType() != IEntityMovementType.MOVE_JUMP) {
+            return 0;
+        }
+
+        if (this instanceof Protomech && prevStep.getMovementType() == IEntityMovementType.MOVE_JUMP) {
             return 0;
         }
 
@@ -4696,6 +4700,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             }
         }
 
+        if (this instanceof Infantry || this instanceof Protomech) {
+            if (rv != 2) {
+                rv = 0;
+            }
+        }
         return rv;
     }
 
@@ -7859,21 +7868,21 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 }
             }
         }
-        
+
         return bonus;
     }
-    
+
     /**
      * @return the initiative bonus this Entity grants for MD implants
      */
     public int getMDIniBonus() {
-        if(this.crew.getOptions().booleanOption("comm_implant") 
-                || this.crew.getOptions().booleanOption("boost_comm_implant")) {
+        if(crew.getOptions().booleanOption("comm_implant")
+                || crew.getOptions().booleanOption("boost_comm_implant")) {
             return 1;
         }
         return 0;
     }
-    
+
     /**
      * Apply any pending Santa Anna allocations to Killer Whale ammo bins
      * effectively "splitting" the ammo bins in two

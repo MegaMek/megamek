@@ -37,6 +37,7 @@ v0.33.41-dev (SVN)
 + Bug 2414528: BA jumping into a building should need PSR to avoid damage
 + Updated Armored Crits code
 + Updated Artillery BV values to BV 2.0
++ BV halving for rear mounted weapons not working correctly
 
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs

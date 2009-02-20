@@ -2902,7 +2902,7 @@ public abstract class Mech extends Entity implements Serializable {
         boolean hasTargComp = hasTargComp();
         // first, add up front-faced and rear-faced unmodified BV,
         // to know wether front- or rear faced BV should be halved
-        double bvFront = 0, bvRear = 0;
+        double bvFront = 0, bvRear = 0, nonArmFront = 0, nonArmRear = 0;
         ArrayList<Mounted> weapons = getWeaponList();
         for (Mounted weapon : weapons) {
             WeaponType wtype = (WeaponType) weapon.getType();
@@ -2941,6 +2941,13 @@ public abstract class Mech extends Entity implements Serializable {
                 bvText.append(" (R)");
             } else {
                 bvFront += dBV;
+            }
+            if (!isArm(weapon.getLocation())) {
+                if (weapon.isRearMounted()) {
+                    nonArmRear += dBV;
+                } else {
+                    nonArmFront += dBV;
+                }
             }
 
             bvText.append(endColumn);
@@ -3002,9 +3009,38 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append(endColumn);
         bvText.append(endRow);
 
+        bvText.append("Unmodified Front non-arm BV:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(nonArmFront);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Unmodfied Rear non-arm BV:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(nonArmRear);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
         boolean halveRear = true;
-        if (bvFront <= bvRear) {
+        if (nonArmFront <= nonArmRear) {
             halveRear = false;
+            bvText.append(startRow);
+            bvText.append(startColumn);
+
+            bvText.append("halving front instead of rear weapon BVs");
+            bvText.append(endColumn);
+            bvText.append(endRow);
         }
 
         bvText.append(startRow);
@@ -3120,7 +3156,7 @@ public abstract class Mech extends Entity implements Serializable {
             }
             // half for being rear mounted (or front mounted, when more rear-
             // than front-mounted un-modded BV
-            if ((mounted.isRearMounted() && halveRear) || (!mounted.isRearMounted() && !halveRear)) {
+            if (!isArm(mounted.getLocation()) && ((mounted.isRearMounted() && halveRear) || (!mounted.isRearMounted() && !halveRear))) {
                 dBV /= 2;
             }
 
@@ -5519,5 +5555,14 @@ public abstract class Mech extends Entity implements Serializable {
             return "";
         }
         return source;
+    }
+
+    /**
+     * Is the passed in location an arm?
+     * @param loc
+     * @return
+     */
+    public boolean isArm(int loc) {
+        return (loc == Mech.LOC_LARM) || (loc == Mech.LOC_RARM);
     }
 }

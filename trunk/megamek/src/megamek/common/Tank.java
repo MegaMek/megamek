@@ -726,6 +726,9 @@ public class Tank extends Entity implements Serializable {
             if (wtype.hasFlag(WeaponType.F_AMS)) {
                 continue;
             }
+            if (wtype.hasFlag(WeaponType.F_B_POD)) {
+                continue;
+            }
 
             // artemis bumps up the value
             if (mounted.getLinkedBy() != null) {
@@ -1715,7 +1718,7 @@ public class Tank extends Entity implements Serializable {
     public boolean hasArmoredEngine() {
         for (int slot = 0; slot < getNumberOfCriticals(LOC_BODY); slot++) {
             CriticalSlot cs = getCritical(LOC_BODY, slot);
-            if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == Mech.SYSTEM_ENGINE) {
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mech.SYSTEM_ENGINE)) {
                 return cs.isArmored();
             }
         }

@@ -38,6 +38,7 @@ v0.33.41-dev (SVN)
 + Updated Armored Crits code
 + Updated Artillery BV values to BV 2.0
 + BV halving for rear mounted weapons not working correctly
++ Bug: B-Pods have wrong BV and count for explosiveness 
 
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs

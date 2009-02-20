@@ -2602,6 +2602,11 @@ public abstract class Mech extends Entity implements Serializable {
                 toSubtract = 0;
             }
 
+            // B-Pods shouldn't subtract
+            if ((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_B_POD))) {
+                toSubtract = 0;
+            }
+
             // coolant pods subtract 1 each
             if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_COOLANT_POD)) {
                 toSubtract = 1;
@@ -2906,6 +2911,9 @@ public abstract class Mech extends Entity implements Serializable {
         ArrayList<Mounted> weapons = getWeaponList();
         for (Mounted weapon : weapons) {
             WeaponType wtype = (WeaponType) weapon.getType();
+            if (wtype.hasFlag(WeaponType.F_B_POD)) {
+                continue;
+            }
             double dBV = wtype.getBV(this, weapon.isArmored());
 
             // don't count destroyed equipment
@@ -3064,6 +3072,9 @@ public abstract class Mech extends Entity implements Serializable {
         double maximumHeat = 0;
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
+            if (wtype.hasFlag(WeaponType.F_B_POD)) {
+                continue;
+            }
             double weaponHeat = wtype.getHeat();
 
             // only count non-damaged equipment

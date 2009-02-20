@@ -89,7 +89,7 @@ public class QuadMech extends Mech {
                 if (!isLocationBad(i)) {
                     if (legHasHipCrit(i)) {
                         hipHits++;
-                        if (game == null || !game.getOptions().booleanOption("tacops_leg_damage")) {
+                        if ((game == null) || !game.getOptions().booleanOption("tacops_leg_damage")) {
                             continue;
                         }
                     }
@@ -111,7 +111,7 @@ public class QuadMech extends Mech {
         }
         if (wmp > 0) {
             if (hipHits > 0) {
-                if (game != null && game.getOptions().booleanOption("tacops_leg_damage")) {
+                if ((game != null) && game.getOptions().booleanOption("tacops_leg_damage")) {
                     wmp = wmp - (2 * hipHits);
                 } else {
                     for (int i = 0; i < hipHits; i++) {
@@ -128,7 +128,7 @@ public class QuadMech extends Mech {
 
         if (!ignoreheat) {
             // factor in heat
-            if (game != null && game.getOptions().booleanOption("tacops_heat")) {
+            if ((game != null) && game.getOptions().booleanOption("tacops_heat")) {
                 if (heat < 30) {
                     wmp -= (heat / 5);
                 } else if (heat >= 49) {
@@ -146,7 +146,7 @@ public class QuadMech extends Mech {
                 wmp -= (heat / 5);
             }
             // TSM negates some heat
-            if (heat >= 9 && hasTSM()) {
+            if ((heat >= 9) && hasTSM()) {
                 wmp += 2;
             }
         }
@@ -209,7 +209,7 @@ public class QuadMech extends Mech {
         final Mounted mounted = getEquipment(wn);
 
         // B-Pods need to be special-cased, the have 360 firing arc
-        if (mounted.getType() instanceof WeaponType &&
+        if ((mounted.getType() instanceof WeaponType) &&
                 mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
@@ -301,7 +301,7 @@ public class QuadMech extends Mech {
                 // destroyed, so add the +5 only once
                 // 3 or more destroyed legs are being taken care in
                 // getBasePiloting
-                if (destroyedLegs == 2 && !destroyedLegCounted) {
+                if ((destroyedLegs == 2) && !destroyedLegCounted) {
                     roll.addModifier(5, "2 legs destroyed");
                     destroyedLegCounted = true;
                 }
@@ -390,7 +390,7 @@ public class QuadMech extends Mech {
         }
 
         if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
-            if (table == ToHitData.HIT_NORMAL || table == ToHitData.HIT_PARTIAL_COVER) {
+            if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
                 roll = Compute.d6(2);
                 try {
                     PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
@@ -624,7 +624,7 @@ public class QuadMech extends Mech {
                 }
                 return new HitData(Mech.LOC_RLEG);
             }
-        } else if (table == ToHitData.HIT_SWARM || table == ToHitData.HIT_SWARM_CONVENTIONAL) {
+        } else if ((table == ToHitData.HIT_SWARM) || (table == ToHitData.HIT_SWARM_CONVENTIONAL)) {
             int effects;
             if (table == ToHitData.HIT_SWARM_CONVENTIONAL) {
                 effects = HitData.EFFECT_NONE;
@@ -688,35 +688,35 @@ public class QuadMech extends Mech {
     @Override
     public boolean removePartialCoverHits(int location, int cover, int side) {
         // treat front legs like legs not arms.
-        if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER) && (location == Mech.LOC_CT || location == Mech.LOC_HEAD)) {
+        if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER) && ((location == Mech.LOC_CT) || (location == Mech.LOC_HEAD))) {
             return true;
         }
         // left and right cover are from attacker's POV.
         // if hitting front arc, need to swap them
         if (side == ToHitData.SIDE_FRONT) {
-            if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && (location == Mech.LOC_LARM || location == Mech.LOC_LLEG)) {
+            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) && ((location == Mech.LOC_LARM) || (location == Mech.LOC_LLEG))) {
                 return true;
             }
-            if ((cover & LosEffects.COVER_LOWLEFT) != 0 && (location == Mech.LOC_RARM || location == Mech.LOC_RLEG)) {
+            if (((cover & LosEffects.COVER_LOWLEFT) != 0) && ((location == Mech.LOC_RARM) || (location == Mech.LOC_RLEG))) {
                 return true;
             }
-            if ((cover & LosEffects.COVER_RIGHT) != 0 && location == Mech.LOC_LT) {
+            if (((cover & LosEffects.COVER_RIGHT) != 0) && (location == Mech.LOC_LT)) {
                 return true;
             }
-            if ((cover & LosEffects.COVER_LEFT) != 0 && location == Mech.LOC_RT) {
+            if (((cover & LosEffects.COVER_LEFT) != 0) && (location == Mech.LOC_RT)) {
                 return true;
             }
         } else {
-            if ((cover & LosEffects.COVER_LOWLEFT) != 0 && (location == Mech.LOC_LARM || location == Mech.LOC_LLEG)) {
+            if (((cover & LosEffects.COVER_LOWLEFT) != 0) && ((location == Mech.LOC_LARM) || (location == Mech.LOC_LLEG))) {
                 return true;
             }
-            if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && (location == Mech.LOC_RARM || location == Mech.LOC_RLEG)) {
+            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) && ((location == Mech.LOC_RARM) || (location == Mech.LOC_RLEG))) {
                 return true;
             }
-            if ((cover & LosEffects.COVER_LEFT) != 0 && location == Mech.LOC_LT) {
+            if (((cover & LosEffects.COVER_LEFT) != 0) && (location == Mech.LOC_LT)) {
                 return true;
             }
-            if ((cover & LosEffects.COVER_RIGHT) != 0 && location == Mech.LOC_RT) {
+            if (((cover & LosEffects.COVER_RIGHT) != 0) && (location == Mech.LOC_RT)) {
                 return true;
             }
         }
@@ -734,7 +734,7 @@ public class QuadMech extends Mech {
         boolean rearLeftLeg = false;
 
         for (Mounted mounted : getMisc()) {
-            if (mounted.getLocation() == Mech.LOC_LLEG || mounted.getLocation() == Mech.LOC_RLEG || mounted.getLocation() == Mech.LOC_LARM || mounted.getLocation() == Mech.LOC_RARM) {
+            if ((mounted.getLocation() == Mech.LOC_LLEG) || (mounted.getLocation() == Mech.LOC_RLEG) || (mounted.getLocation() == Mech.LOC_LARM) || (mounted.getLocation() == Mech.LOC_RARM)) {
                 if (((MiscType) mounted.getType()).hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) && !mounted.isDestroyed() && !mounted.isBreached() && !mounted.isMissing()) {
                     if (mounted.getLocation() == Mech.LOC_LLEG) {
                         rearLeftLeg = true;
@@ -770,6 +770,17 @@ public class QuadMech extends Mech {
 
             return badLocs < 2;
         }
+        return false;
+    }
+
+    /**
+     * Is the passed in location an arm?
+     * @param loc
+     * @return
+     */
+    @Override
+    public boolean isArm(int loc) {
+        // quads don't have arms
         return false;
     }
 }

@@ -36,6 +36,7 @@ v0.33.41-dev (SVN)
 + Bug: ProtoMechs not causing 1 CF damage to buildings when entering.
 + Bug 2414528: BA jumping into a building should need PSR to avoid damage
 + Updated Armored Crits code
++ Updated Artillery BV values to BV 2.0
 
 v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Reorganized game options so that unofficial options are integrated into the appropriate tabs

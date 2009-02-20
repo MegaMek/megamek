@@ -1666,7 +1666,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 25;
         ammo.ammoType = AmmoType.T_LONG_TOM;
         ammo.shots = 5;
-        ammo.bv = 11;
+        ammo.bv = 46;
         ammo.cost = 10000;
 
         return ammo;
@@ -1687,7 +1687,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_SNIPER;
         ammo.shots = 10;
-        ammo.bv = 5;
+        ammo.bv = 11;
         ammo.cost = 6000;
 
         return ammo;
@@ -1708,7 +1708,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_THUMPER;
         ammo.shots = 20;
-        ammo.bv = 3;
+        ammo.bv = 5;
         ammo.cost = 4500;
 
         return ammo;
@@ -5087,7 +5087,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_ARROW_IV;
         ammo.shots = 5;
-        ammo.bv = 11;
+        ammo.bv = 30;
         ammo.cost = 10000;
 
         return ammo;
@@ -5107,7 +5107,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_ARROW_IV;
         ammo.shots = 5;
-        ammo.bv = 11;
+        ammo.bv = 21;
         ammo.cost = 10000;
 
         return ammo;
@@ -5128,7 +5128,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 25;
         ammo.ammoType = AmmoType.T_LONG_TOM;
         ammo.shots = 5;
-        ammo.bv = 11;
+        ammo.bv = 70;
         ammo.cost = 10000;
 
         return ammo;
@@ -5149,7 +5149,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_SNIPER;
         ammo.shots = 10;
-        ammo.bv = 5;
+        ammo.bv = 12;
         ammo.cost = 6000;
 
         return ammo;
@@ -5170,7 +5170,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_THUMPER;
         ammo.shots = 20;
-        ammo.bv = 3;
+        ammo.bv = 6;
         ammo.cost = 4500;
 
         return ammo;

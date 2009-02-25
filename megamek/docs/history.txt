@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.41-dev (SVN)
+v0.33.41 (2009-02-25, UTC+1)
 + Bug: prevent NPE when c3/c3i team mate is not yet deployed
 + Minor fix in BV calculations
 + Bug 2499328: german AMS report string needs to be updated

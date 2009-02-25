@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -31,12 +31,15 @@ public class BLKFile {
     public static final int XXL = 3; // don't ask
     public static final int LIGHT = 4; // don't ask
     public static final int COMPACT = 5; // don't ask
+    public static final int FUELCELL = 6;
+    public static final int FISSION = 7;
 
     protected void loadEquipment(Entity t, String sName, int nLoc)
             throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
-        if (saEquip == null)
+        if (saEquip == null) {
             return;
+        }
 
         // prefix is "Clan " or "IS "
         String prefix;
@@ -71,36 +74,46 @@ public class BLKFile {
 
     public boolean isMine() {
 
-        if (dataFile.exists("blockversion"))
+        if (dataFile.exists("blockversion")) {
             return true;
+        }
 
         return false;
 
     }
 
     static int translateEngineCode(int code) {
-        if (code == BLKFile.FUSION)
+        if (code == BLKFile.FUSION) {
             return Engine.NORMAL_ENGINE;
-        else if (code == BLKFile.ICE)
+        } else if (code == BLKFile.ICE) {
             return Engine.COMBUSTION_ENGINE;
-        else if (code == BLKFile.XL)
+        } else if (code == BLKFile.XL) {
             return Engine.XL_ENGINE;
-        else if (code == BLKFile.LIGHT)
+        } else if (code == BLKFile.LIGHT) {
             return Engine.LIGHT_ENGINE;
-        else if (code == BLKFile.XXL)
+        } else if (code == BLKFile.XXL) {
             return Engine.XXL_ENGINE;
-        else if (code == BLKFile.COMPACT)
+        } else if (code == BLKFile.COMPACT) {
             return Engine.COMPACT_ENGINE;
-        else
+        } else if (code == BLKFile.FUELCELL) {
+            return Engine.FUEL_CELL;
+        } else if (code == BLKFile.FISSION) {
+            return Engine.FISSION;
+        } else {
             return -1;
+        }
     }
-    
+
     public void setTechLevel(Entity e) throws EntityLoadingException {
-        if (!dataFile.exists("year")) throw new EntityLoadingException("Could not find year block.");
+        if (!dataFile.exists("year")) {
+            throw new EntityLoadingException("Could not find year block.");
+        }
         e.setYear(dataFile.getDataAsInt("year")[0]);
-            
-        if (!dataFile.exists("type")) throw new EntityLoadingException("Could not find type block.");
-            
+
+        if (!dataFile.exists("type")) {
+            throw new EntityLoadingException("Could not find type block.");
+        }
+
         if (dataFile.getDataAsString("type")[0].equals("IS")) {
             if (e.getYear() == 3025) {
                 e.setTechLevel(TechConstants.T_INTRO_BOXSET);

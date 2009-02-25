@@ -21,7 +21,7 @@
 /**
  *
  * @author  njrkrynn
- * @version 
+ * @version
  */
 package megamek.common.loaders;
 
@@ -50,11 +50,12 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
 
         Tank t = new Tank();
 
-        if (!dataFile.exists("Name"))
+        if (!dataFile.exists("Name")) {
             throw new EntityLoadingException("Could not find name block.");
+        }
         t.setChassis(dataFile.getDataAsString("Name")[0]);
         if (dataFile.exists("Model")
-                && dataFile.getDataAsString("Model")[0] != null) {
+                && (dataFile.getDataAsString("Model")[0] != null)) {
             t.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             t.setModel("");
@@ -62,12 +63,14 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
 
         setTechLevel(t);
 
-        if (!dataFile.exists("tonnage"))
+        if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
+        }
         t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
 
-        if (!dataFile.exists("motion_type"))
+        if (!dataFile.exists("motion_type")) {
             throw new EntityLoadingException("Could not find movement block.");
+        }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         int nMotion = -1;
         for (int x = 0; x < MOVES.length; x++) {
@@ -76,8 +79,9 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
                 break;
             }
         }
-        if (nMotion == -1)
+        if (nMotion == -1) {
             throw new EntityLoadingException("Invalid movment type: " + sMotion);
+        }
         t.setMovementMode(nMotion);
 
         if (dataFile.exists("transporters")) {
@@ -101,28 +105,34 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
         int engineFlags = Engine.TANK_ENGINE;
-        if (t.isClan())
+        if (t.isClan()) {
             engineFlags |= Engine.CLAN_ENGINE;
-        if (!dataFile.exists("cruiseMP"))
+        }
+        if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
+        }
         int engineRating = dataFile.getDataAsInt("cruiseMP")[0]
                 * (int) t.getWeight() - t.getSuspensionFactor();
         t.setEngine(new Engine(engineRating, BLKFile
                 .translateEngineCode(engineCode), engineFlags));
 
-        if (dataFile.exists("armor_type"))
+        if (dataFile.exists("armor_type")) {
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
-        if (dataFile.exists("armor_tech"))
+        }
+        if (dataFile.exists("armor_tech")) {
             t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        if (dataFile.exists("internal_type"))
+        }
+        if (dataFile.exists("internal_type")) {
             t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
+        }
 
-        if (!dataFile.exists("armor"))
+        if (!dataFile.exists("armor")) {
             throw new EntityLoadingException("Could not find armor block.");
+        }
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        if (armor.length < 4 || armor.length > 5) {
+        if ((armor.length < 4) || (armor.length > 5)) {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
@@ -156,20 +166,22 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
     public static void encode(String fileName, Tank t) {
         BuildingBlock blk = new BuildingBlock();
         blk.createNewBlock();
-        if (t instanceof VTOL)
+        if (t instanceof VTOL) {
             blk.writeBlockData("UnitType", "VTOL");
-        else
+        } else {
             blk.writeBlockData("UnitType", "Tank");
+        }
         blk.writeBlockData("blockversion", 1);
         blk.writeBlockData("Name", t.getChassis());
         blk.writeBlockData("Model", t.getModel());
         blk.writeBlockData("year", t.getYear());
         String type;
         if (t.isMixedTech()) {
-            if (!t.isClan())
+            if (!t.isClan()) {
                 type = "Mixed (IS Chassis)";
-            else
+            } else {
                 type = "Mixed (Clan Chassis)";
+            }
         } else {
             switch (t.getTechLevel()) {
                 case TechConstants.T_INTRO_BOXSET:
@@ -193,9 +205,10 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         blk.writeBlockData("type", type);
         blk.writeBlockData("tonnage", t.getWeight());
         blk.writeBlockData("motion_type", t.getMovementModeAsString());
-        if (t.getTroopCarryingSpace() > 0)
+        if (t.getTroopCarryingSpace() > 0) {
             blk.writeBlockData("transporters", "TroopSpace: "
                     + t.getTroopCarryingSpace());
+        }
         int engineCode = BLKFile.FUSION;
         switch (t.getEngine().getEngineType()) {
             case Engine.COMBUSTION_ENGINE:
@@ -210,6 +223,12 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
             case Engine.XXL_ENGINE:
                 engineCode = BLKFile.XXL;
                 break;
+            case Engine.FUEL_CELL:
+                engineCode = BLKFile.FUELCELL;
+                break;
+            case Engine.FISSION:
+                engineCode = BLKFile.FISSION;
+                break;
         }
         blk.writeBlockData("engine_type", engineCode);
         blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
@@ -217,10 +236,12 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
             blk.writeBlockData("armor_type", t.getArmorType());
             blk.writeBlockData("armor_tech", t.getArmorTechLevel());
         }
-        if (t.getStructureType() != 0)
+        if (t.getStructureType() != 0) {
             blk.writeBlockData("internal_type", t.getStructureType());
-        if (t.isOmni())
+        }
+        if (t.isOmni()) {
             blk.writeBlockData("omni", 1);
+        }
         int armor_array[];
         armor_array = new int[t.locations() - 1];
         for (int i = 1; i < t.locations(); i++) {
@@ -235,8 +256,9 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         for (Mounted m : t.getEquipment()) {
             String name = m.getType().getInternalName();
             int loc = m.getLocation();
-            if (loc != Entity.LOC_NONE)
+            if (loc != Entity.LOC_NONE) {
                 eq.get(loc).add(name);
+            }
         }
         for (int i = 0; i < t.locations(); i++) {
             blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));

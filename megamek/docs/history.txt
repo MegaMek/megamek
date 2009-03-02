@@ -3,6 +3,7 @@
 v0.33.42-dev (SVN)
 + Updated RSPPU mechfiles because of pending errata
     Thanks darkisi!
++ Bug 2653414: ClassCastException in Compute#getSwarmMekBaseToHit
 
 v0.33.41 (2009-02-25, UTC+1)
 + Bug: prevent NPE when c3/c3i team mate is not yet deployed

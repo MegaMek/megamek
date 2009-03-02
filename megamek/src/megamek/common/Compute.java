@@ -2326,7 +2326,7 @@ public class Compute {
         if((ae.getPosition() == null) || (target.getPosition() == null)) {
             return false;
         }
-        
+
         //check visual range based on planetary conditions
         int visualRange = game.getPlanetaryConditions().getVisualRange(ae, teSpotlight);
 
@@ -2352,21 +2352,21 @@ public class Compute {
         }
 
         visualRange = Math.max(visualRange, 1);
-        
+
         return ae.getPosition().distance(target.getPosition()) <= visualRange;
 
     }
-    
+
     /**
      * Checks to see whether the target is within sensor range (but not necessarily LoS or visual range)
      */
     public static boolean inSensorRange(IGame game, Entity ae, Targetable target) {
-        
+
         //if either does not have a position then return false
         if((ae.getPosition() == null) || (target.getPosition() == null)) {
             return false;
         }
-        
+
         int bracket = Compute.getSensorRangeBracket(ae, target);
         int range = Compute.getSensorRangeByBracket(game, ae, target);
 
@@ -2375,17 +2375,17 @@ public class Compute {
         if(game.getOptions().booleanOption("inclusive_sensor_range")) {
             minSensorRange = 0;
         }
-        
+
         int distance = ae.getPosition().distance(target.getPosition());
-        
-        return distance > minSensorRange && distance <= maxSensorRange;
+
+        return (distance > minSensorRange) && (distance <= maxSensorRange);
     }
-    
+
     /**
      * Slightly misnamed. Checks to see if the target is visible to the unit, either visually or through sensors
      */
     public static boolean canSee(IGame game, Entity ae, Targetable target) {
-        
+
         if(!ae.getCrew().isActive()) {
             return false;
         }
@@ -3492,7 +3492,7 @@ public class Compute {
         }
 
         ToHitData toReturn = new ToHitData(base, reason.toString());
-        if (((Mech)defender).isIndustrial()) {
+        if ((defender instanceof Mech) && ((Mech)defender).isIndustrial()) {
             toReturn.addModifier(-1, "targeting industrial mech");
         }
         // Return the ToHitData for this attack.

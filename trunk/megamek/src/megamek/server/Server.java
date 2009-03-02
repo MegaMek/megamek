@@ -984,8 +984,17 @@ public class Server implements Runnable {
                 gameListenersClone.add(listener);
             }
             getGame().purgeGameListeners();
+            // the passed in string might be an absolut name, including a path
+            // when the user uses the save game dialog.
+            // if so, save there
+            // we also need to replace any | with " ", so we can support saving
+            // in folders with spacse
+            sFinalFile = sFinalFile.replace("|", " ");
+            File dir = new File(sFinalFile);
+            if (dir.getParent() == null) {
+                sFinalFile = sDir + File.separator + sFinalFile;
+            }
 
-            sFinalFile = sDir + File.separator + sFinalFile;
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(sFinalFile));
 
             oos.writeObject(game);
@@ -18126,7 +18135,7 @@ public class Server implements Runnable {
                 } else if (en.locationIsLeg(loc)) {
 
                     CriticalSlot cs = en.getCritical(loc, 0);
-                    if (cs != null && cs.isArmored()) {
+                    if ((cs != null) && cs.isArmored()) {
                         r = new Report(6700);
                         r.subject = en.getId();
                         r.add(en.getLocationName(loc));
@@ -18155,7 +18164,7 @@ public class Server implements Runnable {
                     return vDesc;
                 } else if ((loc == Mech.LOC_RARM) || (loc == Mech.LOC_LARM)) {
                     CriticalSlot cs = en.getCritical(loc, 0);
-                    if (cs != null && cs.isArmored()) {
+                    if ((cs != null) && cs.isArmored()) {
                         r = new Report(6700);
                         r.subject = en.getId();
                         r.add(en.getLocationName(loc));
@@ -19167,7 +19176,7 @@ public class Server implements Runnable {
 
         // only mechs should roll to avoid pilot damage
         // vehicles may fall due to sideslips
-        if (entity instanceof Mech && !entity.crew.getOptions().booleanOption("dermal_armor")) {
+        if ((entity instanceof Mech) && !entity.crew.getOptions().booleanOption("dermal_armor")) {
             // we want to be able to avoid pilot damage even when it was
             // an automatic fall, only unconsciousness should cause auto-damage
             roll.removeAutos();

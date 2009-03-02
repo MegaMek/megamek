@@ -80,7 +80,7 @@ import megamek.common.util.StringUtil;
 
 public class ClientGUI extends Panel implements WindowListener, ActionListener, BoardViewListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8010157442415211490L;
     // Action commands.
@@ -211,8 +211,9 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * Try to load the "bing" sound clip.
      */
     public void loadSoundClip() {
-        if (GUIPreferences.getInstance().getSoundBingFilename() == null)
+        if (GUIPreferences.getInstance().getSoundBingFilename() == null) {
             return;
+        }
         try {
             File file = new File(GUIPreferences.getInstance()
                     .getSoundBingFilename());
@@ -229,18 +230,18 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
 
     /**
      * Display a system message in the chat box.
-     * 
+     *
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
-        this.cb.systemMessage(message);
+        cb.systemMessage(message);
     }
 
     /**
      * Initializes a number of things about this frame.
      */
     private void initializeFrame() {
-        this.frame = new Frame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
+        frame = new Frame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
         menuBar.setGame(client.game);
         frame.setMenuBar(menuBar);
         Rectangle virtualBounds = new Rectangle();
@@ -259,14 +260,18 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             int y = GUIPreferences.getInstance().getWindowPosY();
             int w = GUIPreferences.getInstance().getWindowSizeWidth();
             int h = GUIPreferences.getInstance().getWindowSizeHeight();
-            if (x < virtualBounds.getMinX() || x + w > virtualBounds.getMaxX())
+            if ((x < virtualBounds.getMinX()) || (x + w > virtualBounds.getMaxX())) {
                 x = 0;
-            if (y < virtualBounds.getMinY() || y + h > virtualBounds.getMaxY())
+            }
+            if ((y < virtualBounds.getMinY()) || (y + h > virtualBounds.getMaxY())) {
                 y = 0;
-            if (w > virtualBounds.getWidth())
+            }
+            if (w > virtualBounds.getWidth()) {
                 w = (int) virtualBounds.getWidth();
-            if (h > virtualBounds.getHeight())
+            }
+            if (h > virtualBounds.getHeight()) {
                 h = (int) virtualBounds.getHeight();
+            }
             frame.setLocation(x, y);
             frame.setSize(w, h);
         } else {
@@ -301,7 +306,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * is created.
      */
     public void initialize() {
-        menuBar = new CommonMenuBar(this.getClient());
+        menuBar = new CommonMenuBar(getClient());
         initializeFrame();
 
         try {
@@ -311,7 +316,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             bv = (IBoardView)c.getConstructor(IGame.class).newInstance(client.game);
             bvc = bv.getComponent();
             bv.addBoardViewListener(this);
- 
+
         } catch (Exception e) {
             e.printStackTrace();
             doAlertDialog(
@@ -325,6 +330,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         menuBar.addActionListener(this);
 
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 frame.setVisible(false);
                 saveSettings();
@@ -368,7 +374,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         // added by kenn
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
-        ruler = new Ruler(frame, this.client, bv);
+        ruler = new Ruler(frame, client, bv);
         x = GUIPreferences.getInstance().getRulerPosX();
         y = GUIPreferences.getInstance().getRulerPosY();
         h = GUIPreferences.getInstance().getRulerSizeHeight();
@@ -399,10 +405,10 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         }
         h = minimap.getSize().height;
         w = minimap.getSize().width;
-        if ((x + 10) >= screenSize.width || (x + w) < 10) {
+        if (((x + 10) >= screenSize.width) || ((x + w) < 10)) {
             x = screenSize.width - w;
         }
-        if ((y + 10) > screenSize.height || (y + h) < 10) {
+        if (((y + 10) > screenSize.height) || ((y + h) < 10)) {
             y = screenSize.height - h;
         }
         minimapW.setLocation(x, y);
@@ -424,11 +430,11 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
 
     /**
      * Get the menu bar for this client.
-     * 
+     *
      * @return the <code>CommonMenuBar</code> of this client.
      */
     public CommonMenuBar getMenuBar() {
-        return this.menuBar;
+        return menuBar;
     }
 
     /**
@@ -436,25 +442,25 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      */
     private void showAbout() {
         // Do we need to create the "about" dialog?
-        if (this.about == null) {
-            this.about = new CommonAboutDialog(this.frame);
+        if (about == null) {
+            about = new CommonAboutDialog(frame);
         }
 
         // Show the about dialog.
-        this.about.setVisible(true);
+        about.setVisible(true);
     }
 
     /**
      * Change the default help file name for this client. <p/> This method
      * should only be called by the constructor of subclasses.
-     * 
+     *
      * @param fileName the <code>String</code> name of the help file for this
      *            <code>Client</code> subclass. This value should not be
      *            <code>null</code>.
      */
     protected void setHelpFileName(String fileName) {
         if (null != fileName) {
-            this.helpFileName = fileName;
+            helpFileName = fileName;
         }
     }
 
@@ -464,11 +470,11 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      */
     public void showHelp() {
         // Do we need to create the "help" dialog?
-        if (this.help == null) {
-            this.help = new CommonHelpDialog(this.frame, new File(helpFileName));
+        if (help == null) {
+            help = new CommonHelpDialog(frame, new File(helpFileName));
         }
         // Show the help dialog.
-        this.help.setVisible(true);
+        help.setVisible(true);
     }
 
     /**
@@ -476,12 +482,12 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      */
     private void showSettings() {
         // Do we need to create the "settings" dialog?
-        if (this.setdlg == null) {
-            this.setdlg = new CommonSettingsDialog(this.frame);
+        if (setdlg == null) {
+            setdlg = new CommonSettingsDialog(frame);
         }
 
         // Show the settings dialog.
-        this.setdlg.setVisible(true);
+        setdlg.setVisible(true);
     }
 
     /**
@@ -522,24 +528,16 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         if (event.getActionCommand().equalsIgnoreCase("fileGameSave")) { //$NON-NLS-1$
             FileDialog fd = new FileDialog(
                     frame,
-                    Messages.getString("ClientGUI.FileSaveDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
+                    Messages.getString("ClientGUI.FileSaveDialog.title"), FileDialog.SAVE); //$NON-NLS-1$
             fd.setDirectory("."); //$NON-NLS-1$
-            // limit file-list to savedgames only
-            fd.setFilenameFilter(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return (null != name && name.endsWith(".sav")); //$NON-NLS-1$
-                }
-            });
-            // Using the FilenameFilter class would be the appropriate way to
-            // filter for certain extensions, but it's broken under windoze. See
-            // http://developer.java.sun.com/developer/bugParade/bugs/4031440.html
-            // for details. The hack below is better than nothing.
-            fd.setFile("*.sav"); //$NON-NLS-1$
 
             fd.setVisible(true);
 
             if (null != fd.getFile()) {
-                client.sendChat("/save " + fd.getFile()); //$NON-NLS-1$
+                String file = fd.getDirectory() + fd.getFile();
+                // stupid hack to allow for savegames in folders with spaces in the name
+                file = file.replace(" ", "|");
+                client.sendChat("/save " + file); //$NON-NLS-1$
             }
         }
 
@@ -588,8 +586,8 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
                 .setWindowSizeHeight(frame.getSize().height);
 
         // also minimap
-        if (minimapW != null
-                && (minimapW.getSize().width * minimapW.getSize().height) > 0) {
+        if ((minimapW != null)
+                && ((minimapW.getSize().width * minimapW.getSize().height) > 0)) {
             GUIPreferences.getInstance().setMinimapPosX(
                     minimapW.getLocation().x);
             GUIPreferences.getInstance().setMinimapPosY(
@@ -598,8 +596,8 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         }
 
         // also mech display
-        if (mechW != null
-                && (mechW.getSize().width * mechW.getSize().height) > 0) {
+        if ((mechW != null)
+                && ((mechW.getSize().width * mechW.getSize().height) > 0)) {
             GUIPreferences.getInstance().setDisplayPosX(mechW.getLocation().x);
             GUIPreferences.getInstance().setDisplayPosY(mechW.getLocation().y);
             GUIPreferences.getInstance().setDisplaySizeWidth(
@@ -610,8 +608,8 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
 
         // added by kenn
         // also ruler display
-        if (ruler != null && ruler.getSize().width != 0
-                && ruler.getSize().height != 0) {
+        if ((ruler != null) && (ruler.getSize().width != 0)
+                && (ruler.getSize().height != 0)) {
             GUIPreferences.getInstance().setRulerPosX(ruler.getLocation().x);
             GUIPreferences.getInstance().setRulerPosY(ruler.getLocation().y);
             GUIPreferences.getInstance().setRulerSizeWidth(
@@ -683,7 +681,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     public CustomBattleArmorDialog getCustomBADialog() {
         return customBADialog;
     }
-    
+
     public CustomFighterSquadronDialog getCustomFSDialog() {
         return customFSDialog;
     }
@@ -701,7 +699,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         }
         return initDialog;
     }
-    
+
     public PlanetaryConditionsDialog getPlanetaryConditionsDialog() {
         if (conditionsDialog == null) {
             conditionsDialog = new PlanetaryConditionsDialog(this);
@@ -743,14 +741,15 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         }
         if (curPanel instanceof DoneButtoned) {
             Button done = ((DoneButtoned) curPanel).getDoneButton();
-            this.cb.setDoneButton(done);
+            cb.setDoneButton(done);
             done.setVisible(true);
         }
 
         // Make the new panel the focus, if the Client option says so
         if (GUIPreferences.getInstance().getFocus()
-                && !(client instanceof megamek.client.bot.TestBot))
+                && !(client instanceof megamek.client.bot.TestBot)) {
             curPanel.requestFocus();
+        }
     }
 
     private Component initializePanel(IGame.Phase phase) {
@@ -986,7 +985,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     /**
      * Pops up a dialog box giving the player a series of choices that are not
      * mutually exclusive.
-     * 
+     *
      * @param title the <code>String</code> title of the dialog box.
      * @param question the <code>String</code> question that has a "Yes" or
      *            "No" answer. The question will be split across multiple line
@@ -1015,7 +1014,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
 
     /**
      * Pops up a dialog box asking a yes/no question
-     * 
+     *
      * @param title the <code>String</code> title of the dialog box.
      * @param question the <code>String</code> question that has a "Yes" or
      *            "No" answer. The question will be split across multiple line
@@ -1031,7 +1030,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     /**
      * Pops up a dialog box asking a yes/no question <p/> The player will be
      * given a chance to not show the dialog again.
-     * 
+     *
      * @param title the <code>String</code> title of the dialog box.
      * @param question the <code>String</code> question that has a "Yes" or
      *            "No" answer. The question will be split across multiple line
@@ -1067,7 +1066,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             // Add a filter for MUL files
             dlgLoadList.setFilenameFilter(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
-                    return (null != name && name.endsWith(".mul")); //$NON-NLS-1$
+                    return ((null != name) && name.endsWith(".mul")); //$NON-NLS-1$
                 }
             });
 
@@ -1115,7 +1114,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * select the units for a new game. The file will record damage sustained,
      * non-standard munitions selected, and ammunition expended during the
      * course of the current engagement.
-     * 
+     *
      * @param unitList - the <code>Vector</code> of <code>Entity</code>s to
      *            be saved to a file. If this value is <code>null</code> or
      *            empty, the "Save As" dialog will not be displayed.
@@ -1123,7 +1122,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     protected void saveListFile(ArrayList<Entity> unitList) {
 
         // Handle empty lists.
-        if (null == unitList || unitList.isEmpty()) {
+        if ((null == unitList) || unitList.isEmpty()) {
             return;
         }
 
@@ -1137,7 +1136,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             // Add a filter for MUL files
             dlgSaveList.setFilenameFilter(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
-                    return (null != name && name.endsWith(".mul")); //$NON-NLS-1$
+                    return ((null != name) && name.endsWith(".mul")); //$NON-NLS-1$
                 }
             });
 
@@ -1311,13 +1310,14 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * Make a "bing" sound.
      */
     public void bing() {
-        if (!GUIPreferences.getInstance().getSoundMute() && null != bingClip) {
+        if (!GUIPreferences.getInstance().getSoundMute() && (null != bingClip)) {
             bingClip.play();
         }
     }
 
     protected GameListener gameListener = new GameListenerAdapter() {
 
+        @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
             AlertDialog alert = new AlertDialog(
                     frame,
@@ -1327,10 +1327,12 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             die();
         }
 
+        @Override
         public void gamePlayerChat(GamePlayerChatEvent e) {
             bing();
         }
 
+        @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             // This is a really lame place for this, but I couldn't find a
             // better one without making massive changes (which didn't seem
@@ -1352,8 +1354,9 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
                     // this will get rid of old report tabs
                     ReportDisplay rD = (ReportDisplay) phaseComponents
                             .get(String.valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
-                    if (rD != null)
+                    if (rD != null) {
                         rD.resetTabs();
+                    }
                     break;
                 case PHASE_DEPLOY_MINEFIELDS:
                 case PHASE_DEPLOYMENT:
@@ -1387,6 +1390,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             cb.moveToEnd();
         }
 
+        @Override
         public void gamePlayerConnected(GamePlayerConnectedEvent e) {
             System.err.println("gamePlayerConnected");
             System.err.flush();
@@ -1397,13 +1401,14 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             }
         }
 
+        @Override
         public void gameReport(GameReportEvent e) {
             // Normally the Report Display is updated when the panel is
             // switched during a phase change.
             // This update is for reports that get sent at odd times,
             // currently Tactical Genius reroll requests and when
             // a player wishes to continue moving after a fall.
-            if (e.getReport() == null && curPanel instanceof ReportDisplay) {
+            if ((e.getReport() == null) && (curPanel instanceof ReportDisplay)) {
                 // Tactical Genius
                 ((ReportDisplay) curPanel).appendReportTab(client.phaseReport);
                 ((ReportDisplay) curPanel).resetReadyButton();
@@ -1417,11 +1422,13 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
                 }
             } else {
                 // Continued movement after getting up
-                if (!(client instanceof megamek.client.bot.TestBot))
+                if (!(client instanceof megamek.client.bot.TestBot)) {
                     doAlertDialog("Movement Report", e.getReport());
+                }
             }
         }
 
+        @Override
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
 
@@ -1456,12 +1463,13 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             } // End user-wants-a-MUL
         }
 
+        @Override
         public void gameSettingsChange(GameSettingsChangeEvent e) {
-            if (boardSelectionDialog != null
+            if ((boardSelectionDialog != null)
                     && boardSelectionDialog.isVisible()) {
                 boardSelectionDialog.update(client.getMapSettings(), true);
             }
-            if (gameOptionsDialog != null && gameOptionsDialog.isVisible()) {
+            if ((gameOptionsDialog != null) && gameOptionsDialog.isVisible()) {
                 gameOptionsDialog.update(client.game.getOptions());
             }
             if (curPanel instanceof ChatLounge) {
@@ -1479,8 +1487,9 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             }
         }
 
+        @Override
         public void gameMapQuery(GameMapQueryEvent e) {
-            if (boardSelectionDialog != null
+            if ((boardSelectionDialog != null)
                     && boardSelectionDialog.isVisible()) {
                 boardSelectionDialog.update(e.getSettings(), false);
             }
@@ -1519,7 +1528,9 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     }
 
     public void hexMoused(BoardViewEvent b) {
-        if (b.getType() == BoardViewEvent.BOARD_HEX_POPUP) showBoardPopup(b.getCoords());
+        if (b.getType() == BoardViewEvent.BOARD_HEX_POPUP) {
+            showBoardPopup(b.getCoords());
+        }
     }
 
     public void hexCursor(BoardViewEvent b) {}

@@ -24,7 +24,7 @@ import megamek.server.Server;
 
 /**
  * Saves the current game.
- * 
+ *
  * @author Ben
  */
 public class SaveGameCommand extends ServerCommand {
@@ -38,6 +38,7 @@ public class SaveGameCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      */
+    @Override
     public void run(int connId, String[] args) {
         String fileName = "savegame.sav";
         if (args.length > 1) {

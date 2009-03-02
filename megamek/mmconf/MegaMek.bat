@@ -16,7 +16,7 @@ if errorlevel 2 goto failure
 
 :sun_jvm
 for %%A in (%1 %2 %3 %4 %5 %6 %7 %8 %9) do if X%%A==X-dedicated goto sun_dedicated
-start javaw -Xmx128m -jar MegaMek.jar %1 %2 %3 %4 %5 %6 %7 %8 %9
+start javaw -Xmx256m -jar MegaMek.jar %1 %2 %3 %4 %5 %6 %7 %8 %9
 goto done
 :sun_dedicated
 echo Starting dedicated server.  Closing this window or pressing [ctrl]-[c] will

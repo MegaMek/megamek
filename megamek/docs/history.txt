@@ -4,6 +4,8 @@ v0.33.42-dev (SVN)
 + Updated RSPPU mechfiles because of pending errata
     Thanks darkisi!
 + Bug 2653414: ClassCastException in Compute#getSwarmMekBaseToHit
++ Bug 2617908:MegaMek runs out of Memory after Nuke Attack
+    Increased default memory to 256MB
 
 v0.33.41 (2009-02-25, UTC+1)
 + Bug: prevent NPE when c3/c3i team mate is not yet deployed

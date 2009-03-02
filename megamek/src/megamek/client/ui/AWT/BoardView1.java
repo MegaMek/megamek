@@ -2044,6 +2044,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     /** Removes all attack sprites from a certain entity */
     public synchronized void removeAttacksFor(Entity e) {
+        if (e == null) {
+            return;
+        }
         int entityId = e.getId();
         for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
             AttackSprite sprite = i.next();

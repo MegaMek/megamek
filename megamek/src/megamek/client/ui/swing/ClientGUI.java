@@ -306,10 +306,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             int y = GUIPreferences.getInstance().getWindowPosY();
             int w = GUIPreferences.getInstance().getWindowSizeWidth();
             int h = GUIPreferences.getInstance().getWindowSizeHeight();
-            if (x < virtualBounds.getMinX() || x + w > virtualBounds.getMaxX()) {
+            if ((x < virtualBounds.getMinX()) || (x + w > virtualBounds.getMaxX())) {
                 x = 0;
             }
-            if (y < virtualBounds.getMinY() || y + h > virtualBounds.getMaxY()) {
+            if ((y < virtualBounds.getMinY()) || (y + h > virtualBounds.getMaxY())) {
                 y = 0;
             }
             if (w > virtualBounds.getWidth()) {
@@ -442,10 +442,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         minimap.addKeyListener(this);
         h = minimap.getSize().height;
         w = minimap.getSize().width;
-        if ((x + 10) >= screenSize.width || (x + w) < 10) {
+        if (((x + 10) >= screenSize.width) || ((x + w) < 10)) {
             x = screenSize.width - w;
         }
-        if ((y + 10) > screenSize.height || (y + h) < 10) {
+        if (((y + 10) > screenSize.height) || ((y + h) < 10)) {
             y = screenSize.height - h;
         }
         minimapW.setLocation(x, y);
@@ -551,25 +551,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             JFileChooser fc = new JFileChooser(".");
             fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
-            fc.setFileFilter(new FileFilter() {
-                @Override
-                public boolean accept(File dir) {
-                    return (dir.getName() != null && dir.getName().endsWith(".sav")); //$NON-NLS-1$
-                }
 
-                @Override
-                public String getDescription() {
-                    return ".sav";
-                }
-            });
-
-            int returnVal = fc.showOpenDialog(frame);
-            if (returnVal != JFileChooser.APPROVE_OPTION || fc.getSelectedFile() == null) {
+            int returnVal = fc.showSaveDialog(frame);
+            if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
                 // I want a file, y'know!
                 return;
             }
             if (fc.getSelectedFile() != null) {
-                client.sendChat("/save " + fc.getSelectedFile()); //$NON-NLS-1$
+                String file = fc.getSelectedFile().getAbsolutePath();
+                // stupid hack to allow for savegames in folders with spaces in the name
+                file = file.replace(" ", "|");
+                client.sendChat("/save " + file); //$NON-NLS-1$
             }
         }
         if ("helpAbout".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
@@ -612,14 +604,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         GUIPreferences.getInstance().setWindowSizeHeight(frame.getSize().height);
 
         // also minimap
-        if (minimapW != null && (minimapW.getSize().width * minimapW.getSize().height) > 0) {
+        if ((minimapW != null) && ((minimapW.getSize().width * minimapW.getSize().height) > 0)) {
             GUIPreferences.getInstance().setMinimapPosX(minimapW.getLocation().x);
             GUIPreferences.getInstance().setMinimapPosY(minimapW.getLocation().y);
             GUIPreferences.getInstance().setMinimapZoom(minimap.getZoom());
         }
 
         // also mech display
-        if (mechW != null && (mechW.getSize().width * mechW.getSize().height) > 0) {
+        if ((mechW != null) && ((mechW.getSize().width * mechW.getSize().height) > 0)) {
             GUIPreferences.getInstance().setDisplayPosX(mechW.getLocation().x);
             GUIPreferences.getInstance().setDisplayPosY(mechW.getLocation().y);
             GUIPreferences.getInstance().setDisplaySizeWidth(mechW.getSize().width);
@@ -628,7 +620,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
         // added by kenn
         // also ruler display
-        if (ruler != null && ruler.getSize().width != 0 && ruler.getSize().height != 0) {
+        if ((ruler != null) && (ruler.getSize().width != 0) && (ruler.getSize().height != 0)) {
             GUIPreferences.getInstance().setRulerPosX(ruler.getLocation().x);
             GUIPreferences.getInstance().setRulerPosY(ruler.getLocation().y);
             GUIPreferences.getInstance().setRulerSizeWidth(ruler.getSize().width);
@@ -1051,7 +1043,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             dlgLoadList.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File dir) {
-                    return (dir.getName() != null && dir.getName().endsWith(".mul")); //$NON-NLS-1$
+                    return ((dir.getName() != null) && dir.getName().endsWith(".mul")); //$NON-NLS-1$
                 }
 
                 @Override
@@ -1064,7 +1056,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         dlgLoadList.setSelectedFile(new File(client.getLocalPlayer().getName() + ".mul")); //$NON-NLS-1$
 
         int returnVal = dlgLoadList.showOpenDialog(frame);
-        if (returnVal != JFileChooser.APPROVE_OPTION || dlgLoadList.getSelectedFile() == null) {
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgLoadList.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -1102,7 +1094,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     protected void saveListFile(ArrayList<Entity> unitList) {
         // Handle empty lists.
-        if (unitList == null || unitList.isEmpty()) {
+        if ((unitList == null) || unitList.isEmpty()) {
             return;
         }
 
@@ -1115,7 +1107,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             dlgSaveList.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File dir) {
-                    return (dir.getName() != null && dir.getName().endsWith(".mul")); //$NON-NLS-1$
+                    return ((dir.getName() != null) && dir.getName().endsWith(".mul")); //$NON-NLS-1$
                 }
 
                 @Override
@@ -1128,7 +1120,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         dlgSaveList.setSelectedFile(new File(client.getLocalPlayer().getName() + ".mul")); //$NON-NLS-1$
 
         int returnVal = dlgSaveList.showSaveDialog(frame);
-        if (returnVal != JFileChooser.APPROVE_OPTION || dlgSaveList.getSelectedFile() == null) {
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgSaveList.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -1217,7 +1209,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Make a "bing" sound.
      */
     void bing() {
-        if (!GUIPreferences.getInstance().getSoundMute() && bingClip != null) {
+        if (!GUIPreferences.getInstance().getSoundMute() && (bingClip != null)) {
             bingClip.play();
         }
     }
@@ -1309,7 +1301,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             // This update is for reports that get sent at odd times,
             // currently Tactical Genius reroll requests and when
             // a player wishes to continue moving after a fall.
-            if (e.getReport() == null && curPanel instanceof ReportDisplay) {
+            if ((e.getReport() == null) && (curPanel instanceof ReportDisplay)) {
                 // Tactical Genius
                 ((ReportDisplay) curPanel).appendReportTab(client.phaseReport);
                 ((ReportDisplay) curPanel).resetReadyButton();
@@ -1359,10 +1351,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
         @Override
         public void gameSettingsChange(GameSettingsChangeEvent e) {
-            if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
+            if ((boardSelectionDialog != null) && boardSelectionDialog.isVisible()) {
                 boardSelectionDialog.update(client.getMapSettings(), true);
             }
-            if (gameOptionsDialog != null && gameOptionsDialog.isVisible()) {
+            if ((gameOptionsDialog != null) && gameOptionsDialog.isVisible()) {
                 gameOptionsDialog.update(client.game.getOptions());
             }
             if (curPanel instanceof ChatLounge) {
@@ -1380,7 +1372,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
         @Override
         public void gameMapQuery(GameMapQueryEvent e) {
-            if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
+            if ((boardSelectionDialog != null) && boardSelectionDialog.isVisible()) {
                 boardSelectionDialog.update(e.getSettings(), false);
             }
         }

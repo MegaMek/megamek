@@ -6904,8 +6904,21 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                     return ToHitData.SIDE_RIGHT;
                 }
                 return ToHitData.SIDE_LEFT;
-            }
-            if ((fa > 30) && (fa <= 150)) {
+            }if (leftBetter && (fa == 150)) {
+                return ToHitData.SIDE_REAR;
+            } else if (leftBetter && (fa == 30)) {
+                if (a.isRolled()) {
+                    return ToHitData.SIDE_LEFT;
+                }
+                return ToHitData.SIDE_RIGHT;
+            } else if (!leftBetter && (fa == 330)) {
+                if (a.isRolled()) {
+                    return ToHitData.SIDE_RIGHT;
+                }
+                return ToHitData.SIDE_LEFT;
+            } else if (!leftBetter && (fa == 210)) {
+                return ToHitData.SIDE_REAR;
+            } else if ((fa > 30) && (fa <= 150)) {
                 if (a.isRolled()) {
                     return ToHitData.SIDE_LEFT;
                 }

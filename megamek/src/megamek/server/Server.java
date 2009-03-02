@@ -23090,7 +23090,7 @@ public class Server implements Runnable {
                 Entity e = entities.nextElement();
                 // If the unit is on the surface, and is no longer allowed in
                 // the hex
-                if ((e.getElevation() == 0) && !((e.getRunMP() > 0) && ((e.getMovementMode() == IEntityMovementMode.HOVER) || (e.getMovementMode() == IEntityMovementMode.WIGE))) && (e.getMovementMode() != IEntityMovementMode.INF_UMU) && !e.hasUMU()) {
+                if ((e.getElevation() == 0) && !(hex.containsTerrain(Terrains.BLDG_ELEV, 0) && (e.getRunMP() > 0) && ((e.getMovementMode() == IEntityMovementMode.HOVER) || (e.getMovementMode() == IEntityMovementMode.WIGE))) && (e.getMovementMode() != IEntityMovementMode.INF_UMU) && !e.hasUMU()) {
                     vPhaseReport.addAll(doEntityFallsInto(e, c, c, new PilotingRollData(TargetRoll.AUTOMATIC_FAIL)));
                 }
             }

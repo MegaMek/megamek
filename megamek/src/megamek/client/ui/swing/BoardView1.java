@@ -1356,6 +1356,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     /** Removes all attack sprites from a certain entity */
     public synchronized void removeAttacksFor(Entity e) {
+        if (e == null) {
+            return;
+        }
         int entityId = e.getId();
         for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
             AttackSprite sprite = i.next();

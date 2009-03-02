@@ -3175,7 +3175,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         }
         //check for Manei Domini implants
         if(((crew.getOptions().booleanOption("cyber_eye_im") || crew.getOptions().booleanOption("mm_eye_im"))
-                && this instanceof Infantry && !(this instanceof BattleArmor))
+                && (this instanceof Infantry) && !(this instanceof BattleArmor))
                 || (crew.getOptions().booleanOption("mm_eye_im")
                         && (crew.getOptions().booleanOption("vdni")
                                 || crew.getOptions().booleanOption("bvdni")))) {
@@ -3198,7 +3198,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         //check for Manei Domini implants
         int cyberBonus = 0;
         if(((crew.getOptions().booleanOption("cyber_eye_im") || crew.getOptions().booleanOption("mm_eye_im"))
-                && this instanceof Infantry && !(this instanceof BattleArmor))
+                && (this instanceof Infantry) && !(this instanceof BattleArmor))
                 || (crew.getOptions().booleanOption("mm_eye_im")
                         && (crew.getOptions().booleanOption("vdni")
                                 || crew.getOptions().booleanOption("bvdni")))) {
@@ -3391,7 +3391,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             }
         }
         //check for Manei Domini implants
-        if(this instanceof Infantry && crew.getOptions().booleanOption("mm_eye_im")
+        if((this instanceof Infantry) && crew.getOptions().booleanOption("mm_eye_im")
                 && crew.getOptions().booleanOption("boost_comm_implant")) {
             return true;
         }
@@ -4665,11 +4665,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         IHex curHex = game.getBoard().getHex(curPos);
         IHex prevHex = game.getBoard().getHex(prevPos);
         // ineligable because of movement type or unit type
-        if (this instanceof Infantry && step.getMovementType() != IEntityMovementType.MOVE_JUMP) {
+        if ((this instanceof Infantry) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)) {
             return 0;
         }
 
-        if (this instanceof Protomech && prevStep.getMovementType() == IEntityMovementType.MOVE_JUMP) {
+        if ((this instanceof Protomech) && (prevStep.getMovementType() == IEntityMovementType.MOVE_JUMP)) {
             return 0;
         }
 
@@ -4700,7 +4700,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             }
         }
 
-        if (this instanceof Infantry || this instanceof Protomech) {
+        if ((this instanceof Infantry) || (this instanceof Protomech)) {
             if (rv != 2) {
                 rv = 0;
             }
@@ -6859,9 +6859,31 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         // calculate firing angle
         int fa = (effectivePos.degree(src) + (6 - face) * 60) % 360;
 
+        boolean leftBetter = true;
+        // if we're right on the line, we need to special case this
+        // defender would choose along which hex the LOS gets drawn, and that
+        // side also determines the side we hit in
+        if (fa % 30 == 0) {
+            LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src, getPosition(),
+                    1, getElevation(), game.getBoard().getHex(src).floor(),
+                    game.getBoard().getHex(getPosition()).floor());
+            ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos,
+                    true);
+            leftBetter = LosEffects.dividedLeftBetter(in, game, ai,
+                    Compute.isInBuilding(game, this), new LosEffects());
+        }
+
         boolean targetIsTank = (this instanceof Tank) || (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations") && (this instanceof QuadMech));
         if (targetIsTank) {
-            if ((fa > 30) && (fa <= 150)) {
+            if (leftBetter && (fa == 150)) {
+                return ToHitData.SIDE_REAR;
+            } else if (leftBetter && (fa == 30)) {
+                return ToHitData.SIDE_RIGHT;
+            } else if (!leftBetter && (fa == 330)) {
+                return ToHitData.SIDE_LEFT;
+            } else if (!leftBetter && (fa == 210)) {
+                return ToHitData.SIDE_REAR;
+            } else if ((fa > 30) && (fa <= 150)) {
                 return ToHitData.SIDE_RIGHT;
             } else if ((fa > 150) && (fa < 210)) {
                 return ToHitData.SIDE_REAR;
@@ -6875,7 +6897,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             Aero a = (Aero) this;
             // Handle spheroids in atmosphere differently
             // TODO: awaiting a rules forum clarification
-            // until then assume that the side must either be left or rifht
+            // until then assume that the side must either be left or right
             if (a.isSpheroid() && game.getBoard().inAtmosphere()) {
                 fa = effectivePos.degree(src);
                 if ((fa >= 0) && (fa < 180)) {
@@ -6899,9 +6921,15 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 return ToHitData.SIDE_FRONT;
             }
         }
-        if ((fa > 90) && (fa <= 150)) {
+        if ((fa == 90) && leftBetter) {
             return ToHitData.SIDE_RIGHT;
-        } else if ((fa > 150) && (fa < 210)) {
+        } else if (((fa == 150) && leftBetter) || (!leftBetter && (fa == 210))) {
+            return ToHitData.SIDE_REAR;
+        } else if (!leftBetter && (fa == 270)) {
+            return ToHitData.SIDE_LEFT;
+        } else if ((fa > 90) && (fa <= 150)) {
+            return ToHitData.SIDE_RIGHT;
+        } else if ((fa > 150) && (fa < 210)){
             return ToHitData.SIDE_REAR;
         } else if ((fa >= 210) && (fa < 270)) {
             return ToHitData.SIDE_LEFT;

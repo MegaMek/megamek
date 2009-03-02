@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 /**
  * Keeps track of the cumulative effects of intervening terrain on LOS
- * 
+ *
  * @author Ben
  */
 public class LosEffects {
@@ -84,7 +84,7 @@ public class LosEffects {
     Building thruBldg = null;
     int minimumWaterDepth = -1;
     boolean arcedShot = false;
-    
+
     /** Creates a new instance of LosEffects */
     public LosEffects() {
 
@@ -99,36 +99,36 @@ public class LosEffects {
     }
 
     public void add(LosEffects other) {
-        this.blocked |= other.blocked;
-        this.infProtected |= other.infProtected;
-        this.plantedFields += other.plantedFields;
-        this.heavyIndustrial += other.heavyIndustrial;
-        this.lightWoods += other.lightWoods;
-        this.heavyWoods += other.heavyWoods;
-        this.ultraWoods += other.ultraWoods;
-        this.lightSmoke += other.lightSmoke;
-        this.heavySmoke += other.heavySmoke;
-        this.buildingLevelsOrHexes += other.buildingLevelsOrHexes;
-        this.screen += other.screen;
-        this.softBuildings += other.softBuildings;
-        this.hardBuildings += other.hardBuildings;
-        this.blockedByHill |= other.blockedByHill;
-        this.blockedByWater |= other.blockedByWater;
-        this.targetCover |= other.targetCover;
-        this.attackerCover |= other.attackerCover;
-        if (null != this.thruBldg && !this.thruBldg.equals(other.thruBldg)) {
-            this.thruBldg = null;
+        blocked |= other.blocked;
+        infProtected |= other.infProtected;
+        plantedFields += other.plantedFields;
+        heavyIndustrial += other.heavyIndustrial;
+        lightWoods += other.lightWoods;
+        heavyWoods += other.heavyWoods;
+        ultraWoods += other.ultraWoods;
+        lightSmoke += other.lightSmoke;
+        heavySmoke += other.heavySmoke;
+        buildingLevelsOrHexes += other.buildingLevelsOrHexes;
+        screen += other.screen;
+        softBuildings += other.softBuildings;
+        hardBuildings += other.hardBuildings;
+        blockedByHill |= other.blockedByHill;
+        blockedByWater |= other.blockedByWater;
+        targetCover |= other.targetCover;
+        attackerCover |= other.attackerCover;
+        if ((null != thruBldg) && !thruBldg.equals(other.thruBldg)) {
+            thruBldg = null;
         }
     }
 
     public int getPlantedFields() {
         return plantedFields;
     }
-    
+
     public int getHeavyIndustrial() {
         return heavyIndustrial;
     }
-    
+
     public int getLightWoods() {
         return lightWoods;
     }
@@ -148,15 +148,15 @@ public class LosEffects {
     public int getHeavySmoke() {
         return heavySmoke;
     }
-    
+
     public int getScreen() {
         return screen;
     }
-    
+
     public int getSoftBuildings() {
         return softBuildings;
     }
-    
+
     public int getHardBuildings() {
         return hardBuildings;
     }
@@ -164,18 +164,18 @@ public class LosEffects {
     public boolean isBlocked() {
         return blocked;
     }
-    
+
     public boolean isBlockedByHill() {
         return blockedByHill;
     }
-    
+
     public boolean isBlockedByWater() {
         return blockedByWater;
     }
 
     /**
      * Getter for property targetCover.
-     * 
+     *
      * @return Value of property targetCover.
      */
     public boolean isTargetCover() {
@@ -188,7 +188,7 @@ public class LosEffects {
 
     /**
      * Setter for property targetCover.
-     * 
+     *
      * @param targetCover New value of property targetCover.
      */
     public void setTargetCover(int targetCover) {
@@ -197,7 +197,7 @@ public class LosEffects {
 
     /**
      * Getter for property attackerCover.
-     * 
+     *
      * @return Value of property attackerCover.
      */
     public boolean isAttackerCover() {
@@ -210,7 +210,7 @@ public class LosEffects {
 
     /**
      * Setter for property attackerCover.
-     * 
+     *
      * @param attackerCover New value of property attackerCover.
      */
     public void setAttackerCover(int attackerCover) {
@@ -219,7 +219,7 @@ public class LosEffects {
 
     /**
      * Getter for property thruBldg.
-     * 
+     *
      * @return Value of property thruBldg.
      */
     public Building getThruBldg() {
@@ -228,7 +228,7 @@ public class LosEffects {
 
     /**
      * Setter for property thruBldg.
-     * 
+     *
      * @param thruBldg New value of property thruBldg.
      */
     public void setThruBldg(Building thruBldg) {
@@ -254,7 +254,7 @@ public class LosEffects {
         final Entity ae = game.getEntity(attackerId);
 
         // LOS fails if one of the entities is not deployed.
-        if (null == ae.getPosition() || null == target.getPosition()
+        if ((null == ae.getPosition()) || (null == target.getPosition())
                 || ae.isOffBoard()) {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
@@ -275,11 +275,11 @@ public class LosEffects {
 
         int attEl = ae.absHeight() + attHex.getElevation();
         int targEl;
-        if (target.getTargetType() == Targetable.TYPE_ENTITY
-                || target.getTargetType() == Targetable.TYPE_FUEL_TANK
-                || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
-                || target.getTargetType() == Targetable.TYPE_BUILDING
-                || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE) {
+        if ((target.getTargetType() == Targetable.TYPE_ENTITY)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
+                || (target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
             targEl = target.absHeight() + targetHex.getElevation();
         } else {
             targEl = game.getBoard().getHex(target.getPosition()).surface();
@@ -297,9 +297,9 @@ public class LosEffects {
             attOnLand = true;
         } else {
             attUnderWater = attHex.containsTerrain(Terrains.WATER)
-                    && attHex.depth() > 0 && attEl < attHex.surface();
+                    && (attHex.depth() > 0) && (attEl < attHex.surface());
             attInWater = attHex.containsTerrain(Terrains.WATER)
-                    && attHex.depth() > 0 && attEl == attHex.surface();
+                    && (attHex.depth() > 0) && (attEl == attHex.surface());
             attOnLand = !(attUnderWater || attInWater);
         }
 
@@ -314,9 +314,9 @@ public class LosEffects {
             targetOnLand = true;
         } else {
             targetUnderWater = targetHex.containsTerrain(Terrains.WATER)
-                    && targetHex.depth() > 0 && targEl < targetHex.surface();
+                    && (targetHex.depth() > 0) && (targEl < targetHex.surface());
             targetInWater = targetHex.containsTerrain(Terrains.WATER)
-                    && targetHex.depth() > 0 && targEl == targetHex.surface();
+                    && (targetHex.depth() > 0) && (targEl == targetHex.surface());
             targetOnLand = !(targetUnderWater || targetInWater);
         }
 
@@ -332,22 +332,23 @@ public class LosEffects {
         ai.attOffBoard = attOffBoard;
         // Handle minimum water depth.
         // Applies to Torpedos.
-        if (ai.attOnLand || ai.targetOnLand)
+        if (ai.attOnLand || ai.targetOnLand) {
             ai.minimumWaterDepth = 0;
-        else if (ai.attInWater || ai.targetInWater)
+        } else if (ai.attInWater || ai.targetInWater) {
             ai.minimumWaterDepth = 1;
-        else if (ai.attUnderWater || ai.targetUnderWater)
+        } else if (ai.attUnderWater || ai.targetUnderWater) {
             ai.minimumWaterDepth = Math.min(
                     attHex.terrainLevel(Terrains.WATER), targetHex
                             .terrainLevel(Terrains.WATER));
+        }
 
         LosEffects finalLoS = calculateLos(game, ai);
         finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);
-        finalLoS.hasLoS = !finalLoS.blocked && finalLoS.screen < 1 && finalLoS.plantedFields < 6 
-                && finalLoS.heavyIndustrial < 3
-                && (finalLoS.lightWoods + finalLoS.lightSmoke)
+        finalLoS.hasLoS = !finalLoS.blocked && (finalLoS.screen < 1) && (finalLoS.plantedFields < 6)
+                && (finalLoS.heavyIndustrial < 3)
+                && ((finalLoS.lightWoods + finalLoS.lightSmoke)
                         + ((finalLoS.heavyWoods + finalLoS.heavySmoke) * 2)
-                        + (finalLoS.ultraWoods * 3) < 3;
+                        + (finalLoS.ultraWoods * 3) < 3);
 
         return finalLoS;
     }
@@ -359,15 +360,15 @@ public class LosEffects {
             los.hasLoS = false;
             return los;
         }
-        if (ai.attOnLand && ai.targetUnderWater || ai.attUnderWater
-                && ai.targetOnLand) {
+        if ((ai.attOnLand && ai.targetUnderWater) || (ai.attUnderWater
+                && ai.targetOnLand)) {
             LosEffects los = new LosEffects();
             los.blocked = true;
             los.hasLoS = false;
             los.blockedByWater = true;
             return los;
         }
-        
+
         double degree = ai.attackPos.degree(ai.targetPos);
         if (degree % 60 == 30) {
             return LosEffects.losDivided(game, ai);
@@ -385,10 +386,11 @@ public class LosEffects {
 
     public ToHitData losModifiers(IGame game, int eistatus) {
         ToHitData modifiers = new ToHitData();
-        
-        if ( arcedShot )
+
+        if ( arcedShot ) {
             return modifiers;
-        
+        }
+
         if (blocked) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "LOS blocked by terrain.");
@@ -398,12 +400,12 @@ public class LosEffects {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Infantry protected by building.");
         }
-        
+
         if (buildingLevelsOrHexes > 2) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by buildin hexes or levels.");
         }
 
-        if (ultraWoods >= 1 || lightWoods + (heavyWoods * 2) > 2) {
+        if ((ultraWoods >= 1) || (lightWoods + (heavyWoods * 2) > 2)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by woods.");
         }
 
@@ -414,15 +416,15 @@ public class LosEffects {
         if(plantedFields > 5) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by planted fields.");
         }
-        
+
         if(heavyIndustrial > 2) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by heavy industrial zones.");
         }
-        
+
         if (screen > 0) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by screen.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by screen.");
         }
-        
+
         if (lightSmoke + (heavySmoke * 2) + lightWoods + (heavyWoods * 2) > 2) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "LOS blocked by smoke and woods.");
@@ -432,12 +434,12 @@ public class LosEffects {
             modifiers.addModifier((int)Math.floor(plantedFields / 2.0), plantedFields
                     + " intervening planted fields");
         }
-        
+
         if(heavyIndustrial > 0) {
             modifiers.addModifier(heavyIndustrial, heavyIndustrial
                     + " intervening heavy industrial zones");
         }
-        
+
         if (lightWoods > 0) {
             if (eistatus > 0) {
                 modifiers.addModifier(1,
@@ -447,7 +449,7 @@ public class LosEffects {
                         + " intervening light woods");
             }
         }
-        
+
         if (buildingLevelsOrHexes > 0) {
             if (eistatus > 0) {
                 modifiers.addModifier(1,
@@ -487,13 +489,14 @@ public class LosEffects {
 
         if (targetCover != COVER_NONE) {
             if (game.getOptions().booleanOption("tacops_partial_cover")) {
-                if (targetCover == COVER_75LEFT || targetCover == COVER_75RIGHT)
+                if ((targetCover == COVER_75LEFT) || (targetCover == COVER_75RIGHT)) {
                     modifiers.addModifier(1, "target has 75% cover");
-                else if (targetCover >= COVER_HORIZONTAL)
+                } else if (targetCover >= COVER_HORIZONTAL) {
                     modifiers.addModifier(1, "target has 50% cover");
-                else
+                } else {
                     // no bth mod for 25% cover
                     modifiers.addModifier(0, "target has 25% cover");
+                }
             } else {
                 modifiers.addModifier(1, "target has partial cover");
                 modifiers.setHitTable(ToHitData.HIT_PARTIAL_COVER);
@@ -537,15 +540,15 @@ public class LosEffects {
 
         // Infantry inside a building can only be
         // targeted by units in the same building.
-        if (ai.targetInfantry && targetInBuilding && null == los.getThruBldg()) {
+        if (ai.targetInfantry && targetInBuilding && (null == los.getThruBldg())) {
             los.infProtected = true;
         }
 
         // If a target Entity is at a different elevation as its
         // attacker, and if the attack is through a building, the
         // target has cover.
-        if (null != los.getThruBldg()
-                && ai.attackAbsHeight != ai.targetAbsHeight) {
+        if ((null != los.getThruBldg())
+                && (ai.attackAbsHeight != ai.targetAbsHeight)) {
             los.setTargetCover(COVER_HORIZONTAL);
         }
 
@@ -556,21 +559,21 @@ public class LosEffects {
      * Returns LosEffects for a line that passes between two hexes at least
      * once. The rules say that this situation is resolved in favor of the
      * defender.
-     * 
+     *
      * The intervening() function returns both hexes in these
      * circumstances, and, when they are in line order, it's not hard to figure
      * out which hexes are split and which are not.
-     * 
+     *
      * The line always looks like:
-     *        ___     ___ 
+     *        ___     ___
      *    ___/ 1 \___/...\___
      *   / 0 \___/ 3 \___/etc\
      *   \___/ 2 \___/...\___/
-     *       \___/   \___/ 
-     * We go thru and figure out the modifiers for the non-split hexes first. 
+     *       \___/   \___/
+     * We go thru and figure out the modifiers for the non-split hexes first.
      * Then we go to each of the two split hexes and determine
      * which gives us the bigger modifier. We use the bigger modifier.
-     * 
+     *
      * This is not perfect as it takes partial cover as soon as it can, when
      * perhaps later might be better.
      * Also, it doesn't account for the fact that
@@ -612,6 +615,326 @@ public class LosEffects {
         }
 
         // go through divided line segments
+        // we do this twice, because we should stick to one of the
+        // sides
+        // we later use the side that has more hexes
+        boolean leftBetter = dividedLeftBetter(in, game, ai, targetInBuilding, los);
+        for (int i = 1; i < in.size() - 2; i += 3) {
+            // get effects of the side that is better
+            LosEffects toUse;
+            boolean usingLeft;
+            if (leftBetter) {
+                toUse = losForCoords(game, ai, in.get(i), los
+                        .getThruBldg());
+                usingLeft = true;
+            } else {
+                toUse = losForCoords(game, ai, in.get(i + 1), los
+                        .getThruBldg());
+                usingLeft = false;
+            }
+
+            // If a target Entity is at a different elevation as its
+            // attacker, and if the attack is through a building, the
+            // target has cover.
+            final boolean isElevDiff = ai.attackAbsHeight != ai.targetAbsHeight;
+
+            if ((ai.minimumWaterDepth < 1) && ai.underWaterCombat) {
+                los.blocked = true;
+            }
+
+            if (targetInBuilding && isElevDiff) {
+                if (null != toUse.getThruBldg()) {
+                    toUse.setTargetCover(COVER_HORIZONTAL);
+                }
+            }
+
+            // Include all previous LOS effects.
+            toUse.add(los);
+
+            // Infantry inside a building can only be
+            // targeted by units in the same building.
+            if (ai.targetInfantry && targetInBuilding) {
+                if (null == toUse.getThruBldg()) {
+                    toUse.infProtected = true;
+                }
+            }
+            los = toUse;
+
+            if (game.getOptions().booleanOption("tacops_partial_cover")) {
+                int cover;
+                if (usingLeft) {
+                    cover = (toUse.targetCover & (COVER_LEFT | COVER_LOWLEFT));
+                } else {
+                    cover = (toUse.targetCover & (COVER_RIGHT | COVER_LOWRIGHT));
+                }
+                if ((cover < COVER_FULL) && !(toUse.blocked)) {
+                    los.blocked = false;
+                    los.targetCover = cover;
+                }
+            }
+        }
+        return los;
+    }
+
+    /**
+     * Returns a LosEffects object representing the LOS effects of anything at
+     * the specified coordinate.
+     */
+    private static LosEffects losForCoords(IGame game, AttackInfo ai,
+            Coords coords, Building thruBldg) {
+        LosEffects los = new LosEffects();
+        // ignore hexes not on board
+        if (!game.getBoard().contains(coords)) {
+            return los;
+        }
+
+        // Is there a building in this hex?
+        Building bldg = game.getBoard().getBuildingAt(coords);
+
+        // We're only tracing thru a single building if there
+        // is a building in this hex, and if it isn't the same
+        // building that we'be been tracing LOS thru.
+        if ((bldg != null) && bldg.equals(thruBldg)) {
+            los.setThruBldg(thruBldg);
+        }
+
+        // ignore hexes the attacker or target are in
+        if (coords.equals(ai.attackPos) || coords.equals(ai.targetPos)) {
+            if (los.getThruBldg() != null) {
+                // attacker and target in building at different height:
+                // +1 for each level of difference
+                if (ai.attackPos.equals(ai.targetPos) && ai.targetEntity) {
+                    los.buildingLevelsOrHexes += (Math.abs(ai.attackHeight - ai.targetHeight));
+                }
+            }
+            return los;
+        }
+
+        // we are an attack in a building, +1 for each building hex between the
+        // 2 units
+        if ((game.getBoard().getBuildingAt(ai.attackPos) != null)
+                && (game.getBoard().getBuildingAt(ai.targetPos) != null)
+                && (thruBldg != null)
+                && game.getBoard().getBuildingAt(ai.attackPos).equals(game.getBoard().getBuildingAt(ai.targetPos))
+                && ai.targetEntity && thruBldg.equals(game.getBoard().getBuildingAt(ai.attackPos))) {
+            los.buildingLevelsOrHexes += 1;
+        }
+
+        IHex hex = game.getBoard().getHex(coords);
+        int hexEl = ai.underWaterCombat ? hex.floor() : hex.surface();
+
+        // Handle minimum water depth.
+        // Applies to Torpedos.
+        if (!(hex.containsTerrain(Terrains.WATER))) {
+            ai.minimumWaterDepth = 0;
+        } else if ((hex.terrainLevel(Terrains.WATER) >= 0)
+                && ((ai.minimumWaterDepth == -1) || (hex
+                        .terrainLevel(Terrains.WATER) < ai.minimumWaterDepth))) {
+            ai.minimumWaterDepth = hex.terrainLevel(Terrains.WATER);
+        }
+
+        // Handle building elevation.
+        // Attacks thru a building are not blocked by that building.
+        // ASSUMPTION: bridges don't block LOS.
+        int bldgEl = 0;
+        if ((null == los.getThruBldg())
+                && hex.containsTerrain(Terrains.BLDG_ELEV)) {
+            bldgEl = hex.terrainLevel(Terrains.BLDG_ELEV);
+        }
+
+        // TODO: Identify when LOS travels *above* a building's hex.
+        // Alternatively, force all building hexes to be same height.
+
+        // check for block by terrain
+
+        // check for LOS according to diagramming rule from MaxTech, page 22
+        if (game.getOptions().booleanOption("tacops_LOS1")) {
+            if (hexEl + bldgEl > (ai.targetAbsHeight
+                    * ai.attackPos.distance(coords) + ai.attackAbsHeight
+                    * ai.targetPos.distance(coords))
+                    / (ai.targetPos.distance(coords) + ai.attackPos
+                            .distance(coords))) {
+                los.blocked = true;
+                if(hex.terrainLevel(Terrains.BLDG_CF) > 90) {
+                    los.hardBuildings++;
+                } else if(bldgEl > 0) {
+                    los.softBuildings++;
+                } else {
+                    los.blockedByHill = true;
+                }
+            }
+        }
+
+        if (((hexEl + bldgEl > ai.attackAbsHeight) && (hexEl + bldgEl > ai.targetAbsHeight))
+                || ((hexEl + bldgEl > ai.attackAbsHeight) && (ai.attackPos
+                        .distance(coords) == 1))
+                || ((hexEl + bldgEl > ai.targetAbsHeight) && (ai.targetPos
+                        .distance(coords) == 1))) {
+            los.blocked = true;
+            if(hex.terrainLevel(Terrains.BLDG_CF) > 90) {
+                los.hardBuildings++;
+            } else if(bldgEl > 0) {
+                los.softBuildings++;
+            } else {
+                los.blockedByHill = true;
+            }
+        }
+
+        // check if there's a clear hex between the targets that's higher than
+        // one of them, if we're in underwater combat
+        if (ai.underWaterCombat
+                && (hex.terrainLevel(Terrains.WATER) == ITerrain.LEVEL_NONE)
+                && ((hexEl + bldgEl > ai.attackAbsHeight) || (hexEl + bldgEl > ai.targetAbsHeight))) {
+            los.blocked = true;
+        }
+
+        // check for woods or smoke only if not under water
+        if (!ai.underWaterCombat) {
+            if(hex.containsTerrain(Terrains.SCREEN)) {
+                //number of screens doesn't matter. One is enough to block
+                los.screen++;
+            }
+            //heavy industrial zones can vary in height up to 10 levels, so lets
+            //put all of this into a for loop
+            for(int level = 1; level < 11; level++) {
+                if(((hexEl + level > ai.attackAbsHeight) && (hexEl + level > ai.targetAbsHeight))
+                        || ((hexEl + level > ai.attackAbsHeight) && (ai.attackPos
+                                .distance(coords) == 1))
+                        || ((hexEl + level > ai.targetAbsHeight) && (ai.targetPos
+                                .distance(coords) == 1))) {
+                    //check industrial zone
+                    if(hex.terrainLevel(Terrains.INDUSTRIAL) == level) {
+                        los.heavyIndustrial++;
+                    }
+                    //TODO: might as well put everything in here to save some time
+                }
+            }
+            //planted fields only rise one level above the terrain
+            if(((hexEl + 1 > ai.attackAbsHeight) && (hexEl + 2 > ai.targetAbsHeight))
+                    || ((hexEl + 1 > ai.attackAbsHeight) && (ai.attackPos
+                            .distance(coords) == 1))
+                    || ((hexEl + 1 > ai.targetAbsHeight) && (ai.targetPos
+                            .distance(coords) == 1))) {
+                if (hex.containsTerrain(Terrains.FIELDS)) {
+                    los.plantedFields++;
+                }
+            }
+            if (((hexEl + 2 > ai.attackAbsHeight) && (hexEl + 2 > ai.targetAbsHeight))
+                    || ((hexEl + 2 > ai.attackAbsHeight) && (ai.attackPos
+                            .distance(coords) == 1))
+                    || ((hexEl + 2 > ai.targetAbsHeight) && (ai.targetPos
+                            .distance(coords) == 1))) {
+                // smoke and woods stack for
+                // LOS
+                // so check them both
+                if (hex.containsTerrain(Terrains.SMOKE)) {
+                    if (hex.terrainLevel(Terrains.SMOKE) == 1) {
+                        los.lightSmoke++;
+                    } else if (hex.terrainLevel(Terrains.SMOKE) > 1) {
+                        los.heavySmoke++;
+                    }
+                }
+
+                if ((hex.terrainLevel(Terrains.WOODS) == 1)
+                        || (hex.terrainLevel(Terrains.JUNGLE) == 1)) {
+                    los.lightWoods++;
+                } else if ((hex.terrainLevel(Terrains.WOODS) == 2)
+                        || (hex.terrainLevel(Terrains.JUNGLE) == 2)) {
+                    los.heavyWoods++;
+                }
+            }
+            //ultra woods/jungle rise three levels above the terrain
+            if (((hexEl + 3 > ai.attackAbsHeight) && (hexEl + 3 > ai.targetAbsHeight))
+                    || ((hexEl + 3 > ai.attackAbsHeight) && (ai.attackPos
+                            .distance(coords) == 1))
+                    || ((hexEl + 3 > ai.targetAbsHeight) && (ai.targetPos
+                            .distance(coords) == 1))) {
+
+                if ((hex.terrainLevel(Terrains.WOODS) == 3)
+                        || (hex.terrainLevel(Terrains.JUNGLE) == 3)) {
+                    los.ultraWoods++;
+                }
+            }
+        }
+
+
+        // check for target partial cover
+        if (ai.targetPos.distance(coords) == 1) {
+            if (los.blocked
+                    && game.getOptions().booleanOption("tacops_partial_cover")) {
+                los.targetCover = COVER_FULL;
+            } else if ((hexEl + bldgEl == ai.targetAbsHeight)
+                    && (ai.attackAbsHeight <= ai.targetAbsHeight)
+                    && (ai.targetHeight > 0)) {
+                los.targetCover |= COVER_HORIZONTAL;
+            }
+        }
+
+        // check for attacker partial cover
+        if (ai.attackPos.distance(coords) == 1) {
+            if (los.blocked
+                    && game.getOptions().booleanOption("tacops_partial_cover")) {
+                los.attackerCover = COVER_FULL;
+            } else if ((hexEl + bldgEl == ai.attackAbsHeight)
+                    && (ai.attackAbsHeight >= ai.targetAbsHeight)
+                    && (ai.attackHeight > 0)) {
+                los.attackerCover |= COVER_HORIZONTAL;
+            }
+        }
+
+        return los;
+    }
+
+    public static boolean hasFireBetween(Coords start, Coords end, IGame game) {
+
+        ArrayList<Coords> in = Coords.intervening(start, end);
+        for ( Coords hex : in ) {
+            if ( game.getBoard().getHex(hex).containsTerrain(Terrains.FIRE) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setArcedAttack(boolean attack){
+        arcedShot = attack;
+    }
+
+    /**
+     * Build line of sight effects between coordinates c1 and c2 at height h1
+     * and h2 respectivly.
+     *
+     * @param c1 the source coordiantes.
+     * @param c2 the target coordinates.
+     * @param h1 the height in the source tile that is being shot from.
+     * @param h2 the height of the target tile to shoot for.
+     * @return an attackInfo object that describes the apliable modifiers.
+     */
+    public static LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1,
+            int h2, int h1Floor, int h2Floor) {
+        LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
+        ai.attackPos = c1;
+        ai.targetPos = c2;
+        ai.attackHeight = h1;
+        ai.targetHeight = h2;
+        ai.attackAbsHeight = h1Floor + h1;
+        ai.targetAbsHeight = h2Floor + h2;
+        return ai;
+    }
+
+    /**
+     * find out if the left or right side of the divided LOS is better for the
+     * target
+     * @param in
+     * @param game
+     * @param ai
+     * @param targetInBuilding
+     * @param los
+     * @return
+     */
+    public static boolean dividedLeftBetter(ArrayList<Coords> in, IGame game, AttackInfo ai, boolean targetInBuilding, LosEffects los) {
+        int leftBetterCount = 0;
+        int rightBetterCount = 0;
         for (int i = 1; i < in.size() - 2; i += 3) {
             // get effects of each side
             LosEffects left = losForCoords(game, ai, in.get(i), los
@@ -623,10 +946,6 @@ public class LosEffects {
             // attacker, and if the attack is through a building, the
             // target has cover.
             final boolean isElevDiff = ai.attackAbsHeight != ai.targetAbsHeight;
-
-            if ((ai.minimumWaterDepth < 1) && ai.underWaterCombat) {
-                los.blocked = true;
-            }
 
             if (targetInBuilding && isElevDiff) {
                 if (null != left.getThruBldg()) {
@@ -654,245 +973,12 @@ public class LosEffects {
             // which is better?
             int lVal = left.losModifiers(game).getValue();
             int rVal = right.losModifiers(game).getValue();
-            if (lVal > rVal || (lVal == rVal && left.isAttackerCover())) {
-                los = left;
+            if ((lVal > rVal) || ((lVal == rVal) && left.isAttackerCover())) {
+                leftBetterCount++;
             } else {
-                los = right;
-            }
-            if (game.getOptions().booleanOption("tacops_partial_cover")) {
-                int cover = (left.targetCover & (COVER_LEFT | COVER_LOWLEFT))
-                        | (right.targetCover & (COVER_RIGHT | COVER_LOWRIGHT));
-                if (cover < COVER_FULL && !(left.blocked && right.blocked)) {
-                    los.blocked = false;
-                    los.targetCover = cover;
-                }
-                cover = (left.attackerCover & (COVER_LEFT | COVER_LOWLEFT))
-                        | (right.attackerCover & (COVER_RIGHT | COVER_LOWRIGHT));
-                if (cover < COVER_FULL && !(left.blocked && right.blocked)) {
-                    los.blocked = false;
-                    los.attackerCover = cover;
-                }
+                rightBetterCount++;
             }
         }
-        return los;
-    }
-
-    /**
-     * Returns a LosEffects object representing the LOS effects of anything at
-     * the specified coordinate.
-     */
-    private static LosEffects losForCoords(IGame game, AttackInfo ai,
-            Coords coords, Building thruBldg) {
-        LosEffects los = new LosEffects();
-        // ignore hexes not on board
-        if (!game.getBoard().contains(coords)) {
-            return los;
-        }
-
-        // Is there a building in this hex?
-        Building bldg = game.getBoard().getBuildingAt(coords);
-
-        // We're only tracing thru a single building if there
-        // is a building in this hex, and if it isn't the same
-        // building that we'be been tracing LOS thru.
-        if (bldg != null && bldg.equals(thruBldg)) {
-            los.setThruBldg(thruBldg);
-        }
-
-        // ignore hexes the attacker or target are in
-        if (coords.equals(ai.attackPos) || coords.equals(ai.targetPos)) {
-            if (los.getThruBldg() != null) {
-                // attacker and target in building at different height:
-                // +1 for each level of difference
-                if (ai.attackPos.equals(ai.targetPos) && ai.targetEntity)
-                    los.buildingLevelsOrHexes += (Math.abs(ai.attackHeight - ai.targetHeight));
-            }
-            return los;
-        }
-        
-        // we are an attack in a building, +1 for each building hex between the
-        // 2 units
-        if (game.getBoard().getBuildingAt(ai.attackPos) != null
-                && game.getBoard().getBuildingAt(ai.targetPos) != null
-                && thruBldg != null
-                && game.getBoard().getBuildingAt(ai.attackPos).equals(game.getBoard().getBuildingAt(ai.targetPos))
-                && ai.targetEntity && thruBldg.equals(game.getBoard().getBuildingAt(ai.attackPos))) {
-            los.buildingLevelsOrHexes += 1;
-        }
-
-        IHex hex = game.getBoard().getHex(coords);
-        int hexEl = ai.underWaterCombat ? hex.floor() : hex.surface();
-
-        // Handle minimum water depth.
-        // Applies to Torpedos.
-        if (!(hex.containsTerrain(Terrains.WATER)))
-            ai.minimumWaterDepth = 0;
-        else if ((hex.terrainLevel(Terrains.WATER) >= 0)
-                && ((ai.minimumWaterDepth == -1) || (hex
-                        .terrainLevel(Terrains.WATER) < ai.minimumWaterDepth)))
-            ai.minimumWaterDepth = hex.terrainLevel(Terrains.WATER);
-
-        // Handle building elevation.
-        // Attacks thru a building are not blocked by that building.
-        // ASSUMPTION: bridges don't block LOS.
-        int bldgEl = 0;
-        if (null == los.getThruBldg()
-                && hex.containsTerrain(Terrains.BLDG_ELEV)) {
-            bldgEl = hex.terrainLevel(Terrains.BLDG_ELEV);
-        }
-
-        // TODO: Identify when LOS travels *above* a building's hex.
-        // Alternatively, force all building hexes to be same height.
-
-        // check for block by terrain
-
-        // check for LOS according to diagramming rule from MaxTech, page 22
-        if (game.getOptions().booleanOption("tacops_LOS1")) {
-            if (hexEl + bldgEl > (ai.targetAbsHeight
-                    * ai.attackPos.distance(coords) + ai.attackAbsHeight
-                    * ai.targetPos.distance(coords))
-                    / (ai.targetPos.distance(coords) + ai.attackPos
-                            .distance(coords))) {
-                los.blocked = true;
-                if(hex.terrainLevel(Terrains.BLDG_CF) > 90) 
-                    los.hardBuildings++;
-                else if(bldgEl > 0)
-                    los.softBuildings++;
-                else
-                    los.blockedByHill = true;
-            }
-        }
-        
-        if ((hexEl + bldgEl > ai.attackAbsHeight && hexEl + bldgEl > ai.targetAbsHeight)
-                || (hexEl + bldgEl > ai.attackAbsHeight && ai.attackPos
-                        .distance(coords) == 1)
-                || (hexEl + bldgEl > ai.targetAbsHeight && ai.targetPos
-                        .distance(coords) == 1)) {
-            los.blocked = true;
-            if(hex.terrainLevel(Terrains.BLDG_CF) > 90) 
-                los.hardBuildings++;
-            else if(bldgEl > 0)
-                los.softBuildings++;
-            else
-                los.blockedByHill = true;
-        }
-
-        // check if there's a clear hex between the targets that's higher than
-        // one of them, if we're in underwater combat
-        if (ai.underWaterCombat
-                && hex.terrainLevel(Terrains.WATER) == ITerrain.LEVEL_NONE
-                && (hexEl + bldgEl > ai.attackAbsHeight || hexEl + bldgEl > ai.targetAbsHeight)) {
-            los.blocked = true;
-        }
-
-        // check for woods or smoke only if not under water
-        if (!ai.underWaterCombat) {
-            if(hex.containsTerrain(Terrains.SCREEN)) {
-                //number of screens doesn't matter. One is enough to block
-                los.screen++;
-            }
-            //heavy industrial zones can vary in height up to 10 levels, so lets 
-            //put all of this into a for loop
-            for(int level = 1; level < 11; level++) {
-                if((hexEl + level > ai.attackAbsHeight && hexEl + level > ai.targetAbsHeight)
-                        || (hexEl + level > ai.attackAbsHeight && ai.attackPos
-                                .distance(coords) == 1)
-                        || (hexEl + level > ai.targetAbsHeight && ai.targetPos
-                                .distance(coords) == 1)) {             
-                    //check industrial zone
-                    if(hex.terrainLevel(Terrains.INDUSTRIAL) == level) {
-                        los.heavyIndustrial++;
-                    }
-                    //TODO: might as well put everything in here to save some time
-                }
-            }           
-            //planted fields only rise one level above the terrain
-            if((hexEl + 1 > ai.attackAbsHeight && hexEl + 2 > ai.targetAbsHeight)
-                    || (hexEl + 1 > ai.attackAbsHeight && ai.attackPos
-                            .distance(coords) == 1)
-                    || (hexEl + 1 > ai.targetAbsHeight && ai.targetPos
-                            .distance(coords) == 1)) { 
-                if (hex.containsTerrain(Terrains.FIELDS)) {
-                    los.plantedFields++;
-                }
-            }
-            if ((hexEl + 2 > ai.attackAbsHeight && hexEl + 2 > ai.targetAbsHeight)
-                    || (hexEl + 2 > ai.attackAbsHeight && ai.attackPos
-                            .distance(coords) == 1)
-                    || (hexEl + 2 > ai.targetAbsHeight && ai.targetPos
-                            .distance(coords) == 1)) {
-                // smoke and woods stack for
-                // LOS
-                // so check them both
-                if (hex.containsTerrain(Terrains.SMOKE)) {
-                    if (hex.terrainLevel(Terrains.SMOKE) == 1) {
-                        los.lightSmoke++;
-                    } else if (hex.terrainLevel(Terrains.SMOKE) > 1) {
-                        los.heavySmoke++;
-                    }
-                }
-
-                if (hex.terrainLevel(Terrains.WOODS) == 1
-                        || hex.terrainLevel(Terrains.JUNGLE) == 1) {
-                    los.lightWoods++;
-                } else if (hex.terrainLevel(Terrains.WOODS) == 2
-                        || hex.terrainLevel(Terrains.JUNGLE) == 2) {
-                    los.heavyWoods++;
-                }
-            }
-            //ultra woods/jungle rise three levels above the terrain
-            if ((hexEl + 3 > ai.attackAbsHeight && hexEl + 3 > ai.targetAbsHeight)
-                    || (hexEl + 3 > ai.attackAbsHeight && ai.attackPos
-                            .distance(coords) == 1)
-                    || (hexEl + 3 > ai.targetAbsHeight && ai.targetPos
-                            .distance(coords) == 1)) {
-                
-                if (hex.terrainLevel(Terrains.WOODS) == 3
-                        || hex.terrainLevel(Terrains.JUNGLE) == 3) {
-                    los.ultraWoods++;
-                }
-            }
-        }
-        
-
-        // check for target partial cover
-        if (ai.targetPos.distance(coords) == 1) {
-            if (los.blocked
-                    && game.getOptions().booleanOption("tacops_partial_cover")) {
-                los.targetCover = COVER_FULL;
-            } else if (hexEl + bldgEl == ai.targetAbsHeight
-                    && ai.attackAbsHeight <= ai.targetAbsHeight
-                    && ai.targetHeight > 0) {
-                los.targetCover |= COVER_HORIZONTAL;
-            }
-        }
-
-        // check for attacker partial cover
-        if (ai.attackPos.distance(coords) == 1) {
-            if (los.blocked
-                    && game.getOptions().booleanOption("tacops_partial_cover")) {
-                los.attackerCover = COVER_FULL;
-            } else if (hexEl + bldgEl == ai.attackAbsHeight
-                    && ai.attackAbsHeight >= ai.targetAbsHeight
-                    && ai.attackHeight > 0) {
-                los.attackerCover |= COVER_HORIZONTAL;
-            }
-        }
-
-        return los;
-    }
-    
-    public static boolean hasFireBetween(Coords start, Coords end, IGame game) {
-        
-        ArrayList<Coords> in = Coords.intervening(start, end);
-        for ( Coords hex : in ) {
-            if ( game.getBoard().getHex(hex).containsTerrain(Terrains.FIRE) )
-                return true;
-        }
-        return false;
-    }
-    
-    public void setArcedAttack(boolean attack){
-        this.arcedShot = attack;
+        return leftBetterCount >= rightBetterCount;
     }
 }

@@ -2824,7 +2824,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public boolean hasWorkingSystem(int system, int loc) {
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             CriticalSlot ccs = getCritical(loc, i);
-            if ((ccs != null) && (ccs.getType() == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == system) && !ccs.isDamaged()) {
+            if ((ccs != null) && (ccs.getType() == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == system) && !ccs.isDamaged() && !ccs.isBreached()) {
                 return true;
             }
         }

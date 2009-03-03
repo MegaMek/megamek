@@ -2618,9 +2618,7 @@ public class Server implements Runnable {
             final Entity entity = loop.nextElement();
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
-                if ((entity instanceof Infantry)
-                        // only non-swarming infantry get a movement turn
-                        &&!((game.getPhase() == IGame.Phase.PHASE_MOVEMENT) && (entity.getSwarmTargetId() != Entity.NONE))) {
+                if ((entity instanceof Infantry)) {
                     if (infMoveEven) {
                         player.incrementEvenTurns();
                     } else if (infMoveMulti) {
@@ -18728,16 +18726,27 @@ public class Server implements Runnable {
             if (Entity.NONE != swarmerId) {
                 final Entity swarmer = game.getEntity(swarmerId);
 
-                // remove the swarmer from the move queue
-                game.removeTurnFor(swarmer);
-                send(createTurnVectorPacket());
-
                 swarmer.setSwarmTargetId(Entity.NONE);
+                // a unit that stopped swarming due to the swarmed unit dieing
+                // should be able to move
+                swarmer.setUnloaded(false);
                 entity.setSwarmAttackerId(Entity.NONE);
+                Report.addNewline(vDesc);
                 r = new Report(6380);
                 r.subject = swarmerId;
                 r.addDesc(swarmer);
                 vDesc.addElement(r);
+                if ((entity instanceof Mech) && !entity.isProne()) {
+                    // Swarming infantry take a 2d6 point hit.
+                    // ASSUMPTION : damage should not be doubled.
+                    r = new Report(2335);
+                    r.subject = swarmer.getId();
+                    r.addDesc(swarmer);
+                    vDesc.add(r);
+                    vDesc.addAll(damageEntity(swarmer, swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), Compute.d6(2)));
+                    Report.addNewline(vPhaseReport);
+                }
+
                 entityUpdate(swarmerId);
             }
 

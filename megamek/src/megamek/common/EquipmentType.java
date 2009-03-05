@@ -198,7 +198,7 @@ public class EquipmentType {
         return (flags & flag) != 0;
     }
 
-    public double getBV(Entity entity, boolean isArmored) {
+    public double getBV(Entity entity) {
         return bv;
     }
 

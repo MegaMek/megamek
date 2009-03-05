@@ -431,7 +431,7 @@ public class MiscType extends EquipmentType {
         return 1;
     }
 
-    public double getBV(Entity entity, Mounted mount, boolean isArmored) {
+    public double getBV(Entity entity, Mounted mount) {
 
         if (hasFlag(F_PPC_CAPACITOR) && (mount != null)
                 && (mount.getLinked() != null)) {
@@ -457,20 +457,14 @@ public class MiscType extends EquipmentType {
             }
         }
 
-        return this.getBV(entity, isArmored);
+        return this.getBV(entity);
     }
 
     @Override
-    public double getBV(Entity entity, boolean isArmored) {
+    public double getBV(Entity entity) {
         double returnBV = 0.0;
         if (bv != BV_VARIABLE) {
             returnBV = bv;
-            if (isArmored) {
-                returnBV += (bv * .05) * getCriticals(entity);
-                if (Math.floor(returnBV) < 1) {
-                    returnBV = 5;
-                }
-            }
             return returnBV;
         }
         // check for known formulas
@@ -494,9 +488,9 @@ public class MiscType extends EquipmentType {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     if (m.isRearMounted()) {
-                        fRearBV += wt.getBV(entity, false);
+                        fRearBV += wt.getBV(entity);
                     } else {
-                        fFrontBV += wt.getBV(entity, false);
+                        fFrontBV += wt.getBV(entity);
                     }
                 }
             }
@@ -508,13 +502,6 @@ public class MiscType extends EquipmentType {
             returnBV = (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
         }
 
-        if (isArmored) {
-            int crits = getCriticals(entity);
-            returnBV += (returnBV * 0.5) * crits;
-            if (Math.floor(returnBV) < 1) {
-                returnBV = 5 * crits;
-            }
-        }
         return returnBV;
     }
 

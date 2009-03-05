@@ -416,7 +416,7 @@ public class GunEmplacement extends Entity implements Serializable {
                     || (etype instanceof AmmoType && ((AmmoType) etype)
                             .getAmmoType() == AmmoType.T_AMS)
                     || etype.hasFlag(MiscType.F_ECM)) {
-                dEquipmentBV += etype.getBV(this, mounted.isArmored());
+                dEquipmentBV += etype.getBV(this);
             }
         }
         dbv += dEquipmentBV;
@@ -431,7 +431,7 @@ public class GunEmplacement extends Entity implements Serializable {
         boolean hasTargComp = hasTargComp();
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
-            double dBV = wtype.getBV(this, mounted.isArmored());
+            double dBV = wtype.getBV(this);
 
             // don't count destroyed equipment
             if (mounted.isDestroyed()) {

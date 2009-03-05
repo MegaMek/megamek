@@ -2503,7 +2503,7 @@ public abstract class Mech extends Entity implements Serializable {
                     // not yet coded: ||
                     // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
                     || etype.hasFlag(MiscType.F_BAP)))) {
-                double bv = etype.getBV(this, mounted.isArmored());
+                double bv = etype.getBV(this);
                 dEquipmentBV += bv;
                 bvText.append(startRow);
                 bvText.append(startColumn);
@@ -2524,6 +2524,22 @@ public abstract class Mech extends Entity implements Serializable {
 
         bvText.append(startRow);
         bvText.append(startColumn);
+
+        double armoredBVCal = getArmoredCritBV();
+
+        if (armoredBVCal > 0) {
+            bvText.append("Armored Components BV Modification");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+
+            bvText.append("+");
+            bvText.append(armoredBVCal);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            dbv += armoredBVCal;
+        }
 
         bvText.append("Total BV of all Defensive Equipment ");
         bvText.append(endColumn);
@@ -2914,7 +2930,7 @@ public abstract class Mech extends Entity implements Serializable {
             if (wtype.hasFlag(WeaponType.F_B_POD)) {
                 continue;
             }
-            double dBV = wtype.getBV(this, weapon.isArmored());
+            double dBV = wtype.getBV(this);
 
             // don't count destroyed equipment
             if (weapon.isDestroyed()) {
@@ -2929,7 +2945,7 @@ public abstract class Mech extends Entity implements Serializable {
                 double mgaBV = 0;
                 for (Mounted possibleMG : getWeaponList()) {
                     if (possibleMG.getType().hasFlag(WeaponType.F_MG) && (possibleMG.getLocation() == weapon.getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this, possibleMG.isArmored());
+                        mgaBV += possibleMG.getType().getBV(this);
                     }
                 }
                 dBV = mgaBV * 0.67;
@@ -2937,7 +2953,7 @@ public abstract class Mech extends Entity implements Serializable {
             // check to see if the weapon is a PPC and has a Capacitor attached
             // to it
             if (wtype.hasFlag(WeaponType.F_PPC) && (weapon.getLinkedBy() != null)) {
-                dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this, weapon, weapon.getLinkedBy().isArmored());
+                dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this, weapon);
             }
 
             bvText.append(startRow);
@@ -3121,7 +3137,7 @@ public abstract class Mech extends Entity implements Serializable {
             bvText.append(endColumn);
             bvText.append(endRow);
 
-            double dBV = wtype.getBV(this, mounted.isArmored());
+            double dBV = wtype.getBV(this);
             String weaponName = mounted.getName() + (mounted.isRearMounted() ? "(R)" : "");
 
             // don't count AMS, it's defensive
@@ -3133,7 +3149,7 @@ public abstract class Mech extends Entity implements Serializable {
                 double mgaBV = 0;
                 for (Mounted possibleMG : getWeaponList()) {
                     if (possibleMG.getType().hasFlag(WeaponType.F_MG) && (possibleMG.getLocation() == mounted.getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this, possibleMG.isArmored());
+                        mgaBV += possibleMG.getType().getBV(this);
                     }
                 }
                 dBV = mgaBV * 0.67;
@@ -3153,7 +3169,7 @@ public abstract class Mech extends Entity implements Serializable {
                 // check to see if the weapon is a PPC and has a Capacitor
                 // attached to it
                 if (wtype.hasFlag(WeaponType.F_PPC)) {
-                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(this, mounted, mounted.getLinkedBy().isArmored());
+                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(this, mounted);
                 }
                 Mounted mLinker = mounted.getLinkedBy();
                 if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
@@ -3194,9 +3210,9 @@ public abstract class Mech extends Entity implements Serializable {
             if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype.getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this, mounted.isArmored()));
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
                 } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this, mounted.isArmored()) + weaponsForExcessiveAmmo.get(key));
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
                 }
             }
         }
@@ -3398,7 +3414,7 @@ public abstract class Mech extends Entity implements Serializable {
                 // weapons
                 continue;
             }
-            double bv = mtype.getBV(this, mounted.isArmored());
+            double bv = mtype.getBV(this);
             // if physical weapon linked to AES, multiply by 1.5
             if ((mtype.hasFlag(MiscType.F_CLUB) || mtype.hasFlag(MiscType.F_HAND_WEAPON)) && hasFunctionalArmAES(mounted.getLocation())) {
                 bv *= 1.5;
@@ -3477,13 +3493,13 @@ public abstract class Mech extends Entity implements Serializable {
                 if (tmpP != null) {
                     // Okay, actually check for friendly TAG.
                     if (tmpP.hasTAG()) {
-                        tagBV += atype.getBV(this, false);
+                        tagBV += atype.getBV(this);
                     } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (game != null)) {
                         for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
                             Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {
-                                    tagBV += atype.getBV(this, false);
+                                    tagBV += atype.getBV(this);
                                 }
                                 // A player can't be on two teams.
                                 // If we check his team and don't give the
@@ -4716,30 +4732,18 @@ public abstract class Mech extends Entity implements Serializable {
         }
         if (type == CriticalSlot.TYPE_SYSTEM) {
             if ((systemNames[index].indexOf("Upper") != -1) || (systemNames[index].indexOf("Lower") != -1) || (systemNames[index].indexOf("Hand") != -1) || (systemNames[index].indexOf("Foot") != -1)) {
-                return systemNames[index] + " Actuator";
+                return systemNames[index] + " Actuator" + armoredText;
             } else if (systemNames[index].indexOf("Engine") != -1) {
-                if (cs.isArmored()) {
-                    return "Fusion " + systemNames[index] + armoredText;
-                }
-                return "Fusion " + systemNames[index];
+                return "Fusion " + systemNames[index] + armoredText;
             } else {
-                if (cs.isArmored()) {
-                    return systemNames[index] + armoredText;
-                }
-                return systemNames[index];
+                return systemNames[index] + armoredText;
             }
         } else if (type == CriticalSlot.TYPE_EQUIPMENT) {
             Mounted m = getEquipment(cs.getIndex());
             if (m.isRearMounted()) {
-                if (m.isArmored()) {
-                    return m.getType().getInternalName() + " (R)" + armoredText;
-                }
-                return m.getType().getInternalName() + " (R)";
+                return m.getType().getInternalName() + " (R)" + armoredText;
             }
-            if (m.isArmored()) {
-                return m.getType().getInternalName() + armoredText;
-            }
-            return m.getType().getInternalName();
+            return m.getType().getInternalName() + armoredText;
         } else {
             return "?" + index;
         }
@@ -5575,5 +5579,32 @@ public abstract class Mech extends Entity implements Serializable {
      */
     public boolean isArm(int loc) {
         return (loc == Mech.LOC_LARM) || (loc == Mech.LOC_RARM);
+    }
+
+    public double getArmoredCritBV() {
+        double bv = 0.0f;
+
+        for (int loc = Mech.LOC_HEAD; loc <= Mech.LOC_LLEG; loc++) {
+            for (int slot = 0; slot < getNumberOfCriticals(loc); slot++) {
+                CriticalSlot cs = getCritical(loc, slot);
+                if (cs != null && cs.isArmored()) {
+                    if (cs.getType() == CriticalSlot.TYPE_SYSTEM) {
+                        bv += 5;
+                    } else {
+                        Mounted mount = cs.getMount() != null ? cs.getMount() : getEquipment(cs.getIndex());
+                        if (mount != null) {
+                            double critBv = mount.getType().getBV(this);
+
+                            if (critBv == 0) {
+                                bv += 5;
+                            } else {
+                                bv += critBv * .05;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return bv;
     }
 }

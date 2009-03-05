@@ -745,10 +745,10 @@ public class BattleArmor extends Infantry implements Serializable {
                     continue;
                 }
                 if (weapon.getLocation() == LOC_SQUAD) {
-                    oBV += weapon.getType().getBV(this, weapon.isArmored());
+                    oBV += weapon.getType().getBV(this);
                 } else {
                     // squad support, count at 1/troopercount
-                    oBV += weapon.getType().getBV(this, weapon.isArmored()) / getTotalOInternal();
+                    oBV += weapon.getType().getBV(this) / getTotalOInternal();
                 }
             }
             for (Mounted ammo : getAmmo()) {
@@ -773,11 +773,11 @@ public class BattleArmor extends Infantry implements Serializable {
                     if (weapon.getLocation() == LOC_SQUAD) {
                         if (!weapon.getType().hasFlag(WeaponType.F_MISSILE) &&
                                 !weapon.isBodyMounted()) {
-                            oBV += weapon.getType().getBV(this, weapon.isArmored());
+                            oBV += weapon.getType().getBV(this);
                         }
                     } else {
                         // squad support, count at 1/troopercount
-                        oBV += weapon.getType().getBV(this, weapon.isArmored()) / getTotalOInternal();
+                        oBV += weapon.getType().getBV(this) / getTotalOInternal();
                     }
                 }
                 // magnetic claws and vibro claws counted again
@@ -785,7 +785,7 @@ public class BattleArmor extends Infantry implements Serializable {
                     if (misc.getLocation() == LOC_SQUAD || misc.getLocation() == i) {
                         if (misc.getType().hasFlag(MiscType.F_ASSAULT_CLAW)
                                 || misc.getType().hasFlag(MiscType.F_VIBROCLAW)) {
-                            oBV += misc.getType().getBV(this, misc.isArmored());
+                            oBV += misc.getType().getBV(this);
                         }
                     }
                 }

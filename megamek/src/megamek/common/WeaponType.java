@@ -978,15 +978,8 @@ public class WeaponType extends EquipmentType {
     }
 
     @Override
-    public double getBV(Entity entity, boolean isArmored) {
+    public double getBV(Entity entity) {
         double returnBV = bv;
-        if (isArmored) {
-            returnBV += (bv * .05) * getCriticals(entity);
-            if (Math.floor(returnBV) < 1) {
-                returnBV = 5;
-            }
-        }
-
         return returnBV;
     }
 }

@@ -13028,7 +13028,7 @@ public class Server implements Runnable {
                 mtHeat = false;
             }
             // heat effects: start up
-            if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
+            if ((entity.heat < autoShutDownHeat) && entity.isShutDown() && !entity.isStalled()) {
                 if (entity.getTaserShutdownRounds() == 0) {
                     if (entity.heat < 14) {
                         // automatically starts up again

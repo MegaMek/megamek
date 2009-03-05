@@ -847,7 +847,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * Is this entity shut down or is the crew unconscious?
      */
     public boolean isImmobile() {
-        return shutDown || crew.isUnconscious();
+        return isShutDown() || crew.isUnconscious();
     }
 
     public boolean isCharging() {
@@ -8188,6 +8188,14 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     public boolean hasArmoredEngine() {
+        return false;
+    }
+
+    /**
+     * Is this Entity's ICE Engine stalled?
+     * @return if this Entity's ICE engine is stalled
+     */
+    public boolean isStalled() {
         return false;
     }
 

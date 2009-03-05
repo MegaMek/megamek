@@ -502,21 +502,19 @@ public class Server implements Runnable {
         }
 
         // kill pending connnections
-        for (Enumeration<IConnection> connEnum = connectionsPending.elements();connEnum.hasMoreElements();) {
-            IConnection conn = connEnum.nextElement();
+        for (IConnection conn : connectionsPending) {
             conn.close();
         }
         connectionsPending.removeAllElements();
 
         // Send "kill" commands to all connections
         // N.B. I may be starting a race here.
-        for (Enumeration<IConnection> connEnum = connections.elements();connEnum.hasMoreElements();) {
-            send(connEnum.nextElement().getId(), new Packet(Packet.COMMAND_CLOSE_CONNECTION));
+        for (IConnection connection : connections) {
+            send(connection.getId(), new Packet(Packet.COMMAND_CLOSE_CONNECTION));
         }
 
         // kill active connnections
-        for (Enumeration<IConnection> connEnum = connections.elements();connEnum.hasMoreElements();) {
-            IConnection conn = connEnum.nextElement();
+        for (IConnection conn : connections) {
             conn.close();
         }
         connections.removeAllElements();
@@ -1835,8 +1833,7 @@ public class Server implements Runnable {
             // write End Phase header
             addReport(new Report(5005, Report.PUBLIC));
             checkForSuffocation();
-            checkForIndustrialWaterDeath();
-            checkForIndustrialUnstall();
+            checkForIndustrialEndOfTurn();
             game.getPlanetaryConditions().determineWind();
             send(createPlanetaryConditionsPacket());
             for (DynamicTerrainProcessor tp : terrainProcessors) {
@@ -9682,12 +9679,14 @@ public class Server implements Runnable {
                     ae.destroyRetractableBlade(armLoc);
                 }
             }
-
-
-
         }
-
         addNewLines();
+
+        //if the target is an industrial mech, it needs to check for crits
+        //at the end of turn
+        if (target instanceof Mech && ((Mech)target).isIndustrial()) {
+            ((Mech)target).setCheckForCrit(true);
+        }
     }
 
     /**
@@ -9910,6 +9909,12 @@ public class Server implements Runnable {
             game.addPSR(kickPRD);
         }
 
+        //if the target is an industrial mech, it needs to check for crits
+        //at the end of turn
+        if (te instanceof Mech && ((Mech)te).isIndustrial()) {
+            ((Mech)te).setCheckForCrit(true);
+        }
+
         addNewLines();
     }
 
@@ -10102,6 +10107,12 @@ public class Server implements Runnable {
         }
 
         addNewLines();
+
+        //if the target is an industrial mech, it needs to check for crits
+        //at the end of turn
+        if (target instanceof Mech && ((Mech)target).isIndustrial()) {
+            ((Mech)target).setCheckForCrit(true);
+        }
     }
 
     /**
@@ -10272,6 +10283,12 @@ public class Server implements Runnable {
         }
 
         addNewLines();
+
+        //if the target is an industrial mech, it needs to check for crits
+        //at the end of turn
+        if (target instanceof Mech && ((Mech)target).isIndustrial()) {
+            ((Mech)target).setCheckForCrit(true);
+        }
     }
 
     /**
@@ -10349,6 +10366,11 @@ public class Server implements Runnable {
             addReport(r);
             addReport(damageEntity(ae, hit, damage));
             addNewLines();
+            //if this is an industrial mech, it needs to check for crits
+            //at the end of turn
+            if (ae instanceof Mech && ((Mech)ae).isIndustrial()) {
+                ((Mech)ae).setCheckForCrit(true);
+            }
             return;
         }
 
@@ -10985,6 +11007,12 @@ public class Server implements Runnable {
             addReport(r);
             ae.removeMisc(caa.getClub().getName());
         }
+
+        //if the target is an industrial mech, it needs to check for crits
+        //at the end of turn
+        if (target instanceof Mech && ((Mech)target).isIndustrial()) {
+            ((Mech)target).setCheckForCrit(true);
+        }
     }
 
     /**
@@ -11124,6 +11152,12 @@ public class Server implements Runnable {
             game.addPSR(pushPRD);
         }
 
+        //if the target is an industrial mech, it needs to check for crits
+        //at the end of turn
+        if (te instanceof Mech && ((Mech)te).isIndustrial()) {
+            ((Mech)te).setCheckForCrit(true);
+        }
+
         addNewLines();
     }
 
@@ -11189,6 +11223,11 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         addReport(r);
         addNewLines();
+        //if the target is an industrial mech, it needs to check for crits
+        //at the end of turn
+        if (te instanceof Mech && ((Mech)te).isIndustrial()) {
+            ((Mech)te).setCheckForCrit(true);
+        }
     }
 
     /**
@@ -11272,6 +11311,12 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         addReport(r);
         addNewLines();
+
+        //if the target is an industrial mech, it needs to check for crits
+        //at the end of turn
+        if (te instanceof Mech && ((Mech)te).isIndustrial()) {
+            ((Mech)te).setCheckForCrit(true);
+        }
     }
 
     /**
@@ -11601,8 +11646,7 @@ public class Server implements Runnable {
             // move attacker to side hex
             addReport(doEntityDisplacement(ae, src, dest, null));
         } else if ((target.getTargetType() == Targetable.TYPE_BUILDING) || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) { // Targeting
-            // a
-            // building.
+            // a building.
             // The building takes the full brunt of the attack.
             r = new Report(4040);
             r.subject = ae.getId();
@@ -12078,6 +12122,12 @@ public class Server implements Runnable {
 
         addNewLines();
 
+        //if the target is an industrial mech, it needs to check for crits
+        //at the end of turn
+        if (te instanceof Mech && ((Mech)te).isIndustrial()) {
+            ((Mech)te).setCheckForCrit(true);
+        }
+
     } // End private void resolveChargeDamage( Entity, Entity, ToHitData )
 
     private void resolveLayExplosivesAttack(PhysicalResult pr, int lastEntityId) {
@@ -12262,8 +12312,8 @@ public class Server implements Runnable {
                 int height = 2 + (game.getBoard().getHex(dest).containsTerrain(Terrains.BLDG_ELEV) ? game.getBoard().getHex(dest).terrainLevel(Terrains.BLDG_ELEV) : 0);
                 addReport(doEntityFall(ae, dest, height, 3, ae.getBasePilotingRoll()));
             } else {
-                // attacker destroyed Tanks
-                // suffer an ammo/power plant hit.
+                // attacker destroyed
+                // Tanks suffer an ammo/power plant hit.
                 // TODO : a Mech suffers a Head Blown Off crit.
                 addReport(destroyEntity(ae, "impossible displacement", ae instanceof Mech, ae instanceof Mech));
             }
@@ -12402,6 +12452,12 @@ public class Server implements Runnable {
         }
         // HACK: to avoid automatic falls, displace from dest to dest
         addReport(doEntityDisplacement(ae, dest, dest, new PilotingRollData(ae.getId(), 4, "executed death from above")));
+
+        //if the target is an industrial mech, it needs to check for crits
+        //at the end of turn
+        if (target instanceof Mech && ((Mech)target).isIndustrial()) {
+            ((Mech)target).setCheckForCrit(true);
+        }
     }
 
     /**
@@ -13545,10 +13601,51 @@ public class Server implements Runnable {
         }
     }
 
+    private void checkForIndustrialEndOfTurn() {
+        checkForIndustrialWaterDeath();
+        checkForIndustrialUnstall();
+        checkForIndustrialCrit();
+    }
+
     private void checkForIndustrialUnstall() {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = i.nextElement();
             entity.checkUnstall(vPhaseReport);
+        }
+    }
+
+    /**
+     * industrial mechs might need to check for critical damage
+     */
+    private void checkForIndustrialCrit() {
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            final Entity entity = i.nextElement();
+            if (entity instanceof Mech && ((Mech)entity).isIndustrial()) {
+                Mech mech = (Mech)entity;
+                // should we check for critical damage?
+                if (mech.isCheckForCrit()) {
+                    Report r = new Report(5530);
+                    r.addDesc(mech);
+                    r.subject = mech.getId();
+                    r.newlines = 0;
+                    vPhaseReport.add(r);
+                    // for being hit by a physical weapon
+                    if (mech.getLevelsFallen() == 0) {
+                        r = new Report(5531);
+                        r.subject = mech.getId();
+                    // or for falling
+                    } else {
+                        r = new Report(5532);
+                        r.subject = mech.getId();
+                        r.add(mech.getLevelsFallen());
+                    }
+                    vPhaseReport.add(r);
+                    vPhaseReport.addAll(criticalEntity(mech,
+                            mech.rollHitLocation(ToHitData.HIT_NORMAL,
+                            ToHitData.SIDE_FRONT).getLocation(),
+                            mech.getLevelsFallen()));
+                }
+            }
         }
     }
 
@@ -15784,13 +15881,6 @@ public class Server implements Runnable {
             // This is a hack so MM.NET marks the mech as not salvageable
             if (en instanceof Mech) {
                 en.destroyLocation(Mech.LOC_CT);
-            }
-
-            // Light our hex on fire
-            final IHex curHex = game.getBoard().getHex(en.getPosition());
-
-            if ((null != curHex) && !curHex.containsTerrain(Terrains.FIRE)) {
-                ignite(en.getPosition(), false, vDesc);
             }
 
             // ICE explosions don't hurt anyone else, but fusion do
@@ -19087,6 +19177,17 @@ public class Server implements Runnable {
         if ((waterDepth > 0) && !(entity instanceof Mech) && !(entity instanceof Protomech) && !((entity.getRunMP() > 0) && (entity.getMovementMode() == IEntityMovementMode.HOVER)) && (entity.getMovementMode() != IEntityMovementMode.HYDROFOIL) && (entity.getMovementMode() != IEntityMovementMode.NAVAL) && (entity.getMovementMode() != IEntityMovementMode.SUBMARINE) && (entity.getMovementMode() != IEntityMovementMode.INF_UMU)) {
             vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
             return vPhaseReport;
+        }
+
+        // set how deep the mech has fallen
+        if (entity instanceof Mech) {
+            Mech mech = (Mech)entity;
+            mech.setLevelsFallen(damageHeight+waterDepth+1);
+            // an industrial mech now needs to check for a crit at the end of
+            // the turn
+            if (mech.isIndustrial()) {
+                mech.setCheckForCrit(true);
+            }
         }
 
         // calculate damage for hitting the surface

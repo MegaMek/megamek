@@ -406,12 +406,14 @@ public class TdbFile implements IMechLoader {
                         "This xml file is not a valid Drawing Board mech.  Make sure you are using version 2.0.23 or later of The Drawing Board.");
             }
 
-            if (gyroType.equals("Extra-Light"))
+            if (gyroType.equals("Extra-Light")) {
                 gyroType = "XL";
-            else if (gyroType.equals("Heavy-Duty"))
+            } else if (gyroType.equals("Heavy-Duty")) {
                 gyroType = "Heavy Duty";
-            if (cockpitType.equals("Torso-Mounted"))
+            }
+            if (cockpitType.equals("Torso-Mounted")) {
                 cockpitType = "Torso Mounted";
+            }
             if (chassisConfig.equals("Quad")) {
                 mech = new QuadMech(gyroType, cockpitType);
             } else {
@@ -491,8 +493,9 @@ public class TdbFile implements IMechLoader {
                         + techBase);
             }
             mech.setWeight(Integer.parseInt(tonnage));
-            if (jumpMP != null)
+            if (jumpMP != null) {
                 mech.setOriginalJumpMP(Integer.parseInt(jumpMP));
+            }
             int engineFlags = 0;
             if ((mech.isClan() && !mech.isMixedTech())
                     || (mech.isMixedTech() && mech.isClan() && !mech

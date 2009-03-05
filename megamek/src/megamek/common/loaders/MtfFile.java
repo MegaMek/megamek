@@ -574,7 +574,7 @@ public class MtfFile implements IMechLoader {
                         m.setArmored(isArmored);
                         mech.addEquipment(m, loc, rearMounted);
                     } else {
-                        mech.addEquipment(etype, loc, rearMounted).setArmored(isArmored);
+                        mech.addEquipment(etype, loc, rearMounted, false, isArmored);
                     }
                 } else {
                     if (!critName.equals(MtfFile.EMPTY)) {

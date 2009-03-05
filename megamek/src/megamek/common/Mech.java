@@ -5397,9 +5397,9 @@ public abstract class Mech extends Entity implements Serializable {
         stalledThisTurn = true;
     }
 
-    /**
-     * Is this Mech's ICE Engine stalled?
-     * @return if this Mech's ICE engine is stalled
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#isStalled()
      */
     public boolean isStalled() {
         return stalled;

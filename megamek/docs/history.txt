@@ -17,6 +17,7 @@ v0.33.42-dev (SVN)
 + Implementing Industrial check for critical damage after falling or being hít
     by a physical attack
 + Engine explosions shouldn't cause fires
++ Bug: Stalled engine in an industrial not causing all shutdown problems
 
 v0.33.41 (2009-02-25, UTC+1)
 + Bug: prevent NPE when c3/c3i team mate is not yet deployed

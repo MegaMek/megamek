@@ -622,11 +622,11 @@ public class Infantry extends Entity implements Serializable {
                 // stupid assumption to at least get a value:
                 // each weapon is carried once by each platoon member
                 // if an antiMek platoon, count twice
-                wbv += wtype.getBV(this, weapon.isArmored()) * this.getInternal(Entity.LOC_NONE)
+                wbv += wtype.getBV(this) * this.getInternal(Entity.LOC_NONE)
                         * (antiMek ? 2 : 0);
             } else {
                 // field guns count only once
-                wbv += wtype.getBV(this, weapon.isArmored());
+                wbv += wtype.getBV(this);
             }
         }
         obv = wbv * speedFactor;

@@ -481,12 +481,12 @@ public class Jumpship extends Aero implements Serializable {
             if ((etype instanceof WeaponType && (etype.hasFlag(WeaponType.F_AMS)))
                     || (etype instanceof AmmoType && ((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)
                     || (etype instanceof WeaponType && ((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
-                dEquipmentBV += etype.getBV(this, mounted.isArmored());
+                dEquipmentBV += etype.getBV(this);
             }
 
             if(etype instanceof AmmoType && ((AmmoType) etype).getAmmoType() == AmmoType.T_AMS) {
                 double weight = mounted.getShotsLeft() / ((AmmoType)etype).getShots();
-                dEquipmentBV += etype.getBV(this, mounted.isArmored()) * weight;
+                dEquipmentBV += etype.getBV(this) * weight;
             }
 
         }
@@ -507,7 +507,7 @@ public class Jumpship extends Aero implements Serializable {
             WeaponType wtype = (WeaponType) mounted.getType();
             double weaponHeat = wtype.getHeat();
             int arc = getWeaponArc(getEquipmentNum(mounted));
-            double dBV = wtype.getBV(this, mounted.isArmored());
+            double dBV = wtype.getBV(this);
             //skip bays
             if(wtype instanceof BayWeapon) {
                 continue;
@@ -538,9 +538,9 @@ public class Jumpship extends Aero implements Serializable {
             if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || wtype.getAmmoType() == AmmoType.T_NA)) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize() + ";" + arc;
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this, mounted.isArmored()));
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
                 } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this, mounted.isArmored()) + weaponsForExcessiveAmmo.get(key));
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
                 }
             }
             //calc MG Array here:
@@ -549,7 +549,7 @@ public class Jumpship extends Aero implements Serializable {
                 for (Mounted possibleMG : getTotalWeaponList()) {
                     if (possibleMG.getType().hasFlag(WeaponType.F_MG)
                             && possibleMG.getLocation() == mounted.getLocation()) {
-                        mgaBV += possibleMG.getType().getBV(this, possibleMG.isArmored());
+                        mgaBV += possibleMG.getType().getBV(this);
                     }
                 }
                 dBV = mgaBV * 0.67;
@@ -775,7 +775,7 @@ public class Jumpship extends Aero implements Serializable {
                 // weapons
                 continue;
             }
-            double bv = mtype.getBV(this, mounted.isArmored());
+            double bv = mtype.getBV(this);
             // if physical weapon linked to AES, multiply by 1.5
             oEquipmentBV += bv;
             // need to do this here, a MiscType does not know the location

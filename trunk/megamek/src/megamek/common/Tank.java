@@ -668,7 +668,7 @@ public class Tank extends Entity implements Serializable {
                             // not yet coded: ||
                             // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
                             || etype.hasFlag(MiscType.F_BAP)))) {
-                dEquipmentBV += etype.getBV(this, mounted.isArmored());
+                dEquipmentBV += etype.getBV(this);
             }
         }
         dbv += dEquipmentBV;
@@ -715,7 +715,7 @@ public class Tank extends Entity implements Serializable {
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
-            double dBV = wtype.getBV(this, mounted.isArmored());
+            double dBV = wtype.getBV(this);
 
             // don't count destroyed equipment
             if (mounted.isDestroyed()) {
@@ -765,9 +765,9 @@ public class Tank extends Entity implements Serializable {
                     .getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this, mounted.isArmored()));
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
                 } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this, mounted.isArmored())
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this)
                             + weaponsForExcessiveAmmo.get(key));
                 }
             }
@@ -877,7 +877,7 @@ public class Tank extends Entity implements Serializable {
                 // weapons
                 continue;
             }
-            oEquipmentBV += mtype.getBV(this, mounted.isArmored());
+            oEquipmentBV += mtype.getBV(this);
         }
 
         weaponBV += oEquipmentBV;

@@ -211,6 +211,10 @@ public abstract class Mech extends Entity implements Serializable {
 
     private String source = "";
 
+    private boolean checkForCrit = false;
+
+    private int levelsFallen = 0;
+
     /**
      * Construct a new, blank, mech.
      */
@@ -615,6 +619,8 @@ public abstract class Mech extends Entity implements Serializable {
         if (stalledThisTurn) {
             stalledThisTurn = false;
         }
+        levelsFallen = 0;
+        checkForCrit = false;
     } // End public void newRound()
 
     /**
@@ -5470,7 +5476,7 @@ public abstract class Mech extends Entity implements Serializable {
             vPhaseReport.add(r);
             r = new Report(2285);
             r.subject = getId();
-            PilotingRollData base = getBasePilotingRoll();
+            PilotingRollData base = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
             r.add(base.getValueAsString());
             r.add(base.getDesc());
             vPhaseReport.add(r);
@@ -5573,6 +5579,32 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     /**
+     * should this mech check for a critical hit
+     * at the end of turn due to being an industrial mech
+     * and having been the target of a succesfull physical
+     * attack or for falling
+     */
+    public boolean isCheckForCrit() {
+        return checkForCrit;
+    }
+
+    /**
+     * how many levels did this mech fall this turn?
+     * @return
+     */
+    public int getLevelsFallen() {
+        return levelsFallen;
+    }
+
+    public void setLevelsFallen(int levels) {
+        levelsFallen = levels;
+    }
+
+    public void setCheckForCrit(boolean check) {
+        checkForCrit = check;
+    }
+
+    /**
      * Is the passed in location an arm?
      * @param loc
      * @return
@@ -5607,4 +5639,5 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return bv;
     }
+
 }

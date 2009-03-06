@@ -21,6 +21,7 @@ v0.33.42-dev (SVN)
 + Bug: Armored Components not calculated correctly for PPC Caps
 + Bug 1681510: Mech in depth 1 water takes damage to legs from swarmmissiles
 + Bug 1827095: performance issue in loading large maps
++ Bug: More Armored Components BV Calculations.
 
 v0.33.41 (2009-02-25, UTC+1)
 + Bug: prevent NPE when c3/c3i team mate is not yet deployed

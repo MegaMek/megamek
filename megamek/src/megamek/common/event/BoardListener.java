@@ -23,23 +23,30 @@ package megamek.common.event;
  * removed using the <code>removeBoardListener</code> method. When board is
  * changed the appropriate method will be invoked.
  * </p>
- * 
+ *
  * @see BoardListenerAdapter
  * @see BoardEvent
  */
 public interface BoardListener extends java.util.EventListener {
     /**
      * Sent when Board completely changed
-     * 
+     *
      * @param b an event containing information about the change
      */
     public void boardNewBoard(BoardEvent b);
 
     /**
      * Sent when Hex on the Board changed
-     * 
+     *
      * @param b an event containing information about the change
      */
     public void boardChangedHex(BoardEvent b);
+
+    /**
+     * Sent when all hexes on the board changed
+     *
+     * @param b an event containing information about the change
+     */
+    public void boardChangedAllHexes(BoardEvent b);
 
 }

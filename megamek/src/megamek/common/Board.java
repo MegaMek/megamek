@@ -345,9 +345,11 @@ public class Board implements Serializable, IBoard {
         // Initialize all exits.
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                initializeHex(x, y);
+                initializeHex(x, y, false);
             }
         }
+        processBoardEvent(new BoardEvent(this, null,
+                BoardEvent.BOARD_CHANGED_ALL_HEXES));
         // good time to ensure hex cache
         IdealHex.ensureCacheSize(width + 1, height + 1);
 
@@ -376,6 +378,10 @@ public class Board implements Serializable, IBoard {
      * off the board, it checks the hex opposite the missing hex.
      */
     private void initializeHex(int x, int y) {
+        initializeHex(x, y, true);
+    }
+
+    private void initializeHex(int x, int y, boolean event) {
         IHex hex = getHex(x, y);
 
         if (hex == null) {
@@ -387,8 +393,10 @@ public class Board implements Serializable, IBoard {
             IHex other = getHexInDir(x, y, i);
             hex.setExits(other, i, roadsAutoExit);
         }
-        processBoardEvent(new BoardEvent(this, new Coords(x, y),
-                BoardEvent.BOARD_CHANGED_HEX));
+        if (event) {
+            processBoardEvent(new BoardEvent(this, new Coords(x, y),
+                    BoardEvent.BOARD_CHANGED_HEX));
+        }
     }
 
     /**
@@ -1180,15 +1188,18 @@ public class Board implements Serializable, IBoard {
             return;
         }
         for (BoardListener l : boardListeners) {
-         switch (event.getType()) {
-        case BoardEvent.BOARD_CHANGED_HEX:
-            l.boardChangedHex(event);
-            break;
-        case BoardEvent.BOARD_NEW_BOARD:
-            l.boardNewBoard(event);
-            break;
-         }
-      }
+            switch (event.getType()) {
+            case BoardEvent.BOARD_CHANGED_HEX:
+                l.boardChangedHex(event);
+                break;
+            case BoardEvent.BOARD_NEW_BOARD:
+                l.boardNewBoard(event);
+                break;
+            case BoardEvent.BOARD_CHANGED_ALL_HEXES:
+                l.boardChangedAllHexes(event);
+                break;
+            }
+        }
     }
 
     protected Vector<BoardListener> getListeners() {

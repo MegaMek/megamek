@@ -651,6 +651,16 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
         board.update(b.getCoords(), hex, localPlayer);
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
+     */
+    public void boardChangedAllHexes(BoardEvent b) {
+        tileManager.getTilesetManager().loadAllHexes();
+        board.update(localPlayer);
+    }
+
     public void gameEntityNew(GameEntityNewEvent e) {
         for (Entity en : e.GetEntities()) {
             redrawEntity(en);

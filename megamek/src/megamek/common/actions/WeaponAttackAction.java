@@ -459,7 +459,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if(ae.crew.getOptions().booleanOption("grappler")) {
                 toHit.addModifier(-2, "MD Grapple/Magnet");
             }
-            
+
             // If the defender carries mechanized BA, they can fight off the
             // swarm
             for (Entity e : te.getExternalUnits()) {
@@ -912,13 +912,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 || ae.crew.getOptions().booleanOption("bvdni")) {
             toHit.addModifier(-1, "VDNI");
         }
-        
+
         //check for pl-masc
-        if (ae.crew.getOptions().booleanOption("pl_masc") 
+        if (ae.crew.getOptions().booleanOption("pl_masc")
                 && ae.getMovementMode() == IEntityMovementMode.INF_LEG) {
             toHit.addModifier(+1, "PL-MASC");
         }
-        
+
         //check for cyber eye laser sighting
         if (ae.crew.getOptions().booleanOption("cyber_eye_tele")) {
             toHit.addModifier(-1, "MD laser-sighting");
@@ -1636,7 +1636,31 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.append(Compute.getTargetMovementModifier(game, oldTarget.getId()));
             toHit.append(Compute.getTargetTerrainModifier(game, game
                     .getEntity(oldTarget.getId()), eistatus, inSameBuilding));
+            toHit.setCover(LosEffects.COVER_NONE);
             distance = Compute.effectiveDistance(game, ae, oldTarget);
+            LosEffects swarmlos = LosEffects.calculateLos(game, te.getId(), oldTarget);
+         // reset cover
+            if (swarmlos.getTargetCover() != LosEffects.COVER_NONE) {
+                if (game.getOptions().booleanOption("tacops_partial_cover")) {
+                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
+                    toHit.setCover(swarmlos.getTargetCover());
+                } else {
+                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
+                    toHit.setCover(LosEffects.COVER_HORIZONTAL);
+                }
+            }
+            // target in water?
+            targHex = game.getBoard().getHex(oldTarget.getPosition());
+            targEl = oldTarget.absHeight();
+
+            if ((oldTarget.getTargetType() == Targetable.TYPE_ENTITY)
+                    && targHex.containsTerrain(Terrains.WATER)
+                    && (targHex.terrainLevel(Terrains.WATER) == 1) && (targEl == 0)
+                    && (oldTarget.height() > 0)) { // target in partial water
+                toHit.setCover(toHit.getCover()
+                        | LosEffects.COVER_HORIZONTAL);
+            }
+
             if (oldTarget.isProne()) {
                 // easier when point-blank
                 if (distance <= 1) {

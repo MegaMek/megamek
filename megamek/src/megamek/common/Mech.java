@@ -5625,7 +5625,16 @@ public abstract class Mech extends Entity implements Serializable {
                     } else {
                         Mounted mount = cs.getMount() != null ? cs.getMount() : getEquipment(cs.getIndex());
                         if (mount != null) {
-                            double critBv = mount.getType().getBV(this);
+                            double critBv = 0;
+
+                            if (mount.getType() instanceof WeaponType && mount.getType().hasFlag(WeaponType.F_PPC) && mount.getLinkedBy() != null) {
+                                critBv = mount.getType().getBV(this);
+                                Mounted ppcCap = mount.getLinkedBy();
+                                critBv += ((MiscType) ppcCap.getType()).getBV(this, ppcCap);
+                            } else {
+                                critBv = mount.getType().getBV(this);
+                            }
+
 
                             if (critBv == 0) {
                                 bv += 5;

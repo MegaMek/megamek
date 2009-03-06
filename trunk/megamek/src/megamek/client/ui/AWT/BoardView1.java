@@ -5202,6 +5202,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
+     */
+    public synchronized void boardChangedAllHexes(BoardEvent b) {
+        updateBoardImage();
+    }
+
     private GameListener gameListener = new GameListenerAdapter() {
 
         @Override

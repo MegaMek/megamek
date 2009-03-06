@@ -3958,6 +3958,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         repaint();
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
+     */
+    public synchronized void boardChangedAllHexes(BoardEvent b) {
+        tileManager.loadAllHexes();
+        repaint();
+    }
+
     private GameListener gameListener = new GameListenerAdapter() {
 
         @Override

@@ -4,7 +4,7 @@ v0.33.42-dev (SVN)
 + Updated RSPPU mechfiles because of pending errata
     Thanks darkisi!
 + Bug 2653414: ClassCastException in Compute#getSwarmMekBaseToHit
-+ Bug 2617908:MegaMek runs out of Memory after Nuke Attack
++ Bug 2617908: MegaMek runs out of Memory after Nuke Attack
     Increased default memory to 256MB
 + Bug 2617215: Buggy savegame dialogue
 + Bug 1734691: LOS walking "both sides of the fence"
@@ -22,6 +22,7 @@ v0.33.42-dev (SVN)
 + Bug 1681510: Mech in depth 1 water takes damage to legs from swarmmissiles
 + Bug 1827095: performance issue in loading large maps
 + Bug: More Armored Components BV Calculations.
++ Bug 2620865: Bridge collapses, one unit falls other does not
 
 v0.33.41 (2009-02-25, UTC+1)
 + Bug: prevent NPE when c3/c3i team mate is not yet deployed

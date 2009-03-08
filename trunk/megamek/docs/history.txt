@@ -23,6 +23,7 @@ v0.33.42-dev (SVN)
 + Bug 1827095: performance issue in loading large maps
 + Bug: More Armored Components BV Calculations.
 + Bug 2620865: Bridge collapses, one unit falls other does not
++ Bug 2672469: Direct-fire artillery is +4 to-hit, not +5 (TacOps, pg. 185)
 
 v0.33.41 (2009-02-25, UTC+1)
 + Bug: prevent NPE when c3/c3i team mate is not yet deployed

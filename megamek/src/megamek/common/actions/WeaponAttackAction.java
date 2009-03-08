@@ -1077,7 +1077,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // Handle direct artillery attacks.
         if (isArtilleryDirect) {
             if (!isArtilleryFLAK) {
-                toHit.addModifier(5, "direct artillery modifer");
+                toHit.addModifier(4, "direct artillery modifer");
             }
             toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
             toHit.append(losMods);

@@ -24,6 +24,8 @@ v0.33.42-dev (SVN)
 + Bug: More Armored Components BV Calculations.
 + Bug 2620865: Bridge collapses, one unit falls other does not
 + Bug 2672469: Direct-fire artillery is +4 to-hit, not +5 (TacOps, pg. 185)
++ Bug: When moving out of a building collapses that buildinghex, the unit causing
+    the collapse should not be hit by debris, because it just left that hex
 
 v0.33.41 (2009-02-25, UTC+1)
 + Bug: prevent NPE when c3/c3i team mate is not yet deployed

@@ -5620,68 +5620,7 @@ public abstract class Mech extends Entity implements Serializable {
             for (int slot = 0; slot < getNumberOfCriticals(loc); slot++) {
                 CriticalSlot cs = getCritical(loc, slot);
                 if (cs != null && cs.isArmored()) {
-                    if (cs.getType() == CriticalSlot.TYPE_SYSTEM) {
                         bv += 5;
-                    } else {
-                        Mounted mount = cs.getMount() != null ? cs.getMount() : getEquipment(cs.getIndex());
-                        if (mount != null) {
-                            double critBv = 0;
-
-                            /*if (mount.getLinkedBy() != null) {
-                                if (wtype.hasFlag(WeaponType.F_PPC)) {
-                                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(this, mounted);
-                                }
-                                Mounted mLinker = mounted.getLinkedBy();
-                                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                                    dBV *= 1.2;
-                                    weaponName = weaponName.concat(" with Artemis");
-                                }
-                                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                                    dBV *= 1.15;
-                                    weaponName = weaponName.concat(" with Apollo");
-                                }
-                            }*/
-
-                            if (mount.getType() instanceof WeaponType && mount.getType().hasFlag(WeaponType.F_PPC) && mount.getLinkedBy() != null) {
-                                critBv = mount.getType().getBV(this);
-                                Mounted ppcCap = mount.getLinkedBy();
-                                critBv += ((MiscType) ppcCap.getType()).getBV(this, ppcCap);
-                            } else if (mount.getType() instanceof MiscType && mount.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && mount.getLinked() != null) {
-                                Mounted ppc = mount.getLinked();
-                                double crits = ppc.getType().getCriticals(this) + 1;
-                                critBv = ppc.getType().getBV(this);
-                                critBv += ((MiscType) mount.getType()).getBV(this, mount);
-                                critBv /= crits;
-                            } else if ((mount.getType() instanceof WeaponType) && mount.getLinkedBy() != null && mount.getLinkedBy().getType().hasFlag(MiscType.F_ARTEMIS)) {
-                                critBv = mount.getType().getBV(this);
-                                critBv *= 1.2;
-                            } else if (mount.getType() instanceof MiscType && mount.getType().hasFlag(MiscType.F_ARTEMIS) && mount.getLinked() != null) {
-                                Mounted weapon = mount.getLinked();
-                                double crits = weapon.getType().getCriticals(this) + 1;
-                                critBv = weapon.getType().getBV(this);
-                                critBv *= 1.15;
-                                critBv /= crits;
-                            } else if ((mount.getType() instanceof WeaponType) && mount.getLinkedBy() != null && mount.getLinkedBy().getType().hasFlag(MiscType.F_APOLLO)) {
-                                critBv = mount.getType().getBV(this);
-                                critBv *= 1.15;
-                            } else if (mount.getType() instanceof MiscType && mount.getType().hasFlag(MiscType.F_APOLLO) && mount.getLinked() != null) {
-                                Mounted weapon = mount.getLinked();
-                                double crits = weapon.getType().getCriticals(this) + 1;
-                                critBv = weapon.getType().getBV(this);
-                                critBv *= 1.15;
-                                critBv /= crits;
-                            } else {
-                                critBv = mount.getType().getBV(this);
-                            }
-
-
-                            if (critBv == 0) {
-                                bv += 5;
-                            } else {
-                                bv += critBv * .05;
-                            }
-                        }
-                    }
                 }
             }
         }

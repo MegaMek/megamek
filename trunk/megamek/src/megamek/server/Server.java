@@ -21551,7 +21551,7 @@ public class Server implements Runnable {
             // not the amount to bring building to 0 CF.
             damageInfantryIn(bldg, toBldg, entering ? curPos : lastPos);
         }
-        return checkBuildingCollapseWhileMoving(bldg, entity, entering?curPos:lastPos);
+        return checkBuildingCollapseWhileMoving(bldg, entity, curPos);
     }
 
     /**
@@ -21563,7 +21563,7 @@ public class Server implements Runnable {
      *            the <code>Entity</code>
      * @param curPos
      *            the <coode>Coords</code> of the position of the entity
-     * @return a <code>boolean/code> value indicating if the building collapses
+     * @return a <code>boolean</code> value indicating if the building collapses
      */
     private boolean checkBuildingCollapseWhileMoving(Building bldg, Entity entity, Coords curPos) {
         Coords oldPos = entity.getPosition();

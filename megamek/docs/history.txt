@@ -26,6 +26,7 @@ v0.33.42-dev (SVN)
 + Bug 2672469: Direct-fire artillery is +4 to-hit, not +5 (TacOps, pg. 185)
 + Bug: When moving out of a building collapses that buildinghex, the unit causing
     the collapse should not be hit by debris, because it just left that hex
++ Bug: Armored Components BV Calculations changing again.
 
 v0.33.41 (2009-02-25, UTC+1)
 + Bug: prevent NPE when c3/c3i team mate is not yet deployed

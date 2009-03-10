@@ -64,4 +64,7 @@ public interface Targetable extends Serializable {
 
     /** @return side hit from location */
     public int sideTable(Coords src);
+
+    /** @return if this is off the board */
+    public boolean isOffBoard();
 }

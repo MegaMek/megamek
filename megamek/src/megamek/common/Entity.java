@@ -6283,8 +6283,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         return false;
     }
 
-    /**
-     * @return Returns whether the unit is offboard.
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Targetable#isOffBoard()
      */
     public boolean isOffBoard() {
         return offBoardDistance > 0;

@@ -16,7 +16,7 @@ package megamek.common;
 
 public class HexTarget implements Targetable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5742445409423125942L;
     private Coords m_coords;
@@ -36,7 +36,7 @@ public class HexTarget implements Targetable {
     }
 
     public int getTargetId() {
-        return coordsToId(m_coords);
+        return HexTarget.coordsToId(m_coords);
     }
 
     public Coords getPosition() {
@@ -114,5 +114,13 @@ public class HexTarget implements Targetable {
 
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Targetable#isOffBoard()
+     */
+    public boolean isOffBoard() {
+        return false;
     }
 }

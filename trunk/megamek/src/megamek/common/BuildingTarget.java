@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -17,14 +17,14 @@ package megamek.common;
 /**
  * This class represents a single, targetable hex of a building. The building
  * itself may occupy multiple hexex.
- * 
+ *
  * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $Revision$
  */
 public class BuildingTarget implements Targetable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6432766092407639630L;
 
@@ -60,7 +60,7 @@ public class BuildingTarget implements Targetable {
 
     /**
      * Initialize this object from the input.
-     * 
+     *
      * @param coords - the <code>Coords</code> of the hext being targeted.
      * @param board - the game's <code>Board</code> object.
      * @param ignite - a <code>boolean</code> flag that indicates whether the
@@ -69,49 +69,50 @@ public class BuildingTarget implements Targetable {
      *                the given coordinates do not contain a building.
      */
     protected void init(Coords coords, IBoard board, boolean ignite) {
-        this.position = coords;
-        this.isIgnite = ignite;
+        position = coords;
+        isIgnite = ignite;
 
         // Get the building at the given coordinates.
-        Building bldg = board.getBuildingAt(this.position);
+        Building bldg = board.getBuildingAt(position);
         if (bldg == null) {
             throw new IllegalArgumentException("The coordinates, "
-                    + this.position.getBoardNum()
+                    + position.getBoardNum()
                     + ", do not contain a building.");
         }
 
         // Save the building's ID.
-        this.id = coordsToId(coords);
+        id = BuildingTarget.coordsToId(coords);
 
         // Generate a name.
         StringBuffer buff = new StringBuffer();
-        buff.append("Hex ").append(this.position.getBoardNum()).append(" of ")
+        buff.append("Hex ").append(position.getBoardNum()).append(" of ")
                 .append(bldg.getName());
-        if (this.isIgnite) {
+        if (isIgnite) {
             buff.append(" (Ignite)");
         } else {
             buff.append(" (Collapse)");
         }
-        this.name = buff.toString();
+        name = buff.toString();
 
         // Bottom of building is at ground level, top of building is at
         // BLDG_ELEV.
         // Note that height of 0 is a single story building.
         // Bridges are always height 0, and the BRIDGE_ELEV indicates the
         // elevation
-        IHex targetHex = board.getHex(this.position);
+        IHex targetHex = board.getHex(position);
         elevation = Math.max(-targetHex.depth(), targetHex
                 .terrainLevel(Terrains.BRIDGE_ELEV));
         height = targetHex.terrainLevel(Terrains.BLDG_ELEV);
-        if (height <= 0)
+        if (height <= 0) {
             height = 0;
-        else
+        } else {
             height--;
+        }
     }
 
     /**
      * Target a single hex of a building.
-     * 
+     *
      * @param coords - the <code>Coords</code> of the hext being targeted.
      * @param board - the game's <code>Board</code> object.
      * @param type - an <code>int</code> value that indicates whether the
@@ -121,12 +122,12 @@ public class BuildingTarget implements Targetable {
      */
     public BuildingTarget(Coords coords, IBoard board, int nType) {
         boolean ignite = (nType == Targetable.TYPE_BLDG_IGNITE);
-        this.init(coords, board, ignite);
+        init(coords, board, ignite);
     }
 
     /**
      * Target a single hex of a building.
-     * 
+     *
      * @param coords - the <code>Coords</code> of the hext being targeted.
      * @param board - the game's <code>Board</code> object.
      * @param ignite - a <code>boolean</code> flag that indicates whether the
@@ -135,25 +136,25 @@ public class BuildingTarget implements Targetable {
      *                the given coordinates do not contain a building.
      */
     public BuildingTarget(Coords coords, IBoard board, boolean ignite) {
-        this.init(coords, board, ignite);
+        init(coords, board, ignite);
     }
 
     // Implementation of Targetable
 
     public int getTargetType() {
         int retval = Targetable.TYPE_BUILDING;
-        if (this.isIgnite) {
+        if (isIgnite) {
             retval = Targetable.TYPE_BLDG_IGNITE;
         }
         return retval;
     }
 
     public int getTargetId() {
-        return this.id;
+        return id;
     }
 
     public Coords getPosition() {
-        return this.position;
+        return position;
     }
 
     public int absHeight() {
@@ -161,11 +162,11 @@ public class BuildingTarget implements Targetable {
     }
 
     public int getHeight() {
-        return this.height;
+        return height;
     }
 
     public int getElevation() {
-        return this.elevation;
+        return elevation;
     }
 
     public boolean isImmobile() {
@@ -173,7 +174,7 @@ public class BuildingTarget implements Targetable {
     }
 
     public String getDisplayName() {
-        return this.name;
+        return name;
     }
 
     /**
@@ -196,5 +197,13 @@ public class BuildingTarget implements Targetable {
 
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Targetable#isOffBoard()
+     */
+    public boolean isOffBoard() {
+        return false;
     }
 }

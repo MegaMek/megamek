@@ -24,7 +24,7 @@ import java.io.Serializable;
 public class INarcPod implements Serializable, Targetable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3566809840132774242L;
     public static final int HOMING = 1;
@@ -61,17 +61,18 @@ public class INarcPod implements Serializable, Targetable {
     /**
      * Determine if the other object is an equivalent INarc pod. <p/> Overrides
      * <code>Object#equals(Object)</code>.
-     * 
+     *
      * @param other the other <code>Object</code> which may be an equivalent
      *            INarc pod.
      * @return <code>true</code> if the other object matches this one,
      *         <code>false</code> otherwise.
      */
+    @Override
     public boolean equals(Object other) {
         boolean equal = false;
         if (other instanceof INarcPod) {
             INarcPod pod = (INarcPod) other;
-            if (this.type == pod.type && this.team == pod.team) {
+            if (type == pod.type && team == pod.team) {
                 equal = true;
             }
         }
@@ -81,9 +82,10 @@ public class INarcPod implements Serializable, Targetable {
     /**
      * Get a <code>String</code> representing this INarc pod. <p/> Overrides
      * <code>Object#toString()</code>.
-     * 
+     *
      * @return a <code>String</code> that represents this INarc pod.
      */
+    @Override
     public String toString() {
         StringBuffer buf = new StringBuffer();
         switch (type) {
@@ -106,7 +108,7 @@ public class INarcPod implements Serializable, Targetable {
 
     /**
      * Create a new iNarc pod that is equivalent to the given ID.
-     * 
+     *
      * @param id the <code>int</code> ID of the iNarc pod.
      * @return a new <code>INarcPod</code> that matches the ID.
      */
@@ -152,10 +154,18 @@ public class INarcPod implements Serializable, Targetable {
     }
 
     public String getDisplayName() {
-        return this.toString();
+        return toString();
     }
 
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Targetable#isOffBoard()
+     */
+    public boolean isOffBoard() {
+        return false;
     }
 }

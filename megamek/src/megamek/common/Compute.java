@@ -2389,8 +2389,11 @@ public class Compute {
         if(!ae.getCrew().isActive()) {
             return false;
         }
+        if (target.isOffBoard()) {
+            return false;
+        }
 
-        return (LosEffects.calculateLos(game, ae.getId(), target).canSee() && inVisualRange(game, ae, target)) || inSensorRange(game, ae, target);
+        return (LosEffects.calculateLos(game, ae.getId(), target).canSee() && Compute.inVisualRange(game, ae, target)) || Compute.inSensorRange(game, ae, target);
     }
 
     private static int getSensorRangeBracket(Entity ae, Targetable target) {

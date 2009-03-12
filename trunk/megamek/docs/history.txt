@@ -31,6 +31,7 @@ v0.33.42 (2009-03-10, 19:52 UTC+1)
     the collapse should not be hit by debris, because it just left that hex
 + Bug: Armored Components BV Calculations changing again.
 + Bug 2673107: double blind and offboard artillery result in crash
++ Bug 2685499: some 3025 units are erroneously marked as TW units
 
 v0.33.41 (2009-02-25, UTC+1)
 + Bug: prevent NPE when c3/c3i team mate is not yet deployed

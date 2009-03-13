@@ -137,7 +137,7 @@ public class SharedUtility {
             }
 
             // check for crossing ice
-            if (curHex.containsTerrain(Terrains.ICE) && curHex.containsTerrain(Terrains.WATER) && !(curPos.equals(lastPos)) && step.getElevation() == 0 && moveType != IEntityMovementType.MOVE_JUMP && !(entity instanceof Infantry)) {
+            if (curHex.containsTerrain(Terrains.ICE) && curHex.containsTerrain(Terrains.WATER) && !(curPos.equals(lastPos)) && (step.getElevation() == 0) && (moveType != IEntityMovementType.MOVE_JUMP) && !(entity instanceof Infantry) && !(step.isPavementStep() && curHex.containsTerrain(Terrains.BRIDGE))) {
                 nagReport.append(Messages.getString("MovementDisplay.IceMoving"));
             }
 
@@ -148,19 +148,19 @@ public class SharedUtility {
             }
 
             // check for non-mech entering a fire
-            if (curHex.containsTerrain(Terrains.FIRE) && !(entity instanceof Mech) && step.getElevation() <= 1 && moveType != IEntityMovementType.MOVE_JUMP && !(curPos.equals(lastPos))) {
+            if (curHex.containsTerrain(Terrains.FIRE) && !(entity instanceof Mech) && (step.getElevation() <= 1) && (moveType != IEntityMovementType.MOVE_JUMP) && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages.getString("MovementDisplay.FireMoving", new Object[] { new Integer(8) }));
             }
 
             // check for magma
             int level = curHex.terrainLevel(Terrains.MAGMA);
-            if (level == 1 && step.getElevation() == 0 && moveType != IEntityMovementType.MOVE_JUMP && !(curPos.equals(lastPos))) {
+            if ((level == 1) && (step.getElevation() == 0) && (moveType != IEntityMovementType.MOVE_JUMP) && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages.getString("MovementDisplay.MagmaCrustMoving"));
-            } else if (level == 2 && entity.getElevation() == 0 && moveType != IEntityMovementType.MOVE_JUMP && entity.getMovementMode() != IEntityMovementMode.HOVER && entity.getMovementMode() != IEntityMovementMode.WIGE && !(curPos.equals(lastPos))) {
+            } else if ((level == 2) && (entity.getElevation() == 0) && (moveType != IEntityMovementType.MOVE_JUMP) && (entity.getMovementMode() != IEntityMovementMode.HOVER) && (entity.getMovementMode() != IEntityMovementMode.WIGE) && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages.getString("MovementDisplay.MagmaLiquidMoving"));
             }
 
-            if (entity instanceof VTOL || entity.getMovementMode() == IEntityMovementMode.HOVER || entity.getMovementMode() == IEntityMovementMode.WIGE) {
+            if ((entity instanceof VTOL) || (entity.getMovementMode() == IEntityMovementMode.HOVER) || (entity.getMovementMode() == IEntityMovementMode.WIGE)) {
                 rollTarget = entity.checkSideSlip(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing, lastPos, curPos, distance);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     nagReport.append(SharedUtility.addNag(rollTarget));
@@ -197,7 +197,7 @@ public class SharedUtility {
 
                         // For Tanks, we need to check if the tank had more MPs
                         // because it was moving along a road
-                        if (step.getMpUsed() > entity.getRunMP(false, false) && !step.isOnlyPavement()) {
+                        if ((step.getMpUsed() > entity.getRunMP(false, false)) && !step.isOnlyPavement()) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(SharedUtility.addNag(rollTarget));
@@ -218,7 +218,7 @@ public class SharedUtility {
 
             // Handle non-infantry moving into a building.
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
-            if (buildingMove > 0 && !(entity instanceof Protomech)) {
+            if ((buildingMove > 0) && !(entity instanceof Protomech)) {
 
                 // Get the building being exited.
                 Building bldgExited = null;
@@ -232,7 +232,7 @@ public class SharedUtility {
                     bldgEntered = client.game.getBoard().getBuildingAt(curPos);
                 }
 
-                if (bldgExited != null && bldgEntered != null && !bldgExited.equals(bldgEntered)) {
+                if ((bldgExited != null) && (bldgEntered != null) && !bldgExited.equals(bldgEntered)) {
                     // Exiting one building and entering another.
                     // Brave, aren't we?
                     rollTarget = entity.rollMovementInBuilding(bldgExited, distance, "exiting", overallMoveType);
@@ -262,7 +262,7 @@ public class SharedUtility {
                 }
             }
 
-            if ((step.getType() == MovePath.STEP_BACKWARDS || step.getType() == MovePath.STEP_LATERAL_LEFT_BACKWARDS || step.getType() == MovePath.STEP_LATERAL_RIGHT_BACKWARDS) && client.game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation() && !(entity instanceof VTOL)) {
+            if (((step.getType() == MovePath.STEP_BACKWARDS) || (step.getType() == MovePath.STEP_LATERAL_LEFT_BACKWARDS) || (step.getType() == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)) && (client.game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation()) && !(entity instanceof VTOL)) {
                 nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
                 nagReport.append(SharedUtility.addNag(entity.getBasePilotingRoll(overallMoveType)));
             }
@@ -290,7 +290,7 @@ public class SharedUtility {
         }
 
         // but the danger isn't over yet! landing from a jump can be risky!
-        if (overallMoveType == IEntityMovementType.MOVE_JUMP && !entity.isMakingDfa()) {
+        if ((overallMoveType == IEntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
             // check for damaged criticals
             rollTarget = entity.checkLandingWithDamage(overallMoveType);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -299,7 +299,7 @@ public class SharedUtility {
             // jumped into water?
             IHex hex = client.game.getBoard().getHex(curPos);
             int waterLevel = hex.terrainLevel(Terrains.WATER);
-            if (hex.containsTerrain(Terrains.ICE) && waterLevel > 0) {
+            if (hex.containsTerrain(Terrains.ICE) && (waterLevel > 0)) {
                 if(!(entity instanceof Infantry)) {
                     nagReport.append(Messages.getString("MovementDisplay.IceLanding"));
                 }
@@ -336,7 +336,7 @@ public class SharedUtility {
                 }
 
                 // stalling out
-                if (md.getFinalVelocity() == 0 && !(a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) && client.game.getBoard().inAtmosphere() && !a.isVSTOL()) {
+                if ((md.getFinalVelocity() == 0) && !(a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) && client.game.getBoard().inAtmosphere() && !a.isVSTOL()) {
                     rollTarget = a.checkStall(md.getFinalVelocity(), overallMoveType);
                     nagReport.append(SharedUtility.addNag(rollTarget));
                 }
@@ -377,12 +377,12 @@ public class SharedUtility {
 
             j++;
             // how do I figure out last step?
-            if (step.getDistance() == 0 && md.length() != j) {
+            if ((step.getDistance() == 0) && (md.length() != j)) {
                 thrustUsed += step.getMp();
             } else {
                 // if this was the last move and distance was zero, then add
                 // thrust
-                if (step.getDistance() == 0 && md.length() == j) {
+                if ((step.getDistance() == 0) && (md.length() == j)) {
                     thrustUsed += step.getMp();
                 }
                 // then we moved to a new hex or the last step so check

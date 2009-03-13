@@ -5330,7 +5330,8 @@ public class Server implements Runnable {
             if (curHex.containsTerrain(Terrains.ICE) && curHex.containsTerrain(Terrains.WATER)
                     && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)
                     && !lastPos.equals(curPos)
-                    && !(entity instanceof Infantry)) {
+                    && !(entity instanceof Infantry)
+                    && !(step.isPavementStep() && curHex.containsTerrain(Terrains.BRIDGE))) {
                 if (step.getElevation() == 0) {
                     int roll = Compute.d6(1);
                     r = new Report(2118);
@@ -9684,7 +9685,7 @@ public class Server implements Runnable {
 
         //if the target is an industrial mech, it needs to check for crits
         //at the end of turn
-        if (target instanceof Mech && ((Mech)target).isIndustrial()) {
+        if ((target instanceof Mech) && ((Mech)target).isIndustrial()) {
             ((Mech)target).setCheckForCrit(true);
         }
     }
@@ -9911,7 +9912,7 @@ public class Server implements Runnable {
 
         //if the target is an industrial mech, it needs to check for crits
         //at the end of turn
-        if (te instanceof Mech && ((Mech)te).isIndustrial()) {
+        if ((te instanceof Mech) && ((Mech)te).isIndustrial()) {
             ((Mech)te).setCheckForCrit(true);
         }
 
@@ -10110,7 +10111,7 @@ public class Server implements Runnable {
 
         //if the target is an industrial mech, it needs to check for crits
         //at the end of turn
-        if (target instanceof Mech && ((Mech)target).isIndustrial()) {
+        if ((target instanceof Mech) && ((Mech)target).isIndustrial()) {
             ((Mech)target).setCheckForCrit(true);
         }
     }
@@ -10286,7 +10287,7 @@ public class Server implements Runnable {
 
         //if the target is an industrial mech, it needs to check for crits
         //at the end of turn
-        if (target instanceof Mech && ((Mech)target).isIndustrial()) {
+        if ((target instanceof Mech) && ((Mech)target).isIndustrial()) {
             ((Mech)target).setCheckForCrit(true);
         }
     }
@@ -10368,7 +10369,7 @@ public class Server implements Runnable {
             addNewLines();
             //if this is an industrial mech, it needs to check for crits
             //at the end of turn
-            if (ae instanceof Mech && ((Mech)ae).isIndustrial()) {
+            if ((ae instanceof Mech) && ((Mech)ae).isIndustrial()) {
                 ((Mech)ae).setCheckForCrit(true);
             }
             return;
@@ -11010,7 +11011,7 @@ public class Server implements Runnable {
 
         //if the target is an industrial mech, it needs to check for crits
         //at the end of turn
-        if (target instanceof Mech && ((Mech)target).isIndustrial()) {
+        if ((target instanceof Mech) && ((Mech)target).isIndustrial()) {
             ((Mech)target).setCheckForCrit(true);
         }
     }
@@ -11154,7 +11155,7 @@ public class Server implements Runnable {
 
         //if the target is an industrial mech, it needs to check for crits
         //at the end of turn
-        if (te instanceof Mech && ((Mech)te).isIndustrial()) {
+        if ((te instanceof Mech) && ((Mech)te).isIndustrial()) {
             ((Mech)te).setCheckForCrit(true);
         }
 
@@ -11225,7 +11226,7 @@ public class Server implements Runnable {
         addNewLines();
         //if the target is an industrial mech, it needs to check for crits
         //at the end of turn
-        if (te instanceof Mech && ((Mech)te).isIndustrial()) {
+        if ((te instanceof Mech) && ((Mech)te).isIndustrial()) {
             ((Mech)te).setCheckForCrit(true);
         }
     }
@@ -11314,7 +11315,7 @@ public class Server implements Runnable {
 
         //if the target is an industrial mech, it needs to check for crits
         //at the end of turn
-        if (te instanceof Mech && ((Mech)te).isIndustrial()) {
+        if ((te instanceof Mech) && ((Mech)te).isIndustrial()) {
             ((Mech)te).setCheckForCrit(true);
         }
     }
@@ -12124,7 +12125,7 @@ public class Server implements Runnable {
 
         //if the target is an industrial mech, it needs to check for crits
         //at the end of turn
-        if (te instanceof Mech && ((Mech)te).isIndustrial()) {
+        if ((te instanceof Mech) && ((Mech)te).isIndustrial()) {
             ((Mech)te).setCheckForCrit(true);
         }
 
@@ -12455,7 +12456,7 @@ public class Server implements Runnable {
 
         //if the target is an industrial mech, it needs to check for crits
         //at the end of turn
-        if (target instanceof Mech && ((Mech)target).isIndustrial()) {
+        if ((target instanceof Mech) && ((Mech)target).isIndustrial()) {
             ((Mech)target).setCheckForCrit(true);
         }
     }
@@ -13620,7 +13621,7 @@ public class Server implements Runnable {
     private void checkForIndustrialCrit() {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = i.nextElement();
-            if (entity instanceof Mech && ((Mech)entity).isIndustrial()) {
+            if ((entity instanceof Mech) && ((Mech)entity).isIndustrial()) {
                 Mech mech = (Mech)entity;
                 // should we check for critical damage?
                 if (mech.isCheckForCrit()) {

@@ -40,7 +40,7 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
 
     protected static final String[] MOVES = { "", "", "", "Tracked", "Wheeled",
         "Hover", "", "Naval", "Hydrofoil", "Submarine", "", "", "", "", "",
-        "WIGE"};
+        "WiGE" };
 
     public BLKSupportTankFile(BuildingBlock bb) {
         dataFile = bb;
@@ -79,7 +79,7 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         int nMotion = -1;
         for (int x = 0; x < MOVES.length; x++) {
-            if (sMotion.equals(MOVES[x])) {
+            if (sMotion.equalsIgnoreCase(MOVES[x])) {
                 nMotion = x;
                 break;
             }

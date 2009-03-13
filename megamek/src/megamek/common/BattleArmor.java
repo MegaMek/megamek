@@ -610,14 +610,14 @@ public class BattleArmor extends Infantry implements Serializable {
         // to one less than the number of locations in the unit.
         troopersShooting = locations() - 1;
     }
-    
+
     /**
     * Set the troopers in the unit to the given values.
     */
     public void setInternal(int value) {
         // Initialize the troopers.
-        for (int loop = 1; loop < this.locations(); loop++) {
-            this.initializeInternal(value, loop);
+        for (int loop = 1; loop < locations(); loop++) {
+            initializeInternal(value, loop);
         }
     }
 
@@ -657,8 +657,10 @@ public class BattleArmor extends Infantry implements Serializable {
             stealthName = name;
         } else if (BattleArmor.MIMETIC_CAMO.equals(name)) {
             isMimetic = true;
+            stealthName = name;
         } else if (BattleArmor.SIMPLE_CAMO.equals(name)) {
             isSimpleCamo = true;
+            stealthName = name;
         }
     }
 
@@ -917,12 +919,48 @@ public class BattleArmor extends Infantry implements Serializable {
     }
 
     /**
-     * Determine if this unit has an active stealth system. <p/> Sub-classes are
-     * encouraged to override this method.
+     * Returns the name of the stealth Armor used by the BA. Mostly for MegaMekLab Usage.
      *
-     * @return <code>true</code> if this unit has a stealth system that is
-     *         currently active, <code>false</code> if there is no stealth
-     *         system or if it is inactive.
+     * @return name of the stealth armor.
+     */
+    public String getStealthName() {
+        return stealthName;
+    }
+
+    /**
+     * Public interface to the BattleArmors short range stealth modifier
+     *
+     * @return shortStealthMod
+     */
+    public int getShortStealthMod() {
+        return shortStealthMod;
+    }
+
+    /**
+     * Public interface to the BattleArmors medium range stealth modifier
+     *
+     * @return mediumStealthMod
+     */
+    public int getMediumStealthMod() {
+        return mediumStealthMod;
+    }
+
+    /**
+     * Public interface to the BattleArmors long range stealth modifier
+     *
+     * @return longStealthMod
+     */
+    public int getLongStealthMod() {
+        return longStealthMod;
+    }
+
+    /**
+     * Determine if this unit has an active stealth system.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @return <code>true</code> if this unit has a stealth system that is currently active, <code>false</code> if there is no stealth system or if it is
+     *         inactive.
      */
     @Override
     public boolean isStealthActive() {
@@ -1103,6 +1141,7 @@ public class BattleArmor extends Infantry implements Serializable {
         return result;
     } // End public TargetRoll getStealthModifier( char )
 
+    @Override
     public double getCost() {
         // Hopefully the cost is correctly set.
         if (myCost > 0) {

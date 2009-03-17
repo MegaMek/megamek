@@ -147,7 +147,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
                     hit.setSpecCritmod(hit.getSpecCritMod()+2);
                 }
             }
-            vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : DamageType.NONE, false, false, throughFront));
+            vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : DamageType.NONE, false, false, throughFront, underWater));
         }
     }
 

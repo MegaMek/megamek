@@ -27,6 +27,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
+import megamek.common.ILocationExposureStatus;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -73,6 +74,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int nDamPerHit;
     protected int attackValue;
     protected boolean throughFront;
+    protected boolean underWater;
     protected boolean announcedEntityFiring = false;
     protected boolean missed = false;
     protected DamageType damageType;
@@ -584,7 +586,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront, nukeS2S));
+                                    : damageType, false, false, throughFront, underWater, nukeS2S));
         }
     }
 
@@ -695,6 +697,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         } else {
             throughFront = true;
         }
+        //is the attack originating from underwater?
+        underWater = ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET;
         roll = Compute.d6(2);
         nweapons = getNumberWeapons();
         // use ammo when creating this, so it works when shooting the last shot

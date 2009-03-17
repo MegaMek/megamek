@@ -8199,5 +8199,16 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public boolean isStalled() {
         return false;
     }
+    
+    /**
+     * is this a naval vessel on the surface of the water?
+     */
+    public boolean isSurfaceNaval() {
+        //TODO: assuming submarines on the surface act like surface naval vessels until rules clarified
+        //http://www.classicbattletech.com/forums/index.php/topic,48987.0.html
+        return this.getElevation() == 0 && (this.getMovementMode() == IEntityMovementMode.NAVAL 
+                || this.getMovementMode() == IEntityMovementMode.HYDROFOIL 
+                || this.getMovementMode() == IEntityMovementMode.SUBMARINE);
+    }
 
 }

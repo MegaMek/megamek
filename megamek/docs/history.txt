@@ -5,7 +5,7 @@ v0.33.43-dev (SVN)
 + Bug: WiGE not loading if momement type was WiGE instead of WIGE
 + RFE: added public methods for BattleArmor Stealth Armor
 + Bug: checking for ice breaking when moving across elevation 0 bridge
-+ Bug 1944660: Attacks on surface naval vessels don't follow TW rules (NOTE: Turrets still being hit by underwater attacks)
++ Bug 1944660: Attacks on surface naval vessels don't follow TW rules
 
 v0.33.42 (2009-03-10, 19:52 UTC+1)
 + Updated RSPPU mechfiles because of pending errata

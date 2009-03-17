@@ -18498,13 +18498,10 @@ public class Server implements Runnable {
                 break;
             }
         }
-        
-        boolean surfaceNaval = entity.getMovementMode() == IEntityMovementMode.NAVAL || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL;
-        
         // This handles both water and vacuum breaches.
         // Also need to account for hull breaches on surface naval vessels which are technically not "wet"
         if (entity.getLocationStatus(loc) > ILocationExposureStatus.NORMAL ||
-                (surfaceNaval && loc != Tank.LOC_TURRET)) {
+                (entity.isSurfaceNaval() && loc != Tank.LOC_TURRET)) {
             // Does the location have armor (check rear armor on Mek)
             // and is the check due to damage?
             int breachroll = 0;
@@ -18515,7 +18512,9 @@ public class Server implements Runnable {
                     (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_TRACE)) {
                 target = 12;
             }
-            if(surfaceNaval && !underWater) {
+            //if this is a surface naval vessel and the attack is not from underwater 
+            //then the breach should only occur on a roll of 12
+            if(entity.isSurfaceNaval() && !underWater) {
                 target = 12;
             }            
             if ((entity.getArmor(loc) > 0) && (entity instanceof Mech ? entity.getArmor(loc, true) > 0 : true) && (null == hex)) {

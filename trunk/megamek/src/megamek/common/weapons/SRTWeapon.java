@@ -46,6 +46,6 @@ public abstract class SRTWeapon extends MissileWeapon {
      */
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new SRMHandler(toHit, waa, game, server);
+        return new SRTHandler(toHit, waa, game, server);
     }
 }

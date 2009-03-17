@@ -114,7 +114,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
                             damage,
                             false,
                             ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront);
+                                    : damageType, false, false, throughFront, underWater);
         } else {
             // add newline _before_ last report
             try {

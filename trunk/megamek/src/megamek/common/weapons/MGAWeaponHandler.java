@@ -190,7 +190,7 @@ public class MGAWeaponHandler extends MGHandler {
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront));
+                                    : damageType, false, false, throughFront, underWater));
         }
     }
 }

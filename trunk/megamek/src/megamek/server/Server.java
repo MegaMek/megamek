@@ -7374,9 +7374,7 @@ public class Server implements Runnable {
      * @param elevation
      *            the elevation the entity should be at.
      */
-
-    public Vector<Report> doSetLocationsExposure(Entity entity, IHex hex, boolean isJump, int elevation) {
-        Vector<Report> vPhaseReport = new Vector<Report>();
+    public Vector<Report> doSetLocationsExposure(Entity entity, IHex hex, boolean isJump, int elevation) {        Vector<Report> vPhaseReport = new Vector<Report>();
         if ((hex.terrainLevel(Terrains.WATER) > 0) && !isJump && (elevation < 0)) {
             if ((entity instanceof Mech) && !entity.isProne() && (hex.terrainLevel(Terrains.WATER) == 1)) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
@@ -14429,7 +14427,39 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag, boolean damageIS, boolean areaSatArty, boolean throughFront) {
-        return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, throughFront, false);
+        return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, throughFront, false, false);
+    }
+
+    
+    /**
+     * Deals the listed damage to an entity. Returns a vector of Reports for the
+     * phase report
+     *
+     * @param te
+     *            the target entity
+     * @param hit
+     *            the hit data for the location hit
+     * @param damage
+     *            the damage to apply
+     * @param ammoExplosion
+     *            ammo explosion type damage is applied directly to the IS,
+     *            hurts the pilot, causes auto-ejects, and can blow the unit to
+     *            smithereens
+     * @param bFrag
+     *            The DamageType of the attack.
+     * @param damageIS
+     *            Should the target location's internal structure be damaged
+     *            directly?
+     * @param areaSatArty
+     *            Is the damage from an area saturating artillery attack?
+     * @param throughFront
+     *            Is the damage coming through the hex the unit is facing?
+     * @param underWater
+     *            Is the damage coming from an underwater attack
+     * @return a <code>Vector</code> of <code>Report</code>s
+     */
+    public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag, boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater) {
+        return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, throughFront, underWater, false);
     }
 
     /**
@@ -14455,11 +14485,13 @@ public class Server implements Runnable {
      *            Is the damage from an area saturating artillery attack?
      * @param throughFront
      *            Is the damage coming through the hex the unit is facing?
+     * @param underWater
+     *            Is the damage coming from an underwater attack?
      * @param nukeS2s
      *            is this a ship-to-ship nuke?
      * @return a <code>Vector</code> of <code>Report</code>s
      */
-    public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag, boolean damageIS, boolean areaSatArty, boolean throughFront, boolean nukeS2S) {
+    public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag, boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S) {
 
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
@@ -14478,7 +14510,7 @@ public class Server implements Runnable {
             new_hit.setCapital(hit.isCapital());
             new_hit.setCapMisCritMod(hit.getCapMisCritMod());
             new_hit.setSingleAV(hit.getSingleAV());
-            return damageEntity(fighter, new_hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, throughFront, nukeS2S);
+            return damageEntity(fighter, new_hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, throughFront, underWater, nukeS2S);
         }
 
         // This is good for shields if a shield absorps the hit it shouldn't
@@ -15621,7 +15653,7 @@ public class Server implements Runnable {
                 specCrits++;
             }
             // check for breaching
-            vDesc.addAll(breachCheck(te, hit.getLocation(), null));
+            vDesc.addAll(breachCheck(te, hit.getLocation(), null, underWater));
 
             // resolve special results
             if ((hit.getEffect() & HitData.EFFECT_VEHICLE_MOVE_DAMAGED) == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
@@ -18424,6 +18456,28 @@ public class Server implements Runnable {
      *            movement.
      */
     private Vector<Report> breachCheck(Entity entity, int loc, IHex hex) {
+        return breachCheck(entity, loc, hex, false);
+    }
+    /**
+     * Checks for location breach and returns phase logging. <p/> Please note
+     * that dependent locations ARE NOT considered breached!
+     *
+     * @param entity
+     *            the <code>Entity</code> that needs to be checked.
+     * @param loc
+     *            the <code>int</code> location on the entity that needs to be
+     *            checked for a breach.
+     * @param target
+     *            the <code>int</code> target number for the breach
+     * @param hex
+     *            the <code>IHex</code> the enitity occupies when checking
+     *            This value will be <code>null</code> if the check is the
+     *            result of an attack, and non-null if it occurs during
+     *            movement.
+     * @param underWater
+     *            Is the breach check a result of an underwater attack?
+     */
+    private Vector<Report> breachCheck(Entity entity, int loc, IHex hex, boolean underWater) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
@@ -18444,9 +18498,13 @@ public class Server implements Runnable {
                 break;
             }
         }
-
+        
+        boolean surfaceNaval = entity.getMovementMode() == IEntityMovementMode.NAVAL || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL;
+        
         // This handles both water and vacuum breaches.
-        if (entity.getLocationStatus(loc) > ILocationExposureStatus.NORMAL) {
+        // Also need to account for hull breaches on surface naval vessels which are technically not "wet"
+        if (entity.getLocationStatus(loc) > ILocationExposureStatus.NORMAL ||
+                (surfaceNaval && loc != Tank.LOC_TURRET)) {
             // Does the location have armor (check rear armor on Mek)
             // and is the check due to damage?
             int breachroll = 0;
@@ -18457,6 +18515,9 @@ public class Server implements Runnable {
                     (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_TRACE)) {
                 target = 12;
             }
+            if(surfaceNaval && !underWater) {
+                target = 12;
+            }            
             if ((entity.getArmor(loc) > 0) && (entity instanceof Mech ? entity.getArmor(loc, true) > 0 : true) && (null == hex)) {
                 // functional HarJel prevents breach
                 if ((entity instanceof Mech) && ((Mech) entity).hasHarJelIn(loc)) {

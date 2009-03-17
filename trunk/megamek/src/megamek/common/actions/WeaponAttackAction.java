@@ -62,7 +62,9 @@ import megamek.common.WeaponType;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.ISHGaussRifle;
+import megamek.common.weapons.LRTWeapon;
 import megamek.common.weapons.MekMortarWeapon;
+import megamek.common.weapons.SRTWeapon;
 import megamek.common.weapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 
@@ -1536,10 +1538,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
+        //is this attack originating from underwater
+        //TODO: assuming that torpedoes are underwater attacks even if fired from surface vessel, awaiting rules clarification
+        //http://www.classicbattletech.com/forums/index.php/topic,48744.0.html
+        boolean underWater = ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET || wtype instanceof SRTWeapon || wtype instanceof LRTWeapon;       
+        
         // Change hit table for partial cover, accomodate for partial
         // underwater(legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
-            if ((ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)
+            if (underWater
                     && (targHex.containsTerrain(Terrains.WATER) && (targEl == 0) && (te
                             .height() > 0))) {
                 // weapon underwater, target in partial water
@@ -1556,7 +1563,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
             // XXX what to do about GunEmplacements with partial cover?
         }
-
+        
+        //change hit table for surface vessels hit by underwater attacks
+        if(underWater && targHex.containsTerrain(Terrains.WATER) && null != te
+                && te.isSurfaceNaval()) {
+            toHit.setHitTable(ToHitData.HIT_UNDERWATER);
+        }
+        
         // factor in target side
         if (isAttackerInfantry && (0 == distance)) {
             // Infantry attacks from the same hex are resolved against the
@@ -2466,10 +2479,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
+        //is the attack originating from underwater
+        boolean underWater = ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET || wtype instanceof SRTWeapon || wtype instanceof LRTWeapon;
+        
         // attacker partial cover means no leg weapons
         if (los.isAttackerCover()
                 && ae.locationIsLeg(weapon.getLocation())
-                && (ae.getLocationStatus(weapon.getLocation()) != ILocationExposureStatus.WET)) {
+                && !underWater) {
             return "Nearby terrain blocks leg weapons.";
         }
 

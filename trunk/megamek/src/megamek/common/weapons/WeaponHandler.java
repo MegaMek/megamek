@@ -697,8 +697,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         } else {
             throughFront = true;
         }
-        //is the attack originating from underwater?
-        underWater = ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET;
+        //is this an underwater attack on a surface naval vessel?
+        underWater = toHit.getHitTable() == ToHitData.HIT_UNDERWATER;
         roll = Compute.d6(2);
         nweapons = getNumberWeapons();
         // use ammo when creating this, so it works when shooting the last shot

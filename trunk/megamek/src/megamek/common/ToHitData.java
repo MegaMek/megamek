@@ -29,6 +29,7 @@ public class ToHitData extends TargetRoll {
     public static final int HIT_BELOW = 5;
     public static final int HIT_PARTIAL_COVER = 6;
     public static final int HIT_SWARM_CONVENTIONAL = 7;
+    public static final int HIT_UNDERWATER = 8;
 
     public static final int SIDE_FRONT = 0;
     public static final int SIDE_REAR = 1;
@@ -157,4 +158,5 @@ public class ToHitData extends TargetRoll {
     public void setMoS(int moS) {
         margineOfSuccess = moS;
     }
+
 }

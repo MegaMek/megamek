@@ -281,7 +281,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                         .getAimingMode());
                 vPhaseReport.addAll(server.damageEntity(entity, hit,
                         ratedDamage, false, DamageType.NONE, false, true,
-                        throughFront));
+                        throughFront, underWater));
                 server.creditKill(entity, ae);
             }
         }

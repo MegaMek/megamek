@@ -187,7 +187,7 @@ public class LargeSupportTank extends SupportTank implements Serializable {
         // calculate firing angle
         int fa = (effectivePos.degree(src) + (6 - face) * 60) % 360;
 
-        boolean leftBetter = true;
+        int leftBetter = 2;
         // if we're right on the line, we need to special case this
         // defender would choose along which hex the LOS gets drawn, and that
         // side also determines the side we hit in
@@ -201,17 +201,17 @@ public class LargeSupportTank extends SupportTank implements Serializable {
                     Compute.isInBuilding(game, this), new LosEffects());
         }
 
-        if ((fa == 330) && !leftBetter) {
+        if ((fa == 330) && (leftBetter == 0)) {
             return ToHitData.SIDE_FRONTLEFT;
-        } else if ((fa == 270) && !leftBetter) {
+        } else if ((fa == 270) && (leftBetter == 0)) {
             return ToHitData.SIDE_REARLEFT;
-        } else if ((fa == 210) && !leftBetter) {
+        } else if ((fa == 210) && (leftBetter == 0)) {
             return  ToHitData.SIDE_REAR;
-        } else if ((fa == 150) && !leftBetter) {
+        } else if ((fa == 150) && (leftBetter == 0)) {
             return ToHitData.SIDE_REARRIGHT;
-        } else if ((fa == 90) && leftBetter) {
+        } else if ((fa == 90) && (leftBetter == 1)) {
             return ToHitData.SIDE_REARRIGHT;
-        } else if ((fa == 30) && leftBetter) {
+        } else if ((fa == 30) && (leftBetter == 1)) {
             return ToHitData.SIDE_FRONTRIGHT;
         } else if ((fa > 30) && (fa <= 90)) {
             return ToHitData.SIDE_FRONTRIGHT;

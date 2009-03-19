@@ -6870,7 +6870,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         // calculate firing angle
         int fa = (effectivePos.degree(src) + (6 - face) * 60) % 360;
 
-        boolean leftBetter = true;
+        int leftBetter = 2;
         // if we're right on the line, we need to special case this
         // defender would choose along which hex the LOS gets drawn, and that
         // side also determines the side we hit in
@@ -6886,13 +6886,13 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
 
         boolean targetIsTank = (this instanceof Tank) || (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations") && (this instanceof QuadMech));
         if (targetIsTank) {
-            if (leftBetter && (fa == 150)) {
+            if ((leftBetter == 1) && (fa == 150)) {
                 return ToHitData.SIDE_REAR;
-            } else if (leftBetter && (fa == 30)) {
+            } else if ((leftBetter == 1) && (fa == 30)) {
                 return ToHitData.SIDE_RIGHT;
-            } else if (!leftBetter && (fa == 330)) {
+            } else if ((leftBetter == 0) && (fa == 330)) {
                 return ToHitData.SIDE_LEFT;
-            } else if (!leftBetter && (fa == 210)) {
+            } else if ((leftBetter == 0) && (fa == 210)) {
                 return ToHitData.SIDE_REAR;
             } else if ((fa > 30) && (fa <= 150)) {
                 return ToHitData.SIDE_RIGHT;
@@ -6915,19 +6915,19 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                     return ToHitData.SIDE_RIGHT;
                 }
                 return ToHitData.SIDE_LEFT;
-            }if (leftBetter && (fa == 150)) {
+            }if ((leftBetter == 1) && (fa == 150)) {
                 return ToHitData.SIDE_REAR;
-            } else if (leftBetter && (fa == 30)) {
+            } else if ((leftBetter == 1) && (fa == 30)) {
                 if (a.isRolled()) {
                     return ToHitData.SIDE_LEFT;
                 }
                 return ToHitData.SIDE_RIGHT;
-            } else if (!leftBetter && (fa == 330)) {
+            } else if ((leftBetter == 0) && (fa == 330)) {
                 if (a.isRolled()) {
                     return ToHitData.SIDE_RIGHT;
                 }
                 return ToHitData.SIDE_LEFT;
-            } else if (!leftBetter && (fa == 210)) {
+            } else if ((leftBetter == 0) && (fa == 210)) {
                 return ToHitData.SIDE_REAR;
             } else if ((fa > 30) && (fa <= 150)) {
                 if (a.isRolled()) {
@@ -6945,11 +6945,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 return ToHitData.SIDE_FRONT;
             }
         }
-        if ((fa == 90) && leftBetter) {
+        if ((fa == 90) && (leftBetter == 1)) {
             return ToHitData.SIDE_RIGHT;
-        } else if (((fa == 150) && leftBetter) || (!leftBetter && (fa == 210))) {
+        } else if (((fa == 150) && (leftBetter == 1)) || ((leftBetter == 0) && (fa == 210))) {
             return ToHitData.SIDE_REAR;
-        } else if (!leftBetter && (fa == 270)) {
+        } else if ((leftBetter == 0) && (fa == 270)) {
             return ToHitData.SIDE_LEFT;
         } else if ((fa > 90) && (fa <= 150)) {
             return ToHitData.SIDE_RIGHT;
@@ -8199,16 +8199,16 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public boolean isStalled() {
         return false;
     }
-    
+
     /**
      * is this a naval vessel on the surface of the water?
      */
     public boolean isSurfaceNaval() {
         //TODO: assuming submarines on the surface act like surface naval vessels until rules clarified
         //http://www.classicbattletech.com/forums/index.php/topic,48987.0.html
-        return this.getElevation() == 0 && (this.getMovementMode() == IEntityMovementMode.NAVAL 
-                || this.getMovementMode() == IEntityMovementMode.HYDROFOIL 
-                || this.getMovementMode() == IEntityMovementMode.SUBMARINE);
+        return (getElevation() == 0) && ((getMovementMode() == IEntityMovementMode.NAVAL)
+                || (getMovementMode() == IEntityMovementMode.HYDROFOIL)
+                || (getMovementMode() == IEntityMovementMode.SUBMARINE));
     }
 
 }

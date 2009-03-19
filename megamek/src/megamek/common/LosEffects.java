@@ -72,7 +72,7 @@ public class LosEffects {
     int heavyWoods = 0;
     int ultraWoods = 0;
     int lightSmoke = 0;
-    int heavySmoke = 0; // heavySmoke is also standard for normal L2 smoke
+    int heavySmoke = 0;
     int screen = 0;
     int softBuildings = 0;
     int hardBuildings = 0;
@@ -618,12 +618,13 @@ public class LosEffects {
         // we do this twice, because we should stick to one of the
         // sides
         // we later use the side that has more hexes
-        boolean leftBetter = dividedLeftBetter(in, game, ai, targetInBuilding, los);
+        int leftBetter = dividedLeftBetter(in, game, ai, targetInBuilding, los);
         for (int i = 1; i < in.size() - 2; i += 3) {
             // get effects of the side that is better
             LosEffects toUse;
             boolean usingLeft;
-            if (leftBetter) {
+            // we'll use left if both are equal
+            if ((leftBetter == 1) || (leftBetter == 2)) {
                 toUse = losForCoords(game, ai, in.get(i), los
                         .getThruBldg());
                 usingLeft = true;
@@ -925,16 +926,16 @@ public class LosEffects {
     /**
      * find out if the left or right side of the divided LOS is better for the
      * target
+     * return 0 if right is better, 1 if left is better, 2 if both are equal
      * @param in
      * @param game
      * @param ai
      * @param targetInBuilding
      * @param los
-     * @return
      */
-    public static boolean dividedLeftBetter(ArrayList<Coords> in, IGame game, AttackInfo ai, boolean targetInBuilding, LosEffects los) {
-        int leftBetterCount = 0;
-        int rightBetterCount = 0;
+    public static int dividedLeftBetter(ArrayList<Coords> in, IGame game, AttackInfo ai, boolean targetInBuilding, LosEffects los) {
+        LosEffects leftTotal = new LosEffects();
+        LosEffects rightTotal = new LosEffects();
         for (int i = 1; i < in.size() - 2; i += 3) {
             // get effects of each side
             LosEffects left = losForCoords(game, ai, in.get(i), los
@@ -974,11 +975,19 @@ public class LosEffects {
             int lVal = left.losModifiers(game).getValue();
             int rVal = right.losModifiers(game).getValue();
             if ((lVal > rVal) || ((lVal == rVal) && left.isAttackerCover())) {
-                leftBetterCount++;
+                leftTotal.add(left);
             } else {
-                rightBetterCount++;
+                rightTotal.add(right);
             }
         }
-        return leftBetterCount >= rightBetterCount;
+        int leftTotalValue = leftTotal.losModifiers(game).getValue();
+        int rightTotalValue = rightTotal.losModifiers(game).getValue();
+        if (leftTotalValue > rightTotalValue) {
+            return 1;
+        } else if (leftTotalValue < rightTotalValue) {
+            return 0;
+        } else {
+            return 2;
+        }
     }
 }

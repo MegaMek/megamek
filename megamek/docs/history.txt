@@ -6,6 +6,9 @@ v0.33.43-dev (SVN)
 + RFE: added public methods for BattleArmor Stealth Armor
 + Bug: checking for ice breaking when moving across elevation 0 bridge
 + Bug 1944660: Attacks on surface naval vessels don't follow TW rules
++ Bug: fix error with LOS between 2 units not always being identical
+    Also, when LOS is going exactly between 2 hexes, and both provide same cover,
+    the side gets chosen that gives the "better" hitting arc for the targeted unit
 
 v0.33.42 (2009-03-10, 19:52 UTC+1)
 + Updated RSPPU mechfiles because of pending errata

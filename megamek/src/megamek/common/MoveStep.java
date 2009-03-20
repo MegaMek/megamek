@@ -1880,7 +1880,7 @@ public class MoveStep implements Serializable {
 
         // do not allow to move onto a bridge if there's no exit in lastPos's
         // direction
-        if (climbMode &&
+        if (!isFirstStep() && !curPos.equals(lastPos) && climbMode &&
                 game.getBoard().getHex(curPos).containsTerrain(Terrains.BRIDGE) &&
                 !game.getBoard().getHex(curPos).containsTerrainExit(
                         Terrains.BRIDGE, curPos.direction(lastPos))) {

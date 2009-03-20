@@ -11,6 +11,7 @@ v0.33.43-dev (SVN)
     cover, the side gets chosen that gives the "better" hitting arc for the
     targeted unit
 + Bug 1908901: unit in climb mode can enter bridge from the side
++ Bug 1840605: mech falling into waterhex that has bridge wrong
 
 v0.33.42 (2009-03-10, 19:52 UTC+1)
 + Updated RSPPU mechfiles because of pending errata

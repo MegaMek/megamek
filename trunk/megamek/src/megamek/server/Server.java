@@ -14430,7 +14430,7 @@ public class Server implements Runnable {
         return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, throughFront, false, false);
     }
 
-    
+
     /**
      * Deals the listed damage to an entity. Returns a vector of Reports for the
      * phase report
@@ -18512,11 +18512,11 @@ public class Server implements Runnable {
                     (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_TRACE)) {
                 target = 12;
             }
-            //if this is a surface naval vessel and the attack is not from underwater 
+            //if this is a surface naval vessel and the attack is not from underwater
             //then the breach should only occur on a roll of 12
             if(entity.isSurfaceNaval() && !underWater) {
                 target = 12;
-            }            
+            }
             if ((entity.getArmor(loc) > 0) && (entity instanceof Mech ? entity.getArmor(loc, true) > 0 : true) && (null == hex)) {
                 // functional HarJel prevents breach
                 if ((entity instanceof Mech) && ((Mech) entity).hasHarJelIn(loc)) {
@@ -19200,6 +19200,16 @@ public class Server implements Runnable {
         }
 
         int waterDepth = fallHex.terrainLevel(Terrains.WATER);
+        boolean fallOntoBridge = false;
+        // only fall onto the bridge if we were in the hex and on it,
+        // or we fell from a hex that the bridge exits to
+        if ((entity.climbMode() && entity.getPosition() != fallPos &&
+                fallHex.containsTerrain(Terrains.BRIDGE) &&
+                fallHex.containsTerrainExit(Terrains.BRIDGE,
+                        fallPos.direction(entity.getPosition()))) ||
+                        entity.getElevation() == fallHex.terrainLevel(Terrains.BRIDGE_ELEV)) {
+            fallOntoBridge = true;
+        }
         int bridgeHeight = fallHex.terrainLevel(Terrains.BRIDGE_ELEV) + fallHex.depth();
         int buildingHeight = fallHex.terrainLevel(Terrains.BLDG_ELEV);
         int damageHeight = height;
@@ -19208,7 +19218,7 @@ public class Server implements Runnable {
         if ((height >= buildingHeight) && (buildingHeight >= 0)) {
             damageHeight -= buildingHeight;
             newElevation = buildingHeight;
-        } else if ((height >= bridgeHeight) && (bridgeHeight >= 0)) {
+        } else if (fallOntoBridge && (height >= bridgeHeight) && (bridgeHeight >= 0)) {
             damageHeight -= bridgeHeight;
             waterDepth = 0;
             newElevation = fallHex.terrainLevel(Terrains.BRIDGE_ELEV);

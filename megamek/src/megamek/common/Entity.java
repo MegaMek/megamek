@@ -6875,13 +6875,16 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         // defender would choose along which hex the LOS gets drawn, and that
         // side also determines the side we hit in
         if (fa % 30 == 0) {
-            LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src, getPosition(),
-                    1, getElevation(), game.getBoard().getHex(src).floor(),
-                    game.getBoard().getHex(getPosition()).floor());
-            ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos,
-                    true);
-            leftBetter = LosEffects.dividedLeftBetter(in, game, ai,
-                    Compute.isInBuilding(game, this), new LosEffects());
+            IHex srcHex = game.getBoard().getHex(src);
+            IHex curHex = game.getBoard().getHex(getPosition());
+            if ((srcHex != null) && (curHex != null)) {
+                LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src, getPosition(),
+                        1, getElevation(), srcHex.floor(), curHex.floor());
+                ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos,
+                        true);
+                leftBetter = LosEffects.dividedLeftBetter(in, game, ai,
+                        Compute.isInBuilding(game, this), new LosEffects());
+            }
         }
 
         boolean targetIsTank = (this instanceof Tank) || (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations") && (this instanceof QuadMech));

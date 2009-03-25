@@ -657,9 +657,15 @@ public class BattleArmor extends Infantry implements Serializable {
             stealthName = name;
         } else if (BattleArmor.MIMETIC_CAMO.equals(name)) {
             isMimetic = true;
+            shortStealthMod = 3;
+            mediumStealthMod = 2;
+            longStealthMod = 1;
             stealthName = name;
         } else if (BattleArmor.SIMPLE_CAMO.equals(name)) {
             isSimpleCamo = true;
+            shortStealthMod = 2;
+            mediumStealthMod = 1;
+            longStealthMod = 0;
             stealthName = name;
         }
     }

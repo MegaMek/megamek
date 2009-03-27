@@ -14,6 +14,7 @@ v0.33.43-dev (SVN)
 + Bug 1840605: mech falling into waterhex that has bridge wrong
 + Bug: server crash when charging a unit off the map
 + RFE: Added Movment Mod variabels for SimpleCamo and and Mimetic Armor for MegaMekLab
++ Bug: Clan and IS Superchargers had the same internal name
 
 v0.33.42 (2009-03-10, 19:52 UTC+1)
 + Updated RSPPU mechfiles because of pending errata

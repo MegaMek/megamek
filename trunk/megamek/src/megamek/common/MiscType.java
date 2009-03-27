@@ -951,8 +951,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Supercharger";
         misc.setInternalName(misc.name);
         misc.addLookupName("IS Super Charger");
-        misc.addLookupName("SuperCharger");
-        misc.addLookupName("Supercharger");
+        misc.addLookupName("ISSuperCharger");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
@@ -971,8 +970,8 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         misc.name = "Supercharger";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CL Super Charger");
+        misc.setInternalName("CL Super Charger");
+        misc.addLookupName("CLSuperCharger");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;

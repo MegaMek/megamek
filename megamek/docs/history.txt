@@ -19,6 +19,7 @@ v0.33.43-dev (SVN)
 	to move each time the bot starts.)  The option is set in bot.properties.
 + Bug 2526357: Swing button display was not updating properly
 + Bug 1880517: Entity.getArmor needed defensive programming
++ Bug 1774438: Bot inappropriately charges
 
 v0.33.42 (2009-03-10, 19:52 UTC+1)
 + Updated RSPPU mechfiles because of pending errata

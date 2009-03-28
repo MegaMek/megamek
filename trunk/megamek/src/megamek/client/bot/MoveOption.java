@@ -28,13 +28,11 @@ import megamek.common.Entity;
 import megamek.common.IEntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
-import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
-import megamek.common.Protomech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -45,7 +43,7 @@ import megamek.common.ToHitData;
  * worst case threat) for when psr's are made. TODO: add a notion of a blocked
  * move, something that could open up after another mech moves.
  */
-public class MoveOption extends MovePath implements Cloneable {
+public class MoveOption extends MovePath {
     private static final long serialVersionUID = -4517093562444861980L;
 
     public static class WeightedComparator implements Comparator<MoveOption> {
@@ -151,7 +149,8 @@ public class MoveOption extends MovePath implements Cloneable {
         this.prone = base.prone;
     }
 
-    public MoveOption clone() {
+    @Override
+	public MoveOption clone() {
         return new MoveOption(this);
     }
 
@@ -179,7 +178,8 @@ public class MoveOption extends MovePath implements Cloneable {
         return centity;
     }
 
-    public MoveOption addStep(int step_type) {
+    @Override
+	public MoveOption addStep(int step_type) {
         super.addStep(step_type);
         MoveStep current = getLastStep();
         // running with gyro or hip hit is dangerous!
@@ -232,16 +232,21 @@ public class MoveOption extends MovePath implements Cloneable {
 
     public boolean changeToPhysical() {
         MoveStep last = getLastStep();
-        boolean isInfantry = (getEntity() instanceof Infantry);
-        boolean isProtomech = (getEntity() instanceof Protomech);
+        if (isJumping()) {
+        	if (getEntity().canCharge()) {
+        		return false;
+        	}
+        } else {
+        	if (getEntity().canDFA()) {
+        		return false;
+        	}
+        }
         boolean isClan = getEntity().isClan();
         if (last == null
                 || last.getMovementType() == IEntityMovementType.MOVE_ILLEGAL) {
             return false;
         }
         if (last.getType() != STEP_FORWARDS
-                || isInfantry
-                || isProtomech
                 || (isClan
                         && game.getOptions().booleanOption("no_clan_physical") && getEntity()
                         .getSwarmAttackerId() == Entity.NONE)) { //$NON-NLS-1$
@@ -542,7 +547,8 @@ public class MoveOption extends MovePath implements Cloneable {
         return target.getTargetId();
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return getEntity().getShortName() + " " + getEntity().getId() + " "
                 + getFinalCoords() + " " + super.toString() + "\r\n Utility: "
                 + getUtility() + " \r\n" + tv + "\r\n";

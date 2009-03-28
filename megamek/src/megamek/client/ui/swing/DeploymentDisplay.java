@@ -18,7 +18,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -32,7 +31,6 @@ import javax.swing.JPanel;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.AlertDialog;
 import megamek.common.Aero;
@@ -42,13 +40,11 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Player;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay implements
-        BoardViewListener, ActionListener, DoneButtoned, KeyListener,
-        GameListener {
+        DoneButtoned, KeyListener {
     /**
      * 
      */
@@ -68,9 +64,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     private JPanel panButtons;
     private JButton butNext;
     private JButton butTurn;
-    // private JButton butSpace;
-    // private JButton butSpace2;
-    // private JButton butSpace3;
     private JButton butLoad;
     private JButton butUnload;
     private JButton butRemove;
@@ -340,7 +333,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         removeAll();
     }
 
-    public void gameTurnChange(GameTurnChangeEvent e) {
+    @Override
+	public void gameTurnChange(GameTurnChangeEvent e) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -357,7 +351,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    public void gamePhaseChange(GamePhaseChangeEvent e) {
+    @Override
+	public void gamePhaseChange(GamePhaseChangeEvent e) {
         DeploymentDisplay.this.clientgui.bv.markDeploymentHexesFor(null);
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -372,7 +367,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     //
     // BoardListener
     //
-    public void hexMoused(BoardViewEvent b) {
+    @Override
+	public void hexMoused(BoardViewEvent b) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -581,22 +577,28 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
+    	//ignore
     }
 
     public void keyReleased(KeyEvent ev) {
+    	//ignore
     }
 
     public void keyTyped(KeyEvent ev) {
+    	//ignore
     }
 
     //
     // BoardViewListener
     //
-    public void finishedMovingUnits(BoardViewEvent b) {
+    @Override
+	public void finishedMovingUnits(BoardViewEvent b) {
+    	//ignore
     }
 
     // Selected a unit in the unit overview.
-    public void unitSelected(BoardViewEvent b) {
+    @Override
+	public void unitSelected(BoardViewEvent b) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;

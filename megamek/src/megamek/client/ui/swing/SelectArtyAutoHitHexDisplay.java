@@ -19,7 +19,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -30,20 +29,17 @@ import javax.swing.JPanel;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.containers.PlayerIDandList;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
-        implements BoardViewListener, ActionListener, DoneButtoned,
-        KeyListener, GameListener {
+        implements  DoneButtoned, KeyListener {
 
     private static final long serialVersionUID = -4948184589134809323L;
 
@@ -186,7 +182,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     //
     // BoardListener
     //
-    public void hexMoused(BoardViewEvent b) {
+    @Override
+	public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -211,7 +208,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     //
     // GameListener
     //
-    public void gameTurnChange(GameTurnChangeEvent e) {
+    @Override
+	public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -236,7 +234,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
      * 
      * @param e ignored parameter
      */
-    public void gamePhaseChange(final GamePhaseChangeEvent e) {
+    @Override
+	public void gamePhaseChange(final GamePhaseChangeEvent e) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -281,12 +280,15 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
+    	//ignore
     }
 
     public void keyReleased(KeyEvent ev) {
+    	//ignore
     }
 
     public void keyTyped(KeyEvent ev) {
+    	//ignore
     }
 
     private void setArtyEnabled(int nbr) {

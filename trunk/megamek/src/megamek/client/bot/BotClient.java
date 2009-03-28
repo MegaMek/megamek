@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.client.Client;
@@ -57,19 +58,22 @@ public abstract class BotClient extends Client {
         super(playerName, host, port);
         game.addGameListener(new GameListenerAdapter() {
 
-            public void gamePlayerChat(GamePlayerChatEvent e) {
+            @Override
+			public void gamePlayerChat(GamePlayerChatEvent e) {
                 processChat(e);
                 flushConn();
             }
 
-            public void gameTurnChange(GameTurnChangeEvent e) {
+            @Override
+			public void gameTurnChange(GameTurnChangeEvent e) {
                 if (isMyTurn()) {
                     calculateMyTurn();
                     flushConn();
                 }
             }
 
-            public void gameReport(GameReportEvent e) {
+            @Override
+			public void gameReport(GameReportEvent e) {
                 if (game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT) {
                     // Opponent has used tactical genius, must press
                     // "Done" again to advance past initiative report.
@@ -130,7 +134,8 @@ public abstract class BotClient extends Client {
     }
 
     // TODO: move initMovement to be called on phase end
-    public void changePhase(IGame.Phase phase) {
+    @Override
+	public void changePhase(IGame.Phase phase) {
         super.changePhase(phase);
 
         try {
@@ -186,6 +191,17 @@ public abstract class BotClient extends Client {
             t.printStackTrace();
         }
     }
+    
+    private Entity getRandomUnmovedEntity() {
+    	List<Entity> owned = this.getEntitiesOwned();
+    	List<Entity> unMoved = new ArrayList<Entity>();
+    	for (Entity e : owned) {
+    		if (e.isSelectableThisTurn()) {
+    			unMoved.add(e);
+    		}
+    	}
+    	return unMoved.get(Compute.randomInt(unMoved.size()));
+    }
 
     protected void calculateMyTurn() {
         try {
@@ -197,7 +213,12 @@ public abstract class BotClient extends Client {
                     Entity mustMove = game.getEntity(turn.getEntityNum());
                     mp = continueMovementFor(mustMove);
                 } else {
-                    mp = calculateMoveTurn();
+                	if (config.isForcedIndividual()) {
+                		Entity mustMove = getRandomUnmovedEntity();
+                		mp = continueMovementFor(mustMove);                		
+                	} else {
+                		mp = calculateMoveTurn();
+                	}
                 }
                 moveEntity(mp.getEntity().getId(), mp);
             } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
@@ -876,7 +897,8 @@ public abstract class BotClient extends Client {
         return message;
     }
 
-    public void retrieveServerInfo() {
+    @Override
+	public void retrieveServerInfo() {
         super.retrieveServerInfo();
         initialize();
     }

@@ -86,6 +86,12 @@ Other Possibilities:
     This file contains settings for changing the behavior of the bot.
     At this time, you can change the difficulty to one of three levels.
       --The difference may not be all that great, but should be enough.
+      
+    You can also force the bot to consider one unit at a time (forcing
+    the bot to consider a random unit each time it moves.)  This option
+    is active only if individual initiative is NOT turned on.  Be
+    warned that the bot will lack what limited unit cohesion it used to
+    have.  
 
   Tips & Thoughts
     The bot has some smarts, but does no learning -- so don't expect it to adapt

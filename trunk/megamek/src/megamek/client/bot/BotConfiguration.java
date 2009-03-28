@@ -48,6 +48,17 @@ public class BotConfiguration {
                 return 10;
         }
     }
+    
+    public boolean isForcedIndividual() {
+    	boolean forced = false;
+        try {
+            forced = Boolean.parseBoolean(BotProperties.getProperty(
+                    "forceIndividualInitiative", "false")); //$NON-NLS-1$ //$NON-NLS-2$
+        } catch (Exception e) {
+            // do nothing
+        }
+        return forced;
+    }
 
     public boolean isDebug() {
         try {

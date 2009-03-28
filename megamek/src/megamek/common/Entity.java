@@ -15,7 +15,6 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -43,7 +42,7 @@ import megamek.common.weapons.WeaponHandler;
 /**
  * Entity is a master class for basically anything on the board except terrain.
  */
-public abstract class Entity extends TurnOrdered implements Serializable, Transporter, Targetable, RoundUpdated {
+public abstract class Entity extends TurnOrdered implements Transporter, Targetable, RoundUpdated {
     /**
      *
      */
@@ -1750,6 +1749,9 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      * IArmorState.ARMOR_NA, or IArmorState.ARMOR_DESTROYED.
      */
     public int getArmor(int loc, boolean rear) {
+    	if (loc >= armor.length) {
+    		return IArmorState.ARMOR_NA;
+    	}
         return armor[loc];
     }
 
@@ -3224,9 +3226,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 if(game.getBoard().inSpace()) {
                     if(m.curMode().equals("Medium")) {
                         return 12 + cyberBonus;
-                    } else {
-                        return 6 + cyberBonus;
                     }
+					return 6 + cyberBonus;
                 }
 
                 if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP)) {
@@ -3736,9 +3737,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         if (hasC3i() && e.hasC3i() && getC3NetId().equals(e.getC3NetId())) {
             if (ignoreECM) {
                 return true;
-            } else {
-                return !(Compute.isAffectedByECM(e, e.getPosition(), e.getPosition())) && !(Compute.isAffectedByECM(this, getPosition(), getPosition()));
             }
+			return !(Compute.isAffectedByECM(e, e.getPosition(), e.getPosition())) && !(Compute.isAffectedByECM(this, getPosition(), getPosition()));
         }
 
         // simple sanity check - do they both have C3, and are they both on the
@@ -5216,7 +5216,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         return result;
     }
 
-    public Bay getLoadedBay(int id) {
+    public Bay getLoadedBay(int bayID) {
 
         Vector<Bay> bays = getFighterBays();
         for (int nbay = 0; nbay < bays.size(); nbay++) {
@@ -5224,7 +5224,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             Vector<Entity> currentFighters = currentBay.getLoadedUnits();
             for (int nfighter = 0; nfighter < currentFighters.size(); nfighter++) {
                 Entity fighter = currentFighters.elementAt(nfighter);
-                if (fighter.getId() == id) {
+                if (fighter.getId() == bayID) {
                     // then we are in the right bay
                     return currentBay;
                 }
@@ -5852,6 +5852,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             try {
                 loc = Integer.parseInt(str);
             } catch (NumberFormatException nfe) {
+            	loc = LOC_NONE;
             }
         }
 
@@ -5983,10 +5984,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public Enumeration<Entity> getKills() {
         final int killer = id;
         return game.getSelectedOutOfGameEntities(new EntitySelector() {
-            private final int killerId = killer;
-
             public boolean accept(Entity entity) {
-                if (killerId == entity.killerId) {
+                if (killer == entity.killerId) {
                     return true;
                 }
                 return false;
@@ -5997,10 +5996,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     public int getKillNumber() {
         final int killer = id;
         return game.getSelectedOutOfGameEntityCount(new EntitySelector() {
-            private final int killerId = killer;
-
             public boolean accept(Entity entity) {
-                if (killerId == entity.killerId) {
+                if (killer == entity.killerId) {
                     return true;
                 }
                 return false;
@@ -7221,9 +7218,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             if ((game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BLDG_ELEV) >= getElevation())
                     || (game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BRIDGE_ELEV) >= getElevation())) {
                 return false;
-            } else {
-                return getElevation() > 0;
             }
+			return getElevation() > 0;
         }
         return false;
     }
@@ -7302,15 +7298,15 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
 
     /**
      *  return the bay of the current weapon
-     * @param id
+     * @param bayID
      * @return
      */
-    public Mounted whichBay(int id) {
+    public Mounted whichBay(int bayID) {
 
         for (Mounted m : getWeaponBayList()) {
             for (int wId : m.getBayWeapons()) {
                 // find the weapon and determine if it is there
-                if (wId == id) {
+                if (wId == bayID) {
                     return m;
                 }
             }
@@ -7346,7 +7342,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
 
     public int getHeatInArc(int location, boolean rearMount) {
 
-        int heat = 0;
+        int arcHeat = 0;
 
         for (Mounted mounted : getTotalWeaponList()) {
             // is the weapon usable?
@@ -7355,10 +7351,10 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             }
 
             if ((mounted.getLocation() == location) && (mounted.isRearMounted() == rearMount)) {
-                    heat += mounted.getCurrentHeat();
+                    arcHeat += mounted.getCurrentHeat();
             }
         }
-        return heat;
+        return arcHeat;
     }
 
     public int[] getVectors() {
@@ -7373,12 +7369,11 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         vectors = v;
     }
 
-    public int getVector(int facing) {
-        if (facing < 6) {
-            return vectors[facing];
-        } else {
-            return 0;
+    public int getVector(int vectorFacing) {
+        if (vectorFacing < 6) {
+            return vectors[vectorFacing];
         }
+		return 0;
     }
 
     public int getVelocity() {
@@ -7490,9 +7485,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
 
         if (rearMount) {
             return rearArcFired[location];
-        } else {
-            return frontArcFired[location];
         }
+		return frontArcFired[location];
     }
 
     public void setArcFired(int location, boolean rearMount) {
@@ -7566,6 +7560,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     public void setGrappled(int id, boolean attacker) {
+    	//TODO?
     }
 
     public boolean isGrappleAttacker() {
@@ -7587,7 +7582,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             try {
                 this.addEquipment(EquipmentType.get(BattleArmor.SINGLE_HEX_ECM), Aero.LOC_NOSE, false);
             } catch (LocationFullException ex) {
-
+            	//ignore
             }
         }
 
@@ -7672,7 +7667,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     public void setGrappleSide(int side) {
-
+    	//TODO?
     }
 
     public int getGrappleSide() {
@@ -7847,6 +7842,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
     }
 
     public void addCoolantFailureAmount(int amount){
+    	//TODO?
     }
 
     /**

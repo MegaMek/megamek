@@ -19,7 +19,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -39,7 +38,6 @@ import javax.swing.event.ListSelectionListener;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.common.AmmoType;
 import megamek.common.Compute;
@@ -61,7 +59,6 @@ import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.TriggerAPPodAction;
 import megamek.common.actions.TriggerBPodAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
@@ -70,9 +67,8 @@ import megamek.common.event.GameTurnChangeEvent;
  * with something else
  */
 
-public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements GameListener,
-        ActionListener, DoneButtoned, KeyListener, ItemListener, BoardViewListener,
-        ListSelectionListener {
+public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements 
+        DoneButtoned, KeyListener, ItemListener, ListSelectionListener {
     /**
      * 
      */
@@ -80,21 +76,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
 
     // Action command names
     private static final String FIRE_FIRE = "fireFire"; //$NON-NLS-1$
-
     private static final String FIRE_MODE = "fireMode"; //$NON-NLS-1$
-
     private static final String FIRE_FLIP_ARMS = "fireFlipArms"; //$NON-NLS-1$
-
     private static final String FIRE_NEXT = "fireNext"; //$NON-NLS-1$
-
     private static final String FIRE_NEXT_TARG = "fireNextTarg"; //$NON-NLS-1$
-
     private static final String FIRE_SKIP = "fireSkip"; //$NON-NLS-1$
-
     private static final String FIRE_TWIST = "fireTwist"; //$NON-NLS-1$
-
     private static final String FIRE_CANCEL = "fireCancel"; //$NON-NLS-1$
-
     private static final String FIRE_SEARCHLIGHT = "fireSearchlight"; //$NON-NLS-1$
 
     // parent game
@@ -713,11 +701,11 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
     /**
      * Torso twist in the proper direction.
      */
-    private void torsoTwist(Coords target) {
+    private void torsoTwist(Coords cTarget) {
         int direction = ce().getFacing();
 
-        if (null != target)
-            direction = ce().clipSecondaryFacing(ce().getPosition().direction(target));
+        if (null != cTarget)
+            direction = ce().clipSecondaryFacing(ce().getPosition().direction(cTarget));
 
         if (direction != ce().getSecondaryFacing()) {
             clearAttacks();
@@ -730,20 +718,20 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
     /**
      * Torso twist to the left or right
      * 
-     * @param target
+     * @param twistDirection
      *            An <code>int</code> specifying wether we're twisting left or right, 0 if we're
      *            twisting to the left, 1 if to the right.
      */
 
-    private void torsoTwist(int target) {
+    private void torsoTwist(int twistDirection) {
         int direction = ce().getSecondaryFacing();
-        if (target == 0) {
+        if (twistDirection == 0) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 5) % 6);
             attacks.addElement(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
-        } else if (target == 1) {
+        } else if (twistDirection == 1) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 7) % 6);
             attacks.addElement(new TorsoTwistAction(cen, direction));
@@ -831,14 +819,15 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
     /**
      * Returns the current entity.
      */
-    private Entity ce() {
+    Entity ce() {
         return client.game.getEntity(cen);
     }
 
     //
     // BoardListener
     //
-    public void hexMoused(BoardViewEvent b) {
+    @Override
+	public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -872,7 +861,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
         }
     }
 
-    public void hexSelected(BoardViewEvent b) {
+    @Override
+	public void hexSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -899,7 +889,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
     //
     // GameListener
     //
-    public void gameTurnChange(GameTurnChangeEvent e) {
+    @Override
+	public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -921,7 +912,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
         }
     }
 
-    public void gamePhaseChange(GamePhaseChangeEvent e) {
+    @Override
+	public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -1104,6 +1096,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
     }
 
     public void keyTyped(KeyEvent ev) {
+    	//ignore
     }
 
     //
@@ -1119,7 +1112,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
     }
 
     // board view listener
-    public void finishedMovingUnits(BoardViewEvent b) {
+    @Override
+	public void finishedMovingUnits(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -1132,7 +1126,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements Game
         }
     }
 
-    public void unitSelected(BoardViewEvent b) {
+    @Override
+	public void unitSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {

@@ -42,7 +42,6 @@ import javax.swing.event.ListSelectionListener;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.IndexedCheckbox;
 import megamek.common.Aero;
@@ -85,12 +84,10 @@ import megamek.common.actions.TriggerAPPodAction;
 import megamek.common.actions.TriggerBPodAction;
 import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
-public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewListener,
-        GameListener, ActionListener, DoneButtoned, KeyListener, ItemListener,
+public class FiringDisplay extends StatusBarPhaseDisplay implements DoneButtoned, KeyListener, ItemListener,
         ListSelectionListener {
     /**
      * 
@@ -100,31 +97,18 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
     private static final int NUM_BUTTON_LAYOUTS = 2;
 
     public static final String FIRE_FIND_CLUB = "fireFindClub"; //$NON-NLS-1$
-
     public static final String FIRE_FIRE = "fireFire"; //$NON-NLS-1$
-
     public static final String FIRE_MODE = "fireMode"; //$NON-NLS-1$
-
     public static final String FIRE_FLIP_ARMS = "fireFlipArms"; //$NON-NLS-1$
-
-    private static final String FIRE_MORE = "fireMore"; //$NON-NLS-1$
-
+    public static final String FIRE_MORE = "fireMore"; //$NON-NLS-1$
     public static final String FIRE_NEXT = "fireNext"; //$NON-NLS-1$
-
     public static final String FIRE_NEXT_TARG = "fireNextTarg"; //$NON-NLS-1$
-
     public static final String FIRE_SKIP = "fireSkip"; //$NON-NLS-1$
-
     public static final String FIRE_SPOT = "fireSpot"; //$NON-NLS-1$
-
     public static final String FIRE_TWIST = "fireTwist"; //$NON-NLS-1$
-
     public static final String FIRE_CANCEL = "fireCancel"; //$NON-NLS-1$
-
     public static final String FIRE_SEARCHLIGHT = "fireSearchlight"; //$NON-NLS-1$
-
     public static final String FIRE_CLEAR_TURRET = "fireClearTurret"; //$NON-NLS-1$
-
     public static final String FIRE_CLEAR_WEAPON = "fireClearWeaponJam"; //$NON-NLS-1$
 
     // parent game
@@ -361,7 +345,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
             break;
         }
 
-        validate();
+        panButtons.validate();
+        panButtons.repaint();
     }
 
     /**
@@ -682,9 +667,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
             } else if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(client.game);
-                Targetable target = waa.getTarget(client.game);
+                Targetable target1 = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker
-                        .getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
+                        .getSecondaryFacing(), target1.getPosition(), Compute.ARC_FORWARD);
                 if (curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa
                             .getTargetType(), waa.getTargetId(), waa.getWeaponId());
@@ -707,9 +692,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
             } else if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(client.game);
-                Targetable target = waa.getTarget(client.game);
+                Targetable target1 = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker
-                        .getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
+                        .getSecondaryFacing(), target1.getPosition(), Compute.ARC_FORWARD);
                 if (!curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa
                             .getTargetType(), waa.getTargetId(), waa.getWeaponId());
@@ -850,6 +835,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
             try {
                 lastAction = attacks.lastElement();
             } catch (NoSuchElementException ex) {
+            	//ignore
             }
             if (lastAction != null && lastAction instanceof WeaponAttackAction) {
                 WeaponAttackAction oldWaa = (WeaponAttackAction) lastAction;
@@ -1165,11 +1151,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
     /**
      * Torso twist in the proper direction.
      */
-    void torsoTwist(Coords target) {
+    void torsoTwist(Coords twistTarget) {
         int direction = ce().getFacing();
 
-        if (target != null)
-            direction = ce().clipSecondaryFacing(ce().getPosition().direction(target));
+        if (twistTarget != null)
+            direction = ce().clipSecondaryFacing(ce().getPosition().direction(twistTarget));
 
         if (direction != ce().getSecondaryFacing()) {
             clearAttacks();
@@ -1182,20 +1168,20 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
     /**
      * Torso twist to the left or right
      * 
-     * @param target
+     * @param twistDir
      *            An <code>int</code> specifying wether we're twisting left or right, 0 if we're
      *            twisting to the left, 1 if to the right.
      */
 
-    void torsoTwist(int target) {
+    void torsoTwist(int twistDir) {
         int direction = ce().getSecondaryFacing();
-        if (target == 0) {
+        if (twistDir == 0) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 5) % 6);
             attacks.addElement(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
-        } else if (target == 1) {
+        } else if (twistDir == 1) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 7) % 6);
             attacks.addElement(new TorsoTwistAction(cen, direction));
@@ -1214,7 +1200,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
     //
     // BoardListener
     //
-    public void hexMoused(BoardViewEvent b) {
+    @Override
+	public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -1248,7 +1235,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
         }
     }
 
-    public void hexSelected(BoardViewEvent b) {
+    @Override
+	public void hexSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -1273,7 +1261,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
     //
     // GameListener
     //
-    public void gameTurnChange(GameTurnChangeEvent e) {
+    @Override
+	public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -1294,7 +1283,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
         }
     }
 
-    public void gamePhaseChange(GamePhaseChangeEvent e) {
+    @Override
+	public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -1529,6 +1519,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
     }
 
     public void keyTyped(KeyEvent ev) {
+    	//ignore
     }
 
     //
@@ -1543,7 +1534,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
     }
 
     // board view listener
-    public void finishedMovingUnits(BoardViewEvent b) {
+    @Override
+	public void finishedMovingUnits(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -1556,7 +1548,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
         }
     }
 
-    public void unitSelected(BoardViewEvent b) {
+    @Override
+	public void unitSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -1594,6 +1587,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
         private AimedShotDialog asd;
 
         public AimedShotHandler() {
+        	//ignore
         }
 
         public void showDialog() {

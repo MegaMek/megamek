@@ -2,7 +2,7 @@
 ----------------
 v0.33.43-dev (SVN)
 + Updated Lancelot 25-01X
-+ Bug: WiGE not loading if momement type was WiGE instead of WIGE
++ Bug: WiGE not loading if movement type was WiGE instead of WIGE
 + RFE: added public methods for BattleArmor Stealth Armor
 + Bug: checking for ice breaking when moving across elevation 0 bridge
 + Bug 1944660: Attacks on surface naval vessels don't follow TW rules
@@ -18,6 +18,7 @@ v0.33.43-dev (SVN)
 + RFE: Added a way to force the bot to go individual init.  (a random unit is forced
 	to move each time the bot starts.)  The option is set in bot.properties.
 + Bug: Swing button display was not updating properly
++ Bug 1880517: Entity.getArmor needed defensive programming
 
 v0.33.42 (2009-03-10, 19:52 UTC+1)
 + Updated RSPPU mechfiles because of pending errata

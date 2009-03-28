@@ -20,7 +20,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -38,7 +37,7 @@ import megamek.common.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
 
 public class ReportDisplay extends StatusBarPhaseDisplay implements
-        ActionListener, KeyListener, DoneButtoned {
+        KeyListener, DoneButtoned {
     /**
      *
      */
@@ -264,17 +263,17 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
-        }
         if ((ev.getKeyCode() == KeyEvent.VK_ENTER) && ev.isControlDown()) {
             ready();
         }
     }
 
     public void keyReleased(KeyEvent ev) {
+    	//ignore
     }
 
     public void keyTyped(KeyEvent ev) {
+    	//ignore
     }
 
     @Override

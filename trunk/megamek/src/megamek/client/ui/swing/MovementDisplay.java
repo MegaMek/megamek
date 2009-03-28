@@ -19,7 +19,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -34,7 +33,6 @@ import javax.swing.JPanel;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.AWT.ChoiceDialog;
@@ -75,11 +73,10 @@ import megamek.common.VTOL;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
-public class MovementDisplay extends StatusBarPhaseDisplay implements ActionListener, DoneButtoned, KeyListener, GameListener, BoardViewListener {
+public class MovementDisplay extends StatusBarPhaseDisplay implements DoneButtoned, KeyListener {
     /**
      *
      */
@@ -732,6 +729,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         }
         panButtons.add(butMore);
         panButtons.validate();
+        panButtons.repaint();
     }
 
     /**
@@ -2902,8 +2900,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             private final GameTurn turn = client.game.getTurn();
             private final int ownerId = client.getLocalPlayer().getId();
 
-            public boolean accept(Entity entity) {
-                if (turn.isValid(ownerId, entity, game)) {
+            public boolean accept(Entity acc) {
+                if (turn.isValid(ownerId, acc, game)) {
                     return true;
                 }
                 return false;
@@ -3009,6 +3007,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
     }
 
     public void keyTyped(KeyEvent ev) {
+    	//ignore
     }
 
     // board view listener

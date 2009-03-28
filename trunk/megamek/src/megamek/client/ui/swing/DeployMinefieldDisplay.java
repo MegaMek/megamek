@@ -19,7 +19,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -33,7 +32,6 @@ import javax.swing.JPanel;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.IGame;
@@ -41,13 +39,11 @@ import megamek.common.IHex;
 import megamek.common.Minefield;
 import megamek.common.Player;
 import megamek.common.Terrains;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
-        BoardViewListener, ActionListener, DoneButtoned, KeyListener,
-        GameListener {
+        DoneButtoned, KeyListener {
     private static final long serialVersionUID = -1243277953037374936L;
 
     // Action command names
@@ -410,7 +406,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
     //
     // BoardListener
     //
-    public void hexMoused(BoardViewEvent b) {
+    @Override
+	public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -435,7 +432,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
     //
     // GameListener
     //
-    public void gameTurnChange(GameTurnChangeEvent e) {
+    @Override
+	public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -455,7 +453,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    public void gamePhaseChange(GamePhaseChangeEvent e) {
+    @Override
+	public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -549,12 +548,15 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
+    	//ignore
     }
 
     public void keyReleased(KeyEvent ev) {
+    	//ignore
     }
 
     public void keyTyped(KeyEvent ev) {
+    	//ignore
     }
 
     private void setConventionalEnabled(int nbr) {

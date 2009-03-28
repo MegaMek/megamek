@@ -35,7 +35,6 @@ import javax.swing.JPanel;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.IndexedCheckbox;
 import megamek.common.BattleArmor;
@@ -72,13 +71,11 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class PhysicalDisplay extends StatusBarPhaseDisplay implements
-        GameListener, ActionListener, DoneButtoned, KeyListener,
-        BoardViewListener {
+        DoneButtoned, KeyListener {
 
     /**
      * 
@@ -316,7 +313,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
                 break;
         }
 
-        validate();
+        panButtons.validate();
+        panButtons.repaint();
     }
 
     /**
@@ -1347,7 +1345,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     //
     // BoardListener
     //
-    public void hexMoused(BoardViewEvent b) {
+    @Override
+	public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (this.isIgnoringEvents()) {
@@ -1371,7 +1370,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    public void hexSelected(BoardViewEvent b) {
+    @Override
+	public void hexSelected(BoardViewEvent b) {
         // Are we ignoring events?
         if (this.isIgnoringEvents()) {
             return;
@@ -1462,7 +1462,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     //
     // GameListener
     //
-    public void gameTurnChange(GameTurnChangeEvent e) {
+    @Override
+	public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if (this.isIgnoringEvents()) {
@@ -1488,7 +1489,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    public void gamePhaseChange(GamePhaseChangeEvent e) {
+    @Override
+	public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
         if (this.isIgnoringEvents()) {
@@ -1582,18 +1584,23 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     }
 
     public void keyReleased(KeyEvent ev) {
+    	//ignore
     }
 
     public void keyTyped(KeyEvent ev) {
+    	//ignore
     }
 
     //
     // BoardViewListener
     //
-    public void finishedMovingUnits(BoardViewEvent b) {
+    @Override
+	public void finishedMovingUnits(BoardViewEvent b) {
+    	//no action
     }
 
-    public void unitSelected(BoardViewEvent b) {
+    @Override
+	public void unitSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (this.isIgnoringEvents()) {
@@ -1709,6 +1716,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         private boolean canAim;
 
         public AimedShotHandler() {
+        	//no action
         }
 
         public int getAimTable() {

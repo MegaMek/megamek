@@ -127,30 +127,30 @@ public class MoveOption extends MovePath {
     public MoveOption(IGame game, CEntity centity) {
         super(game, centity.entity);
         this.centity = centity;
-        this.pos = centity.entity.getPosition();
-        this.facing = centity.entity.getFacing();
-        this.prone = centity.entity.isProne();
+        pos = centity.entity.getPosition();
+        facing = centity.entity.getFacing();
+        prone = centity.entity.isProne();
     }
 
     public MoveOption(MoveOption base) {
         this(base.game, base.centity);
         steps = new Vector<MoveStep>(base.steps);
-        this.threat = base.threat;
-        this.damage = base.damage;
-        this.movement_threat = base.movement_threat;
-        this.tv = new ArrayList<String>(base.tv);
-        this.self_threat = base.self_threat;
-        this.inDanger = base.inDanger;
-        this.doomed = base.doomed;
-        this.isPhysical = base.isPhysical;
-        this.self_damage = base.self_damage;
-        this.pos = base.pos;
-        this.facing = base.facing;
-        this.prone = base.prone;
+        threat = base.threat;
+        damage = base.damage;
+        movement_threat = base.movement_threat;
+        tv = new ArrayList<String>(base.tv);
+        self_threat = base.self_threat;
+        inDanger = base.inDanger;
+        doomed = base.doomed;
+        isPhysical = base.isPhysical;
+        self_damage = base.self_damage;
+        pos = base.pos;
+        facing = base.facing;
+        prone = base.prone;
     }
 
     @Override
-	public MoveOption clone() {
+    public MoveOption clone() {
         return new MoveOption(this);
     }
 
@@ -179,7 +179,7 @@ public class MoveOption extends MovePath {
     }
 
     @Override
-	public MoveOption addStep(int step_type) {
+    public MoveOption addStep(int step_type) {
         super.addStep(step_type);
         MoveStep current = getLastStep();
         // running with gyro or hip hit is dangerous!
@@ -187,45 +187,47 @@ public class MoveOption extends MovePath {
                 && (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                         Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0 || entity
                         .hasHipCrit())) {
-            this.getStep(0).setDanger(true);
+            getStep(0).setDanger(true);
             current.setDanger(true);
         }
-        
+
         if (current.isDanger()) {
             if (getCEntity().base_psr_odds < .1) {
                 current.setMovementType(IEntityMovementType.MOVE_ILLEGAL);
             } else {
                 double cur_threat = getCEntity().getThreatUtility(
-                        .2 * this.entity.getWeight(), ToHitData.SIDE_REAR)
+                        .2 * entity.getWeight(), ToHitData.SIDE_REAR)
                         * (1 - Math.pow(getCEntity().base_psr_odds, 2));
-                this.movement_threat += cur_threat;
-                if (centity.getTb().debug)
-                    this.tv.add(cur_threat + " Movement Threat \r\n");
+                movement_threat += cur_threat;
+                if (centity.getTb().debug) {
+                    tv.add(cur_threat + " Movement Threat \r\n");
+                }
             }
         }
         return this;
     }
 
     public int getMovementheatBuildup() {
-        MoveStep last = this.getLastStep();
-        if (last == null)
+        MoveStep last = getLastStep();
+        if (last == null) {
             return 0;
+        }
         int heat = last.getTotalHeat();
         int move = 0;
         switch (last.getMovementType()) {
-            case IEntityMovementType.MOVE_WALK:
-            case IEntityMovementType.MOVE_VTOL_WALK:
-                move = 1;
-                break;
-            case IEntityMovementType.MOVE_RUN:
-            case IEntityMovementType.MOVE_VTOL_RUN:
-                move = 2;
-                break;
-            case IEntityMovementType.MOVE_JUMP:
-                move = getEntity().getJumpHeat(last.getMpUsed());
-                break;
-            default:
-                move = 1000;
+        case IEntityMovementType.MOVE_WALK:
+        case IEntityMovementType.MOVE_VTOL_WALK:
+            move = 1;
+            break;
+        case IEntityMovementType.MOVE_RUN:
+        case IEntityMovementType.MOVE_VTOL_RUN:
+            move = 2;
+            break;
+        case IEntityMovementType.MOVE_JUMP:
+            move = getEntity().getJumpHeat(last.getMpUsed());
+            break;
+        default:
+            move = 1000;
         }
         return heat + move; // illegal?
     }
@@ -233,13 +235,13 @@ public class MoveOption extends MovePath {
     public boolean changeToPhysical() {
         MoveStep last = getLastStep();
         if (isJumping()) {
-        	if (getEntity().canCharge()) {
-        		return false;
-        	}
+            if (getEntity().canCharge()) {
+                return false;
+            }
         } else {
-        	if (getEntity().canDFA()) {
-        		return false;
-        	}
+            if (getEntity().canDFA()) {
+                return false;
+            }
         }
         boolean isClan = getEntity().isClan();
         if (last == null
@@ -249,16 +251,16 @@ public class MoveOption extends MovePath {
         if (last.getType() != STEP_FORWARDS
                 || (isClan
                         && game.getOptions().booleanOption("no_clan_physical") && getEntity()
-                        .getSwarmAttackerId() == Entity.NONE)) { //$NON-NLS-1$
+                        .getSwarmAttackerId() == Entity.NONE)) {
             return false;
         }
         Enumeration<Entity> e = game.getEntities(last.getPosition());
         // TODO: this just takes the first target
         while (e.hasMoreElements()) {
             Entity en = e.nextElement();
-            if (!en.isSelectableThisTurn() && en.isEnemyOf(this.entity)) {
-                this.isPhysical = true;
-                this.removeLastStep();
+            if (!en.isSelectableThisTurn() && en.isEnemyOf(entity)) {
+                isPhysical = true;
+                removeLastStep();
                 if (isJumping()) {
                     addStep(MovePath.STEP_DFA, en);
                 } else {
@@ -272,21 +274,21 @@ public class MoveOption extends MovePath {
 
     // it would be nice to have a stand still move...
     public void setState() {
-        this.entity = this.centity.entity;
-        if (this.steps.size() == 0) {
-            this.entity.setPosition(pos);
-            this.entity.setFacing(facing);
-            this.entity.setSecondaryFacing(facing);
-            this.entity.delta_distance = 0;
-            this.entity.setProne(prone);
+        entity = centity.entity;
+        if (steps.size() == 0) {
+            entity.setPosition(pos);
+            entity.setFacing(facing);
+            entity.setSecondaryFacing(facing);
+            entity.delta_distance = 0;
+            entity.setProne(prone);
         } else {
-            this.entity.setPosition(getFinalCoords());
-            this.entity.setFacing(getFinalFacing());
-            this.entity.setSecondaryFacing(getFinalFacing());
-            this.entity.setProne(getFinalProne());
-            this.entity.delta_distance = getHexesMoved();
+            entity.setPosition(getFinalCoords());
+            entity.setFacing(getFinalFacing());
+            entity.setSecondaryFacing(getFinalFacing());
+            entity.setProne(getFinalProne());
+            entity.delta_distance = getHexesMoved();
         }
-        this.entity.moved = getLastStepMovementType();
+        entity.moved = getLastStepMovementType();
     }
 
     /**
@@ -295,7 +297,7 @@ public class MoveOption extends MovePath {
      */
     public int[] getModifiers(final Entity te) {
         // set them at the appropriate positions
-        final Entity ae = this.entity;
+        final Entity ae = entity;
 
         int attHeight = ae.isProne() ? 0 : 1;
         int targHeight = te.isProne() ? 0 : 1;
@@ -318,7 +320,7 @@ public class MoveOption extends MovePath {
 
         toHitd.append(Compute.getAttackerMovementModifier(game, te.getId()));
         toHitd.append(Compute.getTargetMovementModifier(game, ae.getId()));
-        if (!(this.isPhysical && isJumping())) {
+        if (!(isPhysical && isJumping())) {
             toHitd.append(Compute.getTargetTerrainModifier(game, ae));
         }
         toHitd.append(Compute.getAttackerTerrainModifier(game, te.getId()));
@@ -401,27 +403,25 @@ public class MoveOption extends MovePath {
      */
     public double getUtility() {
         // self threat and self damage are considered transient
-        double temp_threat = (this.threat + this.movement_threat
-                + this.self_threat + (double) this.getMovementheatBuildup() / 20)
+        double temp_threat = (threat + movement_threat + self_threat + (double) getMovementheatBuildup() / 20)
                 / getCEntity().strategy.attack;
-        double temp_damage = (this.damage + this.self_damage)
-                * this.centity.strategy.attack;
-        if (this.threat + this.movement_threat > 4 * this.centity.avg_armor) {
-            double ratio = (this.threat + this.movement_threat)
-                    / (this.centity.avg_armor + .25 * this.centity.avg_iarmor);
+        double temp_damage = (damage + self_damage) * centity.strategy.attack;
+        if (threat + movement_threat > 4 * centity.avg_armor) {
+            double ratio = (threat + movement_threat)
+                    / (centity.avg_armor + .25 * centity.avg_iarmor);
             if (ratio > 2) {
-                temp_threat += this.centity.bv / 15.0; // likely to die
-                this.doomed = true;
-                this.inDanger = true;
+                temp_threat += centity.bv / 15.0; // likely to die
+                doomed = true;
+                inDanger = true;
             } else if (ratio > 1) {
-                temp_threat += this.centity.bv / 30.0; // in danger
-                this.inDanger = true;
+                temp_threat += centity.bv / 30.0; // in danger
+                inDanger = true;
             } else {
-                temp_threat += this.centity.bv / 75.0; // in danger
-                this.inDanger = true;
+                temp_threat += centity.bv / 75.0; // in danger
+                inDanger = true;
             }
-        } else if (this.threat + this.movement_threat > 30) {
-            temp_threat += this.centity.entity.getWeight();
+        } else if (threat + movement_threat > 30) {
+            temp_threat += centity.entity.getWeight();
         }
         double retVal = temp_threat - temp_damage;
         // If the move has a chance of making MASC fail...
@@ -436,14 +436,14 @@ public class MoveOption extends MovePath {
             }
             double mascMult = Compute.oddsAbove(mascTN) / 100;
             if (mascMult < 1.0) {
-                this.inDanger = true;
+                inDanger = true;
             }
             retVal *= (mascMult > 0) ? mascMult : 0.01;
         }
         // If getting up is difficult...
         if (prone) {
-            PilotingRollData tmpPRD = this.centity.getEntity().checkGetUp(
-                    getStep(0));
+            PilotingRollData tmpPRD = centity.getEntity()
+                    .checkGetUp(getStep(0));
             if ((tmpPRD != null)
                     && ((tmpPRD.getValue() == TargetRoll.IMPOSSIBLE) || (tmpPRD
                             .getValue() == TargetRoll.AUTOMATIC_FAIL))) {
@@ -548,7 +548,7 @@ public class MoveOption extends MovePath {
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         return getEntity().getShortName() + " " + getEntity().getId() + " "
                 + getFinalCoords() + " " + super.toString() + "\r\n Utility: "
                 + getUtility() + " \r\n" + tv + "\r\n";

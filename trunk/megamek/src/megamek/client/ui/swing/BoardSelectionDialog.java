@@ -70,7 +70,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
 
     private JPanel panTypeChooser = new JPanel();
     private Choice typeChooser = new Choice();
-    
+
     private JPanel panMapSize = new JPanel();
 
     private JLabel labBoardSize = new JLabel(Messages
@@ -149,7 +149,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         c.gridwidth = 1;
         gridbag.setConstraints(panTypeChooser, c);
         getContentPane().add(panTypeChooser);
-        
+
         gridbag.setConstraints(panMapSize, c);
         getContentPane().add(panMapSize);
 
@@ -173,14 +173,14 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
 
         mapPreviewW.addWindowListener(new WindowAdapter() {
             @Override
-			public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
         });
 
         addWindowListener(new WindowAdapter() {
             @Override
-			public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent e) {
                 setVisible(false);
                 mapPreviewW.setVisible(false);
             }
@@ -192,16 +192,17 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
                 / 2 - getSize().width / 2, client.frame.getLocation().y
                 + client.frame.getSize().height / 2 - getSize().height / 2);
     }
-    
+
     /**
      * Set up the map chooser panel
      */
     private void setupMapChoice() {
         typeChooser.add(MapSettings.getMediumName(MapSettings.MEDIUM_GROUND));
-        typeChooser.add(MapSettings.getMediumName(MapSettings.MEDIUM_ATMOSPHERE));
+        typeChooser.add(MapSettings
+                .getMediumName(MapSettings.MEDIUM_ATMOSPHERE));
         typeChooser.add(MapSettings.getMediumName(MapSettings.MEDIUM_SPACE));
         refreshMapChoice();
-        
+
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panTypeChooser.setLayout(gridbag);
@@ -211,10 +212,11 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(typeChooser,c);
+        gridbag.setConstraints(typeChooser, c);
         panTypeChooser.add(typeChooser);
-        
+
     }
+
     /**
      * Set up the map size panel
      */
@@ -343,7 +345,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
     private void refreshMapChoice() {
         typeChooser.select(mapSettings.getMedium());
     }
-    
+
     private void refreshMapSize() {
         texBoardWidth.setText(Integer.toString(mapSettings.getBoardWidth()));
         texBoardHeight.setText(Integer.toString(mapSettings.getBoardHeight()));
@@ -387,8 +389,9 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
     private void refreshSelectAllCheck() {
         boolean newVal = lisBoardsSelected.getSelectedIndices().length == lisBoardsSelected
                 .getModel().getSize();
-        if (chkSelectAll.isSelected() != newVal)
+        if (chkSelectAll.isSelected() != newVal) {
             chkSelectAll.setSelected(newVal);
+        }
     }
 
     private void refreshBoardsAvailable() {
@@ -407,7 +410,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         for (final int newVar : selected) {
             String name = board;
             if (!MapSettings.BOARD_RANDOM.equals(name)
-                      && !MapSettings.BOARD_SURPRISE.equals(name)
+                    && !MapSettings.BOARD_SURPRISE.equals(name)
                     && chkRotateBoard.isSelected()) {
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }
@@ -478,7 +481,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
      * the server.
      */
     public void update(MapSettings newSettings, boolean updateSize) {
-        this.mapSettings = (MapSettings) newSettings.clone();
+        mapSettings = (MapSettings) newSettings.clone();
         if (updateSize) {
             refreshMapSize();
             refreshMapButtons();
@@ -524,15 +527,16 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
             return;
         }
 
-        //change the type - probably not the right place for this but I can't get it to work elsewhere
-        if(typeChooser.getSelectedIndex() == 2) {
+        // change the type - probably not the right place for this but I can't
+        // get it to work elsewhere
+        if (typeChooser.getSelectedIndex() == 2) {
             mapSettings.setMedium(MapSettings.MEDIUM_SPACE);
-        } else if(typeChooser.getSelectedIndex() == 1) {
+        } else if (typeChooser.getSelectedIndex() == 1) {
             mapSettings.setMedium(MapSettings.MEDIUM_ATMOSPHERE);
-        } else if(typeChooser.getSelectedIndex() == 0) {
+        } else if (typeChooser.getSelectedIndex() == 0) {
             mapSettings.setMedium(MapSettings.MEDIUM_GROUND);
         }
-        
+
         client.getClient().sendMapSettings(mapSettings);
         setVisible(false);
         mapPreviewW.setVisible(false);
@@ -542,7 +546,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         String boardName = (String) lisBoardsAvailable.getSelectedValue();
         if (lisBoardsAvailable.getSelectedIndex() > 2) {
             IBoard board = new Board(Integer.parseInt(texBoardWidth.getText()),
-            		Integer.parseInt(texBoardHeight.getText()));
+                    Integer.parseInt(texBoardHeight.getText()));
             board.load(boardName + ".board");
             if (chkRotateBoard.isSelected()) {
                 BoardUtilities.flip(board, true, true);
@@ -591,17 +595,17 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         } else {
             try {
                 int board = Integer.parseInt(e.getActionCommand());
-                this.lisBoardsSelected.setSelectedIndex(board);
+                lisBoardsSelected.setSelectedIndex(board);
             } catch (NumberFormatException n) {
-            	//ignore
+                // ignore
             } catch (ArrayIndexOutOfBoundsException a) {
-            	//ignore
+                // ignore
             }
         }
     }
 
     public void updateMapSettings(MapSettings newSettings) {
-        this.mapSettings = newSettings;
+        mapSettings = newSettings;
         refreshMapSize();
         refreshMapButtons();
 

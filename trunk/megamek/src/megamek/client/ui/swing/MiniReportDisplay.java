@@ -59,6 +59,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
 
         // closing the window is the same as hitting butOkay
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 actionPerformed(new ActionEvent(butOkay,
                         ActionEvent.ACTION_PERFORMED, butOkay.getText()));

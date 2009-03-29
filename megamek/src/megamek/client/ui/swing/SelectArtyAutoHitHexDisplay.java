@@ -39,7 +39,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
-        implements  DoneButtoned, KeyListener {
+        implements DoneButtoned, KeyListener {
 
     private static final long serialVersionUID = -4948184589134809323L;
 
@@ -168,14 +168,13 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
                                                 "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[] { coords.getBoardNum() }))) { //$NON-NLS-1$
             artyAutoHitHexes.addElement(coords);
             setArtyEnabled(5 - artyAutoHitHexes.size());
-            client.game.getBoard().addSpecialHexDisplay(coords,
+            client.game.getBoard().addSpecialHexDisplay(
+                    coords,
                     new SpecialHexDisplay(
                             SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
-                            SpecialHexDisplay.NO_ROUND,
-                            client.getLocalPlayer().getName(),
-                            "Artilery autohit, better text later"
-                    )
-            );
+                            SpecialHexDisplay.NO_ROUND, client.getLocalPlayer()
+                                    .getName(),
+                            "Artilery autohit, better text later"));
         }
     }
 
@@ -183,7 +182,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     // BoardListener
     //
     @Override
-	public void hexMoused(BoardViewEvent b) {
+    public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -209,7 +208,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     // GameListener
     //
     @Override
-	public void gameTurnChange(GameTurnChangeEvent e) {
+    public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -232,10 +231,11 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     /**
      * called when the game changes phase.
      * 
-     * @param e ignored parameter
+     * @param e
+     *            ignored parameter
      */
     @Override
-	public void gamePhaseChange(final GamePhaseChangeEvent e) {
+    public void gamePhaseChange(final GamePhaseChangeEvent e) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -261,8 +261,9 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
             return;
         }
 
-        if (statusBarActionPerformed(ev, client))
+        if (statusBarActionPerformed(ev, client)) {
             return;
+        }
 
         if (!client.isMyTurn()) {
             // odd...
@@ -280,15 +281,15 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-    	//ignore
+        // ignore
     }
 
     public void keyReleased(KeyEvent ev) {
-    	//ignore
+        // ignore
     }
 
     public void keyTyped(KeyEvent ev) {
-    	//ignore
+        // ignore
     }
 
     private void setArtyEnabled(int nbr) {
@@ -303,8 +304,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     /**
      * Retrieve the "Done" button of this object.
      * 
-     * @return the <code>javax.swing.JButton</code> that activates this
-     *         object's "Done" action.
+     * @return the <code>javax.swing.JButton</code> that activates this object's
+     *         "Done" action.
      */
     public JButton getDoneButton() {
         return butDone;

@@ -40,17 +40,17 @@ public class BotConfiguration {
         }
 
         switch (difficulty) {
-            case 1:
-                return 8;
-            case 2:
-                return 9;
-            default:
-                return 10;
+        case 1:
+            return 8;
+        case 2:
+            return 9;
+        default:
+            return 10;
         }
     }
-    
+
     public boolean isForcedIndividual() {
-    	boolean forced = false;
+        boolean forced = false;
         try {
             forced = Boolean.parseBoolean(BotProperties.getProperty(
                     "forceIndividualInitiative", "false")); //$NON-NLS-1$ //$NON-NLS-2$

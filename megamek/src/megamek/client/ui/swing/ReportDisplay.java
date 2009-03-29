@@ -121,9 +121,10 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Show or hide the "reroll inititiative" button in this report display.
-     *
-     * @param show a <code>boolean</code> that indicates that the button
-     *            should be shown in this report display.
+     * 
+     * @param show
+     *            a <code>boolean</code> that indicates that the button should
+     *            be shown in this report display.
      */
     public void showRerollButton(boolean show) {
         rerollInitiativeB.setVisible(show);
@@ -269,11 +270,11 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
     }
 
     public void keyReleased(KeyEvent ev) {
-    	//ignore
+        // ignore
     }
 
     public void keyTyped(KeyEvent ev) {
-    	//ignore
+        // ignore
     }
 
     @Override
@@ -299,9 +300,9 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Retrieve the "Done" button of this object.
-     *
-     * @return the <code>javax.swing.JButton</code> that activates this
-     *         object's "Done" action.
+     * 
+     * @return the <code>javax.swing.JButton</code> that activates this object's
+     *         "Done" action.
      */
     public JButton getDoneButton() {
         return readyB;
@@ -309,7 +310,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Get the secondary display section of this phase.
-     *
+     * 
      * @return the <code>Component</code> which is displayed in the secondary
      *         section during this phase.
      */

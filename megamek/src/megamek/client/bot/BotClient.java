@@ -59,13 +59,13 @@ public abstract class BotClient extends Client {
         game.addGameListener(new GameListenerAdapter() {
 
             @Override
-			public void gamePlayerChat(GamePlayerChatEvent e) {
+            public void gamePlayerChat(GamePlayerChatEvent e) {
                 processChat(e);
                 flushConn();
             }
 
             @Override
-			public void gameTurnChange(GameTurnChangeEvent e) {
+            public void gameTurnChange(GameTurnChangeEvent e) {
                 if (isMyTurn()) {
                     calculateMyTurn();
                     flushConn();
@@ -73,7 +73,7 @@ public abstract class BotClient extends Client {
             }
 
             @Override
-			public void gameReport(GameReportEvent e) {
+            public void gameReport(GameReportEvent e) {
                 if (game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT) {
                     // Opponent has used tactical genius, must press
                     // "Done" again to advance past initiative report.
@@ -113,7 +113,7 @@ public abstract class BotClient extends Client {
         ArrayList<Entity> result = new ArrayList<Entity>();
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = i.nextElement();
-            if (entity.getOwner().equals(this.getLocalPlayer())
+            if (entity.getOwner().equals(getLocalPlayer())
                     && entity.getPosition() != null && !entity.isOffBoard()) {
                 result.add(entity);
             }
@@ -125,7 +125,7 @@ public abstract class BotClient extends Client {
         ArrayList<Entity> result = new ArrayList<Entity>();
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = i.nextElement();
-            if (entity.getOwner().isEnemyOf(this.getLocalPlayer())
+            if (entity.getOwner().isEnemyOf(getLocalPlayer())
                     && entity.getPosition() != null && !entity.isOffBoard()) {
                 result.add(entity);
             }
@@ -135,72 +135,73 @@ public abstract class BotClient extends Client {
 
     // TODO: move initMovement to be called on phase end
     @Override
-	public void changePhase(IGame.Phase phase) {
+    public void changePhase(IGame.Phase phase) {
         super.changePhase(phase);
 
         try {
             switch (phase) {
-                case PHASE_LOUNGE:
-                    sendChat(Messages.getString("BotClient.Hi")); //$NON-NLS-1$
-                    break;
-                case PHASE_DEPLOYMENT:
-                    initialize();
-                    break;
-                case PHASE_MOVEMENT:
-                    if (game.getEntitiesOwnedBy(this.getLocalPlayer()) == 0) {
-                        sendChat(Messages.getString("BotClient.HowAbout")); //$NON-NLS-1$
-                        this.die();
-                    }
-                    // if the game is not double blind and I can't see anyone
-                    // else on the board I should kill myself.
-                    if (!(game.getOptions().booleanOption("double_blind")) //$NON-NLS-1$
-                            && game.getEntitiesOwnedBy(this.getLocalPlayer())
-                                    - game.getNoOfEntities() == 0) {
-                        this.die();
-                    }
+            case PHASE_LOUNGE:
+                sendChat(Messages.getString("BotClient.Hi")); //$NON-NLS-1$
+                break;
+            case PHASE_DEPLOYMENT:
+                initialize();
+                break;
+            case PHASE_MOVEMENT:
+                if (game.getEntitiesOwnedBy(getLocalPlayer()) == 0) {
+                    sendChat(Messages.getString("BotClient.HowAbout")); //$NON-NLS-1$
+                    die();
+                }
+                // if the game is not double blind and I can't see anyone
+                // else on the board I should kill myself.
+                if (!(game.getOptions().booleanOption("double_blind")) //$NON-NLS-1$
+                        && game.getEntitiesOwnedBy(getLocalPlayer())
+                                - game.getNoOfEntities() == 0) {
+                    die();
+                }
 
-                    if (Compute.randomInt(4) == 1) {
-                        String message = getRandomBotMessage();
-                        if (message != null)
-                            sendChat(message);
+                if (Compute.randomInt(4) == 1) {
+                    String message = getRandomBotMessage();
+                    if (message != null) {
+                        sendChat(message);
                     }
-                    initMovement();
-                    break;
-                case PHASE_FIRING:
-                    initFiring();
-                    break;
-                case PHASE_PHYSICAL:
-                    break;
-                case PHASE_END_REPORT:
-                    // Check if stealth armor should be switched on/off
-                    // Kinda cheap leaving this until the end phase, players
-                    // can't do this
-                    toggleStealth();
-                case PHASE_INITIATIVE_REPORT:
-                case PHASE_TARGETING_REPORT:
-                case PHASE_MOVEMENT_REPORT:
-                case PHASE_OFFBOARD_REPORT:
-                case PHASE_FIRING_REPORT:
-                case PHASE_PHYSICAL_REPORT:
-                    sendDone(true);
-                    break;
-                case PHASE_VICTORY:
-                    break;
+                }
+                initMovement();
+                break;
+            case PHASE_FIRING:
+                initFiring();
+                break;
+            case PHASE_PHYSICAL:
+                break;
+            case PHASE_END_REPORT:
+                // Check if stealth armor should be switched on/off
+                // Kinda cheap leaving this until the end phase, players
+                // can't do this
+                toggleStealth();
+            case PHASE_INITIATIVE_REPORT:
+            case PHASE_TARGETING_REPORT:
+            case PHASE_MOVEMENT_REPORT:
+            case PHASE_OFFBOARD_REPORT:
+            case PHASE_FIRING_REPORT:
+            case PHASE_PHYSICAL_REPORT:
+                sendDone(true);
+                break;
+            case PHASE_VICTORY:
+                break;
             }
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
-    
+
     private Entity getRandomUnmovedEntity() {
-    	List<Entity> owned = this.getEntitiesOwned();
-    	List<Entity> unMoved = new ArrayList<Entity>();
-    	for (Entity e : owned) {
-    		if (e.isSelectableThisTurn()) {
-    			unMoved.add(e);
-    		}
-    	}
-    	return unMoved.get(Compute.randomInt(unMoved.size()));
+        List<Entity> owned = getEntitiesOwned();
+        List<Entity> unMoved = new ArrayList<Entity>();
+        for (Entity e : owned) {
+            if (e.isSelectableThisTurn()) {
+                unMoved.add(e);
+            }
+        }
+        return unMoved.get(Compute.randomInt(unMoved.size()));
     }
 
     protected void calculateMyTurn() {
@@ -213,12 +214,12 @@ public abstract class BotClient extends Client {
                     Entity mustMove = game.getEntity(turn.getEntityNum());
                     mp = continueMovementFor(mustMove);
                 } else {
-                	if (config.isForcedIndividual()) {
-                		Entity mustMove = getRandomUnmovedEntity();
-                		mp = continueMovementFor(mustMove);                		
-                	} else {
-                		mp = calculateMoveTurn();
-                	}
+                    if (config.isForcedIndividual()) {
+                        Entity mustMove = getRandomUnmovedEntity();
+                        mp = continueMovementFor(mustMove);
+                    } else {
+                        mp = calculateMoveTurn();
+                    }
                 }
                 moveEntity(mp.getEntity().getId(), mp);
             } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
@@ -267,7 +268,7 @@ public abstract class BotClient extends Client {
         int conv_fcount; // Friendly conventional units
         int conv_ecount; // Enemy conventional units
         // Check all of the hexes in order.
-        for (int x = 0; x < c.length; x++) {
+        for (Coords element : c) {
             // Verify stacking limits. Gotta do this the long way, as
             // Compute.stackingViolation references the entity's CURRENT
             // position as well as the hex being checked; because its not
@@ -275,7 +276,7 @@ public abstract class BotClient extends Client {
             mech_count = 0;
             conv_fcount = 0;
             conv_ecount = 0;
-            for (Enumeration<Entity> stacked_ents = game.getEntities(c[x]); stacked_ents
+            for (Enumeration<Entity> stacked_ents = game.getEntities(element); stacked_ents
                     .hasMoreElements();) {
                 Entity test_ent = stacked_ents.nextElement();
                 if (test_ent instanceof Mech) {
@@ -293,15 +294,19 @@ public abstract class BotClient extends Client {
             } else {
                 conv_fcount++;
             }
-            if (mech_count > 1)
+            if (mech_count > 1) {
                 continue;
-            if ((conv_fcount + mech_count) > 2)
+            }
+            if ((conv_fcount + mech_count) > 2) {
                 continue;
-            if ((conv_fcount + mech_count) > 2)
+            }
+            if ((conv_fcount + mech_count) > 2) {
                 continue;
-            if ((conv_fcount + conv_ecount) > 4)
+            }
+            if ((conv_fcount + conv_ecount) > 4) {
                 continue;
-            return c[x];
+            }
+            return element;
         }
 
         System.out.println("Returning no deployment position; THIS IS BAD!");
@@ -362,32 +367,32 @@ public abstract class BotClient extends Client {
         // Check for prohibited terrain, stacking limits
 
         switch (getLocalPlayer().getStartingPos()) {
-            case 1:
-            case 3:
-            case 5:
-            case 7:
-                valid_array = new Coords[(3 * game.getBoard().getWidth())
-                        + (3 * game.getBoard().getHeight()) - 9];
-                // fitness = new
-                // double[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
-                break;
-            case 2:
-            case 6:
-                valid_array = new Coords[game.getBoard().getWidth() * 3];
-                // fitness = new double[game.getBoard().getWidth()*3];
-                break;
-            case 4:
-            case 8:
-                valid_array = new Coords[game.getBoard().getHeight() * 3];
-                // fitness = new double[game.getBoard().getHeight()*3];
-                break;
-            case 0:
-            default:
-                valid_array = new Coords[game.getBoard().getWidth()
-                        * game.getBoard().getHeight()];
-                // fitness = new
-                // double[game.getBoard().getWidth()*game.getBoard().getHeight()];
-                break;
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+            valid_array = new Coords[(3 * game.getBoard().getWidth())
+                    + (3 * game.getBoard().getHeight()) - 9];
+            // fitness = new
+            // double[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
+            break;
+        case 2:
+        case 6:
+            valid_array = new Coords[game.getBoard().getWidth() * 3];
+            // fitness = new double[game.getBoard().getWidth()*3];
+            break;
+        case 4:
+        case 8:
+            valid_array = new Coords[game.getBoard().getHeight() * 3];
+            // fitness = new double[game.getBoard().getHeight()*3];
+            break;
+        case 0:
+        default:
+            valid_array = new Coords[game.getBoard().getWidth()
+                    * game.getBoard().getHeight()];
+            // fitness = new
+            // double[game.getBoard().getWidth()*game.getBoard().getHeight()];
+            break;
         }
 
         counter = 0;
@@ -396,7 +401,7 @@ public abstract class BotClient extends Client {
                 test_hex.x = test_x;
                 test_hex.y = test_y;
                 if (game.getBoard().isLegalDeployment(test_hex,
-                        this.getLocalPlayer())) {
+                        getLocalPlayer())) {
                     if (!deployed_ent.isHexProhibited(game.getBoard().getHex(
                             test_hex.x, test_hex.y))) {
                         valid_array[counter] = new Coords(test_hex);
@@ -746,8 +751,9 @@ public abstract class BotClient extends Client {
         float fDamage = 0.0f;
         WeaponType wt = (WeaponType) weapon.getType();
         if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
-            if (weapon.getLinked() == null)
+            if (weapon.getLinked() == null) {
                 return 0.0f;
+            }
             AmmoType at = (AmmoType) weapon.getLinked().getType();
 
             float fHits = 0.0f;
@@ -796,7 +802,7 @@ public abstract class BotClient extends Client {
 
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity check_ent = i.nextElement();
-            if ((check_ent.getOwnerId() == this.local_pn)
+            if ((check_ent.getOwnerId() == local_pn)
                     && (check_ent instanceof Mech)) {
                 if (((Mech) check_ent).hasStealth()) {
                     for (Mounted mEquip : check_ent.getMisc()) {
@@ -861,7 +867,7 @@ public abstract class BotClient extends Client {
                                 }
                             }
                             mEquip.setMode(new_stealth);
-                            this.sendModeChange(check_ent.getId(), check_ent
+                            sendModeChange(check_ent.getId(), check_ent
                                     .getEquipmentNum(mEquip), new_stealth);
                             break;
                         }
@@ -880,11 +886,12 @@ public abstract class BotClient extends Client {
             BufferedReader dis = new BufferedReader(new InputStreamReader(fis));
             while (dis.ready()) {
                 message = dis.readLine();
-                if (Compute.randomInt(10) == 1)
+                if (Compute.randomInt(10) == 1) {
                     break;
+                }
             }
         }// File not found don't do anything just return a null and allow the
-            // bot to remain silent
+        // bot to remain silent
         catch (FileNotFoundException fnfe) {
             // no chat message found continue on.
             return null;
@@ -898,7 +905,7 @@ public abstract class BotClient extends Client {
     }
 
     @Override
-	public void retrieveServerInfo() {
+    public void retrieveServerInfo() {
         super.retrieveServerInfo();
         initialize();
     }

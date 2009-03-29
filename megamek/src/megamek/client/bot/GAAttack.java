@@ -46,8 +46,8 @@ public class GAAttack extends GA {
         super(attack.size() + 1, population, .7, .05, generations, .4);
         this.attack = attack;
         this.attacker = attacker;
-        this.game = tb.game;
-        this.target_array = new ArrayList<Entity>(game.getEntitiesVector());
+        game = tb.game;
+        target_array = new ArrayList<Entity>(game.getEntitiesVector());
         ArrayList<Integer> temp = new ArrayList<Integer>();
         for (int i = 0; i < target_array.size(); i++) {
             Entity entity = target_array.get(i);
@@ -56,13 +56,13 @@ public class GAAttack extends GA {
             }
         }
         targets = new CEntity.Table(tb);
-        this.valid_target_indexes = temp;
+        valid_target_indexes = temp;
         if (attacker.tsm_offset) {
-            this.overheat_eligible = true;
+            overheat_eligible = true;
         }
         if (isEnemy
                 || (attacker.last != null && (!attacker.last.inDanger || attacker.last.doomed))) {
-            this.overheat_eligible = true;
+            overheat_eligible = true;
         }
     }
 
@@ -71,10 +71,11 @@ public class GAAttack extends GA {
     }
 
     public double getDamageUtility(CEntity to) {
-        if (damages == null)
-            damages = this.getDamageUtilities();
-        for (int k = 0; k < this.target_array.size(); k++) {
-            Entity enemy = this.target_array.get(k);
+        if (damages == null) {
+            damages = getDamageUtilities();
+        }
+        for (int k = 0; k < target_array.size(); k++) {
+            Entity enemy = target_array.get(k);
             if (enemy.getId() == to.entity.getId()) {
                 return damages[k];
             }
@@ -85,15 +86,15 @@ public class GAAttack extends GA {
     public double[] getDamageUtilities() {
         int iChromIndex = populationDim - 1;
         targets.clear(); // could use ArrayList and not hashtable
-        double[] result = new double[this.target_array.size()];
-        Chromosome chromArrayList = this.chromosomes[iChromIndex];
+        double[] result = new double[target_array.size()];
+        Chromosome chromArrayList = chromosomes[iChromIndex];
         // TODO should account for high heat?
         int heat_total = 0;
-        if (chromArrayList.genes[chromosomeDim - 1] >= this.target_array.size()) {
-            chromArrayList.genes[chromosomeDim - 1] = 
-                this.valid_target_indexes.get(0).intValue();
+        if (chromArrayList.genes[chromosomeDim - 1] >= target_array.size()) {
+            chromArrayList.genes[chromosomeDim - 1] = valid_target_indexes.get(
+                    0).intValue();
         }
-        Entity target = this.target_array
+        Entity target = target_array
                 .get(chromArrayList.genes[chromosomeDim - 1]);
         for (int iGene = 0; iGene < chromosomeDim - 1; iGene++) {
             AttackOption a = attack.get(iGene).get(chromArrayList.genes[iGene]);
@@ -111,11 +112,11 @@ public class GAAttack extends GA {
             }
         }
 
-        for (int k = 0; k < this.target_array.size(); k++) {
-            Entity en = this.target_array.get(k);
+        for (int k = 0; k < target_array.size(); k++) {
+            Entity en = target_array.get(k);
             CEntity enemy = null;
             result[k] = 0;
-            if ((enemy = this.targets.get(new Integer(en.getId()))) != null) {
+            if ((enemy = targets.get(new Integer(en.getId()))) != null) {
                 result[k] = getThreadUtility(enemy);
                 enemy.resetPossibleDamage();
             }
@@ -144,8 +145,9 @@ public class GAAttack extends GA {
         return 0;
     }
 
+    @Override
     protected double getFitness(int iChromIndex) {
-        return this.getFitness(this.chromosomes[iChromIndex]);
+        return this.getFitness(chromosomes[iChromIndex]);
     }
 
     protected double getFitness(Chromosome chromArrayList) {
@@ -153,14 +155,12 @@ public class GAAttack extends GA {
         int heat_total = 0;
         Entity target = null;
         try {
-            target = this.target_array
-                    .get(chromArrayList.genes[chromosomeDim - 1]);
+            target = target_array.get(chromArrayList.genes[chromosomeDim - 1]);
         } catch (Exception e) {
             System.out.println(chromosomeDim
                     + " " + chromArrayList.genes.length); //$NON-NLS-1$
-            System.out.println(this.target_array.size());
-            target = this.target_array.get(this.valid_target_indexes.get(0)
-                    .intValue());
+            System.out.println(target_array.size());
+            target = target_array.get(valid_target_indexes.get(0).intValue());
         }
         for (int iGene = 0; iGene < chromosomeDim - 1; iGene++) {
             final int[] genes = chromArrayList.genes;
@@ -209,12 +209,13 @@ public class GAAttack extends GA {
         // Don't forget heat from stealth armor...
         if (attacker.entity instanceof Mech
                 && (attacker.entity.isStealthActive()
-                      || attacker.entity.isNullSigActive()
-                      || attacker.entity.isVoidSigActive())) {
+                        || attacker.entity.isNullSigActive() || attacker.entity
+                        .isVoidSigActive())) {
             overheat += 10;
         }
         // ... or chameleon lps...
-        if (attacker.entity instanceof Mech && attacker.entity.isChameleonShieldActive()) {
+        if (attacker.entity instanceof Mech
+                && attacker.entity.isChameleonShieldActive()) {
             overheat += 6;
         }
         // ... or infernos...
@@ -224,8 +225,9 @@ public class GAAttack extends GA {
         // ... or standing in fire...
         if (game.getBoard().getHex(attacker.entity.getPosition()) != null) {
             if (game.getBoard().getHex(attacker.entity.getPosition())
-                    .containsTerrain(Terrains.FIRE) &&
-                    game.getBoard().getHex(attacker.entity.getPosition()).getFireTurn() > 0) {
+                    .containsTerrain(Terrains.FIRE)
+                    && game.getBoard().getHex(attacker.entity.getPosition())
+                            .getFireTurn() > 0) {
                 overheat += 5;
             }
         }
@@ -234,7 +236,8 @@ public class GAAttack extends GA {
             overheat += attacker.entity.getEngineCritHeat();
         }
         // ... or ambient temperature
-        overheat += game.getPlanetaryConditions().getTemperatureDifference(50,-30);
+        overheat += game.getPlanetaryConditions().getTemperatureDifference(50,
+                -30);
         if (attacker.entity.heat > 0 && overheat < 0) {
             // always perfer smaller heat numbers
             total_utility -= attacker.bv / 1000 * overheat;
@@ -261,14 +264,13 @@ public class GAAttack extends GA {
             }
         } else if (overheat > 0) {
             if (overheat > 4 && !attacker.tsm_offset) {
-                total_utility *= (this.overheat_eligible && attacker.jumpMP > 2) ? .9
+                total_utility *= (overheat_eligible && attacker.jumpMP > 2) ? .9
                         : .85;
             }
             if (overheat > 7 && !attacker.tsm_offset) {
-                double mod = this.overheat_eligible ? +((attacker.jumpMP > 2) ? 0
-                        : 10)
-                        : 40;
-                if (this.attacker.overheat > CEntity.OVERHEAT_LOW) {
+                double mod = overheat_eligible ? +((attacker.jumpMP > 2) ? 0
+                        : 10) : 40;
+                if (attacker.overheat > CEntity.OVERHEAT_LOW) {
                     total_utility -= attacker.bv / mod;
                 } else {
                     total_utility -= attacker.bv / (mod + 10);
@@ -283,8 +285,7 @@ public class GAAttack extends GA {
                 }
             }
             if (overheat > 12) {
-                total_utility -= attacker.bv
-                        / (this.overheat_eligible ? 45 : 30);
+                total_utility -= attacker.bv / (overheat_eligible ? 45 : 30);
             }
             if (overheat > 16) {
                 // only if I am going to die?
@@ -301,11 +302,13 @@ public class GAAttack extends GA {
      * but the highest chance of mutation, this is where we use the primary
      * target heuristic to drive convergence
      */
+    @Override
     protected void doRandomMutation(int iChromIndex) {
-        Chromosome c1 = this.chromosomes[iChromIndex];
+        Chromosome c1 = chromosomes[iChromIndex];
         // skip if it's an empty chromosome
-        if (c1.genes.length < 1)
+        if (c1.genes.length < 1) {
             return;
+        }
         int r1 = (c1.genes.length > 2) ? Compute.randomInt(c1.genes.length - 1)
                 : 0;
         CEntity target = null;
@@ -313,7 +316,7 @@ public class GAAttack extends GA {
         if (r1 % 2 == 1) {
             c1.genes[r1]--;
             if (c1.genes[r1] < 0 && attack.size() > r1) {
-                c1.genes[r1] = this.attack.get(r1).size() - 1;
+                c1.genes[r1] = attack.get(r1).size() - 1;
             } else {
                 c1.genes[r1] = 0; // TODO : what is a good value here?
             }
@@ -353,35 +356,36 @@ public class GAAttack extends GA {
                     }
                 }
             }
-            (this.chromosomes[0]).genes[chromosomeDim - 1] = target.enemy_num;
+            (chromosomes[0]).genes[chromosomeDim - 1] = target.enemy_num;
         }
     }
 
+    @Override
     protected void initPopulation() {
         // promote max
         for (int iGene = 0; iGene < chromosomeDim - 1; iGene++) {
-            (this.chromosomes[0]).genes[iGene] = 0;
+            (chromosomes[0]).genes[iGene] = 0;
         }
 
         // use first weapon target as primary, not smart but good enough...
         AttackOption a = attack.get(0).get(0);
-        (this.chromosomes[0]).genes[chromosomeDim - 1] = a.target.enemy_num;
+        (chromosomes[0]).genes[chromosomeDim - 1] = a.target.enemy_num;
 
         for (int i = 1; i < populationDim; i++) {
-            Chromosome cv = this.chromosomes[i];
+            Chromosome cv = chromosomes[i];
             for (int iGene = 0; iGene < chromosomeDim - 1; iGene++) {
                 cv.genes[iGene] = Compute.randomInt(attack.get(iGene).size());
-                if (i <= this.attack.size()) {
-                    if (iGene + 1 == i)
+                if (i <= attack.size()) {
+                    if (iGene + 1 == i) {
                         cv.genes[iGene] = 0; // fire
-                    else
+                    } else {
                         cv.genes[iGene] = attack.get(iGene).size() - 1;
+                    }
                 }
             }
-            cv.genes[chromosomeDim - 1] = this.valid_target_indexes.get(
-                    Compute.randomInt(this.valid_target_indexes.size()))
-                    .intValue();
-            this.chromosomes[i].fitness = getFitness(i);
+            cv.genes[chromosomeDim - 1] = valid_target_indexes.get(
+                    Compute.randomInt(valid_target_indexes.size())).intValue();
+            chromosomes[i].fitness = getFitness(i);
         }
     }
 

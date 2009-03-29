@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import javax.swing.JDialog;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -27,8 +26,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
-import java.util.Enumeration;
 import java.util.Vector;
+
+import javax.swing.JDialog;
 
 import megamek.client.ui.Messages;
 import megamek.common.IBoard;
@@ -89,7 +89,7 @@ public class MapPreview extends Canvas {
         initializeColors();
         m_dialog.setResizable(false);
         addMouseListener(new MouseAdapter() {
-        	@Override
+            @Override
             public void mousePressed(MouseEvent me) {
                 processMouseClick(me.getX(), me.getY(), me);
             }
@@ -171,71 +171,71 @@ public class MapPreview extends Canvas {
             blue = 0;
 
             switch (st.nextToken()) {
-                case StreamTokenizer.TT_EOF:
-                    break scan;
-                case StreamTokenizer.TT_EOL:
-                    break scan;
-                case StreamTokenizer.TT_WORD:
-                    // read in
-                    String key = st.sval;
-                    if (key.equals("unitsize")) { //$NON-NLS-1$
-                        st.nextToken();
-                    } else if (key.equals("background")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+            case StreamTokenizer.TT_EOF:
+                break scan;
+            case StreamTokenizer.TT_EOL:
+                break scan;
+            case StreamTokenizer.TT_WORD:
+                // read in
+                String key = st.sval;
+                if (key.equals("unitsize")) { //$NON-NLS-1$
+                    st.nextToken();
+                } else if (key.equals("background")) { //$NON-NLS-1$
+                    st.nextToken();
+                    red = (int) st.nval;
+                    st.nextToken();
+                    green = (int) st.nval;
+                    st.nextToken();
+                    blue = (int) st.nval;
 
-                        BACKGROUND = new Color(red, green, blue);
-                    } else if (key.equals("heavywoods")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                    BACKGROUND = new Color(red, green, blue);
+                } else if (key.equals("heavywoods")) { //$NON-NLS-1$
+                    st.nextToken();
+                    red = (int) st.nval;
+                    st.nextToken();
+                    green = (int) st.nval;
+                    st.nextToken();
+                    blue = (int) st.nval;
 
-                        HEAVY_WOODS = new Color(red, green, blue);
-                    } else if (key.equals("ultraheavywoods")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                    HEAVY_WOODS = new Color(red, green, blue);
+                } else if (key.equals("ultraheavywoods")) { //$NON-NLS-1$
+                    st.nextToken();
+                    red = (int) st.nval;
+                    st.nextToken();
+                    green = (int) st.nval;
+                    st.nextToken();
+                    blue = (int) st.nval;
 
-                        ULTRA_HEAVY_WOODS = new Color(red, green, blue);
-                    } else if (key.equals("sinkhole")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                    ULTRA_HEAVY_WOODS = new Color(red, green, blue);
+                } else if (key.equals("sinkhole")) { //$NON-NLS-1$
+                    st.nextToken();
+                    red = (int) st.nval;
+                    st.nextToken();
+                    green = (int) st.nval;
+                    st.nextToken();
+                    blue = (int) st.nval;
 
-                        SINKHOLE = new Color(red, green, blue);
-                    } else if (key.equals("smokeandfire")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                    SINKHOLE = new Color(red, green, blue);
+                } else if (key.equals("smokeandfire")) { //$NON-NLS-1$
+                    st.nextToken();
+                    red = (int) st.nval;
+                    st.nextToken();
+                    green = (int) st.nval;
+                    st.nextToken();
+                    blue = (int) st.nval;
 
-                        SMOKE_AND_FIRE = new Color(red, green, blue);
-                    } else {
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                    SMOKE_AND_FIRE = new Color(red, green, blue);
+                } else {
+                    st.nextToken();
+                    red = (int) st.nval;
+                    st.nextToken();
+                    green = (int) st.nval;
+                    st.nextToken();
+                    blue = (int) st.nval;
 
-                        m_terrainColors[Terrains.getType(key)] = new Color(red,
-                                green, blue);
-                    }
+                    m_terrainColors[Terrains.getType(key)] = new Color(red,
+                            green, blue);
+                }
             }
         }
 
@@ -264,10 +264,12 @@ public class MapPreview extends Canvas {
         m_dialog.pack();
         // m_dialog.show();
         m_mapImage = createImage(getSize().width, getSize().height);
-        if (getSize().width > requiredWidth)
+        if (getSize().width > requiredWidth) {
             leftMargin = ((getSize().width - requiredWidth) / 2) + margin;
-        if (getSize().height > requiredHeight)
+        }
+        if (getSize().height > requiredHeight) {
             topMargin = ((getSize().height - requiredHeight) / 2) + margin;
+        }
         drawMap();
     }
 
@@ -277,8 +279,9 @@ public class MapPreview extends Canvas {
             return;
         }
 
-        if (!m_dialog.isVisible())
+        if (!m_dialog.isVisible()) {
             return;
+        }
 
         Graphics g = m_mapImage.getGraphics();
         Color oldColor = g.getColor();
@@ -294,8 +297,9 @@ public class MapPreview extends Canvas {
             }
         }
 
-        if (!roadHexIndexes.isEmpty())
+        if (!roadHexIndexes.isEmpty()) {
             paintRoads(g);
+        }
 
         if (SHOW_NO_HEIGHT != heightDisplayMode) {
             for (int j = 0; j < m_board.getWidth(); j++) {
@@ -317,8 +321,9 @@ public class MapPreview extends Canvas {
     }
 
     private void paintHeight(Graphics g, IHex h, int x, int y) {
-        if (heightDisplayMode == SHOW_NO_HEIGHT)
+        if (heightDisplayMode == SHOW_NO_HEIGHT) {
             return;
+        }
         if (zoom > 2) {
             int baseX = x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
             int baseY = (2 * y + 1 + x % 2) * hexSideByCos30[zoom] + topMargin;
@@ -373,9 +378,7 @@ public class MapPreview extends Canvas {
         int[] yPoints = new int[4];
         Color oldColor = g.getColor();
         g.setColor(m_terrainColors[Terrains.ROAD]);
-        for (Enumeration<int[]> iter = roadHexIndexes.elements(); iter
-                .hasMoreElements();) {
-            int[] hex = iter.nextElement();
+        for (int[] hex : roadHexIndexes) {
             x = hex[0];
             y = hex[1];
             baseX = x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin
@@ -511,47 +514,55 @@ public class MapPreview extends Canvas {
 
         int r, g, b;
         switch (terrain) {
-            case 0:
-            case Terrains.WOODS:
-            case Terrains.JUNGLE:
-            case Terrains.ROUGH:
-            case Terrains.RUBBLE:
-            case Terrains.WATER:
-            case Terrains.PAVEMENT:
-            case Terrains.ICE:
-            case Terrains.FIELDS:
-                level = Math.abs(x.floor());
-                // By experiment it is possible to make only 6 distinctive color
-                // steps
-                if (level > 10)
-                    level = 10;
-                r = terrColor.getRed() - level * 15;
-                g = terrColor.getGreen() - level * 15;
-                b = terrColor.getBlue() - level * 15;
-                if (r < 0)
-                    r = 0;
-                if (g < 0)
-                    g = 0;
-                if (b < 0)
-                    b = 0;
-                return new Color(r, g, b);
-            case Terrains.FUEL_TANK:
-            case Terrains.BUILDING:
-                level = Math.abs(x.ceiling());
-                // By experiment it is possible to make only 6 distinctive color
-                // steps
-                if (level > 10)
-                    level = 10;
-                r = terrColor.getRed() - level * 15;
-                g = terrColor.getGreen() - level * 15;
-                b = terrColor.getBlue() - level * 15;
-                if (r < 0)
-                    r = 0;
-                if (g < 0)
-                    g = 0;
-                if (b < 0)
-                    b = 0;
-                return new Color(r, g, b);
+        case 0:
+        case Terrains.WOODS:
+        case Terrains.JUNGLE:
+        case Terrains.ROUGH:
+        case Terrains.RUBBLE:
+        case Terrains.WATER:
+        case Terrains.PAVEMENT:
+        case Terrains.ICE:
+        case Terrains.FIELDS:
+            level = Math.abs(x.floor());
+            // By experiment it is possible to make only 6 distinctive color
+            // steps
+            if (level > 10) {
+                level = 10;
+            }
+            r = terrColor.getRed() - level * 15;
+            g = terrColor.getGreen() - level * 15;
+            b = terrColor.getBlue() - level * 15;
+            if (r < 0) {
+                r = 0;
+            }
+            if (g < 0) {
+                g = 0;
+            }
+            if (b < 0) {
+                b = 0;
+            }
+            return new Color(r, g, b);
+        case Terrains.FUEL_TANK:
+        case Terrains.BUILDING:
+            level = Math.abs(x.ceiling());
+            // By experiment it is possible to make only 6 distinctive color
+            // steps
+            if (level > 10) {
+                level = 10;
+            }
+            r = terrColor.getRed() - level * 15;
+            g = terrColor.getGreen() - level * 15;
+            b = terrColor.getBlue() - level * 15;
+            if (r < 0) {
+                r = 0;
+            }
+            if (g < 0) {
+                g = 0;
+            }
+            if (b < 0) {
+                b = 0;
+            }
+            return new Color(r, g, b);
         }
         return terrColor;
     }
@@ -629,21 +640,20 @@ public class MapPreview extends Canvas {
                 g.setColor(Color.yellow);
                 String label;
                 switch (heightDisplayMode) {
-                    case SHOW_NO_HEIGHT:
-                        label = Messages.getString("MiniMap.NoHeightLabel"); //$NON-NLS-1$
-                        break;
-                    case SHOW_GROUND_HEIGHT:
-                        label = Messages.getString("MiniMap.GroundHeightLabel"); //$NON-NLS-1$
-                        break;
-                    case SHOW_BUILDING_HEIGHT:
-                        label = Messages
-                                .getString("MiniMap.BuildingHeightLabel"); //$NON-NLS-1$
-                        break;
-                    case SHOW_TOTAL_HEIGHT:
-                        label = Messages.getString("MiniMap.TotalHeightLabel"); //$NON-NLS-1$
-                        break;
-                    default:
-                        label = ""; //$NON-NLS-1$
+                case SHOW_NO_HEIGHT:
+                    label = Messages.getString("MiniMap.NoHeightLabel"); //$NON-NLS-1$
+                    break;
+                case SHOW_GROUND_HEIGHT:
+                    label = Messages.getString("MiniMap.GroundHeightLabel"); //$NON-NLS-1$
+                    break;
+                case SHOW_BUILDING_HEIGHT:
+                    label = Messages.getString("MiniMap.BuildingHeightLabel"); //$NON-NLS-1$
+                    break;
+                case SHOW_TOTAL_HEIGHT:
+                    label = Messages.getString("MiniMap.TotalHeightLabel"); //$NON-NLS-1$
+                    break;
+                default:
+                    label = ""; //$NON-NLS-1$
                 }
                 g.drawString(label, 17, getSize().height - 14 + 12);
             }
@@ -657,8 +667,9 @@ public class MapPreview extends Canvas {
         if (y > (getSize().height - 14)) {
 
             if (x < 14) {
-                if (zoom == 0)
+                if (zoom == 0) {
                     return;
+                }
                 zoom--;
                 initializeMap();
             } else if (x < 28 && zoom > 2) {
@@ -666,8 +677,9 @@ public class MapPreview extends Canvas {
                         : heightDisplayMode;
                 initializeMap();
             } else if (x > (getSize().width - 14)) {
-                if (zoom == (hexSide.length - 1))
+                if (zoom == (hexSide.length - 1)) {
                     return;
+                }
                 zoom++;
                 initializeMap();
             } else {

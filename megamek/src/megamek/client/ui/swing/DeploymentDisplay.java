@@ -334,7 +334,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     }
 
     @Override
-	public void gameTurnChange(GameTurnChangeEvent e) {
+    public void gameTurnChange(GameTurnChangeEvent e) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -352,7 +352,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     }
 
     @Override
-	public void gamePhaseChange(GamePhaseChangeEvent e) {
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
         DeploymentDisplay.this.clientgui.bv.markDeploymentHexesFor(null);
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -368,7 +368,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     // BoardListener
     //
     @Override
-	public void hexMoused(BoardViewEvent b) {
+    public void hexMoused(BoardViewEvent b) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -577,28 +577,28 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-    	//ignore
+        //ignore
     }
 
     public void keyReleased(KeyEvent ev) {
-    	//ignore
+        //ignore
     }
 
     public void keyTyped(KeyEvent ev) {
-    	//ignore
+        //ignore
     }
 
     //
     // BoardViewListener
     //
     @Override
-	public void finishedMovingUnits(BoardViewEvent b) {
-    	//ignore
+    public void finishedMovingUnits(BoardViewEvent b) {
+        //ignore
     }
 
     // Selected a unit in the unit overview.
     @Override
-	public void unitSelected(BoardViewEvent b) {
+    public void unitSelected(BoardViewEvent b) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;

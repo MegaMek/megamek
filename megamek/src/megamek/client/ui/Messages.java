@@ -28,7 +28,7 @@ public class Messages {
                     .getLocale());
 
     private Messages() {
-    	//All static class, should never be instantiated
+        // All static class, should never be instantiated
     }
 
     public static String getString(String key) {
@@ -42,8 +42,10 @@ public class Messages {
     /**
      * Returns the formatted message for the given key in the resource bundle.
      * 
-     * @param key the resource name
-     * @param args the message arguments
+     * @param key
+     *            the resource name
+     * @param args
+     *            the message arguments
      * @return the string
      */
     public static String getString(String key, Object[] args) {

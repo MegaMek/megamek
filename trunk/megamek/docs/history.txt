@@ -20,6 +20,7 @@ v0.33.43-dev (SVN)
 + Bug 2526357: Swing button display was not updating properly
 + Bug 1880517: Entity.getArmor needed defensive programming
 + Bug 1774438: Bot inappropriately charges
++ Bug 2719742: Protos not moving
 
 v0.33.42 (2009-03-10, 19:52 UTC+1)
 + Updated RSPPU mechfiles because of pending errata

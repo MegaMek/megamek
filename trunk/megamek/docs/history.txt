@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.33.44 (SVN)
+
 v0.33.43 (2008-03-31, 20:31 GMT+2)
 + Updated Lancelot 25-01X
 + Bug: WiGE not loading if movement type was WiGE instead of WIGE

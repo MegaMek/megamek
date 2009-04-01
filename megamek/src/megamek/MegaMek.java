@@ -534,7 +534,7 @@ public class MegaMek {
                     w.newLine();
                     w.write("This file can be regenerated with java -jar MegaMek.jar -export filename");
                     w.newLine();
-                    w.write("Type,Name,BV,Cost,Year,Canon");
+                    w.write("Type,Name,BV,Cost,Year,Tonnage,Canon");
                     w.newLine();
 
                     MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
@@ -548,6 +548,8 @@ public class MegaMek {
                         w.write(Integer.toString(unit.getCost()));
                         w.write(",");
                         w.write(Integer.toString(unit.getYear()));
+                        w.write(",");
+                        w.write(Integer.toString(unit.getTons()));
                         w.write(",");
                         if ( unit.isCanon() ) {
                             w.write("Canon");

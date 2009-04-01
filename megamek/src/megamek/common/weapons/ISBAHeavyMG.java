@@ -34,23 +34,22 @@ public class ISBAHeavyMG extends BAMGWeapon {
      */
     public ISBAHeavyMG() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        this.name = "Heavy Machine Gun";
-        this.setInternalName("BA Heavy Machine Gun");
-        this.addLookupName("IS BA Heavy Machine Gun");
-        this.addLookupName("ISBAHeavyMG");
-        this.heat = 0;
-        this.damage = 3;
-        this.rackSize = 3;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 2;
-        this.extremeRange = 2;
-        this.tonnage = 1.0f;
-        this.criticals = 1;
-        this.bv = 6;
-        this.cost = 7500;
-        this.flags |= F_BA_WEAPON;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        name = "Heavy Machine Gun";
+        setInternalName("BA Heavy Machine Gun");
+        addLookupName("IS BA Heavy Machine Gun");
+        addLookupName("ISBAHeavyMG");
+        heat = 0;
+        damage = 3;
+        rackSize = 3;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 2;
+        extremeRange = 2;
+        tonnage = 1.0f;
+        criticals = 1;
+        bv = 6;
+        cost = 7500;
     }
 
 }

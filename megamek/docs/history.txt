@@ -2,6 +2,7 @@
 ----------------
 v0.33.44 (SVN)
 + RFE: Add tonnage to -export command
++ Added F_BA_WEAPON flag to Clan BA weapons
 
 v0.33.43 (2008-03-31, 20:31 GMT+2)
 + Updated Lancelot 25-01X

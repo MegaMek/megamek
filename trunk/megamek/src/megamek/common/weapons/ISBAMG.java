@@ -30,23 +30,22 @@ public class ISBAMG extends BAMGWeapon {
      */
     public ISBAMG() {
         super();
-        this.techLevel = TechConstants.T_INTRO_BOXSET;
-        this.name = "Machine Gun";
-        this.setInternalName("BA Machine Gun");
-        this.addLookupName("IS BA Machine Gun");
-        this.addLookupName("ISBAMachine Gun");
-        this.heat = 0;
-        this.damage = 2;
-        this.rackSize = 2;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 4;
-        this.tonnage = 0.5f;
-        this.criticals = 1;
-        this.bv = 5;
-        this.cost = 5000;
-        this.flags |= F_BA_WEAPON;
+        techLevel = TechConstants.T_INTRO_BOXSET;
+        name = "Machine Gun";
+        setInternalName("BA Machine Gun");
+        addLookupName("IS BA Machine Gun");
+        addLookupName("ISBAMachine Gun");
+        heat = 0;
+        damage = 2;
+        rackSize = 2;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 3;
+        extremeRange = 4;
+        tonnage = 0.5f;
+        criticals = 1;
+        bv = 5;
+        cost = 5000;
     }
 
 }

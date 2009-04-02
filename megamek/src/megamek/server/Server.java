@@ -9259,6 +9259,7 @@ public class Server implements Runnable {
         ITerrain woods = h.getTerrain(Terrains.WOODS);
         ITerrain jungle = h.getTerrain(Terrains.JUNGLE);
         ITerrain ice = h.getTerrain(Terrains.ICE);
+        ITerrain magma = h.getTerrain(Terrains.MAGMA);
         Report r;
         if (woods != null) {
             int tf = woods.getTerrainFactor() - nDamage;
@@ -9328,6 +9329,23 @@ public class Server implements Runnable {
                 vPhaseReport.addAll(resolveIceBroken(c));
             } else {
                 ice.setTerrainFactor(tf);
+            }
+        }
+        if ((magma != null) && (magma.getLevel() == 1)) {
+            int tf = magma.getTerrainFactor() - nDamage;
+            if (tf <= 0) {
+                // magma crust destroyed
+                r = new Report(3093);
+                r.subject = entityId;
+                vPhaseReport.add(r);
+                h.removeTerrain(Terrains.MAGMA);
+                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
+                for (Enumeration<Entity> e = getGame()
+                        .getEntities(c); e.hasMoreElements();) {
+                    doMagmaDamage(e.nextElement(), false);
+                }
+            } else {
+                magma.setTerrainFactor(tf);
             }
         }
         sendChangedHex(c);
@@ -18500,8 +18518,8 @@ public class Server implements Runnable {
         }
         // This handles both water and vacuum breaches.
         // Also need to account for hull breaches on surface naval vessels which are technically not "wet"
-        if (entity.getLocationStatus(loc) > ILocationExposureStatus.NORMAL ||
-                (entity.isSurfaceNaval() && loc != Tank.LOC_TURRET)) {
+        if ((entity.getLocationStatus(loc) > ILocationExposureStatus.NORMAL) ||
+                (entity.isSurfaceNaval() && (loc != Tank.LOC_TURRET))) {
             // Does the location have armor (check rear armor on Mek)
             // and is the check due to damage?
             int breachroll = 0;
@@ -19203,11 +19221,11 @@ public class Server implements Runnable {
         boolean fallOntoBridge = false;
         // only fall onto the bridge if we were in the hex and on it,
         // or we fell from a hex that the bridge exits to
-        if ((entity.climbMode() && entity.getPosition() != fallPos &&
+        if ((entity.climbMode() && (entity.getPosition() != fallPos) &&
                 fallHex.containsTerrain(Terrains.BRIDGE) &&
                 fallHex.containsTerrainExit(Terrains.BRIDGE,
                         fallPos.direction(entity.getPosition()))) ||
-                        entity.getElevation() == fallHex.terrainLevel(Terrains.BRIDGE_ELEV)) {
+                        (entity.getElevation() == fallHex.terrainLevel(Terrains.BRIDGE_ELEV))) {
             fallOntoBridge = true;
         }
         int bridgeHeight = fallHex.terrainLevel(Terrains.BRIDGE_ELEV) + fallHex.depth();
@@ -23667,7 +23685,7 @@ public class Server implements Runnable {
      *            because of an eruption
      */
     void doMagmaDamage(Entity en, boolean eruption) {
-        if (((en.getMovementMode() == IEntityMovementMode.VTOL) || (en.getMovementMode() == IEntityMovementMode.HOVER) || ((en.getMovementMode() == IEntityMovementMode.WIGE) && (en.getOriginalWalkMP() > 0) && !eruption)) && !en.isImmobile()) {
+        if ((((en.getMovementMode() == IEntityMovementMode.VTOL) && (en.getElevation() > 0)) || (en.getMovementMode() == IEntityMovementMode.HOVER) || ((en.getMovementMode() == IEntityMovementMode.WIGE) && (en.getOriginalWalkMP() > 0) && !eruption)) && !en.isImmobile()) {
             return;
         }
         Report r;

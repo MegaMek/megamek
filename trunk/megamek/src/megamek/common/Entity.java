@@ -8387,6 +8387,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (getTotalCommGearTons() >= 7) {
                     bonus += 1;
                 }
+                break;
             }
         }
 

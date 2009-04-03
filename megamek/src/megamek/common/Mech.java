@@ -5325,7 +5325,7 @@ public abstract class Mech extends Entity implements Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.Entity#getIniBonus()
+     * @see megamek.common.Entity#getHQIniBonus()
      */
     @Override
     public int getHQIniBonus() {
@@ -5401,6 +5401,7 @@ public abstract class Mech extends Entity implements Serializable {
      * (non-Javadoc)
      * @see megamek.common.Entity#isStalled()
      */
+    @Override
     public boolean isStalled() {
         return stalled;
     }
@@ -5619,7 +5620,7 @@ public abstract class Mech extends Entity implements Serializable {
         for (int loc = Mech.LOC_HEAD; loc <= Mech.LOC_LLEG; loc++) {
             for (int slot = 0; slot < getNumberOfCriticals(loc); slot++) {
                 CriticalSlot cs = getCritical(loc, slot);
-                if (cs != null && cs.isArmored()) {
+                if ((cs != null) && cs.isArmored()) {
                         bv += 5;
                 }
             }

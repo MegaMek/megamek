@@ -5,6 +5,7 @@ v0.33.44 (SVN)
 + Added F_BA_WEAPON flag to Clan BA weapons
 + revert change to require java6, for windows 98 users
 + Bug: Magma crust not destroyable
++ Bug 2728335: communication gear
 
 v0.33.43 (2008-03-31, 20:31 GMT+2)
 + Updated Lancelot 25-01X

@@ -7,6 +7,7 @@ v0.33.44 (SVN)
 + Bug: Magma crust not destroyable
 + Bug 2728335: communication gear
 + Bug 1884498: damage during  BA swarm attack not quite correct
++ Bug 2713471: erronoues text
 
 v0.33.43 (2008-03-31, 20:31 GMT+2)
 + Updated Lancelot 25-01X

@@ -27,7 +27,6 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
-import megamek.common.ILocationExposureStatus;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -130,8 +129,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // Shots that miss an entity can set fires.
         // Buildings can't be accidentally ignited,
         // and some weapons can't ignite fires.
-        if (entityTarget != null
-                && (bldg == null && wtype.getFireTN() != TargetRoll.IMPOSSIBLE)) {
+        if ((entityTarget != null)
+                && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
             server.tryIgniteHex(target.getPosition(), subjectId, false, false, new TargetRoll(wtype.getFireTN(), wtype.getName()),
                     3, vPhaseReport);
         }
@@ -141,7 +140,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         // BMRr, pg. 51: "All shots that were aimed at a target inside
         // a building and miss do full damage to the building instead."
-        if (!targetInBuilding || toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+        if (!targetInBuilding || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
             return false;
         }
         return true;
@@ -157,8 +156,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // normal BA attacks (non-swarm, non single-trooper weapons)
         // do more than 1 hit
-        if (ae instanceof BattleArmor
-                && weapon.getLocation() == BattleArmor.LOC_SQUAD
+        if ((ae instanceof BattleArmor)
+                && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
                 && !(ae.getSwarmTargetId() == target.getTargetId())) {
             bSalvo = true;
             int toReturn = allShotsHit() ? ((BattleArmor) ae).getShootingStrength()
@@ -172,6 +171,40 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.newlines = 0;
             vPhaseReport.add(r);
             return toReturn;
+        }
+        // HACK: during a swarm, when they are not already resolved,
+        // get any other attacks by this unit at the target that
+        // are also automatic successes, and add their damage
+        // if they have already been resolved, just report how much they added
+        // to the damage
+        if (ae instanceof BattleArmor) {
+            BattleArmor ba = (BattleArmor)ae;
+            if (!ba.isAttacksDuringSwarmResolved()) {
+                for (AttackHandler ah : server.getGame().getAttacksVector()) {
+                    if ((ah.getAttackerId() == subjectId)
+                            && (ah.getWaa().getWeaponId() != waa.getWeaponId())
+                            && (ah.getWaa().getTargetId() == target.getTargetId())
+                            && (((WeaponHandler)ah).toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS)) {
+                        WeaponType wtype = (WeaponType)ba.getEquipment(ah.getWaa().getWeaponId()).getType();
+                        // damage to add to the original attack's damage,
+                        // so we apply one block of damage to the target
+                        int addToDamage = wtype.getDamage(nRange);
+                        // if it's a squad mounted weapon, each trooper hits
+                        if (ba.getEquipment().get(ah.getWaa().getWeaponId()).getLocation() == BattleArmor.LOC_SQUAD) {
+                            addToDamage *= ba.getShootingStrength();
+                        }
+                        nDamPerHit += addToDamage;
+                    }
+                }
+                ba.setAttacksDuringSwarmResolved(true);
+            } else {
+                r = new Report(3375);
+                r.subject = subjectId;
+                r.add(wtype.getDamage(nRange));
+                r.indent(2);
+                vPhaseReport.add(r);
+                return 0;
+            }
         }
         return 1;
     }
@@ -277,7 +310,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         //Set Margin of Success/Failure.
         toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && entityTarget != null;
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
@@ -324,14 +357,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
         int nCluster = calcnCluster();
 
         //Now I need to adjust this for air-to-air attacks because they use attack values and different rules
-        if(ae instanceof Aero && target instanceof Aero) {
+        if((ae instanceof Aero) && (target instanceof Aero)) {
             //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
             if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
                 bSalvo = true;
                 nDamPerHit = 1;
                 hits = attackValue;
                 nCluster = 5;
-            } else if(ae.isCapitalFighter()) {          
+            } else if(ae.isCapitalFighter()) {
                 bSalvo = true;
                 int nhit = 1;
                 if(nweapons > 1) {
@@ -347,7 +380,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 nDamPerHit = attackValue * nhit;
                 hits = 1;
                 nCluster = 1;
-            } else if(usesClusterTable() && entityTarget != null && !entityTarget.isCapitalScale()) {
+            } else if(usesClusterTable() && (entityTarget != null) && !entityTarget.isCapitalScale()) {
                 bSalvo = true;
                 nDamPerHit = 1;
                 hits = attackValue;
@@ -367,7 +400,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
-        if (targetInBuilding && bldg != null) {
+        if (targetInBuilding && (bldg != null)) {
             bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
         }
 
@@ -382,8 +415,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         while (hits > 0) {
             int nDamage;
             // targeting a hex for igniting
-            if (target.getTargetType() == Targetable.TYPE_HEX_IGNITE
-                    || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE) {
+            if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                    || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
                 handleIgnitionDamage(vPhaseReport, bldg, bSalvo, hits);
                 return false;
             }
@@ -421,13 +454,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
         int nRange = ae.getPosition().distance(target.getPosition());
         double toReturn = wtype.getDamage(nRange);
         // during a swarm, all damage gets applied as one block to one location
-        if (ae instanceof BattleArmor
-                && weapon.getLocation() == BattleArmor.LOC_SQUAD
+        if ((ae instanceof BattleArmor)
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
-            toReturn *= ((BattleArmor) ae).getShootingStrength();
+            BattleArmor ba = (BattleArmor)ae;
+            if (weapon.getLocation() == BattleArmor.LOC_SQUAD) {
+                toReturn *= ba.getShootingStrength();
+            }
         }
         // we default to direct fire weapons for anti-infantry damage
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
         } else if ( bDirect ){
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
@@ -437,11 +472,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
-
-
         return (int) toReturn;
     }
 
@@ -628,7 +661,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // Buildings can't be accidentally ignited.
         //TODO: change this for TacOps - now you roll another 2d6 first and on a 5 or less
         //you do a normal ignition as though for intentional fires
-        if (bldg != null
+        if ((bldg != null)
                 && server.tryIgniteHex(target.getPosition(), subjectId, false, false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
@@ -657,9 +690,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected boolean allShotsHit() {
-        if (((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE || target
-                .getTargetType() == Targetable.TYPE_BUILDING) && nRange <= 1)
-                || target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+        if ((((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE) || (target
+                .getTargetType() == Targetable.TYPE_BUILDING)) && (nRange <= 1))
+                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             return true;
         }
         return false;

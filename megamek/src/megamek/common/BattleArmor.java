@@ -205,6 +205,11 @@ public class BattleArmor extends Infantry implements Serializable {
     public static final int LOC_TROOPER_5 = 5;
     public static final int LOC_TROOPER_6 = 6;
 
+    /**
+     * have all of this units attacks during a swarm attack already been resolved?
+     */
+    private boolean attacksDuringSwarmResolved = false;
+
     @Override
     public String[] getLocationAbbrs() {
         if (!isInitialized || isClan()) {
@@ -417,16 +422,16 @@ public class BattleArmor extends Infantry implements Serializable {
         // "previously destroyed includes the current phase" for rolling hits on
         // a squad,
         // modifying previous ruling in the AskThePM FAQ.
-        while (loc >= locations()
-                || IArmorState.ARMOR_NA == this.getInternal(loc)
-                || IArmorState.ARMOR_DESTROYED == this.getInternal(loc)
-                || (IArmorState.ARMOR_DOOMED == this.getInternal(loc) && !isDoomed())) {
+        while ((loc >= locations())
+                || (IArmorState.ARMOR_NA == this.getInternal(loc))
+                || (IArmorState.ARMOR_DESTROYED == this.getInternal(loc))
+                || ((IArmorState.ARMOR_DOOMED == this.getInternal(loc)) && !isDoomed())) {
             loc = Compute.d6();
         }
 
         int critLocation = Compute.d6();
         //TacOps p. 108 Trooper takes a crit if a second roll is the same location as the first.
-        if (game.getOptions().booleanOption("tacops_ba_criticals") && loc == critLocation) {
+        if (game.getOptions().booleanOption("tacops_ba_criticals") && (loc == critLocation)) {
             return new HitData(loc, false, HitData.EFFECT_CRITICAL);
         }
         // Hit that trooper.
@@ -479,7 +484,7 @@ public class BattleArmor extends Infantry implements Serializable {
                 case Tank.LOC_RIGHT:
                     // There are 2 troopers on each location, so pick
                     // one randomly if both are alive.
-                    if (getInternal(1) > 0 && getInternal(2) > 0) {
+                    if ((getInternal(1) > 0) && (getInternal(2) > 0)) {
                         loc = Compute.randomInt(2) + 1;
                     } else if (getInternal(1) > 0) {
                         loc = 1;
@@ -488,7 +493,7 @@ public class BattleArmor extends Infantry implements Serializable {
                     }
                     break;
                 case Tank.LOC_LEFT:
-                    if (getInternal(3) > 0 && getInternal(4) > 0) {
+                    if ((getInternal(3) > 0) && (getInternal(4) > 0)) {
                         loc = Compute.randomInt(2) + 3;
                     } else if (getInternal(3) > 0) {
                         loc = 3;
@@ -497,7 +502,7 @@ public class BattleArmor extends Infantry implements Serializable {
                     }
                     break;
                 case Tank.LOC_REAR:
-                    if (getInternal(5) > 0 && getInternal(6) > 0) {
+                    if ((getInternal(5) > 0) && (getInternal(6) > 0)) {
                         loc = Compute.randomInt(2) + 5;
                     } else if (getInternal(5) > 0) {
                         loc = 5;
@@ -738,7 +743,7 @@ public class BattleArmor extends Infantry implements Serializable {
                 tmmFactor += 0.2;
             }
             // improved stealth get's an extra 0.1, for 0.3 total
-            if (stealthName != null && stealthName.equals(BattleArmor.EXPERT_STEALTH)) {
+            if ((stealthName != null) && stealthName.equals(BattleArmor.EXPERT_STEALTH)) {
                 tmmFactor += 0.1;
             }
             if (isMimetic) {
@@ -765,7 +770,7 @@ public class BattleArmor extends Infantry implements Serializable {
                 if (loc == LOC_NONE) {
                     continue;
                 }
-                if (loc == LOC_SQUAD || loc == i) {
+                if ((loc == LOC_SQUAD) || (loc == i)) {
                     double ammoBV =((AmmoType)ammo.getType()).getBABV();
                     oBV += ammoBV;
                 }
@@ -790,7 +795,7 @@ public class BattleArmor extends Infantry implements Serializable {
                 }
                 // magnetic claws and vibro claws counted again
                 for (Mounted misc : getMisc()) {
-                    if (misc.getLocation() == LOC_SQUAD || misc.getLocation() == i) {
+                    if ((misc.getLocation() == LOC_SQUAD) || (misc.getLocation() == i)) {
                         if (misc.getType().hasFlag(MiscType.F_ASSAULT_CLAW)
                                 || misc.getType().hasFlag(MiscType.F_VIBROCLAW)) {
                             oBV += misc.getType().getBV(this);
@@ -861,6 +866,7 @@ public class BattleArmor extends Infantry implements Serializable {
                 m.setMode("Single");
             }
         }
+        attacksDuringSwarmResolved = false;
     }
 
     /**
@@ -911,7 +917,7 @@ public class BattleArmor extends Infantry implements Serializable {
                 // ammo, but if the weapon has no currently loaded ammo, we're
                 // fine
                 Mounted weapon = mounted.getLinkedBy();
-                if (weapon != null
+                if ((weapon != null)
                         && weapon.isBodyMounted()
                         && weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
                     return true;
@@ -1001,8 +1007,8 @@ public class BattleArmor extends Infantry implements Serializable {
              * "Basic Stealth", 4: "Prototype Stealth", 5: "Standard Stealth",
              * 6: "Improved Stealth", 7: "Fire Resistant", 8: "Mimetic"
              */
-            if (armorType == 3
-                    && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
+            if ((armorType == 3)
+                    && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
                 // Basic Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -1021,8 +1027,8 @@ public class BattleArmor extends Infantry implements Serializable {
                         throw new IllegalArgumentException(
                                 "Unknown range constant: " + range);
                 }
-            } else if (armorType == 4
-                    && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
+            } else if ((armorType == 4)
+                    && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
                 // Prototype Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -1041,8 +1047,8 @@ public class BattleArmor extends Infantry implements Serializable {
                         throw new IllegalArgumentException(
                                 "Unknown range constant: " + range);
                 }
-            } else if (armorType == 5
-                    && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
+            } else if ((armorType == 5)
+                    && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
                 // Standard Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -1061,8 +1067,8 @@ public class BattleArmor extends Infantry implements Serializable {
                         throw new IllegalArgumentException(
                                 "Unknown range constant: " + range);
                 }
-            } else if (armorType == 6
-                    && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
+            } else if ((armorType == 6)
+                    && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
                 // Improved Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -1101,7 +1107,7 @@ public class BattleArmor extends Infantry implements Serializable {
 
             // Stealthy units alreay have their to-hit mods defined.
             if (isStealthy
-                    && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
+                    && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
                     case RangeType.RANGE_SHORT:
@@ -1130,7 +1136,7 @@ public class BattleArmor extends Infantry implements Serializable {
         // 1 hexes moved +1 movement modifier
         // 2+ hexes moved no modifier
         // This can also be in addition to any armor except Mimetic!
-        if (isSimpleCamo && delta_distance < 2) {
+        if (isSimpleCamo && (delta_distance < 2)) {
             int mod = Math.max(2 - delta_distance, 0);
             if (result == null) {
                 result = new TargetRoll(mod, "camoflage");
@@ -1219,6 +1225,7 @@ public class BattleArmor extends Infantry implements Serializable {
         return 0;
     }
 
+    @Override
     public boolean hasEiCockpit() {
         return true;
     }
@@ -1227,6 +1234,7 @@ public class BattleArmor extends Infantry implements Serializable {
         weightClass = inWC;
     }
 
+    @Override
     public int getWeightClass() {
         return weightClass;
     }
@@ -1239,10 +1247,12 @@ public class BattleArmor extends Infantry implements Serializable {
         return chassisType;
     }
 
+    @Override
     public boolean canAssaultDrop() {
         return true;
     }
 
+    @Override
     public boolean isNuclearHardened() {
         return true;
     }
@@ -1273,6 +1283,7 @@ public class BattleArmor extends Infantry implements Serializable {
         return activeTroops.elementAt(locInt);
     }
 
+    @Override
     public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
         // BA must carry the ammo in same location as the weapon.
         // except for mine launcher mines
@@ -1280,12 +1291,13 @@ public class BattleArmor extends Infantry implements Serializable {
         // such as NARC and the support weapons in TW/TO
         AmmoType at = (AmmoType) mountedAmmo.getType();
         if (!(at.getAmmoType() == AmmoType.T_MINE)
-                && mounted.getLocation() != mountedAmmo.getLocation()) {
+                && (mounted.getLocation() != mountedAmmo.getLocation())) {
             return false;
         }
         return super.loadWeapon(mounted, mountedAmmo);
     }
 
+    @Override
     public boolean loadWeaponWithSameAmmo(Mounted mounted, Mounted mountedAmmo) {
         // BA must carry the ammo in same location as the weapon.
         // except for mine launcher mines
@@ -1293,7 +1305,7 @@ public class BattleArmor extends Infantry implements Serializable {
         // such as NARC and the support weapons in TW/TO
         AmmoType at = (AmmoType) mountedAmmo.getType();
         if (!(at.getAmmoType() == AmmoType.T_MINE)
-                && mounted.getLocation() != mountedAmmo.getLocation()) {
+                && (mounted.getLocation() != mountedAmmo.getLocation())) {
             return false;
         }
         return super.loadWeaponWithSameAmmo(mounted, mountedAmmo);
@@ -1445,6 +1457,7 @@ public class BattleArmor extends Infantry implements Serializable {
      * (non-Javadoc)
      * @see megamek.common.Entity#getVibroClaws()
      */
+    @Override
     public int getVibroClaws() {
         int claws = 0;
         for (Mounted mounted : getMisc()) {
@@ -1510,9 +1523,28 @@ public class BattleArmor extends Infantry implements Serializable {
      * (non-Javadoc)
      * @see megamek.common.Entity#canTransferCriticals(int)
      */
+    @Override
     public boolean canTransferCriticals(int loc) {
         // BAs can never transfer crits
         return false;
+    }
+
+    /**
+     * have all attacks this BA made while swarming a unit already been resolved
+     * this turn?
+     * @return
+     */
+    public boolean isAttacksDuringSwarmResolved() {
+        return attacksDuringSwarmResolved;
+    }
+
+    /**
+     * set wether or not all attacks this BA made while swarming a unit have
+     * already been resolved
+     * @param resolved - a <code>boolean</code>
+     */
+    public void setAttacksDuringSwarmResolved(boolean resolved) {
+        attacksDuringSwarmResolved = resolved;
     }
 
 

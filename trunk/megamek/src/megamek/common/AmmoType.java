@@ -7970,7 +7970,7 @@ public class AmmoType extends EquipmentType {
     /**
      * get bv for protomech loads
      */
-    public double getProtoBV() {
+    public double getProtoBV(int shots) {
         if ((getAmmoType() == AmmoType.T_SRM) ||
             (getAmmoType() == AmmoType.T_SRM_STREAK) ||
             (getAmmoType() == AmmoType.T_LRM) ||

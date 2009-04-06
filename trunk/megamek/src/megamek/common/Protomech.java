@@ -340,7 +340,7 @@ public class Protomech extends Entity implements Serializable {
 
         int waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(
                 Terrains.WATER);
-        if (waterLevel <= 0 || getElevation() >= 0) {
+        if ((waterLevel <= 0) || (getElevation() >= 0)) {
             return getJumpMP();
         }
         return 0;
@@ -422,7 +422,7 @@ public class Protomech extends Entity implements Serializable {
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
-            return rotate == 0 || rotate == 1 || rotate == -1 || rotate == -5;
+            return (rotate == 0) || (rotate == 1) || (rotate == -1) || (rotate == -5);
         }
         return rotate == 0;
     }
@@ -784,10 +784,10 @@ public class Protomech extends Entity implements Serializable {
                 continue;
             }
 
-            if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS))
-                    || (etype instanceof AmmoType && ((AmmoType) etype)
-                            .getAmmoType() == AmmoType.T_AMS)
-                    || (etype instanceof MiscType && (etype
+            if (((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_AMS))
+                    || ((etype instanceof AmmoType) && (((AmmoType) etype)
+                            .getAmmoType() == AmmoType.T_AMS))
+                    || ((etype instanceof MiscType) && (etype
                             .hasFlag(MiscType.F_ECM) || etype
                             .hasFlag(MiscType.F_BAP)))) {
                 dEquipmentBV += etype.getBV(this);
@@ -824,7 +824,7 @@ public class Protomech extends Entity implements Serializable {
             // artemis bumps up the value
             if (mounted.getLinkedBy() != null) {
                 Mounted mLinker = mounted.getLinkedBy();
-                if (mLinker.getType() instanceof MiscType
+                if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                 }
@@ -832,7 +832,7 @@ public class Protomech extends Entity implements Serializable {
 
             if (mounted.getLinkedBy() != null) {
                 Mounted mLinker = mounted.getLinkedBy();
-                if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
                 }
             }
@@ -846,8 +846,8 @@ public class Protomech extends Entity implements Serializable {
             // to compare with ammo BV later for excessive ammo BV rule
             if (!(wtype.hasFlag(WeaponType.F_ENERGY)
                     || wtype.hasFlag(WeaponType.F_ONESHOT)
-                    || wtype.hasFlag(WeaponType.F_INFANTRY) || wtype
-                    .getAmmoType() == AmmoType.T_NA)) {
+                    || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype
+                    .getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
@@ -884,13 +884,13 @@ public class Protomech extends Entity implements Serializable {
                 continue;
             }
             // semiguided or homing ammo might count double
-            if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED
-                    || atype.getMunitionType() == AmmoType.M_HOMING) {
+            if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
+                    || (atype.getMunitionType() == AmmoType.M_HOMING)) {
                 Player tmpP = getOwner();
                 // Okay, actually check for friendly TAG.
                 if (tmpP.hasTAG()) {
                     tagBV += atype.getBV(this);
-                } else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
+                } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (game != null)) {
                     for (Enumeration<Team> e = game.getTeams(); e
                             .hasMoreElements();) {
                         Team m = e.nextElement();
@@ -911,9 +911,9 @@ public class Protomech extends Entity implements Serializable {
                 keys.add(key);
             }
             if (!ammo.containsKey(key)) {
-                ammo.put(key, atype.getProtoBV());
+                ammo.put(key, atype.getProtoBV(mounted.getShotsLeft()));
             } else {
-                ammo.put(key, atype.getProtoBV() + ammo.get(key));
+                ammo.put(key, atype.getProtoBV(mounted.getShotsLeft()) + ammo.get(key));
             }
         }
         // excessive ammo rule:
@@ -922,7 +922,7 @@ public class Protomech extends Entity implements Serializable {
         // type on the mech is reached
         for (String key : keys) {
             if (weaponsForExcessiveAmmo.containsKey(key)
-                    && ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
+                    && (ammo.get(key) > weaponsForExcessiveAmmo.get(key))) {
                 ammoBV += weaponsForExcessiveAmmo.get(key);
             } else {
                 ammoBV += ammo.get(key);
@@ -1188,7 +1188,7 @@ public class Protomech extends Entity implements Serializable {
             return true;
         }
 
-        return hex.terrainLevel(Terrains.WOODS) > 2 || hex.terrainLevel(Terrains.JUNGLE) > 2;
+        return (hex.terrainLevel(Terrains.WOODS) > 2) || (hex.terrainLevel(Terrains.JUNGLE) > 2);
     }
 
     @Override

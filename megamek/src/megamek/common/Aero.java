@@ -1458,7 +1458,6 @@ public class Aero
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;
-        System.out.println(getChassis()+" "+getModel()+" OBV: "+obv+" DBV:"+dbv);
 
         double finalBV = dbv + obv;
         if ( getCockpitType() == Aero.COCKPIT_SMALL ) {

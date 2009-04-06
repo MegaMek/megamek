@@ -1510,10 +1510,7 @@ public class BattleArmor extends Infantry implements Serializable {
     public boolean hasActiveProbe() {
         for (Mounted equip : getMisc()) {
             if (equip.getType().hasFlag(MiscType.F_BAP)) {
-                if (equip.getType().getInternalName().equals(Sensor.CLBALIGHT_AP)
-                        || equip.getType().getInternalName().equals(Sensor.ISBALIGHT_AP)) {
-                    return true;
-                }
+                return true;
             }
         }
         return false;

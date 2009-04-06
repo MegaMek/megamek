@@ -316,11 +316,6 @@ public class MechView {
             sIntArm.append( "\n" ); //$NON-NLS-1$
         }
 
-
-
-        sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
-            .append( entity.getTotalArmor() );
-
         if(entity.isCapitalFighter()) {
             sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
             .append( a.getCapArmor());

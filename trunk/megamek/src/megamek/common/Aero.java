@@ -1461,6 +1461,12 @@ public class Aero
 
         obv = weaponBV * speedFactor;
 
+        double finalBV = dbv + obv;
+        if ( getCockpitType() == Aero.COCKPIT_SMALL ) {
+            finalBV *= 0.95;
+        }
+        finalBV = Math.round(finalBV);
+
         // we get extra bv from some stuff
         double xbv = 0.0;
         // extra BV for semi-guided lrm when TAG in our team
@@ -1479,11 +1485,8 @@ public class Aero
             }
             xbv += totalForceBV *= 0.05;
         }
+        finalBV += xbv;
 
-        int finalBV = (int) Math.round(dbv + obv + xbv);
-        if ( getCockpitType() == Aero.COCKPIT_SMALL ) {
-            finalBV *= 0.95;
-        }
 
         // and then factor in pilot
         double pilotFactor = 1;
@@ -1495,7 +1498,7 @@ public class Aero
 
         // don't factor pilot in if we are just calculating BV for C3 extra BV
         if (ignoreC3) {
-            return finalBV;
+            return (int)finalBV;
         }
         return retVal;
     }
@@ -2604,7 +2607,7 @@ public class Aero
     public boolean hasArmoredEngine() {
         for (int slot = 0; slot < getNumberOfCriticals(LOC_AFT); slot++) {
             CriticalSlot cs = getCritical(LOC_AFT, slot);
-            if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == Mech.SYSTEM_ENGINE) {
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mech.SYSTEM_ENGINE)) {
                 return cs.isArmored();
             }
         }

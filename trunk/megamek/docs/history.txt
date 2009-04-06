@@ -13,6 +13,7 @@ v0.33.44 (SVN)
 + Bug 2183009: VTOL Skid problem forces use of /skip
 + Bug: BV rounding for small cockpits wrong
 + Bug: Aero small cockpit BV calculation not quite right
++ Bug: Not all BAPs counting for BA BV
 
 v0.33.43 (2008-03-31, 20:31 GMT+2)
 + Updated Lancelot 25-01X

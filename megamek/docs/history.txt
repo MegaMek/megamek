@@ -10,6 +10,7 @@ v0.33.44 (SVN)
 + Bug 2713471: erronoues text
 + Bug: Firebee has missing MML ammo
 + Non-monospace font in swing unit loading failure dialog
++ Bug 2183009: VTOL Skid problem forces use of /skip
 
 v0.33.43 (2008-03-31, 20:31 GMT+2)
 + Updated Lancelot 25-01X

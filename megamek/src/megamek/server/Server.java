@@ -5061,7 +5061,7 @@ public class Server implements Runnable {
                                 return;
                             }
 
-                            if (!entity.isDestroyed() && !entity.isDoomed()) {
+                            if (!entity.isDestroyed() && !entity.isDoomed() && (mpUsed < entity.getRunMP())) {
                                 fellDuringMovement = true; // No, but it should
                                 // work...
                             }

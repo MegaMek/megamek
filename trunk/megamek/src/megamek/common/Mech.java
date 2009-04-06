@@ -3707,7 +3707,7 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append(endColumn);
         bvText.append(startColumn);
 
-        int finalBV = (int) Math.round(obv + dbv);
+        double finalBV = obv + dbv;
 
         bvText.append(dbv);
         bvText.append(" + ");
@@ -3727,10 +3727,11 @@ public abstract class Mech extends Entity implements Serializable {
             cockpitMod = 0.95;
             finalBV *= cockpitMod;
         }
+        finalBV = Math.round(finalBV);
         bvText.append("Total BV * Cockpit Modifier");
         bvText.append(endColumn);
         bvText.append(startColumn);
-        bvText.append((int) Math.round(obv + dbv));
+        bvText.append(obv + dbv);
         bvText.append(" * ");
         bvText.append(cockpitMod);
         bvText.append(endColumn);
@@ -3797,7 +3798,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         // don't factor pilot in if we are just calculating BV for C3 extra BV
         if (ignoreC3) {
-            return finalBV;
+            return (int)finalBV;
         }
         return retVal;
     }

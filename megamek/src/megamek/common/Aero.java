@@ -1206,11 +1206,6 @@ public class Aero
                     dBV = mgaBV * 0.67;
                 }
 
-                // if linked to AES, multiply by 1.5
-                if (hasFunctionalArmAES(weapon.getLocation())) {
-                    dBV *= 1.5;
-                }
-
                 // and we'll add the tcomp here too
                 if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     if (hasTargComp) {
@@ -1257,6 +1252,10 @@ public class Aero
                 }
                 //don't count screen launchers, they are defensive
                 if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
+                    continue;
+                }
+                //do not count weapon groups
+                if(weapon.isWeaponGroup()) {
                     continue;
                 }
                 // calc MG Array here:
@@ -1346,8 +1345,7 @@ public class Aero
                 continue;
             }
 
-            if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_AP_POD)
-            // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
+            if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)) {
                 // weapons
                 continue;
@@ -1460,6 +1458,7 @@ public class Aero
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;
+        System.out.println(getChassis()+" "+getModel()+" OBV: "+obv+" DBV:"+dbv);
 
         double finalBV = dbv + obv;
         if ( getCockpitType() == Aero.COCKPIT_SMALL ) {

@@ -1334,8 +1334,7 @@ public class Aero
             }
         }
 
-        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
-        // BMR p152)
+        // add offensive misc. equipment BV
         double oEquipmentBV = 0;
         for (Mounted mounted : getMisc()) {
             MiscType mtype = (MiscType) mounted.getType();
@@ -1345,24 +1344,11 @@ public class Aero
                 continue;
             }
 
-            if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) {
-                // weapons
+            if (mtype.hasFlag(MiscType.F_TARGCOMP)) {
                 continue;
             }
             double bv = mtype.getBV(this);
-            // if physical weapon linked to AES, multiply by 1.5
             oEquipmentBV += bv;
-            // need to do this here, a MiscType does not know the location
-            // where it's mounted
-            if (mtype.hasFlag(MiscType.F_HARJEL)) {
-                if (this.getArmor(mounted.getLocation(), false) != IArmorState.ARMOR_DESTROYED) {
-                    oEquipmentBV += this.getArmor(mounted.getLocation());
-                }
-                if (hasRearArmor(mounted.getLocation()) && (this.getArmor(mounted.getLocation(), true) != IArmorState.ARMOR_DESTROYED)) {
-                    oEquipmentBV += this.getArmor(mounted.getLocation(), true);
-                }
-            }
         }
         weaponBV += oEquipmentBV;
 
@@ -1447,14 +1433,7 @@ public class Aero
         weaponBV += ammoBV;
 
         // adjust further for speed factor
-        double speedFactor;
-        // but taking into account hit actuators
-        double speedFactorTableLookup = getRunMP();
-        if (speedFactorTableLookup > 25) {
-            speedFactor = Math.pow(1 + (((double) getRunMP() - 5) / 10), 1.2);
-        } else {
-            speedFactor = Math.pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
-        }
+        double speedFactor = Math.pow(1 + (((double) getRunMP()  - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;

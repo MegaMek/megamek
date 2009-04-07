@@ -459,7 +459,7 @@ public class Jumpship extends Aero implements Serializable {
 
         int modularArmor = 0;
         for (Mounted mounted : getEquipment()) {
-            if (mounted.getType() instanceof MiscType && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
+            if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
                 modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
             }
         }
@@ -478,13 +478,13 @@ public class Jumpship extends Aero implements Serializable {
                 continue;
             }
 
-            if ((etype instanceof WeaponType && (etype.hasFlag(WeaponType.F_AMS)))
-                    || (etype instanceof AmmoType && ((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)
-                    || (etype instanceof WeaponType && ((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
+            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))
+                    || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER))
+                    || ((etype instanceof WeaponType) && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN))) {
                 dEquipmentBV += etype.getBV(this);
             }
 
-            if(etype instanceof AmmoType && ((AmmoType) etype).getAmmoType() == AmmoType.T_AMS) {
+            if((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
                 double weight = mounted.getShotsLeft() / ((AmmoType)etype).getShots();
                 dEquipmentBV += etype.getBV(this) * weight;
             }
@@ -535,7 +535,7 @@ public class Jumpship extends Aero implements Serializable {
             }
             //add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || wtype.getAmmoType() == AmmoType.T_NA)) {
+            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype.getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize() + ";" + arc;
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
@@ -548,7 +548,7 @@ public class Jumpship extends Aero implements Serializable {
                 double mgaBV = 0;
                 for (Mounted possibleMG : getTotalWeaponList()) {
                     if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && possibleMG.getLocation() == mounted.getLocation()) {
+                            && (possibleMG.getLocation() == mounted.getLocation())) {
                         mgaBV += possibleMG.getType().getBV(this);
                     }
                 }
@@ -563,10 +563,10 @@ public class Jumpship extends Aero implements Serializable {
             // artemis bumps up the value
             if (mounted.getLinkedBy() != null) {
                 Mounted mLinker = mounted.getLinkedBy();
-                if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                 }
-                if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
                 }
             }
@@ -595,9 +595,9 @@ public class Jumpship extends Aero implements Serializable {
         Iterator<Integer> iter = set.iterator();
         while(iter.hasNext()) {
             int key = iter.next();
-            if(arcBVs.get(key) > highBV
-                    && (key == Compute.ARC_NOSE || key == Compute.ARC_LEFT_BROADSIDE
-                            || key == Compute.ARC_RIGHT_BROADSIDE || key == Compute.ARC_AFT)) {
+            if((arcBVs.get(key) > highBV)
+                    && ((key == Compute.ARC_NOSE) || (key == Compute.ARC_LEFT_BROADSIDE)
+                            || (key == Compute.ARC_RIGHT_BROADSIDE) || (key == Compute.ARC_AFT))) {
                 highArc = key;
                 highBV = arcBVs.get(key);
             }
@@ -610,13 +610,13 @@ public class Jumpship extends Aero implements Serializable {
             int adjArcCCW = getAdjacentArcCCW(highArc);
             double adjArcCWBV = 0.0;
             double adjArcCWHeat = 0.0;
-            if(adjArcCW > Integer.MIN_VALUE && null != arcBVs.get(adjArcCW)) {
+            if((adjArcCW > Integer.MIN_VALUE) && (null != arcBVs.get(adjArcCW))) {
                 adjArcCWBV = arcBVs.get(adjArcCW);
                 adjArcCWHeat = arcHeat.get(adjArcCW);
             }
             double adjArcCCWBV = 0.0;
             double adjArcCCWHeat = 0.0;
-            if(adjArcCCW > Integer.MIN_VALUE && null != arcBVs.get(adjArcCCW)) {
+            if((adjArcCCW > Integer.MIN_VALUE) && (null != arcBVs.get(adjArcCCW))) {
                 adjArcCCWBV = arcBVs.get(adjArcCCW);
                 adjArcCCWHeat = arcHeat.get(adjArcCCW);
             }
@@ -668,33 +668,6 @@ public class Jumpship extends Aero implements Serializable {
                 // assumption: ammo without a location is for a oneshot weapon
                 continue;
             }
-            /*
-            // semiguided or homing ammo might count double
-            if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED
-                    || atype.getMunitionType() == AmmoType.M_HOMING) {
-                Player tmpP = getOwner();
-
-                if (tmpP != null) {
-                    // Okay, actually check for friendly TAG.
-                    if (tmpP.hasTAG())
-                        tagBV += atype.getBV(this);
-                    else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-                        for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
-                            Team m = e.nextElement();
-                            if (m.getId() == tmpP.getTeam()) {
-                                if (m.hasTAG(game)) {
-                                    tagBV += atype.getBV(this);
-                                }
-                                // A player can't be on two teams.
-                                // If we check his team and don't give the
-                                // penalty, that's it.
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-             */
             String key = atype.getAmmoType() + ":" + atype.getRackSize() + ";" + arc;
             //ammo mounts on large craft is not necessarily in single ton increments so I need to figure out tonnage first
             double weight = mounted.getShotsLeft() / atype.getShots();
@@ -741,11 +714,11 @@ public class Jumpship extends Aero implements Serializable {
             //ok now add the BV from this arc and reset to zero
             weaponBV += arcBVs.get(highArc);
             arcBVs.put(highArc, 0.0);
-            if(adjArc > Integer.MIN_VALUE && null != arcBVs.get(adjArc)) {
+            if((adjArc > Integer.MIN_VALUE) && (null != arcBVs.get(adjArc))) {
                 weaponBV += adjArcMult * arcBVs.get(adjArc);
                 arcBVs.put(adjArc, 0.0);
             }
-            if(oppArc > Integer.MIN_VALUE && null != arcBVs.get(oppArc)) {
+            if((oppArc > Integer.MIN_VALUE) && (null != arcBVs.get(oppArc))) {
                 weaponBV += oppArcMult * arcBVs.get(oppArc);
                 arcBVs.put(oppArc, 0.0);
             }
@@ -769,54 +742,31 @@ public class Jumpship extends Aero implements Serializable {
                 continue;
             }
 
-            if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_AP_POD)
-                    // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) {
-                // weapons
+            if (mtype.hasFlag(MiscType.F_TARGCOMP)) {
                 continue;
             }
             double bv = mtype.getBV(this);
-            // if physical weapon linked to AES, multiply by 1.5
             oEquipmentBV += bv;
-            // need to do this here, a MiscType does not know the location
-            // where it's mounted
-            if (mtype.hasFlag(MiscType.F_HARJEL)) {
-                if (this.getArmor(mounted.getLocation(), false) != IArmorState.ARMOR_DESTROYED) {
-                    oEquipmentBV += this.getArmor(mounted.getLocation());
-                }
-                if (hasRearArmor(mounted.getLocation()) && this.getArmor(mounted.getLocation(), true) != IArmorState.ARMOR_DESTROYED) {
-                    oEquipmentBV += this.getArmor(mounted.getLocation(), true);
-                }
-            }
         }
         weaponBV += oEquipmentBV;
 
         // adjust further for speed factor
-        double speedFactor;
         int runMp = getRunMP();
         if(!(this instanceof Warship) && !(this instanceof SpaceStation)) {
             runMp = 1;
         }
-        // but taking into account hit actuators
-        double speedFactorTableLookup = runMp;
-        if (speedFactorTableLookup > 25) {
-            speedFactor = Math.pow(1 + (((double) runMp - 5) / 10), 1.2);
-        } else {
-            speedFactor = Math.pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
-        }
+        double speedFactor = Math.pow(1 + (((double) runMp - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;
 
         // we get extra bv from some stuff
         double xbv = 0.0;
-        // extra BV for semi-guided lrm when TAG in our team
-        //xbv += tagBV;
         // extra from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3
         // times
-        if (((hasC3MM() && calculateFreeC3MNodes() < 2) || (hasC3M() && calculateFreeC3Nodes() < 3) || (hasC3S() && c3Master > NONE) || (hasC3i() && calculateFreeC3Nodes() < 5)) && !ignoreC3 && (game != null)) {
+        if (((hasC3MM() && (calculateFreeC3MNodes() < 2)) || (hasC3M() && (calculateFreeC3Nodes() < 3)) || (hasC3S() && (c3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5))) && !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
             totalForceBV += this.calculateBattleValue(true, true);
             for (Entity e : game.getC3NetworkMembers(this)) {
@@ -1005,10 +955,10 @@ public class Jumpship extends Aero implements Serializable {
         int bayCost = 0;
         for(Bay next:getTransportBays()) {
             baydoors += next.getDoors();
-            if(next instanceof MechBay || next instanceof ASFBay || next instanceof SmallCraftBay) {
+            if((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
                 bayCost += 20000 * next.totalSpace;
             }
-            if(next instanceof LightVehicleBay || next instanceof HeavyVehicleBay) {
+            if((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
                 bayCost += 20000 * next.totalSpace;
             }
         }
@@ -1054,14 +1004,14 @@ public class Jumpship extends Aero implements Serializable {
 
         //for large craft, ammo must be in the same ba
         Mounted bay = whichBay(getEquipmentNum(mounted));
-        if(bay != null && !bay.ammoInBay(getEquipmentNum(mountedAmmo))) {
+        if((bay != null) && !bay.ammoInBay(getEquipmentNum(mountedAmmo))) {
             return success;
         }
 
 
         if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
-                && atype.getAmmoType() == wtype.getAmmoType()
-                && atype.getRackSize() == wtype.getRackSize()) {
+                && (atype.getAmmoType() == wtype.getAmmoType())
+                && (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
         }
@@ -1139,7 +1089,7 @@ public class Jumpship extends Aero implements Serializable {
      */
     @Override
     public boolean isCrewProtected() {
-        return isMilitary() && getOriginalWalkMP() > 4;
+        return isMilitary() && (getOriginalWalkMP() > 4);
     }
 
     public double getAccumulatedThrust() {
@@ -1163,7 +1113,7 @@ public class Jumpship extends Aero implements Serializable {
         //then we make the proper adjustments in server#processMovement
         //until I hear from Welshman, I am assuming that you cannot "hold back" thrust. So once you
         //get 1 thrust point, you have to spend it before you can accumulate more
-        if(isDeployed() && getAccumulatedThrust() < 1.0) {
+        if(isDeployed() && (getAccumulatedThrust() < 1.0)) {
             setAccumulatedThrust(getAccumulatedThrust() + stationThrust);
         }
     }

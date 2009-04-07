@@ -803,7 +803,7 @@ public class BattleArmor extends Infantry implements Serializable {
                     }
                 }
             }
-            int movement = Math.max(getWalkMP(false, false), getJumpMP(false));
+            int movement = Math.max(getWalkMP(false, false), getJumpMP(false, true));
             double speedFactor = Math.pow(1+((double)(movement-5)/10), 1.2);
             speedFactor = Math.round(speedFactor * 100) / 100.0;
             oBV *= speedFactor;

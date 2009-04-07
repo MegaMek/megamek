@@ -1268,11 +1268,6 @@ public class Aero
                     }
                     dBV = mgaBV * 0.67;
                 }
-
-                // if linked to AES, multiply by 1.5
-                if (hasFunctionalArmAES(weapon.getLocation())) {
-                    dBV *= 1.5;
-                }
                 // and we'll add the tcomp here too
                 if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
                     dBV *= 1.25;
@@ -2327,7 +2322,7 @@ public class Aero
     }
 
     public String getCockpitTypeString() {
-        return getCockpitTypeString(getCockpitType());
+        return Aero.getCockpitTypeString(getCockpitType());
     }
 
     public static String getCockpitTypeString(int inCockpitType) {

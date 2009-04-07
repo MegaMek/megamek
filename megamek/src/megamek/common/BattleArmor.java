@@ -130,11 +130,13 @@ public class BattleArmor extends Infantry implements Serializable {
 
     /**
      * The internal name for Boarding Claw equipment.
+     * battle claw/heavy battle claw
      */
     public static final String BOARDING_CLAW = "BA-Boarding Claw";
 
     /**
      * The internal name for Assault Claw equipment.
+     * (heavy battle claw (magnetic)
      */
     public static final String ASSAULT_CLAW = "BA-Assault Claws";
 
@@ -179,14 +181,6 @@ public class BattleArmor extends Infantry implements Serializable {
     public static final String SINGLE_HEX_ECM = "Single-Hex ECM";
 
     /**
-     * The name for Longinus squads.
-     */
-    public static final String LONGINUS_SQUAD = "Longinus";
-
-    /**
-     * The name for Purifier squads.
-     */
-    public static final String PURIFIER_SQUAD = "Purifier";
 
     /**
      * The maximum number of men in a battle armor squad.

@@ -5,6 +5,8 @@ v0.33.45-dev (0.34.0 Release Candidate 2) (SVN)
 + Bug: BA improved sensors counting as light active probes for BV purposes
 + Bug: BA BV calculation not disregarding "burden" by non-fired missiles for
     speedfactor calculation
++ Bug: Clan Medium Bär BA does not have heavy battle claws (magnetic)
++ Bug: Clan SRM 5 BV wrong
 
 v0.33.44 (0.34.0 Release Candidate 1) (2009-04-07, 03:43 UTC+2)
 + RFE: Add tonnage to -export command

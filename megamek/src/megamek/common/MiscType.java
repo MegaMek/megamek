@@ -1602,7 +1602,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.flags |= F_MINE;
-        misc.bv = 8;
+        misc.bv = 4;
 
         return misc;
     }

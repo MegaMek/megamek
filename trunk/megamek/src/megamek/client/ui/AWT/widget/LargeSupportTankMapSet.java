@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -37,72 +37,84 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
     private static final String IMAGE_DIR = "data/images/widgets";
 
     private Component comp;
-    private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[14];
-    private PMSimpleLabel[] labels = new PMSimpleLabel[15];
-    private PMValueLabel[] vLabels = new PMValueLabel[15];
+    private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[15];
+    private PMSimpleLabel[] labels = new PMSimpleLabel[16];
+    private PMValueLabel[] vLabels = new PMValueLabel[16];
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
 
-    private static final int INT_STR_OFFSET = 6;
     // Polygons for all areas
-    private Polygon frontArmor = new Polygon(new int[] { 0, 19, 149, 168, 145,
-            132, 57, 23 }, new int[] { 55, 27, 27, 55, 68, 49, 49, 68 }, 8);
-    
+
+    // front armor
+    private Polygon frontArmor = new Polygon(
+            new int[] { 0, 23, 157, 180, 157, 118, 62, 23 },
+            new int[] { 30, 7, 7,   30,  41,  25,  25, 41 }, 8);
+
     // front internal structure
-    private Polygon frontIS = new Polygon(new int[] { 87, 87, 145, 132, 57, 23,
-            81, 81 }, new int[] { 40, 77, 39, 20, 20, 39, 77, 40 }, 8);
+    private Polygon frontIS = new Polygon(
+            new int[] { 23, 62, 118, 157, 93, 93, 87, 87 },
+            new int[] { 41, 25, 25,  41,  73, 42, 42, 73 }, 8);
     // Left Front armor
-    private Polygon leftFrontArmor = new Polygon(new int[] { 0, 0, 23, 23 },
-            new int[] { 26, 120, 120, 39 }, 4);
+    private Polygon leftFrontArmor = new Polygon(
+            new int[] { 0,  0,   23,  23 },
+            new int[] { 30, 109, 109, 41 }, 4);
 
     // Left Front internal structure
-    private Polygon leftFrontIS = new Polygon(new int[] {81, 23, 23, 53, 66, 74,
-            78, 81}, new int[] {77, 39, 120, 120, 94, 94, 85, 85}, 8);
-    
+    private Polygon leftFrontIS = new Polygon(
+            new int[] {23, 87, 87, 84, 80, 71, 59,  23},
+            new int[] {41, 73, 80, 80, 87, 87, 109, 109}, 8);
+
     // Left rear armor
-    private Polygon leftRearArmor = new Polygon(new int[] { 0, 0, 23, 23 },
-            new int[] { 120, 214, 200, 120 }, 4);
-    
-    private Polygon leftRearIS = new Polygon(new int[] {23, 23, 60, 53, 53},
-            new int[] {120, 200, 183, 168, 120}, 5);
-    
-    // Right armor
-    private Polygon rightFrontArmor = new Polygon(new int[] { 168, 145, 145, 168 },
-            new int[] { 26, 120, 120, 39 }, 4);
+    private Polygon leftRearArmor = new Polygon(
+            new int[] { 0,   0,   23,  23 },
+            new int[] { 109, 187, 175, 109 }, 4);
 
-    // Right internal structure
+    // Left rear internal structure
+    private Polygon leftRearIS = new Polygon(
+            new int[] {23, 23,   66,  59,  59},
+            new int[] {109, 175, 161, 149, 109}, 5);
 
-    private Polygon rightFrontIS = new Polygon(new int[] { 103, 116, 116, 108, 145, 145,
-            145, 87, 87, 91, 95 }, new int[] { 94, 120, 168, 183, 200, 200, 39,
-            77, 85, 85, 94 }, 11);
-    
-    // Right armor
-    private Polygon rightRearArmor = new Polygon(new int[] { 168, 145, 145, 168 },
-            new int[] { 120, 214, 200, 120 }, 4);
+    // Right front armor
+    private Polygon rightFrontArmor = new Polygon(
+            new int[] { 157, 180, 180, 157 },
+            new int[] { 41,  30,  109, 109 }, 4);
 
-    // Right internal structure
+    // Right front internal structure
+    private Polygon rightFrontIS = new Polygon(
+            new int[] { 93, 157, 157, 121, 109, 100, 96, 93 },
+            new int[] { 73, 41,  109, 109, 87,  87,  80, 80 }, 8);
 
-    private Polygon rightRearIS = new Polygon(new int[] { 103, 116, 116, 108, 145, 145,
-            145, 87, 87, 91, 95 }, new int[] { 94, 120, 168, 183, 200, 200, 39,
-            77, 85, 85, 94 }, 11);
+    // Right rear armor
+    private Polygon rightRearArmor = new Polygon(
+            new int[] { 157, 180, 180, 157 },
+            new int[] { 109, 109, 187, 175 }, 4);
+
+    // Right rear internal structure
+    private Polygon rightRearIS = new Polygon(
+            new int[] { 121, 157, 157, 114, 121, 121 },
+            new int[] { 109, 109, 175, 161, 149, 109 }, 6);
 
     // Rear armor
-    private Polygon rearArmor = new Polygon(new int[] { 168, 145, 112, 55, 23,
-            0, 11, 166 }, new int[] { 214, 200, 220, 220, 200, 214, 239, 239 },
-            8);
+    private Polygon rearArmor = new Polygon(
+            new int[] { 180, 152, 26,  0,   23,  59,  121, 157 },
+            new int[] { 187, 208, 208, 187, 175, 192, 192, 175 }, 8);
+
     // Rear internal structure
-    private Polygon rearIS = new Polygon(new int[] { 145, 108, 99, 70, 60, 23,
-            55, 112 }, new int[] { 200, 183, 202, 202, 183, 200, 220, 220 }, 8);
+    private Polygon rearIS = new Polygon(
+            new int[] { 157, 121, 59,  23,  66,  76,  105, 114 },
+            new int[] { 175, 192, 192, 175, 161, 177, 177, 161 }, 8);
+
     // Turret armor
-    private Polygon turretArmor = new Polygon(new int[] { 84, 94, 109, 109, 59,
-            59, 74, 84, 84, 84, 84, 70, 53, 53, 56, 74, 78, 81, 81, 87, 87, 91,
-            95, 103, 116, 116, 108, 109, 84 }, new int[] { 187, 187, 160, 139, 139,
-            160, 187, 187, 202, 187, 202, 202, 168, 120, 94, 94, 85, 85, 40,
-            40, 85, 85, 94, 94, 120, 168, 183, 202, 202 }, 29);
+    private Polygon turretArmor = new Polygon(
+            new int[] { 87, 87, 84, 80, 71, 59,  59,  75,  90,  90,  80,  65,
+            65,  115, 115, 100, 90,  90,  105, 121, 121, 109, 100, 96, 93, 93 },
+            new int[] { 42, 80, 80, 87, 87, 109, 149, 177, 177, 165, 165, 142,
+            125, 125, 142, 165, 165, 177, 177, 149, 109, 87,  87 , 80, 80, 42 },
+            26);
     // Turret internal structure
     private Polygon turretIS = new Polygon(
-            new int[] { 59, 59, 74, 94, 109, 109 }, new int[] { 139, 160, 187,
-                    187, 160, 139 }, 6);
+            new int[] { 65,  65,  80,  100, 115, 115 },
+            new int[] { 125, 142, 165, 165, 142, 125 }, 6);
 
     private static final Font FONT_LABEL = new Font(
             "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
@@ -114,7 +126,7 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
         setAreas();
         setLabels();
         setBackGround();
-        translateAreas();
+        //translateAreas();
         setContent();
     }
 
@@ -140,117 +152,111 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
             WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
                     / (double) a0);
         }
-        for (int i = 8; i < 14; i++) {
+        for (int i = 8; i < 15; i++) {
             a = t.getInternal(i - 8);
             a0 = t.getOInternal(i - 8);
             vLabels[i].setValue(t.getInternalString(i - 8));
             WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
                     / (double) a0);
         }
-        vLabels[14].setValue(String.valueOf(((SupportTank)t).getBARRating()));
+        vLabels[15].setValue(String.valueOf(((SupportTank)t).getBARRating()));
     }
 
     private void setContent() {
-        for (int i = 1; i < 8; i++) {
+        for (int i = 1; i < 15; i++) {
             content.addArea(areas[i]);
             content.addArea(labels[i]);
             content.addArea(vLabels[i]);
         }
-        for (int i = 1; i < 8; i++) {
-            content.addArea(areas[i + INT_STR_OFFSET]);
-            content.addArea(labels[i + INT_STR_OFFSET]);
-            content.addArea(vLabels[i + INT_STR_OFFSET]);
-        }
-        content.addArea(labels[14]);
-        content.addArea(vLabels[14]);
+        content.addArea(labels[15]);
+        content.addArea(vLabels[15]);
     }
 
     private void setAreas() {
-        areas[LargeSupportTank.LOC_FRONT] = new PMSimplePolygonArea(frontArmor);
-        areas[LargeSupportTank.LOC_FRONTRIGHT] = new PMSimplePolygonArea(rightFrontArmor);
-        areas[LargeSupportTank.LOC_FRONTLEFT] = new PMSimplePolygonArea(leftFrontArmor);
-        areas[LargeSupportTank.LOC_REARLEFT] = new PMSimplePolygonArea(leftRearArmor);
-        areas[LargeSupportTank.LOC_REARRIGHT] = new PMSimplePolygonArea(rightRearArmor);
-        areas[LargeSupportTank.LOC_REAR] = new PMSimplePolygonArea(rearArmor);
-        areas[LargeSupportTank.LOC_TURRET] = new PMSimplePolygonArea(turretArmor);
-        areas[LargeSupportTank.LOC_FRONT + INT_STR_OFFSET] = new PMSimplePolygonArea(
-                frontIS);
-        areas[LargeSupportTank.LOC_FRONTRIGHT + INT_STR_OFFSET] = new PMSimplePolygonArea(
-                rightFrontIS);
-        areas[LargeSupportTank.LOC_FRONTLEFT + INT_STR_OFFSET] = new PMSimplePolygonArea(leftFrontIS);
-        areas[LargeSupportTank.LOC_REARLEFT + INT_STR_OFFSET] = new PMSimplePolygonArea(leftRearIS);
-        areas[LargeSupportTank.LOC_REARRIGHT + INT_STR_OFFSET] = new PMSimplePolygonArea(rightRearIS);
-        areas[LargeSupportTank.LOC_REAR + INT_STR_OFFSET] = new PMSimplePolygonArea(rearIS);
-        areas[LargeSupportTank.LOC_TURRET + INT_STR_OFFSET] = new PMSimplePolygonArea(
-                turretIS);
+        areas[1] = new PMSimplePolygonArea(frontArmor);
+        areas[2] = new PMSimplePolygonArea(rightFrontArmor);
+        areas[3] = new PMSimplePolygonArea(leftFrontArmor);
+        areas[4] = new PMSimplePolygonArea(rightRearArmor);
+        areas[5] = new PMSimplePolygonArea(leftRearArmor);
+        areas[6] = new PMSimplePolygonArea(rearArmor);
+        areas[7] = new PMSimplePolygonArea(turretArmor);
+        areas[8] = new PMSimplePolygonArea(frontIS);
+        areas[9] = new PMSimplePolygonArea(rightFrontIS);
+        areas[10] = new PMSimplePolygonArea(leftFrontIS);
+        areas[11] = new PMSimplePolygonArea(rightRearIS);
+        areas[12] = new PMSimplePolygonArea(leftRearIS);
+        areas[13] = new PMSimplePolygonArea(rearIS);
+        areas[14] = new PMSimplePolygonArea(turretIS);
     }
 
     private void setLabels() {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
 
         // Labels for Front view
-        labels[LargeSupportTank.LOC_FRONT] = WidgetUtils.createLabel(Messages
-                .getString("TankMapSet.FrontArmor"), fm, Color.black, 85, 35); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_FRONT + INT_STR_OFFSET] = WidgetUtils
+        labels[1] = WidgetUtils.createLabel(Messages
+                .getString("LargeSupportTankMapSet.FrontArmor"), fm, Color.black, 85, 15); //$NON-NLS-1$
+        labels[2] = WidgetUtils.createLabel(Messages
+                .getString("LargeSupportTankMapSet.FRS"), fm, Color.black, 170, 80); //$NON-NLS-1$
+        labels[3] = WidgetUtils.createLabel(Messages
+                .getString("LargeSupportTankMapSet.FLS"), fm, Color.black, 10, 80); //$NON-NLS-1$
+        labels[4] = WidgetUtils.createLabel(Messages
+                .getString("LargeSupportTankMapSet.RRS"), fm, Color.black, 170, 155); //$NON-NLS-1$
+        labels[5] = WidgetUtils.createLabel(Messages
+                .getString("LargeSupportTankMapSet.RLS"), fm, Color.black, 10, 155); //$NON-NLS-1$
+        labels[6] = WidgetUtils.createLabel(Messages
+                .getString("LargeSupportTankMapSet.RearArmor"), fm, Color.black, 85, 200); //$NON-NLS-1$
+        labels[7] = WidgetUtils.createLabel(Messages
+                .getString("LargeSupportTankMapSet.TurretArmor"), fm, Color.black, 90, 104); //$NON-NLS-1$
+        labels[8] = WidgetUtils
                 .createLabel(
-                        Messages.getString("TankMapSet.FrontIS"), fm, Color.black, 83, 57); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_FRONTLEFT] = WidgetUtils.createLabel(Messages
-                .getString("TankMapSet.LS"), fm, Color.black, 18, 125); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_FRONTLEFT + INT_STR_OFFSET] = WidgetUtils.createLabel(
-                Messages.getString("TankMapSet.LIS"), fm, Color.black, 48, 96); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_FRONTRIGHT] = WidgetUtils.createLabel(Messages
-                .getString("TankMapSet.RS"), fm, Color.black, 165, 125); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_FRONTRIGHT + INT_STR_OFFSET] = WidgetUtils.createLabel(
-                Messages.getString("TankMapSet.RIS"), fm, Color.black, 136, 96); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_REARLEFT] = WidgetUtils.createLabel(Messages
-                .getString("TankMapSet.LS"), fm, Color.black, 18, 165); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_REARLEFT + INT_STR_OFFSET] = WidgetUtils.createLabel(
-                Messages.getString("TankMapSet.LIS"), fm, Color.black, 48, 136); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_REARRIGHT] = WidgetUtils.createLabel(Messages
-                .getString("TankMapSet.RS"), fm, Color.black, 165, 165); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_REARRIGHT + INT_STR_OFFSET] = WidgetUtils.createLabel(
-                Messages.getString("TankMapSet.RIS"), fm, Color.black, 136, 136); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_REAR] = WidgetUtils.createLabel(Messages
-                .getString("TankMapSet.RearArmor"), fm, Color.black, 85, 257); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_REAR + INT_STR_OFFSET] = WidgetUtils
+                        Messages.getString("LargeSupportTankMapSet.FrontIS"), fm, Color.black, 80, 30); //$NON-NLS-1$
+        labels[9] = WidgetUtils.createLabel(
+                Messages.getString("LargeSupportTankMapSet.FRIS"), fm, Color.black, 120, 80); //$NON-NLS-1$
+        labels[10] = WidgetUtils.createLabel(
+                Messages.getString("LargeSupportTankMapSet.FLIS"), fm, Color.black, 43, 80); //$NON-NLS-1$
+        labels[11] = WidgetUtils.createLabel(
+                Messages.getString("LargeSupportTankMapSet.RRIS"), fm, Color.black, 140, 155); //$NON-NLS-1$
+        labels[12] = WidgetUtils.createLabel(
+                Messages.getString("LargeSupportTankMapSet.RLIS"), fm, Color.black, 43, 155); //$NON-NLS-1$
+        labels[13] = WidgetUtils
                 .createLabel(
-                        Messages.getString("TankMapSet.RearIS"), fm, Color.black, 83, 239); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_TURRET] = WidgetUtils.createLabel(Messages
-                .getString("TankMapSet.TurretArmor"), fm, Color.black, 93, 145); //$NON-NLS-1$
-        labels[LargeSupportTank.LOC_TURRET + INT_STR_OFFSET] = WidgetUtils
+                        Messages.getString("LargeSupportTankMapSet.RearIS"), fm, Color.black, 85, 185); //$NON-NLS-1$
+        labels[14] = WidgetUtils
                 .createLabel(
-                        Messages.getString("TankMapSet.TurretIS"), fm, Color.black, 93, 173); //$NON-NLS-1$
-        labels[14] = WidgetUtils.createLabel(Messages
-                .getString("TankMapSet.BARRating"), fm, Color.white, 65, 270); //$NON-NLS-1$
+                        Messages.getString("LargeSupportTankMapSet.TurretIS"), fm, Color.black, 90, 140); //$NON-NLS-1$
+        labels[15] = WidgetUtils.createLabel(Messages
+                .getString("LargeSupportTankMapSet.BARRating"), fm, Color.white, 80, 220); //$NON-NLS-1$
 
         // Value labels for all parts of mek
         // front
         fm = comp.getFontMetrics(FONT_VALUE);
-        vLabels[LargeSupportTank.LOC_FRONT] = WidgetUtils.createValueLabel(121, 37, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_FRONT + INT_STR_OFFSET] = WidgetUtils
-                .createValueLabel(111, 58, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_FRONTLEFT] = WidgetUtils.createValueLabel(20, 150, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_FRONTLEFT + INT_STR_OFFSET] = WidgetUtils.createValueLabel(
-                44, 121, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_FRONTRIGHT] = WidgetUtils
-                .createValueLabel(165, 150, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_FRONTRIGHT + INT_STR_OFFSET] = WidgetUtils
-                .createValueLabel(142, 121, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_REARLEFT] = WidgetUtils.createValueLabel(20, 150, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_REARLEFT + INT_STR_OFFSET] = WidgetUtils.createValueLabel(
-                44, 121, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_REARRIGHT] = WidgetUtils
-                .createValueLabel(165, 150, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_REARRIGHT + INT_STR_OFFSET] = WidgetUtils
-                .createValueLabel(142, 121, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_REAR] = WidgetUtils.createValueLabel(119, 258, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_REAR + INT_STR_OFFSET] = WidgetUtils.createValueLabel(
-                111, 241, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_TURRET] = WidgetUtils
-                .createValueLabel(93, 159, "", fm); //$NON-NLS-1$
-        vLabels[LargeSupportTank.LOC_TURRET + INT_STR_OFFSET] = WidgetUtils
-                .createValueLabel(93, 193, "", fm); //$NON-NLS-1$
-        vLabels[14] = WidgetUtils.createValueLabel(120, 280, "", fm); //$NON-NLS-1$
+        vLabels[1] = WidgetUtils.createValueLabel(115, 17, "", fm); //$NON-NLS-1$
+        vLabels[2] = WidgetUtils
+        .createValueLabel(164, 70, "", fm); //$NON-NLS-1$
+        vLabels[3] = WidgetUtils.createValueLabel(6, 70, "", fm); //$NON-NLS-1$
+        vLabels[4] = WidgetUtils.createValueLabel(
+                164, 140, "", fm); //$NON-NLS-1$
+        vLabels[5] = WidgetUtils
+        .createValueLabel(6, 140, "", fm); //$NON-NLS-1$
+        vLabels[6] = WidgetUtils
+        .createValueLabel(113, 202, "", fm); //$NON-NLS-1$
+        vLabels[7] = WidgetUtils
+        .createValueLabel(93, 115, "", fm); //$NON-NLS-1$
+        vLabels[8] = WidgetUtils.createValueLabel(93, 151, "", fm);//$NON-NLS-1$
+        vLabels[9] = WidgetUtils
+        .createValueLabel(140, 65, "", fm); //$NON-NLS-1$
+        vLabels[10] = WidgetUtils
+        .createValueLabel(43, 65, "", fm); //$NON-NLS-1$
+        vLabels[11] = WidgetUtils
+        .createValueLabel(145, 140, "", fm); //$NON-NLS-1$
+        vLabels[12] = WidgetUtils
+        .createValueLabel(43, 140, "", fm); //$NON-NLS-1$
+        vLabels[13] = WidgetUtils
+        .createValueLabel(113,187, "", fm); //$NON-NLS-1$
+        vLabels[14] = WidgetUtils
+        .createValueLabel(
+                110, 32, "", fm); //$NON-NLS-1$
+        vLabels[15] = WidgetUtils.createValueLabel(110, 222, "", fm); //$NON-NLS-1$
     }
 
     private void setBackGround() {
@@ -302,22 +308,5 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
-    }
-
-    private void translateAreas() {
-        areas[LargeSupportTank.LOC_FRONT].translate(8, 0);
-        areas[LargeSupportTank.LOC_FRONT + INT_STR_OFFSET].translate(8, 29);
-        areas[LargeSupportTank.LOC_FRONTLEFT].translate(8, 29);
-        areas[LargeSupportTank.LOC_FRONTLEFT + INT_STR_OFFSET].translate(8, 29);
-        areas[LargeSupportTank.LOC_FRONTRIGHT].translate(8, 29);
-        areas[LargeSupportTank.LOC_FRONTRIGHT + INT_STR_OFFSET].translate(8, 29);
-        areas[LargeSupportTank.LOC_REARLEFT].translate(8, 29);
-        areas[LargeSupportTank.LOC_REARLEFT + INT_STR_OFFSET].translate(8, 29);
-        areas[LargeSupportTank.LOC_REARRIGHT].translate(8, 29);
-        areas[LargeSupportTank.LOC_REARRIGHT + INT_STR_OFFSET].translate(8, 29);
-        areas[LargeSupportTank.LOC_REAR].translate(8, 29);
-        areas[LargeSupportTank.LOC_REAR + INT_STR_OFFSET].translate(8, 29);
-        areas[LargeSupportTank.LOC_TURRET].translate(8, 29);
-        areas[LargeSupportTank.LOC_TURRET + INT_STR_OFFSET].translate(8, 29);
     }
 }

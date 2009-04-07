@@ -17,6 +17,7 @@ v0.33.44 (SVN)
 + Bug: Protomech ammo not calculating correct BV
 + Bug: Aero BV not working correctly for heat efficient fighters
 + Bug: Armor appears twice in MechView for Aeros
++ Bug 1988508: Large Support Tank Vee Armor Display Distorted
 
 v0.33.43 (2008-03-31, 20:31 GMT+2)
 + Updated Lancelot 25-01X

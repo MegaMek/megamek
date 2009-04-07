@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.44 (SVN)
+v0.33.44 (0.34.0 Release Candidate 1) (2009-04-07, 03:43 UTC+2)
 + RFE: Add tonnage to -export command
 + Added F_BA_WEAPON flag to Clan BA weapons
 + revert change to require java6, for windows 98 users

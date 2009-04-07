@@ -30,7 +30,7 @@ import megamek.common.Tank;
 
 /**
  * Class which keeps set of all areas required to represent Tank unit in
- * MechDsiplay.ArmorPanel class.
+ * MechDisplay.ArmorPanel class.
  */
 public class TankMapSet implements DisplayMapSet {
 
@@ -55,18 +55,17 @@ public class TankMapSet implements DisplayMapSet {
             new int[] { 26, 214, 200, 39 }, 4);
 
     // Left internal structure
-    private Polygon leftIS = new Polygon(new int[] { 61, 23, 23, 23, 40, 33,
-            33, 46, 54, 58, 61 }, new int[] { 77, 39, 200, 200, 183, 168, 120,
-            94, 94, 85, 85 }, 11);
+    private Polygon leftIS = new Polygon(new int[] { 61, 23, 23, 40, 33,
+            33, 46, 54, 58, 61 }, new int[] { 77, 39, 200, 183, 168, 120,
+            94, 94, 85, 85 }, 10);
     // Right armor
     private Polygon rightArmor = new Polygon(new int[] { 128, 105, 105, 128 },
             new int[] { 26, 39, 200, 214 }, 4);
 
     // Right internal structure
-
-    private Polygon rightIS = new Polygon(new int[] { 83, 96, 96, 88, 105, 105,
-            105, 67, 67, 71, 75 }, new int[] { 94, 120, 168, 183, 200, 200, 39,
-            77, 85, 85, 94 }, 11);
+    private Polygon rightIS = new Polygon(new int[] { 83, 96, 96, 88, 105,
+            105, 67, 67, 71, 75 }, new int[] { 94, 120, 168, 183, 200, 39,
+            77, 85, 85, 94 }, 10);
 
     // Rear armor
     private Polygon rearArmor = new Polygon(new int[] { 128, 105, 92, 35, 23,
@@ -78,9 +77,9 @@ public class TankMapSet implements DisplayMapSet {
     // Turret armor
     private Polygon turretArmor = new Polygon(new int[] { 64, 74, 89, 89, 39,
             39, 54, 64, 64, 64, 64, 50, 33, 33, 46, 54, 58, 61, 61, 67, 67, 71,
-            75, 83, 96, 96, 88, 79, 64 }, new int[] { 187, 187, 160, 139, 139,
-            160, 187, 187, 202, 187, 202, 202, 168, 120, 94, 94, 85, 85, 40,
-            40, 85, 85, 94, 94, 120, 168, 183, 202, 202 }, 29);
+            75, 83, 96, 96, 88, 79, 64 },   new int[] { 187, 187, 160, 139, 139,
+            160, 187, 187, 202, 187, 202, 202, 168, 120, 94, 94, 85, 85, 40, 40,
+            85, 85, 94, 94, 120, 168, 183, 202, 202 }, 29);
     // Turret internal structure
     private Polygon turretIS = new Polygon(
             new int[] { 39, 39, 54, 74, 89, 89 }, new int[] { 139, 160, 187,

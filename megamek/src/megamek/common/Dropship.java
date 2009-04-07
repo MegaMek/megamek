@@ -192,6 +192,7 @@ public class Dropship extends SmallCraft implements Serializable {
 
         // add defensive equipment
         double dEquipmentBV = 0;
+
         for (Mounted mounted : getEquipment()) {
             EquipmentType etype = mounted.getType();
 
@@ -383,33 +384,7 @@ public class Dropship extends SmallCraft implements Serializable {
                 // assumption: ammo without a location is for a oneshot weapon
                 continue;
             }
-            /*
-            // semiguided or homing ammo might count double
-            if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED
-                    || atype.getMunitionType() == AmmoType.M_HOMING) {
-                Player tmpP = getOwner();
 
-                if (tmpP != null) {
-                    // Okay, actually check for friendly TAG.
-                    if (tmpP.hasTAG())
-                        tagBV += atype.getBV(this);
-                    else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-                        for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
-                            Team m = e.nextElement();
-                            if (m.getId() == tmpP.getTeam()) {
-                                if (m.hasTAG(game)) {
-                                    tagBV += atype.getBV(this);
-                                }
-                                // A player can't be on two teams.
-                                // If we check his team and don't give the
-                                // penalty, that's it.
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            */
             String key = atype.getAmmoType() + ":" + atype.getRackSize() + ";" + arc;
             double weight = mounted.getShotsLeft() / atype.getShots();
             if(atype.isCapital()) {
@@ -469,8 +444,7 @@ public class Dropship extends SmallCraft implements Serializable {
             }
         }
 
-        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
-        // BMR p152)
+        // add offensive misc. equipment BV
         double oEquipmentBV = 0;
         for (Mounted mounted : getMisc()) {
             MiscType mtype = (MiscType) mounted.getType();
@@ -480,45 +454,22 @@ public class Dropship extends SmallCraft implements Serializable {
                 continue;
             }
 
-            if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_AP_POD)
-            // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) {
-                // weapons
+            if (mtype.hasFlag(MiscType.F_TARGCOMP)) {
                 continue;
             }
             double bv = mtype.getBV(this);
-            // if physical weapon linked to AES, multiply by 1.5
             oEquipmentBV += bv;
-            // need to do this here, a MiscType does not know the location
-            // where it's mounted
-            if (mtype.hasFlag(MiscType.F_HARJEL)) {
-                if (this.getArmor(mounted.getLocation(), false) != IArmorState.ARMOR_DESTROYED) {
-                    oEquipmentBV += this.getArmor(mounted.getLocation());
-                }
-                if (hasRearArmor(mounted.getLocation()) && (this.getArmor(mounted.getLocation(), true) != IArmorState.ARMOR_DESTROYED)) {
-                    oEquipmentBV += this.getArmor(mounted.getLocation(), true);
-                }
-            }
         }
         weaponBV += oEquipmentBV;
 
         // adjust further for speed factor
-        double speedFactor;
-        // but taking into account hit actuators
-        double speedFactorTableLookup = getRunMP();
-        if (speedFactorTableLookup > 25) {
-            speedFactor = Math.pow(1 + (((double) getRunMP() - 5) / 10), 1.2);
-        } else {
-            speedFactor = Math.pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
-        }
+        double speedFactor = Math.pow(1 + (((double) getRunMP()  - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;
 
         // we get extra bv from some stuff
         double xbv = 0.0;
-        // extra BV for semi-guided lrm when TAG in our team
-        //xbv += tagBV;
         // extra from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3

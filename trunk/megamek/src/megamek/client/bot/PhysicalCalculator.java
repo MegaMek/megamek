@@ -59,7 +59,7 @@ public final class PhysicalCalculator {
             } // End no-attack
             entNum = bot.game.getNextEntityNum(entNum);
 
-        } while (entNum != -1 && entNum != first);
+        } while ((entNum != -1) && (entNum != first));
 
         // Didn't find any physical attack.
         return null;
@@ -142,7 +142,7 @@ public final class PhysicalCalculator {
                 // If both arms are capable of punching, check double punch
                 // damage
 
-                if (l_dmg > 0 && r_dmg > 0) {
+                if ((l_dmg > 0) && (r_dmg > 0)) {
 
                     // If chance of breaching armor is minimal set double brush
 
@@ -183,13 +183,13 @@ public final class PhysicalCalculator {
                     test_ranking = 1.0;
                     test_pod = pod_list.next();
                     // If pod is homing and attacker has no ECM
-                    if (test_pod.getType() == INarcPod.HOMING
+                    if ((test_pod.getType() == INarcPod.HOMING)
                             && !entity.hasActiveECM()) {
                         // Pod is +1
                         test_ranking += 1.0;
                     }
                     // If pod is ECM and attacker has C3 link
-                    if (test_pod.getType() == INarcPod.ECM
+                    if ((test_pod.getType() == INarcPod.ECM)
                             && (entity.hasC3() || entity.hasC3i())) {
                         // Pod is +2
                         test_ranking += 2.0;
@@ -249,7 +249,7 @@ public final class PhysicalCalculator {
                     // If both arms are capable of punching, check double punch
                     // damage
 
-                    if (l_dmg > 0 && r_dmg > 0) {
+                    if ((l_dmg > 0) && (r_dmg > 0)) {
 
                         // If chance of breaching armor is minimal set double
                         // brush
@@ -278,24 +278,29 @@ public final class PhysicalCalculator {
         for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
             Entity target = e.nextElement();
 
-            if (target.equals(entity))
+            if (target.equals(entity)) {
                 continue;
-            if (!target.isEnemyOf(entity))
+            }
+            if (!target.isEnemyOf(entity)) {
                 continue;
-            if (target.getPosition() == null)
+            }
+            if (target.getPosition() == null) {
                 continue;
-            if (Compute.effectiveDistance(game, entity, target) > 1)
+            }
+            if (Compute.effectiveDistance(game, entity, target) > 1) {
                 continue;
+            }
 
             PhysicalOption one = getBestPhysicalAttack(entity, target, game);
             if (one != null) {
-                if (best == null || one.expectedDmg > best.expectedDmg) {
+                if ((best == null) || (one.expectedDmg > best.expectedDmg)) {
                     best = one;
                 }
             }
         }
-        if (best == null)
+        if (best == null) {
             best = new PhysicalOption(entity);
+        }
         return best;
     }
 
@@ -311,11 +316,11 @@ public final class PhysicalCalculator {
         boolean targetConvInfantry = false;
 
         // Infantry and tanks can't conduct any of these attacks
-        if (from instanceof Infantry || from instanceof Tank) {
+        if ((from instanceof Infantry) || (from instanceof Tank)) {
             return null;
         }
 
-        if (to instanceof Infantry && !(to instanceof BattleArmor)) {
+        if ((to instanceof Infantry) && !(to instanceof BattleArmor)) {
             targetConvInfantry = true;
         }
 
@@ -370,8 +375,8 @@ public final class PhysicalCalculator {
                 PunchAttackAction.LEFT);
         ToHitData odds_a = PunchAttackAction.toHit(game, from.getId(), to,
                 PunchAttackAction.RIGHT);
-        if (odds.getValue() != TargetRoll.IMPOSSIBLE
-                && odds_a.getValue() != TargetRoll.IMPOSSIBLE) {
+        if ((odds.getValue() != TargetRoll.IMPOSSIBLE)
+                && (odds_a.getValue() != TargetRoll.IMPOSSIBLE)) {
             damage = PunchAttackAction.getDamageFor(from,
                     PunchAttackAction.LEFT, targetConvInfantry);
             dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
@@ -422,11 +427,11 @@ public final class PhysicalCalculator {
             // punch, or kick table
             if (to instanceof Mech) {
                 location_table = ToHitData.HIT_NORMAL;
-                if (to.getElevation() == from.getElevation() - 1
+                if ((to.getElevation() == from.getElevation() - 1)
                         && !to.isProne()) {
                     location_table = ToHitData.HIT_PUNCH;
                 }
-                if (to.getElevation() == from.getElevation() + 1
+                if ((to.getElevation() == from.getElevation() + 1)
                         && !to.isProne()) {
                     location_table = ToHitData.HIT_KICK;
                 }
@@ -490,7 +495,7 @@ public final class PhysicalCalculator {
                     breach = punchThroughMod(to, ToHitData.HIT_NORMAL,
                             ToHitData.SIDE_FRONT, dmg, Math.min(dmg, 5.0));
                     // If breach factor is > 1 and displacement hex has water
-                    if (breach > 1 && water_landing) {
+                    if ((breach > 1) && water_landing) {
                         breach *= 2.0;
                     }
                     // Modify damage to reflect how bad it is for target to be
@@ -521,7 +526,7 @@ public final class PhysicalCalculator {
                 breach = punchThroughMod(to, ToHitData.HIT_NORMAL,
                         ToHitData.SIDE_FRONT, dmg, Math.min(dmg, 5.0));
                 // If breach factor is > 1 and target hex is in water
-                if (breach > 1 && water_landing) {
+                if ((breach > 1) && water_landing) {
                     breach *= 2.0;
                 }
                 // Modify damage to reflect how bad it is for target to be prone
@@ -542,7 +547,7 @@ public final class PhysicalCalculator {
         }
 
         // Conventional infantry in the open suffer double damage.
-        if (to instanceof Infantry && !(to instanceof BattleArmor)) {
+        if ((to instanceof Infantry) && !(to instanceof BattleArmor)) {
             IHex e_hex = game.getBoard().getHex(to.getPosition());
             if (!e_hex.containsTerrain(Terrains.WOODS)
                     && !e_hex.containsTerrain(Terrains.BUILDING)) {
@@ -558,7 +563,7 @@ public final class PhysicalCalculator {
 
     /**
      * Calculates the Falling damage after a successful To-Hit.
-     * 
+     *
      * @param odds
      * @param ent The entity that is falling
      * @return
@@ -582,7 +587,7 @@ public final class PhysicalCalculator {
             return 0.0;
         }
 
-        if (to instanceof Infantry && !(to instanceof BattleArmor)) {
+        if ((to instanceof Infantry) && !(to instanceof BattleArmor)) {
             targetConvInfantry = true;
         }
 
@@ -611,7 +616,7 @@ public final class PhysicalCalculator {
         return dmg;
     }
 
-    /*
+    /**
      * This checks to see if the damage will punch through armor anywhere in the
      * attacked arc. damage argument is divided into hits, using the group
      * argument (ie, group = 5.0 for LRM). Each hit of group damage is checked
@@ -621,7 +626,6 @@ public final class PhysicalCalculator {
      * each pass is made the increase to the multiplier is lowered due to the
      * lower chance of hitting the same location
      */
-
     private static double punchThroughMod(Entity target, int hitTable,
             int hitSide, double damage, double group) {
 
@@ -636,8 +640,9 @@ public final class PhysicalCalculator {
         // single hit)
         double base_multiplier = 0.5;
 
-        if (damage <= 0.0 || group <= 0.0)
+        if ((damage <= 0.0) || (group <= 0.0)) {
             return final_multiplier;
+        }
 
         // If the target is a Mech
         if (target instanceof Mech) {
@@ -699,16 +704,16 @@ public final class PhysicalCalculator {
             }
             if (hitTable == ToHitData.HIT_KICK) {
                 max_index = -1;
-                if (hitSide == ToHitData.SIDE_FRONT
-                        || hitSide == ToHitData.SIDE_REAR
-                        || hitSide == ToHitData.SIDE_RIGHT) {
+                if ((hitSide == ToHitData.SIDE_FRONT)
+                        || (hitSide == ToHitData.SIDE_REAR)
+                        || (hitSide == ToHitData.SIDE_RIGHT)) {
                     max_index++;
                     armor_values[max_index] = target.getArmor(Mech.LOC_RLEG,
                             false);
                 }
-                if (hitSide == ToHitData.SIDE_FRONT
-                        || hitSide == ToHitData.SIDE_REAR
-                        || hitSide == ToHitData.SIDE_LEFT) {
+                if ((hitSide == ToHitData.SIDE_FRONT)
+                        || (hitSide == ToHitData.SIDE_REAR)
+                        || (hitSide == ToHitData.SIDE_LEFT)) {
                     max_index++;
                     armor_values[max_index] = target.getArmor(Mech.LOC_LLEG,
                             false);
@@ -769,7 +774,7 @@ public final class PhysicalCalculator {
             }
         }
         // If the target is conventional infantry
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             // Create a single element vector with total number of troopers
             max_index = 0;
             armor_values[0] = ((Infantry) target).getShootingStrength();

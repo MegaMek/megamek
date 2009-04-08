@@ -11,6 +11,7 @@ v0.33.45-dev (0.34.0 Release Candidate 2) (SVN)
 + Bug: Rogue Bear BA should not be able to make leg or swarm attacks
 + Bug: Fa Shih should have 2 mines for each trooper, at 4 BV each
 + Bug: BA micro bombs should have BV 11
++ Bug: Report with missing subject
 
 v0.33.44 (0.34.0 Release Candidate 1) (2009-04-07, 03:43 UTC+2)
 + RFE: Add tonnage to -export command

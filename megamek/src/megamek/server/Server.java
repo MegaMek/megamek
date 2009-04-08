@@ -13957,6 +13957,7 @@ public class Server implements Runnable {
                 r = new Report(2300);
                 r.add(roll.getValueAsString());
                 r.add(diceRoll);
+                r.subject = entity.getId();
                 if (diceRoll < roll.getValue()) {
                     r.choose(false);
                     vPhaseReport.add(r);

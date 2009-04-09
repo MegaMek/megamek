@@ -533,7 +533,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (ae.getTaserFeedBackRounds() > 0) {
                 toHit.addModifier(1, "Taser feedback");
             }
-        }
+            if (ae.getTaserInterferenceRounds() > 0) {
+                toHit.addModifier(ae.getTaserInterference(), "Taser interference");
+            }
+         }
 
         // Engineer's fire extinguisher has fixed to hit number,
         // Note that coolant trucks make a regular attack.

@@ -1589,6 +1589,7 @@ public class MoveStep implements Serializable {
         }
 
         // anyone who can and does lay mines is legal
+        // TODO: for BA, only allow mine laying at start or end of jumping movement
         if ((type == MovePath.STEP_LAY_MINE) && entity.canLayMine()) {
             movementType = prev.movementType;
         }

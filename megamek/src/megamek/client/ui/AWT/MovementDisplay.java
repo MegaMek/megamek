@@ -1289,12 +1289,8 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             }
         }
 
-        if (md.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) { // pop
-            // up
-            // are
-            // you
-            // sure
-            // dialog
+        if (md.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) {
+            // pop up are you sure dialog
             Mech m = (Mech) ce();
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                     Messages.getString("MovementDisplay.ConfirmMoveRoll", new Object[] { new Integer(m.getMASCTarget()) }), //$NON-NLS-1$
@@ -2871,7 +2867,6 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             }
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_LAY_MINE)) {
-            clearAllMoves();
             int i = chooseMineToLay();
             if (i != -1) {
                 Mounted m = ce().getEquipment(i);
@@ -2881,7 +2876,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                     m.setVibraSetting(vsd.getSetting());
                 }
                 cmd.addStep(MovePath.STEP_LAY_MINE, i);
-                moveTo(cmd);
+                clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_DIG_IN)) {
             cmd.addStep(MovePath.STEP_DIG_IN);

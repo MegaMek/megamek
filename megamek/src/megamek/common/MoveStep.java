@@ -2170,6 +2170,12 @@ public class MoveStep implements Serializable {
         Building bld = game.getBoard().getBuildingAt(dest);
 
         if (bld != null) {
+            // protomechs that are jumping can't change the level inside a building,
+            // they can only jump onto a building or out of it
+            if (src.equals(dest) && (entity instanceof Protomech) &&
+                    (getMovementType() == IEntityMovementType.MOVE_JUMP)) {
+                return false;
+            }
             IHex hex = game.getBoard().getHex(getPosition());
             int maxElevation = 2 + entity.getElevation()
                     + game.getBoard().getHex(entity.getPosition()).surface()

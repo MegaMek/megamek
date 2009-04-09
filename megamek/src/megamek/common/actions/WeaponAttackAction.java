@@ -917,7 +917,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         //check for pl-masc
         if (ae.crew.getOptions().booleanOption("pl_masc")
-                && ae.getMovementMode() == IEntityMovementMode.INF_LEG) {
+                && (ae.getMovementMode() == IEntityMovementMode.INF_LEG)) {
             toHit.addModifier(+1, "PL-MASC");
         }
 
@@ -1541,8 +1541,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         //is this attack originating from underwater
         //TODO: assuming that torpedoes are underwater attacks even if fired from surface vessel, awaiting rules clarification
         //http://www.classicbattletech.com/forums/index.php/topic,48744.0.html
-        boolean underWater = ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET || wtype instanceof SRTWeapon || wtype instanceof LRTWeapon;       
-        
+        boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET) || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
+
         // Change hit table for partial cover, accomodate for partial
         // underwater(legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
@@ -1563,13 +1563,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
             // XXX what to do about GunEmplacements with partial cover?
         }
-        
+
         //change hit table for surface vessels hit by underwater attacks
-        if(underWater && targHex.containsTerrain(Terrains.WATER) && null != te
+        if(underWater && targHex.containsTerrain(Terrains.WATER) && (null != te)
                 && te.isSurfaceNaval()) {
             toHit.setHitTable(ToHitData.HIT_UNDERWATER);
         }
-        
+
         // factor in target side
         if (isAttackerInfantry && (0 == distance)) {
             // Infantry attacks from the same hex are resolved against the
@@ -2450,6 +2450,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Target not in arc.";
         }
 
+        // Protomech can fire MGA only into front arc, TW page 137
+        if (!Compute.isInArc(ae.getPosition(), ae.getFacing(), target.getPosition(), Compute.ARC_FORWARD)
+                && wtype.hasFlag(WeaponType.F_MGA) && (ae instanceof Protomech)) {
+            return "Protomech can fire MGA only into front arc.";
+        }
+
         //for spheroid dropships in atmosphere, nose and aft mounted weapons can only be fired
         //at units two elevations different
         //TODO: awaiting rules clarification on forums
@@ -2480,8 +2486,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         //is the attack originating from underwater
-        boolean underWater = ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET || wtype instanceof SRTWeapon || wtype instanceof LRTWeapon;
-        
+        boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET) || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
+
         // attacker partial cover means no leg weapons
         if (los.isAttackerCover()
                 && ae.locationIsLeg(weapon.getLocation())

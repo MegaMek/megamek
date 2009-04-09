@@ -1834,6 +1834,10 @@ public class Aero
     @Override
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
     throws LocationFullException {
+        // Aft mounted weapons are always rear mounted
+        if (loc == Aero.LOC_AFT) {
+            rearMounted = true;
+        }
         super.addEquipment(mounted,loc, rearMounted);
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,

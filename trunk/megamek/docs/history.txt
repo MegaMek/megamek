@@ -17,6 +17,8 @@ v0.33.45-dev (0.34.0 Release Candidate 2) (SVN)
 + Bug: Building destruction does not affect units in parts of the building that
     are destroyed due to more than half the building hexes being destroyed
 + Bug: ProtoMechs should not be able to fire MGA into non-front arcs
++ Bug: ProtoMechs should not be able to jump into any elevation of a building
+    hex, only onto the top of it
 
 v0.33.44 (0.34.0 Release Candidate 1) (2009-04-07, 03:43 UTC+2)
 + RFE: Add tonnage to -export command

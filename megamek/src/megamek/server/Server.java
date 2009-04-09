@@ -21903,6 +21903,10 @@ public class Server implements Runnable {
 
     } // End private boolean checkForCollapse( Building, Hashtable )
 
+
+    public void collapseBuilding(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords) {
+        collapseBuilding(bldg, positionMap, coords, true);
+    }
     /**
      * Collapse a building hex. Inflict the appropriate amount of damage on all
      * entities in the building. Update all clients.
@@ -21916,8 +21920,11 @@ public class Server implements Runnable {
      *            not be <code>null</code>.
      * @param coords -
      *            The <code>Coords></code> of the building hex that has collapsed
+     * @param collapseAll -
+     *            A <code>boolean</code> indicating wether or not this collapse
+     *            of a hex should be able to collapse the whole building
      */
-    public void collapseBuilding(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords) {
+    public void collapseBuilding(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords, boolean collapseAll) {
         if (!bldg.hasCFIn(coords)) {
             return;
         }
@@ -22044,13 +22051,10 @@ public class Server implements Runnable {
         }
         // if more than half of the hexes are gone, collapse all
         if (bldg.getCollapsedHexCount() > bldg.getOriginalHexCount()/2) {
-            Vector<Coords> vCoords = new Vector<Coords>();
             for (Enumeration<Coords> coordsEnum = bldg.getCoords();coordsEnum.hasMoreElements();) {
                 coords = coordsEnum.nextElement();
-                vCoords.add(coords);
+                collapseBuilding(bldg, game.getPositionMap(), coords, false);
             }
-            send(createCollapseBuildingPacket(vCoords));
-            game.getBoard().collapseBuilding(bldg);
         }
 
     } // End private void collapseBuilding( Building )

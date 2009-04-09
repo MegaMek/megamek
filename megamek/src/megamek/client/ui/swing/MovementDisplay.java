@@ -1265,12 +1265,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
         }
 
-        if (md.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) { // pop
-            // up
-            // are
-            // you
-            // sure
-            // dialog
+        if (md.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) {
+            // pop up are you sure dialog
             Mech m = (Mech) ce();
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
@@ -2047,7 +2043,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     /**
      * Get the unit that the player wants to unload. This method will remove the
      * unit from our local copy of loaded units.
-     * 
+     *
      * @return The <code>Entity</code> that the player wants to unload. This
      *         value will not be <code>null</code>.
      */
@@ -2220,7 +2216,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     /**
      * Get the unit that the player wants to unload. This method will remove the
      * unit from our local copy of loaded units.
-     * 
+     *
      * @return The <code>Entity</code> that the player wants to unload. This
      *         value will not be <code>null</code>.
      */
@@ -2546,7 +2542,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Have the player select a target from the entities at the given coords.
-     * 
+     *
      * @param pos
      *            - the <code>Coords</code> containing targets.
      */
@@ -3058,7 +3054,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (ev.getActionCommand().equals(MOVE_LAY_MINE)) {
-            clearAllMoves();
             int i = chooseMineToLay();
             if (i != -1) {
                 Mounted m = ce().getEquipment(i);
@@ -3069,7 +3064,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     m.setVibraSetting(vsd.getSetting());
                 }
                 cmd.addStep(MovePath.STEP_LAY_MINE, i);
-                moveTo(cmd);
+                clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_DIG_IN)) {
             cmd.addStep(MovePath.STEP_DIG_IN);
@@ -3592,7 +3587,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Retrieve the "Done" button of this object.
-     * 
+     *
      * @return the <code>javax.swing.JButton</code> that activates this object's
      *         "Done" action.
      */

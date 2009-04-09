@@ -71,7 +71,6 @@ import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.DodgeAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.LayMinefieldAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameMapQueryEvent;
@@ -880,8 +879,6 @@ public class Client implements IClientCommandHandler {
                     game.addAction(ea);
                 } else if (charge == 1) {
                     game.addCharge((AttackAction) ea);
-                } else {
-                    game.addLayMinefieldAction((LayMinefieldAction) ea);
                 }
             }
         }

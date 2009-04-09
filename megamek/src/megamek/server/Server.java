@@ -146,7 +146,6 @@ import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.JumpJetAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.LayExplosivesAttackAction;
-import megamek.common.actions.LayMinefieldAction;
 import megamek.common.actions.ProtomechPhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
@@ -755,7 +754,6 @@ public class Server implements Runnable {
                 send(connId, createAttackPacket(game.getChargesVector(), 1));
                 send(connId, createAttackPacket(game.getRamsVector(), 1));
                 send(connId, createAttackPacket(game.getTeleMissileAttacksVector(), 1));
-                send(connId, createAttackPacket(game.getLayMinefieldActionsVector(), 2));
             }
             if (game.phaseHasTurns(game.getPhase())) {
                 send(connId, createTurnVectorPacket());
@@ -4803,9 +4801,7 @@ public class Server implements Runnable {
             }
 
             if (step.getType() == MovePath.STEP_LAY_MINE) {
-                LayMinefieldAction lma = new LayMinefieldAction(entity.getId(), step.getMineToLay());
-                game.addLayMinefieldAction(lma);
-                entity.setLayingMines(true);
+                layMine(entity, step.getMineToLay(), step.getPosition());
                 break;
             }
 
@@ -8530,60 +8526,6 @@ public class Server implements Runnable {
      * weapons fire that happens. Torso twists, for example.
      */
     private void resolveAllButWeaponAttacks() {
-        if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-            // Phase report header
-            addReport(new Report(3000, Report.PUBLIC));
-            Report r;
-            for (Enumeration<LayMinefieldAction> e = game.getLayMinefieldActions(); e.hasMoreElements();) {
-                LayMinefieldAction lma = e.nextElement();
-                Entity ent = game.getEntity(lma.getEntityId());
-                Mounted mine = ent.getEquipment(lma.getMineId());
-                if (!mine.isMissing()) {
-                    switch (mine.getMineType()) {
-                    case Mounted.MINE_CONVENTIONAL:
-                        deliverThunderMinefield(ent.getPosition(), ent.getOwnerId(), 10, ent.getId());
-                        mine.setMissing(true);
-                        r = new Report(3500, Report.PLAYER);
-                        r.subject = ent.getId();
-                        r.addDesc(ent);
-                        r.type = Report.PLAYER;
-                        r.add(ent.getPosition().getBoardNum());
-                        addReport(r);
-                        break;
-                    case Mounted.MINE_VIBRABOMB:
-                        deliverThunderVibraMinefield(ent.getPosition(), ent.getOwnerId(), 10, mine.getVibraSetting(), ent.getId());
-                        mine.setMissing(true);
-                        r = new Report(3505, Report.PLAYER);
-                        r.subject = ent.getId();
-                        r.addDesc(ent);
-                        r.add(ent.getPosition().getBoardNum());
-                        addReport(r);
-                        break;
-                    case Mounted.MINE_ACTIVE:
-                        deliverThunderActiveMinefield(ent.getPosition(), ent.getOwnerId(), 10, ent.getId());
-                        mine.setMissing(true);
-                        r = new Report(3510, Report.PLAYER);
-                        r.subject = ent.getId();
-                        r.addDesc(ent);
-                        r.add(ent.getPosition().getBoardNum());
-                        addReport(r);
-                        break;
-                    case Mounted.MINE_INFERNO:
-                        deliverThunderInfernoMinefield(ent.getPosition(), ent.getOwnerId(), 10, ent.getId());
-                        mine.setMissing(true);
-                        r = new Report(3515, Report.PLAYER);
-                        r.subject = ent.getId();
-                        r.addDesc(ent);
-                        r.add(ent.getPosition().getBoardNum());
-                        addReport(r);
-                        break;
-                    // TODO: command-detonated mines
-                    // case 2:
-                    }
-                }
-            }
-            game.resetLayMinefieldActions();
-        }
 
         Vector<EntityAction> triggerPodActions = new Vector<EntityAction>();
         // loop thru actions and handle everything we expect except attacks
@@ -24349,6 +24291,60 @@ public class Server implements Runnable {
         }
         Report.addNewline(vPhaseReport);
         return vFullReport;
+    }
+
+    /**
+     * let an entity lay a mine
+     * @param entity the <code>Entity</code> that should lay a mine
+     * @param mineId an <code>int</code> pointing to the mine
+     */
+    private void layMine(Entity entity, int mineId, Coords coords) {
+        Mounted mine = entity.getEquipment(mineId);
+        Report r;
+        if (!mine.isMissing()) {
+            switch (mine.getMineType()) {
+            case Mounted.MINE_CONVENTIONAL:
+                deliverThunderMinefield(coords, entity.getOwnerId(), 10, entity.getId());
+                mine.setMissing(true);
+                r = new Report(3500, Report.PLAYER);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.type = Report.PLAYER;
+                r.add(coords.getBoardNum());
+                addReport(r);
+                break;
+            case Mounted.MINE_VIBRABOMB:
+                deliverThunderVibraMinefield(coords, entity.getOwnerId(), 10, mine.getVibraSetting(), entity.getId());
+                mine.setMissing(true);
+                r = new Report(3505, Report.PLAYER);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.add(coords.getBoardNum());
+                addReport(r);
+                break;
+            case Mounted.MINE_ACTIVE:
+                deliverThunderActiveMinefield(coords, entity.getOwnerId(), 10, entity.getId());
+                mine.setMissing(true);
+                r = new Report(3510, Report.PLAYER);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.add(coords.getBoardNum());
+                addReport(r);
+                break;
+            case Mounted.MINE_INFERNO:
+                deliverThunderInfernoMinefield(coords, entity.getOwnerId(), 10, entity.getId());
+                mine.setMissing(true);
+                r = new Report(3515, Report.PLAYER);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.add(coords.getBoardNum());
+                addReport(r);
+                break;
+                // TODO: command-detonated mines
+                // case 2:
+            }
+            entity.setLayingMines(true);
+        }
     }
 
 }

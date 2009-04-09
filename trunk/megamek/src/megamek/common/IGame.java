@@ -24,7 +24,6 @@ import java.util.Vector;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
-import megamek.common.actions.LayMinefieldAction;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.options.GameOptions;
@@ -121,7 +120,7 @@ public interface IGame {
 
     /**
      * Returns all the GameListeners.
-     * 
+     *
      * @return
      */
     public abstract Vector<GameListener> getGameListeners();
@@ -953,25 +952,6 @@ public interface IGame {
      * charges to the client.
      */
     public abstract Vector<AttackAction> getTeleMissileAttacksVector();
-
-    /**
-     * Adds a pending lay minefield action to the list for this phase.
-     */
-    public void addLayMinefieldAction(LayMinefieldAction lma);
-
-    /**
-     * Returns an Enumeration of LayMinefieldActions
-     */
-    public Enumeration<LayMinefieldAction> getLayMinefieldActions();
-
-    /** Resets the pending LayMinefieldActions list. */
-    public void resetLayMinefieldActions();
-
-    /**
-     * Returns the LayMinefieldActions vector. Do not modify. >:[ Used for
-     * sending these actions to the client.
-     */
-    public Vector<LayMinefieldAction> getLayMinefieldActionsVector();
 
     /**
      * Adds a pending PSR to the list for this phase.

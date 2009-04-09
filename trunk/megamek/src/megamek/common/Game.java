@@ -27,7 +27,6 @@ import java.util.Vector;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
-import megamek.common.actions.LayMinefieldAction;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEndEvent;
@@ -109,7 +108,6 @@ public class Game implements Serializable, IGame {
     private Vector<AttackAction> pendingCharges = new Vector<AttackAction>();
     private Vector<AttackAction> pendingRams = new Vector<AttackAction>();
     private Vector<AttackAction> pendingTeleMissileAttacks = new Vector<AttackAction>();
-    private Vector<LayMinefieldAction> pendingLayMinefieldActions = new Vector<LayMinefieldAction>();
     private Vector<PilotingRollData> pilotRolls = new Vector<PilotingRollData>();
     private Vector<PilotingRollData> extremeGravityRolls = new Vector<PilotingRollData>();
     private Vector<PilotingRollData> controlRolls = new Vector<PilotingRollData>();
@@ -708,14 +706,12 @@ public class Game implements Serializable, IGame {
                 resetActions();
                 resetCharges();
                 resetRams();
-                resetLayMinefieldActions();
                 break;
             // TODO Is there better solution to handle charges?
             case PHASE_PHYSICAL_REPORT:
             case PHASE_END:
                 resetCharges();
                 resetRams();
-                resetLayMinefieldActions();
                 break;
 
         }
@@ -1270,7 +1266,6 @@ public class Game implements Serializable, IGame {
         resetAttacks();
         removeMinefields();
         removeArtyAutoHitHexes();
-        resetLayMinefieldActions();
         flares.removeAllElements();
         clearAllReports();
         smokeCloudList.clear();
@@ -2107,34 +2102,6 @@ public class Game implements Serializable, IGame {
      */
     public Vector<AttackAction> getTeleMissileAttacksVector() {
         return pendingTeleMissileAttacks;
-    }
-
-    /**
-     * Adds a pending lay minefield action to the list for this phase.
-     */
-    public void addLayMinefieldAction(LayMinefieldAction lma) {
-        pendingLayMinefieldActions.addElement(lma);
-        processGameEvent(new GameNewActionEvent(this, lma));
-    }
-
-    /**
-     * Returns an Enumeration of LayMinefieldActions
-     */
-    public Enumeration<LayMinefieldAction> getLayMinefieldActions() {
-        return pendingLayMinefieldActions.elements();
-    }
-
-    /** Resets the pending LayMinefieldActions list. */
-    public void resetLayMinefieldActions() {
-        pendingLayMinefieldActions.removeAllElements();
-    }
-
-    /**
-     * Returns the LayMinefieldActions vector. Do not modify. >:[ Used for
-     * sending these actions to the client.
-     */
-    public Vector<LayMinefieldAction> getLayMinefieldActionsVector() {
-        return pendingLayMinefieldActions;
     }
 
     /** Adds a pending PSR to the list for this phase. */

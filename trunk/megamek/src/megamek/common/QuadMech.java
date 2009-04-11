@@ -416,22 +416,29 @@ public class QuadMech extends Mech {
                         } // if
                         return tac(table, side, Mech.LOC_CT, false);
                     case 3:
-                        return new HitData(Mech.LOC_RARM);
+                        return new HitData(Mech.LOC_LLEG);
                     case 4:
-                        return new HitData(Mech.LOC_RLEG);
                     case 5:
+                        return new HitData(Mech.LOC_LARM);
                     case 6:
-                        return new HitData(Mech.LOC_RARM);
+                        return new HitData(Mech.LOC_LT);
                     case 7:
                         return new HitData(Mech.LOC_CT);
                     case 8:
-                        return new HitData(Mech.LOC_LT);
+                        return new HitData(Mech.LOC_RT);
                     case 9:
                     case 10:
+                        return new HitData(Mech.LOC_RARM);
                     case 11:
-                        return new HitData(Mech.LOC_LARM);
+                        return new HitData(Mech.LOC_RLEG);
                     case 12:
-                        return new HitData(Mech.LOC_LLEG);
+                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit"))) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side, Mech.LOC_HEAD, false));
+                            return result;
+                        } // if
+                        return tac(table, side, Mech.LOC_HEAD, false);
                     }
                 } else if (side == ToHitData.SIDE_REAR) {
                     switch (roll) {
@@ -444,23 +451,30 @@ public class QuadMech extends Mech {
                         } // if
                         return tac(table, side, Mech.LOC_CT, true);
                     case 3:
+                        return new HitData(Mech.LOC_LARM, true);
                     case 4:
-                        return new HitData(Mech.LOC_RARM, true);
                     case 5:
+                        return new HitData(Mech.LOC_LLEG, true);
                     case 6:
-                        return new HitData(Mech.LOC_RLEG, true);
+                        return new HitData(Mech.LOC_LT, true);
                     case 7:
                         return new HitData(Mech.LOC_CT, true);
                     case 8:
-                        return new HitData(Mech.LOC_LT, true);
+                        return new HitData(Mech.LOC_RT, true);
                     case 9:
                     case 10:
+                        return new HitData(Mech.LOC_RLEG, true);
                     case 11:
-                        return new HitData(Mech.LOC_LLEG, true);
+                        return new HitData(Mech.LOC_RARM, true);
                     case 12:
-                        return new HitData(Mech.LOC_LARM, true);
+                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit"))) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side, Mech.LOC_HEAD, true));
+                            return result;
+                        } // if
+                        return tac(table, side, Mech.LOC_HEAD, true);
                     }
-
                 } else if (side == ToHitData.SIDE_LEFT) {
                     switch (roll) {
                     case 2:
@@ -472,22 +486,29 @@ public class QuadMech extends Mech {
                         } // if
                         return tac(table, side, Mech.LOC_LT,false);
                     case 3:
+                        return new HitData(Mech.LOC_RARM);
                     case 4:
-                        return new HitData(Mech.LOC_LLEG);
                     case 5:
-                    case 6:
                         return new HitData(Mech.LOC_LARM);
+                    case 6:
+                        return new HitData(Mech.LOC_RT);
                     case 7:
-                        return new HitData(Mech.LOC_LLEG);
+                        return new HitData(Mech.LOC_LT);
                     case 8:
                         return new HitData(Mech.LOC_CT);
                     case 9:
-                        return new HitData(Mech.LOC_RT);
                     case 10:
+                        return new HitData(Mech.LOC_LLEG);
                     case 11:
-                        return new HitData(Mech.LOC_RARM);
-                    case 12:
                         return new HitData(Mech.LOC_RLEG);
+                    case 12:
+                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit"))) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side, Mech.LOC_HEAD, false));
+                            return result;
+                        } // if
+                        return tac(table, side, Mech.LOC_HEAD, false);
                     }
                 } else if (side == ToHitData.SIDE_RIGHT) {
                     switch (roll) {
@@ -500,22 +521,29 @@ public class QuadMech extends Mech {
                         } // if
                         return tac(table, side, Mech.LOC_RT,false);
                     case 3:
-                    case 4:
-                        return new HitData(Mech.LOC_RLEG);
-                    case 5:
-                    case 6:
-                        return new HitData(Mech.LOC_RARM);
-                    case 7:
-                        return new HitData(Mech.LOC_RLEG);
-                    case 8:
-                        return new HitData(Mech.LOC_CT);
-                    case 9:
-                        return new HitData(Mech.LOC_LT);
-                    case 10:
-                    case 11:
                         return new HitData(Mech.LOC_LARM);
-                    case 12:
+                    case 4:
+                    case 5:
+                        return new HitData(Mech.LOC_RARM);
+                    case 6:
+                        return new HitData(Mech.LOC_CT);
+                    case 7:
+                        return new HitData(Mech.LOC_RT);
+                    case 8:
+                        return new HitData(Mech.LOC_LT);
+                    case 9:
+                    case 10:
+                        return new HitData(Mech.LOC_RLEG);
+                    case 11:
                         return new HitData(Mech.LOC_LLEG);
+                    case 12:
+                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit"))) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side, Mech.LOC_HEAD, false));
+                            return result;
+                        } // if
+                        return tac(table, side, Mech.LOC_HEAD, false);
                     }
                 }
             }

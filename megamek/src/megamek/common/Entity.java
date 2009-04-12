@@ -6706,8 +6706,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             break;
         case IOffBoardDirections.WEST:
             setFacing(2);
+            break;
         case IOffBoardDirections.EAST:
             setFacing(4);
+            break;
         }
         offBoardDistance = distance;
         offBoardDirection = direction;

@@ -1275,7 +1275,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             return false;
         }
 
-        if ((boardHeight <= 0) || (boardHeight <= 0)) {
+        if ((boardWidth <= 0) || (boardHeight <= 0)) {
             JOptionPane
                     .showMessageDialog(
                             frame,

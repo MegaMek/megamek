@@ -1212,7 +1212,7 @@ public class RandomMapDialog extends Dialog implements ActionListener,
             return false;
         }
 
-        if ((boardHeight <= 0) || (boardHeight <= 0)) {
+        if ((boardWidth <= 0) || (boardHeight <= 0)) {
             new AlertDialog(frame, INVALID_SETTING, Messages
                     .getString("RandomMapDialog.BoardSizeWarn")).setVisible(true); //$NON-NLS-1$
             return false;

@@ -6425,6 +6425,7 @@ public class Server implements Runnable {
             r = new Report(6695);
             r.indent(3);
             r.add(entity.getDisplayName());
+            r.subject = entity.getId();
             r.newlines = 0;
             vPhaseReport.add(r);
             if(entity instanceof Tank) {
@@ -6457,6 +6458,7 @@ public class Server implements Runnable {
                 r.indent(3);
                 r.add(entity.getDisplayName());
                 r.newlines = 0;
+                r.subject = entity.getId();
                 vPhaseReport.add(r);
                 if(entity instanceof Tank) {
                     Report.addNewline(vPhaseReport);
@@ -19548,6 +19550,7 @@ public class Server implements Runnable {
             Report r = new Report(3007);
             r.indent(2);
             r.add(game.getPlanetaryConditions().cannotStartFire());
+            r.type = Report.PUBLIC;
             vReport.add(r);
             return;
         }
@@ -19555,6 +19558,7 @@ public class Server implements Runnable {
         if(!game.getOptions().booleanOption("tacops_start_fire")) {
             Report r = new Report(3008);
             r.indent(2);
+            r.type = Report.PUBLIC;
             vReport.add(r);
             return;
         }
@@ -19567,6 +19571,7 @@ public class Server implements Runnable {
         Report r = new Report(3005);
         r.indent(2);
         r.add(c.getBoardNum());
+        r.type = Report.PUBLIC;
 
         //type of fire. We use level 2 for infernos
         int type = 1;

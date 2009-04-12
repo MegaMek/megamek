@@ -446,7 +446,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         }
 
         // check settings
-        if (boardHeight <= 0 || boardHeight <= 0 || mapWidth <= 0
+        if (boardWidth <= 0 || boardHeight <= 0 || mapWidth <= 0
                 || mapHeight <= 0) {
             JOptionPane.showMessageDialog(client.frame, Messages
                     .getString("BoardSelectionDialog.MapSizeMustBeGreateter0"),

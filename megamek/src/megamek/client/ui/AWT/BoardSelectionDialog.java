@@ -435,7 +435,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         }
         
         // check settings
-        if (boardHeight <= 0 || boardHeight <= 0 || mapWidth <= 0
+        if (boardWidth <= 0 || boardHeight <= 0 || mapWidth <= 0
                 || mapHeight <= 0) {
             new AlertDialog(
                     client.frame,

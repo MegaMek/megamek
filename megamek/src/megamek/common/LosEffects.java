@@ -255,7 +255,7 @@ public class LosEffects {
 
         // LOS fails if one of the entities is not deployed.
         if ((null == ae.getPosition()) || (null == target.getPosition())
-                || ae.isOffBoard()) {
+                || ae.isOffBoard() || target.isOffBoard()) {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
             los.hasLoS = false;

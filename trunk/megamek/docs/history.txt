@@ -27,6 +27,10 @@ v0.33.45-dev (0.34.0 Release Candidate 2) (SVN)
 + Bug: Aft mounted weapons not correctly identified as being rear mounted for
     Aero BV calculations
 + Bug: Implemented errata for QuadMech advanced hit location table
++ Bug 2755192: NPE when resolving FASCAM artillery delivery
++ Patch 2754033: Switch statements fall through
++ Patch 2754024: Error messages for invalid board size
+
 
 v0.33.44 (0.34.0 Release Candidate 1) (2009-04-07, 03:43 UTC+2)
 + RFE: Add tonnage to -export command

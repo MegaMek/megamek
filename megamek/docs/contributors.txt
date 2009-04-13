@@ -61,6 +61,7 @@
      Chris Stadther <cstadthe@users.sourceforge.net>
      Jay "Taharqa" Lawson <bombaijin@users.sourceforge.net>
      Jörg Walter <j.walter@syntax-k.de>
+     Philip Stein <slickam@users.sourceforge.net>
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

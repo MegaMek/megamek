@@ -364,10 +364,9 @@ public class Compute {
             return true;
         }
 
-        // If we entering or leaving a building, all non-infantry
+        // If we entering a building, all non-infantry
         // need to make a piloting check to avoid damage.
-        if (((srcElevation < srcHex.terrainLevel(Terrains.BLDG_ELEV))
-                || (destElevation < destHex.terrainLevel(Terrains.BLDG_ELEV)))
+        if ((destElevation < destHex.terrainLevel(Terrains.BLDG_ELEV))
                 && !(entity instanceof Infantry)) {
             return true;
         }

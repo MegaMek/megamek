@@ -3865,7 +3865,7 @@ public class Server implements Runnable {
                     addAffectedBldg(bldg, false);
                 } else {
                     // otherwise it collapses immediately on our head
-                    checkForCollapse(bldg, game.getPositionMap(), nextPos);
+                    checkForCollapse(bldg, game.getPositionMap(), nextPos, true);
                 }
 
             } // End handle-building.
@@ -3884,7 +3884,7 @@ public class Server implements Runnable {
             // Check for collapse of any building the entity might be on
             Building roof = game.getBoard().getBuildingAt(nextPos);
             if (roof != null) {
-                if (checkForCollapse(roof, game.getPositionMap(), nextPos)) {
+                if (checkForCollapse(roof, game.getPositionMap(), nextPos, true)) {
                     break; // stop skidding if the building collapsed
                 }
             }
@@ -5501,34 +5501,24 @@ public class Server implements Runnable {
 
                 boolean collapsed = false;
                 // are we passing through a building wall?
-                if ((bldgEntered != null) || (bldgExited != null)) {
+                if ((bldgEntered != null)) {
                     // If we're not leaving a building, just handle the
                     // "entered".
+                    String reason;
                     if (bldgExited == null) {
-                        collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, "entering", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), true);
-                        addAffectedBldg(bldgEntered, collapsed);
+                        reason = "entering";
                     }
-
                     // If we're moving within the same building, just handle
                     // the "within".
                     else if (bldgExited.equals(bldgEntered) && !(entity instanceof Protomech) && !(entity instanceof Infantry)) {
-                        collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, "moving in", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), true);
-                        addAffectedBldg(bldgEntered, collapsed);
+                        reason = "moving in";
                     }
-
                     // If we have different buildings, roll for each.
-                    else if (bldgEntered != null) {
-                        collapsed = passBuildingWall(entity, bldgExited, lastPos, curPos, distance, "exiting", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), false);
-                        addAffectedBldg(bldgExited, collapsed);
-                        collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, "entering", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), true);
-                        addAffectedBldg(bldgEntered, collapsed);
+                    else {
+                        reason = "entering";
                     }
-
-                    // Otherwise, just handle the "exited".
-                    else if (!(entity instanceof Protomech) && !(entity instanceof Infantry)) {
-                        collapsed = passBuildingWall(entity, bldgExited, lastPos, curPos, distance, "exiting", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), false);
-                        addAffectedBldg(bldgExited, collapsed);
-                    }
+                    collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, reason, step.isThisStepBackwards(), step.getParent().getLastStepMovementType());
+                    addAffectedBldg(bldgEntered, collapsed);
                 }
 
                 // stepping on roof, no PSR just check for over weight
@@ -5859,7 +5849,7 @@ public class Server implements Runnable {
             // check for building collapse
             Building bldg = game.getBoard().getBuildingAt(curPos);
             if (bldg != null) {
-                checkForCollapse(bldg, game.getPositionMap(), curPos);
+                checkForCollapse(bldg, game.getPositionMap(), curPos, true);
             }
 
             // check for breaking magma crust
@@ -7955,7 +7945,7 @@ public class Server implements Runnable {
         if (bldg != null) {
             if (destHex.terrainLevel(Terrains.BLDG_ELEV) > oldElev) {
                 // woops, into the building we go
-                passBuildingWall(entity, game.getBoard().getBuildingAt(dest), src, dest, 1, "displaced into", Math.abs(entity.getFacing() - src.direction(dest)) == 3, entity.moved, true);
+                passBuildingWall(entity, game.getBoard().getBuildingAt(dest), src, dest, 1, "displaced into", Math.abs(entity.getFacing() - src.direction(dest)) == 3, entity.moved);
             } else {
                 // woops, we step on the roof
                 checkBuildingCollapseWhileMoving(bldg, entity, dest);
@@ -21529,7 +21519,7 @@ public class Server implements Runnable {
      *            a <code>boolean</code> if the entity is entering or exiting a building
      * @return <code>true</code> if the building collapses due to overloading.
      */
-    private boolean passBuildingWall(Entity entity, Building bldg, Coords lastPos, Coords curPos, int distance, String why, boolean backwards, int overallMoveType, boolean entering) {
+    private boolean passBuildingWall(Entity entity, Building bldg, Coords lastPos, Coords curPos, int distance, String why, boolean backwards, int overallMoveType) {
 
         Report r;
 
@@ -21547,7 +21537,7 @@ public class Server implements Runnable {
             if (0 < doSkillCheckWhileMoving(entity, lastPos, curPos, psr, false)) {
 
                 // Divide the building's current CF by 10, round up.
-                int damage = (int) Math.ceil(bldg.getCurrentCF(entering ? curPos : lastPos) / 10.0);
+                int damage = (int) Math.ceil(bldg.getCurrentCF(curPos) / 10.0);
 
                 // Infantry and Battle armor take different amounts of damage then Meks and vehicles.
                 if (entity instanceof Infantry) {
@@ -21579,14 +21569,14 @@ public class Server implements Runnable {
             }
             // Damage the building. The CF can never drop below 0.
             int toBldg = (int) Math.ceil(entity.getWeight() / 10.0);
-            int curCF = bldg.getCurrentCF(entering ? curPos : lastPos);
+            int curCF = bldg.getCurrentCF(curPos);
             curCF -= Math.min(curCF, toBldg);
-            bldg.setCurrentCF(curCF, entering ? curPos : lastPos);
+            bldg.setCurrentCF(curCF, curPos);
 
             // Apply the correct amount of damage to infantry in the building.
             // ASSUMPTION: We inflict toBldg damage to infantry and
             // not the amount to bring building to 0 CF.
-            damageInfantryIn(bldg, toBldg, entering ? curPos : lastPos);
+            damageInfantryIn(bldg, toBldg, curPos);
         }
         return checkBuildingCollapseWhileMoving(bldg, entity, curPos);
     }
@@ -21612,7 +21602,7 @@ public class Server implements Runnable {
         Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
 
         // Check for collapse of this building due to overloading, and return.
-        boolean rv = checkForCollapse(bldg, positionMap, curPos);
+        boolean rv = checkForCollapse(bldg, positionMap, curPos, true);
 
         // If the entity was not displaced and didnt fall, move it back where it
         // was
@@ -21733,7 +21723,7 @@ public class Server implements Runnable {
      *            the <code>Coords</code> of the building hex to be checked
      * @return <code>true</code> if the building collapsed.
      */
-    public boolean checkForCollapse(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords) {
+    public boolean checkForCollapse(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords, boolean checkBecauseOfDamage) {
 
         // If the input is meaningless, do nothing and throw no exception.
         if ((bldg == null) || (positionMap == null) || positionMap.isEmpty() || (coords == null) || !bldg.isIn(coords) || !bldg.hasCFIn(coords)) {
@@ -21748,6 +21738,10 @@ public class Server implements Runnable {
 
         // look for a collapse.
         boolean collapse = false;
+
+        if (checkBecauseOfDamage && (currentCF <= 0)) {
+            collapse = true;
+        }
 
         // Get the Vector of Entities at these coordinates.
         final Vector<Entity> vector = positionMap.get(coords);
@@ -22103,7 +22097,7 @@ public class Server implements Runnable {
                 Vector<Coords> updateCoords = update.get(bldg);
                 Vector<Coords> coordsToRemove = new Vector<Coords>();
                 for (Coords coords : updateCoords) {
-                    if (checkForCollapse(bldg, positionMap, coords)) {
+                    if (checkForCollapse(bldg, positionMap, coords, false)) {
                         coordsToRemove.add(coords);
                     }
                 }

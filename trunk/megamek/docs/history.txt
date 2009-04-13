@@ -31,6 +31,9 @@ v0.33.45-dev (0.34.0 Release Candidate 2) (SVN)
 + Patch 2754033: Switch statements fall through
 + Patch 2754024: Error messages for invalid board size
 + added the ability to load the source tag for all BLK file loaders
++ Bug: buildings should not be damaged when exiting
++ Bug: buildings should immediately collapse when CF gets lowered to 0 due to
+    units moving into buildings
 
 v0.33.44 (0.34.0 Release Candidate 1) (2009-04-07, 03:43 UTC+2)
 + RFE: Add tonnage to -export command

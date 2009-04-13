@@ -113,7 +113,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     }
 
                     // If it doesn't collapse under its load, mark it for update.
-                    else if (!server.checkForCollapse(bldg, positionMap, coords)) {
+                    else if (!server.checkForCollapse(bldg, positionMap, coords, false)) {
                         bldg.setPhaseCF(cf, coords);
                     }
                 }
@@ -132,7 +132,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                 if(currentHex.containsTerrain(Terrains.FIRE)) {
                     //If the woods has been cleared, or the building
                     // has collapsed put non-inferno fires out.
-                    if (currentHex.terrainLevel(Terrains.FIRE) == 1 && !currentHex.isIgnitable()) {
+                    if ((currentHex.terrainLevel(Terrains.FIRE) == 1) && !currentHex.isIgnitable()) {
                         server.removeFire(currentCoords, "lack of fuel");
                         continue;
                     }
@@ -232,7 +232,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         TargetRoll directroll = new TargetRoll(9, "spread downwind");
         TargetRoll obliqueroll = new TargetRoll(11, "spread 60 degrees to downwind");
 
-        if(windStr > PlanetaryConditions.WI_NONE && windStr < PlanetaryConditions.WI_STRONG_GALE) {
+        if((windStr > PlanetaryConditions.WI_NONE) && (windStr < PlanetaryConditions.WI_STRONG_GALE)) {
             directroll.addModifier(-2, "light/moderate gale");
             obliqueroll.addModifier(-1, "light/moderate gale");
         }
@@ -248,8 +248,8 @@ public class FireProcessor extends DynamicTerrainProcessor {
         // unless a higher hex intervenes
         IHex nextHex = game.getBoard().getHex(nextCoords);
         IHex jumpHex = game.getBoard().getHex(nextCoords.translated(windDir));
-        if (nextHex != null && jumpHex != null && !(nextHex.containsTerrain(Terrains.FIRE))
-                && (curHeight >= nextHex.ceiling() || jumpHex.ceiling() >= nextHex.ceiling())) {
+        if ((nextHex != null) && (jumpHex != null) && !(nextHex.containsTerrain(Terrains.FIRE))
+                && ((curHeight >= nextHex.ceiling()) || (jumpHex.ceiling() >= nextHex.ceiling()))) {
             // we've already gone one step in the wind direction, now go another
             directroll.addModifier(3, "crossing non-burning hex");
             spreadFire(nextCoords.translated(windDir), directroll, curHeight);
@@ -443,20 +443,20 @@ public class FireProcessor extends DynamicTerrainProcessor {
     public boolean driftSmokeDissipate(SmokeCloud cloud, int roll, int windStr) {
 
         //HVAC Heavy smoke dissipation
-        if ( cloud.getDuration() > 0 && cloud.getDuration()-1 == 0 ) {
+        if ( (cloud.getDuration() > 0) && (cloud.getDuration()-1 == 0) ) {
             cloud.setDuration(0);
             cloud.setSmokeLevel(0);
             return true;
         }
 
-        if ( cloud.getDuration() > 0 && cloud.getDuration()-1 > 0 ) {
+        if ( (cloud.getDuration() > 0) && (cloud.getDuration()-1 > 0) ) {
             cloud.setDuration(cloud.getDuration()-1);
         }
 
         // Dissipate in various winds
-        if (roll > 10 || (roll > 9 && windStr == PlanetaryConditions.WI_MOD_GALE)
-                || (roll > 7 && windStr == PlanetaryConditions.WI_STRONG_GALE)
-                || (roll > 5 && windStr == PlanetaryConditions.WI_STORM)) {
+        if ((roll > 10) || ((roll > 9) && (windStr == PlanetaryConditions.WI_MOD_GALE))
+                || ((roll > 7) && (windStr == PlanetaryConditions.WI_STRONG_GALE))
+                || ((roll > 5) && (windStr == PlanetaryConditions.WI_STORM))) {
             return true;
         }
         //All smoke goes bye bye in Tornados
@@ -470,7 +470,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
     public void driftSmokeReport(SmokeCloud cloud, boolean dis) {
         Report r;
         int size = cloud.getSmokeLevel();
-        if (size == 2 && dis == true) {
+        if ((size == 2) && (dis == true)) {
             // heavy smoke drifts and dissipates to light
             for ( int pos = 0; pos < cloud.getCoordsList().size(); pos++ ) {
                 if ( pos == 0 ) {
@@ -485,7 +485,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
             r = new Report(5212, Report.PUBLIC);
             vPhaseReport.addElement(r);
-        } else if (size == 2 && dis == false) {
+        } else if ((size == 2) && (dis == false)) {
             // heavy smoke drifts
             for ( int pos = 0; pos < cloud.getCoordsList().size(); pos++ ) {
                 if ( pos == 0 ) {
@@ -500,7 +500,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
             r = new Report(5213, Report.PUBLIC);
             vPhaseReport.addElement(r);
-        } else if (size == 1 && dis == true) {
+        } else if ((size == 1) && (dis == true)) {
             // light smoke drifts and dissipates
             for ( int pos = 0; pos < cloud.getCoordsList().size(); pos++ ) {
                 if ( pos == 0 ) {
@@ -516,7 +516,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
             r = new Report(5222, Report.PUBLIC);
             vPhaseReport.addElement(r);
 
-        } else if (size == 1 && dis == false) {
+        } else if ((size == 1) && (dis == false)) {
             // light smoke drifts
 
             for ( int pos = 0; pos < cloud.getCoordsList().size(); pos++ ) {

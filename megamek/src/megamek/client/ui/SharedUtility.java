@@ -220,38 +220,15 @@ public class SharedUtility {
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
             if ((buildingMove > 0) && !(entity instanceof Protomech)) {
 
-                // Get the building being exited.
-                Building bldgExited = null;
-                if ((buildingMove & 1) == 1) {
-                    bldgExited = client.game.getBoard().getBuildingAt(lastPos);
-                }
-
                 // Get the building being entered.
                 Building bldgEntered = null;
                 if ((buildingMove & 2) == 2) {
                     bldgEntered = client.game.getBoard().getBuildingAt(curPos);
                 }
 
-                if ((bldgExited != null) && (bldgEntered != null) && !bldgExited.equals(bldgEntered)) {
-                    // Exiting one building and entering another.
-                    // Brave, aren't we?
-                    rollTarget = entity.rollMovementInBuilding(bldgExited, distance, "exiting", overallMoveType);
-                    nagReport.append(SharedUtility.addNag(rollTarget));
+                if (bldgEntered != null) {
                     rollTarget = entity.rollMovementInBuilding(bldgEntered, distance, "entering", overallMoveType);
                     nagReport.append(SharedUtility.addNag(rollTarget));
-                } else {
-                    Building bldg;
-                    if (bldgEntered == null) {
-                        // Exiting a building.
-                        bldg = bldgExited;
-                    } else {
-                        // Entering or moving within a building.
-                        bldg = bldgEntered;
-                    }
-                    if (bldg != null) {
-                        rollTarget = entity.rollMovementInBuilding(bldg, distance, "", overallMoveType);
-                        nagReport.append(SharedUtility.addNag(rollTarget));
-                    }
                 }
             }
 

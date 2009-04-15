@@ -34,6 +34,7 @@ v0.33.45-dev (0.34.0 Release Candidate 2) (SVN)
 + Bug: buildings should not be damaged when exiting
 + Bug: buildings should immediately collapse when CF gets lowered to 0 due to
     units moving into buildings
++ Bug: Endo steel crits on listed as Tech All
 
 v0.33.44 (0.34.0 Release Candidate 1) (2009-04-07, 03:43 UTC+2)
 + RFE: Add tonnage to -export command

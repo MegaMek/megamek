@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -54,6 +55,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.filechooser.FileFilter;
 
 import megamek.client.Client;
@@ -290,6 +294,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     private void initializeFrame() {
         frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
+        frame.getRootPane().setDoubleBuffered(false);
         menuBar.setGame(client.game);
         frame.setJMenuBar(menuBar);
         Rectangle virtualBounds = new Rectangle();
@@ -988,7 +993,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Pops up a dialog box showing an alert
      */
     public void doAlertDialog(String title, String message) {
-        JOptionPane.showMessageDialog(frame, message, title, JOptionPane.ERROR_MESSAGE);
+        JTextArea textArea = new JTextArea(10,65);
+        textArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            textArea.setText(message);
+        JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
     }
 
     /**

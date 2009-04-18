@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -21,6 +21,7 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -35,7 +36,7 @@ import megamek.client.ui.AWT.widget.AdvancedLabel;
  */
 public class AlertDialog extends Dialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -132834772501650316L;
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
@@ -57,8 +58,11 @@ public class AlertDialog extends Dialog implements ActionListener {
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(labMessage, c);
-        add(labMessage);
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.add(labMessage);
+        scrollPane.setSize(400, 300);
+        gridbag.setConstraints(scrollPane, c);
+        add(scrollPane);
 
         c.weightx = 1.0;
         c.weighty = 1.0;
@@ -69,6 +73,7 @@ public class AlertDialog extends Dialog implements ActionListener {
         add(butOkay);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -109,8 +114,11 @@ public class AlertDialog extends Dialog implements ActionListener {
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(labMessage, c);
-        add(labMessage);
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.add(labMessage);
+        scrollPane.setSize(400, 300);
+        gridbag.setConstraints(scrollPane, c);
+        add(scrollPane);
 
         c.weightx = 1.0;
         c.weighty = 1.0;
@@ -121,6 +129,7 @@ public class AlertDialog extends Dialog implements ActionListener {
         add(butOkay);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -146,6 +155,6 @@ public class AlertDialog extends Dialog implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        this.setVisible(false);
+        setVisible(false);
     }
 }

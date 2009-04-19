@@ -1449,8 +1449,8 @@ public class Compute {
             }
         }
 
-        boolean isVTOL = ((entityTarget != null) && (hex != null)) && (entityTarget.absHeight() >= 2);
-
+        boolean isAboveWoods = ((entityTarget != null) && (hex != null)) && (entityTarget.absHeight() >= 2);
+        boolean isAboveSmoke = ((entityTarget != null) && (hex != null)) && (entityTarget.absHeight() >= 3);
         ToHitData toHit = new ToHitData();
 
         // if we have in-building combat, it's a +1
@@ -1473,23 +1473,8 @@ public class Compute {
         } else if (woodsLevel == 3) {
             woodsText = "target in ultra heavy " + woodsText;
         }
-        if (hex.terrainLevel(Terrains.SMOKE) == 1) {
-            toHit.addModifier(1, "target in light smoke");
-        } else if (hex.terrainLevel(Terrains.SMOKE) > 1) {
-            if (eistatus > 0) {
-                toHit.addModifier(1, "target in heavy smoke");
-            } else {
-                toHit.addModifier(2, "target in heavy smoke");
-            }
-        }
-        if (hex.terrainLevel(Terrains.GEYSER) == 2) {
-            if (eistatus > 0) {
-                toHit.addModifier(1, "target in erupting geyser");
-            } else {
-                toHit.addModifier(2, "target in erupting geyser");
-            }
-        }
-        if (!game.getOptions().booleanOption("tacops_woods_cover") && !isVTOL && !((t.getTargetType() == Targetable.TYPE_HEX_CLEAR) || (t.getTargetType() == Targetable.TYPE_HEX_IGNITE) || (t.getTargetType() == Targetable.TYPE_HEX_BOMB) || (t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) || (t.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER))) {
+
+        if (!game.getOptions().booleanOption("tacops_woods_cover") && !isAboveWoods && !((t.getTargetType() == Targetable.TYPE_HEX_CLEAR) || (t.getTargetType() == Targetable.TYPE_HEX_IGNITE) || (t.getTargetType() == Targetable.TYPE_HEX_BOMB) || (t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) || (t.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER))) {
             if ((woodsLevel == 1) && (eistatus != 2)) {
                 toHit.addModifier(1, woodsText);
             } else if (woodsLevel > 1) {
@@ -1498,6 +1483,25 @@ public class Compute {
                 } else {
                     toHit.addModifier(woodsLevel, woodsText);
                 }
+            }
+        }
+        if (!isAboveSmoke) {
+            if (hex.terrainLevel(Terrains.SMOKE) == 1) {
+                toHit.addModifier(1, "target in light smoke");
+            } else if (hex.terrainLevel(Terrains.SMOKE) > 1) {
+                if (eistatus > 0) {
+                    toHit.addModifier(1, "target in heavy smoke");
+                } else {
+                    toHit.addModifier(2, "target in heavy smoke");
+                }
+            }
+
+        }
+        if (hex.terrainLevel(Terrains.GEYSER) == 2) {
+            if (eistatus > 0) {
+                toHit.addModifier(1, "target in erupting geyser");
+            } else {
+                toHit.addModifier(2, "target in erupting geyser");
             }
         }
 

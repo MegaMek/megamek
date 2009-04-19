@@ -4,7 +4,8 @@ v0.33.46-dev (0.34.0 Release Candidate 3) (SVN)
 + Bug: make camo choice dialog correct size
 + Mechfiles update
 + Bug: VTOLs above smoke acting as if in smoke
-+ Bug: Hovers falling into water when breaking ice 
++ Bug: Hovers falling into water when breaking ice
++ Bug: one-shot ammo counting as explosive for Aero BV
 
 v0.33.45 (0.34.0 Release Candidate 2) (2008-04-16, 14:34 UTC+2)
 + Bug: AMS and BAP should count for offensive Aero BV

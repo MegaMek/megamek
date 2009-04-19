@@ -1034,6 +1034,11 @@ public class Aero
                 continue;
             }
 
+            // don't count oneshot ammo
+            if (loc == LOC_NONE) {
+                continue;
+            }
+
             if (isClan()) {
                 //clan aeros automatically have CASE
                 continue;

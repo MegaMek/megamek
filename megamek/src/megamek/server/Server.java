@@ -23100,7 +23100,7 @@ public class Server implements Runnable {
                     return false;
                 }
 
-                if ((entity instanceof Tank) && (entity.getPosition() != null) && ((entity.getMovementMode() == IEntityMovementMode.TRACKED) || (entity.getMovementMode() == IEntityMovementMode.WHEELED)) && (game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0) && (entity.getElevation() < 0)) {
+                if ((entity instanceof Tank) && (entity.getPosition() != null) && ((entity.getMovementMode() == IEntityMovementMode.TRACKED) || (entity.getMovementMode() == IEntityMovementMode.WHEELED) || ((entity.getMovementMode() == IEntityMovementMode.HOVER) && entity.isImmobile())) && (game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0) && (entity.getElevation() < 0)) {
                     return true;
                 }
                 return false;

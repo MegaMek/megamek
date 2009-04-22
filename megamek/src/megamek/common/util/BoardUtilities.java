@@ -277,16 +277,16 @@ public class BoardUtilities {
 
         /* Add special effects */
         if (Compute.randomInt(100) < mapSettings.getProbFlood()) {
-            PostProcessFlood(nb, mapSettings.getFxMod());
+            postProcessFlood(nb, mapSettings.getFxMod());
         }
         if (Compute.randomInt(100) < mapSettings.getProbDrought()) {
-            PostProcessDrought(nb, mapSettings.getFxMod());
+            postProcessDrought(nb, mapSettings.getFxMod());
         }
         if (Compute.randomInt(100) < mapSettings.getProbFreeze()) {
-            PostProcessDeepFreeze(nb, mapSettings.getFxMod());
+            postProcessDeepFreeze(nb, mapSettings.getFxMod());
         }
         if (Compute.randomInt(100) < mapSettings.getProbForestFire()) {
-            PostProcessForestFire(nb, mapSettings.getFxMod());
+            postProcessForestFire(nb, mapSettings.getFxMod());
         }
 
         /* Add the road */
@@ -667,7 +667,7 @@ public class BoardUtilities {
      * Flood negative hex levels Shoreline / salt marshes effect Works best with
      * more elevation
      */
-    protected static void PostProcessFlood(IHex[] hexSet, int modifier) {
+    protected static void postProcessFlood(IHex[] hexSet, int modifier) {
         int n;
         IHex field;
         ITerrainFactory f = Terrains.getTerrainFactory();
@@ -690,7 +690,7 @@ public class BoardUtilities {
     /**
      * Converts water hexes to ice hexes. Works best with snow&ice theme.
      */
-    protected static void PostProcessDeepFreeze(IHex[] hexSet, int modifier) {
+    protected static void postProcessDeepFreeze(IHex[] hexSet, int modifier) {
         int n;
         IHex field;
         ITerrainFactory f = Terrains.getTerrainFactory();
@@ -725,7 +725,7 @@ public class BoardUtilities {
     /**
      * Burning woods, with chance to be burnt down already
      */
-    protected static void PostProcessForestFire(IHex[] hexSet, int modifier) {
+    protected static void postProcessForestFire(IHex[] hexSet, int modifier) {
         int n;
         IHex field;
         int level, newlevel;
@@ -756,7 +756,7 @@ public class BoardUtilities {
      * Dries up all bodies of water by 1-3 levels. dried up water becomes swamp
      * then rough
      */
-    protected static void PostProcessDrought(IHex[] hexSet, int modifier) {
+    protected static void postProcessDrought(IHex[] hexSet, int modifier) {
         int n;
         IHex field;
         int level, newlevel;

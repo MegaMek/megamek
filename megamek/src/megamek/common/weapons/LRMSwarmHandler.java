@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -24,6 +24,7 @@ import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -35,7 +36,7 @@ import megamek.server.Server;
 public class LRMSwarmHandler extends LRMHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7962873403915683220L;
     int swarmMissilesNowLeft = 0;
@@ -54,11 +55,12 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
+    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        if (!this.cares(phase)) {
+        if (!cares(phase)) {
             return true;
         }
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
@@ -66,8 +68,9 @@ public class LRMSwarmHandler extends LRMHandler {
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
 
-        if (entityTarget != null)
+        if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
+        }
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -87,18 +90,18 @@ public class LRMSwarmHandler extends LRMHandler {
             r.add(target.getDisplayName(), true);
         }
         vPhaseReport.addElement(r);
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;
@@ -140,13 +143,13 @@ public class LRMSwarmHandler extends LRMHandler {
 
         //Set Margin of Success/Failure.
         toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && entityTarget != null;
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
-        } 
+        }
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
@@ -191,7 +194,7 @@ public class LRMSwarmHandler extends LRMHandler {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
-        if (targetInBuilding && bldg != null) {
+        if (targetInBuilding && (bldg != null)) {
             bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
         }
 
@@ -206,8 +209,8 @@ public class LRMSwarmHandler extends LRMHandler {
         while (hits > 0) {
             int nDamage;
             // targeting a hex for igniting
-            if (target.getTargetType() == Targetable.TYPE_HEX_IGNITE
-                    || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE) {
+            if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                    || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
                 handleIgnitionDamage(vPhaseReport, bldg, bSalvo, hits);
                 return false;
             }
@@ -272,7 +275,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
      *      boolean, megamek.common.Building, java.util.Vector)
      */
@@ -324,34 +327,38 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
                 return ((BattleArmor) ae).getShootingStrength();
             }
             return 1;
         }
-        // no AMS for Swarms
+
         int missilesHit;
         int nMissilesModifier = 0;
+
+        // add AMS mods
+        nMissilesModifier += getAMSHitsMod(vPhaseReport);
 
         if (bGlancing) {
             nMissilesModifier -= 4;
         }
-        if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
+        if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
             nMissilesModifier -= 2;
         }
 
         if ( bDirect ){
             nMissilesModifier += (toHit.getMoS()/3)*2;
         }
-        
+
         if(game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
@@ -359,16 +366,17 @@ public class LRMSwarmHandler extends LRMHandler {
         int swarmMissilesLeft = waa.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles
         if (swarmMissilesLeft > 0) {
-            if (allShotsHit())
+            if (allShotsHit()) {
                 missilesHit = swarmMissilesLeft;
-            else {
+            } else {
                 int swarmsForHitTable = 5;
-                if (swarmMissilesLeft > 5 && swarmMissilesLeft <= 10)
+                if ((swarmMissilesLeft > 5) && (swarmMissilesLeft <= 10)) {
                     swarmsForHitTable = 10;
-                else if (swarmMissilesLeft > 10 && swarmMissilesLeft <= 15)
+                } else if ((swarmMissilesLeft > 10) && (swarmMissilesLeft <= 15)) {
                     swarmsForHitTable = 15;
-                else if (swarmMissilesLeft > 15 && swarmMissilesLeft <= 20)
+                } else if ((swarmMissilesLeft > 15) && (swarmMissilesLeft <= 20)) {
                     swarmsForHitTable = 20;
+                }
                 missilesHit = Compute.missilesHit(swarmsForHitTable,
                         nMissilesModifier, bGlancing);
                 if (missilesHit > swarmMissilesLeft) {

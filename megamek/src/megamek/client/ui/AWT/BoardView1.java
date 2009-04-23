@@ -2535,7 +2535,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         isTipPossible = false;
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
-            if ((backSize != null) && (disp.isHit(point, backSize))) {
+            Point dispPoint = point;
+            dispPoint.x = point.x - offset.x;
+            dispPoint.y = point.y - offset.y;
+            if ((backSize != null) && (disp.isHit(dispPoint, backSize))) {
                 return;
             }
         }

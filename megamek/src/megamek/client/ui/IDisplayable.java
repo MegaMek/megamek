@@ -42,8 +42,9 @@ public interface IDisplayable {
     /**
      * Draw this IDisplayable
      * @param graph -           the <code>Graphics</code> to draw on
-     * @param drawRelativeTo -  the <code>Point</code> relative to which this
-     *                          should be drawn
+     * @param drawRelativeTo -  the top left <code>Point</code>
+     *                          of the viewport, relative to the Graphics
+     *                          this needs to be drawn on
      * @param size -            the size of the viewport in
      *                          which this should be draw
      */

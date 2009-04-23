@@ -493,15 +493,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         // draw all the "displayables"
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
-
-            // displaybles are drawn on the main graphics, and their draw functions
-            // expect a dimension that is the top right corner of the viewport,
-            // relative to the whole board
-            // BoardView1's bounds have x and y that are negative when scrolling
-            // down or to the right, so we need to invert them for proper drawing
-            disp.draw(g, new Point((int) Math.min(boardSize.getWidth(),
-                    scrollpane.getViewport().getSize().getWidth()
-                            - getBounds().getX()), (int) -getBounds().getY()), scrollpane.getViewport().getSize());
+            double width = Math.min(boardSize.getWidth(), scrollpane.getViewport().getSize().getWidth());
+            double height = Math.min(boardSize.getHeight(), scrollpane.getViewport().getSize().getHeight());
+            Dimension drawDimension = new Dimension();
+            drawDimension.setSize(width, height);
+            disp.draw(g,
+                    new Point((int)Math.min(boardSize.getWidth(), -getBounds().getX()),
+                            (int)Math.min(boardSize.getHeight(),-getBounds().getY())),
+                            drawDimension);
         }
     }
 
@@ -1733,9 +1732,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         }
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
-            if (disp.isHit(point, new Dimension((int) Math.min(boardSize.getWidth(),
-                    scrollpane.getViewport().getSize().getWidth()
-                    - getBounds().getX()), (int) -getBounds().getY()))) {
+            double width = Math.min(boardSize.getWidth(), scrollpane.getViewport().getSize().getWidth());
+            double height = Math.min(boardSize.getHeight(), scrollpane.getViewport().getSize().getHeight());
+            Dimension dispDimension = new Dimension();
+            dispDimension.setSize(width, height);
+            // we need to adjust the point, because it should be against the displayable dimension
+            Point dispPoint = point;
+            dispPoint.setLocation(point.x + getBounds().x, point.y + getBounds().y);
+            if (disp.isHit(dispPoint, dispDimension)) {
                 return;
             }
         }

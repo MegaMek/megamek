@@ -30,18 +30,19 @@ public abstract class MissileWeapon extends AmmoWeapon {
      */
     public MissileWeapon() {
         super();
-        this.damage = DAMAGE_MISSILE;
-        this.flags |= F_MISSILE;
+        damage = DAMAGE_MISSILE;
+        flags |= F_MISSILE | F_MECH_WEAPON | F_AERO_WEAPON | F_VTOL_WEAPON | F_TANK_WEAPON;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return new MissileWeaponHandler(toHit, waa, game, server);
     }
 

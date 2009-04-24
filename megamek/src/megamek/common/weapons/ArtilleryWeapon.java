@@ -35,36 +35,32 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
 
     public ArtilleryWeapon() {
         super();
-        this.flags |= F_ARTILLERY | F_SPLITABLE;
-        this.damage = DAMAGE_ARTILLERY;
-        this.atClass = CLASS_ARTILLERY;
+        flags |= F_ARTILLERY | F_SPLITABLE | F_MECH_WEAPON | F_AERO_WEAPON | F_VTOL_WEAPON | F_TANK_WEAPON;
+        damage = DAMAGE_ARTILLERY;
+        atClass = CLASS_ARTILLERY;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
+     * megamek.server.Server)
      */
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_HOMING) {
             if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-                return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game,
-                        server);
+                return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game, server);
             } else {
-                return new ArtilleryWeaponIndirectHomingHandler(toHit, waa,
-                        game, server);
+                return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game, server);
             }
         } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-            return new ArtilleryWeaponDirectFireHandler(toHit, waa, game,
-                    server);
+            return new ArtilleryWeaponDirectFireHandler(toHit, waa, game, server);
         } else {
-            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game,
-                    server);
+            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, server);
         }
     }
 }

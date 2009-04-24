@@ -33,19 +33,20 @@ public abstract class EnergyWeapon extends Weapon {
     private static final long serialVersionUID = 3128205629152612073L;
 
     public EnergyWeapon() {
-        this.flags |= F_ENERGY;
+        flags |= F_ENERGY | F_MECH_WEAPON | F_AERO_WEAPON | F_VTOL_WEAPON | F_TANK_WEAPON;
 
     }
-    
+
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return new EnergyWeaponHandler(toHit, waa, game, server);
     }
 }

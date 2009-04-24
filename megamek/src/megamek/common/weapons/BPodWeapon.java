@@ -28,7 +28,6 @@ import megamek.server.Server;
  */
 public abstract class BPodWeapon extends AmmoWeapon {
 
-
     /**
      *
      */
@@ -50,7 +49,7 @@ public abstract class BPodWeapon extends AmmoWeapon {
         extremeRange = 0;
         tonnage = 1.0f;
         criticals = 1;
-        flags |=  F_ONESHOT | F_B_POD | F_BALLISTIC;
+        flags |= F_ONESHOT | F_B_POD | F_BALLISTIC | F_MECH_WEAPON | F_AERO_WEAPON | F_VTOL_WEAPON | F_TANK_WEAPON;
         explosive = true;
         bv = 2;
         cost = 6000;
@@ -59,13 +58,13 @@ public abstract class BPodWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return new BPodHandler(toHit, waa, game, server);
     }
 }

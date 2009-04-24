@@ -34,23 +34,23 @@ public class CLAMS extends AmmoWeapon {
      */
     public CLAMS() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
-        this.name = "AMS";
-        this.setInternalName("CLAntiMissileSystem");
-        this.addLookupName("Clan Anti-Missile Sys");
-        this.addLookupName("Clan AMS");
-        this.heat = 1;
-        this.rackSize = 2;
-        this.damage = 2; // # of d6 of missiles affected
-        this.ammoType = AmmoType.T_AMS;
-        this.tonnage = 0.5f;
-        this.criticals = 1;
-        this.bv = 32;
-        this.flags |= F_AUTO_TARGET | F_AMS | F_BALLISTIC;
-        this.setModes(new String[] { "On", "Off" });
-        this.setInstantModeSwitch(false);
-        this.cost = 100000;
-        
-        this.atClass = CLASS_POINT_DEFENSE;
+        techLevel = TechConstants.T_CLAN_TW;
+        name = "AMS";
+        setInternalName("CLAntiMissileSystem");
+        addLookupName("Clan Anti-Missile Sys");
+        addLookupName("Clan AMS");
+        heat = 1;
+        rackSize = 2;
+        damage = 2; // # of d6 of missiles affected
+        ammoType = AmmoType.T_AMS;
+        tonnage = 0.5f;
+        criticals = 1;
+        bv = 32;
+        flags |= F_AUTO_TARGET | F_AMS | F_BALLISTIC | F_MECH_WEAPON | F_AERO_WEAPON | F_VTOL_WEAPON | F_TANK_WEAPON;
+        setModes(new String[] { "On", "Off" });
+        setInstantModeSwitch(false);
+        cost = 100000;
+
+        atClass = CLASS_POINT_DEFENSE;
     }
 }

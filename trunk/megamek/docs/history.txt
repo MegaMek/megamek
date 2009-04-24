@@ -9,6 +9,7 @@ v0.33.46 (0.34.0 Release Candidate 3) (2008-04-22, 22:14 UTC+2)
 + Bug 2774986: Hovercraft Not Sinking on Water
 + Bug 2777807: AMS and Swarm Missiles
 + Added BA Flag to more BA only equipment
++ Added Flags to delininate weapons and equipment for unit types
 
 v0.33.45 (0.34.0 Release Candidate 2) (2008-04-16, 14:34 UTC+2)
 + Bug: AMS and BAP should count for offensive Aero BV

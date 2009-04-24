@@ -95,6 +95,11 @@ public class MiscType extends EquipmentType {
     public static final long F_MASS = 1L << 58; // TODO: Implement me, so far
     // only construction data
     public static final long F_BA_EQUIPMENT = 1L << 59;
+    public static final long F_MECH_EQUIPMENT = 1L << 60;
+    public static final long F_AERO_EQUIPMENT = 1L << 61;
+    public static final long F_PROTO_EQUIPMENT = 1L << 62;
+    public static final long F_TANK_EQUIPMENT = 1L << 63;
+    public static final long F_VTOL_EQUIPMENT = 1L << 64;
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -652,7 +657,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 1.0f;
         misc.criticals = 1;
-        misc.flags |= F_HEAT_SINK;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_HEAT_SINK;
         misc.bv = 0;
 
         return misc;
@@ -667,7 +672,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("JumpJet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
-        misc.flags |= F_JUMP_JET;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_JUMP_JET;
         misc.subType |= S_STANDARD;
         misc.bv = 0;
 
@@ -683,7 +688,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ImprovedJump Jet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
-        misc.flags |= F_JUMP_JET;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_JUMP_JET;
         misc.subType |= S_IMPROVED;
         misc.bv = 0;
 
@@ -700,7 +705,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLImprovedJump Jet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
-        misc.flags |= F_JUMP_JET;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_JUMP_JET;
         misc.subType |= S_IMPROVED;
         misc.bv = 0;
 
@@ -715,7 +720,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = 0;
-        misc.flags |= F_TRACTOR_MODIFICATION;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_TRACTOR_MODIFICATION;
         misc.bv = 0;
 
         return misc;
@@ -728,7 +733,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_TREE_CLUB | S_CLUB;
         misc.bv = 0;
 
@@ -742,7 +747,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_CLUB;
         misc.bv = 0;
 
@@ -756,7 +761,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_CLUB;
         misc.bv = 0;
 
@@ -772,7 +777,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_HATCHET;
         misc.bv = BV_VARIABLE;
 
@@ -791,7 +796,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ISDouble Heat Sink");
         misc.tonnage = 1.0f;
         misc.criticals = 3;
-        misc.flags |= F_DOUBLE_HEAT_SINK;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_DOUBLE_HEAT_SINK;
         misc.bv = 0;
 
         return misc;
@@ -807,7 +812,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLDouble Heat Sink");
         misc.tonnage = 1.0f;
         misc.criticals = 2;
-        misc.flags |= F_DOUBLE_HEAT_SINK;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_DOUBLE_HEAT_SINK;
         misc.bv = 0;
 
         return misc;
@@ -823,7 +828,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = false;
-        misc.flags |= F_CASE;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CASE;
         misc.cost = 50000;
         misc.bv = 0;
 
@@ -840,7 +845,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.0f;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_CASE;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CASE;
         misc.cost = 50000;
         misc.bv = 0;
 
@@ -857,7 +862,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.0f;
         misc.criticals = 1;
         misc.hittable = false;
-        misc.flags |= F_CASEII;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CASEII;
         misc.cost = 175000;
         misc.bv = 0;
 
@@ -874,7 +879,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = false;
-        misc.flags |= F_CASEII;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CASEII;
         misc.cost = 175000;
         misc.bv = 0;
 
@@ -891,7 +896,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_MASC;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_MASC;
         misc.bv = 0;
 
         String[] saModes = { "Armed", "Off" };
@@ -911,7 +916,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.bv = 0;
-        misc.flags |= F_MASC;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_MASC;
         String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
 
@@ -929,7 +934,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_MASC;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_MASC;
         misc.subType |= S_SUPERCHARGER;
         misc.bv = 0;
 
@@ -949,7 +954,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_MASC;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_MASC;
         misc.subType |= S_SUPERCHARGER;
         misc.bv = 0;
 
@@ -971,7 +976,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 6;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_TSM;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_TSM;
         misc.bv = 0;
 
         return misc;
@@ -989,7 +994,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 12;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_INDUSTRIAL_TSM;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_INDUSTRIAL_TSM;
         misc.bv = 0;
 
         return misc;
@@ -1005,7 +1010,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 250000;
-        misc.flags |= F_C3S;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_C3S;
         misc.bv = 0;
 
         return misc;
@@ -1022,7 +1027,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2.5f;
         misc.criticals = 2;
         misc.cost = 750000;
-        misc.flags |= F_C3I;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_C3I;
         misc.bv = 0;
 
         return misc;
@@ -1038,7 +1043,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.0f;
         misc.criticals = 1;
         misc.cost = 100000;
-        misc.flags |= F_ARTEMIS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ARTEMIS;
 
         return misc;
     }
@@ -1053,7 +1058,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.0f;
         misc.cost = 100000;
         misc.criticals = 1;
-        misc.flags |= F_ARTEMIS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ARTEMIS;
 
         return misc;
     }
@@ -1069,7 +1074,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.0f;
         misc.criticals = 1;
         misc.cost = 125000;
-        misc.flags |= F_APOLLO;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_APOLLO;
 
         return misc;
     }
@@ -1086,7 +1091,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.cost = 200000;
-        misc.flags |= F_ECM;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ECM;
         misc.bv = 61;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
@@ -1104,7 +1109,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 200000;
-        misc.flags |= F_ECM;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ECM;
         misc.bv = 61;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
@@ -1124,7 +1129,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticals = 2;
         misc.cost = 750000;
-        misc.flags |= F_ECM | F_ANGEL_ECM;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
@@ -1144,7 +1149,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.cost = 1000000;
-        misc.flags |= F_ECM | F_ANGEL_ECM;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
@@ -1165,7 +1170,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.cost = 750000;
-        misc.flags |= F_ECM | F_ANGEL_ECM;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
@@ -1185,7 +1190,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 500000;
-        misc.flags |= F_ECM | F_BAP;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ECM | F_BAP;
         misc.bv = 73;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
@@ -1202,7 +1207,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_SWORD;
         misc.bv = BV_VARIABLE;
 
@@ -1218,7 +1223,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = 120000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_CHAIN_WHIP;
         misc.bv = BV_VARIABLE;
 
@@ -1234,7 +1239,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_RETRACTABLE_BLADE;
         misc.bv = BV_VARIABLE;
         misc.setInstantModeSwitch(true);
@@ -1253,7 +1258,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticals = 1;
         misc.cost = 75000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_SPOT_WELDER;
         misc.bv = 5;
 
@@ -1270,7 +1275,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_MACE_THB;
         misc.bv = BV_VARIABLE;
 
@@ -1286,7 +1291,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = 130000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_MACE;
         misc.bv = BV_VARIABLE;
 
@@ -1302,7 +1307,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticals = 6;
         misc.cost = 50000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_BACKHOE;
         misc.bv = 8;
 
@@ -1318,7 +1323,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3;
         misc.criticals = 3;
         misc.cost = 50000;
-        misc.flags |= F_LIFTHOIST;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_LIFTHOIST;
         misc.bv = 0;
 
         return misc;
@@ -1333,7 +1338,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 7;
         misc.criticals = 7;
         misc.cost = 100000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_DUAL_SAW;
         misc.bv = 9;
 
@@ -1350,7 +1355,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 10;
         misc.criticals = 8;
         misc.cost = 100000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_PILE_DRIVER;
         misc.bv = 5;
 
@@ -1366,7 +1371,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticals = 5;
         misc.cost = 100000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_CHAINSAW;
         misc.bv = 7;
 
@@ -1382,7 +1387,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticals = 5;
         misc.cost = 100000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_ROCK_CUTTER;
         misc.bv = 6;
 
@@ -1397,7 +1402,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.cost = 0;
-        misc.flags |= F_EJECTION_SEAT;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_EJECTION_SEAT;
         misc.bv = 0;
 
         return misc;
@@ -1411,7 +1416,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = 0;
-        misc.flags |= F_ARMORED_CHASSIS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ARMORED_CHASSIS;
         misc.bv = 0;
 
         return misc;
@@ -1426,7 +1431,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 10000;
-        misc.flags |= F_COWL;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COWL;
         misc.bv = 10;
 
         return misc;
@@ -1453,7 +1458,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.bv = BV_VARIABLE;
-        misc.flags |= F_TARGCOMP;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_TARGCOMP;
         // see note above
         misc.spreadable = true;
         String[] modes = { "Normal", "Aimed shot" };
@@ -1473,7 +1478,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.bv = BV_VARIABLE;
-        misc.flags |= F_TARGCOMP;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_TARGCOMP;
         // see note above
         misc.spreadable = true;
         String[] modes = { "Normal", "Aimed shot" };
@@ -1574,7 +1579,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("Mine");
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.flags |= F_MINE | F_BA_EQUIPMENT;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_MINE | F_BA_EQUIPMENT;
         misc.bv = 4;
 
         return misc;
@@ -1588,7 +1593,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_TOOLS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_TOOLS;
         misc.subType |= S_MINESWEEPER;
         misc.bv = 0;
 
@@ -1604,7 +1609,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_TOOLS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_TOOLS;
         misc.subType |= S_MINESWEEPER;
         misc.toHitModifier = 1;
         misc.bv = 0;
@@ -1681,7 +1686,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_PARAFOIL;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_PARAFOIL;
         misc.bv = 0;
 
         return misc;
@@ -1697,7 +1702,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 12;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_STEALTH;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_STEALTH;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
@@ -1716,7 +1721,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.spreadable = true;
-        misc.flags |= F_NULLSIG;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_NULLSIG;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
@@ -1739,7 +1744,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
-        misc.flags |= F_VOIDSIG;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_VOIDSIG;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
@@ -1759,7 +1764,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
-        misc.flags |= F_CHAMELEON_SHIELD | F_BA_EQUIPMENT;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CHAMELEON_SHIELD | F_BA_EQUIPMENT;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
@@ -1777,7 +1782,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_FERRO_FIBROUS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_FERRO_FIBROUS;
         misc.bv = 0;
 
         return misc;
@@ -1793,7 +1798,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 16;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_FERRO_FIBROUS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_FERRO_FIBROUS;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
@@ -1811,7 +1816,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_FERRO_FIBROUS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_FERRO_FIBROUS;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
 
@@ -1828,7 +1833,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 21;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_FERRO_FIBROUS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_FERRO_FIBROUS;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
 
@@ -1899,7 +1904,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_ENDO_STEEL;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ENDO_STEEL;
         misc.bv = 0;
 
         return misc;
@@ -1916,7 +1921,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 16;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_ENDO_STEEL;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ENDO_STEEL;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
@@ -1948,7 +1953,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -1966,7 +1971,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticals = 2;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -1984,7 +1989,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3;
         misc.criticals = 3;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2002,7 +2007,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 4;
         misc.criticals = 4;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2020,7 +2025,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticals = 5;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2038,7 +2043,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 6;
         misc.criticals = 6;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2056,7 +2061,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 7;
         misc.criticals = 7;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2074,7 +2079,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 8;
         misc.criticals = 8;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2092,7 +2097,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 9;
         misc.criticals = 9;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2110,7 +2115,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 10;
         misc.criticals = 10;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2128,7 +2133,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 11;
         misc.criticals = 11;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2146,7 +2151,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 12;
         misc.criticals = 12;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2164,7 +2169,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 13;
         misc.criticals = 13;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2182,7 +2187,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 14;
         misc.criticals = 14;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2200,7 +2205,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 15;
         misc.criticals = 15;
         misc.bv = 0;
-        misc.flags |= F_COMMUNICATIONS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COMMUNICATIONS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -2246,7 +2251,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLLaser Heat Sink");
         misc.tonnage = 1.0f;
         misc.criticals = 2;
-        misc.flags |= F_DOUBLE_HEAT_SINK | F_LASER_HEAT_SINK;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_DOUBLE_HEAT_SINK | F_LASER_HEAT_SINK;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_CLAN_ADVANCED;
 
@@ -2265,7 +2270,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS1 Compact Heat Sink");
         misc.tonnage = 1.5f;
         misc.criticals = 1;
-        misc.flags |= F_HEAT_SINK;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_HEAT_SINK;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
@@ -2280,7 +2285,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS2 Compact Heat Sinks");
         misc.tonnage = 3.0f;
         misc.criticals = 1;
-        misc.flags |= F_DOUBLE_HEAT_SINK;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_DOUBLE_HEAT_SINK;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
@@ -2296,7 +2301,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("BAP (2 Hex)");
         misc.tonnage = 0.0f;
         misc.cost = 200000;
-        misc.flags |= F_BAP | F_BA_EQUIPMENT;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_BAP | F_BA_EQUIPMENT;
 
         return misc;
     }
@@ -2310,7 +2315,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("BAP (3 Hex)");
         misc.tonnage = 0.0f;
         misc.cost = 200000;
-        misc.flags |= F_BAP | F_BA_EQUIPMENT;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_BAP | F_BA_EQUIPMENT;
 
         return misc;
     }
@@ -2327,7 +2332,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.cost = 200000;
-        misc.flags |= F_BAP;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_BAP;
         misc.bv = 10;
 
         return misc;
@@ -2345,7 +2350,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticals = 3;
         misc.cost = 500000;
-        misc.flags |= F_BAP;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_BAP;
         misc.bv = 25;
 
         return misc;
@@ -2363,7 +2368,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticals = 2;
         misc.cost = 750000;
-        misc.flags |= F_BAP;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_BAP;
         misc.bv = 25;
 
         return misc;
@@ -2380,7 +2385,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 200000;
-        misc.flags |= F_BAP;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_BAP;
         misc.bv = 12;
 
         return misc;
@@ -2398,7 +2403,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.cost = 150000;
-        misc.flags |= F_BAP;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_BAP;
         misc.bv = 7;
 
         return misc;
@@ -2413,7 +2418,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.15f;
         misc.criticals = 1;
         misc.cost = 50000;
-        misc.flags |= F_BAP | F_BA_EQUIPMENT;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_BAP | F_BA_EQUIPMENT;
         misc.bv = 0;
 
         return misc;
@@ -2428,7 +2433,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.25f;
         misc.criticals = 1;
         misc.cost = 50000;
-        misc.flags |= F_BAP | F_BA_EQUIPMENT;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_BAP | F_BA_EQUIPMENT;
         misc.bv = 0;
 
         return misc;
@@ -2446,7 +2451,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.cost = 1500;
-        misc.flags |= F_AP_POD;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_AP_POD;
         misc.bv = 1;
 
         return misc;
@@ -2463,7 +2468,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.cost = 1500;
-        misc.flags |= F_AP_POD;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_AP_POD;
         misc.bv = 1;
 
         return misc;
@@ -2477,7 +2482,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("BASearchlight");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
-        misc.flags |= F_SEARCHLIGHT;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_SEARCHLIGHT;
         misc.bv = 0;
         misc.cost = 2000;
 
@@ -2492,7 +2497,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.0f;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_VIBROCLAW;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_VIBROCLAW;
         misc.bv = 1;
 
         return misc;
@@ -2506,7 +2511,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = 0;
-        misc.flags |= F_VACUUM_PROTECTION;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_VACUUM_PROTECTION;
         misc.bv = 0;
 
         return misc;
@@ -2521,7 +2526,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 8;
         misc.cost = 0;
         misc.spreadable = true;
-        misc.flags |= F_ENVIRONMENTAL_SEALING;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ENVIRONMENTAL_SEALING;
         misc.bv = 0;
 
         return misc;
@@ -2536,7 +2541,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.bv = 0;
-        misc.flags |= F_JUMP_BOOSTER;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_JUMP_BOOSTER;
         // see note above
         misc.spreadable = true;
 
@@ -2552,7 +2557,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_TOOLS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_TOOLS;
         misc.subType |= S_DEMOLITION_CHARGE;
         misc.toHitModifier = 1;
         misc.bv = 0;
@@ -2569,7 +2574,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_TOOLS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_TOOLS;
         misc.subType |= S_VIBROSHOVEL;
         misc.toHitModifier = 1;
         misc.bv = 0;
@@ -2586,7 +2591,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_TOOLS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_TOOLS;
         misc.subType |= S_BRIDGE_KIT;
         misc.toHitModifier = 1;
         misc.bv = 0;
@@ -2604,7 +2609,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticals = 3;
         misc.cost = 50000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_SHIELD_SMALL;
         misc.bv = 50;
         misc.setInstantModeSwitch(true);
@@ -2632,7 +2637,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_HAND_WEAPON;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_HAND_WEAPON;
         misc.subType |= S_CLAW;
         misc.bv = BV_VARIABLE;
 
@@ -2649,7 +2654,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 4;
         misc.criticals = 5;
         misc.cost = 100000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_SHIELD_MEDIUM;
         misc.bv = 135;
         misc.setInstantModeSwitch(true);
@@ -2672,7 +2677,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 6;
         misc.criticals = 7;
         misc.cost = 300000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_SHIELD_LARGE;
         misc.bv = 263;
         misc.setInstantModeSwitch(true);
@@ -2694,7 +2699,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 120000;
-        misc.flags |= F_HARJEL;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_HARJEL;
         // can't enter BV here, because it's location dependendent,
         // and MiscType has no idea where a certain equipment may be
         // mounted
@@ -2712,7 +2717,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 120000;
-        misc.flags |= F_HARJEL;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_HARJEL;
         // can't enter BV here, because it's location dependendent,
         // and MiscType has no idea where a certain equipment may be
         // mounted
@@ -2731,7 +2736,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_ACTUATOR_ENHANCEMENT_SYSTEM;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ACTUATOR_ENHANCEMENT_SYSTEM;
         misc.bv = BV_VARIABLE;
 
         return misc;
@@ -2747,7 +2752,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_ACTUATOR_ENHANCEMENT_SYSTEM;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_ACTUATOR_ENHANCEMENT_SYSTEM;
         misc.bv = BV_VARIABLE;
 
         return misc;
@@ -2762,7 +2767,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Underwater Maneuvering Unit");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
-        misc.flags |= F_UMU;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_UMU;
         misc.bv = 0;
 
         return misc;
@@ -2777,7 +2782,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan Underwater Maneuvering Unit");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
-        misc.flags |= F_UMU;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_UMU;
         misc.bv = 0;
 
         return misc;
@@ -2794,7 +2799,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_LANCE;
         misc.bv = BV_VARIABLE;
 
@@ -2811,7 +2816,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticals = 4;
         misc.cost = 110000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_FLAIL;
         misc.bv = 11;
 
@@ -2828,7 +2833,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 4;
         misc.criticals = 5;
         misc.cost = 110000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_WRECKING_BALL;
         misc.bv = 8;
 
@@ -2845,7 +2850,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 4;
         misc.criticals = 5;
         misc.cost = 110000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_WRECKING_BALL;
         misc.bv = 8;
 
@@ -2862,7 +2867,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3;
         misc.criticals = 1;
         misc.cost = 150000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_VIBRO_SMALL;
         misc.bv = 12;
         misc.setInstantModeSwitch(true);
@@ -2882,7 +2887,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticals = 2;
         misc.cost = 400000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_VIBRO_MEDIUM;
         misc.bv = 17;
         misc.setInstantModeSwitch(true);
@@ -2902,7 +2907,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 7;
         misc.criticals = 4;
         misc.cost = 750000;
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_VIBRO_LARGE;
         misc.bv = 24;
         misc.setInstantModeSwitch(true);
@@ -2922,7 +2927,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 4;
         misc.criticals = 2;
         misc.cost = 100000;// From the Ask the Writer Forum
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_BUZZSAW;
         misc.bv = 67;// From the Ask the Writer Forum
 
@@ -2939,7 +2944,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 4;
         misc.criticals = 2;
         misc.cost = 100000;// From the Ask the Writer Forum
-        misc.flags |= F_CLUB;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_CLUB;
         misc.subType |= S_BUZZSAW;
         misc.bv = 6;// From the Ask the Writer Forum
 
@@ -2955,7 +2960,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 9;
         misc.criticals = 2;
         misc.cost = 90000;
-        misc.flags |= F_COOLANT_SYSTEM;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_COOLANT_SYSTEM;
         misc.bv = 15;
 
         return misc;
@@ -2970,7 +2975,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.cost = 90000;
-        misc.flags |= F_SPIKES;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_SPIKES;
         misc.bv = 3;
 
         return misc;
@@ -2985,7 +2990,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
         misc.cost = 90000;
-        misc.flags |= F_TALON;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_TALON;
         misc.bv = 3;
 
         return misc;
@@ -3000,7 +3005,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.cost = 100000;
-        misc.flags |= F_TOOLS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_TOOLS;
         misc.subType = S_HEAVY_ARMOR;
         misc.bv = 15;
 
@@ -3039,7 +3044,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 150000;
         misc.setModes(new String[] { "Off", "Charge" });
-        misc.flags |= F_PPC_CAPACITOR;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_PPC_CAPACITOR;
         misc.setInstantModeSwitch(false);
         misc.explosive = true;
         // misc.bv = 88;
@@ -3058,7 +3063,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_REFLECTIVE;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_REFLECTIVE;
         misc.bv = 0;
 
         return misc;
@@ -3074,7 +3079,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = CRITICALS_VARIABLE;
         misc.spreadable = true;
-        misc.flags |= F_REACTIVE;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_REACTIVE;
         misc.bv = 0;
 
         return misc;
@@ -3090,7 +3095,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 100000;
-        misc.flags |= F_MODULAR_ARMOR;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_MODULAR_ARMOR;
         misc.bv = BV_VARIABLE;
         misc.damageTaken = 0;
         misc.baseDamageAbsorptionRate = 10;
@@ -3109,7 +3114,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 100000;
-        misc.flags |= F_MODULAR_ARMOR;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_MODULAR_ARMOR;
         misc.bv = BV_VARIABLE;
         misc.damageTaken = 0;
         misc.baseDamageAbsorptionRate = 10;
@@ -3128,7 +3133,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.bv = 0;
         misc.cost = 50000;
-        misc.flags |= F_SALVAGE_ARM;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_SALVAGE_ARM;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
 
         return misc;
@@ -3144,7 +3149,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.bv = 0;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_TRACKS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_TRACKS;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
 
         return misc;
@@ -3160,7 +3165,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.bv = 9;
         misc.cost = 4000;
-        misc.flags |= F_MASS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_MASS;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
@@ -3176,7 +3181,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.bv = 9;
         misc.cost = 4000;
-        misc.flags |= F_MASS;
+        misc.flags |= F_MECH_EQUIPMENT | F_AERO_EQUIPMENT | F_VTOL_EQUIPMENT | F_TANK_EQUIPMENT | F_MASS;
         misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
 
         return misc;

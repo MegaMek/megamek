@@ -91,9 +91,9 @@ public class MiscType extends EquipmentType {
     public static final long F_EJECTION_SEAT = 1L << 55;
     public static final long F_SALVAGE_ARM = 1L << 56;
     public static final long F_TRACKS = 1L << 57; // TODO: Implement me, so far
-                                                  // only construction data
+    // only construction data
     public static final long F_MASS = 1L << 58; // TODO: Implement me, so far
-                                                // only construction data
+    // only construction data
     public static final long F_BA_EQUIPMENT = 1L << 59;
 
     // Secondary Flags for Physical Weapons
@@ -1491,7 +1491,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_BOARDING_CLAW;
+        misc.flags |= F_BOARDING_CLAW | F_BA_EQUIPMENT;
         misc.bv = 0;
 
         return misc;
@@ -1505,7 +1505,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_ASSAULT_CLAW;
+        misc.flags |= F_ASSAULT_CLAW | F_BA_EQUIPMENT;
         misc.bv = 3;
 
         return misc;
@@ -1519,7 +1519,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_FIRE_RESISTANT;
+        misc.flags |= F_FIRE_RESISTANT | F_BA_EQUIPMENT;
         misc.bv = 0;
 
         return misc;
@@ -1533,7 +1533,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_STEALTH;
+        misc.flags |= F_STEALTH | F_BA_EQUIPMENT;
         misc.bv = 0;
 
         return misc;
@@ -1547,7 +1547,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_STEALTH;
+        misc.flags |= F_STEALTH | F_BA_EQUIPMENT;
         misc.bv = 0;
 
         return misc;
@@ -1561,7 +1561,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_STEALTH;
+        misc.flags |= F_STEALTH | F_BA_EQUIPMENT;
         misc.bv = 0;
 
         return misc;
@@ -1574,7 +1574,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("Mine");
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.flags |= F_MINE;
+        misc.flags |= F_MINE | F_BA_EQUIPMENT;
         misc.bv = 4;
 
         return misc;
@@ -1620,7 +1620,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_MAGNETIC_CLAMP;
+        misc.flags |= F_MAGNETIC_CLAMP | F_BA_EQUIPMENT;
         String[] saModes = { "On", "Off" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(true);
@@ -1653,7 +1653,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_STEALTH | F_VISUAL_CAMO;
+        misc.flags |= F_STEALTH | F_VISUAL_CAMO | F_BA_EQUIPMENT;
         misc.bv = 0;
 
         return misc;
@@ -1667,7 +1667,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags |= F_STEALTH | F_VISUAL_CAMO;
+        misc.flags |= F_STEALTH | F_VISUAL_CAMO | F_BA_EQUIPMENT;
         misc.bv = 0;
 
         return misc;
@@ -1759,7 +1759,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
-        misc.flags |= F_CHAMELEON_SHIELD;
+        misc.flags |= F_CHAMELEON_SHIELD | F_BA_EQUIPMENT;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 

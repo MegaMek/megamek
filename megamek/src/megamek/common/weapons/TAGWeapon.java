@@ -34,7 +34,7 @@ public abstract class TAGWeapon extends Weapon {
 
     public TAGWeapon() {
         super();
-        flags |= F_TAG | F_NO_FIRES | F_MECH_WEAPON | F_AERO_WEAPON |  F_TANK_WEAPON;
+        flags |= F_TAG | F_NO_FIRES ; flags1 |= F_MECH_WEAPON | F_AERO_WEAPON |  F_TANK_WEAPON;
         ammoType = AmmoType.T_NA;
         setModes(new String[] { "1-shot", "2-shot", "3-shot", "4-shot" });
     }

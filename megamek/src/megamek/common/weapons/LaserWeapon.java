@@ -30,7 +30,7 @@ public abstract class LaserWeapon extends EnergyWeapon {
 
     public LaserWeapon() {
         super();
-        flags |= F_LASER | F_DIRECT_FIRE | F_MECH_WEAPON | F_AERO_WEAPON |  F_TANK_WEAPON;
+        flags |= F_LASER | F_DIRECT_FIRE ; flags1 |= F_MECH_WEAPON | F_AERO_WEAPON |  F_TANK_WEAPON;
         ammoType = AmmoType.T_NA;
 
         atClass = CLASS_LASER;

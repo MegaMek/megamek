@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.46 (0.34.0 Release Candidate 3) (2008-04-22, 22:14 UTC+2)
+v0.34.0 STABLE (2008-04-27, 21:46 UTC+2)
 + Bug: make camo choice dialog correct size
 + Mechfiles update
 + Bug: VTOLs above smoke acting as if in smoke

@@ -99,7 +99,7 @@ public class Engine implements Serializable {
      * returns true if the engine has the flag set, false otherwise
      *
      * @param flag the flag to check for.
-     * @return true iff the flag is set.
+     * @return true if the flag is set.
      */
     public boolean hasFlag(int flag) {
         if ((engineFlags & flag) != 0) {
@@ -204,7 +204,7 @@ public class Engine implements Serializable {
     }
 
     /**
-     * Returns the weight of the enginein tons, rounded to the next highest half
+     * Returns the weight of the engine in tons, rounded to the next highest half
      * ton.
      *
      * @return the weight of the engine.
@@ -320,7 +320,7 @@ public class Engine implements Serializable {
     }
 
     /**
-     * This returns a non-localized name of the engine, it's mnostly used to
+     * This returns a non-localized name of the engine, it's mostly used to
      * generate files.
      */
     // Don't localize the marked strings below since they are used in mech
@@ -512,13 +512,12 @@ public class Engine implements Serializable {
                 cost = 15000;
                 break;
             case FUEL_CELL:
-                //TODO: FIXME
-                cost = 1;
+                cost = 3500;
                 break;
             case FISSION:
-                //TODO: FIXME
-                cost = 1;
-                break;        }
+                cost = 7500;
+                break;
+            }
         if (hasFlag(LARGE_ENGINE)) {
             cost *= 2;
         }

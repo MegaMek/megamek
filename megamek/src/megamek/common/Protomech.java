@@ -828,6 +828,10 @@ public class Protomech extends Entity implements Serializable {
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                 }
+                if ((mLinker.getType() instanceof MiscType) 
+                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                    dBV *= 1.3;
+                }
             }
 
             if (mounted.getLinkedBy() != null) {

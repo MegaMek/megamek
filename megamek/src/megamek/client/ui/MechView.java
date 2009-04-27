@@ -511,7 +511,11 @@ public class MechView {
 )
                     || (name.indexOf("Endo Steel") != -1 //$NON-NLS-1$
 )
-                    || (name.indexOf("Ferro-Fibrous") != -1)) { //$NON-NLS-1$
+                    || (name.indexOf("Ferro-Fibrous") != -1) //$NON-NLS-1$
+            
+                    || (name.indexOf("Ferro-Lamellor") != -1)) { //$NON-NLS-1$
+                
+                    
                 // These items are displayed elsewhere, so skip them here.
                 continue;
             }

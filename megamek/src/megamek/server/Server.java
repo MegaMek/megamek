@@ -10880,7 +10880,7 @@ public class Server implements Runnable {
 
         // On a roll of 10+ a lance hitting a mech/Vehicle can cause 1 point of
         // internal damage
-        if (((MiscType) caa.getClub().getType()).hasSubType(MiscType.S_LANCE) && (te.getArmor(hit) > 0) && (te.getArmorType() != EquipmentType.T_ARMOR_HARDENED)) {
+        if (((MiscType) caa.getClub().getType()).hasSubType(MiscType.S_LANCE) && (te.getArmor(hit) > 0) && (te.getArmorType() != EquipmentType.T_ARMOR_HARDENED) && (te.getArmorType() != EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
             roll = Compute.d6(2);
             // Pierce checking report
             r = new Report(4021);
@@ -14472,7 +14472,7 @@ public class Server implements Runnable {
         // one hit and shouldn't cause
         // 2 hits to the pilot.
         boolean isHeadHit = (te instanceof Mech) && (((Mech) te).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) && (hit.getLocation() == Mech.LOC_HEAD) && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS);
-
+        
         // booleans to indicate criticals for AT2
         boolean critSI = false;
         boolean critThresh = false;
@@ -14540,13 +14540,18 @@ public class Server implements Runnable {
         IHex te_hex = null;
 
         boolean hardenedArmor = false;
+        boolean ferroLamellorArmor = false;
         boolean reflectiveArmor = false;
         boolean reactiveArmor = false;
 
         if ( ((te instanceof Mech) || (te instanceof Tank)) && (te.getArmorType() == EquipmentType.T_ARMOR_HARDENED)) {
             hardenedArmor = true;
         }
-
+        
+        if ( ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero)) && (te.getArmorType() == EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
+            ferroLamellorArmor = true;
+        }
+        
         if (((te instanceof Mech) || (te instanceof Tank)) && (te.getArmorType() == EquipmentType.T_ARMOR_REFLECTIVE)) {
             reflectiveArmor = true;
         }
@@ -14555,8 +14560,16 @@ public class Server implements Runnable {
             reactiveArmor = true;
         }
 
-        int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) && !hardenedArmor ? 1 : 0;
-        int specCrits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) && hardenedArmor ? 1 : 0;
+        int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) && ( !hardenedArmor && !ferroLamellorArmor ) ? 1 : 0;
+        
+        int specCrits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) && (hardenedArmor || ferroLamellorArmor) ? 1 : 0;
+        
+        //if our mech has Hardened or Ferro-Lamellor armor, ignore extra crits from AP effects.
+        if ((hardenedArmor || ferroLamellorArmor ) && (((hit.getGeneralDamageType() & HitData.DAMAGE_ARMOR_PIERCING_MISSILE) == HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
+                                                    || ((hit.getGeneralDamageType() & HitData.DAMAGE_ARMOR_PIERCING) == HitData.DAMAGE_ARMOR_PIERCING))) {
+                                                        specCrits -= 1;
+                                                    }
+        
         HitData nextHit = null;
 
         // Some "hits" on a Protomech are actually misses.
@@ -15041,7 +15054,20 @@ public class Server implements Runnable {
                         // extra 0 or 1 point of damage to men
                         tmpDamageHold += damage;
                     }
-
+                // If the target has Ferro-Lamellor armor, we need to adjust damage. (4/5ths rounded down), 
+                // Also check to eliminate crit chances for damage reduced to 0
+                } else if (ferroLamellorArmor && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                    tmpDamageHold = damage;
+                    damage = (int) Math.floor(( ((double) damage) * 4) / 5);
+                    if ( damage <= 0 ) {
+                        crits = 0;
+                    }
+                    r = new Report(6073);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    r.add(damage);
+                    vDesc.addElement(r);
                 } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
                     tmpDamageHold = damage;
                     damage *= 2;
@@ -15662,6 +15688,10 @@ public class Server implements Runnable {
             // resolve Aero crits
             if (te instanceof Aero) {
                 checkAeroCrits(vDesc, (Aero)te, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
+            }
+            //check 0 damage to Ferro-Lamellor armor
+            if( (damage <= 0) && ferroLamellorArmor ) {
+                isHeadHit = false;
             }
 
             if (isHeadHit && !te.crew.getOptions().booleanOption("dermal_armor")) {

@@ -233,14 +233,14 @@ public class MechFileParser {
         for (Mounted m : ent.getMisc()) {
 
             // Link Artemis IV fire-control systems to their missle racks.
-            if (m.getType().hasFlag(MiscType.F_ARTEMIS)
+            if ((m.getType().hasFlag(MiscType.F_ARTEMIS) || (m.getType().hasFlag(MiscType.F_ARTEMIS_V)))
                     && m.getLinked() == null) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
-                    // only srm and lrm are valid for artemis
+                    // only srm, lrm and mml are valid for artemis
                     if (wtype.getAmmoType() != AmmoType.T_LRM
                             && wtype.getAmmoType() != AmmoType.T_MML
                             && wtype.getAmmoType() != AmmoType.T_SRM) {

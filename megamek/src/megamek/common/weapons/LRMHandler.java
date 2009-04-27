@@ -164,6 +164,26 @@ public class LRMHandler extends MissileWeaponHandler {
             } else {
                 nMissilesModifier += 2;
             }
+        } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS_V))
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+            if (bECMAffected) {
+                // ECM prevents bonus
+                r = new Report(3330);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else if (bMekStealthActive) {
+                // stealth prevents bonus
+                r = new Report(3335);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else {
+                nMissilesModifier += 3;
+            }
         } else if (atype.getAmmoType() == AmmoType.T_ATM) {
             if (bECMAffected) {
                 // ECM prevents bonus

@@ -1,6 +1,10 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.35.0-dev (SVN)
++ Patch 2604166: Battlemech Partial Wing
++ Patch 2590162: Ferro-Lamellar and Artemis V
++ Patch 2782015, Bug 2777743: Enhanced ER PPC BV
++ Patch 2781982: Added Engine Base Costs
 
 v0.34.0 STABLE (2008-04-27, 21:46 UTC+2)
 + Bug: make camo choice dialog correct size

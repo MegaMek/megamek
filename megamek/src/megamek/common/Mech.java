@@ -1122,10 +1122,118 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
 
+        //apply Partial Wing bonus if we have the ability to jump
+        if ( jump > 0 ) {
+            for (Mounted mount : getMisc()) {
+                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) ) {
+                    jump += getPartialWingJumpBonus(mount);
+                    break;
+                }
+            }
+        }
+
         if (gravity) {
             return applyGravityEffectsOnMP(jump);
         }
         return jump;
+    }
+
+    /**
+     * Gives the bonus to Jump MP conferred by a mech partial wing.
+     *
+     * @param mount The mounted location of the Wing
+     * @return The Jump MP bonus conferred by the wing
+     */
+    public int getPartialWingJumpBonus(Mounted mount) {
+        int bonus = 0;
+        if ( game != null ) {
+            if( (getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) ||
+                    (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) ) {
+                switch( game.getPlanetaryConditions().getAtmosphere() ) {
+                case PlanetaryConditions.ATMO_VACUUM:
+                    bonus = 0;
+                    break;
+                case PlanetaryConditions.ATMO_TRACE:
+                    bonus = 0;
+                    break;
+                case PlanetaryConditions.ATMO_THIN:
+                    bonus = 1;
+                    break;
+                case PlanetaryConditions.ATMO_STANDARD:
+                    bonus = 2;
+                    break;
+                case PlanetaryConditions.ATMO_HIGH:
+                    bonus = 2;break;
+
+                case PlanetaryConditions.ATMO_VHIGH:
+                    bonus = 3;
+                    break;
+                default:
+                    bonus = 2;
+                }
+            }
+            if( (getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) ||
+                    (getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) ) {
+                switch( game.getPlanetaryConditions().getAtmosphere() ) {
+                case PlanetaryConditions.ATMO_VACUUM:
+                    bonus = 0;
+                    break;
+                case PlanetaryConditions.ATMO_TRACE:
+                    bonus = 0;
+                    break;
+                case PlanetaryConditions.ATMO_THIN:
+                    bonus = 0;
+                    break;
+                case PlanetaryConditions.ATMO_STANDARD:
+                    bonus = 1;
+                    break;
+                case PlanetaryConditions.ATMO_HIGH:
+                    bonus = 2;
+                    break;
+                case PlanetaryConditions.ATMO_VHIGH:
+                    bonus = 2;
+                    break;
+                default:
+                    bonus = 1;
+                }
+            }
+        } else {
+            if( (getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) || (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) ) {
+                bonus = 2;
+            } else {
+                bonus = 1;
+            }
+        }
+
+        //subtract jumping bonus for damaged criticals
+        bonus -= getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_RT);
+        bonus -= getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_LT);
+
+        return bonus > 0 ? bonus : 0;
+    }
+
+    /**
+     * Gives the heat capacity bonus conferred by a mech partial wing.
+     *
+     * @return the heat capacity bonus provided by the wing
+     */
+    private int getPartialWingHeatBonus() {
+        int bonus = 0;
+        if ( game != null ) {
+            switch( game.getPlanetaryConditions().getAtmosphere() ) {
+            case PlanetaryConditions.ATMO_VACUUM: 	bonus = 0; break;
+            case PlanetaryConditions.ATMO_TRACE: 	bonus = 1; break;
+            case PlanetaryConditions.ATMO_THIN: 	bonus = 2; break;
+            case PlanetaryConditions.ATMO_STANDARD: bonus = 3; break;
+            case PlanetaryConditions.ATMO_HIGH: 	bonus = 3; break;
+            case PlanetaryConditions.ATMO_VHIGH: 	bonus = 3; break;
+            default: bonus = 3;
+            }
+        } else {
+            bonus = 3;
+        }
+
+        return bonus;
     }
 
     /**
@@ -1157,9 +1265,19 @@ public abstract class Mech extends Entity implements Serializable {
      * (non-Javadoc)
      *
      * @see megamek.common.Entity#getJumpHeat(int)
+     *
      */
     @Override
     public int getJumpHeat(int movedMP) {
+
+        //don't count movement granted by Partial Wing
+        for (Mounted mount : getMisc()) {
+            if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) ) {
+                movedMP -= getPartialWingJumpBonus(mount);
+                break;
+            }
+        }
+
         switch (getJumpType()) {
         case JUMP_IMPROVED:
             return engine.getJumpHeat(movedMP / 2 + movedMP % 2);
@@ -1170,7 +1288,8 @@ public abstract class Mech extends Entity implements Serializable {
         default:
             return engine.getJumpHeat(movedMP);
         }
-    }
+	}
+
 
     /**
      * Returns this mech's jumping MP, modified for missing & underwater jets
@@ -1203,6 +1322,16 @@ public abstract class Mech extends Entity implements Serializable {
         for (Mounted mounted : getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached() && locationIsTorso(mounted.getLocation())) {
                 jump++;
+            }
+        }
+
+        // apply Partial Wing bonus if we have the ability to jump
+        if ( jump > 0 ) {
+            for (Mounted mount : getMisc()) {
+                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) ) {
+                    jump += getPartialWingJumpBonus(mount);
+                    break;
+                }
             }
         }
 
@@ -1350,6 +1479,15 @@ public abstract class Mech extends Entity implements Serializable {
                 capacity += 2;
             }
         }
+
+        for (Mounted mount : getMisc()) {
+    		if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) && //unless all crits are destroyed, we get the bonus
+    		   ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_RT) > 0) ||
+    			(getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_LT) > 0))) {
+            	capacity += getPartialWingHeatBonus();
+            	break;
+            }
+    	}
 
         return capacity;
     }

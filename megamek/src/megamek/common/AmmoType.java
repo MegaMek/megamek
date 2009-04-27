@@ -153,63 +153,63 @@ public class AmmoType extends EquipmentType {
     public static final long     M_DEAD_FIRE         = 1l << 14;
     public static final long     M_HEAT_SEEKING      = 1l << 15;
     public static final long     M_TANDEM_CHARGE     = 1l << 16;
-    public static final long     M_ARTEMIS_V_CAPABLE = 1l << 51;
+    public static final long     M_ARTEMIS_V_CAPABLE = 1l << 17;
     // LRM Munition Types
     // Incendiary is special, though...
     //FIXME - I'm not implemented!!!
-    public static final long     M_INCENDIARY_LRM    = 1l << 17;
-    public static final long     M_FLARE             = 1l << 18;
-    public static final long     M_SEMIGUIDED        = 1l << 19;
-    public static final long     M_SWARM             = 1l << 20;
-    public static final long     M_SWARM_I           = 1l << 21;
-    public static final long     M_THUNDER           = 1l << 22;
-    public static final long     M_THUNDER_AUGMENTED = 1l << 23;
-    public static final long     M_THUNDER_INFERNO   = 1l << 24;
-    public static final long     M_THUNDER_VIBRABOMB = 1l << 25;
-    public static final long     M_THUNDER_ACTIVE    = 1l << 26;
-    public static final long     M_FOLLOW_THE_LEADER = 1l << 27;
-    public static final long     M_MULTI_PURPOSE     = 1l << 28;
+    public static final long     M_INCENDIARY_LRM    = 1l << 18;
+    public static final long     M_FLARE             = 1l << 19;
+    public static final long     M_SEMIGUIDED        = 1l << 20;
+    public static final long     M_SWARM             = 1l << 21;
+    public static final long     M_SWARM_I           = 1l << 22;
+    public static final long     M_THUNDER           = 1l << 23;
+    public static final long     M_THUNDER_AUGMENTED = 1l << 24;
+    public static final long     M_THUNDER_INFERNO   = 1l << 25;
+    public static final long     M_THUNDER_VIBRABOMB = 1l << 26;
+    public static final long     M_THUNDER_ACTIVE    = 1l << 27;
+    public static final long     M_FOLLOW_THE_LEADER = 1l << 28;
+    public static final long     M_MULTI_PURPOSE     = 1l << 29;
     // SRM Munition Types
     // TODO: Inferno should be available to fluid guns and vehicle flamers
     // TO page 362
-    public static final long     M_INFERNO           = 1l << 29;
-    public static final long     M_AX_HEAD           = 1l << 30;
+    public static final long     M_INFERNO           = 1l << 30;
+    public static final long     M_AX_HEAD           = 1l << 31;
 
     //SRM, MRM and LRM
-    public static final long     M_TORPEDO           = 1l << 31;
+    public static final long     M_TORPEDO           = 1l << 32;
 
     // iNarc Munition Types
-    public static final long     M_NARC_EX           = 1l << 32;
-    public static final long     M_ECM               = 1l << 33;
-    public static final long     M_HAYWIRE           = 1l << 34;
-    public static final long     M_NEMESIS           = 1l << 35;
+    public static final long     M_NARC_EX           = 1l << 33;
+    public static final long     M_ECM               = 1l << 34;
+    public static final long     M_HAYWIRE           = 1l << 35;
+    public static final long     M_NEMESIS           = 1l << 36;
 
-    public static final long     M_EXPLOSIVE         = 1l << 36;
+    public static final long     M_EXPLOSIVE         = 1l << 37;
 
     // Arrow IV Munition Types
-    public static final long     M_HOMING            = 1l << 37;
-    public static final long     M_FASCAM            = 1l << 38;
-    public static final long     M_INFERNO_IV        = 1l << 39;
-    public static final long     M_VIBRABOMB_IV      = 1l << 40;
-    public static final long     M_SMOKE             = 1l << 41;
+    public static final long     M_HOMING            = 1l << 38;
+    public static final long     M_FASCAM            = 1l << 39;
+    public static final long     M_INFERNO_IV        = 1l << 40;
+    public static final long     M_VIBRABOMB_IV      = 1l << 41;
+    public static final long     M_SMOKE             = 1l << 42;
 
     // Nuclear Munitions
-    public static final long     M_DAVY_CROCKETT_M   = 1l << 42;
-    public static final long     M_SANTA_ANNA        = 1l << 43;
+    public static final long     M_DAVY_CROCKETT_M   = 1l << 43;
+    public static final long     M_SANTA_ANNA        = 1l << 44;
 
     //tele-missile
-    public static final long     M_TELE              = 1l << 44;
+    public static final long     M_TELE              = 1l << 45;
 
     //fluid gun
     //TODO: implement all of these
     // coolant and water should also be used for vehicle flamers
     // TO page 361-363
-    public static final long     M_WATER             = 11 << 45;
-    public static final long     M_PAINT_OBSCURANT   = 11 << 46;
-    public static final long     M_OIL_SLICK         = 11 << 47;
-    public static final long     M_ANTI_FLAME_FOAM   = 11 << 48;
-    public static final long     M_CORROSIVE         = 11 << 49;
-    public static final long     M_COOLANT           = 11 << 50;
+    public static final long     M_WATER             = 11 << 46;
+    public static final long     M_PAINT_OBSCURANT   = 11 << 47;
+    public static final long     M_OIL_SLICK         = 11 << 48;
+    public static final long     M_ANTI_FLAME_FOAM   = 11 << 49;
+    public static final long     M_CORROSIVE         = 11 << 50;
+    public static final long     M_COOLANT           = 11 << 51;
 
 
 
@@ -1002,7 +1002,7 @@ public class AmmoType extends EquipmentType {
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "(Clan) Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW ) );
-        munitions.add( new MunitionMutator( "(Clan) Artemis V-capable", 
+        munitions.add( new MunitionMutator( "(Clan) Artemis V-capable",
                                                    1, M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL) );
         munitions.add( new MunitionMutator( "(Clan) Semi-guided",
                                                    1, M_SEMIGUIDED, TechConstants.T_CLAN_TW) );

@@ -35,7 +35,7 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
 
     public ArtilleryWeapon() {
         super();
-        flags |= F_ARTILLERY | F_SPLITABLE | F_MECH_WEAPON | F_AERO_WEAPON | F_VTOL_WEAPON | F_TANK_WEAPON;
+        flags |= F_ARTILLERY | F_SPLITABLE | F_MECH_WEAPON | F_AERO_WEAPON |  F_TANK_WEAPON;
         damage = DAMAGE_ARTILLERY;
         atClass = CLASS_ARTILLERY;
     }

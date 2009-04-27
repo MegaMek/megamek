@@ -49,7 +49,7 @@ public abstract class BPodWeapon extends AmmoWeapon {
         extremeRange = 0;
         tonnage = 1.0f;
         criticals = 1;
-        flags |= F_ONESHOT | F_B_POD | F_BALLISTIC | F_MECH_WEAPON | F_AERO_WEAPON | F_VTOL_WEAPON | F_TANK_WEAPON;
+        flags |= F_ONESHOT | F_B_POD | F_BALLISTIC | F_MECH_WEAPON | F_AERO_WEAPON |  F_TANK_WEAPON;
         explosive = true;
         bv = 2;
         cost = 6000;

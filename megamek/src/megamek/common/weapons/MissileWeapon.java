@@ -31,7 +31,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
     public MissileWeapon() {
         super();
         damage = DAMAGE_MISSILE;
-        flags |= F_MISSILE | F_MECH_WEAPON | F_AERO_WEAPON | F_VTOL_WEAPON | F_TANK_WEAPON;
+        flags |= F_MISSILE | F_MECH_WEAPON | F_AERO_WEAPON |  F_TANK_WEAPON;
     }
 
     /*

@@ -91,14 +91,14 @@ public class WeaponType extends EquipmentType {
     public static final long F_B_POD = 1l << 36;
     public static final long F_TASER = 1l << 37;
     public static final long F_BA_WEAPON = 1l << 38; // Currently only used by
-                                                     // MegaMekLab
+    // MegaMekLab
     public static final long F_ANTI_SHIP = 1l << 39; // for anti-ship missiles
     public static final long F_SPACE_BOMB = 1l << 40;
     public static final long F_MECH_WEAPON = 1L << 60;
     public static final long F_AERO_WEAPON = 1L << 61;
     public static final long F_PROTO_WEAPON = 1L << 62;
     public static final long F_TANK_WEAPON = 1L << 63;
-    public static final long F_VTOL_WEAPON = 1L << 64;
+    // public static final long F_VTOL_WEAPON = 1L << 64;
 
     // add maximum range for AT2
     public static final int RANGE_SHORT = 1;

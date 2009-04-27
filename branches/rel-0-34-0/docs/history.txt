@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.34.1-dev (SVN)
+
 v0.34.0 STABLE (2008-04-27, 21:46 UTC+2)
 + Bug: make camo choice dialog correct size
 + Mechfiles update

@@ -53,7 +53,7 @@ public class CLBearhunterSuperheavyAC extends Weapon {
         tonnage = 0.0f;
         criticals = 0;
         bv = 4;
-        flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_BA_WEAPON;
+        flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC ; flags1 |= F_BA_WEAPON;
     }
 
     /*

@@ -153,6 +153,7 @@ public class AmmoType extends EquipmentType {
     public static final long     M_DEAD_FIRE         = 1l << 14;
     public static final long     M_HEAT_SEEKING      = 1l << 15;
     public static final long     M_TANDEM_CHARGE     = 1l << 16;
+    public static final long     M_ARTEMIS_V_CAPABLE = 1l << 51;
     // LRM Munition Types
     // Incendiary is special, though...
     //FIXME - I'm not implemented!!!
@@ -894,6 +895,8 @@ public class AmmoType extends EquipmentType {
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "(Clan) Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW ) );
+        munitions.add( new MunitionMutator( "(Clan) Artemis V-capable",
+                                                   1, M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL ) );
         munitions.add( new MunitionMutator( "(Clan) Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_CLAN_EXPERIMENTAL ) );
         munitions.add( new MunitionMutator( "(Clan) Anti-TSM",
@@ -999,6 +1002,8 @@ public class AmmoType extends EquipmentType {
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_TW ) );
         munitions.add( new MunitionMutator( "(Clan) Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW ) );
+        munitions.add( new MunitionMutator( "(Clan) Artemis V-capable", 
+                                                   1, M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL) );
         munitions.add( new MunitionMutator( "(Clan) Semi-guided",
                                                    1, M_SEMIGUIDED, TechConstants.T_CLAN_TW) );
         munitions.add( new MunitionMutator( "(Clan) Swarm",
@@ -7938,7 +7943,8 @@ public class AmmoType extends EquipmentType {
             }
 
             if ( ((munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && (munition.getMunitionType() == AmmoType.M_TANDEM_CHARGE) ){
+                    && ( (munition.getMunitionType() == AmmoType.M_TANDEM_CHARGE)
+                      || (munition.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE) )){
                 cost *= 5;
             }
 

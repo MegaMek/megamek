@@ -217,6 +217,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
+        boolean bMekStealthActive = false;
+        if (ae instanceof Mech) {
+            bMekStealthActive = ae.isStealthActive();
+        }
         boolean isIndirect = wtype.hasModes()
                 && weapon.curMode().equals("Indirect");
         boolean isInferno = ((atype != null)
@@ -262,9 +266,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_APOLLO))
                 && (atype.getAmmoType() == AmmoType.T_MRM);
+        boolean bArtemisV = ((mLinker != null )
+                && (mLinker.getType() instanceof MiscType)
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS_V)
+                && !isECMAffected
+                && !bMekStealthActive
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE ));
         boolean inSameBuilding = (te != null) && (game.getBoard().getBuildingAt(ae.getPosition()) != null)
                 && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
-
+        
+        
         if (te != null) {
             if (!isTargetECMAffected
                     && te.isINarcedBy(ae.getOwner().getTeam())
@@ -1429,7 +1442,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (isINarcGuided) {
             toHit.addModifier(-1, "iNarc homing pod");
         }
-
+        
+        // add Artemis V bonus
+        if (bArtemisV) {
+            toHit.addModifier(-1, "Artemis V FCS" );
+        }
+ 
         if (isHaywireINarced) {
             toHit.addModifier(1, "iNarc Haywire pod");
         }

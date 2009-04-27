@@ -97,6 +97,9 @@ public class MiscType extends EquipmentType {
     public static final long F_BA_EQUIPMENT = 1L << 59;
     public static final long F_MECH_EQUIPMENT = 1L << 60;
     public static final long F_TANK_EQUIPMENT = 1L << 61;
+    public static final long F_PARTIAL_WING = 1L << 62;
+    public static final long F_FERRO_LAMELLOR = 1L << 63;
+    public static final long F_ARTEMIS_V = 1L << 64;
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -225,6 +228,8 @@ public class MiscType extends EquipmentType {
             } else {
                 return 2.0f;
             }
+        } else if (hasFlag(F_PARTIAL_WING)) {
+            return (float) (Math.ceil(entity.getWeight() / 20.0 * 2.0) / 2.0);
         } else if (hasFlag(F_CLUB) && (hasSubType(S_HATCHET) || hasSubType(S_MACE_THB))) {
             return (float) Math.ceil(entity.getWeight() / 15.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
@@ -275,6 +280,10 @@ public class MiscType extends EquipmentType {
             return (float) tons;
         } else if (EquipmentType.getArmorTypeName(T_ARMOR_HEAVY_FERRO).equals(internalName)) {
             double tons = entity.getTotalOArmor() / (16 * 1.24);
+            tons = Math.ceil(tons * 2.0) / 2.0;
+            return (float) tons;
+        } else if (EquipmentType.getArmorTypeName(T_ARMOR_FERRO_LAMELLOR).equals(internalName)) {
+            double tons = entity.getTotalOArmor() / (16 * 0.875);
             tons = Math.ceil(tons * 2.0) / 2.0;
             return (float) tons;
         } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName)) {
@@ -546,6 +555,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createIndustrialArmor());
         EquipmentType.addType(MiscType.createHeavyIndustrialArmor());
         EquipmentType.addType(MiscType.createCommercialArmor());
+        EquipmentType.addType(MiscType.createFerroLamellorArmor());
         EquipmentType.addType(MiscType.createEndoSteelPrototype());
         EquipmentType.addType(MiscType.createReinforcedStructure());
         EquipmentType.addType(MiscType.createCompositeStructure());
@@ -553,6 +563,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createIS1CompactHeatSink());
         EquipmentType.addType(MiscType.createIS2CompactHeatSinks());
         EquipmentType.addType(MiscType.createCLLaserHeatSink());
+        EquipmentType.addType(MiscType.createArtemisV());
         EquipmentType.addType(MiscType.createISAngelECM());
         EquipmentType.addType(MiscType.createISTHBAngelECM());
         EquipmentType.addType(MiscType.createCLAngelECM());
@@ -618,6 +629,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCommsGear13());
         EquipmentType.addType(MiscType.createCommsGear14());
         EquipmentType.addType(MiscType.createCommsGear15());
+        EquipmentType.addType(MiscType.createPartialWing());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBABoardingClaw());
@@ -1057,6 +1069,21 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.flags |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT | F_ARTEMIS;
 
+        return misc;
+    }
+    
+    public static MiscType createArtemisV() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.name = "Artemis V FCS";
+        misc.setInternalName("CLArtemisV");
+        misc.addLookupName("Clan Artemis V");
+        misc.addLookupName("Artemis V");
+        misc.tonnage = 1.5f;
+        misc.cost = 250000;
+        misc.criticals = 2;
+        misc.flags |= F_ARTEMIS_V;
         return misc;
     }
 
@@ -1861,6 +1888,21 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.bv = 0;
         misc.flags |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
+        return misc;
+    }
+    
+    public static MiscType createFerroLamellorArmor() {
+        MiscType misc = new MiscType();
+        
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_LAMELLOR);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_LAMELLOR));
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 12;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.bv = 0;
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.flags |= F_FERRO_LAMELLOR;
         return misc;
     }
 
@@ -3182,6 +3224,22 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT | F_MASS;
         misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
 
+        return misc;
+    }
+    
+    public static MiscType createPartialWing() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Partial Wing";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("PartialWing");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 6;
+        misc.spreadable = true;
+        misc.cost = COST_VARIABLE;
+        misc.flags |= F_PARTIAL_WING;
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        
         return misc;
     }
 

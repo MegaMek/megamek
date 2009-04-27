@@ -1410,11 +1410,12 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
 
         // We'll arbitrarily require the squad to have a name.
         // No blank designations.
-        if ((m_tfBAName.getText() == null)
+        //NOTE: BROKEN
+        /*if ((m_tfBAName.getText() == null)
                 || (m_tfBAName.getText().trim().length() < 1)) {
             invalidReason = "Squads must be named.";
             return false;
-        }
+        }*/
 
         // Quad chassis can't be PA(L)
         if ((stateChassisType == CHASSIS_TYPE_QUAD)

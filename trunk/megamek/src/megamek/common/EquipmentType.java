@@ -25,8 +25,9 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 /**
- * Represents any type of equipment mounted on a mechs, excluding systems and actuators.
- *
+ * Represents any type of equipment mounted on a mechs, excluding systems and
+ * actuators.
+ * 
  * @author Ben
  * @version
  */
@@ -70,13 +71,14 @@ public class EquipmentType {
     public static final int[] structureLevels = { 1, 2, 3, 3, 3 };
 
     // Assume for nowt that prototype is not more expensive
-    public static final double[] structureCosts = { 400, 1600, 1600, 6400, 3200, 300};
+    public static final double[] structureCosts = { 400, 1600, 1600, 6400, 3200, 300 };
 
     // Assume for now that prototype is not more expensive
-    public static final double[] armorCosts = { 10000, 20000, 30000, 30000, 15000, 15000, 25000, /*patchwork)*/50000, 50000, 20000, 3000, 75000, 100000, 50000, 5000, 10000, 35000 };
+    public static final double[] armorCosts = { 10000, 20000, 30000, 30000, 15000, 15000, 25000, /*
+                                                                                                  * patchwork)
+                                                                                                  */50000, 50000, 20000, 3000, 75000, 100000, 50000, 5000, 10000, 35000 };
 
-
-    public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 1, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875};
+    public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 1, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875 };
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
 
@@ -98,6 +100,8 @@ public class EquipmentType {
     protected int techLevel = TechConstants.T_TECH_UNKNOWN;
 
     protected long flags = 0;
+    protected long flags1 = 0;
+
     protected long subType = 0;
 
     protected double bv = 0; // battle value point system
@@ -113,13 +117,19 @@ public class EquipmentType {
      */
     protected boolean instantModeSwitch = true;
     /**
-     * sometimes some modes can be switched at the end of turn and some instantly In that case, the specific end of turn mode names can be added here
+     * sometimes some modes can be switched at the end of turn and some
+     * instantly In that case, the specific end of turn mode names can be added
+     * here
      */
     public Vector<String> endTurnModes = new Vector<String>();
 
     // static list of eq
     protected static Vector<EquipmentType> allTypes;
     protected static Hashtable<String, EquipmentType> lookupHash;
+
+    // Constants for Flag Fields
+    public static final int FLAG_FIELD_0 = 0;
+    public static final int FLAG_FIELD_1 = 1;
 
     /** Creates new EquipmentType */
     public EquipmentType() {
@@ -191,8 +201,28 @@ public class EquipmentType {
         return toHitModifier;
     }
 
+    public long getFlags(int flagField) {
+        switch(flagField){
+        case FLAG_FIELD_1:
+            return flags1;
+            default: 
+        return flags;
+        }
+    }
+
     public long getFlags() {
         return flags;
+    }
+
+    public boolean hasFlag(long flag, int flagField) {
+
+        switch (flagField) {
+        case FLAG_FIELD_1:
+            return (flags1 & flag) != 0;
+        default:
+            return (flags & flag) != 0;
+        }
+
     }
 
     public boolean hasFlag(long flag) {
@@ -204,14 +234,16 @@ public class EquipmentType {
     }
 
     /**
-     * @return <code>true</code> if this type of equipment has set of modes that it can be in.
+     * @return <code>true</code> if this type of equipment has set of modes that
+     *         it can be in.
      */
     public boolean hasModes() {
         return modes != null;
     }
 
     /**
-     * @return the number of modes that this type of equipment can be in or <code>0</code> if it doesn't have modes.
+     * @return the number of modes that this type of equipment can be in or
+     *         <code>0</code> if it doesn't have modes.
      */
     public int getModesCount() {
         if (modes != null) {
@@ -221,7 +253,8 @@ public class EquipmentType {
     }
 
     /**
-     * @return <code>Enumeration</code> of the <code>EquipmentMode</code> that this type of equipment can be in
+     * @return <code>Enumeration</code> of the <code>EquipmentMode</code> that
+     *         this type of equipment can be in
      */
     public Enumeration<EquipmentMode> getModes() {
         if (modes != null) {
@@ -241,9 +274,10 @@ public class EquipmentType {
     }
 
     /**
-     * Sets the modes that this type of equipment can be in. By default the EquipmentType doesn't have the modes, so don't try to call this method with null or
-     * empty argument.
-     *
+     * Sets the modes that this type of equipment can be in. By default the
+     * EquipmentType doesn't have the modes, so don't try to call this method
+     * with null or empty argument.
+     * 
      * @param modes
      *            non null, non empty list of available mode names.
      */
@@ -265,11 +299,14 @@ public class EquipmentType {
     }
 
     /**
-     * Some equipment types might have both instant and next turn mode switching. This method checks for end of turn modes that are kept in a vector of names.
-     * It is used by the {@link Mounted#setMode(int)} method to distinguish instant and end of turn switching.
-     *
+     * Some equipment types might have both instant and next turn mode
+     * switching. This method checks for end of turn modes that are kept in a
+     * vector of names. It is used by the {@link Mounted#setMode(int)} method to
+     * distinguish instant and end of turn switching.
+     * 
      * @param mode
-     *            - the <code>String</code> of the mode name involved in the switch
+     *            - the <code>String</code> of the mode name involved in the
+     *            switch
      * @return true if the mode name is found in the next turn mode vector
      */
     public boolean isNextTurnModeSwitch(String mode) {
@@ -283,13 +320,17 @@ public class EquipmentType {
 
     /**
      * <p>
-     * Returns the mode number <code>modeNum</code> from the list of modes available for this type of equipment. Modes are numbered from <code>0<code> to
+     * Returns the mode number <code>modeNum</code> from the list of modes
+     * available for this type of equipment. Modes are numbered from
+     * <code>0<code> to
      * <code>getModesCount()-1</code>
      * <p>
-     * Fails if this type of the equipment doesn't have modes, or given mode is out of the valid range.
-     *
+     * Fails if this type of the equipment doesn't have modes, or given mode is
+     * out of the valid range.
+     * 
      * @param modeNum
-     * @return mode number <code>modeNum</code> from the list of modes available for this type of equipment.
+     * @return mode number <code>modeNum</code> from the list of modes available
+     *         for this type of equipment.
      * @see #hasModes()
      */
     public EquipmentMode getMode(int modeNum) {
@@ -412,11 +453,11 @@ public class EquipmentType {
     }
 
     public static double getArmorPointMultiplier(int inArmor) {
-        return getArmorPointMultiplier(inArmor, TechConstants.T_IS_TW_NON_BOX);
+        return EquipmentType.getArmorPointMultiplier(inArmor, TechConstants.T_IS_TW_NON_BOX);
     }
 
     public static double getArmorPointMultiplier(int inArmor, int inTechLevel) {
-        return getArmorPointMultiplier(inArmor, ((inTechLevel == TechConstants.T_CLAN_TW) || (inTechLevel == TechConstants.T_CLAN_ADVANCED)) || (inTechLevel == TechConstants.T_CLAN_EXPERIMENTAL) || (inTechLevel == TechConstants.T_CLAN_UNOFFICIAL));
+        return EquipmentType.getArmorPointMultiplier(inArmor, ((inTechLevel == TechConstants.T_CLAN_TW) || (inTechLevel == TechConstants.T_CLAN_ADVANCED)) || (inTechLevel == TechConstants.T_CLAN_EXPERIMENTAL) || (inTechLevel == TechConstants.T_CLAN_UNOFFICIAL));
     }
 
     public static double getArmorPointMultiplier(int inArmor, boolean clanArmor) {
@@ -430,7 +471,8 @@ public class EquipmentType {
     }
 
     /**
-     * stuff like hatchets, which depend on an unknown quality (usually tonnage of the unit.) entity is whatever has this item
+     * stuff like hatchets, which depend on an unknown quality (usually tonnage
+     * of the unit.) entity is whatever has this item
      */
     public int resolveVariableCost(Entity entity, boolean isArmored) {
         int cost = 0;
@@ -477,7 +519,7 @@ public class EquipmentType {
                 int bladeTons = (int) Math.ceil(0.5f + Math.ceil(entity.getWeight() / 20.0));
                 cost = (1 + bladeTons) * 10000;
             } else if (hasFlag(MiscType.F_TRACKS)) {
-                cost = (int)Math.ceil(500 * entity.getEngine().getRating() * entity.getWeight() / 75);
+                cost = (int) Math.ceil(500 * entity.getEngine().getRating() * entity.getWeight() / 75);
             }
         } else {
             if (cost == 0) {
@@ -560,19 +602,19 @@ public class EquipmentType {
                 w.write(",");
                 w.write(type.getName());
                 w.write(",");
-                if ( type.tonnage == EquipmentType.TONNAGE_VARIABLE ){
+                if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {
                     w.write("Variable");
                 } else {
                     w.write(Float.toString(type.tonnage));
                 }
                 w.write(",");
-                if ( type.criticals == EquipmentType.CRITICALS_VARIABLE ){
+                if (type.criticals == EquipmentType.CRITICALS_VARIABLE) {
                     w.write("Variable");
-                } else{
+                } else {
                     w.write(Integer.toString(type.criticals));
                 }
                 w.write(",");
-                if ( type.cost == EquipmentType.COST_VARIABLE ){
+                if (type.cost == EquipmentType.COST_VARIABLE) {
                     w.write("Variable");
                 } else {
                     w.write(Double.toString(type.getCost(null, false)));

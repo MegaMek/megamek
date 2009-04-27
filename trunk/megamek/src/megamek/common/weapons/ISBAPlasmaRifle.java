@@ -45,6 +45,6 @@ public class ISBAPlasmaRifle extends Weapon {
         this.longRange = 6;
         this.extremeRange = 8;
         this.bv = 12;
-        this.flags |= F_DIRECT_FIRE | F_ENERGY | F_PLASMA | F_BA_WEAPON;
+        this.flags |= F_DIRECT_FIRE | F_ENERGY | F_PLASMA ; flags1 |= F_BA_WEAPON;
     }
 }

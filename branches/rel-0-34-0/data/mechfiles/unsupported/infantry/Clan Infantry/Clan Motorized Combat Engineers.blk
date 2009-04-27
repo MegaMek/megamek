@@ -1,0 +1,35 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Clan Motorized Combat Engineers
+</Name>
+<Tonnage>
+6
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+0
+</Armor>
+<Platoon Equipment>
+Infantry Rifle
+</Platoon Equipment>
+<type>
+Clan
+</type>
+<year>
+3050
+</year>
+<motion_type>
+Motorized
+</motion_type>

@@ -282,6 +282,9 @@ public abstract class TestEntity implements TestEntityOption {
         if (mt.hasFlag(MiscType.F_ENDO_STEEL)) {
             return 0f;
         }
+        if (mt.hasFlag(MiscType.F_FERRO_LAMELLOR)) {
+            return 0f;
+        }
 
         if (mt.hasFlag(MiscType.F_JUMP_JET)) {
             return mt.getTonnage(getEntity());
@@ -788,7 +791,8 @@ public abstract class TestEntity implements TestEntityOption {
                         illegal = true;
                     }
                     for (Mounted mounted : mech.getMisc()) {
-                        if (mounted.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                        if (mounted.getType().hasFlag(MiscType.F_ARTEMIS) || 
+                            mounted.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                             buff.append("industrial mech without advanced fire control can't use artemis");
                             illegal = true;
                         }

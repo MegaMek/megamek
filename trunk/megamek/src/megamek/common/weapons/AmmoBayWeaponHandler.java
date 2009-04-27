@@ -130,6 +130,18 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
             }
             current_av = current_av + bonus;
         }
+        //check for Artemis V
+        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS_V))
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+            //MML3 WOULD get a bonus from Artemis V, if you were crazy enough to cross-tech it
+            bonus = (int)Math.ceil(atype.getRackSize() / 5.0);
+            if(atype.getAmmoType() == AmmoType.T_SRM) {
+                bonus = 2;
+            }
+        }
         
         if(atype.getMunitionType() == AmmoType.M_CLUSTER) {
             current_av = Math.floor(0.6*current_av);

@@ -2007,7 +2007,10 @@ public class Aero
 
     }
 
-    //check to see if case is available anywhere
+    /**
+     * check to see if case is available anywhere
+     * @return
+     */
     public boolean hasCase() {
 
         boolean hasCase = false;
@@ -2020,7 +2023,7 @@ public class Aero
         return hasCase;
     }
 
-    /*
+    /**
      * Used to determine net velocity of ramming attack
      *
      */

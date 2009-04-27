@@ -151,11 +151,11 @@
 	</target>
 
 	<target name="packageCode" description="Generates code package only" depends="svndev-get, svndev-build">
-		<zip basedir="${svndir}" zipfile="${basedir}/megamek-dev-upgrade-${DSTAMP}.zip" includes="${jarfile} docs/history.txt license.txt MegaMek.exe startup.sh mmconf/MegaMek.bat" />
+		<zip basedir="${svndir}" zipfile="${basedir}/MegaMek-v${input_version}-upgrade.zip" includes="${jarfile} docs/history.txt license.txt MegaMek.exe startup.sh mmconf/MegaMek.bat"/>
 	</target>
 
 	<target name="packageMedia" description="Generates media package only" depends="svndev-get">
-		<zip basedir="${svndir}" zipfile="${basedir}/megamek-dev-media-${DSTAMP}.zip" includes="${datadir}/ ${confdir}/ ${docdir}/ *.txt stats.pl" excludes="*.jar" />
+		<zip basedir="${svndir}" zipfile="${basedir}/MegaMek-v${input_version}-media.zip" includes="${datadir}/ ${confdir}/ ${docdir}/ *.txt stats.pl" excludes="*.jar"/>
 	</target>
 
 	<target name="updateInstalledCode" description="Compiles, jars and installs the newest sources from svn." depends="svndev-init">
@@ -193,6 +193,7 @@
 	<target name="svndev-init">
 		<tstamp />
 		<delete dir="${svndir}" />
+		<input message="Please enter version number (eg. 0.34.0):" addproperty="input_version"/>
 	</target>
 
 	<!-- following svndev-* tasks get, build & package the current version from svn -->
@@ -248,7 +249,7 @@
 		<!-- keep in mind that directory references for 'excludes' are -->
 		<!-- relative to the zip-tasks basedir but 'zipfile' uses the -->
 		<!-- absolute (project) ${basedir} -->
-		<zip zipfile="${basedir}/megamek-dev-svn-${DSTAMP}.zip" basedir="${svndir}" excludes="${builddir}/" />
+		<zip zipfile="${basedir}/MegaMek-v${input_version}.zip" basedir="${svndir}" excludes="${builddir}/"/>
 	</target>
 
 	<target name="svndev-clean">

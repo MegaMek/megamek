@@ -28,7 +28,6 @@ import megamek.server.Server;
  */
 public abstract class MGWeapon extends AmmoWeapon {
 
-
     private static final long serialVersionUID = 923749421748564257L;
 
     /**
@@ -36,21 +35,22 @@ public abstract class MGWeapon extends AmmoWeapon {
      */
     public MGWeapon() {
         super();
-        this.ammoType = AmmoType.T_MG;
-        this.flags |= F_MG | F_BALLISTIC;
-        
-        this.atClass = CLASS_POINT_DEFENSE;
+        ammoType = AmmoType.T_MG;
+        flags |= F_MG | F_BALLISTIC;
+        flags1 |= F_MECH_WEAPON | F_AERO_WEAPON | F_TANK_WEAPON;
+        atClass = CLASS_POINT_DEFENSE;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return new MGHandler(toHit, waa, game, server);
     }
 }

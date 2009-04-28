@@ -24,7 +24,6 @@ import megamek.server.Server;
  */
 public abstract class MekMortarWeapon extends AmmoWeapon {
 
-
     private static final long serialVersionUID = -4887277242270179970L;
 
     /**
@@ -32,20 +31,23 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
      */
     public MekMortarWeapon() {
         super();
-        this.ammoType = AmmoType.T_MEK_MORTAR;
-        this.setModes(new String[] { "", "Indirect" });
-        this.atClass = CLASS_NONE;
+        ammoType = AmmoType.T_MEK_MORTAR;
+        setModes(new String[] { "", "Indirect" });
+        atClass = CLASS_NONE;
+
+        flags1 |= F_MECH_WEAPON;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return new MekMortarHandler(toHit, waa, game, server);
     }
 }

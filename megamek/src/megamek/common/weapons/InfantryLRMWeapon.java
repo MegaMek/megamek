@@ -45,6 +45,8 @@ public class InfantryLRMWeapon extends InfantryWeapon {
         this.mediumRange = 6;
         this.longRange = 9;
         this.extremeRange = 12;
+        // LRM Launcher(farshot), TM pg. 301
+        this.cost = 2000;
         // corean farshot support lrm, TM, p. 319
         this.bv = 1.15;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_MISSILE;

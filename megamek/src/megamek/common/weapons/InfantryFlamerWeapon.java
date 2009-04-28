@@ -43,6 +43,8 @@ public class InfantryFlamerWeapon extends InfantryWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 3;
+        // Flamer (man-pack), TM p. 300 
+        this.cost = 100;
         // Flamer (man-portable), TM p. 319
         this.bv = 0.36;
         this.flags |= F_DIRECT_FIRE | F_FLAMER | F_ENERGY;

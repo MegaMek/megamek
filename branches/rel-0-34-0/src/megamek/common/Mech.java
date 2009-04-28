@@ -2817,7 +2817,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         }
         if (hasVoidSig()) {
-            targetMovementModifier = +3;
+            targetMovementModifier += 3;
             bvText.append(startRow);
             bvText.append(startColumn);
 

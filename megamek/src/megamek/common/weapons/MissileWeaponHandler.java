@@ -205,11 +205,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             bTargetECMAffected = Compute.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.T_LRM) ||
-                 (atype.getAmmoType() == AmmoType.T_SRM)) ||
-                 ((atype.getAmmoType() == AmmoType.T_MML)
+                 (atype.getAmmoType() == AmmoType.T_SRM) ||
+                 (atype.getAmmoType() == AmmoType.T_MML))
                     && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
                     && ((weapon.curMode() == null) || !weapon.curMode().equals(
-                            "Indirect")))) {
+                            "Indirect"))) {
                 if (bTargetECMAffected) {
                     // ECM prevents bonus
                     r = new Report(3330);
@@ -740,10 +740,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     && (((atype.getAmmoType() == AmmoType.T_ATM) && ((atype
                             .getMunitionType() == AmmoType.M_STANDARD)
                             || (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) || (atype
-                            .getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE))) || (((atype
+                            .getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE))) || ((((atype
                             .getAmmoType() == AmmoType.T_LRM) || (atype
                             .getAmmoType() == AmmoType.T_SRM)) && (atype
-                            .getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) || (atype
+                            .getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) || (atype
                             .getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)))) {
                 isNemesisConfusable = true;
             }

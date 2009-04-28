@@ -39,24 +39,25 @@ public abstract class UACWeapon extends AmmoWeapon {
      */
     public UACWeapon() {
         super();
-        this.flags |= WeaponType.F_DIRECT_FIRE|WeaponType.F_BALLISTIC;
-        this.ammoType = AmmoType.T_AC_ULTRA;
+        flags |= WeaponType.F_DIRECT_FIRE | WeaponType.F_BALLISTIC;
+        flags1 |= WeaponType.F_MECH_WEAPON | WeaponType.F_AERO_WEAPON | WeaponType.F_TANK_WEAPON;
+        ammoType = AmmoType.T_AC_ULTRA;
         String[] modes = { "Single", "Ultra" };
-        this.setModes(modes);
-        
-        this.atClass = CLASS_AC;
+        setModes(modes);
+
+        atClass = CLASS_AC;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
-                waa.getWeaponId());
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (weapon.curMode().equals("Ultra")) {
             return new UltraWeaponHandler(toHit, waa, game, server);
         } else {

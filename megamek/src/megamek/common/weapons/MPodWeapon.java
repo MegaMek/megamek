@@ -28,7 +28,6 @@ import megamek.server.Server;
  */
 public abstract class MPodWeapon extends AmmoWeapon {
 
-    
     private static final long serialVersionUID = 3343394645568467135L;
 
     /**
@@ -36,32 +35,34 @@ public abstract class MPodWeapon extends AmmoWeapon {
      */
     public MPodWeapon() {
         super();
-        this.heat = 0;
-        this.damage = 15;
-        this.ammoType = AmmoType.T_MPOD;
-        this.rackSize = 15;
-        this.minimumRange = 0;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 4;
-        this.tonnage = 1.0f;
-        this.criticals = 1;
-        this.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_ONESHOT;
-        this.explosive = true;
-        this.bv = 5;
-        this.cost = 6000;
-        this.explosionDamage = 5;
+        heat = 0;
+        damage = 15;
+        ammoType = AmmoType.T_MPOD;
+        rackSize = 15;
+        minimumRange = 0;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 3;
+        extremeRange = 4;
+        tonnage = 1.0f;
+        criticals = 1;
+        flags |= F_DIRECT_FIRE | F_BALLISTIC | F_ONESHOT;
+        explosive = true;
+        bv = 5;
+        cost = 6000;
+        explosionDamage = 5;
+        flags1 |= F_MECH_WEAPON;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return new MPodHandler(toHit, waa, game, server);
     }
 }

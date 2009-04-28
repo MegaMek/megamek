@@ -38,8 +38,10 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
     public VehicleFlamerWeapon() {
         super();
         flags |= F_FLAMER;
+
+        flags1 |= F_MECH_WEAPON | F_AERO_WEAPON | F_TANK_WEAPON;
         ammoType = AmmoType.T_VEHICLE_FLAMER;
-        //TODO: cool should be an ammotype, not a mode
+        // TODO: cool should be an ammotype, not a mode
         String modes[] = { "Damage", "Heat", "Cool" };
         setModes(modes);
 
@@ -47,14 +49,11 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId())
-                .curMode().equals("Heat"))) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode().equals("Heat"))) {
             return new VehicleFlamerHeatHandler(toHit, waa, game, server);
-        } else if ((game.getEntity(waa.getEntityId()).getEquipment(
-                waa.getWeaponId()).curMode().equals("Cool"))) {
-            //TODO: cool should be an ammotype, not a mode
+        } else if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode().equals("Cool"))) {
+            // TODO: cool should be an ammotype, not a mode
             return new VehicleFlamerCoolHandler(toHit, waa, game, server);
         } else {
             return new VehicleFlamerHandler(toHit, waa, game, server);

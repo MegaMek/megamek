@@ -33,7 +33,8 @@ public abstract class EnergyWeapon extends Weapon {
     private static final long serialVersionUID = 3128205629152612073L;
 
     public EnergyWeapon() {
-        flags |= F_ENERGY ; flags1 |= F_MECH_WEAPON | F_AERO_WEAPON |  F_TANK_WEAPON;
+        flags |= F_ENERGY;
+        flags1 |= F_MECH_WEAPON | F_AERO_WEAPON | F_TANK_WEAPON;
 
     }
 

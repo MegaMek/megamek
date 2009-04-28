@@ -2535,7 +2535,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         isTipPossible = false;
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
-            Point dispPoint = point;
+            Point dispPoint = new Point();
             dispPoint.x = point.x - offset.x;
             dispPoint.y = point.y - offset.y;
             if ((backSize != null) && (disp.isHit(dispPoint, backSize))) {
@@ -2649,7 +2649,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
-            if (disp.isDragged(point, backSize)) {
+            Point dispPoint = new Point();
+            dispPoint.x = point.x - offset.x;
+            dispPoint.y = point.y - offset.y;
+            if (disp.isDragged(dispPoint, backSize)) {
                 repaint();
                 return;
             }

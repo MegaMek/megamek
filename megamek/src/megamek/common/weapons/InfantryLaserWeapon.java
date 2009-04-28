@@ -43,6 +43,8 @@ public class InfantryLaserWeapon extends InfantryWeapon {
         this.mediumRange = 4;
         this.longRange = 6;
         this.extremeRange = 8;
+        // laser rifle, TM p. 299
+        this.cost = 1250;
         // laser rifle, TM p. 319
         this.bv = 0.88;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_LASER | F_ENERGY;

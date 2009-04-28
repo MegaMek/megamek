@@ -45,6 +45,8 @@ public class InfantryRifleWeapon extends InfantryWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 3;
+        // Auto-Rifle, TM p. 299 
+        this.cost = 80;
         // auto-rifle from TM p. 319
         this.bv = 1.28;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;

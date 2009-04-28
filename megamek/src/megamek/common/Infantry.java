@@ -741,67 +741,44 @@ public class Infantry extends Entity implements Serializable {
     }
 
     /**
-     * @return The cost in C-Bills of the 'Mech in question.
+     * @return The cost in C-Bills of the Infantry in question.
      */
     @Override
     public double getCost() {
-        double cost = 0;
         double multiplier = 0;
-
-        int mm = getMovementMode();
-
-        if (IEntityMovementMode.WHEELED == mm
-                || IEntityMovementMode.TRACKED == mm
-                || IEntityMovementMode.HOVER == mm) {
-            // FIXME, when techmanual comes out
-            mm = IEntityMovementMode.INF_MOTORIZED;
-        }
 
         if (antiMek) {
             multiplier = 5;
         } else {
             multiplier = 1;
         }
-
-        if (IEntityMovementMode.INF_UMU == mm) {
-            mm = IEntityMovementMode.INF_LEG;
-            multiplier *= 2;
-        }/*
-             * //TODO: fix me for new style of weapons if (this.weapons ==
-             * INF_RIFLE) { if ( IEntityMovementMode.INF_LEG == mm ) cost =
-             * 600000; else if ( IEntityMovementMode.INF_MOTORIZED == mm ) cost =
-             * 960000; else if ( IEntityMovementMode.INF_JUMP == mm ) cost =
-             * 1200000; else throw new IllegalArgumentException ( "Unknown
-             * movement type: " + mm ); } else if (this.weapons == INF_MG) { if (
-             * IEntityMovementMode.INF_LEG == mm ) cost = 800000; else if (
-             * IEntityMovementMode.INF_MOTORIZED == mm ) cost = 1280000; else if (
-             * IEntityMovementMode.INF_JUMP == mm ) cost = 1600000; else throw
-             * new IllegalArgumentException ( "Unknown movement type: " + mm ); }
-             * else if (this.weapons == INF_FLAMER) { if (
-             * IEntityMovementMode.INF_LEG == mm ) cost = 800000; else if (
-             * IEntityMovementMode.INF_MOTORIZED == mm ) cost = 1280000; else if (
-             * IEntityMovementMode.INF_JUMP == mm ) cost = 1600000; else throw
-             * new IllegalArgumentException ( "Unknown movement type: " + mm ); }
-             * else if (this.weapons == INF_LASER) { if (
-             * IEntityMovementMode.INF_LEG == mm ) cost = 1200000; else if (
-             * IEntityMovementMode.INF_MOTORIZED == mm ) cost = 1920000; else if (
-             * IEntityMovementMode.INF_JUMP == mm ) cost = 2400000; else throw
-             * new IllegalArgumentException ( "Unknown movement type: " + mm ); }
-             * else if (this.weapons == INF_SRM || weapons == INF_INFERNO_SRM) {
-             * if ( IEntityMovementMode.INF_LEG == mm ) cost = 1400000; else if (
-             * IEntityMovementMode.INF_MOTORIZED == mm ) cost = 2240000; else if (
-             * IEntityMovementMode.INF_JUMP == mm ) cost = 2800000; else throw
-             * new IllegalArgumentException ( "Unknown movement type: " + mm ); }
-             * else if (this.weapons == INF_LRM) { if (
-             * IEntityMovementMode.INF_LEG == mm ) cost = 1400000; else if (
-             * IEntityMovementMode.INF_MOTORIZED == mm ) cost = 2240000; else if (
-             * IEntityMovementMode.INF_JUMP == mm ) cost = 2800000; else throw
-             * new IllegalArgumentException ( "Unknown movement type: " + mm ); }
-             * else throw new IllegalArgumentException ( "Unknown infantry
-             * weapon: " + this.weapons ); // End not-anti-Mek
-             */
-
-        return cost * multiplier;
+        
+        switch (getMovementMode()){
+        case IEntityMovementMode.INF_UMU:
+            multiplier *= 2.0;
+        case IEntityMovementMode.INF_LEG:
+            multiplier *= 1.0;
+            break;
+        case IEntityMovementMode.INF_MOTORIZED:
+            multiplier *= 1.6;
+            break;
+        case IEntityMovementMode.INF_JUMP:
+            multiplier *= 2.6;
+            break;
+        case IEntityMovementMode.HOVER:
+            multiplier *= 3.2;
+            break;
+        case IEntityMovementMode.WHEELED:
+            multiplier *= 3.2;
+            break;
+        case IEntityMovementMode.TRACKED:
+            multiplier *= 3.2;
+            break;
+        default:
+            break;                
+        }
+        
+        return Math.round(2000 * Math.sqrt(this.getWeaponsAndEquipmentCost()) * multiplier * menStarting);
     }
 
     @Override

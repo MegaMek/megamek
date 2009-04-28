@@ -6,6 +6,7 @@ v0.34.1 (2009-04-28, 15:16 UTC+2)
 + Patch 2782015, Bug 2777743: Enhanced ER PPC BV
 + Bug: mouse clicks register at wrong location in BoardView
 + Adjusted build.xml to get source from correct location
++ Bug: Ostwar 3M has wrong techlevel
 
 v0.34.0 STABLE (2009-04-27, 21:46 UTC+2)
 + Bug: make camo choice dialog correct size

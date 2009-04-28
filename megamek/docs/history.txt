@@ -12,6 +12,7 @@ v0.35.0-dev (SVN)
 + Moved all Unit Weapon flags to flag1 field for WeaponType;
 + Bug: mouseclicks in boardview register at wrong location
 + Bug: Ostwar 3M has wrong techlevel
++ Bug 2555773, Patch 2782679: Narc pods working for non-narc ammo
 
 v0.34.0 STABLE (2008-04-27, 21:46 UTC+2)
 + Bug: make camo choice dialog correct size

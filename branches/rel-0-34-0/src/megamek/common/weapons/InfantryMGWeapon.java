@@ -45,6 +45,8 @@ public class InfantryMGWeapon extends InfantryWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 4;
+        // machine gun (support), TM p. 300 
+        this.cost = 1750;
         // machine gun (support) TM p. 319
         this.bv = 3.93;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;

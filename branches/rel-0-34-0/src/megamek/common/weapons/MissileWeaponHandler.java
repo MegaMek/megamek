@@ -185,11 +185,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             bTargetECMAffected = Compute.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.T_LRM) ||
-                 (atype.getAmmoType() == AmmoType.T_SRM)) ||
-                 ((atype.getAmmoType() == AmmoType.T_MML)
-                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
-                    && ((weapon.curMode() == null) || !weapon.curMode().equals(
-                            "Indirect")))) {
+                    (atype.getAmmoType() == AmmoType.T_SRM) ||
+                    (atype.getAmmoType() == AmmoType.T_MML))
+                       && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
+                       && ((weapon.curMode() == null) || !weapon.curMode().equals(
+                               "Indirect"))) {
                 if (bTargetECMAffected) {
                     // ECM prevents bonus
                     r = new Report(3330);

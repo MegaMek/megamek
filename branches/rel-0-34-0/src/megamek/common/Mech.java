@@ -31,6 +31,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
+import megamek.common.weapons.ISMekTaser;
 import megamek.common.weapons.PPCWeapon;
 
 /**
@@ -2630,6 +2631,11 @@ public abstract class Mech extends Entity implements Serializable {
 
             // gauss rifles only subtract 1 point per slot
             if (etype instanceof GaussWeapon) {
+                toSubtract = 1;
+            }
+
+            // tasers also get only 1 point per slot
+            if (etype instanceof ISMekTaser) {
                 toSubtract = 1;
             }
 

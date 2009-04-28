@@ -5621,7 +5621,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Taser";
         ammo.setInternalName(ammo.name);
         ammo.addLookupName("MekTaserAmmo");
-        ammo.damagePerShot = 1;
+        ammo.damagePerShot = 6;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_TASER;
         ammo.shots = 5;

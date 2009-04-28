@@ -15,6 +15,7 @@ v0.35.0-dev (SVN)
 + Bug 2555773, Patch 2782679: Narc pods working for non-narc ammo
 + Patch 2782596: Infantry weapon cost missing
 + Bug 2780871: Kobold BA missing and wrong variants
++ Bug: HAG costs incorrect
 
 v0.34.0 STABLE (2008-04-27, 21:46 UTC+2)
 + Bug: make camo choice dialog correct size

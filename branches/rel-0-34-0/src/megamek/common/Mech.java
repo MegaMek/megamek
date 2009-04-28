@@ -2811,11 +2811,11 @@ public abstract class Mech extends Entity implements Serializable {
 
         }
         if (hasVoidSig()) {
-            targetMovementModifier = 3;
+            targetMovementModifier = +3;
             bvText.append(startRow);
             bvText.append(startColumn);
 
-            bvText.append("Void Sig (replaces Target Movement Mod");
+            bvText.append("Void Sig +3");
             bvText.append(endColumn);
             bvText.append(startColumn);
 

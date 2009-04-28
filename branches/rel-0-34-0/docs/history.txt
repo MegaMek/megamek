@@ -6,6 +6,7 @@ v0.34.2-dev (SVN)
 + Patch 2782596: Infantry weapon cost missing
 + Bug 2780871: Kobold BA missing and wrong variants
 + Bug: HAG costs wrong
++ Bug: Void sig not correctly counted for BV purposes
 
 v0.34.1 (2009-04-28, 15:16 UTC+2)
 + Patch 2782015, Bug 2777743: Enhanced ER PPC BV

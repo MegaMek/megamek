@@ -670,7 +670,6 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 1.0f;
         misc.criticals = 1;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_HEAT_SINK;
         misc.bv = 0;
 
@@ -737,7 +736,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = 0;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
+        misc.flags1 |= F_TANK_EQUIPMENT;
         misc.flags |= F_TRACTOR_MODIFICATION;
         misc.bv = 0;
 
@@ -818,7 +817,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ISDouble Heat Sink");
         misc.tonnage = 1.0f;
         misc.criticals = 3;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_DOUBLE_HEAT_SINK;
         misc.bv = 0;
 
@@ -835,7 +833,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLDouble Heat Sink");
         misc.tonnage = 1.0f;
         misc.criticals = 2;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_DOUBLE_HEAT_SINK;
         misc.bv = 0;
 
@@ -1490,8 +1487,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = 0;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
-        misc.flags |= F_TANK_EQUIPMENT | F_ARMORED_CHASSIS;
+        misc.flags1 |= F_TANK_EQUIPMENT;
+        misc.flags |= F_ARMORED_CHASSIS;
         misc.bv = 0;
 
         return misc;
@@ -1876,7 +1873,6 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;
 
@@ -1893,7 +1889,6 @@ public class MiscType extends EquipmentType {
         misc.criticals = 16;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
@@ -1912,7 +1907,6 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
@@ -1930,7 +1924,6 @@ public class MiscType extends EquipmentType {
         misc.criticals = 21;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
@@ -1978,7 +1971,6 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_FERRO_LAMELLOR;
         return misc;
     }
@@ -1992,7 +1984,6 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.bv = 0;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_TANK_EQUIPMENT;
         return misc;
     }
@@ -2006,7 +1997,6 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.bv = 0;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_TANK_EQUIPMENT;
         return misc;
     }
@@ -2023,7 +2013,6 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_ENDO_STEEL;
         misc.bv = 0;
 
@@ -2041,7 +2030,6 @@ public class MiscType extends EquipmentType {
         misc.criticals = 16;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_ENDO_STEEL;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
@@ -2061,7 +2049,6 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_TANK_EQUIPMENT;
         return misc;
     }
@@ -2388,7 +2375,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLLaser Heat Sink");
         misc.tonnage = 1.0f;
         misc.criticals = 2;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_DOUBLE_HEAT_SINK | F_LASER_HEAT_SINK;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_CLAN_ADVANCED;
@@ -2408,7 +2394,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS1 Compact Heat Sink");
         misc.tonnage = 1.5f;
         misc.criticals = 1;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_HEAT_SINK;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
@@ -2424,7 +2409,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS2 Compact Heat Sinks");
         misc.tonnage = 3.0f;
         misc.criticals = 1;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_DOUBLE_HEAT_SINK;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
@@ -2649,7 +2633,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.0f;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
+        misc.flags1 |= F_BA_EQUIPMENT;
         misc.flags |= F_VIBROCLAW;
         misc.bv = 1;
 
@@ -2680,7 +2664,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 8;
         misc.cost = 0;
         misc.spreadable = true;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
+        misc.flags1 |= F_TANK_EQUIPMENT;
         misc.flags |= F_ENVIRONMENTAL_SEALING;
         misc.bv = 0;
 
@@ -2713,7 +2697,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
+        misc.flags1 |= F_TANK_EQUIPMENT;
         misc.flags |= F_TOOLS;
         misc.subType |= S_DEMOLITION_CHARGE;
         misc.toHitModifier = 1;
@@ -2731,7 +2715,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
+        misc.flags1 |= F_TANK_EQUIPMENT;
         misc.flags |= F_TOOLS;
         misc.subType |= S_VIBROSHOVEL;
         misc.toHitModifier = 1;
@@ -2749,7 +2733,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
+        misc.flags1 |= F_TANK_EQUIPMENT;
         misc.flags |= F_TOOLS;
         misc.subType |= S_BRIDGE_KIT;
         misc.toHitModifier = 1;
@@ -3181,12 +3165,11 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_ADVANCED;
-        misc.name = "Heavy Armor";
+        misc.name = "";
         misc.setInternalName(misc.name);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.cost = 100000;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_TOOLS;
         misc.subType = S_HEAVY_ARMOR;
         misc.bv = 15;

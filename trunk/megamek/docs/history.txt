@@ -18,6 +18,7 @@ v0.35.0-dev (SVN)
 + Bug: HAG costs incorrect
 + Bug: Void sig not correctly counted for BV purposes
 + Bug: Mech taser counting for -15 per crit for defensive BV, instead of -1
++ Updated Weapon and Equipment Flags for Specific units.
 
 v0.34.0 STABLE (2008-04-27, 21:46 UTC+2)
 + Bug: make camo choice dialog correct size

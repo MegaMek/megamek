@@ -19,6 +19,8 @@ v0.35.0-dev (SVN)
 + Bug: Void sig not correctly counted for BV purposes
 + Bug: Mech taser counting for -15 per crit for defensive BV, instead of -1
 + Updated Weapon and Equipment Flags for Specific units.
++ Bug: mouse clicks register at wrong location in BoardView
++ Added zooming to swing UI
 
 v0.34.0 STABLE (2008-04-27, 21:46 UTC+2)
 + Bug: make camo choice dialog correct size

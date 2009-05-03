@@ -65,6 +65,7 @@ import keypoint.PngEncoder;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
+import megamek.client.ui.AWT.ClientGUI;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Hex;
@@ -501,7 +502,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return null != dir.getName()
+                return (null != dir.getName())
                         && dir.getName().endsWith(".board"); //$NON-NLS-1$
             }
 
@@ -511,8 +512,8 @@ public class BoardEditor extends JComponent implements ItemListener,
             }
         });
         int returnVal = fc.showOpenDialog(frame);
-        if (returnVal != JFileChooser.APPROVE_OPTION
-                || fc.getSelectedFile() == null) {
+        if ((returnVal != JFileChooser.APPROVE_OPTION)
+                || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -613,7 +614,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return null != dir.getName()
+                return (null != dir.getName())
                         && dir.getName().endsWith(".board"); //$NON-NLS-1$
             }
 
@@ -623,8 +624,8 @@ public class BoardEditor extends JComponent implements ItemListener,
             }
         });
         int returnVal = fc.showSaveDialog(frame);
-        if (returnVal != JFileChooser.APPROVE_OPTION
-                || fc.getSelectedFile() == null) {
+        if ((returnVal != JFileChooser.APPROVE_OPTION)
+                || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -656,7 +657,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return null != dir.getName() && dir.getName().endsWith(".png"); //$NON-NLS-1$
+                return (null != dir.getName()) && dir.getName().endsWith(".png"); //$NON-NLS-1$
             }
 
             @Override
@@ -666,7 +667,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         });
         // Default to the board's name (if it has one).
         String fileName;
-        if (curfile != null && curfile.length() > 0) {
+        if ((curfile != null) && (curfile.length() > 0)) {
             fileName = curfile.getName().toUpperCase();
             if (fileName.endsWith(".BOARD")) { //$NON-NLS-1$
                 int length = fileName.length();
@@ -676,8 +677,8 @@ public class BoardEditor extends JComponent implements ItemListener,
             fc.setSelectedFile(new File(fileName));
         }
         int returnVal = fc.showSaveDialog(frame);
-        if (returnVal != JFileChooser.APPROVE_OPTION
-                || fc.getSelectedFile() == null) {
+        if ((returnVal != JFileChooser.APPROVE_OPTION)
+                || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -785,7 +786,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         } else if ("fileBoardSaveAsImage".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             boardSaveAsImage();
         } else if (ae.getSource().equals(butDelTerrain)
-                && lisTerrain.getSelectedValue() != null) {
+                && (lisTerrain.getSelectedValue() != null)) {
             ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(
                     (String) lisTerrain.getSelectedValue());
             curHex.removeTerrain(toRemove.getType());
@@ -794,12 +795,12 @@ public class BoardEditor extends JComponent implements ItemListener,
         } else if (ae.getSource().equals(butAddTerrain)) {
             addSetTerrain();
         } else if (ae.getSource().equals(butElevUp)
-                && curHex.getElevation() < 9) {
+                && (curHex.getElevation() < 9)) {
             curHex.setElevation(curHex.getElevation() + 1);
             texElev.setText(Integer.toString(curHex.getElevation()));
             repaintWorkingHex();
         } else if (ae.getSource().equals(butElevDown)
-                && curHex.getElevation() > -5) {
+                && (curHex.getElevation() > -5)) {
             curHex.setElevation(curHex.getElevation() - 1);
             texElev.setText(Integer.toString(curHex.getElevation()));
             repaintWorkingHex();
@@ -812,7 +813,11 @@ public class BoardEditor extends JComponent implements ItemListener,
             addSetTerrain();
         } else if ("viewMiniMap".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             toggleMap();
-        } else if ("helpAbout".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_ZOOM_IN)) {
+            bv.zoomIn();
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_ZOOM_OUT)) {
+            bv.zoomOut();
+        }else if ("helpAbout".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             showAbout();
         } else if ("helpContents".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             showHelp();

@@ -95,15 +95,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     // Action commands.
     public static final String VIEW_MEK_DISPLAY = "viewMekDisplay"; //$NON-NLS-1$
-
     public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
-
     public static final String VIEW_LOS_SETTING = "viewLOSSetting"; //$NON-NLS-1$
-
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
-
     public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
-
     public static final String VIEW_ZOOM_OUT = "viewZoomOut"; //$NON-NLS-1$
 
     // a frame, to show stuff in
@@ -595,6 +590,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             toggleUnitOverview();
         } else if (event.getActionCommand().equals(VIEW_LOS_SETTING)) {
             showLOSSettingDialog();
+        } else if (event.getActionCommand().equals(VIEW_ZOOM_IN)) {
+            bv.zoomIn();
+        } else if (event.getActionCommand().equals(VIEW_ZOOM_OUT)) {
+            bv.zoomOut();
         }
     }
 

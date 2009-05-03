@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -27,6 +27,7 @@ import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Report;
 import megamek.common.TagInfo;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -38,7 +39,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         ArtilleryWeaponIndirectFireHandler implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7243477723032010917L;
 
@@ -54,11 +55,12 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
+    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        if (!this.cares(phase)) {
+        if (!cares(phase)) {
             return true;
         }
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
@@ -116,19 +118,19 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             r.add(target.getDisplayName(), true);
         }
         vPhaseReport.addElement(r);
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;
@@ -170,13 +172,13 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
         //Set Margin of Success/Failure.
         toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && entityTarget != null;
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
-        } 
+        }
 
         // we may still have to use ammo, if direct fire
         if (!handledAmmoAndReport) {
@@ -192,8 +194,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             bMissed = true;
         }
         nDamPerHit = wtype.getRackSize();
-        
-        
+
+
         // copperhead gets 10 damage less than standard
         if (((AmmoType)ammo.getType()).getAmmoType() != AmmoType.T_ARROW_IV) {
             nDamPerHit -= 10;
@@ -216,7 +218,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         }
         int hits = 1;
         int nCluster = 1;
-        if (entityTarget != null && entityTarget.getTaggedBy() != -1) {
+        if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
             if (aaa.getCoords() != null) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
@@ -225,14 +227,15 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
-        if (targetInBuilding && bldg != null) {
+        if (targetInBuilding && (bldg != null)) {
             bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
         }
         if ((bldg != null) && (bldgAbsorbs > 0)) {
             // building absorbs some damage
             r = new Report(6010);
-            if (entityTarget != null)
+            if (entityTarget != null) {
                 r.subject = entityTarget.getId();
+            }
             r.add(bldgAbsorbs);
             vPhaseReport.addElement(r);
             Vector<Report> buildingReport = server.damageBuilding(bldg,
@@ -251,7 +254,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             vPhaseReport.addElement(r);
             return false;
         }
-        if (!bMissed && entityTarget != null) {
+        if (!bMissed && (entityTarget != null)) {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, nDamPerHit, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
@@ -271,9 +274,10 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                     .hasMoreElements();) {
                 Entity entity = impactHexHits.nextElement();
                 if (!bMissed) {
-                    if (entity == entityTarget)
+                    if (entity == entityTarget) {
                         continue; // don't splash the target unless missile
                     // missed
+                    }
                 }
                 toHit.setSideTable(entity.sideTable(aaa.getCoords()));
                 HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit
@@ -314,9 +318,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             for (int i = 0; i < v.size(); i++) {
                 info = v.elementAt(i);
                 tagger = game.getEntity(info.attackerId);
-                if (info.shots < info.priority && !ae.isEnemyOf(tagger)) {
+                if ((info.shots < info.priority) && !ae.isEnemyOf(tagger)) {
                     entityTarget = game.getEntity(info.targetId);
-                    if (entityTarget != null && entityTarget.isOnSameSheet(tc)) {
+                    if ((entityTarget != null) && entityTarget.isOnSameSheet(tc)) {
                         if (tc.distance(entityTarget.getPosition()) < bestDistance) {
                             bestIndex = i;
                             bestDistance = tc.distance(entityTarget
@@ -343,18 +347,16 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             game.clearTagInfoShots(ae, tc);
         }
 
-        if (entityTarget == null || info == null) {
-            toHit = new ToHitData(ToHitData.IMPOSSIBLE,
+        if ((entityTarget == null) || (info == null)) {
+            toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no targets tagged on map sheet");
         } else if (info.missed) {
             aaa.setTargetId(entityTarget.getId());
             aaa.setTargetType(Targetable.TYPE_ENTITY);
             target = entityTarget;
-            toHit = new ToHitData(ToHitData.IMPOSSIBLE, "tag missed the target");
+            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "tag missed the target");
         } else {
-            // update for hit table resolution
             target = entityTarget;
-            aaa.setCoords(tagger.getPosition());
             aaa.setTargetId(entityTarget.getId());
             aaa.setTargetType(Targetable.TYPE_ENTITY);
         }
@@ -362,10 +364,11 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
      *      boolean, megamek.common.Building, java.util.Vector)
      */
+    @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
         return true;

@@ -1737,7 +1737,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             Dimension dispDimension = new Dimension();
             dispDimension.setSize(width, height);
             // we need to adjust the point, because it should be against the displayable dimension
-            Point dispPoint = point;
+            Point dispPoint = new Point();
             dispPoint.setLocation(point.x + getBounds().x, point.y + getBounds().y);
             if (disp.isHit(dispPoint, dispDimension)) {
                 return;

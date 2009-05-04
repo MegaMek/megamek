@@ -1399,6 +1399,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
 
     public void updateFlipArms(boolean armsFlipped) {
+        if (ce() == null) {
+            return;
+        }
         if (armsFlipped == ce().getArmsFlipped()) {
             return;
         }

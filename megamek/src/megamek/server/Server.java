@@ -8557,7 +8557,7 @@ public class Server implements Runnable {
 
                 // Don't trigger the same pod twice.
                 if (!triggerPodActions.contains(tba)) {
-                    triggerBPod(entity, tba.getPodId(), tba.getTarget());
+                    triggerBPod(entity, tba.getPodId(), game.getEntity(tba.getTargetId()));
                     triggerPodActions.addElement(tba);
                 } else {
                     System.err.print("B Pod #");
@@ -14472,7 +14472,7 @@ public class Server implements Runnable {
         // one hit and shouldn't cause
         // 2 hits to the pilot.
         boolean isHeadHit = (te instanceof Mech) && (((Mech) te).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) && (hit.getLocation() == Mech.LOC_HEAD) && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS);
-        
+
         // booleans to indicate criticals for AT2
         boolean critSI = false;
         boolean critThresh = false;
@@ -14547,11 +14547,11 @@ public class Server implements Runnable {
         if ( ((te instanceof Mech) || (te instanceof Tank)) && (te.getArmorType() == EquipmentType.T_ARMOR_HARDENED)) {
             hardenedArmor = true;
         }
-        
+
         if ( ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero)) && (te.getArmorType() == EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
             ferroLamellorArmor = true;
         }
-        
+
         if (((te instanceof Mech) || (te instanceof Tank)) && (te.getArmorType() == EquipmentType.T_ARMOR_REFLECTIVE)) {
             reflectiveArmor = true;
         }
@@ -14561,15 +14561,15 @@ public class Server implements Runnable {
         }
 
         int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) && ( !hardenedArmor && !ferroLamellorArmor ) ? 1 : 0;
-        
+
         int specCrits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) && (hardenedArmor || ferroLamellorArmor) ? 1 : 0;
-        
+
         //if our mech has Hardened or Ferro-Lamellor armor, ignore extra crits from AP effects.
         if ((hardenedArmor || ferroLamellorArmor ) && (((hit.getGeneralDamageType() & HitData.DAMAGE_ARMOR_PIERCING_MISSILE) == HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
                                                     || ((hit.getGeneralDamageType() & HitData.DAMAGE_ARMOR_PIERCING) == HitData.DAMAGE_ARMOR_PIERCING))) {
                                                         specCrits -= 1;
                                                     }
-        
+
         HitData nextHit = null;
 
         // Some "hits" on a Protomech are actually misses.
@@ -15054,7 +15054,7 @@ public class Server implements Runnable {
                         // extra 0 or 1 point of damage to men
                         tmpDamageHold += damage;
                     }
-                // If the target has Ferro-Lamellor armor, we need to adjust damage. (4/5ths rounded down), 
+                // If the target has Ferro-Lamellor armor, we need to adjust damage. (4/5ths rounded down),
                 // Also check to eliminate crit chances for damage reduced to 0
                 } else if (ferroLamellorArmor && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
                     tmpDamageHold = damage;

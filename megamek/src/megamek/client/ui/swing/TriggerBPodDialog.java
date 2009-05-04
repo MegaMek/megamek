@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -34,7 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.SingleChoiceDialog;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Infantry;
@@ -51,7 +50,7 @@ import megamek.common.actions.TriggerBPodAction;
 public class TriggerBPodDialog extends JDialog implements ActionListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5882060083607984056L;
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
@@ -66,9 +65,9 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
      * The <code>int</code> ID of the entity that can fire Anti-BA Pods.
      */
     private int entityId = Entity.NONE;
-    
+
     private ClientGUI clientgui;
-    
+
     /**
      * A helper class to track when a Anti-BA Pod has been selected to be triggered.
      */
@@ -94,7 +93,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
 
         /**
          * See if this Anti-BA Pod should be triggered
-         * 
+         *
          * @return <code>true</code> if the pod should be triggered.
          */
         public boolean isTriggered() {
@@ -103,7 +102,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
 
         /**
          * Get the equipment number of this Anti-BA Pod.
-         * 
+         *
          * @return the <code>int</code> of the pod.
          */
         public int getNum() {
@@ -114,7 +113,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
     /**
      * Display a dialog that shows the Anti-BA Pods on the entity, and allows the
      * player to fire any active pods.
-     * 
+     *
      * @param parent the <code>Frame</code> parent of this dialog
      * @param entity the <code>Entity</code> that can fire AP Pods.
      */
@@ -122,7 +121,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         super(clientgui.frame, Messages.getString("TriggerBPodDialog.title"), true); //$NON-NLS-1$
         entityId = entity.getId();
         this.clientgui = clientgui;
-        
+
 
         labMessage = new JTextArea(
                 Messages.getString(
@@ -138,7 +137,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         // Walk through the entity's weapons equipment, looking for Anti-BA Pods.
         for (Mounted mount : entity.getWeaponList()) {
 
-            
+
             // Is this an Anti-BA Pod?
             if (mount.getType().hasFlag(WeaponType.F_B_POD)) {
 
@@ -153,24 +152,25 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                 // Can the entity fire the pod?
                 if (mount.canFire()) {
                     //Only Leg's and CT BPods can be used against Leg attacks
-                    if ( attackType.equals(Infantry.LEG_ATTACK) 
-                            && mount.getLocation() != Mech.LOC_CT
-                            && mount.getLocation() != Mech.LOC_LLEG
-                            && mount.getLocation() != Mech.LOC_RLEG ){
+                    if ( attackType.equals(Infantry.LEG_ATTACK)
+                            && (mount.getLocation() != Mech.LOC_CT)
+                            && (mount.getLocation() != Mech.LOC_LLEG)
+                            && (mount.getLocation() != Mech.LOC_RLEG) ){
                         if (entity instanceof QuadMech) {
-                            if (mount.getLocation() != Mech.LOC_LARM
-                                    || mount.getLocation() != Mech.LOC_RARM) {
+                            if ((mount.getLocation() != Mech.LOC_LARM)
+                                    || (mount.getLocation() != Mech.LOC_RARM)) {
                                         pod.setEnabled(false);
-                        } 
-                        } else
+                        }
+                        } else {
                             pod.setEnabled(false);
+                        }
                     } //Only Forward Mounted Arm and Side Torso B-Pod's can be used against
                       //Swarm attacks
-                    else if ( attackType.equals(Infantry.SWARM_MEK) 
-                            && (mount.isRearMounted() 
-                            || mount.getLocation() == Mech.LOC_CT
-                            || mount.getLocation() == Mech.LOC_LLEG
-                            || mount.getLocation() == Mech.LOC_RLEG)  ){
+                    else if ( attackType.equals(Infantry.SWARM_MEK)
+                            && (mount.isRearMounted()
+                            || (mount.getLocation() == Mech.LOC_CT)
+                            || (mount.getLocation() == Mech.LOC_LLEG)
+                            || (mount.getLocation() == Mech.LOC_RLEG))  ){
                         pod.setEnabled(false);
                     }else {
                         // Yup. Add a traker for this pod.
@@ -216,6 +216,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         getContentPane().add(butOkay);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -246,7 +247,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
 
     /**
      * Get the trigger actions that the user selected.
-     * 
+     *
      * @return the <code>Enumeration</code> of <code>TriggerAPPodAction</code>
      *         objects that match the user's selections.
      */
@@ -258,17 +259,17 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
 
             // Should we create an action for this pod?
             if (pod.isTriggered()) {
-                
-                temp.addElement(new TriggerBPodAction(entityId, pod.getNum(), chooseTarget(clientgui.client.game.getEntity(entityId).getPosition())));
+
+                temp.addElement(new TriggerBPodAction(entityId, pod.getNum(), chooseTarget(clientgui.client.game.getEntity(entityId).getPosition()).getId()));
             }
         }
 
         return temp.elements();
     }
-    
+
     /**
      * Have the player select a target from the entities at the given coords.
-     * 
+     *
      * @param pos - the <code>Coords</code> containing targets.
      */
     private Entity chooseTarget(Coords pos) {
@@ -283,7 +284,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         Vector<Entity> targets = new Vector<Entity>();
         while (choices.hasMoreElements()) {
             choice = choices.nextElement();
-            if (!clientgui.client.game.getEntity(entityId).equals(choice) && choice instanceof Infantry) {
+            if (!clientgui.client.game.getEntity(entityId).equals(choice) && (choice instanceof Infantry)) {
                 targets.addElement(choice);
             }
         }

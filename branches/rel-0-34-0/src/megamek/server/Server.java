@@ -8557,7 +8557,7 @@ public class Server implements Runnable {
 
                 // Don't trigger the same pod twice.
                 if (!triggerPodActions.contains(tba)) {
-                    triggerBPod(entity, tba.getPodId(), tba.getTarget());
+                    triggerBPod(entity, tba.getPodId(), game.getEntity(tba.getTargetId()));
                     triggerPodActions.addElement(tba);
                 } else {
                     System.err.print("B Pod #");

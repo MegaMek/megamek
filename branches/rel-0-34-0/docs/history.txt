@@ -12,6 +12,7 @@ v0.34.2-dev (SVN)
 + Bug: homing artillery hit side resolving from TAG location
 + Bug: prevent NPE in FiringDisplay
 + Bug 2786447: B-Pod bug
++ Bug 2785522: minor typo and small bug
 
 v0.34.1 (2009-04-28, 15:16 UTC+2)
 + Patch 2782015, Bug 2777743: Enhanced ER PPC BV

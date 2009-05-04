@@ -3456,7 +3456,7 @@ public class Compute {
 
         // Can't swarm a friendly Mek.
         // See http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=632321&page=0&view=collapsed&sb=5&o=0&fpart=
-        else if (!attacker.isEnemyOf(defender)) {
+        else if (!attacker.isEnemyOf(defender) && !attacker.getGame().getOptions().booleanOption("friendly_fire")) {
             reason.append("Can only swarm an enemy.");
         }
 

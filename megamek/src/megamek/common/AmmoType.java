@@ -335,7 +335,6 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> mortarAmmos = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> clanMortarAmmos = new ArrayList<AmmoType>(4);
         ArrayList<MunitionMutator> munitions = new ArrayList<MunitionMutator>();
-        ArrayList<AmmoType> mmlAmmos = new ArrayList<AmmoType>();
 
         AmmoType base = null;
 
@@ -485,35 +484,27 @@ public class AmmoType extends EquipmentType {
 
         base = AmmoType.createISMML3LRMAmmo();
         lrmAmmos.add( base );
-        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = AmmoType.createISMML3SRMAmmo();
         srmAmmos.add( base );
-        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = AmmoType.createISMML5LRMAmmo();
         lrmAmmos.add( base );
-        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = AmmoType.createISMML5SRMAmmo();
         srmAmmos.add( base );
-        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = AmmoType.createISMML7LRMAmmo();
         lrmAmmos.add( base );
-        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = AmmoType.createISMML7SRMAmmo();
         srmAmmos.add( base );
-        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = AmmoType.createISMML9LRMAmmo();
         lrmAmmos.add( base );
-        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = AmmoType.createISMML9SRMAmmo();
         srmAmmos.add( base );
-        mmlAmmos.add(base);
         EquipmentType.addType( base );
 
         base = AmmoType.createISLongTomAmmo();
@@ -883,7 +874,7 @@ public class AmmoType extends EquipmentType {
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        AmmoType.createMunitions(srmAmmos,munitions);
+        AmmoType.createMunitions(srmAmmos, munitions);
 
         // Create the munition types for Clan SRM launchers.
         munitions.clear();
@@ -1025,14 +1016,6 @@ public class AmmoType extends EquipmentType {
         // mutators, and create munition types.
         AmmoType.createMunitions(clanLrmAmmos,munitions);
 
-        // Create the torpedo munitions for MMLs
-        munitions.clear();
-        munitions.add( new MunitionMutator( "Torpedo", 1, M_TORPEDO, TechConstants.T_IS_TW_NON_BOX));
-
-        // Walk through both the base types and the
-        // mutators, and create munition types.
-        AmmoType.createMunitions(mmlAmmos,munitions);
-
         // Create the munition types for AC rounds.
         munitions.clear();
         munitions.add( new MunitionMutator( "Precision",2, M_PRECISION, TechConstants.T_IS_TW_NON_BOX ) );
@@ -1140,6 +1123,7 @@ public class AmmoType extends EquipmentType {
 
     private static void createMunitions(List<AmmoType> bases, List<MunitionMutator> munitions) {
         for(AmmoType base : bases) {
+            base.ammoRatio = base.ammoRatio;
             for(MunitionMutator mutator: munitions) {
                 EquipmentType.addType( mutator.createMunitionType( base ) );
             }

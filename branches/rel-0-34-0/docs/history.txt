@@ -13,6 +13,9 @@ v0.34.2-dev (SVN)
 + Bug: prevent NPE in FiringDisplay
 + Bug 2786447: B-Pod bug
 + Bug 2785522: minor typo and small bug
++ Bug: LRM-delivered minefields should always have strength equal to the rack-
+    size of the launcher
++ Bug: Torpedoes should not be available to MMLs
 
 v0.34.1 (2009-04-28, 15:16 UTC+2)
 + Patch 2782015, Bug 2777743: Enhanced ER PPC BV

@@ -417,6 +417,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         counter.setUsedThisRound(true);
                         amsEnganged = true;
                         r = new Report(3350);
+                        r.subject = entityTarget.getId();
                         r.newlines = 0;
                         vPhaseReport.add(r);
                         return -4;

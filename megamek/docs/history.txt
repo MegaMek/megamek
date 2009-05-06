@@ -28,6 +28,7 @@ v0.35.0-dev (SVN)
 + Bug: LRM-delivered minefields should always have strength equal to the rack-
     size of the launcher
 + Bug: Torpedoes should not be available to MMLs
++ Bug 2787549: pilot damage avoidance rolls wrong
 
 v0.34.0 STABLE (2008-04-27, 21:46 UTC+2)
 + Bug: make camo choice dialog correct size

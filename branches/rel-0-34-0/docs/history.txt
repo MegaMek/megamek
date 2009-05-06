@@ -16,6 +16,7 @@ v0.34.2-dev (SVN)
 + Bug: LRM-delivered minefields should always have strength equal to the rack-
     size of the launcher
 + Bug: Torpedoes should not be available to MMLs
++ Bug 2787549: pilot damage avoidance rolls wrong
 
 v0.34.1 (2009-04-28, 15:16 UTC+2)
 + Patch 2782015, Bug 2777743: Enhanced ER PPC BV

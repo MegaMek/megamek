@@ -90,6 +90,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public Pilot crew = new Pilot();
 
     protected boolean shutDown = false;
+    protected boolean shutDownThisPhase = false;
     protected boolean doomed = false;
     protected boolean destroyed = false;
 
@@ -707,6 +708,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void setShutDown(boolean shutDown) {
         this.shutDown = shutDown;
+        setShutDownThisPhase(shutDown);
+    }
+
+    public void setShutDownThisPhase(boolean shutDown) {
+        shutDownThisPhase = shutDown;
+    }
+
+    public boolean isShutDownThisPhase() {
+        return shutDownThisPhase;
     }
 
     public boolean isDoomed() {
@@ -4230,27 +4240,29 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // gyro operational?
         if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) && (getGyroType() != Mech.GYRO_HEAVY_DUTY)) {
-            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, 3, "Gyro destroyed");
+            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting() + 6, "Gyro destroyed");
         }
 
         // Takes 3+ hits to kill an HD Gyro.
         if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 2) && (getGyroType() == Mech.GYRO_HEAVY_DUTY)) {
-            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, 3, "Gyro destroyed");
+            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting() + 6, "Gyro destroyed");
         }
 
         // both legs present?
         if (this instanceof BipedMech) {
             if (((BipedMech) this).countBadLegs() == 2) {
-                return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, 10, "Both legs destroyed");
+                return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting() + 10, "Both legs destroyed");
             }
         } else if (this instanceof QuadMech) {
             if (((QuadMech) this).countBadLegs() >= 3) {
-                return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, 10, ((Mech) this).countBadLegs() + " legs destroyed");
+                return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting() + ((Mech) this).countBadLegs() * 5, ((Mech) this).countBadLegs() + " legs destroyed");
             }
         }
         // entity shut down?
-        if (isShutDown()) {
-            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, 3, "Reactor shut down");
+        if (isShutDown() && isShutDownThisPhase()) {
+            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting() + 3, "Reactor shut down");
+        } else if (isShutDown()) {
+            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, TargetRoll.IMPOSSIBLE, "Reactor shut down");
         }
 
         // okay, let's figure out the stuff then

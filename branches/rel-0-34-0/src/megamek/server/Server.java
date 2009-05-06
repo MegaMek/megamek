@@ -1210,6 +1210,7 @@ public class Server implements Runnable {
             entity.engineHitsThisRound = 0;
             entity.rolledForEngineExplosion = false;
             entity.dodging = false;
+            entity.setShutDownThisPhase(false);
 
             // reset done to false
 

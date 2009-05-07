@@ -61,7 +61,6 @@ public class VictoryResult implements Victory.Result {
         double max = Double.MIN_VALUE;
         int maxTeam = Player.TEAM_NONE;
         boolean draw = false;
-        ;
         for (int i : teamScore.keySet()) {
             if (teamScore.get(i) == max) {
                 draw = true;
@@ -123,8 +122,7 @@ public class VictoryResult implements Victory.Result {
     public double getPlayerScore(int id) {
         if (playerScore.get(id) == null)
             return 0.0;
-        else
-            return playerScore.get(id);
+        return playerScore.get(id);
     }
 
     public int[] getPlayers() {
@@ -134,8 +132,7 @@ public class VictoryResult implements Victory.Result {
     public double getTeamScore(int id) {
         if (teamScore.get(id) == null)
             return 0.0;
-        else
-            return teamScore.get(id);
+        return teamScore.get(id);
     }
 
     public int[] getTeams() {
@@ -165,6 +162,7 @@ public class VictoryResult implements Victory.Result {
         return ret;
     }
 
+    @Override
     public String toString() {
         return "victory provided to you by:" + getTrace();
     }

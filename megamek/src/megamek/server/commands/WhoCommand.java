@@ -39,6 +39,7 @@ public class WhoCommand extends ServerCommand {
                 "Lists all of the players connected to the server.");
     }
 
+    @Override
     public void run(int connId, String[] args) {
         server.sendServerChat(connId, "Listing all connections...");
         server

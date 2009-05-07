@@ -40,6 +40,7 @@ public class FixElevationCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      */
+    @Override
     public void run(int connId, String[] args) {
         int countbad = 0;
         for (Enumeration<Entity> e = server.getGame().getEntities(); e

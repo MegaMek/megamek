@@ -32,6 +32,7 @@ public class NukeCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      */
+    @Override
     public void run(int connId, String[] args) {
 
         // Check to make sure nuking is allowed by game options!

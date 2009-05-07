@@ -38,6 +38,7 @@ public class ListSavesCommand extends ServerCommand {
                 "List all saved games in the saved games directory.");
     }
 
+    @Override
     public void run(int connId, String[] args) {
         File sDir = new File("savegames");
         if (!sDir.exists()) {

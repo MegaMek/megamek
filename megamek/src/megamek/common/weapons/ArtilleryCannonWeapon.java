@@ -17,28 +17,22 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
  */
-public abstract class ArtilleryWeapon extends AmmoWeapon {
+public abstract class ArtilleryCannonWeapon extends AmmoWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -732023379991213890L;
 
-    public ArtilleryWeapon() {
+    public ArtilleryCannonWeapon() {
         super();
-        flags |= F_ARTILLERY | F_SPLITABLE ;
-        flags1 |= F_MECH_WEAPON | F_TANK_WEAPON;
-        damage = DAMAGE_ARTILLERY;
-        atClass = CLASS_ARTILLERY;
+        flags |= F_ARTILLERY_CANNON | F_SPLITABLE;
+        flags1 |= F_MECH_WEAPON | F_AERO_WEAPON | F_TANK_WEAPON;
+        atClass = CLASS_AC;
     }
 
     /*
@@ -49,19 +43,10 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
      * megamek.server.Server)
      */
+    /*
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.getMunitionType() == AmmoType.M_HOMING) {
-            if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-                return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game, server);
-            } else {
-                return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game, server);
-            }
-        } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-            return new ArtilleryWeaponDirectFireHandler(toHit, waa, game, server);
-        } else {
-            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, server);
-        }
-    }
+        return new ArtilleryCannonWeaponHandler(toHit, waa, game, server);
+    }*/
 }

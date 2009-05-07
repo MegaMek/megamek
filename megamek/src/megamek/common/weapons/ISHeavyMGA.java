@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005,2006,2007 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -26,7 +26,7 @@ import megamek.server.Server;
 public class ISHeavyMGA extends AmmoWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2647621717483237437L;
 
@@ -51,6 +51,7 @@ public class ISHeavyMGA extends AmmoWeapon {
         // because it depends on the number of MGs linked to
         // the MGA
         flags |= F_BALLISTIC | F_BURST_FIRE | F_MGA;
+        flags1 |= F_MECH_WEAPON | F_TANK_WEAPON | F_AERO_WEAPON;
         cost = 5000;
         String[] modes = { "Linked", "Off" };
         setModes(modes);

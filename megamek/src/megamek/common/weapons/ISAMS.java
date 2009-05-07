@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -25,32 +25,33 @@ import megamek.common.TechConstants;
  */
 public class ISAMS extends AmmoWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5678281956614161074L;
 
     /**
-     * 
+     *
      */
     public ISAMS() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        this.name = "AMS";
-        this.setInternalName("ISAntiMissileSystem");
-        this.addLookupName("IS Anti-Missile System");
-        this.addLookupName("IS AMS");
-        this.heat = 1;
-        this.rackSize = 2;
-        this.damage = 1; // # of d6 of missiles affected
-        this.ammoType = AmmoType.T_AMS;
-        this.tonnage = 0.5f;
-        this.criticals = 1;
-        this.bv = 32;
-        this.flags |= F_AUTO_TARGET | F_AMS | F_BALLISTIC;
-        this.setModes(new String[] { "On", "Off" });
-        this.setInstantModeSwitch(false);
-        this.cost = 100000;
-        
-        this.atClass = CLASS_POINT_DEFENSE;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        name = "AMS";
+        setInternalName("ISAntiMissileSystem");
+        addLookupName("IS Anti-Missile System");
+        addLookupName("IS AMS");
+        heat = 1;
+        rackSize = 2;
+        damage = 1; // # of d6 of missiles affected
+        ammoType = AmmoType.T_AMS;
+        tonnage = 0.5f;
+        criticals = 1;
+        bv = 32;
+        flags |= F_AUTO_TARGET | F_AMS | F_BALLISTIC;
+        flags1 = F_MECH_WEAPON | F_TANK_WEAPON | F_AERO_WEAPON;
+        setModes(new String[] { "On", "Off" });
+        setInstantModeSwitch(false);
+        cost = 100000;
+
+        atClass = CLASS_POINT_DEFENSE;
     }
 }

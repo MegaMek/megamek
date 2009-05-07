@@ -23,35 +23,37 @@ import megamek.common.TechConstants;
 /**
  * @author Sebastian Brocks
  */
-public class CLSniper extends ArtilleryWeapon {
+public class ISThumperCannon extends ArtilleryCannonWeapon {
+
 
     /**
      *
      */
-    private static final long serialVersionUID = -599648142688689572L;
+    private static final long serialVersionUID = -1951764278554798130L;
 
-    /**
-     *
-     */
-    public CLSniper() {
+    public ISThumperCannon() {
         super();
-        techLevel = TechConstants.T_CLAN_ADVANCED;
-        name = "Sniper";
-        setInternalName("CLSniper");
-        addLookupName("CLSniperArtillery");
-        addLookupName("Clan Sniper");
-        flags1 |= F_AERO_WEAPON;
-        heat = 10;
-        rackSize = 20;
-        ammoType = AmmoType.T_SNIPER;
-        shortRange = 1; //
-        mediumRange = 2;
-        longRange = 18;
-        extremeRange = 18; // No extreme range.
-        tonnage = 20f;
-        criticals = 20;
-        bv = 96;
-        cost = 300000;
+        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        name = "Thumper Cannon";
+        setInternalName("ISThumperCannon");
+        addLookupName("ISThumperArtilleryCannon");
+        addLookupName("IS Thumper Cannon");
+        heat = 5;
+        rackSize = 15;
+        ammoType = AmmoType.T_THUMPER_CANNON;
+        minimumRange = 3;
+        shortRange = 4;
+        mediumRange = 9;
+        longRange = 14;
+        extremeRange = 18;
+        tonnage = 10f;
+        criticals = 7;
+        bv = 41;
+        cost = 200000;
+        shortAV = 5;
+        medAV = 5;
+        longAV = 5;
+        maxRange = RANGE_MED;
     }
 
 }

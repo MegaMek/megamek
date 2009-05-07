@@ -2498,6 +2498,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Nearby terrain blocks leg weapons.";
         }
 
+        // hull down cannot fire any leg weapons
+        if (ae.isHullDown()) {
+            if (((ae instanceof BipedMech) &&
+                    ((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG))) ||
+               ((ae instanceof QuadMech) &&
+                    ((weapon.getLocation() == Mech.LOC_LLEG) ||
+                            (weapon.getLocation() == Mech.LOC_RLEG) ||
+                            (weapon.getLocation() == Mech.LOC_LARM) ||
+                            (weapon.getLocation() == Mech.LOC_RARM)))) {
+                return "Leg weapons cannot be fired while hull down.";
+            }
+        }
+
         if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
             //no space bombing if other attacks already declared
             for ( Enumeration<EntityAction> i = game.getActions();

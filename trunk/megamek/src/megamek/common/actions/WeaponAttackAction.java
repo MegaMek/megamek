@@ -276,8 +276,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE ));
         boolean inSameBuilding = (te != null) && (game.getBoard().getBuildingAt(ae.getPosition()) != null)
                 && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
-        
-        
+
+
         if (te != null) {
             if (!isTargetECMAffected
                     && te.isINarcedBy(ae.getOwner().getTeam())
@@ -1442,12 +1442,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (isINarcGuided) {
             toHit.addModifier(-1, "iNarc homing pod");
         }
-        
+
         // add Artemis V bonus
         if (bArtemisV) {
             toHit.addModifier(-1, "Artemis V FCS" );
         }
- 
+
         if (isHaywireINarced) {
             toHit.addModifier(1, "iNarc Haywire pod");
         }
@@ -2514,6 +2514,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && ae.locationIsLeg(weapon.getLocation())
                 && !underWater) {
             return "Nearby terrain blocks leg weapons.";
+        }
+
+        // hull down cannot fire any leg weapons
+        if (ae.isHullDown()) {
+            if (((ae instanceof BipedMech) &&
+                    ((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG))) ||
+               ((ae instanceof QuadMech) &&
+                    ((weapon.getLocation() == Mech.LOC_LLEG) ||
+                            (weapon.getLocation() == Mech.LOC_RLEG) ||
+                            (weapon.getLocation() == Mech.LOC_LARM) ||
+                            (weapon.getLocation() == Mech.LOC_RARM)))) {
+                return "Leg weapons cannot be fired while hull down.";
+            }
         }
 
         if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {

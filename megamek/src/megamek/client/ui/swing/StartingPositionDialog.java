@@ -56,7 +56,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
      * 
      */
     private static final long serialVersionUID = 7255701351824139329L;
-    private Client client;
+    Client client;
     private ClientGUI clientgui;
 
     private JPanel panButtons = new JPanel();
@@ -106,6 +106,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
         getContentPane().add(panButtons);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }

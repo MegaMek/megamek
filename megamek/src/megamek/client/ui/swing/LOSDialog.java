@@ -57,6 +57,7 @@ public class LOSDialog extends JDialog implements ActionListener {
 
         // closing the window is the same as hitting butOK
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 actionPerformed(new ActionEvent(butOK,
                         ActionEvent.ACTION_PERFORMED, butOK.getText()));

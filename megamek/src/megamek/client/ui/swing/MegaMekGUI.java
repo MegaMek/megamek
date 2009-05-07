@@ -70,9 +70,6 @@ public class MegaMekGUI implements IMegaMekGUI {
     private GameOptionsDialog optdlg;
     private CommonSettingsDialog setdlg;
 
-    public MegaMekGUI() {
-    }
-
     public void start(String[] args) {
         createGUI();
     }
@@ -107,6 +104,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                 GUIPreferences.getInstance().getTooltipDelay());
         frame = new JFrame("MegaMek"); //$NON-NLS-1$
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 quit();
             }
@@ -244,7 +242,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Display the game options dialog.
      */
-    private void showGameOptions() {
+    void showGameOptions() {
         GameOptions options = new GameOptions();
         options.initialize();
         options.loadOptions();
@@ -258,7 +256,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Display the board editor.
      */
-    private void showEditor() {
+    void showEditor() {
         BoardEditor editor = new BoardEditor();
         launch(editor.getFrame());
         editor.boardNew();
@@ -267,7 +265,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Display the board editor and open an "open" dialog.
      */
-    private void showEditorOpen() {
+    void showEditorOpen() {
         BoardEditor editor = new BoardEditor();
         launch(editor.getFrame());
         editor.boardLoad();
@@ -276,7 +274,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Start instances of both the client and the server.
      */
-    private void host() {
+    void host() {
         HostDialog hd;
         hd = new HostDialog(frame);
         hd.setVisible(true);
@@ -357,17 +355,19 @@ public class MegaMekGUI implements IMegaMekGUI {
         optdlg = null;
     }
 
-    private void loadGame() {
+    void loadGame() {
         JFileChooser fc = new JFileChooser("savegames");
         fc
                 .setLocation(frame.getLocation().x + 150,
                         frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("MegaMek.SaveGameDialog.title"));
         fc.setFileFilter(new FileFilter() {
+            @Override
             public boolean accept(File dir) {
                 return (dir.getName() != null && dir.getName().endsWith(".sav")); //$NON-NLS-1$
             }
 
+            @Override
             public String getDescription() {
                 return ".sav";
             }
@@ -450,7 +450,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Host a game constructed from a scenario file
      */
-    private void scenario() {
+    void scenario() {
         JFileChooser fc = new JFileChooser("data" + File.separatorChar
                 + "scenarios");
         fc
@@ -459,10 +459,12 @@ public class MegaMekGUI implements IMegaMekGUI {
         fc.setDialogTitle(Messages
                 .getString("MegaMek.SelectScenarioDialog.title"));
         fc.setFileFilter(new FileFilter() {
+            @Override
             public boolean accept(File dir) {
                 return (dir.getName() != null && dir.getName().endsWith(".mms")); //$NON-NLS-1$
             }
 
+            @Override
             public String getDescription() {
                 return ".mms";
             }
@@ -591,6 +593,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                 BotClient c = new TestBot(pa[x].getName(), "localhost", hd.port); //$NON-NLS-1$
                 c.game.addGameListener(new BotGUI(c));
                 if (!c.connect()) {
+                    //bots should never fail on connect
                 }
                 c.retrieveServerInfo();
             }
@@ -606,13 +609,15 @@ public class MegaMekGUI implements IMegaMekGUI {
                     tmpP.setObserver(true);
             }
         }
-        launch(gui.getFrame());
+        if (gui != null) {
+            launch(gui.getFrame());
+        }
     }
 
     /**
      * Connect to to a game and then launch the chat lounge.
      */
-    private void connect() {
+    void connect() {
         ConnectDialog cd;
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
@@ -656,7 +661,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         launch(gui.getFrame());
     }
 
-    private void connectBot() {
+    void connectBot() {
         ConnectDialog cd;
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
@@ -712,7 +717,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Called when the user selects the "Help->About" menu item.
      */
-    private void showAbout() {
+    void showAbout() {
         // Do we need to create the "about" dialog?
         if (about == null) {
             about = new CommonAboutDialog(frame);
@@ -725,7 +730,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Called when the user selects the "Help->Contents" menu item.
      */
-    private void showHelp() {
+    void showHelp() {
         if (help == null) {
             help = showHelp(frame, "readme"); //$NON-NLS-1$
         }
@@ -739,7 +744,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     private static CommonHelpDialog showHelp(JFrame frame, String filename) {
         Locale l = Locale.getDefault();
         File helpfile = new File(filename + '-'
-                + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$ //$NON-NLS-2$
+                + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$ 
         if (!helpfile.exists()) {
             helpfile = new File(filename + ".txt"); //$NON-NLS-1$
         }
@@ -749,7 +754,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Called when the user selects the "View->Client Settings" menu item.
      */
-    private void showSettings() {
+    void showSettings() {
         // Do we need to create the "settings" dialog?
         if (setdlg == null) {
             setdlg = new CommonSettingsDialog(frame);
@@ -762,7 +767,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Called when the quit buttons is pressed or the main menu is closed.
      */
-    private static void quit() {
+    static void quit() {
         PreferenceManager.getInstance().save();
         System.exit(0);
     }
@@ -774,10 +779,12 @@ public class MegaMekGUI implements IMegaMekGUI {
     private void launch(JFrame launched) {
         // listen to new frame
         launched.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 unlaunch();
             }
 
+            @Override
             public void windowClosed(WindowEvent e) {
                 unlaunch();
             }
@@ -789,7 +796,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Un-hides the main menu and tries to clean up the client or server.
      */
-    private void unlaunch() {
+    void unlaunch() {
         // clean up server, if we have one
         if (server != null) {
             server.die();

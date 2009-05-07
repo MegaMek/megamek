@@ -80,7 +80,7 @@ public class MineLayingDialog extends JDialog implements ActionListener {
 
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
-                        .append(' ')//$NON-NLS-1$
+                        .append(' ')
                         .append(mount.getDesc());
                 chMines.addItem(message.toString());
                 vMines.add(mount);
@@ -115,6 +115,7 @@ public class MineLayingDialog extends JDialog implements ActionListener {
         butOkay.requestFocus();
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }

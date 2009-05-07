@@ -102,7 +102,7 @@ abstract class HexModel extends TransformGroup {
     }
 
     private static final GeometryArray makeHexOutline() {
-        LineStripArray l = new LineStripArray(hexVertices.length, LineStripArray.COORDINATES, new int[] { hexVertices.length/3 });
+        LineStripArray l = new LineStripArray(hexVertices.length, GeometryArray.COORDINATES, new int[] { hexVertices.length/3 });
         l.setCoordinates(0, hexVertices);
         return l;
     }

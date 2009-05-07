@@ -55,7 +55,7 @@ import megamek.common.weapons.ISFireExtinguisher;
 /**
  * Context menu for the board.
  */
-public class MapMenu extends JPopupMenu implements ActionListener {
+public class MapMenu extends JPopupMenu {
 
     /**
      * 
@@ -63,14 +63,14 @@ public class MapMenu extends JPopupMenu implements ActionListener {
     private static final long serialVersionUID = 2879345079968414986L;
 
     private Coords coords;
-    private IGame game;
-    private Component currentPanel;
+    IGame game;
+    Component currentPanel;
     private IBoard board;
-    private Client client;
-    private ClientGUI gui;
-    private Entity selectedEntity;
-    private Entity myEntity;
-    private Targetable myTarget = null;
+    Client client;
+    ClientGUI gui;
+    Entity selectedEntity;
+    Entity myEntity;
+    Targetable myTarget = null;
     private boolean hasMenu = false;
 
     public MapMenu(Coords coords, Client client, Component panel, ClientGUI gui) {
@@ -265,8 +265,8 @@ public class MapMenu extends JPopupMenu implements ActionListener {
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Entity en = game.getEntity(Integer.parseInt(e.getActionCommand()));
-                    selectedEntity = en;
+                    Entity entity = game.getEntity(Integer.parseInt(e.getActionCommand()));
+                    selectedEntity = entity;
                     if (currentPanel instanceof MovementDisplay) {
                         ((MovementDisplay) currentPanel).selectEntity(selectedEntity.getId());
                     } else if (currentPanel instanceof FiringDisplay) {
@@ -780,9 +780,6 @@ public class MapMenu extends JPopupMenu implements ActionListener {
         return menu;
     }
 
-    public void actionPerformed(ActionEvent arg0) {
-    }
-
     private JMenu createStandMenu() {
         JMenu menu = new JMenu();
 
@@ -936,7 +933,7 @@ public class MapMenu extends JPopupMenu implements ActionListener {
         return menu;
     }
 
-    private void plotCourse(ActionEvent e) {
+    void plotCourse(ActionEvent e) {
         ((MovementDisplay) currentPanel).actionPerformed(e);
 
         // Drag
@@ -945,7 +942,7 @@ public class MapMenu extends JPopupMenu implements ActionListener {
         ((BoardView1) gui.bv).mouseAction(coords, 1, 16);
     }
 
-    private Targetable decodeTargetInfo(String info) {
+    Targetable decodeTargetInfo(String info) {
 
         StringTokenizer target = new StringTokenizer(info, "|");
         String type = target.nextToken();
@@ -954,17 +951,17 @@ public class MapMenu extends JPopupMenu implements ActionListener {
             return game.getEntity(Integer.parseInt(target.nextToken()));
         }
 
-        Coords coords = new Coords(Integer.parseInt(target.nextToken()), Integer.parseInt(target.nextToken()));
+        Coords targetCoords = new Coords(Integer.parseInt(target.nextToken()), Integer.parseInt(target.nextToken()));
 
         if (type.equals("B")) {
-            return new BuildingTarget(coords, board, Boolean.parseBoolean(target.nextToken()));
+            return new BuildingTarget(targetCoords, board, Boolean.parseBoolean(target.nextToken()));
         }
 
         if (type.equals("M")) {
-            return new MinefieldTarget(coords, board);
+            return new MinefieldTarget(targetCoords, board);
         }
 
-        return new HexTarget(coords, board, Integer.parseInt(target.nextToken()));
+        return new HexTarget(targetCoords, board, Integer.parseInt(target.nextToken()));
     }
 
     private boolean hasAmmoType(int ammoType) {
@@ -1024,8 +1021,8 @@ public class MapMenu extends JPopupMenu implements ActionListener {
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    int direction = Integer.parseInt(e.getActionCommand());
-                    ((FiringDisplay) currentPanel).torsoTwist(direction);
+                    int twistDir = Integer.parseInt(e.getActionCommand());
+                    ((FiringDisplay) currentPanel).torsoTwist(twistDir);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -1035,10 +1032,10 @@ public class MapMenu extends JPopupMenu implements ActionListener {
         return item;
     }
 
-    private JMenuItem createTorsoTwistJMenuItem(Coords coords) {
+    private JMenuItem createTorsoTwistJMenuItem(Coords twistCoords) {
         JMenuItem item = new JMenuItem("Twist");
 
-        item.setActionCommand(coords.x + "|" + coords.y);
+        item.setActionCommand(twistCoords.x + "|" + twistCoords.y);
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -1136,11 +1133,11 @@ public class MapMenu extends JPopupMenu implements ActionListener {
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    int position = Integer.parseInt(e.getActionCommand());
+                    int modePosition = Integer.parseInt(e.getActionCommand());
                     int weaponNum = gui.mechD.wPan.getSelectedWeaponNum();
-                    Mounted mounted = myEntity.getEquipment(weaponNum);
-                    mounted.setMode(position);
-                    client.sendModeChange(myEntity.getId(), weaponNum, position);
+                    Mounted equip = myEntity.getEquipment(weaponNum);
+                    equip.setMode(modePosition);
+                    client.sendModeChange(myEntity.getId(), weaponNum, modePosition);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -1324,6 +1321,7 @@ public class MapMenu extends JPopupMenu implements ActionListener {
         return item;
     }
     
+    @Override
     public void show(Component comp, int x, int y){
         if (client.isMyTurn() && myEntity != null) {
             selectTarget();

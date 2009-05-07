@@ -92,6 +92,7 @@ public class UnitFailureDialog extends Dialog implements ActionListener,
         reasonTextArea.addKeyListener(this);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent we) {
                 setVisible(false);
             }
@@ -114,10 +115,10 @@ public class UnitFailureDialog extends Dialog implements ActionListener,
     }
 
     public void keyTyped(KeyEvent ke) {
-
+        //ignored
     }
 
     public void keyReleased(KeyEvent ke) {
-
+        //ignored
     }
 }

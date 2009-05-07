@@ -102,6 +102,7 @@ public class PMPicPolygonalArea extends PMGenericHotArea {
         return this.areaShape;
     }
 
+    @Override
     public void onMouseOver(MouseEvent e) {
         if (highlight)
             selected = true;
@@ -109,6 +110,7 @@ public class PMPicPolygonalArea extends PMGenericHotArea {
 
     }
 
+    @Override
     public void onMouseExit(MouseEvent e) {
         if (highlight)
             selected = false;

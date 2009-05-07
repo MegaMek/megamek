@@ -35,7 +35,6 @@ import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.IndexedCheckbox;
 import megamek.common.BattleArmor;
@@ -72,13 +71,11 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class PhysicalDisplay extends StatusBarPhaseDisplay implements
-        GameListener, ActionListener, DoneButtoned, KeyListener,
-        BoardViewListener {
+        DoneButtoned, KeyListener{
 
     /**
      * 
@@ -1343,6 +1340,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     //
     // BoardListener
     //
+    @Override
     public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
@@ -1367,6 +1365,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    @Override
     public void hexSelected(BoardViewEvent b) {
         // Are we ignoring events?
         if (this.isIgnoringEvents()) {
@@ -1458,6 +1457,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     //
     // GameListener
     //
+    @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
@@ -1484,6 +1484,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
@@ -1578,17 +1579,22 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     }
 
     public void keyReleased(KeyEvent ev) {
+        //ignored
     }
 
     public void keyTyped(KeyEvent ev) {
+        //ignored
     }
 
     //
     // BoardViewListener
     //
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
+        //ignored
     }
 
+    @Override
     public void unitSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
@@ -1697,14 +1703,12 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
 
     private class AimedShotHandler implements ActionListener, ItemListener {
         private int aimingAt = -1;
-
         private int aimingMode = IAimingModes.AIM_MODE_NONE;
-
         private AimedShotDialog asd;
-
         private boolean canAim;
 
-        public AimedShotHandler() {
+        AimedShotHandler() {
+            //ignored
         }
 
         public int getAimTable() {

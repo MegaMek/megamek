@@ -149,6 +149,7 @@ public abstract class PicMap extends JComponent {
      * Removes all elements from PicMap component.
      */
 
+    @Override
     public void removeAll() {
         otherAreas.removeAll();
         hotAreas.removeAll();
@@ -208,6 +209,7 @@ public abstract class PicMap extends JComponent {
      * Please remember to add super.addNotify() when overriding
      */
 
+    @Override
     public void addNotify() {
         super.addNotify();
         update();
@@ -233,6 +235,7 @@ public abstract class PicMap extends JComponent {
         }
     }
 
+    @Override
     public void paintComponent(Graphics g) {
         if (bgIsOpaque) {
             // If we want to use buffering Component will be with opaque
@@ -267,10 +270,12 @@ public abstract class PicMap extends JComponent {
 
     }
 
+    @Override
     public Dimension getPreferredSize() {
         return getMinimumSize();
     }
 
+    @Override
     public Dimension getMinimumSize() {
         Rectangle r = rootGroup.getBounds();
         if (r != null) {
@@ -319,6 +324,7 @@ public abstract class PicMap extends JComponent {
         bgIsOpaque = v;
     }
 
+    @Override
     protected void processMouseEvent(MouseEvent e) {
         PMHotArea ha = getAreaUnder(e.getX(), e.getY());
         switch (e.getID()) {
@@ -338,6 +344,7 @@ public abstract class PicMap extends JComponent {
         update();
     }
 
+    @Override
     protected void processMouseMotionEvent(MouseEvent e) {
         switch (e.getID()) {
             case MouseEvent.MOUSE_MOVED:
@@ -359,6 +366,7 @@ public abstract class PicMap extends JComponent {
         }
     }
 
+    @Override
     protected void processComponentEvent(ComponentEvent e) {
         switch (e.getID()) {
             case ComponentEvent.COMPONENT_RESIZED:

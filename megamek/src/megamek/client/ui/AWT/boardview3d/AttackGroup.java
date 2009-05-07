@@ -19,6 +19,8 @@ package megamek.client.ui.AWT.boardview3d;
 
 import java.util.Enumeration;
 import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Group;
+
 import megamek.client.ui.AWT.TilesetManager;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -47,8 +49,8 @@ class AttackGroup extends BranchGroup {
         game = g;
         currentView = v;
         tileManager = t;
-        setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
-        setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+        setCapability(Group.ALLOW_CHILDREN_EXTEND);
+        setCapability(Group.ALLOW_CHILDREN_WRITE);
         setPickable(false);
     }
     

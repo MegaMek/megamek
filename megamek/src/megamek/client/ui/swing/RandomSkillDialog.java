@@ -37,6 +37,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
@@ -60,17 +61,17 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
     private JLabel labelMethod = new JLabel(Messages
-            .getString("RandomSkillDialog.labelMethod"), JLabel.RIGHT); //$NON-NLS-1$
+            .getString("RandomSkillDialog.labelMethod"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox chMethod = new JComboBox();
     private JLabel labelType = new JLabel(Messages
-            .getString("RandomSkillDialog.labelType"), JLabel.RIGHT); //$NON-NLS-1$
+            .getString("RandomSkillDialog.labelType"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox chType = new JComboBox();
     private JLabel labelLevel = new JLabel(Messages
-            .getString("RandomSkillDialog.labelLevel"), JLabel.RIGHT); //$NON-NLS-1$
+            .getString("RandomSkillDialog.labelLevel"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox chLevel = new JComboBox();
 
     private JLabel labelPlayer = new JLabel(Messages
-            .getString("MechSelectorDialog.m_labelPlayer"), JLabel.RIGHT); //$NON-NLS-1$
+            .getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox chPlayer = new JComboBox();
 
     private JTextArea texDesc = new JTextArea(Messages
@@ -171,6 +172,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         this.add(panButtons);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -215,10 +217,6 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         panButtons.add(chPlayer);
     }
 
-    public void update() {
-
-    }
-
     private void updatePlayerChoice() {
         String lastChoice = (String) chPlayer.getSelectedItem();
         String clientName = clientgui.getClient().getName();
@@ -237,6 +235,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
             chPlayer.setSelectedIndex(0);
     }
 
+    @Override
     public void setVisible(boolean show) {
         if (show) {
             updatePlayerChoice();

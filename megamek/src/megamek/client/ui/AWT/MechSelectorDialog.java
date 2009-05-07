@@ -664,6 +664,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         try {
             walk = Integer.parseInt(m_tWalk.getText());
         } catch (NumberFormatException ne) {
+            //ignore
         }
         if (walk > -1) {
             if (m_cWalk.getSelectedIndex() == 0) { // at least
@@ -682,6 +683,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         try {
             jump = Integer.parseInt(m_tJump.getText());
         } catch (NumberFormatException ne) {
+            //ignore
         }
         if (jump > -1) {
             if (m_cJump.getSelectedIndex() == 0) { // at least
@@ -725,6 +727,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         try {
             weapon1 = Integer.parseInt(m_tWeapons1.getText());
         } catch (NumberFormatException ne) {
+            //ignore
         }
         if (weapon1 > -1) {
             weaponLine1Active = true;
@@ -744,6 +747,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         try {
             weapon2 = Integer.parseInt(m_tWeapons2.getText());
         } catch (NumberFormatException ne) {
+            //ignore
         }
         if (weapon2 > -1) {
             weaponLine2Active = true;
@@ -763,10 +767,12 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         try {
             startYear = Integer.parseInt(m_tStartYear.getText());
         } catch (NumberFormatException ne) {
+            //ignore
         }
         try {
             endYear = Integer.parseInt(m_tEndYear.getText());
         } catch (NumberFormatException ne) {
+            //ignore
         }
         if (entity.getYear() < startYear || entity.getYear() > endYear) {
             return false;
@@ -830,6 +836,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         return new Point(desiredX, desiredY);
     }
 
+    @Override
     public void setVisible(boolean show) {
         if (show) {
             updatePlayerChoice();
@@ -849,9 +856,9 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
             levelOrValid = "F";
         }
         if (GUIPreferences.getInstance().getMechSelectorIncludeModel())
-            val += makeLength(ms.getModel(), 10) + " "; //$NON-NLS-1$ //$NON-NLS-2$
+            val += makeLength(ms.getModel(), 10) + " "; //$NON-NLS-1$ 
         if (GUIPreferences.getInstance().getMechSelectorIncludeName())
-            val += makeLength(ms.getChassis(), 20) + " "; //$NON-NLS-1$ //$NON-NLS-2$
+            val += makeLength(ms.getChassis(), 20) + " "; //$NON-NLS-1$ 
         if (GUIPreferences.getInstance().getMechSelectorIncludeTons())
             val += makeLength("" + ms.getTons(), 7) + " "; //$NON-NLS-1$ //$NON-NLS-2$
         if (GUIPreferences.getInstance().getMechSelectorIncludeBV())
@@ -1011,6 +1018,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
     }
 
     public void keyReleased(java.awt.event.KeyEvent ke) {
+        //ignore
     }
 
     public void keyPressed(java.awt.event.KeyEvent ke) {
@@ -1029,15 +1037,18 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
     }
 
     public void keyTyped(java.awt.event.KeyEvent ke) {
+        //ignore
     }
 
     //
     // WindowListener
     //
     public void windowActivated(java.awt.event.WindowEvent windowEvent) {
+        //ignore
     }
 
     public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+        //ignore
     }
 
     public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -1045,15 +1056,19 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
     }
 
     public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
+        //ignore
     }
 
     public void windowDeiconified(java.awt.event.WindowEvent windowEvent) {
+        //ignore
     }
 
     public void windowIconified(java.awt.event.WindowEvent windowEvent) {
+        //ignore
     }
 
     public void windowOpened(java.awt.event.WindowEvent windowEvent) {
+        //ignore
     }
 
     private void updateWidgetEnablements() {

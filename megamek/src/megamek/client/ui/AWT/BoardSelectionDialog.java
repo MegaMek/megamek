@@ -166,12 +166,14 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
                 .getString("BoardSelectionDialog.MapPreview"), false); //$NON-NLS-1$
 
         mapPreviewW.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
         });
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
                 mapPreviewW.setVisible(false);
@@ -468,8 +470,8 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
      * Updates to show the map settings that have, presumably, just been sent by
      * the server.
      */
-    public void update(MapSettings mapSettings, boolean updateSize) {
-        this.mapSettings = (MapSettings) mapSettings.clone();
+    public void update(MapSettings newMapSettings, boolean updateSize) {
+        this.mapSettings = (MapSettings) newMapSettings.clone();
         if (updateSize) {
             refreshMapSize();
             refreshMapButtons();
@@ -535,6 +537,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
                 mapPreview = new MapPreview(mapPreviewW, board);
             } catch (IOException e) {
                 e.printStackTrace();
+                return;
             }
             mapPreviewW.removeAll();
             mapPreviewW.add(mapPreview);
@@ -565,7 +568,9 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
                 int board = Integer.parseInt(e.getActionCommand());
                 this.lisBoardsSelected.select(board);
             } catch (NumberFormatException n) {
+                //ignore
             } catch (ArrayIndexOutOfBoundsException a) {
+                //ignore
             }
         }
     }
@@ -609,8 +614,8 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         }
     }
 
-    public void updateMapSettings(MapSettings mapSettings) {
-        this.mapSettings = mapSettings;
+    public void updateMapSettings(MapSettings newMapSettings) {
+        this.mapSettings = newMapSettings;
         refreshMapSize();
         refreshMapButtons();
 
@@ -622,7 +627,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         lisBoardsAvailable.add(Messages
                 .getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
 
-        client.getClient().sendMapQuery(mapSettings);
+        client.getClient().sendMapQuery(newMapSettings);
     }
 
     /**
@@ -651,5 +656,6 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
     }
 
     public void keyTyped(KeyEvent arg0) {
+        //ignore
     }
 }

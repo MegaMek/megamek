@@ -172,10 +172,12 @@ public class MiniMap extends Canvas {
         m_client = c.getClient();
     }
 
+    @Override
     public synchronized void update(Graphics g) {
         paint(g);
     }
 
+    @Override
     public void paint(Graphics g) {
         if (m_mapImage != null) {
             g.drawImage(m_mapImage, 0, 0, this);
@@ -311,7 +313,7 @@ public class MiniMap extends Canvas {
         cr.close();
     }
 
-    private void initializeMap() {
+    void initializeMap() {
 
         // sanity check (cfg file could be hosed)
         if (zoom < 0) {
@@ -1125,7 +1127,7 @@ public class MiniMap extends Canvas {
         return new Coords(gridX, gridY);
     }
 
-    private void processMouseClick(int x, int y, MouseEvent me) {
+    void processMouseClick(int x, int y, MouseEvent me) {
         if (y > (getSize().height - 14)) {
 
             if (x < 14) {
@@ -1176,6 +1178,7 @@ public class MiniMap extends Canvas {
     }
 
     protected BoardListener boardListener = new BoardListenerAdapter() {
+        @Override
         public void boardNewBoard(BoardEvent b) {
             initializeMap();
         }
@@ -1183,14 +1186,17 @@ public class MiniMap extends Canvas {
     };
 
     protected GameListener gameListener = new GameListenerAdapter() {
+        @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             drawMap();
         }
 
+        @Override
         public void gameTurnChange(GameTurnChangeEvent e) {
             drawMap();
         }
 
+        @Override
         public void gameBoardNew(GameBoardNewEvent e) {
             IBoard b = e.getOldBoard();
             if (b != null)
@@ -1201,30 +1207,36 @@ public class MiniMap extends Canvas {
             initializeMap();
         }
 
+        @Override
         public void gameBoardChanged(GameBoardChangeEvent e) {
             drawMap();
         }
     };
 
     BoardViewListener boardViewListener = new BoardViewListenerAdapter() {
+        @Override
         public void hexCursor(BoardViewEvent b) {
             update();
         }
 
+        @Override
         public void boardHexHighlighted(BoardViewEvent b) {
             update();
         }
 
+        @Override
         public void hexSelected(BoardViewEvent b) {
             update();
         }
 
+        @Override
         public void firstLOSHex(BoardViewEvent b) {
             secondLOS = null;
             firstLOS = b.getCoords();
             drawMap();
         }
 
+        @Override
         public void secondLOSHex(BoardViewEvent b, Coords c) {
             firstLOS = c;
             secondLOS = b.getCoords();
@@ -1239,6 +1251,7 @@ public class MiniMap extends Canvas {
     };
 
     MouseListener mouseListener = new MouseAdapter() {
+        @Override
         public void mousePressed(MouseEvent me) {
             // center main map on clicked area
             processMouseClick(me.getX(), me.getY(), me);
@@ -1246,10 +1259,12 @@ public class MiniMap extends Canvas {
     };
 
     ComponentListener componentListener = new ComponentAdapter() {
+        @Override
         public void componentShown(ComponentEvent ce) {
             drawMap();
         }
 
+        @Override
         public void componentResized(ComponentEvent ce) {
             // if (!minimized) initializeMap();
         }

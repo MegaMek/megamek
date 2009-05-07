@@ -127,7 +127,7 @@ public class CustomInitiativeDialog extends Dialog implements ActionListener,
         if (ev.getSource().equals(m_bOK)) {
             int bonus = 0;
             if (m_constant.getText().trim().equals("")) { //$NON-NLS-1$
-                bonus = 0; //$NON-NLS-1$
+                bonus = 0; 
             } else {
                 bonus = Integer.valueOf(m_constant.getText());
             }
@@ -154,9 +154,11 @@ public class CustomInitiativeDialog extends Dialog implements ActionListener,
     }
 
     public void windowActivated(WindowEvent arg0) {
+        //ignored
     }
 
     public void windowClosed(WindowEvent arg0) {
+        //ignored
     }
 
     public void windowClosing(WindowEvent arg0) {
@@ -164,17 +166,22 @@ public class CustomInitiativeDialog extends Dialog implements ActionListener,
     }
 
     public void windowDeactivated(WindowEvent arg0) {
+        //ignored
     }
 
     public void windowDeiconified(WindowEvent arg0) {
+        //ignored
     }
 
     public void windowIconified(WindowEvent arg0) {
+        //ignored
     }
 
     public void windowOpened(WindowEvent arg0) {
+        //ignored
     }
 
+    @Override
     public void setVisible(boolean show) {
         super.setVisible(show);
     }

@@ -202,13 +202,13 @@ public class MechView {
                     .append(
                             renderArmor(entity
                                     .getArmor(GunEmplacement.LOC_BUILDING)))
-                    .append('\n'); //$NON-NLS-1$
+                    .append('\n'); 
             if (((GunEmplacement) entity).hasTurret()) {
                 sBasic.append(Messages.getString("MechView.TurretArmor"))
                         .append(
                                 renderArmor(entity
                                         .getArmor(GunEmplacement.LOC_TURRET)))
-                        .append('\n'); //$NON-NLS-1$
+                        .append('\n'); 
             }
         }
 

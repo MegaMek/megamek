@@ -73,14 +73,17 @@ public class TestBot extends BotClient {
         debug = config.isDebug();
     }
 
+    @Override
     public void initialize() {
         // removed
     }
 
+    @Override
     public PhysicalOption calculatePhysicalTurn() {
         return PhysicalCalculator.calculatePhysicalTurn(this);
     }
 
+    @Override
     public MovePath calculateMoveTurn() {
         long enter = System.currentTimeMillis();
         int initiative = 0;
@@ -449,6 +452,11 @@ public class TestBot extends BotClient {
                                                     target.getEntity()), ToHitData.SIDE_FRONT)
                                             * (Compute.oddsAbove(toHit.getValue()) / 100);
                                     option.setState();
+                                } else {
+                                    //TODO Ram for Aero units
+                                    
+                                    //Get a default toHit
+                                    toHit = new ToHitData();
                                 }
                                 damage = target.getThreatUtility(damage, toHit.getSideTable())
                                         * Compute.oddsAbove(toHit.getValue()) / 100;
@@ -888,6 +896,7 @@ public class TestBot extends BotClient {
         }
     }
 
+    @Override
     protected void initFiring() {
         ArrayList<Entity> entities = new ArrayList<Entity>(game.getEntitiesVector());
         for (int i = 0; i < entities.size(); i++) {
@@ -1238,6 +1247,7 @@ public class TestBot extends BotClient {
         return result.getFittestChromosomesFitness();
     }
 
+    @Override
     public void calculateFiringTurn() {
         int first_entity = game.getFirstEntityNum(getMyTurn());
         int entity_num = first_entity;
@@ -1339,6 +1349,7 @@ public class TestBot extends BotClient {
     /**
      * consider how to put more pre-turn logic here
      */
+    @Override
     protected void initMovement() {
         this.my_mechs_moved = 0;
         this.old_moves = null;
@@ -1471,11 +1482,13 @@ public class TestBot extends BotClient {
         System.gc(); // just to make sure
     }
 
+    @Override
     protected void processChat(GamePlayerChatEvent ge) {
         chatp.processChat(ge, this);
     }
 
     // Where do I put my units? This prioritizes hexes and facings
+    @Override
     protected void calculateDeployment() {
 
         int weapon_count;
@@ -1576,6 +1589,7 @@ public class TestBot extends BotClient {
         deploy(entNum, cDeploy, nDir);
     }
 
+    @Override
     protected MovePath continueMovementFor(Entity entity) {
         System.out.println("Contemplating movement of " + entity.getShortName() + " "
                 + entity.getId());
@@ -1699,6 +1713,7 @@ public class TestBot extends BotClient {
         return min;
     }
 
+    @Override
     protected Vector<Minefield> calculateMinefieldDeployment() {
         Vector<Minefield> deployedMinefields = new Vector<Minefield>();
 
@@ -1709,6 +1724,7 @@ public class TestBot extends BotClient {
         return deployedMinefields;
     }
 
+    @Override
     protected PlayerIDandList<Coords> calculateArtyAutoHitHexes() {
         PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
         artyAutoHitHexes.setPlayerID(this.getLocalPlayer().getId());

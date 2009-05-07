@@ -50,7 +50,6 @@ import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.AWT.BotGUI;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.MechView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.util.PlayerColors;
@@ -69,13 +68,12 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
-        ItemListener, BoardViewListener, GameListener, DoneButtoned {
+        ItemListener, DoneButtoned {
     /**
      *
      */
@@ -134,7 +132,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     Button butArmy;
     Button butSkills;
     Button butLoadCustomBA;
-    private Button butLoadCustomFS;
+    Button butLoadCustomFS;
     private Button butDelete;
     private Button butCustom;
     private Button butMechReadout;
@@ -1106,7 +1104,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                     new Integer(entity.getCrew().getPiloting()),
                                     (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                     (isManeiDomini ? Messages
-                                            .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                            .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$ 
                                     unitClass,
                                     ((entity.isOffBoard()) ? Messages
                                             .getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
@@ -1123,7 +1121,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                                     .getPiloting()),
                                             (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                             (isManeiDomini ? Messages
-                                                    .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                                    .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$ 
                                             new Integer(entity
                                                     .calculateBattleValue()),
                                             strTreeView,

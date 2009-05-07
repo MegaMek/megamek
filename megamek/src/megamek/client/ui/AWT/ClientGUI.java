@@ -78,7 +78,8 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
-public class ClientGUI extends Panel implements WindowListener, ActionListener, BoardViewListener {
+public class ClientGUI extends Panel implements WindowListener, ActionListener,
+        BoardViewListener {
     /**
      *
      */
@@ -109,7 +110,8 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     public MechDisplay mechD;
     public Dialog minimapW;
     public MiniMap minimap;
-    public PopupMenu popup;// = new PopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
+    public PopupMenu popup;// = new
+                           // PopupMenu(Messages.getString("ClientGUI.BoardPopup"));
     private UnitOverview uo;
     public Ruler ruler; // added by kenn
     protected Component curPanel;
@@ -230,8 +232,9 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
 
     /**
      * Display a system message in the chat box.
-     *
-     * @param message the <code>String</code> message to be shown.
+     * 
+     * @param message
+     *            the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
         cb.systemMessage(message);
@@ -260,10 +263,12 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             int y = GUIPreferences.getInstance().getWindowPosY();
             int w = GUIPreferences.getInstance().getWindowSizeWidth();
             int h = GUIPreferences.getInstance().getWindowSizeHeight();
-            if ((x < virtualBounds.getMinX()) || (x + w > virtualBounds.getMaxX())) {
+            if ((x < virtualBounds.getMinX())
+                    || (x + w > virtualBounds.getMaxX())) {
                 x = 0;
             }
-            if ((y < virtualBounds.getMinY()) || (y + h > virtualBounds.getMaxY())) {
+            if ((y < virtualBounds.getMinY())
+                    || (y + h > virtualBounds.getMaxY())) {
                 y = 0;
             }
             if (w > virtualBounds.getWidth()) {
@@ -298,7 +303,8 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     }
 
     /**
-     * Have the client register itself as a listener wherever it's needed. <p/>
+     * Have the client register itself as a listener wherever it's needed.
+     * <p/>
      * According to
      * http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a
      * major bad no-no to perform these registrations before the constructor
@@ -312,8 +318,11 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         try {
             client.game.addGameListener(gameListener);
             // Create the board viewer.
-            Class<?> c = getClass().getClassLoader().loadClass(System.getProperty("megamek.client.ui.AWT.boardView", "megamek.client.ui.AWT.BoardView1"));
-            bv = (IBoardView)c.getConstructor(IGame.class).newInstance(client.game);
+            Class<?> c = getClass().getClassLoader().loadClass(
+                    System.getProperty("megamek.client.ui.AWT.boardView",
+                            "megamek.client.ui.AWT.BoardView1"));
+            bv = (IBoardView) c.getConstructor(IGame.class).newInstance(
+                    client.game);
             bvc = bv.getComponent();
             bv.addBoardViewListener(this);
 
@@ -423,14 +432,15 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
         customBADialog = new CustomBattleArmorDialog(this);
-        customFSDialog = new CustomFighterSquadronDialog(this, unitLoadingDialog);
+        customFSDialog = new CustomFighterSquadronDialog(this,
+                unitLoadingDialog);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
         new Thread(customBADialog, "Custom Battle Armor Dialog").start();
     }
 
     /**
      * Get the menu bar for this client.
-     *
+     * 
      * @return the <code>CommonMenuBar</code> of this client.
      */
     public CommonMenuBar getMenuBar() {
@@ -451,10 +461,12 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     }
 
     /**
-     * Change the default help file name for this client. <p/> This method
-     * should only be called by the constructor of subclasses.
-     *
-     * @param fileName the <code>String</code> name of the help file for this
+     * Change the default help file name for this client.
+     * <p/>
+     * This method should only be called by the constructor of subclasses.
+     * 
+     * @param fileName
+     *            the <code>String</code> name of the help file for this
      *            <code>Client</code> subclass. This value should not be
      *            <code>null</code>.
      */
@@ -465,8 +477,9 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     }
 
     /**
-     * Called when the user selects the "Help->Contents" menu item. <p/> This
-     * method can be called by subclasses.
+     * Called when the user selects the "Help->Contents" menu item.
+     * <p/>
+     * This method can be called by subclasses.
      */
     public void showHelp() {
         // Do we need to create the "help" dialog?
@@ -535,7 +548,8 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
 
             if (null != fd.getFile()) {
                 String file = fd.getDirectory() + fd.getFile();
-                // stupid hack to allow for savegames in folders with spaces in the name
+                // stupid hack to allow for savegames in folders with spaces in
+                // the name
                 file = file.replace(" ", "|");
                 client.sendChat("/save " + file); //$NON-NLS-1$
             }
@@ -760,139 +774,139 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         String secondary = null;
         String main = null;
         switch (phase) {
-            case PHASE_LOUNGE:
-                component = new ChatLounge(this);
-                chatlounge = (ChatLounge) component;
-                main = "ChatLounge"; //$NON-NLS-1$
-                secondary = main;
-                panMain.add(main, component);
-                panSecondary.add(secondary, ((ChatLounge) component)
-                        .getSecondaryDisplay());
-                break;
-            case PHASE_STARTING_SCENARIO:
-                component = new Label(Messages
-                        .getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
-                main = "Label-StartingScenario"; //$NON-NLS-1$
-                secondary = main;
-                panMain.add(main, component);
-                panSecondary.add(secondary, new Label("")); //$NON-NLS-1$
-                break;
-            case PHASE_EXCHANGE:
-                component = new Label(Messages
-                        .getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
-                main = "Label-Exchange"; //$NON-NLS-1$
-                secondary = main;
-                panMain.add(main, component);
-                panSecondary.add(secondary, new Label("")); //$NON-NLS-1$
-                break;
-            case PHASE_SET_ARTYAUTOHITHEXES:
-                component = new SelectArtyAutoHitHexDisplay(this);
+        case PHASE_LOUNGE:
+            component = new ChatLounge(this);
+            chatlounge = (ChatLounge) component;
+            main = "ChatLounge"; //$NON-NLS-1$
+            secondary = main;
+            panMain.add(main, component);
+            panSecondary.add(secondary, ((ChatLounge) component)
+                    .getSecondaryDisplay());
+            break;
+        case PHASE_STARTING_SCENARIO:
+            component = new Label(Messages
+                    .getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
+            main = "Label-StartingScenario"; //$NON-NLS-1$
+            secondary = main;
+            panMain.add(main, component);
+            panSecondary.add(secondary, new Label("")); //$NON-NLS-1$
+            break;
+        case PHASE_EXCHANGE:
+            component = new Label(Messages
+                    .getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
+            main = "Label-Exchange"; //$NON-NLS-1$
+            secondary = main;
+            panMain.add(main, component);
+            panSecondary.add(secondary, new Label("")); //$NON-NLS-1$
+            break;
+        case PHASE_SET_ARTYAUTOHITHEXES:
+            component = new SelectArtyAutoHitHexDisplay(this);
 
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "SelectArtyAutoHitHexDisplay"; //$NON-NLS-1$
-                if (!mainNames.keySet().contains(main)) {
-                    panMain.add(main, bvc);
-                }
-                panSecondary.add(secondary, component);
-                break;
-            case PHASE_DEPLOY_MINEFIELDS:
-                component = new DeployMinefieldDisplay(this);
+            main = "BoardView"; //$NON-NLS-1$
+            secondary = "SelectArtyAutoHitHexDisplay"; //$NON-NLS-1$
+            if (!mainNames.keySet().contains(main)) {
+                panMain.add(main, bvc);
+            }
+            panSecondary.add(secondary, component);
+            break;
+        case PHASE_DEPLOY_MINEFIELDS:
+            component = new DeployMinefieldDisplay(this);
 
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "DeployMinefieldDisplay"; //$NON-NLS-1$
-                if (!mainNames.keySet().contains(main)) {
-                    panMain.add(main, bvc);
-                }
-                panSecondary.add(secondary, component);
-                break;
-            case PHASE_DEPLOYMENT:
-                component = new DeploymentDisplay(this);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "DeploymentDisplay"; //$NON-NLS-1$
-                if (!mainNames.keySet().contains(main)) {
-                    panMain.add(main, bvc);
-                }
-                panSecondary.add(secondary, component);
-                break;
-            case PHASE_TARGETING:
-                component = new TargetingPhaseDisplay(this, false);
-                ((TargetingPhaseDisplay) component).initializeListeners();
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "TargetingPhaseDisplay"; //$NON-NLS-1$
-                if (!mainNames.keySet().contains(main)) {
-                    panMain.add(main, bvc);
-                }
-                panSecondary.add(secondary, component);
-                break;
-            case PHASE_MOVEMENT:
-                component = new MovementDisplay(this);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "MovementDisplay"; //$NON-NLS-1$
-                if (!mainNames.keySet().contains(main)) {
-                    panMain.add(main, bvc);
-                }
-                panSecondary.add(secondary, component);
-                break;
-            case PHASE_OFFBOARD:
-                component = new TargetingPhaseDisplay(this, true);
-                ((TargetingPhaseDisplay) component).initializeListeners();
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "OffboardDisplay"; //$NON-NLS-1$
-                if (!mainNames.keySet().contains(main)) {
-                    panMain.add(main, bvc);
-                }
-                panSecondary.add(secondary, component);
-                break;
-            case PHASE_FIRING:
-                component = new FiringDisplay(this);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "FiringDisplay"; //$NON-NLS-1$
-                if (!mainNames.keySet().contains(main)) {
-                    panMain.add(main, bvc);
-                }
-                panSecondary.add(secondary, component);
-                break;
-            case PHASE_PHYSICAL:
-                component = new PhysicalDisplay(this);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "PhysicalDisplay"; //$NON-NLS-1$
-                if (!mainNames.keySet().contains(main)) {
-                    panMain.add(main, bvc);
-                }
-                panSecondary.add(secondary, component);
-                break;
-            case PHASE_INITIATIVE_REPORT:
-                component = new ReportDisplay(client);
-                main = "ReportDisplay"; //$NON-NLS-1$
-                secondary = main;
-                panMain.add(main, component);
-                panSecondary.add(secondary, ((ReportDisplay) component)
-                        .getSecondaryDisplay());
-                break;
-            case PHASE_TARGETING_REPORT:
-            case PHASE_MOVEMENT_REPORT:
-            case PHASE_OFFBOARD_REPORT:
-            case PHASE_FIRING_REPORT:
-            case PHASE_PHYSICAL_REPORT:
-            case PHASE_END_REPORT:
-            case PHASE_VICTORY:
-                // Try to reuse the ReportDisplay for other phases...
-                component = phaseComponents.get(String
-                        .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
-                if (null == component) {
-                    // no ReportDisplay to reuse -- get a new one
-                    component = initializePanel(IGame.Phase.PHASE_INITIATIVE_REPORT);
-                }
-                main = "ReportDisplay"; //$NON-NLS-1$
-                secondary = main;
-                break;
-            default:
-                component = new Label(Messages
-                        .getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
-                main = "Label-Default"; //$NON-NLS-1$
-                secondary = main;
-                panMain.add(main, component);
-                panSecondary.add(secondary, new Label("")); //$NON-NLS-1$
+            main = "BoardView"; //$NON-NLS-1$
+            secondary = "DeployMinefieldDisplay"; //$NON-NLS-1$
+            if (!mainNames.keySet().contains(main)) {
+                panMain.add(main, bvc);
+            }
+            panSecondary.add(secondary, component);
+            break;
+        case PHASE_DEPLOYMENT:
+            component = new DeploymentDisplay(this);
+            main = "BoardView"; //$NON-NLS-1$
+            secondary = "DeploymentDisplay"; //$NON-NLS-1$
+            if (!mainNames.keySet().contains(main)) {
+                panMain.add(main, bvc);
+            }
+            panSecondary.add(secondary, component);
+            break;
+        case PHASE_TARGETING:
+            component = new TargetingPhaseDisplay(this, false);
+            ((TargetingPhaseDisplay) component).initializeListeners();
+            main = "BoardView"; //$NON-NLS-1$
+            secondary = "TargetingPhaseDisplay"; //$NON-NLS-1$
+            if (!mainNames.keySet().contains(main)) {
+                panMain.add(main, bvc);
+            }
+            panSecondary.add(secondary, component);
+            break;
+        case PHASE_MOVEMENT:
+            component = new MovementDisplay(this);
+            main = "BoardView"; //$NON-NLS-1$
+            secondary = "MovementDisplay"; //$NON-NLS-1$
+            if (!mainNames.keySet().contains(main)) {
+                panMain.add(main, bvc);
+            }
+            panSecondary.add(secondary, component);
+            break;
+        case PHASE_OFFBOARD:
+            component = new TargetingPhaseDisplay(this, true);
+            ((TargetingPhaseDisplay) component).initializeListeners();
+            main = "BoardView"; //$NON-NLS-1$
+            secondary = "OffboardDisplay"; //$NON-NLS-1$
+            if (!mainNames.keySet().contains(main)) {
+                panMain.add(main, bvc);
+            }
+            panSecondary.add(secondary, component);
+            break;
+        case PHASE_FIRING:
+            component = new FiringDisplay(this);
+            main = "BoardView"; //$NON-NLS-1$
+            secondary = "FiringDisplay"; //$NON-NLS-1$
+            if (!mainNames.keySet().contains(main)) {
+                panMain.add(main, bvc);
+            }
+            panSecondary.add(secondary, component);
+            break;
+        case PHASE_PHYSICAL:
+            component = new PhysicalDisplay(this);
+            main = "BoardView"; //$NON-NLS-1$
+            secondary = "PhysicalDisplay"; //$NON-NLS-1$
+            if (!mainNames.keySet().contains(main)) {
+                panMain.add(main, bvc);
+            }
+            panSecondary.add(secondary, component);
+            break;
+        case PHASE_INITIATIVE_REPORT:
+            component = new ReportDisplay(client);
+            main = "ReportDisplay"; //$NON-NLS-1$
+            secondary = main;
+            panMain.add(main, component);
+            panSecondary.add(secondary, ((ReportDisplay) component)
+                    .getSecondaryDisplay());
+            break;
+        case PHASE_TARGETING_REPORT:
+        case PHASE_MOVEMENT_REPORT:
+        case PHASE_OFFBOARD_REPORT:
+        case PHASE_FIRING_REPORT:
+        case PHASE_PHYSICAL_REPORT:
+        case PHASE_END_REPORT:
+        case PHASE_VICTORY:
+            // Try to reuse the ReportDisplay for other phases...
+            component = phaseComponents.get(String
+                    .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+            if (null == component) {
+                // no ReportDisplay to reuse -- get a new one
+                component = initializePanel(IGame.Phase.PHASE_INITIATIVE_REPORT);
+            }
+            main = "ReportDisplay"; //$NON-NLS-1$
+            secondary = main;
+            break;
+        default:
+            component = new Label(Messages
+                    .getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
+            main = "Label-Default"; //$NON-NLS-1$
+            secondary = main;
+            panMain.add(main, component);
+            panSecondary.add(secondary, new Label("")); //$NON-NLS-1$
         }
         phaseComponents.put(name, component);
         mainNames.put(name, main);
@@ -915,19 +929,16 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         }
     }
 
-/*    private boolean canTargetEntities() {
-        return client.isMyTurn()
-                && (curPanel instanceof FiringDisplay
-                        || curPanel instanceof PhysicalDisplay || curPanel instanceof TargetingPhaseDisplay);
-    }
-
-    private boolean canSelectEntities() {
-        return client.isMyTurn()
-                && (curPanel instanceof FiringDisplay
-                        || curPanel instanceof PhysicalDisplay
-                        || curPanel instanceof MovementDisplay || curPanel instanceof TargetingPhaseDisplay);
-    }
-*/
+    /*
+     * private boolean canTargetEntities() { return client.isMyTurn() &&
+     * (curPanel instanceof FiringDisplay || curPanel instanceof PhysicalDisplay
+     * || curPanel instanceof TargetingPhaseDisplay); }
+     * 
+     * private boolean canSelectEntities() { return client.isMyTurn() &&
+     * (curPanel instanceof FiringDisplay || curPanel instanceof PhysicalDisplay
+     * || curPanel instanceof MovementDisplay || curPanel instanceof
+     * TargetingPhaseDisplay); }
+     */
     /**
      * Toggles the entity display window
      */
@@ -979,19 +990,22 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     }
 
     protected void fillPopup(Coords coords) {
-        popup = new MapMenu(coords,client,curPanel,this);
+        popup = new MapMenu(coords, client, curPanel, this);
     }
 
     /**
      * Pops up a dialog box giving the player a series of choices that are not
      * mutually exclusive.
-     *
-     * @param title the <code>String</code> title of the dialog box.
-     * @param question the <code>String</code> question that has a "Yes" or
-     *            "No" answer. The question will be split across multiple line
-     *            on the '\n' characters.
-     * @param choices the array of <code>String</code> choices that the player
-     *            can select from.
+     * 
+     * @param title
+     *            the <code>String</code> title of the dialog box.
+     * @param question
+     *            the <code>String</code> question that has a "Yes" or "No"
+     *            answer. The question will be split across multiple line on the
+     *            '\n' characters.
+     * @param choices
+     *            the array of <code>String</code> choices that the player can
+     *            select from.
      * @return The array of the <code>int</code> indexes of the from the input
      *         array that match the selected choices. If no choices were
      *         available, if the player did not select a choice, or if the
@@ -1014,11 +1028,13 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
 
     /**
      * Pops up a dialog box asking a yes/no question
-     *
-     * @param title the <code>String</code> title of the dialog box.
-     * @param question the <code>String</code> question that has a "Yes" or
-     *            "No" answer. The question will be split across multiple line
-     *            on the '\n' characters.
+     * 
+     * @param title
+     *            the <code>String</code> title of the dialog box.
+     * @param question
+     *            the <code>String</code> question that has a "Yes" or "No"
+     *            answer. The question will be split across multiple line on the
+     *            '\n' characters.
      * @return <code>true</code> if yes
      */
     public boolean doYesNoDialog(String title, String question) {
@@ -1028,18 +1044,20 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     }
 
     /**
-     * Pops up a dialog box asking a yes/no question <p/> The player will be
-     * given a chance to not show the dialog again.
-     *
-     * @param title the <code>String</code> title of the dialog box.
-     * @param question the <code>String</code> question that has a "Yes" or
-     *            "No" answer. The question will be split across multiple line
-     *            on the '\n' characters.
-     * @return the <code>ConfirmDialog</code> containing the player's
-     *         responses. The dialog will already have been shown to the player,
-     *         and is only being returned so the calling function can see the
-     *         answer to the question and the state of the "Show again?"
-     *         question.
+     * Pops up a dialog box asking a yes/no question
+     * <p/>
+     * The player will be given a chance to not show the dialog again.
+     * 
+     * @param title
+     *            the <code>String</code> title of the dialog box.
+     * @param question
+     *            the <code>String</code> question that has a "Yes" or "No"
+     *            answer. The question will be split across multiple line on the
+     *            '\n' characters.
+     * @return the <code>ConfirmDialog</code> containing the player's responses.
+     *         The dialog will already have been shown to the player, and is
+     *         only being returned so the calling function can see the answer to
+     *         the question and the state of the "Show again?" question.
      */
     public ConfirmDialog doYesNoBotherDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
@@ -1114,10 +1132,11 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * select the units for a new game. The file will record damage sustained,
      * non-standard munitions selected, and ammunition expended during the
      * course of the current engagement.
-     *
-     * @param unitList - the <code>Vector</code> of <code>Entity</code>s to
-     *            be saved to a file. If this value is <code>null</code> or
-     *            empty, the "Save As" dialog will not be displayed.
+     * 
+     * @param unitList
+     *            - the <code>Vector</code> of <code>Entity</code>s to be saved
+     *            to a file. If this value is <code>null</code> or empty, the
+     *            "Save As" dialog will not be displayed.
      */
     protected void saveListFile(ArrayList<Entity> unitList) {
 
@@ -1173,9 +1192,11 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     // WindowListener
     //
     public void windowActivated(java.awt.event.WindowEvent windowEvent) {
+        // ignored
     }
 
     public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+        // ignored
     }
 
     public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -1187,92 +1208,80 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     }
 
     public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
+        // ignored
     }
 
     public void windowDeiconified(java.awt.event.WindowEvent windowEvent) {
+        // ignored
     }
 
     public void windowIconified(java.awt.event.WindowEvent windowEvent) {
+        // ignored
     }
 
     public void windowOpened(java.awt.event.WindowEvent windowEvent) {
+        // ignored
     }
 
     /**
      * A menu item that lives to view an entity.
      */
-/*    private class ViewMenuItem extends MenuItem implements ActionListener {
-        private static final long serialVersionUID = 3756822619315859847L;
-        Entity entity;
-
-        public ViewMenuItem(Entity entity) {
-            super(
-                    Messages.getString("ClientGUI.viewMenuItem")
-                            + entity.getDisplayName()
-                            + (entity.isDone() ? " (" + Messages.getString("ClientGUI.doneMenuItem").trim() + ")" : "")); //$NON-NLS-1$
-            this.entity = entity;
-            addActionListener(this);
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
-            setDisplayVisible(true);
-            mechD.displayEntity(entity);
-        }
-    }
-*/
+    /*
+     * private class ViewMenuItem extends MenuItem implements ActionListener {
+     * private static final long serialVersionUID = 3756822619315859847L; Entity
+     * entity;
+     * 
+     * public ViewMenuItem(Entity entity) { super(
+     * Messages.getString("ClientGUI.viewMenuItem") + entity.getDisplayName() +
+     * (entity.isDone() ? " (" +
+     * Messages.getString("ClientGUI.doneMenuItem").trim() + ")" : ""));
+     * //$NON-NLS-1$ this.entity = entity; addActionListener(this); }
+     * 
+     * public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
+     * setDisplayVisible(true); mechD.displayEntity(entity); } }
+     */
     /**
      * A menu item that would really like to select an entity. You can use this
      * during movement, firing & physical phases. (Deployment would just be
      * silly.)
      */
-/*    private class SelectMenuItem extends MenuItem implements ActionListener {
-        private static final long serialVersionUID = -2472642242836893482L;
-        Entity entity;
-
-        public SelectMenuItem(Entity entity) {
-            super(
-                    Messages.getString("ClientGUI.selectMenuItem") + entity.getDisplayName()); //$NON-NLS-1$
-            this.entity = entity;
-            addActionListener(this);
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
-            if (curPanel instanceof MovementDisplay) {
-                ((MovementDisplay) curPanel).selectEntity(entity.getId());
-            } else if (curPanel instanceof FiringDisplay) {
-                ((FiringDisplay) curPanel).selectEntity(entity.getId());
-            } else if (curPanel instanceof PhysicalDisplay) {
-                ((PhysicalDisplay) curPanel).selectEntity(entity.getId());
-            }
-        }
-    }
-*/
+    /*
+     * private class SelectMenuItem extends MenuItem implements ActionListener {
+     * private static final long serialVersionUID = -2472642242836893482L;
+     * Entity entity;
+     * 
+     * public SelectMenuItem(Entity entity) { super(
+     * Messages.getString("ClientGUI.selectMenuItem") +
+     * entity.getDisplayName()); //$NON-NLS-1$ this.entity = entity;
+     * addActionListener(this); }
+     * 
+     * public void actionPerformed(java.awt.event.ActionEvent actionEvent) { if
+     * (curPanel instanceof MovementDisplay) { ((MovementDisplay)
+     * curPanel).selectEntity(entity.getId()); } else if (curPanel instanceof
+     * FiringDisplay) { ((FiringDisplay) curPanel).selectEntity(entity.getId());
+     * } else if (curPanel instanceof PhysicalDisplay) { ((PhysicalDisplay)
+     * curPanel).selectEntity(entity.getId()); } } }
+     */
     /**
      * A menu item that will target an entity, provided that it's sensible to do
      * so
      */
-  /*  private class TargetMenuItem extends MenuItem implements ActionListener {
-        private static final long serialVersionUID = -3854766135227390453L;
-        Targetable target;
-
-        public TargetMenuItem(Targetable t) {
-            super(
-                    Messages.getString("ClientGUI.targetMenuItem") + t.getDisplayName()); //$NON-NLS-1$
-            target = t;
-            addActionListener(this);
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
-            if (curPanel instanceof FiringDisplay) {
-                ((FiringDisplay) curPanel).target(target);
-            } else if (curPanel instanceof PhysicalDisplay) {
-                ((PhysicalDisplay) curPanel).target(target);
-            } else if (curPanel instanceof TargetingPhaseDisplay) {
-                ((TargetingPhaseDisplay) curPanel).target(target);
-            }
-        }
-    }
-*/
+    /*
+     * private class TargetMenuItem extends MenuItem implements ActionListener {
+     * private static final long serialVersionUID = -3854766135227390453L;
+     * Targetable target;
+     * 
+     * public TargetMenuItem(Targetable t) { super(
+     * Messages.getString("ClientGUI.targetMenuItem") + t.getDisplayName());
+     * //$NON-NLS-1$ target = t; addActionListener(this); }
+     * 
+     * public void actionPerformed(java.awt.event.ActionEvent actionEvent) { if
+     * (curPanel instanceof FiringDisplay) { ((FiringDisplay)
+     * curPanel).target(target); } else if (curPanel instanceof PhysicalDisplay)
+     * { ((PhysicalDisplay) curPanel).target(target); } else if (curPanel
+     * instanceof TargetingPhaseDisplay) { ((TargetingPhaseDisplay)
+     * curPanel).target(target); } } }
+     */
     /**
      * @return the frame this client is displayed in
      */
@@ -1301,7 +1310,8 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     public void loadPreviewImage(BufferedPanel bp, Entity entity, Player player) {
         Image camo = bv.getTilesetManager().getPlayerCamo(player);
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
-        BackGroundDrawer bgdPreview = new BackGroundDrawer(bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp));
+        BackGroundDrawer bgdPreview = new BackGroundDrawer(bv
+                .getTilesetManager().loadPreviewImage(entity, camo, tint, bp));
         bp.removeBgDrawers();
         bp.addBgDrawer(bgdPreview);
     }
@@ -1350,37 +1360,39 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
 
             // Handle phase-specific items.
             switch (e.getNewPhase()) {
-                case PHASE_LOUNGE:
-                    // this will get rid of old report tabs
-                    ReportDisplay rD = (ReportDisplay) phaseComponents
-                            .get(String.valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
-                    if (rD != null) {
-                        rD.resetTabs();
-                    }
-                    break;
-                case PHASE_DEPLOY_MINEFIELDS:
-                case PHASE_DEPLOYMENT:
-                case PHASE_TARGETING:
-                case PHASE_MOVEMENT:
-                case PHASE_OFFBOARD:
-                case PHASE_FIRING:
-                case PHASE_PHYSICAL:
-                    if (GUIPreferences.getInstance().getMinimapEnabled()
-                            && !minimapW.isVisible()) {
-                        setMapVisible(true);
-                    }
-                    break;
-                case PHASE_INITIATIVE_REPORT:
-                case PHASE_TARGETING_REPORT:
-                case PHASE_MOVEMENT_REPORT:
-                case PHASE_OFFBOARD_REPORT:
-                case PHASE_FIRING_REPORT:
-                case PHASE_END:
-                case PHASE_VICTORY:
-                    setMapVisible(false);
-                    // nemchenk, 2004-01-01 -- hide MechDisplay at the end
-                    mechW.setVisible(false);
-                    break;
+            case PHASE_LOUNGE:
+                // this will get rid of old report tabs
+                ReportDisplay rD = (ReportDisplay) phaseComponents.get(String
+                        .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+                if (rD != null) {
+                    rD.resetTabs();
+                }
+                break;
+            case PHASE_DEPLOY_MINEFIELDS:
+            case PHASE_DEPLOYMENT:
+            case PHASE_TARGETING:
+            case PHASE_MOVEMENT:
+            case PHASE_OFFBOARD:
+            case PHASE_FIRING:
+            case PHASE_PHYSICAL:
+                if (GUIPreferences.getInstance().getMinimapEnabled()
+                        && !minimapW.isVisible()) {
+                    setMapVisible(true);
+                }
+                break;
+            case PHASE_INITIATIVE_REPORT:
+            case PHASE_TARGETING_REPORT:
+            case PHASE_MOVEMENT_REPORT:
+            case PHASE_OFFBOARD_REPORT:
+            case PHASE_FIRING_REPORT:
+            case PHASE_END:
+            case PHASE_VICTORY:
+                setMapVisible(false);
+                // nemchenk, 2004-01-01 -- hide MechDisplay at the end
+                mechW.setVisible(false);
+                break;
+            default:
+                break;
             }
 
             menuBar.setPhase(client.game.getPhase());
@@ -1513,7 +1525,8 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     }
 
     /**
-     * @param selectedEntityNum The selectedEntityNum to set.
+     * @param selectedEntityNum
+     *            The selectedEntityNum to set.
      */
     public void setSelectedEntityNum(int selectedEntityNum) {
         this.selectedEntityNum = selectedEntityNum;
@@ -1533,11 +1546,24 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         }
     }
 
-    public void hexCursor(BoardViewEvent b) {}
-    public void boardHexHighlighted(BoardViewEvent b) {}
-    public void hexSelected(BoardViewEvent b) {}
-    public void firstLOSHex(BoardViewEvent b) {}
-    public void secondLOSHex(BoardViewEvent b, Coords c) {}
-    public void finishedMovingUnits(BoardViewEvent b) {}
-    public void unitSelected(BoardViewEvent b) {}
+    public void hexCursor(BoardViewEvent b) { // ignored
+    }
+
+    public void boardHexHighlighted(BoardViewEvent b) { // ignored
+    }
+
+    public void hexSelected(BoardViewEvent b) { // ignored
+    }
+
+    public void firstLOSHex(BoardViewEvent b) { // ignored
+    }
+
+    public void secondLOSHex(BoardViewEvent b, Coords c) { // ignored
+    }
+
+    public void finishedMovingUnits(BoardViewEvent b) { // ignored
+    }
+
+    public void unitSelected(BoardViewEvent b) { // ignored
+    }
 }

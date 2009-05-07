@@ -133,6 +133,7 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
         butOK.requestFocus();
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -237,7 +238,7 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
      *         match the selected choices is returned.
      */
     public int getChoice() {
-        int[] retval = null;
+        int[] retval = {-1};
 
         // Did the player make a choice?
         if (checkboxes != null && confirm) {

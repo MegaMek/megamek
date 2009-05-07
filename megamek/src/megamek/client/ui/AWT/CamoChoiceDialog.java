@@ -80,7 +80,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
     /**
      * The list containing the item names.
      */
-    private List items;
+    List items;
 
     /**
      * The "keep old camo" button.
@@ -90,7 +90,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
     /**
      * The "select new camo" button.
      */
-    private ImageButton select;
+    ImageButton select;
 
     /**
      * The previously selected category.
@@ -254,6 +254,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
         // Close the window, when the WM says to.
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 close();
             }
@@ -345,6 +346,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
             }
         });
         keep.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent event) {
                 // Pressing enter on this button closes without saving.
                 if (KeyEvent.VK_ENTER == event.getKeyCode()) {
@@ -370,6 +372,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         // Fire the "select new camo" action when the enter key is pressed
         // on either the list or the "select new camo" button.
         KeyAdapter enterAdapter = new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent event) {
                 if (KeyEvent.VK_ENTER == event.getKeyCode()) {
                     actionPerformed(new ActionEvent(select, event.getID(),
@@ -646,6 +649,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
      * Show the dialog. Make sure that all selections have been applied. <p/>
      * Overrides <code>Component#setVisible()</code>.
      */
+    @Override
     public void setVisible(boolean show) {
 
         if (show) {

@@ -57,6 +57,7 @@ public class PlayerListDialog extends JDialog implements ActionListener {
         refreshPlayerList();
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -86,17 +87,17 @@ public class PlayerListDialog extends JDialog implements ActionListener {
                 playerDisplay.append(" ["); //$NON-NLS-1$
                 playerDisplay.append(Messages
                         .getString("PlayerListDialog.player_ghost")); //$NON-NLS-1$
-                playerDisplay.append(']'); //$NON-NLS-1$
+                playerDisplay.append(']'); 
             } else if (player.isObserver()) {
                 playerDisplay.append(" ["); //$NON-NLS-1$
                 playerDisplay.append(Messages
                         .getString("PlayerListDialog.player_observer")); //$NON-NLS-1$
-                playerDisplay.append(']'); //$NON-NLS-1$
+                playerDisplay.append(']'); 
             } else if (player.isDone()) {
                 playerDisplay.append(" ("); //$NON-NLS-1$
                 playerDisplay.append(Messages
                         .getString("PlayerListDialog.player_done")); //$NON-NLS-1$
-                playerDisplay.append(')'); //$NON-NLS-1$
+                playerDisplay.append(')'); 
             }
             ((DefaultListModel) playerList.getModel()).addElement(playerDisplay
                     .toString());

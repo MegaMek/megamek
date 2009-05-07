@@ -23,7 +23,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -37,7 +36,6 @@ import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.common.AmmoType;
 import megamek.common.Compute;
@@ -57,7 +55,6 @@ import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
@@ -66,8 +63,7 @@ import megamek.common.event.GameTurnChangeEvent;
  * too easy to confuse with something else
  */
 public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
-        GameListener, ActionListener, DoneButtoned, KeyListener, ItemListener,
-        BoardViewListener {
+        DoneButtoned, KeyListener, ItemListener {
     /**
      * 
      */
@@ -719,12 +715,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     /**
      * Torso twist in the proper direction.
      */
-    private void torsoTwist(Coords target) {
+    private void torsoTwist(Coords twistTarget) {
         int direction = ce().getFacing();
 
-        if (null != target)
+        if (null != twistTarget)
             direction = ce().clipSecondaryFacing(
-                    ce().getPosition().direction(target));
+                    ce().getPosition().direction(twistTarget));
 
         if (direction != ce().getSecondaryFacing()) {
             clearAttacks();
@@ -737,19 +733,19 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     /**
      * Torso twist to the left or right
      * 
-     * @param target An <code>int</code> specifying wether we're twisting left
+     * @param twistTarget An <code>int</code> specifying wether we're twisting left
      *            or right, 0 if we're twisting to the left, 1 if to the right.
      */
 
-    private void torsoTwist(int target) {
+    private void torsoTwist(int twistTarget) {
         int direction = ce().getSecondaryFacing();
-        if (target == 0) {
+        if (twistTarget == 0) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 5) % 6);
             attacks.addElement(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
-        } else if (target == 1) {
+        } else if (twistTarget == 1) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 7) % 6);
             attacks.addElement(new TorsoTwistAction(cen, direction));
@@ -833,13 +829,14 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     /**
      * Returns the current entity.
      */
-    private Entity ce() {
+    Entity ce() {
         return client.game.getEntity(cen);
     }
 
     //
     // BoardListener
     //
+    @Override
     public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
@@ -875,6 +872,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    @Override
     public void hexSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
@@ -904,6 +902,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     //
     // GameListener
     //
+    @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
@@ -927,6 +926,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
@@ -1114,6 +1114,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     public void keyTyped(KeyEvent ev) {
+        //ignored
     }
 
     //
@@ -1133,6 +1134,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     // board view listener
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
 
         // Are we ignoring events?
@@ -1146,6 +1148,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    @Override
     public void unitSelected(BoardViewEvent b) {
 
         // Are we ignoring events?

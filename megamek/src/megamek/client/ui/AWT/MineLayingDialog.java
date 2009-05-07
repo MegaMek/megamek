@@ -112,6 +112,7 @@ public class MineLayingDialog extends Dialog implements ActionListener {
         butOkay.requestFocus();
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }

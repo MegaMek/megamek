@@ -19,6 +19,8 @@ package megamek.client.ui.AWT.boardview3d;
 
 import java.util.Enumeration;
 import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Group;
+
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.MovePath;
@@ -36,8 +38,8 @@ class MoveGroup extends BranchGroup {
     public MoveGroup(IGame g, ViewTransform v) {
         game = g;
         currentView = v;
-        setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
-        setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+        setCapability(Group.ALLOW_CHILDREN_EXTEND);
+        setCapability(Group.ALLOW_CHILDREN_WRITE);
         setPickable(false);
     }
     

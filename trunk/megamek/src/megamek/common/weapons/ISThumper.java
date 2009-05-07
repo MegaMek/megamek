@@ -40,6 +40,7 @@ public class ISThumper extends ArtilleryWeapon {
         setInternalName("ISThumper");
         addLookupName("ISThumperArtillery");
         addLookupName("IS Thumper");
+        flags1 |= F_AERO_WEAPON;
         heat = 5;
         rackSize = 15;
         ammoType = AmmoType.T_THUMPER;

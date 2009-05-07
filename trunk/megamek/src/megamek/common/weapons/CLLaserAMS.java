@@ -47,6 +47,7 @@ public class CLLaserAMS extends LaserWeapon {
         criticals = 2;
         bv = 45;
         flags |= F_AUTO_TARGET | F_AMS;
+        flags1 = F_MECH_WEAPON | F_TANK_WEAPON | F_AERO_WEAPON | F_PROTO_WEAPON;
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;

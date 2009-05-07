@@ -23,35 +23,36 @@ import megamek.common.TechConstants;
 /**
  * @author Sebastian Brocks
  */
-public class CLSniper extends ArtilleryWeapon {
+public class CLLongTomCannon extends ArtilleryCannonWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -599648142688689572L;
+    private static final long serialVersionUID = -3643634306982832651L;
 
-    /**
-     *
-     */
-    public CLSniper() {
+    public CLLongTomCannon() {
         super();
-        techLevel = TechConstants.T_CLAN_ADVANCED;
-        name = "Sniper";
-        setInternalName("CLSniper");
-        addLookupName("CLSniperArtillery");
-        addLookupName("Clan Sniper");
-        flags1 |= F_AERO_WEAPON;
-        heat = 10;
-        rackSize = 20;
-        ammoType = AmmoType.T_SNIPER;
-        shortRange = 1; //
-        mediumRange = 2;
-        longRange = 18;
-        extremeRange = 18; // No extreme range.
+        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        name = "Long Tom Cannon";
+        setInternalName("CLLongTomCannon");
+        addLookupName("CLLongTomArtilleryCannon");
+        addLookupName("CL Long Tom Cannon");
+        heat = 20;
+        rackSize = 25;
+        ammoType = AmmoType.T_LONG_TOM_CANNON;
         tonnage = 20f;
-        criticals = 20;
-        bv = 96;
-        cost = 300000;
+        criticals = 15;
+        bv = 329;
+        cost = 650000;
+        minimumRange = 4;
+        shortRange = 6;
+        mediumRange = 13;
+        longRange = 20;
+        extremeRange = 26;
+        shortAV = 20;
+        medAV = 20;
+        longAV = 20;
+        maxRange = RANGE_LONG;
     }
 
 }

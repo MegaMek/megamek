@@ -107,7 +107,10 @@ public class AmmoType extends EquipmentType {
     public static final int     T_RL_BOMB           = 81;
     public static final int     T_ARROW_IV_BOMB     = 82;
     public static final int     T_FLUID_GUN         = 83;
-    public static final int     NUM_TYPES           = 84;
+    public static final int     T_SNIPER_CANNON     = 84;
+    public static final int     T_THUMPER_CANNON    = 85;
+    public static final int     T_LONG_TOM_CANNON    = 86;
+    public static final int     NUM_TYPES           = 87;
 
 
     // ammo flags
@@ -510,10 +513,19 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createISLongTomAmmo();
         longTomAmmos.add( base );
         EquipmentType.addType( base );
+        base = AmmoType.createISLongTomCannonAmmo();
+        longTomAmmos.add( base );
+        EquipmentType.addType( base );
         base = AmmoType.createISSniperAmmo();
         sniperAmmos.add( base );
         EquipmentType.addType( base );
+        base = AmmoType.createISSniperCannonAmmo();
+        sniperAmmos.add( base );
+        EquipmentType.addType( base );
         base = AmmoType.createISThumperAmmo();
+        thumperAmmos.add( base );
+        EquipmentType.addType( base );
+        base = AmmoType.createISThumperCannonAmmo();
         thumperAmmos.add( base );
         EquipmentType.addType( base );
         base = AmmoType.createISArrowIVAmmo();
@@ -610,10 +622,19 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createCLLongTomAmmo();
         clanArtyAmmos.add( base );
         EquipmentType.addType( base );
+        base = AmmoType.createCLLongTomCannonAmmo();
+        clanArtyAmmos.add( base );
+        EquipmentType.addType( base );
         base = AmmoType.createCLSniperAmmo();
         clanArtyAmmos.add( base );
+        EquipmentType.addType( base );
+        base = AmmoType.createCLSniperCannonAmmo();
+        clanArtyAmmos.add( base );
+        EquipmentType.addType( base );
         base = AmmoType.createCLThumperAmmo();
         EquipmentType.addType( base );
+        clanArtyAmmos.add( base );
+        base = AmmoType.createCLThumperCannonAmmo();
         clanArtyAmmos.add( base );
         EquipmentType.addType( base );
         base = AmmoType.createCLArrowIVAmmo();
@@ -1661,6 +1682,48 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createISLongTomCannonAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "Long Tom Cannon Ammo";
+        ammo.shortName = "Long Tom Cannon";
+        ammo.setInternalName("ISLongTomCannonAmmo");
+        ammo.addLookupName("ISLongTomCannon Ammo");
+        ammo.addLookupName("ISLongTomArtilleryCannon Ammo");
+        ammo.addLookupName("IS Ammo Long Tom Cannon");
+        ammo.addLookupName("IS Long Tom Cannon Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 25;
+        ammo.ammoType = AmmoType.T_LONG_TOM_CANNON;
+        ammo.shots = 5;
+        ammo.bv = 44;
+        ammo.cost = 20000;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLLongTomCannonAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        ammo.name = "Long Tom Cannon Ammo";
+        ammo.shortName = "Long Tom Cannon";
+        ammo.setInternalName("CLLongTomCannonAmmo");
+        ammo.addLookupName("CLLongTomCannon Ammo");
+        ammo.addLookupName("CLLongTomArtilleryCannon Ammo");
+        ammo.addLookupName("CL Ammo Long Tom Cannon");
+        ammo.addLookupName("CL Long Tom Cannon Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 25;
+        ammo.ammoType = AmmoType.T_LONG_TOM_CANNON;
+        ammo.shots = 5;
+        ammo.bv = 44;
+        ammo.cost = 20000;
+
+        return ammo;
+    }
+
     private static AmmoType createISSniperAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -1678,6 +1741,48 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 11;
         ammo.cost = 6000;
+
+        return ammo;
+    }
+
+    private static AmmoType createISSniperCannonAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "Sniper Cannon Ammo";
+        ammo.shortName = "Sniper Cannon";
+        ammo.setInternalName("ISSniperCannonAmmo");
+        ammo.addLookupName("ISSniperCannon Ammo");
+        ammo.addLookupName("ISSniperArtilleryCannon Ammo");
+        ammo.addLookupName("IS Ammo Sniper Cannon");
+        ammo.addLookupName("IS Sniper Cannon Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_SNIPER_CANNON;
+        ammo.shots = 10;
+        ammo.bv = 10;
+        ammo.cost = 15000;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLSniperCannonAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        ammo.name = "Sniper Cannon Ammo";
+        ammo.shortName = "Sniper Cannon";
+        ammo.setInternalName("CLSniperCannonAmmo");
+        ammo.addLookupName("CLSniperCannon Ammo");
+        ammo.addLookupName("CLSniperArtilleryCannon Ammo");
+        ammo.addLookupName("CL Ammo Sniper Cannon");
+        ammo.addLookupName("CL Sniper Cannon Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_SNIPER_CANNON;
+        ammo.shots = 10;
+        ammo.bv = 10;
+        ammo.cost = 15000;
 
         return ammo;
     }
@@ -1702,6 +1807,49 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
+
+    private static AmmoType createISThumperCannonAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "Thumper Cannon Ammo";
+        ammo.shortName = "Thumper Cannon";
+        ammo.setInternalName("ISThumperCannonAmmo");
+        ammo.addLookupName("ISThumperCannon Ammo");
+        ammo.addLookupName("ISThumperArtilleryCannon Ammo");
+        ammo.addLookupName("IS Ammo Thumper Cannon");
+        ammo.addLookupName("IS Thumper Cannon Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_THUMPER_CANNON;
+        ammo.shots = 20;
+        ammo.bv = 5;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLThumperCannonAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        ammo.name = "Thumper Cannon Ammo";
+        ammo.shortName = "Thumper Cannon";
+        ammo.setInternalName("CLThumperCannonAmmo");
+        ammo.addLookupName("CLThumperCannon Ammo");
+        ammo.addLookupName("CLThumperArtilleryCannon Ammo");
+        ammo.addLookupName("CL Ammo Thumper Cannon");
+        ammo.addLookupName("CL Thumper Cannon Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_THUMPER_CANNON;
+        ammo.shots = 20;
+        ammo.bv = 5;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
 
     // Start of Level2 Ammo
 

@@ -40,6 +40,7 @@ public class ISSniper extends ArtilleryWeapon {
         setInternalName("ISSniper");
         addLookupName("ISSniperArtillery");
         addLookupName("IS Sniper");
+        flags1 |= F_AERO_WEAPON;
         heat = 10;
         rackSize = 20;
         ammoType = AmmoType.T_SNIPER;

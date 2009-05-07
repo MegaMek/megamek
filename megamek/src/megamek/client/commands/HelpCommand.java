@@ -35,22 +35,21 @@ public class HelpCommand extends ClientCommand {
         cmdHandler = client;
     }
 
+    @Override
     public String run(String[] args) {
         if (args.length == 1) {
             // no args
             return "Type #help [command] for help on a specific command.  Commands available: "
                     + commandList();
-        } else {
-            // argument
-            ClientCommand command = cmdHandler.getCommand(args[1]);
-            if (command == null) {
-                return "Command \"" + args[1]
-                        + "\" not recognized.  Commands available: "
-                        + commandList();
-            } else {
-                return "#" + command.getName() + " : " + command.getHelp();
-            }
         }
+        // argument
+        ClientCommand command = cmdHandler.getCommand(args[1]);
+        if (command == null) {
+            return "Command \"" + args[1]
+                    + "\" not recognized.  Commands available: "
+                    + commandList();
+        }
+        return "#" + command.getName() + " : " + command.getHelp();
     }
 
     private String commandList() {

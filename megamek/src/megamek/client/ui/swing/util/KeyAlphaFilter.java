@@ -27,6 +27,7 @@ public class KeyAlphaFilter extends RGBImageFilter {
         this.keyColor = keyColor;
     }
 
+    @Override
     public int filterRGB(int x, int y, int RGB) {
         if (RGB == keyColor) {
             return 0;

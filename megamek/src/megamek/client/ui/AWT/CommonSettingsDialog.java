@@ -122,6 +122,7 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         // Close this dialog when the window manager says to.
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 cancel();
             }
@@ -353,6 +354,7 @@ public class CommonSettingsDialog extends ClientDialog implements
      * Display the current settings in this dialog. <p/> Overrides
      * <code>Dialog#show()</code>.
      */
+    @Override
     public void setVisible(boolean show) {
         if (show) {
             GUIPreferences gs = GUIPreferences.getInstance();
@@ -442,7 +444,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     /**
      * Cancel any updates made in this dialog, and closes it.
      */
-    private void cancel() {
+    void cancel() {
         this.setVisible(false);
     }
 
@@ -540,6 +542,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     }
 
     public void focusGained(FocusEvent e) {
+        //ignored
     }
 
     public void focusLost(FocusEvent e) {

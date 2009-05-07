@@ -28,6 +28,8 @@ import javax.media.j3d.Alpha;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.ColoringAttributes;
+import javax.media.j3d.GeometryArray;
+import javax.media.j3d.Group;
 import javax.media.j3d.LineStripArray;
 import javax.media.j3d.Material;
 import javax.media.j3d.ScaleInterpolator;
@@ -79,9 +81,8 @@ class EntityModel extends BranchGroup {
     static final Vector3d scale(Entity entity) {
         if (entity.isProne() && entity instanceof Mech) {
             return new Vector3d(BoardModel.UNIT_SIZE, height(entity), BoardModel.HEX_HEIGHT*2);
-        } else {
-            return new Vector3d(BoardModel.UNIT_SIZE, BoardModel.UNIT_SIZE, height(entity));
         }
+        return new Vector3d(BoardModel.UNIT_SIZE, BoardModel.UNIT_SIZE, height(entity));
     }
 
     static final double height(Entity entity) {
@@ -192,9 +193,9 @@ class EntityModel extends BranchGroup {
         addChild(facing);
         addChild(label);
         setCapability(BranchGroup.ALLOW_DETACH);
-        setCapability(BranchGroup.ALLOW_CHILDREN_READ);
-        setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
-        setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+        setCapability(Group.ALLOW_CHILDREN_READ);
+        setCapability(Group.ALLOW_CHILDREN_WRITE);
+        setCapability(Group.ALLOW_CHILDREN_EXTEND);
         setUserData(entity);
     }
 
@@ -270,13 +271,13 @@ class EntityModel extends BranchGroup {
                     super.computeTransform(alphaValue, transform);
                     Vector3d trans = new Vector3d();
                     transform.get(trans);
-                    Point3d pos = new Point3d(trans);
+                    Point3d vecPos = new Point3d(trans);
                     double h = height(((int)(knots*alphaValue)) < mpos?prev:entity);
-                    pos.z = pos.z - h/2 + (h-BoardModel.HEX_HEIGHT) + BoardModel.HEX_HEIGHT/2;
+                    vecPos.z = vecPos.z - h/2 + (h-BoardModel.HEX_HEIGHT) + BoardModel.HEX_HEIGHT/2;
                     EntityGroup g = ((EntityGroup)getParent().getParent().getParent());
                     if (alphaValue < 0.999f) {
                         g.removeC3LinksFor(entity);
-                        g.addC3LinksFor(entity, pos);
+                        g.addC3LinksFor(entity, vecPos);
                     } else {
                         g.update(entity);
                     }
@@ -396,7 +397,7 @@ class EntityModel extends BranchGroup {
     private static final Shape3D makeECMOutline(int range) {
         double[] outline = makeECMCoords(range);
 
-        LineStripArray l = new LineStripArray(outline.length, LineStripArray.COORDINATES, new int[] { outline.length/3 });
+        LineStripArray l = new LineStripArray(outline.length, GeometryArray.COORDINATES, new int[] { outline.length/3 });
         l.setCoordinates(0, outline);
 
         return new Shape3D(l);

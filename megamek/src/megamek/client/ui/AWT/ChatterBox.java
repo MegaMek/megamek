@@ -47,8 +47,8 @@ public class ChatterBox implements KeyListener {
 
     // AWT components
     public Panel chatPanel;
-    private TextArea chatArea;
-    private List playerList;
+    TextArea chatArea;
+    List playerList;
     private TextField inputField;
     private Button butDone;
 
@@ -58,28 +58,34 @@ public class ChatterBox implements KeyListener {
     public ChatterBox(ClientGUI clientgui) {
         this.client = clientgui.getClient();
         client.game.addGameListener(new GameListenerAdapter() {
+            @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 chatArea.append("\n" + e.getMessage()); //$NON-NLS-1$
                 PlayerListDialog.refreshPlayerList(playerList, client);
                 moveToEnd();
             }
 
+            @Override
             public void gamePlayerChange(GamePlayerChangeEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
 
+            @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
 
+            @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
 
+            @Override
             public void gameEntityNew(GameEntityNewEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
 
+            @Override
             public void gameEntityRemove(GameEntityRemoveEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
@@ -176,9 +182,11 @@ public class ChatterBox implements KeyListener {
     }
 
     public void keyReleased(KeyEvent ev) {
+        //ignored
     }
 
     public void keyTyped(KeyEvent ev) {
+        //ignored
     }
 
     private void fetchHistory() {

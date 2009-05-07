@@ -40,6 +40,7 @@ public class PMValueLabel extends PMSimpleLabel {
         width = fm.stringWidth(string);
     }
 
+    @Override
     public void setVisible(boolean v) {
         super.setVisible(v);
     }
@@ -47,6 +48,7 @@ public class PMValueLabel extends PMSimpleLabel {
     /*
      * Draw the label.
      */
+    @Override
     public void drawInto(Graphics g) {
         if (!visible)
             return;
@@ -56,6 +58,7 @@ public class PMValueLabel extends PMSimpleLabel {
         g.setColor(temp);
     }
 
+    @Override
     public Rectangle getBounds() {
         return new Rectangle(x - width / 2, y - height, width, height + descent);
     }

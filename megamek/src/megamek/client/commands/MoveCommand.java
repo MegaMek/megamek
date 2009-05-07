@@ -45,6 +45,7 @@ public class MoveCommand extends ClientCommand {
                 "Move your units. Use #move HELP for more information.");
     }
 
+    @Override
     public String run(String[] args) {
         if (args.length > 1) {
             Coords target = null;
@@ -175,20 +176,20 @@ public class MoveCommand extends ClientCommand {
         }
     }
 
-    private String gearName(int gear) {
-        if (gear == GEAR_TURN) {
+    private String gearName(int intGear) {
+        if (intGear == GEAR_TURN) {
             return "turning";
-        } else if (gear == GEAR_LAND) {
+        } else if (intGear == GEAR_LAND) {
             return "walking";
-        } else if (gear == GEAR_BACKUP) {
+        } else if (intGear == GEAR_BACKUP) {
             return "backup";
-        } else if (gear == GEAR_CHARGE) {
+        } else if (intGear == GEAR_CHARGE) {
             return "charging";
-        } else if (gear == GEAR_DFA) {
+        } else if (intGear == GEAR_DFA) {
             return "death from aboveing";
-        } else if (gear == GEAR_SWIM) {
+        } else if (intGear == GEAR_SWIM) {
             return "swiming";
-        } else if (gear == GEAR_JUMP) {
+        } else if (intGear == GEAR_JUMP) {
             return "jumping";
         }
 

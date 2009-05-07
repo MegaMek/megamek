@@ -170,6 +170,7 @@ public class TriggerAPPodDialog extends Dialog implements ActionListener {
         add(butOkay);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }

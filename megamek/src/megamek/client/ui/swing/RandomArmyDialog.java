@@ -259,15 +259,17 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
                 m_lMechs.validate();
                 pack();
             } catch (NumberFormatException ex) {
-
+                //ignored
             }
         }
     }
 
     public void windowActivated(WindowEvent arg0) {
+        //ignored
     }
 
     public void windowClosed(WindowEvent arg0) {
+        //ignored
     }
 
     public void windowClosing(WindowEvent arg0) {
@@ -275,15 +277,19 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
     }
 
     public void windowDeactivated(WindowEvent arg0) {
+        //ignored
     }
 
     public void windowDeiconified(WindowEvent arg0) {
+        //ignored
     }
 
     public void windowIconified(WindowEvent arg0) {
+        //ignored
     }
 
     public void windowOpened(WindowEvent arg0) {
+        //ignored
     }
 
     private void updatePlayerChoice() {
@@ -324,6 +330,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         }
     }
 
+    @Override
     public void setVisible(boolean show) {
         if (show) {
             updatePlayerChoice();

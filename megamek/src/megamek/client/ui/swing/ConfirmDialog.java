@@ -160,6 +160,7 @@ public class ConfirmDialog extends JDialog implements ActionListener {
 
     private void finishSetup(JFrame p) {
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }

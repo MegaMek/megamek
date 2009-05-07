@@ -418,7 +418,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                             Messages
                                     .getString(
                                             "DeploymentDisplay.cantDeployInto", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
-                            , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                            , JOptionPane.ERROR_MESSAGE); 
             return;
         } else if(ce() instanceof Aero && client.game.getBoard().inAtmosphere() && 
                 ce().getElevation() <= client.game.getBoard().getHex(moveto).ceiling()) {
@@ -429,7 +429,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                     Messages
                             .getString(
                                     "DeploymentDisplay.elevationTooLow", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
-                    , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                    , JOptionPane.ERROR_MESSAGE); 
             return;
         } else if (Compute.stackingViolation(client.game, ce().getId(), moveto) != null) {
             // check if deployed unit violates stacking
@@ -515,7 +515,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                                 Messages
                                         .getString(
                                                 "DeploymentDisplay.allertDialog1.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.allertDialog1.title") //$NON-NLS-1$
-                                , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                                , JOptionPane.ERROR_MESSAGE); 
             }
         } // End load-unit
         else if (ev.getActionCommand().equals(DEPLOY_UNLOAD)) {

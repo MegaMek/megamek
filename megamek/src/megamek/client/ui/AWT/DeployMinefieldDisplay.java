@@ -22,17 +22,13 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.IGame;
@@ -40,12 +36,10 @@ import megamek.common.IHex;
 import megamek.common.Minefield;
 import megamek.common.Player;
 import megamek.common.Terrains;
-import megamek.common.event.GameListener;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
-        BoardViewListener, ActionListener, DoneButtoned, KeyListener,
-        GameListener {
+        DoneButtoned{
     /**
      * 
      */
@@ -212,16 +206,12 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
-
-        clientgui.bv.addKeyListener(this);
-        addKeyListener(this);
     }
 
     private void addBag(Component comp, GridBagLayout gridbag,
             GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
-        comp.addKeyListener(this);
     }
 
     /**
@@ -413,6 +403,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
     //
     // BoardListener
     //
+    @Override
     public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
@@ -438,6 +429,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
     //
     // GameListener
     //
+    @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
@@ -547,18 +539,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
             remove = true;
         }
     } // End public void actionPerformed(ActionEvent ev)
-
-    //
-    // KeyListener
-    //
-    public void keyPressed(KeyEvent ev) {
-    }
-
-    public void keyReleased(KeyEvent ev) {
-    }
-
-    public void keyTyped(KeyEvent ev) {
-    }
 
     private void setConventionalEnabled(int nbr) {
         butM

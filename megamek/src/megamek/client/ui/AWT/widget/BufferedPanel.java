@@ -78,6 +78,7 @@ public class BufferedPanel extends Panel implements ComponentListener {
     /**
      * overriden to eliminate flicker.
      */
+    @Override
     public void update(Graphics g) {
         paint(g);
     }
@@ -90,6 +91,7 @@ public class BufferedPanel extends Panel implements ComponentListener {
      * @param g - the <code>Graphics</code> to draw onto. This value may be
      *            <code>null</code>.
      */
+    @Override
     public void paint(Graphics g) {
         // No Graphics, no painting.
         if (null == g) {
@@ -143,10 +145,12 @@ public class BufferedPanel extends Panel implements ComponentListener {
         repaint();
     }
 
+    @Override
     public Dimension getPreferredSize() {
         return preferredSize;
     }
 
+    @Override
     public void setPreferredSize(Dimension dimension) {
         preferredSize = dimension;
     }

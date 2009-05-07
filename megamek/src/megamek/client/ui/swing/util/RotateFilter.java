@@ -54,6 +54,7 @@ public class RotateFilter extends RGBImageFilter {
     /**
      * Store the dimensions, when set.
      */
+    @Override
     public void setDimensions(int width, int height) {
         this.width = width;
         this.height = height;
@@ -66,6 +67,7 @@ public class RotateFilter extends RGBImageFilter {
     /**
      * Don't filter, just store.
      */
+    @Override
     public int filterRGB(int x, int y, int rgb) {
         raster[y * width + x] = rgb;
         return rgb;
@@ -74,6 +76,7 @@ public class RotateFilter extends RGBImageFilter {
     /**
      * Here's where we do the work.
      */
+    @Override
     public void imageComplete(int status) {
         if (status == IMAGEERROR || status == IMAGEABORTED) {
             consumer.imageComplete(status);

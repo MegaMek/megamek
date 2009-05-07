@@ -22,27 +22,21 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.containers.PlayerIDandList;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
-        implements BoardViewListener, ActionListener, DoneButtoned,
-        KeyListener, GameListener {
+        implements DoneButtoned {
     private static final long serialVersionUID = -6733665205235744376L;
 
     // parent game
@@ -113,16 +107,12 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
-
-        clientgui.bv.addKeyListener(this);
-        addKeyListener(this);
     }
 
     private void addBag(Component comp, GridBagLayout gridbag,
             GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
-        comp.addKeyListener(this);
     }
 
     /**
@@ -185,6 +175,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     //
     // BoardListener
     //
+    @Override
     public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
@@ -210,6 +201,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     //
     // GameListener
     //
+    @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
@@ -236,6 +228,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
      * 
      * @param e Unused parameter.
      */
+    @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         // Are we ignoring events?
         if (this.isIgnoringEvents()) {
@@ -276,18 +269,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
             client.sendPlayerInfo();
         }
     } // End public void actionPerformed(ActionEvent ev)
-
-    //
-    // KeyListener
-    //
-    public void keyPressed(KeyEvent ev) {
-    }
-
-    public void keyReleased(KeyEvent ev) {
-    }
-
-    public void keyTyped(KeyEvent ev) {
-    }
 
     private void setArtyEnabled(int nbr) {
         butA

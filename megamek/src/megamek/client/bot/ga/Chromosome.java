@@ -22,6 +22,7 @@ public class Chromosome implements Comparable<Chromosome> {
         genes = new int[iGenesDim];
     }
 
+    @Override
     public String toString() {
         return genes.toString();
     }

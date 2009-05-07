@@ -265,6 +265,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
 
         // Close the window, when the WM says to.
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 close();
             }
@@ -356,6 +357,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
             }
         });
         keep.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent event) {
                 // Pressing enter on this button closes without saving.
                 if (event.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -381,6 +383,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         // Fire the "select new camo" action when the enter key is pressed
         // on either the list or the "select new camo" button.
         KeyAdapter enterAdapter = new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent event) {
                 if (event.getKeyCode() == KeyEvent.VK_ENTER) {
                     actionPerformed(new ActionEvent(select, event.getID(),
@@ -664,6 +667,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
      * Show the dialog. Make sure that all selections have been applied. <p/>
      * Overrides <code>Dialog#setVisible(boolean)</code>.
      */
+    @Override
     public void setVisible(boolean visible) {
 
         // Make sure the "keep" button is set correctly.

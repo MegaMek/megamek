@@ -66,11 +66,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     private CommonHelpDialog help = null;
     private GameOptionsDialog optdlg = null;
     private CommonSettingsDialog setdlg = null;
-
-    public MegaMekGUI() {
-
-    }
-
+    
     public void start(String[] args) {
         createGUI();
     }
@@ -81,6 +77,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     private void createGUI() {
         this.frame = new Frame("MegaMek"); //$NON-NLS-1$
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 quit();
             }
@@ -175,7 +172,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         try {
             tracker.waitForID(0);
         } catch (InterruptedException e) {
-
+            //should never get here
         }
         // make splash image panel
         BufferedPanel panTitle = new BufferedPanel();
@@ -566,6 +563,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                 c.game.addGameListener(new BotGUI(c));
 
                 if (!c.connect()) {
+                    //bots should never fail
                 }
 
                 c.retrieveServerInfo();
@@ -573,8 +571,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
 
         // If he didn't have a name when hasSlot was set, then the host should
-        // be
-        // an observer.
+        // be an observer.
         if (!hasSlot) {
             Enumeration<Player> pE = server.getGame().getPlayers();
             while (pE.hasMoreElements()) {
@@ -584,7 +581,9 @@ public class MegaMekGUI implements IMegaMekGUI {
             }
         }
 
-        launch(gui.getFrame());
+        if (gui != null) {
+            launch(gui.getFrame());
+        }
     }
 
     /**
@@ -685,7 +684,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Called when the user selects the "Help->About" menu item.
      */
-    private void showAbout() {
+    void showAbout() {
         // Do we need to create the "about" dialog?
         if (this.about == null) {
             this.about = new CommonAboutDialog(this.frame);
@@ -698,7 +697,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Called when the user selects the "Help->Contents" menu item.
      */
-    private void showHelp() {
+    void showHelp() {
         if (this.help == null) {
             help = showHelp(this.frame, "readme"); //$NON-NLS-1$
         }
@@ -722,7 +721,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Called when the user selects the "View->Client Settings" menu item.
      */
-    private void showSettings() {
+    void showSettings() {
         // Do we need to create the "settings" dialog?
         if (this.setdlg == null) {
             this.setdlg = new CommonSettingsDialog(this.frame);
@@ -735,7 +734,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Called when the quit buttons is pressed or the main menu is closed.
      */
-    private void quit() {
+    void quit() {
         PreferenceManager.getInstance().save();
         System.exit(0);
     }
@@ -747,10 +746,12 @@ public class MegaMekGUI implements IMegaMekGUI {
     private void launch(Frame launched) {
         // listen to new frame
         launched.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 unlaunch();
             }
 
+            @Override
             public void windowClosed(WindowEvent e) {
                 unlaunch();
             }
@@ -762,7 +763,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Un-hides the main menu and tries to clean up the client or server.
      */
-    private void unlaunch() {
+    void unlaunch() {
         // clean up server, if we have one
         if (server != null) {
             server.die();

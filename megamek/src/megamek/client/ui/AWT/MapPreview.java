@@ -89,6 +89,7 @@ public class MapPreview extends Canvas {
         initializeColors();
         m_dialog.setResizable(false);
         addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent me) {
                 processMouseClick(me.getX(), me.getY(), me);
             }
@@ -307,6 +308,7 @@ public class MapPreview extends Canvas {
         repaint();
     }
 
+    @Override
     public void paint(Graphics g) {
         if (m_mapImage != null) {
             g.drawImage(m_mapImage, 0, 0, this);
@@ -650,7 +652,7 @@ public class MapPreview extends Canvas {
 
     }
 
-    private void processMouseClick(int x, int y, MouseEvent me) {
+    void processMouseClick(int x, int y, MouseEvent me) {
         if (y > (getSize().height - 14)) {
 
             if (x < 14) {

@@ -52,7 +52,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements
      * 
      */
     private static final long serialVersionUID = -2459992981678758743L;
-    private Client client;
+    Client client;
     private ClientGUI clientgui;
 
     private Panel panButtons = new Panel();
@@ -98,6 +98,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements
         this.add(panButtons);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }

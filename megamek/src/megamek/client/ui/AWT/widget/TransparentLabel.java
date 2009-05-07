@@ -34,6 +34,7 @@ public class TransparentLabel extends PicMap {
         repaint();
     }
 
+    @Override
     public void onResize() {
         Rectangle r = getContentBounds();
         Dimension d = getSize();

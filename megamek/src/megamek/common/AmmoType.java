@@ -7927,6 +7927,9 @@ public class AmmoType extends EquipmentType {
             case AmmoType.T_LONG_TOM:
             case AmmoType.T_SNIPER:
             case AmmoType.T_THUMPER:
+            case AmmoType.T_LONG_TOM_CANNON:
+            case AmmoType.T_SNIPER_CANNON:
+            case AmmoType.T_THUMPER_CANNON:
                 // Add the munition name to the beginning of the display name.
                 nameBuf = new StringBuffer( name );
                 nameBuf.append( " " );

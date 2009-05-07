@@ -41,6 +41,7 @@ public class KickCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      */
+    @Override
     public void run(int connId, String[] args) {
         int kickArg = server.isPassworded() ? 2 : 1;
 

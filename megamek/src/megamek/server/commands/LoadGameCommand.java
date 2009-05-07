@@ -41,6 +41,7 @@ public class LoadGameCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      */
+    @Override
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
             server.sendServerChat(connId,

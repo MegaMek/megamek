@@ -97,7 +97,7 @@ public class PacketTool extends Frame implements Runnable {
     /**
      * The connection to the other peer.
      */
-    private IConnection conn = null;
+    IConnection conn = null;
 
     /**
      * Display a window for testing the transmission of boards.
@@ -128,6 +128,7 @@ public class PacketTool extends Frame implements Runnable {
 
         // Handle the frame stuff.
         this.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 quit();
             }
@@ -218,10 +219,12 @@ public class PacketTool extends Frame implements Runnable {
                 }
             };
             final TimerTask packetUpdate2 = new TimerTask() {
+                @Override
                 public void run() {
                     try {
                         SwingUtilities.invokeAndWait(packetUpdate);
                     } catch (Exception ie) {
+                        //this should never fail
                     }
                 }
             };
@@ -475,18 +478,18 @@ public class PacketTool extends Frame implements Runnable {
      * Called when it is sensed that a connection has terminated. <p/>
      * Implements <code>ConnectionHandler</code>.
      * 
-     * @param conn - the <code>Connection</code> that has terminated.
+     * @param deadConn - the <code>Connection</code> that has terminated.
      */
-    public synchronized void disconnected(IConnection conn) {
+    public synchronized void disconnected(IConnection deadConn) {
         // write something in the log
-        System.out.println("s: connection " + conn.getId() + " disconnected");
+        System.out.println("s: connection " + deadConn.getId() + " disconnected");
 
         // kill the connection and remove it from any lists it might be on
         panXmit.setEnabled(false);
         butSend.setEnabled(false);
         boardName.setText("");
         board = null;
-        conn = null;
+        deadConn = null;
         panConnect.setEnabled(true);
     }
 
@@ -495,10 +498,12 @@ public class PacketTool extends Frame implements Runnable {
         /**
          * Called when it is sensed that a connection has terminated.
          */
+        @Override
         public void disconnected(DisconnectedEvent e) {
             PacketTool.this.disconnected(e.getConnection());
         }
 
+        @Override
         public void packetReceived(PacketReceivedEvent e) {
             PacketTool.this.handle(e.getConnection().getId(), e.getPacket());
         }

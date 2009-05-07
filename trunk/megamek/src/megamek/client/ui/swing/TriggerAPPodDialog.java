@@ -135,7 +135,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
                 // Create a checkbox for the pod, and add it to the panel.
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
-                        .append(' ')//$NON-NLS-1$
+                        .append(' ')
                         .append(mount.getName());
                 JCheckBox pod = new JCheckBox(message.toString());
                 panPods.add(pod);
@@ -183,6 +183,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
         getContentPane().add(butOkay);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }

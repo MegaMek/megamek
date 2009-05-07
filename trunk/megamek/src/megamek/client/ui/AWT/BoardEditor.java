@@ -80,11 +80,11 @@ public class BoardEditor extends Container implements ItemListener,
      */
     private static final long serialVersionUID = -8281854232284355981L;
 
-    private final Frame frame = new Frame();
+    final Frame frame = new Frame();
 
     private final Game game = new Game();
-    private IBoard board = game.getBoard();
-    private BoardView1 bv;
+    IBoard board = game.getBoard();
+    BoardView1 bv;
     private final CommonMenuBar menuBar = new CommonMenuBar();
     private CommonAboutDialog about = null;
     private CommonHelpDialog help = null;
@@ -93,7 +93,7 @@ public class BoardEditor extends Container implements ItemListener,
     /**
      * The current working hex.
      */
-    private IHex curHex = new Hex();
+    IHex curHex = new Hex();
 
     private String curpath, curfile, curfileImage;
 
@@ -139,7 +139,7 @@ public class BoardEditor extends Container implements ItemListener,
     private Dialog minimapW;
     private MiniMap minimap;
 
-    private Coords lastClicked;
+    Coords lastClicked;
 
     private MapSettings mapSettings = new MapSettings();
 
@@ -158,6 +158,7 @@ public class BoardEditor extends Container implements ItemListener,
 
         bv.addBoardViewListener(new BoardViewListenerAdapter() {
 
+            @Override
             public void hexMoused(final BoardViewEvent b) {
                 final Coords c = b.getCoords();
                 if (c.equals(lastClicked))
@@ -231,6 +232,7 @@ public class BoardEditor extends Container implements ItemListener,
 
         // when frame is closing, just hide it
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(final WindowEvent e) {
                 frame.setVisible(false);
                 setMapVisible(false);
@@ -918,10 +920,12 @@ public class BoardEditor extends Container implements ItemListener,
             setSize(72, 72);
         }
 
+        @Override
         public void paint(final Graphics g) {
             update(g);
         }
 
+        @Override
         public void update(final Graphics g) {
             if (curHex != null) {
                 final TilesetManager tm = bv.getTilesetManager();

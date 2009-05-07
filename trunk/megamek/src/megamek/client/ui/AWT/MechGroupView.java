@@ -96,6 +96,7 @@ public class MechGroupView extends Dialog implements ActionListener,
                 - this.getSize().width / 2, frame.getLocation().y
                 + frame.getSize().height / 10);
         this.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 e.getWindow().setVisible(false);
             }

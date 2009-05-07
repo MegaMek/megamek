@@ -93,8 +93,8 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
      * @param frame - the <code>Frame</code> parent of this dialog.
      * @param options - the <code>GameOptions</code> to be displayed.
      */
-    private void init(Frame frame, PlanetaryConditions conditions) {
-        this.conditions = (PlanetaryConditions)conditions.clone();
+    private void init(Frame frame, PlanetaryConditions startConditions) {
+        this.conditions = (PlanetaryConditions)startConditions.clone();
         
         setupConditions();
         setupButtons();
@@ -119,6 +119,7 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         add(panButtons);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -276,8 +277,8 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         
     }
     
-    public void update(PlanetaryConditions conditions) {
-        this.conditions = (PlanetaryConditions)conditions.clone();
+    public void update(PlanetaryConditions newConditions) {
+        this.conditions = (PlanetaryConditions)newConditions.clone();
         refreshConditions();
     }
     

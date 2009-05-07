@@ -32,6 +32,7 @@ public class SimpleLine extends Canvas {
         setSize(w, h);
     }
 
+    @Override
     public void paint(Graphics g) {
         g.setColor(Color.gray);
         g.drawLine(0, 0, w, 0);

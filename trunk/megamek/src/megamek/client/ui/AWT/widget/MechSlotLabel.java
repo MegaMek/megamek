@@ -57,6 +57,7 @@ public class MechSlotLabel extends PicMap {
         bgd.setImage(BGImage);
     }
 
+    @Override
     public void onResize() {
         drawBGImage();
     }

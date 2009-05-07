@@ -34,6 +34,7 @@ public class SimpleLine extends JComponent {
         setPreferredSize(new Dimension(w, h));
     }
 
+    @Override
     public void paintComponent(Graphics g) {
         g.setColor(Color.gray);
         g.drawLine(0, 0, w, 0);

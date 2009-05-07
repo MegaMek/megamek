@@ -33,6 +33,7 @@ public class TintFilter extends RGBImageFilter {
         canFilterIndexColorModel = true;
     }
 
+    @Override
     public int filterRGB(int x, int y, int RGB) {
         final int alpha = RGB & 0xff000000;
         if (alpha != 0xff000000) {

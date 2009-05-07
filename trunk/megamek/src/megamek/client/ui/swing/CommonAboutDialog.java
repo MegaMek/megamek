@@ -88,6 +88,7 @@ public class CommonAboutDialog extends JDialog {
 
         // Make sure we close at the appropriate times.
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 quit();
             }

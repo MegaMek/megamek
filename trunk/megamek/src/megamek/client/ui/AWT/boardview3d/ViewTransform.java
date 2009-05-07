@@ -88,10 +88,10 @@ abstract class ViewTransform {
 class PlayerViewTransform extends ViewTransform implements MouseBehaviorCallback {
     final static Quat4d rotfix = C.mkquat(1, 0, 0, Math.PI/2);
 
-    public PlayerViewTransform() {}
-    
+    @Override
     String getName() { return "Player View"; }
 
+    @Override
     public void centerOnHex(Coords c, IHex hex) {
         if (c == null || hex == null) return;
 
@@ -102,6 +102,7 @@ class PlayerViewTransform extends ViewTransform implements MouseBehaviorCallback
         );
     }
 
+    @Override
     void reset() {
         MultiTransformGroup mtg = universe.getViewingPlatform().getMultiTransformGroup();
 
@@ -124,6 +125,7 @@ class PlayerViewTransform extends ViewTransform implements MouseBehaviorCallback
     /**
      * Create transformation chain and mouse behaviors for a "human player" perspective
      */
+    @Override
     protected void setup() {
         MultiTransformGroup mtg = universe.getViewingPlatform().getMultiTransformGroup();
         View view = universe.getViewer().getView();
@@ -178,6 +180,7 @@ class PlayerViewTransform extends ViewTransform implements MouseBehaviorCallback
         behavior4.setSchedulingBounds(BoardModel.bounds);
     }
     
+    @Override
     void zoom(int steps) {
         MultiTransformGroup mtg = universe.getViewingPlatform().getMultiTransformGroup();
         TransformGroup zoomTrans = mtg.getTransformGroup(4);
@@ -193,6 +196,7 @@ class PlayerViewTransform extends ViewTransform implements MouseBehaviorCallback
         zoomTrans.setTransform(trans);
     }
 
+    @Override
     Node makeViewRelative(Node obj, double centerDistance) {
         MultiTransformGroup mtg = universe.getViewingPlatform().getMultiTransformGroup();
 
@@ -260,12 +264,12 @@ class PlayerViewTransform extends ViewTransform implements MouseBehaviorCallback
  *  (but ugly).
  */
 class MapViewTransform extends ViewTransform implements MouseBehaviorCallback {
-    public MapViewTransform() {}
-
     TransformGroup wheel = new TransformGroup();
 
+    @Override
     String getName() { return "Map View"; }
 
+    @Override
     public void centerOnHex(Coords c, IHex hex) {
         if (c == null || hex == null) return;
 
@@ -288,6 +292,7 @@ class MapViewTransform extends ViewTransform implements MouseBehaviorCallback {
         panTrans.setTransform(ptrans);
     }
 
+    @Override
     void zoom(int steps) {
         View view = universe.getViewer().getView();
 
@@ -304,6 +309,7 @@ class MapViewTransform extends ViewTransform implements MouseBehaviorCallback {
         panTrans.setTransform(ptrans);
     }
 
+    @Override
     void reset() {
         MultiTransformGroup mtg = universe.getViewingPlatform().getMultiTransformGroup();
         View view = universe.getViewer().getView();
@@ -318,6 +324,7 @@ class MapViewTransform extends ViewTransform implements MouseBehaviorCallback {
     /**
      * Create transformation chain and mouse behaviors for a top-down map perspective
      */
+    @Override
     protected void setup() {
         MultiTransformGroup mtg = universe.getViewingPlatform().getMultiTransformGroup();
         View view = universe.getViewer().getView();
@@ -359,6 +366,7 @@ class MapViewTransform extends ViewTransform implements MouseBehaviorCallback {
         behavior3.setSchedulingBounds(BoardModel.bounds);
     }
     
+    @Override
     Node makeViewRelative(Node obj, double centerDistance) {
         // TODO.
         return obj;

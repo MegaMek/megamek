@@ -52,11 +52,11 @@ public class ConfirmDialog extends Dialog implements ActionListener {
     private Panel panButtons = new Panel();
     private Button butYes = new Button(Messages.getString("Yes")); //$NON-NLS-1$
     private Button butNo = new Button(Messages.getString("No")); //$NON-NLS-1$
-    private Button defaultButton = butYes;
+    Button defaultButton = butYes;
 
     private boolean confirmation = false;
 
-    private Component firstFocusable;
+    Component firstFocusable;
 
     /**
      * Creates a new dialog window that lets the user answer Yes or No, with the
@@ -170,6 +170,7 @@ public class ConfirmDialog extends Dialog implements ActionListener {
 
     private void finishSetup(Frame p) {
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }

@@ -16,7 +16,6 @@ package megamek.client.ui.AWT.widget;
 
 import java.awt.Button;
 import java.awt.Dimension;
-import java.io.Serializable;
 
 /**
  * This class implements buttons that have a preferred size that is different
@@ -24,7 +23,7 @@ import java.io.Serializable;
  * 
  * @author James Damour
  */
-public class SizedButton extends Button implements Serializable {
+public class SizedButton extends Button {
 
     /**
      * 
@@ -84,6 +83,7 @@ public class SizedButton extends Button implements Serializable {
      * @return  the <code>Dimension</code> preferred by this button.
      *          This object can be safely reused after this call.
      */
+    @Override
     public Dimension getPreferredSize() {
         return new Dimension(prefSize);
     }
@@ -109,6 +109,7 @@ public class SizedButton extends Button implements Serializable {
      * @param size - the <code>Dimension</code> preferred by this button. This
      *            object can be safely reused after this call.
      */
+    @Override
     public void setPreferredSize(Dimension size) {
         setPreferredSize(size.width, size.height);
     }

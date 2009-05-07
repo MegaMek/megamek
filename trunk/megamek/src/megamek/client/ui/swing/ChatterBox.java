@@ -63,7 +63,7 @@ public class ChatterBox implements KeyListener {
         client.game.addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
-                chatArea.append('\n' + e.getMessage()); //$NON-NLS-1$
+                chatArea.append('\n' + e.getMessage()); 
                 PlayerListDialog.refreshPlayerList(playerList, client);
                 moveToEnd();
             }
@@ -211,9 +211,11 @@ public class ChatterBox implements KeyListener {
     }
 
     public void keyReleased(KeyEvent ev) {
+        //ignored
     }
 
     public void keyTyped(KeyEvent ev) {
+        //ignored
     }
 
 }

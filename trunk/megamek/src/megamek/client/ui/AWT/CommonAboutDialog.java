@@ -86,6 +86,7 @@ public class CommonAboutDialog extends Dialog {
 
         // Make sure we close at the appropriate times.
         this.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 quit();
             }

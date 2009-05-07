@@ -106,6 +106,7 @@ public class MechGroupView extends JDialog implements ActionListener,
                 - getSize().width / 2, frame.getLocation().y
                 + frame.getSize().height / 10);
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 e.getWindow().setVisible(false);
             }

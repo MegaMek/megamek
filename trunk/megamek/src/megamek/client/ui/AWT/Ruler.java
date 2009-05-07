@@ -145,6 +145,7 @@ public class Ruler extends Dialog implements BoardViewListener {
         heightLabel1.setForeground(startColor);
         height1.setText("1"); //$NON-NLS-1$
         height1.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent e) {
                 height1_keyReleased(e);
             }
@@ -154,6 +155,7 @@ public class Ruler extends Dialog implements BoardViewListener {
         heightLabel2.setForeground(endColor);
         height2.setText("1"); //$NON-NLS-1$
         height2.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent e) {
                 height2_keyReleased(e);
             }
@@ -272,6 +274,7 @@ public class Ruler extends Dialog implements BoardViewListener {
         setVisible(false);
     }
 
+    @Override
     protected void processWindowEvent(WindowEvent e) {
         if (e.getID() == WindowEvent.WINDOW_CLOSING) {
             cancel();
@@ -328,11 +331,13 @@ public class Ruler extends Dialog implements BoardViewListener {
         try {
             h1 = Integer.parseInt(height1.getText());
         } catch (NumberFormatException e) {
+            //ignored
         }
 
         try {
             h2 = Integer.parseInt(height2.getText());
         } catch (NumberFormatException e) {
+            //ignored
         }
 
         String toHit1 = "", toHit2 = ""; //$NON-NLS-1$ //$NON-NLS-2$
@@ -417,23 +422,23 @@ public class Ruler extends Dialog implements BoardViewListener {
     }
 
     public void hexCursor(BoardViewEvent b) {
-
+        //ignored
     }
 
     public void boardHexHighlighted(BoardViewEvent b) {
-
+        //ignored
     }
 
     public void hexSelected(BoardViewEvent b) {
-
+        //ignored
     }
 
     public void firstLOSHex(BoardViewEvent b) {
-
+        //ignored
     }
 
     public void secondLOSHex(BoardViewEvent b, Coords c) {
-
+        //ignored
     }
 
     void butFlip_actionPerformed(ActionEvent e) {
@@ -474,24 +479,18 @@ public class Ruler extends Dialog implements BoardViewListener {
     }
 
     public void boardChangedEntity(BoardViewEvent b) {
+        //ignored
     }
 
     public void boardNewAttack(BoardViewEvent a) {
+        //ignored
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.client.BoardViewListener#finishedMovingUnits(megamek.client.BoardViewEvent)
-     */
     public void finishedMovingUnits(BoardViewEvent b) {
+        //ignored
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.client.BoardViewListener#selectUnit(megamek.client.BoardViewEvent)
-     */
     public void unitSelected(BoardViewEvent b) {
+        //ignored
     }
 }

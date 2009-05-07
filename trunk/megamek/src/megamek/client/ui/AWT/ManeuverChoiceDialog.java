@@ -135,6 +135,7 @@ public class ManeuverChoiceDialog extends Dialog implements ActionListener {
         butOK.requestFocus();
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -271,9 +272,8 @@ public class ManeuverChoiceDialog extends Dialog implements ActionListener {
 
         if(null != retval) {
             return retval[0];
-        } else {
-            return -1;
         }
+        return -1;
     }
     
     public void checkPerformability(int velocity, int altitude, int ceiling, boolean isVTOL, int distance) {

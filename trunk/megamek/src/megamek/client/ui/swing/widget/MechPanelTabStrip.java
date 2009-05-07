@@ -44,6 +44,7 @@ public class MechPanelTabStrip extends PicMap {
         update();
     }
 
+    @Override
     public void addNotify() {
         super.addNotify();
         setImages();
@@ -173,7 +174,9 @@ public class MechPanelTabStrip extends PicMap {
         g.dispose();
     }
 
+    @Override
     public void onResize() {
+        //ignore
     }
 
 }

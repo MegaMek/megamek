@@ -22,6 +22,7 @@ package megamek.client.ui.AWT;
 import java.awt.Button;
 import java.awt.Checkbox;
 import java.awt.Choice;
+import java.awt.Dialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -43,7 +44,7 @@ import megamek.common.Entity;
 import megamek.common.Tank;
 import megamek.common.VTOL;
 
-public class RandomSkillDialog extends java.awt.Dialog implements
+public class RandomSkillDialog extends Dialog implements
         ActionListener, ItemListener {
 
     /**
@@ -167,6 +168,7 @@ public class RandomSkillDialog extends java.awt.Dialog implements
         this.add(panButtons);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -211,10 +213,6 @@ public class RandomSkillDialog extends java.awt.Dialog implements
         panButtons.add(chPlayer);
     }
 
-    public void update() {
-
-    }
-
     private void updatePlayerChoice() {
         String lastChoice = chPlayer.getSelectedItem();
         chPlayer.removeAll();
@@ -230,6 +228,7 @@ public class RandomSkillDialog extends java.awt.Dialog implements
         }
     }
 
+    @Override
     public void setVisible(boolean show) {
         if (show) {
             updatePlayerChoice();

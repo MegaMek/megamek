@@ -148,6 +148,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         heightLabel1.setForeground(startColor);
         height1.setText("1"); //$NON-NLS-1$
         height1.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent e) {
                 height1_keyReleased();
             }
@@ -157,6 +158,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         heightLabel2.setForeground(endColor);
         height2.setText("1"); //$NON-NLS-1$
         height2.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent e) {
                 height2_keyReleased();
             }
@@ -275,6 +277,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         setVisible(false);
     }
 
+    @Override
     protected void processWindowEvent(WindowEvent e) {
         if (e.getID() == WindowEvent.WINDOW_CLOSING) {
             cancel();
@@ -395,23 +398,23 @@ public class Ruler extends JDialog implements BoardViewListener {
     }
 
     public void hexCursor(BoardViewEvent b) {
-
+        //ignored
     }
 
     public void boardHexHighlighted(BoardViewEvent b) {
-
+        //ignored
     }
 
     public void hexSelected(BoardViewEvent b) {
-
+        //ignored
     }
 
     public void firstLOSHex(BoardViewEvent b) {
-
+        //ignored
     }
 
     public void secondLOSHex(BoardViewEvent b, Coords c) {
-
+        //ignored
     }
 
     void butFlip_actionPerformed() {
@@ -451,19 +454,11 @@ public class Ruler extends JDialog implements BoardViewListener {
         setVisible(true);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.client.BoardViewListener#finishedMovingUnits(megamek.client.BoardViewEvent)
-     */
     public void finishedMovingUnits(BoardViewEvent b) {
+        //ignored
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.client.BoardViewListener#selectUnit(megamek.client.BoardViewEvent)
-     */
     public void unitSelected(BoardViewEvent b) {
+        //ignored
     }
 }

@@ -145,18 +145,22 @@ public class StraightArrowPolygon extends Polygon {
                 * cos - tailLength * sin));
     }
 
+    @Override
     public boolean contains(int x, int y) {
         return hotArea.contains(x, y);
     }
 
+    @Override
     public boolean contains(Point p) {
         return hotArea.contains(p);
     }
 
+    @Override
     public boolean contains(double x, double y) {
         return hotArea.contains((int) Math.round(x), (int) Math.round(y));
     }
 
+    @Override
     public void translate(int deltaX, int deltaY) {
         super.translate(deltaX, deltaY);
         hotArea.translate(deltaX, deltaY);

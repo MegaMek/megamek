@@ -107,10 +107,12 @@ public class BoardNewDialog extends Dialog implements ActionListener {
         }
     }
 
+    @Override
     public int getX() {
         return xvalue;
     }
 
+    @Override
     public int getY() {
         return yvalue;
     }

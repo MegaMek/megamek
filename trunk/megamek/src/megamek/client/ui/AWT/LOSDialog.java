@@ -40,12 +40,12 @@ public class LOSDialog extends Dialog implements ActionListener {
      */
     private static final long serialVersionUID = 2709304305904897160L;
 
-    private Button butOK = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+    Button butOK = new Button(Messages.getString("Okay")); //$NON-NLS-1$
 
     /**
      * The checkboxes for available choices.
      */
-    private Checkbox[] checkboxes1 = null;
+    Checkbox[] checkboxes1 = null;
     private Checkbox[] checkboxes2 = null;
 
     public LOSDialog(Frame parent, boolean mechInFirst, boolean mechInSecond) {
@@ -54,6 +54,7 @@ public class LOSDialog extends Dialog implements ActionListener {
 
         // closing the window is the same as hitting butOK
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 actionPerformed(new ActionEvent(butOK,
                         ActionEvent.ACTION_PERFORMED, butOK.getLabel()));

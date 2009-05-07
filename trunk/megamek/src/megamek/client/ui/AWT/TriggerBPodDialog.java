@@ -114,7 +114,7 @@ public class TriggerBPodDialog extends Dialog implements ActionListener {
         labMessage = new AdvancedLabel(
                 Messages.getString(
                         "TriggerBPodDialog.selectPodsToTrigger",
-                        new Object[] { entity.getDisplayName() })); //$NON-NLS-1$
+                        new Object[] { entity.getDisplayName() })); 
 
         // Anti-BA Pod checkbox panel.
         Panel panPods = new Panel();

@@ -113,6 +113,7 @@ public class ImageButton extends SizedButton {
      *
      * @param   g - the <code>Graphics</code> needing update.
      */
+    @Override
     public void paint(Graphics g) {
 
         // Paint the button default.

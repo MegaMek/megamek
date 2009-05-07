@@ -80,7 +80,7 @@ abstract class ArrowModel extends BranchGroup {
     }
 
     private static final GeometryArray makeArrowOutline() {
-        LineStripArray l = new LineStripArray(arrowVertices.length, LineStripArray.COORDINATES, arrowStrips);
+        LineStripArray l = new LineStripArray(arrowVertices.length, GeometryArray.COORDINATES, arrowStrips);
         l.setCoordinates(0, arrowVertices);
         return l;
     }
@@ -119,7 +119,7 @@ abstract class ArrowModel extends BranchGroup {
     }
 
     static final GeometryArray makeArrowOutline(double length) {
-        LineStripArray l = new LineStripArray(arrowVertices.length, LineStripArray.COORDINATES, arrowStrips);
+        LineStripArray l = new LineStripArray(arrowVertices.length, GeometryArray.COORDINATES, arrowStrips);
         double[] vertices = new double[arrowVertices.length];
         System.arraycopy(arrowVertices, 0, vertices, 0, vertices.length);
         

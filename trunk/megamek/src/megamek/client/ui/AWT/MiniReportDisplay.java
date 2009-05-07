@@ -34,7 +34,7 @@ public class MiniReportDisplay extends Dialog implements ActionListener {
      * 
      */
     private static final long serialVersionUID = -8035930786467770860L;
-    private Button butOkay;
+    Button butOkay;
     private TextArea taData;
 
     public MiniReportDisplay(Frame parent, String sReport) {
@@ -57,6 +57,7 @@ public class MiniReportDisplay extends Dialog implements ActionListener {
 
         // closing the window is the same as hitting butOkay
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 actionPerformed(new ActionEvent(butOkay,
                         ActionEvent.ACTION_PERFORMED, butOkay.getLabel()));

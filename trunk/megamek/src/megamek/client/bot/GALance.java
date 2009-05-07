@@ -39,6 +39,7 @@ public class GALance extends GA {
         this.enemy_array = tb.getEnemyEntities().toArray();
     }
 
+    @Override
     protected void initPopulation() {
         // promote max
         try {
@@ -63,6 +64,7 @@ public class GALance extends GA {
     }
 
     // now they have a hard-coded hoard metality
+    @Override
     protected double getFitness(int iChromIndex) {
         Chromosome chrom = this.chromosomes[iChromIndex];
         ArrayList<MoveOption> possible = new ArrayList<MoveOption>();
@@ -262,6 +264,7 @@ public class GALance extends GA {
         return result;
     }
 
+    @Override
     protected void doRandomMutation(int iChromIndex) {
         Chromosome c1 = this.chromosomes[iChromIndex];
         // I don't think we need to mutate an empty chromosome

@@ -39,6 +39,7 @@ public class TeamCommand extends ServerCommand {
                 "Allows players on the same team to chat with each other in the game.");
     }
 
+    @Override
     public void run(int connId, String[] args) {
 
         if (args.length > 1) {

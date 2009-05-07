@@ -37,6 +37,7 @@ public class RollCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      */
+    @Override
     public void run(int connId, String[] args) {
         int dice = 2;
         int sides = 6;

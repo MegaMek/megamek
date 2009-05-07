@@ -107,6 +107,7 @@ public class DedicatedServer {
             return gameFilename;
         }
 
+        @Override
         protected void start() throws ParseException {
             if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_PORT)) {
                 nextToken();
@@ -123,16 +124,17 @@ public class DedicatedServer {
 
         private void parsePort() throws ParseException {
             if (getToken() == TOK_LITERAL) {
-                int port = -1;
+                int newPort = -1;
                 try {
-                    port = Integer.decode(getTokenValue()).intValue();
+                    newPort = Integer.decode(getTokenValue()).intValue();
                 } catch (NumberFormatException e) {
+                    //ignore, leave at -1
                 }
                 nextToken();
-                if (port < 0 || port > 65535) {
+                if (newPort < 0 || newPort > 65535) {
                     error("invalid port number"); //$NON-NLS-1$                                    
                 }
-                this.port = port;
+                this.port = newPort;
             } else {
                 error("port number expected"); //$NON-NLS-1$                
             }

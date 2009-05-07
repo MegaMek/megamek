@@ -42,6 +42,7 @@ public class HelpCommand extends ServerCommand {
                 "Lists all of the commands available, or gives help on a specific command.  Usage: /help [command]");
     }
 
+    @Override
     public void run(int connId, String[] args) {
         if (args.length == 1) {
             // no args

@@ -41,6 +41,7 @@ public class SeeAllCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      */
+    @Override
     public void run(int connId, String[] args) {
         boolean doBlind = server.getGame().getOptions().booleanOption(
                 "double_blind");

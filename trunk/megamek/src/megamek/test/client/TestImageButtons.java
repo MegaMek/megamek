@@ -38,11 +38,11 @@ import megamek.client.ui.AWT.widget.SizedButton;
 
 public class TestImageButtons {
 
-    private ImageButton camo;
-    private Dialog dialog;
+    ImageButton camo;
+    Dialog dialog;
     private List list;
-    private ImageButton imgButton;
-    private SizedButton color;
+    ImageButton imgButton;
+    SizedButton color;
 
     private TestImageButtons() {
 
@@ -51,6 +51,7 @@ public class TestImageButtons {
 
         // Close the window at WM_CLOSE.
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
             }
@@ -66,6 +67,7 @@ public class TestImageButtons {
             }
         });
         camo.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent event) {
                 if (KeyEvent.VK_ENTER == event.getKeyCode()) {
                     dialog.setVisible(true);
@@ -77,6 +79,7 @@ public class TestImageButtons {
         // Construct a dialog.
         dialog = new Dialog(frame, "Choose a pattern", true);
         dialog.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 dialog.setVisible(false);
             }
@@ -103,6 +106,7 @@ public class TestImageButtons {
             }
         });
         list.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent event) {
                 if (KeyEvent.VK_ENTER == event.getKeyCode()
                         || KeyEvent.VK_SPACE == event.getKeyCode()) {
@@ -135,6 +139,7 @@ public class TestImageButtons {
             }
         });
         imgButton.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent event) {
                 if (KeyEvent.VK_ENTER == event.getKeyCode()) {
                     Dimension size = imgButton.getPreferredSize();
@@ -162,6 +167,7 @@ public class TestImageButtons {
             }
         });
         color.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent event) {
                 if (KeyEvent.VK_ENTER == event.getKeyCode()) {
                     camo.setBackground(color.getBackground());

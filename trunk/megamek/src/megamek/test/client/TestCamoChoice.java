@@ -52,6 +52,7 @@ public class TestCamoChoice extends Frame implements ActionListener,
         final TestCamoChoice frame = new TestCamoChoice();
 
         frame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 frame.dispose();
                 System.exit(1);
@@ -61,6 +62,7 @@ public class TestCamoChoice extends Frame implements ActionListener,
 
     }
 
+    @Override
     public void dispose() {
         dialog.dispose();
         super.dispose();

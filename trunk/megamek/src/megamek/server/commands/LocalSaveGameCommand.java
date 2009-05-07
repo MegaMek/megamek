@@ -38,6 +38,7 @@ public class LocalSaveGameCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      */
+    @Override
     public void run(int connId, String[] args) {
         if (server.getGame().getOptions().booleanOption("double_blind") &&
                 server.getGame().getOptions().booleanOption("disable_local_save")) {

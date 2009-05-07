@@ -1163,7 +1163,7 @@ public class Aero
                 }
                 dBV = mgaBV * 0.67;
             }
-            if (weapon.isRearMounted()) {
+            if (weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT)) {
                 bvRear += dBV;
             } else {
                 bvFront += dBV;
@@ -1229,7 +1229,7 @@ public class Aero
                 }
                 // half for being rear mounted (or front mounted, when more rear-
                 // than front-mounted un-modded BV
-                if ((weapon.isRearMounted() && halveRear) || (!weapon.isRearMounted() && !halveRear)) {
+                if (((weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT))&& halveRear) || (!(weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT)) && !halveRear)) {
                     dBV /= 2;
                 }
                 weaponBV += dBV;
@@ -1289,7 +1289,7 @@ public class Aero
                 }
                 // half for being rear mounted (or front mounted, when more rear-
                 // than front-mounted un-modded BV
-                if ((weapon.isRearMounted() && halveRear) || (!weapon.isRearMounted() && !halveRear)) {
+                if (((weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT))&& halveRear) || (!(weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT)) && !halveRear)) {
                     dBV /= 2;
                 }
                 int heat = ((WeaponType)weapon.getType()).getHeat();
@@ -1839,10 +1839,6 @@ public class Aero
     @Override
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
     throws LocationFullException {
-        // Aft mounted weapons are always rear mounted
-        if (loc == Aero.LOC_AFT) {
-            rearMounted = true;
-        }
         super.addEquipment(mounted,loc, rearMounted);
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,

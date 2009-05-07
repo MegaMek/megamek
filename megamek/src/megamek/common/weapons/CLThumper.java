@@ -40,6 +40,7 @@ public class CLThumper extends ArtilleryWeapon {
         setInternalName("CLThumper");
         addLookupName("CLThumperArtillery");
         addLookupName("Clan Thumper");
+        flags1 |= F_AERO_WEAPON;
         heat = 5;
         rackSize = 15;
         ammoType = AmmoType.T_THUMPER;

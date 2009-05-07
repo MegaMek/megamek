@@ -92,6 +92,7 @@ public class WeaponType extends EquipmentType {
     public static final long F_TASER = 1l << 37;
     public static final long F_ANTI_SHIP = 1l << 38; // for anti-ship missiles
     public static final long F_SPACE_BOMB = 1l << 39;
+    public static final long F_ARTILLERY_CANNON = 11 << 40;
 
     // Flag Field 1 Variables
     public static final long F_BA_WEAPON = 1l << 0; // Currently only used by
@@ -99,7 +100,6 @@ public class WeaponType extends EquipmentType {
     public static final long F_AERO_WEAPON = 1L << 2;
     public static final long F_PROTO_WEAPON = 1L << 3;
     public static final long F_TANK_WEAPON = 1L << 4;
-    public static final long F_VTOL_WEAPON = 1L << 5;
 
     // add maximum range for AT2
     public static final int RANGE_SHORT = 1;
@@ -793,6 +793,13 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLSniper());
         EquipmentType.addType(new CLThumper());
         EquipmentType.addType(new CLArrowIV());
+        // Arty Cannons
+        EquipmentType.addType(new ISLongTomCannon());
+        EquipmentType.addType(new ISThumperCannon());
+        EquipmentType.addType(new ISSniperCannon());
+        EquipmentType.addType(new CLLongTomCannon());
+        EquipmentType.addType(new CLSniperCannon());
+        EquipmentType.addType(new CLThumperCannon());
         // MFUK weapons
         EquipmentType.addType(new CLPlasmaRifle());
         EquipmentType.addType(new CLRAC2());

@@ -19,6 +19,8 @@ v0.34.2-dev (SVN)
 + Bug 2787549: pilot damage avoidance rolls wrong
 + Bug 278587: Aft Weapons Bay Bug
 + Bug 2784920, Patch 2786448: firing leg-mounted weapons when hull down
++ Bug: camo choice not working correctly in swing for no camo
++ Bug: board selection dialog in swing not reacting to double click on board
 
 v0.34.1 (2009-04-28, 15:16 UTC+2)
 + Patch 2782015, Bug 2777743: Enhanced ER PPC BV

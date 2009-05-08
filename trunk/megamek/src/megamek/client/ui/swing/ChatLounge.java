@@ -18,6 +18,7 @@ package megamek.client.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -28,6 +29,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -312,12 +314,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         choTeam.addItemListener(this);
 
         butCamo = new JButton();
-        butCamo.setText(Messages.getString("ChatLounge.noCamo")); //$NON-NLS-1$
         butCamo.setPreferredSize(new Dimension(84, 72));
         butCamo.setActionCommand("camo"); //$NON-NLS-1$
         butCamo.addActionListener(this);
         camoDialog.addItemListener(new CamoChoiceListener(camoDialog, butCamo,
-                butOptions.getBackground(), this));
+                this));
         refreshCamos();
 
         // If we have a camo pattern, use it. Otherwise set a background.
@@ -325,9 +326,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (images != null) {
             butCamo.setIcon(new ImageIcon(images[0]));
         } else {
-            butCamo
-                    .setBackground(PlayerColors
-                            .getColor(player.getColorIndex()));
+            BufferedImage tempImage = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = tempImage.createGraphics();
+            graphics.setColor(PlayerColors.getColor(player.getColorIndex()));
+            graphics.fillRect(0, 0, 84, 72);
+            butCamo.setIcon(new ImageIcon(tempImage));
         }
 
         butInit = new JButton(Messages.getString("ChatLounge.butInit")); //$NON-NLS-1$
@@ -1110,7 +1113,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                     new Integer(entity.getCrew().getPiloting()),
                                     (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                     (isManeiDomini ? Messages
-                                            .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$ 
+                                            .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$
                                     unitClass,
                                     ((entity.isOffBoard()) ? Messages
                                             .getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
@@ -1127,7 +1130,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                                     .getPiloting()),
                                             (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                             (isManeiDomini ? Messages
-                                                    .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$ 
+                                                    .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$
                                             new Integer(entity
                                                     .calculateBattleValue()),
                                             strTreeView,
@@ -1287,25 +1290,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (null == image) {
             for (int color = 0; color < Player.colorNames.length; color++) {
                 if (Player.colorNames[color].equals(curItem)) {
-                    butCamo.setText(Messages
-                            .getString("CamoChoiceListener.NoCammo")); //$NON-NLS-1$
-                    butCamo.setBackground(PlayerColors.getColor(color));
+                    BufferedImage tempImage = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
+                    Graphics2D graphics = tempImage.createGraphics();
+                    graphics.setColor(PlayerColors.getColor(color));
+                    graphics.fillRect(0, 0, 84, 72);
+                    butCamo.setIcon(new ImageIcon(tempImage));
                     break;
                 }
             }
         }
         // We need to copy the image to make it appear.
         else {
-            butCamo.setText(""); //$NON-NLS-1$
-            butCamo.setBackground(butOptions.getBackground()); 
-            // butOptions.getBackground() == default ackground.
-            // This needs to be cleaned p.
-        }
-
-        // Update the butCamo's image.
-        // FIXME: game was crashing. this null check fixes it, but it's clear
-        // the code above was supposed to prevent this.
-        if (image != null) {
+            // Update the butCamo's image.
             butCamo.setIcon(new ImageIcon(image));
         }
     }
@@ -1813,7 +1809,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                 Messages
                                         .getString("ChatLounge.InitiativeAlert.message"),
                                 Messages
-                                        .getString("ChatLounge.InitiativeAlert.title"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$ 
+                                        .getString("ChatLounge.InitiativeAlert.title"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
             }
             Client c = getPlayerListSelected(lisPlayerInfo);
             if (c == null) {
@@ -1885,7 +1881,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     /**
      * Allow others to see what player is currently selected. Nessecary for
      * CameoChoieListener.
-     * 
+     *
      * @return
      */
     protected Client getPlayerListSelectedClient() {
@@ -1904,7 +1900,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     /**
      * Retrieve the "Done" button of this object.
-     * 
+     *
      * @return the <code>javax.swing.JButton</code> that activates this object's
      *         "Done" action.
      */
@@ -1922,7 +1918,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     /**
      * Get the secondary display section of this phase.
-     * 
+     *
      * @return the <code>Component</code> which is displayed in the secondary
      *         section during this phase.
      */

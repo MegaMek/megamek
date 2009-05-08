@@ -1,7 +1,6 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -27,7 +26,7 @@ import megamek.common.Player;
  */
 public class ScenarioDialog extends JDialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5682593522064612790L;
     private static final int T_ME = 0;
@@ -66,7 +65,6 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                     .getString("MegaMek.ScenarioDialog.otherh")); //$NON-NLS-1$
             m_typeChoices[x].addItem(Messages
                     .getString("MegaMek.ScenarioDialog.bot")); //$NON-NLS-1$
-            final Color defaultBackground = m_typeChoices[x].getBackground();
             m_camoButtons[x] = new JButton();
             final JButton curButton = m_camoButtons[x];
             curButton.setText(Messages.getString("MegaMek.NoCamoBtn")); //$NON-NLS-1$
@@ -80,7 +78,6 @@ public class ScenarioDialog extends JDialog implements ActionListener {
             curButton.addActionListener(new ActionListener() {
                 private final CamoChoiceDialog dialog = camoDialog;
                 private final JButton button = curButton;
-                private final Color background = defaultBackground;
                 private final Player player = curPlayer;
 
                 public void actionPerformed(ActionEvent e) {
@@ -96,7 +93,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                         dialog.setItemName(player.getCamoFileName());
                     }
                     prevListener = new CamoChoiceListener(dialog, button,
-                            background, player);
+                            player);
                     dialog.addItemListener(prevListener);
                     dialog.setVisible(true);
                 }

@@ -94,6 +94,8 @@
      fastsammy <fastsammy@users.sourceforge.net>
      Sni77 <sni77@users.sourceforge.net>
      Jellico
+     Brock Peterman <bh-21@users.sourceforge.net>
+     
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>

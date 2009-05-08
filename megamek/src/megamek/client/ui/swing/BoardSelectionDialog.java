@@ -28,6 +28,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -58,9 +60,9 @@ import megamek.common.util.BoardUtilities;
  * @author Ben
  */
 public class BoardSelectionDialog extends JDialog implements ActionListener,
-        IMapSettingsObserver, ListSelectionListener {
+        IMapSettingsObserver, ListSelectionListener, MouseListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4591325591152076483L;
     private ClientGUI client;
@@ -136,6 +138,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         setupButtons();
 
         butChange.addActionListener(this);
+        lisBoardsAvailable.addMouseListener(this);
 
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -446,8 +449,8 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         }
 
         // check settings
-        if (boardWidth <= 0 || boardHeight <= 0 || mapWidth <= 0
-                || mapHeight <= 0) {
+        if ((boardWidth <= 0) || (boardHeight <= 0) || (mapWidth <= 0)
+                || (mapHeight <= 0)) {
             JOptionPane.showMessageDialog(client.frame, Messages
                     .getString("BoardSelectionDialog.MapSizeMustBeGreateter0"),
                     Messages.getString("BoardSelectionDialog.InvalidMapSize"),
@@ -566,8 +569,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
 
     public void actionPerformed(ActionEvent e) {
 
-        if (e.getSource().equals(butChange)
-                || e.getSource().equals(lisBoardsAvailable)) {
+        if (e.getSource().equals(butChange)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
                 change((String) lisBoardsAvailable.getSelectedValue());
             }
@@ -624,5 +626,29 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         if (event.getSource().equals(lisBoardsSelected)) {
             refreshSelectAllCheck();
         }
+    }
+
+    public void mouseClicked(MouseEvent arg0) {
+        if ((arg0.getClickCount() == 2) && arg0.getSource().equals(lisBoardsAvailable)) {
+            if (lisBoardsAvailable.getSelectedIndex() != -1) {
+                change((String) lisBoardsAvailable.getSelectedValue());
+            }
+        }
+    }
+
+    public void mouseEntered(MouseEvent arg0) {
+        // ignore
+    }
+
+    public void mouseExited(MouseEvent arg0) {
+        // ignore
+    }
+
+    public void mousePressed(MouseEvent arg0) {
+        // ignore
+    }
+
+    public void mouseReleased(MouseEvent arg0) {
+        //ignore
     }
 }

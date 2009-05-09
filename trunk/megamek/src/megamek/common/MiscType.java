@@ -90,20 +90,21 @@ public class MiscType extends EquipmentType {
     public static final long F_SINGLE_HEX_ECM = 1L << 54;
     public static final long F_EJECTION_SEAT = 1L << 55;
     public static final long F_SALVAGE_ARM = 1L << 56;
-    public static final long F_TRACKS = 1L << 57; // TODO: Implement me, so far
-    // only construction data
-    public static final long F_MASS = 1L << 58; // TODO: Implement me, so far
-    public static final long F_PARTIAL_WING = 1L << 59;
-    public static final long F_FERRO_LAMELLOR = 1L << 60;
-    public static final long F_ARTEMIS_V = 1L << 61;
+    public static final long F_PARTIAL_WING = 1L << 57;
+    public static final long F_FERRO_LAMELLOR = 1L << 58;
+    public static final long F_ARTEMIS_V = 1L << 59;
+    // TODO: Implement me, so far only construction data
+    // FIXME: 1L << 60 is 1, so we need to figure something out for these flags
+    public static final long F_TRACKS = 1L << 60;
+    // TODO: Implement me, so far only construction data
+    public static final long F_MASS = 1L << 61;
 
     // Flags2
     public static final long F_BA_EQUIPMENT = 1L << 0;
     public static final long F_MECH_EQUIPMENT = 1L << 1;
     public static final long F_TANK_EQUIPMENT = 1L << 2;
-    public static final long F_VTOL_EQUIPMENT = 1L << 3;
-    public static final long F_AERO_EQUIPMENT = 1L << 4;
-    public static final long F_PROTOMECH_EQUIPMENT = 1L << 5;
+    public static final long F_AERO_EQUIPMENT = 1L << 3;
+    public static final long F_PROTOMECH_EQUIPMENT = 1L << 4;
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -2768,7 +2769,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     * 
+     *
      * @return MiscType
      */
     public static MiscType createISClaw() {

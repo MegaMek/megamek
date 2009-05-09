@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.34.3-dev (SVN)
+
 v0.34.2 (2009-05-09, 18:02 UTC+2)
 + Bug: Ostwar 3M has wrong techlevel
 + Bug 2555773, Patch 2782679: Narc pods working for non-narc ammo

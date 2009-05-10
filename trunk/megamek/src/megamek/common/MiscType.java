@@ -94,7 +94,6 @@ public class MiscType extends EquipmentType {
     public static final long F_FERRO_LAMELLOR = 1L << 58;
     public static final long F_ARTEMIS_V = 1L << 59;
     // TODO: Implement me, so far only construction data
-    // FIXME: 1L << 60 is 1, so we need to figure something out for these flags
     public static final long F_TRACKS = 1L << 60;
     // TODO: Implement me, so far only construction data
     public static final long F_MASS = 1L << 61;
@@ -2649,7 +2648,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = 0;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
+        misc.flags1 |= F_TANK_EQUIPMENT;
         misc.flags |= F_VACUUM_PROTECTION;
         misc.bv = 0;
 
@@ -2665,7 +2664,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 8;
         misc.cost = 0;
         misc.spreadable = true;
-        misc.flags1 |= F_TANK_EQUIPMENT;
+        misc.flags1 |= F_MECH_EQUIPMENT;
         misc.flags |= F_ENVIRONMENTAL_SEALING;
         misc.bv = 0;
 
@@ -2769,7 +2768,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     *
+     * 
      * @return MiscType
      */
     public static MiscType createISClaw() {

@@ -97,6 +97,8 @@ public class MiscType extends EquipmentType {
     public static final long F_TRACKS = 1L << 60;
     // TODO: Implement me, so far only construction data
     public static final long F_MASS = 1L << 61;
+    public static final long F_CARGO = 1L << 62;
+    public static final long F_DUMPER = 1L << 63;
 
     // Flags2
     public static final long F_BA_EQUIPMENT = 1L << 0;
@@ -338,6 +340,17 @@ public class MiscType extends EquipmentType {
             return (float) (Math.floor(tonnage) + 0.5);
         } else if (hasFlag(F_TRACKS)) {
             return entity.getWeight() / 10;
+        } else if (hasFlag(F_DUMPER)) {
+            // 5% of cargo
+            float cargoTonnage = 0;
+            for (Mounted mount : entity.getMisc()) {
+                if (mount.getType().hasFlag(F_CARGO)) {
+                    cargoTonnage += mount.getType().getTonnage(entity);
+                }
+            }
+            // round to half ton TODO: round to kilograms for non-large support
+            // vees, but we don't support them yet
+            return (float)(Math.ceil(entity.getWeight() / 40) * 2.0);
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -489,6 +502,9 @@ public class MiscType extends EquipmentType {
             returnBV = fRearBV * 0.2 + fFrontBV * 0.1;
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
             returnBV = (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
+        } else if (hasFlag(F_TALON)) {
+            //TODO, TO says it should be the damage talons do, but they just
+            //modify DFA/Kick damage
         }
 
         return returnBV;
@@ -547,8 +563,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createTracks());
         EquipmentType.addType(MiscType.createISMASS());
         EquipmentType.addType(MiscType.createCLMASS());
+        // For industrials and tanks
+        EquipmentType.addType(MiscType.createEnvironmentalSealing());
 
-        // Start of level 3 stuff
         EquipmentType.addType(MiscType.createImprovedJumpJet());
         EquipmentType.addType(MiscType.createCLImprovedJumpJet());
         EquipmentType.addType(MiscType.createJumpBooster());
@@ -634,6 +651,14 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCommsGear14());
         EquipmentType.addType(MiscType.createCommsGear15());
         EquipmentType.addType(MiscType.createPartialWing());
+        EquipmentType.addType(MiscType.createCargo());
+        EquipmentType.addType(MiscType.createMechSprayer());
+        EquipmentType.addType(MiscType.createTankSprayer());
+        EquipmentType.addType(MiscType.createTankSprayer());
+        EquipmentType.addType(MiscType.createFrontDumper());
+        EquipmentType.addType(MiscType.createRearDumper());
+        EquipmentType.addType(MiscType.createLeftDumper());
+        EquipmentType.addType(MiscType.createRightDumper());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBABoardingClaw());
@@ -657,7 +682,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISBALightActiveProbe());
 
         // support vee stuff
-        EquipmentType.addType(MiscType.createEnvironmentalSealing());
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createArmoredChassis());
     }
@@ -2664,7 +2688,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 8;
         misc.cost = 0;
         misc.spreadable = true;
-        misc.flags1 |= F_MECH_EQUIPMENT;
+        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_ENVIRONMENTAL_SEALING;
         misc.bv = 0;
 
@@ -2768,7 +2792,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     * 
+     *
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -3152,9 +3176,10 @@ public class MiscType extends EquipmentType {
         misc.name = "Talons";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 2;
-        misc.cost = 90000;
-        misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
+        misc.criticals = 4;
+        misc.spreadable = true;
+        misc.cost = COST_VARIABLE;
+        misc.flags1 |= F_MECH_EQUIPMENT;
         misc.flags |= F_TALON;
         misc.bv = 3;
 
@@ -3374,6 +3399,109 @@ public class MiscType extends EquipmentType {
         misc.flags1 |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT;
         misc.flags |= F_PARTIAL_WING;
         misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+
+        return misc;
+    }
+
+    public static MiscType createCargo() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.cost = 0;
+        misc.flags |= F_CARGO;
+        misc.flags1 |= F_MECH_EQUIPMENT;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createMechSprayer() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Sprayer";
+        misc.setInternalName("MechSprayer");
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.cost = 1000;
+        misc.flags1 |= F_MECH_EQUIPMENT;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createTankSprayer() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Sprayer";
+        misc.setInternalName("Tank Sprayer");
+        misc.tonnage = 0.015f;
+        misc.criticals = 0;
+        misc.cost = 1000;
+        misc.flags1 |= F_TANK_EQUIPMENT;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createFrontDumper() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Dumper (Front)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = 5000;
+        misc.flags |= F_DUMPER;
+        misc.flags1 |= F_TANK_EQUIPMENT | F_MECH_EQUIPMENT;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createRearDumper() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Dumper (Rear)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = 5000;
+        misc.flags |= F_DUMPER;
+        misc.flags1 |= F_TANK_EQUIPMENT | F_MECH_EQUIPMENT;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createRightDumper() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Dumper (Right)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = 5000;
+        misc.flags |= F_DUMPER;
+        misc.flags1 |= F_TANK_EQUIPMENT | F_MECH_EQUIPMENT;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createLeftDumper() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Dumper (Left)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = 5000;
+        misc.flags |= F_DUMPER;
+        misc.flags1 |= F_TANK_EQUIPMENT | F_MECH_EQUIPMENT;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
 
         return misc;
     }

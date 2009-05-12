@@ -6,6 +6,7 @@ v0.35.1-dev (SVN)
 + Added image for Zeus X (thanks St0ny)
 + Bug: Artemis V and Ferro Lamellor not working
 + Updated vehicle files
++ Added scrolling to swing quick view
 
 v0.35.0 (2009-05-09, 18:02 UTC+2)
 + Patch 2604166: Battlemech Partial Wing

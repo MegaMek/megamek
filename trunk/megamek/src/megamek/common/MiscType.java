@@ -348,7 +348,7 @@ public class MiscType extends EquipmentType {
                     cargoTonnage += mount.getType().getTonnage(entity);
                 }
             }
-            // round to half ton TODO: round to kilograms for non-large support
+            // round to half ton TODO: round to kilograms for small support
             // vees, but we don't support them yet
             return (float)(Math.ceil(entity.getWeight() / 40) * 2.0);
         }

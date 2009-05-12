@@ -25,10 +25,8 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -55,7 +53,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -175,7 +172,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JPanel panTop;
 
     private JLabel labStatus;
-    private static final String DONEACTION = "ready"; //$NON-NLS-1$ 
+    private static final String DONEACTION = "ready"; //$NON-NLS-1$
     private JButton butDone;
 
     private JButton butAddBot;
@@ -229,7 +226,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         butDone.setActionCommand(DONEACTION);
         butDone.addActionListener(this);
-        
+
         setupPlayerInfo();
         setupMinefield();
 

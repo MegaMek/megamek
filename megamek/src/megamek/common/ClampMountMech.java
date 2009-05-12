@@ -53,6 +53,7 @@ package megamek.common;
      * @return a <code>String</code> containing the internal name of the
      *         <code>EquipmentType</code> needed to board this transporter.
      */
+    @Override
     protected String getBoardingEquipment() {
         return BattleArmor.MAGNETIC_CLAMP;
     }
@@ -68,6 +69,7 @@ package megamek.common;
      * @return a <code>String</code> describing the occupancy state of this
      *         transporter.
      */
+    @Override
     protected String getVacancyString(boolean isLoaded) {
         if (isLoaded)
             return ClampMountMech.NO_VACANCY_STRING;
@@ -84,6 +86,7 @@ package megamek.common;
         super();
     }
 
+    @Override
     public int getCargoMpReduction() {
         return getLoadedUnits().size();
     }

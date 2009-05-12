@@ -14,7 +14,6 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -23,7 +22,7 @@ import java.util.Vector;
  * initative for the team, and contains a list of players on that team. It also
  * implements functions that gather the number of units each team has.
  */
-public final class Team extends TurnOrdered implements Serializable {
+public final class Team extends TurnOrdered {
     /**
      * 
      */
@@ -54,6 +53,7 @@ public final class Team extends TurnOrdered implements Serializable {
     /**
      * Clear the initiative of this object.
      */
+    @Override
     public void clearInitiative() {
         this.getInitiative().clear();
         TurnOrdered.rollInitiative(players);
@@ -76,6 +76,7 @@ public final class Team extends TurnOrdered implements Serializable {
      * @return the <code>int</code> number of "normal" turns this item should
      *         take in a phase.
      */
+    @Override
     public int getNormalTurns(IGame game) {
         int normal = this.getMultiTurns(game) + this.getOtherTurns();
         if (0 == normal)
@@ -83,6 +84,7 @@ public final class Team extends TurnOrdered implements Serializable {
         return normal;
     }
 
+    @Override
     public int getEvenTurns() {
         // Sum the even turns of all Players in this Team.
         int sum = 0;
@@ -93,6 +95,7 @@ public final class Team extends TurnOrdered implements Serializable {
         return sum;
     }
 
+    @Override
     public int getOtherTurns() {
         // Sum the other turns of all Players in this Team.
         int sum = 0;
@@ -103,6 +106,7 @@ public final class Team extends TurnOrdered implements Serializable {
         return sum;
     }
 
+    @Override
     public int getMultiTurns(IGame game) {
         // Sum the multi turns of all Players in this Team.
         int sum = 0;
@@ -113,6 +117,7 @@ public final class Team extends TurnOrdered implements Serializable {
         return sum;
     }
     
+    @Override
     public int getSpaceStationTurns() {
 //      Sum the other turns of all Players in this Team.
         int sum = 0;
@@ -123,6 +128,7 @@ public final class Team extends TurnOrdered implements Serializable {
         return sum;
     }
     
+    @Override
     public int getJumpshipTurns() {
 //      Sum the other turns of all Players in this Team.
         int sum = 0;
@@ -133,6 +139,7 @@ public final class Team extends TurnOrdered implements Serializable {
         return sum;
     }
     
+    @Override
     public int getWarshipTurns() {
 //      Sum the other turns of all Players in this Team.
         int sum = 0;
@@ -143,6 +150,7 @@ public final class Team extends TurnOrdered implements Serializable {
         return sum;
     }
     
+    @Override
     public int getDropshipTurns() {
 //      Sum the other turns of all Players in this Team.
         int sum = 0;
@@ -153,6 +161,7 @@ public final class Team extends TurnOrdered implements Serializable {
         return sum;
     }
     
+    @Override
     public int getSmallCraftTurns() {
 //      Sum the other turns of all Players in this Team.
         int sum = 0;
@@ -167,6 +176,7 @@ public final class Team extends TurnOrdered implements Serializable {
      * Two teams are equal if their ids and players are equal. <p/> Override
      * <code>java.lang.Object#equals(Object)
      */
+    @Override
     public boolean equals(Object object) {
         if (this == object) {
             return true;

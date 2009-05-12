@@ -67,6 +67,7 @@ public class MechWarrior extends Infantry {
      * 
      * @see megamek.common.Entity#isSelectableThisTurn()
      */
+    @Override
     public boolean isSelectableThisTurn() {
         return (pickedUpById == Entity.NONE) && super.isSelectableThisTurn();
     }
@@ -133,10 +134,12 @@ public class MechWarrior extends Infantry {
      * 
      * @see megamek.common.Infantry#calculateBattleValue()
      */
+    @Override
     public int calculateBattleValue() {
         return 0;
     }
 
+    @Override
     public void newRound(int number) {
         super.newRound(number);
         getCrew().setEjected(false);

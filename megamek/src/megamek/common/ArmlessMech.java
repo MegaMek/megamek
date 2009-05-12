@@ -44,6 +44,7 @@ public class ArmlessMech extends BipedMech {
     /**
      * Returns true if the entity can flip its arms
      */
+    @Override
     public boolean canFlipArms() {
         return false;
     }
@@ -57,6 +58,7 @@ public class ArmlessMech extends BipedMech {
      * @param arm right/left arm
      * @param leg right/left leg
      */
+    @Override
     public void setInternal(int head, int ct, int t, int arm, int leg) {
         initializeInternal(head, LOC_HEAD);
         initializeInternal(ct, LOC_CT);
@@ -68,6 +70,7 @@ public class ArmlessMech extends BipedMech {
         initializeInternal(leg, LOC_LLEG);
     }
 
+    @Override
     protected double getArmActuatorCost() {
         return 0.0;
     }
@@ -85,6 +88,7 @@ public class ArmlessMech extends BipedMech {
     /**
      * Gets the location that excess damage transfers to
      */
+    @Override
     public HitData getTransferLocation(HitData hit) {
         if (hit.getLocation() == LOC_LARM || hit.getLocation() == LOC_RARM) {
             return new HitData(LOC_NONE);

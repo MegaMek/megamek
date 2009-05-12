@@ -13,14 +13,13 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * This is a large support vehicle
  * @author beerockxs
  */
-public class LargeSupportTank extends SupportTank implements Serializable {
+public class LargeSupportTank extends SupportTank {
 
     /**
      *
@@ -36,10 +35,10 @@ public class LargeSupportTank extends SupportTank implements Serializable {
     public static final int LOC_REAR = 6;
     public static final int LOC_TURRET = 7;
 
-    protected static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
+    private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
         "RRRS", "RRLS", "RR", "TU" };
 
-    public static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
+    private static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
         "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
 
 

@@ -1657,7 +1657,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return getLocationName(hit.getLocation());
     }
 
-    protected abstract String[] getLocationNames();
+    public abstract String[] getLocationNames();
 
     /**
      * Returns the name of the location specified.
@@ -1672,7 +1672,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return locationNames[loc];
     }
 
-    protected abstract String[] getLocationAbbrs();
+    public abstract String[] getLocationAbbrs();
 
     /**
      * Returns the abbreviated name of the location specified.

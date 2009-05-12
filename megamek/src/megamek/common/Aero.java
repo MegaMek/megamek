@@ -14,7 +14,6 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,9 +30,7 @@ import megamek.common.weapons.GaussWeapon;
 /**
  * Taharqa's attempt at creating an Aerospace entity
  */
-public class Aero
-    extends Entity
-    implements Serializable
+public class Aero extends Entity
 {
     /**
      *
@@ -100,15 +97,14 @@ public class Aero
     //and bombs and such
     private static final int[] NUM_OF_SLOTS = {100, 100, 100, 100, 100, 100};
 
-    protected static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG" };
-    protected static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings" };
+    private static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings" };
 
     @Override
     public String[] getLocationAbbrs() { return LOCATION_ABBRS; }
     @Override
     public String[] getLocationNames() { return LOCATION_NAMES; }
 
-    private int structureType = 0;
     private int sensorHits = 0;
     private int fcsHits = 0;
     private int engineHits = 0;
@@ -1302,14 +1298,14 @@ public class Aero
                 if (((weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT))&& halveRear) || (!(weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT)) && !halveRear)) {
                     dBV /= 2;
                 }
-                int heat = ((WeaponType)weapon.getType()).getHeat();
+                int weaponHeat = ((WeaponType)weapon.getType()).getHeat();
                 double[] weaponValues = new double[2];
                 weaponValues[0] = dBV;
-                weaponValues[1] = heat;
-                if (heat > 0) {
+                weaponValues[1] = weaponHeat;
+                if (weaponHeat > 0) {
                     // store heat and BV, for sorting a few lines down
                     weaponValues[0] = dBV;
-                    weaponValues[1] = heat;
+                    weaponValues[1] = weaponHeat;
                     heatBVs.add(weaponValues);
                 }
                 else {
@@ -1723,18 +1719,6 @@ public class Aero
         armorType = type;
     }
 
-    @Override
-    public int getStructureType()
-    {
-        return structureType;
-    }
-
-    @Override
-    public void setStructureType(int type)
-    {
-        structureType = type;
-    }
-
     /**
      * @return suspension factor of vehicle
      */
@@ -1762,8 +1746,7 @@ public class Aero
         cost += 25000 + 10 * getWeight();
 
         //engine
-        Engine engine = getEngine();
-        cost += engine.getBaseCost() * engine.getRating() * weight / 75.0;
+        cost += getEngine().getBaseCost() * getEngine().getRating() * weight / 75.0;
 
         //fuel tanks
         cost += 200 * getFuel() / 80.0;
@@ -2492,8 +2475,8 @@ public class Aero
     /***
      * use the specified amount of fuel for this Aero. The amount may be adjusted by certain game options
      */
-    public void useFuel(int fuel) {
-        setFuel(Math.max(0,getFuel()- fuel));
+    public void useFuel(int fuelUsed) {
+        setFuel(Math.max(0,getFuel()- fuelUsed));
     }
 
 
@@ -2588,9 +2571,8 @@ public class Aero
         //if we are still here then type and velocity same, so roll for it
         if(getWhoFirst() < other.getWhoFirst()) {
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
     @Override

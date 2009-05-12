@@ -272,8 +272,8 @@ public class Coords implements Serializable {
         return xd + ym;
     }
 
-    public int distance(int x, int y) {
-        return distance(new Coords(x, y));
+    public int distance(int distx, int disty) {
+        return distance(new Coords(distx, disty));
     }
 
     /**
@@ -291,6 +291,7 @@ public class Coords implements Serializable {
     /**
      * Coords are equal if their x and y components are equal
      */
+    @Override
     public boolean equals(Object object) {
         if (this == object) {
             return true;
@@ -306,6 +307,7 @@ public class Coords implements Serializable {
      * 
      * @return The <code>int</code> hash code for these coords.
      */
+    @Override
     public int hashCode() {
         // Record the signs of X and Y separately from their values.
         boolean negy = (y < 0);
@@ -344,6 +346,7 @@ public class Coords implements Serializable {
         return new Coords(hashx, hashy);
     }
 
+    @Override
     public String toString() {
         return "Coords (" + x + ", " + y + "); " + getBoardNum();
     }

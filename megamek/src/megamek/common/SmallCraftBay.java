@@ -60,6 +60,7 @@ public final class SmallCraftBay extends Bay {
      * @return  <code>true</code> if the unit can be loaded,
      *          <code>false</code> otherwise.
      */
+    @Override
     public boolean canLoad( Entity unit ) {
         // Assume that we cannot carry the unit.
         boolean result = false;
@@ -90,6 +91,7 @@ public final class SmallCraftBay extends Bay {
      * @exception - If the unit can't be loaded, an
      *          <code>IllegalArgumentException</code> exception will be thrown.
      */
+    @Override
     public void load( Entity unit ) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if ( !this.canLoad(unit) ) {
@@ -126,10 +128,12 @@ public final class SmallCraftBay extends Bay {
     
     
     
+    @Override
     public String getUnusedString() {
         return "Small Craft - " + this.currentSpace + " units (" + getRecoverySlots() + " recovery open)";
     }
 
+    @Override
     public String getType() {
         return "Small Craft";
     }
@@ -151,7 +155,7 @@ public final class SmallCraftBay extends Bay {
     
     public Vector<Integer> initializeRecoverySlots() {
         
-        Vector<Integer> slots = new Vector<Integer>();;
+        Vector<Integer> slots = new Vector<Integer>();
  
         for(int i = 0; i < this.doors; i++) {
             slots.add(0);
@@ -187,6 +191,7 @@ public final class SmallCraftBay extends Bay {
     }
     
     //  destroy a door
+    @Override
     public void destroyDoorNext() {
         
         setDoorsNext(getDoorsNext() - 1);
@@ -202,6 +207,7 @@ public final class SmallCraftBay extends Bay {
     }
     
     //  destroy a door
+    @Override
     public void destroyDoor() {
         
         this.doors -= 1;
@@ -217,6 +223,7 @@ public final class SmallCraftBay extends Bay {
     }
   
     //get doors should be different - first I must subtract the number of active recoveries
+    @Override
     public int getDoors() {
         
         //just take the available recovery slots, divided by two

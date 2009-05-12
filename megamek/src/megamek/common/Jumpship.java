@@ -16,7 +16,6 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,7 +28,7 @@ import megamek.common.weapons.BayWeapon;
 /**
  * @author Jay Lawson
  */
-public class Jumpship extends Aero implements Serializable {
+public class Jumpship extends Aero {
 
     /**
      *
@@ -44,8 +43,8 @@ public class Jumpship extends Aero implements Serializable {
     public static final int        LOC_ALS                = 4;
     public static final int        LOC_ARS                = 5;
 
-    protected static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS" };
-    protected static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side", "Aft Right Side" };
+    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side", "Aft Right Side" };
 
     private int kf_integrity = 0;
     private int sail_integrity = 0;
@@ -485,8 +484,8 @@ public class Jumpship extends Aero implements Serializable {
             }
 
             if((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
-                double weight = mounted.getShotsLeft() / ((AmmoType)etype).getShots();
-                dEquipmentBV += etype.getBV(this) * weight;
+                double ammoWeight = mounted.getShotsLeft() / ((AmmoType)etype).getShots();
+                dEquipmentBV += etype.getBV(this) * ammoWeight;
             }
 
         }
@@ -673,20 +672,20 @@ public class Jumpship extends Aero implements Serializable {
             }
             String key = atype.getAmmoType() + ":" + atype.getRackSize() + ";" + arc;
             //ammo mounts on large craft is not necessarily in single ton increments so I need to figure out tonnage first
-            double weight = mounted.getShotsLeft() / atype.getShots();
+            double ammoWeight = mounted.getShotsLeft() / atype.getShots();
             if(atype.isCapital()) {
-                weight = mounted.getShotsLeft() * atype.getAmmoRatio();
+                ammoWeight = mounted.getShotsLeft() * atype.getAmmoRatio();
             }
             if(atype.hasFlag(AmmoType.F_CAP_MISSILE)) {
-                weight = mounted.getShotsLeft();
+                ammoWeight = mounted.getShotsLeft();
             }
             if (!keys.contains(key)) {
                 keys.add(key);
             }
             if (!ammo.containsKey(key)) {
-                ammo.put(key, weight * atype.getBV(this));
+                ammo.put(key, ammoWeight * atype.getBV(this));
             } else {
-                ammo.put(key, weight * atype.getBV(this) + ammo.get(key));
+                ammo.put(key, ammoWeight * atype.getBV(this) + ammo.get(key));
             }
         }
 
@@ -868,9 +867,11 @@ public class Jumpship extends Aero implements Serializable {
         }
 
         double armorPerTon = baseArmor;
-        double weight=0.0;
-        for(;(weight*armorPerTon)<armorPoints;weight+=.5) {}
-        return weight;
+        double armWeight=0.0;
+        for(;(armWeight*armorPerTon)<armorPoints;armWeight+=.5) {
+            //add armor in discrete batches
+        }
+        return armWeight;
     }
 
     @Override

@@ -25,6 +25,7 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
      *            location is front facing.
      * @return an array of <code>int</code> listing the exterior locations.
      */
+    @Override
     protected int[] getExteriorLocs(boolean isRear) {
         return BattleArmorHandlesTank.EXTERIOR_LOCATIONS;
     }
@@ -43,6 +44,7 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
      *         <code>false</code> if the weapon can fire.
      * @see megamek.common.BattleArmorHandles#getBlockedLocs(boolean)
      */
+    @Override
     public final boolean isWeaponBlockedAt(int loc, boolean isRear) {
         // Assume that the weapon is not blocked.
         boolean result = false;

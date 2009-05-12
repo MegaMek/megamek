@@ -47,7 +47,6 @@ import megamek.client.ui.swing.widget.IndexedCheckbox;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
 import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -65,7 +64,6 @@ import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
-import megamek.common.QuadMech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -487,8 +485,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     private void endMyTurn() {
         // end my turn, then.
         Entity next = client.game.getNextEntity(client.game.getTurnIndex());
-        if ((client.game.getPhase() == IGame.Phase.PHASE_FIRING) && (next != null)
-                && (ce() != null) && (next.getOwnerId() != ce().getOwnerId())) {
+        if ((client.game.getPhase() == IGame.Phase.PHASE_FIRING)
+                && (next != null) && (ce() != null)
+                && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.setDisplayVisible(false);
         }
         cen = Entity.NONE;
@@ -869,7 +868,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             } catch (NoSuchElementException ex) {
                 // ignore
             }
-            if ((lastAction != null) && (lastAction instanceof WeaponAttackAction)) {
+            if ((lastAction != null)
+                    && (lastAction instanceof WeaponAttackAction)) {
                 WeaponAttackAction oldWaa = (WeaponAttackAction) lastAction;
                 Targetable oldTarget = oldWaa.getTarget(client.game);
                 if (!oldTarget.equals(target)) {
@@ -919,7 +919,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ce().getEquipmentNum(ammoMount));
             if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) && ((ammoType
-                    .getAmmoType() == AmmoType.T_LRM) || (ammoType.getAmmoType() == AmmoType.T_MML)))
+                    .getAmmoType() == AmmoType.T_LRM) || (ammoType
+                    .getAmmoType() == AmmoType.T_MML)))
                     || (ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV)) {
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                         clientgui.frame);
@@ -955,7 +956,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         updateClearWeaponJam();
 
         // check; if there are no ready weapons, you're done.
-        if ((nextWeapon == -1) && GUIPreferences.getInstance().getAutoEndFiring()) {
+        if ((nextWeapon == -1)
+                && GUIPreferences.getInstance().getAutoEndFiring()) {
             ready();
             return;
         }
@@ -1127,8 +1129,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // update target panel
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
-        if ((target != null) && (target.getPosition() != null) && (weaponId != -1)
-                && (ce() != null)) {
+        if ((target != null) && (target.getPosition() != null)
+                && (weaponId != -1) && (ce() != null)) {
             ToHitData toHit;
             if (ash.inAimingMode()) {
                 Mounted weapon = ce().getEquipment(weaponId);
@@ -1217,7 +1219,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Torso twist to the left or right
-     *
+     * 
      * @param twistDir
      *            An <code>int</code> specifying wether we're twisting left or
      *            right, 0 if we're twisting to the left, 1 if to the right.
@@ -1424,7 +1426,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * update for change of arms-flipping status
-     *
+     * 
      * @param armsFlipped
      */
     void updateFlipArms(boolean armsFlipped) {
@@ -1667,14 +1669,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 String[] options;
                 boolean[] enabled;
 
+                if (target instanceof Entity) {
+                    options = ((Entity) target).getLocationNames();
+                    enabled = createEnabledMask(options.length);
+                } else {
+                    return;
+                }
                 if (target instanceof Mech) {
-                    if (target instanceof BipedMech) {
-                        options = BipedMech.LOCATION_NAMES;
-                        enabled = createEnabledMask(options.length);
-                    } else {
-                        options = QuadMech.LOCATION_NAMES;
-                        enabled = createEnabledMask(options.length);
-                    }
                     if (aimingMode == IAimingModes.AIM_MODE_IMMOBILE) {
                         aimingAt = Mech.LOC_HEAD;
                     } else if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
@@ -1682,27 +1683,20 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     }
                 } else if (target instanceof Tank) {
                     if (target instanceof LargeSupportTank) {
-                        options = LargeSupportTank.LOCATION_NAMES;
                         aimingAt = LargeSupportTank.LOC_FRONT;
                     } else {
-                        options = Tank.LOCATION_NAMES;
                         aimingAt = Tank.LOC_FRONT;
                     }
-                    enabled = createEnabledMask(options.length);
                 } else if (target instanceof GunEmplacement) {
-                    options = GunEmplacement.HIT_LOCATION_NAMES;
                     enabled = new boolean[] { true,
                             ((GunEmplacement) target).hasTurret() };
                     aimingAt = GunEmplacement.LOC_BUILDING;
                 } else if (target instanceof Protomech) {
-                    options = Protomech.LOCATION_NAMES;
-                    enabled = createEnabledMask(options.length);
                     aimingAt = Protomech.LOC_TORSO;
                 } else if (target instanceof BattleArmor) {
-                    options = BattleArmor.IS_LOCATION_NAMES;
-                    enabled = createEnabledMask(options.length);
                     aimingAt = BattleArmor.LOC_TROOPER_1;
                 } else {
+                    // no aiming allowed for MechWarrior or BattleArmor
                     return;
                 }
                 asd = new AimedShotDialog(
@@ -1867,12 +1861,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         public String getAimingLocation() {
             if ((target != null) && (aimingAt != Entity.LOC_NONE)
                     && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-                if (target instanceof BipedMech) {
-                    return BipedMech.LOCATION_NAMES[aimingAt];
-                } else if (target instanceof BipedMech) {
-                    return QuadMech.LOCATION_NAMES[aimingAt];
-                } else if (target instanceof GunEmplacement) {
+                if (target instanceof GunEmplacement) {
                     return GunEmplacement.HIT_LOCATION_NAMES[aimingAt];
+                } else if (target instanceof Entity) {
+                    return ((Entity) target).getLocationAbbrs()[aimingAt];
                 }
             }
             return null;
@@ -1919,7 +1911,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         /**
          * should aimned shoots be allowed with the passed weapon
-         *
+         * 
          * @param weapon
          * @return
          */
@@ -2014,7 +2006,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Retrieve the "Done" button of this object.
-     *
+     * 
      * @return the <code>javax.swing.JButton</code> that activates this object's
      *         "Done" action.
      */
@@ -2033,7 +2025,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Have the player select a target from the entities at the given coords.
-     *
+     * 
      * @param pos
      *            - the <code>Coords</code> containing targets.
      */

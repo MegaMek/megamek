@@ -59,6 +59,7 @@ public class GameEntityChangeEvent extends GameEntityEvent {
         return movePath;
     }
 
+    @Override
     public String toString() {
         try {
             return getEntity().toString() + " moved to "
@@ -68,6 +69,7 @@ public class GameEntityChangeEvent extends GameEntityEvent {
                 return getEntity().toString() + " probably deployed.";
             }
         } catch (NullPointerException npe) {
+            return "There is nothing to move!";
         }
 
         return "Something happened.";

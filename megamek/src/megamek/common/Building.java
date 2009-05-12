@@ -448,6 +448,7 @@ public class Building implements Serializable {
      *         <code>Buildig</code>, or if it is not the same as this
      *         <code>Building</code>.
      */
+    @Override
     public boolean equals(Object other) {
         if (other == null || !(other instanceof Building)) {
             return false;
@@ -461,6 +462,7 @@ public class Building implements Serializable {
     /**
      * Get a String for this building.
      */
+    @Override
     public String toString() {
 
         // Assemble the string in pieces.

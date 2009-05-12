@@ -57,6 +57,7 @@ public class LandAirMech extends BipedMech {
      * Returns the elevation of the LAM, correct in Mech mode, but needs fixing
      * in other modes.
      */
+    @Override
     public int getElevation() {
         if (mode == MODE_MECH) {
             return super.getElevation();
@@ -69,6 +70,7 @@ public class LandAirMech extends BipedMech {
      * is it possible to go up, or are we at maximum altitude? assuming passed
      * elevation.
      */
+    @Override
     public boolean canGoUp(int assumedElevation, Coords assumedPos) {
         IHex hex = getGame().getBoard().getHex(assumedPos);
         int altitude = assumedElevation + hex.surface();
@@ -91,6 +93,7 @@ public class LandAirMech extends BipedMech {
      * airmechs in water? I'll assume that airmechs can't go underwater, and
      * that fighters follow the rules for VTOLS
      */
+    @Override
     public boolean canGoDown(int assumedElevation, Coords assumedPos) {
         IHex hex = getGame().getBoard().getHex(assumedPos);
         int altitude = assumedElevation + hex.surface();
@@ -122,11 +125,11 @@ public class LandAirMech extends BipedMech {
     /**
      * Returns true if the mech is in the given mode, false otherwise.
      * 
-     * @param mode One of the MODE_* or the MODE_CONVERT_* constants.
+     * @param testMode One of the MODE_* or the MODE_CONVERT_* constants.
      * @return true iff the mech is in that mode.
      */
-    public boolean isInMode(int mode) {
-        return this.mode == mode;
+    public boolean isInMode(int testMode) {
+        return this.mode == testMode;
     }
 
     /**
@@ -211,8 +214,8 @@ public class LandAirMech extends BipedMech {
      * 
      * @return true iff the mech can go in that mode.
      */
-    public boolean canConvertToMode(int mode) {
-        switch (mode) {
+    public boolean canConvertToMode(int convertMode) {
+        switch (convertMode) {
             case MODE_MECH:
                 return canConvertToMech();
             case MODE_AIRMECH:
@@ -258,12 +261,14 @@ public class LandAirMech extends BipedMech {
         }
     }
 
+    @Override
     public int getMaxElevationChange() {
         if (mode == MODE_MECH)
             return super.getMaxElevationChange();
         return 999;
     }
 
+    @Override
     public void newRound(int roundNumber) {
         if (mode >= MODE_CONVERT) { // if we are undergoing a conversiuon
             switch (mode) {
@@ -302,6 +307,7 @@ public class LandAirMech extends BipedMech {
     /**
      * This function returns the original jump MP for the mode the mech is in.
      */
+    @Override
     public int getOriginalJumpMP() {
         int base = super.getOriginalJumpMP();
         switch (mode) {
@@ -325,6 +331,7 @@ public class LandAirMech extends BipedMech {
     /**
      * How much heat is gained from jumping, airmechs don't gain jumping heat.
      */
+    @Override
     public int getJumpHeat(int movedMP) {
         if (mode == MODE_MECH || mode == MODE_CONVERT_MECH_TO_AIRMECH) {
             return super.getJumpHeat(movedMP);
@@ -335,6 +342,7 @@ public class LandAirMech extends BipedMech {
     /**
      * Can this entity fire this turn?
      */
+    @Override
     public boolean isEligibleForFiring() {
         // can't shoot if converting to or from aircraft.
         if (mode == MODE_CONVERT_AIRMECH_TO_AIRCRAFT
@@ -347,6 +355,7 @@ public class LandAirMech extends BipedMech {
     /**
      * Returns the original walking MP for that mode or that conversion.
      */
+    @Override
     public int getOriginalWalkMP() {
         int base = super.getOriginalWalkMP();
         switch (mode) {
@@ -369,6 +378,7 @@ public class LandAirMech extends BipedMech {
      * 
      * @return true iff the mech is flying
      */
+    @Override
     public boolean isFlying() {
         return !landed;
     }
@@ -376,10 +386,12 @@ public class LandAirMech extends BipedMech {
     // //-----*******--------- WARNING DIRTY HACK BELOW
     // -------******-------////////
     // the way jump mps get calculated need to be refactored.
+    @Override
     public int getJumpMP() {
         return getOriginalJumpMP(); // ignoring terrain for now.
     }
 
+    @Override
     public int getJumpMPWithTerrain() {
         return getJumpMP(); // ignoring terrain for now.
     }

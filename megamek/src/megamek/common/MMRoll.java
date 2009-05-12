@@ -120,6 +120,7 @@ public class MMRoll extends Roll {
      * 
      * @return the <code>int</code> value of the roll.
      */
+    @Override
     public int getIntValue() {
         return this.total;
     }
@@ -130,6 +131,7 @@ public class MMRoll extends Roll {
      * 
      * @return the <code>String</code> value of the roll.
      */
+    @Override
     public String toString() {
         // Build a buffer as we go.
         StringBuffer buffer = new StringBuffer();
@@ -168,6 +170,7 @@ public class MMRoll extends Roll {
      * 
      * @return the <code>String</code> details of the roll.
      */
+    @Override
     public String getReport() {
 
         // Build a buffer as we go.

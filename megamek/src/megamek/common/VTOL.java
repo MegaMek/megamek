@@ -31,9 +31,9 @@ public class VTOL extends Tank {
     public static final int LOC_ROTOR = 5; // will this cause problems w/r/t
                                             // turrets?
 
-    protected static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
+    private static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
             "RO" };
-    protected static String[] LOCATION_NAMES = { "Body", "Front", "Right",
+    private static String[] LOCATION_NAMES = { "Body", "Front", "Right",
             "Left", "Rear", "Rotor" };
 
     // critical hits
@@ -47,10 +47,12 @@ public class VTOL extends Tank {
         super();
     }
 
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
 
+    @Override
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
@@ -62,6 +64,7 @@ public class VTOL extends Tank {
      *      megamek.common.MoveStep, int, int, megamek.common.Coords,
      *      megamek.common.Coords, boolean, int)
      */
+    @Override
     public PilotingRollData checkSkid(int moveType, IHex prevHex,
             int overallMoveType, MoveStep prevStep, int prevFacing,
             int curFacing, Coords lastPos, Coords curPos, boolean isInfantry,
@@ -77,6 +80,7 @@ public class VTOL extends Tank {
      * 
      * @see megamek.common.Tank#canCharge()
      */
+    @Override
     public boolean canCharge() {
         return false;
     }
@@ -84,6 +88,7 @@ public class VTOL extends Tank {
     /**
      * Returns the name of the type of movement used. This is VTOL-specific.
      */
+    @Override
     public String getMovementString(int mtype) {
         switch (mtype) {
             case IEntityMovementType.MOVE_VTOL_WALK:
@@ -100,6 +105,7 @@ public class VTOL extends Tank {
     /**
      * Returns the name of the type of movement used. This is tank-specific.
      */
+    @Override
     public String getMovementAbbr(int mtype) {
         switch (mtype) {
             case IEntityMovementType.MOVE_VTOL_WALK:
@@ -113,10 +119,12 @@ public class VTOL extends Tank {
         }
     }
 
+    @Override
     public int getMaxElevationChange() {
         return 999;
     }
 
+    @Override
     public boolean isHexProhibited(IHex hex) {
         if (hex.containsTerrain(Terrains.IMPASSABLE))
             return true;
@@ -132,6 +140,7 @@ public class VTOL extends Tank {
      * 
      * @see megamek.common.Tank#isRepairable()
      */
+    @Override
     public boolean isRepairable() {
         boolean retval = this.isSalvage();
         int loc = Tank.LOC_FRONT;
@@ -147,6 +156,7 @@ public class VTOL extends Tank {
     /*
      * (non-Javadoc) This really, really isn't right.
      */
+    @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation,
             int aimingMode) {
         int nArmorLoc = LOC_FRONT;
@@ -218,18 +228,22 @@ public class VTOL extends Tank {
         return rv;
     }
 
+    @Override
     public boolean doomedInVacuum() {
         return true;
     }
     
+    @Override
     public boolean doomedInAtmosphere() {
         return true;
     }
     
+    @Override
     public boolean doomedInSpace() {
         return true;
     }
 
+    @Override
     public void setOnFire(boolean inferno) {
         super.setOnFire(inferno);
         extinguishLocation(LOC_ROTOR);
@@ -243,6 +257,7 @@ public class VTOL extends Tank {
      * @param loc the hit location
      * @return a critical type
      */
+    @Override
     public int getCriticalEffect(int roll, int loc) {
         if (roll > 12)
             roll = 12;
@@ -398,6 +413,7 @@ public class VTOL extends Tank {
         return CRIT_NONE;
     }
 
+    @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         if (movementDamage > 0) {
             prd.addModifier(movementDamage, "Steering Damage");

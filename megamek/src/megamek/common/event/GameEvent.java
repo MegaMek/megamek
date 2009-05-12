@@ -63,6 +63,7 @@ public abstract class GameEvent extends java.util.EventObject {
         return type;
     }
 
+    @Override
     public String toString() {
         StringBuffer buff = new StringBuffer();
         switch (this.type) {

@@ -27,7 +27,7 @@ import java.util.Vector;
 /**
  * Represents any type of equipment mounted on a mechs, excluding systems and
  * actuators.
- * 
+ *
  * @author Ben
  * @version
  */
@@ -205,7 +205,7 @@ public class EquipmentType {
         switch(flagField){
         case FLAG_FIELD_1:
             return flags1;
-            default: 
+            default:
         return flags;
         }
     }
@@ -277,7 +277,7 @@ public class EquipmentType {
      * Sets the modes that this type of equipment can be in. By default the
      * EquipmentType doesn't have the modes, so don't try to call this method
      * with null or empty argument.
-     * 
+     *
      * @param modes
      *            non null, non empty list of available mode names.
      */
@@ -303,7 +303,7 @@ public class EquipmentType {
      * switching. This method checks for end of turn modes that are kept in a
      * vector of names. It is used by the {@link Mounted#setMode(int)} method to
      * distinguish instant and end of turn switching.
-     * 
+     *
      * @param mode
      *            - the <code>String</code> of the mode name involved in the
      *            switch
@@ -327,7 +327,7 @@ public class EquipmentType {
      * <p>
      * Fails if this type of the equipment doesn't have modes, or given mode is
      * out of the valid range.
-     * 
+     *
      * @param modeNum
      * @return mode number <code>modeNum</code> from the list of modes available
      *         for this type of equipment.
@@ -520,7 +520,10 @@ public class EquipmentType {
                 cost = (1 + bladeTons) * 10000;
             } else if (hasFlag(MiscType.F_TRACKS)) {
                 cost = (int) Math.ceil(500 * entity.getEngine().getRating() * entity.getWeight() / 75);
+            } else if (hasFlag(MiscType.F_TALON)) {
+                cost = (int) Math.ceil(getTonnage(entity) * 300);
             }
+
         } else {
             if (cost == 0) {
                 // if we don't know what it is...

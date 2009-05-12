@@ -430,6 +430,13 @@ public class MiscType extends EquipmentType {
             if (entity instanceof BipedMech) {
                 return 2;
             }
+        } else if (hasFlag(F_TALON)) {
+            if (entity instanceof QuadMech) {
+                return 8;
+            }
+            if (entity instanceof BipedMech) {
+                return 4;
+            }
         }
         // right, well I'll just guess then
         return 1;
@@ -3176,7 +3183,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Talons";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 4;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.spreadable = true;
         misc.cost = COST_VARIABLE;
         misc.flags1 |= F_MECH_EQUIPMENT;

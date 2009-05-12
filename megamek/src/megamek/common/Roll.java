@@ -94,6 +94,7 @@ public abstract class Roll {
      * 
      * @return the <code>String</code> value of the roll.
      */
+    @Override
     public abstract String toString();
 
     /**

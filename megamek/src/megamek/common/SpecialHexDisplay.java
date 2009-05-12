@@ -29,30 +29,36 @@ public class SpecialHexDisplay implements Serializable {
 
     public enum Type {
         ARTILLERY_AUTOHIT   ("data/images/hexes/artyauto.gif") {
+            @Override
             public boolean drawBefore() {
                 return false;
             }
 
+            @Override
             public boolean drawAfter() {
                 return true;
             }
         },
         ARTILLERY_ADJUSTED  ("data/images/hexes/artyadj.gif") {
+            @Override
             public boolean drawBefore() {
                 return false;
             }
 
+            @Override
             public boolean drawAfter() {
                 return true;
             }
         },
         ARTILLERY_INCOMING   ("data/images/hexes/artyinc.gif"),
         ARTILLERY_TARGET      ("data/images/hexes/artytarget.gif"){
+            @Override
             public boolean drawBefore() {
                 return false;
             }
         },
         ARTILLERY_HIT        ("data/images/hexes/artyhit.gif") {
+            @Override
             public boolean drawBefore() {
                 return false;
             }
@@ -88,7 +94,7 @@ public class SpecialHexDisplay implements Serializable {
         public boolean drawAfter() {
             return false;
         }
-    };
+    }
 
     private String info;
     private Type type;
@@ -100,12 +106,9 @@ public class SpecialHexDisplay implements Serializable {
     
     public static int NO_ROUND = -99;
 
-    /**
-     * Special constructor only for deserialization use.
-     *
-     */
     @SuppressWarnings("unused")
     private SpecialHexDisplay() {
+        //deserialization use only
     }
     
     public SpecialHexDisplay(Type type) {
@@ -140,27 +143,27 @@ public class SpecialHexDisplay implements Serializable {
         this.obscured = obscured; 
     }
 
-    public boolean thisRound(int round) {
+    public boolean thisRound(int testRound) {
         if (NO_ROUND == this.round) {
             return true;
         }
-        return round == this.round;
+        return testRound == this.round;
     }
 
     /** Does this SpecialHexDisplayObjet concern a round in the future? */
-    public boolean futureRound(int round) {
+    public boolean futureRound(int testRound) {
         if(NO_ROUND == this.round) {
             return true;
         }
-        return round > this.round;
+        return testRound > this.round;
     }
     
     /** Does this SpecialHexDisplayObjet concern a round in the past? */
-    public boolean pastRound(int round) {
+    public boolean pastRound(int testRound) {
         if(NO_ROUND == this.round) {
             return true;
         }
-        return round < this.round;
+        return testRound < this.round;
     }
     
     public String getInfo() {
@@ -205,18 +208,18 @@ public class SpecialHexDisplay implements Serializable {
 
     /**
      * @param phase
-     * @param round
+     * @param curRound
      * @return
      */
-    public boolean drawNow(IGame.Phase phase, int round) {
-        boolean shouldDisplay = thisRound(round) || 
-            (pastRound(round) && type.drawBefore()) ||
-            (futureRound(round) && type.drawAfter());
+    public boolean drawNow(IGame.Phase phase, int curRound) {
+        boolean shouldDisplay = thisRound(curRound) || 
+            (pastRound(curRound) && type.drawBefore()) ||
+            (futureRound(curRound) && type.drawAfter());
         if(phase.isBefore(IGame.Phase.PHASE_OFFBOARD) && 
                 (type == Type.ARTILLERY_TARGET || type == Type.ARTILLERY_HIT)
         ) {
             //hack to display atry targets the round after the hit.
-            shouldDisplay = shouldDisplay || thisRound(round-1);
+            shouldDisplay = shouldDisplay || thisRound(curRound-1);
         }
         
         //System.err.println("turn: " + round + " Special type: " + type + " drawing: " + shouldDisplay + " details: " + info);

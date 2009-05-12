@@ -16,7 +16,6 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,7 +27,7 @@ import java.util.Vector;
  * @author Jay Lawson
  * Fighter squadrons are basically "containers" for a bunch of fighters.
  */
-public class FighterSquadron extends Aero implements Transporter, Serializable {
+public class FighterSquadron extends Aero {
 
     private static final long serialVersionUID = 3491212296982370726L;
 
@@ -342,13 +341,13 @@ public class FighterSquadron extends Aero implements Transporter, Serializable {
 
     @Override
     public float getWeight() {
-        float weight = 0.0f;
+        float totWeight = 0.0f;
         for(Aero fighter : fighters) {
             if(!fighter.isDestroyed() && !fighter.isDoomed()) {
-                weight += fighter.getWeight();
+                totWeight += fighter.getWeight();
             }
         }
-        return weight;
+        return totWeight;
     }
 
     public double getAveWeight() {
@@ -381,7 +380,7 @@ public class FighterSquadron extends Aero implements Transporter, Serializable {
 
         // Pick a new random number if that fighter is destroyed or never existed.
         while (getFighter(loc).isDestroyed() || getFighter(loc).isDoomed()) {
-            loc = Compute.randomInt(getN0Fighters());;
+            loc = Compute.randomInt(getN0Fighters());
         }
 
         return new HitData(loc);
@@ -406,6 +405,7 @@ public class FighterSquadron extends Aero implements Transporter, Serializable {
      * instead of trying to track the individual units weapons, just recompile the weapon groups for this
      * squadron each round
      */
+    @Override
     public void updateWeaponGroups() {
         //first we need to reset all the weapons in our existing mounts to zero until proven otherwise
         Set<String> set= weaponGroups.keySet();

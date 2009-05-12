@@ -22,9 +22,9 @@ public class BipedMech extends Mech {
      */
     private static final long serialVersionUID = 4166375446709772785L;
 
-    public static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm", "Left Arm", "Right Leg", "Left Leg" };
+    private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm", "Left Arm", "Right Leg", "Left Leg" };
 
-    public static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL" };
+    private static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL" };
 
     private static final int[] NUM_OF_SLOTS = { 6, 12, 12, 12, 12, 12, 6, 6 };
 
@@ -266,7 +266,7 @@ public class BipedMech extends Mech {
      * Returns a vector of names for all locations
      */
     @Override
-    protected String[] getLocationNames() {
+    public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
 
@@ -274,7 +274,7 @@ public class BipedMech extends Mech {
      * Returns a vector of abbreviations for all locations
      */
     @Override
-    protected String[] getLocationAbbrs() {
+    public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
 

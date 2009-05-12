@@ -16,18 +16,18 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
 
 /**
  * @author Jay Lawson
  */
-public class SpaceStation extends Jumpship implements Serializable {
+public class SpaceStation extends Jumpship {
 
     /**
      * 
      */
     private static final long serialVersionUID = -3160156173650960985L;
 
+    @Override
     public double getCost() {
         
         double cost = 0.0f;
@@ -115,6 +115,7 @@ public class SpaceStation extends Jumpship implements Serializable {
     /**
      * All military space stations automatically have ECM if in space
      */
+    @Override
     public boolean hasActiveECM() {
         if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
             return super.hasActiveECM();
@@ -128,6 +129,7 @@ public class SpaceStation extends Jumpship implements Serializable {
      * @return the <code>int</code> range of this unit's ECM. This value will
      *         be <code>Entity.NONE</code> if no ECM is active.
      */
+    @Override
     public int getECMRange() {
         if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
             return super.getECMRange();
@@ -141,6 +143,7 @@ public class SpaceStation extends Jumpship implements Serializable {
         return range;
     }
     
+    @Override
     public double getBVTypeModifier() {
         return 0.7;
     }

@@ -16,30 +16,33 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
 
 /**
  * @author Jay Lawson
  */
-public class ConvFighter extends Aero implements Serializable {
+public class ConvFighter extends Aero {
     
     /**
      * 
      */
     private static final long serialVersionUID = 6297668284292929409L;
 
+    @Override
     public boolean doomedInVacuum() {
         return true;
     }
     
+    @Override
     public boolean doomedInSpace() {
         return true;
     }  
     
+    @Override
     public int getHeatCapacity() {
         return 999;
     }
     
+    @Override
     public int getFuelUsed(int thrust) {
         int overThrust =  Math.max(thrust - getWalkMP(), 0);
         int safeThrust = thrust - overThrust;
@@ -52,6 +55,7 @@ public class ConvFighter extends Aero implements Serializable {
         return used;
     }
     
+    @Override
     public double getBVTypeModifier() {
         return 1.1;
     }

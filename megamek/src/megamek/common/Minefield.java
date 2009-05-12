@@ -64,6 +64,7 @@ public class Minefield implements Serializable, Cloneable {
     private boolean detonated = false;
 
     private Minefield() {
+        //Creates a minefield
     }
     
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density) {
@@ -99,6 +100,7 @@ public class Minefield implements Serializable, Cloneable {
         throw new IllegalArgumentException("Unknown mine type");
     }
 
+    @Override
     public Object clone() {
         Minefield mf = new Minefield();
 
@@ -113,6 +115,7 @@ public class Minefield implements Serializable, Cloneable {
         return mf;
     }
 
+    @Override
     public boolean equals(Object object) {
         Minefield mf;
         try {

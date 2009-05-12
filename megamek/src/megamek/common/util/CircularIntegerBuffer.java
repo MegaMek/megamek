@@ -69,6 +69,7 @@ public class CircularIntegerBuffer {
         buffer[end] = value;
     }
 
+    @Override
     public String toString() {
         StringBuffer result = new StringBuffer();
 

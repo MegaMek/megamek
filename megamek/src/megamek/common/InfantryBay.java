@@ -59,6 +59,7 @@ public final class InfantryBay extends Bay {
      * @return  <code>true</code> if the unit can be loaded,
      *          <code>false</code> otherwise.
      */
+    @Override
     public boolean canLoad( Entity unit ) {
         // Assume that we cannot carry the unit.
         boolean result = false;
@@ -83,10 +84,12 @@ public final class InfantryBay extends Bay {
         return result;
     }
 
+    @Override
     public String getUnusedString() {
         return "Infantry - " + this.currentSpace + " platoons";
     }
     
+    @Override
     public String getType() {
         return "Infantry";
     }

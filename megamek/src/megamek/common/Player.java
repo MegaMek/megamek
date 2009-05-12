@@ -14,7 +14,6 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -23,7 +22,7 @@ import megamek.common.event.GamePlayerChangeEvent;
 /**
  * Represents a player in the game.
  */
-public final class Player extends TurnOrdered implements Serializable {
+public final class Player extends TurnOrdered {
     /**
      * 
      */
@@ -297,6 +296,7 @@ public final class Player extends TurnOrdered implements Serializable {
     /**
      * Two players are equal if their ids are equal
      */
+    @Override
     public boolean equals(Object object) {
         if (this == object) {
             return true;
@@ -307,6 +307,7 @@ public final class Player extends TurnOrdered implements Serializable {
         return other.getId() == this.id;
     }
 
+    @Override
     public int hashCode() {
         return getId();
     }
@@ -392,9 +393,9 @@ public final class Player extends TurnOrdered implements Serializable {
                 }
             }
         } else {
-            Team team = game.getTeamForPlayer(this);
-            if (team != null) {
-                for (Enumeration<Player> e = team.getPlayers(); e
+            Team teamObj = game.getTeamForPlayer(this);
+            if (teamObj != null) {
+                for (Enumeration<Player> e = teamObj.getPlayers(); e
                         .hasMoreElements();) {
                     Player p = e.nextElement();
                     if (!p.equals(this)) {

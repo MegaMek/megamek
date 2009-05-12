@@ -109,6 +109,7 @@ public abstract class MMRandom {
     static class SunRandom extends MMRandom {
         Random random = new Random();
 
+        @Override
         public int randomInt(int maxValue) {
             return random.nextInt(maxValue);
         }
@@ -123,8 +124,7 @@ public abstract class MMRandom {
         /**
          * Contruct, making a new thread to init the RNG
          */
-        public CryptoRandom() throws ClassNotFoundException,
-                NoSuchMethodException {
+        public CryptoRandom() throws NoSuchMethodException {
             // hack: just check to see if there's java.util.Random@nextInt(int)
             new java.util.Random().getClass().getMethod("nextInt",
                     new Class[] { Integer.TYPE });
@@ -140,6 +140,7 @@ public abstract class MMRandom {
             initRNG.start();
         }
 
+        @Override
         public int randomInt(int maxValue) {
             return random.nextInt(maxValue);
         }
@@ -161,6 +162,7 @@ public abstract class MMRandom {
         }
 
         /** Watches for 2 as nDice and then does its special thing. */
+        @Override
         public Roll d6(int nDice) {
             if (nDice != 2) {
                 return super.d6(nDice);

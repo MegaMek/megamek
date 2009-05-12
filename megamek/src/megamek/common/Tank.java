@@ -14,7 +14,6 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -24,7 +23,7 @@ import java.util.Vector;
 /**
  * You know what tanks are, silly.
  */
-public class Tank extends Entity implements Serializable {
+public class Tank extends Entity {
     /**
      *
      */
@@ -75,9 +74,9 @@ public class Tank extends Entity implements Serializable {
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25 };
 
-    protected static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
+    private static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
             "TU" };
-    public static String[] LOCATION_NAMES = { "Body", "Front", "Right",
+    private static String[] LOCATION_NAMES = { "Body", "Front", "Right",
             "Left", "Rear", "Turret" };
 
     @Override
@@ -1207,8 +1206,7 @@ public class Tank extends Entity implements Serializable {
     @Override
     public double getCost() {
         double cost = 0;
-        Engine engine = getEngine();
-        cost += engine.getBaseCost() * engine.getRating() * weight / 75.0;
+        cost += getEngine().getBaseCost() * getEngine().getRating() * weight / 75.0;
         double controlWeight = Math.ceil(weight * 0.05 * 2.0) / 2.0; // ?
                                                                         // should
                                                                         // be

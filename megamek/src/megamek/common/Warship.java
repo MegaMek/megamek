@@ -16,12 +16,11 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
 
 /**
  * @author Jay Lawson
  */
-public class Warship extends Jumpship implements Serializable {
+public class Warship extends Jumpship {
 
     /**
      *
@@ -37,8 +36,8 @@ public class Warship extends Jumpship implements Serializable {
     public static final int           LOC_LBS                  = 6;
     public static final int           LOC_RBS                  = 7;
 
-    protected static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "LBS", "RBS" };
-    protected static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side", "Aft Right Side", "Left Broadsides", "Right Broadsides" };
+    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "LBS", "RBS" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side", "Aft Right Side", "Left Broadsides", "Right Broadsides" };
 
     private int damThresh[] = {0,0,0,0,0,0,0,0};
     private int standard_damage[] = {0,0,0,0,0,0,0,0};

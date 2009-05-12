@@ -14,7 +14,6 @@
 
 package megamek.common.options;
 
-import java.io.Serializable;
 import java.util.Vector;
 
 /**
@@ -22,7 +21,7 @@ import java.util.Vector;
  * 
  * @author Cord
  */
-public class PilotOptions extends AbstractOptions implements Serializable {
+public class PilotOptions extends AbstractOptions {
     private static final long serialVersionUID = 6628080570425023949L;
     public static final String LVL3_ADVANTAGES = "lvl3Advantages"; //$NON-NLS-1$
     public static final String MD_ADVANTAGES = "MDAdvantages"; //$NON-NLS-1$
@@ -31,6 +30,7 @@ public class PilotOptions extends AbstractOptions implements Serializable {
         super();
     }
 
+    @Override
     public void initialize() {
         IBasicOptionGroup adv = addGroup("adv", LVL3_ADVANTAGES); //$NON-NLS-1$
         addOption(adv, "dodge_maneuver", false); //$NON-NLS-1$
@@ -76,6 +76,7 @@ public class PilotOptions extends AbstractOptions implements Serializable {
      * 
      * @see megamek.common.options.AbstractOptions#getOptionsInfoImp()
      */
+    @Override
     protected AbstractOptionsInfo getOptionsInfoImp() {
         return PilotOptionsInfo.getInstance();
     }

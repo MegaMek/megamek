@@ -401,6 +401,7 @@ public class Hex implements IHex, Serializable {
         return rv;
     }
 
+    @Override
     public String toString() {
         String temp;
         temp = "Elevation: " + getElevation();

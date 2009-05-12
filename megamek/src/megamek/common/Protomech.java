@@ -15,7 +15,6 @@
 package megamek.common;
 
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -27,7 +26,7 @@ import megamek.common.preference.PreferenceManager;
 /**
  * Protomechs. Level 2 Clan equipment.
  */
-public class Protomech extends Entity implements Serializable {
+public class Protomech extends Entity {
     /**
      *
      */
@@ -35,10 +34,10 @@ public class Protomech extends Entity implements Serializable {
 
     public static final int NUM_PMECH_LOCATIONS = 6;
 
-    public static final String[] LOCATION_NAMES = { "Head", "Torso",
+    private static final String[] LOCATION_NAMES = { "Head", "Torso",
             "Right Arm", "Left Arm", "Legs", "Main Gun" };
 
-    public static final String[] LOCATION_ABBRS = { "HD", "T", "RA", "LA", "L",
+    private static final String[] LOCATION_ABBRS = { "HD", "T", "RA", "LA", "L",
             "MG" };
 
     // weapon bools
@@ -1039,7 +1038,7 @@ public class Protomech extends Entity implements Serializable {
     }
 
     @Override
-    protected String[] getLocationAbbrs() {
+    public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
 

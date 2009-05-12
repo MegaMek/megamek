@@ -40,13 +40,11 @@ import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.IndexedCheckbox;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
 import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -64,7 +62,6 @@ import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
-import megamek.common.QuadMech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -80,13 +77,11 @@ import megamek.common.actions.SpotAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
-        BoardViewListener, GameListener, ActionListener, DoneButtoned,
-        KeyListener, ItemListener {
+    DoneButtoned, KeyListener, ItemListener {
     /**
      *
      */
@@ -114,7 +109,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     // parent game
     public Client client;
-    private ClientGUI clientgui;
+    ClientGUI clientgui;
     // buttons
     private Container panButtons;
 
@@ -143,7 +138,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE; // current entity number
-    private Targetable target; // target
+    Targetable target; // target
 
     // HACK : track when we wan to show the target choice dialog.
     private boolean showTargetChoice = true;
@@ -675,9 +670,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             } else if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(client.game);
-                Targetable target = waa.getTarget(client.game);
+                Targetable weapTarget = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
-                        attacker.getSecondaryFacing(), target.getPosition(),
+                        attacker.getSecondaryFacing(), weapTarget.getPosition(),
                         Compute.ARC_FORWARD);
                 if (curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa
@@ -701,9 +696,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             } else if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(client.game);
-                Targetable target = waa.getTarget(client.game);
+                Targetable weapTarget = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
-                        attacker.getSecondaryFacing(), target.getPosition(),
+                        attacker.getSecondaryFacing(), weapTarget.getPosition(),
                         Compute.ARC_FORWARD);
                 if (!curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa
@@ -845,6 +840,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             try {
                 lastAction = attacks.lastElement();
             } catch (NoSuchElementException ex) {
+                //should never reach here
             }
             if ((lastAction != null) && (lastAction instanceof WeaponAttackAction)) {
                 WeaponAttackAction oldWaa = (WeaponAttackAction) lastAction;
@@ -1176,12 +1172,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Torso twist in the proper direction.
      */
-    public void torsoTwist(Coords target) {
+    public void torsoTwist(Coords twistDir) {
         int direction = ce().getFacing();
 
-        if (null != target) {
+        if (null != twistDir) {
             direction = ce().clipSecondaryFacing(
-                    ce().getPosition().direction(target));
+                    ce().getPosition().direction(twistDir));
         }
 
         if (direction != ce().getSecondaryFacing()) {
@@ -1195,20 +1191,20 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Torso twist to the left or right
      *
-     * @param target
+     * @param twistDir
      *            An <code>int</code> specifying wether we're twisting left or
      *            right, 0 if we're twisting to the left, 1 if to the right.
      */
 
-    public void torsoTwist(int target) {
+    public void torsoTwist(int twistDir) {
         int direction = ce().getSecondaryFacing();
-        if (target == 0) {
+        if (twistDir == 0) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 5) % 6);
             attacks.addElement(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
-        } else if (target == 1) {
+        } else if (twistDir == 1) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 7) % 6);
             attacks.addElement(new TorsoTwistAction(cen, direction));
@@ -1220,7 +1216,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Returns the current entity.
      */
-    private Entity ce() {
+    Entity ce() {
         return client.game.getEntity(cen);
     }
 
@@ -1558,6 +1554,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
 
     public void keyTyped(KeyEvent ev) {
+        //IGNORED
     }
 
     //
@@ -1613,16 +1610,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    private class AimedShotHandler implements ActionListener, ItemListener {
+    class AimedShotHandler implements ActionListener, ItemListener {
         private int aimingAt = Entity.LOC_NONE;
         private int aimingMode = IAimingModes.AIM_MODE_NONE;
         private int partialCover = LosEffects.COVER_NONE;
 
         private AimedShotDialog asd;
-
-        public AimedShotHandler() {
-        }
-
+        
         public void showDialog() {
             if (asd != null) {
                 int oldAimingMode = aimingMode;
@@ -1634,14 +1628,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 String[] options;
                 boolean[] enabled;
 
+                if (target instanceof Entity) {
+                    options = ((Entity)target).getLocationNames();
+                    enabled = createEnabledMask(options.length);
+                } else {
+                    return;
+                }
                 if (target instanceof Mech) {
-                    if (target instanceof BipedMech) {
-                        options = BipedMech.LOCATION_NAMES;
-                        enabled = createEnabledMask(options.length);
-                    } else {
-                        options = QuadMech.LOCATION_NAMES;
-                        enabled = createEnabledMask(options.length);
-                    }
                     if (aimingMode == IAimingModes.AIM_MODE_IMMOBILE) {
                         aimingAt = Mech.LOC_HEAD;
                     } else if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
@@ -1649,27 +1642,20 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     }
                 } else if (target instanceof Tank) {
                     if (target instanceof LargeSupportTank) {
-                        options = LargeSupportTank.LOCATION_NAMES;
                         aimingAt = LargeSupportTank.LOC_FRONT;
                     } else {
-                        options = Tank.LOCATION_NAMES;
                         aimingAt = Tank.LOC_FRONT;
                     }
-                    enabled = createEnabledMask(options.length);
                 } else if (target instanceof GunEmplacement) {
-                    options = GunEmplacement.HIT_LOCATION_NAMES;
                     enabled = new boolean[] { true,
                             ((GunEmplacement) target).hasTurret() };
                     aimingAt = GunEmplacement.LOC_BUILDING;
                 } else if (target instanceof Protomech) {
-                    options = Protomech.LOCATION_NAMES;
-                    enabled = createEnabledMask(options.length);
                     aimingAt = Protomech.LOC_TORSO;
                 } else if (target instanceof BattleArmor) {
-                    options = ((BattleArmor) target).getLocationNames();
-                    enabled = createEnabledMask(options.length);
                     aimingAt = BattleArmor.LOC_TROOPER_1;
                 } else {
+                    //no aiming allowed for MechWarrior or BattleArmor
                     return;
                 }
 
@@ -1832,13 +1818,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         public String getAimingLocation() {
             if ((target != null) && (aimingAt != Entity.LOC_NONE)
                     && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-                if (target instanceof BipedMech) {
-                    return BipedMech.LOCATION_NAMES[aimingAt];
-                } else if (target instanceof BipedMech) {
-                    return QuadMech.LOCATION_NAMES[aimingAt];
-                } else if (target instanceof GunEmplacement) {
+                if (target instanceof GunEmplacement) {
                     return GunEmplacement.HIT_LOCATION_NAMES[aimingAt];
-                }
+                } else if (target instanceof Entity) {
+                    return ((Entity)target).getLocationAbbrs()[aimingAt];
+                } 
             }
             return null;
         }

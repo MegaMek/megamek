@@ -14,7 +14,6 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.Vector;
 
 /**
@@ -30,7 +29,7 @@ import java.util.Vector;
  * PLEASE NOTE!!! My programming style is to put constants first in tests so the
  * compiler catches my "= for ==" errors.
  */
-public class BattleArmor extends Infantry implements Serializable {
+public class BattleArmor extends Infantry {
     /**
      *
      */
@@ -43,7 +42,7 @@ public class BattleArmor extends Infantry implements Serializable {
     private static final int[] IS_NUM_OF_SLOTS = { 7, 2, 2, 2, 2, 2, 2 };
     private static final String[] IS_LOCATION_ABBRS = { "Squad", "Trooper 1",
             "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
-    public static final String[] IS_LOCATION_NAMES = { "Squad", "Trooper 1",
+    private static final String[] IS_LOCATION_NAMES = { "Squad", "Trooper 1",
             "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
     private static final int[] CLAN_NUM_OF_SLOTS = { 10, 2, 2, 2, 2, 2, 2 };
     private static final String[] CLAN_LOCATION_ABBRS = { "Point", "Trooper 1",
@@ -726,8 +725,8 @@ public class BattleArmor extends Infantry implements Serializable {
             }
             int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, false), false, false).getValue();
             // get jump MP, ignoring burden
-            int jumpMP = getJumpMP(false, true);
-            int tmmJumped = Compute.getTargetMovementModifier(jumpMP, true, false).getValue();
+            int rawJump = getJumpMP(false, true);
+            int tmmJumped = Compute.getTargetMovementModifier(rawJump, true, false).getValue();
             double targetMovementModifier = Math.max(tmmRan, tmmJumped);
             double tmmFactor = 1 + (targetMovementModifier / 10) + 0.1;
             if (isSimpleCamo) {

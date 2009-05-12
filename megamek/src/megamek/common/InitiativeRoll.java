@@ -38,8 +38,8 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
     private Vector<Boolean> wasRollReplaced = new Vector<Boolean>(); // booleans
     private Vector<Integer> bonuses = new Vector<Integer>();
     
-    /** Creates new InitaitiveRoll */
     public InitiativeRoll() {
+        //Creates new InitaitiveRoll
     }
 
     public void clear() {
@@ -103,6 +103,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         return compare;
     }
 
+    @Override
     public String toString() {
         StringBuffer buff = new StringBuffer();
 

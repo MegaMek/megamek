@@ -404,6 +404,13 @@ public class MiscType extends EquipmentType {
             if (entity instanceof BipedMech) {
                 return 2;
             }
+        } else if (hasFlag(F_TALON)) {
+            if (entity instanceof QuadMech) {
+                return 8;
+            }
+            if (entity instanceof BipedMech) {
+                return 4;
+            }
         }
         // right, well I'll just guess then
         return 1;
@@ -2622,7 +2629,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     * 
+     *
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -2986,10 +2993,11 @@ public class MiscType extends EquipmentType {
         misc.name = "Talons";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 2;
-        misc.cost = 90000;
-        misc.flags |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT | F_TALON;
-        misc.bv = 3;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.spreadable = true;
+        misc.cost = COST_VARIABLE;
+        misc.flags |= F_MECH_EQUIPMENT | F_TALON;
+        misc.bv = BV_VARIABLE;
 
         return misc;
     }

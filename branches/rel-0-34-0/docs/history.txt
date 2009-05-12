@@ -6,6 +6,7 @@ v0.34.3-dev (SVN)
 + Added image for Zeus X (thanks St0ny)
 + Updated vehicle files
 + Updated conventional fighter files
++ Bug 2790142: Talons have wrong weight
 
 v0.34.2 (2009-05-09, 18:02 UTC+2)
 + Bug: Ostwar 3M has wrong techlevel

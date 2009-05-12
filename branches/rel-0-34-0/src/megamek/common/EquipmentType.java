@@ -477,6 +477,8 @@ public class EquipmentType {
                 cost = (1 + bladeTons) * 10000;
             } else if (hasFlag(MiscType.F_TRACKS)) {
                 cost = (int)Math.ceil(500 * entity.getEngine().getRating() * entity.getWeight() / 75);
+            } else if (hasFlag(MiscType.F_TALON)) {
+                cost = (int) Math.ceil(getTonnage(entity) * 300);
             }
         } else {
             if (cost == 0) {

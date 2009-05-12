@@ -57,6 +57,7 @@ class ObjectStreamConnection extends AbstractConnection {
         super(host, port, id);
     }
 
+    @Override
     protected INetworkPacket readNetworkPacket() throws Exception {
         NetworkPacket packet = null;
         if (in == null) {
@@ -67,6 +68,7 @@ class ObjectStreamConnection extends AbstractConnection {
         return packet;
     }
 
+    @Override
     protected void sendNetworkPacket(byte[] data, boolean zipped)
             throws Exception {
         if (out == null) {

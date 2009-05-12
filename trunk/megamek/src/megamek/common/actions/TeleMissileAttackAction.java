@@ -46,9 +46,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     public static int getDamageFor(Entity entity) {      
         if(entity instanceof TeleMissile) {
             return ((TeleMissile)entity).getDamageValue();
-        } else {
-            return 0;
         }
+        return 0;
     }
     
     /**
@@ -68,7 +67,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
 
         // Do to pretreatment of physical attacks, the target may be null.
         if (target == null) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is null");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is null");
         }
         
         if (!game.getOptions().booleanOption("friendly_fire")) {

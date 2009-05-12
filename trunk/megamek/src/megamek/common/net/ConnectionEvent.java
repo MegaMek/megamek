@@ -62,6 +62,7 @@ public abstract class ConnectionEvent extends java.util.EventObject {
         return (IConnection) getSource();
     }
 
+    @Override
     public String toString() {
         StringBuffer buff = new StringBuffer();
         switch (this.type) {

@@ -16,13 +16,12 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
 
 
 /**
  * @author Jay Lawson
  */
-public class TeleMissile extends Aero implements Serializable {
+public class TeleMissile extends Aero {
 
     /**
      * 
@@ -31,8 +30,8 @@ public class TeleMissile extends Aero implements Serializable {
 
     public static final int        LOC_BODY               = 0;
 
-    protected static String[] LOCATION_ABBRS = { "BODY"};
-    protected static String[] LOCATION_NAMES = { "Body" };
+    private static String[] LOCATION_ABBRS = { "BODY"};
+    private static String[] LOCATION_NAMES = { "Body" };
 
     private int originalRideId;
     private int originalRideExternalId;
@@ -90,6 +89,7 @@ public class TeleMissile extends Aero implements Serializable {
         setOriginalRideExternalId(originalRide.getExternalId());
     }
 
+    @Override
     public HitData rollHitLocation(int table, int side) {
         return new HitData(LOC_BODY, false, HitData.EFFECT_NONE);
     }
@@ -117,14 +117,17 @@ public class TeleMissile extends Aero implements Serializable {
         this.originalRideExternalId = originalRideExternalId;
     }
 
+    @Override
     public void setThresh(int val, int loc) {
         damThresh[loc] = val;
     }
 
+    @Override
     public int getThresh(int loc) {
         return damThresh[loc];
     }
 
+    @Override
     public void autoSetThresh()
     {
         for(int x = 0; x < locations(); x++)
@@ -133,24 +136,29 @@ public class TeleMissile extends Aero implements Serializable {
         }    
     }
 
+    @Override
     public void initializeThresh(int loc)
     {
         int nThresh = (int)Math.ceil(getArmor(loc) / 10.0);
         setThresh(nThresh,loc);
     }
 
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
 
+    @Override
     public String[] getLocationNames() { 
         return LOCATION_NAMES; 
     }
 
+    @Override
     public int calculateBattleValue() {
         return 0;
     }
 
+    @Override
     public PilotingRollData checkThrustSI(int thrust, int overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
@@ -158,6 +166,7 @@ public class TeleMissile extends Aero implements Serializable {
         return roll;
     }
 
+    @Override
     public PilotingRollData checkThrustSITotal(int thrust, int overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
@@ -173,6 +182,7 @@ public class TeleMissile extends Aero implements Serializable {
         this.outContact = b;
     }
 
+    @Override
     public boolean isOutControlTotal() {
         //due to control roll, heat, shut down, or crew unconscious
         return (isOutControl() || outContact || shutDown || crew.isUnconscious());
@@ -186,6 +196,7 @@ public class TeleMissile extends Aero implements Serializable {
         return critMod;
     }
     
+    @Override
     public int locations() {
         return 1;
     }

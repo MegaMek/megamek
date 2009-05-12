@@ -67,6 +67,7 @@ class DataStreamConnection extends AbstractConnection {
     protected int len = 0;
     protected PacketReadState state = PacketReadState.Header;
 
+    @Override
     protected INetworkPacket readNetworkPacket() throws Exception {
         NetworkPacket packet = null;
         if (in == null) {
@@ -102,7 +103,8 @@ class DataStreamConnection extends AbstractConnection {
         return null;
     }
 
-    protected void sendNetworkPacket(byte[] data, boolean zipped)
+    @Override
+    protected void sendNetworkPacket(byte[] data, boolean iszipped)
             throws Exception {
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(
@@ -110,7 +112,7 @@ class DataStreamConnection extends AbstractConnection {
             // out.flush(); thsi should be unnecessary?
         }
 
-        out.writeBoolean(zipped);
+        out.writeBoolean(iszipped);
         out.writeInt(marshallingType);
         out.writeInt(data.length);
         out.write(data);
@@ -120,6 +122,7 @@ class DataStreamConnection extends AbstractConnection {
     /**
      * override flush to flush the datastream after flushing packetqueue
      */
+    @Override
     public synchronized void flush() {
         super.flush();
         try {

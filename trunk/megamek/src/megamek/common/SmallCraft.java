@@ -16,19 +16,18 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
 
 /**
  * @author Jay Lawson
  */
-public class SmallCraft extends Aero implements Serializable {
+public class SmallCraft extends Aero {
            
     /**
      * 
      */
     private static final long serialVersionUID = 6708788176436555036L;
-    protected static String[] LOCATION_ABBRS = { "NOS", "LS", "RS", "AFT" };
-    protected static String[] LOCATION_NAMES = { "Nose", "Left Side", "Right Side", "Aft" };
+    private static String[] LOCATION_ABBRS = { "NOS", "LS", "RS", "AFT" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Side", "Right Side", "Aft" };
     
     //crew and passengers
     private int nCrew = 0;
@@ -50,23 +49,28 @@ public class SmallCraft extends Aero implements Serializable {
          return nPassenger;
     }
     
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
     
+    @Override
     public String[] getLocationNames() { 
         return LOCATION_NAMES; 
     }
   
+    @Override
     public int locations() {
         return 4;
    }
     
+    @Override
     public void setEngine(Engine e) {
         engine = e;
     }
     
     //what is different - hit table is about it
+    @Override
     public HitData rollHitLocation(int table, int side) {
 
         /* 
@@ -283,6 +287,7 @@ public class SmallCraft extends Aero implements Serializable {
         }
     
     //weapon arcs
+    @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
         
@@ -367,6 +372,7 @@ public class SmallCraft extends Aero implements Serializable {
         return hasWeapons;
     }
     
+    @Override
     public double getArmorWeight() {
         //first I need to subtract SI bonus from total armor
         int armorPoints = getTotalOArmor();
@@ -435,15 +441,18 @@ public class SmallCraft extends Aero implements Serializable {
         }
         
         double armorPerTon = baseArmor*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
-        double weight=0.0;
-        for(;((int)Math.round(weight*armorPerTon))<armorPoints;weight+=.5) {}
-        return weight;
+        double armWeight=0.0;
+        for(;((int)Math.round(armWeight*armorPerTon))<armorPoints;armWeight+=.5) {
+            //add armor weight in discrete batches
+        }
+        return armWeight;
     }
     
     /*There is a mistake in some of the AT2r costs
      * for some reason they added ammo twice for a lot of the 
      * level 2 designs, leading to costs that are too high
      */
+    @Override
     public double getCost() {
         
         double cost = 0;
@@ -498,10 +507,12 @@ public class SmallCraft extends Aero implements Serializable {
     }
     
     
+    @Override
     public int getMaxEngineHits() {
         return 6;
     }
 
+    @Override
     public double getBVTypeModifier() {
         return 1.0;
     }
@@ -509,6 +520,7 @@ public class SmallCraft extends Aero implements Serializable {
     /**
      * need to check bay location before loading ammo
      */
+    @Override
     public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
         boolean success = false;
         WeaponType wtype = (WeaponType) mounted.getType();
@@ -530,6 +542,7 @@ public class SmallCraft extends Aero implements Serializable {
      * (non-Javadoc)
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
+    @Override
     public int getTotalCommGearTons() {
         return 3 + getExtraCommGearTons();
     }
@@ -537,6 +550,7 @@ public class SmallCraft extends Aero implements Serializable {
     /**
      * All military small craft automatically have ECM if in space
      */
+    @Override
     public boolean hasActiveECM() {
         if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
             return super.hasActiveECM();
@@ -550,6 +564,7 @@ public class SmallCraft extends Aero implements Serializable {
      * @return the <code>int</code> range of this unit's ECM. This value will
      *         be <code>Entity.NONE</code> if no ECM is active.
      */
+    @Override
     public int getECMRange() {
         if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
             return super.getECMRange();
@@ -580,6 +595,7 @@ public class SmallCraft extends Aero implements Serializable {
     /**
      * @return is  the crew of this vessel protected from gravitational effects, see StratOps, pg. 36
      */
+    @Override
     public boolean isCrewProtected() {
         return isMilitary() && this.getOriginalWalkMP() > 4;
     }

@@ -37,6 +37,7 @@ public class XMLMarshaller extends PacketMarshaller {
      * @see megamek.common.net.marshall.PacketMarshaller#marshall(megamek.common.net.Packet,
      *      java.io.OutputStream)
      */
+    @Override
     public void marshall(Packet packet, OutputStream stream) throws Exception {
         OutputStreamWriter out = new OutputStreamWriter(stream);
         PacketEncoder.encode(packet, out);
@@ -48,6 +49,7 @@ public class XMLMarshaller extends PacketMarshaller {
      * 
      * @see megamek.common.net.marshall.PacketMarshaller#unmarshall(java.io.InputStream)
      */
+    @Override
     public Packet unmarshall(InputStream stream) throws Exception {
         ParsedXML root = TinyParser.parseXML(stream);
         Enumeration<?> rootChildren = root.elements();

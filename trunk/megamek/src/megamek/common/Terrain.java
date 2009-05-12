@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 /**
  * Represents a single type of terrain or condition in a hex. The type of a
- * terrain is immutable, once created, but the level and exits are changable.
+ * terrain is immutable, once created, but the level and exits are changeable.
  * Each type of terrain should only be represented once in a hex.
  * 
  * @author Ben
@@ -133,9 +133,11 @@ public class Terrain implements ITerrain, Serializable {
      * Flips the exits around the vertical axis (North-for-South) and/or the
      * horizontal axis (East-for-West).
      * 
-     * @param horiz - a <code>boolean</code> value that, if <code>true</code>,
+     * @param horiz
+     *            - a <code>boolean</code> value that, if <code>true</code>,
      *            indicates that the exits are being flipped North-for-South.
-     * @param vert - a <code>boolean</code> value that, if <code>true</code>,
+     * @param vert
+     *            - a <code>boolean</code> value that, if <code>true</code>,
      *            indicates that the exits are being flipped East-for-West.
      */
     public void flipExits(boolean horiz, boolean vert) {
@@ -234,6 +236,7 @@ public class Terrain implements ITerrain, Serializable {
      * Terrains are equal if their types and levels are equal. Does not pay
      * attention to exits.
      */
+    @Override
     public boolean equals(Object object) {
         if (this == object) {
             return true;
@@ -244,6 +247,7 @@ public class Terrain implements ITerrain, Serializable {
         return this.type == other.getType() && this.level == other.getLevel();
     }
 
+    @Override
     public String toString() {
         return Terrains.getName(type) + ":" + level
                 + (exitsSpecified ? ":" + exits : "");
@@ -251,185 +255,185 @@ public class Terrain implements ITerrain, Serializable {
 
     public int pilotingModifier(int moveType) {
         switch (type) {
-            case Terrains.JUNGLE:
-                return level;
-            case Terrains.MAGMA:
-                return (level == 2) ? 4 : 1;
-            case Terrains.TUNDRA:
-            case Terrains.SAND:
-                return 1;
-            case Terrains.SNOW:
-                return (level == 2) ? 1 : 0;
-            case Terrains.SWAMP:
-                if (moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
-                    return 0;
-                else if(moveType == IEntityMovementMode.BIPED || moveType== IEntityMovementMode.QUAD)
-                    return 1;
-                else
-                    return 2;
-            case Terrains.MUD:
-                if(moveType == IEntityMovementMode.BIPED || moveType== IEntityMovementMode.QUAD
-                        || moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
-                    return 0;
-                else 
-                    return 1;
-            case Terrains.GEYSER:
-            case Terrains.RUBBLE:
-                if (level == 2)
-                    return 1;
+        case Terrains.JUNGLE:
+            return level;
+        case Terrains.MAGMA:
+            return (level == 2) ? 4 : 1;
+        case Terrains.TUNDRA:
+        case Terrains.SAND:
+            return 1;
+        case Terrains.SNOW:
+            return (level == 2) ? 1 : 0;
+        case Terrains.SWAMP:
+            if (moveType == IEntityMovementMode.HOVER
+                    || moveType == IEntityMovementMode.WIGE)
                 return 0;
-            case Terrains.RAPIDS:
-                if(level == 2)
-                    return 3;
-                else 
-                    return 2;
-            case Terrains.ICE:
-                if (moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
-                    return 0;
-                else 
-                    return 4;
-            case Terrains.INDUSTRIAL:
+            else if (moveType == IEntityMovementMode.BIPED
+                    || moveType == IEntityMovementMode.QUAD)
                 return 1;
-            default:
+            else
+                return 2;
+        case Terrains.MUD:
+            if (moveType == IEntityMovementMode.BIPED
+                    || moveType == IEntityMovementMode.QUAD
+                    || moveType == IEntityMovementMode.HOVER
+                    || moveType == IEntityMovementMode.WIGE)
                 return 0;
+            return 1;
+        case Terrains.GEYSER:
+        case Terrains.RUBBLE:
+            if (level == 2)
+                return 1;
+            return 0;
+        case Terrains.RAPIDS:
+            if (level == 2)
+                return 3;
+            return 2;
+        case Terrains.ICE:
+            if (moveType == IEntityMovementMode.HOVER
+                    || moveType == IEntityMovementMode.WIGE)
+                return 0;
+            return 4;
+        case Terrains.INDUSTRIAL:
+            return 1;
+        default:
+            return 0;
         }
     }
 
     public int movementCost(int moveType) {
         switch (type) {
-            case Terrains.MAGMA:
-            case Terrains.RUBBLE:
-                return level - 1;
-            case Terrains.GEYSER:
-                if (level == 2)
-                    return 1;
-                return 0;
-            case Terrains.WOODS:
-                return level;
-            case Terrains.JUNGLE:
-                return level + 1;
-            case Terrains.SNOW:
-                if(level == 2) {
-                    if(moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
-                        return 0;
-                    else 
-                        return 1;
-                }
-                if (moveType == IEntityMovementMode.WHEELED
-                        || moveType == IEntityMovementMode.INF_JUMP
-                        || moveType == IEntityMovementMode.INF_LEG
-                        || moveType == IEntityMovementMode.INF_MOTORIZED) {
-                    return 1;
-                }
-                return 0;
-            case Terrains.MUD:
-                if(moveType == IEntityMovementMode.BIPED || moveType== IEntityMovementMode.QUAD
-                        || moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
-                    return 0;
-                else 
-                    return 1;
-            case Terrains.SWAMP:
-                if (moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
-                    return 0;
-                else if(moveType == IEntityMovementMode.BIPED || moveType== IEntityMovementMode.QUAD)
-                    return 1;
-                else
-                    return 2;
-            case Terrains.ICE:
-                if (moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
-                    return 0;
-                else
-                    return 1;
-            case Terrains.RAPIDS:
-            case Terrains.ROUGH:
-                if(level == 2)
-                    return 2;
-                else 
-                    return 1;
-            case Terrains.SAND:
-                if (moveType == IEntityMovementMode.WHEELED
-                        || moveType == IEntityMovementMode.INF_JUMP
-                        || moveType == IEntityMovementMode.INF_LEG
-                        || moveType == IEntityMovementMode.INF_MOTORIZED)
-                    return 1;
-                return 0;
-            case Terrains.INDUSTRIAL:
-                if(moveType == IEntityMovementMode.BIPED || moveType== IEntityMovementMode.QUAD)
-                    return 1;
-                else
-                    return 0;
-            default:
-                return 0;
-        }
-    }
-    
-    public int ignitionModifier() {
-        switch (type) {
-            case Terrains.JUNGLE:
+        case Terrains.MAGMA:
+        case Terrains.RUBBLE:
+            return level - 1;
+        case Terrains.GEYSER:
+            if (level == 2)
                 return 1;
-            case Terrains.SNOW:
-                if(level == 2)
-                    return 2;
-                else 
+            return 0;
+        case Terrains.WOODS:
+            return level;
+        case Terrains.JUNGLE:
+            return level + 1;
+        case Terrains.SNOW:
+            if (level == 2) {
+                if (moveType == IEntityMovementMode.HOVER
+                        || moveType == IEntityMovementMode.WIGE)
                     return 0;
-            case Terrains.FIELDS:
-                return -1;
-            default:
+                return 1;
+            }
+            if (moveType == IEntityMovementMode.WHEELED
+                    || moveType == IEntityMovementMode.INF_JUMP
+                    || moveType == IEntityMovementMode.INF_LEG
+                    || moveType == IEntityMovementMode.INF_MOTORIZED) {
+                return 1;
+            }
+            return 0;
+        case Terrains.MUD:
+            if (moveType == IEntityMovementMode.BIPED
+                    || moveType == IEntityMovementMode.QUAD
+                    || moveType == IEntityMovementMode.HOVER
+                    || moveType == IEntityMovementMode.WIGE)
                 return 0;
-        }
-    }
-    
-    public int getBogDownModifier(int moveType, boolean largeVee) {
-        if(moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
-            return TargetRoll.AUTOMATIC_SUCCESS;
-        switch (type) {
-        case(Terrains.SWAMP):
-            //if this is quicksand, then you automatically fail
-            if(level > 1)
-                return TargetRoll.AUTOMATIC_FAIL;
-            if(moveType == IEntityMovementMode.VTOL) 
-                return TargetRoll.AUTOMATIC_FAIL;
-            else
+            return 1;
+        case Terrains.SWAMP:
+            if (moveType == IEntityMovementMode.HOVER
+                    || moveType == IEntityMovementMode.WIGE)
                 return 0;
-        case(Terrains.MAGMA):
-            if(level == 2)
+            else if (moveType == IEntityMovementMode.BIPED
+                    || moveType == IEntityMovementMode.QUAD)
+                return 1;
+            else
+                return 2;
+        case Terrains.ICE:
+            if (moveType == IEntityMovementMode.HOVER
+                    || moveType == IEntityMovementMode.WIGE)
                 return 0;
-            else
-                return TargetRoll.AUTOMATIC_SUCCESS;
-        case(Terrains.MUD):
-            if(moveType == IEntityMovementMode.BIPED || moveType== IEntityMovementMode.QUAD)
-                return TargetRoll.AUTOMATIC_SUCCESS;
-        case(Terrains.TUNDRA):
-            return -1;
-        case(Terrains.SNOW):
-            if(level == 2)
-                return -1;
-            else
-                return TargetRoll.AUTOMATIC_SUCCESS;
-        case(Terrains.SAND):
-            if(largeVee)
-                return 0;
-            else
-                return TargetRoll.AUTOMATIC_SUCCESS;
-        default:
-            return TargetRoll.AUTOMATIC_SUCCESS;
-        }
-    }
-    
-    public int getUnstuckModifier(int elev) {
-        switch (type) {
-        case(Terrains.SWAMP):
-            if(level > 1)
-                return 3 + ((-3)*elev);
-            else
-                return 0;
-        case(Terrains.TUNDRA):
-            return -1;
-        case(Terrains.SNOW):
-                return -1;
+            return 1;
+        case Terrains.RAPIDS:
+        case Terrains.ROUGH:
+            if (level == 2)
+                return 2;
+            return 1;
+        case Terrains.SAND:
+            if (moveType == IEntityMovementMode.WHEELED
+                    || moveType == IEntityMovementMode.INF_JUMP
+                    || moveType == IEntityMovementMode.INF_LEG
+                    || moveType == IEntityMovementMode.INF_MOTORIZED)
+                return 1;
+            return 0;
+        case Terrains.INDUSTRIAL:
+            if (moveType == IEntityMovementMode.BIPED
+                    || moveType == IEntityMovementMode.QUAD)
+                return 1;
+            return 0;
         default:
             return 0;
         }
     }
-    
+
+    public int ignitionModifier() {
+        switch (type) {
+        case Terrains.JUNGLE:
+            return 1;
+        case Terrains.SNOW:
+            if (level == 2)
+                return 2;
+            return 0;
+        case Terrains.FIELDS:
+            return -1;
+        default:
+            return 0;
+        }
+    }
+
+    public int getBogDownModifier(int moveType, boolean largeVee) {
+        if (moveType == IEntityMovementMode.HOVER
+                || moveType == IEntityMovementMode.WIGE)
+            return TargetRoll.AUTOMATIC_SUCCESS;
+        switch (type) {
+        case (Terrains.SWAMP):
+            // if this is quicksand, then you automatically fail
+            if (level > 1)
+                return TargetRoll.AUTOMATIC_FAIL;
+            if (moveType == IEntityMovementMode.VTOL)
+                return TargetRoll.AUTOMATIC_FAIL;
+            return 0;
+        case (Terrains.MAGMA):
+            if (level == 2)
+                return 0;
+            return TargetRoll.AUTOMATIC_SUCCESS;
+        case (Terrains.MUD):
+            if (moveType == IEntityMovementMode.BIPED
+                    || moveType == IEntityMovementMode.QUAD)
+                return TargetRoll.AUTOMATIC_SUCCESS;
+        case (Terrains.TUNDRA):
+            return -1;
+        case (Terrains.SNOW):
+            if (level == 2)
+                return -1;
+            return TargetRoll.AUTOMATIC_SUCCESS;
+        case (Terrains.SAND):
+            if (largeVee)
+                return 0;
+            return TargetRoll.AUTOMATIC_SUCCESS;
+        default:
+            return TargetRoll.AUTOMATIC_SUCCESS;
+        }
+    }
+
+    public int getUnstuckModifier(int elev) {
+        switch (type) {
+        case (Terrains.SWAMP):
+            if (level > 1)
+                return 3 + ((-3) * elev);
+            return 0;
+        case (Terrains.TUNDRA):
+            return -1;
+        case (Terrains.SNOW):
+            return -1;
+        default:
+            return 0;
+        }
+    }
+
 }

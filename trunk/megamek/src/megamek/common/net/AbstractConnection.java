@@ -75,7 +75,7 @@ public abstract class AbstractConnection implements IConnection {
     /**
      * Bytes send during the connection lifecycle
      */
-    private long bytesSent;
+    long bytesSent;
 
     /**
      * Bytes received during the connection lifecycle
@@ -112,12 +112,12 @@ public abstract class AbstractConnection implements IConnection {
     /**
      * Marshaller used to send packets
      */
-    private PacketMarshaller marshaller;
+    PacketMarshaller marshaller;
 
     /**
      * Indicates the need to compress sent data
      */
-    private boolean zipData = true;
+    boolean zipData = true;
 
     /**
      * Creates new client (connection from client to server) connection
@@ -339,9 +339,9 @@ public abstract class AbstractConnection implements IConnection {
     protected void reportSendException(Exception ex, SendPacket packet) {
         System.err.print(getConnectionTypeAbbrevation());
         System.err.print(" error sending command #");
-        System.err.print(packet.getCommand()); //$NON-NLS-1$
+        System.err.print(packet.getCommand()); 
         System.err.print(": ");
-        System.err.println(ex.getMessage()); //$NON-NLS-1$
+        System.err.println(ex.getMessage()); 
         reportLastCommands();
     }
 
@@ -365,7 +365,7 @@ public abstract class AbstractConnection implements IConnection {
     protected void reportReceiveException(Exception ex, StringBuffer buffer) {
         System.err.print(getConnectionTypeAbbrevation());
         System.err.print(" error reading command: ");
-        System.err.println(ex.getMessage()); //$NON-NLS-1$
+        System.err.println(ex.getMessage()); 
         reportLastCommands();
     }
 
@@ -532,7 +532,7 @@ public abstract class AbstractConnection implements IConnection {
     protected abstract void sendNetworkPacket(byte[] data, boolean zipped)
             throws Exception;
 
-    private static class SendQueue {
+    static class SendQueue {
 
         private Vector<SendPacket> queue = new Vector<SendPacket>();
         private boolean finished = false;

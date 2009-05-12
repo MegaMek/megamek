@@ -26,9 +26,9 @@ public class QuadMech extends Mech {
      */
     private static final long serialVersionUID = 7183093787457804717L;
 
-    public static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Front Right Leg", "Front Left Leg", "Rear Right Leg", "Rear Left Leg" };
+    private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Front Right Leg", "Front Left Leg", "Rear Right Leg", "Rear Left Leg" };
 
-    public static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT", "FRL", "FLL", "RRL", "RLL" };
+    private static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT", "FRL", "FLL", "RRL", "RLL" };
 
     private static final int[] NUM_OF_SLOTS = { 6, 12, 12, 12, 6, 6, 6, 6 };
 
@@ -343,7 +343,7 @@ public class QuadMech extends Mech {
      * Returns a vector of names for all locations
      */
     @Override
-    protected String[] getLocationNames() {
+    public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
 
@@ -351,7 +351,7 @@ public class QuadMech extends Mech {
      * Returns a vector of abbreviations for all locations
      */
     @Override
-    protected String[] getLocationAbbrs() {
+    public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
 

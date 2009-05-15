@@ -483,6 +483,10 @@ public class MiscType extends EquipmentType {
             returnBV = fRearBV * 0.2 + fFrontBV * 0.1;
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
             returnBV = (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
+        } else if (hasFlag(F_TALON)) {
+            // according to an email from TPTB, Talon BV is the extra damage they
+            // do for kicks, so 50% of normal kick damage
+            returnBV = entity.getWeight()/5 * 0.5;
         }
 
         return returnBV;

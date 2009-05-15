@@ -7,6 +7,7 @@ v0.34.3-dev (SVN)
 + Updated vehicle files
 + Updated conventional fighter files
 + Bug 2790142: Talons have wrong weight
++ Bug: Talons BV should be the extra damage they do in a kick attack
 
 v0.34.2 (2009-05-09, 18:02 UTC+2)
 + Bug: Ostwar 3M has wrong techlevel

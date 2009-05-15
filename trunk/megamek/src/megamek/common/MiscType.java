@@ -510,8 +510,9 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
             returnBV = (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
         } else if (hasFlag(F_TALON)) {
-            //TODO, TO says it should be the damage talons do, but they just
-            //modify DFA/Kick damage
+            // according to an email from TPTB, Talon BV is the extra damage they
+            // do for kicks, so 50% of normal kick damage
+            returnBV = entity.getWeight()/5 * 0.5;
         }
 
         return returnBV;
@@ -3188,7 +3189,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags1 |= F_MECH_EQUIPMENT;
         misc.flags |= F_TALON;
-        misc.bv = 3;
+        misc.bv = BV_VARIABLE;
 
         return misc;
     }

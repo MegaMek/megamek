@@ -51,9 +51,10 @@ public class PrototypeUltraWeaponHandler extends UltraWeaponHandler {
      * 
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
+    @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll <= 4 && howManyShots == 2) {
-            r = new Report();
+            Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);
             if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {

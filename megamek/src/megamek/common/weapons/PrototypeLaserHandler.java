@@ -46,6 +46,7 @@ public class PrototypeLaserHandler extends EnergyWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
+    @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             int heat = wtype.getHeat();

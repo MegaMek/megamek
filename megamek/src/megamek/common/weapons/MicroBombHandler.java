@@ -55,23 +55,24 @@ public class MicroBombHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      *      megamek.common.Entity, boolean)
      */
+    @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget, boolean bMissed) {
+            Entity entityTarget) {
         Coords coords = target.getPosition();
         if (!bMissed) {
-            r = new Report(3190);
+            Report r = new Report(3190);
             r.subject = subjectId;
             r.add(coords.getBoardNum());
             vPhaseReport.add(r);
         } else {
             coords = Compute.scatterDiveBombs(coords);
             if (game.getBoard().contains(coords)) {
-                r = new Report(3195);
+                Report r = new Report(3195);
                 r.subject = subjectId;
                 r.add(coords.getBoardNum());
                 vPhaseReport.add(r);
             } else {
-                r = new Report(3200);
+                Report r = new Report(3200);
                 r.subject = subjectId;
                 vPhaseReport.add(r);
                 return !bMissed;

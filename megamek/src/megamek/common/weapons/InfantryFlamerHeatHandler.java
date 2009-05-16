@@ -57,6 +57,7 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
      * (non-Javadoc)
      * @see megamek.common.weapons.InfantryWeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         int troopersHit = Compute.missilesHit(((Infantry) ae)
                 .getShootingStrength());
@@ -67,13 +68,15 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
      * (non-Javadoc)
      * @see megamek.common.weapons.InfantryWeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         return 1;
     }
 
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
+            int bldgAbsorbs) {
         if (entityTarget instanceof Mech
                 && game.getOptions().booleanOption("flamer_heat")) {
             // heat
@@ -84,7 +87,7 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                     .getCover(), Compute.targetSideTable(ae, entityTarget))) {
                 // Weapon strikes Partial Cover.
-                r = new Report(3460);
+                Report r = new Report(3460);
                 r.subject = subjectId;
                 r.add(entityTarget.getShortName());
                 r.add(entityTarget.getLocationAbbr(hit));
@@ -94,7 +97,7 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
                 missed = true;
                 return;
             }
-            r = new Report(3400);
+            Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
             r.add(hits);
@@ -104,7 +107,7 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
             entityTarget.heatFromExternal += hits;
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, nDamPerHit, bldgAbsorbs);
+                    nCluster, bldgAbsorbs);
         }
     }
 }

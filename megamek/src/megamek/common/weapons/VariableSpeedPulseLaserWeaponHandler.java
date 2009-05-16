@@ -46,7 +46,6 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        int nRange = ae.getPosition().distance(target.getPosition());
         int[] nRanges = wtype.getRanges(weapon);
         double toReturn = wtype.getDamage(nRange);
 

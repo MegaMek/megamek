@@ -47,6 +47,7 @@ public class ACTracerHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();
         // during a swarm, all damage gets applied as one block to one

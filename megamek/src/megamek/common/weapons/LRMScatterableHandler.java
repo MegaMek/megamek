@@ -52,8 +52,9 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      *      megamek.common.Entity, boolean)
      */
+    @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget, boolean bMissed) {
+            Entity entityTarget) {
         Coords coords = target.getPosition();
         AmmoType atype = (AmmoType) ammo.getType();
         //only report to player if mine delivery
@@ -62,7 +63,7 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
             whoReport = Report.PUBLIC;
         }    
         if (!bMissed) {
-            r = new Report(3190, whoReport);
+            Report r = new Report(3190, whoReport);
             r.subject = subjectId;
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);
@@ -72,13 +73,13 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
             coords = Compute.scatterDiveBombs(coords);
             if (game.getBoard().contains(coords)) {
                 // misses and scatters to another hex
-                r = new Report(3195, whoReport);
+                Report r = new Report(3195, whoReport);
                 r.subject = subjectId;
                 r.add(coords.getBoardNum());
                 vPhaseReport.addElement(r);
             } else {
                 // misses and scatters off-board
-                r = new Report(3200);
+                Report r = new Report(3200);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
                 return !bMissed;

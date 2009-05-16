@@ -39,6 +39,7 @@ public class WhiteSharkTHandler extends TeleMissileHandler {
         super(t, w, g, s);
     }
     
+    @Override
     protected int getCapMisMod() {
         return 9;
     }

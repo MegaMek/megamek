@@ -46,8 +46,8 @@ public class EnergyWeaponHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
-        int nRange = ae.getPosition().distance(target.getPosition());
         double toReturn = wtype.getDamage(nRange);
         
         if ( game.getOptions().booleanOption("tacops_energy_weapons") && wtype.hasModes()){
@@ -91,6 +91,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
+    @Override
     protected void addHeat() {
         if ( toHit.getValue() != TargetRoll.IMPOSSIBLE) {
             int heat = wtype.getHeat();

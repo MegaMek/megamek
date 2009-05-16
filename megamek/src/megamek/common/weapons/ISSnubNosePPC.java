@@ -61,6 +61,7 @@ public class ISSnubNosePPC extends PPCWeapon {
         this.medAV = 8;
     }
 
+    @Override
     public int getDamage(int range) {
         if ( range <= shortRange )
             return damageShort;

@@ -39,6 +39,7 @@ public class PiranhaHandler extends AmmoWeaponHandler {
         super(t, w, g, s);
     }
     
+    @Override
     protected int getCapMisMod() {
         return 13;
     }

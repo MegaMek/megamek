@@ -140,7 +140,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
         // report number of shots that hit only when weapon doesn't jam
         if (!weapon.isJammed()) {
-            r = new Report(3325);
+            Report r = new Report(3325);
             r.subject = subjectId;
             r.add(shotsHit);
             r.add(" shot(s) ");
@@ -186,7 +186,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll == 2 && howManyShots == 2) {
-            r = new Report();
+            Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);
             if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {

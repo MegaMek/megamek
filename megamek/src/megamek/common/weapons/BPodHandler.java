@@ -69,9 +69,8 @@ public class BPodHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         if (target instanceof BattleArmor) {
             return 10;
-        } else {
-            return 1;
         }
+        return 1;
     }
 
 

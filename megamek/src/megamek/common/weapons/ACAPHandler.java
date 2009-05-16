@@ -42,7 +42,6 @@ public class ACAPHandler extends AmmoWeaponHandler {
      *
      */
     private static final long serialVersionUID = -4251291510045646817L;
-    protected int generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
 
     /**
      * @param t
@@ -51,6 +50,7 @@ public class ACAPHandler extends AmmoWeaponHandler {
      */
     public ACAPHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
+        generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }
 
 
@@ -94,7 +94,7 @@ public class ACAPHandler extends AmmoWeaponHandler {
     @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
+            int bldgAbsorbs) {
         AmmoType atype = (AmmoType) weapon.getLinked().getType();
         int nDamage;
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
@@ -102,7 +102,7 @@ public class ACAPHandler extends AmmoWeaponHandler {
         hit.setGeneralDamageType(generalDamageType);
 
         // Each hit in the salvo get's its own hit location.
-        r = new Report(3405);
+        Report r = new Report(3405);
         r.subject = subjectId;
         r.add(toHit.getTableDesc());
         r.add(entityTarget.getLocationAbbr(hit));

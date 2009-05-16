@@ -55,6 +55,7 @@ public class MGAWeaponHandler extends MGHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
      */
+    @Override
     protected void useAmmo() {
         int shotsNeedFiring;
         setDone();
@@ -85,31 +86,32 @@ public class MGAWeaponHandler extends MGHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         int shotsHit;
         int nMod = 0;
-        if(game.getPlanetaryConditions().hasEMI()) {
+        if (game.getPlanetaryConditions().hasEMI()) {
             nMod -= 2;
         }
         switch (howManyShots) {
-            case 1:
-                shotsHit = 1;
-                break;
-            default:
-                shotsHit = allShotsHit() ? howManyShots : Compute
-                        .missilesHit(howManyShots, nMod);
-                r = new Report(3325);
-                r.subject = subjectId;
-                r.add(shotsHit);
-                r.add(" shot(s) ");
-                r.add(toHit.getTableDesc());
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-                r = new Report(3345);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-                break;
+        case 1:
+            shotsHit = 1;
+            break;
+        default:
+            shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(
+                    howManyShots, nMod);
+            Report r = new Report(3325);
+            r.subject = subjectId;
+            r.add(shotsHit);
+            r.add(" shot(s) ");
+            r.add(toHit.getTableDesc());
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+            r = new Report(3345);
+            r.subject = subjectId;
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+            break;
         }
         bSalvo = true;
         return shotsHit;
@@ -120,6 +122,7 @@ public class MGAWeaponHandler extends MGHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
+    @Override
     protected void addHeat() {
         for (int x = 0; x < howManyShots; x++) {
             super.addHeat();
@@ -129,12 +132,14 @@ public class MGAWeaponHandler extends MGHandler {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
-     *      java.util.Vector, megamek.common.Building, int, int, int, int)
+     * @see
+     * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
+     * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
      */
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
+            int bldgAbsorbs) {
         int nDamage;
         if (hit == null)
             hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
@@ -143,7 +148,7 @@ public class MGAWeaponHandler extends MGHandler {
         hit.setGeneralDamageType(generalDamageType);
         if (!bSalvo) {
             // Each hit in the salvo get's its own hit location.
-            r = new Report(3405);
+            Report r = new Report(3405);
             r.subject = subjectId;
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(hit));
@@ -152,7 +157,7 @@ public class MGAWeaponHandler extends MGHandler {
         }
 
         if (hit.hitAimedLocation()) {
-            r = new Report(3410);
+            Report r = new Report(3410);
             r.subject = subjectId;
             r.newlines = 0;
             vPhaseReport.addElement(r);
@@ -165,18 +170,19 @@ public class MGAWeaponHandler extends MGHandler {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg, entityTarget.getPosition());
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                    entityTarget.getPosition());
             for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
             vPhaseReport.addAll(buildingReport);
         }
-        
-        nDamage = checkTerrain(nDamage, entityTarget,vPhaseReport);
+
+        nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
         // A building may absorb the entire shot.
         if (nDamage == 0) {
-            r = new Report(3415);
+            Report r = new Report(3415);
             r.subject = subjectId;
             r.indent(2);
             r.addDesc(entityTarget);
@@ -190,7 +196,8 @@ public class MGAWeaponHandler extends MGHandler {
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront, underWater));
+                                    : damageType, false, false, throughFront,
+                            underWater));
         }
     }
 }

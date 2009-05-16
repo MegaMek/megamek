@@ -49,16 +49,16 @@ public class MediumRecoillessHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             int toReturn = Compute.d6(2);
             if ( bDirect )
                 toReturn += toHit.getMoS()/3;
             if (bGlancing)
-                toReturn = (int) Math.floor(toReturn / 2.0);;
+                toReturn = (int) Math.floor(toReturn / 2.0);
             return toReturn;
         }
-        else
-            return super.calcDamagePerHit();
+        return super.calcDamagePerHit();
     }
 }

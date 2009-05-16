@@ -39,6 +39,7 @@ public class KillerWhaleTHandler extends TeleMissileHandler {
         super(t, w, g, s);
     }
     
+    @Override
     protected int getCapMisMod() {
         return 10;
     }

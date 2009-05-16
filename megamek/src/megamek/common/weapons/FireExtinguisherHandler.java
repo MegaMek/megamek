@@ -54,10 +54,11 @@ public class FireExtinguisherHandler extends WeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      *      megamek.common.Entity, boolean)
      */
+    @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget, boolean bMissed) {
+            Entity entityTarget) {
         if (!bMissed) {
-            r = new Report(2270);
+            Report r = new Report(2270);
             r.subject = subjectId;
             r.newlines = 0;
             vPhaseReport.add(r);

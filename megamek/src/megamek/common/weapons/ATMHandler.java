@@ -61,6 +61,7 @@ public class ATMHandler extends MissileWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         double toReturn;
         AmmoType atype = (AmmoType) ammo.getType();
@@ -86,6 +87,7 @@ public class ATMHandler extends MissileWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
+    @Override
     protected int calcnCluster() {
         return 5;
     }
@@ -95,6 +97,7 @@ public class ATMHandler extends MissileWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // don't need to check for BAs, because BA can't mount ATMs
@@ -120,6 +123,7 @@ public class ATMHandler extends MissileWeaponHandler {
      * 
      * @return an <code>int</code> representing the attack value at that range.
      */
+    @Override
     protected int calcAttackValue() {
         int distance = ae.getPosition().distance(target.getPosition());
         int av = 0;
@@ -166,7 +170,7 @@ public class ATMHandler extends MissileWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
-                r = new Report(3325);
+                Report r = new Report(3325);
                 r.subject = subjectId;
                 r.add(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength());
@@ -176,7 +180,7 @@ public class ATMHandler extends MissileWeaponHandler {
                 vPhaseReport.add(r);
                 return ((BattleArmor) ae).getShootingStrength();
             }
-            r = new Report(3325);
+            Report r = new Report(3325);
             r.subject = subjectId;
             r.add(wtype.getRackSize());
             r.add(sSalvoType);
@@ -216,13 +220,13 @@ public class ATMHandler extends MissileWeaponHandler {
                 && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
             if (bECMAffected) {
                 // ECM prevents bonus
-                r = new Report(3330);
+                Report r = new Report(3330);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             } else if (bMekStealthActive) {
                 // stealth prevents bonus
-                r = new Report(3335);
+                Report r = new Report(3335);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -231,13 +235,13 @@ public class ATMHandler extends MissileWeaponHandler {
         } else if (atype.getAmmoType() == AmmoType.T_ATM) {
             if (bECMAffected) {
                 // ECM prevents bonus
-                r = new Report(3330);
+                Report r = new Report(3330);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             } else if (bMekStealthActive) {
                 // stealth prevents bonus
-                r = new Report(3335);
+                Report r = new Report(3335);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -261,7 +265,7 @@ public class ATMHandler extends MissileWeaponHandler {
                             "Indirect"))) {
                 if (bTargetECMAffected) {
                     // ECM prevents bonus
-                    r = new Report(3330);
+                    Report r = new Report(3330);
                     r.subject = subjectId;
                     r.newlines = 0;
                     vPhaseReport.addElement(r);
@@ -297,7 +301,7 @@ public class ATMHandler extends MissileWeaponHandler {
         }
 
         if (missilesHit > 0) {
-            r = new Report(3325);
+            Report r = new Report(3325);
             r.subject = subjectId;
             r.add(missilesHit);
             r.add(sSalvoType);
@@ -315,7 +319,7 @@ public class ATMHandler extends MissileWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        r = new Report(3345);
+        Report r = new Report(3345);
         r.subject = subjectId;
         r.newlines = 0;
         vPhaseReport.addElement(r);
@@ -323,11 +327,12 @@ public class ATMHandler extends MissileWeaponHandler {
         return missilesHit;
     }
     
+    @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget, boolean bMissed) {
+            Entity entityTarget) {
         if (!bMissed
                 && target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) {
-            r = new Report(3255);
+            Report r = new Report(3255);
             r.indent(1);
             r.subject = subjectId;
             vPhaseReport.addElement(r);

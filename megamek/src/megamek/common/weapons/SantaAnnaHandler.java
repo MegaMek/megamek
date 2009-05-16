@@ -45,10 +45,12 @@ public class SantaAnnaHandler extends AmmoWeaponHandler {
      * 
      * @return an <code>int</code> representing the attack value at that range.
      */
+    @Override
     protected int calcAttackValue() {
         return 100;
     }
     
+    @Override
     protected int getCapMisMod() {
         return 9;
     }

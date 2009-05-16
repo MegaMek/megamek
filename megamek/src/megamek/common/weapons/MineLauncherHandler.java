@@ -51,6 +51,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
@@ -67,7 +68,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
         }
         bSalvo = true;
         String sSalvoType = " mine(s) ";
-        r = new Report(3325);
+        Report r = new Report(3325);
         r.subject = subjectId;
         r.add(hits);
         r.add(sSalvoType);
@@ -87,9 +88,10 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
      *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
+            int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
         if (target instanceof Mech) {
@@ -133,6 +135,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
+    @Override
     protected void useAmmo() {
         setDone();
         checkAmmo();

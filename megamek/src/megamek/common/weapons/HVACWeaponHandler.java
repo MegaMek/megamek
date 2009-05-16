@@ -56,6 +56,7 @@ public class HVACWeaponHandler extends RapidfireACWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#handle(megamek.common.IGame.Phase,
      *      java.util.Vector)
      */
+    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
 
         if (game.getOptions().booleanOption("tacops_start_fire") && game.getPlanetaryConditions().getAtmosphere() >= PlanetaryConditions.ATMO_TRACE) {
@@ -83,9 +84,10 @@ public class HVACWeaponHandler extends RapidfireACWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
+    @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll == 2) {
-            r = new Report(3162);
+            Report r = new Report(3162);
             r.subject = subjectId;
             weapon.setJammed(false);
             weapon.setHit(true);

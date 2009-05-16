@@ -49,9 +49,9 @@ public class SNPPCHandler extends PPCHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         double toReturn;
-        int nRange = ae.getPosition().distance(target.getPosition());
         if (nRange <= wtype.getShortRange()) {
             toReturn = 10;
         } else if (nRange <= wtype.getMediumRange()) {

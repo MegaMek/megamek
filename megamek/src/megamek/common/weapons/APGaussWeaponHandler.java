@@ -21,7 +21,6 @@ import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -35,7 +34,6 @@ public class APGaussWeaponHandler extends AmmoWeaponHandler {
      * 
      */
     private static final long serialVersionUID = 859869643917346042L;
-    Mounted ammo;
 
     /**
      * @param t
@@ -52,6 +50,7 @@ public class APGaussWeaponHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             int toReturn = Compute.d6(2);

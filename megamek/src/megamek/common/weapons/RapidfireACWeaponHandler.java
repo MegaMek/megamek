@@ -53,17 +53,18 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
      * 
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
+    @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll <= 4 && howManyShots == 2) {
             if (roll > 2) {
-                r = new Report(3161);
+                Report r = new Report(3161);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
                 weapon.setJammed(true);
                 weapon.setHit(true);
             } else {
-                r = new Report(3162);
+                Report r = new Report(3162);
                 r.subject = subjectId;
                 weapon.setJammed(true);
                 weapon.setHit(true);
@@ -92,10 +93,12 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
         return false;
     }
     
+    @Override
     protected boolean usesClusterTable() {
         return true;
     }
     
+    @Override
     protected boolean canDoDirectBlowDamage(){
         return false;
     }

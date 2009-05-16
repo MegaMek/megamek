@@ -46,6 +46,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         double toReturn = ((AmmoType)ammo.getType()).getRackSize() * ((AmmoType)ammo.getType()).getDamagePerShot(); 
         
@@ -83,6 +84,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
 
     }
 
+    @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             ae.heatBuildup += (wtype.getHeat());

@@ -42,6 +42,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new StreakLRMHandler(toHit, waa, game, server);

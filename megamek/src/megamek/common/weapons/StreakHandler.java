@@ -116,6 +116,7 @@ public class StreakHandler extends MissileWeaponHandler {
             missilesHit = Compute.missilesHit(wtype.getRackSize(),
                     amsMod, weapon.isHotLoaded(), true, advancedAMS);
             if (amsMod != 0) {
+                Report r;
                 if (amsMod > 0) {
                     r = new Report(3340);
                 } else {
@@ -128,7 +129,7 @@ public class StreakHandler extends MissileWeaponHandler {
             }
         }
         if (missilesHit > 0) {
-            r = new Report(3325);
+            Report r = new Report(3325);
             r.subject = subjectId;
             r.add(missilesHit);
             r.add(sSalvoType);
@@ -136,7 +137,7 @@ public class StreakHandler extends MissileWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        r = new Report(3345);
+        Report r = new Report(3345);
         r.subject = subjectId;
         r.newlines = 0;
         vPhaseReport.addElement(r);

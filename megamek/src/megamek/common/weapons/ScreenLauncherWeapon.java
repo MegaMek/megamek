@@ -64,6 +64,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new ScreenLauncherHandler(toHit, waa, game, server);

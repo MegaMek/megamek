@@ -52,8 +52,8 @@ public class CLHeavyMGA extends AmmoWeapon {
         flags |= F_BALLISTIC | F_BURST_FIRE | F_MGA;
         flags1 = F_MECH_WEAPON | F_TANK_WEAPON | F_AERO_WEAPON | F_PROTO_WEAPON;
         cost = 5000;
-        String[] modes = { "Linked", "Off" };
-        setModes(modes);
+        String[] modeStrings = { "Linked", "Off" };
+        setModes(modeStrings);
         instantModeSwitch = false;
     }
 

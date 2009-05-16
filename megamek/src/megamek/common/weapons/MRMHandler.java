@@ -53,11 +53,12 @@ public class MRMHandler extends MissileWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      *      megamek.common.Entity, boolean)
      */
+    @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget, boolean bMissed) {
+            Entity entityTarget) {
         if (!bMissed
                 && target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) {
-            r = new Report(3255);
+            Report r = new Report(3255);
             r.indent(1);
             r.subject = subjectId;
             vPhaseReport.addElement(r);

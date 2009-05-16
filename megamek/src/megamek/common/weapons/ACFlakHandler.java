@@ -48,6 +48,7 @@ public class ACFlakHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();
         

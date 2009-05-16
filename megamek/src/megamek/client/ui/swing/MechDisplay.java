@@ -124,7 +124,7 @@ public class MechDisplay extends JPanel {
     public WeaponPanel wPan;
     private SystemPanel sPan;
     private ExtraPanel ePan;
-    private ClientGUI clientgui;
+    ClientGUI clientgui;
 
     private Entity currentlyDisplaying;
     private ArrayList<MechDisplayListener> eventListeners = new ArrayList<MechDisplayListener>();

@@ -39,6 +39,7 @@ public class KrakenTHandler extends TeleMissileHandler {
         super(t, w, g, s);
     }
     
+    @Override
     protected int getCapMisMod() {
         return 8;
     }

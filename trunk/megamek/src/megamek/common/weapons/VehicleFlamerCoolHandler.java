@@ -48,12 +48,13 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
         super(toHit, waa, g, s);
     }
 
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
+            int bldgAbsorbs) {
         if (entityTarget.infernos.isStillBurning()
                 || (target instanceof Tank && ((Tank) target).isOnFire())) {
-            r = new Report(3550);
+            Report r = new Report(3550);
             r.subject = subjectId;
             r.addDesc(entityTarget);
             r.newlines = 0;
@@ -68,7 +69,7 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
         // coolant also reduces heat of mechs
         if (target instanceof Mech) {
             int nDamage = nDamPerHit * hits;
-            r = new Report(3400);
+            Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
             r.add(nDamage);

@@ -53,6 +53,7 @@ public class MPodHandler extends LBXHandler {
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      *      vPhaseReport)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
@@ -78,7 +79,7 @@ public class MPodHandler extends LBXHandler {
         
         int shotsHit = allShotsHit() ? shots : Compute.missilesHit(shots,hitMod);
         
-        r = new Report(3325);
+        Report r = new Report(3325);
         r.subject = subjectId;
         r.add(shotsHit);
         r.add(" pellet(s) ");

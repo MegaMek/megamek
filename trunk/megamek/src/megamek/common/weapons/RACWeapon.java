@@ -38,9 +38,9 @@ public abstract class RACWeapon extends UACWeapon {
     public RACWeapon() {
         super();
         this.ammoType = AmmoType.T_AC_ROTARY;
-        String[] modes = { "Single", "2-shot", "3-shot", "4-shot", "5-shot",
+        String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot", "5-shot",
                 "6-shot" };
-        this.setModes(modes);
+        this.setModes(modeStrings);
         // explosive when jammed
         this.explosive = true;
         this.explosionDamage = damage;
@@ -55,6 +55,7 @@ public abstract class RACWeapon extends UACWeapon {
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(

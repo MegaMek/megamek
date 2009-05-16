@@ -48,6 +48,7 @@ public class TeleMissileHandler extends AmmoWeaponHandler {
      * @return a <code>boolean</code> value indicating wether this should be
      *         kept or not
      */
+    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         
         AmmoType atype = (AmmoType)ammo.getType();

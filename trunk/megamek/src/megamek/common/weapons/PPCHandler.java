@@ -78,7 +78,6 @@ public class PPCHandler extends EnergyWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        int nRange = ae.getPosition().distance(target.getPosition());
         float toReturn = wtype.getDamage(nRange);
 
         if ( game.getOptions().booleanOption("tacops_energy_weapons") && wtype.hasModes()){
@@ -146,7 +145,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 rollTarget = 10;
             }
             // roll to avoid damage
-            r = new Report(3175);
+            Report r = new Report(3175);
             r.subject = subjectId;
             r.indent();
             vPhaseReport.addElement(r);
@@ -187,7 +186,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         // resolve roll for charged capacitor
         if (weapon.hasChargedCapacitor()) {
             if (roll == 2) {
-                r = new Report(3178);
+                Report r = new Report(3178);
                 r.subject = ae.getId();
                 r.indent();
                 vPhaseReport.add(r);

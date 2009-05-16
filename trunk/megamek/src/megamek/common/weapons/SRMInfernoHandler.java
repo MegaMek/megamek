@@ -90,7 +90,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
         // Report any AMS action.
         if (amsEnganged) {
-            r = new Report(3230);
+            Report r = new Report(3230);
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
@@ -128,7 +128,7 @@ public class SRMInfernoHandler extends SRMHandler {
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // Report weapon attack and its to-hit value.
-        r = new Report(3115);
+        Report r = new Report(3115);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
@@ -252,7 +252,7 @@ public class SRMInfernoHandler extends SRMHandler {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
-                r = new Report(3325);
+                Report r = new Report(3325);
                 r.subject = subjectId;
                 r.add(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength());
@@ -262,7 +262,7 @@ public class SRMInfernoHandler extends SRMHandler {
                 vPhaseReport.add(r);
                 return ((BattleArmor) ae).getShootingStrength()*wtype.getRackSize();
             }
-            r = new Report(3325);
+            Report r = new Report(3325);
             r.subject = subjectId;
             r.add(wtype.getRackSize());
             r.add(sSalvoType);
@@ -316,7 +316,7 @@ public class SRMInfernoHandler extends SRMHandler {
         }
 
         if (missilesHit > 0) {
-            r = new Report(3325);
+            Report r = new Report(3325);
             r.subject = subjectId;
             r.add(missilesHit);
             r.add(sSalvoType);
@@ -335,7 +335,7 @@ public class SRMInfernoHandler extends SRMHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        r = new Report(3345);
+        Report r = new Report(3345);
         r.newlines = 0;
         r.subject = subjectId;
         vPhaseReport.addElement(r);
@@ -345,16 +345,16 @@ public class SRMInfernoHandler extends SRMHandler {
 
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, boolean bSalvo) {
+            Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
-            r = new Report(2270);
+            Report r = new Report(2270);
             r.subject = subjectId;
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
         // report that damage was "applied" to terrain
-        r = new Report(3385);
+        Report r = new Report(3385);
         r.indent();
         r.subject = subjectId;
         r.add(nDamage);

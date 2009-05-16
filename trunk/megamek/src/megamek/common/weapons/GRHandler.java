@@ -53,7 +53,6 @@ public class GRHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        int nRange = ae.getPosition().distance(target.getPosition());
         double toReturn = wtype.getDamage(nRange);
 
         if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {

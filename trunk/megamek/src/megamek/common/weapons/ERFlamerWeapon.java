@@ -38,8 +38,7 @@ public abstract class ERFlamerWeapon extends FlamerWeapon {
         if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId())
                 .curMode().equals("Heat"))) {
             return new ERFlamerHeatHandler(toHit, waa, game, server);
-        } else {
-            return new ERFlamerHandler(toHit, waa, game, server);
         }
+        return new ERFlamerHandler(toHit, waa, game, server);
     }
 }

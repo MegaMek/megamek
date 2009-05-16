@@ -45,6 +45,7 @@ public class AR10Handler extends AmmoWeaponHandler {
      * 
      * @return an <code>int</code> representing the attack value at that range.
      */
+    @Override
     protected int calcAttackValue() {
         int av = 0;       
         AmmoType atype = (AmmoType) ammo.getType();
@@ -58,6 +59,7 @@ public class AR10Handler extends AmmoWeaponHandler {
         return av;
     }
     
+    @Override
     protected int getCapMisMod() {
         int mod = 0;
         AmmoType atype = (AmmoType) ammo.getType();

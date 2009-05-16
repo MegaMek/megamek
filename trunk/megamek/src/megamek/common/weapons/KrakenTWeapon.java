@@ -65,6 +65,7 @@ public class KrakenTWeapon extends CapitalMissileWeapon {
      *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
      *      megamek.server.Server)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new KrakenTHandler(toHit, waa, game, server);

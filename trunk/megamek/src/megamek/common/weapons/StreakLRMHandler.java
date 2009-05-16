@@ -80,10 +80,10 @@ public class StreakLRMHandler extends StreakHandler {
      */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget, boolean bMissed) {
+            Entity entityTarget) {
         if (!bMissed
                 && target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) {
-            r = new Report(3255);
+            Report r = new Report(3255);
             r.indent(1);
             r.subject = subjectId;
             vPhaseReport.addElement(r);

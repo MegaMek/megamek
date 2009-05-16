@@ -39,6 +39,7 @@ public class WhiteSharkHandler extends AmmoWeaponHandler {
         super(t, w, g, s);
     }
     
+    @Override
     protected int getCapMisMod() {
         return 9;
     }

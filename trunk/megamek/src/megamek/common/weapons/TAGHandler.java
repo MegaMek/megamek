@@ -45,6 +45,7 @@ public class TAGHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         return 0;
     }
@@ -55,11 +56,12 @@ public class TAGHandler extends WeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
      *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
+            int bldgAbsorbs) {
         if (entityTarget == null) {
-            r = new Report(3187);
+            Report r = new Report(3187);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
         } else {
@@ -83,7 +85,7 @@ public class TAGHandler extends WeaponHandler {
                     priority, false);
             game.addTagInfo(info);
             entityTarget.setTaggedBy(ae.getId());
-            r = new Report(3188);
+            Report r = new Report(3188);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
         }
@@ -95,6 +97,7 @@ public class TAGHandler extends WeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
      *      boolean, megamek.common.Building, java.util.Vector)
      */
+    @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
         int priority = 1;
@@ -122,6 +125,7 @@ public class TAGHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
+    @Override
     public boolean cares(IGame.Phase phase) {
         if (phase == IGame.Phase.PHASE_OFFBOARD) {
             return true;

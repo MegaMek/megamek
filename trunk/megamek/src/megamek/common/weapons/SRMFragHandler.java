@@ -55,6 +55,7 @@ public class SRMFragHandler extends SRMHandler {
      * 
      * @return an <code>int</code> representing the damage dealt per hit.
      */
+    @Override
     protected int calcDamagePerHit() {
         float toReturn = 2;
         // during a swarm, all damage gets applied as one block to one location
@@ -84,11 +85,12 @@ public class SRMFragHandler extends SRMHandler {
      * @see megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
      *      megamek.common.Building, int, boolean)
      */
+    @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, boolean bSalvo) {
+            Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
-            r = new Report(2270);
+            Report r = new Report(2270);
             r.subject = subjectId;
             r.newlines = 0;
             vPhaseReport.addElement(r);
@@ -98,7 +100,7 @@ public class SRMFragHandler extends SRMHandler {
         // Fragmentation does double damage to woods
         nDamage *= 2;
 
-        r = new Report(3385);
+        Report r = new Report(3385);
         r.indent();
         r.subject = subjectId;
         r.add(nDamage);
@@ -123,8 +125,9 @@ public class SRMFragHandler extends SRMHandler {
      * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector,
      *      megamek.common.Building, int, boolean)
      */
+    @Override
     protected void handleBuildingDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, boolean bSalvo, Coords coords) {
+            Building bldg, int nDamage, Coords coords) {
         return;
     }
 

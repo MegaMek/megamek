@@ -28,16 +28,12 @@ import megamek.server.Server;
  * @author Andrew Hunter
  */
 public class AmmoWeaponHandler extends WeaponHandler {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -4934490646657484486L;
     Mounted ammo;
 
-    /**
-     * Used for deserialization. DO NOT USE OTHERWISE.
-     */
     protected AmmoWeaponHandler() {
+        //deserialization only
     }
 
     /**

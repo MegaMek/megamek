@@ -44,6 +44,7 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new AdvancedSRMHandler(toHit, waa, game, server);

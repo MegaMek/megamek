@@ -55,12 +55,13 @@ public class InfantryMGHandler extends InfantryWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets an extra d6 damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             int troopersHit = Compute.missilesHit(((Infantry) ae)
                     .getShootingStrength());
-            r = new Report(3325);
+            Report r = new Report(3325);
             r.subject = subjectId;
             r.add(troopersHit);
             r.add(" troopers ");
@@ -69,8 +70,8 @@ public class InfantryMGHandler extends InfantryWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
             return toReturn;
-        } else
-            return super.calcHits(vPhaseReport);
+        }
+        return super.calcHits(vPhaseReport);
     }
 
 }

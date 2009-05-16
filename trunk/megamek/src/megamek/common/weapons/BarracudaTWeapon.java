@@ -66,13 +66,13 @@ public class BarracudaTWeapon extends CapitalMissileWeapon {
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
         .getEquipment(waa.getWeaponId()).getLinked().getType();
         if(atype.hasFlag(AmmoType.F_TELE_MISSILE))
             return new BarracudaTHandler(toHit, waa, game, server);
-        else 
-            return new BarracudaHandler(toHit, waa, game, server);
+        return new BarracudaHandler(toHit, waa, game, server);
     }
 }

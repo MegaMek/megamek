@@ -85,7 +85,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
         }
 
         if (missilesHit > 0) {
-            r = new Report(3325);
+            Report r = new Report(3325);
             r.subject = subjectId;
             r.add(missilesHit);
             r.add(sSalvoType);
@@ -104,7 +104,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        r = new Report(3345);
+        Report r = new Report(3345);
         r.subject = subjectId;
         r.newlines = 0;
         vPhaseReport.addElement(r);
@@ -128,13 +128,13 @@ public class MekMortarHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector, megamek.common.Entity, boolean)
      */
     @Override
-    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget, boolean bMissed) {
+    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         // targeting a hex for clearing
         if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
             int nDamage = nDamPerHit *calcHits(vPhaseReport);
             int[] damages = { nDamage };
             Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-            handleClearDamage(vPhaseReport, bldg, nDamage, bSalvo);
+            handleClearDamage(vPhaseReport, bldg, nDamage);
             server.doExplosion(damages, false, target.getPosition(), true, vPhaseReport, null, calcnCluster());
             return true;
         }

@@ -54,6 +54,7 @@ public class PrototypeLBXHandler extends LBXHandler {
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      *      vPhaseReport)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount LBXs
@@ -71,7 +72,7 @@ public class PrototypeLBXHandler extends LBXHandler {
         int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
                 .missilesHit(wtype.getRackSize(), shotMod);
         
-        r = new Report(3325);
+        Report r = new Report(3325);
         r.subject = subjectId;
         r.add(shotsHit);
         r.add(" shot(s) ");
@@ -91,9 +92,10 @@ public class PrototypeLBXHandler extends LBXHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
+    @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll == 2) {
-            r = new Report(3165);
+            Report r = new Report(3165);
             r.subject = subjectId;
             weapon.setJammed(true);
             weapon.setHit(true);

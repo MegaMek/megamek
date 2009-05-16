@@ -23,11 +23,7 @@ import megamek.server.Server;
  */
 public class LRMSwarmIHandler extends LRMSwarmHandler {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 6522069260223528740L;
-    int swarmMissilesNowLeft = 0;
 
     /**
      * @param t

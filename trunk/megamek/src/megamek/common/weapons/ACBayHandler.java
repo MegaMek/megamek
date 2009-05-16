@@ -46,6 +46,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
      * 
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
+    @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         for(int wId: weapon.getBayWeapons()) {    
             Mounted bayW = ae.getEquipment(wId);
@@ -75,7 +76,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
                         break;
                 }
                 if (jams) {
-                    r = new Report(3170);
+                    Report r = new Report(3170);
                     r.subject = subjectId;
                     r.add(" shot(s)");
                     r.newlines = 0;
@@ -85,7 +86,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
             }
             else if (bayWType.getAmmoType() == AmmoType.T_AC_ULTRA) {
                 if (roll == 2 && ammoUsed == 2) {
-                    r = new Report();
+                    Report r = new Report();
                     r.subject = subjectId;
                     r.messageId = 3160;
                     r.newlines = 0;

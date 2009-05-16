@@ -42,8 +42,8 @@ public abstract class UACWeapon extends AmmoWeapon {
         flags |= WeaponType.F_DIRECT_FIRE | WeaponType.F_BALLISTIC;
         flags1 |= WeaponType.F_MECH_WEAPON | WeaponType.F_AERO_WEAPON | WeaponType.F_TANK_WEAPON;
         ammoType = AmmoType.T_AC_ULTRA;
-        String[] modes = { "Single", "Ultra" };
-        setModes(modes);
+        String[] modeStrings = { "Single", "Ultra" };
+        setModes(modeStrings);
 
         atClass = CLASS_AC;
     }
@@ -60,8 +60,7 @@ public abstract class UACWeapon extends AmmoWeapon {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (weapon.curMode().equals("Ultra")) {
             return new UltraWeaponHandler(toHit, waa, game, server);
-        } else {
-            return super.getCorrectHandler(toHit, waa, game, server);
         }
+        return super.getCorrectHandler(toHit, waa, game, server);
     }
 }

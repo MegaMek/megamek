@@ -54,8 +54,8 @@ public class ISMineLauncher extends Weapon {
         this.tonnage = 0.0f;
         this.criticals = 0;
         this.bv = 6;
-        String[] modes = { "Single", "2-shot", "3-shot", "4-shot" };
-        this.setModes(modes);
+        String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot" };
+        this.setModes(modeStrings);
         this.flags |= F_DIRECT_FIRE | F_SOLO_ATTACK;
     }
 
@@ -66,6 +66,7 @@ public class ISMineLauncher extends Weapon {
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new MineLauncherHandler(toHit, waa, game, server);

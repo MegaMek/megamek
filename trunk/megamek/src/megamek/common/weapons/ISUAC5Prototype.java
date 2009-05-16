@@ -64,14 +64,14 @@ public class ISUAC5Prototype extends UACWeapon {
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
                 waa.getWeaponId());
         if (weapon.curMode().equals("Ultra")) {
             return new PrototypeUltraWeaponHandler(toHit, waa, game, server);
-        } else {
-            return super.getCorrectHandler(toHit, waa, game, server);
         }
+        return super.getCorrectHandler(toHit, waa, game, server);
     }
 }

@@ -53,10 +53,11 @@ public class NarcHandler extends MissileWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         bSalvo = true;
         if (amsEnganged) {
-            r = new Report(3235);
+            Report r = new Report(3235);
             r.subject = subjectId;
             vPhaseReport.add(r);
             r = new Report(3230);
@@ -84,6 +85,7 @@ public class NarcHandler extends MissileWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
+    @Override
     protected int calcnCluster() {
         return 1;
     }
@@ -93,6 +95,7 @@ public class NarcHandler extends MissileWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         return 0;
     }
@@ -103,9 +106,10 @@ public class NarcHandler extends MissileWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
      *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
+            int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
         AmmoType atype = (AmmoType) ammo.getType();
@@ -113,7 +117,7 @@ public class NarcHandler extends MissileWeaponHandler {
             // narced
             NarcPod pod = new NarcPod(ae.getOwner().getTeam(), hit
                     .getLocation());
-            r = new Report(3250);
+            Report r = new Report(3250);
             r.subject = subjectId;
             r.add(entityTarget.getDisplayName());
             r.add(entityTarget.getLocationAbbr(hit));
@@ -125,7 +129,7 @@ public class NarcHandler extends MissileWeaponHandler {
             if (atype.getMunitionType() == AmmoType.M_ECM) {
                 pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.ECM, hit
                         .getLocation());
-                r = new Report(3251);
+                Report r = new Report(3251);
                 r.subject = subjectId;
                 r.add(entityTarget.getDisplayName());
                 r.add(entityTarget.getLocationAbbr(hit));
@@ -133,7 +137,7 @@ public class NarcHandler extends MissileWeaponHandler {
             } else if (atype.getMunitionType() == AmmoType.M_HAYWIRE) {
                 pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.HAYWIRE,
                         hit.getLocation());
-                r = new Report(3252);
+                Report r = new Report(3252);
                 r.subject = subjectId;
                 r.add(entityTarget.getDisplayName());
                 r.add(entityTarget.getLocationAbbr(hit));
@@ -141,7 +145,7 @@ public class NarcHandler extends MissileWeaponHandler {
             } else if (atype.getMunitionType() == AmmoType.M_NEMESIS) {
                 pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.NEMESIS,
                         hit.getLocation());
-                r = new Report(3253);
+                Report r = new Report(3253);
                 r.add(entityTarget.getDisplayName());
                 r.add(entityTarget.getLocationAbbr(hit));
                 r.subject = subjectId;
@@ -149,7 +153,7 @@ public class NarcHandler extends MissileWeaponHandler {
             } else {
                 pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.HOMING,
                         hit.getLocation());
-                r = new Report(3254);
+                Report r = new Report(3254);
                 r.subject = subjectId;
                 r.add(entityTarget.getDisplayName());
                 r.add(entityTarget.getLocationAbbr(hit));

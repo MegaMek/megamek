@@ -47,9 +47,8 @@ public abstract class LBXACWeapon extends AmmoWeapon {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
             return new LBXHandler(toHit, waa, game, server);
-        } else {
-            return new ACWeaponHandler(toHit, waa, game, server);
         }
+        return new ACWeaponHandler(toHit, waa, game, server);
     }
 
     public LBXACWeapon() {

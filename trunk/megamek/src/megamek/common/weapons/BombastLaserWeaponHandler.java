@@ -46,8 +46,8 @@ public class BombastLaserWeaponHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
-        int nRange = ae.getPosition().distance(target.getPosition());
         double toReturn = wtype.getDamage(nRange);
         
         toReturn = Compute.dialDownDamage(weapon, wtype,nRange);
@@ -89,6 +89,7 @@ public class BombastLaserWeaponHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
+    @Override
     protected void addHeat() {
         if ( toHit.getValue() != TargetRoll.IMPOSSIBLE) {
             int heat = wtype.getHeat();

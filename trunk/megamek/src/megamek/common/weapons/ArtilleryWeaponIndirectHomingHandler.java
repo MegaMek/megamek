@@ -14,7 +14,6 @@
 
 package megamek.common.weapons;
 
-import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -36,7 +35,7 @@ import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
 public class ArtilleryWeaponIndirectHomingHandler extends
-        ArtilleryWeaponIndirectFireHandler implements Serializable {
+        ArtilleryWeaponIndirectFireHandler {
 
     /**
      *
@@ -68,7 +67,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself
-                r = new Report(3121);
+                Report r = new Report(3121);
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
@@ -106,7 +105,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // Report weapon attack and its to-hit value.
-        r = new Report(3115);
+        Report r = new Report(3115);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
@@ -202,7 +201,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         }
 
         // Do we need some sort of special resolution (minefields, artillery,
-        if (specialResolution(vPhaseReport, entityTarget, bMissed)) {
+        if (specialResolution(vPhaseReport, entityTarget)) {
             return false;
         }
 
@@ -239,9 +238,11 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             r.add(bldgAbsorbs);
             vPhaseReport.addElement(r);
             Vector<Report> buildingReport = server.damageBuilding(bldg,
-                    nDamPerHit, entityTarget.getPosition());
-            for (Report report : buildingReport) {
-                report.subject = entityTarget.getId();
+                    nDamPerHit, target.getPosition());
+            if (entityTarget != null) {
+                for (Report report : buildingReport) {
+                    report.subject = entityTarget.getId();
+                }
             }
             vPhaseReport.addAll(buildingReport);
         }
@@ -256,7 +257,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         }
         if (!bMissed && (entityTarget != null)) {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, nDamPerHit, bldgAbsorbs);
+                    nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
         }
         Coords coords = target.getPosition();
@@ -267,7 +268,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
         // assumption: homing artillery splash damage is area effect.
         // do damage to woods, 2 * normal damage (TW page 112)
-        handleClearDamage(vPhaseReport, bldg, ratedDamage * 2, bSalvo);
+        handleClearDamage(vPhaseReport, bldg, ratedDamage * 2);
         ratedDamage -= bldgAbsorbs;
         if (ratedDamage > 0) {
             for (Enumeration<Entity> impactHexHits = game.getEntities(coords); impactHexHits

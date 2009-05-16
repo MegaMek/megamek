@@ -56,7 +56,6 @@ public class PrototypeGaussHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage();
-        int nRange = ae.getPosition().distance(target.getPosition());
 
         if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn -= 1;
@@ -80,7 +79,7 @@ public class PrototypeGaussHandler extends AmmoWeaponHandler {
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll == 2) {
-            r = new Report(3165);
+            Report r = new Report(3165);
             r.subject = subjectId;
             weapon.setJammed(true);
             weapon.setHit(true);

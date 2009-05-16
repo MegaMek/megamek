@@ -22,6 +22,7 @@ import megamek.common.FighterSquadron;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Report;
+import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -53,6 +54,7 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
      * @return a <code>boolean</code> value indicating wether this should be
      *         kept or not
      */
+    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         if (!this.cares(phase)) {
             return true;
@@ -62,7 +64,7 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
         //how many screen launchers in bay
         
         //Report weapon attack and its to-hit value.
-        r = new Report(3115);
+        Report r = new Report(3115);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
@@ -70,19 +72,19 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
         r.messageId = 3120;
         r.add(target.getDisplayName(), true);
         vPhaseReport.addElement(r);
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;
@@ -103,17 +105,17 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
                 //if fighter squadron all fighters are damaged
                 if(entity instanceof FighterSquadron) {
                     for(Entity fighter : ((FighterSquadron)entity).getFighters()) {
-                        ToHitData toHit = new ToHitData();
-                        toHit.setHitTable(ToHitData.HIT_NORMAL);
-                        HitData hit = fighter.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
+                        ToHitData squadronToHit = new ToHitData();
+                        squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
+                        HitData hit = fighter.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
                         hit.setCapital(false);
                         vPhaseReport.addAll( server.damageEntity(fighter, hit, attackValue));
                         server.creditKill(fighter, ae);
                     }
                 } else {  
-                    ToHitData toHit = new ToHitData();
-                    toHit.setHitTable(ToHitData.HIT_NORMAL);
-                    HitData hit = entity.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
+                    ToHitData hexToHit = new ToHitData();
+                    hexToHit.setHitTable(ToHitData.HIT_NORMAL);
+                    HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
                     hit.setCapital(false);
                     vPhaseReport.addAll( server.damageEntity(entity, hit, attackValue));
                     server.creditKill(entity, ae);

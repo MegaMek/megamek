@@ -58,7 +58,6 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
-        int nRange = ae.getPosition().distance(target.getPosition());
         if (game.getOptions().booleanOption("tacops_altdmg")) {
             if (nRange <= 1) {
                 toReturn++;

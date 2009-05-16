@@ -47,23 +47,24 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
      *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
+            int bldgAbsorbs) {
         if (entityTarget instanceof Mech) {
             if (!bSalvo) {
                 // hits
-                r = new Report(3390);
+                Report r = new Report(3390);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             }
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, 0, bldgAbsorbs);
+                    nCluster, bldgAbsorbs);
 
             if (missed)
                 return;
 
-            r = new Report(3400);
+            Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
             r.add(5);
@@ -73,7 +74,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
             entityTarget.heatFromExternal += 5;
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, nDamPerHit, bldgAbsorbs);
+                    nCluster, bldgAbsorbs);
         }
     }
     
@@ -83,6 +84,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
      *         attack needs further calculating, like a missed shot hitting a
      *         building, or an AMS only shooting down some missiles.
      */
+    @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
         // Shots that miss an entity can set fires.
@@ -105,11 +107,12 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
         return true;
     }
     
+    @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
-            Building bldg, boolean bSalvo, int hits) {
+            Building bldg, int hits) {
         if (!bSalvo) {
             // hits!
-            r = new Report(2270);
+            Report r = new Report(2270);
             r.subject = subjectId;
             r.newlines = 0;
             vPhaseReport.addElement(r);
@@ -122,17 +125,18 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
         }
     }
     
+    @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, boolean bSalvo) {
+            Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
-            r = new Report(2270);
+            Report r = new Report(2270);
             r.subject = subjectId;
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
         // report that damage was "applied" to terrain
-        r = new Report(3385);
+        Report r = new Report(3385);
         r.indent();
         r.subject = subjectId;
         r.add(nDamage);

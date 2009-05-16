@@ -55,6 +55,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
@@ -99,7 +100,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
                     .missilesHit(wtype.getRackSize(), nMissilesModifier, bGlancing );
             missilesHit = (int) Math.ceil((double) missilesHit / 2);
         }
-        r = new Report(3325);
+        Report r = new Report(3325);
         r.subject = subjectId;
         r.add(missilesHit);
         r.add(sSalvoType);

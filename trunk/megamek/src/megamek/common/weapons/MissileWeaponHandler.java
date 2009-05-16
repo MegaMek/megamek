@@ -77,7 +77,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
-                r = new Report(3325);
+                Report r = new Report(3325);
                 r.subject = subjectId;
                 r.add(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength());
@@ -87,7 +87,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 vPhaseReport.add(r);
                 return ((BattleArmor) ae).getShootingStrength();
             }
-            r = new Report(3325);
+            Report r = new Report(3325);
             r.subject = subjectId;
             r.add(wtype.getRackSize());
             r.add(sSalvoType);
@@ -139,13 +139,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
             if (bECMAffected) {
                 // ECM prevents bonus
-                r = new Report(3330);
+                Report r = new Report(3330);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             } else if (bMekStealthActive) {
                 // stealth prevents bonus
-                r = new Report(3335);
+                Report r = new Report(3335);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -159,13 +159,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
             if (bECMAffected) {
                 // ECM prevents bonus
-                r = new Report(3330);
+                Report r = new Report(3330);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             } else if (bMekStealthActive) {
                 // stealth prevents bonus
-                r = new Report(3335);
+                Report r = new Report(3335);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -181,13 +181,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         } else if (atype.getAmmoType() == AmmoType.T_ATM) {
             if (bECMAffected) {
                 // ECM prevents bonus
-                r = new Report(3330);
+                Report r = new Report(3330);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             } else if (bMekStealthActive) {
                 // stealth prevents bonus
-                r = new Report(3335);
+                Report r = new Report(3335);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -212,7 +212,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                             "Indirect"))) {
                 if (bTargetECMAffected) {
                     // ECM prevents bonus
-                    r = new Report(3330);
+                    Report r = new Report(3330);
                     r.subject = subjectId;
                     r.newlines = 0;
                     vPhaseReport.addElement(r);
@@ -253,7 +253,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
 
         if (missilesHit > 0) {
-            r = new Report(3325);
+            Report r = new Report(3325);
             r.subject = subjectId;
             r.add(missilesHit);
             r.add(sSalvoType);
@@ -272,7 +272,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        r = new Report(3345);
+        Report r = new Report(3345);
         r.subject = subjectId;
         r.newlines = 0;
         vPhaseReport.addElement(r);
@@ -385,7 +385,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         // Report any AMS action.
         if (amsEnganged) {
-            r = new Report(3230);
+            Report r = new Report(3230);
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
@@ -413,7 +413,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                             && !amsEnganged) {
 
                         Mounted mAmmo = counter.getLinked();
-                        Entity ae = waa.getEntity(game);
                         if (!(counter.getType() instanceof WeaponType)
                                 || !counter.isReady() || counter.isMissing()
                                 // no AMS when a shield in the AMS location
@@ -450,7 +449,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         // set the ams as having fired
                         counter.setUsedThisRound(true);
                         amsEnganged = true;
-                        r = new Report(3350);
+                        Report r = new Report(3350);
                         r.subject = entityTarget.getId();
                         r.newlines = 0;
                         vPhaseReport.add(r);
@@ -486,7 +485,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
         String number = nweapons > 1 ? " (" + nweapons + ")" : "";
         // Report weapon attack and its to-hit value.
-        r = new Report(3115);
+        Report r = new Report(3115);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
@@ -514,7 +513,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
                         entity.getTargetId(), waa.getWeaponId());
                 newWaa.setNemesisConfused(true);
-                Entity ae = game.getEntity(waa.getEntityId());
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
                 AttackHandler ah = w.fire(newWaa, game, server);
@@ -618,7 +616,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         nDamPerHit = calcDamagePerHit();
 
         // Do we need some sort of special resolution (minefields, artillery,
-        if (specialResolution(vPhaseReport, entityTarget, bMissed)) {
+        if (specialResolution(vPhaseReport, entityTarget)) {
             return false;
         }
 
@@ -697,26 +695,26 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // targeting a hex for igniting
             if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
                     || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
-                handleIgnitionDamage(vPhaseReport, bldg, bSalvo, hits);
+                handleIgnitionDamage(vPhaseReport, bldg, hits);
                 return false;
             }
             // targeting a hex for clearing
             if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
                 nDamage = nDamPerHit * hits;
-                handleClearDamage(vPhaseReport, bldg, nDamage, bSalvo);
+                handleClearDamage(vPhaseReport, bldg, nDamage);
                 return false;
             }
             // Targeting a building.
             if (target.getTargetType() == Targetable.TYPE_BUILDING) {
                 // The building takes the full brunt of the attack.
                 nDamage = nDamPerHit * hits;
-                handleBuildingDamage(vPhaseReport, bldg, nDamage, bSalvo, target.getPosition());
+                handleBuildingDamage(vPhaseReport, bldg, nDamage, target.getPosition());
                 // And we're done!
                 return false;
             }
             if (entityTarget != null) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                        nCluster, nDamPerHit, bldgAbsorbs);
+                        nCluster, bldgAbsorbs);
                 server.creditKill(entityTarget, ae);
                 hits -= nCluster;
             }

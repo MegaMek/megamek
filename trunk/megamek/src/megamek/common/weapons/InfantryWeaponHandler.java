@@ -88,7 +88,7 @@ public abstract class InfantryWeaponHandler extends WeaponHandler {
         if (target instanceof Infantry && ((Infantry)target).isMechanized()) {
             damageDealt /= 2;
         }
-        r = new Report(3325);
+        Report r = new Report(3325);
         r.subject = subjectId;
         r.add(troopersHit);
         r.add(" troopers ");

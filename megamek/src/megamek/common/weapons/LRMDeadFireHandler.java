@@ -45,6 +45,7 @@ public class LRMDeadFireHandler extends LRMHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
+    @Override
     protected int calcnCluster() {
         return 1;
     }
@@ -54,6 +55,7 @@ public class LRMDeadFireHandler extends LRMHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         return 2;
     }

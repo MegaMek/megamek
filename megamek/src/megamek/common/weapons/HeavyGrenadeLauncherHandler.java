@@ -42,6 +42,7 @@ public class HeavyGrenadeLauncherHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             int toReturn = Compute.d6();
@@ -50,7 +51,7 @@ public class HeavyGrenadeLauncherHandler extends WeaponHandler {
             if (bGlancing)
                 toReturn = (int) Math.floor(toReturn / 2.0);
             return toReturn;
-        } else
-            return super.calcDamagePerHit();
+        }
+        return super.calcDamagePerHit();
     }
 }

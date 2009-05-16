@@ -109,10 +109,10 @@ public class FlamerHandler extends WeaponHandler {
 
     @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
-            Building bldg, boolean bSalvo, int hits) {
+            Building bldg, int hits) {
         if (!bSalvo) {
             // hits!
-            r = new Report(2270);
+            Report r = new Report(2270);
             r.subject = subjectId;
             r.newlines = 0;
             vPhaseReport.addElement(r);
@@ -127,16 +127,16 @@ public class FlamerHandler extends WeaponHandler {
 
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, boolean bSalvo) {
+            Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
-            r = new Report(2270);
+            Report r = new Report(2270);
             r.subject = subjectId;
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
         // report that damage was "applied" to terrain
-        r = new Report(3385);
+        Report r = new Report(3385);
         r.indent();
         r.subject = subjectId;
         r.add(nDamage);

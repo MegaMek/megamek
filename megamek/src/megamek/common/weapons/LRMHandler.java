@@ -63,10 +63,10 @@ public class LRMHandler extends MissileWeaponHandler {
      */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget, boolean bMissed) {
+            Entity entityTarget) {
         if (!bMissed && (target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR)) {
             // minefield clearance attempt
-            r = new Report(3255);
+            Report r = new Report(3255);
             r.indent(1);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
@@ -101,7 +101,7 @@ public class LRMHandler extends MissileWeaponHandler {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
-                r = new Report(3325);
+                Report r = new Report(3325);
                 r.subject = subjectId;
                 r.add(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength());
@@ -111,7 +111,7 @@ public class LRMHandler extends MissileWeaponHandler {
                 vPhaseReport.add(r);
                 return ((BattleArmor) ae).getShootingStrength();
             }
-            r = new Report(3325);
+            Report r = new Report(3325);
             r.subject = subjectId;
             r.add(wtype.getRackSize());
             r.add(sSalvoType);
@@ -151,13 +151,13 @@ public class LRMHandler extends MissileWeaponHandler {
                 && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
             if (bECMAffected) {
                 // ECM prevents bonus
-                r = new Report(3330);
+                Report r = new Report(3330);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             } else if (bMekStealthActive) {
                 // stealth prevents bonus
-                r = new Report(3335);
+                Report r = new Report(3335);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -171,13 +171,13 @@ public class LRMHandler extends MissileWeaponHandler {
                 && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
             if (bECMAffected) {
                 // ECM prevents bonus
-                r = new Report(3330);
+                Report r = new Report(3330);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             } else if (bMekStealthActive) {
                 // stealth prevents bonus
-                r = new Report(3335);
+                Report r = new Report(3335);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -187,13 +187,13 @@ public class LRMHandler extends MissileWeaponHandler {
         } else if (atype.getAmmoType() == AmmoType.T_ATM) {
             if (bECMAffected) {
                 // ECM prevents bonus
-                r = new Report(3330);
+                Report r = new Report(3330);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             } else if (bMekStealthActive) {
                 // stealth prevents bonus
-                r = new Report(3335);
+                Report r = new Report(3335);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -218,7 +218,7 @@ public class LRMHandler extends MissileWeaponHandler {
                             "Indirect")))) {
                 if (bTargetECMAffected) {
                     // ECM prevents bonus
-                    r = new Report(3330);
+                    Report r = new Report(3330);
                     r.subject = subjectId;
                     r.newlines = 0;
                     vPhaseReport.addElement(r);
@@ -256,7 +256,7 @@ public class LRMHandler extends MissileWeaponHandler {
         }
 
         if (missilesHit > 0) {
-            r = new Report(3325);
+            Report r = new Report(3325);
             r.subject = subjectId;
             r.add(missilesHit);
             r.add(sSalvoType);
@@ -275,7 +275,7 @@ public class LRMHandler extends MissileWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        r = new Report(3345);
+        Report r = new Report(3345);
         r.subject = subjectId;
         r.newlines = 0;
         vPhaseReport.addElement(r);

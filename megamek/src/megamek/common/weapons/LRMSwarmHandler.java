@@ -39,8 +39,8 @@ public class LRMSwarmHandler extends LRMHandler {
      *
      */
     private static final long serialVersionUID = 7962873403915683220L;
-    int swarmMissilesNowLeft = 0;
-    boolean handledHeat = false;
+    private int swarmMissilesNowLeft = 0;
+    private boolean handledHeat = false;
 
     /**
      * @param t
@@ -76,7 +76,7 @@ public class LRMSwarmHandler extends LRMHandler {
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // Report weapon attack and its to-hit value.
-        r = new Report(3115);
+        Report r = new Report(3115);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
@@ -167,7 +167,7 @@ public class LRMSwarmHandler extends LRMHandler {
         nDamPerHit = calcDamagePerHit();
 
         // Do we need some sort of special resolution (minefields, artillery,
-        if (specialResolution(vPhaseReport, entityTarget, bMissed)) {
+        if (specialResolution(vPhaseReport, entityTarget)) {
             return false;
         }
 
@@ -211,26 +211,26 @@ public class LRMSwarmHandler extends LRMHandler {
             // targeting a hex for igniting
             if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
                     || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
-                handleIgnitionDamage(vPhaseReport, bldg, bSalvo, hits);
+                handleIgnitionDamage(vPhaseReport, bldg, hits);
                 return false;
             }
             // targeting a hex for clearing
             if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
                 nDamage = nDamPerHit * hits;
-                handleClearDamage(vPhaseReport, bldg, nDamage, bSalvo);
+                handleClearDamage(vPhaseReport, bldg, nDamage);
                 return false;
             }
             // Targeting a building.
             if (target.getTargetType() == Targetable.TYPE_BUILDING) {
                 // The building takes the full brunt of the attack.
                 nDamage = nDamPerHit * hits;
-                handleBuildingDamage(vPhaseReport, bldg, nDamage, bSalvo, target.getPosition());
+                handleBuildingDamage(vPhaseReport, bldg, nDamage, target.getPosition());
                 // And we're done!
                 return false;
             }
             if (entityTarget != null) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                        nCluster, nDamPerHit, bldgAbsorbs);
+                        nCluster, bldgAbsorbs);
                 server.creditKill(entityTarget, ae);
                 hits -= nCluster;
             }
@@ -293,7 +293,7 @@ public class LRMSwarmHandler extends LRMHandler {
         Entity swarmTarget = Compute.getSwarmMissileTarget(game, ae.getId(),
                 entityTarget, waa.getWeaponId());
         if (swarmTarget != null) {
-            r = new Report(3420);
+            Report r = new Report(3420);
             r.subject = subjectId;
             r.indent(2);
             r.add(swarmMissilesNowLeft);
@@ -316,7 +316,7 @@ public class LRMSwarmHandler extends LRMHandler {
             wh.handledHeat = true;
             wh.handle(phase, vPhaseReport);
         } else {
-            r = new Report(3425);
+            Report r = new Report(3425);
             r.subject = subjectId;
             r.indent(2);
             r.add(swarmMissilesNowLeft);
@@ -389,7 +389,7 @@ public class LRMSwarmHandler extends LRMHandler {
             swarmMissilesLeft = wtype.getRackSize();
         }
         swarmMissilesNowLeft = swarmMissilesLeft - missilesHit;
-        r = new Report(3325);
+        Report r = new Report(3325);
         r.subject = subjectId;
         r.add(missilesHit);
         r.add(sSalvoType);

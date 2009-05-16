@@ -99,7 +99,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself
-                r = new Report(3121);
+                Report r = new Report(3121);
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
@@ -130,22 +130,16 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return true;
         }
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();
-        final Targetable target = aaa.getTarget(game);
         final Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
         boolean isFlak = target instanceof VTOL;
         Entity bestSpotter = null;
-        Entity ae = game.getEntity(aaa.getEntityId());
-        if (ae == null) {
-            ae = game.getOutOfGameEntity(aaa.getEntityId());
-        }
-        //TODO: Fix null pointer exception
         if(ae == null) {
             System.err.println("Artillery Entity is null!");
             return true;
         }
-        Mounted ammo = ae.getEquipment(aaa.getAmmoId());
-        final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
+        Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
+        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {
             // fetch possible spotters now
@@ -189,16 +183,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         // Is the attacker still alive and we're not shooting FLAK?
         // then adjust the target
-        Entity artyAttacker = aaa.getEntity(game);
-        if ((null != artyAttacker) && !isFlak) {
-
-            // Get the arty weapon.
-            Mounted weapon = artyAttacker.getEquipment(aaa.getWeaponId());
+        if ((null != ae) && !isFlak) {
 
             // If the shot hit the target hex, then all subsequent
             // fire will hit the hex automatically.
             if (roll >= toHit.getValue()) {
-                artyAttacker.aTracker.setModifier(weapon,
+                ae.aTracker.setModifier(weapon,
                         TargetRoll.AUTOMATIC_SUCCESS, targetPos);
 
                 game.getBoard().addSpecialHexDisplay(targetPos,
@@ -214,7 +204,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // If the shot missed, but was adjusted by a
             // spotter, future shots are more likely to hit.
             else if (null != bestSpotter) {
-                artyAttacker.aTracker.setModifier(weapon, artyAttacker.aTracker
+                ae.aTracker.setModifier(weapon, ae.aTracker
                         .getModifier(weapon, targetPos) - 1, targetPos);
 
                 game.getBoard().addSpecialHexDisplay(targetPos,
@@ -231,7 +221,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         } // End artyAttacker-alive
 
         // Report weapon attack and its to-hit value.
-        r = new Report(3120);
+        Report r = new Report(3120);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
@@ -385,7 +375,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
-            server.deliverArtilleryInferno(coords, artyAttacker, subjectId, vPhaseReport);
+            server.deliverArtilleryInferno(coords, ae, subjectId, vPhaseReport);
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
@@ -426,8 +416,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             }
         }
 
-        server.artilleryDamageArea(coords, artyAttacker.getPosition(), atype,
-                subjectId, artyAttacker, isFlak, altitude, mineClear, vPhaseReport);
+        server.artilleryDamageArea(coords, ae.getPosition(), atype,
+                subjectId, ae, isFlak, altitude, mineClear, vPhaseReport);
 
         //artillery may unintentially clear minefields, but only if it wasn't trying to
         if(!mineClear && game.containsMinefield(coords)) {
@@ -435,7 +425,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if(server.clearMinefield(mf, artyAttacker, 10, vPhaseReport)) {
+                if(server.clearMinefield(mf, ae, 10, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }

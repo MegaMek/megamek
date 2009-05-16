@@ -42,6 +42,7 @@ public class AutoGrenadeLauncherHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             int toReturn = (int) Math.ceil(((double) Compute.d6()) / 2);
@@ -50,7 +51,7 @@ public class AutoGrenadeLauncherHandler extends WeaponHandler {
             if (bDirect)
                 toReturn += toHit.getMoS()/3;
             return toReturn;
-        } else
-            return super.calcDamagePerHit();
+        }
+        return super.calcDamagePerHit();
     }
 }

@@ -48,6 +48,7 @@ public class BayWeaponHandler extends WeaponHandler {
      * 
      * @return an <code>int</code> representing the attack value at that range.
      */
+    @Override
     protected int calcAttackValue() {
         int distance = ae.getPosition().distance(target.getPosition());
         double av = 0;
@@ -72,6 +73,7 @@ public class BayWeaponHandler extends WeaponHandler {
         return (int)Math.ceil(av);
     }
     
+    @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if(game.getOptions().booleanOption("heat_by_bay")) {

@@ -41,6 +41,7 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new VariableSpeedPulseLaserWeaponHandler(toHit, waa, game, server);
@@ -51,6 +52,7 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
      * (non-Javadoc)
      * @see megamek.common.WeaponType#getDamage(int)
      */
+    @Override
     public int getDamage(int range) {
         if ( range <= shortRange )
             return damageShort;

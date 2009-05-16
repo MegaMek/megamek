@@ -46,6 +46,7 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
+    @Override
     protected int calcnCluster() {
         return Integer.MAX_VALUE;
     }
@@ -55,6 +56,7 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         return 1;
     }

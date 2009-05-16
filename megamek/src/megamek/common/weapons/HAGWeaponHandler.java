@@ -23,7 +23,6 @@ import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -38,8 +37,6 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
      *
      */
     private static final long serialVersionUID = -8193801876308832102L;
-
-    Mounted ammo;
 
     /**
      * @param t
@@ -124,7 +121,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
         } else {
             nHits = Compute.missilesHit(wtype.getRackSize(), nHitsModifier);
         }
-        r = new Report(3325);
+        Report r = new Report(3325);
         r.subject = subjectId;
         r.add(nHits);
         r.add(" projectiles ");

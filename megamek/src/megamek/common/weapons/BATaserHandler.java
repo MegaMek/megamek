@@ -31,16 +31,10 @@ import megamek.server.Server;
 
 public class BATaserHandler extends AmmoWeaponHandler {
 
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1308895663099714573L;
 
-    /**
-     * Used for deserialization. DO NOT USE OTHERWISE.
-     */
     protected BATaserHandler() {
+        //deserialization only
     }
 
     /**
@@ -60,57 +54,38 @@ public class BATaserHandler extends AmmoWeaponHandler {
      */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget, boolean bMissed) {
+            Entity entityTarget) {
         boolean done = false;
         if (bMissed) {
-
+            return done;
         }
-        else {
-            Report r = new Report(3700);
-            int roll = Compute.d6(2);
-            r.add(roll);
-            r.newlines = 0;
-            vPhaseReport.add(r);
-            if (entityTarget instanceof BattleArmor) {
-                if (roll >= 9) {
-                    r = new Report(3706);
-                    r.addDesc(entityTarget);
-                    // shut down for rest of scenario, so we actually kill it
-                    // TODO: fix for salvage purposes
-                    HitData targetTrooper = entityTarget.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                    r.add(entityTarget.getLocationAbbr(targetTrooper));
-                    vPhaseReport.add(r);
-                    vPhaseReport.addAll(server.criticalEntity(ae, targetTrooper.getLocation(), 0, false, false));
-                    done = true;
-                }
-            } else if (entityTarget instanceof Mech) {
-                if (((Mech)entityTarget).isIndustrial()) {
-                    if (roll >= 11) {
-                        entityTarget.baTaserShutdown(3);
-                    } else {
-                        // suffer +1 to piloting and gunnery for 3 rounds
-                        entityTarget.setTaserInterference(1, 3);
-                    }
+        Report r = new Report(3700);
+        int taserRoll = Compute.d6(2);
+        r.add(taserRoll);
+        r.newlines = 0;
+        vPhaseReport.add(r);
+        if (entityTarget instanceof BattleArmor) {
+            if (taserRoll >= 9) {
+                r = new Report(3706);
+                r.addDesc(entityTarget);
+                // shut down for rest of scenario, so we actually kill it
+                // TODO: fix for salvage purposes
+                HitData targetTrooper = entityTarget.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                r.add(entityTarget.getLocationAbbr(targetTrooper));
+                vPhaseReport.add(r);
+                vPhaseReport.addAll(server.criticalEntity(ae, targetTrooper.getLocation(), 0, false, false));
+                done = true;
+            }
+        } else if (entityTarget instanceof Mech) {
+            if (((Mech)entityTarget).isIndustrial()) {
+                if (taserRoll >= 11) {
+                    entityTarget.baTaserShutdown(3);
                 } else {
-                    if (roll >= 12) {
-                        r = new Report(3705);
-                        r.addDesc(entityTarget);
-                        r.add(3);
-                        vPhaseReport.add(r);
-                        entityTarget.baTaserShutdown(3);
-                    } else {
-                        r = new Report(3710);
-                        r.addDesc(entityTarget);
-                        r.add(1);
-                        r.add(3);
-                        vPhaseReport.add(r);
-                        entityTarget.setTaserInterference(1, 3);
-                    }
+                    // suffer +1 to piloting and gunnery for 3 rounds
+                    entityTarget.setTaserInterference(1, 3);
                 }
-            } else if ((entityTarget instanceof Protomech)
-                    || (entityTarget instanceof Tank)
-                    || (entityTarget instanceof Aero)) {
-                if (roll >= 11) {
+            } else {
+                if (taserRoll >= 12) {
                     r = new Report(3705);
                     r.addDesc(entityTarget);
                     r.add(3);
@@ -125,25 +100,42 @@ public class BATaserHandler extends AmmoWeaponHandler {
                     entityTarget.setTaserInterference(1, 3);
                 }
             }
-            roll = Compute.d6(2);
-            r = new Report(3715);
-            r.addDesc(ae);
-            r.add(roll);
-            r.newlines = 0;
-            r.indent(2);
-            vPhaseReport.add(r);
-            if (roll >= 7) {
-                r = new Report(3720);
+        } else if ((entityTarget instanceof Protomech)
+                || (entityTarget instanceof Tank)
+                || (entityTarget instanceof Aero)) {
+            if (taserRoll >= 11) {
+                r = new Report(3705);
+                r.addDesc(entityTarget);
+                r.add(3);
                 vPhaseReport.add(r);
-                // +1 to-hit for 3 turns
-                ae.setTaserFeedback(3);
+                entityTarget.baTaserShutdown(3);
             } else {
-                r = new Report(3725);
+                r = new Report(3710);
+                r.addDesc(entityTarget);
+                r.add(1);
+                r.add(3);
                 vPhaseReport.add(r);
-                // kill the firing trooper
-                // TODO: should just be shut down for remainder of scenario
-                vPhaseReport.addAll(server.criticalEntity(ae, weapon.getLocation(), 0, false, false));
+                entityTarget.setTaserInterference(1, 3);
             }
+        }
+        taserRoll = Compute.d6(2);
+        r = new Report(3715);
+        r.addDesc(ae);
+        r.add(taserRoll);
+        r.newlines = 0;
+        r.indent(2);
+        vPhaseReport.add(r);
+        if (taserRoll >= 7) {
+            r = new Report(3720);
+            vPhaseReport.add(r);
+            // +1 to-hit for 3 turns
+            ae.setTaserFeedback(3);
+        } else {
+            r = new Report(3725);
+            vPhaseReport.add(r);
+            // kill the firing trooper
+            // TODO: should just be shut down for remainder of scenario
+            vPhaseReport.addAll(server.criticalEntity(ae, weapon.getLocation(), 0, false, false));
         }
         return done;
     }

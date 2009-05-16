@@ -48,6 +48,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
      * be ok to use the ammo here
      * @return an <code>int</code> representing the attack value at that range.
      */
+    @Override
     protected int calcAttackValue() {
 
         int distance = ae.getPosition().distance(target.getPosition());
@@ -114,7 +115,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
      * TODO: it might be better to have unique weapon handlers 
      * for these by bay, but I am lazy
      */   
-    protected double updateAVforAmmo(double current_av, AmmoType atype, WeaponType wtype, int range, int wId) {     
+    protected double updateAVforAmmo(double current_av, AmmoType atype, WeaponType bayWType, int range, int wId) {     
         
         //check for artemisIV
         Mounted mLinker = weapon.getLinkedBy();
@@ -148,7 +149,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
         }
         else if (AmmoType.T_ATM == atype.getAmmoType()) {
             if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
-                current_av = wtype.getExtAV()/2;                       
+                current_av = bayWType.getExtAV()/2;                       
             } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
                 current_av = 1.5 * current_av;
                 if(range > WeaponType.RANGE_SHORT) {

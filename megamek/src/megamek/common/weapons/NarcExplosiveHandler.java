@@ -52,6 +52,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
@@ -64,16 +65,16 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         }
         bSalvo = true;
         if (ae instanceof BattleArmor) {
-            if (amsEnganged)
+            if (amsEnganged) {
                 return Compute.missilesHit(((BattleArmor) ae)
-                        .getShootingStrength(), -2);
-            else
-                return Compute.missilesHit(((BattleArmor) ae)
-                        .getShootingStrength());
+                        .getShootingStrength(), -2); 
+            }
+            return Compute.missilesHit(((BattleArmor) ae)
+                    .getShootingStrength());
         }
 
         if (amsEnganged) {
-            r = new Report(3235);
+            Report r = new Report(3235);
             r.subject = subjectId;
             vPhaseReport.add(r);
             r = new Report(3230);
@@ -101,6 +102,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
+    @Override
     protected int calcnCluster() {
         return 1;
     }
@@ -110,6 +112,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         AmmoType atype = (AmmoType) ammo.getType();
         double toReturn;

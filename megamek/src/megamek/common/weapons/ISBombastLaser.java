@@ -67,6 +67,7 @@ public class ISBombastLaser extends LaserWeapon {
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new BombastLaserWeaponHandler(toHit, waa, game, server);

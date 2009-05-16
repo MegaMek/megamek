@@ -22,6 +22,7 @@ import java.util.Vector;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Report;
+import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -50,29 +51,29 @@ public class StopSwarmAttackHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
+    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         Entity entityTarget = (Entity) target;
         // ... but only as their *only* attack action.
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-            r = new Report(3105);
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            Report r = new Report(3105);
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        } else {
-            // swarming ended succesfully
-            r = new Report(3110);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-            // Only apply the "stop swarm 'attack'" to the swarmed Mek.
-            if (ae.getSwarmTargetId() != target.getTargetId()) {
-                Entity other = game.getEntity(ae.getSwarmTargetId());
-                other.setSwarmAttackerId(Entity.NONE);
-            } else {
-                entityTarget.setSwarmAttackerId(Entity.NONE);
-            }
-            ae.setSwarmTargetId(Entity.NONE);
-            return false;
         }
+        // swarming ended succesfully
+        Report r = new Report(3110);
+        r.subject = subjectId;
+        vPhaseReport.addElement(r);
+        // Only apply the "stop swarm 'attack'" to the swarmed Mek.
+        if (ae.getSwarmTargetId() != target.getTargetId()) {
+            Entity other = game.getEntity(ae.getSwarmTargetId());
+            other.setSwarmAttackerId(Entity.NONE);
+        } else {
+            entityTarget.setSwarmAttackerId(Entity.NONE);
+        }
+        ae.setSwarmTargetId(Entity.NONE);
+        return false;
     }
 }

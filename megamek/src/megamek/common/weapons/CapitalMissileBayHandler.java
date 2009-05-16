@@ -44,6 +44,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         super(t, w, g, s);
     }
  
+    @Override
     protected int getCapMisMod() {
         int mod = 0;
         for(int wId: weapon.getBayWeapons()) {
@@ -85,6 +86,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     /**
      * Insert any additionaly attacks that should occur before this attack
      */
+    @Override
     protected void insertAttacks(IGame.Phase phase, Vector<Report> vPhaseReport) {
         for(int wId: insertedAttacks) {
             Mounted bayW = ae.getEquipment(wId);

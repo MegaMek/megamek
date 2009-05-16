@@ -59,9 +59,10 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
      *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
+            int bldgAbsorbs) {
         if (entityTarget instanceof Mech
                 && game.getOptions().booleanOption("flamer_heat")) {
 
@@ -72,7 +73,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                     .getCover(), Compute.targetSideTable(ae, entityTarget))) {
                 // Weapon strikes Partial Cover.
-                r = new Report(3460);
+                Report r = new Report(3460);
                 r.subject = subjectId;
                 r.add(entityTarget.getShortName());
                 r.add(entityTarget.getLocationAbbr(hit));
@@ -85,7 +86,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
 
             // heat
             int heat = wtype.getHeat();
-            r = new Report(3400);
+            Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
             r.add(heat);
@@ -95,7 +96,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
             entityTarget.heatBuildup += heat;
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, nDamPerHit, bldgAbsorbs);
+                    nCluster, bldgAbsorbs);
         }
     }
 
@@ -104,6 +105,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         double toReturn;
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
@@ -132,6 +134,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
      *         attack needs further calculating, like a missed shot hitting a
      *         building, or an AMS only shooting down some missiles.
      */
+    @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
         // Shots that miss an entity can set fires.
@@ -154,11 +157,12 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
         return true;
     }
     
+    @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
-            Building bldg, boolean bSalvo, int hits) {
+            Building bldg, int hits) {
         if (!bSalvo) {
             // hits!
-            r = new Report(2270);
+            Report r = new Report(2270);
             r.subject = subjectId;
             r.newlines = 0;
             vPhaseReport.addElement(r);
@@ -171,17 +175,18 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
         }
     }
     
+    @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, boolean bSalvo) {
+            Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
-            r = new Report(2270);
+            Report r = new Report(2270);
             r.subject = subjectId;
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
         // report that damage was "applied" to terrain
-        r = new Report(3385);
+        Report r = new Report(3385);
         r.indent();
         r.subject = subjectId;
         r.add(nDamage);

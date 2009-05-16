@@ -48,9 +48,10 @@ public class SwarmAttackHandler extends WeaponHandler {
         generalDamageType = HitData.DAMAGE_NONE;
     }
 
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
+            int bldgAbsorbs) {
         Report r;
         // Is the target already swarmed?
         if (Entity.NONE != entityTarget.getSwarmAttackerId()) {
@@ -79,6 +80,7 @@ public class SwarmAttackHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         return 1;
     }

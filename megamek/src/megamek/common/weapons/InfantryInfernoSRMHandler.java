@@ -25,6 +25,7 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Report;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -55,10 +56,11 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         int troopersHit = Compute.missilesHit(((Infantry) ae)
                 .getShootingStrength());
-        r = new Report(3325);
+        Report r = new Report(3325);
         r.subject = subjectId;
         r.add(troopersHit);
         r.add(" trooper(s) ");
@@ -73,6 +75,7 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#handle(int, java.util.Vector)
      */
+    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         if (!this.cares(phase)) {
             return true;
@@ -86,7 +89,7 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // Report weapon attack and its to-hit value.
-        r = new Report(3115);
+        Report r = new Report(3115);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
@@ -98,19 +101,19 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
             r.add(target.getDisplayName(), true);
         }
         vPhaseReport.addElement(r);
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;

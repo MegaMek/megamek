@@ -132,7 +132,7 @@ public class LBXHandler extends AmmoWeaponHandler {
         }
 
 
-        r = new Report(3325);
+        Report r = new Report(3325);
         r.subject = subjectId;
         r.add(shotsHit);
         r.add(" pellet(s) ");

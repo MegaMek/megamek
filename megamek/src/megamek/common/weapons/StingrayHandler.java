@@ -39,6 +39,7 @@ public class StingrayHandler extends AmmoWeaponHandler {
         super(t, w, g, s);
     }
     
+    @Override
     protected int getCapMisMod() {
         return 12;
     }

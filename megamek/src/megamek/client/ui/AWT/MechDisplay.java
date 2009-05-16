@@ -120,7 +120,7 @@ public class MechDisplay extends BufferedPanel {
     public WeaponPanel wPan;
     public SystemPanel sPan;
     public ExtraPanel ePan;
-    private ClientGUI clientgui;
+    ClientGUI clientgui;
 
     private Entity currentlyDisplaying = null;
     private Vector<MechDisplayListener> eventListeners = new Vector<MechDisplayListener>();

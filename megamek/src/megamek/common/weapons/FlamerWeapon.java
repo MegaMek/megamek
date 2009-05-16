@@ -37,8 +37,8 @@ public abstract class FlamerWeapon extends EnergyWeapon {
         super();
         flags |= F_FLAMER;
         ammoType = AmmoType.T_NA;
-        String modes[] = { "Damage", "Heat" };
-        setModes(modes);
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
 
         atClass = CLASS_POINT_DEFENSE;
     }
@@ -47,8 +47,7 @@ public abstract class FlamerWeapon extends EnergyWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode().equals("Heat"))) {
             return new FlamerHeatHandler(toHit, waa, game, server);
-        } else {
-            return new FlamerHandler(toHit, waa, game, server);
         }
+        return new FlamerHandler(toHit, waa, game, server);
     }
 }

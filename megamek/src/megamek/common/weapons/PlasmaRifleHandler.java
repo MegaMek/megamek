@@ -54,13 +54,14 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
      *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
+            int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                nCluster, nDamPerHit, bldgAbsorbs);
+                nCluster, bldgAbsorbs);
         if (!missed && entityTarget instanceof Mech) {
-            r = new Report(3400);
+            Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
             int extraHeat = Compute.d6();
@@ -77,6 +78,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         if (target instanceof Mech) {
             int toReturn = 10;
@@ -87,9 +89,8 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 toReturn -= 1;
             }
             return toReturn;
-        } else {
-            return 1;
         }
+        return 1;
     }
 
     /*
@@ -97,23 +98,23 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
+    @Override
     protected int calcnCluster() {
         if (target instanceof Mech) {
             bSalvo = false;
             return 1;
-        } else {
-            int toReturn = 5;
-            if (target instanceof Infantry && !(target instanceof BattleArmor))
-                toReturn = Compute.d6(2);
-            bSalvo = true;
-            // pain shunted infantry get half damage
-            if (target instanceof Infantry
-                    && ((Entity) target).getCrew().getOptions().booleanOption(
-                            "pain_shunt")) {
-                toReturn = Math.max(toReturn / 2, 1);
-            }
-            return toReturn;
         }
+        int toReturn = 5;
+        if (target instanceof Infantry && !(target instanceof BattleArmor))
+            toReturn = Compute.d6(2);
+        bSalvo = true;
+        // pain shunted infantry get half damage
+        if (target instanceof Infantry
+                && ((Entity) target).getCrew().getOptions().booleanOption(
+                        "pain_shunt")) {
+            toReturn = Math.max(toReturn / 2, 1);
+        }
+        return toReturn;
     }
 
     /*
@@ -121,6 +122,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
+    @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         int toReturn;
         // against mechs, 1 hit with 10 damage, plus heat
@@ -146,6 +148,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      *         attack needs further calculating, like a missed shot hitting a
      *         building, or an AMS only shooting down some missiles.
      */
+    @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
         // Shots that miss an entity can set fires.
@@ -168,11 +171,12 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         return true;
     }
     
+    @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
-            Building bldg, boolean bSalvo, int hits) {
+            Building bldg, int hits) {
         if (!bSalvo) {
             // hits!
-            r = new Report(2270);
+            Report r = new Report(2270);
             r.subject = subjectId;
             r.newlines = 0;
             vPhaseReport.addElement(r);
@@ -185,17 +189,18 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         }
     }
     
+    @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, boolean bSalvo) {
+            Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
-            r = new Report(2270);
+            Report r = new Report(2270);
             r.subject = subjectId;
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
         // report that damage was "applied" to terrain
-        r = new Report(3385);
+        Report r = new Report(3385);
         r.indent();
         r.subject = subjectId;
         r.add(nDamage);

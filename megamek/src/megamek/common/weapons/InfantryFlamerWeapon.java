@@ -48,8 +48,8 @@ public class InfantryFlamerWeapon extends InfantryWeapon {
         // Flamer (man-portable), TM p. 319
         this.bv = 0.36;
         this.flags |= F_DIRECT_FIRE | F_FLAMER | F_ENERGY;
-        String modes[] = { "Damage", "Heat" };
-        this.setModes(modes);
+        String[] modeStrings = { "Damage", "Heat" };
+        this.setModes(modeStrings);
     }
 
     /*
@@ -58,6 +58,7 @@ public class InfantryFlamerWeapon extends InfantryWeapon {
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId())

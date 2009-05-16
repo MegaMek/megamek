@@ -49,6 +49,7 @@ public class RACHandler extends UltraWeaponHandler {
      * 
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
+    @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         boolean jams = false;
         switch (howManyShots) {
@@ -73,7 +74,7 @@ public class RACHandler extends UltraWeaponHandler {
                 break;
         }
         if (jams) {
-            r = new Report(3160);
+            Report r = new Report(3160);
             r.subject = subjectId;
             r.add(" shot(s)");
             vPhaseReport.addElement(r);
@@ -88,6 +89,7 @@ public class RACHandler extends UltraWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
+    @Override
     protected void useAmmo() {
         int actualShots;
         setDone();
@@ -136,10 +138,12 @@ public class RACHandler extends UltraWeaponHandler {
         ammo.setShotsLeft(ammo.getShotsLeft() - shotsNeedFiring);
     }
     
+    @Override
     protected boolean usesClusterTable() {
         return true;
     }
     
+    @Override
     protected boolean canDoDirectBlowDamage(){
         return false;
     }

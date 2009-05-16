@@ -60,6 +60,7 @@ public class MGHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         if (weapon.isRapidfire() && !(target instanceof Infantry && !(target instanceof BattleArmor))) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
@@ -91,6 +92,7 @@ public class MGHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
+    @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (weapon.isRapidfire()) {
@@ -106,9 +108,10 @@ public class MGHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
+    @Override
     protected void reportMiss(Vector<Report> vPhaseReport) {
         // Report the miss
-        r = new Report(3220);
+        Report r = new Report(3220);
         r.subject = subjectId;
         if (weapon.isRapidfire()) {
             r.messageId = 3225;
@@ -122,6 +125,7 @@ public class MGHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
+    @Override
     protected void useAmmo() {
         if (weapon.isRapidfire()) {
 

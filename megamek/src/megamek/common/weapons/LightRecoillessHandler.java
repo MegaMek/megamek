@@ -49,6 +49,7 @@ public class LightRecoillessHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
+    @Override
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             int toReturn = Compute.d6();
@@ -57,7 +58,7 @@ public class LightRecoillessHandler extends WeaponHandler {
             if (bDirect)
                 toReturn += toHit.getMoS()/3;
             return toReturn;
-        } else
-            return super.calcDamagePerHit();
+        }
+        return super.calcDamagePerHit();
     }
 }

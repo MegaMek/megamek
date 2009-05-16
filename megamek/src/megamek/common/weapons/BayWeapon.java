@@ -37,6 +37,7 @@ public abstract class BayWeapon extends Weapon {
         super();
     }
 
+    @Override
     public AttackHandler fire(WeaponAttackAction waa, IGame game, Server server) {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
@@ -50,6 +51,7 @@ public abstract class BayWeapon extends Weapon {
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
+    @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new BayWeaponHandler(toHit, waa, game, server);

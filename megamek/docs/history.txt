@@ -12,6 +12,7 @@ v0.35.1-dev (SVN)
 + Bug 2790142: Talon weight
 + Bug: Talons BV should be the extra damage they do in a kick attack
 + re-implemented escape and ctrl-enter for swing gui
++ Prevent ConcurrentModificationExceptions in the server networking
 
 v0.35.0 (2009-05-09, 18:02 UTC+2)
 + Patch 2604166: Battlemech Partial Wing

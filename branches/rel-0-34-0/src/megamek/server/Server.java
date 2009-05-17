@@ -428,7 +428,8 @@ public class Server implements Runnable {
      * clients have connected
      */
     public void resetConnections() {
-        for (IConnection conn : connections) {
+        for (Enumeration<IConnection> connEnum = connections.elements();connEnum.hasMoreElements();) {
+            IConnection conn = connEnum.nextElement();
             send(conn.getId(), new Packet(Packet.COMMAND_RESET_CONNECTION));
         }
     }
@@ -501,21 +502,25 @@ public class Server implements Runnable {
         }
 
         // kill pending connnections
-        for (IConnection conn : connectionsPending) {
+        for (Enumeration<IConnection> connEnum = connectionsPending.elements();connEnum.hasMoreElements();) {
+            IConnection conn = connEnum.nextElement();
             conn.close();
         }
         connectionsPending.removeAllElements();
 
         // Send "kill" commands to all connections
         // N.B. I may be starting a race here.
-        for (IConnection connection : connections) {
-            send(connection.getId(), new Packet(Packet.COMMAND_CLOSE_CONNECTION));
+        for (Enumeration<IConnection> connEnum = connections.elements();connEnum.hasMoreElements();) {
+            IConnection conn = connEnum.nextElement();
+            send(conn.getId(), new Packet(Packet.COMMAND_CLOSE_CONNECTION));
         }
 
         // kill active connnections
-        for (IConnection conn : connections) {
+        for (Enumeration<IConnection> connEnum = connections.elements();connEnum.hasMoreElements();) {
+            IConnection conn = connEnum.nextElement();
             conn.close();
         }
+
         connections.removeAllElements();
         connectionIds.clear();
         System.out.flush();
@@ -20997,7 +21002,8 @@ public class Server implements Runnable {
         if (connections == null) {
             return;
         }
-        for (IConnection conn : connections) {
+        for (Enumeration<IConnection> connEnum = connections.elements();connEnum.hasMoreElements();) {
+            IConnection conn = connEnum.nextElement();
             conn.send(packet);
         }
     }
@@ -21014,7 +21020,8 @@ public class Server implements Runnable {
             return;
         }
 
-        for (IConnection conn : connections) {
+        for (Enumeration<IConnection> connEnum = connections.elements();connEnum.hasMoreElements();) {
+            IConnection conn = connEnum.nextElement();
             Player p = game.getPlayer(conn.getId());
             Packet packet;
             if (tacticalGeniusReport) {

@@ -30,8 +30,6 @@ import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -86,11 +84,8 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
-public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener,
-        KeyListener {
-    /**
-     *
-     */
+public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener {
+
     private static final long serialVersionUID = 3913466735610109147L;
 
     // Action commands.
@@ -106,71 +101,43 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     // A menu bar to contain all actions.
     protected CommonMenuBar menuBar;
-
     private CommonAboutDialog about;
-
     private CommonHelpDialog help;
-
     private CommonSettingsDialog setdlg;
-
     private String helpFileName = "readme.txt"; //$NON-NLS-1$
 
     // keep me
     ChatterBox cb;
-
     public IBoardView bv;
-
     private Component bvc;
-
     public JDialog mechW;
-
     public MechDisplay mechD;
-
     public JDialog minimapW;
-
     public MiniMap minimap;
-
     private MapMenu popup;// = new JPopupMenu(Messages.getString("ClientGUI.BoardPopup"));
-
     private UnitOverview uo;
-
     private Ruler ruler; // added by kenn
-
     protected JComponent curPanel;
-
     public ChatLounge chatlounge;
 
     // some dialogs...
     BoardSelectionDialog boardSelectionDialog;
-
     GameOptionsDialog gameOptionsDialog;
-
     private MechSelectorDialog mechSelectorDialog;
-
     private CustomBattleArmorDialog customBADialog;
-
     private CustomFighterSquadronDialog customFSDialog;
-
     private StartingPositionDialog startingPositionDialog;
-
     private PlayerListDialog playerListDialog;
-
     private RandomArmyDialog randomArmyDialog;
-
     private RandomSkillDialog randomSkillDialog;
-
     private CustomInitiativeDialog initDialog;
-
     private PlanetaryConditionsDialog conditionsDialog;
-
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
      */
     private JFileChooser dlgLoadList;
-
     private JFileChooser dlgSaveList;
-
-    Client client;
+    private Client client;
 
     /**
      * Cache for the "bing" soundclip.
@@ -263,15 +230,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-    public void keyPressed(KeyEvent ke) {
-    }
-
-    public void keyTyped(KeyEvent ke) {
-    }
-
-    public void keyReleased(KeyEvent ke) {
     }
 
     /**
@@ -368,7 +326,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         layoutFrame();
         frame.setVisible(true);
         menuBar.addActionListener(this);
-        frame.addKeyListener(this);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -383,7 +340,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         uo = new UnitOverview(this);
         bv.addDisplayable(uo);
-        bv.addKeyListener(this);
         Dimension screenSize = frame.getToolkit().getScreenSize();
         int x;
         int y;
@@ -406,7 +362,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         mechW.setSize(w, h);
         mechW.setResizable(true);
         mechW.addWindowListener(this);
-        mechW.addKeyListener(this);
         mechD = new MechDisplay(this);
         mechD.addMechDisplayListener(bv);
         mechW.add(mechD);
@@ -439,7 +394,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message1") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
         }
-        minimap.addKeyListener(this);
         h = minimap.getSize().height;
         w = minimap.getSize().width;
         if (((x + 10) >= screenSize.width) || ((x + w) < 10)) {
@@ -450,7 +404,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         minimapW.setLocation(x, y);
         minimapW.addWindowListener(this);
-        minimapW.addKeyListener(this);
         minimapW.add(minimap);
         cb = new ChatterBox(this);
         add(cb.getComponent(), BorderLayout.SOUTH);
@@ -866,7 +819,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             panSecondary.add(secondary, component);
             break;
         case PHASE_INITIATIVE_REPORT:
-            component = new ReportDisplay(client);
+            component = new ReportDisplay(this);
             main = "ReportDisplay"; //$NON-NLS-1$
             secondary = main;
             panMain.add(main, component);
@@ -1162,9 +1115,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     // WindowListener
     //
     public void windowActivated(WindowEvent windowEvent) {
+        //ignored
     }
 
     public void windowClosed(WindowEvent windowEvent) {
+        //ignored
     }
 
     public void windowClosing(WindowEvent windowEvent) {
@@ -1176,15 +1131,19 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void windowDeactivated(WindowEvent windowEvent) {
+        //ignored
     }
 
     public void windowDeiconified(WindowEvent windowEvent) {
+        //ignored
     }
 
     public void windowIconified(WindowEvent windowEvent) {
+        //ignored
     }
 
     public void windowOpened(WindowEvent windowEvent) {
+        //ignored
     }
 
     /**
@@ -1247,11 +1206,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             // better one without making massive changes (which didn't seem
             // worth it for one little feature).
             if (bv.getLocalPlayer() == null) {
-                bv.setLocalPlayer(client.getLocalPlayer());
+                bv.setLocalPlayer(getClient().getLocalPlayer());
             }
 
             // Swap to this phase's panel.
-            switchPanel(client.game.getPhase());
+            switchPanel(getClient().game.getPhase());
 
             // Handle phase-specific items.
             switch (e.getNewPhase()) {
@@ -1287,7 +1246,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 break;
             default:
             }
-            menuBar.setPhase(client.game.getPhase());
+            menuBar.setPhase(getClient().game.getPhase());
             cb.getComponent().setVisible(true);
             validate();
             doLayout();
@@ -1314,19 +1273,19 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             // a player wishes to continue moving after a fall.
             if ((e.getReport() == null) && (curPanel instanceof ReportDisplay)) {
                 // Tactical Genius
-                ((ReportDisplay) curPanel).appendReportTab(client.phaseReport);
+                ((ReportDisplay) curPanel).appendReportTab(getClient().phaseReport);
                 ((ReportDisplay) curPanel).resetReadyButton();
                 // Check if the player deserves an active reroll button
                 // (possible, if he gets one which he didn't use, and his
                 // opponent got and used one) and if so activates it.
-                if (client.game.hasTacticalGenius(client.getLocalPlayer())) {
+                if (getClient().game.hasTacticalGenius(getClient().getLocalPlayer())) {
                     if (!((ReportDisplay) curPanel).hasRerolled()) {
                         ((ReportDisplay) curPanel).resetRerollButton();
                     }
                 }
             } else {
                 // Continued movement after getting up
-                if (!(client instanceof TestBot)) {
+                if (!(getClient() instanceof TestBot)) {
                     doAlertDialog("Movement Report", e.getReport());
                 }
             }
@@ -1341,10 +1300,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             getBots().clear();
 
             // Make a list of the player's living units.
-            ArrayList<Entity> living = client.game.getPlayerEntities(client.getLocalPlayer(), false);
+            ArrayList<Entity> living = getClient().game.getPlayerEntities(getClient().getLocalPlayer(), false);
 
             // Be sure to include all units that have retreated.
-            for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter
+            for (Enumeration<Entity> iter = getClient().game.getRetreatedEntities(); iter
                     .hasMoreElements();) {
                 living.add(iter.nextElement());
             }
@@ -1363,20 +1322,20 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         @Override
         public void gameSettingsChange(GameSettingsChangeEvent e) {
             if ((boardSelectionDialog != null) && boardSelectionDialog.isVisible()) {
-                boardSelectionDialog.update(client.getMapSettings(), true);
+                boardSelectionDialog.update(getClient().getMapSettings(), true);
             }
             if ((gameOptionsDialog != null) && gameOptionsDialog.isVisible()) {
-                gameOptionsDialog.update(client.game.getOptions());
+                gameOptionsDialog.update(getClient().game.getOptions());
             }
             if (curPanel instanceof ChatLounge) {
                 ChatLounge cl = (ChatLounge) curPanel;
-                boolean useMinefields = client.game.getOptions().booleanOption("minefields"); //$NON-NLS-1$
+                boolean useMinefields = getClient().game.getOptions().booleanOption("minefields"); //$NON-NLS-1$
                 cl.enableMinefields(useMinefields);
                 if (!useMinefields) {
-                    client.getLocalPlayer().setNbrMFConventional(0);
-                    client.getLocalPlayer().setNbrMFCommand(0);
-                    client.getLocalPlayer().setNbrMFVibra(0);
-                    client.sendPlayerInfo();
+                    getClient().getLocalPlayer().setNbrMFConventional(0);
+                    getClient().getLocalPlayer().setNbrMFCommand(0);
+                    getClient().getLocalPlayer().setNbrMFVibra(0);
+                    getClient().sendPlayerInfo();
                 }
             }
         }
@@ -1427,24 +1386,31 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void hexCursor(BoardViewEvent b) {
+        //ignored
     }
 
     public void boardHexHighlighted(BoardViewEvent b) {
+        //ignored
     }
 
     public void hexSelected(BoardViewEvent b) {
+        //ignored
     }
 
     public void firstLOSHex(BoardViewEvent b) {
+        //ignored
     }
 
     public void secondLOSHex(BoardViewEvent b, Coords c) {
+        //ignored
     }
 
     public void finishedMovingUnits(BoardViewEvent b) {
+        //ignored
     }
 
     public void unitSelected(BoardViewEvent b) {
+        //ignored
     }
 
 }

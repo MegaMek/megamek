@@ -14,7 +14,15 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -41,7 +49,7 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewListener,
-        GameListener, Distractable {
+        GameListener, Distractable, DoneButtoned {
 
     /**
      * 
@@ -51,6 +59,28 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
     // Distraction implementation.
     protected DistractableAdapter distracted = new DistractableAdapter();
 
+    protected JButton butDone;
+    
+    protected ClientGUI clientgui;
+    
+    protected AbstractPhaseDisplay() {        
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,InputEvent.CTRL_DOWN_MASK),
+        "doneButton");
+
+        getActionMap().put("doneButton", new AbstractAction() {
+            private static final long serialVersionUID = -5034474968902280850L;
+
+            public void actionPerformed(ActionEvent e) {
+                if (isIgnoringEvents()) {
+                    return;
+                }
+                if (clientgui.getClient().isMyTurn() || clientgui.getClient().game.getTurn() == null) {
+                    ready();
+                }
+            }
+        });
+    }
+    
     /**
      * Determine if the listener is currently distracted.
      * 
@@ -77,81 +107,115 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
     // BoardListener
     //
     public void hexMoused(BoardViewEvent b) {
+        //noaction default
     }
 
     public void hexSelected(BoardViewEvent b) {
+        //noaction default
     }
 
     public void hexCursor(BoardViewEvent b) {
+        //noaction default
     }
 
     public void boardHexHighlighted(BoardViewEvent b) {
+        //noaction default
     }
 
     public void firstLOSHex(BoardViewEvent b) {
+        //noaction default
     }
 
     public void secondLOSHex(BoardViewEvent b, Coords c) {
+        //noaction default
     }
 
     public void finishedMovingUnits(BoardViewEvent b) {
+        //noaction default
     }
 
     public void unitSelected(BoardViewEvent b) {
+        //noaction default
     }
 
     // GameListener
     //
 
     public void gamePlayerConnected(GamePlayerConnectedEvent e) {
+        //noaction default
     }
 
     public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
+        //noaction default
     }
 
     public void gamePlayerChange(GamePlayerChangeEvent e) {
+        //noaction default
     }
 
     public void gamePlayerChat(GamePlayerChatEvent e) {
+        //noaction default
     }
 
     public void gamePhaseChange(GamePhaseChangeEvent e) {
+        //noaction default
     }
 
     public void gameTurnChange(GameTurnChangeEvent e) {
+        //noaction default
     }
 
     public void gameReport(GameReportEvent e) {
+        //noaction default
     }
 
     public void gameEnd(GameEndEvent e) {
+        //noaction default
     }
 
     public void gameBoardNew(GameBoardNewEvent e) {
+        //noaction default
     }
 
     public void gameBoardChanged(GameBoardChangeEvent e) {
+        //noaction default
     }
 
     public void gameSettingsChange(GameSettingsChangeEvent e) {
+        //noaction default
     }
 
     public void gameMapQuery(GameMapQueryEvent e) {
+        //noaction default
     }
 
     public void gameEntityNew(GameEntityNewEvent e) {
+        //noaction default
     }
 
     public void gameEntityNewOffboard(GameEntityNewOffboardEvent e) {
+        //noaction default
     }
 
     public void gameEntityRemove(GameEntityRemoveEvent e) {
+        //noaction default
     }
 
     public void gameEntityChange(GameEntityChangeEvent e) {
+        //noaction default
     }
 
     public void gameNewAction(GameNewActionEvent e) {
+        //noaction default
     }
 
+    /**
+     * Retrieve the "Done" button of this object.
+     *
+     * @return the <code>javax.swing.JButton</code> that activates this object's
+     *         "Done" action.
+     */
+    public JButton getDoneButton() {
+        return butDone;
+    }
 }

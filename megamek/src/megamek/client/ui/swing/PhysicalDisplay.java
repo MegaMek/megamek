@@ -23,8 +23,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
@@ -33,7 +31,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.IndexedCheckbox;
@@ -74,8 +71,7 @@ import megamek.common.actions.TripAttackAction;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
-public class PhysicalDisplay extends StatusBarPhaseDisplay implements
-        DoneButtoned, KeyListener {
+public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
     /**
      * 
@@ -98,9 +94,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     public static final String PHYSICAL_EXPLOSIVES = "explosives"; //$NON-NLS-1$
 
     private static final int NUM_BUTTON_LAYOUTS = 2;
-    // parent game
-    ClientGUI clientgui;
-    private Client client;
 
     // buttons
     private JComponent panButtons;
@@ -119,7 +112,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     private JButton butExplosives;
 
     private JButton butNext;
-    private JButton butDone;
     private JButton butMore;
 
     private JButton butSpace;
@@ -139,12 +131,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Creates and lays out a new movement phase display for the specified
-     * client.
+     * clientgui.getClient().
      */
     public PhysicalDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        client = clientgui.getClient();
-        client.game.addGameListener(this);
+        clientgui.getClient().game.addGameListener(this);
 
         clientgui.getBoardView().addBoardViewListener(this);
 
@@ -237,7 +228,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         butSearchlight = new JButton(Messages
                 .getString("FiringDisplay.Searchlight")); //$NON-NLS-1$
         butSearchlight.addActionListener(this);
-        butSearchlight.addKeyListener(this);
         butSearchlight.setActionCommand(PHYSICAL_SEARCHLIGHT);
         butSearchlight.setEnabled(false);
 
@@ -260,7 +250,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
 
         // c.weightx = 1.0; c.weighty = 0;
         // c.gridwidth = 1;
-        // addBag(client.cb.getComponent(), gridbag, c);
+        // addBag(clientgui.getClient().cb.getComponent(), gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;
@@ -271,17 +261,12 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
-
-        clientgui.bv.addKeyListener(this);
-        addKeyListener(this);
-
     }
 
     private void addBag(JComponent comp, GridBagLayout gridbag,
             GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
-        comp.addKeyListener(this);
     }
 
     private void setupButtonPanel() {
@@ -321,7 +306,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Selects an entity, by number, for movement.
      */
     public void selectEntity(int en) {
-        if (client.game.getEntity(en) == null) {
+        if (clientgui.getClient().game.getEntity(en) == null) {
             System.err
                     .println("PhysicalDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
@@ -336,7 +321,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         if (entity instanceof Mech) {
             int grapple = ((Mech) entity).getGrappled();
             if (grapple != Entity.NONE) {
-                Entity t = client.game.getEntity(grapple);
+                Entity t = clientgui.getClient().game.getEntity(grapple);
                 if (t != null) {
                     target(t);
                 }
@@ -386,7 +371,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Does turn start stuff
      */
     private void beginMyTurn() {
-        GameTurn turn = client.getMyTurn();
+        GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for countering break grapple.
         if (turn instanceof GameTurn.CounterGrappleTurn) {
             disableButtons();
@@ -395,7 +380,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
             ready();
         } else {
             target(null);
-            selectEntity(client.getFirstEntityNum());
+            selectEntity(clientgui.getClient().getFirstEntityNum());
             setNextEnabled(true);
             butDone.setEnabled(true);
             butMore.setEnabled(true);
@@ -409,8 +394,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      */
     private void endMyTurn() {
         // end my turn, then.
-        Entity next = client.game.getNextEntity(client.game.getTurnIndex());
-        if (IGame.Phase.PHASE_PHYSICAL == client.game.getPhase()
+        Entity next = clientgui.getClient().game.getNextEntity(clientgui.getClient().game.getTurnIndex());
+        if (IGame.Phase.PHASE_PHYSICAL == clientgui.getClient().game.getPhase()
                 && null != next && null != ce()
                 && next.getOwnerId() != ce().getOwnerId()) {
             clientgui.setDisplayVisible(false);
@@ -447,7 +432,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     /**
      * Called when the current entity is done with physical attacks.
      */
-    private void ready() {
+    public void ready() {
         if (attacks.isEmpty()
                 && GUIPreferences.getInstance().getNagForNoAction()) {
             // comfirm this action
@@ -467,7 +452,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         }
 
         disableButtons();
-        client.sendAttackData(cen, attacks);
+        clientgui.getClient().sendAttackData(cen, attacks);
         attacks.removeAllElements();
         // close aimed shot display, if any
         ash.closeDialog();
@@ -477,14 +462,15 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     /**
      * Clears all current actions
      */
-    private void clearattacks() {
+    @Override
+    protected void clear() {
         if (attacks.size() > 0) {
             attacks.removeAllElements();
         }
         clientgui.mechD.wPan.displayMech(ce());
         updateTarget();
 
-        Entity entity = client.game.getEntity(cen);
+        Entity entity = clientgui.getClient().game.getEntity(cen);
         entity.dodging = true;
     }
 
@@ -492,9 +478,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Punch the target!
      */
     void punch() {
-        final ToHitData leftArm = PunchAttackAction.toHit(client.game, cen,
+        final ToHitData leftArm = PunchAttackAction.toHit(clientgui.getClient().game, cen,
                 target, PunchAttackAction.LEFT);
-        final ToHitData rightArm = PunchAttackAction.toHit(client.game, cen,
+        final ToHitData rightArm = PunchAttackAction.toHit(clientgui.getClient().game, cen,
                 target, PunchAttackAction.RIGHT);
         String title = Messages
                 .getString(
@@ -523,7 +509,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
             boolean rightBladeExtend = false;
             if (ce() instanceof Mech
                     && target instanceof Entity
-                    && clientgui.client.game.getOptions().booleanOption(
+                    && clientgui.getClient().game.getOptions().booleanOption(
                             "tacops_retractable_blades")
                     && leftArm.getValue() != TargetRoll.IMPOSSIBLE
                     && ((Mech) ce()).hasRetractedBlade(Mech.LOC_LARM)) {
@@ -537,7 +523,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
             if (ce() instanceof Mech
                     && target instanceof Entity
                     && rightArm.getValue() != TargetRoll.IMPOSSIBLE
-                    && clientgui.client.game.getOptions().booleanOption(
+                    && clientgui.getClient().game.getOptions().booleanOption(
                             "tacops_retractable_blades")
                     && ((Mech) ce()).hasRetractedBlade(Mech.LOC_RARM)) {
                 rightBladeExtend = clientgui.doYesNoDialog(Messages
@@ -581,7 +567,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
                     "current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
-        if (!SearchlightAttackAction.isPossible(client.game, cen, target, null)) {
+        if (!SearchlightAttackAction.isPossible(clientgui.getClient().game, cen, target, null)) {
             return;
         }
 
@@ -591,7 +577,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         attacks.addElement(saa);
 
         // and add it into the game, temporarily
-        client.game.addAction(saa);
+        clientgui.getClient().game.addAction(saa);
         clientgui.bv.addAttack(saa);
         clientgui.minimap.drawMap();
 
@@ -606,9 +592,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Kick the target!
      */
     void kick() {
-        ToHitData leftLeg = KickAttackAction.toHit(client.game, cen, target,
+        ToHitData leftLeg = KickAttackAction.toHit(clientgui.getClient().game, cen, target,
                 KickAttackAction.LEFT);
-        ToHitData rightLeg = KickAttackAction.toHit(client.game, cen, target,
+        ToHitData rightLeg = KickAttackAction.toHit(clientgui.getClient().game, cen, target,
                 KickAttackAction.RIGHT);
         ToHitData rightRearLeg = null;
         ToHitData leftRearLeg = null;
@@ -623,10 +609,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
             attackSide = KickAttackAction.RIGHT;
             attackLeg = rightLeg;
         }
-        if (client.game.getEntity(cen) instanceof QuadMech) {
-            rightRearLeg = KickAttackAction.toHit(client.game, cen, target,
+        if (clientgui.getClient().game.getEntity(cen) instanceof QuadMech) {
+            rightRearLeg = KickAttackAction.toHit(clientgui.getClient().game, cen, target,
                     KickAttackAction.RIGHTMULE);
-            leftRearLeg = KickAttackAction.toHit(client.game, cen, target,
+            leftRearLeg = KickAttackAction.toHit(clientgui.getClient().game, cen, target,
                     KickAttackAction.LEFTMULE);
             if (value > rightRearLeg.getValue()) {
                 value = rightRearLeg.getValue();
@@ -668,7 +654,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Push that target!
      */
     void push() {
-        ToHitData toHit = PushAttackAction.toHit(client.game, cen, target);
+        ToHitData toHit = PushAttackAction.toHit(clientgui.getClient().game, cen, target);
         String title = Messages
                 .getString(
                         "PhysicalDisplay.PushDialog.title", new Object[] { target.getDisplayName() }); //$NON-NLS-1$
@@ -695,7 +681,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Trip that target!
      */
     void trip() {
-        ToHitData toHit = TripAttackAction.toHit(client.game, cen, target);
+        ToHitData toHit = TripAttackAction.toHit(clientgui.getClient().game, cen, target);
         String title = Messages
                 .getString(
                         "PhysicalDisplay.TripDialog.title", new Object[] { target.getDisplayName() }); //$NON-NLS-1$
@@ -729,7 +715,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void grapple(boolean counter) {
-        ToHitData toHit = GrappleAttackAction.toHit(client.game, cen, target);
+        ToHitData toHit = GrappleAttackAction.toHit(clientgui.getClient().game, cen, target);
         String title = Messages
                 .getString(
                         "PhysicalDisplay.GrappleDialog.title", new Object[] { target.getDisplayName() }); //$NON-NLS-1$
@@ -761,7 +747,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void breakGrapple() {
-        ToHitData toHit = BreakGrappleAttackAction.toHit(client.game, cen,
+        ToHitData toHit = BreakGrappleAttackAction.toHit(clientgui.getClient().game, cen,
                 target);
         String title = Messages
                 .getString(
@@ -790,7 +776,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     public void vibroclawatt() {
         BAVibroClawAttackAction act = new BAVibroClawAttackAction(cen, target
                 .getTargetType(), target.getTargetId());
-        ToHitData toHit = act.toHit(client.game);
+        ToHitData toHit = act.toHit(clientgui.getClient().game);
 
         String title = Messages
                 .getString(
@@ -815,15 +801,15 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         int leg;
         int damage;
         if (ce().isProne()) {
-            toHit = JumpJetAttackAction.toHit(client.game, cen, target,
+            toHit = JumpJetAttackAction.toHit(clientgui.getClient().game, cen, target,
                     JumpJetAttackAction.BOTH);
             leg = JumpJetAttackAction.BOTH;
             damage = JumpJetAttackAction.getDamageFor(ce(),
                     JumpJetAttackAction.BOTH);
         } else {
-            ToHitData left = JumpJetAttackAction.toHit(client.game, cen,
+            ToHitData left = JumpJetAttackAction.toHit(clientgui.getClient().game, cen,
                     target, JumpJetAttackAction.LEFT);
-            ToHitData right = JumpJetAttackAction.toHit(client.game, cen,
+            ToHitData right = JumpJetAttackAction.toHit(clientgui.getClient().game, cen,
                     target, JumpJetAttackAction.RIGHT);
             int d_left = JumpJetAttackAction.getDamageFor(ce(),
                     JumpJetAttackAction.LEFT);
@@ -875,7 +861,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
                                 "PhysicalDisplay.ChooseClubDialog.line",
                                 new Object[] {
                                         club.getName(),
-                                        ClubAttackAction.toHit(client.game,
+                                        ClubAttackAction.toHit(clientgui.getClient().game,
                                                 cen, target, club,
                                                 ash.getAimTable())
                                                 .getValueAsString(),
@@ -910,7 +896,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         if (null == club) {
             return;
         }
-        ToHitData toHit = ClubAttackAction.toHit(client.game, cen, target,
+        ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient().game, cen, target,
                 club, ash.getAimTable());
         String title = Messages
                 .getString(
@@ -945,7 +931,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         if (null == club) {
             return;
         }
-        ToHitData toHit = ClubAttackAction.toHit(client.game, cen, target,
+        ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient().game, cen, target,
                 club, ash.getAimTable());
         String title = Messages
                 .getString(
@@ -977,7 +963,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Make a protomech physical attack on the target.
      */
     private void proto() {
-        ToHitData proto = ProtomechPhysicalAttackAction.toHit(client.game, cen,
+        ToHitData proto = ProtomechPhysicalAttackAction.toHit(clientgui.getClient().game, cen,
                 target);
         String title = Messages
                 .getString(
@@ -1003,7 +989,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void explosives() {
-        ToHitData explo = LayExplosivesAttackAction.toHit(client.game, cen,
+        ToHitData explo = LayExplosivesAttackAction.toHit(clientgui.getClient().game, cen,
                 target);
         String title = Messages
                 .getString(
@@ -1026,9 +1012,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Sweep off the target with the arms that the player selects.
      */
     private void brush() {
-        ToHitData toHitLeft = BrushOffAttackAction.toHit(client.game, cen,
+        ToHitData toHitLeft = BrushOffAttackAction.toHit(clientgui.getClient().game, cen,
                 target, BrushOffAttackAction.LEFT);
-        ToHitData toHitRight = BrushOffAttackAction.toHit(client.game, cen,
+        ToHitData toHitRight = BrushOffAttackAction.toHit(clientgui.getClient().game, cen,
                 target, BrushOffAttackAction.RIGHT);
         boolean canHitLeft = (TargetRoll.IMPOSSIBLE != toHitLeft.getValue());
         boolean canHitRight = (TargetRoll.IMPOSSIBLE != toHitRight.getValue());
@@ -1176,7 +1162,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     void thrash() {
         ThrashAttackAction act = new ThrashAttackAction(cen, target
                 .getTargetType(), target.getTargetId());
-        ToHitData toHit = act.toHit(client.game);
+        ToHitData toHit = act.toHit(clientgui.getClient().game);
 
         String title = Messages
                 .getString(
@@ -1207,7 +1193,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
                         Messages.getString("PhysicalDisplay.DodgeDialog.title"), Messages.getString("PhysicalDisplay.DodgeDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
             disableButtons();
 
-            Entity entity = client.game.getEntity(cen);
+            Entity entity = clientgui.getClient().game.getEntity(cen);
             entity.dodging = true;
 
             DodgeAction act = new DodgeAction(cen);
@@ -1234,24 +1220,24 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         if (cen != Entity.NONE && target != null) {
             if (target.getTargetType() != Targetable.TYPE_INARC_POD) {
                 // punch?
-                final ToHitData leftArm = PunchAttackAction.toHit(client.game,
+                final ToHitData leftArm = PunchAttackAction.toHit(clientgui.getClient().game,
                         cen, target, PunchAttackAction.LEFT);
-                final ToHitData rightArm = PunchAttackAction.toHit(client.game,
+                final ToHitData rightArm = PunchAttackAction.toHit(clientgui.getClient().game,
                         cen, target, PunchAttackAction.RIGHT);
                 boolean canPunch = leftArm.getValue() != TargetRoll.IMPOSSIBLE
                         || rightArm.getValue() != TargetRoll.IMPOSSIBLE;
                 setPunchEnabled(canPunch);
 
                 // kick?
-                ToHitData leftLeg = KickAttackAction.toHit(client.game, cen,
+                ToHitData leftLeg = KickAttackAction.toHit(clientgui.getClient().game, cen,
                         target, KickAttackAction.LEFT);
-                ToHitData rightLeg = KickAttackAction.toHit(client.game, cen,
+                ToHitData rightLeg = KickAttackAction.toHit(clientgui.getClient().game, cen,
                         target, KickAttackAction.RIGHT);
                 boolean canKick = leftLeg.getValue() != TargetRoll.IMPOSSIBLE
                         || rightLeg.getValue() != TargetRoll.IMPOSSIBLE;
-                ToHitData rightRearLeg = KickAttackAction.toHit(client.game,
+                ToHitData rightRearLeg = KickAttackAction.toHit(clientgui.getClient().game,
                         cen, target, KickAttackAction.RIGHTMULE);
-                ToHitData leftRearLeg = KickAttackAction.toHit(client.game,
+                ToHitData leftRearLeg = KickAttackAction.toHit(clientgui.getClient().game,
                         cen, target, KickAttackAction.LEFTMULE);
                 canKick |= (leftRearLeg.getValue() != TargetRoll.IMPOSSIBLE)
                         || (rightRearLeg.getValue() != TargetRoll.IMPOSSIBLE);
@@ -1259,29 +1245,29 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
                 setKickEnabled(canKick);
 
                 // how about push?
-                ToHitData push = PushAttackAction.toHit(client.game, cen,
+                ToHitData push = PushAttackAction.toHit(clientgui.getClient().game, cen,
                         target);
                 setPushEnabled(push.getValue() != TargetRoll.IMPOSSIBLE);
 
                 // how about trip?
-                ToHitData trip = TripAttackAction.toHit(client.game, cen,
+                ToHitData trip = TripAttackAction.toHit(clientgui.getClient().game, cen,
                         target);
                 setTripEnabled(trip.getValue() != TargetRoll.IMPOSSIBLE);
 
                 // how about grapple?
-                ToHitData grap = GrappleAttackAction.toHit(client.game, cen,
+                ToHitData grap = GrappleAttackAction.toHit(clientgui.getClient().game, cen,
                         target);
-                ToHitData bgrap = BreakGrappleAttackAction.toHit(client.game,
+                ToHitData bgrap = BreakGrappleAttackAction.toHit(clientgui.getClient().game,
                         cen, target);
                 setGrappleEnabled(grap.getValue() != TargetRoll.IMPOSSIBLE
                         || bgrap.getValue() != TargetRoll.IMPOSSIBLE);
 
                 // how about JJ?
-                ToHitData jjl = JumpJetAttackAction.toHit(client.game, cen,
+                ToHitData jjl = JumpJetAttackAction.toHit(clientgui.getClient().game, cen,
                         target, JumpJetAttackAction.LEFT);
-                ToHitData jjr = JumpJetAttackAction.toHit(client.game, cen,
+                ToHitData jjr = JumpJetAttackAction.toHit(clientgui.getClient().game, cen,
                         target, JumpJetAttackAction.RIGHT);
-                ToHitData jjb = JumpJetAttackAction.toHit(client.game, cen,
+                ToHitData jjb = JumpJetAttackAction.toHit(clientgui.getClient().game, cen,
                         target, JumpJetAttackAction.BOTH);
                 setJumpJetEnabled(!(jjl.getValue() == TargetRoll.IMPOSSIBLE
                         && jjr.getValue() == TargetRoll.IMPOSSIBLE && jjb
@@ -1293,7 +1279,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
                 for (Mounted club : ce().getClubs()) {
                     if (club != null) {
                         ToHitData clubToHit = ClubAttackAction.toHit(
-                                client.game, cen, target, club, ash
+                                clientgui.getClient().game, cen, target, club, ash
                                         .getAimTable());
                         canClub |= (clubToHit.getValue() != TargetRoll.IMPOSSIBLE);
                         // assuming S7 vibroswords count as swords and maces
@@ -1324,22 +1310,22 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
 
                 // Thrash at infantry?
                 ToHitData thrash = new ThrashAttackAction(cen, target)
-                        .toHit(client.game);
+                        .toHit(clientgui.getClient().game);
                 setThrashEnabled(thrash.getValue() != TargetRoll.IMPOSSIBLE);
 
                 // make a Protomech physical attack?
                 ToHitData proto = ProtomechPhysicalAttackAction.toHit(
-                        client.game, cen, target);
+                        clientgui.getClient().game, cen, target);
                 setProtoEnabled(proto.getValue() != TargetRoll.IMPOSSIBLE);
 
-                ToHitData explo = LayExplosivesAttackAction.toHit(client.game,
+                ToHitData explo = LayExplosivesAttackAction.toHit(clientgui.getClient().game,
                         cen, target);
                 setExplosivesEnabled(explo.getValue() != TargetRoll.IMPOSSIBLE);
             }
             // Brush off swarming infantry or iNarcPods?
-            ToHitData brushRight = BrushOffAttackAction.toHit(client.game, cen,
+            ToHitData brushRight = BrushOffAttackAction.toHit(clientgui.getClient().game, cen,
                     target, BrushOffAttackAction.RIGHT);
-            ToHitData brushLeft = BrushOffAttackAction.toHit(client.game, cen,
+            ToHitData brushLeft = BrushOffAttackAction.toHit(clientgui.getClient().game, cen,
                     target, BrushOffAttackAction.LEFT);
             boolean canBrush = (brushRight.getValue() != TargetRoll.IMPOSSIBLE || brushLeft
                     .getValue() != TargetRoll.IMPOSSIBLE);
@@ -1364,7 +1350,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Returns the current entity.
      */
     Entity ce() {
-        return client.game.getEntity(cen);
+        return clientgui.getClient().game.getEntity(cen);
     }
 
     //
@@ -1382,7 +1368,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
             return;
         }
-        if (client.isMyTurn()
+        if (clientgui.getClient().isMyTurn()
                 && (b.getModifiers() & InputEvent.BUTTON1_MASK) != 0) {
             if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
                 if (!b.getCoords().equals(
@@ -1402,7 +1388,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (client.isMyTurn() && b.getCoords() != null && ce() != null) {
+        if (clientgui.getClient().isMyTurn() && b.getCoords() != null && ce() != null) {
             final Targetable targ = chooseTarget(b.getCoords());
             if (targ != null) {
                 target(targ);
@@ -1424,7 +1410,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         Targetable choice = null;
 
         // Get the available choices.
-        Enumeration<Entity> choices = client.game.getEntities(pos);
+        Enumeration<Entity> choices = clientgui.getClient().game.getEntities(pos);
 
         // Convert the choices into a List of targets.
         Vector<Targetable> targets = new Vector<Targetable>();
@@ -1436,9 +1422,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         }
 
         // Is there a building in the hex?
-        Building bldg = client.game.getBoard().getBuildingAt(pos);
+        Building bldg = clientgui.getClient().game.getBoard().getBuildingAt(pos);
         if (bldg != null) {
-            targets.addElement(new BuildingTarget(pos, client.game.getBoard(),
+            targets.addElement(new BuildingTarget(pos, clientgui.getClient().game.getBoard(),
                     false));
         }
 
@@ -1496,9 +1482,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (client.game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
+        if (clientgui.getClient().game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
 
-            if (client.isMyTurn()) {
+            if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
@@ -1524,12 +1510,12 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (client.isMyTurn()
-                && client.game.getPhase() != IGame.Phase.PHASE_PHYSICAL) {
+        if (clientgui.getClient().isMyTurn()
+                && clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_PHYSICAL) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
-        if (client.game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
+        if (clientgui.getClient().game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
             setStatusBarText(Messages
                     .getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
         }
@@ -1545,11 +1531,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (statusBarActionPerformed(ev, client)) {
+        if (statusBarActionPerformed(ev, clientgui.getClient())) {
             return;
         }
 
-        if (!client.isMyTurn()) {
+        if (!clientgui.getClient().isMyTurn()) {
             // odd...
             return;
         }
@@ -1580,7 +1566,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(PHYSICAL_EXPLOSIVES)) {
             explosives();
         } else if (ev.getActionCommand().equals(PHYSICAL_NEXT)) {
-            selectEntity(client.getNextEntityNum(cen));
+            selectEntity(clientgui.getClient().getNextEntityNum(cen));
         } else if (ev.getActionCommand().equals(PHYSICAL_SEARCHLIGHT)) {
             doSearchlight();
         } else if (ev.getSource() == butMore) {
@@ -1592,33 +1578,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
 
             setupButtonPanel();
         }
-    }
-
-    //
-    // KeyListener
-    //
-    public void keyPressed(KeyEvent ev) {
-
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            clearattacks();
-        } else if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
-            if (client.isMyTurn()) {
-                //
-            }
-        }
-    }
-
-    public void keyReleased(KeyEvent ev) {
-        // ignore
-    }
-
-    public void keyTyped(KeyEvent ev) {
-        // ignore
     }
 
     //
@@ -1637,9 +1596,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        Entity e = client.game.getEntity(b.getEntityId());
-        if (client.isMyTurn()) {
-            if (client.getMyTurn().isValidEntity(e, client.game)) {
+        Entity e = clientgui.getClient().game.getEntity(b.getEntityId());
+        if (clientgui.getClient().isMyTurn()) {
+            if (clientgui.getClient().getMyTurn().isValidEntity(e, clientgui.getClient().game)) {
                 selectEntity(e.getId());
             }
         } else {
@@ -1722,18 +1681,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        client.game.removeGameListener(this);
+        clientgui.getClient().game.removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
-    }
-
-    /**
-     * Retrieve the "Done" button of this object.
-     * 
-     * @return the <code>javax.swing.JButton</code> that activates this object's
-     *         "Done" action.
-     */
-    public JButton getDoneButton() {
-        return butDone;
     }
 
     private class AimedShotHandler implements ActionListener, ItemListener {

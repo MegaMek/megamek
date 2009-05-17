@@ -233,7 +233,7 @@ public class MechDisplay extends JPanel {
      * @param event
      *            the mech display event.
      */
-    private void processMechDisplayEvent(MechDisplayEvent event) {
+    void processMechDisplayEvent(MechDisplayEvent event) {
         for (int i = 0; i < eventListeners.size(); i++) {
             MechDisplayListener lis = eventListeners.get(i);
             switch (event.getType()) {
@@ -307,7 +307,7 @@ public class MechDisplay extends JPanel {
     /**
      * This panel contains the armor readout display.
      */
-    private class ArmorPanel extends PicMap {
+    class ArmorPanel extends PicMap {
         /**
          *
          */
@@ -503,7 +503,7 @@ public class MechDisplay extends JPanel {
     /**
      * This class contains the all the gizmos for firing the mech's weapons.
      */
-    public class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener {
+    class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener {
         /**
          *
          */
@@ -1602,7 +1602,7 @@ public class MechDisplay extends JPanel {
             onResize();
         } // End private void updateRangeDisplayForAmmo( AmmoType )
 
-        private void updateAttackValues(WeaponType wtype, Mounted wAmmo) {
+        private void updateAttackValues(WeaponType wtype, Mounted ammo) {
             // update Attack Values and change range
             int avShort = wtype.getRoundShortAV();
             int avMed = wtype.getRoundMedAV();
@@ -1611,8 +1611,8 @@ public class MechDisplay extends JPanel {
             int maxr = wtype.getMaxRange();
 
             // change range and attack values based upon ammo
-            if (null != wAmmo) {
-                AmmoType atype = (AmmoType) wAmmo.getType();
+            if (null != ammo) {
+                AmmoType atype = (AmmoType) ammo.getType();
                 double[] changes = changeAttackValues(atype, avShort, avMed,
                         avLong, avExt, maxr);
                 avShort = (int) changes[0];
@@ -2170,14 +2170,14 @@ public class MechDisplay extends JPanel {
         /**
          * updates fields for the specified mech
          */
-        public void displayMech(Entity en) {
-            this.en = en;
+        public void displayMech(Entity newEntity) {
+            this.en = newEntity;
             entities.clear();
-            entities.add(en);
+            entities.add(newEntity);
             ((DefaultListModel) unitList.getModel()).removeAllElements();
             ((DefaultListModel) unitList.getModel()).addElement(Messages
                     .getString("MechDisplay.Ego"));
-            for (Entity loadee : en.getLoadedUnits()) {
+            for (Entity loadee : newEntity.getLoadedUnits()) {
                 ((DefaultListModel) unitList.getModel()).addElement(loadee
                         .getModel());
                 entities.add(loadee);

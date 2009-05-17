@@ -30,4 +30,6 @@ public interface DoneButtoned {
      *         object's "Done" action.
      */
     public JButton getDoneButton();
+    
+    public void ready();
 }

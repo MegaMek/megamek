@@ -20,8 +20,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -31,38 +29,32 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
-import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
 
-public class ReportDisplay extends StatusBarPhaseDisplay implements
-        KeyListener, DoneButtoned {
+public class ReportDisplay extends StatusBarPhaseDisplay {
     /**
      *
      */
     private static final long serialVersionUID = 6185643976857892270L;
 
-    // parent game
-    public Client client;
 
     // displays
     private JTabbedPane tabs;
 
     // buttons
-    private JButton readyB;
     private JButton rerollInitiativeB;
 
     private boolean rerolled; // have we rerolled an init?
 
     /**
      * Creates and lays out a new movement phase display for the specified
-     * client.
+     * clientgui.getClient().
      */
-    public ReportDisplay(Client client) {
-        this.client = client;
-
-        client.game.addGameListener(this);
+    public ReportDisplay(ClientGUI clientgui) {
+        this.clientgui = clientgui;
+        clientgui.getClient().game.addGameListener(this);
 
         // Create a tabbed panel to hold our reports.
         tabs = new JTabbedPane();
@@ -76,9 +68,9 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
 
         setupStatusBar(""); //$NON-NLS-1$
 
-        readyB = new JButton(Messages.getString("ReportDisplay.Done")); //$NON-NLS-1$
-        readyB.setActionCommand("ready"); //$NON-NLS-1$
-        readyB.addActionListener(this);
+        butDone = new JButton(Messages.getString("ReportDisplay.Done")); //$NON-NLS-1$
+        butDone.setActionCommand("ready"); //$NON-NLS-1$
+        butDone.addActionListener(this);
 
         rerollInitiativeB = new JButton(Messages
                 .getString("ReportDisplay.Reroll")); //$NON-NLS-1$
@@ -107,16 +99,12 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
             panButtons.add(new JLabel("")); //$NON-NLS-1$
         }
         addBag(panButtons, gridbag, c);
-
-        addKeyListener(this);
-
     }
 
     private void addBag(JComponent comp, GridBagLayout gridbag,
             GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
-        comp.addKeyListener(this);
     }
 
     /**
@@ -135,8 +123,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
      */
     public void ready() {
         rerollInitiativeB.setEnabled(false);
-        readyB.setEnabled(false);
-        client.sendDone(true);
+        butDone.setEnabled(false);
+        clientgui.getClient().sendDone(true);
     }
 
     /**
@@ -145,8 +133,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
     public void rerollInitiative() {
         rerolled = true;
         rerollInitiativeB.setEnabled(false);
-        readyB.setEnabled(false);
-        client.sendRerollInitiativeRequest();
+        butDone.setEnabled(false);
+        clientgui.getClient().sendRerollInitiativeRequest();
     }
 
     /**
@@ -158,8 +146,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
 
     public void resetButtons() {
         resetReadyButton();
-        if ((client.game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT)
-                && client.game.hasTacticalGenius(client.getLocalPlayer())) {
+        if ((clientgui.getClient().game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT)
+                && clientgui.getClient().game.hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
             showRerollButton(true);
         } else {
             showRerollButton(false);
@@ -168,7 +156,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
     }
 
     public void resetReadyButton() {
-        readyB.setEnabled(true);
+        butDone.setEnabled(true);
     }
 
     public void resetRerollButton() {
@@ -200,14 +188,14 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
                 if (tabs.indexOfTab("Round " + catchup) != -1) {
                     ((JTextArea) ((JScrollPane) tabs.getComponentAt(tabs
                             .indexOfTab("Round " + catchup))).getViewport()
-                            .getView()).setText(client
-                            .receiveReport(client.game.getReports(catchup)));
+                            .getView()).setText(clientgui.getClient()
+                            .receiveReport(clientgui.getClient().game.getReports(catchup)));
                     continue;
                 }
                 String text = roundText;
                 if (catchup != round) {
-                    text = client
-                            .receiveReport(client.game.getReports(catchup));
+                    text = clientgui.getClient()
+                            .receiveReport(clientgui.getClient().game.getReports(catchup));
                 }
                 ta = new JTextArea(text, 40, 25);
                 ta.setEditable(false);
@@ -260,23 +248,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    //
-    // KeyListener
-    //
-    public void keyPressed(KeyEvent ev) {
-        if ((ev.getKeyCode() == KeyEvent.VK_ENTER) && ev.isControlDown()) {
-            ready();
-        }
-    }
-
-    public void keyReleased(KeyEvent ev) {
-        // ignore
-    }
-
-    public void keyTyped(KeyEvent ev) {
-        // ignore
-    }
-
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
@@ -285,27 +256,22 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        setReportTab(client.game.getRoundCount(), client.roundReport,
-                client.phaseReport);
+        setReportTab(clientgui.getClient().game.getRoundCount(), clientgui.getClient().roundReport,
+                clientgui.getClient().phaseReport);
         resetButtons();
         rerolled = false;
+    }
+    
+    @Override
+    protected void clear() {
+        //move along, move along, nothing to see here
     }
 
     /**
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        client.game.removeGameListener(this);
-    }
-
-    /**
-     * Retrieve the "Done" button of this object.
-     * 
-     * @return the <code>javax.swing.JButton</code> that activates this object's
-     *         "Done" action.
-     */
-    public JButton getDoneButton() {
-        return readyB;
+        clientgui.getClient().game.removeGameListener(this);
     }
 
     /**

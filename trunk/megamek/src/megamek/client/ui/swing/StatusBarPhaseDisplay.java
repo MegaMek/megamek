@@ -19,9 +19,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
 import megamek.client.Client;
@@ -29,14 +33,35 @@ import megamek.client.Client;
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         implements ActionListener {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 639696875125581395L;
     // displays
     private JLabel labStatus;
     protected JPanel panStatus;
 
+    protected StatusBarPhaseDisplay() {
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0),
+        "clearButton");
+
+        getActionMap().put("clearButton", new AbstractAction() {
+            private static final long serialVersionUID = -7781405756822535409L;
+
+            public void actionPerformed(ActionEvent e) {
+                if (isIgnoringEvents()) {
+                    return;
+                }
+                if (clientgui.getClient().isMyTurn()) {
+                    clear();
+                }
+            }
+        });
+
+    }
+
+    /**
+     * clears the actions of this phase
+     */
+    protected abstract void clear();
+    
     /**
      * Sets up the status bar with toggle buttons for the mek display and map.
      */

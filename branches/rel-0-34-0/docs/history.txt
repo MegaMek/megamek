@@ -10,6 +10,7 @@ v0.34.3-dev (SVN)
 + Bug: Talons BV should be the extra damage they do in a kick attack
 + Prevent ConcurrentModificationExceptions in the server networking
 + Updated vehicles.zip
++ Images for TRO3075 units
 
 v0.34.2 (2009-05-09, 18:02 UTC+2)
 + Bug: Ostwar 3M has wrong techlevel

@@ -610,7 +610,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
                 int ghostTargetMoF = (ae.getCrew().getSensorOps() + ghostTargetMod)
                         - (ae.getGhostTargetOverride() + bapMod + tcMod);
-                if (ghostTargetMoF > 0) {
+                if (ghostTargetMoF > 1) {
                     toHit.addModifier(Math.min(4, ghostTargetMoF / 2),
                             "ghost targets");
                 }

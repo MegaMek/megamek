@@ -220,7 +220,7 @@ public class Server implements Runnable {
      * The DamageType enumeration is used for the damageEntity function.
      */
     public enum DamageType {
-        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, IGNORE_PASSENGER, ANTI_TSM, ANTI_INFANTRY
+        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, IGNORE_PASSENGER, ANTI_TSM, ANTI_INFANTRY, NAIL_RIVET
     }
 
     // public final static String LEGAL_CHARS =
@@ -14704,6 +14704,18 @@ public class Server implements Runnable {
             break;
         case ANTI_TSM:
             te.hitThisRoundByAntiTSM = true;
+            break;
+        case NAIL_RIVET:
+            // no damage against armor of BAR rating >=5
+            if ((te.getBARRating() >= 5) && (te.getArmor(hit.getLocation()) > 0)) {
+                damage = 0;
+                r = new Report(6065);
+                r.subject = te_n;
+                r.indent(2);
+                r.newlines = 0;
+                vDesc.add(r);
+            }
+            break;
         default:
             // We can ignore this.
             break;
@@ -15617,6 +15629,16 @@ public class Server implements Runnable {
                                     te.setWeaponDestroyed(m);
                                 }
                             }
+                        }
+                        // if this is damage from a nail/rivet gun, and we transfer
+                        // to a location that has armor, and BAR >=5, no damage
+                        if ((bFrag == DamageType.NAIL_RIVET) && (te.getArmor(nextHit.getLocation()) > 0) && (te.getBARRating() >=5)) {
+                            damage = 0;
+                            r = new Report(6065);
+                            r.subject = te_n;
+                            r.indent(2);
+                            r.newlines = 0;
+                            vDesc.add(r);
                         }
                     }
                 }

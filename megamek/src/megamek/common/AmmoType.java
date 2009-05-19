@@ -109,8 +109,9 @@ public class AmmoType extends EquipmentType {
     public static final int     T_FLUID_GUN         = 83;
     public static final int     T_SNIPER_CANNON     = 84;
     public static final int     T_THUMPER_CANNON    = 85;
-    public static final int     T_LONG_TOM_CANNON    = 86;
-    public static final int     NUM_TYPES           = 87;
+    public static final int     T_LONG_TOM_CANNON   = 86;
+    public static final int     T_NAIL_RIVET_GUN    = 87;
+    public static final int     NUM_TYPES           = 88;
 
 
     // ammo flags
@@ -618,6 +619,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLMediumChemicalLaserAmmo());
         EquipmentType.addType(AmmoType.createCLSmallChemicalLaserAmmo());
         EquipmentType.addType(AmmoType.createCLLargeChemicalLaserAmmo());
+        EquipmentType.addType(AmmoType.createISNailRivetGunAmmo());
+        EquipmentType.addType(AmmoType.createISNailRivetGunAmmoHalf());
+        EquipmentType.addType(AmmoType.createCLNailRivetGunAmmo());
+        EquipmentType.addType(AmmoType.createCLNailRivetGunAmmoHalf());
 
         base = AmmoType.createCLLongTomAmmo();
         clanArtyAmmos.add( base );
@@ -7646,6 +7651,84 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.tonnage = 0;
+
+        return ammo;
+    }
+
+    private static AmmoType createISNailRivetGunAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        ammo.name = "Nail/Rivet Gun Ammo";
+        ammo.shortName = "Nail/Rivet Gun";
+        ammo.setInternalName("IS Ammo Nail/Rivet - Full");
+        ammo.addLookupName("ISNailRivetGun Ammo (200)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_NAIL_RIVET_GUN;
+        ammo.shots = 300;
+        ammo.bv = 1;
+        ammo.cost = 300;
+        ammo.tonnage = 1f;
+        ammo.explosive = false;
+
+        return ammo;
+    }
+
+    private static AmmoType createISNailRivetGunAmmoHalf() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        ammo.name = "Nail/Rivet Gun Ammo";
+        ammo.shortName = "Nail/Rivet Gun";
+        ammo.setInternalName("IS Ammo Nail/Rivet - Half");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_NAIL_RIVET_GUN;
+        ammo.shots = 150;
+        ammo.bv = 0.5f;
+        ammo.tonnage = 0.5f;
+        ammo.cost = 150;
+        ammo.explosive = false;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLNailRivetGunAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_TW;
+        ammo.name = "Nail/Rivet Gun Ammo";
+        ammo.shortName = "Nail/Rivet Gun";
+        ammo.setInternalName("CL Ammo Nail/Rivet - Full");
+        ammo.addLookupName("CLNailRivetGun Ammo (200)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_NAIL_RIVET_GUN;
+        ammo.shots = 300;
+        ammo.bv = 1;
+        ammo.cost = 300;
+        ammo.tonnage = 1f;
+        ammo.explosive = false;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLNailRivetGunAmmoHalf() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_TW;
+        ammo.name = "Nail/Rivet Gun Ammo";
+        ammo.shortName = "Nail/Rivet Gun";
+        ammo.setInternalName("CL Ammo Nail/Rivet - Half");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_NAIL_RIVET_GUN;
+        ammo.shots = 150;
+        ammo.bv = 0.5f;
+        ammo.tonnage = 0.5f;
+        ammo.cost = 150;
+        ammo.explosive = false;
 
         return ammo;
     }

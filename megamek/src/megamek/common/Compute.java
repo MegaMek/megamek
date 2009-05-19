@@ -2870,15 +2870,15 @@ public class Compute {
         //the keys will be the entity id
         Hashtable<Integer, Boolean> hEnemyGTCrossed = new Hashtable<Integer, Boolean>();
         Hashtable<Integer, Integer> hEnemyGTMods = new Hashtable<Integer, Integer>();
-        Vector<Coords> vEnemyECMCoords = new Vector<Coords>(16);
-        Vector<Integer> vEnemyECMRanges = new Vector<Integer>(16);
-        Vector<Double> vEnemyECMStrengths = new Vector<Double>(16);
+        Vector<Coords> vEnemyECCMCoords = new Vector<Coords>(16);
+        Vector<Integer> vEnemyECCMRanges = new Vector<Integer>(16);
+        Vector<Double> vEnemyECCMStrengths = new Vector<Double>(16);
         Vector<Coords> vEnemyGTCoords = new Vector<Coords>(16);
         Vector<Integer> vEnemyGTRanges = new Vector<Integer>(16);
         Vector<Integer> vEnemyGTId = new Vector<Integer>(16);
-        Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
-        Vector<Double> vFriendlyECCMStrengths = new Vector<Double>(16);
+        Vector<Coords> vFriendlyECMCoords = new Vector<Coords>(16);
+        Vector<Integer> vFriendlyECMRanges = new Vector<Integer>(16);
+        Vector<Double> vFriendlyECMStrengths = new Vector<Double>(16);
         for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
@@ -2889,15 +2889,15 @@ public class Compute {
                 hEnemyGTCrossed.put(ent.getId(), false);
                 hEnemyGTMods.put(ent.getId(), ent.getGhostTargetRollMoS());
             }
-            if (ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)) {
-                vEnemyECMCoords.addElement(entPos);
-                vEnemyECMRanges.addElement(new Integer(ent.getECMRange()));
-                vEnemyECMStrengths.add(ent.getECMStrength());
+            if (ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
+                vEnemyECCMCoords.addElement(entPos);
+                vEnemyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                vEnemyECCMStrengths.add(ent.getECCMStrength());
             }
-            if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
-                vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-                vFriendlyECCMStrengths.add(ent.getECCMStrength());
+            if (!ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)) {
+                vFriendlyECMCoords.addElement(entPos);
+                vFriendlyECMRanges.addElement(new Integer(ent.getECMRange()));
+                vFriendlyECMStrengths.add(ent.getECMStrength());
             }
 
             // Check the ECM effects of the entity's passengers.
@@ -2909,15 +2909,15 @@ public class Compute {
                     hEnemyGTCrossed.put(ent.getId(), false);
                     hEnemyGTMods.put(ent.getId(), ent.getGhostTargetRollMoS());
                 }
-                if (other.isEnemyOf(ae) && other.hasActiveECM() && (entPos != null)) {
-                    vEnemyECMCoords.addElement(entPos);
-                    vEnemyECMRanges.addElement(new Integer(other.getECMRange()));
-                    vEnemyECMStrengths.add(ent.getECMStrength());
+                if (other.isEnemyOf(ae) && other.hasActiveECCM() && (entPos != null)) {
+                    vEnemyECCMCoords.addElement(entPos);
+                    vEnemyECCMRanges.addElement(new Integer(other.getECMRange()));
+                    vEnemyECCMStrengths.add(ent.getECCMStrength());
                 }
-                if (!other.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
-                    vFriendlyECCMCoords.addElement(entPos);
-                    vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-                    vFriendlyECCMStrengths.add(ent.getECCMStrength());
+                if (!other.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)) {
+                    vFriendlyECMCoords.addElement(entPos);
+                    vFriendlyECMRanges.addElement(new Integer(ent.getECMRange()));
+                    vFriendlyECMStrengths.add(ent.getECMStrength());
                 }
             }
         }
@@ -2929,37 +2929,36 @@ public class Compute {
 
         // get intervening Coords.
         ArrayList<Coords> coords = Coords.intervening(a, b);
-        // loop through all intervening coords, if they are not eccm'ed by the enemy then add any Ghost Targets
+        // loop through all intervening coords, if they are not ecm'ed by friendlys then add any Ghost Targets
         //to the hashlist
         for (Coords c : coords) {
-            // < 0: in friendly ECCM
-            // 0: unaffected by enemy ECM
-            // >0: affected by enemy ECM
+            // >0: in friendly ECM
+            // <=0: not in friendly ECM
             int ecmStatus = 0;
-            // first, subtract 1 for each enemy ECM that affects us
-            Enumeration<Integer> ranges = vEnemyECMRanges.elements();
-            Enumeration<Double> strengths = vEnemyECMStrengths.elements();
-            for (Coords enemyECMCoords : vEnemyECMCoords) {
+            // first, add 1 for each friendly ECM that affects us
+            Enumeration<Integer> ranges = vFriendlyECMRanges.elements();
+            Enumeration<Double> strengths = vFriendlyECMStrengths.elements();
+            for (Coords friendlyECMCoords : vFriendlyECMCoords) {
                 int range = ranges.nextElement().intValue();
-                int nDist = c.distance(enemyECMCoords);
+                int nDist = c.distance(friendlyECMCoords);
                 double strength = strengths.nextElement().doubleValue();
                 if (nDist <= range) {
                     ecmStatus += strength;
                 }
             }
-            // now, add one for each friendly ECCM
-            ranges = vFriendlyECCMRanges.elements();
-            strengths = vFriendlyECCMStrengths.elements();
-            for (Coords friendlyECCMCoords : vFriendlyECCMCoords) {
+            // now, subtract one for each enemy ECCM
+            ranges = vEnemyECCMRanges.elements();
+            strengths = vEnemyECCMStrengths.elements();
+            for (Coords enemyECCMCoords : vEnemyECCMCoords) {
                 int range = ranges.nextElement().intValue();
-                int nDist = c.distance(friendlyECCMCoords);
+                int nDist = c.distance(enemyECCMCoords);
                 double strength = strengths.nextElement().doubleValue();
                 if (nDist <= range) {
                     ecmStatus -= strength;
                 }
             }
 
-            if(ecmStatus >= 0) {
+            if(ecmStatus < 1) {
                 //find any new Ghost Targets that we have crossed
                 ranges = vEnemyGTRanges.elements();
                 Enumeration<Integer> ids = vEnemyGTId.elements();
@@ -2976,17 +2975,16 @@ public class Compute {
 
         //ok so now we have a hashtable that tells us which Ghost Targets have been crossed
         //lets loop through that and identify the highest bonus and count the total number crossed
-        int totalGT = 0;
+        int totalGT = -1;
         int highestMod = -1;
         Enumeration<Integer> ids = hEnemyGTCrossed.keys();
         while(ids.hasMoreElements()) {
             int id = ids.nextElement();
             if(hEnemyGTCrossed.get(id)) {
+                totalGT++;
                 if(hEnemyGTMods.get(id) > highestMod) {
                     highestMod = hEnemyGTMods.get(id);
-                } else {
-                    totalGT++;
-                }
+                } 
             }
         }
         return highestMod + totalGT;

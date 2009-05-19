@@ -97,8 +97,12 @@ public class MiscType extends EquipmentType {
     public static final long F_TRACKS = 1L << 60;
     // TODO: Implement me, so far only construction data
     public static final long F_MASS = 1L << 61;
+    // TODO: Implement me, so far only construction data
     public static final long F_CARGO = 1L << 62;
+    // TODO: Implement me, so far only construction data
     public static final long F_DUMPER = 1L << 63;
+    // TODO: Implement me, so far only construction data
+    //public static final long F_MASH = 1L << 64;
 
     // Flags2
     public static final long F_BA_EQUIPMENT = 1L << 0;

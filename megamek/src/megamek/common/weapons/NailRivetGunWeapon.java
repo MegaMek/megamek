@@ -36,6 +36,7 @@ public abstract class NailRivetGunWeapon extends AmmoWeapon {
     public NailRivetGunWeapon() {
         super();
         ammoType = AmmoType.T_NAIL_RIVET_GUN;
+        flags |= F_BALLISTIC;
         flags1 |= F_MECH_WEAPON | F_AERO_WEAPON | F_TANK_WEAPON;
         heat = 0;
         damage = 0;

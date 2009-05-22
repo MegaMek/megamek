@@ -3202,7 +3202,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_ADVANCED;
-        misc.name = "";
+        misc.name = "Heavy Armor";
         misc.setInternalName(misc.name);
         misc.tonnage = 0;
         misc.criticals = 0;

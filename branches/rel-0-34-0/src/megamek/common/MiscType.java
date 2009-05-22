@@ -3015,7 +3015,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.cost = 100000;
-        misc.flags |= F_MECH_EQUIPMENT | F_TANK_EQUIPMENT | F_TOOLS;
+        misc.flags |= F_TOOLS;
         misc.subType = S_HEAVY_ARMOR;
         misc.bv = 15;
 

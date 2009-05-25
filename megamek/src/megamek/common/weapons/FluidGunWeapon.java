@@ -36,19 +36,20 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
         super();
         ammoType = AmmoType.T_FLUID_GUN;
         flags |= F_BALLISTIC;
+        flags1 |= F_MECH_WEAPON | F_TANK_WEAPON | F_AERO_WEAPON;
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return super.getCorrectHandler(toHit, waa, game, server);
-        //TODO: implement all the ammos
+        // TODO: implement all the ammos
     }
 }

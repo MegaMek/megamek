@@ -317,7 +317,17 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        }else {
+        } else if (option.getName().equals("tacops_LOS1")) { //$NON-NLS-1$
+            if ((options.getOption("tacops_dead_zones")).booleanValue() //$NON-NLS-1$
+                    || !editable) {
+                optionComp.setEditable(false);
+            }
+        } else if (option.getName().equals("tacops_dead_zones")) { //$NON-NLS-1$
+            if ((options.getOption("tacops_LOS1")).booleanValue() //$NON-NLS-1$
+                    || !editable) {
+                optionComp.setEditable(false);
+            }
+        } else {
             optionComp.setEditable(editable);
         }
         optionComps.addElement(optionComp);
@@ -478,6 +488,26 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("visibility".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(state);
+                }
+            }
+        }
+        if ("tacops_dead_zones".equals(option.getName())) { //$NON-NLS-1$
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
+                    .hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
+                if ("tacops_LOS1".equals(comp_i.option.getName())) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setSelected(false);
+                }
+            }
+        }
+        if ("tacops_LOS1".equals(option.getName())) { //$NON-NLS-1$
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
+                    .hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
+                if ("tacops_dead_zones".equals(comp_i.option.getName())) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setSelected(false);
                 }
             }
         }

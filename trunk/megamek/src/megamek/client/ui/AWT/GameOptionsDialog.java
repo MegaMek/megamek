@@ -323,7 +323,17 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        }else {
+        } else if (option.getName().equals("tacops_LOS1")) { //$NON-NLS-1$
+            if ((options.getOption("tacops_dead_zones")).booleanValue() //$NON-NLS-1$
+                    || !editable) {
+                optionComp.setEditable(false);
+            }
+        } else if (option.getName().equals("tacops_dead_zones")) { //$NON-NLS-1$
+            if ((options.getOption("tacops_LOS1")).booleanValue() //$NON-NLS-1$
+                    || !editable) {
+                optionComp.setEditable(false);
+            }
+        } else {
             optionComp.setEditable(editable);
         }
         optionComps.addElement(optionComp);
@@ -485,6 +495,27 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                 }
             }
         }
+        
+        if (option.getName().equals("tacops_LOS1") ){
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
+                if ( comp_i.option.getName().equals("tacops_dead_zones")){
+                    comp_i.setEditable(!state);
+                    comp_i.setState(false);
+                }
+            }
+        }
+        
+        if (option.getName().equals("tacops_dead_zones") ){
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
+                if ( comp_i.option.getName().equals("tacops_LOS1")){
+                    comp_i.setEditable(!state);
+                    comp_i.setState(false);
+                }
+            }
+        }
+        
     }
 
     private void setupButtons() {

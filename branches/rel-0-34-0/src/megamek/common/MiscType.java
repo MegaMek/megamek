@@ -1772,7 +1772,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
-        misc.flags |= F_MECH_EQUIPMENT | F_BA_EQUIPMENT;
+        misc.flags |= F_MECH_EQUIPMENT | F_CHAMELEON_SHIELD;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 

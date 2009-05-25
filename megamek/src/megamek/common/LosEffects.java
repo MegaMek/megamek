@@ -64,6 +64,7 @@ public class LosEffects {
     public static final int COVER_75RIGHT = 0xB; // 75% cover (blocked)
 
     boolean blocked = false;
+    boolean deadZone = false;
     boolean infProtected = false;
     boolean hasLoS = true;
     int plantedFields = 0;
@@ -341,7 +342,7 @@ public class LosEffects {
                     attHex.terrainLevel(Terrains.WATER), targetHex
                             .terrainLevel(Terrains.WATER));
         }
-
+        
         LosEffects finalLoS = calculateLos(game, ai);
         finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);
         finalLoS.hasLoS = !finalLoS.blocked && (finalLoS.screen < 1) && (finalLoS.plantedFields < 6)
@@ -369,6 +370,13 @@ public class LosEffects {
             return los;
         }
 
+        if(game.getOptions().booleanOption("tacops_dead_zones") && isDeadZone(game, ai)) {
+            LosEffects los = new LosEffects();
+            los.blocked = true;
+            los.deadZone = true;
+            return los;
+        }
+        
         double degree = ai.attackPos.degree(ai.targetPos);
         if (degree % 60 == 30) {
             return LosEffects.losDivided(game, ai);
@@ -391,6 +399,11 @@ public class LosEffects {
             return modifiers;
         }
 
+        if (deadZone) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "LOS blocked by dead zone.");
+        }
+        
         if (blocked) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "LOS blocked by terrain.");
@@ -989,5 +1002,45 @@ public class LosEffects {
         } else {
             return 2;
         }
+    }
+    
+    private static boolean isDeadZone(IGame game, AttackInfo ai) {
+        //determine who is higher and who is lower
+        int highElev = ai.attackAbsHeight;
+        int lowElev = ai.targetAbsHeight;
+        Coords highPos = ai.attackPos;
+        Coords lowPos = ai.targetPos;
+        if(highElev < lowElev) {
+            highElev = ai.targetAbsHeight;
+            lowElev = ai.attackAbsHeight;
+            highPos = ai.targetPos;
+            lowPos = ai.attackPos;
+        }
+        //TODO: check if this works right for splits (thinks like expanded partial cover for example)
+        ArrayList<Coords> in = Coords.intervening(lowPos, highPos, true);
+        int IntElev = lowElev;
+        Coords IntPos = lowPos;
+        for(Coords c : in) {
+           if(!c.equals(lowPos)) {
+               IHex hex = game.getBoard().getHex(c);
+               int hexEl = ai.underWaterCombat ? hex.floor() : hex.surface();
+               // Handle building elevation.
+               // Attacks thru a building are not blocked by that building.
+               // ASSUMPTION: bridges don't block LOS.
+               int bldgEl = 0;
+               if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                   bldgEl = hex.terrainLevel(Terrains.BLDG_ELEV);
+               }
+               int totalEl = hexEl + bldgEl;
+               if(totalEl > IntElev) {
+                   IntElev = totalEl;
+                   IntPos = c;
+               }
+           }
+        }
+        if(!IntPos.equals(lowPos)) {
+            return  1 < 2 * (2*IntElev - highElev - lowElev) + IntPos.distance(highPos) - IntPos.distance(lowPos);
+        }
+        return false;
     }
 }

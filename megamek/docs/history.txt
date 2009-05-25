@@ -19,6 +19,7 @@ v0.35.1-dev (SVN)
 + ECM should cancel Ghost Targets not ECCM
 + Added Uziel Jacob and Uziel Jacob II 
 + Added Unit Weapon Type Flags to Fluid Guns.
++ TacOps Dead Zone Rule
 
 v0.35.0 (2009-05-09, 18:02 UTC+2)
 + Patch 2604166: Battlemech Partial Wing

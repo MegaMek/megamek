@@ -399,10 +399,12 @@ public class LosEffects {
             return modifiers;
         }
 
+        /*
         if (deadZone) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "LOS blocked by dead zone.");
         }
+        */
         
         if (blocked) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,

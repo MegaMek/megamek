@@ -477,7 +477,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                     .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("tacops_falling_expanded".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
+                    comp_i.setEditable(state);
                     comp_i.setSelected(false);
                 }
             }

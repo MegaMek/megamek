@@ -7662,9 +7662,9 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Nail/Rivet Gun Ammo";
         ammo.shortName = "Nail/Rivet Gun";
         ammo.setInternalName("IS Ammo Nail/Rivet - Full");
-        ammo.addLookupName("ISNailRivetGun Ammo (200)");
+        ammo.addLookupName("ISNailRivetGun Ammo (300)");
         ammo.damagePerShot = 1;
-        ammo.rackSize = 2;
+        ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_NAIL_RIVET_GUN;
         ammo.shots = 300;
         ammo.bv = 1;
@@ -7679,11 +7679,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        ammo.name = "Nail/Rivet Gun Ammo";
+        ammo.name = "Half Nail/Rivet Gun Ammo";
         ammo.shortName = "Nail/Rivet Gun";
         ammo.setInternalName("IS Ammo Nail/Rivet - Half");
         ammo.damagePerShot = 1;
-        ammo.rackSize = 2;
+        ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_NAIL_RIVET_GUN;
         ammo.shots = 150;
         ammo.bv = 0.5f;
@@ -7701,7 +7701,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Nail/Rivet Gun Ammo";
         ammo.shortName = "Nail/Rivet Gun";
         ammo.setInternalName("CL Ammo Nail/Rivet - Full");
-        ammo.addLookupName("CLNailRivetGun Ammo (200)");
+        ammo.addLookupName("CLNailRivetGun Ammo (300)");
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_NAIL_RIVET_GUN;
@@ -7718,7 +7718,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_TW;
-        ammo.name = "Nail/Rivet Gun Ammo";
+        ammo.name = "Half Nail/Rivet Gun Ammo";
         ammo.shortName = "Nail/Rivet Gun";
         ammo.setInternalName("CL Ammo Nail/Rivet - Half");
         ammo.damagePerShot = 1;

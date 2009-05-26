@@ -872,9 +872,8 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         updateSearchlightButton();
         updateLoadButtons();
         updateElevationButtons();
-
-        setEvadeEnabled((isMech || (ce instanceof Tank)) && client.game.getOptions().booleanOption("tacops_evade"));
-
+        updateEvadeButton();
+        
         updateRecoveryButton();
         updateJoinButton();
         updateDumpButton();
@@ -1080,6 +1079,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
         updateLoadButtons();
         updateElevationButtons();
+        updateEvadeButton();
         updateRecoveryButton();
         updateJoinButton();
         updateSpeedButtons();
@@ -1554,6 +1554,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             updateSearchlightButton();
             updateLoadButtons();
             updateElevationButtons();
+            updateEvadeButton();
             updateFleeButton();
             updateLaunchButton();
             updateRecklessButton();
@@ -1850,6 +1851,26 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
         setLaunchEnabled((ce.getLaunchableFighters().size() > 0) || (ce.getLaunchableSmallCraft().size() > 0));
 
+    }
+    
+    private void updateEvadeButton() {
+
+        final Entity ce = ce();
+
+        if (null == ce) {
+            return;
+        }
+        
+        if(clientgui.getClient().game.getOptions().booleanOption("tacops_evade")) {
+            return;
+        }
+        
+        if(!(ce instanceof Mech || ce instanceof Tank)) {
+            return;
+        }
+        
+        setEvadeEnabled(cmd.getLastStepMovementType() != IEntityMovementType.MOVE_JUMP 
+                          && cmd.getLastStepMovementType() != IEntityMovementType.MOVE_SPRINT);
     }
 
     private void updateRecklessButton() {
@@ -3009,6 +3030,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         updateSearchlightButton();
         updateLoadButtons();
         updateElevationButtons();
+        updateEvadeButton();
         updateFleeButton();
         updateLaunchButton();
         updateRecklessButton();

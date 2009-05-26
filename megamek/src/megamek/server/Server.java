@@ -4830,7 +4830,7 @@ public class Server implements Runnable {
             mpUsed = step.getMpUsed();
 
             if (cachedGravityLimit < 0) {
-                cachedGravityLimit = IEntityMovementType.MOVE_JUMP == moveType ? entity.getJumpMP(false) : entity.getRunMP(false, false);
+                cachedGravityLimit = IEntityMovementType.MOVE_JUMP == moveType ? entity.getJumpMP(false) : entity.getRunningGravityLimit();
             }
             // check for charge
             if (step.getType() == MovePath.STEP_CHARGE) {
@@ -5633,6 +5633,20 @@ public class Server implements Runnable {
         rollTarget = entity.checkRunningWithDamage(overallMoveType);
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             doSkillCheckInPlace(entity, rollTarget);
+        }
+        
+        //if we sprinted with MASC or a supercharger, then we need a PSR
+        rollTarget = entity.checkSprintingWithMASC(overallMoveType, entity.mpUsed);
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+            doSkillCheckInPlace(entity, rollTarget);
+        }
+        
+        rollTarget = entity.checkSprintingWithSupercharger(overallMoveType, entity.mpUsed);
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+            doSkillCheckInPlace(entity, rollTarget);
+        }
+        if(md.getLastStepMovementType() == IEntityMovementType.MOVE_SPRINT && md.hasActiveMASC()) {
+            doSkillCheckInPlace(entity, entity.getBasePilotingRoll(IEntityMovementType.MOVE_SPRINT));
         }
 
         if (entity instanceof Aero) {
@@ -7340,7 +7354,9 @@ public class Server implements Runnable {
                 entity.heatBuildup += entity.getRunHeat();
             } else if (entity.moved == IEntityMovementType.MOVE_JUMP) {
                 entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
-            }
+            } else if (entity.moved == IEntityMovementType.MOVE_SPRINT) {
+                entity.heatBuildup += entity.getSprintHeat();
+            }        
         }
     }
 
@@ -13698,11 +13714,15 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
                 // walking and running, 1 damage per MP used more than we would
                 // have normally
-                if ((entity.moved == IEntityMovementType.MOVE_WALK) || (entity.moved == IEntityMovementType.MOVE_VTOL_WALK) || (entity.moved == IEntityMovementType.MOVE_RUN) || (entity.moved == IEntityMovementType.MOVE_VTOL_RUN)) {
+                if ((entity.moved == IEntityMovementType.MOVE_WALK) 
+                        || (entity.moved == IEntityMovementType.MOVE_VTOL_WALK) 
+                        || (entity.moved == IEntityMovementType.MOVE_RUN) 
+                        || (entity.moved == IEntityMovementType.MOVE_SPRINT) 
+                        || (entity.moved == IEntityMovementType.MOVE_VTOL_RUN)) {
                     if (entity instanceof Mech) {
                         int j = entity.mpUsed;
                         int damage = 0;
-                        while (j > entity.getRunMP(false, false)) {
+                        while (j > entity.getRunningGravityLimit()) {
                             j--;
                             damage++;
                         }
@@ -22658,7 +22678,11 @@ public class Server implements Runnable {
         PilotingRollData rollTarget;
         if (game.getPlanetaryConditions().getGravity() != 1) {
             if (entity instanceof Mech) {
-                if ((step.getMovementType() == IEntityMovementType.MOVE_WALK) || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK) || (step.getMovementType() == IEntityMovementType.MOVE_RUN) || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)) {
+                if ((step.getMovementType() == IEntityMovementType.MOVE_WALK) 
+                        || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK) 
+                        || (step.getMovementType() == IEntityMovementType.MOVE_RUN) 
+                        || (step.getMovementType() == IEntityMovementType.MOVE_SPRINT) 
+                        || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)) {
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We moved too fast, let's make PSR to see if we get
                         // damage

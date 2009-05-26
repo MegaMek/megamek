@@ -355,7 +355,7 @@ public class Compute {
          * srcHex.contains(Terrain.PAVEMENT) || srcHex.contains(Terrain.ROAD) ||
          * srcHex.contains(Terrain.BRIDGE) )
          */
-        if (((prevStepIsOnPavement && (movementType == IEntityMovementType.MOVE_RUN))
+        if (((prevStepIsOnPavement && (movementType == IEntityMovementType.MOVE_RUN || movementType == IEntityMovementType.MOVE_SPRINT))
                 || ((srcHex.containsTerrain(Terrains.ICE))
                 && (movementType != IEntityMovementType.MOVE_JUMP)))
                 && (entity.getMovementMode() != IEntityMovementMode.HOVER)
@@ -1287,6 +1287,8 @@ public class Compute {
             toHit.addModifier(3, "attacker jumped");
         } else if (movement == IEntityMovementType.MOVE_OVER_THRUST) {
             toHit.addModifier(2, "over thrust used");
+        } else if (movement == IEntityMovementType.MOVE_SPRINT) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "attacker sprinted");
         }
 
         return toHit;
@@ -1316,6 +1318,8 @@ public class Compute {
             toHit.addModifier(2, "spotter ran");
         } else if (movement == IEntityMovementType.MOVE_JUMP) {
             toHit.addModifier(3, "spotter jumped");
+        } else if (movement == IEntityMovementType.MOVE_SPRINT) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "spotter sprinted");
         }
 
         return toHit;
@@ -1369,6 +1373,11 @@ public class Compute {
         }
         if ((entity.getElevation() > 0) && (entity.getMovementMode() == IEntityMovementMode.WIGE)) {
             toHit.addModifier(1, "target is a flying WiGE");
+        }
+        
+        //did the target sprint?
+        if (entity.moved == IEntityMovementType.MOVE_SPRINT) {
+            toHit.addModifier(-1, "target sprinted");
         }
 
         return toHit;

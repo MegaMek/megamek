@@ -23,6 +23,7 @@ v0.35.1-dev (SVN)
 + Bug: Hull Down option disabling falling (expanded) option in Swing GUI, when it should be the reverse
 + changed reporting of dead zones
 + Bug: Chameleon Light Polarization Shield not working
++ TacOps Sprinting Movement Mode
 
 v0.35.0 (2009-05-09, 18:02 UTC+2)
 + Patch 2604166: Battlemech Partial Wing

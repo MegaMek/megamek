@@ -838,9 +838,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateJoinButton();
         updateRecoveryButton();
         updateDumpButton();
-
-        setEvadeEnabled((isMech || (ce instanceof Tank))
-                && clientgui.getClient().game.getOptions().booleanOption("tacops_evade"));
+        updateEvadeButton();
 
         if (ce instanceof Aero) {
             butThrust.setEnabled(true);
@@ -1280,6 +1278,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 return;
             }
         }
+        if(cmd.getLastStepMovementType() == IEntityMovementType.MOVE_SPRINT && GUIPreferences.getInstance().getNagForSprint()) {
+            ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages
+                    .getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString("MovementDisplay.ConfirmSprint"), true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForSprint(false);
+                }
+            } else {
+                return;
+            }
+        }
         String check = SharedUtility.doPSRCheck(cmd, clientgui.getClient());
         if ((check.length() > 0) && GUIPreferences.getInstance().getNagForPSR()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages
@@ -1296,7 +1308,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 return;
             }
         }
-
+        
         disableButtons();
         clientgui.bv.clearMovementData();
         if (ce().hasUMU()) {
@@ -1622,6 +1634,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateSearchlightButton();
             updateLoadButtons();
             updateElevationButtons();
+            updateEvadeButton();
             updateFleeButton();
             updateLaunchButton();
             updateRecklessButton();
@@ -1927,6 +1940,26 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setLaunchEnabled((ce.getLaunchableFighters().size() > 0)
                 || (ce.getLaunchableSmallCraft().size() > 0));
 
+    }
+    
+    private void updateEvadeButton() {
+
+        final Entity ce = ce();
+
+        if (null == ce) {
+            return;
+        }
+        
+        if(clientgui.getClient().game.getOptions().booleanOption("tacops_evade")) {
+            return;
+        }
+        
+        if(!(ce instanceof Mech || ce instanceof Tank)) {
+            return;
+        }
+        
+        setEvadeEnabled(cmd.getLastStepMovementType() != IEntityMovementType.MOVE_JUMP 
+                          && cmd.getLastStepMovementType() != IEntityMovementType.MOVE_SPRINT);
     }
 
     private void updateRecklessButton() {
@@ -3174,6 +3207,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateHoverButton();
         updateManeuverButton();
         updateDumpButton();
+        updateEvadeButton();
         updateSpeedButtons();
         updateThrustButton();
         updateRollButton();

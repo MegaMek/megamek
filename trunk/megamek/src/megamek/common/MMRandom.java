@@ -41,7 +41,7 @@ public abstract class MMRandom {
      * Gives you the type asked for, defaulting to SunRandom if there are any
      * errors.
      */
-    public static MMRandom generate(int type) {
+    static MMRandom generate(int type) {
         System.err.println("MMRandom: generating RNG type #" + type);
         try {
             switch (type) {
@@ -72,7 +72,7 @@ public abstract class MMRandom {
      * @throws <code>IllegalArgumentException</code> will be thrown if the
      *             input is <= 0.
      */
-    public Roll d6(int nDice) {
+    Roll d6(int nDice) {
         if (0 >= nDice) {
             throw new IllegalArgumentException(
                     "Must ask for a positive number of rolls, not " + nDice);
@@ -89,7 +89,7 @@ public abstract class MMRandom {
     /**
      * A single die
      */
-    public Roll d6() {
+    Roll d6() {
         return d6(1);
     }
 
@@ -101,7 +101,7 @@ public abstract class MMRandom {
      *            any random number returned by this method.
      * @return a random <code>int</code> from the value set [0, maxValue).
      */
-    public abstract int randomInt(int maxValue);
+    abstract int randomInt(int maxValue);
 
     /**
      * Uses com.sun.java.util.collections.Random

@@ -107,6 +107,7 @@ import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.Report;
+import megamek.common.Roll;
 import megamek.common.SmallCraft;
 import megamek.common.SpaceStation;
 import megamek.common.SpecialHexDisplay;
@@ -24420,6 +24421,12 @@ public class Server implements Runnable {
             }
             entity.setLayingMines(true);
         }
+    }
+
+    public void reportRoll(Roll roll) {
+        Report r = new Report(1230);
+        r.add(roll.getReport());
+        addReport(r);
     }
 
 }

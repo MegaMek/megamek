@@ -35,6 +35,7 @@ import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.BayWeapon;
+import megamek.server.Server;
 
 /**
  * The compute class is designed to provide static methods for mechs and other
@@ -132,12 +133,22 @@ public class Compute {
     /** Wrapper to random#d6(n) */
     public static int d6(int dice) {
         Roll roll = random.d6(dice);
+        if (Server.getServerInstance().getGame().getOptions().booleanOption(
+                "rng_log")) {
+            Server.getServerInstance().reportRoll(roll);
+        }
         return roll.getIntValue();
     }
 
     /** Wrapper to random#d6() */
     public static int d6() {
         Roll roll = random.d6();
+        if (Server.getServerInstance() != null) {
+            if (Server.getServerInstance().getGame().getOptions()
+                    .booleanOption("rng_log")) {
+                Server.getServerInstance().reportRoll(roll);
+            }
+        }
         return roll.getIntValue();
     }
 

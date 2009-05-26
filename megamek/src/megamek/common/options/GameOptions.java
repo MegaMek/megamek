@@ -26,7 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -38,7 +37,7 @@ import megamek.common.CommonConstants;
  *
  * @author Ben
  */
-public class GameOptions extends AbstractOptions implements Serializable {
+public class GameOptions extends AbstractOptions {
 
     private static final long serialVersionUID = 4916321960852747706L;
     private static final String GAME_OPTIONS_FILE_NAME = "mmconf/gameoptions.xml"; //$NON-NLS-1$
@@ -71,6 +70,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(base, "bridgeCF", 0); //$NON-NLS-1$
         addOption(base, "show_bay_detail", false); //$NON-NLS-1$
         addOption(base, "rng_type", 1); //$NON-NLS-1$
+        addOption(base, "rng_log", false); //$NON-NLS-1$
         addOption(base, "flamer_heat", true); //$NON-NLS-1$
         addOption(base, "indirect_fire", true); //$NON-NLS-1$  
         
@@ -405,6 +405,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
             output.flush();
             output.close();
         } catch (IOException e) {
+            //if there are errors, the file is not saved properly.
         }
     }
 

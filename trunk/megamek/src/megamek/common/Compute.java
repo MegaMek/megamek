@@ -300,7 +300,8 @@ public class Compute {
         final IHex destHex = game.getBoard().getHex(dest);
         final boolean isInfantry = (entity instanceof Infantry);
         final boolean isPavementStep = Compute.canMoveOnPavement(game, src, dest, path);
-
+        int delta_alt = (destElevation + destHex.getElevation()) - (srcElevation + srcHex.getElevation());
+        
         // arguments valid?
         if (entity == null) {
             throw new IllegalArgumentException("Entity invalid.");
@@ -391,6 +392,11 @@ public class Compute {
                             || (movementType == IEntityMovementType.MOVE_VTOL_RUN))) {
                 return true;
             }
+        }
+        
+        //check leaps
+        if(entity instanceof Mech && delta_alt < -2 && movementType != IEntityMovementType.MOVE_JUMP) {
+            return true;
         }
 
         return false;

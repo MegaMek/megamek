@@ -53,6 +53,7 @@ public class SharedUtility {
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
         int lastElevation = entity.getElevation();
+        int curElevation = entity.getElevation();
         int curFacing = entity.getFacing();
         int distance = 0;
         int moveType = IEntityMovementType.MOVE_NONE;
@@ -109,9 +110,26 @@ public class SharedUtility {
             // set last step parameters
             curPos = step.getPosition();
             curFacing = step.getFacing();
+            curElevation = step.getElevation();
 
             final IHex curHex = client.game.getBoard().getHex(curPos);
 
+            //check for leap
+            if(!lastPos.equals(curPos) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) 
+                    && entity instanceof Mech && client.game.getOptions().booleanOption("tacops_leaping")) {
+                int leapDistance = (lastElevation + client.game.getBoard().getHex(lastPos).getElevation()) - (curElevation + curHex.getElevation());
+                if(leapDistance > 2) {
+                    rollTarget = entity.getBasePilotingRoll(step.getMovementType());
+                    entity.addPilotingModifierForTerrain(rollTarget, curPos);
+                    rollTarget.append(new PilotingRollData(entity.getId(), 2 * leapDistance, "leaping (leg damage)"));
+                    nagReport.append(SharedUtility.addNag(rollTarget));
+                    rollTarget = entity.getBasePilotingRoll(step.getMovementType());
+                    entity.addPilotingModifierForTerrain(rollTarget, curPos);
+                    rollTarget.append(new PilotingRollData(entity.getId(), leapDistance, "leaping (fall)"));
+                    nagReport.append(SharedUtility.addNag(rollTarget));
+                }
+            }
+            
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing, lastPos, curPos, isInfantry, distance-1);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {

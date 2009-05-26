@@ -49,6 +49,7 @@ public class MoveStep implements Serializable {
     private int totalHeat;
 
     private int distance;
+    private int leapDistance;
 
     private int elevation = -999;
 
@@ -1013,6 +1014,13 @@ public class MoveStep implements Serializable {
     /**
      * @return
      */
+    public int getLeapDistance() {
+        return leapDistance;
+    }
+    
+    /**
+     * @return
+     */
     public int getFacing() {
         return facing;
     }
@@ -1225,6 +1233,13 @@ public class MoveStep implements Serializable {
      */
     public void setDistance(int i) {
         distance = i;
+    }
+    
+    /**
+     * @param i
+     */
+    public void setLeapDistance(int i) {
+        leapDistance = i;
     }
 
     /**
@@ -2011,6 +2026,7 @@ public class MoveStep implements Serializable {
         final boolean isInfantry = parent.getEntity() instanceof Infantry;
         final boolean isMechanizedInfantry = isInfantry && ((Infantry)parent.getEntity()).isMechanized();
         final boolean isProto = parent.getEntity() instanceof Protomech;
+        final boolean isMech = parent.getEntity() instanceof Mech;
         int nSrcEl = srcHex.getElevation() + prevEl;
         int nDestEl = destHex.getElevation() + elevation;
 
@@ -2097,6 +2113,12 @@ public class MoveStep implements Serializable {
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveType != IEntityMovementMode.WIGE)) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
+            if(game.getOptions().booleanOption("tacops_leaping") 
+                    && isMech && delta_e > 2 && nDestEl < nSrcEl) {
+                //leaping (moving down more than 2 hexes) always costs 4 mp regardless of anything else
+                mp = 4;
+                return;
+            }
             // non-flying Infantry and ground vehicles are charged double.
             if ((isInfantry && !((moveType == IEntityMovementType.MOVE_VTOL_WALK)
                     || (moveType == IEntityMovementType.MOVE_VTOL_RUN)))
@@ -2299,6 +2321,11 @@ public class MoveStep implements Serializable {
                 return false;
             }
         }
+        
+        if(entity instanceof Mech && (srcAlt - destAlt) > 2) {
+            setLeapDistance(srcAlt - destAlt);
+        }
+        
         // Units moving backwards may not change elevation levels.
         // (Ben thinks this rule is dumb)
         if (((type == MovePath.STEP_BACKWARDS)

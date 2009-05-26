@@ -166,6 +166,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(advancedCombat, "indirect_always_possible", false); //$NON-NLS-1$      
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
+        addOption(advancedGroundMovement, "tacops_sprint", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_standing_still", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_evade", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_skilled_evasion", false); //$NON-NLS-1$

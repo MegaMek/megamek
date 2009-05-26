@@ -1089,7 +1089,102 @@ public abstract class Mech extends Entity implements Serializable {
     public int getRunHeat() {
         return engine.getRunHeat();
     }
+    
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMP()
+     */
+    @Override
+    public int getSprintMP() {
+        if(hasHipCrit()) {
+            return getRunMP();
+        }
+        return getSprintMP(false, false);
+    }
+    
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMP(boolean, boolean)
+     */
+    @Override
+    public int getSprintMP(boolean gravity, boolean ignoreheat) {
+        if(hasHipCrit()) {
+            return getRunMP(gravity, ignoreheat);
+        }
+        if (hasArmedMASCAndSuperCharger()) {
+            return ((int) Math.ceil(getWalkMP(gravity, ignoreheat) * 3.0)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+        }
+        if (hasArmedMASC()) {
+            return ((int) Math.ceil(getWalkMP(gravity, ignoreheat) * 2.5)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+        }
+        return getSprintMPwithoutMASC(gravity, ignoreheat);
+    }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean)
+     */
+    @Override
+    public int getSprintMPwithoutMASC() {
+        return getSprintMPwithoutMASC(true, false);
+    }
+    
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean)
+     */
+    @Override
+    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat) {
+        if(hasHipCrit()) {
+            return getRunMPwithoutMASC(gravity, ignoreheat);
+        }
+        return ((int) Math.ceil(getWalkMP(gravity, ignoreheat) * 2.0)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+    }
+
+    public int getOriginalSprintMPwithoutMASC() {
+        if(hasHipCrit()) {
+            return getOriginalSprintMPwithoutMASC();
+        }
+        return ((int) Math.ceil(getWalkMP(false, false) * 2.0)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+    }
+
+    /**
+     * Returns this entity's Sprint mp as a string.
+     */
+    @Override
+    public String getSprintMPasString() {
+        if (hasArmedMASC()) {
+            return getRunMPwithoutMASC() + "(" + getSprintMP() + ")";
+        }
+        return Integer.toString(getSprintMP());
+    }
+    
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getRunningGravityLimit()
+     */
+    @Override
+    public int getRunningGravityLimit() {
+        if(game.getOptions().booleanOption("tacops_sprint")) {
+            return getSprintMP(false, false);
+        }
+        return getRunMP(false, false);
+    }
+    
+    
+    /**
+     * Depends on engine type
+     */
+    @Override
+    public int getSprintHeat() {
+        return engine.getSprintHeat();
+    }
+    
     /**
      * This mech's jumping MP modified for missing jump jets and gravity
      */
@@ -1556,6 +1651,8 @@ public abstract class Mech extends Entity implements Serializable {
             return "Ran";
         case IEntityMovementType.MOVE_JUMP:
             return "Jumped";
+        case IEntityMovementType.MOVE_SPRINT:
+            return "Sprinted";
         default:
             return "Unknown!";
         }
@@ -1577,6 +1674,8 @@ public abstract class Mech extends Entity implements Serializable {
             return "R";
         case IEntityMovementType.MOVE_JUMP:
             return "J";
+        case IEntityMovementType.MOVE_SPRINT:
+            return "Sp";
         default:
             return "?";
         }

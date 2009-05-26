@@ -178,6 +178,7 @@ public class SharedUtility {
             if (!i.hasMoreElements() && !firstStep) {
                 if ((entity instanceof Mech) || (entity instanceof VTOL)) {
                     if ((step.getMovementType() == IEntityMovementType.MOVE_WALK) || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK) || (step.getMovementType() == IEntityMovementType.MOVE_RUN) || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)) {
+                        //TODO: need to adjust for sprinting, but game options are not passed
                         if (step.getMpUsed() > entity.getRunMP(false, false)) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -186,6 +187,13 @@ public class SharedUtility {
                         }
                     } else if (step.getMovementType() == IEntityMovementType.MOVE_JUMP) {
                         if (step.getMpUsed() > entity.getJumpMP(false)) {
+                            rollTarget = entity.checkMovedTooFast(step);
+                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                nagReport.append(SharedUtility.addNag(rollTarget));
+                            }
+                        }
+                    } else if (step.getMovementType() == IEntityMovementType.MOVE_SPRINT) {
+                        if (step.getMpUsed() > entity.getSprintMP(false, false)) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(SharedUtility.addNag(rollTarget));
@@ -262,6 +270,17 @@ public class SharedUtility {
 
         // running with destroyed hip or gyro needs a check
         rollTarget = entity.checkRunningWithDamage(overallMoveType);
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+            nagReport.append(SharedUtility.addNag(rollTarget));
+        }
+        
+        //if we sprinted with MASC or a supercharger, then we need a PSR
+        rollTarget = entity.checkSprintingWithMASC(overallMoveType, md.getMpUsed());
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+            nagReport.append(SharedUtility.addNag(rollTarget));
+        }
+        
+        rollTarget = entity.checkSprintingWithSupercharger(overallMoveType, md.getMpUsed());
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             nagReport.append(SharedUtility.addNag(rollTarget));
         }

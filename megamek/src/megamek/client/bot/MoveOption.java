@@ -223,6 +223,9 @@ public class MoveOption extends MovePath {
         case IEntityMovementType.MOVE_VTOL_RUN:
             move = 2;
             break;
+        case IEntityMovementType.MOVE_SPRINT:
+            move = 3;
+            break;
         case IEntityMovementType.MOVE_JUMP:
             move = getEntity().getJumpHeat(last.getMpUsed());
             break;

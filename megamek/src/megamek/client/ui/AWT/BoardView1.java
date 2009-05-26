@@ -1860,6 +1860,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             case IEntityMovementType.MOVE_JUMP :
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveJumpColor");
                 break;
+            case IEntityMovementType.MOVE_SPRINT :
+                col = GUIPreferences.getInstance().getColor("AdvancedMoveSprintColor");
+                break;
             case IEntityMovementType.MOVE_ILLEGAL :
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
                 break;
@@ -3890,6 +3893,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             case IEntityMovementType.MOVE_JUMP:
                 col = GUIPreferences.getInstance().getColor(
                         "AdvancedMoveJumpColor");
+                break;
+            case IEntityMovementType.MOVE_SPRINT:
+                col = GUIPreferences.getInstance().getColor(
+                        "AdvancedMoveSprintColor");
                 break;
             case IEntityMovementType.MOVE_ILLEGAL:
                 col = GUIPreferences.getInstance().getColor(

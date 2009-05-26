@@ -610,8 +610,6 @@ public class Aero extends Entity
             return "Cruised";
         case IEntityMovementType.MOVE_RUN :
             return "Flanked";
-        case IEntityMovementType.MOVE_JUMP :
-            return "Jumped";
         case IEntityMovementType.MOVE_SAFE_THRUST :
             return "Safe Thrust";
         case IEntityMovementType.MOVE_OVER_THRUST :

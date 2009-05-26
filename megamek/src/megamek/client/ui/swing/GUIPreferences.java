@@ -54,6 +54,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_MOVE_MASC_COLOR = "AdvancedMoveMASCColor";
     public static final String ADVANCED_MOVE_RUN_COLOR = "AdvancedMoveRunColor";
     public static final String ADVANCED_MOVE_BACK_COLOR = "AdvancedMoveBackColor";
+    public static final String ADVANCED_MOVE_SPRINT_COLOR = "AdvancedMoveSprintColor";
     public static final String ADVANCED_MOVE_STEP_DELAY = "AdvancedMoveStepDelay";
     public static final String ADVANCED_DARKEN_MAP_AT_NIGHT = "AdvancedDarkenMapAtNight";
     public static final String ADVANCED_MAPSHEET_COLOR = "AdvancedMapsheetColor";
@@ -106,6 +107,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_NO_ACTION = "NagForNoAction";
     public static final String NAG_FOR_PSR = "NagForPSR";
     public static final String NAG_FOR_README = "NagForReadme";
+    public static final String NAG_FOR_SPRINT = "NagForSprint";
     public static final String RIGHT_DRAG_SCROLL = "RightDragScroll";
     public static final String RULER_COLOR_1 = "RulerColor1";
     public static final String RULER_COLOR_2 = "RulerColor2";
@@ -153,6 +155,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_MOVE_MASC_COLOR, new Color(255, 140, 0));
         setDefault(ADVANCED_MOVE_RUN_COLOR, "yellow");
         setDefault(ADVANCED_MOVE_BACK_COLOR, new Color(255, 255, 0));
+        setDefault(ADVANCED_MOVE_SPRINT_COLOR, new Color(255, 20, 147));
         store.setDefault(ADVANCED_MOVE_STEP_DELAY, 100);
         store.setDefault(ADVANCED_DARKEN_MAP_AT_NIGHT, true);
         setDefault(ADVANCED_MAPSHEET_COLOR, "blue");
@@ -190,6 +193,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_NO_ACTION, true);
         store.setDefault(NAG_FOR_PSR, true);
         store.setDefault(NAG_FOR_README, true);
+        store.setDefault(NAG_FOR_SPRINT, true);
         store.setDefault(RIGHT_DRAG_SCROLL, true);
         setDefault(RULER_COLOR_1, Color.cyan);
         setDefault(RULER_COLOR_2, Color.magenta);
@@ -380,6 +384,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getNagForReadme() {
         return store.getBoolean(NAG_FOR_README);
+    }
+    
+    public boolean getNagForSprint() {
+        return store.getBoolean(NAG_FOR_SPRINT);
     }
 
     public boolean getRightDragScroll() {
@@ -614,6 +622,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setNagForReadme(boolean b) {
         store.setValue(NAG_FOR_README, b);
+    }
+    
+    public void setNagForSprint(boolean b) {
+        store.setValue(NAG_FOR_SPRINT, b);
     }
 
     public void setRightDragScroll(boolean state) {

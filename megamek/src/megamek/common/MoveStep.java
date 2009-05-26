@@ -1725,6 +1725,18 @@ public class MoveStep implements Serializable {
                 // store if we got the pavement Bonus for end of phase
                 // gravity psr
                 entity.gotPavementBonus = true;
+            } else if (game.getOptions().booleanOption("tacops_sprint") 
+                    && (entity instanceof Mech) 
+                    && (getMpUsed() <= entity.getSprintMPwithoutMASC() 
+                            || ((getMpUsed() <= entity.getSprintMP()) && ((Mech) entity).isMASCUsed()))
+                    && !isRunProhibited() && !isEvading()) {
+                movementType = IEntityMovementType.MOVE_SPRINT;
+            } else if ((getMpUsed() <= entity.getSprintMP()) && !isRunProhibited() && !isEvading() 
+                    && game.getOptions().booleanOption("tacops_sprint")) {
+                setUsingMASC(true);
+                Mech m = (Mech) entity;
+                setTargetNumberMASC(m.getMASCTarget());
+                movementType = IEntityMovementType.MOVE_SPRINT;
             }
         }
         // 0 MP infantry units can move 1 hex
@@ -1750,8 +1762,12 @@ public class MoveStep implements Serializable {
         } else if ((movementType == IEntityMovementType.MOVE_VTOL_WALK)
                 && (prev.movementType == IEntityMovementType.MOVE_VTOL_RUN)) {
             movementType = IEntityMovementType.MOVE_VTOL_RUN;
+        } else if ((movementType == IEntityMovementType.MOVE_WALK || movementType == IEntityMovementType.MOVE_RUN)
+                && (prev.movementType == IEntityMovementType.MOVE_SPRINT)) {
+            movementType = IEntityMovementType.MOVE_SPRINT;
         }
-
+  
+        
         // Mechs with busted Gyro may make only one facing change
         if ((entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
                 Mech.LOC_CT) > 1)
@@ -1847,7 +1863,7 @@ public class MoveStep implements Serializable {
 
         // Can't run or jump if unjamming a RAC.
         if (isUnjammingRAC
-                && ((movementType == IEntityMovementType.MOVE_RUN)
+                && ((movementType == IEntityMovementType.MOVE_RUN) || (movementType == IEntityMovementType.MOVE_SPRINT)
                         || (movementType == IEntityMovementType.MOVE_VTOL_RUN) || parent
                         .isJumping())) {
             movementType = IEntityMovementType.MOVE_ILLEGAL;
@@ -2259,6 +2275,7 @@ public class MoveStep implements Serializable {
         }
         if (bDumping
                 && ((movementType == IEntityMovementType.MOVE_RUN)
+                        || (movementType == IEntityMovementType.MOVE_SPRINT)
                         || (movementType == IEntityMovementType.MOVE_VTOL_RUN)
                         || (movementType == IEntityMovementType.MOVE_JUMP))) {
             return false;
@@ -2304,7 +2321,9 @@ public class MoveStep implements Serializable {
 
         // Can't run into water unless hovering, naval, first step, using a
         // bridge, or fly.
-        if (((movementType == IEntityMovementType.MOVE_RUN) || (movementType == IEntityMovementType.MOVE_VTOL_RUN))
+        if (((movementType == IEntityMovementType.MOVE_RUN) 
+                || (movementType == IEntityMovementType.MOVE_SPRINT)
+                || (movementType == IEntityMovementType.MOVE_VTOL_RUN))
                 && (nMove != IEntityMovementMode.HOVER)
                 && (nMove != IEntityMovementMode.NAVAL)
                 && (nMove != IEntityMovementMode.HYDROFOIL)

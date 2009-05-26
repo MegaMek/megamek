@@ -24,6 +24,7 @@ v0.35.1-dev (SVN)
 + changed reporting of dead zones
 + Bug: Chameleon Light Polarization Shield not working
 + TacOps Sprinting Movement Mode
++ Added game option to log d6s
 
 v0.35.0 (2009-05-09, 18:02 UTC+2)
 + Patch 2604166: Battlemech Partial Wing

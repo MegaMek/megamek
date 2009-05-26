@@ -4301,6 +4301,15 @@ public abstract class Mech extends Entity implements Serializable {
     public int getMaxElevationChange() {
         return 2;
     }
+    
+    @Override
+    public int getMaxElevationDown() {
+        if(game.getOptions().booleanOption("tacops_leaping")) {
+            return 999;
+        } else {
+            return getMaxElevationChange();
+        }
+    }
 
     /**
      * Determine if this unit has an active stealth system.

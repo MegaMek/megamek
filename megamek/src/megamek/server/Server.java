@@ -4976,13 +4976,51 @@ public class Server implements Runnable {
             entity.setElevation(step.getElevation());
 
             IHex curHex = game.getBoard().getHex(curPos);
-
+            
+            
             // check for automatic unstick
             if (entity.canUnstickByJumping() && entity.isStuck() && (moveType == IEntityMovementType.MOVE_JUMP)) {
                 entity.setStuck(false);
                 entity.setCanUnstickByJumping(false);
             }
-
+            
+            //check for leap
+            if(!lastPos.equals(curPos) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) 
+                    && entity instanceof Mech && game.getOptions().booleanOption("tacops_leaping")) {
+                int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getElevation()) - (curElevation + curHex.getElevation());
+                if(leapDistance > 2) {
+                    //skill check for leg damage
+                    PilotingRollData roll = entity.getBasePilotingRoll(step.getMovementType());
+                    entity.addPilotingModifierForTerrain(roll, curPos);
+                    roll.append(new PilotingRollData(entity.getId(), 2 * leapDistance, "leaping (leg damage)"));
+                    if(0 < doSkillCheckWhileMoving(entity, lastPos, curPos, roll, false)) {
+                        //do leg damage               
+                        addReport(damageEntity(entity, new HitData(Mech.LOC_LLEG), leapDistance));
+                        addReport(damageEntity(entity, new HitData(Mech.LOC_RLEG), leapDistance));     
+                        addNewLines();
+                        addReport(criticalEntity(entity, Mech.LOC_LLEG, 0));
+                        addNewLines();
+                        addReport(criticalEntity(entity, Mech.LOC_RLEG, 0));
+                        if(entity instanceof QuadMech) {
+                            addReport(damageEntity(entity, new HitData(Mech.LOC_LARM), leapDistance));
+                            addReport(damageEntity(entity, new HitData(Mech.LOC_RARM), leapDistance));                      
+                            addNewLines();
+                            addReport(criticalEntity(entity, Mech.LOC_LARM, 0));
+                            addNewLines();
+                            addReport(criticalEntity(entity, Mech.LOC_RARM, 0));
+                        }
+                    }
+                    //skill check for fall
+                    roll = entity.getBasePilotingRoll(step.getMovementType());
+                    entity.addPilotingModifierForTerrain(roll, curPos);
+                    roll.append(new PilotingRollData(entity.getId(), leapDistance, "leaping (fall)"));
+                    if(0 < doSkillCheckWhileMoving(entity, lastPos, curPos, roll, false)) {
+                        entity.setElevation(lastElevation);
+                        addReport(doEntityFallsInto(entity, lastPos, curPos, entity.getBasePilotingRoll(overallMoveType), false));               
+                    }
+                }
+            }
+            
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing, lastPos, curPos, isInfantry, distance-1);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -5081,7 +5119,7 @@ public class Server implements Runnable {
                     }
                 }
             }
-
+            
             // check if we've moved into rubble
             rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {

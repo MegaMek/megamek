@@ -113,6 +113,10 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
+        //some buildings scale remaining damage that is not absorbed
+        //TODO: this isn't quite right for castles brian
+        nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
+        
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             Report r = new Report(3415);

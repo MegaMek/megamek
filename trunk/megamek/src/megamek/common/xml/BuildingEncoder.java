@@ -258,7 +258,7 @@ public class BuildingEncoder {
 
                 // Try to create the building.
                 try {
-                    retVal = new Building(type, id, name, coordVec);
+                    retVal = new Building(Building.STANDARD, type, id, name, coordVec);
                 } catch (IllegalArgumentException iaexp) {
                     throw new IllegalStateException(iaexp.getMessage());
                 }

@@ -227,7 +227,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
         if (targetInBuilding && (bldg != null)) {
-            bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
+            bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
         }
         if ((bldg != null) && (bldgAbsorbs > 0)) {
             // building absorbs some damage
@@ -264,7 +264,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         int ratedDamage = 5; // splash damage is 5 from all launchers
         bldg = null;
         bldg = game.getBoard().getBuildingAt(coords);
-        bldgAbsorbs = (bldg != null) ? bldg.getPhaseCF(coords) / 10 : 0;
+        bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
         // assumption: homing artillery splash damage is area effect.
         // do damage to woods, 2 * normal damage (TW page 112)

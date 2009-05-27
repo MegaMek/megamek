@@ -383,7 +383,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
      */
     public static int getDamageTakenBy(Entity entity, Building bldg, Coords coords) {
         // ASSUMPTION: 10% of buildings CF at start of phase, round up.
-        return (int) Math.ceil(bldg.getPhaseCF(coords) / 10.0);
+        return (int) Math.floor(bldg.getDamageFromScale() * Math.ceil(bldg.getPhaseCF(coords) / 10.0));
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target) {

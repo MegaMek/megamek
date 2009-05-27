@@ -4811,16 +4811,42 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             desc = "Light";
             break;
         case Building.MEDIUM:
-            mod = 1;
-            desc = "Medium";
+            if(bldg.getBldgClass() != Building.HANGAR) {
+                mod = 1;
+                desc = "Medium";
+            }  
+            if(bldg.getBldgClass() >= Building.FORTRESS) {
+                mod = 2;
+                desc = desc + " Fortress";
+            }           
             break;
         case Building.HEAVY:
             mod = 2;
             desc = "Heavy";
+            if(bldg.getBldgClass() == Building.HANGAR) {
+                mod = 1;
+                desc = desc + " Hangar";
+            }
+            if(bldg.getBldgClass() == Building.FORTRESS) {
+                mod = 3;
+                desc = desc + " Fortress";
+            }
+            //if(bldg.getBldgClass() == Building.CASTLE_BRIAN) {
+             //   mod = 4;
+             //   desc = desc + " Castle Brian";
+            //}
             break;
         case Building.HARDENED:
             mod = 5;
             desc = "Hardened";
+            if(bldg.getBldgClass() == Building.HANGAR) {
+                mod = 3;
+                desc = desc + " Hangar";
+            }
+            if(bldg.getBldgClass() == Building.FORTRESS) {
+                mod = 4;
+                desc = desc + " Fortress";
+            }
             break;
         case Building.WALL:
             mod = 12;

@@ -1093,6 +1093,7 @@ public class Board implements Serializable, IBoard {
                 final Coords coords = coordsEnum.nextElement();
                 bldg.setCurrentCF(other.getCurrentCF(coords), coords);
                 bldg.setPhaseCF(other.getPhaseCF(coords), coords);
+                bldg.setArmor(other.getArmor(coords), coords);
             }
         } // Handle the next building.
 

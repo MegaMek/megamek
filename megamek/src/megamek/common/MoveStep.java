@@ -2145,7 +2145,7 @@ public class MoveStep implements Serializable {
                     if(bldg.getBldgClass() == Building.HANGAR) {
                         mp--;
                     }
-                    if(bldg.getBldgClass() >= Building.FORTRESS) {
+                    if(bldg.getBldgClass() == Building.FORTRESS) {
                         mp++;
                     }
                 } else {
@@ -2228,6 +2228,12 @@ public class MoveStep implements Serializable {
 
             if ((bld.getType() == Building.WALL)
                     && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+                return false;
+            }
+            
+            //only infantry can enter an armored building
+            if(elevation < hex.terrainLevel(Terrains.BLDG_ELEV) && bld.getArmor(dest) > 0
+                    && !(entity instanceof Infantry)) {
                 return false;
             }
         }

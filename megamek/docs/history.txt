@@ -30,6 +30,7 @@ v0.35.1-dev (SVN)
 + TacOps building armor
 + Bug: null building armor 
 + Bug 2797113: dead zone rule preventing targeting of buildings
++ Bug 2796980: Sprinting and Weapons Fire
 
 v0.35.0 (2009-05-09, 18:02 UTC+2)
 + Patch 2604166: Battlemech Partial Wing

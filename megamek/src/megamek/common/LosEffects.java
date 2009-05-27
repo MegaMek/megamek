@@ -1040,7 +1040,8 @@ public class LosEffects {
                }
            }
         }
-        if(!IntPos.equals(lowPos)) {
+        //the intervening hex cannot be either the low or high position
+        if(!IntPos.equals(lowPos) && !IntPos.equals(highPos)) {
             return  1 < 2 * (2*IntElev - highElev - lowElev) + IntPos.distance(highPos) - IntPos.distance(lowPos);
         }
         return false;

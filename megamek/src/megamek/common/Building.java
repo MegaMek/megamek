@@ -51,6 +51,11 @@ public class Building implements Serializable {
      */
     private int type = Building.UNKNOWN;
     
+    /**
+     * the class of the building
+     */
+    private int bldgClass =Building.STANDARD;
+    
     private int collapsedHexes = 0;
     
     private int originalHexes = 0;
@@ -118,13 +123,20 @@ public class Building implements Serializable {
             return;
 
         if (structureType == Terrains.BUILDING) {
-            // Error off if the building type or CF is off.
+            // Error off if the building type, or CF is off.
             if (this.type != nextHex.terrainLevel(Terrains.BUILDING)) {
                 throw new IllegalArgumentException("The coordinates, "
                         + coords.getBoardNum()
                         + ", should contain the same type of building as "
                         + this.coordinates.elementAt(0).getBoardNum());
             }
+            if (this.bldgClass != nextHex.terrainLevel(Terrains.BLDG_CLASS)) {
+                throw new IllegalArgumentException("The coordinates, "
+                        + coords.getBoardNum()
+                        + ", should contain the same class of building as "
+                        + this.coordinates.elementAt(0).getBoardNum());
+            }
+            
         }
         // We passed our tests, add the next hex to this building.
         this.coordinates.addElement(coords);
@@ -160,6 +172,15 @@ public class Building implements Serializable {
     public static final int HEAVY = 3;
     public static final int HARDENED = 4;
     public static final int WALL = 5;
+    
+    /**
+     * Various building types
+     */
+    public static final int STANDARD = 0;
+    public static final int HANGAR = 1;
+    public static final int FORTRESS = 2;
+    //TODO: leaving out Castles Brian until issues with damage scaling are resolved
+    //public static final int CASTLE_BRIAN = 3;
 
     /**
      * Construct a building for the given coordinates from the board's
@@ -196,6 +217,7 @@ public class Building implements Serializable {
                     + coords.getBoardNum() + ", do not contain a building.");
         }
         this.type = startHex.terrainLevel(structureType);
+        this.bldgClass = startHex.terrainLevel(Terrains.BLDG_CLASS);
 
         // Insure that we've got a good type (and initialize our CF).
         this.currentCF.put(coords, getDefaultCF(this.type));
@@ -263,7 +285,8 @@ public class Building implements Serializable {
      *          the given coordinates do not contain a building, or if the
      *          building covers multiple hexes with different CFs.
      */
-    public Building(int type, int id, String name, Vector<Coords> coords) {
+    public Building(int bldgClass, int type, int id, String name, Vector<Coords> coords) {
+        this.bldgClass = bldgClass;
         this.type = type;
         this.id = id;
         this.name = name;
@@ -329,6 +352,14 @@ public class Building implements Serializable {
     public int getType() {
         return this.type;
     }
+    
+    /**
+     * Get the building class, per TacOps rules. 
+     * @return the <code>int</code> code of the building's classification.
+     */
+    public int getBldgClass() {
+        return this.bldgClass;
+    }
 
     /**
      * Get the current construction factor of the building hex at the
@@ -378,7 +409,7 @@ public class Building implements Serializable {
 
         this.currentCF.put(coords, cf);
     }
-
+    
     /**
      * Set the construction factor of the building hex for the start of the next
      * phase. Call this method at the end of the phase to apply damage sustained
@@ -486,6 +517,20 @@ public class Building implements Serializable {
                 buf.append("");
                 break;
         }
+        
+        switch(this.getBldgClass()) {
+        case Building.HANGAR:
+            buf.append("Hangar ");
+            break;
+        case Building.FORTRESS:
+            buf.append("Fortress ");
+            break;
+       // case Building.CASTLE_BRIAN:
+         //   buf.append("Castle Brian ");
+        //    break;
+        default:
+            buf.append("Standard ");
+        }
 
         // Add the building's name.
         buf.append(this.name);
@@ -537,4 +582,48 @@ public class Building implements Serializable {
     public int getCollapsedHexCount() {
         return collapsedHexes;
     }
+    
+    /**
+     * 
+     * @return the damage scale multiplier for units passing through this building
+     */
+    public double getDamageFromScale() {
+        switch(this.getBldgClass()) {
+        case Building.HANGAR:
+            return 0.5;
+        case Building.FORTRESS:
+            return 2.0;
+        //case Building.CASTLE_BRIAN:
+          //  return 10.0;
+        default:
+            return 1.0;
+        }
+    }
+    
+    /**
+     * 
+     * @return the damage scale multiplier for damage applied to this building (and occupants)
+     */
+    public double getDamageToScale() {
+        switch(this.getBldgClass()) {
+        case Building.FORTRESS:
+            return 0.5;
+        //case Building.CASTLE_BRIAN:
+          //  return 0.1;
+        default:
+            return 1.0;
+        }
+    }
+    
+    /**
+     * 
+     * @return the amount of damage the building absorbs
+     */
+    public int getAbsorbtion(Coords pos) {
+        //if(getBldgClass() == Building.CASTLE_BRIAN) {
+          //  return (int) Math.ceil(getPhaseCF(pos));
+        //}
+        return (int) Math.ceil(getPhaseCF(pos) / 10.0);
+    }
+    
 } // End public class Building implements Serializable

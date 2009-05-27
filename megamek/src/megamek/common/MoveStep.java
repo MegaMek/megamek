@@ -2142,6 +2142,12 @@ public class MoveStep implements Serializable {
                     // non-protos pay extra according to the building type
                     Building bldg = game.getBoard().getBuildingAt(getPosition());
                     mp += bldg.getType();
+                    if(bldg.getBldgClass() == Building.HANGAR) {
+                        mp--;
+                    }
+                    if(bldg.getBldgClass() >= Building.FORTRESS) {
+                        mp++;
+                    }
                 } else {
                     // protos pay one extra
                     mp += 1;

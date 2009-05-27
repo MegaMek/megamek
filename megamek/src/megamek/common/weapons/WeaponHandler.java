@@ -397,7 +397,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
         if (targetInBuilding && (bldg != null)) {
-            bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
+            bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
         }
 
         // Make sure the player knows when his attack causes no damage.
@@ -596,6 +596,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
+        //some buildings scale remaining damage that is not absorbed
+        //TODO: this isn't quite right for castles brian
+        nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
+        
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             Report r = new Report(3415);

@@ -9593,7 +9593,7 @@ public class Server implements Runnable {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         if (targetInBuilding && (bldg != null)) {
-            int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
+            int bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
@@ -9602,6 +9602,10 @@ public class Server implements Runnable {
                 report.subject = ae.getId();
             }
             addReport(buildingReport);
+            
+            //some buildings scale remaining damage that is not absorbed
+            //TODO: this isn't quite right for castles brian
+            damage = (int) Math.floor(bldg.getDamageToScale() * damage);
         }
 
         // A building may absorb the entire shot.
@@ -9834,7 +9838,7 @@ public class Server implements Runnable {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         if (targetInBuilding && (bldg != null)) {
-            int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
+            int bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
@@ -9843,6 +9847,10 @@ public class Server implements Runnable {
                 report.subject = ae.getId();
             }
             addReport(buildingReport);
+            
+            //some buildings scale remaining damage that is not absorbed
+            //TODO: this isn't quite right for castles brian
+            damage = (int) Math.floor(bldg.getDamageToScale() * damage);
         }
 
         // A building may absorb the entire shot.
@@ -10075,7 +10083,7 @@ public class Server implements Runnable {
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
             if (targetInBuilding && (bldg != null)) {
-                int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
+                int bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
                 int toBldg = Math.min(bldgAbsorbs, damage);
                 damage -= toBldg;
                 addNewLines();
@@ -10084,6 +10092,10 @@ public class Server implements Runnable {
                     report.subject = ae.getId();
                 }
                 addReport(buildingReport);
+                
+                //some buildings scale remaining damage that is not absorbed
+                //TODO: this isn't quite right for castles brian
+                damage = (int) Math.floor(bldg.getDamageToScale() * damage);
             }
 
             // A building may absorb the entire shot.
@@ -10252,7 +10264,7 @@ public class Server implements Runnable {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         if (targetInBuilding && (bldg != null)) {
-            int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
+            int bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
@@ -10261,6 +10273,10 @@ public class Server implements Runnable {
                 report.subject = ae.getId();
             }
             addReport(buildingReport);
+            
+            //some buildings scale remaining damage that is not absorbed
+            //TODO: this isn't quite right for castles brian
+            damage = (int) Math.floor(bldg.getDamageToScale() * damage);
         }
 
         // A building may absorb the entire shot.
@@ -10875,7 +10891,7 @@ public class Server implements Runnable {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         if (targetInBuilding && (bldg != null)) {
-            int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
+            int bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
@@ -10884,6 +10900,10 @@ public class Server implements Runnable {
                 report.subject = ae.getId();
             }
             addReport(buildingReport);
+            
+            //some buildings scale remaining damage that is not absorbed
+            //TODO: this isn't quite right for castles brian
+            damage = (int) Math.floor(bldg.getDamageToScale() * damage);
         }
 
         // A building may absorb the entire shot.
@@ -12009,7 +12029,7 @@ public class Server implements Runnable {
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
         if (targetInBuilding && (bldg != null)) {
-            bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(te.getPosition()) / 10.0);
+            bldgAbsorbs = bldg.getAbsorbtion(te.getPosition());
         }
 
         Report r;
@@ -12084,6 +12104,10 @@ public class Server implements Runnable {
                     report.subject = ae.getId();
                 }
                 addReport(buildingReport);
+                
+                //some buildings scale remaining damage that is not absorbed
+                //TODO: this isn't quite right for castles brian
+                damage = (int) Math.floor(bldg.getDamageToScale() * damage);
             }
 
             // A building may absorb the entire shot.
@@ -21644,7 +21668,7 @@ public class Server implements Runnable {
             if (0 < doSkillCheckWhileMoving(entity, lastPos, curPos, psr, false)) {
 
                 // Divide the building's current CF by 10, round up.
-                int damage = (int) Math.ceil(bldg.getCurrentCF(curPos) / 10.0);
+                int damage = (int) Math.floor(bldg.getDamageFromScale() * Math.ceil(bldg.getCurrentCF(curPos) / 10.0));
 
                 // Infantry and Battle armor take different amounts of damage then Meks and vehicles.
                 if (entity instanceof Infantry) {
@@ -21675,7 +21699,7 @@ public class Server implements Runnable {
                 return false;
             }
             // Damage the building. The CF can never drop below 0.
-            int toBldg = (int) Math.ceil(entity.getWeight() / 10.0);
+            int toBldg = (int) Math.floor(bldg.getDamageToScale() * Math.ceil(entity.getWeight() / 10.0));
             int curCF = bldg.getCurrentCF(curPos);
             curCF -= Math.min(curCF, toBldg);
             bldg.setCurrentCF(curCF, curPos);
@@ -21753,6 +21777,10 @@ public class Server implements Runnable {
         // Round up at .5 points of damage.
         int toInf = Math.round(damage * percent);
 
+        //some buildings scale remaining damage
+        //TODO: this isn't quite right for castles brian
+        damage = (int) Math.floor(bldg.getDamageToScale() * toInf);
+        
         // Record if we find any infantry.
         boolean foundInfantry = false;
 
@@ -22029,7 +22057,7 @@ public class Server implements Runnable {
                 }
 
                 // Calculate collapse damage for this entity.
-                int damage = (int) Math.ceil(phaseCF * (numFloors - floor) / 10.0);
+                int damage = (int) Math.floor(bldg.getDamageFromScale() * Math.ceil(phaseCF * (numFloors - floor) / 10.0));
 
                 // Infantry suffer more damage.
                 if (entity instanceof Infantry) {
@@ -22262,6 +22290,9 @@ public class Server implements Runnable {
         Report r = new Report(1210, Report.PUBLIC);
         r.newlines = 0;
 
+        //adjust damage for building class
+        damage = (int) Math.floor(bldg.getDamageToScale() * damage);
+        
         // Do nothing if no building or no damage was passed.
         if ((bldg != null) && (damage > 0)) {
             int curCF = bldg.getCurrentCF(coords);
@@ -23828,7 +23859,7 @@ public class Server implements Runnable {
         Building bldg = game.getBoard().getBuildingAt(coords);
         int bldgAbsorbs = 0;
         if ((bldg != null) && !(flak && (flakElevation > hex.terrainLevel(Terrains.BLDG_ELEV)))) {
-            bldgAbsorbs = bldg.getPhaseCF(coords) / 10;
+            bldgAbsorbs = bldg.getAbsorbtion(coords);
             if (!((ammo != null) && (ammo.getMunitionType() == AmmoType.M_FLECHETTE))) {
                 // damage the building
                 Vector<Report> buildingReport = damageBuilding(bldg, damage, coords);
@@ -23860,6 +23891,9 @@ public class Server implements Runnable {
             // Check: is entity inside building?
             if ((bldg != null) && (bldgAbsorbs > 0) && (entity.getElevation() < hex.terrainLevel(Terrains.BLDG_ELEV))) {
                 cluster -= bldgAbsorbs;
+                //some buildings scale remaining damage that is not absorbed
+                //TODO: this isn't quite right for castles brian
+                cluster = (int) Math.floor(bldg.getDamageToScale() * cluster);
                 if (entity instanceof Infantry) {
                     continue; // took its damage already from building damage
                 } else if (cluster <= 0) {

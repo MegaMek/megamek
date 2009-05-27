@@ -195,7 +195,7 @@ public class LRMSwarmHandler extends LRMHandler {
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
         if (targetInBuilding && (bldg != null)) {
-            bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
+            bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
         }
 
         // Make sure the player knows when his attack causes no damage.

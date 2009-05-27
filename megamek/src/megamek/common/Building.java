@@ -147,7 +147,11 @@ public class Building implements Serializable {
         originalHexes++;
         this.currentCF.put(coords, getDefaultCF(this.type));
         this.phaseCF.put(coords, getDefaultCF(this.type));
-        this.armor.put(coords, nextHex.terrainLevel(Terrains.BLDG_ARMOR));
+        if(nextHex.containsTerrain(Terrains.BLDG_ARMOR)) {
+            this.armor.put(coords,nextHex.terrainLevel(Terrains.BLDG_ARMOR));
+        } else {
+            this.armor.put(coords,0);
+        }
         
         this.burning.put(coords, false);
 
@@ -244,10 +248,12 @@ public class Building implements Serializable {
                 && startHex.containsTerrain(Terrains.FUEL_TANK_CF)) {
             this.currentCF.put(coords, startHex.terrainLevel(Terrains.FUEL_TANK_CF));
         }
-        if (structureType == Terrains.BUILDING
-                && startHex.containsTerrain(Terrains.BLDG_ARMOR)) {
+        if (startHex.containsTerrain(Terrains.BLDG_ARMOR)) {
             this.armor.put(coords, startHex.terrainLevel(Terrains.BLDG_ARMOR));
+        } else {
+            this.armor.put(coords, 0);
         }
+        
         this.phaseCF.putAll(currentCF);
 
         // Walk through the exit directions and

@@ -71,7 +71,11 @@ public class Building implements Serializable {
      * the phase.
      */
     private Map<Coords, Integer> phaseCF = new HashMap<Coords, Integer>();
-
+    /**
+     * The current armor of the building hexes.
+     */
+    private Map<Coords, Integer> armor = new HashMap<Coords, Integer>();
+    
     /**
      * The name of the building.
      */
@@ -143,6 +147,7 @@ public class Building implements Serializable {
         originalHexes++;
         this.currentCF.put(coords, getDefaultCF(this.type));
         this.phaseCF.put(coords, getDefaultCF(this.type));
+        this.armor.put(coords, nextHex.terrainLevel(Terrains.BLDG_ARMOR));
         
         this.burning.put(coords, false);
 
@@ -239,6 +244,10 @@ public class Building implements Serializable {
                 && startHex.containsTerrain(Terrains.FUEL_TANK_CF)) {
             this.currentCF.put(coords, startHex.terrainLevel(Terrains.FUEL_TANK_CF));
         }
+        if (structureType == Terrains.BUILDING
+                && startHex.containsTerrain(Terrains.BLDG_ARMOR)) {
+            this.armor.put(coords, startHex.terrainLevel(Terrains.BLDG_ARMOR));
+        }
         this.phaseCF.putAll(currentCF);
 
         // Walk through the exit directions and
@@ -295,6 +304,7 @@ public class Building implements Serializable {
         for (Coords coord : coordinates) {
             this.currentCF.put(coord, getDefaultCF(this.type));
             this.phaseCF.putAll(currentCF);
+            this.armor.put(coord, 0);
             if (getDefaultCF(this.type) == Building.UNKNOWN) {
                 throw new IllegalArgumentException("Invalid construction type: "
                         + this.type + ".");
@@ -390,6 +400,10 @@ public class Building implements Serializable {
         return this.phaseCF.get(coords);
     }
 
+    public int getArmor(Coords coords) {
+        return this.armor.get(coords);
+    }
+    
     /**
      * Set the current construction factor of the building hex. Call this method
      * immediately when the building sustains any damage.
@@ -429,6 +443,15 @@ public class Building implements Serializable {
         }
 
         this.phaseCF.put(coords, cf);
+    }
+    
+    public void setArmor(int a, Coords coords) {
+        if (a < 0) {
+            throw new IllegalArgumentException(
+                    "Invalid value for armor: " + a);
+        }
+
+        this.armor.put(coords, a);
     }
 
     /**

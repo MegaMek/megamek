@@ -58,33 +58,34 @@ public class Terrains implements ITerrainFactory {
     public static final int BLDG_CF        = 23;
     public static final int BLDG_ELEV      = 24;
     public static final int BLDG_BASEMENT  = 25;
-    public static final int BLDG_CLASS     = 26; //1: hangars 2: walls 3: bridges 4: fortresses 5: castle brians 6: Gun emplacements
+    public static final int BLDG_CLASS     = 26; //1: hangars 2: fortresses
+    public static final int BLDG_ARMOR     = 27;
     //leaving this empty will be interpreted as standard
-    public static final int BRIDGE         = 27;
-    public static final int BRIDGE_CF      = 28;
-    public static final int BRIDGE_ELEV    = 29;
-    public static final int FUEL_TANK      = 30;
-    public static final int FUEL_TANK_CF   = 31;
-    public static final int FUEL_TANK_ELEV = 32;
-    public static final int FUEL_TANK_MAGN = 33;
+    public static final int BRIDGE         = 28;
+    public static final int BRIDGE_CF      = 29;
+    public static final int BRIDGE_ELEV    = 30;
+    public static final int FUEL_TANK      = 31;
+    public static final int FUEL_TANK_CF   = 32;
+    public static final int FUEL_TANK_ELEV = 33;
+    public static final int FUEL_TANK_MAGN = 34;
 
     // special types
-    public static final int IMPASSABLE = 34;
-    public static final int ELEVATOR   = 35; // level=elevation it moves to,exits=d6 rolls it moves on
-    public static final int FORTIFIED  = 36;
-    public static final int SCREEN     = 37;
+    public static final int IMPASSABLE = 35;
+    public static final int ELEVATOR   = 36; // level=elevation it moves to,exits=d6 rolls it moves on
+    public static final int FORTIFIED  = 37;
+    public static final int SCREEN     = 38;
     
     //fluff
-    public static final int FLUFF = 38;
-    public static final int ARMS  = 39; // blown off arms for use as clubs, level = number of arms in that hex
-    public static final int LEGS  = 40; // blown off legs for use as clubs, level = number of legs in that hex
+    public static final int FLUFF = 39;
+    public static final int ARMS  = 40; // blown off arms for use as clubs, level = number of arms in that hex
+    public static final int LEGS  = 41; // blown off legs for use as clubs, level = number of legs in that hex
 
     private static final String[] names = { "none", "woods", "water", "rough", 
         "rubble", "jungle", "sand", "tundra", "magma", "planted_fields",
         "heavy_industrial", "space",
         "pavement", "road", "swamp", "mud", "rapids", "ice", "snow", 
         "fire", "smoke", "geyser", 
-        "building", "bldg_cf", "bldg_elev", "bldg_basement", "bldg_class", "bridge", "bridge_cf",
+        "building", "bldg_cf", "bldg_elev", "bldg_basement", "bldg_class", "bldg_armor", "bridge", "bridge_cf",
         "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev", "fuel_tank_magn", 
         "impassable", "elevator", "fortified", "screen",
         "fluff", "arms", "legs" };

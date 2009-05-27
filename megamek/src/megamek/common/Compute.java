@@ -1305,7 +1305,7 @@ public class Compute {
         } else if (movement == IEntityMovementType.MOVE_OVER_THRUST) {
             toHit.addModifier(2, "over thrust used");
         } else if (movement == IEntityMovementType.MOVE_SPRINT) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "attacker sprinted");
+            return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "attacker sprinted");
         }
 
         return toHit;

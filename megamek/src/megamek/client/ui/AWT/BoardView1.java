@@ -1523,6 +1523,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 buf.append(bldg.toString());
                 buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
                 buf.append(bldg.getCurrentCF(mcoords));
+                buf.append(Messages.getString("BoardView1.BldgArmor")); //$NON-NLS-1$
+                buf.append(bldg.getArmor(mcoords));
                 strings[stringsIndex] = buf.toString();
                 stringsIndex += 1;
             }

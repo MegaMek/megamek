@@ -22290,48 +22290,84 @@ public class Server implements Runnable {
         Report r = new Report(1210, Report.PUBLIC);
         r.newlines = 0;
 
-        //adjust damage for building class
-        damage = (int) Math.floor(bldg.getDamageToScale() * damage);
-        
         // Do nothing if no building or no damage was passed.
         if ((bldg != null) && (damage > 0)) {
-            int curCF = bldg.getCurrentCF(coords);
-            final int startingCF = curCF;
-            curCF -= Math.min(curCF, damage);
-            bldg.setCurrentCF(curCF, coords);
             r.messageId = 3435;
             r.add(bldg.getName());
             r.add(why);
             r.add(damage);
-            r.newlines = 1;
-
-            // If the CF is zero, the building should fall.
-            if ((curCF == 0) && (startingCF != 0)) {
-                if (bldg instanceof FuelTank) {
-                    // If this is a fuel tank, we'll give it its own message.
-                    r.messageId = 3441;
-                    r.type = Report.PUBLIC;
+            vPhaseReport.add(r);
+            int curArmor = bldg.getArmor(coords);
+            if(curArmor >= damage) {
+                curArmor -= Math.min(curArmor, damage);
+                bldg.setArmor(curArmor,coords);
+                r = new Report(3436, Report.PUBLIC);
+                r.indent(0);
+                r.add(damage);
+                r.add(curArmor);
+                vPhaseReport.add(r);
+            } else {
+                r.add(damage);
+                if(curArmor > 0) {
+                    bldg.setArmor(0, coords);
+                    damage = damage - curArmor;
+                    r = new Report(3436, Report.PUBLIC);
+                    r.indent(0);
+                    r.add(curArmor);
+                    r.add(0);
                     vPhaseReport.add(r);
-                    // ...But we ALSO need to blow up everything nearby.
-                    // Bwahahahahaha...
-                    r = new Report(3560);
-                    r.type = Report.PUBLIC;
-                    r.newlines = 1;
-                    vPhaseReport.add(r);
-                    Vector<Report> vRep = new Vector<Report>();
-                    doExplosion(((FuelTank) bldg).getMagnitude(), 10, false, bldg.getCoords().nextElement(), true, vRep, null);
-                    Report.indentAll(vRep, 2);
-                    vPhaseReport.addAll(vRep);
-                    return vPhaseReport;
                 }
-                if (bldg.getType() == Building.WALL) {
-                    r.messageId = 3442;
-                } else {
-                    r.messageId = 3440;
+                damage = (int) Math.floor(bldg.getDamageToScale() * damage);
+                if(bldg.getDamageToScale() < 1.0) {
+                    r = new Report(3437, Report.PUBLIC);
+                    r.indent(0);
+                    r.add(damage);
+                    vPhaseReport.add(r);
+                }
+                if(bldg.getDamageToScale() > 1.0) {
+                    r = new Report(3438, Report.PUBLIC);
+                    r.indent(0);
+                    r.add(damage);
+                    vPhaseReport.add(r);
+                }
+                int curCF = bldg.getCurrentCF(coords);
+                final int startingCF = curCF;
+                curCF -= Math.min(curCF, damage);
+                bldg.setCurrentCF(curCF, coords);
+    
+                // If the CF is zero, the building should fall.
+                if ((curCF == 0) && (startingCF != 0)) {
+                    if (bldg instanceof FuelTank) {
+                        // If this is a fuel tank, we'll give it its own message.
+                        r = new Report(3441);
+                        r.type = Report.PUBLIC;
+                        r.indent(0);
+                        vPhaseReport.add(r);
+                        // ...But we ALSO need to blow up everything nearby.
+                        // Bwahahahahaha...
+                        r = new Report(3560);
+                        r.type = Report.PUBLIC;
+                        r.newlines = 1;
+                        vPhaseReport.add(r);
+                        Vector<Report> vRep = new Vector<Report>();
+                        doExplosion(((FuelTank) bldg).getMagnitude(), 10, false, bldg.getCoords().nextElement(), true, vRep, null);
+                        Report.indentAll(vRep, 2);
+                        vPhaseReport.addAll(vRep);
+                        return vPhaseReport;
+                    }
+                    if (bldg.getType() == Building.WALL) {
+                        r = new Report(3442);
+                        r.type = Report.PUBLIC;
+                        r.indent(0);
+                        vPhaseReport.add(r);
+                    } else {
+                        r = new Report(3440);
+                        r.type = Report.PUBLIC;
+                        r.indent(0);
+                        vPhaseReport.add(r);
+                    }
                 }
             }
-
-            vPhaseReport.add(r);
         }
         Report.indentAll(vPhaseReport, 2);
         return vPhaseReport;

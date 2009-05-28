@@ -115,7 +115,9 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
         //some buildings scale remaining damage that is not absorbed
         //TODO: this isn't quite right for castles brian
-        nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
+        if(null != bldg) {
+            nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
+        }
         
         // A building may absorb the entire shot.
         if (nDamage == 0) {

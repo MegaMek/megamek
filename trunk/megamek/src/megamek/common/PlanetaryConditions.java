@@ -126,6 +126,7 @@ public class PlanetaryConditions implements Serializable {
         emi = other.emi;
         fog = other.fog;
         terrainAffected = other.terrainAffected;
+        blowingSand = other.blowingSand;
     }
 
     /** clone! */

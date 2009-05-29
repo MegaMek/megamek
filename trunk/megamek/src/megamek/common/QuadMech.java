@@ -381,7 +381,9 @@ public class QuadMech extends Mech {
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
 
-        if ((aimedLocation != LOC_NONE) && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+        if ((aimedLocation != LOC_NONE) 
+                && (aimingMode != IAimingModes.AIM_MODE_NONE)
+                && (aimingMode != IAimingModes.AIM_MODE_CALLED)) {
             roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {

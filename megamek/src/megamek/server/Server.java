@@ -74,6 +74,7 @@ import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.HitData;
+import megamek.common.IAimingModes;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
 import megamek.common.IEntityMovementMode;
@@ -6570,7 +6571,7 @@ public class Server implements Runnable {
         // track this missile on the entity
         ae.getTMTracker().addMissile(wId, tele.getId());
     }
-
+    
     /**
      * deliver inferno missiles
      *
@@ -6582,6 +6583,25 @@ public class Server implements Runnable {
      *            the <code>int</code> amount of missiles
      */
     public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t, int missiles) {
+        return deliverInfernoMissiles(ae, t, missiles, IAimingModes.AIM_MODE_NONE, -1);
+    }
+    
+    /**
+     * deliver inferno missiles
+     *
+     * @param ae
+     *            the <code>Entity</code> that fired the missiles
+     * @param t
+     *            the <code>Targetable</code> that is the target
+     * @param missiles
+     *            the <code>int</code> amount of missiles
+     * @param aimingMode
+     *            an <code>int</code> indicated the aiming mode used to fire the inferno missiles (for called shots)
+     * @param aimAt
+     *            an <code>int</code> indicating the location being aimed at (for called shots)
+     */
+    public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t, int missiles, int aimingMode, int aimAt) {
+        //TODO: this doesn't get the right side table for called shots, I think
         IHex hex = game.getBoard().getHex(t.getPosition());
         Report r;
         Vector<Report> vPhaseReport = new Vector<Report>();
@@ -6595,7 +6615,7 @@ public class Server implements Runnable {
                     r.subject = e.getId();
                     r.addDesc(e);
                     vPhaseReport.add(r);
-                    vPhaseReport.addAll(deliverInfernoMissiles(ae, e, missiles));
+                    vPhaseReport.addAll(deliverInfernoMissiles(ae, e, missiles, aimingMode, aimAt));
                 } else {
                     int roll = Compute.d6();
                     r = new Report(3570);
@@ -6604,7 +6624,7 @@ public class Server implements Runnable {
                     r.add(roll);
                     vPhaseReport.add(r);
                     if (roll >= 5) {
-                        vPhaseReport.addAll(deliverInfernoMissiles(ae, e, missiles));
+                        vPhaseReport.addAll(deliverInfernoMissiles(ae, e, missiles, aimingMode, aimAt));
                     }
                 }
             }
@@ -6635,7 +6655,7 @@ public class Server implements Runnable {
                 r.add(roll);
                 vPhaseReport.add(r);
                 if (roll >= 5) {
-                    vPhaseReport.addAll(deliverInfernoMissiles(ae, e, missiles));
+                    vPhaseReport.addAll(deliverInfernoMissiles(ae, e, missiles, aimingMode, aimAt));
                 }
             }
             Vector<Report> vBuildingReport = damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles, t.getPosition());
@@ -6652,7 +6672,7 @@ public class Server implements Runnable {
                 for (int i = 0; i < m; i++) {
                     int roll = Compute.d6(2);
                     LosEffects le = LosEffects.calculateLos(game, ae.getId(), t);
-                    if (te.removePartialCoverHits(roll, le.getTargetCover(), Compute.targetSideTable(ae, t))) {
+                    if (te.removePartialCoverHits(roll, le.getTargetCover(), Compute.targetSideTable(ae, t, aimingMode, aimAt))) {
                         missiles--;
                     }
                 }
@@ -6671,7 +6691,7 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
                 te.heatFromExternal += 2 * missiles;
             } else if (te instanceof Tank) {
-                int direction = Compute.targetSideTable(ae, te);
+                int direction = Compute.targetSideTable(ae, te, aimingMode, aimAt);
                 while (missiles-- > 0) {
                     HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
                     vPhaseReport.addAll(criticalEntity(te, hit.getLocation(), -2));
@@ -6749,7 +6769,7 @@ public class Server implements Runnable {
                 }
             } else {
                 // gun emplacements
-                int direction = Compute.targetSideTable(ae, te);
+                int direction = Compute.targetSideTable(ae, te, aimingMode, aimAt);
                 while (missiles-- > 0) {
                     HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
                     vPhaseReport.addAll(damageEntity(te, hit, 2));

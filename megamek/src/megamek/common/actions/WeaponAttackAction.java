@@ -23,6 +23,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.BombType;
+import megamek.common.CalledShots;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
@@ -1584,6 +1585,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
             // XXX what to do about GunEmplacements with partial cover?
         }
+        
+        //add penalty for called shots and change hit table, if necessary
+        if(aimingMode == IAimingModes.AIM_MODE_CALLED) {
+            toHit.addModifier(+3, "called shot");
+            switch (aimingAt) {
+            case CalledShots.CALLED_HIGH:
+                toHit.setHitTable(ToHitData.HIT_ABOVE);
+                break;
+            case CalledShots.CALLED_LOW:
+                toHit.setHitTable(ToHitData.HIT_BELOW);
+                break;
+            }
+        }
 
         //change hit table for surface vessels hit by underwater attacks
         if(underWater && targHex.containsTerrain(Terrains.WATER) && (null != te)
@@ -1596,8 +1610,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // Infantry attacks from the same hex are resolved against the
             // front.
             toHit.setSideTable(ToHitData.SIDE_FRONT);
-        } else {
-            toHit.setSideTable(Compute.targetSideTable(ae, target));
+        } else {          
+            toHit.setSideTable(Compute.targetSideTable(ae, target, aimingMode, aimingAt));
         }
 
         if (target instanceof Aero) {

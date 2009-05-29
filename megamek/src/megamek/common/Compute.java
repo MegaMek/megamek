@@ -2508,8 +2508,12 @@ public class Compute {
     public static int targetSideTable(Coords inPosition, Targetable target) {
         return target.sideTable(inPosition);
     }
-
+    
     public static int targetSideTable(Entity attacker, Targetable target) {
+        return targetSideTable(attacker, target, IAimingModes.AIM_MODE_NONE, -1);
+    }
+
+    public static int targetSideTable(Entity attacker, Targetable target, int aimingMode, int aimingAt) {
         Coords attackPos = attacker.getPosition();
 
         boolean usePrior = false;
@@ -2524,6 +2528,15 @@ public class Compute {
         if((target instanceof Aero) && (attacker instanceof Aero)) {
             return ((Entity)target).sideTable(attackPos, usePrior);
         }
+        
+        if(target instanceof Entity 
+                && aimingMode == IAimingModes.AIM_MODE_CALLED && aimingAt == CalledShots.CALLED_LEFT) {
+            return ((Entity)target).sideTable(attackPos, false, (((Entity)target).getFacing() + 5) % 6);
+        } else if (target instanceof Entity 
+                && aimingMode == IAimingModes.AIM_MODE_CALLED && aimingAt == CalledShots.CALLED_RIGHT) {
+            return ((Entity)target).sideTable(attackPos, false, (((Entity)target).getFacing() + 1) % 6);
+        }
+        
         return target.sideTable(attackPos);
     }
 

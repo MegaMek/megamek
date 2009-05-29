@@ -94,7 +94,8 @@ public class LargeSupportTank extends SupportTank {
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+                && (aimingMode != IAimingModes.AIM_MODE_NONE)
+                && (aimingMode != IAimingModes.AIM_MODE_CALLED)) {
 
             int roll = Compute.d6(2);
 

@@ -57,7 +57,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         if (entityTarget instanceof Mech) {
             HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
             hit.setGeneralDamageType(generalDamageType);
-            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), Compute.targetSideTable(ae, entityTarget))) {
+            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), Compute.targetSideTable(ae, entityTarget, 
+                    waa.getAimingMode(), waa.getAimedLocation()))) {
                 // Weapon strikes Partial Cover.
                 Report r = new Report(3460);
                 r.subject = subjectId;

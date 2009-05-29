@@ -546,7 +546,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         boolean isIndirect = wtype.hasModes() && weapon.curMode().equals("Indirect");
 
         if (!isIndirect && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget))) {
+                .getCover(), Compute.targetSideTable(ae, entityTarget, 
+                        waa.getAimingMode(), waa.getAimedLocation()))) {
             // Weapon strikes Partial Cover.
             Report r = new Report(3460);
             r.subject = subjectId;

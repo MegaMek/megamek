@@ -95,7 +95,7 @@
      Sni77 <sni77@users.sourceforge.net>
      Jellico
      Brock Peterman <bh-21@users.sourceforge.net>
-     
+     DarkISI
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>
@@ -151,7 +151,7 @@
      James Lacy <freakboy2571@users.sourceforge.net>
 
   And Of Course...
-     FASA, WizKids and FanPro for creating and publishing the original game of 
+     FASA, WizKids, FanPro and Catalyst Game Labs for creating and publishing the original game of 
      BattleTech, a source of fun and inspiration to us all.
 
 

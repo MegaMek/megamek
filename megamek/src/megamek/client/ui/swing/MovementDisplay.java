@@ -2962,16 +2962,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
             if (clientgui.getClient().game.getOptions().booleanOption("tacops_careful_stand")
                     && (ce.getWalkMP() > 2)) {
-                megamek.client.ui.swing.ConfirmDialog response = clientgui
-                        .doYesNoBotherDialog(
+                ConfirmDialog response = clientgui.doYesNoBotherDialog(
                                 Messages
                                         .getString("MovementDisplay.CarefulStand.title"),//$NON-NLS-1$
                                 Messages
                                         .getString("MovementDisplay.CarefulStand.message"));
-
-                response.setVisible(true);
-                response.setVisible(true);
-
                 if (response.getAnswer()) {
                     ce.setCarefulStand(true);
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {

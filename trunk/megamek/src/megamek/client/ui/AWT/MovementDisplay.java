@@ -2793,9 +2793,27 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if(!cmd.contains(MovePath.STEP_HULL_DOWN)) {
                 clearAllMoves();
             }
-
-            if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
-                cmd.addStep(MovePath.STEP_GET_UP);
+            if (clientgui.getClient().game.getOptions().booleanOption("tacops_careful_stand")
+                    && (ce.getWalkMP() > 2)) {
+                ConfirmDialog response = clientgui.doYesNoBotherDialog(
+                        Messages
+                        .getString("MovementDisplay.CarefulStand.title"),//$NON-NLS-1$
+                        Messages
+                        .getString("MovementDisplay.CarefulStand.message"));
+                if (response.getAnswer()) {
+                    ce.setCarefulStand(true);
+                    if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
+                        cmd.addStep(MovePath.STEP_CAREFUL_STAND);
+                    }
+                } else {
+                    if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
+                        cmd.addStep(MovePath.STEP_GET_UP);
+                    }
+                }
+            } else {
+                if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
+                    cmd.addStep(MovePath.STEP_GET_UP);
+                }
             }
             clientgui.bv.drawMovementData(ce, cmd);
         }else if (ev.getActionCommand().equals(MOVE_CAREFUL_STAND)) {

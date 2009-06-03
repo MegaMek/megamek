@@ -499,7 +499,7 @@ public class PlanetaryConditions implements Serializable {
         //wind mods
         switch(windStrength) {
         case(WI_LIGHT_GALE):
-            if(en.getMovementMode() == IEntityMovementMode.INF_LEG) {
+            if(en.getMovementMode() == IEntityMovementMode.INF_LEG || en.getMovementMode() == IEntityMovementMode.INF_JUMP) {
                 mod -= 1;
             }
             break;

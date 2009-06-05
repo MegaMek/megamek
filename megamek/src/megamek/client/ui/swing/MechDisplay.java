@@ -63,6 +63,7 @@ import megamek.client.ui.swing.widget.MechMapSet;
 import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.client.ui.swing.widget.PicMap;
+import megamek.client.ui.swing.widget.PilotMapSet;
 import megamek.client.ui.swing.widget.ProtomechMapSet;
 import megamek.client.ui.swing.widget.QuadMapSet;
 import megamek.client.ui.swing.widget.SpheroidMapSet;
@@ -120,6 +121,7 @@ public class MechDisplay extends JPanel {
 
     private JPanel displayP;
     private MovementPanel mPan;
+    private PilotPanel pPan;
     private ArmorPanel aPan;
     public WeaponPanel wPan;
     private SystemPanel sPan;
@@ -142,6 +144,8 @@ public class MechDisplay extends JPanel {
         displayP = new JPanel(new CardLayout());
         mPan = new MovementPanel();
         displayP.add("movement", mPan); //$NON-NLS-1$
+        pPan = new PilotPanel();
+        displayP.add("pilot", pPan); //$NON-NLS-1$
         aPan = new ArmorPanel();
         displayP.add("armor", aPan); //$NON-NLS-1$
         wPan = new WeaponPanel();
@@ -184,6 +188,7 @@ public class MechDisplay extends JPanel {
         currentlyDisplaying = en;
 
         mPan.displayMech(en);
+        pPan.displayMech(en);
         aPan.displayMech(en);
         wPan.displayMech(en);
         sPan.displayMech(en);
@@ -205,14 +210,16 @@ public class MechDisplay extends JPanel {
         ((CardLayout) displayP.getLayout()).show(displayP, s);
         if ("movement".equals(s)) { //$NON-NLS-1$
             tabStrip.setTab(0);
-        } else if ("armor".equals(s)) { //$NON-NLS-1$
+        } if (s == "pilot") { //$NON-NLS-1$
             tabStrip.setTab(1);
-        } else if ("weapons".equals(s)) { //$NON-NLS-1$
-            tabStrip.setTab(3);
-        } else if ("systems".equals(s)) { //$NON-NLS-1$
+        }else if ("armor".equals(s)) { //$NON-NLS-1$
             tabStrip.setTab(2);
-        } else if ("extras".equals(s)) { //$NON-NLS-1$
+        } else if ("weapons".equals(s)) { //$NON-NLS-1$
             tabStrip.setTab(4);
+        } else if ("systems".equals(s)) { //$NON-NLS-1$
+            tabStrip.setTab(3);
+        } else if ("extras".equals(s)) { //$NON-NLS-1$
+            tabStrip.setTab(5);
         }
     }
 
@@ -304,6 +311,61 @@ public class MechDisplay extends JPanel {
 
     }
 
+    /**
+     * The pilot panel contains all the information about the pilot/crew of this unit.
+     */
+    private class PilotPanel extends PicMap {
+
+        /**
+         *
+         */
+        private static final long serialVersionUID = 8284603003897415518L;
+
+        private PilotMapSet pi;
+
+        private int minTopMargin = 8;
+        private int minLeftMargin = 8;
+
+        PilotPanel() {
+            pi = new PilotMapSet(this);
+            addElement(pi.getContentGroup());
+            Enumeration<BackGroundDrawer> iter = pi.getBackgroundDrawers()
+                    .elements();
+            while (iter.hasMoreElements()) {
+                addBgDrawer(iter.nextElement());
+            }
+            onResize();
+        }
+
+        @Override
+        public void addNotify() {
+            super.addNotify();
+            update();
+        }
+
+        @Override
+        public void onResize() {
+            int w = getSize().width;
+            Rectangle r = getContentBounds();
+            int dx = Math.round(((w - r.width) / 2));
+            if (dx < minLeftMargin) {
+                dx = minLeftMargin;
+            }
+            int dy = minTopMargin;
+            setContentMargins(dx, dy, dx, dy);
+        }
+
+        /**
+         * updates fields for the specified mech
+         */
+        public void displayMech(Entity en) {
+            pi.setEntity(en);
+            onResize();
+            update();
+        }
+
+    }
+    
     /**
      * This panel contains the armor readout display.
      */

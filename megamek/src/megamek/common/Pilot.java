@@ -626,5 +626,19 @@ public class Pilot implements Serializable {
         return false;
     }
     
+    public String getStatusDesc() {
+        String s = new String("");
+        if(hits > 0) {
+            s += hits + " hits";
+            if (isUnconscious()) {
+                s += " (KO)";
+            } else if (isDead()) {
+                s += " (dead)";
+            }
+        }
+        return s;
+    }
+
+    
 
 }

@@ -372,6 +372,8 @@ public class EntityListFile {
             final Pilot crew = entity.getCrew();
             output.write("      <pilot name=\"");
             output.write(crew.getName().replaceAll("\"", "&quot;"));
+            output.write("\" nick=\"");
+            output.write(crew.getNickname().replaceAll("\"", "&quot;"));
             output.write("\" gunnery=\"");
             output.write(String.valueOf(crew.getGunnery()));
             if (entity.getGame().getOptions().booleanOption("rpg_gunnery")) {

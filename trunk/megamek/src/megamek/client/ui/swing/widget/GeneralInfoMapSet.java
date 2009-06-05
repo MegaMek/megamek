@@ -48,12 +48,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
-            weightL, bvL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
+            weightL, bvL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
             movementTypeL, ejectL, elevationL, buildingTypeL, buildingHeightL, fuelL;
-    private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, pilotR, mpR0,
+    private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, mpR0,
             mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
             elevationR, buildingTypeR, buildingHeightR, fuelR;
-    private PMSimpleLabel[] advantagesR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font(
             "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
@@ -192,13 +191,6 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 movementTypeL.getSize().width + 10, getYCoord());
         content.addArea(movementTypeR);
 
-        pilotL = createLabel(
-                Messages.getString("GeneralInfoMapSet.pilotL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
-        content.addArea(pilotL);
-        pilotR = createLabel(STAR3, fm, pilotL.getSize().width + 10,
-                getYCoord());
-        content.addArea(pilotR);
-
         ejectL = createLabel(
                 Messages.getString("GeneralInfoMapSet.ejectL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(ejectL);
@@ -226,18 +218,6 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         buildingHeightR = createLabel(STAR3, fm,
                 buildingHeightL.getSize().width + 10, getYCoord());
         content.addArea(buildingHeightR);
-
-        advantagesR = new PMSimpleLabel[24];
-        for (int i = 0; i < advantagesR.length; i++) {
-            advantagesR[i] = createLabel(Integer.toString(i), fm, pilotL
-                    .getSize().width + 10, getNewYCoord());
-            content.addArea(advantagesR[i]);
-        }
-        // DO NOT PLACE ANY MORE LABELS BELOW HERE. They will get
-        // pushed off the bottom of the screen by the pilot advantage
-        // labels. Why not just allocate the number of pilot advantage
-        // labels required instead of a hard 24? Because we don't have
-        // an entity at this point. Bleh.
     }
 
     /**
@@ -286,17 +266,6 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
         weightR.setString(Integer.toString((int) en.getWeight()));
 
-        if ((en.getGame() != null)
-                && en.getGame().getOptions().booleanOption("rpg_gunnery")) {
-            pilotR
-                    .setString(en.crew.getDesc()
-                            + " (" + en.crew.getGunneryRPG() + "/" + en.crew.getPiloting() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        } else {
-            pilotR
-                    .setString(en.crew.getDesc()
-                            + " (" + en.crew.getGunnery() + "/" + en.crew.getPiloting() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
-
         ejectR.setString(Messages.getString("GeneralInfoMapSet.NA")); //$NON-NLS-1$
         if (en instanceof Mech) {
             if (((Mech) en).isAutoEject()) {
@@ -309,21 +278,6 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
         elevationR.setString(Messages.getString("GeneralInfoMapSet.NA")); //$NON-NLS-1$
         elevationR.setString(Integer.toString(en.getElevation()));
-
-        for (PMSimpleLabel element : advantagesR) {
-            element.setString(""); //$NON-NLS-1$
-        }
-        if (en.crew.countAdvantages() > 0) {
-            int i = 0;
-            for (Enumeration<IOption> advantages = en.crew.getAdvantages(); advantages
-                    .hasMoreElements();) {
-                IOption option = advantages.nextElement();
-                if (option.booleanValue()) {
-                    advantagesR[i++].setString(option
-                            .getDisplayableNameWithValue());
-                }
-            }
-        }
 
         if (en.mpUsed > 0) {
             mpR0.setString("(" + en.mpUsed + " used)"); //$NON-NLS-1$ //$NON-NLS-2$

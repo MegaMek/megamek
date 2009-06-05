@@ -19,9 +19,9 @@ public class MechPanelTabStrip extends PicMap {
 
     private static final String IMAGE_DIR = "data/images/widgets";
 
-    private PMPicPolygonalArea[] tabs = new PMPicPolygonalArea[5];
-    private static final Image[] idleImage = new Image[5];
-    private static final Image[] activeImage = new Image[5];
+    private PMPicPolygonalArea[] tabs = new PMPicPolygonalArea[6];
+    private static final Image[] idleImage = new Image[6];
+    private static final Image[] activeImage = new Image[6];
     private Image idleCorner, selectedCorner;
     private int activeTab = 0;
     MechDisplay md;
@@ -37,8 +37,8 @@ public class MechPanelTabStrip extends PicMap {
     }
 
     public void setTab(int i) {
-        if (i > 4)
-            i = 4;
+        if (i > 5)
+            i = 5;
         activeTab = i;
         redrawImages();
         update();
@@ -57,19 +57,21 @@ public class MechPanelTabStrip extends PicMap {
         MediaTracker mt = new MediaTracker(this);
         Toolkit tk = getToolkit();
         idleImage[0] = tk.getImage(IMAGE_DIR + "/tab_general_idle.gif"); //$NON-NLS-1$
-        idleImage[1] = tk.getImage(IMAGE_DIR + "/tab_armor_idle.gif"); //$NON-NLS-1$
-        idleImage[2] = tk.getImage(IMAGE_DIR + "/tab_systems_idle.gif"); //$NON-NLS-1$
-        idleImage[3] = tk.getImage(IMAGE_DIR + "/tab_weapon_idle.gif"); //$NON-NLS-1$
-        idleImage[4] = tk.getImage(IMAGE_DIR + "/tab_extras_idle.gif"); //$NON-NLS-1$
+        idleImage[1] = tk.getImage(IMAGE_DIR + "/tab_pilot_idle.gif"); //$NON-NLS-1$
+        idleImage[2] = tk.getImage(IMAGE_DIR + "/tab_armor_idle.gif"); //$NON-NLS-1$
+        idleImage[3] = tk.getImage(IMAGE_DIR + "/tab_systems_idle.gif"); //$NON-NLS-1$
+        idleImage[4] = tk.getImage(IMAGE_DIR + "/tab_weapon_idle.gif"); //$NON-NLS-1$
+        idleImage[5] = tk.getImage(IMAGE_DIR + "/tab_extras_idle.gif"); //$NON-NLS-1$
         activeImage[0] = tk.getImage(IMAGE_DIR + "/tab_general_active.gif"); //$NON-NLS-1$
-        activeImage[1] = tk.getImage(IMAGE_DIR + "/tab_armor_active.gif"); //$NON-NLS-1$
-        activeImage[2] = tk.getImage(IMAGE_DIR + "/tab_systems_active.gif"); //$NON-NLS-1$
-        activeImage[3] = tk.getImage(IMAGE_DIR + "/tab_weapon_active.gif"); //$NON-NLS-1$
-        activeImage[4] = tk.getImage(IMAGE_DIR + "/tab_extras_active.gif"); //$NON-NLS-1$
+        activeImage[1] = tk.getImage(IMAGE_DIR + "/tab_pilot_active.gif"); //$NON-NLS-1$
+        activeImage[2] = tk.getImage(IMAGE_DIR + "/tab_armor_active.gif"); //$NON-NLS-1$
+        activeImage[3] = tk.getImage(IMAGE_DIR + "/tab_systems_active.gif"); //$NON-NLS-1$
+        activeImage[4] = tk.getImage(IMAGE_DIR + "/tab_weapon_active.gif"); //$NON-NLS-1$
+        activeImage[5] = tk.getImage(IMAGE_DIR + "/tab_extras_active.gif"); //$NON-NLS-1$
         idleCorner = tk.getImage(IMAGE_DIR + "/idle_corner.gif"); //$NON-NLS-1$
         selectedCorner = tk.getImage(IMAGE_DIR + "/active_corner.gif"); //$NON-NLS-1$
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             mt.addImage(idleImage[i], 0);
             mt.addImage(activeImage[i], 0);
         }
@@ -90,14 +92,14 @@ public class MechPanelTabStrip extends PicMap {
         int stepX = 47;
 
         tabs[0] = new PMPicPolygonalArea(firstTab, createImage(47, 18));
-        for (int i = 1; i < 4; i++) {
+        for (int i = 1; i < 5; i++) {
             tabs[i] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 6),
                     createImage(47, 18));
         }
 
-        tabs[4] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 6),
+        tabs[5] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 6),
                 createImage(60, 18));
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             drawIdleImage(i);
             tabs[i].translate(i * stepX, 0);
             addElement(tabs[i]);
@@ -117,7 +119,7 @@ public class MechPanelTabStrip extends PicMap {
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
                     setTab(1);
-                    md.showPanel("armor"); //$NON-NLS-1$
+                    md.showPanel("pilot"); //$NON-NLS-1$
                 }
             }
         });
@@ -125,7 +127,7 @@ public class MechPanelTabStrip extends PicMap {
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
                     setTab(2);
-                    md.showPanel("systems"); //$NON-NLS-1$
+                    md.showPanel("armor"); //$NON-NLS-1$
                 }
             }
         });
@@ -133,7 +135,7 @@ public class MechPanelTabStrip extends PicMap {
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
                     setTab(3);
-                    md.showPanel("weapons"); //$NON-NLS-1$
+                    md.showPanel("systems"); //$NON-NLS-1$
                 }
             }
         });
@@ -141,6 +143,14 @@ public class MechPanelTabStrip extends PicMap {
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
                     setTab(4);
+                    md.showPanel("weapons"); //$NON-NLS-1$
+                }
+            }
+        });
+        tabs[5].addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
+                    setTab(5);
                     md.showPanel("extras"); //$NON-NLS-1$
                 }
             }
@@ -149,7 +159,7 @@ public class MechPanelTabStrip extends PicMap {
     }
 
     private void redrawImages() {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             drawIdleImage(i);
         }
     }

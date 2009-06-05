@@ -2660,15 +2660,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         @Override
         public String[] getTooltip() {
-            String[] tipStrings = new String[3];
+            String[] tipStrings = new String[4];
             StringBuffer buffer;
 
             buffer = new StringBuffer();
             buffer.append(entity.getChassis()).append(" (") //$NON-NLS-1$
-                    .append(entity.getOwner().getName()).append("); ") //$NON-NLS-1$
+                    .append(entity.getOwner().getName()); //$NON-NLS-1$
+            tipStrings[0] = buffer.toString();  
+                    
+            buffer = new StringBuffer();
+            buffer.append(Messages.getString("BoardView1.pilot")).append(" (")
                     .append(entity.getCrew().getGunnery()).append("/") //$NON-NLS-1$
-                    .append(entity.getCrew().getPiloting()).append(
-                            Messages.getString("BoardView1.pilot")); //$NON-NLS-1$
+                    .append(entity.getCrew().getPiloting()).append(")").append("; ")
+                    .append(entity.getCrew().getStatusDesc()); //$NON-NLS-1$
             int numAdv = entity.getCrew().countAdvantages();
             boolean isMD = entity.getCrew().countMDImplants() > 0;
             if (numAdv > 0) {
@@ -2678,7 +2682,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             if (isMD) {
                 buffer.append(Messages.getString("BoardView1.md")); //$NON-NLS-1$
             }
-            tipStrings[0] = buffer.toString();
+            tipStrings[1] = buffer.toString();
 
             GunEmplacement ge = null;
             if (entity instanceof GunEmplacement) {
@@ -2718,7 +2722,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             if (entity.isDone()) {
                 buffer.append(" (").append(Messages.getString("BoardView1.done")).append(")");
             }
-            tipStrings[1] = buffer.toString();
+            tipStrings[2] = buffer.toString();
 
             buffer = new StringBuffer();
             if (ge == null) {
@@ -2732,7 +2736,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                                 Messages.getString("BoardView1.turretArmor")) //$NON-NLS-1$
                         .append(ge.getCurrentTurretArmor());
             }
-            tipStrings[2] = buffer.toString();
+            tipStrings[3] = buffer.toString();
 
             return tipStrings;
         }
@@ -4375,7 +4379,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         // check if it's on any entities
         for (EntitySprite eSprite : entitySprites) {
             if (eSprite.isInside(point)) {
-                stringsSize += 3;
+                stringsSize += 4;
             }
         }
 

@@ -100,6 +100,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             .getString("CustomMechDialog.labName"), SwingConstants.RIGHT); //$NON-NLS-1$
 
     private JTextField fldName = new JTextField(20);
+    
+    private JLabel labNick = new JLabel(Messages
+            .getString("CustomMechDialog.labNick"), SwingConstants.RIGHT); //$NON-NLS-1$
+
+    private JTextField fldNick = new JTextField(20);
 
     private JLabel labGunnery = new JLabel(Messages
             .getString("CustomMechDialog.labGunnery"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -294,6 +299,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         tempPanel.add(labName, GBC.std());
         tempPanel.add(fldName, GBC.eol());
+        
+        tempPanel.add(labNick, GBC.std());
+        tempPanel.add(fldNick, GBC.eol());
 
         if (client.game.getOptions().booleanOption("rpg_gunnery")) {
 
@@ -532,6 +540,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         fldName.setText(entity.getCrew().getName());
         fldName.addActionListener(this);
+        fldNick.setText(entity.getCrew().getNickname());
+        fldNick.addActionListener(this);
         fldGunnery.setText(Integer.toString(entity.getCrew().getGunnery()));
         fldGunnery.addActionListener(this);
         fldGunneryL.setText(Integer.toString(entity.getCrew().getGunneryL()));
@@ -559,6 +569,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         if (!editable) {
             fldName.setEnabled(false);
+            fldNick.setEnabled(false);
             fldGunnery.setEnabled(false);
             fldGunneryL.setEnabled(false);
             fldGunneryM.setEnabled(false);
@@ -1571,6 +1582,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         if (!actionEvent.getSource().equals(butCancel)) {
             // get values
             String name = fldName.getText();
+            String nick = fldNick.getText();
             int gunnery;
             int gunneryL;
             int gunneryM;
@@ -1668,6 +1680,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
             entity.getCrew().setInitBonus(init);
             entity.getCrew().setCommandBonus(command);
+            entity.getCrew().setNickname(nick);
             if (entity instanceof Mech) {
                 Mech mech = (Mech) entity;
                 mech.setAutoEject(!autoEject);

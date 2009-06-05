@@ -4,6 +4,7 @@ v0.35.2-dev (SVN)
 + Separate pilot tab (swing only)
 + pilot nicknames (swing only)
 + pilot tab images
++ nicknames saved to and loaded from MUL file
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

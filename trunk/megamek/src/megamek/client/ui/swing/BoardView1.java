@@ -2665,11 +2665,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
             buffer = new StringBuffer();
             buffer.append(entity.getChassis()).append(" (") //$NON-NLS-1$
-                    .append(entity.getOwner().getName()); //$NON-NLS-1$
+                    .append(entity.getOwner().getName()).append(")"); //$NON-NLS-1$
             tipStrings[0] = buffer.toString();  
                     
+            boolean hasNick = (null != entity.getCrew().getNickname() && !entity.getCrew().getNickname().equals(""));
             buffer = new StringBuffer();
-            buffer.append(Messages.getString("BoardView1.pilot")).append(" (")
+            buffer.append(Messages.getString("BoardView1.pilot"));
+            if(hasNick) {
+                buffer.append(" '").append(entity.getCrew().getNickname()).append("'");
+            }
+            buffer.append(" (")
                     .append(entity.getCrew().getGunnery()).append("/") //$NON-NLS-1$
                     .append(entity.getCrew().getPiloting()).append(")").append("; ")
                     .append(entity.getCrew().getStatusDesc()); //$NON-NLS-1$

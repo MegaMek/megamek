@@ -40,7 +40,7 @@ public class PilotMapSet implements DisplayMapSet {
     private static String STAR3 = "***"; //$NON-NLS-1$
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
-    private PMSimpleLabel nameL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, initBL, commandBL, hitsL, advantagesL;
+    private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, initBL, commandBL, hitsL, advantagesL;
     private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR, initBR, commandBR, hitsR;
     private PMSimpleLabel[] advantagesR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
@@ -77,12 +77,16 @@ public class PilotMapSet implements DisplayMapSet {
         nameL.setColor(Color.yellow);
         content.addArea(nameL);
             
+        fm = comp.getFontMetrics(FONT_VALUE);       
+        nickL = createLabel(Messages
+                .getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea(nickL);
+        
         hitsR = createLabel(STAR3, fm, 0, getNewYCoord());
         hitsR.setColor(Color.RED);
         content.addArea(hitsR);
         getNewYCoord();
-            
-        fm = comp.getFontMetrics(FONT_VALUE);
+        
         pilotL = createLabel(Messages.getString("PilotMapSet.pilotL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(pilotL);
         pilotR = createLabel(STAR3, fm, pilotL.getSize().width + 5, getYCoord());
@@ -152,6 +156,7 @@ public class PilotMapSet implements DisplayMapSet {
     public void setEntity(Entity en) {
         
         nameL.setString(en.crew.getName());
+        nickL.setString(en.crew.getNickname());
         pilotR.setString(Integer.toString(en.crew.getPiloting()));
         gunneryR.setString(Integer.toString(en.crew.getGunnery()));
         

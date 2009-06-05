@@ -31,6 +31,8 @@ public class Pilot implements Serializable {
     private int gunnery;
     private int piloting;
     private int hits; // hits taken
+    
+    private String nickname;
 
     private boolean unconscious;
     private boolean doomed; // scheduled to die at end of phase
@@ -74,6 +76,7 @@ public class Pilot implements Serializable {
 
     public Pilot(String name, int gunnery, int piloting) {
         this.name = name;
+        this.nickname = "";
         this.gunnery = gunnery;
         this.gunneryL = gunnery;
         this.gunneryM = gunnery;
@@ -92,6 +95,7 @@ public class Pilot implements Serializable {
     public Pilot(String name, int gunneryL, int gunneryM, int gunneryB,
             int piloting) {
         this.name = name;
+        this.nickname = "";
         this.gunnery = (int) Math.round((gunneryL + gunneryM + gunneryB) / 3.0);
         this.gunneryL = gunneryL;
         this.gunneryM = gunneryM;
@@ -109,6 +113,10 @@ public class Pilot implements Serializable {
 
     public String getName() {
         return name;
+    }
+    
+    public String getNickname() {
+        return nickname;
     }
 
     public int getGunnery() {
@@ -141,6 +149,10 @@ public class Pilot implements Serializable {
     
     public int getCommandBonus() {
         return commandBonus;
+    }
+    
+    public void setNickname(String nick) {
+        this.nickname = nick;
     }
     
     public void setGunnery(int gunnery) {

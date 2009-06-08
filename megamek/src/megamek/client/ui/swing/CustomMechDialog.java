@@ -20,6 +20,7 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -36,6 +37,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -43,6 +45,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -96,6 +99,23 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
      */
     private static final long serialVersionUID = -6809436986445582731L;
 
+    private JPanel panPilot;
+    private JPanel panEquip;
+    private JPanel panDeploy;
+    private JPanel panQuirks;
+    private JPanel panFluff;
+    
+    private JScrollPane scrPilot;
+    private JScrollPane scrEquip;
+    private JScrollPane scrDeploy;
+    private JScrollPane scrQuirks;
+    private JScrollPane scrFluff;
+
+    private JPanel panOptions;
+    //private JScrollPane scrOptions;
+
+    private JTabbedPane tabAll;
+    
     private JLabel labName = new JLabel(Messages
             .getString("CustomMechDialog.labName"), SwingConstants.RIGHT); //$NON-NLS-1$
 
@@ -252,12 +272,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private ArrayList<DialogOptionComponent> optionComps = new ArrayList<DialogOptionComponent>();
 
-    private JPanel panOptions = new JPanel();
-
-    private JScrollPane scrOptions;
-
-    private JScrollPane scrAll;
-
     private JTextArea texDesc = new JTextArea(Messages
             .getString("CustomMechDialog.texDesc"), 20, 10); //$NON-NLS-1$
 
@@ -275,7 +289,33 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         super(clientgui.frame,
                 Messages.getString("CustomMechDialog.title"), true); //$NON-NLS-1$
 
-        JPanel tempPanel = new JPanel(new GridBagLayout());
+        //set up the panels
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        tabAll = new JTabbedPane();
+
+        panPilot = new JPanel(new GridBagLayout());
+        panEquip = new JPanel(new GridBagLayout());
+        panDeploy = new JPanel(new GridBagLayout());
+        panQuirks = new JPanel(new GridBagLayout());
+        panFluff = new JPanel(new GridBagLayout());
+        
+        scrPilot = new JScrollPane(panPilot);
+        scrEquip = new JScrollPane(panEquip);
+        scrDeploy = new JScrollPane(panDeploy);
+        scrQuirks = new JScrollPane(panQuirks);
+        scrFluff = new JScrollPane(panFluff);
+        
+        panOptions = new JPanel(new GridBagLayout());
+        
+        mainPanel.add(tabAll, GBC.eol().fill(GridBagConstraints.BOTH).insets(5, 5, 5, 5));
+        mainPanel.add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER));
+
+        tabAll.addTab(Messages.getString("CustomMechDialog.tabPilot"), scrPilot);
+        tabAll.addTab(Messages.getString("CustomMechDialog.tabEquipment"), scrEquip);
+        tabAll.addTab(Messages.getString("CustomMechDialog.tabDeployment"), scrDeploy);
+
+        getContentPane().add(mainPanel);
+        
         this.entity = entity;
         this.clientgui = clientgui;
         this.client = client;
@@ -286,6 +326,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         texDesc.setLineWrap(true);
         texDesc.setWrapStyleWord(true);
 
+        //**PILOT TAB**/
         if (entity instanceof Tank) {
             labPiloting.setText(Messages
                     .getString("CustomMechDialog.labDriving"));
@@ -297,151 +338,49 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     .getString("CustomMechDialog.labPiloting"));
         }
 
-        tempPanel.add(labName, GBC.std());
-        tempPanel.add(fldName, GBC.eol());
+        panPilot.add(labName, GBC.std());
+        panPilot.add(fldName, GBC.eol());
         
-        tempPanel.add(labNick, GBC.std());
-        tempPanel.add(fldNick, GBC.eol());
+        panPilot.add(labNick, GBC.std());
+        panPilot.add(fldNick, GBC.eol());
 
         if (client.game.getOptions().booleanOption("rpg_gunnery")) {
 
-            tempPanel.add(labGunneryL, GBC.std());
-            tempPanel.add(fldGunneryL, GBC.eol());
+            panPilot.add(labGunneryL, GBC.std());
+            panPilot.add(fldGunneryL, GBC.eol());
 
-            tempPanel.add(labGunneryM, GBC.std());
-            tempPanel.add(fldGunneryM, GBC.eol());
+            panPilot.add(labGunneryM, GBC.std());
+            panPilot.add(fldGunneryM, GBC.eol());
 
-            tempPanel.add(labGunneryB, GBC.std());
-            tempPanel.add(fldGunneryB, GBC.eol());
+            panPilot.add(labGunneryB, GBC.std());
+            panPilot.add(fldGunneryB, GBC.eol());
 
         } else {
-            tempPanel.add(labGunnery, GBC.std());
-            tempPanel.add(fldGunnery, GBC.eol());
+            panPilot.add(labGunnery, GBC.std());
+            panPilot.add(fldGunnery, GBC.eol());
         }
 
-        tempPanel.add(labPiloting, GBC.std());
-        tempPanel.add(fldPiloting, GBC.eol());
+        panPilot.add(labPiloting, GBC.std());
+        panPilot.add(fldPiloting, GBC.eol());
 
         if (client.game.getOptions().booleanOption("individual_initiative")) {
-            tempPanel.add(labInit, GBC.std());
-            tempPanel.add(fldInit, GBC.eol());
+            panPilot.add(labInit, GBC.std());
+            panPilot.add(fldInit, GBC.eol());
         }
 
         if (client.game.getOptions().booleanOption("command_init")) {
-            tempPanel.add(labCommandInit, GBC.std());
-            tempPanel.add(fldCommandInit, GBC.eol());
+            panPilot.add(labCommandInit, GBC.std());
+            panPilot.add(fldCommandInit, GBC.eol());
         }
 
-        if (entity instanceof Aero) {
-            tempPanel.add(labStartVelocity, GBC.std());
-            tempPanel.add(fldStartVelocity, GBC.eol());
-
-            tempPanel.add(labStartElevation, GBC.std());
-            tempPanel.add(fldStartElevation, GBC.eol());
-        }
-
-        // Auto-eject checkbox.
-        if (entity instanceof Mech) {
-            Mech mech = (Mech) entity;
-            boolean hasEjectSeat = true;
-            // torso mounted cockpits don't have an ejection seat
-            if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-                hasEjectSeat = false;
-            }
-            if (mech.isIndustrial()) {
-                hasEjectSeat = false;
-                // industrials can only eject when they have an ejection seat
-                for (Mounted misc : mech.getMisc()) {
-                    if (misc.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
-                        hasEjectSeat = true;
-                    }
-                }
-            }
-            if (hasEjectSeat) {
-                tempPanel.add(labAutoEject, GBC.std());
-                tempPanel.add(chAutoEject, GBC.eol());
-                chAutoEject.setSelected(!mech.isAutoEject());
-            }
-        }
-
-        tempPanel.add(labDeployment, GBC.std());
-        tempPanel.add(choDeployment, GBC.eol());
-        refreshDeployment();
-
+        // Set up commanders for commander killed victory condition
         if (clientgui.getClient().game.getOptions().booleanOption(
-                "pilot_advantages") //$NON-NLS-1$
-                || clientgui.getClient().game.getOptions().booleanOption(
-                        "manei_domini")) { //$NON-NLS-1$
-            scrOptions = new JScrollPane(panOptions);
-
-            tempPanel.add(scrOptions, GBC.std());
-            tempPanel.add(new JScrollPane(texDesc), GBC.eol());
+                "commander_killed")) { //$NON-NLS-1$
+            panPilot.add(labCommander, GBC.std());
+            panPilot.add(chCommander, GBC.eol());
+            chCommander.setSelected(entity.isCommander());
         }
-
-        if (entity.hasC3() || entity.hasC3i()) {
-            tempPanel.add(labC3, GBC.std());
-            tempPanel.add(choC3, GBC.eol());
-            refreshC3();
-        }
-        boolean eligibleForOffBoard = false;
-        for (Mounted mounted : entity.getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-                eligibleForOffBoard = true;
-            }
-        }
-        if (eligibleForOffBoard) {
-            tempPanel.add(labOffBoard, GBC.std());
-            tempPanel.add(chOffBoard, GBC.eol());
-            chOffBoard.setSelected(entity.isOffBoard());
-
-            tempPanel.add(labOffBoardDirection, GBC.std());
-
-            choOffBoardDirection.addItem(Messages
-                    .getString("CustomMechDialog.North")); //$NON-NLS-1$
-            choOffBoardDirection.addItem(Messages
-                    .getString("CustomMechDialog.South")); //$NON-NLS-1$
-            choOffBoardDirection.addItem(Messages
-                    .getString("CustomMechDialog.East")); //$NON-NLS-1$
-            choOffBoardDirection.addItem(Messages
-                    .getString("CustomMechDialog.West")); //$NON-NLS-1$
-            direction = entity.getOffBoardDirection();
-            if (IOffBoardDirections.NONE == direction) {
-                direction = IOffBoardDirections.NORTH;
-            }
-            choOffBoardDirection.setSelectedIndex(direction);
-            tempPanel.add(choOffBoardDirection, GBC.eol());
-
-            tempPanel.add(labOffBoardDistance, GBC.std());
-
-            butOffBoardDistance.addActionListener(this);
-            butOffBoardDistance.setText(Integer.toString(distance));
-            tempPanel.add(butOffBoardDistance, GBC.eol());
-        }
-
-        if (!(entity.hasTargComp())
-                && (clientgui.getClient().game.getOptions()
-                        .booleanOption("allow_level_3_targsys"))
-                && ((entity instanceof Mech) || (clientgui.getClient().game
-                        .getOptions().booleanOption("tank_level_3_targsys") && (entity instanceof Tank)))
-                && !entity.hasC3() && !entity.hasC3i()) {
-            tempPanel.add(labTargSys, GBC.std());
-
-            choTargSys.addItem(MiscType
-                    .getTargetSysName(MiscType.T_TARGSYS_STANDARD));
-            choTargSys.addItem(MiscType
-                    .getTargetSysName(MiscType.T_TARGSYS_LONGRANGE));
-            choTargSys.addItem(MiscType
-                    .getTargetSysName(MiscType.T_TARGSYS_SHORTRANGE));
-            choTargSys.addItem(MiscType
-                    .getTargetSysName(MiscType.T_TARGSYS_ANTI_AIR));
-            // choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_MULTI_TRAC));
-            tempPanel.add(choTargSys, GBC.eol());
-
-            choTargSys.setSelectedItem(MiscType.getTargetSysName(entity
-                    .getTargSysType()));
-        }
-
+        
         if (entity instanceof Protomech) {
             // All Protomechs have a callsign.
             StringBuffer callsign = new StringBuffer(Messages
@@ -452,7 +391,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                             .getClientPreferences().getUnitStartChar()))
                     .append('-').append(this.entity.getId());
             labCallsign.setText(callsign.toString());
-            tempPanel.add(labCallsign, GBC.eol().anchor(GridBagConstraints.CENTER));
+            panPilot.add(labCallsign, GBC.eol().anchor(GridBagConstraints.CENTER));
 
             // Get the Protomechs of this entity's player
             // that *aren't* in the entity's unit.
@@ -476,16 +415,79 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             // If we got any other entites, show the unit number controls.
             if (otherUnitEntities.hasMoreElements()) {
-                tempPanel.add(labUnitNum, GBC.std());
-                tempPanel.add(choUnitNum, GBC.eol());
+                panPilot.add(labUnitNum, GBC.std());
+                panPilot.add(choUnitNum, GBC.eol());
                 refreshUnitNum(otherUnitEntities);
             }
         }
 
-        // Can't set up munitions on infantry.
+        if (clientgui.getClient().game.getOptions().booleanOption(
+                "pilot_advantages") //$NON-NLS-1$
+                || clientgui.getClient().game.getOptions().booleanOption(
+                        "manei_domini")) { //$NON-NLS-1$
+            //scrOptions = new JScrollPane(panOptions);
+
+            panPilot.add(panOptions, GBC.eol());
+        }
+
+        //**EQUIPMENT TAB**//
+        //Auto-eject checkbox.
+        if (entity instanceof Mech) {
+            Mech mech = (Mech) entity;
+            boolean hasEjectSeat = true;
+            // torso mounted cockpits don't have an ejection seat
+            if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+                hasEjectSeat = false;
+            }
+            if (mech.isIndustrial()) {
+                hasEjectSeat = false;
+                // industrials can only eject when they have an ejection seat
+                for (Mounted misc : mech.getMisc()) {
+                    if (misc.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
+                        hasEjectSeat = true;
+                    }
+                }
+            }
+            if (hasEjectSeat) {
+                panEquip.add(labAutoEject, GBC.std());
+                panEquip.add(chAutoEject, GBC.eol());
+                chAutoEject.setSelected(!mech.isAutoEject());
+            }
+        }
+        
+        if (entity.hasC3() || entity.hasC3i()) {
+            panEquip.add(labC3, GBC.std());
+            panEquip.add(choC3, GBC.eol());
+            refreshC3();
+        }
+
+        if (!(entity.hasTargComp())
+                && (clientgui.getClient().game.getOptions()
+                        .booleanOption("allow_level_3_targsys"))
+                && ((entity instanceof Mech) || (clientgui.getClient().game
+                        .getOptions().booleanOption("tank_level_3_targsys") && (entity instanceof Tank)))
+                && !entity.hasC3() && !entity.hasC3i()) {
+            panEquip.add(labTargSys, GBC.std());
+
+            choTargSys.addItem(MiscType
+                    .getTargetSysName(MiscType.T_TARGSYS_STANDARD));
+            choTargSys.addItem(MiscType
+                    .getTargetSysName(MiscType.T_TARGSYS_LONGRANGE));
+            choTargSys.addItem(MiscType
+                    .getTargetSysName(MiscType.T_TARGSYS_SHORTRANGE));
+            choTargSys.addItem(MiscType
+                    .getTargetSysName(MiscType.T_TARGSYS_ANTI_AIR));
+            // choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_MULTI_TRAC));
+            panEquip.add(choTargSys, GBC.eol());
+
+            choTargSys.setSelectedItem(MiscType.getTargetSysName(entity
+                    .getTargSysType()));
+        }
+        
+        //Can't set up munitions on infantry.
         if (!(entity instanceof Infantry) || (entity instanceof BattleArmor)) {
             setupMunitions();
-            tempPanel.add(panMunitions, GBC.eol().anchor(GridBagConstraints.CENTER));
+            panEquip.add(panMunitions, GBC.eol().anchor(GridBagConstraints.CENTER));
         }
 
         // set up Santa Annas if using nukes
@@ -493,7 +495,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 && clientgui.getClient().game.getOptions().booleanOption(
                         "at2_nukes")) {
             setupSantaAnna();
-            tempPanel.add(panSantaAnna, GBC.eol().anchor(GridBagConstraints.CENTER));
+            panEquip.add(panSantaAnna, GBC.eol().anchor(GridBagConstraints.CENTER));
         }
 
          if ((entity instanceof Aero)
@@ -501,7 +503,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         || (entity instanceof SmallCraft)
                         || (entity instanceof Jumpship))) {
             setupBombs();
-            tempPanel.add(panBombs, GBC.eol().anchor(GridBagConstraints.CENTER));
+            panEquip.add(panBombs, GBC.eol().anchor(GridBagConstraints.CENTER));
         }
 
 
@@ -509,34 +511,71 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         if (clientgui.getClient().game.getOptions().booleanOption(
                 "tacops_burst")) { //$NON-NLS-1$
             setupRapidfireMGs();
-            tempPanel.add(panRapidfireMGs, GBC.eol().anchor(GridBagConstraints.CENTER));
+            panEquip.add(panRapidfireMGs, GBC.eol().anchor(GridBagConstraints.CENTER));
         }
 
         // Set up searchlight
         if (clientgui.getClient().game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) {
-            tempPanel.add(labSearchlight, GBC.std());
-            tempPanel.add(chSearchlight, GBC.eol());
+            panEquip.add(labSearchlight, GBC.std());
+            panEquip.add(chSearchlight, GBC.eol());
             chSearchlight.setSelected(entity.hasSpotlight());
-        }
-
-        // Set up commanders for commander killed victory condition
-        if (clientgui.getClient().game.getOptions().booleanOption(
-                "commander_killed")) { //$NON-NLS-1$
-            tempPanel.add(labCommander, GBC.std());
-            tempPanel.add(chCommander, GBC.eol());
-            chCommander.setSelected(entity.isCommander());
         }
 
         // Set up mines
         setupMines();
-        tempPanel.add(panMines, GBC.eop().anchor(GridBagConstraints.CENTER));
+        panEquip.add(panMines, GBC.eop().anchor(GridBagConstraints.CENTER));
+        
+        //**DEPLOYMENT TAB**//
+        boolean eligibleForOffBoard = false;
+        for (Mounted mounted : entity.getWeaponList()) {
+            WeaponType wtype = (WeaponType) mounted.getType();
+            if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+                eligibleForOffBoard = true;
+            }
+        }
+        
+        if (entity instanceof Aero) {
+            panDeploy.add(labStartVelocity, GBC.std());
+            panDeploy.add(fldStartVelocity, GBC.eol());
 
+            panDeploy.add(labStartElevation, GBC.std());
+            panDeploy.add(fldStartElevation, GBC.eol());
+        }
+        
+        panDeploy.add(labDeployment, GBC.std());
+        panDeploy.add(choDeployment, GBC.eol());
+        refreshDeployment();
+        
+        if (eligibleForOffBoard) {
+            panDeploy.add(labOffBoard, GBC.std());
+            panDeploy.add(chOffBoard, GBC.eol());
+            chOffBoard.setSelected(entity.isOffBoard());
+
+            panDeploy.add(labOffBoardDirection, GBC.std());
+
+            choOffBoardDirection.addItem(Messages
+                    .getString("CustomMechDialog.North")); //$NON-NLS-1$
+            choOffBoardDirection.addItem(Messages
+                    .getString("CustomMechDialog.South")); //$NON-NLS-1$
+            choOffBoardDirection.addItem(Messages
+                    .getString("CustomMechDialog.East")); //$NON-NLS-1$
+            choOffBoardDirection.addItem(Messages
+                    .getString("CustomMechDialog.West")); //$NON-NLS-1$
+            direction = entity.getOffBoardDirection();
+            if (IOffBoardDirections.NONE == direction) {
+                direction = IOffBoardDirections.NORTH;
+            }
+            choOffBoardDirection.setSelectedIndex(direction);
+            panDeploy.add(choOffBoardDirection, GBC.eol());
+
+            panDeploy.add(labOffBoardDistance, GBC.std());
+
+            butOffBoardDistance.addActionListener(this);
+            butOffBoardDistance.setText(Integer.toString(distance));
+            panDeploy.add(butOffBoardDistance, GBC.eol());
+        }
+      
         setupButtons();
-        tempPanel.add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER).insets(5, 0, 5, 5));
-        scrAll = new JScrollPane(tempPanel);
-
-        // add the scrollable panel
-        getContentPane().add(scrAll);
 
         fldName.setText(entity.getCrew().getName());
         fldName.addActionListener(this);
@@ -602,6 +641,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         });
 
         pack();
+        setSize(mainPanel.getSize().width, Math.min(mainPanel.getSize().height, 400));
+        setResizable(true);
         setLocationRelativeTo(clientgui);
     }
 

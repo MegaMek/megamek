@@ -7,6 +7,7 @@ v0.35.2-dev (SVN)
 + nicknames saved to and loaded from MUL file
 + Bug 2800635: BattleMech Talons not working correctly
 + lots of mechfile fixes
++ Bug 2799607: NPE with dead-zone LOS
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

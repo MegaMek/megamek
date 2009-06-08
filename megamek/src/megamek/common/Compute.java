@@ -301,7 +301,7 @@ public class Compute {
         final boolean isInfantry = (entity instanceof Infantry);
         final boolean isPavementStep = Compute.canMoveOnPavement(game, src, dest, path);
         int delta_alt = (destElevation + destHex.getElevation()) - (srcElevation + srcHex.getElevation());
-        
+
         // arguments valid?
         if (entity == null) {
             throw new IllegalArgumentException("Entity invalid.");
@@ -367,7 +367,7 @@ public class Compute {
          * srcHex.contains(Terrain.PAVEMENT) || srcHex.contains(Terrain.ROAD) ||
          * srcHex.contains(Terrain.BRIDGE) )
          */
-        if (((prevStepIsOnPavement && (movementType == IEntityMovementType.MOVE_RUN || movementType == IEntityMovementType.MOVE_SPRINT))
+        if (((prevStepIsOnPavement && ((movementType == IEntityMovementType.MOVE_RUN) || (movementType == IEntityMovementType.MOVE_SPRINT)))
                 || ((srcHex.containsTerrain(Terrains.ICE))
                 && (movementType != IEntityMovementType.MOVE_JUMP)))
                 && (entity.getMovementMode() != IEntityMovementMode.HOVER)
@@ -393,9 +393,9 @@ public class Compute {
                 return true;
             }
         }
-        
+
         //check leaps
-        if(entity instanceof Mech && delta_alt < -2 && movementType != IEntityMovementType.MOVE_JUMP) {
+        if((entity instanceof Mech) && (delta_alt < -2) && (movementType != IEntityMovementType.MOVE_JUMP)) {
             return true;
         }
 
@@ -444,6 +444,10 @@ public class Compute {
 
         // can't go up more levels than normally possible
         for (Coords c : intervening) {
+            // ignore off-board hexes
+            if (!game.getBoard().contains(c)) {
+                continue;
+            }
             final IHex hex = game.getBoard().getHex(c);
             int change = entity.elevationOccupied(hex) - entity.elevationOccupied(srcHex);
             if (change > entity.getMaxElevationChange()) {
@@ -1391,7 +1395,7 @@ public class Compute {
         if ((entity.getElevation() > 0) && (entity.getMovementMode() == IEntityMovementMode.WIGE)) {
             toHit.addModifier(1, "target is a flying WiGE");
         }
-        
+
         //did the target sprint?
         if (entity.moved == IEntityMovementType.MOVE_SPRINT) {
             toHit.addModifier(-1, "target sprinted");
@@ -2508,7 +2512,7 @@ public class Compute {
     public static int targetSideTable(Coords inPosition, Targetable target) {
         return target.sideTable(inPosition);
     }
-    
+
     public static int targetSideTable(Entity attacker, Targetable target) {
         return targetSideTable(attacker, target, IAimingModes.AIM_MODE_NONE, -1);
     }
@@ -2528,15 +2532,15 @@ public class Compute {
         if((target instanceof Aero) && (attacker instanceof Aero)) {
             return ((Entity)target).sideTable(attackPos, usePrior);
         }
-        
-        if(target instanceof Entity 
-                && aimingMode == IAimingModes.AIM_MODE_CALLED && aimingAt == CalledShots.CALLED_LEFT) {
+
+        if((target instanceof Entity)
+                && (aimingMode == IAimingModes.AIM_MODE_CALLED) && (aimingAt == CalledShots.CALLED_LEFT)) {
             return ((Entity)target).sideTable(attackPos, false, (((Entity)target).getFacing() + 5) % 6);
-        } else if (target instanceof Entity 
-                && aimingMode == IAimingModes.AIM_MODE_CALLED && aimingAt == CalledShots.CALLED_RIGHT) {
+        } else if ((target instanceof Entity)
+                && (aimingMode == IAimingModes.AIM_MODE_CALLED) && (aimingAt == CalledShots.CALLED_RIGHT)) {
             return ((Entity)target).sideTable(attackPos, false, (((Entity)target).getFacing() + 1) % 6);
         }
-        
+
         return target.sideTable(attackPos);
     }
 
@@ -3023,7 +3027,7 @@ public class Compute {
                 totalGT++;
                 if(hEnemyGTMods.get(id) > highestMod) {
                     highestMod = hEnemyGTMods.get(id);
-                } 
+                }
             }
         }
         return highestMod + totalGT;

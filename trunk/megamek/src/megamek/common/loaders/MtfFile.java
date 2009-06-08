@@ -476,23 +476,23 @@ public class MtfFile implements IMechLoader {
 
             if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
                 mech.setCritical(loc, i, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, isArmored));
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, isArmored, null));
                 continue;
             } else if (critName.equalsIgnoreCase("Life Support")) {
                 mech.setCritical(loc, i, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, true, isArmored));
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, true, isArmored, null));
                 continue;
             } else if (critName.equalsIgnoreCase("Sensors")) {
                 mech.setCritical(loc, i, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, true, isArmored));
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, true, isArmored, null));
                 continue;
             } else if (critName.equalsIgnoreCase("Cockpit")) {
                 mech.setCritical(loc, i, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT, true, isArmored));
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT, true, isArmored, null));
                 continue;
             } else if (critName.equalsIgnoreCase("Gyro")) {
                 mech.setCritical(loc, i, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, true, isArmored));
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, true, isArmored, null));
                 continue;
             } else if ((critName.indexOf("Actuator") != -1) || critName.equalsIgnoreCase("Shoulder") || critName.equalsIgnoreCase("Hip")) {
                 mech.getCritical(loc, i).setArmored(isArmored);
@@ -525,7 +525,7 @@ public class MtfFile implements IMechLoader {
                             mech.addCritical(loc, new CriticalSlot(
                                     CriticalSlot.TYPE_EQUIPMENT, mech
                                             .getEquipmentNum(m), etype
-                                            .isHittable(), isArmored));
+                                            .isHittable(), isArmored, m));
                             continue;
                         }
                         m = mech.addEquipment(etype, loc, rearMounted);

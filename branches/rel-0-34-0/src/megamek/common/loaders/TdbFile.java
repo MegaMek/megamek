@@ -396,9 +396,9 @@ public class TdbFile implements IMechLoader {
         try {
             Mech mech;
 
-            if (creatorName == "Unknown"
+            if ((creatorName == "Unknown")
                     || !creatorName.equals("The Drawing Board")
-                    || Integer.parseInt(creatorVersion) != 2) {
+                    || (Integer.parseInt(creatorVersion) != 2)) {
                 // MegaMek no longer supports older versions of The
                 // Drawing Board (pre 2.0.23) due to incomplete xml
                 // file information in those versions.
@@ -568,7 +568,7 @@ public class TdbFile implements IMechLoader {
     private void parseCrits(Mech mech, int loc) throws EntityLoadingException {
         // check for removed arm actuators
         if (!(mech instanceof QuadMech)) {
-            if (loc == Mech.LOC_LARM || loc == Mech.LOC_RARM) {
+            if ((loc == Mech.LOC_LARM) || (loc == Mech.LOC_RARM)) {
                 if (!critData[loc][3][0].equals("Hand Actuator")) {
                     mech.setCritical(loc, 3, null);
                 }
@@ -589,12 +589,12 @@ public class TdbFile implements IMechLoader {
             // parse out and add the critical
             String critName = critData[loc][i][0];
             boolean rearMounted = true;
-            if (critData[loc][i][1] == null
+            if ((critData[loc][i][1] == null)
                     || !isRearMounted[Integer.parseInt(critData[loc][i][1])]) {
                 rearMounted = false;
             }
             // boolean split = true;
-            if (critData[loc][i][1] == null
+            if ((critData[loc][i][1] == null)
                     || !isSplit[Integer.parseInt(critData[loc][i][1])]) {
                 // split = false;
             }
@@ -687,12 +687,12 @@ public class TdbFile implements IMechLoader {
                             mech.addCritical(loc, new CriticalSlot(
                                     CriticalSlot.TYPE_EQUIPMENT, mech
                                             .getEquipmentNum(m), etype
-                                            .isHittable()));
+                                            .isHittable(), m));
                             continue;
                         }
                         m = mech.addEquipment(etype, loc, rearMounted);
                         hSharedEquip.put(etype, m);
-                    } else if (etype instanceof WeaponType
+                    } else if ((etype instanceof WeaponType)
                             && etype.hasFlag(WeaponType.F_SPLITABLE)) {
                         // do we already have this one in this or an outer
                         // location?
@@ -701,9 +701,9 @@ public class TdbFile implements IMechLoader {
                         for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
                             m = vSplitWeapons.elementAt(x);
                             int nLoc = m.getLocation();
-                            if ((nLoc == loc || loc == Mech
-                                    .getInnerLocation(nLoc))
-                                    && m.getType() == etype) {
+                            if (((nLoc == loc) || (loc == Mech
+                                    .getInnerLocation(nLoc)))
+                                    && (m.getType() == etype)) {
                                 bFound = true;
                                 break;
                             }
@@ -777,10 +777,10 @@ public class TdbFile implements IMechLoader {
         }
         int firstEmpty = -1;
         for (int slot = 0; slot < mech.getNumberOfCriticals(loc); slot++) {
-            if (firstEmpty == -1 && critData[loc][slot][0].equals("Empty")) {
+            if ((firstEmpty == -1) && critData[loc][slot][0].equals("Empty")) {
                 firstEmpty = slot;
             }
-            if (firstEmpty != -1 && !critData[loc][slot][0].equals("Empty")) {
+            if ((firstEmpty != -1) && !critData[loc][slot][0].equals("Empty")) {
                 // move this to the first empty slot
                 critData[loc][firstEmpty][0] = critData[loc][slot][0];
                 critData[loc][firstEmpty][1] = critData[loc][slot][1];

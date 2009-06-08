@@ -473,7 +473,7 @@ public class Tank extends Entity implements Serializable {
         }
         return false;
     }
-    
+
     /**
      * Rolls up a hit location
      */
@@ -483,7 +483,7 @@ public class Tank extends Entity implements Serializable {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRear = false;
-        boolean ignoreTurret = m_bHasNoTurret || table == ToHitData.HIT_UNDERWATER;
+        boolean ignoreTurret = m_bHasNoTurret || (table == ToHitData.HIT_UNDERWATER);
         int motiveMod = 0;
         if ((side == ToHitData.SIDE_FRONT) && isHullDown() && !ignoreTurret) {
             // on a hull down vee, all front hits go to turret if one exists.
@@ -1399,7 +1399,7 @@ public class Tank extends Entity implements Serializable {
         super.addEquipment(mounted, loc, rearMounted);
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                getEquipmentNum(mounted), true));
+                getEquipmentNum(mounted), true, mounted));
     }
 
     /**

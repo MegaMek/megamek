@@ -711,7 +711,7 @@ implements IMechLoader
                                     CriticalSlot criticalSlot = new CriticalSlot(
                                             CriticalSlot.TYPE_EQUIPMENT, mech
                                                     .getEquipmentNum(m),
-                                            equipment.isHittable());
+                                            equipment.isHittable(), m);
                                     mech.addCritical(location, criticalSlot);
                                     if (criticalName
                                             .equalsIgnoreCase("Armored Cowl")) {

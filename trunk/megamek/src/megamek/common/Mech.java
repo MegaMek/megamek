@@ -1089,7 +1089,7 @@ public abstract class Mech extends Entity implements Serializable {
     public int getRunHeat() {
         return engine.getRunHeat();
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -1102,7 +1102,7 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return getSprintMP(false, false);
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -1131,7 +1131,7 @@ public abstract class Mech extends Entity implements Serializable {
     public int getSprintMPwithoutMASC() {
         return getSprintMPwithoutMASC(true, false);
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -1162,7 +1162,7 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return Integer.toString(getSprintMP());
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -1175,8 +1175,8 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return getRunMP(false, false);
     }
-    
-    
+
+
     /**
      * Depends on engine type
      */
@@ -1184,7 +1184,7 @@ public abstract class Mech extends Entity implements Serializable {
     public int getSprintHeat() {
         return engine.getSprintHeat();
     }
-    
+
     /**
      * This mech's jumping MP modified for missing jump jets and gravity
      */
@@ -1842,7 +1842,7 @@ public abstract class Mech extends Entity implements Serializable {
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
 
-        if ((aimedLocation != LOC_NONE) 
+        if ((aimedLocation != LOC_NONE)
                 && (aimingMode != IAimingModes.AIM_MODE_NONE)
                 && (aimingMode != IAimingModes.AIM_MODE_CALLED)) {
 
@@ -2593,9 +2593,7 @@ public abstract class Mech extends Entity implements Serializable {
         int num = getEquipmentNum(mounted);
 
         for (int i = 0; i < slots; i++) {
-            CriticalSlot cs = new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num, mounted.getType().isHittable());
-            cs.setMount(mounted);
-            cs.setArmored(mounted.isArmored());
+            CriticalSlot cs = new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num, mounted.getType().isHittable(), mounted.isArmored(), mounted);
             addCritical(loc, cs);
         }
     }
@@ -4303,7 +4301,7 @@ public abstract class Mech extends Entity implements Serializable {
     public int getMaxElevationChange() {
         return 2;
     }
-    
+
     @Override
     public int getMaxElevationDown() {
         if(game.getOptions().booleanOption("tacops_leaping")) {

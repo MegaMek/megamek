@@ -2511,7 +2511,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Check if the entity has an arbritrary type of misc equipment
+     * Check if the entity has an arbitrary type of misc equipment
      *
      * @param flag
      *            A MiscType.F_XXX
@@ -2532,7 +2532,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Check if the entity has an arbritrary type of misc equipment
+     * Check if the entity has an arbitrary type of misc equipment
      *
      * @param flag
      *            A MiscType.F_XXX
@@ -2543,11 +2543,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return true if at least one ready item.
      */
     public boolean hasWorkingMisc(long flag, int secondary, int location) {
-        for (Mounted m : miscList) {
-            if ((m.getType() instanceof MiscType) && m.isReady() && (m.getLocation() == location)) {
-                MiscType type = (MiscType) m.getType();
-                if (type.hasFlag(flag) && ((secondary == -1) || type.hasSubType(secondary))) {
-                    return true;
+        //go through the location slot by slot, because of misc equipment that
+        //is spreadable
+        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+            CriticalSlot crit = getCritical(location, slot);
+            if (crit.getType() == CriticalSlot.TYPE_EQUIPMENT) {
+                Mounted mount = crit.getMount();
+                if ((mount.getType() instanceof MiscType) && mount.isReady()) {
+                    MiscType type = (MiscType) mount.getType();
+                    if ((secondary == -1) || type.hasSubType(secondary)) {
+                        return true;
+                    }
                 }
             }
         }

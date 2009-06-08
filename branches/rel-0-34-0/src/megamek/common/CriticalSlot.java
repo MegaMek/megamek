@@ -38,14 +38,15 @@ public class CriticalSlot implements Serializable {
     private boolean armored = false; // Armored Component Rule
 
     public CriticalSlot(int type, int index) {
-        this(type, index, true);
+        this(type, index, true, null);
     }
 
-    public CriticalSlot(int type, int index, boolean hittable) {
-        this(type, index, hittable, false);
+    public CriticalSlot(int type, int index, boolean hittable, Mounted mount) {
+        this(type, index, hittable, mount != null?mount.isArmored():false, mount);
     }
 
-    public CriticalSlot(int type, int index, boolean hittable, boolean armored) {
+    public CriticalSlot(int type, int index, boolean hittable, boolean armored,
+            Mounted mount) {
         this.type = type;
         this.index = index;
         this.hittable = hittable;
@@ -53,6 +54,7 @@ public class CriticalSlot implements Serializable {
         if (hittable) {
             this.armored = armored;
         }
+        this.mount = mount;
     }
 
     public CriticalSlot(int type, Mounted mount) {
@@ -149,11 +151,11 @@ public class CriticalSlot implements Serializable {
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if (object == null || getClass() != object.getClass()) {
+        } else if ((object == null) || (getClass() != object.getClass())) {
             return false;
         }
         CriticalSlot other = (CriticalSlot) object;
-        return other.getType() == type && other.getIndex() == index;
+        return (other.getType() == type) && (other.getIndex() == index);
     }
 
     /**

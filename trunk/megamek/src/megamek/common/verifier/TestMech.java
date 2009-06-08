@@ -408,12 +408,12 @@ public class TestMech extends TestEntity {
         // Mechanical Jump Boosts can be greater then Running as long as
         // the unit can handle the weight.
         if ((mech.getJumpMP(false) > mech.getOriginalRunMPwithoutMASC())
-                && !mech.hasJumpBoosters()) {
+                && !mech.hasJumpBoosters() && !mech.hasWorkingMisc(MiscType.F_TALON, -1)) {
             buff.append("Jump MP exceeds run MP\n");
             return false;
         }
         if ((mech.getJumpMP(false) > mech.getOriginalWalkMP()) &&
-               (mech.getJumpType() != Mech.JUMP_IMPROVED)) {
+               ((mech.getJumpType() != Mech.JUMP_IMPROVED) && !mech.hasWorkingMisc(MiscType.F_TALON, -1))) {
           buff.append("Jump MP exceeds walk MP without IJJs");
           return false;
         }

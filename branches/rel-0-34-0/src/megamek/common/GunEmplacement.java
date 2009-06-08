@@ -315,8 +315,8 @@ public class GunEmplacement extends Entity implements Serializable {
     public HitData rollHitLocation(int table, int side, int aimedLocation,
             int aimingMode) {
 
-        if (aimedLocation != LOC_NONE
-                && aimingMode == IAimingModes.AIM_MODE_IMMOBILE) {
+        if ((aimedLocation != LOC_NONE)
+                && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
             switch (Compute.d6(2)) {
                 case 6:
                 case 7:
@@ -412,9 +412,9 @@ public class GunEmplacement extends Entity implements Serializable {
                 continue;
             }
 
-            if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS))
-                    || (etype instanceof AmmoType && ((AmmoType) etype)
-                            .getAmmoType() == AmmoType.T_AMS)
+            if (((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_AMS))
+                    || ((etype instanceof AmmoType) && (((AmmoType) etype)
+                            .getAmmoType() == AmmoType.T_AMS))
                     || etype.hasFlag(MiscType.F_ECM)) {
                 dEquipmentBV += etype.getBV(this);
             }
@@ -446,7 +446,7 @@ public class GunEmplacement extends Entity implements Serializable {
             // artemis bumps up the value
             if (mounted.getLinkedBy() != null) {
                 Mounted mLinker = mounted.getLinkedBy();
-                if (mLinker.getType() instanceof MiscType
+                if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                 }
@@ -454,7 +454,7 @@ public class GunEmplacement extends Entity implements Serializable {
 
             if (mounted.getLinkedBy() != null) {
                 Mounted mLinker = mounted.getLinkedBy();
-                if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
                 }
             }
@@ -499,9 +499,9 @@ public class GunEmplacement extends Entity implements Serializable {
         // also, each 'has' loops through all equipment. inefficient to do it 3
         // times
         double xbv = 0.0;
-        if (((hasC3MM() && calculateFreeC3MNodes() < 2)
-                || (hasC3M() && calculateFreeC3Nodes() < 3)
-                || (hasC3S() && c3Master > NONE) || (hasC3i() && calculateFreeC3Nodes() < 5))
+        if (((hasC3MM() && (calculateFreeC3MNodes() < 2))
+                || (hasC3M() && (calculateFreeC3Nodes() < 3))
+                || (hasC3S() && (c3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5)))
                 && !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
             totalForceBV += this.calculateBattleValue(true, true);
@@ -612,7 +612,7 @@ public class GunEmplacement extends Entity implements Serializable {
     public boolean isRepairable() {
         boolean retval = isSalvage();
         int loc = 0;
-        while (retval && loc < LOC_TURRET) {
+        while (retval && (loc < LOC_TURRET)) {
             int loc_is = this.getInternal(loc);
             loc++;
             retval = (loc_is != IArmorState.ARMOR_DOOMED)
@@ -660,7 +660,7 @@ public class GunEmplacement extends Entity implements Serializable {
     @Override
     public boolean doomedInVacuum() {
         for (Mounted m : getEquipment()) {
-            if (m.getType() instanceof MiscType
+            if ((m.getType() instanceof MiscType)
                     && m.getType().hasFlag(MiscType.F_VACUUM_PROTECTION)) {
                 return false;
             }
@@ -694,7 +694,7 @@ public class GunEmplacement extends Entity implements Serializable {
         super.addEquipment(mounted, loc, rearMounted);
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                getEquipmentNum(mounted), true));
+                getEquipmentNum(mounted), true, mounted));
     }
 
     /*

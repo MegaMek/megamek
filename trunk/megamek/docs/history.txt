@@ -5,6 +5,8 @@ v0.35.2-dev (SVN)
 + pilot nicknames (swing only)
 + pilot tab images
 + nicknames saved to and loaded from MUL file
++ Bug 2800635: BattleMech Talons not working correctly
++ lots of mechfile fixes
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

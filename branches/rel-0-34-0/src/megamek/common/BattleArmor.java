@@ -631,7 +631,7 @@ public class BattleArmor extends Infantry implements Serializable {
 
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                getEquipmentNum(mounted), true));
+                getEquipmentNum(mounted), true, mounted));
 
         // Is the item a stealth equipment?
         // TODO: what's the *real* extreme range modifier?

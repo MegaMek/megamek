@@ -342,7 +342,7 @@ public class LosEffects {
                     attHex.terrainLevel(Terrains.WATER), targetHex
                             .terrainLevel(Terrains.WATER));
         }
-        
+
         LosEffects finalLoS = calculateLos(game, ai);
         finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);
         finalLoS.hasLoS = !finalLoS.blocked && (finalLoS.screen < 1) && (finalLoS.plantedFields < 6)
@@ -376,7 +376,7 @@ public class LosEffects {
             los.deadZone = true;
             return los;
         }
-        
+
         double degree = ai.attackPos.degree(ai.targetPos);
         if (degree % 60 == 30) {
             return LosEffects.losDivided(game, ai);
@@ -405,7 +405,7 @@ public class LosEffects {
                     "LOS blocked by dead zone.");
         }
         */
-        
+
         if (blocked) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "LOS blocked by terrain.");
@@ -1005,7 +1005,7 @@ public class LosEffects {
             return 2;
         }
     }
-    
+
     private static boolean isDeadZone(IGame game, AttackInfo ai) {
         //determine who is higher and who is lower
         int highElev = ai.attackAbsHeight;
@@ -1023,6 +1023,10 @@ public class LosEffects {
         int IntElev = lowElev;
         Coords IntPos = lowPos;
         for(Coords c : in) {
+            // ignore off-board coords
+            if (!game.getBoard().contains(c)) {
+                continue;
+            }
            if(!c.equals(lowPos)) {
                IHex hex = game.getBoard().getHex(c);
                int hexEl = ai.underWaterCombat ? hex.floor() : hex.surface();

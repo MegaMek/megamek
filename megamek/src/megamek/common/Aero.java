@@ -1834,7 +1834,7 @@ public class Aero extends Entity
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
                                            getEquipmentNum(mounted),
-                                           true));
+                                           true, mounted));
     }
 
     /** get the type of critical caused by a critical roll,

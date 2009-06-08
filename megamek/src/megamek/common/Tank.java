@@ -472,7 +472,7 @@ public class Tank extends Entity {
         }
         return false;
     }
-    
+
     /**
      * Rolls up a hit location
      */
@@ -482,7 +482,7 @@ public class Tank extends Entity {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRear = false;
-        boolean ignoreTurret = m_bHasNoTurret || table == ToHitData.HIT_UNDERWATER;
+        boolean ignoreTurret = m_bHasNoTurret || (table == ToHitData.HIT_UNDERWATER);
         int motiveMod = 0;
         if ((side == ToHitData.SIDE_FRONT) && isHullDown() && !ignoreTurret) {
             // on a hull down vee, all front hits go to turret if one exists.
@@ -738,7 +738,7 @@ public class Tank extends Entity {
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                 }
-                if ((mLinker.getType() instanceof MiscType) 
+                if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                     dBV *= 1.3;
                 }
@@ -1402,7 +1402,7 @@ public class Tank extends Entity {
         super.addEquipment(mounted, loc, rearMounted);
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                getEquipmentNum(mounted), true));
+                getEquipmentNum(mounted), true, mounted));
     }
 
     /**

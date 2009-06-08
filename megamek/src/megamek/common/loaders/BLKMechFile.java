@@ -75,25 +75,29 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
 
         Mech mech = null;
 
-        if (chassisType == 1)
+        if (chassisType == 1) {
             mech = new QuadMech();
-        else
+        } else {
             mech = new BipedMech();
+        }
 
         // Do I even write the year for these??
 
-        if (!dataFile.exists("name"))
+        if (!dataFile.exists("name")) {
             throw new EntityLoadingException("Could not find block.");
+        }
         mech.setChassis(dataFile.getDataAsString("Name")[0]);
 
-        if (!dataFile.exists("model"))
+        if (!dataFile.exists("model")) {
             throw new EntityLoadingException("Could not find block.");
+        }
         mech.setModel(dataFile.getDataAsString("Model")[0]);
 
         setTechLevel(mech);
 
-        if (!dataFile.exists("tonnage"))
+        if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find block.");
+        }
         mech.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
 
         int engineCode = BLKFile.FUSION;
@@ -101,32 +105,39 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
         int engineFlags = 0;
-        if (mech.isClan())
+        if (mech.isClan()) {
             engineFlags = Engine.CLAN_ENGINE;
-        if (!dataFile.exists("walkingMP"))
+        }
+        if (!dataFile.exists("walkingMP")) {
             throw new EntityLoadingException("Could not find walkingMP block.");
+        }
         int engineRating = dataFile.getDataAsInt("walkingMP")[0]
                 * (int) mech.getWeight();
         mech.setEngine(new Engine(engineRating, BLKFile
                 .translateEngineCode(engineCode), engineFlags));
 
-        if (!dataFile.exists("jumpingMP"))
+        if (!dataFile.exists("jumpingMP")) {
             throw new EntityLoadingException("Could not find block.");
+        }
         mech.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
 
         // I keep internal(integral) heat sinks seperate...
-        if (!dataFile.exists("heatsinks"))
+        if (!dataFile.exists("heatsinks")) {
             throw new EntityLoadingException("Could not find block.");
+        }
         mech.addEngineSinks(dataFile.getDataAsInt("heatsinks")[0], false);
 
-        if (dataFile.exists("internal_type"))
+        if (dataFile.exists("internal_type")) {
             mech.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
+        }
 
-        if (dataFile.exists("armor_type"))
+        if (dataFile.exists("armor_type")) {
             mech.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+        }
 
-        if (!dataFile.exists("armor"))
+        if (!dataFile.exists("armor")) {
             throw new EntityLoadingException("Could not find block.");
+        }
 
         int[] armor = new int[11]; // only 11 locations...
 
@@ -170,25 +181,29 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
 
         // no lower right arm
         if (!dataFile.getDataAsString("ra criticals")[2].trim()
-                .equalsIgnoreCase("Lower Arm Actuator"))
+                .equalsIgnoreCase("Lower Arm Actuator")) {
             mech.removeCriticals(Mech.LOC_RARM, new CriticalSlot(
                     CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM));
+        }
         // no right hand
         if (!dataFile.getDataAsString("ra criticals")[3].trim()
-                .equalsIgnoreCase("Hand Actuator"))
+                .equalsIgnoreCase("Hand Actuator")) {
             mech.removeCriticals(Mech.LOC_RARM, new CriticalSlot(
                     CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
+        }
 
         // no lower left arm
         if (!dataFile.getDataAsString("la criticals")[2].trim()
-                .equalsIgnoreCase("Lower Arm Actuator"))
+                .equalsIgnoreCase("Lower Arm Actuator")) {
             mech.removeCriticals(Mech.LOC_LARM, new CriticalSlot(
                     CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM));
+        }
         // no left hand
         if (!dataFile.getDataAsString("la criticals")[3].trim()
-                .equalsIgnoreCase("Hand Actuator"))
+                .equalsIgnoreCase("Hand Actuator")) {
             mech.removeCriticals(Mech.LOC_LARM, new CriticalSlot(
                     CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
+        }
 
         // load equipment stuff...
         Vector<String>[] criticals = new Vector[8];
@@ -265,7 +280,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         if (mech.isClan()) {
             mech.addClanCase();
         }
-        
+
         if (dataFile.exists("omni")) {
             mech.setOmni(true);
         }

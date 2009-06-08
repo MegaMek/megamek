@@ -1519,7 +1519,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getRunHeat() {
         return 0;
     }
-    
+
     /**
      * Returns this entity's unmodified sprint mp.
      */
@@ -1566,14 +1566,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getSprintHeat() {
         return 3;
     }
-    
+
     /**
      * get the gravity limit for ground movement
      */
     public int getRunningGravityLimit() {
         return getRunMP(false, false);
     }
-    
+
     /**
      * Returns this entity's original jumping mp.
      */
@@ -2565,7 +2565,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Check if the entity has an arbritrary type of misc equipment
+     * Check if the entity has an arbitrary type of misc equipment
      *
      * @param flag
      *            A MiscType.F_XXX
@@ -2586,7 +2586,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Check if the entity has an arbritrary type of misc equipment
+     * Check if the entity has an arbitrary type of misc equipment
      *
      * @param flag
      *            A MiscType.F_XXX
@@ -2597,11 +2597,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return true if at least one ready item.
      */
     public boolean hasWorkingMisc(long flag, int secondary, int location) {
-        for (Mounted m : miscList) {
-            if ((m.getType() instanceof MiscType) && m.isReady() && (m.getLocation() == location)) {
-                MiscType type = (MiscType) m.getType();
-                if (type.hasFlag(flag) && ((secondary == -1) || type.hasSubType(secondary))) {
-                    return true;
+        //go through the location slot by slot, because of misc equipment that
+        //is spreadable
+        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+            CriticalSlot crit = getCritical(location, slot);
+            if (crit.getType() == CriticalSlot.TYPE_EQUIPMENT) {
+                Mounted mount = crit.getMount();
+                if ((mount.getType() instanceof MiscType) && mount.isReady()) {
+                    MiscType type = (MiscType) mount.getType();
+                    if ((secondary == -1) || type.hasSubType(secondary)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -4358,7 +4364,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (moveType == IEntityMovementType.MOVE_SPRINT) {
             roll.addModifier(2, "Sprinting");
         }
-        
+
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // check light conditions for "running" entities
         if ((moveType == IEntityMovementType.MOVE_RUN) || (moveType == IEntityMovementType.MOVE_SPRINT) || (moveType == IEntityMovementType.MOVE_VTOL_RUN) || (moveType == IEntityMovementType.MOVE_OVER_THRUST)) {
@@ -4435,7 +4441,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
         }
-        if ((overallMoveType == IEntityMovementType.MOVE_RUN || overallMoveType == IEntityMovementType.MOVE_SPRINT) && !isProne() && ((gyroDamage > 0) || hasHipCrit())) {
+        if (((overallMoveType == IEntityMovementType.MOVE_RUN) || (overallMoveType == IEntityMovementType.MOVE_SPRINT)) && !isProne() && ((gyroDamage > 0) || hasHipCrit())) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "running with damaged hip actuator or gyro"));
         } else {
@@ -4444,37 +4450,37 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         addPilotingModifierForTerrain(roll);
         return roll;
     }
-    
+
     /**
-    * Checks if the entity is attempting to sprint with MASC engaged. If so, 
+    * Checks if the entity is attempting to sprint with MASC engaged. If so,
     * returns the target roll for the piloting skill check.
     */
     public PilotingRollData checkSprintingWithMASC(int overallMoveType, int mpUsed) {
        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-       if(overallMoveType == IEntityMovementType.MOVE_SPRINT && mpUsed > ((int) Math.ceil(2.0 * this.getWalkMP()))) {
+       if((overallMoveType == IEntityMovementType.MOVE_SPRINT) && (mpUsed > ((int) Math.ceil(2.0 * this.getWalkMP())))) {
            roll.append(new PilotingRollData(getId(), 0, "sprinting with active MASC/Supercharger"));
        } else {
            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to sprint with MASC");
        }
-       
+
        addPilotingModifierForTerrain(roll);
        return roll;
     }
-    
+
     /**
-     * Checks if the entity is attempting to sprint with supercharger engaged. If so, 
+     * Checks if the entity is attempting to sprint with supercharger engaged. If so,
      * returns the target roll for the piloting skill check.
      */
      public PilotingRollData checkSprintingWithSupercharger(int overallMoveType, int mpUsed) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if(overallMoveType == IEntityMovementType.MOVE_SPRINT && mpUsed > ((int) Math.ceil(2.5 * this.getWalkMP()))) {
+        if((overallMoveType == IEntityMovementType.MOVE_SPRINT) && (mpUsed > ((int) Math.ceil(2.5 * this.getWalkMP())))) {
             roll.append(new PilotingRollData(getId(), 0, "sprinting with active MASC/Supercharger"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to sprint with Supercharger");
         }
-        
+
         addPilotingModifierForTerrain(roll);
         return roll;
      }
@@ -4620,7 +4626,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                  * prevHex.contains(Terrain.PAVEMENT) || prevHex.contains(Terrain.ROAD)
                  * || prevHex.contains(Terrain.BRIDGE) )
                  */
-                && ((prevStep.isPavementStep() && (overallMoveType == IEntityMovementType.MOVE_RUN || overallMoveType == IEntityMovementType.MOVE_SPRINT) && (movementMode != IEntityMovementMode.HOVER) && (movementMode != IEntityMovementMode.WIGE)) || (prevHex.containsTerrain(Terrains.ICE) && (movementMode != IEntityMovementMode.HOVER) && (movementMode != IEntityMovementMode.WIGE)) || (((movementMode == IEntityMovementMode.HOVER) || (movementMode == IEntityMovementMode.WIGE)) && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) || (game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)))) && (prevFacing != curFacing) && !lastPos.equals(curPos) && !isInfantry
+                && ((prevStep.isPavementStep() && ((overallMoveType == IEntityMovementType.MOVE_RUN) || (overallMoveType == IEntityMovementType.MOVE_SPRINT)) && (movementMode != IEntityMovementMode.HOVER) && (movementMode != IEntityMovementMode.WIGE)) || (prevHex.containsTerrain(Terrains.ICE) && (movementMode != IEntityMovementMode.HOVER) && (movementMode != IEntityMovementMode.WIGE)) || (((movementMode == IEntityMovementMode.HOVER) || (movementMode == IEntityMovementMode.WIGE)) && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) || (game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)))) && (prevFacing != curFacing) && !lastPos.equals(curPos) && !isInfantry
                 // Bug 912127, a unit that just got up and changed facing
                 // on pavement in that getting up does not skid.
                 && !prevStep.isHasJustStood()) {
@@ -4814,11 +4820,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if(bldg.getBldgClass() != Building.HANGAR) {
                 mod = 1;
                 desc = "Medium";
-            }  
+            }
             if(bldg.getBldgClass() >= Building.FORTRESS) {
                 mod = 2;
                 desc = desc + " Fortress";
-            }           
+            }
             break;
         case Building.HEAVY:
             mod = 2;

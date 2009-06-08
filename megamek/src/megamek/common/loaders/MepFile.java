@@ -166,21 +166,21 @@ public class MepFile implements IMechLoader {
                 mech = new BipedMech();
             }
 
-            int firstSpace = this.name.indexOf(" ");
+            int firstSpace = name.indexOf(" ");
             if (firstSpace != -1) {
-                mech.setChassis(this.name.substring(firstSpace).trim());
-                mech.setModel(this.name.substring(5, firstSpace).trim());
+                mech.setChassis(name.substring(firstSpace).trim());
+                mech.setModel(name.substring(5, firstSpace).trim());
             } else {
-                mech.setChassis(this.name.substring(5).trim());
-                mech.setModel(this.name.substring(5).trim());
+                mech.setChassis(name.substring(5).trim());
+                mech.setModel(name.substring(5).trim());
             }
 
-            mech.setWeight(Integer.decode(this.tonnage.trim()).intValue());
-            mech.setYear(Integer.parseInt(this.techYear.trim()));
-            mech.setOmni("OmniMech".equals(this.chassisType.trim()));
+            mech.setWeight(Integer.decode(tonnage.trim()).intValue());
+            mech.setYear(Integer.parseInt(techYear.trim()));
+            mech.setOmni("OmniMech".equals(chassisType.trim()));
 
             // TODO: this ought to be a better test
-            if ("InnerSphere".equals(this.innerSphere.trim())) {
+            if ("InnerSphere".equals(innerSphere.trim())) {
                 if (mech.getYear() == 3025) {
                     mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
                 } else {
@@ -191,9 +191,10 @@ public class MepFile implements IMechLoader {
             }
 
             int engineFlags = 0;
-            if (mech.isClan())
+            if (mech.isClan()) {
                 engineFlags = Engine.CLAN_ENGINE;
-            int engineRating = Integer.parseInt(this.walkMP.trim())
+            }
+            int engineRating = Integer.parseInt(walkMP.trim())
                     * (int) mech.getWeight();
             mech.setEngine(new Engine(engineRating, Engine
                     .getEngineTypeByString(engineType), engineFlags));
@@ -204,10 +205,10 @@ public class MepFile implements IMechLoader {
             mech.addCockpit();
             mech.addGyro();
 
-            mech.setOriginalJumpMP(Integer.parseInt(this.jumpMP.trim()));
+            mech.setOriginalJumpMP(Integer.parseInt(jumpMP.trim()));
 
-            boolean dblSinks = "Double".equals(this.heatSinkType.trim());
-            mech.addEngineSinks(Integer.parseInt(this.heatSinks.trim()),
+            boolean dblSinks = "Double".equals(heatSinkType.trim());
+            mech.addEngineSinks(Integer.parseInt(heatSinks.trim()),
                     dblSinks);
 
             mech.setStructureType(internalType);
@@ -299,7 +300,7 @@ public class MepFile implements IMechLoader {
                                 mech.addCritical(loc, new CriticalSlot(
                                         CriticalSlot.TYPE_EQUIPMENT, mech
                                                 .getEquipmentNum(m), etype
-                                                .isHittable()));
+                                                .isHittable(), m));
                                 continue;
                             }
                             m = mech.addEquipment(etype, loc, rearMounted);

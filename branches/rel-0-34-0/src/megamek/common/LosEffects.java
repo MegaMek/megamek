@@ -890,6 +890,10 @@ public class LosEffects {
 
         ArrayList<Coords> in = Coords.intervening(start, end);
         for ( Coords hex : in ) {
+            // ignore off-board hexes
+            if (!game.getBoard().contains(hex)) {
+                continue;
+            }
             if ( game.getBoard().getHex(hex).containsTerrain(Terrains.FIRE) ) {
                 return true;
             }

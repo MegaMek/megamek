@@ -427,6 +427,10 @@ public class Compute {
 
         // can't go up more levels than normally possible
         for (Coords c : intervening) {
+            // ignore off-board hexes
+            if (!game.getBoard().contains(c)) {
+                continue;
+            }
             final IHex hex = game.getBoard().getHex(c);
             int change = entity.elevationOccupied(hex) - entity.elevationOccupied(srcHex);
             if (change > entity.getMaxElevationChange()) {

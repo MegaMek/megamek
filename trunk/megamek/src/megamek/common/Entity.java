@@ -4344,6 +4344,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (isCarefulStand()) {
             roll.addModifier(-2, "careful stand");
         }
+        
+        if(getQuirks().booleanOption("hard_pilot")) {
+            roll.addModifier(+1, "hard to pilot");
+        }
 
         if (game.getOptions().booleanOption("tacops_fatigue") && crew.isPilotingFatigued(game.getRoundCount())) {
             roll.addModifier(1, "fatigue");
@@ -4552,6 +4556,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "not moving recklessly");
         }
+        
+        adjustDifficultTerrainPSRModifier(roll);
 
         return roll;
     }
@@ -4583,6 +4589,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (curHex.containsTerrain(Terrains.ICE) && (curHex.terrainLevel(Terrains.WATER) > 0)) {
             roll.append(new PilotingRollData(getId(), 0, "landing on ice-covered water"));
             addPilotingModifierForTerrain(roll);
+            adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "hex is not covered by ice");
         }
@@ -4645,6 +4652,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             } else {
                 roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on ice"));
             }
+            adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not apparently skidding");
         }
@@ -4667,6 +4675,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), mod, "entering Rubble"));
+            adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not entering rubble");
         }
@@ -4683,6 +4692,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int bgMod = curHex.getBogDownModifier(getMovementMode(), this instanceof LargeSupportTank);
         if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev)) && (bgMod != TargetRoll.AUTOMATIC_SUCCESS) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) && (step.getElevation() == 0) && !isPavementStep) {
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
+            adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Not entering bog-down terrain, or jumping/hovering over such terrain");
         }
@@ -4719,6 +4729,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((waterLevel > 0) && !hasUMU()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), mod, "entering Depth " + waterLevel + " Water"));
+            adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: No water here.");
         }
@@ -4867,6 +4878,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // append the reason modifier
         roll.append(new PilotingRollData(getId(), mod, "moving through " + desc + " " + bldg.getName()));
+        adjustDifficultTerrainPSRModifier(roll);
 
         // Modify the roll by the distance moved so far.
         if (distance >= 25) {
@@ -4915,6 +4927,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         return mod;
+    }
+    
+    /**
+     * calculate any changes to the PSR modifier for entering difficult terrain
+     */
+    private void adjustDifficultTerrainPSRModifier(PilotingRollData psr) {      
+        if(getQuirks().booleanOption("easy_pilot") && getCrew().getPiloting() > 3) {
+            psr.addModifier(-1, "easy to pilot");
+        }
     }
 
     /**

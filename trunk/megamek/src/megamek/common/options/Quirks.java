@@ -34,11 +34,11 @@ public class Quirks extends AbstractOptions {
     public void initialize() {
         //positive quirks
         IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS); //$NON-NLS-1$
-        //addOption(posQuirk, "easy_pilot", false); //$NON-NLS-1$    
+        addOption(posQuirk, "easy_pilot", false); //$NON-NLS-1$    
      
         // negative quirks
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS); //$NON-NLS-1$
-        //addOption(negQuirk, "hard_pilot", false); //$NON-NLS-1$
+        addOption(negQuirk, "hard_pilot", false); //$NON-NLS-1$
     }
 
     /*

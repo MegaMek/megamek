@@ -13504,9 +13504,17 @@ public class Server implements Runnable {
                             }
                             // the weight class PSR modifier is not cumulative
                             damPRD.addModifier(weightMod, "weight class modifier", false);
-                        }game.addPSR(damPRD);
+                        }
+                        if(entity.getQuirks().booleanOption("easy_pilot") && entity.getCrew().getPiloting() > 3) {
+                            damPRD.addModifier(-1, "easy to pilot");
+                        }
+                        game.addPSR(damPRD);
                     } else {
-                        game.addPSR(new PilotingRollData(entity.getId(), 1, "20+ damage"));
+                        PilotingRollData damPRD = new PilotingRollData(entity.getId(), 1, "20+ damage");
+                        if(entity.getQuirks().booleanOption("easy_pilot") && entity.getCrew().getPiloting() > 3) {
+                            damPRD.addModifier(-1, "easy to pilot");
+                        }
+                        game.addPSR(damPRD);
                     }
                 }
             }
@@ -13518,11 +13526,17 @@ public class Server implements Runnable {
                         StringBuffer reportStr = new StringBuffer();
                         reportStr.append(entity.damageThisPhase).append(" damage +").append(damMod);
                         PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod, reportStr.toString());
+                        if(entity.getQuirks().booleanOption("easy_pilot") && entity.getCrew().getPiloting() > 3) {
+                            damPRD.addModifier(-1, "easy to pilot");
+                        }
                         game.addControlRoll(damPRD);
                     } else {
                         //was the damage threshold exceeded this round?
                         if(((Aero)entity).wasCritThresh()) {
                             PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0, "damage threshold exceeded");
+                            if(entity.getQuirks().booleanOption("easy_pilot") && entity.getCrew().getPiloting() > 3) {
+                                damThresh.addModifier(-1, "easy to pilot");
+                            }
                             game.addControlRoll(damThresh);
                         }
                     }

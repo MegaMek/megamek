@@ -12518,6 +12518,9 @@ public class Server implements Runnable {
     private PilotingRollData getKickPushPSR(Entity psrEntity, Entity attacker, Entity target, String reason) {
         int mod = 0;
         PilotingRollData psr = new PilotingRollData(psrEntity.getId(), mod, reason);
+        if(psrEntity.getQuirks().booleanOption("stable")) {
+            psr.addModifier(-1, "stable");
+        }
         if (game.getOptions().booleanOption("tacops_physical_psr")) {
 
             switch (target.getWeightClass()) {

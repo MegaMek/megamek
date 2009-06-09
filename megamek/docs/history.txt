@@ -15,6 +15,7 @@ v0.35.2-dev (SVN)
 + Narrow/Low Profile Quirk
 + Hyper-Extending Actuator Quirk
 + Atmospheric Flyer Quirk
++ Stable Quirk
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

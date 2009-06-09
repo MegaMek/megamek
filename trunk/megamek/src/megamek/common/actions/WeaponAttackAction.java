@@ -1210,6 +1210,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
+        //units with the narrow/low profile quirk are harder to hit
+        if(te != null && te.getQuirks().booleanOption("low_profile")) {
+            toHit.addModifier(1, "narrow/low profile");
+        }
+        
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if (!isAttackerInfantry && (te != null) && (te instanceof BattleArmor)) {
             toHit.addModifier(1, "battle armor target");

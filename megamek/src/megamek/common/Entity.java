@@ -6734,25 +6734,46 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getShortRangeModifier() {
+        int mod = 0;
         if (getTargSysType() == MiscType.T_TARGSYS_SHORTRANGE) {
-            return -1;
+            mod--;
         } else if (getTargSysType() == MiscType.T_TARGSYS_LONGRANGE) {
-            return 1;
+            mod++;
         }
-        return 0;
+        if(getQuirks().booleanOption("imp_target_short")) {
+            mod--;
+        }
+        if(getQuirks().booleanOption("poor_target_short")) {
+            mod++;
+        }
+        return mod;
     }
 
     public int getMediumRangeModifier() {
-        return 2;
+        int mod = 2;
+        if(getQuirks().booleanOption("imp_target_med")) {
+            mod--;
+        }
+        if(getQuirks().booleanOption("poor_target_med")) {
+            mod++;
+        }
+        return mod;
     }
 
     public int getLongRangeModifier() {
+        int mod = 4;
         if (getTargSysType() == MiscType.T_TARGSYS_SHORTRANGE) {
-            return 5;
+            mod++;;
         } else if (getTargSysType() == MiscType.T_TARGSYS_LONGRANGE) {
-            return 3;
+            mod--;
         }
-        return 4;
+        if(getQuirks().booleanOption("imp_target_long")) {
+            mod--;
+        }
+        if(getQuirks().booleanOption("poor_target_long")) {
+            mod++;
+        }
+        return mod;
     }
 
     public int getExtremeRangeModifier() {

@@ -20,6 +20,8 @@ v0.35.2-dev (SVN)
 + Poor Targeting Quirk
 + Anti-Aircraft Targeting Quirk
 + Combat Computer Quirk
++ Battle Computer Quirk
++ Command Battlemech Quirk
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

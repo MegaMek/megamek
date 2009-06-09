@@ -38,11 +38,17 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, "easy_pilot", false); //$NON-NLS-1$
         addOption(posQuirk, "low_profile", false); //$NON-NLS-1$
         addOption(posQuirk, "hyper_actuator", false); //$NON-NLS-1$
+        addOption(posQuirk, "imp_target_short", false); //$NON-NLS-1$
+        addOption(posQuirk, "imp_target_med", false); //$NON-NLS-1$
+        addOption(posQuirk, "imp_target_long", false); //$NON-NLS-1$
         addOption(posQuirk, "stable", false); //$NON-NLS-1$
      
         // negative quirks
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS); //$NON-NLS-1$
         addOption(negQuirk, "hard_pilot", false); //$NON-NLS-1$
+        addOption(posQuirk, "poor_target_short", false); //$NON-NLS-1$
+        addOption(posQuirk, "poor_target_med", false); //$NON-NLS-1$
+        addOption(posQuirk, "poor_target_long", false); //$NON-NLS-1$
     }
 
     /*

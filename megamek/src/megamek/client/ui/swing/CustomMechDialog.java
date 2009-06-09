@@ -79,6 +79,7 @@ import megamek.common.WeaponType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.PilotOptions;
+import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
 
 /**
@@ -267,8 +268,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     Client client;
 
     private PilotOptions options;
+    private Quirks quirks;
 
     private ArrayList<DialogOptionComponent> optionComps = new ArrayList<DialogOptionComponent>();
+    private ArrayList<DialogOptionComponent> quirkComps = new ArrayList<DialogOptionComponent>();
 
     private JTextArea texDesc = new JTextArea(Messages
             .getString("CustomMechDialog.texDesc"), 20, 10); //$NON-NLS-1$
@@ -311,6 +314,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         tabAll.addTab(Messages.getString("CustomMechDialog.tabPilot"), scrPilot);
         tabAll.addTab(Messages.getString("CustomMechDialog.tabEquipment"), scrEquip);
         tabAll.addTab(Messages.getString("CustomMechDialog.tabDeployment"), scrDeploy);
+        if(clientgui.getClient().game.getOptions().booleanOption("stratops_quirks")) {
+            tabAll.addTab("Quirks", scrQuirks);
+        }
 
         getContentPane().add(mainPanel);
 
@@ -318,6 +324,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         this.clientgui = clientgui;
         this.client = client;
         options = entity.getCrew().getOptions();
+        this.quirks = entity.getQuirks();
         this.editable = editable;
 
         texDesc.setEditable(false);
@@ -1355,6 +1362,42 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         validate();
     }
+    
+    private void setQuirks() {
+        IOption option;
+        for (final Object newVar : quirkComps) {
+            DialogOptionComponent comp = (DialogOptionComponent) newVar;
+            option = comp.getOption();
+            if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) { // NON-NLS-$1
+                entity.getQuirks().getOption(option.getName())
+                        .setValue("None"); // NON-NLS-$1
+            } else {
+                entity.getQuirks().getOption(option.getName())
+                        .setValue(comp.getValue());
+            }
+        }
+    }
+    
+    public void refreshQuirks() {
+        panQuirks.removeAll();
+        quirkComps = new ArrayList<DialogOptionComponent>();
+
+        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
+                .hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+
+            panQuirks.add(new JLabel(group.getDisplayableName()), GBC.eol());
+
+            for (Enumeration<IOption> j = group.getOptions(); j
+                    .hasMoreElements();) {
+                IOption option = j.nextElement();
+
+                addQuirk(option, editable);
+            }
+        }
+
+        validate();
+    }
 
     private void addGroup(IOptionGroup group, GridBagLayout gridbag,
             GridBagConstraints c) {
@@ -1386,6 +1429,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panOptions.add(optionComp);
 
         optionComps.add(optionComp);
+    }
+    
+    private void addQuirk(IOption option, boolean editable) {
+        DialogOptionComponent optionComp = new DialogOptionComponent(this,
+                option, editable);
+
+        panQuirks.add(optionComp, GBC.eol());
+
+        quirkComps.add(optionComp);
     }
 
     public void showDescFor(IOption option) {
@@ -1788,7 +1840,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             entity.setSpotlight(chSearchlight.isSelected());
             entity.setSpotlightState(chSearchlight.isSelected());
             setOptions();
-
+            setQuirks();
             if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
                 Entity chosen = client.getEntity(entityCorrespondance[choC3
                         .getSelectedIndex()]);

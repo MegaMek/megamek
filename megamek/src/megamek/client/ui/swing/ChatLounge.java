@@ -1463,6 +1463,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entity,
                 editable);
         cmd.refreshOptions();
+        cmd.refreshQuirks();
         cmd.setTitle(entity.getShortName());
         cmd.setVisible(true);
         if (editable && cmd.isOkay()) {

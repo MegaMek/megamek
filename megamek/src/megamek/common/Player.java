@@ -437,6 +437,7 @@ public final class Player extends TurnOrdered {
     public int getTurnInitBonus() {
         int bonusHQ = 0;
         int bonusMD = 0;      
+        int bonusQ = 0;
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
                 if (game.getOptions().booleanOption("tacops_mobile_hqs") 
@@ -447,9 +448,15 @@ public final class Player extends TurnOrdered {
                         && bonusMD == 0 && entity.getMDIniBonus() > 0) {
                             bonusMD = entity.getMDIniBonus();
                 }
+                if(entity.getQuirkIniBonus() > bonusQ) {
+                    //TODO: I am assuming that the quirk initiative bonuses go to the highest,
+                    //rather than being cumulative
+                    //http://www.classicbattletech.com/forums/index.php/topic,52903.new.html#new
+                    bonusQ = entity.getQuirkIniBonus();
+                }
             }
         }     
-        return bonusHQ + bonusMD;
+        return bonusHQ + bonusMD + bonusQ;
     }
     
     /**

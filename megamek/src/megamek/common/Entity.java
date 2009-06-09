@@ -8086,6 +8086,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return 0;
     }
+    
+    /**
+     * @return the initiative bonus this Entity grants for quirks
+     */
+    public int getQuirkIniBonus() {
+        //command battlemech and and battle computer are not cumulative
+        if(getQuirks().booleanOption("battle_computer") && !getCrew().isDead() && !getCrew().isUnconscious()) {
+            return 2;
+        } else if (getQuirks().booleanOption("command_mech") && !getCrew().isDead() && !getCrew().isUnconscious()) {
+            return 1;
+        }
+        return 0;
+    }
 
     /**
      * Apply any pending Santa Anna allocations to Killer Whale ammo bins

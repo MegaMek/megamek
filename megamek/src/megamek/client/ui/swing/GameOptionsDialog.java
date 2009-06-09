@@ -232,7 +232,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         // Make the width accomadate the longest game option label
         // without needing to scroll horizontally.
         setSize(Math.min(currentFrame.getSize().width, maxOptionWidth + 30),
-                Math.max(getSize().height, 400));
+                Math.min(getSize().height, 400));
 
         validate();
     }
@@ -243,7 +243,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         groupPanel.setLayout(new BoxLayout(groupPanel,BoxLayout.Y_AXIS));
         scrOptions.setAutoscrolls(true);
         scrOptions.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        scrOptions.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrOptions.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         panOptions.addTab(group.getDisplayableName(),scrOptions);
     }

@@ -1208,6 +1208,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 toHit.addModifier(1,
                         "anti-air targetting system vs. non-aerial unit");
             }
+           
+        }
+        
+        if(ae.getQuirks().booleanOption("anti_air") && target instanceof Entity) {
+            if((target instanceof VTOL || target instanceof Aero) && target.getElevation() > 0) {
+                toHit.addModifier(-2, "anti-air targetting system vs. aerial unit");
+            }
         }
 
         //units with the narrow/low profile quirk are harder to hit

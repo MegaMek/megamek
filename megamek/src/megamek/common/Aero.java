@@ -1556,6 +1556,11 @@ public class Aero extends Entity
         if ((getCockpitType() == Aero.COCKPIT_SMALL) && !getCrew().getOptions().booleanOption("bvdni")) {
             prd.addModifier(1, "Small Cockpit");
         }
+        
+        //atmospheric flyer quirk?
+        if(getQuirks().booleanOption("atmo_flyer") && game.getBoard().inAtmosphere()) {
+            prd.addModifier(-1, "atmospheric flyer");
+        }
 
         return prd;
     }

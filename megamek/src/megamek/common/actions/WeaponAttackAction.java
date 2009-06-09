@@ -441,6 +441,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 return toHit;
             }
+            
+            //protected/exposed actuator quirk may adjust target roll
+            if(null != te && te.getQuirks().booleanOption("pro_actuator")) {
+                toHit.addModifier(+1, "protected actuators");
+            }
+            if(null != te && te.getQuirks().booleanOption("exp_actuator")) {
+                toHit.addModifier(-1, "exposed actuators");
+            }
 
             // If the attacker has Assault claws, give a -1 modifier.
             // We can stop looking when we find our first match.
@@ -459,6 +467,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
             if (te instanceof Tank) {
                 toHit.addModifier(-2, "target is vehicle");
+            }
+            
+            //protected/exposed actuator quirk may adjust target roll
+            if(null != te && te.getQuirks().booleanOption("pro_actuator")) {
+                toHit.addModifier(+1, "protected actuators");
+            }
+            if(null != te && te.getQuirks().booleanOption("exp_actuator")) {
+                toHit.addModifier(-1, "exposed actuators");
             }
 
             // If the attacker has assault claws, give a -1 modifier.

@@ -30,6 +30,8 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.options.PilotOptions;
+import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.ACWeapon;
@@ -88,6 +90,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * The pilot of the entity. Even infantry has a 'pilot'.
      */
     public Pilot crew = new Pilot();
+    
+    private Quirks quirks = new Quirks();
 
     protected boolean shutDown = false;
     protected boolean shutDownThisPhase = false;
@@ -420,6 +424,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
         }
         setC3NetId(this);
+        quirks.initialize();
     }
 
     /**
@@ -8347,6 +8352,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return "";
         }
         return source;
+    }
+    
+    public void setQuirks(Quirks quirks) {
+        this.quirks = quirks;
+    }
+
+    public Quirks getQuirks() {
+        return quirks;
     }
 
 }

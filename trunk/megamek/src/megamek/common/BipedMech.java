@@ -57,7 +57,7 @@ public class BipedMech extends Mech {
      */
     @Override
     public boolean canFlipArms() {
-        boolean canFlip = !isProne();
+        boolean canFlip = true;
 
         if (hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
             canFlip = false;
@@ -66,6 +66,14 @@ public class BipedMech extends Mech {
         } else if (hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
             canFlip = false;
         } else if (hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)) {
+            canFlip = false;
+        }
+        
+        if(getQuirks().booleanOption("hyper_actuator")) {
+            canFlip = true;
+        }
+        
+        if(isProne()) {
             canFlip = false;
         }
 

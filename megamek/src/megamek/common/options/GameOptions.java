@@ -72,8 +72,8 @@ public class GameOptions extends AbstractOptions {
         addOption(base, "rng_type", 1); //$NON-NLS-1$
         addOption(base, "rng_log", false); //$NON-NLS-1$
         addOption(base, "flamer_heat", true); //$NON-NLS-1$
-        addOption(base, "indirect_fire", true); //$NON-NLS-1$  
-        
+        addOption(base, "indirect_fire", true); //$NON-NLS-1$
+
         IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
         addOption(victory, "skip_forced_victory", false); //$NON-NLS-1$
         addOption(victory, "check_victory", true); //$NON-NLS-1$
@@ -96,7 +96,7 @@ public class GameOptions extends AbstractOptions {
         addOption(allowed, "no_clan_physical", false); //$NON-NLS-1$
         addOption(allowed, "allow_nukes", false); //$NON-NLS-1$
         addOption(allowed, "really_allow_nukes", false); //$NON-NLS-1$
-        
+
         IBasicOptionGroup advancedRules = addGroup("advancedRules"); //$NON-NLS-1$
         addOption(advancedRules, "minefields", false); //$NON-NLS-1$
 //        addOption(advancedRules, "hidden_units", false); //$NON-NLS-1$
@@ -164,7 +164,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "no_tac", false); //$NON-NLS-1$
         addOption(advancedCombat, "vehicles_safe_from_infernos", false); //$NON-NLS-1$
         addOption(advancedCombat, "protos_safe_from_infernos", false); //$NON-NLS-1$
-        addOption(advancedCombat, "indirect_always_possible", false); //$NON-NLS-1$      
+        addOption(advancedCombat, "indirect_always_possible", false); //$NON-NLS-1$
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_sprint", false); //$NON-NLS-1$
@@ -209,7 +209,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules,"stratops_space_bomb", false); //$NON-NLS-1$
         addOption(advAeroRules,"variable_damage_thresh", false); //$NON-NLS-1$
         addOption(advAeroRules,"at2_nukes", false); //$NON-NLS-1$
-        
+
         IBasicOptionGroup initiative = addGroup("initiative"); //$NON-NLS-1$
         addOption(initiative, "individual_initiative", false); //$NON-NLS-1$
         addOption(initiative, "command_init", false); //$NON-NLS-1$
@@ -232,22 +232,22 @@ public class GameOptions extends AbstractOptions {
         addOption(rpg, "rpg_gunnery", false); //$NON-NLS-1$
         addOption(rpg, "pilot_advantages", false); //$NON-NLS-1$
         addOption(rpg, "manei_domini", false); //$NON-NLS-1$
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         //IBasicOptionGroup advancedBuildings = addGroup("advancedBuildings"); //$NON-NLS-1$
 

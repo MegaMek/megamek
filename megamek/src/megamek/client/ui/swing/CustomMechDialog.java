@@ -20,7 +20,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -37,7 +36,6 @@ import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -104,7 +102,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JPanel panDeploy;
     private JPanel panQuirks;
     private JPanel panFluff;
-    
+
     private JScrollPane scrPilot;
     private JScrollPane scrEquip;
     private JScrollPane scrDeploy;
@@ -115,12 +113,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     //private JScrollPane scrOptions;
 
     private JTabbedPane tabAll;
-    
+
     private JLabel labName = new JLabel(Messages
             .getString("CustomMechDialog.labName"), SwingConstants.RIGHT); //$NON-NLS-1$
 
     private JTextField fldName = new JTextField(20);
-    
+
     private JLabel labNick = new JLabel(Messages
             .getString("CustomMechDialog.labNick"), SwingConstants.RIGHT); //$NON-NLS-1$
 
@@ -298,15 +296,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panDeploy = new JPanel(new GridBagLayout());
         panQuirks = new JPanel(new GridBagLayout());
         panFluff = new JPanel(new GridBagLayout());
-        
+
         scrPilot = new JScrollPane(panPilot);
         scrEquip = new JScrollPane(panEquip);
         scrDeploy = new JScrollPane(panDeploy);
         scrQuirks = new JScrollPane(panQuirks);
         scrFluff = new JScrollPane(panFluff);
-        
+
         panOptions = new JPanel(new GridBagLayout());
-        
+
         mainPanel.add(tabAll, GBC.eol().fill(GridBagConstraints.BOTH).insets(5, 5, 5, 5));
         mainPanel.add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER));
 
@@ -315,7 +313,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         tabAll.addTab(Messages.getString("CustomMechDialog.tabDeployment"), scrDeploy);
 
         getContentPane().add(mainPanel);
-        
+
         this.entity = entity;
         this.clientgui = clientgui;
         this.client = client;
@@ -340,9 +338,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         panPilot.add(labName, GBC.std());
         panPilot.add(fldName, GBC.eol());
-        
+
         panPilot.add(labNick, GBC.std());
-        panPilot.add(fldNick, GBC.eol());
+        panPilot.add(fldNick, GBC.eop());
 
         if (client.game.getOptions().booleanOption("rpg_gunnery")) {
 
@@ -361,16 +359,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
 
         panPilot.add(labPiloting, GBC.std());
-        panPilot.add(fldPiloting, GBC.eol());
+        panPilot.add(fldPiloting, GBC.eop());
 
         if (client.game.getOptions().booleanOption("individual_initiative")) {
             panPilot.add(labInit, GBC.std());
-            panPilot.add(fldInit, GBC.eol());
+            panPilot.add(fldInit, GBC.eop());
         }
 
         if (client.game.getOptions().booleanOption("command_init")) {
             panPilot.add(labCommandInit, GBC.std());
-            panPilot.add(fldCommandInit, GBC.eol());
+            panPilot.add(fldCommandInit, GBC.eop());
         }
 
         // Set up commanders for commander killed victory condition
@@ -380,7 +378,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panPilot.add(chCommander, GBC.eol());
             chCommander.setSelected(entity.isCommander());
         }
-        
+
         if (entity instanceof Protomech) {
             // All Protomechs have a callsign.
             StringBuffer callsign = new StringBuffer(Messages
@@ -416,7 +414,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // If we got any other entites, show the unit number controls.
             if (otherUnitEntities.hasMoreElements()) {
                 panPilot.add(labUnitNum, GBC.std());
-                panPilot.add(choUnitNum, GBC.eol());
+                panPilot.add(choUnitNum, GBC.eop());
                 refreshUnitNum(otherUnitEntities);
             }
         }
@@ -425,9 +423,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 "pilot_advantages") //$NON-NLS-1$
                 || clientgui.getClient().game.getOptions().booleanOption(
                         "manei_domini")) { //$NON-NLS-1$
-            //scrOptions = new JScrollPane(panOptions);
 
-            panPilot.add(panOptions, GBC.eol());
+            panPilot.add(panOptions, GBC.eop());
         }
 
         //**EQUIPMENT TAB**//
@@ -454,7 +451,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 chAutoEject.setSelected(!mech.isAutoEject());
             }
         }
-        
+
         if (entity.hasC3() || entity.hasC3i()) {
             panEquip.add(labC3, GBC.std());
             panEquip.add(choC3, GBC.eol());
@@ -478,16 +475,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             choTargSys.addItem(MiscType
                     .getTargetSysName(MiscType.T_TARGSYS_ANTI_AIR));
             // choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_MULTI_TRAC));
-            panEquip.add(choTargSys, GBC.eol());
+            panEquip.add(choTargSys, GBC.eop());
 
             choTargSys.setSelectedItem(MiscType.getTargetSysName(entity
                     .getTargSysType()));
         }
-        
+
         //Can't set up munitions on infantry.
         if (!(entity instanceof Infantry) || (entity instanceof BattleArmor)) {
             setupMunitions();
-            panEquip.add(panMunitions, GBC.eol().anchor(GridBagConstraints.CENTER));
+            panEquip.add(panMunitions, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
         // set up Santa Annas if using nukes
@@ -495,7 +492,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 && clientgui.getClient().game.getOptions().booleanOption(
                         "at2_nukes")) {
             setupSantaAnna();
-            panEquip.add(panSantaAnna, GBC.eol().anchor(GridBagConstraints.CENTER));
+            panEquip.add(panSantaAnna, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
          if ((entity instanceof Aero)
@@ -503,7 +500,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         || (entity instanceof SmallCraft)
                         || (entity instanceof Jumpship))) {
             setupBombs();
-            panEquip.add(panBombs, GBC.eol().anchor(GridBagConstraints.CENTER));
+            panEquip.add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
 
@@ -511,7 +508,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         if (clientgui.getClient().game.getOptions().booleanOption(
                 "tacops_burst")) { //$NON-NLS-1$
             setupRapidfireMGs();
-            panEquip.add(panRapidfireMGs, GBC.eol().anchor(GridBagConstraints.CENTER));
+            panEquip.add(panRapidfireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
         // Set up searchlight
@@ -524,7 +521,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         // Set up mines
         setupMines();
         panEquip.add(panMines, GBC.eop().anchor(GridBagConstraints.CENTER));
-        
+
         //**DEPLOYMENT TAB**//
         boolean eligibleForOffBoard = false;
         for (Mounted mounted : entity.getWeaponList()) {
@@ -533,7 +530,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 eligibleForOffBoard = true;
             }
         }
-        
+
         if (entity instanceof Aero) {
             panDeploy.add(labStartVelocity, GBC.std());
             panDeploy.add(fldStartVelocity, GBC.eol());
@@ -541,11 +538,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panDeploy.add(labStartElevation, GBC.std());
             panDeploy.add(fldStartElevation, GBC.eol());
         }
-        
+
         panDeploy.add(labDeployment, GBC.std());
         panDeploy.add(choDeployment, GBC.eol());
         refreshDeployment();
-        
+
         if (eligibleForOffBoard) {
             panDeploy.add(labOffBoard, GBC.std());
             panDeploy.add(chOffBoard, GBC.eol());
@@ -574,7 +571,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             butOffBoardDistance.setText(Integer.toString(distance));
             panDeploy.add(butOffBoardDistance, GBC.eol());
         }
-      
+
         setupButtons();
 
         fldName.setText(entity.getCrew().getName());
@@ -641,7 +638,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         });
 
         pack();
-        setSize(mainPanel.getSize().width, Math.min(mainPanel.getSize().height, 400));
+        mainPanel.setSize(mainPanel.getSize().width, Math.min(mainPanel.getSize().height, 400));
         setResizable(true);
         setLocationRelativeTo(clientgui);
     }
@@ -1331,21 +1328,21 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption option = j.nextElement();
-                
+
                 if(entity instanceof GunEmplacement) {
                     continue;
                 }
-                
+
                 // a bunch of stuf should get disabled for conv infantry
-                if (((entity instanceof Infantry && !(entity instanceof BattleArmor)))
-                        && (option.getName().equals("vdni") 
+                if ((((entity instanceof Infantry) && !(entity instanceof BattleArmor)))
+                        && (option.getName().equals("vdni")
                                 || option.getName().equals("bvdni"))) {
                     continue;
                 }
-                
+
                 //a bunch of stuff should get disabled for all but conventional infantry
-                if(!(entity instanceof Infantry && !(entity instanceof BattleArmor)) 
-                        && (option.getName().equals("grappler") 
+                if(!((entity instanceof Infantry) && !(entity instanceof BattleArmor))
+                        && (option.getName().equals("grappler")
                                 || option.getName().equals("pl_masc")
                                 || option.getName().equals("cyber_eye_im")
                                 || option.getName().equals("cyber_eye_tele"))) {
@@ -1791,7 +1788,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             entity.setSpotlight(chSearchlight.isSelected());
             entity.setSpotlightState(chSearchlight.isSelected());
             setOptions();
-            
+
             if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
                 Entity chosen = client.getEntity(entityCorrespondance[choC3
                         .getSelectedIndex()]);
@@ -1819,7 +1816,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 entity.setC3NetId(client.getEntity(entityCorrespondance[choC3
                         .getSelectedIndex()]));
             }
-            
+
             if(entity instanceof BattleArmor) {
                 //have to reset internals because of dermal armor option
                 if(entity.crew.getOptions().booleanOption("dermal_armor")) {

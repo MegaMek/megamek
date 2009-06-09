@@ -12578,6 +12578,16 @@ public class Server implements Runnable {
                     entity.heatBuildup += 2 * a.getEngineHits();
                 }
 
+                //Combat computers help manage heat
+                if(entity.getQuirks().booleanOption("combat_computer")) {
+                    int reduce = Math.min(entity.heatBuildup, 4);
+                    r = new Report(5026);
+                    r.subject = entity.getId();
+                    r.add(reduce);
+                    addReport(r);
+                    entity.heatBuildup -= reduce;
+                }
+                
                 // add the heat we've built up so far.
                 entity.heat += entity.heatBuildup;
 
@@ -12972,6 +12982,17 @@ public class Server implements Runnable {
             entity.heatBuildup += Math.min(15, entity.heatFromExternal);
             entity.heatFromExternal = 0;
 
+
+            //Combat computers help manage heat
+            if(entity.getQuirks().booleanOption("combat_computer")) {
+                int reduce = Math.min(entity.heatBuildup, 4);
+                r = new Report(5026);
+                r.subject = entity.getId();
+                r.add(reduce);
+                addReport(r);
+                entity.heatBuildup -= reduce;
+            }
+            
             // if heatbuildup is negative due to temperature, set it to 0
             // for prettier turnreports
             if (entity.heatBuildup < 0) {

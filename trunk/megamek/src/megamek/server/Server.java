@@ -17250,6 +17250,9 @@ public class Server implements Runnable {
                 r.subject = a.getId();
                 r.newlines = 0;
                 int boomTarget = 9;
+                if(a.getQuirks().booleanOption("fragile_fuel")) {
+                    boomTarget = 7;
+                }
                 if(a.isLargeCraft() && a.isClan() && game.getOptions().booleanOption("stratops_harjel")) {
                     boomTarget = 11;
                 }
@@ -18200,6 +18203,11 @@ public class Server implements Runnable {
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc);
         vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType), true));
+        if(critType != Tank.CRIT_NONE && !t.getEngine().isFusion()
+                && t.getQuirks().booleanOption("fragile_fuel") && Compute.d6(2) > 9) {
+            //BOOM!!
+            vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, Tank.CRIT_FUEL_TANK), true));
+        }
         return vDesc;
     }
 

@@ -54,6 +54,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, "atmo_instability", false); //$NON-NLS-1$
         addOption(negQuirk, "cramped_cockpit", false); //$NON-NLS-1$
         addOption(negQuirk, "exp_actuator", false); //$NON-NLS-1$
+        addOption(negQuirk, "fragile_fuel", false); //$NON-NLS-1$
         addOption(negQuirk, "hard_pilot", false); //$NON-NLS-1$
         addOption(negQuirk, "no_twist", false); //$NON-NLS-1$
         addOption(negQuirk, "poor_target_short", false); //$NON-NLS-1$

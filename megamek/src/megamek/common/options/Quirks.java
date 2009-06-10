@@ -43,6 +43,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, "ext_twist", false); //$NON-NLS-1$
         addOption(posQuirk, "low_profile", false); //$NON-NLS-1$
         addOption(posQuirk, "hyper_actuator", false); //$NON-NLS-1$
+        addOption(posQuirk, "imp_life_support", false); //$NON-NLS-1$
         addOption(posQuirk, "imp_target_short", false); //$NON-NLS-1$
         addOption(posQuirk, "imp_target_med", false); //$NON-NLS-1$
         addOption(posQuirk, "imp_target_long", false); //$NON-NLS-1$
@@ -58,6 +59,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, "hard_pilot", false); //$NON-NLS-1$
         addOption(negQuirk, "no_arms", false); //$NON-NLS-1$
         addOption(negQuirk, "no_twist", false); //$NON-NLS-1$
+        addOption(negQuirk, "poor_life_support", false); //$NON-NLS-1$
         addOption(negQuirk, "poor_target_short", false); //$NON-NLS-1$
         addOption(negQuirk, "poor_target_med", false); //$NON-NLS-1$
         addOption(negQuirk, "poor_target_long", false); //$NON-NLS-1$

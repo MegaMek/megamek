@@ -149,10 +149,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private TextField fldOffBoardDistance = new TextField(4);
     private Button butOffBoardDistance = new Button("0");
 
-    private Label labTargSys = new Label(Messages
-            .getString("CustomMechDialog.labTargSys"), Label.RIGHT);
-    private Choice choTargSys = new Choice();
-
     private Label labStartVelocity = new Label(Messages
             .getString("CustomMechDialog.labStartVelocity"), Label.RIGHT); //$NON-NLS-1$
     private TextField fldStartVelocity = new TextField(3);
@@ -344,29 +340,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             tempPanel.add(butOffBoardDistance, GBC.eol());
         }
 
-        if (!(entity.hasTargComp())
-                && (clientgui.getClient().game.getOptions()
-                        .booleanOption("allow_level_3_targsys"))
-                && ((entity instanceof Mech) || (clientgui.getClient().game
-                        .getOptions().booleanOption("tank_level_3_targsys") && (entity instanceof Tank)))
-                && !entity.hasC3() && !entity.hasC3i()) {
-            tempPanel.add(labTargSys, GBC.std());
-            choTargSys.add(MiscType
-                    .getTargetSysName(MiscType.T_TARGSYS_STANDARD));
-            choTargSys.add(MiscType
-                    .getTargetSysName(MiscType.T_TARGSYS_LONGRANGE));
-            choTargSys.add(MiscType
-                    .getTargetSysName(MiscType.T_TARGSYS_SHORTRANGE));
-            choTargSys.add(MiscType
-                    .getTargetSysName(MiscType.T_TARGSYS_ANTI_AIR));
-            // choTargSys.add(MiscType.getTargetSysName(MiscType.
-            // T_TARGSYS_MULTI_TRAC))
-            tempPanel.add(choTargSys, GBC.eol());
-
-            choTargSys.select(MiscType
-                    .getTargetSysName(entity.getTargSysType()));
-        }
-
         if (entity instanceof Protomech) {
             // All Protomechs have a callsign.
             StringBuffer callsign = new StringBuffer(Messages
@@ -509,7 +482,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             chAutoEject.setEnabled(false);
             chSearchlight.setEnabled(false);
             chCommander.setEnabled(false);
-            choTargSys.setEnabled(false);
             disableMunitionEditing();
             disableMGSetting();
             disableMineSetting();
@@ -1708,24 +1680,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
                 a.setElevation(elev);
-            }
-
-            // Update the entity's targeting system type.
-            if (!(entity.hasTargComp())
-                    && (clientgui.getClient().game.getOptions()
-                            .booleanOption("allow_level_3_targsys"))) {
-                int targSysIndex = MiscType.T_TARGSYS_STANDARD;
-                if (choTargSys.getSelectedItem() != null) {
-                    targSysIndex = MiscType.getTargetSysType(choTargSys
-                            .getSelectedItem());
-                }
-                if (targSysIndex >= 0) {
-                    entity.setTargSysType(targSysIndex);
-                } else {
-                    System.err.println("Illegal targeting system index: "
-                            + targSysIndex);
-                    entity.setTargSysType(MiscType.T_TARGSYS_STANDARD);
-                }
             }
 
             // If the player wants to swap unit numbers, update both

@@ -2603,7 +2603,6 @@ public class MechDisplay extends JPanel {
         private JLabel carrysL;
         private JLabel heatL;
         private JLabel sinksL;
-        private JLabel targSysL;
         private JTextArea unusedR;
         private JTextArea carrysR;
         private JTextArea heatR;
@@ -2683,12 +2682,6 @@ public class MechDisplay extends JPanel {
             heatR.setOpaque(false);
             heatR.setForeground(Color.WHITE);
 
-            targSysL = new JLabel((Messages
-                    .getString("MechDisplay.TargSysLabel")).concat(" "),
-                    SwingConstants.CENTER);
-            targSysL.setForeground(Color.WHITE);
-            targSysL.setOpaque(false);
-
             curSensorsL = new JLabel((Messages
                     .getString("MechDisplay.CurrentSensors")).concat(" "),
                     SwingConstants.CENTER);
@@ -2758,10 +2751,6 @@ public class MechDisplay extends JPanel {
             c.insets = new Insets(1, 9, 18, 9);
             gridbag.setConstraints(heatR, c);
             add(heatR);
-
-            c.insets = new Insets(1, 9, 1, 9);
-            gridbag.setConstraints(targSysL, c);
-            add(targSysL);
 
             setBackGround();
             onResize();
@@ -3082,9 +3071,6 @@ public class MechDisplay extends JPanel {
                         .getString("MechDisplay.CurrentSensors")).concat(" "));
             }
 
-            targSysL.setText((Messages.getString("MechDisplay.TargSysLabel"))
-                    .concat(" ").concat(
-                            MiscType.getTargetSysName(en.getTargSysType())));
             onResize();
         } // End public void displayMech( Entity )
 

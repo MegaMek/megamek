@@ -170,18 +170,6 @@ public class MiscType extends EquipmentType {
     public static final long S_STANDARD = 1L << 0;
     public static final long S_IMPROVED = 1L << 1;
 
-    public static final int T_TARGSYS_UNKNOWN = -1;
-    public static final int T_TARGSYS_STANDARD = 0;
-    public static final int T_TARGSYS_TARGCOMP = 1;
-    public static final int T_TARGSYS_LONGRANGE = 2;
-    public static final int T_TARGSYS_SHORTRANGE = 3;
-    public static final int T_TARGSYS_VARIABLE_RANGE = 4;
-    public static final int T_TARGSYS_ANTI_AIR = 5;
-    public static final int T_TARGSYS_MULTI_TRAC = 6;
-    public static final int T_TARGSYS_MULTI_TRAC_II = 7;
-    public static final int T_TARGSYS_HEAT_SEEKING_THB = 8;
-    public static final String[] targSysNames = { "Standard Targeting System", "Targeting Computer", "Long-Range Targeting System", "Short-Range Targeting System", "Variable-Range Taretting System", "Anti-Air Targeting System", "Multi-Trac Targeting System", "Multi-Trac II Targeting System" };
-
     // New stuff for shields
     protected int baseDamageAbsorptionRate = 0;
     protected int baseDamageCapacity = 0;
@@ -3517,21 +3505,5 @@ public class MiscType extends EquipmentType {
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
 
         return misc;
-    }
-
-    public static String getTargetSysName(int targSysType) {
-        if ((targSysType < 0) || (targSysType >= targSysNames.length)) {
-            return null;
-        }
-        return targSysNames[targSysType];
-    }
-
-    public static int getTargetSysType(String targSysName) {
-        for (int x = 0; x < targSysNames.length; x++) {
-            if (targSysNames[x].compareTo(targSysName) == 0) {
-                return x;
-            }
-        }
-        return -1;
     }
 }

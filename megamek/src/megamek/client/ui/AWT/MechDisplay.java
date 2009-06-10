@@ -2491,7 +2491,7 @@ public class MechDisplay extends BufferedPanel {
         private static final String IMAGE_DIR = "data/images/widgets";
 
         private TransparentLabel curSensorsL, narcLabel, unusedL, carrysL,
-                heatL, sinksL, targSysL;
+                heatL, sinksL;
         public Choice chSensors;
         public TextArea unusedR, carrysR, heatR, sinksR;
         public Button sinks2B;
@@ -2558,10 +2558,6 @@ public class MechDisplay extends BufferedPanel {
             heatR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
             heatR.setEditable(false);
             heatR.addKeyListener(clientgui.menuBar);
-
-            targSysL = new TransparentLabel((Messages
-                    .getString("MechDisplay.TargSysLabel")).concat(" "), fm,
-                    Color.white, TransparentLabel.CENTER);
 
             // layout choice panel
             GridBagLayout gridbag = new GridBagLayout();
@@ -2632,9 +2628,6 @@ public class MechDisplay extends BufferedPanel {
             c.weighty = 1.0;
             gridbag.setConstraints(heatR, c);
             add(heatR);
-
-            gridbag.setConstraints(targSysL, c);
-            add(targSysL);
 
             setBackGround();
 
@@ -2917,10 +2910,6 @@ public class MechDisplay extends BufferedPanel {
                         .getString("MechDisplay.CurrentSensors"))
                         .concat(" None"));
             }
-
-            targSysL.setText((Messages.getString("MechDisplay.TargSysLabel"))
-                    .concat(" ").concat(
-                            MiscType.getTargetSysName(en.getTargSysType())));
         } // End public void displayMech( Entity )
 
         private void refreshSensorChoices(Entity en) {

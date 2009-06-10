@@ -45,6 +45,7 @@ v0.35.2-dev (SVN)
 + Multi-Trac Quirk
 + Reinforced Legs Quirk
 + Weak Legs Quirk
++ removed level 3 (MaxTech) targeting systems
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

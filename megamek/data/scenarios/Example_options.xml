@@ -233,10 +233,6 @@
       <optionvalue>true</optionvalue>
    </gameoption>
    <gameoption>
-      <optionname>allow_level_3_targsys</optionname>
-      <optionvalue>false</optionvalue>
-   </gameoption>
-   <gameoption>
       <optionname>quad_hit_location</optionname>
       <optionvalue>false</optionvalue>
    </gameoption>

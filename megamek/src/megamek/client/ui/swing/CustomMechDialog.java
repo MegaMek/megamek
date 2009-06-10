@@ -217,8 +217,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JLabel labTargSys = new JLabel(Messages
             .getString("CustomMechDialog.labTargSys"), SwingConstants.RIGHT);
 
-    private JComboBox choTargSys = new JComboBox();
-
     private JLabel labStartVelocity = new JLabel(Messages
             .getString("CustomMechDialog.labStartVelocity"), SwingConstants.RIGHT); //$NON-NLS-1$
 
@@ -465,29 +463,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             refreshC3();
         }
 
-        if (!(entity.hasTargComp())
-                && (clientgui.getClient().game.getOptions()
-                        .booleanOption("allow_level_3_targsys"))
-                && ((entity instanceof Mech) || (clientgui.getClient().game
-                        .getOptions().booleanOption("tank_level_3_targsys") && (entity instanceof Tank)))
-                && !entity.hasC3() && !entity.hasC3i()) {
-            panEquip.add(labTargSys, GBC.std());
-
-            choTargSys.addItem(MiscType
-                    .getTargetSysName(MiscType.T_TARGSYS_STANDARD));
-            choTargSys.addItem(MiscType
-                    .getTargetSysName(MiscType.T_TARGSYS_LONGRANGE));
-            choTargSys.addItem(MiscType
-                    .getTargetSysName(MiscType.T_TARGSYS_SHORTRANGE));
-            choTargSys.addItem(MiscType
-                    .getTargetSysName(MiscType.T_TARGSYS_ANTI_AIR));
-            // choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_MULTI_TRAC));
-            panEquip.add(choTargSys, GBC.eop());
-
-            choTargSys.setSelectedItem(MiscType.getTargetSysName(entity
-                    .getTargSysType()));
-        }
-
         //Can't set up munitions on infantry.
         if (!(entity instanceof Infantry) || (entity instanceof BattleArmor)) {
             setupMunitions();
@@ -624,7 +599,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             choDeployment.setEnabled(false);
             chAutoEject.setEnabled(false);
             chSearchlight.setEnabled(false);
-            choTargSys.setEnabled(false);
             chCommander.setEnabled(false);
             m_bombs.setEnabled(false);
             disableMunitionEditing();
@@ -1784,25 +1758,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
                 a.setElevation(elev);
-            }
-
-            // Update the entity's targeting system type.
-            if (!(entity.hasTargComp())
-                    && (clientgui.getClient().game.getOptions()
-                            .booleanOption("allow_level_3_targsys"))) {
-                int targSysIndex = MiscType.T_TARGSYS_STANDARD;
-                if (choTargSys.getSelectedItem() != null) {
-                    targSysIndex = MiscType
-                            .getTargetSysType((String) choTargSys
-                                    .getSelectedItem());
-                }
-                if (targSysIndex >= 0) {
-                    entity.setTargSysType(targSysIndex);
-                } else {
-                    System.err.println("Illegal targeting system index: "
-                            + targSysIndex);
-                    entity.setTargSysType(MiscType.T_TARGSYS_STANDARD);
-                }
             }
 
             // If the player wants to swap unit numbers, update both

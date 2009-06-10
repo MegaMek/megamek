@@ -1392,6 +1392,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     .hasMoreElements();) {
                 IOption option = j.nextElement();
 
+                if(!Quirks.isQuirkLegalFor(option, entity)) {
+                    continue;
+                }
+                
                 addQuirk(option, editable);
             }
         }

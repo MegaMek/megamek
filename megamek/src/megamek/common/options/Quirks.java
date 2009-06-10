@@ -52,6 +52,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, "ext_twist", false); //$NON-NLS-1$
         addOption(posQuirk, "low_profile", false); //$NON-NLS-1$
         addOption(posQuirk, "hyper_actuator", false); //$NON-NLS-1$
+        addOption(posQuirk, "imp_sensors", false); //$NON-NLS-1$
         addOption(posQuirk, "imp_life_support", false); //$NON-NLS-1$
         addOption(posQuirk, "imp_target_short", false); //$NON-NLS-1$
         addOption(posQuirk, "imp_target_med", false); //$NON-NLS-1$
@@ -138,6 +139,7 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("command_mech")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("hyper_actuator")
+                    || quirk.getName().equals("imp_sensors")
                     || quirk.getName().equals("imp_life_support")
                     || quirk.getName().equals("imp_target_short")
                     || quirk.getName().equals("imp_target_med")
@@ -168,6 +170,7 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("command_mech")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("hyper_actuator")
+                    || quirk.getName().equals("imp_sensors")
                     || quirk.getName().equals("imp_life_support")
                     || quirk.getName().equals("pro_actuator")
                     || quirk.getName().equals("low_profile")
@@ -191,6 +194,7 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("command_mech")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("hyper_actuator")
+                    || quirk.getName().equals("imp_sensors")
                     || quirk.getName().equals("imp_life_support")
                     || quirk.getName().equals("pro_actuator")
                     || quirk.getName().equals("low_profile")
@@ -211,7 +215,8 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("battle_computer")
                     || quirk.getName().equals("command_mech")
                     || quirk.getName().equals("ext_twist")
-                    || quirk.getName().equals("hyper_actuator")
+                    || quirk.getName().equals("hyper_actuator")                 
+                    || quirk.getName().equals("imp_sensors")
                     || quirk.getName().equals("imp_life_support")
                     || quirk.getName().equals("pro_actuator")
                     || quirk.getName().equals("low_profile")

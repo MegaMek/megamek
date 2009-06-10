@@ -1012,6 +1012,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             if (!clientgui.getClient().game.getOptions().booleanOption("pilot_advantages")) { //$NON-NLS-1$
                 entity.getCrew().clearAdvantages();
             }
+            
+            if(!clientgui.getClient().game.getOptions().booleanOption("stratops_quirks")) { //$NON-NLS-1$
+                entity.clearQuirks();
+            }
 
             boolean rpgSkills = clientgui.getClient().game.getOptions().booleanOption(
                     "rpg_gunnery");

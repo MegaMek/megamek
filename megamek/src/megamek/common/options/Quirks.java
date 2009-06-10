@@ -63,6 +63,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, "poor_target_short", false); //$NON-NLS-1$
         addOption(negQuirk, "poor_target_med", false); //$NON-NLS-1$
         addOption(negQuirk, "poor_target_long", false); //$NON-NLS-1$
+        addOption(negQuirk, "unbalanced", false); //$NON-NLS-1$
     }
 
     /*

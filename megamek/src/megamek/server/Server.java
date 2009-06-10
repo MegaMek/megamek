@@ -9930,6 +9930,10 @@ public class Server implements Runnable {
                 // destroy rotor
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_ROTOR_DESTROYED), false));
             }
+            if(null != te && te.getQuirks().booleanOption("weak_legs")) {
+                addNewLines();
+                addReport(criticalEntity(te, hit.getLocation(), 0));
+            }
         }
 
         if ((te.getMovementMode() == IEntityMovementMode.BIPED) || (te.getMovementMode() == IEntityMovementMode.QUAD)) {
@@ -12472,6 +12476,10 @@ public class Server implements Runnable {
             // or DFA is halved as well, assume yes. TODO: Check with PM
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
+        
+        if(ae.getQuirks().booleanOption("reinforced_legs")) {
+            damageTaken = (int) Math.floor(damageTaken / 2.0);
+        }
 
         // damage attacker
         r = new Report(4240);
@@ -12485,6 +12493,19 @@ public class Server implements Runnable {
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             addReport(damageEntity(ae, hit, cluster));
             damageTaken -= cluster;
+        }
+        
+        if(ae.getQuirks().booleanOption("weak_legs")) {
+            addNewLines();
+            addReport(criticalEntity(ae, Mech.LOC_LLEG, 0));
+            addNewLines();
+            addReport(criticalEntity(ae, Mech.LOC_RLEG, 0));
+            if(ae instanceof QuadMech) {                
+                addNewLines();
+                addReport(criticalEntity(ae, Mech.LOC_LARM, 0));
+                addNewLines();
+                addReport(criticalEntity(ae, Mech.LOC_RARM, 0));
+            }
         }
 
         addNewLines();

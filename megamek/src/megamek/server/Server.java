@@ -13252,31 +13252,38 @@ public class Server implements Runnable {
             } else {
                 lifeSupportCritCount = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, Mech.LOC_HEAD);
             }
-            if ((lifeSupportCritCount > 0) && ((entity.heat >= 15) || (torsoMountedCockpit && (entity.heat >= 0))) && !entity.crew.isDead() && !entity.crew.isDoomed() && !entity.crew.isEjected()) {
+            int damageHeat = entity.heat;
+            if(entity.getQuirks().booleanOption("imp_life_support")) {
+                damageHeat -= 5;
+            }
+            if(entity.getQuirks().booleanOption("poor_life_support")) {
+                damageHeat += 5;
+            }
+            if ((lifeSupportCritCount > 0) && ((damageHeat >= 15) || (torsoMountedCockpit && (damageHeat >= 0))) && !entity.crew.isDead() && !entity.crew.isDoomed() && !entity.crew.isEjected()) {
                 int heatLimitDesc = 1;
                 int damageToCrew = 0;
-                if ((entity.heat >= 47) && mtHeat) {
+                if ((damageHeat >= 47) && mtHeat) {
                     // mechwarrior takes 5 damage
                     heatLimitDesc = 47;
                     damageToCrew = 5;
-                } else if ((entity.heat >= 39) && mtHeat) {
+                } else if ((damageHeat >= 39) && mtHeat) {
                     // mechwarrior takes 4 damage
                     heatLimitDesc = 39;
                     damageToCrew = 4;
-                } else if ((entity.heat >= 32) && mtHeat) {
+                } else if ((damageHeat >= 32) && mtHeat) {
                     // mechwarrior takes 3 damage
                     heatLimitDesc = 32;
                     damageToCrew = 3;
-                } else if (entity.heat >= 25) {
+                } else if (damageHeat >= 25) {
                     // mechwarrior takes 2 damage
                     heatLimitDesc = 25;
                     damageToCrew = 2;
-                } else if (entity.heat >= 15) {
+                } else if (damageHeat >= 15) {
                     // mechwarrior takes 1 damage
                     heatLimitDesc = 15;
                     damageToCrew = 1;
                 }
-                if ((entity.heat > 0) && (entity instanceof Mech) && (((Mech) entity).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && !entity.crew.getOptions().booleanOption("pain_shunt")) {
+                if ((damageHeat > 0) && (entity instanceof Mech) && (((Mech) entity).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && !entity.crew.getOptions().booleanOption("pain_shunt")) {
                     damageToCrew += 1;
                 }
                 r = new Report(5070);

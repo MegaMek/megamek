@@ -16,6 +16,15 @@ package megamek.common.options;
 
 import java.util.Vector;
 
+import megamek.common.Aero;
+import megamek.common.BattleArmor;
+import megamek.common.Dropship;
+import megamek.common.Entity;
+import megamek.common.Infantry;
+import megamek.common.Jumpship;
+import megamek.common.Mech;
+import megamek.common.Tank;
+
 /**
  * Contains the options determining quirks of the unit
  * 
@@ -77,6 +86,146 @@ public class Quirks extends AbstractOptions {
     protected AbstractOptionsInfo getOptionsInfoImp() {
         return QuirksInfo.getInstance();
     }
+    
+    public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
+        
+        
+        
+        if(en instanceof Mech) {
+            if(quirk.getName().equals("atmo_flyer")
+                    || quirk.getName().equals("atmo_instability")
+                    || quirk.getName().equals("fragile_fuel")) {
+                return false;
+            }
+            return true;
+        }
+        
+        if(en instanceof Tank) {
+            if(quirk.getName().equals("atmo_flyer")
+                    || quirk.getName().equals("combat_computer")
+                    || quirk.getName().equals("command_mech")
+                    || quirk.getName().equals("easy_pilot")
+                    || quirk.getName().equals("ext_twist")
+                    || quirk.getName().equals("hyper_actuator")
+                    || quirk.getName().equals("imp_life_support")
+                    || quirk.getName().equals("pro_actuator")
+                    || quirk.getName().equals("stable")
+                    || quirk.getName().equals("atmo_instability")
+                    || quirk.getName().equals("cramped_cockpit")
+                    || quirk.getName().equals("difficult_eject")
+                    || quirk.getName().equals("exp_actuator")
+                    || quirk.getName().equals("no_arms")
+                    || quirk.getName().equals("no_eject")
+                    || quirk.getName().equals("no_twist")
+                    || quirk.getName().equals("poor_life_support")
+                    || quirk.getName().equals("unbalanced")) {
+                return false;
+            }
+            if(!en.getEngine().isFusion() && quirk.getName().equals("fragile_fuel")) {
+                return false;
+            }
+            return true;
+        }
+        
+        if(en instanceof BattleArmor) {
+            if(quirk.getName().equals("atmo_flyer")
+                    || quirk.getName().equals("anti_air")
+                    || quirk.getName().equals("battle_computer")
+                    || quirk.getName().equals("combat_computer")
+                    || quirk.getName().equals("command_mech")
+                    || quirk.getName().equals("ext_twist")
+                    || quirk.getName().equals("hyper_actuator")
+                    || quirk.getName().equals("imp_life_support")
+                    || quirk.getName().equals("imp_target_short")
+                    || quirk.getName().equals("imp_target_med")
+                    || quirk.getName().equals("imp_target_long")
+                    || quirk.getName().equals("pro_actuator")
+                    || quirk.getName().equals("low_profile")
+                    || quirk.getName().equals("stable")
+                    || quirk.getName().equals("atmo_instability")
+                    || quirk.getName().equals("cramped_cockpit")
+                    || quirk.getName().equals("difficult_eject")
+                    || quirk.getName().equals("exp_actuator")
+                    || quirk.getName().equals("fragile_fuel")
+                    || quirk.getName().equals("no_arms")
+                    || quirk.getName().equals("no_eject")
+                    || quirk.getName().equals("no_twist")
+                    || quirk.getName().equals("poor_life_support")
+                    || quirk.getName().equals("unbalanced")) {
+                return false;
+            }
+            return true;
+        }
+        
+        if(en instanceof Jumpship) {
+            if(quirk.getName().equals("atmo_flyer")
+                    || quirk.getName().equals("anti_air")
+                    || quirk.getName().equals("battle_computer")
+                    || quirk.getName().equals("combat_computer")
+                    || quirk.getName().equals("command_mech")
+                    || quirk.getName().equals("ext_twist")
+                    || quirk.getName().equals("hyper_actuator")
+                    || quirk.getName().equals("imp_life_support")
+                    || quirk.getName().equals("pro_actuator")
+                    || quirk.getName().equals("low_profile")
+                    || quirk.getName().equals("stable")
+                    || quirk.getName().equals("atmo_instability")
+                    || quirk.getName().equals("cramped_cockpit")
+                    || quirk.getName().equals("difficult_eject")
+                    || quirk.getName().equals("exp_actuator")
+                    || quirk.getName().equals("no_arms")
+                    || quirk.getName().equals("no_eject")
+                    || quirk.getName().equals("no_twist")
+                    || quirk.getName().equals("poor_life_support")
+                    || quirk.getName().equals("unbalanced")) {
+                return false;
+            }
+            return true;
+        } else if (en instanceof Dropship) {
+            if(quirk.getName().equals("anti_air")
+                    || quirk.getName().equals("battle_computer")
+                    || quirk.getName().equals("combat_computer")
+                    || quirk.getName().equals("command_mech")
+                    || quirk.getName().equals("ext_twist")
+                    || quirk.getName().equals("hyper_actuator")
+                    || quirk.getName().equals("imp_life_support")
+                    || quirk.getName().equals("pro_actuator")
+                    || quirk.getName().equals("low_profile")
+                    || quirk.getName().equals("stable")
+                    || quirk.getName().equals("cramped_cockpit")
+                    || quirk.getName().equals("difficult_eject")
+                    || quirk.getName().equals("exp_actuator")
+                    || quirk.getName().equals("no_arms")
+                    || quirk.getName().equals("no_eject")
+                    || quirk.getName().equals("no_twist")
+                    || quirk.getName().equals("poor_life_support")
+                    || quirk.getName().equals("unbalanced")) {
+                return false;
+            }
+            return true;
+        } else if (en instanceof Aero) {
+            if(quirk.getName().equals("anti_air")
+                    || quirk.getName().equals("battle_computer")
+                    || quirk.getName().equals("command_mech")
+                    || quirk.getName().equals("ext_twist")
+                    || quirk.getName().equals("hyper_actuator")
+                    || quirk.getName().equals("imp_life_support")
+                    || quirk.getName().equals("pro_actuator")
+                    || quirk.getName().equals("low_profile")
+                    || quirk.getName().equals("stable")
+                    || quirk.getName().equals("exp_actuator")
+                    || quirk.getName().equals("no_arms")
+                    || quirk.getName().equals("no_twist")
+                    || quirk.getName().equals("unbalanced")) {
+                return false;
+            }
+            return true;
+        }
+        
+        
+        return false;
+        
+    }
 
     private static class QuirksInfo extends AbstractOptionsInfo {
         private static AbstractOptionsInfo instance = new QuirksInfo();
@@ -89,4 +238,7 @@ public class Quirks extends AbstractOptions {
             super("QuirksInfo"); //$NON-NLS-1$
         }
     }
+    
+    
+    
 }

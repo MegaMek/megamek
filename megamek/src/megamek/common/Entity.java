@@ -30,6 +30,8 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
@@ -8419,5 +8421,4 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public Quirks getQuirks() {
         return quirks;
     }
-
 }

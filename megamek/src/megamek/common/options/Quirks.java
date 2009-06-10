@@ -14,13 +14,11 @@
 
 package megamek.common.options;
 
-import java.util.Vector;
 
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Dropship;
 import megamek.common.Entity;
-import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.Tank;
@@ -48,6 +46,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, "battle_computer", false); //$NON-NLS-1$
         addOption(posQuirk, "combat_computer", false); //$NON-NLS-1$
         addOption(posQuirk, "command_mech", false); //$NON-NLS-1$
+        addOption(posQuirk, "cowl", false); //$NON-NLS-1$
         addOption(posQuirk, "easy_pilot", false); //$NON-NLS-1$
         addOption(posQuirk, "ext_twist", false); //$NON-NLS-1$
         addOption(posQuirk, "low_profile", false); //$NON-NLS-1$
@@ -61,7 +60,20 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, "pro_actuator", false); //$NON-NLS-1$
         addOption(posQuirk, "reinforced_legs", false); //$NON-NLS-1$
         addOption(posQuirk, "stable", false); //$NON-NLS-1$
-     
+        //not yet implemented
+        //Accurate Weapon (weapon-specific)
+        //Docking Arms (docking unimplemented)
+        //Easy to Maintain (no game effect)
+        //Fast Reload (no game effect at present)
+        //Improved Cooling Jacket (weapon-specific)
+        //Improved Communications
+        //Internal Bomb Bay
+        //Modular Weapon (no game effect)
+        //Searchlight
+        //Trailer Hitch (no Tractor rules yet)
+        //Variable Range Targeting
+        //VTOL Rotor Arrangement (no vee adv move rules)
+        
         // negative quirks
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS); //$NON-NLS-1$
         addOption(negQuirk, "atmo_instability", false); //$NON-NLS-1$
@@ -82,6 +94,23 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, "sensor_ghosts", false); //$NON-NLS-1$
         addOption(negQuirk, "unbalanced", false); //$NON-NLS-1$
         addOption(negQuirk, "weak_legs", false); //$NON-NLS-1$
+        //quirks not implemented yet
+        //Ammunition Feed Problem (weapon-specific)
+        //Bad Reputation (no game effect)
+        //Cooling System Flaws
+        //Difficult to Maintain (no game effect)
+        //EM Interference (weapon-specific)
+        //Exposed Weapon Linkage (weapon-specific)
+        //Gas Hog
+        //Inaccurate Weapon (weapon-specific)
+        //Large Dropship (no docking)
+        //No Cooling Jacket (weapon-specific)
+        //Non-Standard Parts (no game effect)
+        //Poor Cooling Jacket (weapon-specific)
+        //Poor Performance
+        //Un-streamlined
+        //Weak Head Armor
+        //Weak Undercarriage (no landing)
     }
 
     /*
@@ -111,6 +140,7 @@ public class Quirks extends AbstractOptions {
             if(quirk.getName().equals("atmo_flyer")
                     || quirk.getName().equals("combat_computer")
                     || quirk.getName().equals("command_mech")
+                     || quirk.getName().equals("cowl")
                     || quirk.getName().equals("easy_pilot")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("hyper_actuator")
@@ -142,7 +172,8 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("anti_air")
                     || quirk.getName().equals("battle_computer")
                     || quirk.getName().equals("combat_computer")
-                    || quirk.getName().equals("command_mech")
+                    || quirk.getName().equals("command_mech")                
+                     || quirk.getName().equals("cowl")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("hyper_actuator")
                     || quirk.getName().equals("imp_sensors")
@@ -176,7 +207,8 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("anti_air")
                     || quirk.getName().equals("battle_computer")
                     || quirk.getName().equals("combat_computer")
-                    || quirk.getName().equals("command_mech")
+                    || quirk.getName().equals("command_mech")                   
+                     || quirk.getName().equals("cowl")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("hyper_actuator")
                     || quirk.getName().equals("imp_sensors")
@@ -204,6 +236,7 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("battle_computer")
                     || quirk.getName().equals("combat_computer")
                     || quirk.getName().equals("command_mech")
+                    || quirk.getName().equals("cowl")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("hyper_actuator")
                     || quirk.getName().equals("imp_sensors")
@@ -229,6 +262,7 @@ public class Quirks extends AbstractOptions {
             if(quirk.getName().equals("anti_air")
                     || quirk.getName().equals("battle_computer")
                     || quirk.getName().equals("command_mech")
+                    || quirk.getName().equals("cowl")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("hyper_actuator")                 
                     || quirk.getName().equals("imp_sensors")

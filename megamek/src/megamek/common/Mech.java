@@ -187,9 +187,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     private int cockpitType = COCKPIT_STANDARD;
 
-    private boolean hasCowl = false;
-
-    private int cowlArmor = 0;
+    private int cowlArmor = 3;
 
     private int hasLaserHeatSinks = HAS_UNKNOWN;
 
@@ -257,20 +255,15 @@ public abstract class Mech extends Entity implements Serializable {
      */
     public abstract boolean cannotStandUpFromHullDown();
 
-    public void setCowl(int armor) {
-        hasCowl = true;
-        cowlArmor = armor;
-    }
-
     public int getCowlArmor() {
-        if (hasCowl) {
+        if (hasCowl()) {
             return cowlArmor;
         }
         return 0;
     }
 
     public boolean hasCowl() {
-        return hasCowl;
+        return getQuirks().booleanOption("cowl");
     }
 
     /**
@@ -280,7 +273,7 @@ public abstract class Mech extends Entity implements Serializable {
      * @return
      */
     public int damageCowl(int amount) {
-        if (hasCowl) {
+        if (hasCowl()) {
             if (amount < cowlArmor) {
                 cowlArmor -= amount;
                 return 0;

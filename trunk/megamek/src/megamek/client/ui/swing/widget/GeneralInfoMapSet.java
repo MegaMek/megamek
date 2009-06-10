@@ -35,6 +35,7 @@ import megamek.common.Mech;
 import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
 
 /**
  * Set of elements to reperesent general unit information in MechDisplay
@@ -53,6 +54,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, mpR0,
             mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
             elevationR, buildingTypeR, buildingHeightR, fuelR;
+    private PMSimpleLabel[] quirksR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font(
             "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
@@ -218,6 +220,14 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         buildingHeightR = createLabel(STAR3, fm,
                 buildingHeightL.getSize().width + 10, getYCoord());
         content.addArea(buildingHeightR);
+        
+        quirksR = new PMSimpleLabel[40];
+        for (int i = 0; i < quirksR.length; i++) {
+            quirksR[i] = createLabel(new Integer(i).toString(), fm, 0, getNewYCoord());
+            content.addArea(quirksR[i]);
+        }
+        
+        
     }
 
     /**
@@ -279,6 +289,22 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         elevationR.setString(Messages.getString("GeneralInfoMapSet.NA")); //$NON-NLS-1$
         elevationR.setString(Integer.toString(en.getElevation()));
 
+        for(PMSimpleLabel element: quirksR) {
+            element.setString(""); //$NON-NLS-1$
+        }
+        
+        int i = 0;
+        for (Enumeration<IOptionGroup> qGroups = en.getQuirks().getGroups(); qGroups.hasMoreElements();) {
+            IOptionGroup qGroup = qGroups.nextElement();
+            quirksR[i++].setString(qGroup.getDisplayableName());
+            for (Enumeration<IOption> quirks = qGroup.getOptions(); quirks.hasMoreElements();) {
+                IOption quirk = quirks.nextElement();
+                if(quirk.booleanValue()) {
+                    quirksR[i++].setString("  " + quirk.getDisplayableNameWithValue());
+                }
+            }
+        }
+        
         if (en.mpUsed > 0) {
             mpR0.setString("(" + en.mpUsed + " used)"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {

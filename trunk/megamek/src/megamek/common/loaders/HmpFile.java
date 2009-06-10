@@ -709,11 +709,6 @@ implements IMechLoader
                                                     .getEquipmentNum(m),
                                             equipment.isHittable(), m);
                                     mech.addCritical(location, criticalSlot);
-                                    if (criticalName
-                                            .equalsIgnoreCase("Armored Cowl")) {
-                                        mech.setCowl(5); // Initialize
-                                        // armored cowl
-                                    }
 
                                 } else {
                                     m = mech.addEquipment(equipment, location,

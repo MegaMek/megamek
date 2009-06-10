@@ -234,9 +234,6 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     rearMounted = true;
                     critName = critName.substring(4);
                 }
-                if (critName.equalsIgnoreCase("Armored Cowl")) {
-                    mech.setCowl(5);
-                }
                 if (critName.indexOf("Engine") != -1) {
                     mech.setCritical(loc, c, new CriticalSlot(
                             CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));

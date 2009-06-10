@@ -1211,7 +1211,11 @@ public class Compute {
         }
 
         boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
-
+        boolean curInRearArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), ARC_REAR);
+        if(!curInRearArc && attacker.getQuirks().booleanOption("multi_trac")) {
+            return null;
+        }
+        
         int primaryTarget = Entity.NONE;
         for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
             Object o = i.nextElement();

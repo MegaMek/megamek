@@ -108,8 +108,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int walkMP = 0;
     protected int jumpMP = 0;
 
-    protected int targSys = MiscType.T_TARGSYS_STANDARD;
-
     protected boolean done = false;
 
     protected boolean prone = false;
@@ -6752,11 +6750,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getShortRangeModifier() {
         int mod = 0;
-        if (getTargSysType() == MiscType.T_TARGSYS_SHORTRANGE) {
-            mod--;
-        } else if (getTargSysType() == MiscType.T_TARGSYS_LONGRANGE) {
-            mod++;
-        }
         if(getQuirks().booleanOption("imp_target_short")) {
             mod--;
         }
@@ -6779,11 +6772,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getLongRangeModifier() {
         int mod = 4;
-        if (getTargSysType() == MiscType.T_TARGSYS_SHORTRANGE) {
-            mod++;;
-        } else if (getTargSysType() == MiscType.T_TARGSYS_LONGRANGE) {
-            mod--;
-        }
         if(getQuirks().booleanOption("imp_target_long")) {
             mod--;
         }
@@ -6795,14 +6783,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getExtremeRangeModifier() {
         return 6;
-    }
-
-    public int getTargSysType() {
-        return targSys;
-    }
-
-    public void setTargSysType(int targSysType) {
-        targSys = targSysType;
     }
 
     public void setArmorType(int armType) {

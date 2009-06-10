@@ -73,6 +73,10 @@ public class BipedMech extends Mech {
             canFlip = true;
         }
         
+        if(getQuirks().booleanOption("no_arms")) {
+            canFlip = false;
+        }
+        
         if(isProne()) {
             canFlip = false;
         }
@@ -765,8 +769,7 @@ public class BipedMech extends Mech {
 
         PilotingRollData roll = super.checkGetUp(step);
 
-        if ( game.getOptions().booleanOption("tacops_attempting_stand")
-                && (roll.getValue() != TargetRoll.CHECK_FALSE)) {
+        if (roll.getValue() != TargetRoll.CHECK_FALSE) {
             addStandingPenalties(roll);
         }
 
@@ -774,33 +777,38 @@ public class BipedMech extends Mech {
     }
 
 
-    public PilotingRollData addStandingPenalties(PilotingRollData roll) {
+    public void addStandingPenalties(PilotingRollData roll) {
 
+        if(getQuirks().booleanOption("no_arms")) {
+            roll.addModifier(2, "no/minimal arms");
+            return;
+        }
 
-        int[] locsToCheck = new int[2];
-
-        locsToCheck[0] = Mech.LOC_RARM;
-        locsToCheck[1] = Mech.LOC_LARM;
-
-        for (int i = 0; i < locsToCheck.length; i++) {
-            int loc = locsToCheck[i];
-            if (isLocationBad(loc)) {
-                roll.addModifier(2, getLocationName(loc) + " destroyed");
-            } else {
-                // check for damaged hip actuators
-                if (!hasWorkingSystem(Mech.ACTUATOR_HAND, loc)) {
-                    roll.addModifier(1, getLocationName(loc) + " hand Actuator missing/destroyed");
-                } else if (!hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, loc)) {
-                    roll.addModifier(1, getLocationName(loc) + " lower Actuator missing/destroyed");
-                } else if (!hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, loc)) {
-                    roll.addModifier(1, getLocationName(loc) + " upper ctuator missing/destroyed");
-                } else if (!hasWorkingSystem(Mech.ACTUATOR_SHOULDER, loc)) {
-                    roll.addModifier(1, getLocationName(loc) + " shoulder Actuator missing/destroyed");
+        if(game.getOptions().booleanOption("tacops_attempting_stand")) {
+            int[] locsToCheck = new int[2];
+    
+            locsToCheck[0] = Mech.LOC_RARM;
+            locsToCheck[1] = Mech.LOC_LARM;
+    
+            for (int i = 0; i < locsToCheck.length; i++) {
+                int loc = locsToCheck[i];
+                if (isLocationBad(loc)) {
+                    roll.addModifier(2, getLocationName(loc) + " destroyed");
+                } else {
+                    // check for damaged hip actuators
+                    if (!hasWorkingSystem(Mech.ACTUATOR_HAND, loc)) {
+                        roll.addModifier(1, getLocationName(loc) + " hand Actuator missing/destroyed");
+                    } else if (!hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, loc)) {
+                        roll.addModifier(1, getLocationName(loc) + " lower Actuator missing/destroyed");
+                    } else if (!hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, loc)) {
+                        roll.addModifier(1, getLocationName(loc) + " upper ctuator missing/destroyed");
+                    } else if (!hasWorkingSystem(Mech.ACTUATOR_SHOULDER, loc)) {
+                        roll.addModifier(1, getLocationName(loc) + " shoulder Actuator missing/destroyed");
+                    }
                 }
             }
         }
 
-        return roll;
     }
 
     /**

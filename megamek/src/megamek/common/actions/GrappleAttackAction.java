@@ -95,6 +95,11 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         Entity te = (Entity) target;
         final boolean counter = ae.getGrappled() != Entity.NONE && !ae.isGrappleAttacker();
 
+        //check for no/minimal arms quirk
+        if(ae.getQuirks().booleanOption("no_arms")) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
+        }
+   
         // requires 2 good arms
         if (grappleSide == Entity.GRAPPLE_BOTH ) {
 

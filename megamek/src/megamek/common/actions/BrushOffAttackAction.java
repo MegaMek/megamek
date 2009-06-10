@@ -146,6 +146,11 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         if (ae.isLocationBad(armLoc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
+        
+        //check for no/minimal arms quirk
+        if(ae.getQuirks().booleanOption("no_arms")) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
+        }
 
         // check if shoulder is functional
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {

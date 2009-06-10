@@ -174,6 +174,11 @@ public class PushAttackAction extends DisplacementAttackAction {
         if (ae.isLocationBad(Mech.LOC_RARM) || ae.isLocationBad(Mech.LOC_LARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
+        
+        //check for no/minimal arms quirk
+        if(ae.getQuirks().booleanOption("no_arms")) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
+        }   
 
         // check if attacker has fired arm-mounted weapons
         if (ae.weaponFiredFrom(Mech.LOC_RARM)

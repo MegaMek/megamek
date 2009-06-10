@@ -4936,6 +4936,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if(getQuirks().booleanOption("easy_pilot") && getCrew().getPiloting() > 3) {
             psr.addModifier(-1, "easy to pilot");
         }
+        if(getQuirks().booleanOption("unbalanced")) {
+            psr.addModifier(+1, "unbalanced");
+        }
     }
 
     /**

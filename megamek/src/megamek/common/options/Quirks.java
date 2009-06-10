@@ -51,6 +51,7 @@ public class Quirks extends AbstractOptions {
      
         // negative quirks
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS); //$NON-NLS-1$
+        addOption(negQuirk, "atmo_instability", false); //$NON-NLS-1$
         addOption(negQuirk, "exp_actuator", false); //$NON-NLS-1$
         addOption(negQuirk, "hard_pilot", false); //$NON-NLS-1$
         addOption(negQuirk, "no_twist", false); //$NON-NLS-1$

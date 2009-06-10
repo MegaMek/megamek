@@ -160,8 +160,6 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "tacops_vehicle_arcs", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_advanced_mech_hit_locations", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_coolant_failure", false); //$NON-NLS-1$
-        addOption(advancedCombat, "allow_level_3_targsys", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tank_level_3_targsys", false); //$NON-NLS-1$
         addOption(advancedCombat, "no_tac", false); //$NON-NLS-1$
         addOption(advancedCombat, "vehicles_safe_from_infernos", false); //$NON-NLS-1$
         addOption(advancedCombat, "protos_safe_from_infernos", false); //$NON-NLS-1$

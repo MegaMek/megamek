@@ -978,16 +978,6 @@ public class TestBot extends BotClient {
                     }
                 }
 
-                // If the attacker is Mech, it may mount a specialty targeting
-                // system
-                if (en instanceof Mech) {
-                    // Multi-trac I/II have no secondary target penalties
-                    if (en.getTargSysType() == MiscType.T_TARGSYS_MULTI_TRAC
-                            | en.getTargSysType() == MiscType.T_TARGSYS_MULTI_TRAC_II) {
-                        starg_mod = 0;
-                    }
-                }
-
                 // For good measure, infantry cannot attack multiple targets
                 if (en instanceof Infantry && !(en instanceof BattleArmor)) {
                     starg_mod = 13;

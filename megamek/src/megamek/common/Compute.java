@@ -788,17 +788,11 @@ public class Compute {
         // determine which range we're using
         int usingRange = Math.min(range, c3range);
 
-        String targSysType = "";
-        // Get the targeting system type string ready, if necessary
-        if ((ae.getTargSysType() == MiscType.T_TARGSYS_LONGRANGE) && (ae.getTargSysType() == MiscType.T_TARGSYS_SHORTRANGE)) {
-            targSysType = " (w/" + MiscType.getTargetSysName(ae.getTargSysType()) + ")";
-        }
-
         // add range modifier
         if (usingRange == range) {
             // no c3 adjustment
             if (((range == RangeType.RANGE_SHORT) || (range == RangeType.RANGE_MINIMUM)) && (ae.getShortRangeModifier() != 0)) {
-                mods.addModifier(ae.getShortRangeModifier(), "short range" + targSysType);
+                mods.addModifier(ae.getShortRangeModifier(), "short range");
             } else if (range == RangeType.RANGE_MEDIUM) {
                 // Right now, the range-mod affecting targeting systems DON'T
                 // affect medium range, so we won't add that here ever.
@@ -808,24 +802,24 @@ public class Compute {
                 if ((ae instanceof Protomech) && (2 == ((Protomech) ae).getCritsHit(Protomech.LOC_HEAD))) {
                     mods.addModifier(TargetRoll.IMPOSSIBLE, "No long range attacks with destroyed head sensors.");
                 } else {
-                    mods.addModifier(ae.getLongRangeModifier(), "long range" + targSysType);
+                    mods.addModifier(ae.getLongRangeModifier(), "long range");
                 }
             } else if (range == RangeType.RANGE_EXTREME) {
                 // Protos that loose head sensors can't shoot extreme range.
                 if ((ae instanceof Protomech) && (2 == ((Protomech) ae).getCritsHit(Protomech.LOC_HEAD))) {
                     mods.addModifier(TargetRoll.IMPOSSIBLE, "No extreme range attacks with destroyed head sensors.");
                 } else {
-                    mods.addModifier(ae.getExtremeRangeModifier(), "extreme range" + targSysType);
+                    mods.addModifier(ae.getExtremeRangeModifier(), "extreme range");
                 }
             }
         } else {
             // report c3 adjustment
             if ((c3range == RangeType.RANGE_SHORT) || (c3range == RangeType.RANGE_MINIMUM)) {
-                mods.addModifier(ae.getShortRangeModifier(), "short range due to C3 spotter" + targSysType);
+                mods.addModifier(ae.getShortRangeModifier(), "short range due to C3 spotter");
             } else if (c3range == RangeType.RANGE_MEDIUM) {
-                mods.addModifier(ae.getMediumRangeModifier(), "medium range due to C3 spotter" + targSysType);
+                mods.addModifier(ae.getMediumRangeModifier(), "medium range due to C3 spotter");
             } else if (c3range == RangeType.RANGE_LONG) {
-                mods.addModifier(ae.getLongRangeModifier(), "long range due to C3 spotter" + targSysType);
+                mods.addModifier(ae.getLongRangeModifier(), "long range due to C3 spotter");
             }
         }
 

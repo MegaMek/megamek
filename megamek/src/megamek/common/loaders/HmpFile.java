@@ -556,10 +556,6 @@ implements IMechLoader
                 mech.addClanCase();
             }
 
-            if (rulesLevel > 2) {
-                mech.setTargSysType(getTargSys());
-            }
-
             // add any heat sinks not allocated
             mech.addEngineSinks(heatSinks - mech.heatSinks(),
                     heatSinkType == HeatSinkType.DOUBLE);
@@ -2043,31 +2039,6 @@ implements IMechLoader
                     }
                 }
             }
-        }
-    }
-
-    private int getTargSys() {
-        switch (targSys) {
-            case 0:
-                return MiscType.T_TARGSYS_STANDARD;
-            case 1:
-                return MiscType.T_TARGSYS_TARGCOMP;
-            case 2:
-                return MiscType.T_TARGSYS_VARIABLE_RANGE;
-            case 3:
-                return MiscType.T_TARGSYS_MULTI_TRAC_II;
-            case 4:
-                return MiscType.T_TARGSYS_LONGRANGE;
-            case 5:
-                return MiscType.T_TARGSYS_SHORTRANGE;
-            case 6:
-                return MiscType.T_TARGSYS_ANTI_AIR;
-            case 7:
-                return MiscType.T_TARGSYS_MULTI_TRAC;
-            case 8:
-                return MiscType.T_TARGSYS_HEAT_SEEKING_THB;
-            default:
-                return MiscType.T_TARGSYS_UNKNOWN;
         }
     }
 }

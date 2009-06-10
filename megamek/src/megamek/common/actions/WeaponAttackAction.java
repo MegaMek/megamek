@@ -1219,18 +1219,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // add range mods
         toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
-
-        // If it's an anti-air system, add mods for that
-        if ((ae.getTargSysType() == MiscType.T_TARGSYS_ANTI_AIR)
-                && (target instanceof Entity)) {
-            if (target instanceof VTOL) {
-                toHit.addModifier(-2, "anti-air targetting system vs. VTOL");
-            } else {
-                toHit.addModifier(1,
-                        "anti-air targetting system vs. non-aerial unit");
-            }
-           
-        }
         
         if(ae.getQuirks().booleanOption("anti_air") && target instanceof Entity) {
             if((target instanceof VTOL || target instanceof Aero) && target.getElevation() > 0) {

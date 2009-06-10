@@ -1688,6 +1688,9 @@ public abstract class Mech extends Entity implements Serializable {
      */
     @Override
     public boolean canChangeSecondaryFacing() {
+        if(getQuirks().booleanOption("no_twist")) {
+            return false;
+        }
         return !isProne();
     }
 
@@ -1698,7 +1701,11 @@ public abstract class Mech extends Entity implements Serializable {
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
-            return (rotate == 0) || (rotate == 1) || (rotate == -1) || (rotate == -5);
+            if(getQuirks().booleanOption("ext_twist")) {
+                return (rotate == 0) || (rotate == 1) || (rotate == 2) || (rotate == -1) || (rotate == -2) 
+                    || (rotate == -5) || (rotate == -4) || (rotate == 5) || (rotate == 4);
+            }
+            return (rotate == 0) || (rotate == 1) || (rotate == -1) || (rotate == -5) || (rotate == 5);
         }
         return rotate == 0;
     }
@@ -1717,6 +1724,11 @@ public abstract class Mech extends Entity implements Serializable {
         }
         // otherwise, twist once in the appropriate direction
         final int rotate = (dir + (6 - getFacing())) % 6;
+        if(rotate == 3 && getQuirks().booleanOption("ext_twist")) {
+            //if the unit can do an extended torso twist and the area chosen 
+            //was directly behind them, then just rotate one way
+            return (getFacing() + 2) % 6;
+        }
         return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
     }
 

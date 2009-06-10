@@ -4295,6 +4295,10 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
 
+        if(getQuirks().booleanOption("cramped_cockpit")) {
+            roll.addModifier(1, "cramped cockpit");
+        }
+        
         if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
             roll.addModifier(1, "Hardened Armor");
         }

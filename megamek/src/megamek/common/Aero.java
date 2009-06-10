@@ -1564,6 +1564,9 @@ public class Aero extends Entity
         if(getQuirks().booleanOption("atmo_instability") && game.getBoard().inAtmosphere()) {
             prd.addModifier(+1, "atmospheric flight instability");
         }
+        if(getQuirks().booleanOption("cramped_cockpit")) {
+            prd.addModifier(1, "cramped cockpit");
+        }
 
         return prd;
     }

@@ -8413,4 +8413,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public Quirks getQuirks() {
         return quirks;
     }
+    
+    public void clearQuirks() {
+        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
+                .hasMoreElements();) {
+            IOptionGroup group = i.nextElement();  
+            for (Enumeration<IOption> j = group.getOptions(); j
+                    .hasMoreElements();) {
+                IOption option = j.nextElement();
+                option.clearValue();
+            }
+        }
+
+    }
 }

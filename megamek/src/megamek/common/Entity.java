@@ -3258,6 +3258,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (((crew.getOptions().booleanOption("cyber_eye_im") || crew.getOptions().booleanOption("mm_eye_im")) && (this instanceof Infantry) && !(this instanceof BattleArmor)) || (crew.getOptions().booleanOption("mm_eye_im") && (crew.getOptions().booleanOption("vdni") || crew.getOptions().booleanOption("bvdni")))) {
             return !checkECM || !Compute.isAffectedByECM(this, getPosition(), getPosition());
         }
+        //check for quirk
+        if(getQuirks().booleanOption("imp_sensors")) {
+            return !checkECM || !Compute.isAffectedByECM(this, getPosition(), getPosition());
+        }
 
         return false;
     }
@@ -3277,7 +3281,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (((crew.getOptions().booleanOption("cyber_eye_im") || crew.getOptions().booleanOption("mm_eye_im")) && (this instanceof Infantry) && !(this instanceof BattleArmor)) || (crew.getOptions().booleanOption("mm_eye_im") && (crew.getOptions().booleanOption("vdni") || crew.getOptions().booleanOption("bvdni")))) {
             cyberBonus = 1;
         }
-
+        
+        //check for quirks
+        //TODO: assuming the range of this active probe is 2
+        //http://www.classicbattletech.com/forums/index.php/topic,52961.new.html#new
+        int quirkBonus = 0;
+        if (getQuirks().booleanOption("imp_sensors")) {
+            quirkBonus = 2;
+        }
+        
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP) && !m.isInoperable()) {
@@ -3286,28 +3298,28 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 // in space the range of all BAPs is given by the mode
                 if (game.getBoard().inSpace()) {
                     if (m.curMode().equals("Medium")) {
-                        return 12 + cyberBonus;
+                        return 12 + cyberBonus + quirkBonus;
                     }
-                    return 6 + cyberBonus;
+                    return 6 + cyberBonus + quirkBonus;
                 }
 
                 if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP)) {
-                    return 8 + cyberBonus;
+                    return 8 + cyberBonus + quirkBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP) || (m.getType()).getInternalName().equals(Sensor.WATCHDOG) || (m.getType().getInternalName().equals(Sensor.CLBALIGHT_AP))) {
-                    return 5 + cyberBonus;
+                    return 5 + cyberBonus + quirkBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP) || m.getType().getInternalName().equals(Sensor.CLIMPROVED)) {
-                    return 3 + cyberBonus;
+                    return 3 + cyberBonus + quirkBonus;
                 }
                 if (m.getType().getInternalName().equals(Sensor.ISIMPROVED)) {
-                    return 2 + cyberBonus;
+                    return 2 + cyberBonus + quirkBonus;
                 }
-                return 4 + cyberBonus;// everthing else should be range 4
+                return 4 + cyberBonus + quirkBonus;// everthing else should be range 4
             }
         }
-        if (cyberBonus > 0) {
-            return 2;
+        if ((cyberBonus + quirkBonus) > 0) {
+            return cyberBonus + quirkBonus;
         }
 
         return Entity.NONE;

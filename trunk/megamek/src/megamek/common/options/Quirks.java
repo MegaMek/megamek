@@ -59,6 +59,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, "imp_target_long", false); //$NON-NLS-1$
         addOption(posQuirk, "multi_trac", false); //$NON-NLS-1$
         addOption(posQuirk, "pro_actuator", false); //$NON-NLS-1$
+        addOption(posQuirk, "reinforced_legs", false); //$NON-NLS-1$
         addOption(posQuirk, "stable", false); //$NON-NLS-1$
      
         // negative quirks
@@ -80,6 +81,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, "prototype", false); //$NON-NLS-1$
         addOption(negQuirk, "sensor_ghosts", false); //$NON-NLS-1$
         addOption(negQuirk, "unbalanced", false); //$NON-NLS-1$
+        addOption(negQuirk, "weak_legs", false); //$NON-NLS-1$
     }
 
     /*
@@ -114,7 +116,8 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("hyper_actuator")
                     || quirk.getName().equals("imp_life_support")
                     || quirk.getName().equals("multi_trac")
-                    || quirk.getName().equals("pro_actuator")
+                    || quirk.getName().equals("pro_actuator")                 
+                    || quirk.getName().equals("reinforced_legs")
                     || quirk.getName().equals("stable")
                     || quirk.getName().equals("atmo_instability")
                     || quirk.getName().equals("cramped_cockpit")
@@ -124,7 +127,8 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("no_eject")
                     || quirk.getName().equals("no_twist")
                     || quirk.getName().equals("poor_life_support")
-                    || quirk.getName().equals("unbalanced")) {
+                    || quirk.getName().equals("unbalanced")
+                    || quirk.getName().equals("weak_legs")) {
                 return false;
             }
             if(!en.getEngine().isFusion() && quirk.getName().equals("fragile_fuel")) {
@@ -149,6 +153,7 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("multi_trac")
                     || quirk.getName().equals("pro_actuator")
                     || quirk.getName().equals("low_profile")
+                    || quirk.getName().equals("reinforced_legs")
                     || quirk.getName().equals("stable")
                     || quirk.getName().equals("atmo_instability")
                     || quirk.getName().equals("cramped_cockpit")
@@ -159,7 +164,8 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("no_eject")
                     || quirk.getName().equals("no_twist")
                     || quirk.getName().equals("poor_life_support")
-                    || quirk.getName().equals("unbalanced")) {
+                    || quirk.getName().equals("unbalanced")
+                    || quirk.getName().equals("weak_legs")) {
                 return false;
             }
             return true;
@@ -178,6 +184,7 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("multi_trac")
                     || quirk.getName().equals("pro_actuator")
                     || quirk.getName().equals("low_profile")
+                    || quirk.getName().equals("reinforced_legs")
                     || quirk.getName().equals("stable")
                     || quirk.getName().equals("atmo_instability")
                     || quirk.getName().equals("cramped_cockpit")
@@ -187,7 +194,8 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("no_eject")
                     || quirk.getName().equals("no_twist")
                     || quirk.getName().equals("poor_life_support")
-                    || quirk.getName().equals("unbalanced")) {
+                    || quirk.getName().equals("unbalanced")
+                    || quirk.getName().equals("weak_legs")) {
                 return false;
             }
             return true;
@@ -203,6 +211,7 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("multi_trac")
                     || quirk.getName().equals("pro_actuator")
                     || quirk.getName().equals("low_profile")
+                    || quirk.getName().equals("reinforced_legs")
                     || quirk.getName().equals("stable")
                     || quirk.getName().equals("cramped_cockpit")
                     || quirk.getName().equals("difficult_eject")
@@ -211,7 +220,8 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("no_eject")
                     || quirk.getName().equals("no_twist")
                     || quirk.getName().equals("poor_life_support")
-                    || quirk.getName().equals("unbalanced")) {
+                    || quirk.getName().equals("unbalanced")
+                    || quirk.getName().equals("weak_legs")) {
                 return false;
             }
             return true;
@@ -227,10 +237,12 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("pro_actuator")
                     || quirk.getName().equals("low_profile")
                     || quirk.getName().equals("stable")
+                    || quirk.getName().equals("reinforced_legs")
                     || quirk.getName().equals("exp_actuator")
                     || quirk.getName().equals("no_arms")
                     || quirk.getName().equals("no_twist")
-                    || quirk.getName().equals("unbalanced")) {
+                    || quirk.getName().equals("unbalanced")
+                    || quirk.getName().equals("weak_legs")) {
                 return false;
             }
             return true;

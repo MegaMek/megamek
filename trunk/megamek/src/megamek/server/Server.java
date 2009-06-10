@@ -18339,6 +18339,13 @@ public class Server implements Runnable {
      */
     public Vector<Report> criticalEntity(Entity en, int loc, int critMod, boolean rollNumber, boolean isCapital) {
 
+        if(en.getQuirks().booleanOption("poor_work")) {
+            critMod += 1;
+        }
+        if(en.getQuirks().booleanOption("prototype")) {
+            critMod += 2;
+        }
+        
         if (en instanceof Tank) {
             return criticalTank((Tank) en, loc, critMod);
         }

@@ -920,6 +920,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                             "target in/behind woods and attacker has BAP");
         }
 
+        //quirks
+        if(ae.getQuirks().booleanOption("sensor_ghosts")) {
+            toHit.addModifier(+1, "sensor ghosts");
+        }
+        
         // Is the pilot a weapon specialist?
         if (ae.crew.getOptions().stringOption("weapon_specialist").equals(
                 wtype.getName())) {

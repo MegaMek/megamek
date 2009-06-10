@@ -23068,7 +23068,11 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
                 Report.addNewline(vDesc);
                 if ( (rollTarget.getValue()-diceRoll) > 1){
-                    vDesc.addAll(damageCrew(pilot, (rollTarget.getValue()-diceRoll)/2));
+                    int damage = (rollTarget.getValue()-diceRoll)/2;
+                    if(entity.getQuirks().booleanOption("difficult_eject")) {
+                        damage++;
+                    }
+                    vDesc.addAll(damageCrew(pilot, damage));
                 }
             } else {
                 r.choose(true);

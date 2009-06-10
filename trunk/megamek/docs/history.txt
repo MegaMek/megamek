@@ -32,6 +32,7 @@ v0.35.2-dev (SVN)
 + No/Minimal Arms Quirk
 + Improved Life Support Quirk
 + Poor Life Support Quirk
++ Unbalanced Quirk
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

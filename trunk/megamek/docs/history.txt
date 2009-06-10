@@ -26,6 +26,7 @@ v0.35.2-dev (SVN)
 + Exposed Actuators Quirk
 + Extended Torso Twist Quirk
 + No Torso Twist Quirk
++ Atmospheric Flight Instability Quirk
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

@@ -301,6 +301,11 @@ public class ClubAttackAction extends PhysicalAttackAction {
             }
         }
 
+        //check for no/minimal arms quirk
+        if(ae.getQuirks().booleanOption("no_arms")) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
+        }
+        
         // club must not be damaged
         if (!shield
                 && ae.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, ae

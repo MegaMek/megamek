@@ -131,6 +131,11 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (ae.isLocationBad(armLoc)) {
             return "Arm missing";
         }
+        
+        //check for no/minimal arms quirk
+        if(ae.getQuirks().booleanOption("no_arms")) {
+            return "No/minimal arms";
+        }
 
         // check if shoulder is functional
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {

@@ -214,9 +214,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private JButton butOffBoardDistance = new JButton("0");
 
-    private JLabel labTargSys = new JLabel(Messages
-            .getString("CustomMechDialog.labTargSys"), SwingConstants.RIGHT);
-
     private JLabel labStartVelocity = new JLabel(Messages
             .getString("CustomMechDialog.labStartVelocity"), SwingConstants.RIGHT); //$NON-NLS-1$
 
@@ -271,9 +268,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private ArrayList<DialogOptionComponent> optionComps = new ArrayList<DialogOptionComponent>();
     private ArrayList<DialogOptionComponent> quirkComps = new ArrayList<DialogOptionComponent>();
 
-    private JTextArea texDesc = new JTextArea(Messages
-            .getString("CustomMechDialog.texDesc"), 20, 10); //$NON-NLS-1$
-
     private boolean editable;
 
     private int direction = -1;
@@ -324,10 +318,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         options = entity.getCrew().getOptions();
         this.quirks = entity.getQuirks();
         this.editable = editable;
-
-        texDesc.setEditable(false);
-        texDesc.setLineWrap(true);
-        texDesc.setWrapStyleWord(true);
 
         //**PILOT TAB**/
         if (entity instanceof Tank) {
@@ -1361,7 +1351,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             IOptionGroup group = i.nextElement();
 
             panQuirks.add(new JLabel(group.getDisplayableName()), GBC.eol());
-
+            
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption option = j.nextElement();
@@ -1412,14 +1402,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private void addQuirk(IOption option, boolean editable) {
         DialogOptionComponent optionComp = new DialogOptionComponent(this,
                 option, editable);
-
         panQuirks.add(optionComp, GBC.eol());
 
         quirkComps.add(optionComp);
-    }
-
-    public void showDescFor(IOption option) {
-        texDesc.setText(option.getDescription());
     }
 
     // TODO : implement me!!!

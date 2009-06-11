@@ -70,7 +70,7 @@ public class DialogOptionComponent extends JPanel implements MouseListener,
                 checkbox.addMouseListener(this);
                 checkbox.addItemListener(this);
                 add(checkbox, BorderLayout.CENTER);
-
+                checkbox.setToolTipText(option.getDescription());
                 if (!editable)
                     checkbox.setEnabled(false);
 
@@ -81,6 +81,7 @@ public class DialogOptionComponent extends JPanel implements MouseListener,
                 choice.addMouseListener(this);
                 label = new JLabel(option.getDisplayableName());
                 label.addMouseListener(this);
+                label.setToolTipText(option.getDescription());
                 add(label, BorderLayout.WEST);
                 add(choice, BorderLayout.CENTER);
 
@@ -94,7 +95,7 @@ public class DialogOptionComponent extends JPanel implements MouseListener,
                 textField.addMouseListener(this);
                 label = new JLabel(option.getDisplayableName());
                 label.addMouseListener(this);
-
+                label.setToolTipText(option.getDescription());
                 if (option.isLabelBeforeTextField()) {
                     add(label, BorderLayout.CENTER);
                     add(textField, BorderLayout.WEST);
@@ -108,7 +109,6 @@ public class DialogOptionComponent extends JPanel implements MouseListener,
 
                 break;
         }
-
     }
 
     public boolean hasChanged() {
@@ -194,6 +194,8 @@ public class DialogOptionComponent extends JPanel implements MouseListener,
                 break;
         }
     }
+    
+    
 
     /**
      * Returns a new option, representing the option in it's changed state.
@@ -206,7 +208,6 @@ public class DialogOptionComponent extends JPanel implements MouseListener,
     }
 
     public void mouseEntered(MouseEvent mouseEvent) {
-        dialogOptionListener.showDescFor(option);
     }
 
     public void mouseReleased(MouseEvent mouseEvent) {

@@ -166,8 +166,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CHAT_LOUNGE_TABS, true);
-        store.setDefault(DISPLAY_SIZE_HEIGHT, 370);
-        store.setDefault(DISPLAY_SIZE_WIDTH, 235);
+        store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
+        store.setDefault(DISPLAY_SIZE_WIDTH, 300);
         setDefault(MAP_TEXT_COLOR, Color.black);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
@@ -199,8 +199,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(RULER_COLOR_2, Color.magenta);
         store.setDefault(RULER_POS_X, 0);
         store.setDefault(RULER_POS_Y, 0);
-        store.setDefault(RULER_SIZE_HEIGHT, 240);
-        store.setDefault(RULER_SIZE_WIDTH, 350);
+        store.setDefault(RULER_SIZE_HEIGHT, 300);
+        store.setDefault(RULER_SIZE_WIDTH, 500);
         store.setDefault(SCROLL_SENSITIVITY, 3);
         store.setDefault(SHOW_MAPHEX_POPUP, true);
         store.setDefault(SHOW_MOVE_STEP, true);

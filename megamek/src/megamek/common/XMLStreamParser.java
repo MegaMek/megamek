@@ -155,6 +155,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String HITS = "hits";
     public static final String ADVS = "advantages";
     public static final String IMPLANTS = "implants";
+    public static final String QUIRKS = "quirks";
     public static final String AUTOEJECT = "autoeject";
     public static final String INDEX = "index";
     public static final String IS_DESTROYED = "isDestroyed";
@@ -404,6 +405,28 @@ public class XMLStreamParser implements XMLResponder {
 
                 } // End have-chassis
 
+                //quirks
+                String quirks = (String) attr.get(QUIRKS);
+                if ((null != quirks)
+                        && (quirks.trim().length() > 0)) {
+                    StringTokenizer st = new StringTokenizer(quirks,
+                            "::");
+                    while (st.hasMoreTokens()) {
+                        String quirk = st.nextToken();
+                        String quirkName = Pilot.parseAdvantageName(quirk);
+                        Object value = Pilot.parseAdvantageValue(quirk);
+
+                        try {
+                            entity.getQuirks().getOption(quirkName).setValue(
+                                    value);
+                        } catch (Exception e) {
+                            this.warning.append(
+                                    "Error restoring quirk: ").append(
+                                    quirk).append(".\n");
+                        }
+                    }
+                }
+                
             } // End ready-for-new-Entity
 
         } else if (name.equals(FLUFF)) {

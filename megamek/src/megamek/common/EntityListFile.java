@@ -365,6 +365,10 @@ public class EntityListFile {
             output.write(entity.getModel().replaceAll("\"", "&quot;"));
             output.write("\" type=\"");
             output.write(entity.getMovementModeAsString());
+            if (entity.countQuirks() > 0) {
+                output.write("\" quirks=\"");
+                output.write(String.valueOf(entity.getQuirkList("::")));
+            }
             output.write("\">");
             output.write(CommonConstants.NL);
 
@@ -413,7 +417,7 @@ public class EntityListFile {
             }
             output.write("\"/>");
             output.write(CommonConstants.NL);
-
+            
             // If it's a tank, add a movement tag.
             if (entity instanceof Tank) {
                 Tank tentity = (Tank) entity;

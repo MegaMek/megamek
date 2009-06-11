@@ -2610,7 +2610,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 Mounted mount = crit.getMount();
                 if ((mount.getType() instanceof MiscType) && mount.isReady()) {
                     MiscType type = (MiscType) mount.getType();
-                    if ((secondary == -1) || type.hasSubType(secondary)) {
+                    if (type.hasFlag(flag) && ((secondary == -1) || type.hasSubType(secondary))) {
                         return true;
                     }
                 }

@@ -51,6 +51,7 @@ v0.35.2-dev (SVN)
 + quirks save to and load from MULs
 + Fix Aero BV bug
 + Fix bug with unit list export
++ Bug 2804542: SVN 6/10/09 Imaginary Spikes
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

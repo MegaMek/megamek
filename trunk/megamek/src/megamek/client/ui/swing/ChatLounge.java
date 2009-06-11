@@ -27,6 +27,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -720,7 +723,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Sets up the entities panel
      */
     private void setupEntities() {
-        lisEntities = new JList(new DefaultListModel());
+        lisEntities = new JList(new DefaultListModel());       
+        MouseListener doubleClick = new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2 && lisEntities.locationToIndex(e.getPoint()) > -1) {
+                    Entity entity = clientgui.getClient().game.getEntity(entityCorrespondance[lisEntities.locationToIndex(e.getPoint())]);
+                    customizeMech(entity);
+                 }
+            }
+        };
+        lisEntities.addMouseListener(doubleClick);
         lisEntities.addListSelectionListener(this);
         scrEntities = new JScrollPane(lisEntities);
         scrEntities.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

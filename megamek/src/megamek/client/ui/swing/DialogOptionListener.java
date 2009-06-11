@@ -23,7 +23,6 @@ package megamek.client.ui.swing;
 import megamek.common.options.IOption;
 
 public interface DialogOptionListener {
-    public void showDescFor(IOption option);
 
     public void optionClicked(DialogOptionComponent comp, IOption option,
             boolean state);

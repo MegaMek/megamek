@@ -76,10 +76,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     private JTabbedPane panOptions = new JTabbedPane();
     private JScrollPane scrOptions;
     private JPanel groupPanel;
-
-    private JTextArea texDesc = new JTextArea(Messages
-            .getString("GameOptionsDialog.optionDescriptionHint"), 3, 35); //$NON-NLS-1$
-
+    
     private JPanel panPassword = new JPanel();
     private JLabel labPass = new JLabel(Messages
             .getString("GameOptionsDialog.Password")); //$NON-NLS-1$
@@ -103,19 +100,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         this.options = options;
         currentFrame = frame;
 
-        texDesc.setFont(new Font("Sans Serif", Font.PLAIN, 12));
-        texDesc.setLineWrap(true);
-        texDesc.setWrapStyleWord(true);
-        texDesc.setEditable(false);
-        texDesc.setOpaque(false);
-
         setupButtons();
         setupPassword();
         JPanel mainPanel = new JPanel(new GridBagLayout());
 
         // layout
         mainPanel.add(panOptions, GBC.eol().fill(GridBagConstraints.BOTH).insets(5, 5, 5, 5));
-        mainPanel.add(new JScrollPane(texDesc), GBC.eol().fill(GridBagConstraints.BOTH).insets(5, 0, 5, 0));
         mainPanel.add(panPassword, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 5, 5, 5));
         mainPanel.add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER));
 
@@ -331,12 +321,6 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             optionComp.setEditable(editable);
         }
         optionComps.addElement(optionComp);
-    }
-
-    // Gets called when one of the options gets moused over.
-    public void showDescFor(IOption option) {
-        texDesc.setText(option.getDescription());
-        texDesc.setCaretPosition(0);
     }
 
     // Gets called when one of the option checkboxes is clicked.

@@ -53,6 +53,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -95,6 +96,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JPanel panPlayerInfo;
     private JLabel labPlayerInfo;
     private JList lisPlayerInfo;
+    private JScrollPane scrPlayerInfo;
 
     private JLabel labTeam;
     private JComboBox choTeam;
@@ -107,6 +109,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JPanel panMinefield;
     private JLabel labMinefield;
     private JList lisMinefield;
+    private JScrollPane scrMinefield;
     private JLabel labConventional;
     private JLabel labCommandDetonated;
     private JLabel labVibrabomb;
@@ -125,6 +128,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JLabel labBoardSize;
     private JLabel labMapSize;
     private JList lisBoardsSelected;
+    private JScrollPane scrBoardsSelected;
     private JButton butChangeBoard;
     private JPanel panBoardSettings;
     private JButton butConditions;
@@ -144,16 +148,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JButton butMechReadout;
     private JButton butViewGroup;
     private JList lisEntities;
+    private JScrollPane scrEntities;
     private int[] entityCorrespondance;
     private JPanel panEntities;
 
     private JLabel labStarts;
     private JList lisStarts;
+    private JScrollPane scrStarts;
     private JPanel panStarts;
     private JButton butChangeStart;
 
     private JLabel labBVs;
     private JList lisBVs;
+    private JScrollPane scrBVs;
     private ButtonGroup bvCbg;
     private JRadioButton chkBV;
     private JRadioButton chkTons;
@@ -290,7 +297,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         lisPlayerInfo = new JList(new DefaultListModel());
         lisPlayerInfo.addListSelectionListener(this);
-
+        scrPlayerInfo = new JScrollPane(lisPlayerInfo);
+        scrPlayerInfo.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        
         butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot")); //$NON-NLS-1$
         butAddBot.setActionCommand("add_bot"); //$NON-NLS-1$
         butAddBot.addActionListener(this);
@@ -351,8 +360,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 1.0;
-        gridbag.setConstraints(lisPlayerInfo, c);
-        panPlayerInfo.add(lisPlayerInfo);
+        gridbag.setConstraints(scrPlayerInfo, c);
+        panPlayerInfo.add(scrPlayerInfo);
 
         c.gridwidth = 1;
         c.weightx = 0.0;
@@ -408,6 +417,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         labMinefield = new JLabel(Messages.getString("ChatLounge.labMinefield")); //$NON-NLS-1$
 
         lisMinefield = new JList(new DefaultListModel());
+        scrMinefield = new JScrollPane(lisMinefield);
+        scrMinefield.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         labConventional = new JLabel(Messages
                 .getString("ChatLounge.labConventional"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -448,8 +459,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 1.0;
-        gridbag.setConstraints(lisMinefield, c);
-        panMinefield.add(lisMinefield);
+        gridbag.setConstraints(scrMinefield, c);
+        panMinefield.add(scrMinefield);
 
         c.gridwidth = 1;
         c.weightx = 0.0;
@@ -553,6 +564,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         lisBoardsSelected = new JList(new DefaultListModel());
         lisBoardsSelected.addListSelectionListener(this);
+        scrBoardsSelected = new JScrollPane(lisBoardsSelected);
+        scrBoardsSelected.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         butChangeBoard = new JButton(Messages
                 .getString("ChatLounge.butChangeBoard")); //$NON-NLS-1$
@@ -586,8 +599,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         c.weightx = 1.0;
         c.weighty = 1.0;
-        gridbag.setConstraints(lisBoardsSelected, c);
-        panBoardSettings.add(lisBoardsSelected);
+        gridbag.setConstraints(scrBoardsSelected, c);
+        panBoardSettings.add(scrBoardsSelected);
 
         c.weightx = 1.0;
         c.weighty = 0.0;
@@ -709,7 +722,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private void setupEntities() {
         lisEntities = new JList(new DefaultListModel());
         lisEntities.addListSelectionListener(this);
-
+        scrEntities = new JScrollPane(lisEntities);
+        scrEntities.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        
         butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList")); //$NON-NLS-1$
         butLoadList.setActionCommand("load_list"); //$NON-NLS-1$
         butLoadList.addActionListener(this);
@@ -789,8 +804,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(lisEntities, c);
-        panEntities.add(lisEntities);
+        gridbag.setConstraints(scrEntities, c);
+        panEntities.add(scrEntities);
 
         c.weightx = 1.0;
         c.weighty = 0.0;
@@ -859,6 +874,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 Messages.getString("ChatLounge.labBVs.BV"), SwingConstants.CENTER); //$NON-NLS-1$
 
         lisBVs = new JList(new DefaultListModel());
+        scrBVs = new JScrollPane(lisBVs);
+        scrBVs.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         panBVs = new JPanel();
 
@@ -890,21 +907,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         c.weightx = 1.0;
         c.weighty = 1.0;
-        gridbag.setConstraints(lisBVs, c);
-        panBVs.add(lisBVs);
+        gridbag.setConstraints(scrBVs, c);
+        panBVs.add(scrBVs);
 
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 1;
-        gridbag.setConstraints(lisBVs, c);
+        gridbag.setConstraints(scrBVs, c);
         panBVs.add(chkBV);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(lisBVs, c);
+        gridbag.setConstraints(scrBVs, c);
         panBVs.add(chkTons);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(lisBVs, c);
+        gridbag.setConstraints(scrBVs, c);
         panBVs.add(chkCost);
     }
 
@@ -916,6 +933,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 Messages.getString("ChatLounge.labStarts"), SwingConstants.CENTER); //$NON-NLS-1$
 
         lisStarts = new JList(new DefaultListModel());
+        scrStarts = new JScrollPane(lisStarts);
+        scrStarts.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         butChangeStart = new JButton(Messages
                 .getString("ChatLounge.butChangeStart")); //$NON-NLS-1$
@@ -937,8 +956,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         c.weightx = 1.0;
         c.weighty = 1.0;
-        gridbag.setConstraints(lisStarts, c);
-        panStarts.add(lisStarts);
+        gridbag.setConstraints(scrStarts, c);
+        panStarts.add(scrStarts);
 
         c.weightx = 1.0;
         c.weighty = 0.0;

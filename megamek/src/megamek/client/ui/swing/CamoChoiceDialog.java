@@ -47,6 +47,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -92,6 +93,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
      * The list containing the item names.
      */
     private JList items;
+    private JScrollPane scrItems;
 
     /**
      * The "keep old camo" button.
@@ -315,8 +317,9 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
 
         // Create a list to hold the items in the category.
         items = new JList(new DefaultListModel());
-        items.setPreferredSize(new Dimension(150, 200));
-        getContentPane().add(new JScrollPane(items), BorderLayout.CENTER);
+        scrItems = new JScrollPane(items);
+        scrItems.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        getContentPane().add(scrItems);
 
         // Update the "select new camo" when an item is selected.
         items.addListSelectionListener(this);

@@ -558,6 +558,7 @@ public class MegaMek {
                         }
                         w.newLine();
                     }
+                    w.close();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

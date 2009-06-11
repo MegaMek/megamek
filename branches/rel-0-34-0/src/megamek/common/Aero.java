@@ -1018,7 +1018,7 @@ public class Aero
         // subtract for explosive ammo
         double ammoPenalty = 0;
         //need to keep track of any ammo type already used
-        Map<Integer[], Boolean> ammoTypesUsed = new HashMap<Integer[], Boolean>();
+        boolean[][] ammoTypesUsed = new boolean[AmmoType.NUM_TYPES][40];
         for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();
             int toSubtract = 15;
@@ -1062,16 +1062,13 @@ public class Aero
             }
             // only subtract once for each weapon
             // we identify by matching via the ammoType var and the racksize
-            Integer[] idAmmo = new Integer[2];
-            idAmmo[0] = aType.ammoType;
-            idAmmo[1] = aType.getRackSize();
-            if ((null != ammoTypesUsed.get(idAmmo)) && ammoTypesUsed.get(idAmmo)) {
+            if (ammoTypesUsed[aType.ammoType][aType.getRackSize()]) {
                 continue;
             }
 
             ammoPenalty += toSubtract;
 
-            ammoTypesUsed.put(idAmmo, true);
+            ammoTypesUsed[aType.ammoType][aType.getRackSize()] = true;
         }
         dbv = Math.max(1, dbv - ammoPenalty);
 

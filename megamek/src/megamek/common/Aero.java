@@ -1011,8 +1011,8 @@ public class Aero extends Entity
 
         // subtract for explosive ammo
         double ammoPenalty = 0;
-        //need to keep track of any ammo type already used
-        Map<Integer[], Boolean> ammoTypesUsed = new HashMap<Integer[], Boolean>();
+      //need to keep track of any ammo type already used
+        boolean[][] ammoTypesUsed = new boolean[AmmoType.NUM_TYPES][40];
         for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();
             int toSubtract = 15;
@@ -1043,6 +1043,7 @@ public class Aero extends Entity
                 toSubtract = 1;
             }
 
+
             //only ammo counts from here on out
             if(!(etype instanceof AmmoType)) {
                 continue;
@@ -1055,16 +1056,13 @@ public class Aero extends Entity
             }
             // only subtract once for each weapon
             // we identify by matching via the ammoType var and the racksize
-            Integer[] idAmmo = new Integer[2];
-            idAmmo[0] = aType.ammoType;
-            idAmmo[1] = aType.getRackSize();
-            if ((null != ammoTypesUsed.get(idAmmo)) && ammoTypesUsed.get(idAmmo)) {
+            if (ammoTypesUsed[aType.ammoType][aType.getRackSize()]) {
                 continue;
             }
 
             ammoPenalty += toSubtract;
 
-            ammoTypesUsed.put(idAmmo, true);
+            ammoTypesUsed[aType.ammoType][aType.getRackSize()] = true;
         }
         dbv = Math.max(1, dbv - ammoPenalty);
 
@@ -1556,7 +1554,7 @@ public class Aero extends Entity
         if ((getCockpitType() == Aero.COCKPIT_SMALL) && !getCrew().getOptions().booleanOption("bvdni")) {
             prd.addModifier(1, "Small Cockpit");
         }
-        
+
         //quirks?
         if(getQuirks().booleanOption("atmo_flyer") && game.getBoard().inAtmosphere()) {
             prd.addModifier(-1, "atmospheric flyer");

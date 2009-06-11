@@ -34,6 +34,7 @@ import megamek.common.Mech;
 import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
 
 /**
  * Set of elements to reperesent general unit information in MechDisplay
@@ -314,22 +315,17 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         for (PMSimpleLabel element : advantagesR) {
             element.setString(""); //$NON-NLS-1$
         }
-        if ((en.crew.countAdvantages() > 0) || (en.crew.countMDImplants() > 0)) {
-            int i = 0;
-            for (Enumeration<IOption> advantages = en.crew.getAdvantages(); advantages
-                    .hasMoreElements();) {
-                IOption option = advantages.nextElement();
-                if (option.booleanValue()) {
-                    advantagesR[i++].setString(option
-                            .getDisplayableNameWithValue());
-                }
-            }
-            for (Enumeration<IOption> implants = en.crew.getMDImplants(); implants
-                    .hasMoreElements();) {
-                IOption option = implants.nextElement();
-                if (option.booleanValue()) {
-                    advantagesR[i++].setString(option
-                            .getDisplayableNameWithValue());
+        
+        int i = 0;
+        for (Enumeration<IOptionGroup> advGroups = en.crew.getOptions().getGroups(); advGroups.hasMoreElements();) {
+            IOptionGroup advGroup = advGroups.nextElement();
+            if(en.crew.countOptions(advGroup.getKey()) > 0) {  
+                advantagesR[i++].setString(advGroup.getDisplayableName());
+                for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
+                    IOption adv = advs.nextElement();
+                    if(adv.booleanValue()) {
+                        advantagesR[i++].setString("  " + adv.getDisplayableNameWithValue());
+                    }
                 }
             }
         }

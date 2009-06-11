@@ -246,13 +246,10 @@ public class Pilot implements Serializable {
         return options;
     }
 
-    public void clearAdvantages() {
+    public void clearOptions() {
         for (Enumeration<IOptionGroup> i = options.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
-
-            if (!group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES))
-                continue;
 
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
@@ -264,14 +261,32 @@ public class Pilot implements Serializable {
 
     }
 
-    public int countAdvantages() {
+    public int countOptions() {
+        int count = 0;
+
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i
+                .hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            for (Enumeration<IOption> j = group.getOptions(); j
+                    .hasMoreElements();) {
+                IOption option = j.nextElement();
+
+                if (option.booleanValue())
+                    count++;
+            }
+        }
+
+        return count;
+    }
+    
+    public int countOptions(String grpKey) {
         int count = 0;
 
         for (Enumeration<IOptionGroup> i = options.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
-            if (!group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES))
+            if (!group.getKey().equalsIgnoreCase(grpKey))
                 continue;
 
             for (Enumeration<IOption> j = group.getOptions(); j
@@ -287,14 +302,14 @@ public class Pilot implements Serializable {
     }
 
     /**
-     * Returns the LVL3 Rules "Pilot Advantages" this pilot has
+     * Returns the options of the given category that this pilot has
      */
-    public Enumeration<IOption> getAdvantages() {
+    public Enumeration<IOption> getOptions(String grpKey) {
         for (Enumeration<IOptionGroup> i = options.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
-            if (group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES))
+            if (group.getKey().equalsIgnoreCase(grpKey))
                 return group.getOptions();
         }
 
@@ -303,56 +318,34 @@ public class Pilot implements Serializable {
     }
 
     /**
-     * Returns a string of all the LVL3 Pilot Advantage "codes" for this pilot,
+     * Returns a string of all the option "codes" for this pilot, for a given group,
      * using sep as the separator
      */
-    public String getAdvantageList(String sep) {
+    public String getOptionList(String sep, String grpKey) {
         StringBuffer adv = new StringBuffer();
 
         if (null == sep) {
             sep = "";
         }
 
-        for (Enumeration<IOption> j = getAdvantages(); j.hasMoreElements();) {
-            IOption option = j.nextElement();
-
-            if (option.booleanValue()) {
-                if (adv.length() > 0) {
-                    adv.append(sep);
-                }
-
-                adv.append(option.getName());
-                if (option.getType() == IOption.STRING
-                        || option.getType() == IOption.CHOICE
-                        || option.getType() == IOption.INTEGER) {
-                    adv.append(" ").append(option.stringValue());
-                }
-            }
-        }
-
-        return adv.toString();
-    }
-
-    public String getImplantList(String sep) {
-        StringBuffer adv = new StringBuffer();
-
-        if (null == sep) {
-            sep = "";
-        }
-
-        for (Enumeration<IOption> j = getMDImplants(); j.hasMoreElements();) {
-            IOption option = j.nextElement();
-
-            if (option.booleanValue()) {
-                if (adv.length() > 0) {
-                    adv.append(sep);
-                }
-
-                adv.append(option.getName());
-                if (option.getType() == IOption.STRING
-                        || option.getType() == IOption.CHOICE
-                        || option.getType() == IOption.INTEGER) {
-                    adv.append(" ").append(option.stringValue());
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            if (!group.getKey().equalsIgnoreCase(grpKey))
+                continue;
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+                IOption option = j.nextElement();
+    
+                if (option.booleanValue()) {
+                    if (adv.length() > 0) {
+                        adv.append(sep);
+                    }
+    
+                    adv.append(option.getName());
+                    if (option.getType() == IOption.STRING
+                            || option.getType() == IOption.CHOICE
+                            || option.getType() == IOption.INTEGER) {
+                        adv.append(" ").append(option.stringValue());
+                    }
                 }
             }
         }
@@ -383,62 +376,6 @@ public class Pilot implements Serializable {
             result = t;
         } // try-catch
         return result;
-    }
-
-    public void clearMDImplants() {
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
-            IOptionGroup group = i.nextElement();
-
-            if (!group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES))
-                continue;
-
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
-                IOption option = j.nextElement();
-
-                option.clearValue();
-            }
-        }
-
-    }
-
-    public int countMDImplants() {
-        int count = 0;
-
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
-            IOptionGroup group = i.nextElement();
-
-            if (!group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES))
-                continue;
-
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
-                IOption option = j.nextElement();
-
-                if (option.booleanValue())
-                    count++;
-            }
-        }
-
-        return count;
-    }
-
-    /**
-     * Returns the MD Implants this pilot has
-     */
-    public Enumeration<IOption> getMDImplants() {
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
-            IOptionGroup group = i.nextElement();
-
-            if (group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES))
-                return group.getOptions();
-        }
-
-        // no pilot advantages -- return an empty Enumeration
-        return new Vector<IOption>().elements();
     }
 
     public String getDesc() {

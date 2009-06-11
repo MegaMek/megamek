@@ -128,6 +128,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.options.PilotOptions;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -3751,8 +3752,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             .append(entity.getCrew().getGunnery()).append("/") //$NON-NLS-1$
             .append(entity.getCrew().getPiloting()).append(
                     Messages.getString("BoardView1.pilot")); //$NON-NLS-1$
-            int numAdv = entity.getCrew().countAdvantages();
-            boolean isMD = entity.getCrew().countMDImplants() > 0;
+            int numAdv = entity.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES);
+            boolean isMD = entity.getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0;
             if (numAdv > 0) {
                 buffer.append(" <") //$NON-NLS-1$
                 .append(numAdv).append(

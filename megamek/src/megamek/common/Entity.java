@@ -8427,12 +8427,38 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     }
     
+    /**
+     * count all the quirks for this unit, positive and negative
+     */
     public int countQuirks() {
         int count = 0;
 
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
+            for (Enumeration<IOption> j = group.getOptions(); j
+                    .hasMoreElements();) {
+                IOption quirk = j.nextElement();
+
+                if (quirk.booleanValue())
+                    count++;
+            }
+        }
+
+        return count;
+    }
+    
+    /**
+     * count the quirks for this unit, for a given group name
+     */
+    public int countQuirks(String grpKey) {
+        int count = 0;
+
+        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
+                .hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            if (!group.getKey().equalsIgnoreCase(grpKey))
+                continue;
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption quirk = j.nextElement();

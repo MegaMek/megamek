@@ -28,6 +28,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.AWT.Messages;
 import megamek.common.Entity;
 import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
 
 /**
 * Set of elements to reperesent pilot information in MechDisplay
@@ -40,7 +41,7 @@ public class PilotMapSet implements DisplayMapSet {
     private static String STAR3 = "***"; //$NON-NLS-1$
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
-    private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, initBL, commandBL, hitsL, advantagesL;
+    private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, initBL, commandBL;
     private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR, initBR, commandBR, hitsR;
     private PMSimpleLabel[] advantagesR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
@@ -135,9 +136,6 @@ public class PilotMapSet implements DisplayMapSet {
         content.addArea(gunneryBR);
         
         getNewYCoord();
-        advantagesL = createLabel(
-                    Messages.getString("PilotMapSet.advantagesL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
-        content.addArea(advantagesL);
         advantagesR = new PMSimpleLabel[24];
         for (int i = 0; i < advantagesR.length; i++) {
             advantagesR[i] = createLabel(new Integer(i).toString(), fm, 10, getNewYCoord());
@@ -201,22 +199,16 @@ public class PilotMapSet implements DisplayMapSet {
         for (int i = 0; i < advantagesR.length; i++) {
             advantagesR[i].setString(""); //$NON-NLS-1$
         }
-        if (en.crew.countAdvantages() > 0 || en.crew.countMDImplants() > 0) {
-            int i = 0;
-            for (Enumeration<IOption> advantages = en.crew.getAdvantages(); advantages
-            .hasMoreElements();) {
-                IOption option = advantages.nextElement();
-                if (option.booleanValue()) {
-                    advantagesR[i++].setString(option
-                            .getDisplayableNameWithValue());
-                }
-            }
-            for (Enumeration<IOption> implants = en.crew.getMDImplants(); implants
-            .hasMoreElements();) {
-                IOption option = implants.nextElement();
-                if (option.booleanValue()) {
-                    advantagesR[i++].setString(option
-                            .getDisplayableNameWithValue());
+        int i = 0;
+        for (Enumeration<IOptionGroup> advGroups = en.crew.getOptions().getGroups(); advGroups.hasMoreElements();) {
+            IOptionGroup advGroup = advGroups.nextElement();
+            if(en.crew.countOptions(advGroup.getKey()) > 0) {          
+                advantagesR[i++].setString(advGroup.getDisplayableName());
+                for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
+                    IOption adv = advs.nextElement();
+                    if(adv.booleanValue()) {
+                        advantagesR[i++].setString("  " + adv.getDisplayableNameWithValue());
+                    }
                 }
             }
         }

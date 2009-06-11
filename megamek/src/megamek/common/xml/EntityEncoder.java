@@ -41,6 +41,7 @@ import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
+import megamek.common.options.PilotOptions;
 
 /**
  * Objects of this class can encode a <code>Entity</code> object as XML into
@@ -117,13 +118,13 @@ public class EntityEncoder {
             out.write("\" hits=\"");
             out.write(String.valueOf(crew.getHits()));
         }
-        if (crew.countAdvantages() > 0) {
+        if (crew.countOptions(PilotOptions.LVL3_ADVANTAGES) > 0) {
             out.write("\" advantages=\"");
-            out.write(String.valueOf(crew.getAdvantageList(" ")));
+            out.write(String.valueOf(crew.getOptionList("::", PilotOptions.LVL3_ADVANTAGES)));
         }
-        if (crew.countMDImplants() > 0) {
+        if (crew.countOptions(PilotOptions.MD_ADVANTAGES) > 0) {
             out.write("\" implants=\"");
-            out.write(String.valueOf(crew.getImplantList(" ")));
+            out.write(String.valueOf(crew.getOptionList("::", PilotOptions.MD_ADVANTAGES)));
         }
         out.write("\"/>");
 

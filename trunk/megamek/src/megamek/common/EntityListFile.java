@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
+import megamek.common.options.PilotOptions;
+
 /**
  * This class provides static methods to save a list of <code>Entity</code>s
  * to, and load a list of <code>Entity</code>s from a file.
@@ -400,13 +402,13 @@ public class EntityListFile {
                 output.write("\" hits=\"");
                 output.write(String.valueOf(crew.getHits()));
             }
-            if (crew.countAdvantages() > 0) {
+            if (crew.countOptions(PilotOptions.LVL3_ADVANTAGES) > 0) {
                 output.write("\" advantages=\"");
-                output.write(String.valueOf(crew.getAdvantageList("::")));
+                output.write(String.valueOf(crew.getOptionList("::", PilotOptions.LVL3_ADVANTAGES)));
             }
-            if (crew.countMDImplants() > 0) {
+            if (crew.countOptions(PilotOptions.MD_ADVANTAGES) > 0) {
                 output.write("\" implants=\"");
-                output.write(String.valueOf(crew.getImplantList("::")));
+                output.write(String.valueOf(crew.getOptionList("::", PilotOptions.MD_ADVANTAGES)));
             }
             if (entity instanceof Mech) {
                 if (((Mech) entity).isAutoEject()) {

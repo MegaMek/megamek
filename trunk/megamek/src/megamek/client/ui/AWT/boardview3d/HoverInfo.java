@@ -46,6 +46,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.options.PilotOptions;
 
 class HoverInfo implements IDisplayable {
 
@@ -456,8 +457,8 @@ class HoverInfo implements IDisplayable {
                 .append(e.getCrew().getGunnery()).append("/") //$NON-NLS-1$
                 .append(e.getCrew().getPiloting()).append(
                         Messages.getString("BoardView1.pilot")); //$NON-NLS-1$
-        int numAdv = e.getCrew().countAdvantages();
-        boolean isMD = e.getCrew().countMDImplants() > 0;
+        int numAdv = e.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES);
+        boolean isMD = e.getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0;
         if (numAdv > 0) {
             buffer.append(" <") //$NON-NLS-1$
                     .append(numAdv).append(

@@ -56,6 +56,7 @@ v0.35.2-dev (SVN)
 + changed default mech display size
 + changed default ruler display size
 + fixed scroll bars in swing camo dialog
++ Bug: out-of-bounds error in swing camo dialog
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

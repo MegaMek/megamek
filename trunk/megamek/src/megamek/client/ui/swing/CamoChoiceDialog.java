@@ -310,8 +310,10 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         // Make sure that the "select new camo" button is updated.
         categories.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent event) {
-                fillList((String) event.getItem());
-                updateButton();
+                if(event.getStateChange() == ItemEvent.SELECTED) {
+                    fillList((String) event.getItem());
+                    updateButton();
+                }
             }
         });
 

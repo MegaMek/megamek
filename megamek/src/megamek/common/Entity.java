@@ -8426,4 +8426,54 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
     }
+    
+    public int countQuirks() {
+        int count = 0;
+
+        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
+                .hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            for (Enumeration<IOption> j = group.getOptions(); j
+                    .hasMoreElements();) {
+                IOption quirk = j.nextElement();
+
+                if (quirk.booleanValue())
+                    count++;
+            }
+        }
+
+        return count;
+    }
+    
+    /**
+     * Returns a string of all the quirk "codes" for this entity,
+     * using sep as the separator
+     */
+    public String getQuirkList(String sep) {
+        StringBuffer qrk = new StringBuffer();
+
+        if (null == sep) {
+            sep = "";
+        }
+
+        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+                IOption quirk = j.nextElement();
+                if (quirk.booleanValue()) {
+                    if (qrk.length() > 0) {
+                        qrk.append(sep);
+                    }
+                    qrk.append(quirk.getName());
+                    if (quirk.getType() == IOption.STRING
+                            || quirk.getType() == IOption.CHOICE
+                            || quirk.getType() == IOption.INTEGER) {
+                        qrk.append(" ").append(quirk.stringValue());
+                    }
+                }
+            }
+        }
+        return qrk.toString();
+    }
+    
 }

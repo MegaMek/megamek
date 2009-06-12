@@ -1656,8 +1656,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     }
                 } else if (target instanceof GunEmplacement) {
                     enabled = new boolean[] { true,
-                            ((GunEmplacement) target).hasTurret() };
-                    aimingAt = GunEmplacement.LOC_BUILDING;
+                            ((GunEmplacement) target).isTurret() };
+                    aimingAt = GunEmplacement.LOC_GUNS;
                 } else if (target instanceof Protomech) {
                     aimingAt = Protomech.LOC_TORSO;
                 } else if (target instanceof BattleArmor) {

@@ -22140,8 +22140,15 @@ public class Server implements Runnable {
             });
             // Walk through the entities in this position.
             Enumeration<Entity> entities = vector.elements();
-            while (entities.hasMoreElements()) {
-                final Entity entity = entities.nextElement();
+            while (entities.hasMoreElements()) {   
+                final Entity entity = entities.nextElement();               
+                //all gun emplacements are simply destroyed
+                if(entity instanceof GunEmplacement) {
+                    addReport(destroyEntity(entity, "building collapse"));
+                    addNewLines();
+                    continue;
+                }
+                              
                 // final int entityElev = entity.elevationOccupied( curHex
                 // );
                 int floor = entity.getElevation();

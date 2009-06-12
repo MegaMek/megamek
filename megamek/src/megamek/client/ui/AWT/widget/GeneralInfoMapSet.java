@@ -402,33 +402,6 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             buildingTypeR.setVisible(true);
             buildingHeightL.setVisible(true);
             GunEmplacement ge = (GunEmplacement) en;
-            switch (ge.getConstructionType()) {
-                case Building.LIGHT:
-                    buildingTypeR.setString(Messages
-                            .getString("GeneralInfoMapSet.buildingTypeRLight"));
-                    break;
-                case Building.MEDIUM:
-                    buildingTypeR
-                            .setString(Messages
-                                    .getString("GeneralInfoMapSet.buildingTypeRMedium"));
-                    break;
-                case Building.HEAVY:
-                    buildingTypeR.setString(Messages
-                            .getString("GeneralInfoMapSet.buildingTypeRHeavy"));
-                    break;
-                case Building.HARDENED:
-                    buildingTypeR
-                            .setString(Messages
-                                    .getString("GeneralInfoMapSet.buildingTypeRHardened"));
-                    break;
-                case Building.WALL:
-                    buildingTypeR.setString(Messages.getString(""));
-                    break;
-                default:
-                    buildingTypeR
-                            .setString(Messages
-                                    .getString("GeneralInfoMapSet.buildingTypeRUnknown"));
-            }
             buildingHeightR.setString(Integer.toString(ge.getHeight()));
         } else {
             weightL.setVisible(true);

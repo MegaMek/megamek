@@ -21,6 +21,9 @@ import java.util.Vector;
 
 /**
  * A building with weapons fitted and, optionally, a turret.
+ * Taharqa: I am completely re-writing this entity to bring it up to code with TacOps rules
+ * GunEmplacements will not simply be the weapon loadouts that can be attached to buildings.
+ * They will not be targetable in game, but will be destroyed if their building hex is reduced.
  */
 public class GunEmplacement extends Entity implements Serializable {
 
@@ -29,48 +32,29 @@ public class GunEmplacement extends Entity implements Serializable {
      */
     private static final long serialVersionUID = 8561738092216598248L;
     private String name = null;
-    private int cf = 40; // default is a medium building w/ CF 40
-    private int height = 2; // default height is 2
-    private boolean turretNotExists = false;
+    private boolean turret = false;
     private boolean turretLocked = false;
     private int turretOffset = 0;
-    private boolean burning = false;
 
     // locations
-    public static final int LOC_BUILDING = 0;
-    public static final int LOC_NORTH = 1;
-    public static final int LOC_EAST = 2;
-    public static final int LOC_WEST = 3;
-    public static final int LOC_TURRET = 4;
+    public static final int LOC_GUNS = 0;
 
-    public static final String[] HIT_LOCATION_NAMES = { "Building", "Turret" };
+    public static final String[] HIT_LOCATION_NAMES = { "guns" };
 
-    private static int[] CRITICAL_SLOTS = new int[] { 0, 0, 0, 0, 0 };
-    private static String[] LOCATION_ABBRS = { "BU", "N", "E", "W", "TU" };
-    private static String[] LOCATION_NAMES = { "Building", "North", "East",
-            "West", "Turret" };
+    private static int[] CRITICAL_SLOTS = new int[] { 0 };
+    private static String[] LOCATION_ABBRS = { "GUN" };
+    private static String[] LOCATION_NAMES = { "GUNS" };
 
     public GunEmplacement() {
-        // set defaults as specified in BMRr
-        initConstructionFactor(40);
-        setHeight(2);
-        // not actually specfied defaults, but hey, it seems reasonable
-        setTurret(false);
-        initTurretArmor(0);
-        initializeInternal(IArmorState.ARMOR_NA, LOC_NORTH);
-        initializeInternal(IArmorState.ARMOR_NA, LOC_EAST);
-        initializeInternal(IArmorState.ARMOR_NA, LOC_WEST);
+        initializeInternal(IArmorState.ARMOR_NA, LOC_GUNS);
     }
 
-    public boolean hasTurret() {
-        return !turretNotExists;
+    public boolean isTurret() {
+        return turret;
     }
 
     public void setTurret(boolean turret) {
-        turretNotExists = !turret;
-        if (!turret) {
-            super.setSecondaryFacing(-1);
-        }
+        this.turret = turret;
     }
 
     public boolean isTurretLocked() {
@@ -79,113 +63,6 @@ public class GunEmplacement extends Entity implements Serializable {
 
     public void setTurretLocked(boolean locked) {
         turretLocked = locked;
-    }
-
-    public int getConstructionFactor() {
-        return cf;
-    }
-
-    public void setConstructionFactor(int cf) {
-        this.cf = cf;
-        setWeight(cf);
-    }
-
-    public void initConstructionFactor(int cf) {
-        setConstructionFactor(cf);
-        initializeArmor(cf, GunEmplacement.LOC_BUILDING);
-        setArmorType(EquipmentType.T_ARMOR_STANDARD);
-        setArmorTechLevel(TechConstants.T_INTRO_BOXSET);
-        initializeInternal(IArmorState.ARMOR_NA, LOC_BUILDING);
-    }
-
-    public void initTurretArmor(int af) {
-        initializeArmor(af, GunEmplacement.LOC_TURRET);
-        initializeInternal(IArmorState.ARMOR_NA, LOC_TURRET);
-    }
-
-    public int getCurrentTurretArmor() {
-        return getArmor(LOC_TURRET);
-    }
-
-    // ///////// Building methods ///////////
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean isIn(Coords coords) {
-        return getPosition().equals(coords);
-    }
-
-    public Enumeration<Coords> getCoords() {
-        // XXX yuck!
-        Vector<Coords> coords = new Vector<Coords>(1);
-        coords.add(getPosition());
-        return coords.elements();
-    }
-
-    public int getConstructionType() {
-        if (cf <= 15) {
-            return Building.LIGHT;
-        }
-        if (cf <= 40) {
-            return Building.MEDIUM;
-        }
-        if (cf <= 90) {
-            return Building.HEAVY;
-        }
-        if (cf <= 150) {
-            return Building.HARDENED;
-        }
-        return Building.UNKNOWN;
-    }
-
-    public int getCurrentCF() {
-        return getArmor(LOC_BUILDING);
-    }
-
-    // XXX how to handle this?
-    public void setCurrentCF(int cf) {
-        if (cf < 0) {
-            throw new IllegalArgumentException(
-                    "Invalid value for Construction Factor: " + cf);
-        }
-
-        // this.currentCF = cf;
-    }
-
-    // XXX how to handle this?
-    public int getPhaseCF() {
-        return getArmor(LOC_BUILDING);
-    }
-
-    // XXX how to handle this?
-    public void setPhaseCF(int cf) {
-        if (cf < 0) {
-            throw new IllegalArgumentException(
-                    "Invalid value for Construction Factor: " + cf);
-        }
-
-        // this.phaseCF = cf;
-    }
-
-    public boolean isBurning() {
-        return burning;
-    }
-
-    public void setBurning(boolean burning) {
-        this.burning = burning;
-    }
-
-    // ///////// Entity methods ///////////
-
-    @Override
-    public int height() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
     }
 
     @Override
@@ -215,8 +92,9 @@ public class GunEmplacement extends Entity implements Serializable {
             return true;
         }
 
-        // can't put on top of an existing building
-        return hex.containsTerrain(Terrains.BUILDING);
+        //gun emplacements must be placed on a building
+        return !hex.containsTerrain(Terrains.BUILDING);
+       
     }
 
     @Override
@@ -226,12 +104,12 @@ public class GunEmplacement extends Entity implements Serializable {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return hasTurret() && !turretLocked;
+        return isTurret() && !turretLocked;
     }
 
     @Override
     public boolean isValidSecondaryFacing(int n) {
-        return hasTurret() && !turretLocked;
+        return isTurret() && !turretLocked;
     }
 
     @Override
@@ -243,7 +121,7 @@ public class GunEmplacement extends Entity implements Serializable {
     public void setSecondaryFacing(int sec_facing) {
         if (!turretLocked) {
             super.setSecondaryFacing(sec_facing);
-            if (turretNotExists) {
+            if (turret) {
                 turretOffset = sec_facing - getFacing();
             }
         }
@@ -270,7 +148,7 @@ public class GunEmplacement extends Entity implements Serializable {
 
     @Override
     public int locations() {
-        return hasTurret() ? LOCATION_ABBRS.length : LOCATION_ABBRS.length - 1;
+        return 1;
     }
 
     @Override
@@ -280,30 +158,15 @@ public class GunEmplacement extends Entity implements Serializable {
 
     @Override
     public int getWeaponArc(int weaponId) {
-        switch (getEquipment(weaponId).getLocation()) {
-            case LOC_NORTH:
-                return Compute.ARC_NORTH;
-
-            case LOC_EAST:
-                return Compute.ARC_EAST;
-
-            case LOC_WEST:
-                return Compute.ARC_WEST;
-
-            case LOC_TURRET:
-                return Compute.ARC_FORWARD;
-
-            default:
-                return Compute.ARC_360;
+        if(isTurret()) {
+            return Compute.ARC_TURRET;
         }
+        return Compute.ARC_FORWARD;
     }
 
     @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
-        if (getEquipment(weaponId).getLocation() == LOC_TURRET) {
-            return true;
-        }
-        return false;
+        return isTurret();
     }
 
     @Override
@@ -314,54 +177,12 @@ public class GunEmplacement extends Entity implements Serializable {
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation,
             int aimingMode) {
-
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
-            switch (Compute.d6(2)) {
-                case 6:
-                case 7:
-                case 8:
-                    return new HitData(
-                            (aimedLocation == LOC_BUILDING) ? LOC_BUILDING
-                                    : LOC_TURRET, false, true);
-            }
-        }
         return rollHitLocation(table, side);
     }
 
     @Override
     public HitData rollHitLocation(int table, int side) {
-        int armorLoc = LOC_BUILDING;
-        int effect = HitData.EFFECT_NONE;
-        switch (Compute.d6(2)) {
-            case 2:
-                // ASSUMTION: damage goes to main building
-                effect = HitData.EFFECT_GUN_EMPLACEMENT_WEAPONS;
-                break;
-
-            case 3:
-            case 11:
-                if (hasTurret()) {
-                    armorLoc = LOC_TURRET;
-                    effect = HitData.EFFECT_GUN_EMPLACEMENT_TURRET;
-                }
-                break;
-
-            case 4:
-            case 5:
-            case 9:
-            case 10:
-                if (hasTurret()) {
-                    armorLoc = LOC_TURRET;
-                }
-                break;
-
-            case 12:
-                // ASSUMTION: damage goes to main building
-                effect = HitData.EFFECT_GUN_EMPLACEMENT_CREW;
-                break;
-        }
-        return new HitData(armorLoc, false, effect);
+        return new HitData(LOC_GUNS, false, HitData.EFFECT_NONE);
     }
 
     /**
@@ -369,8 +190,7 @@ public class GunEmplacement extends Entity implements Serializable {
      */
     @Override
     public HitData getTransferLocation(HitData hit) {
-        return (hit.getLocation() == LOC_TURRET) ? new HitData(LOC_BUILDING)
-                : new HitData(LOC_DESTROYED);
+        return new HitData(LOC_DESTROYED);
     }
 
     /**
@@ -378,7 +198,7 @@ public class GunEmplacement extends Entity implements Serializable {
      */
     @Override
     public int getDependentLocation(int loc) {
-        return (loc == LOC_BUILDING) ? LOC_TURRET : LOC_NONE;
+        return LOC_NONE;
     }
 
     /**
@@ -467,11 +287,6 @@ public class GunEmplacement extends Entity implements Serializable {
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
                 dBV *= 1.2;
-            }
-
-            // if not turret mounted, 1/2 BV
-            if (mounted.getLocation() != LOC_TURRET) {
-                dBV *= 0.5;
             }
 
             weaponBV += dBV;
@@ -601,10 +416,7 @@ public class GunEmplacement extends Entity implements Serializable {
 
     @Override
     public void autoSetInternal() {
-        initializeInternal(0, LOC_BUILDING);
-        if (hasTurret()) {
-            initializeInternal(0, LOC_TURRET);
-        }
+        initializeInternal(0, LOC_GUNS);
     }
 
     @Override
@@ -614,15 +426,12 @@ public class GunEmplacement extends Entity implements Serializable {
 
     @Override
     public boolean isRepairable() {
-        boolean retval = isSalvage();
-        int loc = 0;
-        while (retval && (loc < LOC_TURRET)) {
-            int loc_is = this.getInternal(loc);
-            loc++;
-            retval = (loc_is != IArmorState.ARMOR_DOOMED)
-                    && (loc_is != IArmorState.ARMOR_DESTROYED);
-        }
-        return retval;
+        return isSalvage();
+    }
+    
+    @Override
+    public boolean isTargetable() {
+        return false;
     }
 
     @Override

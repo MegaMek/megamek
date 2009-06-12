@@ -15,19 +15,13 @@
 
 package megamek.client.ui.swing.widget;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
+
 import java.awt.Image;
-import java.awt.Polygon;
 import java.util.Vector;
 
 import javax.swing.JComponent;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Entity;
-import megamek.common.GunEmplacement;
 
 /**
  * Class which keeps set of all areas required to represent GunEmplacement unit
@@ -36,24 +30,11 @@ import megamek.common.GunEmplacement;
 public class GunEmplacementMapSet implements DisplayMapSet {
 
     private JComponent comp;
-    private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[5];
-    private PMSimpleLabel[] labels = new PMSimpleLabel[5];
-    private PMValueLabel[] vLabels = new PMValueLabel[5];
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
 
     private static final String IMAGE_DIR = "data/images/widgets";
-    private static final Polygon BUILDING_CF = new Polygon(new int[] { 0, 0,
-            40, 40 }, new int[] { 0, 160, 160, 0 }, 4);
-    private static final Polygon TURRET_ARMOR = new Polygon(new int[] { 0, 0,
-            80, 80, 90, 150, 160, 160, 150, 110, 80, 80 }, new int[] { 20, 25,
-            25, 30, 35, 35, 30, 15, 0, 0, 15, 20 }, 12);
-
-    private static final Font FONT_LABEL = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
-    private static final Font FONT_VALUE = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
-
+  
     public GunEmplacementMapSet(JComponent c) {
         comp = c;
         setAreas();
@@ -75,53 +56,19 @@ public class GunEmplacementMapSet implements DisplayMapSet {
     }
 
     public void setEntity(Entity e) {
-        GunEmplacement ge = (GunEmplacement) e;
-        int loc = GunEmplacement.LOC_BUILDING;
-        vLabels[loc].setValue(ge.getArmorString(loc));
-        WidgetUtils.setAreaColor(areas[loc], vLabels[loc], (double) ge
-                .getArmor(loc)
-                / (double) ge.getOArmor(loc));
-        loc = GunEmplacement.LOC_TURRET;
-        vLabels[loc].setValue(ge.getArmorString(loc));
-        WidgetUtils.setAreaColor(areas[loc], vLabels[loc],
-                ge.hasTurret() ? (double) ge.getArmor(loc)
-                        / (double) ge.getOArmor(loc) : 0);
 
     }
 
     private void setContent() {
-        content.addArea(areas[GunEmplacement.LOC_BUILDING]);
-        content.addArea(labels[GunEmplacement.LOC_BUILDING]);
-        content.addArea(vLabels[GunEmplacement.LOC_BUILDING]);
-        content.addArea(areas[GunEmplacement.LOC_TURRET]);
-        content.addArea(labels[GunEmplacement.LOC_TURRET]);
-        content.addArea(vLabels[GunEmplacement.LOC_TURRET]);
+       
     }
 
     private void setAreas() {
-        areas[GunEmplacement.LOC_BUILDING] = new PMSimplePolygonArea(
-                BUILDING_CF);
-        areas[GunEmplacement.LOC_TURRET] = new PMSimplePolygonArea(TURRET_ARMOR);
+       
     }
 
     private void setLabels() {
-        FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
-
-        // Labels for Front view
-        labels[GunEmplacement.LOC_BUILDING] = WidgetUtils
-                .createLabel(
-                        Messages
-                                .getString("GunEmplacementMapSet.ConstructionFactor"), fm, Color.white, 90, 200); //$NON-NLS-1$
-        labels[GunEmplacement.LOC_TURRET] = WidgetUtils
-                .createLabel(
-                        Messages.getString("GunEmplacementMapSet.TurretArmor"), fm, Color.white, 90, -25); //$NON-NLS-1$
-
-        // Value labels for all parts of mek
-        fm = comp.getFontMetrics(FONT_VALUE);
-        vLabels[GunEmplacement.LOC_BUILDING] = WidgetUtils.createValueLabel(90,
-                90, "", fm); //$NON-NLS-1$
-        vLabels[GunEmplacement.LOC_TURRET] = WidgetUtils.createValueLabel(90,
-                10, "", fm); //$NON-NLS-1$
+        
     }
 
     private void setBackGround() {
@@ -176,7 +123,6 @@ public class GunEmplacementMapSet implements DisplayMapSet {
     }
 
     private void translateAreas() {
-        areas[GunEmplacement.LOC_BUILDING].translate(70, 25);
-        areas[GunEmplacement.LOC_TURRET].translate(-30, -10);
+    
     }
 }

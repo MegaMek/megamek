@@ -50,10 +50,10 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
             weightL, bvL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
-            movementTypeL, ejectL, elevationL, buildingTypeL, buildingHeightL, fuelL;
+            movementTypeL, ejectL, elevationL, fuelL;
     private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, mpR0,
             mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
-            elevationR, buildingTypeR, buildingHeightR, fuelR;
+            elevationR, fuelR;
     private PMSimpleLabel[] quirksR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font(
@@ -206,20 +206,6 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         elevationR = createLabel(STAR3, fm, ejectL.getSize().width + 10,
                 getYCoord());
         content.addArea(elevationR);
-
-        buildingTypeL = createLabel(
-                Messages.getString("GeneralInfoMapSet.buildingTypeL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
-        content.addArea(buildingTypeL);
-        buildingTypeR = createLabel(STAR3, fm,
-                buildingTypeL.getSize().width + 10, getYCoord());
-        content.addArea(buildingTypeR);
-
-        buildingHeightL = createLabel(
-                Messages.getString("GeneralInfoMapSet.buildingHeightL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
-        content.addArea(buildingHeightL);
-        buildingHeightR = createLabel(STAR3, fm,
-                buildingHeightL.getSize().width + 10, getYCoord());
-        content.addArea(buildingHeightR);
         
         quirksR = new PMSimpleLabel[40];
         for (int i = 0; i < quirksR.length; i++) {
@@ -375,38 +361,6 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpR3.setVisible(false);
             curMoveL.setVisible(false);
             curMoveR.setVisible(false);
-            buildingTypeL.setVisible(true);
-            buildingTypeR.setVisible(true);
-            buildingHeightL.setVisible(true);
-            GunEmplacement ge = (GunEmplacement) en;
-            switch (ge.getConstructionType()) {
-                case Building.LIGHT:
-                    buildingTypeR.setString(Messages
-                            .getString("GeneralInfoMapSet.buildingTypeRLight"));
-                    break;
-                case Building.MEDIUM:
-                    buildingTypeR
-                            .setString(Messages
-                                    .getString("GeneralInfoMapSet.buildingTypeRMedium"));
-                    break;
-                case Building.HEAVY:
-                    buildingTypeR.setString(Messages
-                            .getString("GeneralInfoMapSet.buildingTypeRHeavy"));
-                    break;
-                case Building.HARDENED:
-                    buildingTypeR
-                            .setString(Messages
-                                    .getString("GeneralInfoMapSet.buildingTypeRHardened"));
-                    break;
-                case Building.WALL:
-                    buildingTypeR.setString(Messages.getString(""));
-                    break;
-                default:
-                    buildingTypeR
-                            .setString(Messages
-                                    .getString("GeneralInfoMapSet.buildingTypeRUnknown"));
-            }
-            buildingHeightR.setString(Integer.toString(ge.getHeight()));
         } else {
             weightL.setVisible(true);
             weightR.setVisible(true);
@@ -420,10 +374,6 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpR3.setVisible(true);
             curMoveL.setVisible(true);
             curMoveR.setVisible(true);
-            buildingTypeL.setVisible(false);
-            buildingTypeR.setVisible(false);
-            buildingHeightL.setVisible(false);
-            buildingHeightR.setVisible(false);
         }
 
         if (en instanceof Aero) {

@@ -2399,7 +2399,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 turretLocked = !((Tank) entity).hasNoTurret() && !entity.canChangeSecondaryFacing();
                 crewStunned = ((Tank) entity).getStunnedTurns();
             } else if (entity instanceof GunEmplacement) {
-                turretLocked = ((GunEmplacement) entity).hasTurret()
+                turretLocked = ((GunEmplacement) entity).isTurret()
                         && !entity.canChangeSecondaryFacing();
                 ge = true;
             }
@@ -2713,7 +2713,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                             .append(Messages.getString("BoardBiew1.DFA1")); //$NON-NLS-1$
                 }
             } else {
-                if (ge.hasTurret() && ge.isTurretLocked()) {
+                if (ge.isTurret() && ge.isTurretLocked()) {
                     buffer.append(Messages.getString("BoardView1.TurretLocked"));
                     if (ge.getFirstWeapon() == -1) {
                         buffer.append(",");
@@ -2736,12 +2736,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                         .append(entity.getTotalArmor()).append(
                                 Messages.getString("BoardView1.internal")) //$NON-NLS-1$
                         .append(entity.getTotalInternal());
-            } else {
+            } 
+            /*
+            else {
                 buffer.append(Messages.getString("BoardView1.cf")) //$NON-NLS-1$
                         .append(ge.getCurrentCF()).append(
                                 Messages.getString("BoardView1.turretArmor")) //$NON-NLS-1$
                         .append(ge.getCurrentTurretArmor());
             }
+            */
             tipStrings[3] = buffer.toString();
 
             return tipStrings;

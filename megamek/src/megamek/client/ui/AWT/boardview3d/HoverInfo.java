@@ -495,7 +495,7 @@ class HoverInfo implements IDisplayable {
                         .append(Messages.getString("BoardBiew1.DFA1")); //$NON-NLS-1$
             }
         } else {
-            if (ge.hasTurret() && ge.isTurretLocked()) {
+            if (ge.isTurret() && ge.isTurretLocked()) {
                 buffer
                         .append(Messages
                                 .getString("BoardView1.TurretLocked"));
@@ -523,11 +523,6 @@ class HoverInfo implements IDisplayable {
                     .append(e.getTotalArmor()).append(
                             Messages.getString("BoardView1.internal")) //$NON-NLS-1$
                     .append(e.getTotalInternal());
-        } else {
-            buffer.append(Messages.getString("BoardView1.cf")) //$NON-NLS-1$
-                    .append(ge.getCurrentCF()).append(
-                            Messages.getString("BoardView1.turretArmor")) //$NON-NLS-1$
-                    .append(ge.getCurrentTurretArmor());
         }
         out.add(buffer.toString());
 

@@ -478,7 +478,7 @@ public class CEntity {
         }
 
         if (entity instanceof GunEmplacement) {
-            armor = ((GunEmplacement) entity).hasTurret() ? GUN_EMPLACEMENT_TURRET_ARMOR
+            armor = ((GunEmplacement) entity).isTurret() ? GUN_EMPLACEMENT_TURRET_ARMOR
                     : GUN_EMPLACEMENT_ARMOR;
         }
 

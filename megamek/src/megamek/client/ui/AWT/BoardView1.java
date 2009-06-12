@@ -3444,7 +3444,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 && !entity.canChangeSecondaryFacing();
                 crewStunned = ((Tank) entity).getStunnedTurns();
             } else if (entity instanceof GunEmplacement) {
-                turretLocked = ((GunEmplacement) entity).hasTurret()
+                turretLocked = ((GunEmplacement) entity).isTurret()
                 && !entity.canChangeSecondaryFacing();
                 ge = true;
             }
@@ -3806,7 +3806,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     .append( Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
                 }
             } else {
-                if (ge.hasTurret() && ge.isTurretLocked()) {
+                if (ge.isTurret() && ge.isTurretLocked()) {
                     buffer
                     .append(Messages
                             .getString("BoardView1.TurretLocked"));
@@ -3834,12 +3834,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 .append(entity.getTotalArmor()).append(
                         Messages.getString("BoardView1.internal")) //$NON-NLS-1$
                         .append(entity.getTotalInternal());
-            } else {
-                buffer.append(Messages.getString("BoardView1.cf")) //$NON-NLS-1$
-                .append(ge.getCurrentCF()).append(
-                        Messages.getString("BoardView1.turretArmor")) //$NON-NLS-1$
-                        .append(ge.getCurrentTurretArmor());
-            }
+            } 
             tipStrings[2] = buffer.toString();
 
             return tipStrings;

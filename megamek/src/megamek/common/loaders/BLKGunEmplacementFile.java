@@ -57,27 +57,11 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
 			e.setSource(dataFile.getDataAsString("source")[0]);
 		}
 
-		if (!dataFile.exists("ConstructionFactor")) {
-			throw new EntityLoadingException("Could not find block.");
-		}
-		e.initConstructionFactor(dataFile.getDataAsInt("ConstructionFactor")[0]);
-
-		if (dataFile.exists("Height")) {
-			e.setHeight(dataFile.getDataAsInt("Height")[0]);
-		}
-
 		if (dataFile.exists("Turret")) {
-			e.setTurret(true);
-			e.initTurretArmor(dataFile.getDataAsInt("Turret")[0]);
+			e.setTurret(dataFile.getDataAsInt("Turret")[0] == 1);
 		}
 
-		loadEquipment(e, "North", GunEmplacement.LOC_NORTH);
-		loadEquipment(e, "East", GunEmplacement.LOC_EAST);
-		loadEquipment(e, "West", GunEmplacement.LOC_WEST);
-		if (e.hasTurret()) {
-			loadEquipment(e, "Turret", GunEmplacement.LOC_TURRET);
-		}
-		loadEquipment(e, "Building", GunEmplacement.LOC_BUILDING);
+		loadEquipment(e, "Guns", GunEmplacement.LOC_GUNS);
 		return e;
 	}
 }

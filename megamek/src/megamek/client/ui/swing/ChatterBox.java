@@ -15,6 +15,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -28,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
@@ -52,6 +54,7 @@ public class ChatterBox implements KeyListener {
     private JPanel chatPanel;
     JTextArea chatArea;
     JList playerList;
+    JScrollPane scrPlayers;
     private JTextField inputField;
     private JButton butDone;
 
@@ -116,6 +119,8 @@ public class ChatterBox implements KeyListener {
         playerList = new JList(new DefaultListModel());
         playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(
                 "AdvancedChatboxSize"));
+        scrPlayers = new JScrollPane(playerList);
+        scrPlayers.setMinimumSize(new Dimension(400,400));
         inputField = new JTextField();
         inputField.addKeyListener(this);
         butDone = new JButton(Messages.getString("ChatterBox.ImDone")); //$NON-NLS-1$
@@ -125,7 +130,7 @@ public class ChatterBox implements KeyListener {
 
         JPanel subPanel = new JPanel(new BorderLayout());
         subPanel.add(new JScrollPane(chatArea), BorderLayout.CENTER);
-        subPanel.add(playerList, BorderLayout.WEST);
+        subPanel.add(scrPlayers, BorderLayout.WEST);
         subPanel.add(inputField, BorderLayout.SOUTH);
         chatPanel.add(subPanel, BorderLayout.CENTER);
         chatPanel.add(butDone, BorderLayout.EAST);

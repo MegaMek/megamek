@@ -46,11 +46,8 @@ public class GunEmplacementEncoder {
     public static void encode(Entity entity, Writer out) throws IOException {
         GunEmplacement ge = (GunEmplacement) entity;
         // save this so that the GE has the correct building type when decoded
-        out.write("<cf>");
-        out.write(Integer.toString(ge.getConstructionFactor()));
-        out.write("<cf/>");
 
-        if (ge.hasTurret() && ge.isTurretLocked()) {
+        if (ge.isTurret() && ge.isTurretLocked()) {
             out.write("<turretLocked facing=\"");
             out.write(Integer.toString(ge.getSecondaryFacing()));
             out.write("\"/>");
@@ -83,15 +80,7 @@ public class GunEmplacementEncoder {
             ParsedXML child = (ParsedXML) children.nextElement();
             String childName = child.getName();
 
-            if (childName.equals("cf")) {
-                String cf = child.getContent().trim();
-                try {
-                    ge.setConstructionFactor(Integer.parseInt(cf));
-                } catch (NumberFormatException nfe) {
-                    throw new IllegalStateException(
-                            "Invalid integer value for cf element: " + cf);
-                }
-            } else if (childName.equals("turretLocked")) {
+            if (childName.equals("turretLocked")) {
                 String facing = child.getAttribute("facing");
                 ge.setTurretLocked(true);
                 try {

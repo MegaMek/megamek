@@ -197,21 +197,7 @@ public class MechView {
             } else {
                 sBasic.append( getInternalAndArmor() );
             }
-        } else {
-            sBasic.append(Messages.getString("MechView.ConstructionFactor"))
-                    .append(
-                            renderArmor(entity
-                                    .getArmor(GunEmplacement.LOC_BUILDING)))
-                    .append('\n'); 
-            if (((GunEmplacement) entity).hasTurret()) {
-                sBasic.append(Messages.getString("MechView.TurretArmor"))
-                        .append(
-                                renderArmor(entity
-                                        .getArmor(GunEmplacement.LOC_TURRET)))
-                        .append('\n'); 
-            }
-        }
-
+        } 
         if (entity.getFluff() != null) {
             sFluff.append(entity.getFluff());
         }

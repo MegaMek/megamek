@@ -75,51 +75,51 @@ public class GunEmplacementMapSet implements DisplayMapSet {
 
     public void setEntity(Entity e) {
         GunEmplacement ge = (GunEmplacement) e;
-        int loc = GunEmplacement.LOC_BUILDING;
+        int loc = GunEmplacement.LOC_GUNS;
         vLabels[loc].setValue(ge.getArmorString(loc));
         WidgetUtils.setAreaColor(areas[loc], vLabels[loc], (double) ge
                 .getArmor(loc)
                 / (double) ge.getOArmor(loc));
-        loc = GunEmplacement.LOC_TURRET;
+        loc = GunEmplacement.LOC_GUNS;
         vLabels[loc].setValue(ge.getArmorString(loc));
         WidgetUtils.setAreaColor(areas[loc], vLabels[loc],
-                ge.hasTurret() ? (double) ge.getArmor(loc)
+                ge.isTurret() ? (double) ge.getArmor(loc)
                         / (double) ge.getOArmor(loc) : 0);
 
     }
 
     private void setContent() {
-        content.addArea(areas[GunEmplacement.LOC_BUILDING]);
-        content.addArea(labels[GunEmplacement.LOC_BUILDING]);
-        content.addArea(vLabels[GunEmplacement.LOC_BUILDING]);
-        content.addArea(areas[GunEmplacement.LOC_TURRET]);
-        content.addArea(labels[GunEmplacement.LOC_TURRET]);
-        content.addArea(vLabels[GunEmplacement.LOC_TURRET]);
+        content.addArea(areas[GunEmplacement.LOC_GUNS]);
+        content.addArea(labels[GunEmplacement.LOC_GUNS]);
+        content.addArea(vLabels[GunEmplacement.LOC_GUNS]);
+        content.addArea(areas[GunEmplacement.LOC_GUNS]);
+        content.addArea(labels[GunEmplacement.LOC_GUNS]);
+        content.addArea(vLabels[GunEmplacement.LOC_GUNS]);
     }
 
     private void setAreas() {
-        areas[GunEmplacement.LOC_BUILDING] = new PMSimplePolygonArea(
+        areas[GunEmplacement.LOC_GUNS] = new PMSimplePolygonArea(
                 BUILDING_CF);
-        areas[GunEmplacement.LOC_TURRET] = new PMSimplePolygonArea(TURRET_ARMOR);
+        areas[GunEmplacement.LOC_GUNS] = new PMSimplePolygonArea(TURRET_ARMOR);
     }
 
     private void setLabels() {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
 
         // Labels for Front view
-        labels[GunEmplacement.LOC_BUILDING] = WidgetUtils
+        labels[GunEmplacement.LOC_GUNS] = WidgetUtils
                 .createLabel(
                         Messages
                                 .getString("GunEmplacementMapSet.ConstructionFactor"), fm, Color.white, 90, 200); //$NON-NLS-1$
-        labels[GunEmplacement.LOC_TURRET] = WidgetUtils
+        labels[GunEmplacement.LOC_GUNS] = WidgetUtils
                 .createLabel(
                         Messages.getString("GunEmplacementMapSet.TurretArmor"), fm, Color.white, 90, -25); //$NON-NLS-1$
 
         // Value labels for all parts of mek
         fm = comp.getFontMetrics(FONT_VALUE);
-        vLabels[GunEmplacement.LOC_BUILDING] = WidgetUtils.createValueLabel(90,
+        vLabels[GunEmplacement.LOC_GUNS] = WidgetUtils.createValueLabel(90,
                 90, "", fm); //$NON-NLS-1$
-        vLabels[GunEmplacement.LOC_TURRET] = WidgetUtils.createValueLabel(90,
+        vLabels[GunEmplacement.LOC_GUNS] = WidgetUtils.createValueLabel(90,
                 10, "", fm); //$NON-NLS-1$
     }
 
@@ -175,7 +175,7 @@ public class GunEmplacementMapSet implements DisplayMapSet {
     }
 
     private void translateAreas() {
-        areas[GunEmplacement.LOC_BUILDING].translate(70, 25);
-        areas[GunEmplacement.LOC_TURRET].translate(-30, -10);
+        areas[GunEmplacement.LOC_GUNS].translate(70, 25);
+        areas[GunEmplacement.LOC_GUNS].translate(-30, -10);
     }
 }

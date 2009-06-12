@@ -363,18 +363,10 @@ public abstract class UnitStatusFormatter {
 
     private static String formatArmorGunEmplacement(GunEmplacement ge) {
         StringBuffer sb = new StringBuffer(1024);
-        if (ge.hasTurret()) {
-            sb
-                    .append("             --------")
-                    .append(CommonConstants.NL)
-                    .append(" TURRET     /   ")
-                    .append(renderArmor(ge.getArmor(GunEmplacement.LOC_TURRET)))
-                    .append("   \\").append(CommonConstants.NL);
-        }
         sb.append("            ----------").append(CommonConstants.NL).append(
                 "           |          |").append(CommonConstants.NL).append(
                 "  CF       |    ").append(
-                renderArmor(ge.getArmor(GunEmplacement.LOC_TURRET))).append(
+                renderArmor(ge.getArmor(GunEmplacement.LOC_GUNS))).append(
                 "    |").append(CommonConstants.NL).append(
                 "           |          |").append(CommonConstants.NL).append(
                 "         -----------------").append(CommonConstants.NL);

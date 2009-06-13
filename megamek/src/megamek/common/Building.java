@@ -557,6 +557,7 @@ public class Building implements Serializable {
             break;
         case Building.GUN_EMPLACEMENT:
             buf.append("Gun Emplacement");
+            break;
        // case Building.CASTLE_BRIAN:
          //   buf.append("Castle Brian ");
         //    break;

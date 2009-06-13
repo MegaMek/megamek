@@ -51,7 +51,7 @@ public class DeployCommand extends ClientCommand {
                     .parseInt(args[3]) - 1);
             int nFacing = getDirection(args[4]);
 
-            client.deploy(id, coord, nFacing);
+            client.deploy(id, coord, nFacing, 0);
             return "Unit " + id + " deployed to " + coord.toFriendlyString()
                     + ". (this is assuming it worked. No error checking done.)";
         }

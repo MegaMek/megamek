@@ -32,11 +32,13 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.AlertDialog;
 import megamek.common.Aero;
 import megamek.common.Board;
+import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Player;
+import megamek.common.Terrains;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
@@ -291,7 +293,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     public void ready() {
         disableButtons();
         Entity en = ce();
-        clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(), en
+        clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(), en.getElevation(), en
                 .getLoadedUnits(), assaultDropPreference);
         en.setDeployed(true);
     }
@@ -424,7 +426,36 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             // check if deployed unit violates stacking
             return;
         } else {
+            
+            //check for buildings and if found ask what level they want to deploy at
+            Building bldg = clientgui.getClient().game.getBoard().getBuildingAt(moveto);
+            if(null != bldg && !(ce() instanceof Aero)) {
+                int height = clientgui.getClient().game.getBoard().getHex(moveto).terrainLevel(Terrains.BLDG_ELEV);
+                String[] floors = new String[height + 1];
+                for (int loop = 1; loop <= height; loop++) {
+                    floors[loop - 1] = Messages.getString("DeploymentDisplay.floor") + Integer.toString(loop);
+                }
+                floors[height] = Messages.getString("DeploymentDisplay.top");
+                SingleChoiceDialog floorsDialog = new SingleChoiceDialog(
+                        clientgui.frame,
+                        Messages
+                                .getString("DeploymentDisplay.floorsDialog.title"), //$NON-NLS-1$
+                        Messages
+                                .getString(
+                                        "DeploymentDisplay.floorsDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
+                        floors);
+                floorsDialog.setVisible(true);
+                if (floorsDialog.getAnswer()) {
+                    ce().setElevation(floorsDialog.getChoice());
+                } else {
+                    ce().setElevation(0);
+                }
+            } else if (!(ce() instanceof Aero)) {
+                ce().setElevation(0);
+            }
+            
             ce().setPosition(moveto);
+            
             clientgui.bv.redrawEntity(ce());
             butDone.setEnabled(true);
         }

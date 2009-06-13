@@ -526,8 +526,8 @@ public class Client implements IClientCommandHandler {
      * @param c - the <code>Coords</code> where the entity should be deployed
      * @param nFacing - the <code>int</code> direction the entity should face
      */
-    public void deploy(int id, Coords c, int nFacing) {
-        this.deploy(id, c, nFacing, new Vector<Entity>(), false);
+    public void deploy(int id, Coords c, int nFacing, int elevation) {
+        this.deploy(id, c, nFacing, elevation, new Vector<Entity>(), false);
     }
 
     /**
@@ -541,14 +541,15 @@ public class Client implements IClientCommandHandler {
      *            being transported byt the deployed entity.
      * @param assaultDrop - true if deployment is an assault drop
      */
-    public void deploy(int id, Coords c, int nFacing,
+    public void deploy(int id, Coords c, int nFacing, int elevation,
             Vector<Entity> loadedUnits, boolean assaultDrop) {
-        int packetCount = 5 + loadedUnits.size();
+        int packetCount = 6 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
         data[index++] = new Integer(id);
         data[index++] = c;
         data[index++] = new Integer(nFacing);
+        data[index++] = new Integer(elevation);
         data[index++] = new Integer(loadedUnits.size());
         data[index++] = new Boolean(assaultDrop);
 

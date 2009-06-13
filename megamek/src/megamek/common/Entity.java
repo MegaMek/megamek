@@ -4790,6 +4790,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return 0;
         }
 
+        //check for movement inside a hangar
+        Building curBldg = game.getBoard().getBuildingAt(curPos);
+        if(null != prevPos && null != curBldg && curBldg.isIn(prevPos) 
+                && curBldg.getBldgClass() == Building.HANGAR && curHex.terrainLevel(Terrains.BLDG_ELEV) > height()
+                && step.getElevation() < curHex.terrainLevel(Terrains.BLDG_ELEV)) {
+            return 0;
+        }
+        
         int rv = 0;
         // check current hex for building
         if (step.getElevation() < curHex.terrainLevel(Terrains.BLDG_ELEV)) {
@@ -4803,7 +4811,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (prevStep != null) {
                 prevEl = prevStep.getElevation();
             }
-            if (prevEl < prevHex.terrainLevel(Terrains.BLDG_ELEV)) {
+            if (prevEl < prevHex.terrainLevel(Terrains.BLDG_ELEV) 
+                    && (curHex.terrainLevel(Terrains.BLDG_CLASS) != 1 || getHeight() >= curHex.terrainLevel(Terrains.BLDG_ELEV))) {
                 rv += 1;
             }
         }

@@ -62,6 +62,8 @@ v0.35.2-dev (SVN)
 + improved quirk and pilot advantage reporting
 + Gun Emplacements now just contain weapon loadouts and turret information. They must be placed within buildings.
 + movement inside hangars costs no extra MP and does not require PSR
++ deployment into buildings brings up dialog asking for floor of deployment
++ draw elevation on entity sprite for all non-zero elevations
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

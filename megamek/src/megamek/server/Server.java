@@ -8116,12 +8116,13 @@ public class Server implements Runnable {
         Entity entity = game.getEntity(packet.getIntValue(0));
         Coords coords = (Coords) packet.getObject(1);
         int nFacing = packet.getIntValue(2);
+        int elevation = packet.getIntValue(3);
 
         // Handle units that deploy loaded with other units.
-        int loadedCount = packet.getIntValue(3);
+        int loadedCount = packet.getIntValue(4);
         Vector<Entity> loadVector = new Vector<Entity>();
         for (int i = 0; i < loadedCount; i++) {
-            int loadedId = packet.getIntValue(5 + i);
+            int loadedId = packet.getIntValue(6 + i);
             loadVector.addElement(game.getEntity(loadedId));
         }
 
@@ -8132,14 +8133,14 @@ public class Server implements Runnable {
         }
 
         // can this player/entity act right now?
-        final boolean assaultDrop = packet.getBooleanValue(4);
+        final boolean assaultDrop = packet.getBooleanValue(5);
         if (!game.getTurn().isValid(connId, entity, game) || !(game.getBoard().isLegalDeployment(coords, entity.getOwner()) || (assaultDrop && game.getOptions().booleanOption("assault_drop") && entity.canAssaultDrop()))) {
             System.err.println("error: server got invalid deployment packet");
             return;
         }
 
         // looks like mostly everything's okay
-        processDeployment(entity, coords, nFacing, loadVector, assaultDrop);
+        processDeployment(entity, coords, nFacing, elevation, loadVector, assaultDrop);
 
         // Update visibility indications if using double blind.
         if (doBlind()) {
@@ -8154,7 +8155,7 @@ public class Server implements Runnable {
      * specified entities inside of it too. Also, check that the deployment is
      * valid.
      */
-    private void processDeployment(Entity entity, Coords coords, int nFacing, Vector<Entity> loadVector, boolean assaultDrop) {
+    private void processDeployment(Entity entity, Coords coords, int nFacing, int elevation, Vector<Entity> loadVector, boolean assaultDrop) {
         for (Entity loaded : loadVector) {
             if ((loaded == null) || (loaded.getPosition() != null) || (loaded.getTransportId() != Entity.NONE)) {
                 // Something is fishy in Denmark.
@@ -8237,6 +8238,11 @@ public class Server implements Runnable {
                 entity.setElevation(hex.floor() - hex.surface());
             }
         }
+        //add the elevation that was passed into this method
+        //TODO: currently only used for building placement, we should do this more systematically with 
+        //up/down buttons in the deployment display
+        entity.setElevation(entity.getElevation() + elevation);
+        
         entity.setDone(true);
         entity.setDeployed(true);
         entityUpdate(entity.getId());

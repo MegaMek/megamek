@@ -1576,7 +1576,7 @@ public class TestBot extends BotClient {
 
         Entity ce = game.getEntity(entNum);
         megamek.debug.Assert.assertTrue(!ce.isHexProhibited(game.getBoard().getHex(cDeploy)));
-        deploy(entNum, cDeploy, nDir);
+        deploy(entNum, cDeploy, nDir, 0);
     }
 
     @Override

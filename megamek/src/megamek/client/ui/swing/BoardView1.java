@@ -2405,17 +2405,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             }
 
             // draw condition strings
-
+            
+            //draw elevation if non-zero
+            if(entity.getElevation() != 0) {
+                graph.setColor(Color.darkGray);
+                graph.drawString(Integer.toString(entity.getElevation()), 26, 15);
+                graph.setColor(Color.PINK);
+                graph.drawString(Integer.toString(entity.getElevation()), 25, 14);
+            }
+            
             if(entity instanceof Aero) {
                 Aero a = (Aero)entity;
-
-                //draw altitude if Aero in atmosphere
-                if(game.getBoard().inAtmosphere()) {
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(Integer.toString(a.getElevation()), 26, 15);
-                    graph.setColor(Color.PINK);
-                    graph.drawString(Integer.toString(a.getElevation()), 25, 14);
-                }
 
                 if(a.isRolled()) {
                     // draw "rolled"

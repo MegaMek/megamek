@@ -2134,13 +2134,18 @@ public class MoveStep implements Serializable {
         if ((moveType == IEntityMovementMode.WIGE) && climbMode && (elevation > 0)) {
             mp += 2;
         }
-
+        
         // If we entering a building, all non-infantry pay additional MP.
         if (nDestEl < destHex.terrainLevel(Terrains.BLDG_ELEV)) {
-            if (!isInfantry) {
+            Building bldg = game.getBoard().getBuildingAt(getPosition());
+            //check for inside hangar movement
+            if(null != prev && null != bldg && bldg.isIn(prev) 
+                    && bldg.getBldgClass() == Building.HANGAR 
+                    && destHex.terrainLevel(Terrains.BLDG_ELEV) > parent.getEntity().height()) {
+                mp += 0;
+            } else if (!isInfantry) {
                 if (!isProto) {
                     // non-protos pay extra according to the building type
-                    Building bldg = game.getBoard().getBuildingAt(getPosition());
                     mp += bldg.getType();
                     if(bldg.getBldgClass() == Building.HANGAR) {
                         mp--;

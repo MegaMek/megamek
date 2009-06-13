@@ -380,7 +380,13 @@ public class Compute {
         // need to make a piloting check to avoid damage.
         if ((destElevation < destHex.terrainLevel(Terrains.BLDG_ELEV))
                 && !(entity instanceof Infantry)) {
-            return true;
+            Building bldg = game.getBoard().getBuildingAt(dest);
+            boolean insideHangar = null != src && null != bldg && bldg.isIn(src) 
+                    && bldg.getBldgClass() == Building.HANGAR 
+                    && destHex.terrainLevel(Terrains.BLDG_ELEV) > entity.height();              
+            if(!insideHangar) {
+                return true;
+            }
         }
 
         // check sideslips

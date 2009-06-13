@@ -65,6 +65,7 @@ v0.35.2-dev (SVN)
 + deployment into buildings brings up dialog asking for floor of deployment
 + draw elevation on entity sprite for all non-zero elevations
 + Gun Emplacement building class
++ Bug: reporting error in gun emplacement displayable name
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

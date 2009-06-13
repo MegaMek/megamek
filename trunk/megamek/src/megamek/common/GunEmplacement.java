@@ -91,7 +91,6 @@ public class GunEmplacement extends Entity implements Serializable {
         if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
         }
-
         //gun emplacements must be placed on a building
         return !hex.containsTerrain(Terrains.BUILDING);
        

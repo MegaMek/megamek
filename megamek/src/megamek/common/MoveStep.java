@@ -2241,6 +2241,12 @@ public class MoveStep implements Serializable {
                     && !(entity instanceof Infantry)) {
                 return false;
             }
+            
+            //only infantry can enter a gun emplacement
+            if(elevation < hex.terrainLevel(Terrains.BLDG_ELEV) && bld.getBldgClass() == Building.GUN_EMPLACEMENT
+                    && !(entity instanceof Infantry)) {
+                return false;
+            }
         }
 
         final int srcAlt = srcEl + srcHex.getElevation();

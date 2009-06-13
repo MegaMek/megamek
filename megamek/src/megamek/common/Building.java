@@ -188,6 +188,7 @@ public class Building implements Serializable {
     public static final int STANDARD = 0;
     public static final int HANGAR = 1;
     public static final int FORTRESS = 2;
+    public static final int GUN_EMPLACEMENT = 3;
     //TODO: leaving out Castles Brian until issues with damage scaling are resolved
     //public static final int CASTLE_BRIAN = 3;
 
@@ -554,6 +555,8 @@ public class Building implements Serializable {
         case Building.FORTRESS:
             buf.append("Fortress ");
             break;
+        case Building.GUN_EMPLACEMENT:
+            buf.append("Gun Emplacement");
        // case Building.CASTLE_BRIAN:
          //   buf.append("Castle Brian ");
         //    break;
@@ -621,6 +624,7 @@ public class Building implements Serializable {
         case Building.HANGAR:
             return 0.5;
         case Building.FORTRESS:
+        case Building.GUN_EMPLACEMENT:
             return 2.0;
         //case Building.CASTLE_BRIAN:
           //  return 10.0;
@@ -636,6 +640,7 @@ public class Building implements Serializable {
     public double getDamageToScale() {
         switch(this.getBldgClass()) {
         case Building.FORTRESS:
+        case Building.GUN_EMPLACEMENT:
             return 0.5;
         //case Building.CASTLE_BRIAN:
           //  return 0.1;

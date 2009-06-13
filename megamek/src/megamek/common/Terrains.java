@@ -58,7 +58,7 @@ public class Terrains implements ITerrainFactory {
     public static final int BLDG_CF        = 23;
     public static final int BLDG_ELEV      = 24;
     public static final int BLDG_BASEMENT  = 25;
-    public static final int BLDG_CLASS     = 26; //1: hangars 2: fortresses
+    public static final int BLDG_CLASS     = 26; //1: hangars 2: fortresses 3: gun emplacements
     public static final int BLDG_ARMOR     = 27;
     //leaving this empty will be interpreted as standard
     public static final int BRIDGE         = 28;

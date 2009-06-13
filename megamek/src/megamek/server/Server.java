@@ -3514,6 +3514,10 @@ public class Server implements Runnable {
                 if (bldg.getType() == Building.WALL) {
                     crashedIntoTerrain = true;
                 }
+                
+                if(bldg.getBldgClass() == Building.GUN_EMPLACEMENT) {
+                    crashedIntoTerrain = true;
+                }
             }
 
             // however WIGE can gain 1 level to avoid crashing into the terrain
@@ -3537,6 +3541,8 @@ public class Server implements Runnable {
                     // Like a building.
                     if (bldg.getType() == Building.WALL) {
                         r = new Report(2047);
+                    } else if (bldg.getBldgClass() == Building.GUN_EMPLACEMENT) {
+                       r = new Report(2049);
                     } else {
                         r = new Report(2045);
                     }
@@ -3584,6 +3590,10 @@ public class Server implements Runnable {
                         // Like a building.
                         if (bldg.getType() == Building.WALL) {
                             addReport(destroyEntity(entity, "crashed into a wall"));
+                            break;
+                        }
+                        if (bldg.getBldgClass() == Building.GUN_EMPLACEMENT) {
+                            addReport(destroyEntity(entity, "crashed into a gun emplacement"));
                             break;
                         }
 

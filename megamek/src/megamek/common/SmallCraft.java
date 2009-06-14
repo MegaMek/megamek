@@ -1,13 +1,13 @@
 /*
 * MegaAero - Copyright (C) 2007 Jay Lawson
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -21,67 +21,67 @@ package megamek.common;
  * @author Jay Lawson
  */
 public class SmallCraft extends Aero {
-           
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6708788176436555036L;
     private static String[] LOCATION_ABBRS = { "NOS", "LS", "RS", "AFT" };
     private static String[] LOCATION_NAMES = { "Nose", "Left Side", "Right Side", "Aft" };
-    
+
     //crew and passengers
     private int nCrew = 0;
     private int nPassenger = 0;
-    
+
     public void setNCrew(int crew) {
-        this.nCrew = crew;
+        nCrew = crew;
     }
-    
+
     public void setNPassenger(int pass) {
-        this.nPassenger = pass;
+        nPassenger = pass;
     }
-    
+
     public int getNCrew() {
         return nCrew;
     }
-    
+
     public int getNPassenger() {
          return nPassenger;
     }
-    
+
     @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
-    
+
     @Override
-    public String[] getLocationNames() { 
-        return LOCATION_NAMES; 
+    public String[] getLocationNames() {
+        return LOCATION_NAMES;
     }
-  
+
     @Override
     public int locations() {
         return 4;
    }
-    
+
     @Override
     public void setEngine(Engine e) {
         engine = e;
     }
-    
+
     //what is different - hit table is about it
     @Override
     public HitData rollHitLocation(int table, int side) {
 
-        /* 
+        /*
          * Unlike other units, ASFs determine potential crits based on the to-hit roll
          * so I need to set this potential value as well as return the to hit data
          */
 
         int roll = Compute.d6(2);
-        
-        if(table == ToHitData.HIT_ABOVE || table == ToHitData.HIT_BELOW) {
-            
+
+        if((table == ToHitData.HIT_ABOVE) || (table == ToHitData.HIT_BELOW)) {
+
             //have to decide which wing
             int wingloc = LOC_RWING;
             int wingroll = Compute.d6(1);
@@ -130,7 +130,7 @@ public class SmallCraft extends Aero {
                 return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         }
-       
+
         if(side == ToHitData.SIDE_FRONT) {
             // normal front hits
             switch( roll ) {
@@ -282,15 +282,15 @@ public class SmallCraft extends Aero {
                 setPotCrit(CRIT_FUEL_TANK);
                 return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
-        }    
+        }
             return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
         }
-    
+
     //weapon arcs
     @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-        
+
         int arc = Compute.ARC_NOSE;
         if(!isSpheroid()) {
             switch (mounted.getLocation()) {
@@ -342,36 +342,38 @@ public class SmallCraft extends Aero {
             default:
                 arc = Compute.ARC_360;
             }
-        
-        } 
-        
+
+        }
+
         return rollArcs(arc);
-        
+
     }
-    
+
     public int getArcswGuns() {
-        //return the number 
+        //return the number
         int nArcs = 0;
         for(int i = 0; i < locations(); i++) {
-                if(hasWeaponInArc(i, false))
+                if(hasWeaponInArc(i, false)) {
                     nArcs++;
+                }
                 //check for rear locations
-                if(hasWeaponInArc(i, true))
+                if(hasWeaponInArc(i, true)) {
                     nArcs++;
-        }      
+                }
+        }
         return nArcs;
     }
-    
+
     public boolean hasWeaponInArc(int loc, boolean rearMount) {
         boolean hasWeapons = false;
         for(Mounted weap: getWeaponList()) {
-            if(weap.getLocation() == loc && weap.isRearMounted() == rearMount) {
+            if((weap.getLocation() == loc) && (weap.isRearMounted() == rearMount)) {
                 hasWeapons = true;
             }
         }
         return hasWeapons;
     }
-    
+
     @Override
     public double getArmorWeight() {
         //first I need to subtract SI bonus from total armor
@@ -379,7 +381,7 @@ public class SmallCraft extends Aero {
         armorPoints -= getSI() * locations();
         //this roundabout method is actually necessary to avoid rounding weirdness.  Yeah, it's dumb.
         //now I need to determine base armor points by type and weight
-        
+
         double baseArmor = 16.0;
         if(isClan()) {
             baseArmor = 20.0;
@@ -439,7 +441,7 @@ public class SmallCraft extends Aero {
                 }
             }
         }
-        
+
         double armorPerTon = baseArmor*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
         double armWeight=0.0;
         for(;((int)Math.round(armWeight*armorPerTon))<armorPoints;armWeight+=.5) {
@@ -447,14 +449,15 @@ public class SmallCraft extends Aero {
         }
         return armWeight;
     }
-    
-    /*There is a mistake in some of the AT2r costs
-     * for some reason they added ammo twice for a lot of the 
+
+    /**
+     * There is a mistake in some of the AT2r costs
+     * for some reason they added ammo twice for a lot of the
      * level 2 designs, leading to costs that are too high
      */
     @Override
-    public double getCost() {
-        
+    public double getCost(boolean ignoreAmmo) {
+
         double cost = 0;
 
         //add in controls
@@ -470,13 +473,13 @@ public class SmallCraft extends Aero {
         cost += 100000;
         //gunnery/control systems
         cost += 10000 * getArcswGuns();
-        
+
         //structural integrity
         cost += 100000 * getSI();
-        
+
         //additional flight systems (attitude thruster and landing gear)
         cost += 25000 + 10 * getWeight();
-        
+
         //engine
         double engineMultiplier = 0.065;
         if(isClan()) {
@@ -486,27 +489,27 @@ public class SmallCraft extends Aero {
         cost += engineWeight * 1000;
         //drive unit
         cost += 500 * getOriginalWalkMP() * weight / 100.0;
-  
+
         //fuel tanks
         cost += 200 * getFuel() / 80.0;
 
         //armor
         cost += getArmorWeight()*EquipmentType.getArmorCost(armorType);
-        
+
         //heat sinks
-        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000: 2000;    
+        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000: 2000;
         cost += sinkCost*getHeatSinks();
-        
-        //weapons 
-        cost += getWeaponsAndEquipmentCost();
-        
+
+        //weapons
+        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
+
         double weightMultiplier = 1 + (weight / 50f);
-        
+
         return Math.round(cost * weightMultiplier);
-        
+
     }
-    
-    
+
+
     @Override
     public int getMaxEngineHits() {
         return 6;
@@ -516,7 +519,7 @@ public class SmallCraft extends Aero {
     public double getBVTypeModifier() {
         return 1.0;
     }
-    
+
     /**
      * need to check bay location before loading ammo
      */
@@ -525,19 +528,20 @@ public class SmallCraft extends Aero {
         boolean success = false;
         WeaponType wtype = (WeaponType) mounted.getType();
         AmmoType atype = (AmmoType) mountedAmmo.getType();
-        
-        if(mounted.getLocation() != mountedAmmo.getLocation())
+
+        if(mounted.getLocation() != mountedAmmo.getLocation()) {
             return success;
-        
+        }
+
         if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
-                && atype.getAmmoType() == wtype.getAmmoType()
-                && atype.getRackSize() == wtype.getRackSize()) {
+                && (atype.getAmmoType() == wtype.getAmmoType())
+                && (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
         }
         return success;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getTotalCommGearTons()
@@ -546,7 +550,7 @@ public class SmallCraft extends Aero {
     public int getTotalCommGearTons() {
         return 3 + getExtraCommGearTons();
     }
-    
+
     /**
      * All military small craft automatically have ECM if in space
      */
@@ -557,10 +561,10 @@ public class SmallCraft extends Aero {
         }
         return getECMRange() >= 0;
     }
-    
+
     /**
-     * What's the range of the ECM equipment? 
-     * 
+     * What's the range of the ECM equipment?
+     *
      * @return the <code>int</code> range of this unit's ECM. This value will
      *         be <code>Entity.NONE</code> if no ECM is active.
      */
@@ -569,15 +573,15 @@ public class SmallCraft extends Aero {
         if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
             return super.getECMRange();
         }
-        if(!this.isMilitary()) {
+        if(!isMilitary()) {
             return Entity.NONE;
         }
-        int range = -1;      
+        int range = -1;
         //if the unit has an ECM unit, then the range might be extended by one
         if ( !isShutDown() ){
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM) && !m.isInoperable()) {
+                if ((type instanceof MiscType) && type.hasFlag(MiscType.F_ECM) && !m.isInoperable()) {
                     if(type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
                         range += 1;
                     } else {
@@ -585,18 +589,18 @@ public class SmallCraft extends Aero {
                     }
                     break;
                 }
-            }          
+            }
         }
         //the range might be affected by sensor/FCS damage
-        range = range - getFCSHits() - getSensorHits();     
+        range = range - getFCSHits() - getSensorHits();
         return range;
     }
-    
+
     /**
      * @return is  the crew of this vessel protected from gravitational effects, see StratOps, pg. 36
      */
     @Override
     public boolean isCrewProtected() {
-        return isMilitary() && this.getOriginalWalkMP() > 4;
+        return isMilitary() && (getOriginalWalkMP() > 4);
     }
 }

@@ -16,7 +16,6 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Enumeration;
 import java.util.Vector;
 
 /**
@@ -93,7 +92,7 @@ public class GunEmplacement extends Entity implements Serializable {
         }
         //gun emplacements must be placed on a building
         return !hex.containsTerrain(Terrains.BUILDING);
-       
+
     }
 
     @Override
@@ -427,7 +426,7 @@ public class GunEmplacement extends Entity implements Serializable {
     public boolean isRepairable() {
         return isSalvage();
     }
-    
+
     @Override
     public boolean isTargetable() {
         return false;
@@ -464,7 +463,7 @@ public class GunEmplacement extends Entity implements Serializable {
     }
 
     @Override
-    public double getCost() {
+    public double getCost(boolean ignoreAmmo) {
         // XXX no idea
         return 0;
     }

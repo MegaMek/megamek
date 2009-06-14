@@ -32,7 +32,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
-import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
@@ -92,7 +91,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * The pilot of the entity. Even infantry has a 'pilot'.
      */
     public Pilot crew = new Pilot();
-    
+
     private Quirks quirks = new Quirks();
 
     protected boolean shutDown = false;
@@ -2606,7 +2605,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         //is spreadable
         for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
             CriticalSlot crit = getCritical(location, slot);
-            if (null != crit && crit.getType() == CriticalSlot.TYPE_EQUIPMENT) {
+            if ((null != crit) && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
                 Mounted mount = crit.getMount();
                 if ((mount.getType() instanceof MiscType) && mount.isReady()) {
                     MiscType type = (MiscType) mount.getType();
@@ -3279,7 +3278,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (((crew.getOptions().booleanOption("cyber_eye_im") || crew.getOptions().booleanOption("mm_eye_im")) && (this instanceof Infantry) && !(this instanceof BattleArmor)) || (crew.getOptions().booleanOption("mm_eye_im") && (crew.getOptions().booleanOption("vdni") || crew.getOptions().booleanOption("bvdni")))) {
             cyberBonus = 1;
         }
-        
+
         //check for quirks
         //TODO: assuming the range of this active probe is 2
         //http://www.classicbattletech.com/forums/index.php/topic,52961.new.html#new
@@ -3287,7 +3286,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (getQuirks().booleanOption("imp_sensors")) {
             quirkBonus = 2;
         }
-        
+
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP) && !m.isInoperable()) {
@@ -4356,7 +4355,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (isCarefulStand()) {
             roll.addModifier(-2, "careful stand");
         }
-        
+
         if(getQuirks().booleanOption("hard_pilot")) {
             roll.addModifier(+1, "hard to pilot");
         }
@@ -4568,7 +4567,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "not moving recklessly");
         }
-        
+
         adjustDifficultTerrainPSRModifier(roll);
 
         return roll;
@@ -4792,12 +4791,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         //check for movement inside a hangar
         Building curBldg = game.getBoard().getBuildingAt(curPos);
-        if(null != prevPos && null != curBldg && curBldg.isIn(prevPos) 
-                && curBldg.getBldgClass() == Building.HANGAR && curHex.terrainLevel(Terrains.BLDG_ELEV) > height()
-                && step.getElevation() < curHex.terrainLevel(Terrains.BLDG_ELEV)) {
+        if((null != prevPos) && (null != curBldg) && curBldg.isIn(prevPos)
+                && (curBldg.getBldgClass() == Building.HANGAR) && (curHex.terrainLevel(Terrains.BLDG_ELEV) > height())
+                && (step.getElevation() < curHex.terrainLevel(Terrains.BLDG_ELEV))) {
             return 0;
         }
-        
+
         int rv = 0;
         // check current hex for building
         if (step.getElevation() < curHex.terrainLevel(Terrains.BLDG_ELEV)) {
@@ -4811,8 +4810,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (prevStep != null) {
                 prevEl = prevStep.getElevation();
             }
-            if (prevEl < prevHex.terrainLevel(Terrains.BLDG_ELEV) 
-                    && (curHex.terrainLevel(Terrains.BLDG_CLASS) != 1 || getHeight() >= curHex.terrainLevel(Terrains.BLDG_ELEV))) {
+            if ((prevEl < prevHex.terrainLevel(Terrains.BLDG_ELEV))
+                    && ((curHex.terrainLevel(Terrains.BLDG_CLASS) != 1) || (getHeight() >= curHex.terrainLevel(Terrains.BLDG_ELEV)))) {
                 rv += 1;
             }
         }
@@ -4949,12 +4948,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         return mod;
     }
-    
+
     /**
      * calculate any changes to the PSR modifier for entering difficult terrain
      */
-    private void adjustDifficultTerrainPSRModifier(PilotingRollData psr) {      
-        if(getQuirks().booleanOption("easy_pilot") && getCrew().getPiloting() > 3) {
+    private void adjustDifficultTerrainPSRModifier(PilotingRollData psr) {
+        if(getQuirks().booleanOption("easy_pilot") && (getCrew().getPiloting() > 3)) {
             psr.addModifier(-1, "easy to pilot");
         }
         if(getQuirks().booleanOption("unbalanced")) {
@@ -6840,11 +6839,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return taggedBy;
     }
 
-    public abstract double getCost();
+    public abstract double getCost(boolean ignoreAmmo);
 
-    public int getWeaponsAndEquipmentCost() {
+    public int getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
         int cost = 0;
         for (Mounted mounted : getEquipment()) {
+            if (ignoreAmmo && (mounted.getType() instanceof AmmoType) && !mounted.getType().hasFlag(AmmoType.T_COOLANT_POD)) {
+                continue;
+            }
             if (mounted.isWeaponGroup()) {
                 continue;
             }
@@ -8092,7 +8094,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return 0;
     }
-    
+
     /**
      * @return the initiative bonus this Entity grants for quirks
      */
@@ -8414,7 +8416,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return source;
     }
-    
+
     public void setQuirks(Quirks quirks) {
         this.quirks = quirks;
     }
@@ -8422,11 +8424,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public Quirks getQuirks() {
         return quirks;
     }
-    
+
     public void clearQuirks() {
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
                 .hasMoreElements();) {
-            IOptionGroup group = i.nextElement();  
+            IOptionGroup group = i.nextElement();
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption option = j.nextElement();
@@ -8435,7 +8437,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
     }
-    
+
     /**
      * count all the quirks for this unit, positive and negative
      */
@@ -8449,14 +8451,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     .hasMoreElements();) {
                 IOption quirk = j.nextElement();
 
-                if (quirk.booleanValue())
+                if (quirk.booleanValue()) {
                     count++;
+                }
             }
         }
 
         return count;
     }
-    
+
     /**
      * count the quirks for this unit, for a given group name
      */
@@ -8466,20 +8469,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
-            if (!group.getKey().equalsIgnoreCase(grpKey))
+            if (!group.getKey().equalsIgnoreCase(grpKey)) {
                 continue;
+            }
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption quirk = j.nextElement();
 
-                if (quirk.booleanValue())
+                if (quirk.booleanValue()) {
                     count++;
+                }
             }
         }
 
         return count;
     }
-    
+
     /**
      * Returns a string of all the quirk "codes" for this entity,
      * using sep as the separator
@@ -8500,9 +8505,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         qrk.append(sep);
                     }
                     qrk.append(quirk.getName());
-                    if (quirk.getType() == IOption.STRING
-                            || quirk.getType() == IOption.CHOICE
-                            || quirk.getType() == IOption.INTEGER) {
+                    if ((quirk.getType() == IOption.STRING)
+                            || (quirk.getType() == IOption.CHOICE)
+                            || (quirk.getType() == IOption.INTEGER)) {
                         qrk.append(" ").append(quirk.stringValue());
                     }
                 }
@@ -8510,5 +8515,5 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return qrk.toString();
     }
-    
+
 }

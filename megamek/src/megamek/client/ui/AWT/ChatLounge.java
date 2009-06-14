@@ -1009,7 +1009,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             if (!client.game.getOptions().booleanOption("pilot_advantages")) { //$NON-NLS-1$
                 entity.getCrew().clearOptions();
             }
-            
+
             if (!client.game.getOptions().booleanOption("stratops_quirks")) { //$NON-NLS-1$
                 entity.clearQuirks();
             }
@@ -1084,7 +1084,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         boolean isManeiDomini = entity.getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0;
         int posQuirkCount = entity.countQuirks(Quirks.POS_QUIRKS);
         int negQuirkCount = entity.countQuirks(Quirks.NEG_QUIRKS);
-        
+
         String gunnery = Integer.toString(entity.getCrew().getGunnery());
         if (rpgSkills) {
             gunnery = entity.getCrew().getGunneryRPG();
@@ -1112,7 +1112,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                     new Integer(entity.getCrew().getPiloting()),
                                     (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                     (isManeiDomini ? Messages
-                                            .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$ 
+                                            .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$
                                     unitClass,
                                     (posQuirkCount > 0 ? " <" + posQuirkCount + Messages.getString("ChatLounge.pquirk") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                     (negQuirkCount > 0 ? " <" + negQuirkCount + Messages.getString("ChatLounge.nquirk") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -1131,7 +1131,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                                     .getPiloting()),
                                             (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                             (isManeiDomini ? Messages
-                                                    .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$ 
+                                                    .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$
                                             (posQuirkCount > 0 ? " <" + posQuirkCount + Messages.getString("ChatLounge.pquirk") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                             (negQuirkCount > 0 ? " <" + negQuirkCount + Messages.getString("ChatLounge.nquirk") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                             new Integer(entity
@@ -1237,7 +1237,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     if (useBv) {
                         playerValue += entity.calculateBattleValue();
                     } else if (useCost) {
-                        playerValue += entity.getCost();
+                        playerValue += entity.getCost(false);
                     } else {
                         playerValue += entity.getWeight();
                     }

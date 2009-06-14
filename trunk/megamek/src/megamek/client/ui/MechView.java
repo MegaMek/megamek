@@ -102,7 +102,7 @@ public class MechView {
         sLoadout.append(dFormatter.format(entity.calculateBattleValue()));
 
         sLoadout.append(" Cost: ");
-        sLoadout.append(dFormatter.format(entity.getCost()));
+        sLoadout.append(dFormatter.format(entity.getCost(false)));
         sLoadout.append(" Cbills");
 
         sBasic.append(entity.getShortNameRaw());
@@ -197,7 +197,7 @@ public class MechView {
             } else {
                 sBasic.append( getInternalAndArmor() );
             }
-        } 
+        }
         if (entity.getFluff() != null) {
             sFluff.append(entity.getFluff());
         }
@@ -498,10 +498,10 @@ public class MechView {
                     || (name.indexOf("Endo Steel") != -1 //$NON-NLS-1$
 )
                     || (name.indexOf("Ferro-Fibrous") != -1) //$NON-NLS-1$
-            
+
                     || (name.indexOf("Ferro-Lamellor") != -1)) { //$NON-NLS-1$
-                
-                    
+
+
                 // These items are displayed elsewhere, so skip them here.
                 continue;
             }

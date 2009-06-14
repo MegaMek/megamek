@@ -1734,12 +1734,13 @@ public class Aero extends Entity
         return 0;
     }
 
-    /*There is a mistake in some of the AT2r costs
+    /**
+     * There is a mistake in some of the AT2r costs
      * for some reason they added ammo twice for a lot of the
      * level 2 designs, leading to costs that are too high
      */
     @Override
-    public double getCost() {
+    public double getCost(boolean ignoreAmmo) {
 
         double cost = 0;
 
@@ -1766,7 +1767,7 @@ public class Aero extends Entity
         cost += sinkCost*getHeatSinks();
 
         //weapons
-        cost += getWeaponsAndEquipmentCost();
+        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         //omni multiplier
         double omniMultiplier = 1;

@@ -827,7 +827,7 @@ public class Protomech extends Entity {
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                 }
-                if ((mLinker.getType() instanceof MiscType) 
+                if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                     dBV *= 1.3;
                 }
@@ -1100,7 +1100,7 @@ public class Protomech extends Entity {
      * @return The cost in C-Bills of the ProtoMech in question.
      */
     @Override
-    public double getCost() {
+    public double getCost(boolean ignoreAmmo) {
         double retVal = 0;
 
         // Add the cockpit, a constant cost.

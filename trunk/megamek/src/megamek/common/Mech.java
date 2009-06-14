@@ -1695,7 +1695,7 @@ public abstract class Mech extends Entity implements Serializable {
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
             if(getQuirks().booleanOption("ext_twist")) {
-                return (rotate == 0) || (rotate == 1) || (rotate == 2) || (rotate == -1) || (rotate == -2) 
+                return (rotate == 0) || (rotate == 1) || (rotate == 2) || (rotate == -1) || (rotate == -2)
                     || (rotate == -5) || (rotate == -4) || (rotate == 5) || (rotate == 4);
             }
             return (rotate == 0) || (rotate == 1) || (rotate == -1) || (rotate == -5) || (rotate == 5);
@@ -1717,8 +1717,8 @@ public abstract class Mech extends Entity implements Serializable {
         }
         // otherwise, twist once in the appropriate direction
         final int rotate = (dir + (6 - getFacing())) % 6;
-        if(rotate == 3 && getQuirks().booleanOption("ext_twist")) {
-            //if the unit can do an extended torso twist and the area chosen 
+        if((rotate == 3) && getQuirks().booleanOption("ext_twist")) {
+            //if the unit can do an extended torso twist and the area chosen
             //was directly behind them, then just rotate one way
             return (getFacing() + 2) % 6;
         }
@@ -4077,8 +4077,8 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     @Override
-    public double getCost() {
-        return getCost(null);
+    public double getCost(boolean ignoreAmmo) {
+        return getCost(null, ignoreAmmo);
     }
 
     /**
@@ -4089,7 +4089,7 @@ public abstract class Mech extends Entity implements Serializable {
      *            buffer to append the detailed cost report to
      * @return The cost in C-Bills of the 'Mech in question.
      */
-    public double getCost(StringBuffer detail) {
+    public double getCost(StringBuffer detail, boolean ignoreAmmo) {
         double[] costs = new double[14];
         int i = 0;
 
@@ -4148,7 +4148,7 @@ public abstract class Mech extends Entity implements Serializable {
         int sinkCost = hasDoubleHeatSinks() ? 6000 : 2000;
         costs[i++] = sinkCost * (heatSinks() - freeSinks);// cost of sinks
         costs[i++] = getArmorWeight() * EquipmentType.getArmorCost(armorType);
-        costs[i++] = getWeaponsAndEquipmentCost();
+        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);
 
         double cost = 0; // calculate the total
         for (int x = 0; x < i; x++) {
@@ -4291,7 +4291,7 @@ public abstract class Mech extends Entity implements Serializable {
         if(getQuirks().booleanOption("cramped_cockpit")) {
             roll.addModifier(1, "cramped cockpit");
         }
-        
+
         if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
             roll.addModifier(1, "Hardened Armor");
         }

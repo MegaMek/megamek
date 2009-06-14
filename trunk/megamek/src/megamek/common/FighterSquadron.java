@@ -44,7 +44,7 @@ public class FighterSquadron extends Aero {
         setModel("");
     }
 
-    /*
+    /**
      * construct fighter squadron with a specific name
      */
     public FighterSquadron(String name) {
@@ -52,11 +52,15 @@ public class FighterSquadron extends Aero {
         setModel("");
     }
 
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Aero#getCost(boolean)
+     */
     @Override
-    public double getCost() {
+    public double getCost(boolean ignoreAmmo) {
         double cost = 0.0;
         for(Aero fighter : fighters) {
-            cost += fighter.getCost();
+            cost += fighter.getCost(ignoreAmmo);
         }
         return cost;
     }
@@ -259,7 +263,7 @@ public class FighterSquadron extends Aero {
             }
             int avihits = fighter.getAvionicsHits();
 
-            if(avihits > 0 && avihits<3) {
+            if((avihits > 0) && (avihits<3)) {
                 prd.addModifier(avihits, "Avionics Damage");
             }
 
@@ -285,7 +289,7 @@ public class FighterSquadron extends Aero {
     public int getClusterMods() {
         int penalty = 0;
         for(Aero fighter : fighters) {
-            if(fighter.isDestroyed() || fighter.isDoomed() || fighter.getFCSHits() > 2) {
+            if(fighter.isDestroyed() || fighter.isDoomed() || (fighter.getFCSHits() > 2)) {
                 continue;
             }
             penalty += fighter.getClusterMods();
@@ -371,7 +375,7 @@ public class FighterSquadron extends Aero {
             int aimingMode) {
 
         // If this squadron is doomed or is of size 1 then just return the first one
-        if (isDoomed() || getNFighters() < 2) {
+        if (isDoomed() || (getNFighters() < 2)) {
             return new HitData(0);
         }
 
@@ -469,8 +473,8 @@ public class FighterSquadron extends Aero {
      */
     private void reloadAllWeapons() {
         for(Mounted weapon : getTotalWeaponList()) {
-            if(((WeaponType)weapon.getType()).getAmmoType() != AmmoType.T_NA
-                    && null != weapon.getLinked() && weapon.getLinked().getType() instanceof AmmoType) {
+            if((((WeaponType)weapon.getType()).getAmmoType() != AmmoType.T_NA)
+                    && (null != weapon.getLinked()) && (weapon.getLinked().getType() instanceof AmmoType)) {
                 weapon.unlink();
             }
         }
@@ -519,7 +523,7 @@ public class FighterSquadron extends Aero {
             fighter.useFuel(fuel);
         }
     }
-    
+
     @Override
     public ArrayList<Mounted> getBombs() {
         ArrayList<Mounted> allBombs = new ArrayList<Mounted>();
@@ -544,14 +548,14 @@ public class FighterSquadron extends Aero {
     @Override
     public boolean canLoad( Entity unit ) {
         // We must have enough space for the new fighter.
-        if ( !unit.isEnemyOf(this) && unit.isFighter()  && fighters.size() < MAX_SIZE) {
+        if ( !unit.isEnemyOf(this) && unit.isFighter()  && (fighters.size() < MAX_SIZE)) {
             return true;
         }
         //fighter squadrons can also load other fighter squadrons provided there is enough space
         //and the loadee is not empty
-        if(unit instanceof FighterSquadron &&  !unit.isEnemyOf(this) && getId() != unit.getId()
-                && ((FighterSquadron)unit).getN0Fighters() > 0
-                && (fighters.size() + ((FighterSquadron)unit).getN0Fighters()) <= MAX_SIZE) {
+        if((unit instanceof FighterSquadron) &&  !unit.isEnemyOf(this) && (getId() != unit.getId())
+                && (((FighterSquadron)unit).getN0Fighters() > 0)
+                && ((fighters.size() + ((FighterSquadron)unit).getN0Fighters()) <= MAX_SIZE)) {
             return true;
         }
 

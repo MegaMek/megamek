@@ -304,7 +304,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         lisPlayerInfo.addListSelectionListener(this);
         scrPlayerInfo = new JScrollPane(lisPlayerInfo);
         scrPlayerInfo.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        
+
         butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot")); //$NON-NLS-1$
         butAddBot.setActionCommand("add_bot"); //$NON-NLS-1$
         butAddBot.addActionListener(this);
@@ -725,10 +725,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Sets up the entities panel
      */
     private void setupEntities() {
-        lisEntities = new JList(new DefaultListModel());       
+        lisEntities = new JList(new DefaultListModel());
         MouseListener doubleClick = new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && lisEntities.locationToIndex(e.getPoint()) > -1) {
+                if ((e.getClickCount() == 2) && (lisEntities.locationToIndex(e.getPoint()) > -1)) {
                     Entity entity = clientgui.getClient().game.getEntity(entityCorrespondance[lisEntities.locationToIndex(e.getPoint())]);
                     customizeMech(entity);
                  }
@@ -738,7 +739,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         lisEntities.addListSelectionListener(this);
         scrEntities = new JScrollPane(lisEntities);
         scrEntities.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        
+
         butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList")); //$NON-NLS-1$
         butLoadList.setActionCommand("load_list"); //$NON-NLS-1$
         butLoadList.addActionListener(this);
@@ -1045,7 +1046,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             if (!clientgui.getClient().game.getOptions().booleanOption("pilot_advantages")) { //$NON-NLS-1$
                 entity.getCrew().clearOptions();
             }
-            
+
             if(!clientgui.getClient().game.getOptions().booleanOption("stratops_quirks")) { //$NON-NLS-1$
                 entity.clearQuirks();
             }
@@ -1276,7 +1277,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     if (useBv) {
                         playerValue += entity.calculateBattleValue();
                     } else if (useCost) {
-                        playerValue += entity.getCost();
+                        playerValue += entity.getCost(false);
                     } else {
                         playerValue += entity.getWeight();
                     }

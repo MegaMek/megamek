@@ -1205,7 +1205,7 @@ public class Tank extends Entity {
     }
 
     @Override
-    public double getCost() {
+    public double getCost(boolean ignoreAmmo) {
         double cost = 0;
         cost += getEngine().getBaseCost() * getEngine().getRating() * weight / 75.0;
         double controlWeight = Math.ceil(weight * 0.05 * 2.0) / 2.0; // ?
@@ -1257,7 +1257,7 @@ public class Tank extends Entity {
         } else {
             cost += diveTonnage * 40000;
         }
-        cost += getWeaponsAndEquipmentCost();
+        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
         double multiplier = 1.0;
         switch (movementMode) {
             case IEntityMovementMode.HOVER:

@@ -76,11 +76,11 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         boolean retVal = false;
 
         TestEntity testEntity = null;
-        if (entity instanceof Mech)
+        if (entity instanceof Mech) {
             testEntity = new TestMech((Mech) entity, mechOption, fileString);
-        else if (entity instanceof Tank)
+        } else if (entity instanceof Tank) {
             testEntity = new TestTank((Tank) entity, tankOption, fileString);
-        else {
+        } else {
             System.err.println("UnknownType: " + entity.getDisplayName());
             System.err.println("Found in: " + fileString);
             return false;
@@ -90,11 +90,12 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             System.out.print(testEntity.printEntity());
             StringBuffer buff = new StringBuffer();
             System.out.println("BV: " + entity.calculateBattleValue()
-                    + "    Cost: " + entity.getCost());
-            if (testEntity.correctEntity(buff, ignoreAmmo))
+                    + "    Cost: " + entity.getCost(false));
+            if (testEntity.correctEntity(buff, ignoreAmmo)) {
                 System.out.println("---Entity is valid---");
-            else
+            } else {
                 System.out.println("---Entity INVALID---");
+            }
         } else {
             StringBuffer buff = new StringBuffer();
             if (testEntity.correctEntity(buff, ignoreAmmo)) {
@@ -139,11 +140,13 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                     || ms[i].getUnitType().equals("Tank")) {
                 Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
                         .getEntryName());
-                if (entity == null)
+                if (entity == null) {
                     continue;
+                }
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),
-                        false))
+                        false)) {
                     failures++;
+                }
             }
         }
         System.out.println("Total Failures: " + failures);
@@ -152,10 +155,11 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     private void readOptions(ParsedXML node) {
         for (Enumeration<?> e = node.elements(); e.hasMoreElements();) {
             ParsedXML child = (ParsedXML) e.nextElement();
-            if (child.getName().equals(BASE_TANK_NODE))
+            if (child.getName().equals(BASE_TANK_NODE)) {
                 tankOption.readXMLOptions(child);
-            else if (child.getName().equals(BASE_MECH_NODE))
+            } else if (child.getName().equals(BASE_MECH_NODE)) {
                 mechOption.readXMLOptions(child);
+            }
         }
     }
 

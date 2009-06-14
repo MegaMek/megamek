@@ -697,6 +697,17 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+        return calculateBattleValue(ignoreC3, ignorePilot, false);
+    }
+
+    /**
+     * Calculates the battle value of this platoon.
+     * @param ignoreC3 ignore C3 linkage
+     * @param ignorePilot ignore the skill of the pilot
+     * @param singleTrooper calculate just the BV of a single trooper
+     * @return the battlevalue
+     */
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot, boolean singleTrooper) {
         // we do this per trooper, then add up
         double squadBV = 0;
         for (int i=1; i < locations(); i++) {
@@ -814,6 +825,10 @@ public class BattleArmor extends Infantry {
         // we have now added all troopers, divide by current strength to then
         // multiply by the unit size mod
         squadBV /= getShootingStrength();
+        // we might want to get just the BV of a single trooper
+        if (singleTrooper) {
+            return (int) Math.round(squadBV);
+        }
         switch (getTotalOInternal()) {
         case 1:
             break;
@@ -1148,7 +1163,8 @@ public class BattleArmor extends Infantry {
     } // End public TargetRoll getStealthModifier( char )
 
     @Override
-    public double getCost() {
+    public double getCost(boolean ignoreAmmo) {
+        // TODO: do this correctly
         // Hopefully the cost is correctly set.
         if (myCost > 0) {
             return myCost;

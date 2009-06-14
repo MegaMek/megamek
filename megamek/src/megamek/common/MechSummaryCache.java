@@ -347,7 +347,7 @@ public class MechSummaryCache {
         ms.setTons((int) e.getWeight());
         ms.setBV(e.calculateBattleValue());
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
-        ms.setCost((int) e.getCost());
+        ms.setCost((int) e.getCost(false));
         ms.setCanon(e.isCanon());
         // we can only test meks and vehicles right now
         if ((e instanceof Mech) || (e instanceof Tank)) {

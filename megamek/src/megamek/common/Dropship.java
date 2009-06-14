@@ -98,7 +98,7 @@ public class Dropship extends SmallCraft implements Serializable {
     }
 
     @Override
-    public double getCost() {
+    public double getCost(boolean ignoreAmmo) {
 
         double cost = 0;
 
@@ -146,7 +146,7 @@ public class Dropship extends SmallCraft implements Serializable {
         cost += sinkCost*getHeatSinks();
 
         //weapons
-        cost += getWeaponsAndEquipmentCost();
+        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         //get bays
         int baydoors = 0;

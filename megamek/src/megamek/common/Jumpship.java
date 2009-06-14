@@ -875,7 +875,7 @@ public class Jumpship extends Aero {
     }
 
     @Override
-    public double getCost() {
+    public double getCost(boolean ignoreAmmo) {
 
         double cost = 0;
 
@@ -952,7 +952,7 @@ public class Jumpship extends Aero {
         cost += 40000000 * getGravDeckHuge();
 
         //weapons
-        cost += getWeaponsAndEquipmentCost();
+        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         //get bays
         int baydoors = 0;

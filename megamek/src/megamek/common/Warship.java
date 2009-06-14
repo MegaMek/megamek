@@ -180,7 +180,7 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    public double getCost() {
+    public double getCost(boolean ignoreAmmo) {
 
         double cost = 0.0f;
 
@@ -260,7 +260,7 @@ public class Warship extends Jumpship {
         cost += 40000000 * getGravDeckHuge();
 
         //weapons
-        cost += getWeaponsAndEquipmentCost();
+        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         //get bays
         //Bay doors are not counted in the AT2r example
@@ -268,10 +268,10 @@ public class Warship extends Jumpship {
         int bayCost = 0;
         for(Bay next:getTransportBays()) {
             baydoors += next.getDoors();
-            if(next instanceof MechBay || next instanceof ASFBay || next instanceof SmallCraftBay) {
+            if((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
                 bayCost += 20000 * next.totalSpace;
             }
-            if(next instanceof LightVehicleBay || next instanceof HeavyVehicleBay) {
+            if((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
                 bayCost += 20000 * next.totalSpace;
             }
         }

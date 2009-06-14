@@ -249,19 +249,19 @@ public class Infantry extends Entity implements Serializable {
         }
 
         if (hex.terrainLevel(Terrains.WOODS) > 0) {
-            if (hex.terrainLevel(Terrains.WOODS) > 1 && getMovementMode() == IEntityMovementMode.TRACKED) {
+            if ((hex.terrainLevel(Terrains.WOODS) > 1) && (getMovementMode() == IEntityMovementMode.TRACKED)) {
                 return true;
             }
-            if (getMovementMode() == IEntityMovementMode.HOVER
-                    || getMovementMode() == IEntityMovementMode.WHEELED) {
+            if ((getMovementMode() == IEntityMovementMode.HOVER)
+                    || (getMovementMode() == IEntityMovementMode.WHEELED)) {
                 return true;
             }
         }
-        if (hex.terrainLevel(Terrains.WATER) > 0
+        if ((hex.terrainLevel(Terrains.WATER) > 0)
                 && !hex.containsTerrain(Terrains.ICE)) {
-            if (getMovementMode() == IEntityMovementMode.HOVER
-                    || getMovementMode() == IEntityMovementMode.INF_UMU
-                    || getMovementMode() == IEntityMovementMode.VTOL) {
+            if ((getMovementMode() == IEntityMovementMode.HOVER)
+                    || (getMovementMode() == IEntityMovementMode.INF_UMU)
+                    || (getMovementMode() == IEntityMovementMode.VTOL)) {
                 return false;
             }
             return true;
@@ -497,17 +497,17 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public int getWeaponArc(int wn) {
-        if (this instanceof BattleArmor && dugIn == DUG_IN_NONE) {
+        if ((this instanceof BattleArmor) && (dugIn == DUG_IN_NONE)) {
             return Compute.ARC_360;
         }
         Mounted mounted = getEquipment(wn);
         WeaponType wtype = (WeaponType) mounted.getType();
         if ((wtype.hasFlag(WeaponType.F_INFANTRY)
                 || wtype.hasFlag(WeaponType.F_EXTINGUISHER)
-                || wtype.getInternalName() == LEG_ATTACK
-                || wtype.getInternalName() == SWARM_MEK || wtype
-                .getInternalName() == STOP_SWARM)
-                && dugIn == DUG_IN_NONE) {
+                || (wtype.getInternalName() == LEG_ATTACK)
+                || (wtype.getInternalName() == SWARM_MEK) || (wtype
+                .getInternalName() == STOP_SWARM))
+                && (dugIn == DUG_IN_NONE)) {
             return Compute.ARC_360;
         }
         return Compute.ARC_FORWARD;
@@ -732,7 +732,7 @@ public class Infantry extends Entity implements Serializable {
         PilotingRollData roll = new PilotingRollData(getId(), 5,
                 "entering boggy terrain");
         int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
-        if (!lastPos.equals(curPos) && bgMod != TargetRoll.AUTOMATIC_SUCCESS && step.getMovementType() != IEntityMovementType.MOVE_JUMP && (getMovementMode() != IEntityMovementMode.HOVER) && (getMovementMode() != IEntityMovementMode.VTOL) && (getMovementMode() != IEntityMovementMode.WIGE) && step.getElevation() == 0 && !isPavementStep) {
+        if (!lastPos.equals(curPos) && (bgMod != TargetRoll.AUTOMATIC_SUCCESS) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) && (getMovementMode() != IEntityMovementMode.HOVER) && (getMovementMode() != IEntityMovementMode.VTOL) && (getMovementMode() != IEntityMovementMode.WIGE) && (step.getElevation() == 0) && !isPavementStep) {
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Not entering bog-down terrain, or jumping/hovering over such terrain");
@@ -744,7 +744,7 @@ public class Infantry extends Entity implements Serializable {
      * @return The cost in C-Bills of the Infantry in question.
      */
     @Override
-    public double getCost() {
+    public double getCost(boolean ignoreAmmo) {
         double multiplier = 0;
 
         if (antiMek) {
@@ -752,7 +752,7 @@ public class Infantry extends Entity implements Serializable {
         } else {
             multiplier = 1;
         }
-        
+
         switch (getMovementMode()){
         case IEntityMovementMode.INF_UMU:
             multiplier *= 2.0;
@@ -775,10 +775,10 @@ public class Infantry extends Entity implements Serializable {
             multiplier *= 3.2;
             break;
         default:
-            break;                
+            break;
         }
-        
-        return Math.round(2000 * Math.sqrt(this.getWeaponsAndEquipmentCost()) * multiplier * menStarting);
+
+        return Math.round(2000 * Math.sqrt(getWeaponsAndEquipmentCost(ignoreAmmo)) * multiplier * menStarting);
     }
 
     @Override
@@ -811,10 +811,10 @@ public class Infantry extends Entity implements Serializable {
 
     @Override
     public boolean isEligibleFor(IGame.Phase phase) {
-        if (turnsLayingExplosives > 0 && phase != IGame.Phase.PHASE_PHYSICAL) {
+        if ((turnsLayingExplosives > 0) && (phase != IGame.Phase.PHASE_PHYSICAL)) {
             return false;
         }
-        if (dugIn != DUG_IN_COMPLETE && dugIn != DUG_IN_NONE) {
+        if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
             return false;
         }
         return super.isEligibleFor(phase);
@@ -829,7 +829,7 @@ public class Infantry extends Entity implements Serializable {
                                             // building
             }
         }
-        if (dugIn != DUG_IN_COMPLETE && dugIn != DUG_IN_NONE) {
+        if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
             dugIn++;
             if (dugIn > DUG_IN_FORTIFYING2) {
                 dugIn = DUG_IN_NONE;
@@ -842,8 +842,8 @@ public class Infantry extends Entity implements Serializable {
     public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
         if (!(this instanceof BattleArmor)) {
             // field guns don't share ammo, and infantry weapons dont have ammo
-            if (mounted.getLinked() != null
-                    || mountedAmmo.getLinkedBy() != null) {
+            if ((mounted.getLinked() != null)
+                    || (mountedAmmo.getLinkedBy() != null)) {
                 return false;
             }
         }
@@ -854,8 +854,8 @@ public class Infantry extends Entity implements Serializable {
     public boolean loadWeaponWithSameAmmo(Mounted mounted, Mounted mountedAmmo) {
         if (!(this instanceof BattleArmor)) {
             // field guns don't share ammo, and infantry weapons dont have ammo
-            if (mounted.getLinked() != null
-                    || mountedAmmo.getLinkedBy() != null) {
+            if ((mounted.getLinked() != null)
+                    || (mountedAmmo.getLinkedBy() != null)) {
                 return false;
             }
         }
@@ -893,9 +893,9 @@ public class Infantry extends Entity implements Serializable {
     }
 
     public boolean isMechanized() {
-        if (getMovementMode() == IEntityMovementMode.WHEELED ||
-                getMovementMode() == IEntityMovementMode.HOVER ||
-                getMovementMode() == IEntityMovementMode.TRACKED) {
+        if ((getMovementMode() == IEntityMovementMode.WHEELED) ||
+                (getMovementMode() == IEntityMovementMode.HOVER) ||
+                (getMovementMode() == IEntityMovementMode.TRACKED)) {
             return true;
         }
         return false;

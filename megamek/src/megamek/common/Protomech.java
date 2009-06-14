@@ -1150,7 +1150,7 @@ public class Protomech extends Entity {
         retVal += getTotalArmor() * 625;
 
         // Add in equipment cost.
-        // FIXME
+        retVal += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         // Finally, apply the Final ProtoMech Cost Multiplier
         retVal *= 1 + (weight / 100.0);

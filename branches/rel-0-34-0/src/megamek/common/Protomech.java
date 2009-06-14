@@ -58,11 +58,12 @@ public class Protomech extends Entity implements Serializable {
     // Needed for location destruction pilot damage.
     private int PilotDamageTaken[] = { 0, 0, 0, 0, 0, 0 };
 
-    /*
-     * * Not every Protomech has a main gun. * N.B. Regardless of the value set
-     * here, the variable is initialized to * <code>false</code> until after
-     * the <code>Entity</code> is initialized, * which is too late to allow
-     * main gun armor, hence the convoluted reverse * logic.
+    /**
+     * Not every Protomech has a main gun.
+     * N.B. Regardless of the value set here, the variable is initialized to
+     * <code>false</code> until after the <code>Entity</code> is initialized,
+     * which is too late to allow main gun armor, hence the convoluted reverse
+     * logic.
      */
     private boolean m_bHasNoMainGun = false;
 
@@ -1131,10 +1132,16 @@ public class Protomech extends Entity implements Serializable {
         retVal += weight * getJumpMP() * getJumpMP() * 200;
 
         // Heat sinks is constant per sink.
-        // FIXME
-        // Protos in MM currently don't keep track of sinks, so we can't do
-        // this.
-        // retVal += 2000*getHeatCapacity();
+        // per the construction rules, we need enough sinks to sink all energy
+        // weapon heat, so we just calculate the cost that way.
+        int sinks = 0;
+        for (Mounted mount : getWeaponList()) {
+            if (mount.getType().hasFlag(WeaponType.F_ENERGY)) {
+                WeaponType wtype = (WeaponType)mount.getType();
+                sinks += wtype.getHeat();
+            }
+        }
+        retVal += 2000*sinks;
 
         // Armor is linear on the armor value of the Protomech
         retVal += getTotalArmor() * 625;

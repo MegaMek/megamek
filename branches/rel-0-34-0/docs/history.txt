@@ -5,6 +5,8 @@ v0.34.4-dev (SVN)
 + lots of mechfile fixes
 + Fix Aero BV bug
 + Fix bug with unit list export
++ Bug: 3d interface not working
++ Bug: Protomech cost not including heatsinks
 
 v0.34.3 (2009-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

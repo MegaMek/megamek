@@ -8,6 +8,7 @@ v0.34.4-dev (SVN)
 + Bug: 3d interface not working
 + Bug: Protomech cost not including heatsinks
 + Bug: Protomech cost not including weapons and misc equipment
++ Bug 2805632: Infantry digging in in terrain where they shouldn't be able to
 
 v0.34.3 (2009-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

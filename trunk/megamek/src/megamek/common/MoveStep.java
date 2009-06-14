@@ -1017,7 +1017,7 @@ public class MoveStep implements Serializable {
     public int getLeapDistance() {
         return leapDistance;
     }
-    
+
     /**
      * @return
      */
@@ -1234,7 +1234,7 @@ public class MoveStep implements Serializable {
     public void setDistance(int i) {
         distance = i;
     }
-    
+
     /**
      * @param i
      */
@@ -1585,8 +1585,16 @@ public class MoveStep implements Serializable {
                 return; // already dug in
             }
             if (game.getBoard().getHex(curPos).containsTerrain(
-                    Terrains.FORTIFIED)) {
-                return; // already fortified - pointless
+                    Terrains.PAVEMENT) ||
+                game.getBoard().getHex(curPos).containsTerrain(
+                    Terrains.FORTIFIED) ||
+                game.getBoard().getHex(curPos).containsTerrain(
+                    Terrains.BUILDING) ||
+                game.getBoard().getHex(curPos).containsTerrain(
+                    Terrains.ROAD)) {
+                // already fortified - pointless, or terrain is illegal for
+                // digging in
+                return;
             }
             isDiggingIn = true;
             movementType = IEntityMovementType.MOVE_NONE;
@@ -1740,13 +1748,13 @@ public class MoveStep implements Serializable {
                 // store if we got the pavement Bonus for end of phase
                 // gravity psr
                 entity.gotPavementBonus = true;
-            } else if (game.getOptions().booleanOption("tacops_sprint") 
-                    && (entity instanceof Mech) 
-                    && (getMpUsed() <= entity.getSprintMPwithoutMASC() 
+            } else if (game.getOptions().booleanOption("tacops_sprint")
+                    && (entity instanceof Mech)
+                    && ((getMpUsed() <= entity.getSprintMPwithoutMASC())
                             || ((getMpUsed() <= entity.getSprintMP()) && ((Mech) entity).isMASCUsed()))
                     && !isRunProhibited() && !isEvading()) {
                 movementType = IEntityMovementType.MOVE_SPRINT;
-            } else if ((getMpUsed() <= entity.getSprintMP()) && !isRunProhibited() && !isEvading() 
+            } else if ((getMpUsed() <= entity.getSprintMP()) && !isRunProhibited() && !isEvading()
                     && game.getOptions().booleanOption("tacops_sprint")) {
                 setUsingMASC(true);
                 Mech m = (Mech) entity;
@@ -1777,12 +1785,12 @@ public class MoveStep implements Serializable {
         } else if ((movementType == IEntityMovementType.MOVE_VTOL_WALK)
                 && (prev.movementType == IEntityMovementType.MOVE_VTOL_RUN)) {
             movementType = IEntityMovementType.MOVE_VTOL_RUN;
-        } else if ((movementType == IEntityMovementType.MOVE_WALK || movementType == IEntityMovementType.MOVE_RUN)
+        } else if (((movementType == IEntityMovementType.MOVE_WALK) || (movementType == IEntityMovementType.MOVE_RUN))
                 && (prev.movementType == IEntityMovementType.MOVE_SPRINT)) {
             movementType = IEntityMovementType.MOVE_SPRINT;
         }
-  
-        
+
+
         // Mechs with busted Gyro may make only one facing change
         if ((entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
                 Mech.LOC_CT) > 1)
@@ -2113,8 +2121,8 @@ public class MoveStep implements Serializable {
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveType != IEntityMovementMode.WIGE)) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
-            if(game.getOptions().booleanOption("tacops_leaping") 
-                    && isMech && delta_e > 2 && nDestEl < nSrcEl) {
+            if(game.getOptions().booleanOption("tacops_leaping")
+                    && isMech && (delta_e > 2) && (nDestEl < nSrcEl)) {
                 //leaping (moving down more than 2 hexes) always costs 4 mp regardless of anything else
                 mp = 4;
                 return;
@@ -2134,14 +2142,14 @@ public class MoveStep implements Serializable {
         if ((moveType == IEntityMovementMode.WIGE) && climbMode && (elevation > 0)) {
             mp += 2;
         }
-        
+
         // If we entering a building, all non-infantry pay additional MP.
         if (nDestEl < destHex.terrainLevel(Terrains.BLDG_ELEV)) {
             Building bldg = game.getBoard().getBuildingAt(getPosition());
             //check for inside hangar movement
-            if(null != prev && null != bldg && bldg.isIn(prev) 
-                    && bldg.getBldgClass() == Building.HANGAR 
-                    && destHex.terrainLevel(Terrains.BLDG_ELEV) > parent.getEntity().height()) {
+            if((null != prev) && (null != bldg) && bldg.isIn(prev)
+                    && (bldg.getBldgClass() == Building.HANGAR)
+                    && (destHex.terrainLevel(Terrains.BLDG_ELEV) > parent.getEntity().height())) {
                 mp += 0;
             } else if (!isInfantry) {
                 if (!isProto) {
@@ -2235,15 +2243,15 @@ public class MoveStep implements Serializable {
                     && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
                 return false;
             }
-            
+
             //only infantry can enter an armored building
-            if(elevation < hex.terrainLevel(Terrains.BLDG_ELEV) && bld.getArmor(dest) > 0
+            if((elevation < hex.terrainLevel(Terrains.BLDG_ELEV)) && (bld.getArmor(dest) > 0)
                     && !(entity instanceof Infantry)) {
                 return false;
             }
-            
+
             //only infantry can enter a gun emplacement
-            if(elevation < hex.terrainLevel(Terrains.BLDG_ELEV) && bld.getBldgClass() == Building.GUN_EMPLACEMENT
+            if((elevation < hex.terrainLevel(Terrains.BLDG_ELEV)) && (bld.getBldgClass() == Building.GUN_EMPLACEMENT)
                     && !(entity instanceof Infantry)) {
                 return false;
             }
@@ -2344,11 +2352,11 @@ public class MoveStep implements Serializable {
                 return false;
             }
         }
-        
-        if(entity instanceof Mech && (srcAlt - destAlt) > 2) {
+
+        if((entity instanceof Mech) && ((srcAlt - destAlt) > 2)) {
             setLeapDistance(srcAlt - destAlt);
         }
-        
+
         // Units moving backwards may not change elevation levels.
         // (Ben thinks this rule is dumb)
         if (((type == MovePath.STEP_BACKWARDS)
@@ -2371,7 +2379,7 @@ public class MoveStep implements Serializable {
 
         // Can't run into water unless hovering, naval, first step, using a
         // bridge, or fly.
-        if (((movementType == IEntityMovementType.MOVE_RUN) 
+        if (((movementType == IEntityMovementType.MOVE_RUN)
                 || (movementType == IEntityMovementType.MOVE_SPRINT)
                 || (movementType == IEntityMovementType.MOVE_VTOL_RUN))
                 && (nMove != IEntityMovementMode.HOVER)

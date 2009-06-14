@@ -1570,8 +1570,16 @@ public class MoveStep implements Serializable {
                 return; // already dug in
             }
             if (game.getBoard().getHex(curPos).containsTerrain(
-                    Terrains.FORTIFIED)) {
-                return; // already fortified - pointless
+                    Terrains.PAVEMENT) ||
+                game.getBoard().getHex(curPos).containsTerrain(
+                    Terrains.FORTIFIED) ||
+                game.getBoard().getHex(curPos).containsTerrain(
+                    Terrains.BUILDING) ||
+                game.getBoard().getHex(curPos).containsTerrain(
+                    Terrains.ROAD)) {
+                // already fortified - pointless, or terrain is illegal for
+                // digging in
+                return;
             }
             isDiggingIn = true;
             movementType = IEntityMovementType.MOVE_NONE;

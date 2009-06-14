@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This file (C) 2008 Jörg Walter <j.walter@syntax-k.de>
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -17,13 +17,6 @@
 
 package megamek.client.ui.AWT.boardview3d;
 
-import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
-import com.sun.j3d.utils.behaviors.mouse.MouseBehaviorCallback;
-import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
-import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
-import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
-import com.sun.j3d.utils.universe.MultiTransformGroup;
-import com.sun.j3d.utils.universe.SimpleUniverse;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Node;
 import javax.media.j3d.Transform3D;
@@ -32,25 +25,36 @@ import javax.media.j3d.View;
 import javax.vecmath.Point3d;
 import javax.vecmath.Quat4d;
 import javax.vecmath.Vector3d;
+
 import megamek.common.Coords;
 import megamek.common.IHex;
+
+import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
+import com.sun.j3d.utils.behaviors.mouse.MouseBehaviorCallback;
+import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
+import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
+import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
+import com.sun.j3d.utils.universe.MultiTransformGroup;
+import com.sun.j3d.utils.universe.SimpleUniverse;
 
 
 abstract class ViewTransform {
     static final int MAX_TRANSFORMS = 7;
-   
+
     abstract String getName();
     abstract void reset();
     abstract void centerOnHex(Coords c, IHex hex);
     abstract Node makeViewRelative(Node obj, double centerDistance);
     abstract void zoom(int steps);
     void remove() {
-        if (controllers != null) controllers.detach();
+        if (controllers != null) {
+            controllers.detach();
+        }
     }
 
     static ViewTransform create(int index, SimpleUniverse universe) {
         try {
-            ViewTransform v = (ViewTransform)transforms[index].getConstructor().newInstance();
+            ViewTransform v = (ViewTransform)transforms[index].newInstance();
             v.universe = universe;
             v.controllers = new BranchGroup();
             v.controllers.setCapability(BranchGroup.ALLOW_DETACH);
@@ -93,7 +97,9 @@ class PlayerViewTransform extends ViewTransform implements MouseBehaviorCallback
 
     @Override
     public void centerOnHex(Coords c, IHex hex) {
-        if (c == null || hex == null) return;
+        if ((c == null) || (hex == null)) {
+            return;
+        }
 
         MultiTransformGroup mtg = universe.getViewingPlatform().getMultiTransformGroup();
 
@@ -179,20 +185,20 @@ class PlayerViewTransform extends ViewTransform implements MouseBehaviorCallback
         controllers.addChild(behavior4);
         behavior4.setSchedulingBounds(BoardModel.bounds);
     }
-    
+
     @Override
     void zoom(int steps) {
         MultiTransformGroup mtg = universe.getViewingPlatform().getMultiTransformGroup();
         TransformGroup zoomTrans = mtg.getTransformGroup(4);
-        
+
         Transform3D trans = new Transform3D();
         zoomTrans.getTransform(trans);
-        
+
         Vector3d t = new Vector3d();
         trans.get(t);
         t.z -= steps*4*BoardModel.HEX_DIAMETER;
         trans.setTranslation(t);
-        
+
         zoomTrans.setTransform(trans);
     }
 
@@ -238,7 +244,9 @@ class PlayerViewTransform extends ViewTransform implements MouseBehaviorCallback
     }
 
     public void transformChanged(int type, Transform3D trans) {
-        if (type != TRANSLATE) return;
+        if (type != TRANSLATE) {
+            return;
+        }
 
         MultiTransformGroup mtg = universe.getViewingPlatform().getMultiTransformGroup();
         Transform3D old = new Transform3D();
@@ -259,8 +267,8 @@ class PlayerViewTransform extends ViewTransform implements MouseBehaviorCallback
 
 
 /**
- *  FIXME: this doesn't yet work exactly as intended. Either rewrite using a 
- *  custom behaviour, or adapt PlayerViewTransform, which is now correct 
+ *  FIXME: this doesn't yet work exactly as intended. Either rewrite using a
+ *  custom behaviour, or adapt PlayerViewTransform, which is now correct
  *  (but ugly).
  */
 class MapViewTransform extends ViewTransform implements MouseBehaviorCallback {
@@ -271,14 +279,16 @@ class MapViewTransform extends ViewTransform implements MouseBehaviorCallback {
 
     @Override
     public void centerOnHex(Coords c, IHex hex) {
-        if (c == null || hex == null) return;
+        if ((c == null) || (hex == null)) {
+            return;
+        }
 
         MultiTransformGroup mtg = universe.getViewingPlatform().getMultiTransformGroup();
 
         mtg.getTransformGroup(0).setTransform(
             new Transform3D(C.nullRot, new Vector3d(BoardModel.getHexLocation(c, hex.getElevation())), 1.0)
         );
-        
+
         center();
     }
 
@@ -299,7 +309,7 @@ class MapViewTransform extends ViewTransform implements MouseBehaviorCallback {
         double scale = view.getScreenScale();
 
         scale *= Math.pow(1.5, steps);
-        
+
         view.setScreenScale(scale);
 
         // seems like this is needed to counter too much J3D optimization
@@ -365,7 +375,7 @@ class MapViewTransform extends ViewTransform implements MouseBehaviorCallback {
         controllers.addChild(behavior3);
         behavior3.setSchedulingBounds(BoardModel.bounds);
     }
-    
+
     @Override
     Node makeViewRelative(Node obj, double centerDistance) {
         // TODO.
@@ -373,11 +383,13 @@ class MapViewTransform extends ViewTransform implements MouseBehaviorCallback {
     }
 
     public void transformChanged(int type, Transform3D trans) {
-        if (type != ZOOM) return;
-        
+        if (type != ZOOM) {
+            return;
+        }
+
         Vector3d t = new Vector3d();
         trans.get(t);
-        
+
         zoom((int)Math.round(t.z));
 
         trans.set(new Vector3d());

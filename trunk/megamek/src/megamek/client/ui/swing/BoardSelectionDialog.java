@@ -118,7 +118,8 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
             .getString("BoardSelectionDialog.Preview")); //$NON-NLS-1$
 
     JDialog mapPreviewW;
-
+    MiniMap miniMap = null;
+    
     /**
      * Creates new BoardSelectionDialog
      */
@@ -171,13 +172,31 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         gridbag.setConstraints(panButtons, c);
         getContentPane().add(panButtons);
 
-        mapPreviewW = new JDialog(this.client.frame, Messages
+
+        
+        mapPreviewW = new JDialog(this, Messages
                 .getString("BoardSelectionDialog.MapPreview"), false); //$NON-NLS-1$
 
+        mapPreviewW.setLocation(GUIPreferences.getInstance().getMinimapPosX(),
+                GUIPreferences.getInstance().getMinimapPosY());
+        
+        mapPreviewW.setVisible(false);
+        try {
+            miniMap = new MiniMap(mapPreviewW, null);
+        } catch (IOException e) {
+            JOptionPane
+                    .showMessageDialog(
+                            this,
+                            Messages
+                                    .getString("BoardEditor.CouldNotInitialiseMinimap") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            this.dispose();
+        }
+        mapPreviewW.add(miniMap);
+        
         mapPreviewW.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                setVisible(false);
+                mapPreviewW.setVisible(false);
             }
         });
 
@@ -554,16 +573,8 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
             if (chkRotateBoard.isSelected()) {
                 BoardUtilities.flip(board, true, true);
             }
-            MapPreview mapPreview = null;
-            try {
-                mapPreview = new MapPreview(mapPreviewW, board);
-                mapPreviewW.removeAll();
-                mapPreviewW.add(mapPreview);
-                mapPreviewW.setVisible(true);
-                mapPreview.initializeMap();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            miniMap.setBoard(board);
+            mapPreviewW.setVisible(true);
         }
     }
 

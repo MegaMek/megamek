@@ -1655,6 +1655,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 String[] options;
                 boolean[] enabled;
 
+                if(target instanceof GunEmplacement) {
+                    return;
+                }
                 if (target instanceof Entity) {
                     options = ((Entity) target).getLocationNames();
                     enabled = createEnabledMask(options.length);
@@ -1680,10 +1683,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     } else {
                         aimingAt = Tank.LOC_FRONT;
                     }
-                } else if (target instanceof GunEmplacement) {
-                    enabled = new boolean[] { true,
-                            ((GunEmplacement) target).isTurret() };
-                    aimingAt = GunEmplacement.LOC_GUNS;
                 } else if (target instanceof Protomech) {
                     aimingAt = Protomech.LOC_TORSO;
                 } else if (target instanceof BattleArmor) {

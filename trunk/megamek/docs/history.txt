@@ -74,6 +74,7 @@ v0.35.2-dev (SVN)
 + Bug: Protomech cost not including weapons and misc equipment
 + Bug 2805632: Infantry digging in in terrain where they shouldn't be able to
 + Bug 2789057: Map Preview not working in Swing
++ Bug 2806773: Fire phase "Array Out Of Bounds"
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

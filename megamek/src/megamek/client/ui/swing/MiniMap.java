@@ -1333,6 +1333,7 @@ public class MiniMap extends Canvas {
             b = e.getNewBoard();
             if (b != null)
                 b.addBoardListener(boardListener);
+            m_board = b;
             initializeMap();
         }
 

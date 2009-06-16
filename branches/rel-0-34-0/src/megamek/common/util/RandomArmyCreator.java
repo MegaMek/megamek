@@ -92,12 +92,13 @@ public class RandomArmyCreator {
      */
     static Comparator<MechSummary> bvComparator = new Comparator<MechSummary>() {
         public int compare(MechSummary a, MechSummary b) {
-            if (a.getBV() > b.getBV())
+            if (a.getBV() > b.getBV()) {
                 return 1;
-            else if (b.getBV() > a.getBV())
+            } else if (b.getBV() > a.getBV()) {
                 return -1;
-            else
+            } else {
                 return 0;
+            }
         }
     };
 
@@ -105,8 +106,9 @@ public class RandomArmyCreator {
             ArrayList<MechSummary> unitList, int count, int targetBV,
             int allowedVariance) {
         ArrayList<MechSummary> units = new ArrayList<MechSummary>();
-        if (count < 1 || unitList.size() < 1)
+        if ((count < 1) || (unitList.size() < 1)) {
             return units;
+        }
         // first pick any random mechs
         int selection[] = new int[count];
         int currentBV = 0;
@@ -120,10 +122,11 @@ public class RandomArmyCreator {
         bottom = 0;
         top = unitList.size() - 1;
         int giveUp = 0;
-        while ((currentBV < targetBV - allowedVariance || currentBV > targetBV)
-                && giveUp++ < 40000) {
-            if (top == bottom)
+        while (((currentBV < targetBV - allowedVariance) || (currentBV > targetBV))
+                && (giveUp++ < 40000)) {
+            if (top == bottom) {
                 break;
+            }
             if (currentBV < targetBV - allowedVariance) {
                 // under BV, reroll above the weakest unit
                 bottom = Math.max(bottom, selection[0]);
@@ -152,8 +155,9 @@ public class RandomArmyCreator {
 
     private static int countBV(ArrayList<MechSummary> units) {
         int bv = 0;
-        for (MechSummary m : units)
+        for (MechSummary m : units) {
             bv += m.getBV();
+        }
         return bv;
     }
 
@@ -194,52 +198,60 @@ public class RandomArmyCreator {
         ArrayList<MechSummary> allInfantry = new ArrayList<MechSummary>();
         ArrayList<MechSummary> allBA = new ArrayList<MechSummary>();
         for (MechSummary m : all) {
-            if (p.tech != TechConstants.T_ALL && p.tech != m.getType()) {
+            if ((p.tech != TechConstants.T_ALL) && (p.tech != m.getType())) {
                 // advanced rules includes basic too
                 if (p.tech == TechConstants.T_CLAN_ADVANCED) {
-                    if (m.getType() != TechConstants.T_CLAN_TW)
+                    if (m.getType() != TechConstants.T_CLAN_TW) {
                         continue;
+                    }
                 } else if (p.tech == TechConstants.T_IS_ADVANCED) {
-                    if (m.getType() != TechConstants.T_INTRO_BOXSET
-                            && m.getType() != TechConstants.T_IS_TW_NON_BOX)
+                    if ((m.getType() != TechConstants.T_INTRO_BOXSET)
+                            && (m.getType() != TechConstants.T_IS_TW_NON_BOX)) {
                         continue;
+                    }
                 } else if (p.tech == TechConstants.T_IS_TW_NON_BOX) {
-                    if (m.getType() != TechConstants.T_INTRO_BOXSET)
+                    if (m.getType() != TechConstants.T_INTRO_BOXSET) {
                         continue;
+                    }
                 } else if (p.tech == TechConstants.T_TW_ALL) {
-                    if (m.getType() != TechConstants.T_INTRO_BOXSET
-                            && m.getType() != TechConstants.T_IS_TW_NON_BOX
-                            && m.getType() != TechConstants.T_CLAN_TW)
+                    if ((m.getType() != TechConstants.T_INTRO_BOXSET)
+                            && (m.getType() != TechConstants.T_IS_TW_NON_BOX)
+                            && (m.getType() != TechConstants.T_CLAN_TW)) {
                         continue;
+                    }
                 } else if (p.tech == TechConstants.T_IS_TW_ALL) {
-                    if (m.getType() != TechConstants.T_INTRO_BOXSET
-                            && m.getType() != TechConstants.T_IS_TW_NON_BOX)
+                    if ((m.getType() != TechConstants.T_INTRO_BOXSET)
+                            && (m.getType() != TechConstants.T_IS_TW_NON_BOX)) {
                         continue;
+                    }
                 } else {
                     continue;
                 }
             }
-            if ((m.getYear() < p.minYear || m.getYear() > p.maxYear)
+            if (((m.getYear() < p.minYear) || (m.getYear() > p.maxYear))
                     && !m.getUnitType().equals(
-                            UnitType.getTypeName(UnitType.INFANTRY)))
+                            UnitType.getTypeName(UnitType.INFANTRY))) {
                 continue;
-            if (p.canon && !m.isCanon())
+            }
+            if (p.canon && !m.isCanon()) {
                 continue;
+            }
 
             // Unit accepted, add to the appropriate list
-            if (m.getUnitType().equals(UnitType.getTypeName(UnitType.MEK)))
+            if (m.getUnitType().equals(UnitType.getTypeName(UnitType.MEK))) {
                 allMechs.add(m);
-            else if (m.getUnitType()
+            } else if (m.getUnitType()
                     .equals(UnitType.getTypeName(UnitType.TANK))
                     || m.getUnitType().equals(
-                            UnitType.getTypeName(UnitType.VTOL)))
+                            UnitType.getTypeName(UnitType.VTOL))) {
                 allTanks.add(m);
-            else if (m.getUnitType().equals(
-                    UnitType.getTypeName(UnitType.BATTLE_ARMOR)))
+            } else if (m.getUnitType().equals(
+                    UnitType.getTypeName(UnitType.BATTLE_ARMOR))) {
                 allBA.add(m);
-            else if (m.getUnitType().equals(
-                    UnitType.getTypeName(UnitType.INFANTRY)))
+            } else if (m.getUnitType().equals(
+                    UnitType.getTypeName(UnitType.INFANTRY))) {
                 allInfantry.add(m);
+            }
         }
         Collections.<MechSummary> sort(allMechs, bvComparator);
         Collections.<MechSummary> sort(allTanks, bvComparator);
@@ -248,30 +260,30 @@ public class RandomArmyCreator {
 
         // get the average BV for each unit class, to determine how to split up
         // the total
-        int mechWeight = countBV(allMechs) / Math.max(1, allMechs.size());
-        int tankWeight = countBV(allTanks) / Math.max(1, allTanks.size());
-        int infWeight = countBV(allInfantry) / Math.max(1, allInfantry.size());
-        int baWeight = countBV(allBA) / Math.max(1, allBA.size());
-        int helpWeight = Math.max(1, p.mechs * mechWeight + p.tanks
-                * tankWeight + p.infantry * infWeight + p.tanks * tankWeight);
+        int averageMechBV = countBV(allMechs) / Math.max(1, allMechs.size());
+        int averageTankBV = countBV(allTanks) / Math.max(1, allTanks.size());
+        int averageInfBV = countBV(allInfantry) / Math.max(1, allInfantry.size());
+        int averageBaBV = countBV(allBA) / Math.max(1, allBA.size());
+        int helpWeight = Math.max(1, p.mechs * averageMechBV + p.tanks
+                * averageTankBV + p.infantry * averageInfBV + p.ba * averageBaBV);
 
-        int baBV = (p.ba * baWeight * p.maxBV) / helpWeight;
-        if (p.ba > 0 && allBA.size() > 0) {
+        int baBV = (p.ba * averageBaBV * p.maxBV) / helpWeight;
+        if ((p.ba > 0) && (allBA.size() > 0)) {
             baBV = Math.max(baBV, p.ba * allBA.get(0).getBV());
             baBV = Math.min(baBV, p.ba * allBA.get(allBA.size() - 1).getBV());
         } else {
             baBV = 0;
         }
-        int mechBV = (p.mechs * mechWeight * p.maxBV) / helpWeight;
-        if (p.mechs > 0 && allMechs.size() > 0) {
+        int mechBV = (p.mechs * averageMechBV * p.maxBV) / helpWeight;
+        if ((p.mechs > 0) && (allMechs.size() > 0)) {
             mechBV = Math.max(mechBV, p.mechs * allMechs.get(0).getBV());
             mechBV = Math.min(mechBV, p.mechs
                     * allMechs.get(allMechs.size() - 1).getBV());
         } else {
             mechBV = 0;
         }
-        int tankBV = (p.tanks * tankWeight * p.maxBV) / helpWeight;
-        if (p.tanks > 0 && allTanks.size() > 0) {
+        int tankBV = (p.tanks * averageTankBV * p.maxBV) / helpWeight;
+        if ((p.tanks > 0) && (allTanks.size() > 0)) {
             tankBV = Math.max(tankBV, p.tanks * allTanks.get(0).getBV());
             tankBV = Math.min(tankBV, p.tanks
                     * allTanks.get(allTanks.size() - 1).getBV());
@@ -287,7 +299,7 @@ public class RandomArmyCreator {
         units.addAll(generateArmy(allMechs, p.mechs, mechBV + tankBV + baBV
                 - countBV(units), allowedVariance));
         if (p.padWithInfantry) {
-            int inf = (p.maxBV - countBV(units)) / infWeight;
+            int inf = (p.maxBV - countBV(units)) / averageInfBV;
             units.addAll(generateArmy(allInfantry, inf, p.maxBV
                     - countBV(units), allowedVariance));
         } else {

@@ -3514,7 +3514,7 @@ public class Server implements Runnable {
                 if (bldg.getType() == Building.WALL) {
                     crashedIntoTerrain = true;
                 }
-                
+
                 if(bldg.getBldgClass() == Building.GUN_EMPLACEMENT) {
                     crashedIntoTerrain = true;
                 }
@@ -4987,17 +4987,17 @@ public class Server implements Runnable {
             entity.setElevation(step.getElevation());
 
             IHex curHex = game.getBoard().getHex(curPos);
-            
-            
+
+
             // check for automatic unstick
             if (entity.canUnstickByJumping() && entity.isStuck() && (moveType == IEntityMovementType.MOVE_JUMP)) {
                 entity.setStuck(false);
                 entity.setCanUnstickByJumping(false);
             }
-            
+
             //check for leap
-            if(!lastPos.equals(curPos) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) 
-                    && entity instanceof Mech && game.getOptions().booleanOption("tacops_leaping")) {
+            if(!lastPos.equals(curPos) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)
+                    && (entity instanceof Mech) && game.getOptions().booleanOption("tacops_leaping")) {
                 int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getElevation()) - (curElevation + curHex.getElevation());
                 if(leapDistance > 2) {
                     //skill check for leg damage
@@ -5005,16 +5005,16 @@ public class Server implements Runnable {
                     entity.addPilotingModifierForTerrain(roll, curPos);
                     roll.append(new PilotingRollData(entity.getId(), 2 * leapDistance, "leaping (leg damage)"));
                     if(0 < doSkillCheckWhileMoving(entity, lastPos, curPos, roll, false)) {
-                        //do leg damage               
+                        //do leg damage
                         addReport(damageEntity(entity, new HitData(Mech.LOC_LLEG), leapDistance));
-                        addReport(damageEntity(entity, new HitData(Mech.LOC_RLEG), leapDistance));     
+                        addReport(damageEntity(entity, new HitData(Mech.LOC_RLEG), leapDistance));
                         addNewLines();
                         addReport(criticalEntity(entity, Mech.LOC_LLEG, 0));
                         addNewLines();
                         addReport(criticalEntity(entity, Mech.LOC_RLEG, 0));
                         if(entity instanceof QuadMech) {
                             addReport(damageEntity(entity, new HitData(Mech.LOC_LARM), leapDistance));
-                            addReport(damageEntity(entity, new HitData(Mech.LOC_RARM), leapDistance));                      
+                            addReport(damageEntity(entity, new HitData(Mech.LOC_RARM), leapDistance));
                             addNewLines();
                             addReport(criticalEntity(entity, Mech.LOC_LARM, 0));
                             addNewLines();
@@ -5027,11 +5027,11 @@ public class Server implements Runnable {
                     roll.append(new PilotingRollData(entity.getId(), leapDistance, "leaping (fall)"));
                     if(0 < doSkillCheckWhileMoving(entity, lastPos, curPos, roll, false)) {
                         entity.setElevation(lastElevation);
-                        addReport(doEntityFallsInto(entity, lastPos, curPos, entity.getBasePilotingRoll(overallMoveType), false));               
+                        addReport(doEntityFallsInto(entity, lastPos, curPos, entity.getBasePilotingRoll(overallMoveType), false));
                     }
                 }
             }
-            
+
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing, lastPos, curPos, isInfantry, distance-1);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -5130,7 +5130,7 @@ public class Server implements Runnable {
                     }
                 }
             }
-            
+
             // check if we've moved into rubble
             rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -5684,18 +5684,18 @@ public class Server implements Runnable {
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             doSkillCheckInPlace(entity, rollTarget);
         }
-        
+
         //if we sprinted with MASC or a supercharger, then we need a PSR
         rollTarget = entity.checkSprintingWithMASC(overallMoveType, entity.mpUsed);
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             doSkillCheckInPlace(entity, rollTarget);
         }
-        
+
         rollTarget = entity.checkSprintingWithSupercharger(overallMoveType, entity.mpUsed);
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             doSkillCheckInPlace(entity, rollTarget);
         }
-        if(md.getLastStepMovementType() == IEntityMovementType.MOVE_SPRINT && md.hasActiveMASC()) {
+        if((md.getLastStepMovementType() == IEntityMovementType.MOVE_SPRINT) && md.hasActiveMASC()) {
             doSkillCheckInPlace(entity, entity.getBasePilotingRoll(IEntityMovementType.MOVE_SPRINT));
         }
 
@@ -6581,7 +6581,7 @@ public class Server implements Runnable {
         // track this missile on the entity
         ae.getTMTracker().addMissile(wId, tele.getId());
     }
-    
+
     /**
      * deliver inferno missiles
      *
@@ -6595,7 +6595,7 @@ public class Server implements Runnable {
     public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t, int missiles) {
         return deliverInfernoMissiles(ae, t, missiles, IAimingModes.AIM_MODE_NONE, -1);
     }
-    
+
     /**
      * deliver inferno missiles
      *
@@ -7425,7 +7425,7 @@ public class Server implements Runnable {
                 entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
             } else if (entity.moved == IEntityMovementType.MOVE_SPRINT) {
                 entity.heatBuildup += entity.getSprintHeat();
-            }        
+            }
         }
     }
 
@@ -8235,24 +8235,18 @@ public class Server implements Runnable {
             entity.setElevation(0);
         } else if (hex.containsTerrain(Terrains.ICE)) {
             entity.setElevation(0);
-        } else if (hex.containsTerrain(Terrains.BRIDGE)) {
-            entity.setElevation(hex.terrainLevel(Terrains.BRIDGE_ELEV));
+
         } else {
             Building bld = game.getBoard().getBuildingAt(entity.getPosition());
-
             if ((bld != null) && (bld.getType() == Building.WALL)) {
                 entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
-            } else {
-                // For anything else, assume they're on the floor.
-                // entity elevation is relative to hex surface
-                entity.setElevation(hex.floor() - hex.surface());
             }
         }
         //add the elevation that was passed into this method
-        //TODO: currently only used for building placement, we should do this more systematically with 
+        //TODO: currently only used for building placement, we should do this more systematically with
         //up/down buttons in the deployment display
         entity.setElevation(entity.getElevation() + elevation);
-        
+
         entity.setDone(true);
         entity.setDeployed(true);
         entityUpdate(entity.getId());
@@ -9638,7 +9632,7 @@ public class Server implements Runnable {
                 report.subject = ae.getId();
             }
             addReport(buildingReport);
-            
+
             //some buildings scale remaining damage that is not absorbed
             //TODO: this isn't quite right for castles brian
             damage = (int) Math.floor(bldg.getDamageToScale() * damage);
@@ -9883,7 +9877,7 @@ public class Server implements Runnable {
                 report.subject = ae.getId();
             }
             addReport(buildingReport);
-            
+
             //some buildings scale remaining damage that is not absorbed
             //TODO: this isn't quite right for castles brian
             damage = (int) Math.floor(bldg.getDamageToScale() * damage);
@@ -9946,7 +9940,7 @@ public class Server implements Runnable {
                 // destroy rotor
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_ROTOR_DESTROYED), false));
             }
-            if(null != te && te.getQuirks().booleanOption("weak_legs")) {
+            if((null != te) && te.getQuirks().booleanOption("weak_legs")) {
                 addNewLines();
                 addReport(criticalEntity(te, hit.getLocation(), 0));
             }
@@ -10132,7 +10126,7 @@ public class Server implements Runnable {
                     report.subject = ae.getId();
                 }
                 addReport(buildingReport);
-                
+
                 //some buildings scale remaining damage that is not absorbed
                 //TODO: this isn't quite right for castles brian
                 damage = (int) Math.floor(bldg.getDamageToScale() * damage);
@@ -10313,7 +10307,7 @@ public class Server implements Runnable {
                 report.subject = ae.getId();
             }
             addReport(buildingReport);
-            
+
             //some buildings scale remaining damage that is not absorbed
             //TODO: this isn't quite right for castles brian
             damage = (int) Math.floor(bldg.getDamageToScale() * damage);
@@ -10940,7 +10934,7 @@ public class Server implements Runnable {
                 report.subject = ae.getId();
             }
             addReport(buildingReport);
-            
+
             //some buildings scale remaining damage that is not absorbed
             //TODO: this isn't quite right for castles brian
             damage = (int) Math.floor(bldg.getDamageToScale() * damage);
@@ -12144,7 +12138,7 @@ public class Server implements Runnable {
                     report.subject = ae.getId();
                 }
                 addReport(buildingReport);
-                
+
                 //some buildings scale remaining damage that is not absorbed
                 //TODO: this isn't quite right for castles brian
                 damage = (int) Math.floor(bldg.getDamageToScale() * damage);
@@ -12492,7 +12486,7 @@ public class Server implements Runnable {
             // or DFA is halved as well, assume yes. TODO: Check with PM
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
-        
+
         if(ae.getQuirks().booleanOption("reinforced_legs")) {
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
@@ -12510,13 +12504,13 @@ public class Server implements Runnable {
             addReport(damageEntity(ae, hit, cluster));
             damageTaken -= cluster;
         }
-        
+
         if(ae.getQuirks().booleanOption("weak_legs")) {
             addNewLines();
             addReport(criticalEntity(ae, Mech.LOC_LLEG, 0));
             addNewLines();
             addReport(criticalEntity(ae, Mech.LOC_RLEG, 0));
-            if(ae instanceof QuadMech) {                
+            if(ae instanceof QuadMech) {
                 addNewLines();
                 addReport(criticalEntity(ae, Mech.LOC_LARM, 0));
                 addNewLines();
@@ -12624,7 +12618,7 @@ public class Server implements Runnable {
                     addReport(r);
                     entity.heatBuildup -= reduce;
                 }
-                
+
                 // add the heat we've built up so far.
                 entity.heat += entity.heatBuildup;
 
@@ -13029,7 +13023,7 @@ public class Server implements Runnable {
                 addReport(r);
                 entity.heatBuildup -= reduce;
             }
-            
+
             // if heatbuildup is negative due to temperature, set it to 0
             // for prettier turnreports
             if (entity.heatBuildup < 0) {
@@ -13573,13 +13567,13 @@ public class Server implements Runnable {
                             // the weight class PSR modifier is not cumulative
                             damPRD.addModifier(weightMod, "weight class modifier", false);
                         }
-                        if(entity.getQuirks().booleanOption("easy_pilot") && entity.getCrew().getPiloting() > 3) {
+                        if(entity.getQuirks().booleanOption("easy_pilot") && (entity.getCrew().getPiloting() > 3)) {
                             damPRD.addModifier(-1, "easy to pilot");
                         }
                         game.addPSR(damPRD);
                     } else {
                         PilotingRollData damPRD = new PilotingRollData(entity.getId(), 1, "20+ damage");
-                        if(entity.getQuirks().booleanOption("easy_pilot") && entity.getCrew().getPiloting() > 3) {
+                        if(entity.getQuirks().booleanOption("easy_pilot") && (entity.getCrew().getPiloting() > 3)) {
                             damPRD.addModifier(-1, "easy to pilot");
                         }
                         game.addPSR(damPRD);
@@ -13594,7 +13588,7 @@ public class Server implements Runnable {
                         StringBuffer reportStr = new StringBuffer();
                         reportStr.append(entity.damageThisPhase).append(" damage +").append(damMod);
                         PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod, reportStr.toString());
-                        if(entity.getQuirks().booleanOption("easy_pilot") && entity.getCrew().getPiloting() > 3) {
+                        if(entity.getQuirks().booleanOption("easy_pilot") && (entity.getCrew().getPiloting() > 3)) {
                             damPRD.addModifier(-1, "easy to pilot");
                         }
                         game.addControlRoll(damPRD);
@@ -13602,7 +13596,7 @@ public class Server implements Runnable {
                         //was the damage threshold exceeded this round?
                         if(((Aero)entity).wasCritThresh()) {
                             PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0, "damage threshold exceeded");
-                            if(entity.getQuirks().booleanOption("easy_pilot") && entity.getCrew().getPiloting() > 3) {
+                            if(entity.getQuirks().booleanOption("easy_pilot") && (entity.getCrew().getPiloting() > 3)) {
                                 damThresh.addModifier(-1, "easy to pilot");
                             }
                             game.addControlRoll(damThresh);
@@ -13879,10 +13873,10 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
                 // walking and running, 1 damage per MP used more than we would
                 // have normally
-                if ((entity.moved == IEntityMovementType.MOVE_WALK) 
-                        || (entity.moved == IEntityMovementType.MOVE_VTOL_WALK) 
-                        || (entity.moved == IEntityMovementType.MOVE_RUN) 
-                        || (entity.moved == IEntityMovementType.MOVE_SPRINT) 
+                if ((entity.moved == IEntityMovementType.MOVE_WALK)
+                        || (entity.moved == IEntityMovementType.MOVE_VTOL_WALK)
+                        || (entity.moved == IEntityMovementType.MOVE_RUN)
+                        || (entity.moved == IEntityMovementType.MOVE_SPRINT)
                         || (entity.moved == IEntityMovementType.MOVE_VTOL_RUN)) {
                     if (entity instanceof Mech) {
                         int j = entity.mpUsed;
@@ -18247,8 +18241,8 @@ public class Server implements Runnable {
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc);
         vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType), true));
-        if(critType != Tank.CRIT_NONE && !t.getEngine().isFusion()
-                && t.getQuirks().booleanOption("fragile_fuel") && Compute.d6(2) > 9) {
+        if((critType != Tank.CRIT_NONE) && !t.getEngine().isFusion()
+                && t.getQuirks().booleanOption("fragile_fuel") && (Compute.d6(2) > 9)) {
             //BOOM!!
             vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, Tank.CRIT_FUEL_TANK), true));
         }
@@ -18382,7 +18376,7 @@ public class Server implements Runnable {
         if(en.getQuirks().booleanOption("prototype")) {
             critMod += 2;
         }
-        
+
         if (en instanceof Tank) {
             return criticalTank((Tank) en, loc, critMod);
         }
@@ -21897,7 +21891,7 @@ public class Server implements Runnable {
         //some buildings scale remaining damage
         //TODO: this isn't quite right for castles brian
         damage = (int) Math.floor(bldg.getDamageToScale() * toInf);
-        
+
         // Record if we find any infantry.
         boolean foundInfantry = false;
 
@@ -22156,15 +22150,15 @@ public class Server implements Runnable {
             });
             // Walk through the entities in this position.
             Enumeration<Entity> entities = vector.elements();
-            while (entities.hasMoreElements()) {   
-                final Entity entity = entities.nextElement();               
+            while (entities.hasMoreElements()) {
+                final Entity entity = entities.nextElement();
                 //all gun emplacements are simply destroyed
                 if(entity instanceof GunEmplacement) {
                     addReport(destroyEntity(entity, "building collapse"));
                     addNewLines();
                     continue;
                 }
-                              
+
                 // final int entityElev = entity.elevationOccupied( curHex
                 // );
                 int floor = entity.getElevation();
@@ -22458,7 +22452,7 @@ public class Server implements Runnable {
                 final int startingCF = curCF;
                 curCF -= Math.min(curCF, damage);
                 bldg.setCurrentCF(curCF, coords);
-    
+
                 // If the CF is zero, the building should fall.
                 if ((curCF == 0) && (startingCF != 0)) {
                     if (bldg instanceof FuelTank) {
@@ -22908,10 +22902,10 @@ public class Server implements Runnable {
         PilotingRollData rollTarget;
         if (game.getPlanetaryConditions().getGravity() != 1) {
             if (entity instanceof Mech) {
-                if ((step.getMovementType() == IEntityMovementType.MOVE_WALK) 
-                        || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK) 
-                        || (step.getMovementType() == IEntityMovementType.MOVE_RUN) 
-                        || (step.getMovementType() == IEntityMovementType.MOVE_SPRINT) 
+                if ((step.getMovementType() == IEntityMovementType.MOVE_WALK)
+                        || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
+                        || (step.getMovementType() == IEntityMovementType.MOVE_RUN)
+                        || (step.getMovementType() == IEntityMovementType.MOVE_SPRINT)
                         || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)) {
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We moved too fast, let's make PSR to see if we get

@@ -10,6 +10,7 @@ v0.34.4-dev (SVN)
 + Bug: Protomech cost not including weapons and misc equipment
 + Bug 2805632: Infantry digging in in terrain where they shouldn't be able to
 + Bug 1967859: random army creator not working correctly with tanks
++ Bug 2805244: BA Vibro claws
 
 v0.34.3 (2009-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

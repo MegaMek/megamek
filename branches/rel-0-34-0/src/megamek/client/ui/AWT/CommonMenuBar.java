@@ -176,6 +176,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     private MenuItem physicalDodge = null;
     private MenuItem physicalThrash = null;
     private MenuItem physicalProto = null;
+    private MenuItem physicalVibro = null;
 
     private Client client;
 
@@ -201,7 +202,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
         // *** Create the File menu.
         menu = new Menu(Messages.getString("CommonMenuBar.FileMenu")); //$NON-NLS-1$
-        this.add(menu);
+        add(menu);
 
         // Create the Game sub-menu.
         submenu = new Menu(Messages.getString("CommonMenuBar.GameMenu")); //$NON-NLS-1$
@@ -297,7 +298,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
         // *** Create the view menu.
         menu = new Menu(Messages.getString("CommonMenuBar.ViewMenu")); //$NON-NLS-1$
-        this.add(menu);
+        add(menu);
 
         viewMekDisplay = new MenuItem(Messages
                 .getString("CommonMenuBar.viewMekDisplay")); //$NON-NLS-1$
@@ -362,7 +363,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
         // *** Create the deployo menu.
         menu = new Menu(Messages.getString("CommonMenuBar.DeployMenu")); //$NON-NLS-1$
-        this.add(menu);
+        add(menu);
 
         // Create the Mines sub-menu.
         submenu = new Menu(Messages.getString("CommonMenuBar.DeployMinesMenu")); //$NON-NLS-1$
@@ -411,7 +412,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
         // *** Create the move menu.
         menu = new Menu(Messages.getString("CommonMenuBar.MoveMenu")); //$NON-NLS-1$
-        this.add(menu);
+        add(menu);
 
         moveWalk = createMenuItem(
                 menu,
@@ -457,18 +458,18 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         moveRoll = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveRoll"), MovementDisplay.MOVE_ROLL); //$NON-NLS-1$
         moveHover = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveHover"), MovementDisplay.MOVE_HOVER); //$NON-NLS-1$
         moveManeuver = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveManeuver"), MovementDisplay.MOVE_MANEUVER); //$NON-NLS-1$
-        moveEvadeAero = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveEvadeAero"), MovementDisplay.MOVE_EVADE); //$NON-NLS-1$       
-        
+        moveEvadeAero = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveEvadeAero"), MovementDisplay.MOVE_EVADE); //$NON-NLS-1$
+
         aeromenu.addSeparator();
         moveTurnLeft = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveTurnLeft"), MovementDisplay.MOVE_TURN_LEFT); //$NON-NLS-1$
         moveTurnRight = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveTurnRight"), MovementDisplay.MOVE_TURN_RIGHT); //$NON-NLS-1$
         moveThrust = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveThrust"), MovementDisplay.MOVE_THRUST); //$NON-NLS-1$
         moveYaw = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveYaw"), MovementDisplay.MOVE_YAW); //$NON-NLS-1$
         moveEndOver = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveEndOver"), MovementDisplay.MOVE_END_OVER); //$NON-NLS-1$
-        
+
         menu.addSeparator();
         menu.add(aeromenu);
-        
+
         // Create the Special sub-menu.
         submenu = new Menu(Messages.getString("CommonMenuBar.SpecialMenu")); //$NON-NLS-1$
 
@@ -509,7 +510,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         moveLayMine = createMenuItem(
                 submenu,
                 Messages.getString("CommonMenuBar.moveLayMine"), MovementDisplay.MOVE_LAY_MINE); //$NON-NLS-1$
-        moveDump = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveDump"), MovementDisplay.MOVE_DUMP); //$NON-NLS-1$ 
+        moveDump = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveDump"), MovementDisplay.MOVE_DUMP); //$NON-NLS-1$
         submenu.addSeparator();
         moveLAMmechMode = createMenuItem(
                 submenu,
@@ -520,10 +521,10 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         moveLAMaircraftMode = createMenuItem(
                 submenu,
                 Messages.getString("CommonMenuBar.moveLAMaircraftMode"), MovementDisplay.MOVE_MODE_AIRCRAFT); //$NON-NLS-1$
-      
+
         menu.addSeparator();
         menu.add(submenu);
-        
+
         // Add the cancel button.
         menu.addSeparator();
         moveNext = createMenuItem(
@@ -532,7 +533,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
         // *** Create the fire menu.
         menu = new Menu(Messages.getString("CommonMenuBar.FireMenu")); //$NON-NLS-1$
-        this.add(menu);
+        add(menu);
 
         fireFire = createMenuItem(
                 menu,
@@ -586,7 +587,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
         // *** Create the physical menu.
         menu = new Menu(Messages.getString("CommonMenuBar.PhysicalMenu")); //$NON-NLS-1$
-        this.add(menu);
+        add(menu);
 
         physicalPunch = createMenuItem(
                 menu,
@@ -612,13 +613,16 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         physicalDodge = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.physicalDodge"), PhysicalDisplay.PHYSICAL_DODGE); //$NON-NLS-1$
+        physicalVibro = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.physicalVibro"), PhysicalDisplay.PHYSICAL_VIBRO); //$NON-NLS-1$
         physicalNext = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.physicalNext"), PhysicalDisplay.PHYSICAL_NEXT, KeyEvent.VK_N); //$NON-NLS-1$
 
         // *** Create the help menu.
         menu = new Menu(Messages.getString("CommonMenuBar.HelpMenu")); //$NON-NLS-1$
-        this.setHelpMenu(menu);
+        setHelpMenu(menu);
 
         item = new MenuItem(Messages.getString("CommonMenuBar.helpContents")); //$NON-NLS-1$
         item.addActionListener(this);
@@ -652,12 +656,12 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
     /**
      * Implement the <code>ActionListener</code> interface.
-     * 
+     *
      * @param event - the <code>ActionEvent</code> that spawned this call.
      */
     public void actionPerformed(ActionEvent event) {
         // Pass the action on to each of our listeners.
-        Enumeration<ActionListener> iter = this.actionListeners.elements();
+        Enumeration<ActionListener> iter = actionListeners.elements();
         while (iter.hasMoreElements()) {
             ActionListener listener = iter.nextElement();
             listener.actionPerformed(event);
@@ -669,7 +673,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
      * bar has been selected. <p/> Please note, the ActionCommand property of
      * the action event will inform the listener as to which menu item that has
      * been selected. Not all listeners will be interested in all menu items.
-     * 
+     *
      * @param listener - the <code>ActionListener</code> that wants to
      *            register itself.
      */
@@ -680,12 +684,12 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     /**
      * Remove an object that was being alerted when an item on this menu bar was
      * selected.
-     * 
+     *
      * @param listener - the <code>ActionListener</code> that wants to be
      *            removed.
      */
     public synchronized void removeActionListener(ActionListener listener) {
-        this.actionListeners.removeElement(listener);
+        actionListeners.removeElement(listener);
     }
 
     /**
@@ -696,19 +700,19 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         // If we have a game, we can't join a new one, but we can save it.
         // Also, no Game menu in the editor (where (this.hasBoard &&
         // null==this.client)).
-        if (this.game != null || (this.hasBoard && null == this.client)) {
+        if ((game != null) || (hasBoard && (null == client))) {
             fileGameNew.setEnabled(false);
             fileGameOpen.setEnabled(false);
             fileGameScenario.setEnabled(false);
             fileGameConnectBot.setEnabled(false);
             fileGameConnect.setEnabled(false);
             // We can only save in certain phases of the game.
-            if (this.phase != IGame.Phase.PHASE_UNKNOWN
-                    && this.phase != IGame.Phase.PHASE_LOUNGE
-                    && this.phase != IGame.Phase.PHASE_SELECTION
-                    && this.phase != IGame.Phase.PHASE_EXCHANGE
-                    && this.phase != IGame.Phase.PHASE_VICTORY
-                    && this.phase != IGame.Phase.PHASE_STARTING_SCENARIO) {
+            if ((phase != IGame.Phase.PHASE_UNKNOWN)
+                    && (phase != IGame.Phase.PHASE_LOUNGE)
+                    && (phase != IGame.Phase.PHASE_SELECTION)
+                    && (phase != IGame.Phase.PHASE_EXCHANGE)
+                    && (phase != IGame.Phase.PHASE_VICTORY)
+                    && (phase != IGame.Phase.PHASE_STARTING_SCENARIO)) {
                 fileGameSave.setEnabled(true);
             } else {
                 fileGameSave.setEnabled(false);
@@ -725,7 +729,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         }
 
         // can view Game Opts if we have a game
-        if (this.game != null) {
+        if (game != null) {
             viewGameOptions.setEnabled(true);
         } else {
             viewGameOptions.setEnabled(false);
@@ -752,7 +756,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
         // If we have a board, we can perform board actions and view the mini
         // map.
-        if (this.hasBoard) {
+        if (hasBoard) {
             // Save boards only in BoardEditor
             if (null == client) {
                 fileBoardSave.setEnabled(true);
@@ -772,21 +776,21 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
         // If we have a unit list, and if we are in the lounge,
         // then we can still perform all unit list actions.
-        if (this.hasUnitList) {
-            fileUnitsOpen.setEnabled((this.phase == IGame.Phase.PHASE_LOUNGE));
-            fileUnitsClear.setEnabled((this.phase == IGame.Phase.PHASE_LOUNGE));
-            fileUnitsSave.setEnabled((this.phase == IGame.Phase.PHASE_LOUNGE));
+        if (hasUnitList) {
+            fileUnitsOpen.setEnabled((phase == IGame.Phase.PHASE_LOUNGE));
+            fileUnitsClear.setEnabled((phase == IGame.Phase.PHASE_LOUNGE));
+            fileUnitsSave.setEnabled((phase == IGame.Phase.PHASE_LOUNGE));
         }
         // If we don't have a unit list, but we are in the lounge,
         // then we can open a unit list.
         else {
-            fileUnitsOpen.setEnabled((this.phase == IGame.Phase.PHASE_LOUNGE));
+            fileUnitsOpen.setEnabled((phase == IGame.Phase.PHASE_LOUNGE));
             fileUnitsClear.setEnabled(false);
             fileUnitsSave.setEnabled(false);
         }
 
         // If an entity has been selected, we can view it.
-        if (this.entity != null) {
+        if (entity != null) {
             viewMekDisplay.setEnabled(true);
         }
         // If we haven't selected an entity, we can't view it.
@@ -797,20 +801,20 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         // We can only view the LOS/Range tool setting and
         // the mini map in certain phases of the game. Also
         // the board editor has no LOS/Units/Player stuff
-        if (this.client == null && this.hasBoard == true) {
+        if ((client == null) && (hasBoard == true)) {
             viewLOSSetting.setEnabled(false);
             viewUnitOverview.setEnabled(false);
             viewPlayerList.setEnabled(false);
         }
         // We're in-game.
-        else if (this.phase == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES
-                || this.phase == IGame.Phase.PHASE_DEPLOY_MINEFIELDS
-                || this.phase == IGame.Phase.PHASE_MOVEMENT
-                || this.phase == IGame.Phase.PHASE_FIRING
-                || this.phase == IGame.Phase.PHASE_PHYSICAL
-                || this.phase == IGame.Phase.PHASE_OFFBOARD
-                || this.phase == IGame.Phase.PHASE_TARGETING
-                || this.phase == IGame.Phase.PHASE_DEPLOYMENT) {
+        else if ((phase == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)
+                || (phase == IGame.Phase.PHASE_DEPLOY_MINEFIELDS)
+                || (phase == IGame.Phase.PHASE_MOVEMENT)
+                || (phase == IGame.Phase.PHASE_FIRING)
+                || (phase == IGame.Phase.PHASE_PHYSICAL)
+                || (phase == IGame.Phase.PHASE_OFFBOARD)
+                || (phase == IGame.Phase.PHASE_TARGETING)
+                || (phase == IGame.Phase.PHASE_DEPLOYMENT)) {
             viewLOSSetting.setEnabled(true);
             viewMiniMap.setEnabled(true);
             viewZoomIn.setEnabled(true);
@@ -829,14 +833,14 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         }
 
         // We can only view the round report in certain phases.
-        if (this.phase == IGame.Phase.PHASE_INITIATIVE
-                || this.phase == IGame.Phase.PHASE_MOVEMENT
-                || this.phase == IGame.Phase.PHASE_FIRING
-                || this.phase == IGame.Phase.PHASE_PHYSICAL
-                || this.phase == IGame.Phase.PHASE_OFFBOARD
-                || this.phase == IGame.Phase.PHASE_TARGETING
-                || this.phase == IGame.Phase.PHASE_END
-                || this.phase == IGame.Phase.PHASE_DEPLOYMENT) {
+        if ((phase == IGame.Phase.PHASE_INITIATIVE)
+                || (phase == IGame.Phase.PHASE_MOVEMENT)
+                || (phase == IGame.Phase.PHASE_FIRING)
+                || (phase == IGame.Phase.PHASE_PHYSICAL)
+                || (phase == IGame.Phase.PHASE_OFFBOARD)
+                || (phase == IGame.Phase.PHASE_TARGETING)
+                || (phase == IGame.Phase.PHASE_END)
+                || (phase == IGame.Phase.PHASE_DEPLOYMENT)) {
             viewRoundReport.setEnabled(true);
         } else {
             viewRoundReport.setEnabled(false);
@@ -845,7 +849,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         // As of 2003-09-04, we can always at least look at the client settings.
         viewClientSettings.setEnabled(true);
 
-        if (this.phase != IGame.Phase.PHASE_FIRING || entity == null) {
+        if ((phase != IGame.Phase.PHASE_FIRING) || (entity == null)) {
             fireCancel.setEnabled(false);
         } else {
             fireCancel.setEnabled(true);
@@ -855,62 +859,62 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     /**
      * Identify to the menu bar that a <code>IGame</code> is available to the
      * parent.
-     * 
+     *
      * @param selected - The <code>IGame</code> that is currently selected.
      *            When there is no selection, set this to <code>null</code>.
      */
     public synchronized void setGame(IGame selected) {
-        this.game = selected;
+        game = selected;
         manageMenu();
     }
 
     /**
      * Identify to the menu bar that a <code>Board</code> is available to the
      * parent.
-     * 
+     *
      * @param available - <code>true</code> when a <code>Board</code> is
      *            available. Set this value to <code>false</code> after the
      *            <code>Board</code> is cleared.
      */
     public synchronized void setBoard(boolean available) {
-        this.hasBoard = available;
+        hasBoard = available;
         manageMenu();
     }
 
     /**
      * Identify to the menu bar that a unit list is available to the parent.
-     * 
+     *
      * @param available - <code>true</code> when a unit list is available. Set
      *            this value to <code>false</code> after the unit list is
      *            cleared.
      */
     public synchronized void setUnitList(boolean available) {
-        this.hasUnitList = available;
+        hasUnitList = available;
         manageMenu();
     }
 
     /**
      * Identify to the menu bar that a <code>Entity</code> is available to the
      * parent.
-     * 
+     *
      * @param selected - The <code>Entity</code> that is currently selected.
      *            When there is no selection, set this to <code>null</code>.
      */
     public synchronized void setEntity(Entity selected) {
-        this.entity = selected;
+        entity = selected;
         manageMenu();
     }
 
     /**
      * Identify to the menu bar which phase is currently in progress
-     * 
+     *
      * @param current - the <code>int</code> value of the current phase (the
      *            valid values for this argument are defined as constants in the
      *            <code>Game</code> class).
      */
     public synchronized void setPhase(IGame.Phase current) {
-        this.entity = null;
-        this.phase = current;
+        entity = null;
+        phase = current;
         manageMenu();
     }
 
@@ -998,7 +1002,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     public synchronized void setMoveLowerEnabled(boolean enabled) {
         moveLower.setEnabled(enabled);
     }
-    
+
     public synchronized void setMoveRecklessEnabled(boolean enabled) {
         moveReckless.setEnabled(enabled);
     }
@@ -1100,7 +1104,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     public synchronized void setDeployFormSquadronEnabled(boolean enabled) {
         deployFormSquadron.setEnabled(enabled);
     }
-    
+
     // Manages deploy minefield items...
     public synchronized void setDeployConventionalEnabled(int nbr) {
         deployMinesConventional.setLabel(Messages.getString(
@@ -1120,13 +1124,13 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
                 "CommonMenuBar.Vibrabomb", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         deployMinesVibrabomb.setEnabled(nbr > 0);
     }
-    
+
     public synchronized void setDeployActiveEnabled(int nbr) {
         deployMinesActive.setLabel(Messages.getString(
                 "CommonMenuBar.Active", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         deployMinesActive.setEnabled(nbr > 0);
     }
-    
+
     public synchronized void setDeployInfernoEnabled(int nbr) {
         deployMinesInferno.setLabel(Messages.getString(
                 "CommonMenuBar.Inferno", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
@@ -1168,6 +1172,10 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
     public synchronized void setPhysicalProtoEnabled(boolean enabled) {
         physicalProto.setEnabled(enabled);
+    }
+
+    public synchronized void setPhysicalVibroEnabled(boolean enabled) {
+        physicalVibro.setEnabled(enabled);
     }
 
     // Manages fire menu items...

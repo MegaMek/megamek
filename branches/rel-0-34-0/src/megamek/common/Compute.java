@@ -470,7 +470,9 @@ public class Compute {
 
     /**
      * Gets a preferred displacement. Right now this picks the surrounding hex
-     * with the highest elevation that is a valid displacement.
+     * with the same elevation as original hex, if not available it picks the
+     * highest elevation that is a valid displacement.
+     * This will preferably not displace into friendly units
      *
      * @return valid displacement coords, or null if none
      */
@@ -481,9 +483,37 @@ public class Compute {
 
         // check the surrounding hexes, nearest to the original direction first
         int[] offsets = { 0, 1, 5, 2, 4, 3 };
+        // first, try not to displace into friendly units
         for (int offset : offsets) {
             Coords dest = src.translated((direction + offset) % 6);
-            if (Compute.isValidDisplacement(game, entityId, src, dest) && game.getBoard().contains(dest)) {
+            if (Compute.isValidDisplacement(game, entityId, src, dest)
+                    && game.getBoard().contains(dest)) {
+                Enumeration<Entity> entities = game.getFriendlyEntities(dest, game.getEntity(entityId));
+                if (entities.hasMoreElements()) {
+                    // friendly unit here, try next hex
+                    continue;
+                }
+                IHex hex = game.getBoard().getHex(dest);
+                int elevation = entity.elevationOccupied(hex);
+                if (elevation > highestElev) {
+                    highestElev = elevation;
+                    highest = dest;
+                }
+                // preferably, go to same elevation
+                if (elevation == entity.getElevation()) {
+                    return dest;
+                }
+            }
+        }
+        if (highest != null) {
+            return highest;
+        }
+        // ok, all hexes occupied, now displace preferably to same elevation,
+        // else highest
+        for (int offset : offsets) {
+            Coords dest = src.translated((direction + offset) % 6);
+            if (Compute.isValidDisplacement(game, entityId, src, dest)
+                    && game.getBoard().contains(dest)) {
                 IHex hex = game.getBoard().getHex(dest);
                 int elevation = entity.elevationOccupied(hex);
                 if (elevation > highestElev) {

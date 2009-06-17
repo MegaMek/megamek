@@ -11,6 +11,8 @@ v0.34.4-dev (SVN)
 + Bug 2805632: Infantry digging in in terrain where they shouldn't be able to
 + Bug 1967859: random army creator not working correctly with tanks
 + Bug 2805244: BA Vibro claws
++ Preferrably do not displace into friendly units when displacement should
+    be chosen by controller of displaced unit
 
 v0.34.3 (2009-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

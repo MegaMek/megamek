@@ -441,12 +441,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 return toHit;
             }
-            
+
             //protected/exposed actuator quirk may adjust target roll
-            if(null != te && te.getQuirks().booleanOption("pro_actuator")) {
+            if((null != te) && te.getQuirks().booleanOption("pro_actuator")) {
                 toHit.addModifier(+1, "protected actuators");
             }
-            if(null != te && te.getQuirks().booleanOption("exp_actuator")) {
+            if((null != te) && te.getQuirks().booleanOption("exp_actuator")) {
                 toHit.addModifier(-1, "exposed actuators");
             }
 
@@ -468,12 +468,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (te instanceof Tank) {
                 toHit.addModifier(-2, "target is vehicle");
             }
-            
+
             //protected/exposed actuator quirk may adjust target roll
-            if(null != te && te.getQuirks().booleanOption("pro_actuator")) {
+            if((null != te) && te.getQuirks().booleanOption("pro_actuator")) {
                 toHit.addModifier(+1, "protected actuators");
             }
-            if(null != te && te.getQuirks().booleanOption("exp_actuator")) {
+            if((null != te) && te.getQuirks().booleanOption("exp_actuator")) {
                 toHit.addModifier(-1, "exposed actuators");
             }
 
@@ -526,8 +526,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // Mine launchers can not hit infantry.
             toHit = new ToHitData(8, "magnetic mine attack");
         } else if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
-            // Micro bombs use anti-mech skill
-            return new ToHitData(ae.getCrew().getPiloting(), "anti-mech skill");
+            if (ae.getPosition().equals(target.getPosition())) {
+                // Micro bombs use anti-mech skill
+                return new ToHitData(ae.getCrew().getPiloting(), "anti-mech skill");
+            } else {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "out of range");
+            }
         }
         // Swarming infantry always hit their target, but
         // they can only target the Mek they're swarming.
@@ -924,7 +928,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if(ae.getQuirks().booleanOption("sensor_ghosts")) {
             toHit.addModifier(+1, "sensor ghosts");
         }
-        
+
         // Is the pilot a weapon specialist?
         if (ae.crew.getOptions().stringOption("weapon_specialist").equals(
                 wtype.getName())) {
@@ -1219,18 +1223,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // add range mods
         toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
-        
-        if(ae.getQuirks().booleanOption("anti_air") && target instanceof Entity) {
-            if((target instanceof VTOL || target instanceof Aero) && target.getElevation() > 0) {
+
+        if(ae.getQuirks().booleanOption("anti_air") && (target instanceof Entity)) {
+            if(((target instanceof VTOL) || (target instanceof Aero)) && (target.getElevation() > 0)) {
                 toHit.addModifier(-2, "anti-air targetting system vs. aerial unit");
             }
         }
 
         //units with the narrow/low profile quirk are harder to hit
-        if(te != null && te.getQuirks().booleanOption("low_profile")) {
+        if((te != null) && te.getQuirks().booleanOption("low_profile")) {
             toHit.addModifier(1, "narrow/low profile");
         }
-        
+
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if (!isAttackerInfantry && (te != null) && (te instanceof BattleArmor)) {
             toHit.addModifier(1, "battle armor target");
@@ -1606,7 +1610,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
             // XXX what to do about GunEmplacements with partial cover?
         }
-        
+
         //add penalty for called shots and change hit table, if necessary
         if(aimingMode == IAimingModes.AIM_MODE_CALLED) {
             toHit.addModifier(+3, "called shot");
@@ -1631,7 +1635,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // Infantry attacks from the same hex are resolved against the
             // front.
             toHit.setSideTable(ToHitData.SIDE_FRONT);
-        } else {          
+        } else {
             toHit.setSideTable(Compute.targetSideTable(ae, target, aimingMode, aimingAt));
         }
 

@@ -10,6 +10,7 @@ v0.35.3-dev (SVN)
     attacks phase
 + Bug: Rubble should always cost +1 MP to enter
 + Bug: Fa Shih mines not working correctly
++ Bug: Aeros with MRM 40 not loading
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)
 + Separate pilot tab (swing only)

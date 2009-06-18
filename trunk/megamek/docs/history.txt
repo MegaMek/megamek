@@ -79,6 +79,7 @@ v0.35.2-dev (SVN)
 + Bug 2805244: BA Vibro claws
 + Preferrably do not displace into friendly units when displacement should
     be chosen by controller of displaced unit
++ REQ: Bot should not fire on friends when friendly fire is turned on.
 
 v0.35.1 (209-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly

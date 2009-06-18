@@ -1347,6 +1347,7 @@ public class Server implements Runnable {
             r.add(player.getName());
             r.add(player.getBV());
             r.add(player.getInitialBV());
+            r.add(player.getFledBV());
             addReport(r);
         }
 
@@ -1872,6 +1873,7 @@ public class Server implements Runnable {
                 r.add(player.getName());
                 r.add(player.getBV());
                 r.add(player.getInitialBV());
+                r.add(player.getFledBV());
                 addReport(r);
             }
         case PHASE_TARGETING_REPORT:

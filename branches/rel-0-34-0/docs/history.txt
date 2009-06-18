@@ -21,7 +21,7 @@ v0.34.4 (2009-06-18, 16 UTC+2)
 v0.34.3 (2009-06-03, 15:48 UTC+2)
 + Bug: aero BV explosive munition subtracting not working correctly
 + Updated mechfiles
-+ Added image for Zeus X (thanks St0ny)
++ Added image for Zeus X (thanks DarkISI)
 + Updated vehicle files
 + Updated conventional fighter files
 + Bug 2790142: Talons have wrong weight

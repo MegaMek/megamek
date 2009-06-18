@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.34.5-dev (SVN)
+
 v0.34.4 (2009-06-18, 16 UTC+2)
 + Bug 2800635: BattleMech Talons not working correctly
 + lots of mechfile fixes

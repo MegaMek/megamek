@@ -1587,7 +1587,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("Mine");
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.flags |= F_BA_EQUIPMENT;
+        misc.flags |= F_BA_EQUIPMENT | F_MINE;
         misc.bv = 4;
 
         return misc;

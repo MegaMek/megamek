@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -3612,6 +3613,10 @@ public class Compute {
             return true;
         }
         if (JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.RIGHT).getValue() != TargetRoll.IMPOSSIBLE) {
+            return true;
+        }
+
+        if (BAVibroClawAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE) {
             return true;
         }
 

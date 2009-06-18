@@ -98,12 +98,12 @@ public class MovePath implements Cloneable, Serializable {
 
         @Override
         public boolean equals(final Object obj) {
-            final Key s1 = (Key) obj;
-            if (s1 != null) {
-                return (type == type) && (facing == s1.facing)
-                        && coords.equals(s1.coords);
+            if (!(obj instanceof Key)) {
+                return false;
             }
-            return false;
+            final Key s1 = (Key) obj;
+            return (type == s1.type) && (facing == s1.facing)
+                && coords.equals(s1.coords);
         }
 
         @Override

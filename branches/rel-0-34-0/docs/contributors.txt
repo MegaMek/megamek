@@ -63,6 +63,7 @@
      Jörg Walter <j.walter@syntax-k.de>
      Philip Stein <slickam@users.sourceforge.net>
      bobtehpwnz0r <bobtehpwnz0r@users.sourceforge.net>
+     fle <galatnm@users.sourceforge.net>
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

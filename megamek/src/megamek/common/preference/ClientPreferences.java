@@ -46,7 +46,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
         // store.setDefault(GAMELOG_MAX_SIZE, 1);
         store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
         store.setDefault(UNIT_START_CHAR, 'A');
-        store.setDefault(GUI_NAME, "AWT");
+        store.setDefault(GUI_NAME, "swing");
         store.setDefault(USE_AVERAGE_SKILLS, true);
         store.setDefault(PRINT_ENTITY_CHANGE, false);
         store.setDefault(BOARD_WIDTH, 16);
@@ -276,8 +276,9 @@ class ClientPreferences extends PreferenceStoreProxy implements
     }
 
     public String getLocaleString() {
-        if (locale == null)
+        if (locale == null) {
             return "";
+        }
         StringBuffer result = new StringBuffer();
         if (locale.getLanguage().length() != 0) {
             result.append(locale.getLanguage());

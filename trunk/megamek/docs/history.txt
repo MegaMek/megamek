@@ -8,6 +8,7 @@ v0.35.3-dev (SVN)
 + Ymir and Von Rohr images added (Thanks st0ny)
 + Bug: BA with vibroclaws not correctly identified as eligible for the physical
     attacks phase
++ Bug: Rubble should always cost +1 MP to enter
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)
 + Separate pilot tab (swing only)

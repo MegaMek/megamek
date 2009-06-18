@@ -20,13 +20,13 @@ import java.io.Serializable;
  * Represents a single type of terrain or condition in a hex. The type of a
  * terrain is immutable, once created, but the level and exits are changable.
  * Each type of terrain should only be represented once in a hex.
- * 
+ *
  * @author Ben
  */
 public class Terrain implements ITerrain, Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7624691566755134033L;
     private final int type;
@@ -47,15 +47,15 @@ public class Terrain implements ITerrain, Serializable {
         this.level = level;
         this.exitsSpecified = exitsSpecified;
         this.exits = exits;
-        this.terrainFactor = Terrains.getTerrainFactor(type, level);
+        terrainFactor = Terrains.getTerrainFactor(type, level);
     }
 
     public Terrain(ITerrain other) {
-        this.type = other.getType();
-        this.level = other.getLevel();
-        this.exitsSpecified = other.hasExitsSpecified();
-        this.exits = other.getExits();
-        this.terrainFactor = other.getTerrainFactor();
+        type = other.getType();
+        level = other.getLevel();
+        exitsSpecified = other.hasExitsSpecified();
+        exits = other.getExits();
+        terrainFactor = other.getTerrainFactor();
     }
 
     /**
@@ -67,22 +67,22 @@ public class Terrain implements ITerrain, Serializable {
         int lastColon = terrain.lastIndexOf(':');
         String name = terrain.substring(0, firstColon);
 
-        this.type = Terrains.getType(name);
+        type = Terrains.getType(name);
         if (firstColon == lastColon) {
-            this.level = levelFor(terrain.substring(firstColon + 1));
-            this.exitsSpecified = false;
+            level = levelFor(terrain.substring(firstColon + 1));
+            exitsSpecified = false;
 
             // Buildings *never* use implicit exits.
-            if ((this.type == Terrains.BUILDING)
-                    || (this.type == Terrains.FUEL_TANK)) {
-                this.exitsSpecified = true;
+            if ((type == Terrains.BUILDING)
+                    || (type == Terrains.FUEL_TANK)) {
+                exitsSpecified = true;
             }
         } else {
-            this.level = levelFor(terrain.substring(firstColon + 1, lastColon));
-            this.exitsSpecified = true;
-            this.exits = levelFor(terrain.substring(lastColon + 1));
+            level = levelFor(terrain.substring(firstColon + 1, lastColon));
+            exitsSpecified = true;
+            exits = levelFor(terrain.substring(lastColon + 1));
         }
-        this.terrainFactor = Terrains.getTerrainFactor(type, level);
+        terrainFactor = Terrains.getTerrainFactor(type, level);
     }
 
     public static int levelFor(String string) {
@@ -132,7 +132,7 @@ public class Terrain implements ITerrain, Serializable {
     /**
      * Flips the exits around the vertical axis (North-for-South) and/or the
      * horizontal axis (East-for-West).
-     * 
+     *
      * @param horiz - a <code>boolean</code> value that, if <code>true</code>,
      *            indicates that the exits are being flipped North-for-South.
      * @param vert - a <code>boolean</code> value that, if <code>true</code>,
@@ -215,7 +215,7 @@ public class Terrain implements ITerrain, Serializable {
         }
 
         // Update the exits.
-        this.setExits(newExits);
+        setExits(newExits);
 
     }
 
@@ -227,23 +227,25 @@ public class Terrain implements ITerrain, Serializable {
         if (other == null) {
             return false;
         }
-        return this.type == other.getType() && this.level == other.getLevel();
+        return (type == other.getType()) && (level == other.getLevel());
     }
 
     /**
      * Terrains are equal if their types and levels are equal. Does not pay
      * attention to exits.
      */
+    @Override
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if (object == null || !(object instanceof ITerrain)) {
+        } else if ((object == null) || !(object instanceof ITerrain)) {
             return false;
         }
         ITerrain other = (ITerrain) object;
-        return this.type == other.getType() && this.level == other.getLevel();
+        return (type == other.getType()) && (level == other.getLevel());
     }
 
+    @Override
     public String toString() {
         return Terrains.getName(type) + ":" + level
                 + (exitsSpecified ? ":" + exits : "");
@@ -261,33 +263,38 @@ public class Terrain implements ITerrain, Serializable {
             case Terrains.SNOW:
                 return (level == 2) ? 1 : 0;
             case Terrains.SWAMP:
-                if (moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
+                if ((moveType == IEntityMovementMode.HOVER) || (moveType == IEntityMovementMode.WIGE)) {
                     return 0;
-                else if(moveType == IEntityMovementMode.BIPED || moveType== IEntityMovementMode.QUAD)
+                } else if((moveType == IEntityMovementMode.BIPED) || (moveType== IEntityMovementMode.QUAD)) {
                     return 1;
-                else
+                } else {
                     return 2;
+                }
             case Terrains.MUD:
-                if(moveType == IEntityMovementMode.BIPED || moveType== IEntityMovementMode.QUAD
-                        || moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
+                if((moveType == IEntityMovementMode.BIPED) || (moveType== IEntityMovementMode.QUAD)
+                        || (moveType == IEntityMovementMode.HOVER) || (moveType == IEntityMovementMode.WIGE)) {
                     return 0;
-                else 
+                } else {
                     return 1;
+                }
             case Terrains.GEYSER:
             case Terrains.RUBBLE:
-                if (level == 2)
+                if (level == 2) {
                     return 1;
+                }
                 return 0;
             case Terrains.RAPIDS:
-                if(level == 2)
+                if(level == 2) {
                     return 3;
-                else 
+                } else {
                     return 2;
+                }
             case Terrains.ICE:
-                if (moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
+                if ((moveType == IEntityMovementMode.HOVER) || (moveType == IEntityMovementMode.WIGE)) {
                     return 0;
-                else 
+                } else {
                     return 4;
+                }
             case Terrains.INDUSTRIAL:
                 return 1;
             default:
@@ -298,131 +305,149 @@ public class Terrain implements ITerrain, Serializable {
     public int movementCost(int moveType) {
         switch (type) {
             case Terrains.MAGMA:
-            case Terrains.RUBBLE:
                 return level - 1;
             case Terrains.GEYSER:
-                if (level == 2)
+                if (level == 2) {
                     return 1;
+                }
                 return 0;
+            case Terrains.RUBBLE:
+                return 1;
             case Terrains.WOODS:
                 return level;
             case Terrains.JUNGLE:
                 return level + 1;
             case Terrains.SNOW:
                 if(level == 2) {
-                    if(moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
+                    if((moveType == IEntityMovementMode.HOVER) || (moveType == IEntityMovementMode.WIGE)) {
                         return 0;
-                    else 
+                    } else {
                         return 1;
+                    }
                 }
-                if (moveType == IEntityMovementMode.WHEELED
-                        || moveType == IEntityMovementMode.INF_JUMP
-                        || moveType == IEntityMovementMode.INF_LEG
-                        || moveType == IEntityMovementMode.INF_MOTORIZED) {
+                if ((moveType == IEntityMovementMode.WHEELED)
+                        || (moveType == IEntityMovementMode.INF_JUMP)
+                        || (moveType == IEntityMovementMode.INF_LEG)
+                        || (moveType == IEntityMovementMode.INF_MOTORIZED)) {
                     return 1;
                 }
                 return 0;
             case Terrains.MUD:
-                if(moveType == IEntityMovementMode.BIPED || moveType== IEntityMovementMode.QUAD
-                        || moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
+                if((moveType == IEntityMovementMode.BIPED) || (moveType== IEntityMovementMode.QUAD)
+                        || (moveType == IEntityMovementMode.HOVER) || (moveType == IEntityMovementMode.WIGE)) {
                     return 0;
-                else 
+                } else {
                     return 1;
+                }
             case Terrains.SWAMP:
-                if (moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
+                if ((moveType == IEntityMovementMode.HOVER) || (moveType == IEntityMovementMode.WIGE)) {
                     return 0;
-                else if(moveType == IEntityMovementMode.BIPED || moveType== IEntityMovementMode.QUAD)
+                } else if((moveType == IEntityMovementMode.BIPED) || (moveType== IEntityMovementMode.QUAD)) {
                     return 1;
-                else
+                } else {
                     return 2;
+                }
             case Terrains.ICE:
-                if (moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
+                if ((moveType == IEntityMovementMode.HOVER) || (moveType == IEntityMovementMode.WIGE)) {
                     return 0;
-                else
+                } else {
                     return 1;
+                }
             case Terrains.RAPIDS:
             case Terrains.ROUGH:
-                if(level == 2)
+                if(level == 2) {
                     return 2;
-                else 
+                } else {
                     return 1;
+                }
             case Terrains.SAND:
-                if (moveType == IEntityMovementMode.WHEELED
-                        || moveType == IEntityMovementMode.INF_JUMP
-                        || moveType == IEntityMovementMode.INF_LEG
-                        || moveType == IEntityMovementMode.INF_MOTORIZED)
+                if ((moveType == IEntityMovementMode.WHEELED)
+                        || (moveType == IEntityMovementMode.INF_JUMP)
+                        || (moveType == IEntityMovementMode.INF_LEG)
+                        || (moveType == IEntityMovementMode.INF_MOTORIZED)) {
                     return 1;
+                }
                 return 0;
             case Terrains.INDUSTRIAL:
-                if(moveType == IEntityMovementMode.BIPED || moveType== IEntityMovementMode.QUAD)
+                if((moveType == IEntityMovementMode.BIPED) || (moveType== IEntityMovementMode.QUAD)) {
                     return 1;
-                else
+                } else {
                     return 0;
+                }
             default:
                 return 0;
         }
     }
-    
+
     public int ignitionModifier() {
         switch (type) {
             case Terrains.JUNGLE:
                 return 1;
             case Terrains.SNOW:
-                if(level == 2)
+                if(level == 2) {
                     return 2;
-                else 
+                } else {
                     return 0;
+                }
             case Terrains.FIELDS:
                 return -1;
             default:
                 return 0;
         }
     }
-    
+
     public int getBogDownModifier(int moveType, boolean largeVee) {
-        if(moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
+        if((moveType == IEntityMovementMode.HOVER) || (moveType == IEntityMovementMode.WIGE)) {
             return TargetRoll.AUTOMATIC_SUCCESS;
+        }
         switch (type) {
         case(Terrains.SWAMP):
             //if this is quicksand, then you automatically fail
-            if(level > 1)
+            if(level > 1) {
                 return TargetRoll.AUTOMATIC_FAIL;
-            if(moveType == IEntityMovementMode.VTOL) 
+            }
+            if(moveType == IEntityMovementMode.VTOL) {
                 return TargetRoll.AUTOMATIC_FAIL;
-            else
+            } else {
                 return 0;
+            }
         case(Terrains.MAGMA):
-            if(level == 2)
+            if(level == 2) {
                 return 0;
-            else
+            } else {
                 return TargetRoll.AUTOMATIC_SUCCESS;
+            }
         case(Terrains.MUD):
-            if(moveType == IEntityMovementMode.BIPED || moveType== IEntityMovementMode.QUAD)
+            if((moveType == IEntityMovementMode.BIPED) || (moveType== IEntityMovementMode.QUAD)) {
                 return TargetRoll.AUTOMATIC_SUCCESS;
+            }
         case(Terrains.TUNDRA):
             return -1;
         case(Terrains.SNOW):
-            if(level == 2)
+            if(level == 2) {
                 return -1;
-            else
+            } else {
                 return TargetRoll.AUTOMATIC_SUCCESS;
+            }
         case(Terrains.SAND):
-            if(largeVee)
+            if(largeVee) {
                 return 0;
-            else
+            } else {
                 return TargetRoll.AUTOMATIC_SUCCESS;
+            }
         default:
             return TargetRoll.AUTOMATIC_SUCCESS;
         }
     }
-    
+
     public int getUnstuckModifier(int elev) {
         switch (type) {
         case(Terrains.SWAMP):
-            if(level > 1)
+            if(level > 1) {
                 return 3 + ((-3)*elev);
-            else
+            } else {
                 return 0;
+            }
         case(Terrains.TUNDRA):
             return -1;
         case(Terrains.SNOW):
@@ -431,5 +456,5 @@ public class Terrain implements ITerrain, Serializable {
             return 0;
         }
     }
-    
+
 }

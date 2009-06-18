@@ -4,6 +4,7 @@ v0.34.5-dev (SVN)
 + Patch 2806831: fix typo in MovePath
 + Bug 2808412: Firebee image misnamed
 + Bug: BA microbomb should have range 0
++ Ymir and Von Rohr images added (Thanks st0ny)
 
 v0.34.4 (2009-06-18, 16 UTC+2)
 + Bug 2800635: BattleMech Talons not working correctly

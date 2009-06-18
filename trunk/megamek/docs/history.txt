@@ -4,6 +4,7 @@ v0.35.3-dev (SVN)
 + Changed default UI to swing
 + Patch 2806831: fix typo in MovePath
 + Bug 2808412: Firebee image misnamed
++ Bug: BA microbomb should have range 0
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)
 + Separate pilot tab (swing only)

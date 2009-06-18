@@ -496,8 +496,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // Mine launchers can not hit infantry.
             toHit = new ToHitData(8, "magnetic mine attack");
         } else if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
-            // Micro bombs use anti-mech skill
-            return new ToHitData(ae.getCrew().getPiloting(), "anti-mech skill");
+            if (ae.getPosition().equals(target.getPosition())) {
+                // Micro bombs use anti-mech skill
+                return new ToHitData(ae.getCrew().getPiloting(), "anti-mech skill");
+            } else {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "out of range");
+            }
         }
         // Swarming infantry always hit their target, but
         // they can only target the Mek they're swarming.

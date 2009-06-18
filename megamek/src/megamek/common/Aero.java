@@ -1012,7 +1012,7 @@ public class Aero extends Entity
         // subtract for explosive ammo
         double ammoPenalty = 0;
       //need to keep track of any ammo type already used
-        boolean[][] ammoTypesUsed = new boolean[AmmoType.NUM_TYPES][40];
+        boolean[][] ammoTypesUsed = new boolean[AmmoType.NUM_TYPES][41];
         for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();
             int toSubtract = 15;

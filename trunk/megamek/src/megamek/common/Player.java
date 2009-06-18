@@ -24,7 +24,7 @@ import megamek.common.event.GamePlayerChangeEvent;
  */
 public final class Player extends TurnOrdered {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6828849559007455760L;
     public static final int PLAYER_NONE = -1;
@@ -64,7 +64,7 @@ public final class Player extends TurnOrdered {
     private int num_mf_vibra = 0;
     private int num_mf_active = 0;
     private int num_mf_inferno = 0;
-    
+
     //now I need to actually keep a vector of minefields because more information is needed than just the number
 
     // hexes that are automatically hit by artillery
@@ -142,11 +142,11 @@ public final class Player extends TurnOrdered {
     public void setNbrMFVibra(int nbrMF) {
         num_mf_vibra = nbrMF;
     }
-    
+
     public void setNbrMFActive(int nbrMF) {
         num_mf_active = nbrMF;
     }
-    
+
     public void setNbrMFInferno(int nbrMF) {
         num_mf_inferno = nbrMF;
     }
@@ -162,17 +162,17 @@ public final class Player extends TurnOrdered {
     public int getNbrMFVibra() {
         return num_mf_vibra;
     }
-    
+
     public int getNbrMFActive() {
         return num_mf_active;
     }
-    
+
     public int getNbrMFInferno() {
         return num_mf_inferno;
     }
 
     public void setCamoCategory(String name) {
-        this.camoCategory = name;
+        camoCategory = name;
     }
 
     public String getCamoCategory() {
@@ -180,7 +180,7 @@ public final class Player extends TurnOrdered {
     }
 
     public void setCamoFileName(String name) {
-        this.camoFileName = name;
+        camoFileName = name;
     }
 
     public String getCamoFileName() {
@@ -238,13 +238,14 @@ public final class Player extends TurnOrdered {
     }
 
     public boolean isObserver() {
-        if (game != null && game.getPhase() == IGame.Phase.PHASE_VICTORY)
+        if ((game != null) && (game.getPhase() == IGame.Phase.PHASE_VICTORY)) {
             return false;
+        }
         return observer;
     }
 
     public void setSeeAll(boolean see_all) {
-        this.see_entire_board = see_all;
+        see_entire_board = see_all;
     }
 
     // This simply returns the value, without checking the observer flag
@@ -260,8 +261,9 @@ public final class Player extends TurnOrdered {
     public void setObserver(boolean observer) {
         this.observer = observer;
         // If not an observer, clear the set see all flag
-        if (!observer)
-            this.setSeeAll(false);
+        if (!observer) {
+            setSeeAll(false);
+        }
     }
 
     public int getColorIndex() {
@@ -269,7 +271,7 @@ public final class Player extends TurnOrdered {
     }
 
     public void setColorIndex(int index) {
-        this.colorIndex = index;
+        colorIndex = index;
     }
 
     public int getStartingPos() {
@@ -282,15 +284,17 @@ public final class Player extends TurnOrdered {
 
     /** Set deployment zone to edge of board for reinforcements */
     public void adjustStartingPosForReinforcements() {
-        if (startingPos > 10)
+        if (startingPos > 10) {
             startingPos -= 10; // deep deploy change to standard
-        if (startingPos == 0 || startingPos == 10)
+        }
+        if ((startingPos == 0) || (startingPos == 10)) {
             startingPos = 9; // any or centre change to edge
+        }
     }
 
     public boolean isEnemyOf(Player other) {
-        return (id != other.getId() && (team == TEAM_NONE || team != other
-                .getTeam()));
+        return ((id != other.getId()) && ((team == TEAM_NONE) || (team != other
+                .getTeam())));
     }
 
     /**
@@ -300,11 +304,11 @@ public final class Player extends TurnOrdered {
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if (object == null || getClass() != object.getClass()) {
+        } else if ((object == null) || (getClass() != object.getClass())) {
             return false;
         }
         Player other = (Player) object;
-        return other.getId() == this.id;
+        return other.getId() == id;
     }
 
     @Override
@@ -334,10 +338,12 @@ public final class Player extends TurnOrdered {
                     private final int ownerId = getId();
 
                     public boolean accept(Entity entity) {
-                        if (entity.getOwner() == null)
+                        if (entity.getOwner() == null) {
                             return false;
-                        if (ownerId == entity.getOwner().getId())
+                        }
+                        if (ownerId == entity.getOwner().getId()) {
                             return true;
+                        }
                         return false;
                     }
                 }); e.hasMoreElements();) {
@@ -359,14 +365,32 @@ public final class Player extends TurnOrdered {
 
         while (survivors.hasMoreElements()) {
             Entity entity = survivors.nextElement();
-            if (entity.getOwner() == this && !entity.isDestroyed())
+            if (entity.getOwner().equals(this) && !entity.isDestroyed()) {
                 bv += entity.calculateBattleValue();
+            }
         }
-        return (int) (bv * this.getForceSizeBVMod());
+        return (int) (bv * getForceSizeBVMod());
+    }
+
+    /**
+     * get the total BV (unmodified by force size mod) for the units of this
+     * player that have fled the field
+     * @return the BV
+     */
+    public int getFledBV() {
+        Enumeration<Entity> fledUnits = game.getRetreatedEntities();
+        int bv = 0;
+        while (fledUnits.hasMoreElements()) {
+            Entity entity = fledUnits.nextElement();
+            if (entity.getOwner().equals(this)) {
+                bv += entity.calculateBattleValue();
+            }
+        }
+        return bv;
     }
 
     public void setInitialBV() {
-        this.initialBV = getBV();
+        initialBV = getBV();
     }
 
     public int getInitialBV() {
@@ -374,8 +398,9 @@ public final class Player extends TurnOrdered {
     }
 
     public float getForceSizeBVMod() {
-        if (game.getOptions().booleanOption("no_force_size_mod"))
+        if (game.getOptions().booleanOption("no_force_size_mod")) {
             return 1;
+        }
         Enumeration<Entity> entities = game.getEntities();
         float ourUnitCount = 0;
         while (entities.hasMoreElements()) {
@@ -385,7 +410,7 @@ public final class Player extends TurnOrdered {
             }
         }
         float enemyUnitCount = 0;
-        if (this.getTeam() == TEAM_NONE) {
+        if (getTeam() == TEAM_NONE) {
             for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {
                 Player p = e.nextElement();
                 if (!p.equals(this)) {
@@ -405,7 +430,7 @@ public final class Player extends TurnOrdered {
             }
             for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
                 Team t = e.nextElement();
-                if (t.getId() != this.getTeam()) {
+                if (t.getId() != getTeam()) {
                     for (Enumeration<Player> players = t.getPlayers(); players
                             .hasMoreElements();) {
                         Player p = players.nextElement();
@@ -414,8 +439,8 @@ public final class Player extends TurnOrdered {
                 }
             }
         }
-        if (ourUnitCount <= enemyUnitCount || enemyUnitCount == 0
-                || ourUnitCount == 0) {
+        if ((ourUnitCount <= enemyUnitCount) || (enemyUnitCount == 0)
+                || (ourUnitCount == 0)) {
             return 1;
         }
 
@@ -424,28 +449,28 @@ public final class Player extends TurnOrdered {
     }
 
     public void setConstantInitBonus(int b) {
-        this.constantInitBonus = b;
+        constantInitBonus = b;
     }
 
     public int getConstantInitBonus() {
         return constantInitBonus;
     }
-    
+
     /**
      * @return the bonus to this player's initiative rolls granted by his units
      */
     public int getTurnInitBonus() {
         int bonusHQ = 0;
-        int bonusMD = 0;      
+        int bonusMD = 0;
         int bonusQ = 0;
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
-                if (game.getOptions().booleanOption("tacops_mobile_hqs") 
-                        && bonusHQ == 0 && entity.getHQIniBonus() > 0) {
+                if (game.getOptions().booleanOption("tacops_mobile_hqs")
+                        && (bonusHQ == 0) && (entity.getHQIniBonus() > 0)) {
                             bonusHQ = entity.getHQIniBonus();
                 }
-                if (game.getOptions().booleanOption("manei_domini") 
-                        && bonusMD == 0 && entity.getMDIniBonus() > 0) {
+                if (game.getOptions().booleanOption("manei_domini")
+                        && (bonusMD == 0) && (entity.getMDIniBonus() > 0)) {
                             bonusMD = entity.getMDIniBonus();
                 }
                 if(entity.getQuirkIniBonus() > bonusQ) {
@@ -455,47 +480,48 @@ public final class Player extends TurnOrdered {
                     bonusQ = entity.getQuirkIniBonus();
                 }
             }
-        }     
+        }
         return bonusHQ + bonusMD + bonusQ;
     }
-    
+
     /**
-     * @return the bonus to this player's initiative rolls for 
+     * @return the bonus to this player's initiative rolls for
      * the highest value initiative (i.e. the 'commander')
      */
     public int getCommandBonus() {
         int commandb = 0;
         if (game.getOptions().booleanOption("command_init")) {
             for (Entity entity : game.getEntitiesVector()) {
-                if (entity.getOwner().equals(this) 
+                if (entity.getOwner().equals(this)
                         && !entity.isDestroyed()
-                        && entity.isDeployed() 
+                        && entity.isDeployed()
                         && !entity.isOffBoard()
                         && entity.getCrew().isActive()
                         && !entity.isCaptured()) {
-                    if (entity.getCrew().getCommandBonus() > commandb)
+                    if (entity.getCrew().getCommandBonus() > commandb) {
                         commandb = entity.getCrew().getCommandBonus();
+                    }
                 }
             }
         }
         return commandb;
     }
-    
+
     /**
      * cycle through entities on team and collect all the airborne VTOL/WIGE
      * @return a vector of relevant entity ids
      */
     public Vector<Integer> getAirborneVTOL() {
-    
+
         //a vector of unit ids
-        Vector<Integer> units = new Vector<Integer>();           
+        Vector<Integer> units = new Vector<Integer>();
         for(Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this) ) {
-                if(entity.getElevation() > 0 &&
-                        (entity instanceof VTOL 
-                                || entity.getMovementMode() == IEntityMovementMode.WIGE)) {
+                if((entity.getElevation() > 0) &&
+                        ((entity instanceof VTOL)
+                                || (entity.getMovementMode() == IEntityMovementMode.WIGE))) {
                     units.add(entity.getId());
-                }             
+                }
             }
         }
         return units;

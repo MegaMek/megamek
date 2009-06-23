@@ -157,6 +157,13 @@ public class Hex implements IHex, Serializable {
                 cTerr.setExit(direction, false);
             }
             
+            //gun emplacements can only be single hex buildings
+            if(cTerr.getType() == Terrains.BUILDING 
+                    && terrainLevel(Terrains.BLDG_CLASS) == Building.GUN_EMPLACEMENT) {
+                cTerr.setExit(direction, false);
+            }
+                
+            
         }
     }
 

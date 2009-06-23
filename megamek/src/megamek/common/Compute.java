@@ -1241,8 +1241,10 @@ public class Compute {
             return null;
         }
 
-        boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
-        boolean curInRearArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), ARC_REAR);
+        boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), 
+                                                target.getPosition(), attacker.getForwardArc());
+        boolean curInRearArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), 
+                                               target.getPosition(), attacker.getRearArc());
         if(!curInRearArc && attacker.getQuirks().booleanOption("multi_trac")) {
             return null;
         }
@@ -1270,7 +1272,8 @@ public class Compute {
                 if ((pte instanceof Mech) && ((Entity) pte).isStealthActive() && (pte != target) && !isSwarm) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE, "When targeting a stealthed Mech, can not attack secondary targets");
                 }
-                if (Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), pte.getPosition(), ARC_FORWARD)) {
+                if (Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), 
+                                    pte.getPosition(), attacker.getForwardArc())) {
                     primaryTarget = prevAttack.getTargetId();
                     break;
                 } else if ((primaryTarget == Entity.NONE) && !curInFrontArc) {

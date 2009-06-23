@@ -1097,12 +1097,12 @@ public class TestBot extends BotClient {
 
 						if (!Compute.isInArc(en.getPosition(), en
 								.getSecondaryFacing(), e.getPosition(),
-								Compute.ARC_FORWARD)) {
+								en.getForwardArc())) {
 							starg_mod = 2;
 						}
 					} else {
 						if (!Compute.isInArc(en.getPosition(), en.getFacing(),
-								e.getPosition(), Compute.ARC_FORWARD)) {
+								e.getPosition(), en.getForwardArc())) {
 							starg_mod = 2;
 						}
 

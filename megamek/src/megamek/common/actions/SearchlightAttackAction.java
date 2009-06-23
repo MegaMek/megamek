@@ -60,7 +60,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
             return false;
         if (!Compute.isInArc(attacker.getPosition(), attacker
                 .getSecondaryFacing(), target.getPosition(),
-                Compute.ARC_FORWARD))
+                attacker.getForwardArc()))
             return false;
         for (Enumeration<EntityAction> actions = game.getActions(); actions
                 .hasMoreElements();) {

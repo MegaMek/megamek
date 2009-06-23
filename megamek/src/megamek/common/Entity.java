@@ -8515,5 +8515,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return qrk.toString();
     }
+    
+    /**
+     * Returns the forward firing arc for this entity - overrided by some units
+     */
+    public int getForwardArc() {
+        return Compute.ARC_FORWARD;
+    }
+    
+    /**
+     * Returns the rear firing arc for this entity - overrided by some units
+     */
+    public int getRearArc() {
+        return Compute.ARC_REAR;
+    }
 
 }

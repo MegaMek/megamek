@@ -263,9 +263,9 @@ super * "road:2:63" "" "fluff/road_trees_63.gif"
 ##BUILDINGS WITH NON-STANDARD CLASS AND ARMOR##
 
 super * "building:4;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hardened/hardened_roof00.gif"
-super * "building:3;bldg_elev:1;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "heavy/heavy_roof00.gif"
-super * "building:2;bldg_elev:1;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "megaart/roof00.gif"
-super * "building:1;bldg_elev:1;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "light/light_roof00.gif"
+super * "building:3;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "heavy/heavy_roof00.gif"
+super * "building:2;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "megaart/roof00.gif"
+super * "building:1;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "light/light_roof00.gif"
 
 super * "building:1:00;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "light/light_roof00.gif"
 super * "building:1:01;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "light/light_roof01.gif"
@@ -550,9 +550,9 @@ super * "building:4:68;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hard
 ##BUILDINGS WITH NON-STANDARD CLASS, NO ARMOR##
 
 super * "building:4;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/hardened_roof00.gif"
-super * "building:3;bldg_elev:1;bldg_cf:*;bldg_class:*" "" "heavy/heavy_roof00.gif"
-super * "building:2;bldg_elev:1;bldg_cf:*;bldg_class:*" "" "megaart/roof00.gif"
-super * "building:1;bldg_elev:1;bldg_cf:*;bldg_class:*" "" "light/light_roof00.gif"
+super * "building:3;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "heavy/heavy_roof00.gif"
+super * "building:2;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "megaart/roof00.gif"
+super * "building:1;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "light/light_roof00.gif"
 
 super * "building:1:00;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "light/light_roof00.gif"
 super * "building:1:01;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "light/light_roof01.gif"
@@ -837,9 +837,9 @@ super * "building:4:68;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/hardened
 ##STANDARD BUILDINGS WITH ARMOR##
 
 super * "building:4;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/hardened_roof00.gif"
-super * "building:3;bldg_elev:1;bldg_cf:*;bldg_armor:*" "" "heavy/heavy_roof00.gif"
-super * "building:2;bldg_elev:1;bldg_cf:*;bldg_armor:*" "" "megaart/roof00.gif"
-super * "building:1;bldg_elev:1;bldg_cf:*;bldg_armor:*" "" "light/light_roof00.gif"
+super * "building:3;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "heavy/heavy_roof00.gif"
+super * "building:2;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "megaart/roof00.gif"
+super * "building:1;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "light/light_roof00.gif"
 
 super * "building:1:00;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "light/light_roof00.gif"
 super * "building:1:01;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "light/light_roof01.gif"

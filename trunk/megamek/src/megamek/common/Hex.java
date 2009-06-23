@@ -150,6 +150,13 @@ public class Hex implements IHex, Serializable {
                     && other.containsTerrain(Terrains.PAVEMENT)) {
                 cTerr.setExit(direction, true);
             }
+            
+            //buildings must have the same building class 
+            if(other != null && cTerr.getType() == Terrains.BUILDING
+                    && terrainLevel(Terrains.BLDG_CLASS) != other.terrainLevel(Terrains.BLDG_CLASS)) {
+                cTerr.setExit(direction, false);
+            }
+            
         }
     }
 

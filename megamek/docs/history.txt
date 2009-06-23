@@ -14,6 +14,7 @@ v0.35.3-dev (SVN)
 + REQ: Added keyboard shortcuts of Y and N for the yes/no dialogs
 	also added space for the common help dialog
 + Bug: buildings with different class being auto-combined in map editor
++ updated map editor readme with TacOps terrain types and levels
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)
 + Separate pilot tab (swing only)

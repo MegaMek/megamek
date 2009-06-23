@@ -104,21 +104,24 @@ information on the board file format, and the tileset file format.
 
     The terrain feature types and their expected values:
 
-        woods: 1-2; 1 for light woods, 2 for heavy woods
-        rough: 1
-        rubble: 1-4; 1-4 corresponding to building types
+        woods: 1-3; 1 for light woods, 2 for heavy woods, 3 for ultra-heavy woods
+        rough: 1-2; 1 for normal rough, 2 for ultra-rough
+        rubble: 1-6; 1-4 corresponding to building types, 5 for wall rubble, 6 for ultra rubble
         water: 0+; the hex elevation is the elevation for the surface of the 
             water, and the water level is the depth of the water
         pavement: 1
         road: 1
-        fire: 1
-        smoke: 1
-        swamp: 1 
+        fire: 1-2; 1 for normal fire, 2 for inferno fire
+        smoke: 1-2; 1 for light smoke, 2 for heavy smoke
+        swamp: 1-3; 1 for normal, 2 for just became quicksand, 3 for quicksand 
         building: 1-4; 1 = light ... 4 = hardened
         bldg_cf: 0-150; defaults to 15, 40, 90, or 120 if not specified
         bldg_elev: 1+; you must supply a number if a building is supplied.
         bldg_basement: 0-2; indicates depth, leaving this parameter out 
             indicates that the game should "roll" for the basement dynamically
+        bldg_class: 0-3; 0 for standard, 1 for hangar, 2 for fortress, 3 for gun emplacement, 
+                         defaults to standard if not specified
+        bldg_armor: 0-150
         bridge: 1-4 (not functional in 0.26); 1 = light ... 4 = reinforced
         bridge_cf: 0-150; defaults to 15, 40, 90, or 120 if not specified
         bridge_elev: any; surface of the bridge, defaults to 0 if not present
@@ -130,17 +133,17 @@ information on the board file format, and the tileset file format.
         geyser: 1-3; 1 is dormant, 2 is active, 3 is a magma vent
         magma: 1-2; 1 is crust, 2 is liquid
         jungle: 1-3; as woods
-        mud: 1-2; normal/deep
-        rapids: 1
+        mud: 1
+        rapids: 1-2; 1 for rapids, 2 for torrents (does not include water flow)
         sand: 1
-        snow: 1
+        snow: 1-2; 1 for thin snow, 2 for deep snow
         tundra: 1
+        fields: 1; for planted fields
+        industrial: 1+; level indicates the height of the heavy industrial terrain     
         impassable: 1; this prevents units entering or deploying, e.g. for underground
         elevator: (any); each exit corresponds to a die roll it will move on, and the 
                          terrain level is the new elevation after it moves.
-        
-    Future additions may include ice, as well as some of the terrain present in
-    the Maximum Tech sourcebook (jungle, magma, etc.)
+  
 
 The board file format is plain text.  You will probably not need to edit the
 board files by hand.  This refrence is just for creating a different editor.

@@ -17,7 +17,7 @@ package megamek.client.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -25,11 +25,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 
 import megamek.client.ui.Messages;
 
@@ -41,6 +47,7 @@ public class CommonHelpDialog extends JDialog {
      * 
      */
     private static final long serialVersionUID = 5189627839475444823L;
+    private static final String CLOSEACTION = "CloseAction"; //$NON-NLS-1$
     private JTextArea lblHelp;
 
     /**
@@ -76,13 +83,24 @@ public class CommonHelpDialog extends JDialog {
         getContentPane().add(scroll, BorderLayout.CENTER);
 
         // Add a "Close" button.
-        JButton butClose = new JButton(Messages
+		Action closeAction = new AbstractAction() {
+			private static final long serialVersionUID = 1680850851585381148L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				quit();
+			}
+		};
+        JButton butClose = new JButton(closeAction);
+        butClose.setText(Messages
                 .getString("CommonHelpDialog.Close")); //$NON-NLS-1$
-        butClose.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                quit();
-            }
-        });
+
+		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0);
+		InputMap imap = butClose.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap amap = butClose.getActionMap();
+		imap.put(ks, CLOSEACTION);
+		amap.put(CLOSEACTION, closeAction);
+
         getContentPane().add(butClose, BorderLayout.SOUTH);
 
         // Make the window half the screensize by default.

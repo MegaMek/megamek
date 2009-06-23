@@ -43,7 +43,7 @@ public class Terrains implements ITerrainFactory {
     public static final int ICE      = 17;
     public static final int SNOW     = 18; // 1: thin 2: deep  
     public static final int FIRE     = 19; // 1: normal fire 2: inferno fire
-    public static final int SMOKE    = 20;
+    public static final int SMOKE    = 20; // 1: light smoke 2: heavy smoke
     public static final int GEYSER   = 21; // 1: dormant 2: active 3: magma vent
     //unimplemented
     //Black Ice
@@ -52,6 +52,7 @@ public class Terrains implements ITerrainFactory {
     //Hazardous Liquid Pools
     //Rail
     //Dirt Roads, Gravel Roads
+    //Water Flow
     
     //Building stuff
     public static final int BUILDING       = 22; // 1: light 2: medium 3: heavy 4: hardened 5: wall

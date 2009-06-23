@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -44,7 +44,7 @@ import megamek.client.ui.Messages;
  */
 public class CommonHelpDialog extends JDialog {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5189627839475444823L;
     private static final String CLOSEACTION = "CloseAction"; //$NON-NLS-1$
@@ -53,7 +53,7 @@ public class CommonHelpDialog extends JDialog {
     /**
      * Create a help dialog for the given parent <code>Frame</code> by reading
      * from the indicated <code>File</code>.
-     * 
+     *
      * @param frame - the parent <code>Frame</code> for this dialog. This
      *            value should <b>not</b> be <code>null</code>.
      * @param helpfile - the <code>File</code> containing the help text. This
@@ -83,23 +83,22 @@ public class CommonHelpDialog extends JDialog {
         getContentPane().add(scroll, BorderLayout.CENTER);
 
         // Add a "Close" button.
-		Action closeAction = new AbstractAction() {
-			private static final long serialVersionUID = 1680850851585381148L;
+        Action closeAction = new AbstractAction() {
+            private static final long serialVersionUID = 1680850851585381148L;
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				quit();
-			}
-		};
+            public void actionPerformed(ActionEvent e) {
+                quit();
+            }
+        };
         JButton butClose = new JButton(closeAction);
         butClose.setText(Messages
                 .getString("CommonHelpDialog.Close")); //$NON-NLS-1$
 
-		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0);
-		InputMap imap = butClose.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-		ActionMap amap = butClose.getActionMap();
-		imap.put(ks, CLOSEACTION);
-		amap.put(CLOSEACTION, closeAction);
+        KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0);
+        InputMap imap = butClose.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap amap = butClose.getActionMap();
+        imap.put(ks, CLOSEACTION);
+        amap.put(CLOSEACTION, closeAction);
 
         getContentPane().add(butClose, BorderLayout.SOUTH);
 

@@ -1728,4 +1728,26 @@ public class Tank extends Entity {
         }
         return false;
     }
+    
+    /**
+     * see {@link Entity#getForwardArc()}
+     */
+    @Override
+    public int getForwardArc() {
+        if(game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+            return Compute.ARC_NOSE;
+        }
+        return super.getForwardArc();
+    }
+    
+    /**
+     * see {@link Entity#getRearArc()}
+     */
+    public int getRearArc() {
+        if(game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+            return Compute.ARC_AFT;
+        }
+        return super.getRearArc();
+    }
+    
 }

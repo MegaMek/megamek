@@ -2593,5 +2593,20 @@ public class Aero extends Entity
         }
         return false;
     }
+    
+    /**
+     * see {@link Entity#getForwardArc()}
+     */
+    @Override
+    public int getForwardArc() {
+        return Compute.ARC_NOSE;
+    }
+    
+    /**
+     * see {@link Entity#getRearArc()}
+     */
+    public int getRearArc() {
+        return Compute.ARC_AFT;
+    }
 
 }

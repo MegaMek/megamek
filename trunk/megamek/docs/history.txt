@@ -16,6 +16,7 @@ v0.35.3-dev (SVN)
 + Bug: buildings with different class being auto-combined in map editor
 + updated map editor readme with TacOps terrain types and levels
 + Bug 2809999: Light and Moderate Gale/Wind
++ Bug 2806950: TacOps Vehicle Arcs + secondary targets
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)
 + Separate pilot tab (swing only)

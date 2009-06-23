@@ -674,7 +674,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 Targetable weapTarget = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
                         attacker.getSecondaryFacing(), weapTarget.getPosition(),
-                        Compute.ARC_FORWARD);
+                        attacker.getForwardArc());
                 if (curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa
                             .getEntityId(), waa.getTargetType(), waa
@@ -700,7 +700,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 Targetable weapTarget = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
                         attacker.getSecondaryFacing(), weapTarget.getPosition(),
-                        Compute.ARC_FORWARD);
+                        attacker.getForwardArc());
                 if (!curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa
                             .getEntityId(), waa.getTargetType(), waa
@@ -849,10 +849,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 if (!oldTarget.equals(target)) {
                     boolean oldInFront = Compute.isInArc(ce().getPosition(),
                             ce().getSecondaryFacing(), oldTarget.getPosition(),
-                            Compute.ARC_FORWARD);
+                            ce().getForwardArc());
                     boolean curInFront = Compute.isInArc(ce().getPosition(),
                             ce().getSecondaryFacing(), target.getPosition(),
-                            Compute.ARC_FORWARD);
+                            ce().getForwardArc());
                     if (!oldInFront && curInFront) {
                         String title = Messages
                                 .getString("FiringDisplay.SecondaryTargetToHitChange.title"); //$NON-NLS-1$

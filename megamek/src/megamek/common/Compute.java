@@ -3468,6 +3468,9 @@ public class Compute {
         } else if (attacker instanceof Infantry) {
             // Non-BattleArmor infantry need many more men.
             Infantry inf = (Infantry) attacker;
+            if(inf.isArmorEncumbering()) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "can't engage in anti-mek attacks with encumbering armor");
+            }    
             men = inf.getShootingStrength();
             if (men >= 22) {
                 base = inf.getCrew().getPiloting();
@@ -3561,6 +3564,10 @@ public class Compute {
         // Non-BattleArmor infantry need many more men.
         else if (attacker instanceof Infantry) {
             Infantry inf = (Infantry) attacker;
+            //can't have encumbering armor
+            if(inf.isArmorEncumbering()) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "can't swarm with encumbering armor");
+            }           
             men = inf.getShootingStrength();
             if (men >= 22) {
                 base = inf.getCrew().getPiloting() + 2;

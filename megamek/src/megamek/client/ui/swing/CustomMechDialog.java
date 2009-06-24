@@ -241,6 +241,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private ArrayList<RapidfireMGPanel> m_vMGs = new ArrayList<RapidfireMGPanel>();
 
     private JPanel panRapidfireMGs = new JPanel();
+    
+    private InfantryArmorPanel panInfArmor = new InfantryArmorPanel();
 
     private ArrayList<MineChoicePanel> m_vMines = new ArrayList<MineChoicePanel>();
 
@@ -482,6 +484,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             setupRapidfireMGs();
             panEquip.add(panRapidfireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
+        
+        //set up infantry armor
+        if(entity instanceof Infantry && !(entity instanceof BattleArmor)) {
+            panInfArmor.initialize();
+            panEquip.add(panInfArmor, GBC.eop().anchor(GridBagConstraints.CENTER));
+        }
 
         // Set up searchlight
         if (clientgui.getClient().game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) {
@@ -594,6 +602,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             disableMunitionEditing();
             disableMGSetting();
             disableMineSetting();
+            panInfArmor.setEnabled(false);
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);
@@ -1230,6 +1239,48 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             chRapid.setEnabled(enabled);
         }
     }
+    
+    class InfantryArmorPanel extends JPanel {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -909995917737642853L;
+
+        private Infantry inf;
+        JLabel labArmor = new JLabel("Infantry Armor");
+        JLabel labDivisor = new JLabel("Damage Divisor:");
+        JLabel labEncumber = new JLabel("Encumbering?");
+        private JTextField fldDivisor = new JTextField(3);
+        JCheckBox chEncumber = new JCheckBox();
+        
+        InfantryArmorPanel() {         
+            GridBagLayout g = new GridBagLayout();
+            setLayout(g);
+            add(labArmor, GBC.eol());
+            add(labDivisor, GBC.std().anchor(GridBagConstraints.EAST));
+            add(fldDivisor, GBC.eol());
+            add(labEncumber, GBC.std().anchor(GridBagConstraints.EAST));
+            add(chEncumber, GBC.eol());
+        }
+        
+        public void initialize() {
+            inf = (Infantry)entity;
+            fldDivisor.setText(Double.toString(inf.getDamageDivisor()));
+            chEncumber.setSelected(inf.isArmorEncumbering());
+        }
+
+        public void applyChoice() {
+            inf.setDamageDivisor(Double.valueOf(fldDivisor.getText()));
+            inf.setArmorEncumbering(chEncumber.isSelected());
+            
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {
+            fldDivisor.setEnabled(enabled);
+            chEncumber.setEnabled(enabled);
+        }
+    }
 
     private void disableMunitionEditing() {
         for (int i = 0; i < m_vMunitions.size(); i++) {
@@ -1760,6 +1811,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // 0?0:choDeployment.getSelectedIndex()+1));
             entity.setDeployRound(choDeployment.getSelectedIndex());
 
+            if(entity instanceof Infantry && !(entity instanceof BattleArmor)) {
+                panInfArmor.applyChoice();
+            }
+            
             // update munitions selections
             for (final Object newVar2 : m_vMunitions) {
                 ((MunitionChoicePanel) newVar2).applyChoice();

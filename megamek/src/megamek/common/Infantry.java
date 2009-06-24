@@ -57,6 +57,12 @@ public class Infantry extends Entity implements Serializable {
     private int men = 0;
 
     /**
+     * Infantry armor
+     */
+    private double damageDivisor = 1.0;
+    private boolean encumbering = false;
+    
+    /**
      * Infantry have no critical slot limitations or locations.
      */
     private static final int[] NUM_OF_SLOTS = { 0 };
@@ -178,6 +184,10 @@ public class Infantry extends Entity implements Serializable {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int mp = getOriginalWalkMP();
+        //encumbering armor reduces MP by 1 to a minimum of one (TacOps, pg. 318)
+        if(encumbering) {
+            mp = Math.max(mp - 1, 1);
+        }
         if(null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if(weatherMod != 0) {
@@ -908,6 +918,22 @@ public class Infantry extends Entity implements Serializable {
     @Override
     public int getTotalCommGearTons() {
         return 0;
+    }
+    
+    public double getDamageDivisor() {
+        return damageDivisor;
+    }
+    
+    public void setDamageDivisor(double d) {
+        this.damageDivisor = d;
+    }
+    
+    public boolean isArmorEncumbering() {
+        return encumbering;
+    }
+    
+    public void setArmorEncumbering(boolean b) {
+        this.encumbering = b;
     }
 
 } // End class Infantry

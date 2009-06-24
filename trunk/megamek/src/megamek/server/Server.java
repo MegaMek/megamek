@@ -14942,6 +14942,18 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
             }
         }
+        
+        //infantry armor can reduce damage
+        if(isPlatoon && ((Infantry)te).getDamageDivisor() != 1.0) {
+            r = new Report(6074);
+            r.subject = te_n;
+            r.indent(2);
+            r.newlines = 0;
+            r.add(damage);
+            damage = (int) Math.ceil(((double) damage) / ((Infantry)te).getDamageDivisor());
+            r.add(damage);
+            vDesc.addElement(r);
+        }
 
         // Allocate the damage
         while (damage > 0) {

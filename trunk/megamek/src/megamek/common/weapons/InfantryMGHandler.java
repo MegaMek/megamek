@@ -65,11 +65,15 @@ public class InfantryMGHandler extends InfantryWeaponHandler {
             r.subject = subjectId;
             r.add(troopersHit);
             r.add(" troopers ");
-            int toReturn = damage[troopersHit - 1] + Compute.d6();
-            r.add(toHit.getTableDesc() + ", causing " + toReturn + "damage.");
+            int damageDealt = damage[troopersHit - 1] + Compute.d6();
+            r.add(toHit.getTableDesc() + ", causing " + damageDealt + "damage.");
             r.newlines = 0;
             vPhaseReport.addElement(r);
-            return toReturn;
+            //this is a little strange, but I cant just do this in calcDamagePerHit because
+            //that is called up before misses are determined and will lead to weird reporting
+            nDamPerHit = damageDealt;
+            return 1;
+            
         }
         return super.calcHits(vPhaseReport);
     }

@@ -24,6 +24,7 @@ v0.35.3-dev (SVN)
 + Space suits, DEST and Sneak suits (infantry armor)
 + localized infantry armor labels
 + infantry BV adjusted for infantry armor
++ added quirks with no game effects for completeness
 
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)

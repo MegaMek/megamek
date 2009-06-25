@@ -32,7 +32,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -44,7 +46,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -80,6 +81,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
+import megamek.common.options.WeaponQuirks;
 import megamek.common.preference.PreferenceManager;
 
 /**
@@ -266,9 +268,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private PilotOptions options;
     private Quirks quirks;
+    private HashMap<Integer, WeaponQuirks> h_wpnQuirks = new HashMap<Integer, WeaponQuirks>();
 
     private ArrayList<DialogOptionComponent> optionComps = new ArrayList<DialogOptionComponent>();
     private ArrayList<DialogOptionComponent> quirkComps = new ArrayList<DialogOptionComponent>();
+    private HashMap<Integer, ArrayList<DialogOptionComponent>> h_wpnQuirkComps = new HashMap<Integer,ArrayList<DialogOptionComponent>>();
 
     private boolean editable;
 
@@ -319,6 +323,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         this.client = client;
         options = entity.getCrew().getOptions();
         this.quirks = entity.getQuirks();
+        for (Mounted m : entity.getWeaponList()) {
+            h_wpnQuirks.put(entity.getEquipmentNum(m), m.getQuirks());
+        }
         this.editable = editable;
 
         //**PILOT TAB**/
@@ -1447,11 +1454,33 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         .setValue(comp.getValue());
             }
         }
+        //now for weapon quirks
+        Set<Integer> set= h_wpnQuirkComps.keySet();
+        Iterator<Integer> iter = set.iterator();
+        while(iter.hasNext()) {
+            int key = iter.next();
+            Mounted m = entity.getEquipment(key);
+            ArrayList<DialogOptionComponent> wpnQuirkComps = h_wpnQuirkComps.get(key);
+            for (final Object newVar : wpnQuirkComps) {
+                DialogOptionComponent comp = (DialogOptionComponent) newVar;
+                option = comp.getOption();
+                if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) { // NON-NLS-$1
+                    m.getQuirks().getOption(option.getName())
+                            .setValue("None"); // NON-NLS-$1
+                } else {
+                    m.getQuirks().getOption(option.getName())
+                            .setValue(comp.getValue());
+                }
+            }
+        }
     }
     
     public void refreshQuirks() {
         panQuirks.removeAll();
         quirkComps = new ArrayList<DialogOptionComponent>();
+        for(Mounted m : entity.getWeaponList()) {
+            h_wpnQuirkComps.put(entity.getEquipmentNum(m), new ArrayList<DialogOptionComponent>());
+        }
 
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
                 .hasMoreElements();) {
@@ -1471,6 +1500,24 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
         }
 
+        //now for weapon quirks
+        Set<Integer> set= h_wpnQuirks.keySet();
+        Iterator<Integer> iter = set.iterator();
+        while(iter.hasNext()) {
+            int key = iter.next();
+            Mounted m = entity.getEquipment(key);
+            WeaponQuirks wpnQuirks = h_wpnQuirks.get(key);
+            JLabel labWpn = new JLabel(m.getName());
+            panQuirks.add(labWpn, GBC.eol());
+            for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements();) {
+                IOptionGroup group = i.nextElement();
+                for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+                    IOption option = j.nextElement();        
+                    addWeaponQuirk(key, option, editable);
+                }
+            }
+        }
+        
         validate();
     }
 
@@ -1512,6 +1559,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panQuirks.add(optionComp, GBC.eol());
 
         quirkComps.add(optionComp);
+    }
+    
+    private void addWeaponQuirk(int key, IOption option, boolean editable) {
+        DialogOptionComponent optionComp = new DialogOptionComponent(this,
+                option, editable);
+
+        panQuirks.add(optionComp, GBC.eol());
+        h_wpnQuirkComps.get(key).add(optionComp);
     }
 
     // TODO : implement me!!!

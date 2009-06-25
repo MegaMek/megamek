@@ -109,9 +109,9 @@ to his/her copy of the game to play their turn.
 To start a dedicated server, use the -dedicated command line switch.  A
 dedicated server just runs the server, in the console, without a "host" player
 in the game.  People, including yourself, can join it like a game with a host.
-The dedicated server reads the password and port options from the MegaMek.cfg
-file, or uses the default (no password and port 2346.)  If you want the
-dedicated server to load a saved game, supply the filename after the
+The dedicated server reads the password and port options from the 
+clientsettings.xml file, or uses the default (no password and port 2346.) If you
+want the dedicated server to load a saved game, supply the filename after the
 -dedicated switch, like this: "-dedicated savedgame.sav".  To stop the server,
 you will need to tell the Java machine to halt execution, which is CTRL + C on
 most platforms.
@@ -205,10 +205,10 @@ hex.  Cyan indicates walking, yellow running, and red jump movement.  Dark grey
 sections of the path indicate where you have exceeded your movement capacity,
 or other illegal moves.  You can drag the mouse to see movement options for 
 several different hexes.  Please note that you can change the colors used to
-display the movement points by editing MegaMek.cfg; you may specify a color in
-RGB notation (e.g. 255 255 255 for white) or with any of the following text
-values: black, blue, cyan, darkgray, gray, green, lightgray, magenta, orange,
-pink, red, white, or yellow.
+display the movement points by editing clientsettings.xml; you may specify a
+color in RGB notation (e.g. 255 255 255 for white) or with any of the following
+text values: black, blue, cyan, darkgray, gray, green, lightgray, magenta, 
+orange, pink, red, white, or yellow.
 
 Units can also be moved by using "waypoints."  By clicking each hex between 
 the unit's current location and destination, you can delineate the exact path 

@@ -1199,8 +1199,8 @@ public class Client implements IClientCommandHandler {
     /**
      * Perform a dump of the current memory usage. <p/> This method is useful in
      * tracking performance issues on various player's systems. You can activate
-     * it by changing the "memorydumpon" setting to "true" in the MegaMek.cfg
-     * file.
+     * it by changing the "memorydumpon" setting to "true" in the
+     * clientsettings.xml file.
      *
      * @param where - a <code>String</code> indicating which part of the game
      *            is making this call.

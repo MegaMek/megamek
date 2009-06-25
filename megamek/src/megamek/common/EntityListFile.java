@@ -100,6 +100,10 @@ public class EntityListFile {
                 output.append("\" munition=\"");
                 output.append(mount.getLinked().getType().getInternalName());
             }
+            if (mount.countQuirks() > 0) {
+                output.append("\" quirks=\"");
+                output.append(String.valueOf(mount.getQuirkList("::")));
+            }
         }
         if (isHit) {
             output.append("\" isHit=\"");
@@ -204,6 +208,13 @@ public class EntityListFile {
 
                     // Record damaged slots in undestroyed locations.
                     else if (!isDestroyed && slot.isDamaged()) {
+                        thisLoc.append(formatSlot(String.valueOf(loop + 1),
+                                mount, slot.isHit(), slot.isDestroyed()));
+                        haveSlot = true;
+                    } 
+                    
+                    //record any quirks
+                    else if (null != mount && mount.countQuirks() > 0) {
                         thisLoc.append(formatSlot(String.valueOf(loop + 1),
                                 mount, slot.isHit(), slot.isDestroyed()));
                         haveSlot = true;

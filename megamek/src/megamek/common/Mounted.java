@@ -1007,6 +1007,9 @@ public class Mounted implements Serializable, RoundUpdated {
             if(getQuirks().booleanOption("no_cooling")) {
                 heat += 2;
             }
+            if(hasChargedCapacitor()) {
+                heat += 5;
+            }
             return heat;
         }
         return 0;

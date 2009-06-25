@@ -49,12 +49,7 @@ public class PrototypeLaserHandler extends EnergyWeaponHandler {
     @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            int heat = wtype.getHeat();
-            if ( game.getOptions().booleanOption("tacops_energy_weapons") ){
-                heat = Compute.dialDownHeat(weapon, wtype,ae.getPosition().distance(target.getPosition()));
-            }
-
-            ae.heatBuildup += heat;
+            super.addHeat();
             ae.heatBuildup += Compute.d6();
         }
     }

@@ -98,7 +98,7 @@ public class MGHandler extends AmmoWeaponHandler {
             if (weapon.isRapidfire()) {
                 ae.heatBuildup += nRapidDamHeatPerHit;
             } else {
-                ae.heatBuildup += (wtype.getHeat());
+                super.addHeat();
             }
         }
     }

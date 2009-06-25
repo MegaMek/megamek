@@ -1380,18 +1380,7 @@ public class MechDisplay extends JPanel {
             WeaponType wtype = (WeaponType) mounted.getType();
             // update weapon display
             wNameR.setText(mounted.getDesc());
-            if (mounted.hasChargedCapacitor()) {
-                wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted,
-                        wtype) + 5)));
-            } else if (wtype.hasFlag(WeaponType.F_ENERGY)
-                    && wtype.hasModes()
-                    && clientgui.getClient().game.getOptions().booleanOption(
-                            "tacops_energy_weapons")) {
-                wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted,
-                        wtype))));
-            } else {
-                wHeatR.setText(Integer.toString(mounted.getCurrentHeat()));
-            }
+            wHeatR.setText(Integer.toString(mounted.getCurrentHeat()));
 
             wArcHeatR.setText(Integer.toString(entity.getHeatInArc(mounted
                     .getLocation(), mounted.isRearMounted())));

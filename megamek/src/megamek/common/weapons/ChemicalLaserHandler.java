@@ -84,11 +84,4 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
 
     }
 
-    @Override
-    protected void addHeat() {
-        if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            ae.heatBuildup += (wtype.getHeat());
-        }
-    }
-
 }

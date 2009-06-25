@@ -32,6 +32,7 @@ v0.35.3-dev (SVN)
 + Improved Cooling Jacket Quirk
 + Poor Cooling Jacket Quirk
 + No Cooling Jacket Quirk
++ save and load weapon quirks from MULs
 
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)

@@ -1008,6 +1008,7 @@ public class XMLStreamParser implements XMLResponder {
                 String hit = (String) attr.get(IS_HIT);
                 String destroyed = (String) attr.get(IS_DESTROYED);
                 String munition = (String) attr.get(MUNITION);
+                String quirks = (String) attr.get(QUIRKS);
 
                 // Did we find required attributes?
                 if (index == null || index.length() == 0) {
@@ -1196,6 +1197,27 @@ public class XMLStreamParser implements XMLResponder {
                         // Reset transient values.
                         mounted.restore();
 
+                        //quirks
+                        if ((null != quirks)
+                                && (quirks.trim().length() > 0)) {
+                            StringTokenizer st = new StringTokenizer(quirks,
+                                    "::");
+                            while (st.hasMoreTokens()) {
+                                String quirk = st.nextToken();
+                                String quirkName = Pilot.parseAdvantageName(quirk);
+                                Object value = Pilot.parseAdvantageValue(quirk);
+
+                                try {
+                                    mounted.getQuirks().getOption(quirkName).setValue(
+                                            value);
+                                } catch (Exception e) {
+                                    this.warning.append(
+                                            "Error restoring quirk: ").append(
+                                            quirk).append(".\n");
+                                }
+                            }
+                        }
+                        
                         // Hit and destroy the mounted, according to the flags.
                         mounted.setDestroyed(hitFlag || destFlag);
 

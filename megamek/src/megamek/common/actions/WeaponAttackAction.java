@@ -928,6 +928,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if(ae.getQuirks().booleanOption("sensor_ghosts")) {
             toHit.addModifier(+1, "sensor ghosts");
         }
+        
+        if(weapon.getQuirks().booleanOption("accurate")) {
+            toHit.addModifier(-1, "accurate weapon");
+        }
+        
+        if(weapon.getQuirks().booleanOption("inaccurate")) {
+            toHit.addModifier(+1, "inaccurate weapon");
+        }
 
         // Is the pilot a weapon specialist?
         if (ae.crew.getOptions().stringOption("weapon_specialist").equals(

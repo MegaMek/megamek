@@ -25,6 +25,9 @@ v0.35.3-dev (SVN)
 + localized infantry armor labels
 + infantry BV adjusted for infantry armor
 + added quirks with no game effects for completeness
++ Weapon Quirks
++ Accurate Weapon Quirk
++ Inaccurate Weapon Quirk
 
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)

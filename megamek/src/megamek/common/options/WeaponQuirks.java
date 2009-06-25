@@ -15,6 +15,8 @@
 package megamek.common.options;
 
 
+import java.util.Vector;
+
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Dropship;
@@ -29,95 +31,29 @@ import megamek.common.Tank;
  * 
  * @author Taharqa (Jay Lawson)
  */
-public class Quirks extends AbstractOptions {
-    private static final long serialVersionUID = 7618380522964885740L;
-    public static final String POS_QUIRKS = "PosQuirks"; //$NON-NLS-1$
-    public static final String NEG_QUIRKS = "NegQuirks"; //$NON-NLS-1$
+public class WeaponQuirks extends AbstractOptions {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8455685281028804229L;
+    public static final String WPN_QUIRKS = "WeaponQuirks"; //$NON-NLS-1$
   
-    public Quirks() {
+    public WeaponQuirks() {
         super();
     }
 
     @Override
     public void initialize() {
         //positive quirks
-        IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS); //$NON-NLS-1$
-        addOption(posQuirk, "anti_air", false); //$NON-NLS-1$
-        addOption(posQuirk, "atmo_flyer", false); //$NON-NLS-1$
-        addOption(posQuirk, "battle_computer", false); //$NON-NLS-1$
-        addOption(posQuirk, "combat_computer", false); //$NON-NLS-1$
-        addOption(posQuirk, "command_mech", false); //$NON-NLS-1$
-        addOption(posQuirk, "cowl", false); //$NON-NLS-1$
-        addOption(posQuirk, "docking_arms", false); //$NON-NLS-1$
-        addOption(posQuirk, "easy_maintain", false); //$NON-NLS-1$
-        addOption(posQuirk, "easy_pilot", false); //$NON-NLS-1$
-        addOption(posQuirk, "ext_twist", false); //$NON-NLS-1$
-        addOption(posQuirk, "fast_reload", false); //$NON-NLS-1$
-        addOption(posQuirk, "low_profile", false); //$NON-NLS-1$
-        addOption(posQuirk, "hyper_actuator", false); //$NON-NLS-1$
-        addOption(posQuirk, "imp_sensors", false); //$NON-NLS-1$
-        addOption(posQuirk, "imp_life_support", false); //$NON-NLS-1$
-        addOption(posQuirk, "imp_target_short", false); //$NON-NLS-1$
-        addOption(posQuirk, "imp_target_med", false); //$NON-NLS-1$
-        addOption(posQuirk, "imp_target_long", false); //$NON-NLS-1$
-        addOption(posQuirk, "internal_bomb", false); //$NON-NLS-1$
-        addOption(posQuirk, "mod_weapons", false); //$NON-NLS-1$
-        addOption(posQuirk, "multi_trac", false); //$NON-NLS-1$
-        addOption(posQuirk, "pro_actuator", false); //$NON-NLS-1$
-        addOption(posQuirk, "reinforced_legs", false); //$NON-NLS-1$
-        addOption(posQuirk, "searchlight", false); //$NON-NLS-1$
-        addOption(posQuirk, "stable", false); //$NON-NLS-1$
-        addOption(posQuirk, "trailer_hitch", false); //$NON-NLS-1$
-        //not yet implemented
-        //Accurate Weapon (weapon-specific)
-        //Docking Arms (docking unimplemented)
-        //Fast Reload (no game effect at present)
-        //Improved Cooling Jacket (weapon-specific)
-        //Improved Communications
-        //Internal Bomb Bay
-        //Searchlight
-        //Variable Range Targeting
-        //VTOL Rotor Arrangement (no vee adv move rules)
-        
-        // negative quirks
-        IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS); //$NON-NLS-1$
-        addOption(negQuirk, "atmo_instability", false); //$NON-NLS-1$
-        addOption(negQuirk, "bad_rep", false); //$NON-NLS-1$
-        addOption(negQuirk, "cramped_cockpit", false); //$NON-NLS-1$
-        addOption(negQuirk, "difficult_eject", false); //$NON-NLS-1$
-        addOption(negQuirk, "difficult_maintain", false); //$NON-NLS-1$
-        addOption(negQuirk, "exp_actuator", false); //$NON-NLS-1$
-        addOption(negQuirk, "fragile_fuel", false); //$NON-NLS-1$
-        addOption(negQuirk, "hard_pilot", false); //$NON-NLS-1$
-        addOption(negQuirk, "no_arms", false); //$NON-NLS-1$
-        addOption(negQuirk, "no_eject", false); //$NON-NLS-1$
-        addOption(negQuirk, "no_twist", false); //$NON-NLS-1$
-        addOption(negQuirk, "non_standard", false); //$NON-NLS-1$
-        addOption(negQuirk, "large_dropper", false); //$NON-NLS-1$
-        addOption(negQuirk, "poor_life_support", false); //$NON-NLS-1$
-        addOption(negQuirk, "poor_target_short", false); //$NON-NLS-1$
-        addOption(negQuirk, "poor_target_med", false); //$NON-NLS-1$
-        addOption(negQuirk, "poor_target_long", false); //$NON-NLS-1$
-        addOption(negQuirk, "poor_work", false); //$NON-NLS-1$
-        addOption(negQuirk, "prototype", false); //$NON-NLS-1$
-        addOption(negQuirk, "sensor_ghosts", false); //$NON-NLS-1$
-        addOption(negQuirk, "unbalanced", false); //$NON-NLS-1$
-        addOption(negQuirk, "weak_legs", false); //$NON-NLS-1$
-        addOption(negQuirk, "weak_undercarriage", false); //$NON-NLS-1$
-        //quirks not implemented yet
-        //Ammunition Feed Problem (weapon-specific)
-        //Cooling System Flaws
-        //EM Interference (weapon-specific)
-        //Exposed Weapon Linkage (weapon-specific, sort of)
-        //Gas Hog
-        //Inaccurate Weapon (weapon-specific)
-        //Large Dropship (no docking)
-        //No Cooling Jacket (weapon-specific)
-        //Poor Cooling Jacket (weapon-specific)
-        //Poor Performance
-        //Un-streamlined
-        //Weak Head Armor
-        //Weak Undercarriage (no landing)
+        IBasicOptionGroup wpnQuirk = addGroup("wpn_quirks", WPN_QUIRKS); //$NON-NLS-1$
+        addOption(wpnQuirk, "accurate", false); //$NON-NLS-1$
+        addOption(wpnQuirk, "inaccurate", false); //$NON-NLS-1$
+        /*
+        addOption(wpnQuirk, "imp_cooling", false); //$NON-NLS-1$
+        addOption(wpnQuirk, "poor_cooling", false); //$NON-NLS-1$
+        addOption(wpnQuirk, "no_cooling", false); //$NON-NLS-1$
+        addOption(wpnQuirk, "ammo_feed", false); //$NON-NLS-1$
+        */
     }
 
     /*
@@ -127,7 +63,7 @@ public class Quirks extends AbstractOptions {
      */
     @Override
     protected AbstractOptionsInfo getOptionsInfoImp() {
-        return QuirksInfo.getInstance();
+        return WeaponQuirksInfo.getInstance();
     }
     
     public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
@@ -328,15 +264,15 @@ public class Quirks extends AbstractOptions {
         
     }
 
-    private static class QuirksInfo extends AbstractOptionsInfo {
-        private static AbstractOptionsInfo instance = new QuirksInfo();
+    private static class WeaponQuirksInfo extends AbstractOptionsInfo {
+        private static AbstractOptionsInfo instance = new WeaponQuirksInfo();
 
         public static AbstractOptionsInfo getInstance() {
             return instance;
         }
 
-        protected QuirksInfo() {
-            super("QuirksInfo"); //$NON-NLS-1$
+        protected WeaponQuirksInfo() {
+            super("WeaponQuirksInfo"); //$NON-NLS-1$
         }
     }
     

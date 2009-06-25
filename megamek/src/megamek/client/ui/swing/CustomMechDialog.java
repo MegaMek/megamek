@@ -1247,31 +1247,82 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         private static final long serialVersionUID = -909995917737642853L;
 
         private Infantry inf;
-        JLabel labArmor = new JLabel("Infantry Armor");
-        JLabel labDivisor = new JLabel("Damage Divisor:");
-        JLabel labEncumber = new JLabel("Encumbering?");
+        JLabel labArmor = new JLabel(Messages.getString("CustomMechDialog.labInfantryArmor"));
+        JLabel labDivisor = new JLabel(Messages.getString("CustomMechDialog.labDamageDivisor"));
+        JLabel labEncumber = new JLabel(Messages.getString("CustomMechDialog.labEncumber"));
+        JLabel labSpaceSuit = new JLabel(Messages.getString("CustomMechDialog.labSpaceSuit"));
+        JLabel labDEST = new JLabel(Messages.getString("CustomMechDialog.labDEST"));
+        JLabel labSneakCamo = new JLabel(Messages.getString("CustomMechDialog.labSneakCamo"));
+        JLabel labSneakIR = new JLabel(Messages.getString("CustomMechDialog.labSneakIR"));
+        JLabel labSneakECM = new JLabel(Messages.getString("CustomMechDialog.labSneakECM"));
         private JTextField fldDivisor = new JTextField(3);
         JCheckBox chEncumber = new JCheckBox();
+        JCheckBox chSpaceSuit = new JCheckBox();
+        JCheckBox chDEST = new JCheckBox();
+        JCheckBox chSneakCamo = new JCheckBox();
+        JCheckBox chSneakIR = new JCheckBox();
+        JCheckBox chSneakECM = new JCheckBox();
         
         InfantryArmorPanel() {         
             GridBagLayout g = new GridBagLayout();
             setLayout(g);
             add(labArmor, GBC.eol());
-            add(labDivisor, GBC.std().anchor(GridBagConstraints.EAST));
+            add(labDivisor, GBC.std());
             add(fldDivisor, GBC.eol());
-            add(labEncumber, GBC.std().anchor(GridBagConstraints.EAST));
+            add(labEncumber, GBC.std());
             add(chEncumber, GBC.eol());
+            add(labSpaceSuit, GBC.std());
+            add(chSpaceSuit, GBC.eol());
+            add(labDEST, GBC.std());
+            add(chDEST, GBC.eol());
+            add(labSneakCamo, GBC.std());
+            add(chSneakCamo, GBC.eol());
+            add(labSneakIR, GBC.std());
+            add(chSneakIR, GBC.eol());
+            add(labSneakECM, GBC.std());
+            add(chSneakECM, GBC.eol());
         }
         
         public void initialize() {
             inf = (Infantry)entity;
             fldDivisor.setText(Double.toString(inf.getDamageDivisor()));
             chEncumber.setSelected(inf.isArmorEncumbering());
+            chSpaceSuit.setSelected(inf.hasSpaceSuit());
+            chDEST.setSelected(inf.hasDEST());
+            chSneakCamo.setSelected(inf.hasSneakCamo());
+            chSneakIR.setSelected(inf.hasSneakIR());
+            chSneakECM.setSelected(inf.hasSneakECM());
+            if(chDEST.isSelected()) {
+                chSneakCamo.setEnabled(false);
+                chSneakIR.setEnabled(false);
+                chSneakECM.setEnabled(false);
+            }
+            chDEST.addItemListener(new ItemListener() {
+                public void itemStateChanged(ItemEvent event) {
+                    if(event.getStateChange() == ItemEvent.SELECTED) {
+                        chSneakCamo.setSelected(false);
+                        chSneakCamo.setEnabled(false);
+                        chSneakIR.setSelected(false);
+                        chSneakIR.setEnabled(false);
+                        chSneakECM.setSelected(false);
+                        chSneakECM.setEnabled(false);
+                    } else if(event.getStateChange() == ItemEvent.DESELECTED) {
+                        chSneakCamo.setEnabled(true);
+                        chSneakIR.setEnabled(true);
+                        chSneakECM.setEnabled(true);
+                    }
+                }
+            });
         }
 
         public void applyChoice() {
             inf.setDamageDivisor(Double.valueOf(fldDivisor.getText()));
             inf.setArmorEncumbering(chEncumber.isSelected());
+            inf.setSpaceSuit(chSpaceSuit.isSelected());
+            inf.setDEST(chDEST.isSelected());
+            inf.setSneakCamo(chSneakCamo.isSelected());
+            inf.setSneakIR(chSneakIR.isSelected());
+            inf.setSneakECM(chSneakECM.isSelected());
             
         }
 
@@ -1279,6 +1330,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         public void setEnabled(boolean enabled) {
             fldDivisor.setEnabled(enabled);
             chEncumber.setEnabled(enabled);
+            chSpaceSuit.setEnabled(enabled);
+            chDEST.setEnabled(enabled);
+            chSneakCamo.setEnabled(enabled);
+            chSneakIR.setEnabled(enabled);
+            chSneakECM.setEnabled(enabled);
         }
     }
 

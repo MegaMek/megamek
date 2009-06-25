@@ -61,7 +61,12 @@ public class Infantry extends Entity implements Serializable {
      */
     private double damageDivisor = 1.0;
     private boolean encumbering = false;
-    
+    private boolean spaceSuit = false;
+    private boolean dest = false;
+    private boolean sneak_camo = false;
+    private boolean sneak_ir = false;
+    private boolean sneak_ecm = false;
+   
     /**
      * Infantry have no critical slot limitations or locations.
      */
@@ -594,13 +599,26 @@ public class Infantry extends Entity implements Serializable {
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv;
-        dbv = this.getInternal(Entity.LOC_NONE) * 1.5;
+   
+        dbv = this.getInternal(Entity.LOC_NONE) * 1.5 * getDamageDivisor();
         int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true), false, false)
                 .getValue();
         int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false),
                 true, false).getValue();
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
         double tmmFactor = 1 + (targetMovementModifier / 10);
+        if(hasDEST()) {
+            tmmFactor += 0.1;
+        }
+        if(hasSneakCamo()) {
+            tmmFactor += 0.2;
+        }
+        if(hasSneakIR()) {
+            tmmFactor += 0.2;
+        }
+        if(hasSneakECM()) {
+            tmmFactor += 0.1;
+        }
         dbv *= tmmFactor;
         // double weaponbv;
         double obv;
@@ -793,11 +811,7 @@ public class Infantry extends Entity implements Serializable {
 
     @Override
     public boolean doomedInVacuum() {
-        // We're assuming that infantry have environmental suits of some sort.
-        // Vac suits, battle armor, whatever.
-        // This isn't necessarily a true assumption.
-        // FIXME
-        return false;
+        return !hasSpaceSuit();
     }
 
     @Override
@@ -935,5 +949,112 @@ public class Infantry extends Entity implements Serializable {
     public void setArmorEncumbering(boolean b) {
         this.encumbering = b;
     }
+    
+    public boolean hasSpaceSuit() {
+        return spaceSuit;
+    }
+    
+    public void setSpaceSuit(boolean b) {
+        this.spaceSuit = b;
+    }
+    
+    public boolean hasDEST() {
+        return dest;
+    }
+    
+    public void setDEST(boolean b) {
+        this.dest = b;
+    }
+    
+    public boolean hasSneakCamo() {
+        return sneak_camo;
+    }
+    
+    public void setSneakCamo(boolean b) {
+        this.sneak_camo = b;
+    }
+    
+    public boolean hasSneakIR() {
+        return sneak_ir;
+    }
+    
+    public void setSneakIR(boolean b) {
+        this.sneak_ir = b;
+    }
+    
+    public boolean hasSneakECM() {
+        return sneak_ecm;
+    }
+    
+    public void setSneakECM(boolean b) {
+        this.sneak_ecm = b;
+    }
+    
+    /**
+     * Determine the stealth modifier for firing at this unit from the given
+     * range. If the value supplied for <code>range</code> is not one of the
+     * <code>Entity</code> class range constants, an
+     * <code>IllegalArgumentException</code> will be thrown. <p/> Sub-classes
+     * are encouraged to override this method.
+     *
+     * @param range - an <code>int</code> value that must match one of the
+     *            <code>Compute</code> class range constants.
+     * @param ae - the entity making the attack.
+     * @return a <code>TargetRoll</code> value that contains the stealth
+     *         modifier for the given range.
+     */
+    @Override
+    public TargetRoll getStealthModifier(int range, Entity ae) {
+        TargetRoll result = null;
+
+        // Note: infantry are immune to stealth, but not camoflage
+        // or mimetic armor
+        
+        if ((sneak_ir || dest) 
+                && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
+            switch (range) {
+            case RangeType.RANGE_MINIMUM:
+            case RangeType.RANGE_SHORT:
+            case RangeType.RANGE_MEDIUM:
+                result = new TargetRoll(+1, "Sneak, IR/DEST suit");
+                break;
+            case RangeType.RANGE_LONG:
+            case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                // modifier?
+                result = new TargetRoll(+2, "Sneak, IR/DEST suit");
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Unknown range constant: " + range);
+            }
+        }
+            
+        // Simple camo modifier is on top of the movement modifier
+        // This can also be in addition to IR/DEST stealth mods!
+        if (sneak_camo && (delta_distance < 3)) {
+            int mod = Math.max(3 - delta_distance, 0);
+            if (result == null) {
+                result = new TargetRoll(mod, "sneak, Camo");
+            } else {
+                result.append(new TargetRoll(mod, "sneak, Camo"));
+            }
+        }
+        
+        if (dest && (delta_distance == 0)) {
+            if (result == null) {
+                result = new TargetRoll(1, "DEST suit");
+            } else {
+                result.append(new TargetRoll(1, "DEST Suit"));
+            }
+        }
+        
+
+        if (result == null) {
+            result = new TargetRoll(0, "no sneak mods");
+        }
+
+        // Return the result.
+        return result;
+    } // End public TargetRoll getStealthModifier( char )
 
 } // End class Infantry

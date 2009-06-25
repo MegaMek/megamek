@@ -159,11 +159,29 @@ public class Sensor implements Serializable {
             return mod;
         }
         
+        boolean hasSneak = (te instanceof Infantry) && !(te instanceof BattleArmor) && (((Infantry)te).hasSneakCamo() || ((Infantry)te).hasSneakIR() || ((Infantry)te).hasDEST());
+        boolean hasSneakECM = (te instanceof Infantry) && !(te instanceof BattleArmor) && ((Infantry)te).hasSneakECM();
+        
         //these are cumulative, so lets just plow through the table on pg. 224 (ick)
         //null sig
-        //TODO: implement void-sig
         switch(type) {
         case (TYPE_BAP):
+            if(te.isVoidSigActive()) {
+                mod += 6;
+            } 
+            if(te.isNullSigActive()) {
+                mod += 5;
+            }
+            if(te.isStealthActive() && !te.isNullSigActive()) {
+                mod += 3;
+            }
+            if(hasSneakECM) {
+                mod += 3;
+            }
+            if(hasSneak) {
+                mod += 2;
+            }
+            break;
         case (TYPE_WATCHDOG):
             if(te.isVoidSigActive()) {
                 mod += 6;
@@ -173,6 +191,12 @@ public class Sensor implements Serializable {
             }
             if(te.isStealthActive() && !te.isNullSigActive()) {
                 mod += 3;
+            }
+            if(hasSneakECM) {
+                mod += 2;
+            }
+            if(hasSneak) {
+                mod += 1;
             }
             break;
         case (TYPE_CLAN_BAP):
@@ -184,6 +208,12 @@ public class Sensor implements Serializable {
             }
             if(te.isStealthActive() && !te.isNullSigActive()) {
                 mod += 3;
+            }
+            if(hasSneakECM) {
+                mod += 2;
+            }
+            if(hasSneak) {
+                mod += 1;
             }
             break;
         case (TYPE_BLOODHOUND):
@@ -202,6 +232,12 @@ public class Sensor implements Serializable {
             if(te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
                 mod += 1;
             }
+            if(hasSneakECM) {
+                mod += 1;
+            }
+            if(hasSneak) {
+                mod += 1;
+            }
             break;
         case (TYPE_LIGHT_AP):
             if(te.isVoidSigActive()) {
@@ -212,6 +248,12 @@ public class Sensor implements Serializable {
             }
             if(te.isStealthActive() && !te.isNullSigActive()) {
                 mod += 4;
+            }
+            if(hasSneakECM) {
+                mod += 3;
+            }
+            if(hasSneak) {
+                mod += 2;
             }
             break;
         case (TYPE_MEK_RADAR):
@@ -228,6 +270,12 @@ public class Sensor implements Serializable {
                 mod += 4;
             }
             if(te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+                mod += 2;
+            }
+            if(hasSneakECM) {
+                mod += 4;
+            }
+            if(hasSneak) {
                 mod += 2;
             }
             break;
@@ -247,6 +295,12 @@ public class Sensor implements Serializable {
             }
             if(te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
                 mod += 3;
+            }
+            if(hasSneakECM) {
+                mod += 3;
+            }
+            if(hasSneak) {
+                mod += 1;
             }
             break;
         }

@@ -48,12 +48,10 @@ public class WeaponQuirks extends AbstractOptions {
         IBasicOptionGroup wpnQuirk = addGroup("wpn_quirks", WPN_QUIRKS); //$NON-NLS-1$
         addOption(wpnQuirk, "accurate", false); //$NON-NLS-1$
         addOption(wpnQuirk, "inaccurate", false); //$NON-NLS-1$
-        /*
         addOption(wpnQuirk, "imp_cooling", false); //$NON-NLS-1$
         addOption(wpnQuirk, "poor_cooling", false); //$NON-NLS-1$
         addOption(wpnQuirk, "no_cooling", false); //$NON-NLS-1$
-        addOption(wpnQuirk, "ammo_feed", false); //$NON-NLS-1$
-        */
+        //addOption(wpnQuirk, "ammo_feed", false); //$NON-NLS-1$
     }
 
     /*

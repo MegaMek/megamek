@@ -29,6 +29,9 @@ v0.35.3-dev (SVN)
 + Accurate Weapon Quirk
 + Inaccurate Weapon Quirk
 + heat buildup recorded from Mounted#getCurrentHeat rather than WeaponType#getHeat
++ Improved Cooling Jacket Quirk
++ Poor Cooling Jacket Quirk
++ No Cooling Jacket Quirk
 
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)

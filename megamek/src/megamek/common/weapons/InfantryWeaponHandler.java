@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -96,6 +97,12 @@ public abstract class InfantryWeaponHandler extends WeaponHandler {
                 + " damage.");
         r.newlines = 0;
         vPhaseReport.addElement(r);
+        if(target instanceof Infantry && !(target instanceof BattleArmor)) {
+            //this is a little strange, but I cant just do this in calcDamagePerHit because
+            //that is called up before misses are determined and will lead to weird reporting
+            nDamPerHit = damageDealt;
+            return 1;
+        }
         return damageDealt;
     }
 }

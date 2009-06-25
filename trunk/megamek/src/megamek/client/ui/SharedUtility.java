@@ -149,7 +149,7 @@ public class SharedUtility {
             }
 
             //check if we are moving recklessly
-            rollTarget = entity.checkRecklessMove(step, curHex, lastPos, curPos, lastElevation);
+            rollTarget = entity.checkRecklessMove(step, curHex, lastPos, curPos, prevHex);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 nagReport.append(SharedUtility.addNag(rollTarget));
             }

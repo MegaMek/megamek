@@ -20,6 +20,7 @@ v0.35.3-dev (SVN)
 + Bug: Gun Emplacements can only be single hex
 + TacOps Infantry Armor (damage divisor and encumbering)
 + Bug: infantry to infantry damage should not be divided into 2-point clusters
++ Bug 2811958: Reckless (non-careful) movement producing too many PSRs
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)
 + Separate pilot tab (swing only)

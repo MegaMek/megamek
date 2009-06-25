@@ -2419,6 +2419,8 @@ public class Compute {
                 visualRange = visualRange / 2;
             } else if(te.isChameleonShieldActive()) {
                 visualRange = visualRange / 2;
+            } else if (te instanceof Infantry && !(te instanceof BattleArmor) && ((Infantry)te).hasSneakCamo()) {
+                visualRange = visualRange / 2;
             }
         }
 

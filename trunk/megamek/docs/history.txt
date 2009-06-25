@@ -21,6 +21,10 @@ v0.35.3-dev (SVN)
 + TacOps Infantry Armor (damage divisor and encumbering)
 + Bug: infantry to infantry damage should not be divided into 2-point clusters
 + Bug 2811958: Reckless (non-careful) movement producing too many PSRs
++ Space suits, DEST and Sneak suits (infantry armor)
++ localized infantry armor labels
++ infantry BV adjusted for infantry armor
+
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)
 + Separate pilot tab (swing only)

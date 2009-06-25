@@ -15,16 +15,9 @@
 package megamek.common.options;
 
 
-import java.util.Vector;
-
-import megamek.common.Aero;
 import megamek.common.BattleArmor;
-import megamek.common.Dropship;
 import megamek.common.Entity;
-import megamek.common.IEntityMovementMode;
 import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.Mech;
 import megamek.common.Tank;
 import megamek.common.WeaponType;
 
@@ -55,6 +48,9 @@ public class WeaponQuirks extends AbstractOptions {
         addOption(wpnQuirk, "no_cooling", false); //$NON-NLS-1$
         //addOption(wpnQuirk, "ammo_feed", false); //$NON-NLS-1$
     }
+    //unimplemented
+    //ammo feed problem
+    //EM Interference
 
     /*
      * (non-Javadoc)

@@ -1507,7 +1507,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             int key = iter.next();
             Mounted m = entity.getEquipment(key);
             WeaponQuirks wpnQuirks = h_wpnQuirks.get(key);
-            JLabel labWpn = new JLabel(m.getName());
+            JLabel labWpn = new JLabel(m.getName() + " (" + entity.getLocationName(m.getLocation()) + ")");
             panQuirks.add(labWpn, GBC.eol());
             for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements();) {
                 IOptionGroup group = i.nextElement();

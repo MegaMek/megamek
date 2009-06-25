@@ -22,8 +22,12 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.GaussWeapon;
 
 /**
@@ -57,6 +61,8 @@ public class Mounted implements Serializable, RoundUpdated {
 
     private Entity entity; // what I'm mounted on
 
+    private WeaponQuirks quirks = new WeaponQuirks();
+    
     private transient EquipmentType type;
     private String typeName;
 
@@ -135,7 +141,7 @@ public class Mounted implements Serializable, RoundUpdated {
             baseDamageCapacity = shield.baseDamageCapacity;
             damageTaken = shield.damageTaken;
         }
-
+        quirks.initialize();
     }
 
     /**
@@ -991,7 +997,17 @@ public class Mounted implements Serializable, RoundUpdated {
             if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes() ){
                 return  Compute.dialDownHeat(this, wtype)*getCurrentShots()*getNWeapons();
             }
-            return ((WeaponType)getType()).getHeat()*getCurrentShots()*getNWeapons();
+            int heat = ((WeaponType)getType()).getHeat()*getCurrentShots()*getNWeapons();
+            if(getQuirks().booleanOption("imp_cooling")) {
+                heat = Math.max(1, heat-1);
+            }
+            if(getQuirks().booleanOption("poor_cooling")) {
+                heat += 1;
+            }
+            if(getQuirks().booleanOption("no_cooling")) {
+                heat += 2;
+            }
+            return heat;
         }
         return 0;
     }
@@ -1052,5 +1068,48 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public boolean isArmored() {
         return armoredComponent;
+    }
+    
+    public void setQuirks(WeaponQuirks quirks) {
+        this.quirks = quirks;
+    }
+
+    public WeaponQuirks getQuirks() {
+        return quirks;
+    }
+
+    public void clearQuirks() {
+        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
+                .hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            for (Enumeration<IOption> j = group.getOptions(); j
+                    .hasMoreElements();) {
+                IOption option = j.nextElement();
+                option.clearValue();
+            }
+        }
+
+    }
+
+    /**
+     * count all the quirks for this unit, positive and negative
+     */
+    public int countQuirks() {
+        int count = 0;
+
+        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
+                .hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            for (Enumeration<IOption> j = group.getOptions(); j
+                    .hasMoreElements();) {
+                IOption quirk = j.nextElement();
+
+                if (quirk.booleanValue()) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
     }
 }

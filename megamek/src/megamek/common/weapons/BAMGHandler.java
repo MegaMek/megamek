@@ -98,7 +98,7 @@ public class BAMGHandler extends WeaponHandler {
             if (weapon.isRapidfire()) {
                 ae.heatBuildup += nDamPerHit;
             } else {
-                ae.heatBuildup += (wtype.getHeat());
+                super.addHeat();
             }
         }
     }

@@ -84,24 +84,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
         }
 
         return (int) Math.ceil(toReturn);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#addHeat()
-     */
-    @Override
-    protected void addHeat() {
-        if ( toHit.getValue() != TargetRoll.IMPOSSIBLE) {
-            int heat = wtype.getHeat();
-            if ( game.getOptions().booleanOption("tacops_energy_weapons") ){
-                heat = Compute.dialDownHeat(weapon, wtype,ae.getPosition().distance(target.getPosition()));
-            }
-
-            ae.heatBuildup += heat;
-        }
-    }   
+    } 
 
     
 }

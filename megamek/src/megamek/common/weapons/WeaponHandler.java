@@ -752,7 +752,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            ae.heatBuildup += (wtype.getHeat());
+            ae.heatBuildup += (weapon.getCurrentHeat());
         }
     }
 

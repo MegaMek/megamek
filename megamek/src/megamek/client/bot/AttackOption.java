@@ -105,7 +105,7 @@ public class AttackOption extends ToHitData {
                 odds = sec_mod <= 12 ? (Compute.oddsAbove(toHit.getValue()
                         + sec_mod) / 100.0) : 0.0;
             }
-            heat = w.getHeat();
+            heat = weapon.getCurrentHeat();
             expected = this.value / primary_odds;
             expected = expected * odds;
 

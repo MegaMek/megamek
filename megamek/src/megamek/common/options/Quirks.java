@@ -69,10 +69,8 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, "stable", false); //$NON-NLS-1$
         addOption(posQuirk, "trailer_hitch", false); //$NON-NLS-1$
         //not yet implemented
-        //Accurate Weapon (weapon-specific)
         //Docking Arms (docking unimplemented)
         //Fast Reload (no game effect at present)
-        //Improved Cooling Jacket (weapon-specific)
         //Improved Communications
         //Internal Bomb Bay
         //Searchlight
@@ -105,15 +103,10 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, "weak_legs", false); //$NON-NLS-1$
         addOption(negQuirk, "weak_undercarriage", false); //$NON-NLS-1$
         //quirks not implemented yet
-        //Ammunition Feed Problem (weapon-specific)
         //Cooling System Flaws
-        //EM Interference (weapon-specific)
         //Exposed Weapon Linkage (weapon-specific, sort of)
         //Gas Hog
-        //Inaccurate Weapon (weapon-specific)
         //Large Dropship (no docking)
-        //No Cooling Jacket (weapon-specific)
-        //Poor Cooling Jacket (weapon-specific)
         //Poor Performance
         //Un-streamlined
         //Weak Head Armor

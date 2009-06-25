@@ -1512,7 +1512,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements();) {
                 IOptionGroup group = i.nextElement();
                 for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
-                    IOption option = j.nextElement();        
+                    IOption option = j.nextElement(); 
+                    if(!WeaponQuirks.isQuirkLegalFor(option, entity, (WeaponType)m.getType())) {
+                        continue;
+                    }
                     addWeaponQuirk(key, option, editable);
                 }
             }

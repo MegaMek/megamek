@@ -22,9 +22,11 @@ import megamek.common.BattleArmor;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.IEntityMovementMode;
+import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.Tank;
+import megamek.common.WeaponType;
 
 /**
  * Contains the options determining quirks of the unit
@@ -64,201 +66,31 @@ public class WeaponQuirks extends AbstractOptions {
         return WeaponQuirksInfo.getInstance();
     }
     
-    public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
+    public static boolean isQuirkLegalFor(IOption quirk, Entity en, WeaponType wtype) {
         
-        
-        
-        if(en instanceof Mech) {
-            if(quirk.getName().equals("atmo_flyer")
-                    || quirk.getName().equals("atmo_instability")
-                    || quirk.getName().equals("docking_arms")
-                    || quirk.getName().equals("fragile_fuel")
-                    || quirk.getName().equals("internal_bomb")
-                    || quirk.getName().equals("trailer_hitch")
-                    || quirk.getName().equals("large_dropper")
-                    || quirk.getName().equals("weak_undercarriage")) {
+        if(en instanceof Tank || en instanceof BattleArmor) {
+            if(quirk.getName().equals("imp_cooling")
+                    || quirk.getName().equals("poor_cooling")
+                    || quirk.getName().equals("no_cooling")) {
                 return false;
             }
-            return true;
         }
         
-        if(en instanceof Tank) {
-            if(quirk.getName().equals("atmo_flyer")
-                    || quirk.getName().equals("combat_computer")
-                    || quirk.getName().equals("command_mech")
-                    || quirk.getName().equals("cowl")
-                    || quirk.getName().equals("docking_arms")
-                    || quirk.getName().equals("easy_pilot")
-                    || quirk.getName().equals("ext_twist")
-                    || quirk.getName().equals("hyper_actuator")
-                    || quirk.getName().equals("imp_life_support")
-                    || quirk.getName().equals("internal_bomb")
-                    || quirk.getName().equals("multi_trac")
-                    || quirk.getName().equals("pro_actuator")                 
-                    || quirk.getName().equals("reinforced_legs")
-                    || quirk.getName().equals("stable")
-                    || quirk.getName().equals("atmo_instability")
-                    || quirk.getName().equals("cramped_cockpit")
-                    || quirk.getName().equals("difficult_eject")
-                    || quirk.getName().equals("exp_actuator")
-                    || quirk.getName().equals("no_arms")
-                    || quirk.getName().equals("no_eject")
-                    || quirk.getName().equals("no_twist")
-                    || quirk.getName().equals("large_dropper")
-                    || quirk.getName().equals("poor_life_support")
-                    || quirk.getName().equals("unbalanced")
-                    || quirk.getName().equals("weak_legs")
-                    || quirk.getName().equals("weak_undercarriage")) {
-                return false;
-            }
-            if(!en.getEngine().isFusion() && quirk.getName().equals("fragile_fuel")) {
-                return false;
-            }
-            if(quirk.getName().equals("trailer_hitch") 
-                    && en.getMovementMode() == IEntityMovementMode.HOVER) {
-                return false;
-            }
-            return true;
+        if(en instanceof Infantry && !(en instanceof BattleArmor)) {
+            return false;
         }
         
-        if(en instanceof BattleArmor) {
-            if(quirk.getName().equals("atmo_flyer")
-                    || quirk.getName().equals("anti_air")
-                    || quirk.getName().equals("battle_computer")
-                    || quirk.getName().equals("combat_computer")
-                    || quirk.getName().equals("command_mech")                
-                     || quirk.getName().equals("cowl")
-                     || quirk.getName().equals("docking_arms")
-                    || quirk.getName().equals("ext_twist")
-                    || quirk.getName().equals("hyper_actuator")
-                    || quirk.getName().equals("imp_sensors")
-                    || quirk.getName().equals("imp_life_support")
-                    || quirk.getName().equals("imp_target_short")
-                    || quirk.getName().equals("imp_target_med")
-                    || quirk.getName().equals("imp_target_long")
-                    || quirk.getName().equals("internal_bomb")
-                    || quirk.getName().equals("multi_trac")
-                    || quirk.getName().equals("pro_actuator")
-                    || quirk.getName().equals("low_profile")
-                    || quirk.getName().equals("reinforced_legs")
-                    || quirk.getName().equals("stable")
-                    || quirk.getName().equals("searchlight")
-                    || quirk.getName().equals("trailer_hitch")
-                    || quirk.getName().equals("atmo_instability")
-                    || quirk.getName().equals("cramped_cockpit")
-                    || quirk.getName().equals("difficult_eject")
-                    || quirk.getName().equals("exp_actuator")
-                    || quirk.getName().equals("fragile_fuel")
-                    || quirk.getName().equals("no_arms")
-                    || quirk.getName().equals("no_eject")
-                    || quirk.getName().equals("no_twist")
-                    || quirk.getName().equals("large_dropper")
-                    || quirk.getName().equals("poor_life_support")
-                    || quirk.getName().equals("unbalanced")
-                    || quirk.getName().equals("weak_legs")
-                    || quirk.getName().equals("weak_undercarriage")) {
+        if(wtype.getHeat() == 0) {
+            if(quirk.getName().equals("imp_cooling")
+                    || quirk.getName().equals("poor_cooling")
+                    || quirk.getName().equals("no_cooling")) {
                 return false;
             }
-            return true;
-        }
-        
-        if(en instanceof Jumpship) {
-            if(quirk.getName().equals("atmo_flyer")
-                    || quirk.getName().equals("anti_air")
-                    || quirk.getName().equals("battle_computer")
-                    || quirk.getName().equals("combat_computer")
-                    || quirk.getName().equals("command_mech")                   
-                     || quirk.getName().equals("cowl")                   
-                    || quirk.getName().equals("docking_arms")
-                    || quirk.getName().equals("ext_twist")                 
-                    || quirk.getName().equals("fast_reload")
-                    || quirk.getName().equals("hyper_actuator")
-                    || quirk.getName().equals("imp_sensors")
-                    || quirk.getName().equals("imp_life_support")
-                    || quirk.getName().equals("internal_bomb")
-                    || quirk.getName().equals("mod_weapons")
-                    || quirk.getName().equals("multi_trac")
-                    || quirk.getName().equals("pro_actuator")
-                    || quirk.getName().equals("low_profile")
-                    || quirk.getName().equals("reinforced_legs")
-                    || quirk.getName().equals("stable")
-                    || quirk.getName().equals("trailer_hitch")
-                    || quirk.getName().equals("searchlight")
-                    || quirk.getName().equals("atmo_instability")
-                    || quirk.getName().equals("cramped_cockpit")
-                    || quirk.getName().equals("difficult_eject")
-                    || quirk.getName().equals("exp_actuator")
-                    || quirk.getName().equals("no_arms")
-                    || quirk.getName().equals("no_eject")
-                    || quirk.getName().equals("no_twist")
-                    || quirk.getName().equals("large_dropper")
-                    || quirk.getName().equals("poor_life_support")
-                    || quirk.getName().equals("unbalanced")
-                    || quirk.getName().equals("weak_legs")
-                    || quirk.getName().equals("weak_undercarriage")) {
-                return false;
-            }
-            return true;
-        } else if (en instanceof Dropship) {
-            if(quirk.getName().equals("anti_air")
-                    || quirk.getName().equals("battle_computer")
-                    || quirk.getName().equals("combat_computer")
-                    || quirk.getName().equals("command_mech")
-                    || quirk.getName().equals("cowl")
-                    || quirk.getName().equals("ext_twist")
-                    || quirk.getName().equals("fast_reload")
-                    || quirk.getName().equals("hyper_actuator")
-                    || quirk.getName().equals("imp_sensors")
-                    || quirk.getName().equals("imp_life_support")
-                    || quirk.getName().equals("multi_trac")
-                    || quirk.getName().equals("pro_actuator")
-                    || quirk.getName().equals("low_profile")
-                    || quirk.getName().equals("reinforced_legs")
-                    || quirk.getName().equals("stable")
-                    || quirk.getName().equals("searchlight")
-                    || quirk.getName().equals("trailer_hitch")
-                    || quirk.getName().equals("cramped_cockpit")
-                    || quirk.getName().equals("difficult_eject")
-                    || quirk.getName().equals("exp_actuator")
-                    || quirk.getName().equals("no_arms")
-                    || quirk.getName().equals("no_eject")
-                    || quirk.getName().equals("no_twist")
-                    || quirk.getName().equals("poor_life_support")
-                    || quirk.getName().equals("unbalanced")
-                    || quirk.getName().equals("weak_legs")) {
-                return false;
-            }
-            return true;
-        } else if (en instanceof Aero) {
-            if(quirk.getName().equals("anti_air")
-                    || quirk.getName().equals("battle_computer")
-                    || quirk.getName().equals("command_mech")
-                    || quirk.getName().equals("cowl")
-                    || quirk.getName().equals("docking_arms")
-                    || quirk.getName().equals("ext_twist")
-                    || quirk.getName().equals("hyper_actuator")                 
-                    || quirk.getName().equals("imp_sensors")
-                    || quirk.getName().equals("imp_life_support")
-                    || quirk.getName().equals("multi_trac")
-                    || quirk.getName().equals("pro_actuator")
-                    || quirk.getName().equals("low_profile")
-                    || quirk.getName().equals("stable")
-                    || quirk.getName().equals("searchlight")
-                    || quirk.getName().equals("trailer_hitch")
-                    || quirk.getName().equals("reinforced_legs")
-                    || quirk.getName().equals("exp_actuator")
-                    || quirk.getName().equals("no_arms")
-                    || quirk.getName().equals("no_twist")
-                    || quirk.getName().equals("large_dropper")
-                    || quirk.getName().equals("unbalanced")
-                    || quirk.getName().equals("weak_legs")) {
-                return false;
-            }
-            return true;
         }
         
         
-        return false;
+        
+        return true;
         
     }
 

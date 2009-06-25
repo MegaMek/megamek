@@ -187,9 +187,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
                             if (waa.getEntityId() == te.getId()) {
                                 Mounted weapon = te.getEquipment(waa
                                         .getWeaponId());
-                                WeaponType wtype = (WeaponType) weapon
-                                        .getType();
-                                if (wtype.getHeat() != 0
+                                if (weapon.getCurrentHeat() != 0
                                         || weapon.isRapidfire()) {
                                     // target fired a weapon that generates heat
                                     lhsused = true;

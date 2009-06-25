@@ -433,11 +433,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         // build up some heat (assume target is ams owner)
                         if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
                             entityTarget.heatBuildup += Compute
-                                    .d6(((WeaponType) counter.getType())
-                                            .getHeat());
+                                    .d6(counter.getCurrentHeat());
                         } else {
-                            entityTarget.heatBuildup += ((WeaponType) counter
-                                    .getType()).getHeat();
+                            entityTarget.heatBuildup += counter.getCurrentHeat();
                         }
 
                         // decrement the ammo

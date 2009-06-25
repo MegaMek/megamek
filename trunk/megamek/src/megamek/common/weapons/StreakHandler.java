@@ -193,7 +193,7 @@ public class StreakHandler extends MissileWeaponHandler {
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)
                 && roll >= toHit.getValue()) {
-            ae.heatBuildup += (wtype.getHeat());
+            super.addHeat();
         }
     }
 

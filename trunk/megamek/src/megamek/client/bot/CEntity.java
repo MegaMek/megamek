@@ -324,7 +324,7 @@ public class CEntity {
             }
 
             num_weapons++;
-            heat_total += weapon.getHeat();
+            heat_total += m.getCurrentHeat();
 
             int min = weapon.getMinimumRange();
             int lr = weapon.getExtremeRange();
@@ -346,7 +346,7 @@ public class CEntity {
                 // units current heat level, 'cause building more heat is bad
                 addDamage(arc, entity.isSecondaryArcWeapon(entity
                         .getEquipmentNum(m)), curRange, ed
-                        * ((weapon.getHeat() > 0) ? heat_mod : 1));
+                        * ((m.getCurrentHeat() > 0) ? heat_mod : 1));
             }
             long_range = Math
                     .max(long_range, Math.min(lr, MAX_RANGE));

@@ -4397,7 +4397,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if an entity is passing through certain terrain while not moving
      * carefully
      */
-    public PilotingRollData checkRecklessMove(MoveStep step, IHex curHex, Coords lastPos, Coords curPos, int lastElev) {
+    public PilotingRollData checkRecklessMove(MoveStep step, IHex curHex, Coords lastPos, Coords curPos, IHex prevHex) {
         PilotingRollData roll = getBasePilotingRoll(step.getParent().getLastStepMovementType());
         // no need to go further if movement is careful
         if (step.getParent().isCareful()) {
@@ -4409,28 +4409,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // move path has ice
         boolean isFoggy = game.getPlanetaryConditions().getFog() != PlanetaryConditions.FOG_NONE;
         boolean isDark = game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK;
-        boolean hasIce = false;
-
-        Enumeration<MoveStep> steps = step.getParent().getSteps();
-        while (steps.hasMoreElements()) {
-            MoveStep nextStep = steps.nextElement();
-            if (null == nextStep.getPosition()) {
-                continue;
-            }
-            IHex nextHex = game.getBoard().getHex(nextStep.getPosition());
-            if (null == nextHex) {
-                continue;
-            }
-            if (nextHex.containsTerrain(Terrains.ICE) && (nextStep.getElevation() == 0)) {
-                hasIce = true;
-                break;
-            }
-        }
-
-        if (!isFoggy && !isDark && !hasIce) {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "conditions are not dangerous");
-            return roll;
-        }
 
         // if we are jumping, then no worries
         if (step.getMovementType() == IEntityMovementType.MOVE_JUMP) {
@@ -4441,13 +4419,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // we need to make this check on the first move forward and anytime the
         // hex is not clear
         // or is a level change
-        if (!lastPos.equals(curPos) && lastPos.equals(step.getParent().getEntity().getPosition())) {
+        if ((isFoggy || isDark) && !lastPos.equals(curPos) && lastPos.equals(step.getParent().getEntity().getPosition())) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
         }
         // TODO: how do you tell if it is clear?
-        // FIXME: no perfect solution in the current code. I will use movement
-        // costs
-        else if (!lastPos.equals(curPos) && ((curHex.movementCost(step.getParent().getLastStepMovementType()) > 0) || (lastElev != curHex.getElevation()))) {
+        // FIXME: no perfect solution in the current code. I will use movement costs
+        else if ((isFoggy || isDark) && !lastPos.equals(curPos) 
+        		&& ((curHex.movementCost(step.getParent().getLastStepMovementType()) > 0) 
+        				|| (null != prevHex && prevHex.getElevation() != curHex.getElevation()))) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
             // ice conditions
         } else if (curHex.containsTerrain(Terrains.ICE)) {

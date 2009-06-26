@@ -369,9 +369,13 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         if(en.getGame().getOptions().booleanOption("double_blind")) {
             curSensorsR.setVisible(true);
             visualRangeR.setVisible(true);
+            curSensorsL.setVisible(true);
+            visualRangeL.setVisible(true);
             curSensorsR.setString(en.getSensorDesc());
             visualRangeR.setString(Integer.toString(en.getGame().getPlanetaryConditions().getVisualRange(en, false)));
         } else {
+            curSensorsR.setVisible(false);
+            visualRangeR.setVisible(false);
             curSensorsR.setVisible(false);
             visualRangeR.setVisible(false);
         }

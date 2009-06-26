@@ -169,18 +169,6 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.weapons.WeaponHandler#addHeat()
-     */
-    @Override
-    protected void addHeat() {// silly hack
-        for (int x = 0; x < howManyShots; x++) {
-            super.addHeat();
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override

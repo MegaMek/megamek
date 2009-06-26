@@ -65,8 +65,7 @@ public class ERFlamerHeatHandler extends FlamerHeatHandler {
                             .getAimingMode());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(), Compute.targetSideTable(ae, entityTarget, 
-                            waa.getAimingMode(), waa.getAimedLocation()))) {
+                    .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
                 Report r = new Report(3460);
                 r.subject = subjectId;

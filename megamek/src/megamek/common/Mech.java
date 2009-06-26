@@ -1848,8 +1848,7 @@ public abstract class Mech extends Entity implements Serializable {
         int roll = -1;
 
         if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_CALLED)) {
+                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
 
             roll = Compute.d6(2);
 

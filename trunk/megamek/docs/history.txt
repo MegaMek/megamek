@@ -37,6 +37,7 @@ v0.35.3-dev (SVN)
 + improved weapon quirk name reporting
 + maximum visual range added to MekDisplay
 + current sensor and ranges added to first tab of MekDisplay
++ unit must have visual or sensor detection to fire per http://www.classicbattletech.com/forums/index.php/topic,47618.0.html 
 
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)

@@ -488,6 +488,14 @@ public class Client implements IClientCommandHandler {
                 new Integer(nMode) };
         send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, data));
     }
+    
+    /**
+     * Send called shot change data to the server
+     */
+    public void sendCalledShotChange(int nEntity, int nEquip) {
+        Object[] data = { new Integer(nEntity), new Integer(nEquip) };
+        send(new Packet(Packet.COMMAND_ENTITY_CALLEDSHOTCHANGE, data));
+    }
 
     /**
      * Send system mode-change data to the server

@@ -1226,6 +1226,10 @@ public class MechDisplay extends JPanel {
                     wn.append(' ');
                     wn.append(mounted.curMode().getDisplayableName());
                 }
+                if(game.getOptions().booleanOption("tacops_called_shots")) {
+                    wn.append(' ');
+                    wn.append(mounted.getCalledShot().getDisplayableName());
+                }
                 ((DefaultListModel) weaponList.getModel()).addElement(wn
                         .toString());
                 if (mounted.isUsedThisRound()

@@ -23,7 +23,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.BombType;
-import megamek.common.CalledShots;
+import megamek.common.CalledShot;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
@@ -1620,16 +1620,35 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         //add penalty for called shots and change hit table, if necessary
-        if(aimingMode == IAimingModes.AIM_MODE_CALLED) {
-            toHit.addModifier(+3, "called shot");
-            switch (aimingAt) {
-            case CalledShots.CALLED_HIGH:
-                toHit.setHitTable(ToHitData.HIT_ABOVE);
-                break;
-            case CalledShots.CALLED_LOW:
-                toHit.setHitTable(ToHitData.HIT_BELOW);
-                break;
+        if(game.getOptions().booleanOption("tacops_called_shots")) {  
+            int call = weapon.getCalledShot().getCall();
+            if(call > CalledShot.CALLED_NONE &&
+                    aimingMode != IAimingModes.AIM_MODE_NONE) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "you can't combine aimed shots and called shots");
             }
+            switch(call) {          
+                case CalledShot.CALLED_NONE:
+                    break;
+                case CalledShot.CALLED_HIGH:
+                    toHit.addModifier(+3, "called shot, high");
+                    toHit.setHitTable(ToHitData.HIT_ABOVE);
+                    break;
+                case CalledShot.CALLED_LOW:
+                    if(los.getTargetCover() == LosEffects.COVER_HORIZONTAL) {
+                        return new ToHitData(TargetRoll.IMPOSSIBLE, "low called shots not possible in partial cover");
+                    }                  
+                    toHit.addModifier(+3, "called shot, low");
+                    toHit.setHitTable(ToHitData.HIT_BELOW);
+                    break;
+                case CalledShot.CALLED_LEFT:
+                    //handled by Compute#targetSideTable
+                    toHit.addModifier(+3, "called shot, left");
+                    break;
+                case CalledShot.CALLED_RIGHT:
+                    //handled by Compute#targetSideTable
+                    toHit.addModifier(+3, "called shot, right");
+                    break;
+            }       
         }
 
         //change hit table for surface vessels hit by underwater attacks
@@ -1644,7 +1663,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // front.
             toHit.setSideTable(ToHitData.SIDE_FRONT);
         } else {
-            toHit.setSideTable(Compute.targetSideTable(ae, target, aimingMode, aimingAt));
+            toHit.setSideTable(Compute.targetSideTable(ae, target, weapon.getCalledShot().getCall()));
         }
 
         if (target instanceof Aero) {
@@ -1885,6 +1904,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Direct-Fire artillery attacks impossible at range <= 6";
         }
 
+        //check called shots
+        if(game.getOptions().booleanOption("tacops_called_shots")) {
+            String reason = weapon.getCalledShot().isValid(target);
+            if(reason != null) {
+                return reason;
+            }
+        }
+        
         if ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_LRM)
                         || (atype.getAmmoType() == AmmoType.T_MML)

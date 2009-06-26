@@ -236,7 +236,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
         // light inferno missiles all at once, if not missed
         if(!bMissed) {
-            vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits, waa.getAimingMode(), waa.getAimedLocation()));
+            vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits, weapon.getCalledShot().getCall()));
         }
         return false;
     }

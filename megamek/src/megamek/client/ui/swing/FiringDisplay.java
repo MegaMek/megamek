@@ -49,7 +49,6 @@ import megamek.common.BattleArmor;
 import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
-import megamek.common.CalledShots;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -108,6 +107,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     public static final String FIRE_SEARCHLIGHT = "fireSearchlight"; //$NON-NLS-1$
     public static final String FIRE_CLEAR_TURRET = "fireClearTurret"; //$NON-NLS-1$
     public static final String FIRE_CLEAR_WEAPON = "fireClearWeaponJam"; //$NON-NLS-1$
+    public static final String FIRE_CALLED = "fireCalled"; //$NON-NLS-1$
 
     // buttons
     private JComponent panButtons;
@@ -131,6 +131,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     private JButton butSpace;
 
     private JButton butFireMode;
+    
+    private JButton butFireCalled;
 
     private JButton butFireClearTurret;
 
@@ -239,6 +241,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         butFireMode.addKeyListener(this);
         butFireMode.setActionCommand(FIRE_MODE);
         butFireMode.setEnabled(false);
+        
+        butFireCalled = new JButton(Messages.getString("FiringDisplay.Called")); //$NON-NLS-1$
+        butFireCalled.addActionListener(this);
+        butFireCalled.addKeyListener(this);
+        butFireCalled.setActionCommand(FIRE_CALLED);
+        butFireCalled.setEnabled(false);
 
         butFireClearTurret = new JButton(Messages
                 .getString("FiringDisplay.ClearTurret")); //$NON-NLS-1$
@@ -316,7 +324,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     private void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridLayout(0, 8));
+        panButtons.setLayout(new GridLayout(0, 9));
 
         switch (buttonLayout) {
         case 0:
@@ -326,13 +334,15 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             panButtons.add(butNextTarg);
             panButtons.add(butTwist);
             panButtons.add(butFireMode);
+            panButtons.add(butFireCalled);
             panButtons.add(butFireClearWeaponJam);
             panButtons.add(butMore);
             break;
         case 1:
             panButtons.add(butNext);
             panButtons.add(butFire);
-            panButtons.add(butFlipArms);
+            panButtons.add(butSkip);
+            panButtons.add(butFlipArms);           
             panButtons.add(butFindClub);
             panButtons.add(butSpot);
             panButtons.add(butSearchlight);
@@ -467,6 +477,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             butDone.setEnabled(true);
             butMore.setEnabled(true);
             setFireModeEnabled(true);
+            setFireCalledEnabled(clientgui.getClient().game.getOptions().booleanOption("tacops_called_shots"));
             clientgui.getBoardView().select(null);
         }
     }
@@ -508,6 +519,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         setNextTargetEnabled(false);
         setFlipArmsEnabled(false);
         setFireModeEnabled(false);
+        setFireCalledEnabled(false);
         setFireClearTurretEnabled(false);
         setFireClearWeaponJamEnabled(false);
     }
@@ -550,6 +562,31 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                             .getString(
                                     "FiringDisplay.willSwitch", new Object[] { m.getName(), m.pendingMode().getDisplayableName() })); //$NON-NLS-1$
         }
+
+        updateTarget();
+        clientgui.mechD.wPan.displayMech(ce());
+        clientgui.mechD.wPan.selectWeapon(wn);
+    }
+    
+    /**
+     * Called Shots - changes the current called shots selection
+     */
+    private void changeCalled() {
+        int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
+
+        // Do nothing we have no unit selected.
+        if (ce() == null) {
+            return;
+        }
+        
+        Mounted m = ce().getEquipment(wn);
+        if ((m == null)) {
+            return;
+        }
+
+        // send change to the server
+        m.getCalledShot().switchCalledShot();
+        clientgui.getClient().sendCalledShotChange(cen, wn);
 
         updateTarget();
         clientgui.mechD.wPan.displayMech(ce());
@@ -1401,6 +1438,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             // Fire Mode - More Fire Mode button handling - Rasia
         } else if (ev.getActionCommand().equals(FIRE_MODE)) {
             changeMode();
+        } else if (ev.getActionCommand().equals(FIRE_CALLED)) {
+            changeCalled();
         } else if (("changeSinks".equalsIgnoreCase(ev.getActionCommand()))
                 || (ev.getActionCommand().equals(FIRE_CANCEL))) {
             clear();
@@ -1502,6 +1541,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     private void setFireModeEnabled(boolean enabled) {
         butFireMode.setEnabled(enabled);
         clientgui.getMenuBar().setFireModeEnabled(enabled);
+    }
+    
+    private void setFireCalledEnabled(boolean enabled) {
+        butFireCalled.setEnabled(enabled);
+        clientgui.getMenuBar().setFireCalledEnabled(enabled);
     }
 
     private void setFireClearTurretEnabled(boolean enabled) {
@@ -1664,14 +1708,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 } else {
                     return;
                 }
-                if(aimingMode == IAimingModes.AIM_MODE_CALLED && target instanceof Entity) {
-                    options = CalledShots.getCalledLocations();
-                    enabled = CalledShots.getEnabledLocations(target, partialCover);
-                    aimingAt = CalledShots.CALLED_LEFT;
-                    if(target instanceof Mech) {
-                        aimingAt = CalledShots.CALLED_HIGH;
-                    }
-                } else if (target instanceof Mech) {
+                if (target instanceof Mech) {
                     if (aimingMode == IAimingModes.AIM_MODE_IMMOBILE) {
                         aimingAt = Mech.LOC_HEAD;
                     } else if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
@@ -1854,9 +1891,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
          * Returns the name of aimed location.
          */
         public String getAimingLocation() {
-            if(aimingMode == IAimingModes.AIM_MODE_CALLED) {
-                return CalledShots.getCalledName(aimingAt);
-            }
             if ((target != null) && (aimingAt != Entity.LOC_NONE)
                     && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
                 if (target instanceof GunEmplacement) {
@@ -1890,22 +1924,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 aimingMode = IAimingModes.AIM_MODE_IMMOBILE;
                 return;
             }
-            
-            //no called shots against infantry or protomeks
-            if(clientgui.getClient().game.getOptions().booleanOption("tacops_called_shots") 
-                    && target != null && target instanceof Entity
-                    && !(target instanceof Infantry)
-                    && !(target instanceof Protomech)) {             
-                //can't make called shot if already firing from above or below
-                if (target instanceof Mech && (null != LosEffects.calculateLos(clientgui.getClient().game, ce().getId(), target).getThruBldg()) 
-                        && (ce().getElevation() != target.getElevation())) {
-                    aimingMode = IAimingModes.AIM_MODE_NONE;
-                    return;
-                } else { 
-                    aimingMode = IAimingModes.AIM_MODE_CALLED;
-                    return;
-                }
-            }           
+                  
             aimingMode = IAimingModes.AIM_MODE_NONE;
         }
 
@@ -1997,8 +2016,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     return false;
                 }
                 break;
-            case (IAimingModes.AIM_MODE_CALLED):
-                return true;
             }
             return true;
         }

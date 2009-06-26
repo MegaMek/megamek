@@ -21,7 +21,10 @@ import java.awt.Image;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -32,6 +35,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.IEntityMovementType;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
+import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
@@ -50,10 +54,10 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
             weightL, bvL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
-            movementTypeL, ejectL, elevationL, fuelL;
+            movementTypeL, ejectL, elevationL, fuelL, curSensorsL, visualRangeL;
     private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, mpR0,
             mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
-            elevationR, fuelR;
+            elevationR, fuelR, curSensorsR, visualRangeR;
     private PMSimpleLabel[] quirksR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font(
@@ -203,10 +207,24 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         elevationL = createLabel(
                 Messages.getString("GeneralInfoMapSet.elevationL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(elevationL);
-        elevationR = createLabel(STAR3, fm, ejectL.getSize().width + 10,
+        elevationR = createLabel(STAR3, fm, elevationL.getSize().width + 10,
                 getYCoord());
         content.addArea(elevationR);
         
+        curSensorsL = createLabel(
+                Messages.getString("GeneralInfoMapSet.currentSensorsL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea(curSensorsL);
+        curSensorsR = createLabel(STAR3, fm, curSensorsL.getSize().width + 10,
+                getYCoord());
+        content.addArea(curSensorsR);
+        
+        visualRangeL = createLabel(
+                Messages.getString("GeneralInfoMapSet.visualRangeL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea(visualRangeL);
+        visualRangeR = createLabel(STAR3, fm, visualRangeL.getSize().width + 10,
+                getYCoord());
+        content.addArea(visualRangeR);
+     
         quirksR = new PMSimpleLabel[40];
         for (int i = 0; i < quirksR.length; i++) {
             quirksR[i] = createLabel(new Integer(i).toString(), fm, 0, getNewYCoord());
@@ -348,6 +366,16 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             movementTypeR.setVisible(false);
         }
 
+        if(en.getGame().getOptions().booleanOption("double_blind")) {
+            curSensorsR.setVisible(true);
+            visualRangeR.setVisible(true);
+            curSensorsR.setString(en.getSensorDesc());
+            visualRangeR.setString(Integer.toString(en.getGame().getPlanetaryConditions().getVisualRange(en, false)));
+        } else {
+            curSensorsR.setVisible(false);
+            visualRangeR.setVisible(false);
+        }
+        
         if (en instanceof GunEmplacement) {
             weightL.setVisible(false);
             weightR.setVisible(false);

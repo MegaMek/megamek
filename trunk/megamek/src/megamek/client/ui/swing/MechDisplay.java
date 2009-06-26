@@ -3052,9 +3052,7 @@ public class MechDisplay extends JPanel {
             if (null != en.getActiveSensor()) {
                 curSensorsL.setText((Messages
                         .getString("MechDisplay.CurrentSensors")).concat(" ")
-                        .concat(
-                                Sensor.getSensorName(en.getActiveSensor()
-                                        .getType())));
+                        .concat(en.getSensorDesc()));
             } else {
                 curSensorsL.setText((Messages
                         .getString("MechDisplay.CurrentSensors")).concat(" "));
@@ -3072,7 +3070,7 @@ public class MechDisplay extends JPanel {
                 if (sensor.isBAP() && !en.hasBAP(false)) {
                     condition = " (Disabled)";
                 }
-                chSensors.addItem(Sensor.getSensorName(sensor.getType())
+                chSensors.addItem(sensor.getDisplayName()
                         + condition);
                 if (sensor.getType() == en.getNextSensor().getType()) {
                     chSensors.setSelectedIndex(i);
@@ -3090,7 +3088,7 @@ public class MechDisplay extends JPanel {
                 clientgui
                         .systemMessage(Messages
                                 .getString(
-                                        "MechDisplay.willSwitchAtEnd", new Object[] { "Active Sensors", Sensor.getSensorName(en.getSensors().elementAt(chSensors.getSelectedIndex()).getType()) }));//$NON-NLS-1$
+                                        "MechDisplay.willSwitchAtEnd", new Object[] { "Active Sensors", en.getSensors().elementAt(chSensors.getSelectedIndex()).getDisplayName() }));//$NON-NLS-1$
                 clientgui.getClient().sendUpdateEntity(
                         clientgui.getClient().game.getEntity(myMechId));
             }

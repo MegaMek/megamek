@@ -8506,5 +8506,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getRearArc() {
         return Compute.ARC_REAR;
     }
+    
+    /**
+     * returns a description to the current sensing range of the active sensor
+     */
+    public String getSensorDesc() {
+        int bracket = Compute.getSensorBracket(getSensorCheck());
+        int range = getActiveSensor().getRangeByBracket();
+        int maxSensorRange = bracket*range;
+        int minSensorRange = Math.max((bracket-1)*range,0);
+        if(game.getOptions().booleanOption("inclusive_sensor_range")) {
+            minSensorRange = 0;
+        }
+        return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-" + maxSensorRange + ")";     
+    }
+    
 
 }

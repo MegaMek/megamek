@@ -1103,6 +1103,10 @@ public class MechDisplay extends BufferedPanel {
                     wn.append(" ");
                     wn.append(mounted.curMode().getDisplayableName());
                 }
+                if (game.getOptions().booleanOption("tacops_called_shots")) {
+                    wn.append(" ");
+                    wn.append(mounted.getCalledShot().getDisplayableName());
+                }
                 weaponList.add(wn.toString());
                 if (mounted.isUsedThisRound()
                         && (game.getPhase() == mounted.usedInPhase())

@@ -160,6 +160,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     private MenuItem fireTwist = null;
     private MenuItem fireFlipArms = null;
     private MenuItem fireMode = null;
+    private MenuItem fireCalled = null;
     private MenuItem fireFindClub = null;
     private MenuItem fireSpot = null;
     private MenuItem fireSearchlight = null;
@@ -561,6 +562,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         fireMode = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.fireMode"), FiringDisplay.FIRE_MODE, KeyEvent.VK_O); //$NON-NLS-1$
+        fireCalled = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.fireCalled"), FiringDisplay.FIRE_CALLED); //$NON-NLS-1$
 
         menu.addSeparator();
 
@@ -1206,6 +1210,10 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
     public synchronized void setFireModeEnabled(boolean enabled) {
         fireMode.setEnabled(enabled);
+    }
+    
+    public synchronized void setFireCalledEnabled(boolean enabled) {
+        fireCalled.setEnabled(enabled);
     }
 
     public synchronized void setFireFindClubEnabled(boolean enabled) {

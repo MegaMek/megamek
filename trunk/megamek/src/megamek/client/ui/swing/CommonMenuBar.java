@@ -144,6 +144,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem fireTwist;
     private JMenuItem fireFlipArms;
     private JMenuItem fireMode;
+    private JMenuItem fireCalled;
     private JMenuItem fireFindClub;
     private JMenuItem fireSpot;
     private JMenuItem fireSearchlight;
@@ -534,6 +535,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         fireMode = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.fireMode"), FiringDisplay.FIRE_MODE, KeyEvent.VK_O); //$NON-NLS-1$
+        fireCalled = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.fireCalled"), FiringDisplay.FIRE_CALLED); //$NON-NLS-1$
         menu.addSeparator();
         fireFindClub = createMenuItem(
                 menu,
@@ -1152,6 +1156,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
 
     public synchronized void setFireModeEnabled(boolean enabled) {
         fireMode.setEnabled(enabled);
+    }
+    
+    public synchronized void setFireCalledEnabled(boolean enabled) {
+        fireCalled.setEnabled(enabled);
     }
 
     public synchronized void setFireFindClubEnabled(boolean enabled) {

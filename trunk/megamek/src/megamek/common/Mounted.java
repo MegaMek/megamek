@@ -123,6 +123,9 @@ public class Mounted implements Serializable, RoundUpdated {
     // for Armored components
     private boolean armoredComponent = false;
 
+    //called shots status, sort of like another mode
+    private CalledShot called = new CalledShot();
+    
     /** Creates new Mounted */
     public Mounted(Entity entity, EquipmentType type) {
         this.entity = entity;
@@ -295,6 +298,7 @@ public class Mounted implements Serializable, RoundUpdated {
             mode = pendingMode;
             pendingMode = -1;
         }
+        called.reset();
     }
 
     /**
@@ -1144,5 +1148,9 @@ public class Mounted implements Serializable, RoundUpdated {
             }
         }
         return qrk.toString();
+    }
+    
+    public CalledShot getCalledShot() {
+        return called;
     }
 }

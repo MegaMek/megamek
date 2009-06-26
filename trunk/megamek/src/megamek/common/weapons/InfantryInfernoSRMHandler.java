@@ -198,7 +198,7 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
         } // End missed-target
 
         // light inferno missiles all at once
-        vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits, waa.getAimingMode(), waa.getAimedLocation()));
+        vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits, weapon.getCalledShot().getCall()));
         return false;
     }
 

@@ -384,8 +384,7 @@ public class BattleArmor extends Infantry {
         }
 
         if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_CALLED)) {
+                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
 
             int roll = Compute.d6(2);
 

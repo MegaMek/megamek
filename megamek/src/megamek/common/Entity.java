@@ -8511,6 +8511,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * returns a description to the current sensing range of the active sensor
      */
     public String getSensorDesc() {
+        if(null == getActiveSensor()) {
+            return "none";
+        }
         int bracket = Compute.getSensorBracket(getSensorCheck());
         int range = getActiveSensor().getRangeByBracket();
         int maxSensorRange = bracket*range;

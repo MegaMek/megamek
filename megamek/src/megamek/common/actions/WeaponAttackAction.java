@@ -1849,7 +1849,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // can't fire Indirect LRM with direct LOS
         if (isIndirect && game.getOptions().booleanOption("indirect_fire")
                 && !game.getOptions().booleanOption("indirect_always_possible")
-                && LosEffects.calculateLos(game, ae.getId(), target).canSee()) {
+                && LosEffects.calculateLos(game, ae.getId(), target).canSee() 
+                && (!game.getOptions().booleanOption("double_blind") || Compute.canSee(game, ae, target))) {
             return new String(
                     "Indirect-fire LRM cannot be fired with direct LOS from attacker to target.");
         }
@@ -2513,6 +2514,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return losMods.getDesc();
         }
 
+        //http://www.classicbattletech.com/forums/index.php/topic,47618.0.html
+        //anything outside of visual range requires a "sensor lock" in order to direct fire
+        if(game.getOptions().booleanOption("double_blind") 
+                && !Compute.inVisualRange(game, ae, target) && !Compute.inSensorRange(game, ae, target)) {
+            //TODO: still should be possible if someone else on a C3 network can "see" the unit
+            //ae.getC
+            return "outside of visual and sensor range";
+        }
+        
         // Weapon in arc?
         if (!Compute.isInArc(game, attackerId, weaponId, target)) {
             return "Target not in arc.";

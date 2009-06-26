@@ -2409,10 +2409,6 @@ public class Compute {
         if(target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
 
-            if ( game.getTeamForPlayer(ae.getOwner()).equals(game.getTeamForPlayer(te.getOwner())) ){
-                return true;
-            }
-
             if(te.isVoidSigActive()) {
                 visualRange = visualRange / 4;
             } else if(te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {

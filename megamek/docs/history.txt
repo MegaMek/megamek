@@ -35,6 +35,8 @@ v0.35.3-dev (SVN)
 + save and load weapon quirks from MULs
 + unit restrictions on weapon quirks
 + improved weapon quirk name reporting
++ maximum visual range added to MekDisplay
++ current sensor and ranges added to first tab of MekDisplay
 
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)

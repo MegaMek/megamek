@@ -2491,6 +2491,13 @@ public class Compute {
         //ECM bubbles
         check += sensor.getModForECM(ae);
 
+        return getSensorBracket(check);
+    }
+    
+    /**
+     * returns the brackets for sensor checks
+     */
+    public static int getSensorBracket(int check) {
         //get the range bracket (0 - none; 1 - short; 2 - medium; 3 - long)
         int bracket = 0;
         if((check == 7) || (check == 8)) {
@@ -2502,9 +2509,9 @@ public class Compute {
         if(check < 5) {
             bracket = 3;
         }
-
         return bracket;
     }
+    
     /**
      * Checks whether the target is within sensor range of the current entity
      */

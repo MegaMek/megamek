@@ -56,12 +56,7 @@ public class Sensor implements Serializable {
                                     "Heat Sensors", "Improved Sensors", "Mech Seismic", "Vehicle Seismic"};
     public static final int SIZE = sensorNames.length;
     
-    public static String getSensorName(int type) {
-        if (type >= 0 && type < SIZE) {
-            return sensorNames[type];
-        }
-        throw new IllegalArgumentException("Unknown sensor type");
-    }
+    
     
     /**
      * Constructor
@@ -72,6 +67,13 @@ public class Sensor implements Serializable {
     
     public int getType() {
         return type;
+    }
+    
+    public String getDisplayName() {
+        if (type >= 0 && type < SIZE) {
+            return sensorNames[type];
+        }
+        throw new IllegalArgumentException("Unknown sensor type");
     }
     
     public boolean isBAP() {

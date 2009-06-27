@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.34.5-dev (SVN)
+v0.34.5 (2009-06-27, 20:37 UTC+2)
 + Patch 2806831: fix typo in MovePath
 + Bug 2808412: Firebee image misnamed
 + Bug: BA microbomb should have range 0

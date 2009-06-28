@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.34.6-dev (SVN)
++ Bug 2813397: Spikes
 
 v0.34.5 (2009-06-27, 20:37 UTC+2)
 + Patch 2806831: fix typo in MovePath

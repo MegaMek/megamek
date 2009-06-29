@@ -82,7 +82,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         //Taken from: http://www.devdaily.com/apple/mac/java-mac-native-look/Introduction.shtml
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MegaMek");
-        
+
         //this should also help to make MegaMek look more system-specific
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -99,7 +99,7 @@ public class MegaMekGUI implements IMegaMekGUI {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         ToolTipManager.sharedInstance().setInitialDelay(
                 GUIPreferences.getInstance().getTooltipDelay());
         frame = new JFrame("MegaMek"); //$NON-NLS-1$
@@ -279,7 +279,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         hd = new HostDialog(frame);
         hd.setVisible(true);
         // verify dialog data
-        if (hd.playerName == null || hd.serverPass == null || hd.port == 0) {
+        if ((hd.playerName == null) || (hd.serverPass == null) || (hd.port == 0)) {
             return;
         }
 
@@ -301,7 +301,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = hd.playerName.toCharArray();
-        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+        for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
@@ -364,7 +364,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return (dir.getName() != null && dir.getName().endsWith(".sav")); //$NON-NLS-1$
+                return ((dir.getName() != null) && dir.getName().endsWith(".sav")); //$NON-NLS-1$
             }
 
             @Override
@@ -373,21 +373,21 @@ public class MegaMekGUI implements IMegaMekGUI {
             }
         });
         int returnVal = fc.showOpenDialog(frame);
-        if (returnVal != JFileChooser.APPROVE_OPTION
-                || fc.getSelectedFile() == null) {
+        if ((returnVal != JFileChooser.APPROVE_OPTION)
+                || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
         HostDialog hd = new HostDialog(frame);
         hd.setVisible(true);
-        if (hd.playerName == null || hd.serverPass == null || hd.port == 0) {
+        if ((hd.playerName == null) || (hd.serverPass == null) || (hd.port == 0)) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = hd.playerName.toCharArray();
-        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+        for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
@@ -461,7 +461,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return (dir.getName() != null && dir.getName().endsWith(".mms")); //$NON-NLS-1$
+                return ((dir.getName() != null) && dir.getName().endsWith(".mms")); //$NON-NLS-1$
             }
 
             @Override
@@ -470,8 +470,8 @@ public class MegaMekGUI implements IMegaMekGUI {
             }
         });
         int returnVal = fc.showOpenDialog(frame);
-        if (returnVal != JFileChooser.APPROVE_OPTION
-                || fc.getSelectedFile() == null) {
+        if ((returnVal != JFileChooser.APPROVE_OPTION)
+                || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -481,6 +481,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         try {
             g = sl.createGame();
         } catch (Exception e) {
+            e.printStackTrace();
             JOptionPane
                     .showMessageDialog(
                             frame,
@@ -512,12 +513,13 @@ public class MegaMekGUI implements IMegaMekGUI {
         // host with the scenario. essentially copied from host()
         HostDialog hd = new HostDialog(frame);
         boolean hasSlot = false;
-        if (!("".equals(sd.localName)))
+        if (!("".equals(sd.localName))) {
             hasSlot = true;
+        }
         hd.yourNameF.setText(sd.localName);
         hd.setVisible(true);
         // verify dialog data
-        if (hd.playerName == null || hd.serverPass == null || hd.port == 0) {
+        if ((hd.playerName == null) || (hd.serverPass == null) || (hd.port == 0)) {
             return;
         }
         sd.localName = hd.playerName;
@@ -525,7 +527,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = hd.playerName.toCharArray();
-        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+        for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
@@ -605,8 +607,9 @@ public class MegaMekGUI implements IMegaMekGUI {
             Enumeration<Player> pE = server.getGame().getPlayers();
             while (pE.hasMoreElements()) {
                 Player tmpP = pE.nextElement();
-                if (tmpP.getName().equals(sd.localName))
+                if (tmpP.getName().equals(sd.localName)) {
                     tmpP.setObserver(true);
+                }
             }
         }
         if (gui != null) {
@@ -622,14 +625,14 @@ public class MegaMekGUI implements IMegaMekGUI {
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
         // verify dialog data
-        if (cd.playerName == null || cd.serverAddr == null || cd.port == 0) {
+        if ((cd.playerName == null) || (cd.serverAddr == null) || (cd.port == 0)) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = cd.playerName.toCharArray();
-        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+        for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
@@ -666,14 +669,14 @@ public class MegaMekGUI implements IMegaMekGUI {
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
         // verify dialog data
-        if (cd.playerName == null || cd.serverAddr == null || cd.port == 0) {
+        if ((cd.playerName == null) || (cd.serverAddr == null) || (cd.port == 0)) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = cd.playerName.toCharArray();
-        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+        for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
@@ -744,7 +747,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     private static CommonHelpDialog showHelp(JFrame frame, String filename) {
         Locale l = Locale.getDefault();
         File helpfile = new File(filename + '-'
-                + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$ 
+                + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$
         if (!helpfile.exists()) {
             helpfile = new File(filename + ".txt"); //$NON-NLS-1$
         }

@@ -134,9 +134,11 @@ public class Compute {
     /** Wrapper to random#d6(n) */
     public static int d6(int dice) {
         Roll roll = random.d6(dice);
-        if (Server.getServerInstance().getGame().getOptions().booleanOption(
-                "rng_log")) {
-            Server.getServerInstance().reportRoll(roll);
+        if (Server.getServerInstance() != null) {
+            if (Server.getServerInstance().getGame().getOptions().booleanOption(
+            "rng_log")) {
+                Server.getServerInstance().reportRoll(roll);
+            }
         }
         return roll.getIntValue();
     }
@@ -1241,9 +1243,9 @@ public class Compute {
             return null;
         }
 
-        boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), 
+        boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(),
                                                 target.getPosition(), attacker.getForwardArc());
-        boolean curInRearArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), 
+        boolean curInRearArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(),
                                                target.getPosition(), attacker.getRearArc());
         if(!curInRearArc && attacker.getQuirks().booleanOption("multi_trac")) {
             return null;
@@ -1272,7 +1274,7 @@ public class Compute {
                 if ((pte instanceof Mech) && ((Entity) pte).isStealthActive() && (pte != target) && !isSwarm) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE, "When targeting a stealthed Mech, can not attack secondary targets");
                 }
-                if (Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), 
+                if (Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(),
                                     pte.getPosition(), attacker.getForwardArc())) {
                     primaryTarget = prevAttack.getTargetId();
                     break;
@@ -2415,7 +2417,7 @@ public class Compute {
                 visualRange = visualRange / 2;
             } else if(te.isChameleonShieldActive()) {
                 visualRange = visualRange / 2;
-            } else if (te instanceof Infantry && !(te instanceof BattleArmor) && ((Infantry)te).hasSneakCamo()) {
+            } else if ((te instanceof Infantry) && !(te instanceof BattleArmor) && ((Infantry)te).hasSneakCamo()) {
                 visualRange = visualRange / 2;
             }
         }
@@ -2489,7 +2491,7 @@ public class Compute {
 
         return getSensorBracket(check);
     }
-    
+
     /**
      * returns the brackets for sensor checks
      */
@@ -2507,7 +2509,7 @@ public class Compute {
         }
         return bracket;
     }
-    
+
     /**
      * Checks whether the target is within sensor range of the current entity
      */
@@ -3475,7 +3477,7 @@ public class Compute {
             Infantry inf = (Infantry) attacker;
             if(inf.isArmorEncumbering()) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "can't engage in anti-mek attacks with encumbering armor");
-            }    
+            }
             men = inf.getShootingStrength();
             if (men >= 22) {
                 base = inf.getCrew().getPiloting();
@@ -3572,7 +3574,7 @@ public class Compute {
             //can't have encumbering armor
             if(inf.isArmorEncumbering()) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "can't swarm with encumbering armor");
-            }           
+            }
             men = inf.getShootingStrength();
             if (men >= 22) {
                 base = inf.getCrew().getPiloting() + 2;

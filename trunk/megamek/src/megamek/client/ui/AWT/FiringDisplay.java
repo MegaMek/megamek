@@ -1178,7 +1178,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             }
             if(Compute.isGroundToAir(ce(), target)) {
                 //add altitude difference
-                int altdiff = ce().getElevation();
+                int altdiff = 2 * target.getElevation();
                 clientgui.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition()) + " + " + altdiff + " altitude difference"); //$NON-NLS-1$
             }
 

@@ -102,6 +102,8 @@ public class MoveStep implements Serializable {
     private int nStraight = 0;
     //how many elevations down
     private int nDown = 0;
+    //how many hexes moved in this velocity "chunk" (for aero on ground maps)
+    private int nMoved = 0;
     //for Aeros, they may get pushed off board by OOC
     private boolean offBoard = false;
     //for optional vector movement
@@ -379,18 +381,29 @@ public class MoveStep implements Serializable {
         }
         addDistance(1);
 
-        //if this is an ASF, then reduce velocity left
-        //also reset nTurns
-        if((entity instanceof Aero) && !game.useVectorMove() &&
-                !((entity.getMovementMode() == IEntityMovementMode.SPHEROID) && game.getBoard().inAtmosphere())) {
+        //need to reduce velocity left for aerospace units (and also reset nTurns)
+        //this is handled differently by aerospace units operating on the ground map and by spheroids in atmosphere
+        if((entity instanceof Aero) && getElevation() > 0 && game.getBoard().onGround()) {
+            setNMoved(getNMoved() + 1);
+            if(entity.getMovementMode() != IEntityMovementMode.SPHEROID && getNMoved() >= 16) {
+                    setVelocityLeft(getVelocityLeft() - 1);
+                    setNMoved(0);
+            }
+        } else if((entity instanceof Aero) && !game.useVectorMove() && !useSpheroidAtmosphere(game, entity)) {
             setVelocityLeft(getVelocityLeft() - 1);
             setNTurns(0);
-        }
+        }   
 
         //if in atmosphere, then I need to know if this move qualifies the unit
         //for a free turn
-        if((entity instanceof Aero) && game.getBoard().inAtmosphere()) {
+        if(useAeroAtmosphere(game, entity)) {
             setNStraight(getNStraight() + 1);
+            if(game.getBoard().onGround() && getNStraight() > 7) {
+                //if flying on ground map, then you have to fly at least 8 straight hexes before you can 
+                //make a turn (free or not)
+                //http://www.classicbattletech.com/forums/index.php/topic,37171.new.html#new
+                setNTurns(0);
+            }
             if(!hasFreeTurn()) {
                 //check conditions
                 if(dueFreeTurn(entity, getNStraight(), getVelocity())) {
@@ -398,7 +411,7 @@ public class MoveStep implements Serializable {
                 }
             }
         }
-
+        
         if (getType() == MovePath.STEP_DFA) {
             IHex hex = game.getBoard().getHex(getPosition());
             setElevation(Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV)));
@@ -480,8 +493,15 @@ public class MoveStep implements Serializable {
         if(entity instanceof Aero) {
             setMp(0);
             //if this a spheroid in atmosphere then the cost is always two
-            if(game.getBoard().inAtmosphere() && (((Aero)entity).isSpheroid() || game.getPlanetaryConditions().isVacuum())) {
-                setMp(2);
+            if(useSpheroidAtmosphere(game, entity)) {
+                if(game.getBoard().onGround()) {
+                    //spheroids only pay for the first hex moved into every 8 hexes
+                    if((distance % 8) == 1) {
+                        setMp(1);
+                    }
+                } else {
+                    setMp(2);
+                }
             }
         } else {
             calcMovementCostFor(game, prev.getPosition(), prev.getElevation());
@@ -566,7 +586,7 @@ public class MoveStep implements Serializable {
                     setMp(asfTurnCost(game, getType(), entity));
                     setNTurns(getNTurns() + 1);
 
-                    if(game.getBoard().inAtmosphere()) {
+                    if(useAeroAtmosphere(game, entity)) {
                         setNStraight(0);
                         setFreeTurn(false);
                     }
@@ -865,6 +885,7 @@ public class MoveStep implements Serializable {
         freeTurn = prev.freeTurn;
         nStraight = prev.nStraight;
         nDown = prev.nDown;
+        nMoved = prev.nMoved;
     }
 
     /**
@@ -1445,25 +1466,29 @@ public class MoveStep implements Serializable {
             }
 
             //unless velocity is zero ASFs must move forward one hex before making turns
-            if (!game.useVectorMove() && !isManeuver() &&
-                    !(game.getBoard().inAtmosphere()
-                            && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum())) &&
+            if (!game.useVectorMove() && !isManeuver() && !useSpheroidAtmosphere(game, entity) &&
                     (distance == 0) && (velocity != 0) &&
                     ((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))) {
                 return;
             }
 
             //if in atmosphere, then they cannot turn under any circumstances in the first hex
-            if (game.getBoard().inAtmosphere() && (distance == 0)  && !isManeuver()
-                    && !(game.getBoard().inAtmosphere() && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum())) &&
+            if (useAeroAtmosphere(game, entity)  && !isManeuver() &&
                     ((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))) {
-                return;
+                if(game.getBoard().onGround()) {
+                    //if flying on the ground map then they need to move 8 hexes first
+                    //TODO: they should carry over their straight movement from last turn
+                    if(distance < 8) {
+                        return;
+                    }
+                } else if(distance == 0) {
+                    return;
+                }
             }
-
+          
             //no more than two turns in one hex unless velocity is zero for anything except ASF
             if (!game.useVectorMove() && !isManeuver()
-                    && !(game.getBoard().inAtmosphere()
-                    && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()))
+                    && !useAeroAtmosphere(game, entity) && !useSpheroidAtmosphere(game, entity)
                     && (a instanceof SmallCraft) && (velocity != 0)
                     && (getNTurns() > 2)) {
                 return;
@@ -1476,9 +1501,7 @@ public class MoveStep implements Serializable {
             }
 
             //if in atmosphere then only one turn no matter what
-            if( game.getBoard().inAtmosphere() && (getNTurns() > 1) && !isManeuver()
-                    && !(game.getBoard().inAtmosphere()
-                            && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()))) {
+            if(useAeroAtmosphere(game, entity) && (getNTurns() > 1) && !isManeuver()) {
                 return;
             }
 
@@ -1511,13 +1534,11 @@ public class MoveStep implements Serializable {
 
             //check for thruster damage
             if ((type == MovePath.STEP_TURN_LEFT) && (a.getRightThrustHits() > 2)
-                    && !(game.getBoard().inAtmosphere()
-                            && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()))) {
+                    && !useSpheroidAtmosphere(game, entity)) {
                 return;
             }
             if ((type == MovePath.STEP_TURN_RIGHT) && (a.getLeftThrustHits() > 2)
-                    && !(game.getBoard().inAtmosphere()
-                            && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()))) {
+                    && !useSpheroidAtmosphere(game, entity)) {
                 return;
             }
 
@@ -1550,9 +1571,15 @@ public class MoveStep implements Serializable {
                 return;
             }
 
+            
             //check to make sure there is velocity left to spend
-            if ((getVelocityLeft() >= 0) || (game.getBoard().inAtmosphere()
-                    && (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()))) {
+            if ((getVelocityLeft() >= 0) || useSpheroidAtmosphere(game, entity)) {
+                //when aeros are flying on the ground mapsheet we need an additional check
+                //because velocityLeft is only decremented at intervals of 16 hexes
+                if(useAeroAtmosphere(game, entity) && game.getBoard().onGround() && getVelocityLeft() == 0 
+                        && getNMoved() > 0) {
+                    return;
+                }
                 if (getMpUsed() <= tmpSafeTh) {
                     movementType = IEntityMovementType.MOVE_SAFE_THRUST;
                 } else if(getMpUsed() <= entity.getRunMPwithoutMASC()) {
@@ -2575,12 +2602,9 @@ public class MoveStep implements Serializable {
             return 0;
         }
 
+        
         //if in atmosphere, the rules are different
-        if(game.getBoard().inAtmosphere()) {
-            //if they are spheroid in atmosphere, then no cost to turn
-            if(game.getBoard().inAtmosphere() && (entity.getMovementMode() == IEntityMovementMode.SPHEROID)) {
-                return 0;
-            }
+        if(useAeroAtmosphere(game, entity)) {
             //if they have a free turn, then this move is free
             if(hasFreeTurn()) {
                 return 0;
@@ -2588,8 +2612,8 @@ public class MoveStep implements Serializable {
                 //it costs half the current velocity (rounded up)
                 return (int)Math.ceil(getVelocity() / 2.0);
             }
-
-
+        } else if(useSpheroidAtmosphere(game, entity)) {
+            return 0;
         }
 
 
@@ -2632,6 +2656,14 @@ public class MoveStep implements Serializable {
 
     public int getNTurns() {
         return nTurns;
+    }
+    
+    public void setNMoved(int moved) {
+        nMoved = moved;
+    }
+
+    public int getNMoved() {
+        return nMoved;
     }
 
     public void setNRolls(int rolls) {
@@ -2720,6 +2752,17 @@ public class MoveStep implements Serializable {
                 thresh = 1;
             }
         }
+        
+        //different rules if flying on the ground map
+        if(en.game.getBoard().onGround() && getElevation() > 0) {
+            if(en instanceof Dropship) {
+                thresh = vel * 8;
+            } else if (en instanceof SmallCraft) {
+                thresh = 8 + (vel - 1) * 6;
+            } else {
+                thresh = 8 + (vel - 1) * 4;
+            }    
+        }
 
         if(straight >= thresh) {
             return true;
@@ -2760,5 +2803,38 @@ public class MoveStep implements Serializable {
     public Minefield getMinefield() {
         return mf;
     }
+    
+    /**
+     * Should we treat this movement as if it is occuring for an aerodyne unit flying in atmosphere?
+     */
+    private boolean useAeroAtmosphere(IGame game, Entity en) {
+        if(!(en instanceof Aero)) {
+            return false;
+        }
+        if(((Aero)en).isSpheroid()) {
+            return false;
+        }
+        //are we in atmosphere?
+        return (game.getBoard().inAtmosphere()|| (game.getBoard().onGround() && getElevation() > 0)) && !game.getPlanetaryConditions().isVacuum();
+    }
 
+    /**
+     * Should we treat this movement as if it is occurring for a spheroid unit flying in atmosphere?
+     * @param game
+     * @param en
+     * @return
+     */
+    private boolean useSpheroidAtmosphere(IGame game, Entity en) {
+        if(!(en instanceof Aero)) {
+            return false;
+        }
+        //aerodyne's will operate like spheroids in vacuum
+        if(!((Aero)en).isSpheroid() && !game.getPlanetaryConditions().isVacuum()) {
+            return false;
+        }
+        //are we in atmosphere?
+        return (game.getBoard().inAtmosphere() || (game.getBoard().onGround() && getElevation() > 0));
+        
+    }
+    
 }

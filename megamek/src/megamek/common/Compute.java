@@ -674,20 +674,6 @@ public class Compute {
             return mods;
         }
         
-        //ground units that are the target of air to ground attacks never have range mods
-        if(Compute.isGroundToAir(ae, target)) {
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                EntityAction ea = i.nextElement();
-                if (!(ea instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                if (prevAttack.getEntityId() == te.getId() && prevAttack.getTargetId() == ae.getId()) {
-                    return mods;
-                }
-            }
-        }
-        
         //
         // modifiy the ranges for PPCs when field inhibitors are turned off
         // TODO: See above, it should be coded elsewhere...
@@ -937,6 +923,23 @@ public class Compute {
     public static int effectiveDistance(IGame game, Entity attacker, Targetable target) {
         int distance = attacker.getPosition().distance(target.getPosition());
 
+        //ground units that are the target of air to ground attacks always have a distance of zero
+        //for return fire except for altitude differences
+        if(Compute.isGroundToAir(attacker, target)) {
+            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                EntityAction ea = i.nextElement();
+                if (!(ea instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                if (target instanceof Entity 
+                        && prevAttack.getEntityId() == ((Entity)target).getId() 
+                        && prevAttack.getTargetId() == attacker.getId()) {
+                    distance = 0;
+                }
+            }
+        }
+        
         // If the attack is completely inside a building, add the difference
         // in elevations between the attacker and target to the range.
         // TODO: should the player be explcitly notified?

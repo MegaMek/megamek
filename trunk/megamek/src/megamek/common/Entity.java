@@ -7615,6 +7615,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
     
     /**
+     * Did the entity pass within a certain number of hexes of these coords?
+     */
+    public boolean passedWithin(Coords c, int dist) {
+        for(Coords crd : passedThrough) {
+            if(crd.distance(c) <= dist) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
      * What coords were passed through previous to the given one
      */
     public Coords passedThroughPrevious(Coords c) {

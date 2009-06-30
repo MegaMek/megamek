@@ -637,8 +637,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
         int nCluster = calcnCluster();
 
-        //Now I need to adjust this for air-to-air attacks because they use attack value
-        if((ae instanceof Aero) && (target instanceof Aero)) {
+        //Now I need to adjust this for aero based attack because they use attack value
+        if(ae instanceof Aero) {
             //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
             if(ae.isCapitalFighter()) {
                 bSalvo = true;

@@ -661,9 +661,33 @@ public class Compute {
         if(ae instanceof Aero) {
             useExtremeRange = true;
         }
-
+        
         ToHitData mods = new ToHitData();
-
+      
+        Entity te = null;
+        if (target instanceof Entity) {
+            te = (Entity) target;
+        }
+        
+        //air to ground attacks never apply range mods
+        if(Compute.isAirToGround(ae, target)) {
+            return mods;
+        }
+        
+        //ground units that are the target of air to ground attacks never have range mods
+        if(Compute.isGroundToAir(ae, target)) {
+            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                EntityAction ea = i.nextElement();
+                if (!(ea instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                if (prevAttack.getEntityId() == te.getId() && prevAttack.getTargetId() == ae.getId()) {
+                    return mods;
+                }
+            }
+        }
+        
         //
         // modifiy the ranges for PPCs when field inhibitors are turned off
         // TODO: See above, it should be coded elsewhere...
@@ -697,14 +721,11 @@ public class Compute {
             }
         }
 
-        // allow naval units on surface to be attacked from above or below
-        Entity te = null;
-        if (target instanceof Entity) {
-            te = (Entity) target;
-            if ((targBottom == 0) && (UnitType.determineUnitTypeCode(te) == UnitType.NAVAL)) {
-                targetInPartialWater = true;
-            }
+        // allow naval units on surface to be attacked from above or below     
+        if (null != te && (targBottom == 0) && (UnitType.determineUnitTypeCode(te) == UnitType.NAVAL)) {
+            targetInPartialWater = true;
         }
+             
         // allow naval units to target underwater units,
         // torpedo tubes are mounted underwater
         if ((targetUnderwater || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
@@ -762,6 +783,13 @@ public class Compute {
             weaponRanges = wtype.getATRanges();
         }
 
+        //flying aeros on the ground map get their range multiplied by 16
+        if(ae.isAirborne() && game.getBoard().onGround()) {
+            for(int i = 0; i < weaponRanges.length; i++) {
+                weaponRanges[i] *= 16;
+            }
+        }
+        
         // determine base distance & range bracket
         int distance = Compute.effectiveDistance(game, ae, target);
         int range = RangeType.rangeBracket(distance, weaponRanges, useExtremeRange);
@@ -776,6 +804,10 @@ public class Compute {
                     maxRange = bayWType.getMaxRange();
                 }
             }
+        }
+        
+        if(ae.isAirborne() && game.getBoard().onGround()) {
+            maxRange *= 16;
         }
 
         //if aero and greater than max range then swith to range_out
@@ -2565,6 +2597,11 @@ public class Compute {
     public static int targetSideTable(Entity attacker, Targetable target, int called) {
         Coords attackPos = attacker.getPosition();
 
+        Entity te = null;
+        if(target instanceof Entity) {
+            te = (Entity)target;
+        }
+        
         boolean usePrior = false;
         //aeros in the same hex in space need to adjust position to get side table
         if(attacker.game.getBoard().inSpace() && attacker.getPosition().equals(target.getPosition())
@@ -2574,19 +2611,20 @@ public class Compute {
             }
             usePrior = ((Aero)target).shouldMoveBackHex((Aero)attacker);
         }
-        if((target instanceof Aero) && (attacker instanceof Aero)) {
-            return ((Entity)target).sideTable(attackPos, usePrior);
+        
+        //if this is a air to ground attack, then attacker position is given by the direction
+        //from which they entered the target hex
+        if(attacker.isAirborne() && null != te && !te.isAirborne()) {
+            attackPos = attacker.passedThroughPrevious(target.getPosition());
         }
 
-        if((target instanceof Entity)
-                && (called == CalledShot.CALLED_LEFT)) {
-            return ((Entity)target).sideTable(attackPos, false, (((Entity)target).getFacing() + 5) % 6);
-        } else if ((target instanceof Entity)
-                && (called == CalledShot.CALLED_RIGHT)) {
-            return ((Entity)target).sideTable(attackPos, false, (((Entity)target).getFacing() + 1) % 6);
+        if(null != te && (called == CalledShot.CALLED_LEFT)) {
+            return te.sideTable(attackPos, usePrior, (te.getFacing() + 5) % 6);
+        } else if (null != te && (called == CalledShot.CALLED_RIGHT)) {
+            return te.sideTable(attackPos, usePrior, (te.getFacing() + 1) % 6);
         }
 
-        return target.sideTable(attackPos);
+        return target.sideTable(attackPos, usePrior);
     }
 
     /**
@@ -4492,5 +4530,18 @@ public class Compute {
         }
         return entities;
     }
+    
+    public static boolean isAirToGround(Entity attacker, Targetable target) {
+        return attacker.isAirborne() && !target.isAirborne();
+    }
+    
+    public static boolean isAirToAir(Entity attacker, Targetable target) {
+        return attacker.isAirborne() && target.isAirborne();
+    }
+    
+    public static boolean isGroundToAir(Entity attacker, Targetable target) {
+        return !attacker.isAirborne() && target.isAirborne();
+    }
+    
 } // End public class Compute
 

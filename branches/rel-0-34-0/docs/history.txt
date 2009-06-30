@@ -4,6 +4,7 @@ v0.34.6-dev (SVN)
 + Bug 2813397: Spikes
 + Bug 2813404: Implemented TacOps artillery scatter errata
 + Bug 2813314: Pulse Laser extreme range
++ Bug 2813374: Ice not working under classic/simplified tileset
 
 v0.34.5 (2009-06-27, 20:37 UTC+2)
 + Patch 2806831: fix typo in MovePath

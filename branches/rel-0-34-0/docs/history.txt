@@ -3,6 +3,7 @@
 v0.34.6-dev (SVN)
 + Bug 2813397: Spikes
 + Bug 2813404: Implemented TacOps artillery scatter errata
++ Bug 2813314: Pulse Laser extreme range
 
 v0.34.5 (2009-06-27, 20:37 UTC+2)
 + Patch 2806831: fix typo in MovePath

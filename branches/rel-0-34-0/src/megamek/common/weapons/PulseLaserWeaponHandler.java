@@ -52,8 +52,8 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
         }
 
         // during a swarm, all damage gets applied as one block to one location
-        if (ae instanceof BattleArmor
-                && weapon.getLocation() == BattleArmor.LOC_SQUAD
+        if ((ae instanceof BattleArmor)
+                && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
@@ -69,12 +69,11 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
             }
         }
 
-        if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
+        if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
             toReturn = (int) Math.floor(toReturn / 2.0);
-            toReturn -= 1;
         }
 
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_PULSE, ((Infantry)target).isMechanized());
         } else if (bDirect){
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);

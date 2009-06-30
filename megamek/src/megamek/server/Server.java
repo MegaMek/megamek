@@ -75,7 +75,6 @@ import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.HitData;
-import megamek.common.IAimingModes;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
 import megamek.common.IEntityMovementMode;
@@ -14942,15 +14941,15 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
             }
         }
-        
+
         //infantry armor can reduce damage
-        if(isPlatoon && ((Infantry)te).getDamageDivisor() != 1.0) {
+        if(isPlatoon && (((Infantry)te).getDamageDivisor() != 1.0)) {
             r = new Report(6074);
             r.subject = te_n;
             r.indent(2);
             r.newlines = 0;
             r.add(damage);
-            damage = (int) Math.ceil(((double) damage) / ((Infantry)te).getDamageDivisor());
+            damage = (int) Math.ceil((damage) / ((Infantry)te).getDamageDivisor());
             r.add(damage);
             vDesc.addElement(r);
         }
@@ -20581,7 +20580,7 @@ public class Server implements Runnable {
         }
 
     }
-    
+
     /**
      * receive and process an entity mode change packet
      *
@@ -23902,7 +23901,7 @@ public class Server implements Runnable {
             int fallHeight = psr.getValue() - roll;
             // determine where we really land
             int distance = Compute.d6(fallHeight);
-            Coords c = Compute.scatter(entity.getPosition(), fallHeight);
+            Coords c = Compute.scatterAssaultDrop(entity.getPosition(), fallHeight);
             r = new Report(2385);
             r.subject = entity.getId();
             r.add(distance);

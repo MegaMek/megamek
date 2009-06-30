@@ -1509,6 +1509,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.addModifier(atype.getToHitModifier(),
                     "ammunition to-hit modifier");
         }
+        
+        if(atype != null 
+                && (atype.getAmmoType() == AmmoType.T_AAA_MISSILE || atype.getAmmoType() == AmmoType.T_LAA_MISSILE) 
+                && Compute.isAirToGround(ae, target)) {
+            toHit.addModifier(+4, "AAA missile at ground target");
+            if(ae.getElevation() < 4) {
+                toHit.addModifier(+3, "AAA missile below altitude 4");
+            }
+        }
+        
 
         // add iNarc bonus
         if (isINarcGuided) {

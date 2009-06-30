@@ -1,7 +1,8 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.35.4 (SVN)
+v0.35.4-dev (SVN)
 + Bug: Scenarios can't start
++ Bug 2814207: NPE in swing ConfirmDialog
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

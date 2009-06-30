@@ -120,12 +120,12 @@ public class ConfirmDialog extends JDialog{
         addQuestion(question);
         setupButtons();
         addInputs();
-        finishSetup(p);
         if (defButton == 'n') {
             defaultButton = butNo;
         } else {
             defaultButton = butYes;
         }
+        finishSetup(p);
     }
 
     private void setupButtons() {

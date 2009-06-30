@@ -157,6 +157,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     public int getOtherAttackInfo() {
         return otherAttackInfo;
     }
+    
+    public boolean isAirToGround(IGame game) {
+        return Compute.isAirToGround(getEntity(game), getTarget(game));
+    }
+    
+    public boolean isAirToAir(IGame game) {
+        return Compute.isAirToAir(getEntity(game), getTarget(game));
+    }
+    
+    public boolean isGroundToAir(IGame game) {
+        return Compute.isGroundToAir(getEntity(game), getTarget(game));
+    }
 
     public ToHitData toHit(IGame game) {
         return WeaponAttackAction.toHit(game, getEntityId(), game.getTarget(
@@ -291,7 +303,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
         int toSubtract = 0;
-        final int ttype = target.getTargetType();
+        final int ttype = target.getTargetType();   
 
         ToHitData toHit = null;
         String reason = null;
@@ -713,10 +725,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
 
             // check for NOE
-            // if the target is NOE in atmosphere
-            if (game.getBoard().inAtmosphere()
-                    && (1 == (ae.getElevation() - game.getBoard().getHex(
-                            ae.getPosition()).ceiling()))) {
+            if (Compute.isAirToAir(ae, target) && ae.isNOE()) {
                 if (ae.isOmni()) {
                     toHit.addModifier(+1, "attacker is flying at NOE (omni)");
                 } else {
@@ -1237,7 +1246,27 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 toHit.addModifier(-2, "anti-air targetting system vs. aerial unit");
             }
         }
+        
+        //air-to-ground strikes apply a +2 mod
+        if(Compute.isAirToGround(ae, target)) {
+            toHit.addModifier(+2, "air to ground strike");
+        }
 
+        //units making air to ground attacks are easier to hit
+        if(null != te && te.isAirborne()) {
+            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                EntityAction ea = i.nextElement();
+                if (!(ea instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                if (prevAttack.getEntityId() == te.getId() && prevAttack.isAirToGround(game)) {
+                    toHit.addModifier(-3, "target making air-to-ground attack");
+                    break;
+                }
+            }
+        }
+        
         //units with the narrow/low profile quirk are harder to hit
         if((te != null) && te.getQuirks().booleanOption("low_profile")) {
             toHit.addModifier(1, "narrow/low profile");
@@ -1796,7 +1825,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             boolean isArtilleryDirect, boolean isTargetECMAffected) {
         boolean isHoming = false;
         ToHitData toHit = null;
-
+    
         // tasers only at non-flying units
         if (wtype.hasFlag(WeaponType.F_TASER)) {
             if (te != null) {
@@ -2563,8 +2592,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
         
         // Weapon in arc?
-        if (!Compute.isInArc(game, attackerId, weaponId, target)) {
+        if (!Compute.isInArc(game, attackerId, weaponId, target) && !Compute.isAirToGround(ae, target)) {
             return "Target not in arc.";
+        }
+        
+        //for air to ground attacks, the target's position must be within the flight path
+        if(Compute.isAirToGround(ae, target)) {
+            if(ae.getElevation() > 5) { 
+                return "attacker is too high";
+            }
+            if(!ae.passedThrough(target.getPosition())) {
+                return "target not along flight path";
+            }
+            if(ae.isNOE()) {
+                return "attacker if flying NOE";
+            }
         }
 
         // Protomech can fire MGA only into front arc, TW page 137

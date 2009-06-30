@@ -8,6 +8,7 @@ v0.35.4-dev (SVN)
 + Bug 2813374: Ice not working under classic/simplified tileset
 + Aerospace units on ground mapsheets option (only movement, no firing yet)
 + Bug: aero units elevation set incorrectly at deployment
++ Aerospace striking attacks
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

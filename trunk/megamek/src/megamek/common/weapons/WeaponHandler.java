@@ -352,8 +352,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         int nCluster = calcnCluster();
 
-        //Now I need to adjust this for air-to-air attacks because they use attack values and different rules
-        if((ae instanceof Aero) && (target instanceof Aero)) {
+        //Now I need to adjust this for attacks by aeros because they use attack values and different rules
+        if(ae instanceof Aero) {
             //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
             if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
                 bSalvo = true;

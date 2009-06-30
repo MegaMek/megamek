@@ -342,6 +342,12 @@ public class LosEffects {
                     attHex.terrainLevel(Terrains.WATER), targetHex
                             .terrainLevel(Terrains.WATER));
         }
+        
+        //if this is an air to ground or ground to air attack or a ground to air, 
+        //treat the attacker's position as the same as the target's
+        if(Compute.isAirToGround(ae, target) || Compute.isGroundToAir(ae, target)) {
+            ai.attackPos = ai.targetPos;
+        }
 
         LosEffects finalLoS = calculateLos(game, ai);
         finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);

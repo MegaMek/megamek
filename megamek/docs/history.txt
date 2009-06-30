@@ -4,6 +4,7 @@ v0.35.4-dev (SVN)
 + Bug: Scenarios can't start
 + Bug 2814207: NPE in swing ConfirmDialog
 + Bug 2813404: Implemented TacOps artillery scatter errata
++ Bug 2813314: Pulse Laser extreme range
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

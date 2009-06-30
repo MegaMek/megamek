@@ -1098,7 +1098,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             break;
         case IEntityMovementMode.AERODYNE:
         case IEntityMovementMode.SPHEROID:
-            if (game.getBoard().inAtmosphere()) {
+            if (!game.getBoard().inSpace()) {
                 altitude = assumedElevation;
                 minAlt = hex.ceiling() + 1;
                 // if sensors are damaged then, one higher
@@ -1138,7 +1138,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             break;
         case IEntityMovementMode.AERODYNE:
         case IEntityMovementMode.SPHEROID:
-            if (game.getBoard().inAtmosphere()) {
+            if (!game.getBoard().inSpace()) {
                 altitude = assumedElevation;
                 maxAlt = 10;
             }

@@ -568,7 +568,7 @@ public class Aero extends Entity
         }
 
         //if in atmosphere, then halve next turn's velocity
-        if(game.getBoard().inAtmosphere() && isDeployed() && (roundNumber > 0)) {
+        if(!game.getBoard().inSpace() && isDeployed() && (roundNumber > 0)) {
             setNextVelocity((int)Math.floor(getNextVelocity() / 2.0));
         }
 
@@ -1522,7 +1522,7 @@ public class Aero extends Entity
         }
 
         //add in atmospheric effects later
-        if(game.getBoard().inAtmosphere()) {
+        if(!game.getBoard().inSpace()) {
             prd.addModifier(+2, "Atmospheric operations");
 
             //check type
@@ -1556,10 +1556,10 @@ public class Aero extends Entity
         }
 
         //quirks?
-        if(getQuirks().booleanOption("atmo_flyer") && game.getBoard().inAtmosphere()) {
+        if(getQuirks().booleanOption("atmo_flyer") && !game.getBoard().inSpace()) {
             prd.addModifier(-1, "atmospheric flyer");
         }
-        if(getQuirks().booleanOption("atmo_instability") && game.getBoard().inAtmosphere()) {
+        if(getQuirks().booleanOption("atmo_instability") && !game.getBoard().inSpace()) {
             prd.addModifier(+1, "atmospheric flight instability");
         }
         if(getQuirks().booleanOption("cramped_cockpit")) {
@@ -1890,7 +1890,7 @@ public class Aero extends Entity
     public PilotingRollData checkVelocityDouble(int velocity, int overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if((velocity > (2 * getWalkMP())) && game.getBoard().inAtmosphere()) {
+        if((velocity > (2 * getWalkMP())) && !game.getBoard().inSpace()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "Velocity greater than 2x safe thrust"));
         } else {

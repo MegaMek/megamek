@@ -11,6 +11,7 @@ v0.35.4-dev (SVN)
 + Aerospace striking attacks
 + ground to air attacks
 + display altitude for ground-to-air attacks in FiringDisplay
++ Bug: atmospheric checks not happening on ground maps
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

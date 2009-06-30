@@ -249,7 +249,7 @@ public class FighterSquadron extends Aero {
         }
 
         //add in atmospheric effects later
-        if(game.getBoard().inAtmosphere()) {
+        if(!game.getBoard().inSpace()) {
             prd.addModifier(+2, "Atmospheric operations");
 
             prd.addModifier(-1,"fighter/small craft");

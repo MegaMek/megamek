@@ -336,7 +336,7 @@ public class SharedUtility {
             }
 
             // Atmospheric checks
-            if (client.game.getBoard().inAtmosphere()) {
+            if (!client.game.getBoard().inSpace()) {
                 // check to see if velocity is 2x thrust
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -350,7 +350,7 @@ public class SharedUtility {
                 }
 
                 // stalling out
-                if ((md.getFinalVelocity() == 0) && !(a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) && client.game.getBoard().inAtmosphere() && !a.isVSTOL()) {
+                if ((md.getFinalVelocity() == 0) && !(a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) && !client.game.getBoard().inSpace() && !a.isVSTOL()) {
                     rollTarget = a.checkStall(md.getFinalVelocity(), overallMoveType);
                     nagReport.append(SharedUtility.addNag(rollTarget));
                 }

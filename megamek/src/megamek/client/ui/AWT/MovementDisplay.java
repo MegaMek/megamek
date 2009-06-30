@@ -888,7 +888,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             setEjectEnabled(true);
             // no turning for spheroids in atmosphere
             if ((((Aero) ce).isSpheroid() || client.game.getPlanetaryConditions().isVacuum())
-                    && client.game.getBoard().inAtmosphere()) {
+                    && (client.game.getBoard().inAtmosphere() || client.game.getBoard().onGround())) {
                 setTurnEnabled(false);
             }
             //jumpships and space stations can turn under different conditions
@@ -1120,8 +1120,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             Aero a = (Aero) ce;
 
             // first check for stalling
-            if (client.game.getBoard().inAtmosphere() && !a.isVSTOL() && !a.isSpheroid()  && !client.game.getPlanetaryConditions().isVacuum()
-                    && (((md == null) && (a.getCurrentVelocity() == 0)) || ((md != null) && (md.getFinalVelocity() == 0)))) {
+            //TODO: this should really be in the server
+            if ((client.game.getBoard().inAtmosphere() || client.game.getBoard().onGround()) && md.getFinalElevation() > 0
+                    && !a.isVSTOL() && !a.isSpheroid()  && !client.game.getPlanetaryConditions().isVacuum()
+                    && (((md == null) && (a.getCurrentVelocity() == 0)) 
+                            || ((md != null) && (md.getFinalVelocity() == 0)))) {
 
                 // add a stall to the movement path
                 md.addStep(MovePath.STEP_STALL);
@@ -1162,7 +1165,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                     int vel = a.getCurrentVelocity();
 
                     // need to check for stall here as well
-                    if ((vel == 0) && !(a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) && client.game.getBoard().inAtmosphere() && !a.isVSTOL()) {
+                    if ((vel == 0) && md.getFinalElevation() > 0 && !(a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) && (client.game.getBoard().inAtmosphere() || client.game.getBoard().onGround()) && !a.isVSTOL()) {
                         // add a stall to the movement path
                         md.addStep(MovePath.STEP_STALL);
                     }
@@ -1645,7 +1648,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
         setRollEnabled(true);
 
-        if (client.game.getBoard().inAtmosphere()) {
+        if (!client.game.getBoard().inSpace()) {
             setRollEnabled(false);
         }
 
@@ -1673,7 +1676,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             return;
         }
 
-        if (!client.game.getBoard().inAtmosphere()) {
+        if (client.game.getBoard().inSpace()) {
             return;
         }
 
@@ -2391,7 +2394,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         }
 
         Aero a = (Aero) ce;
-        if (client.game.getBoard().inAtmosphere()) {
+        if (!client.game.getBoard().inSpace()) {
             if (a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) {
                 butAcc.setEnabled(false);
                 butDec.setEnabled(false);

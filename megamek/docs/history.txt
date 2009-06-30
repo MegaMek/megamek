@@ -9,6 +9,7 @@ v0.35.4-dev (SVN)
 + Aerospace units on ground mapsheets option (only movement, no firing yet)
 + Bug: aero units elevation set incorrectly at deployment
 + Aerospace striking attacks
++ ground to air attacks
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

@@ -825,7 +825,7 @@ public class Compute {
         }
 
         //Account for "dead zones" between Aeros at different altitudes
-        if(game.getBoard().inAtmosphere() && (ae instanceof Aero) && (target instanceof Aero)) {
+        if(Compute.isAirToAir(ae, target)) {
             int altDiff = Math.abs(ae.getElevation() - target.getElevation());
             int realDistance = distance - altDiff;
             if(altDiff >= realDistance) {
@@ -941,8 +941,9 @@ public class Compute {
         // in elevations between the attacker and target to the range.
         // TODO: should the player be explcitly notified?
         //also for Aeros in atmosphere
-        if (Compute.isInSameBuilding(game, attacker, target)  ||
-                ((attacker instanceof Aero) && (target instanceof Aero) && game.getBoard().inAtmosphere())) {
+        if (Compute.isInSameBuilding(game, attacker, target)  
+                || Compute.isAirToAir(attacker, target)
+                || Compute.isGroundToAir(attacker, target)) {
             int aElev = attacker.getElevation();
             int tElev = target.getElevation();
             distance += Math.abs(aElev - tElev);

@@ -732,6 +732,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     toHit.addModifier(+2, "attacker is flying at NOE");
                 }
             }
+            if(Compute.isGroundToAir(ae, target) && null != te && te.isNOE()) {
+                if(te.passedWithin(ae.getPosition(), 1)) {
+                    if(!te.passedThrough(ae.getPosition())) {
+                        toHit.addModifier(+1, "target is NOE");
+                    }
+                } else {
+                    toHit.addModifier(+3, "target is NOE");
+                }
+            }
 
             // check for particular kinds of weapons in weapon bays
             if (ae.usesWeaponBays()) {
@@ -1613,13 +1622,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         // Aeros in atmosphere can hit above and below
-        if ((ae instanceof Aero) && (target instanceof Aero)
-                && game.getBoard().inAtmosphere()) {
+        if (Compute.isAirToAir(ae, target)) {
             if ((aElev - tElev) > 2) {
                 toHit.setHitTable(ToHitData.HIT_ABOVE);
             } else if ((tElev - aElev) > 2) {
                 toHit.setHitTable(ToHitData.HIT_BELOW);
             }
+        }
+        if(Compute.isGroundToAir(ae, target) && tElev > 2) {
+            toHit.setHitTable(ToHitData.HIT_BELOW);
         }
 
         //is this attack originating from underwater
@@ -2606,6 +2617,40 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
             if(ae.isNOE()) {
                 return "attacker if flying NOE";
+            }
+            //can only make a strike attack against a single target
+            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                EntityAction ea = i.nextElement();
+                if (!(ea instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                if (prevAttack.getEntityId() == ae.getId() && null != te && prevAttack.getTargetId() != te.getId()) {
+                    return "air-to-ground strike attack already declared against another target";
+                }
+            }
+        }
+        
+        //only one ground-to-air attack allowed per turn
+        if(!ae.isAirborne()) {
+            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                EntityAction ea = i.nextElement();
+                if (!(ea instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                if(prevAttack.getEntityId() == ae.getId()) {
+                   if(prevAttack.isGroundToAir(game) && !Compute.isGroundToAir(ae, target)) {
+                       return "ground-to-air attack already declared";
+                   }
+                   if(!prevAttack.isGroundToAir(game) && Compute.isGroundToAir(ae, target)) {
+                       return "ground-to-ground attack already declared";
+                   }
+                   if(prevAttack.isGroundToAir(game) && Compute.isGroundToAir(ae, target) 
+                           && null != te && prevAttack.getTargetId() != te.getId()) {
+                       return "only one target allowed for all ground-to-air attacks";
+                   }
+                }
             }
         }
 

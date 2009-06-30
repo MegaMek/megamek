@@ -23562,7 +23562,7 @@ public class Server implements Runnable {
             int fallHeight = psr.getValue() - roll;
             // determine where we really land
             int distance = Compute.d6(fallHeight);
-            Coords c = Compute.scatter(entity.getPosition(), fallHeight);
+            Coords c = Compute.scatterAssaultDrop(entity.getPosition(), fallHeight);
             r = new Report(2385);
             r.subject = entity.getId();
             r.add(distance);

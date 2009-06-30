@@ -326,7 +326,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // we do this here to avoid duplicating handle()
             // in the ArtilleryWeaponDirectFireHandler
             if (phase == IGame.Phase.PHASE_FIRING) {
-                coords = Compute.scatter(coords, 2);
+                coords = Compute.scatterDirectArty(coords);
             } else {
                 coords = Compute.scatter(coords, Math.abs(toHit.getMoS()));
             }

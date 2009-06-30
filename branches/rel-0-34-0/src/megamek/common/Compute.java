@@ -3806,24 +3806,47 @@ public class Compute {
 
     /**
      * scatter from hex according to dive bombing rules
+     * (1d6 of scatter distance)
      * @param coords The <code>Coords</code> to scatter from
      * @return the <code>Coords</code> scattered to
      */
     public static Coords scatterDiveBombs(Coords coords) {
-        return Compute.scatter(coords, 2);
+        return Compute.scatter(coords, Compute.d6());
+    }
+
+    /**
+     * scatter from hex according to direct fire artillery rules
+     * (1d6 of scatter distance)
+     * @param coords The <code>Coords</code> to scatter from
+     * @return the <code>Coords</code> scattered to
+     */
+    public static Coords scatterDirectArty(Coords coords) {
+        return Compute.scatter(coords, Compute.d6());
     }
 
     /**
      * scatter from a hex according, roll d6 to choose scatter direction
      * @param coords The <code>Coords</code> to scatter from
      * @param margin the <code>int</code> margin of failure,
-     * scatter distance will be margin/2 d6 (round up)
+     * scatter distance will be the margin of failure
      * @return the <code>Coords</code> scattered to
      */
     public static Coords scatter(Coords coords, int margin) {
         int scatterDirection = Compute.d6(1) - 1;
-        int scatterDistance = Compute.d6((int)Math.ceil((margin)/2.0));
-        return coords.translated(scatterDirection, scatterDistance);
+        return coords.translated(scatterDirection, margin);
+    }
+
+    /**
+     * scatter from hex according to atmospheric drop rules
+     * d6 for direction, 1d6 per point of MOF
+     * @param coords The <code>Coords</code> to scatter from
+     * @param margin the <code>int</code> margin of failure
+     * @return the <code>Coords</code> scattered to
+     */
+    public static Coords scatterAssaultDrop(Coords coords, int margin) {
+        int scatterDirection = Compute.d6(1) - 1;
+        int distance = Compute.d6(margin);
+        return coords.translated(scatterDirection, distance);
     }
 
     /**

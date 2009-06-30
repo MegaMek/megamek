@@ -285,6 +285,12 @@ public class LosEffects {
         } else {
             targEl = game.getBoard().getHex(target.getPosition()).surface();
         }
+        if(Compute.isGroundToAir(ae, target)) {
+            //HACK!!
+            //make sure that the elevation is set really high for flying aeros, so no terrain interference
+            targEl = 999;
+        }
+
 
         ai.attackAbsHeight = attEl;
         ai.targetAbsHeight = targEl;
@@ -348,7 +354,7 @@ public class LosEffects {
         if(Compute.isAirToGround(ae, target) || Compute.isGroundToAir(ae, target)) {
             ai.attackPos = ai.targetPos;
         }
-
+      
         LosEffects finalLoS = calculateLos(game, ai);
         finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);
         finalLoS.hasLoS = !finalLoS.blocked && (finalLoS.screen < 1) && (finalLoS.plantedFields < 6)

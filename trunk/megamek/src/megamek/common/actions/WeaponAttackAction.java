@@ -2653,6 +2653,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         }
+        if(target.getElevation() > 8 && Compute.isGroundToAir(ae, target)) {
+            return "cannot target aero units beyond altitude 8";
+        }
 
         // Protomech can fire MGA only into front arc, TW page 137
         if (!Compute.isInArc(ae.getPosition(), ae.getFacing(), target.getPosition(), Compute.ARC_FORWARD)

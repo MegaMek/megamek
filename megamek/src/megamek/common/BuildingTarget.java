@@ -198,12 +198,24 @@ public class BuildingTarget implements Targetable {
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
     }
+    
+    public int sideTable(Coords src, boolean usePrior) {
+        return sideTable(src);
+    }
 
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isOffBoard()
      */
     public boolean isOffBoard() {
+        return false;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Targetable#isAirborne()
+     */
+    public boolean isAirborne() {
         return false;
     }
 }

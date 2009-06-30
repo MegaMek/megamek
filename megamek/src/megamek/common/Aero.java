@@ -2608,4 +2608,12 @@ public class Aero extends Entity
     public int getRearArc() {
         return Compute.ARC_AFT;
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Targetable#isAirborne()
+     */
+    public boolean isAirborne() {
+        return getElevation() > 0;
+    }
 }

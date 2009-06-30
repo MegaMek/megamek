@@ -7604,6 +7604,29 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void addPassedThrough(Coords c) {
         passedThrough.add(c);
     }
+    
+    public boolean passedThrough(Coords c) {
+        for(Coords crd : passedThrough) {
+            if(crd.equals(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * What coords were passed through previous to the given one
+     */
+    public Coords passedThroughPrevious(Coords c) {
+        Coords prevCrd = passedThrough.get(0);
+        for(Coords crd : passedThrough) {
+            if(crd.equals(c)) {
+                break;
+            }
+            prevCrd = crd;
+        }
+        return prevCrd;
+    }
 
     public void setRamming(boolean b) {
         ramming = b;
@@ -8522,6 +8545,31 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             minSensorRange = 0;
         }
         return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-" + maxSensorRange + ")";     
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Targetable#isAirborne()
+     */
+    public boolean isAirborne() {
+        return false;
+    }
+    
+    /**
+     * is the unit flying Nape of the Earth? (i.e. one elevation above ground)
+     */
+    public boolean isNOE() {
+        
+        if(!isAirborne()) {
+            return false;
+        }
+        if (game.getBoard().inAtmosphere()) {
+               return (1 == (getElevation() - game.getBoard().getHex(getPosition()).ceiling())); 
+        }
+        if(game.getBoard().onGround()) {
+            return 1 == getElevation();
+        }
+        return false;
     }
     
 

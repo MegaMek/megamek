@@ -942,11 +942,13 @@ public class Compute {
         // TODO: should the player be explcitly notified?
         //also for Aeros in atmosphere
         if (Compute.isInSameBuilding(game, attacker, target)  
-                || Compute.isAirToAir(attacker, target)
-                || Compute.isGroundToAir(attacker, target)) {
+                || Compute.isAirToAir(attacker, target)) {
             int aElev = attacker.getElevation();
             int tElev = target.getElevation();
             distance += Math.abs(aElev - tElev);
+        }
+        if(Compute.isGroundToAir(attacker, target)) {
+            distance += (2 * target.getElevation());
         }
 
         return distance;

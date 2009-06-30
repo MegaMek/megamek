@@ -3207,7 +3207,7 @@ public class Server implements Runnable {
 
         // launching from an OOC vessel causes damage
         // same thing if faster than 2 velocity in atmosphere
-        if ((((Aero) unloader).isOutControlTotal() && !unit.isDoomed()) || ((((Aero) unloader).getCurrentVelocity() > 2) && game.getBoard().inAtmosphere())) {
+        if ((((Aero) unloader).isOutControlTotal() && !unit.isDoomed()) || ((((Aero) unloader).getCurrentVelocity() > 2) && !game.getBoard().inSpace())) {
             int damroll = Compute.d6(2);
             int damage = damroll * 10;
             r = new Report(9385);
@@ -4638,6 +4638,11 @@ public class Server implements Runnable {
                     // don't do the rest
                     break;
                 }
+                
+                if(game.getBoard().onGround() && entity.isAirborne() && step.getElevation() == 0) {
+                    addReport(processCrash(entity, md.getFinalVelocity()));
+                    break;
+                }
 
                 // handle fighter launching
                 if (step.getType() == MovePath.STEP_LAUNCH) {
@@ -5744,7 +5749,7 @@ public class Server implements Runnable {
                 game.addControlRoll(new PilotingRollData(a.getId(), 0, "Thrust spent during turn exceeds SI"));
             }
 
-            if (game.getBoard().inAtmosphere()) {
+            if (!game.getBoard().inSpace()) {
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     game.addControlRoll(new PilotingRollData(a.getId(), 0, "Velocity greater than 2x safe thrust"));
@@ -12784,7 +12789,7 @@ public class Server implements Runnable {
                         addReport(r);
                         // if not already out of control, this may lead to
                         // elevation decline
-                        if (!a.isOutControl() && game.getBoard().inAtmosphere()) {
+                        if (!a.isOutControl() && !game.getBoard().inSpace()) {
                             int loss = Compute.d6(1);
                             r = new Report(9366);
                             r.newlines = 0;
@@ -13582,7 +13587,7 @@ public class Server implements Runnable {
                     }
                 }
             }
-            if ((entity instanceof Aero) && game.getBoard().inAtmosphere()) {
+            if ((entity instanceof Aero) && entity.isAirborne() && !game.getBoard().inSpace()) {
                 // if this aero has any damage, add another roll to the list.
                 if (entity.damageThisPhase > 0) {
                     if(!game.getOptions().booleanOption("atmospheric_control")) {
@@ -14222,7 +14227,7 @@ public class Server implements Runnable {
                                 // if on the atmospheric map, then lose altitude
                                 // and check
                                 // for crash
-                                if (game.getBoard().inAtmosphere()) {
+                                if (!game.getBoard().inSpace()) {
                                     int loss = Compute.d6(1);
                                     r = new Report(9366);
                                     r.newlines = 0;

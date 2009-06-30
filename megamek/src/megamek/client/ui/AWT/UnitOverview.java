@@ -351,15 +351,6 @@ public class UnitOverview implements IDisplayable {
         if(entity instanceof Aero) {
             Aero a = (Aero)entity;
 
-
-            //draw altitude if Aero in atmosphere
-            if(clientgui.getClient().game.getBoard().inAtmosphere()) {
-                graph.setColor(Color.darkGray);
-                graph.drawString(Integer.toString(a.getElevation()), x + 36, y + 15);
-                graph.setColor(Color.PINK);
-                graph.drawString(Integer.toString(a.getElevation()), x + 35, y + 14);
-            }
-
             if(a.isRolled()) {
                 // draw "rolled"
                 graph.setColor(Color.darkGray);

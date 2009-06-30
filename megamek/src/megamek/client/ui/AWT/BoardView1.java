@@ -3417,7 +3417,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     && !((entity instanceof Infantry) && (((Infantry) entity)
                             .getDugIn() == Infantry.DUG_IN_NONE))
                             && !((entity instanceof Aero) && ((Aero)entity).isSpheroid()
-                                    && game.getBoard().inAtmosphere())) {
+                                    && (game.getBoard().inAtmosphere() || game.getBoard().onGround()))) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
 
@@ -3448,18 +3448,16 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 && !entity.canChangeSecondaryFacing();
                 ge = true;
             }
-
+            if(entity.getElevation() > 0) {
+                graph.setColor(Color.darkGray);
+                graph.drawString(Integer.toString(entity.getElevation()), 26, 15);
+                graph.setColor(Color.PINK);
+                graph.drawString(Integer.toString(entity.getElevation()), 25, 14);
+            }
+            
             // draw condition strings
             if(entity instanceof Aero) {
                 Aero a = (Aero)entity;
-
-                //                draw altitude if Aero in atmosphere
-                if(game.getBoard().inAtmosphere()) {
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(Integer.toString(a.getElevation()), 26, 15);
-                    graph.setColor(Color.PINK);
-                    graph.drawString(Integer.toString(a.getElevation()), 25, 14);
-                }
 
                 if(a.isRolled()) {
                     // draw "rolled"

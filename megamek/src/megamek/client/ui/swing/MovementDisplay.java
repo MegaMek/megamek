@@ -851,7 +851,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             // no turning for spheroids in atmosphere
             if ((((Aero) ce).isSpheroid() || clientgui.getClient().game
                     .getPlanetaryConditions().isVacuum())
-                    && clientgui.getClient().game.getBoard().inAtmosphere()) {
+                    && !clientgui.getClient().game.getBoard().inSpace()) {
                 setTurnEnabled(false);
             }
         }
@@ -1055,7 +1055,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             Aero a = (Aero) ce;
 
             // first check for stalling
-            if (clientgui.getClient().game.getBoard().inAtmosphere()
+            if (!clientgui.getClient().game.getBoard().inSpace() && cmd.getFinalElevation() > 0
                     && !a.isVSTOL()
                     && !a.isSpheroid()
                     && !clientgui.getClient().game.getPlanetaryConditions().isVacuum()
@@ -1103,10 +1103,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     int vel = a.getCurrentVelocity();
 
                     // need to check for stall here as well
-                    if ((vel == 0)
+                    if ((vel == 0) && cmd.getFinalElevation() > 0
                             && !(a.isSpheroid() || clientgui.getClient().game
                                     .getPlanetaryConditions().isVacuum())
-                            && clientgui.getClient().game.getBoard().inAtmosphere()
+                            && clientgui.getClient().game.getBoard().inSpace()
                             && !a.isVSTOL()) {
                         // add a stall to the movement path
                         cmd.addStep(MovePath.STEP_STALL);
@@ -1724,7 +1724,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         setRollEnabled(true);
 
-        if (clientgui.getClient().game.getBoard().inAtmosphere()) {
+        if (!clientgui.getClient().game.getBoard().inSpace()) {
             setRollEnabled(false);
         }
 
@@ -1752,7 +1752,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (!clientgui.getClient().game.getBoard().inAtmosphere()) {
+        if (clientgui.getClient().game.getBoard().inSpace()) {
             return;
         }
 
@@ -2557,7 +2557,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
 
         Aero a = (Aero) ce;
-        if (clientgui.getClient().game.getBoard().inAtmosphere()) {
+        if (!clientgui.getClient().game.getBoard().inSpace()) {
             if (a.isSpheroid()
                     || clientgui.getClient().game.getPlanetaryConditions().isVacuum()) {
                 butAcc.setEnabled(false);

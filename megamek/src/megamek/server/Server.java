@@ -8212,7 +8212,10 @@ public class Server implements Runnable {
                 throw new IllegalStateException("Entity #" + entity.getId() + " appears to be in an infinite loop trying to get a legal elevation.");
             }
         } else if (entity instanceof Aero) {
-            if (game.getBoard().inAtmosphere()) {
+            //this is a hack, because Aeros elevation is already set in the CustomMechDialog, so it would
+            //be doubled here
+            entity.setElevation(0);
+            if (!game.getBoard().inSpace() ) {
                 // all spheroid craft should have velocity of zero in atmosphere
                 // regardless of
                 // what was entered
@@ -8222,9 +8225,7 @@ public class Server implements Runnable {
                     a.setNextVelocity(0);
                 }
             } else if (game.getBoard().inSpace()) {
-                entity.setElevation(0);
-            } else {
-                entity.setElevation(hex.floor() - hex.surface());
+                elevation = 0;
             }
         } else if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
             // TODO: Submarines should have a selectable height.

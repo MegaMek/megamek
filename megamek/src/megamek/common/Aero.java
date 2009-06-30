@@ -1788,7 +1788,7 @@ public class Aero extends Entity
 
     @Override
     public boolean doomedOnGround() {
-        return true;
+        return !game.getOptions().booleanOption("aero_ground_move");
     }
 
     @Override
@@ -2608,5 +2608,4 @@ public class Aero extends Entity
     public int getRearArc() {
         return Compute.ARC_AFT;
     }
-
 }

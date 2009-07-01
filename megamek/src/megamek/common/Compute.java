@@ -669,11 +669,6 @@ public class Compute {
             te = (Entity) target;
         }
         
-        //air to ground attacks never apply range mods
-        if(Compute.isAirToGround(ae, target)) {
-            return mods;
-        }
-        
         //
         // modifiy the ranges for PPCs when field inhibitors are turned off
         // TODO: See above, it should be coded elsewhere...
@@ -812,9 +807,8 @@ public class Compute {
 
         //Account for "dead zones" between Aeros at different altitudes
         if(Compute.isAirToAir(ae, target)) {
-            int altDiff = Math.abs(ae.getElevation() - target.getElevation());
-            int realDistance = distance - altDiff;
-            if(altDiff >= realDistance) {
+            int altDiff = Math.abs(ae.getElevation() - target.getElevation());           
+            if(altDiff >= ae.getPosition().distance(target.getPosition())) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                 "Target in dead zone");
             }
@@ -916,11 +910,17 @@ public class Compute {
     /**
      * Finds the effective distance between an attacker and a target. Includes
      * the distance bonus if the attacker and target are in the same building
-     * and on different levels.
+     * and on different levels. Also takes account of altitude differences
      *
      * @return the effective distance
      */
     public static int effectiveDistance(IGame game, Entity attacker, Targetable target) {
+        
+        if(Compute.isAirToGround(attacker, target)) {
+            //always a distance of zero
+            return 0;
+        }
+        
         int distance = attacker.getPosition().distance(target.getPosition());
 
         //ground units that are the target of air to ground attacks always have a distance of zero

@@ -25,6 +25,7 @@ v0.35.4-dev (SVN)
 + Lots of Aerospace and Conventional Fighter Updates
 + all ground units must move before aerospace units
 + Bug: some weapons doing zero damage in air-to-ground attacks
++ report effective range in weapons display
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

@@ -13,12 +13,15 @@ v0.35.4-dev (SVN)
 + display altitude for ground-to-air attacks in FiringDisplay
 + Bug: atmospheric checks not happening on ground maps
 + Bug: ground to air attacks apply 2 ranges per altitude
-+ Bug: altitude affects range of ground-to-air attacks even when attacked from the same aero unit
++ Bug: altitude affects range of ground-to-air attacks even when attacked from
+   the same aero unit
 + improved range reporting for ground to air attacks
 + disabled physical attacks on flying aeros
 + LoS corrected for air-to-ground and ground-to-air attacks
 + mods for AAA missile ground-to-air attacks
-+ dissallow certain weapon locations (front for spheroid, aft for aerodyne) in air to ground attacks
++ dissallow certain weapon locations (front for spheroid, aft for aerodyne)
+   in air to ground attacks
++ Bug: Retractable blade sometimes overweight
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

@@ -2622,6 +2622,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if(ae.getElevation() > 5) { 
                 return "attacker is too high";
             }
+            //only certain weapons can be used for air to ground attacks
+            if(ae instanceof Aero) {
+                if(((Aero)ae).isSpheroid()) {
+                    if(weapon.getLocation() != Aero.LOC_AFT && !weapon.isRearMounted()) {
+                        return "only aft and rear mounted weapons can be fired air to ground from spheroid";
+                    } 
+                } else {
+                    if(weapon.getLocation() == Aero.LOC_AFT || weapon.isRearMounted()) {
+                        return "only forward firing weapons can be fired air to ground from an aerodyne";
+                    }
+                }
+            }
+            
             if(!ae.passedThrough(target.getPosition())) {
                 return "target not along flight path";
             }

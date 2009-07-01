@@ -171,6 +171,17 @@ public final class Team extends TurnOrdered {
         }
         return sum;
     }
+    
+    @Override
+    public int getAeroTurns() {
+//      Sum the other turns of all Players in this Team.
+        int sum = 0;
+        for (Enumeration<Player> loop = players.elements(); loop
+                .hasMoreElements();) {
+            sum += loop.nextElement().getAeroTurns();
+        }
+        return sum;
+    }
 
     /**
      * Two teams are equal if their ids and players are equal. <p/> Override

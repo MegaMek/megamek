@@ -2578,6 +2578,7 @@ public class Server implements Runnable {
             player.resetWarshipTurns();
             player.resetDropshipTurns();
             player.resetSmallCraftTurns();
+            player.resetAeroTurns();
 
             // Add turns for protomechs weapons declaration.
             if (protosMoveByPoint) {
@@ -2653,6 +2654,8 @@ public class Server implements Runnable {
                     player.incrementDropshipTurns();
                 } else if ((entity instanceof SmallCraft) && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
                     player.incrementSmallCraftTurns();
+                } else if ((entity instanceof Aero) && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    player.incrementAeroTurns();
                 } else {
                     player.incrementOtherTurns();
                 }
@@ -2722,6 +2725,8 @@ public class Server implements Runnable {
             float teamEvenTurns = team.getEvenTurns();
 
             // Calculate the number of "even" turns to add for this team.
+            //FIXME: I don't think this is working right, all protos and PBI are deployed/moved after first unit goes
+            //regardless of how many there are (Taharqa)
             int numEven = 0;
             if (1 == numTeamsMoving) {
                 // The only team moving should move all "even" units.
@@ -2754,7 +2759,45 @@ public class Server implements Runnable {
             // Record this team for the next move.
             prevTeam = team;
 
-            if (withinTeamTurns.hasMoreSpaceStationElements()) {
+            int aeroMask = GameTurn.CLASS_AERO + GameTurn.CLASS_SMALL_CRAFT + GameTurn.CLASS_DROPSHIP + GameTurn.CLASS_JUMPSHIP + GameTurn.CLASS_WARSHIP + GameTurn.CLASS_SPACE_STATION;
+            if (withinTeamTurns.hasMoreNormalElements()) {
+
+                // Not a placeholder... get the player who moves next.
+                Player player = (Player) withinTeamTurns.nextNormalElement();
+
+                // If we've added all "normal" turns, allocate turns
+                // for the infantry and/or protomechs moving even.
+                //FIXME: What is this doing? (Taharqa) - I think it just distributes any remaining "move even" units
+                //that were not handled
+                GameTurn turn = null;
+                if (numTurn >= team_order.getTotalTurns()) {
+                    turn = new GameTurn.EntityClassTurn(player.getId(), evenMask);
+                }
+
+                // If either Infantry or Protomechs move even, only allow
+                // the other classes to move during the "normal" turn.
+                else if (infMoveEven || protosMoveEven) {
+                    int newMask = evenMask;
+                    //if this is the movement phase, then don't allow Aeros on normal turns
+                    if(game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+                        newMask += aeroMask;
+                    }
+                    turn = new GameTurn.EntityClassTurn(player.getId(), ~newMask);
+                }
+
+                // Otherwise, let *anybody* move.
+                else {
+                    //well, almost anybody; Aero don't get normal turns during the movement phase
+                    if(game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+                        turn = new GameTurn.EntityClassTurn(player.getId(), ~aeroMask);
+                    } else {
+                        turn = new GameTurn(player.getId());
+                    }
+                }
+                turns.addElement(turn);
+
+            } // End team-has-"normal"-turns
+            else if (withinTeamTurns.hasMoreSpaceStationElements()) {
                 Player player = (Player) withinTeamTurns.nextSpaceStationElement();
                 GameTurn turn = null;
                 turn = new GameTurn.EntityClassTurn(player.getId(), GameTurn.CLASS_SPACE_STATION);
@@ -2779,34 +2822,13 @@ public class Server implements Runnable {
                 GameTurn turn = null;
                 turn = new GameTurn.EntityClassTurn(player.getId(), GameTurn.CLASS_SMALL_CRAFT);
                 turns.addElement(turn);
-            }
-            // This may be a "placeholder" for a team without "normal" turns.
-            else if (withinTeamTurns.hasMoreElements()) {
-
-                // Not a placeholder... get the player who moves next.
-                Player player = (Player) withinTeamTurns.nextElement();
-
-                // If we've added all "normal" turns, allocate turns
-                // for the infantry and/or protomechs moving even.
+            } else if (withinTeamTurns.hasMoreAeroElements()) {
+                Player player = (Player) withinTeamTurns.nextAeroElement();
                 GameTurn turn = null;
-                if (numTurn >= team_order.getTotalTurns()) {
-                    turn = new GameTurn.EntityClassTurn(player.getId(), evenMask);
-                }
-
-                // If either Infantry or Protomechs move even, only allow
-                // the other classes to move during the "normal" turn.
-                else if (infMoveEven || protosMoveEven) {
-                    turn = new GameTurn.EntityClassTurn(player.getId(), ~evenMask);
-                }
-
-                // Otherwise, let *anybody* move.
-                else {
-                    turn = new GameTurn(player.getId());
-                }
+                turn = new GameTurn.EntityClassTurn(player.getId(), GameTurn.CLASS_AERO);
                 turns.addElement(turn);
-
-            } // End team-has-"normal"-turns
-
+            }
+            
             // Add the calculated number of "even" turns.
             // Allow the player at least one "normal" turn before the
             // "even" turns to help with loading infantry in deployment.
@@ -4184,13 +4206,19 @@ public class Server implements Runnable {
 
     }
 
-    private Vector<Report> processCrash(Entity entity, int vel) {
+    //TODO: need to fix calls to this for aero movement on ground maps
+    private Vector<Report> processCrash(Entity entity, int vel, Coords c) {
         Vector<Report> vReport = new Vector<Report>();
         Report r;
 
         if (vel < 1) {
             vel = 1;
         }
+        
+        //first check for buildings
+        Building bldg = game.getBoard().getBuildingAt(c);
+        //TODO: do damage to buildings first, double damage to aero if hardened
+        
         int crash_damage = Compute.d6(2) * 10 * vel;
         r = new Report(9392, Report.PUBLIC);
         r.indent();
@@ -4211,9 +4239,26 @@ public class Server implements Runnable {
             }
             crash_damage -= 10;
         }
-
+        
+        //ok, now lets cycle through the entities in this spot and potentially damage them
+        //different for dropships and everybody else
+        for(Entity en : game.getEntitiesVector(c)) {
+            //roll dice to see if they got hit
+            
+            //apply half the crash damage in 5 point clusters (check hit tables)
+            
+            //displace the entity
+            
+        }
+        //TODO: dropships should hurt adjacent hexes and displace further
+        
+        //reduce woods
+        
+        //check for watery death
+        
         // if the entity survived they are useless anyway because we have no
         // ground map yet so remove them
+        //TODO: need to change this to allow entities to be on the ground
         if (!entity.isDoomed() && !entity.isDestroyed()) {
             r = new Report(9393, Report.PUBLIC);
             r.indent();
@@ -4521,7 +4566,7 @@ public class Server implements Runnable {
                                 return;
                                 // make sure it didn't crash
                             } else if (game.getBoard().getHex(curPos).ceiling() >= step.getElevation()) {
-                                addReport(processCrash(entity, step.getVelocity()));
+                                addReport(processCrash(entity, step.getVelocity(), curPos));
                                 forward = 0;
                                 fellDuringMovement = false;
                             }
@@ -4634,13 +4679,13 @@ public class Server implements Runnable {
                 // if in the atmosphere, check for a potential crash
 
                 if (game.getBoard().inAtmosphere() && (game.getBoard().getHex(step.getPosition()).ceiling() >= step.getElevation())) {
-                    addReport(processCrash(entity, md.getFinalVelocity()));
+                    addReport(processCrash(entity, md.getFinalVelocity(), curPos));
                     // don't do the rest
                     break;
                 }
                 
                 if(game.getBoard().onGround() && entity.isAirborne() && step.getElevation() == 0) {
-                    addReport(processCrash(entity, md.getFinalVelocity()));
+                    addReport(processCrash(entity, md.getFinalVelocity(), curPos));
                     break;
                 }
 
@@ -4944,7 +4989,7 @@ public class Server implements Runnable {
                 game.addControlRoll(new PilotingRollData(entity.getId(), 0, "stalled out"));
                 // check for crash
                 if (game.getBoard().getHex(step.getPosition()).ceiling() >= step.getElevation()) {
-                    addReport(processCrash(entity, 0));
+                    addReport(processCrash(entity, 0, curPos));
                     // don't do the rest
                     break;
                 }
@@ -5777,7 +5822,7 @@ public class Server implements Runnable {
                     a.setElevation(a.getElevation() - 1);
                     // check for crash
                     if (game.getBoard().getHex(a.getPosition()).ceiling() >= a.getElevation()) {
-                        addReport(processCrash(entity, md.getFinalVelocity()));
+                        addReport(processCrash(entity, md.getFinalVelocity(), curPos));
                     }
                 }
 
@@ -12800,7 +12845,7 @@ public class Server implements Runnable {
                             // check for crash
                             if ((a.getElevation() - loss) <= game.getBoard().getHex(a.getPosition()).ceiling()) {
                                 a.setElevation(0);
-                                addReport(processCrash(entity, a.getCurrentVelocity()));
+                                addReport(processCrash(entity, a.getCurrentVelocity(), a.getPosition()));
                             } else {
                                 a.setElevation(a.getElevation() - loss);
                             }
@@ -14238,7 +14283,7 @@ public class Server implements Runnable {
                                     // check for crash
                                     if ((a.getElevation() - loss) <= game.getBoard().getHex(a.getPosition()).ceiling()) {
                                         a.setElevation(game.getBoard().getHex(a.getPosition()).surface());
-                                        vReport.addAll(processCrash(e, a.getCurrentVelocity()));
+                                        vReport.addAll(processCrash(e, a.getCurrentVelocity(), a.getPosition()));
                                     } else {
                                         a.setElevation(a.getElevation() - loss);
                                     }

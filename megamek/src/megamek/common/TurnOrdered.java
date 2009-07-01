@@ -31,11 +31,12 @@ public abstract class TurnOrdered implements Serializable {
 
     private InitiativeRoll initiative = new InitiativeRoll();
 
-    private transient int turns_other = 0;
+    private transient int turns_other = 0; 
     private transient int turns_even = 0;
     private transient int turns_multi = 0;
     
-    //Try adding in special kinds of turns for various Aero types
+    //these are special turns for all of the aero units (only used in the movement phase)
+    private transient int turns_aero = 0; 
     private transient int turns_ss = 0;
     private transient int turns_js = 0;
     private transient int turns_ws = 0;
@@ -96,6 +97,10 @@ public abstract class TurnOrdered implements Serializable {
     public int getSmallCraftTurns() {
         return turns_sc;
     }
+    
+    public int getAeroTurns() {
+        return turns_aero;
+    }
 
     public void incrementOtherTurns() {
         turns_other++;
@@ -128,6 +133,10 @@ public abstract class TurnOrdered implements Serializable {
     public void incrementSmallCraftTurns() {
         turns_sc++;
     }
+    
+    public void incrementAeroTurns() {
+        turns_aero++;
+    }
 
     public void resetOtherTurns() {
         turns_other = 0;
@@ -159,6 +168,10 @@ public abstract class TurnOrdered implements Serializable {
     
     public void resetSmallCraftTurns() {
         turns_sc = 0;
+    }
+    
+    public void resetAeroTurns() {
+        turns_aero = 0;
     }
 
     public InitiativeRoll getInitiative() {
@@ -274,6 +287,8 @@ public abstract class TurnOrdered implements Serializable {
         int[] num_warship_turns = new int[v.size()];
         int[] num_dropship_turns = new int[v.size()];
         int[] num_small_craft_turns = new int[v.size()];
+        int[] num_aero_turns = new int[v.size()];
+
 
         int total_even_turns = 0;
         int total_normal_turns = 0;
@@ -282,6 +297,7 @@ public abstract class TurnOrdered implements Serializable {
         int total_warship_turns = 0;
         int total_dropship_turns = 0;
         int total_small_craft_turns = 0;
+        int total_aero_turns = 0;
         int index;
         TurnOrdered[] order = new TurnOrdered[v.size()];
         int orderedItems = 0;
@@ -308,6 +324,7 @@ public abstract class TurnOrdered implements Serializable {
             num_warship_turns[orderedItems] = item.getWarshipTurns();
             num_dropship_turns[orderedItems] = item.getDropshipTurns();
             num_small_craft_turns[orderedItems] = item.getSmallCraftTurns();
+            num_aero_turns[orderedItems] = item.getAeroTurns();
       
             // Keep a running total.
             total_even_turns += num_even_turns[orderedItems];
@@ -317,6 +334,7 @@ public abstract class TurnOrdered implements Serializable {
             total_warship_turns += num_warship_turns[orderedItems];
             total_dropship_turns += num_dropship_turns[orderedItems];
             total_small_craft_turns += num_small_craft_turns[orderedItems];
+            total_aero_turns += num_aero_turns[orderedItems];
         }
 
         int min;
@@ -326,9 +344,10 @@ public abstract class TurnOrdered implements Serializable {
         int minWS;
         int minDS;
         int minSC;
+        int minAero;
         
         //ok first we have to add in the special Aero turns and then go to 
-        //'normal' turns (which include fighters)  
+        //'normal' turns which are really just ground turns
         
         // We will do the 'normal' turns first, and then the 'even' turns.
         min = Integer.MAX_VALUE;
@@ -337,6 +356,7 @@ public abstract class TurnOrdered implements Serializable {
         minWS = Integer.MAX_VALUE;
         minDS = Integer.MAX_VALUE;
         minSC = Integer.MAX_VALUE;
+        minAero = Integer.MAX_VALUE;
         for (index = 0; index < orderedItems; index++) {
             if (num_normal_turns[index] != 0 && num_normal_turns[index] < min)
                 min = num_normal_turns[index];
@@ -350,17 +370,73 @@ public abstract class TurnOrdered implements Serializable {
                 minDS = num_dropship_turns[index];
             if (num_small_craft_turns[index] != 0 && num_small_craft_turns[index] < minSC)
                 minSC = num_small_craft_turns[index];
+            if (num_aero_turns[index] != 0 && num_aero_turns[index] < minAero)
+                minAero = num_aero_turns[index];
         }
 
         int total_turns = total_normal_turns + total_space_station_turns + total_jumpship_turns 
-                          + total_warship_turns + total_dropship_turns + total_small_craft_turns;
+                          + total_warship_turns + total_dropship_turns + total_small_craft_turns + total_aero_turns;
         
         TurnVectors turns = new TurnVectors(total_normal_turns, total_turns,
                 total_space_station_turns,
                 total_jumpship_turns, total_warship_turns, total_dropship_turns, 
-                total_small_craft_turns,
+                total_small_craft_turns, total_aero_turns,
                 total_even_turns, min);
 
+
+        // Allocate the normal turns.
+        turns_left = total_normal_turns;
+        while (turns_left > 0) {
+            for (index = 0; index < orderedItems; index++) {
+                // If you have no turns here, skip
+                if (num_normal_turns[index] == 0)
+                    continue;
+
+                // If you have less than twice the lowest,
+                // move 1. Otherwise, move more.
+                int ntm = num_normal_turns[index] / min;
+                for (int j = 0; j < ntm; j++) {
+                    turns.addNormal(order[index]);
+                    num_normal_turns[index]--;
+                    turns_left--;
+                }
+
+            }
+            // Since the smallest unit count had to place 1, reduce min)
+            min--;
+
+        } // Handle the next 'regular' turn.
+
+        // Now, we allocate the 'even' turns, if there are any.
+        if (total_even_turns > 0) {
+
+            min = Integer.MAX_VALUE;
+            for (index = 0; index < orderedItems; index++) {
+                if (num_even_turns[index] != 0 && num_even_turns[index] < min)
+                    min = num_even_turns[index];
+            }
+
+            turns_left = total_even_turns;
+            while (turns_left > 0) {
+                for (index = 0; index < orderedItems; index++) {
+                    // If you have no turns here, skip
+                    if (num_even_turns[index] == 0)
+                        continue;
+
+                    // If you have less than twice the lowest,
+                    // move 1. Otherwise, move more.
+                    int ntm = num_even_turns[index] / min;
+                    for (int j = 0; j < ntm; j++) {
+                        turns.addEven(order[index]);
+                        num_even_turns[index]--;
+                        turns_left--;
+                    }
+                }
+                // Since the smallest unit count had to place 1, reduce min)
+                min--;
+            } // Handle the next 'even' turn
+        } // End have-'even'-turns
+        
         // Allocate the space station turns.
         turns_left = total_space_station_turns;
         while (turns_left > 0) {
@@ -476,59 +552,30 @@ public abstract class TurnOrdered implements Serializable {
 
         } // Handle the next 'smal craft' turn.
         
-        
-        // Allocate the normal turns.
-        turns_left = total_normal_turns;
+        //Allocate the aero turns.
+        turns_left = total_aero_turns;
         while (turns_left > 0) {
             for (index = 0; index < orderedItems; index++) {
                 // If you have no turns here, skip
-                if (num_normal_turns[index] == 0)
+                if (num_aero_turns[index] == 0)
                     continue;
 
                 // If you have less than twice the lowest,
                 // move 1. Otherwise, move more.
-                int ntm = num_normal_turns[index] / min;
+                int ntm = num_aero_turns[index] / minAero;
                 for (int j = 0; j < ntm; j++) {
-                    turns.addNormal(order[index]);
-                    num_normal_turns[index]--;
+                    turns.addAero(order[index]);
+                    num_aero_turns[index]--;
                     turns_left--;
                 }
 
             }
             // Since the smallest unit count had to place 1, reduce min)
-            min--;
+            minAero--;
 
-        } // Handle the next 'regular' turn.
-
-        // Now, we allocate the 'even' turns, if there are any.
-        if (total_even_turns > 0) {
-
-            min = Integer.MAX_VALUE;
-            for (index = 0; index < orderedItems; index++) {
-                if (num_even_turns[index] != 0 && num_even_turns[index] < min)
-                    min = num_even_turns[index];
-            }
-
-            turns_left = total_even_turns;
-            while (turns_left > 0) {
-                for (index = 0; index < orderedItems; index++) {
-                    // If you have no turns here, skip
-                    if (num_even_turns[index] == 0)
-                        continue;
-
-                    // If you have less than twice the lowest,
-                    // move 1. Otherwise, move more.
-                    int ntm = num_even_turns[index] / min;
-                    for (int j = 0; j < ntm; j++) {
-                        turns.addEven(order[index]);
-                        num_even_turns[index]--;
-                        turns_left--;
-                    }
-                }
-                // Since the smallest unit count had to place 1, reduce min)
-                min--;
-            } // Handle the next 'even' turn
-        } // End have-'even'-turns
+        } // Handle the next 'aero' turn.
+        
+        
         return turns;
     }
 }

@@ -23,6 +23,7 @@ v0.35.4-dev (SVN)
    in air to ground attacks
 + Bug: Retractable blade sometimes overweight
 + Lots of Aerospace and Conventional Fighter Updates
++ all ground units must move before aerospace units
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

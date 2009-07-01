@@ -22,6 +22,7 @@ v0.35.4-dev (SVN)
 + dissallow certain weapon locations (front for spheroid, aft for aerodyne)
    in air to ground attacks
 + Bug: Retractable blade sometimes overweight
++ Lots of Aerospace and Conventional Fighter Updates
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

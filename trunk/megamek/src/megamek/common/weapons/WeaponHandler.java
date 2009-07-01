@@ -479,9 +479,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return an <code>int</code> representing the attack value at that range.
      */
     protected int calcAttackValue() {
-        int distance = ae.getPosition().distance(target.getPosition());
         int av = 0;
-        int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
         if(range == WeaponType.RANGE_SHORT) {
             av = wtype.getRoundShortAV();
         } else if(range == WeaponType.RANGE_MED) {
@@ -721,7 +720,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         target = game.getTarget(waa.getTargetType(), waa.getTargetId());
         server = s;
         subjectId = getAttackerId();
-        nRange = ae.getPosition().distance(target.getPosition());
+        nRange = Compute.effectiveDistance(game, ae, target);
         if (target instanceof Mech) {
             throughFront = Compute.isThroughFrontHex(game, ae.getPosition(),
                     (Entity) target);

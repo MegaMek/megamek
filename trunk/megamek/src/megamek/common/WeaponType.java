@@ -333,9 +333,9 @@ public class WeaponType extends EquipmentType {
 
     public int[] getATRanges() {
         if (capital) {
-            return new int[] { 0, 12, 24, 40, 50 };
+            return new int[] { Integer.MIN_VALUE, 12, 24, 40, 50 };
         } else {
-            return new int[] { 0, 6, 12, 20, 25 };
+            return new int[] { Integer.MIN_VALUE, 6, 12, 20, 25 };
         }
 
     }

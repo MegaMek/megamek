@@ -234,7 +234,7 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {
             return (float) (Math.ceil(entity.getWeight() / 10.0));
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
-            return 0.5f + (float) Math.ceil(entity.getWeight() / 20.0);
+            return 0.5f + (float) Math.ceil(entity.getWeight() / 10.0)/2;
         } else if (hasFlag(F_MASC)) {
             if (hasSubType(S_SUPERCHARGER)) {
                 Engine e = entity.getEngine();

@@ -50,9 +50,8 @@ public class BayWeaponHandler extends WeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
-        int distance = ae.getPosition().distance(target.getPosition());
         double av = 0;
-        int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
         
         for(int wId: weapon.getBayWeapons()) {
             Mounted m = ae.getEquipment(wId);

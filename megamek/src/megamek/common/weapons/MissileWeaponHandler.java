@@ -314,9 +314,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
-        int distance = ae.getPosition().distance(target.getPosition());
         int av = 0;
-        int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
         if(range == WeaponType.RANGE_SHORT) {
             av = wtype.getRoundShortAV();
         } else if(range == WeaponType.RANGE_MED) {

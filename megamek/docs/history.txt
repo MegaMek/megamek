@@ -31,6 +31,7 @@ v0.35.4-dev (SVN)
 + Bug: -3 to hit for units performing air-to-ground attacks only applies for attacks from airborne units
 + Bug: aero movement on ground map should be able to split turning cost across turns
 + aerospace crashes
++ Bug: airborne aero units on ground maps never affect stacking limits
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

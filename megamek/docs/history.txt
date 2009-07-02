@@ -26,6 +26,9 @@ v0.35.4-dev (SVN)
 + all ground units must move before aerospace units
 + Bug: some weapons doing zero damage in air-to-ground attacks
 + report effective range in weapons display
++ air-to-air attacks on ground map divide effective distance by 16 hexes
++ no minimum range for air-to-air, air-to-ground, and ground-to-air attacks
++ Bug: -3 to hit for units performing air-to-ground attacks only applies for attacks from airborne units
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

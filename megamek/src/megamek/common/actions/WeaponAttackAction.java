@@ -1261,8 +1261,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.addModifier(+2, "air to ground strike");
         }
 
-        //units making air to ground attacks are easier to hit
-        if(null != te && te.isAirborne()) {
+        //units making air to ground attacks are easier to hit by air-to-air attacks
+        if(null != te && Compute.isAirToAir(ae, target)) {
             for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
                 EntityAction ea = i.nextElement();
                 if (!(ea instanceof WeaponAttackAction)) {

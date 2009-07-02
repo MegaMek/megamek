@@ -763,13 +763,6 @@ public class Compute {
         if(ae instanceof Aero) {
             weaponRanges = wtype.getATRanges();
         }
-
-        //flying aeros on the ground map get their range multiplied by 16
-        if(ae.isAirborne() && game.getBoard().onGround()) {
-            for(int i = 0; i < weaponRanges.length; i++) {
-                weaponRanges[i] *= 16;
-            }
-        }
         
         // determine base distance & range bracket
         int distance = Compute.effectiveDistance(game, ae, target);
@@ -785,10 +778,6 @@ public class Compute {
                     maxRange = bayWType.getMaxRange();
                 }
             }
-        }
-        
-        if(ae.isAirborne() && game.getBoard().onGround()) {
-            maxRange *= 16;
         }
 
         //if aero and greater than max range then swith to range_out
@@ -889,9 +878,9 @@ public class Compute {
             }
         }
 
-        // add minimum range modifier
+        // add minimum range modifier (only for ground-to-ground attacks)
         int minRange = weaponRanges[RangeType.RANGE_MINIMUM];
-        if ((minRange > 0) && (distance <= minRange)) {
+        if ((minRange > 0) && (distance <= minRange) && Compute.isGroundToGround(ae, target)) {
             int minPenalty = (minRange - distance) + 1;
             mods.addModifier(minPenalty, "minimum range");
         }
@@ -938,6 +927,11 @@ public class Compute {
                     distance = 0;
                 }
             }
+        }
+        
+        //if this is an air-to-air attack on the ground map, then divide distance by 16
+        if(Compute.isAirToAir(attacker, target) && game.getBoard().onGround()) {
+            distance = (int) Math.ceil(distance / 16.0);
         }
         
         // If the attack is completely inside a building, add the difference
@@ -4547,6 +4541,10 @@ public class Compute {
     
     public static boolean isGroundToAir(Entity attacker, Targetable target) {
         return !attacker.isAirborne() && target.isAirborne();
+    }
+    
+    public static boolean isGroundToGround(Entity attacker, Targetable target) {
+        return !attacker.isAirborne() && !target.isAirborne();
     }
     
 } // End public class Compute

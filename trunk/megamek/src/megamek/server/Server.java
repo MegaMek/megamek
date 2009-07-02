@@ -4206,6 +4206,28 @@ public class Server implements Runnable {
 
     }
 
+    private boolean checkCrash(Entity entity, Coords pos, int elev) {
+        
+        //only Aeros can crach
+        if(!(entity instanceof Aero)) {
+            return false;
+        }       
+        //no crashing in space
+        if(game.getBoard().inSpace()) {
+            return false;
+        }
+        //if aero on the ground map, then only crash if elevation is zero
+        else if(game.getBoard().onGround()) {
+            if(elev <= 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }       
+        //we must be in atmosphere
+        return game.getBoard().getHex(pos).ceiling() >= elev;
+    }
+    
     //TODO: need to fix calls to this for aero movement on ground maps
     private Vector<Report> processCrash(Entity entity, int vel, Coords c) {
         Vector<Report> vReport = new Vector<Report>();
@@ -4215,12 +4237,17 @@ public class Server implements Runnable {
             vel = 1;
         }
         
+        int orig_crash_damage = Compute.d6(2) * 10 * vel;
+        int crash_damage = orig_crash_damage;
         //first check for buildings
         Building bldg = game.getBoard().getBuildingAt(c);
-        //TODO: do damage to buildings first, double damage to aero if hardened
-        
-        int crash_damage = Compute.d6(2) * 10 * vel;
-        r = new Report(9392, Report.PUBLIC);
+        if(bldg.getType() == Building.HARDENED) {
+            crash_damage *= 2;
+        }
+        if(null != bldg) {
+            vReport.addAll(damageBuilding(bldg, orig_crash_damage, c));
+        }    
+        r = new Report(9700, Report.PUBLIC);
         r.indent();
         r.addDesc(entity);
         r.add(crash_damage);
@@ -4240,23 +4267,7 @@ public class Server implements Runnable {
             crash_damage -= 10;
         }
         
-        //ok, now lets cycle through the entities in this spot and potentially damage them
-        //different for dropships and everybody else
-        for(Entity en : game.getEntitiesVector(c)) {
-            //roll dice to see if they got hit
-            
-            //apply half the crash damage in 5 point clusters (check hit tables)
-            
-            //displace the entity
-            
-        }
-        //TODO: dropships should hurt adjacent hexes and displace further
-        
-        //reduce woods
-        
-        //check for watery death
-        
-        // if the entity survived they are useless anyway because we have no
+        //if the entity survived they are useless anyway because we have no
         // ground map yet so remove them
         //TODO: need to change this to allow entities to be on the ground
         if (!entity.isDoomed() && !entity.isDestroyed()) {
@@ -4266,6 +4277,106 @@ public class Server implements Runnable {
             vReport.add(r);
             entity.setDoomed(true);
         }
+        
+        //TODO: check for watery death
+        
+        //ok, now lets cycle through the entities in this spot and potentially damage them
+        //TODO: dropships should hurt adjacent hexes and displace further
+        //different for dropships and everybody else
+        for (Enumeration<Entity> e = game.getEntities(c); e.hasMoreElements();) {
+            Entity victim = e.nextElement();
+            if(victim.getId() == entity.getId()) {
+                continue;
+            }
+            if(victim.getElevation() > 0) {
+                continue;
+            }
+            //if the crasher is a dropship and the victim is not a mech, then it is automatically 
+            //destroyed
+            if(entity instanceof Dropship && !(victim instanceof Mech)) {
+                vReport.addAll(destroyEntity(victim, "hit by crashing dropship"));
+            } else {
+                //roll dice to see if they got hit
+                int target = 2;
+                if(victim instanceof Infantry) {
+                    target = 3;
+                }
+                int roll = Compute.d6();
+                r = new Report(9705, Report.PUBLIC);
+                r.indent();
+                r.addDesc(victim);
+                r.add(target);
+                r.add(orig_crash_damage);
+                r.add(roll);
+                r.newlines = 0;
+                if(roll > target) {
+                    r.choose(true);
+                    vReport.add(r);
+                    //apply half the crash damage in 5 point clusters (check hit tables)
+                    crash_damage = orig_crash_damage;
+                    while (crash_damage > 0) {
+                        HitData hit = victim.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                        if (victim instanceof Mech) {
+                            hit = victim.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
+                        }
+                        if (crash_damage > 5) {
+                            vReport.addAll(damageEntity(victim, hit, 5));
+                        } else {
+                            vReport.addAll(damageEntity(victim, hit, crash_damage));
+                        }
+                        crash_damage -= 5;
+                    }
+                    
+                } else {
+                    r.choose(false);
+                    vReport.add(r);
+                }
+            }
+            
+            if (!victim.isDoomed() && !victim.isDestroyed()) {
+                //entity displacement         
+                //TODO: it is unclear in what direction the entities should be displaced, until answered lets make it random
+                //http://www.classicbattletech.com/forums/index.php/topic,53909.new.html#new
+                doEntityDisplacement(victim, c, c.translated(Compute.d6() - 1), new PilotingRollData(victim.getId(), 0, "crash"));
+            }
+            
+        }
+        
+        //reduce woods
+        IHex h = game.getBoard().getHex(c);
+        if(h.containsTerrain(Terrains.WOODS)) {
+            if(entity instanceof Dropship) {
+                h.removeTerrain(Terrains.WOODS);
+                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+            } else {
+                int level = h.terrainLevel(Terrains.WOODS) - 1;
+                if(level > 0) {
+                    h.removeTerrain(Terrains.WOODS);
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, level));
+                } else {
+                    h.removeTerrain(Terrains.WOODS);
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+                }
+            }
+        }
+        //do the same for jungles
+        if(h.containsTerrain(Terrains.JUNGLE)) {
+            if(entity instanceof Dropship) {
+                h.removeTerrain(Terrains.JUNGLE);
+                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+            } else {
+                int level = h.terrainLevel(Terrains.JUNGLE) - 1;
+                if(level > 0) {
+                    h.removeTerrain(Terrains.JUNGLE);
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE, level));
+                } else {
+                    h.removeTerrain(Terrains.JUNGLE);
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+                }
+            }
+        }
+        sendChangedHex(c);
+        
         return vReport;
     }
 
@@ -4564,8 +4675,8 @@ public class Server implements Runnable {
                                 forward = 0;
                                 fellDuringMovement = false;
                                 return;
-                                // make sure it didn't crash
-                            } else if (game.getBoard().getHex(curPos).ceiling() >= step.getElevation()) {
+                            // make sure it didn't crash
+                            } else if (checkCrash(entity, curPos, step.getElevation())) {
                                 addReport(processCrash(entity, step.getVelocity(), curPos));
                                 forward = 0;
                                 fellDuringMovement = false;
@@ -4678,14 +4789,9 @@ public class Server implements Runnable {
 
                 // if in the atmosphere, check for a potential crash
 
-                if (game.getBoard().inAtmosphere() && (game.getBoard().getHex(step.getPosition()).ceiling() >= step.getElevation())) {
+                if(checkCrash(entity, step.getPosition(), step.getElevation())) {
                     addReport(processCrash(entity, md.getFinalVelocity(), curPos));
                     // don't do the rest
-                    break;
-                }
-                
-                if(game.getBoard().onGround() && entity.isAirborne() && step.getElevation() == 0) {
-                    addReport(processCrash(entity, md.getFinalVelocity(), curPos));
                     break;
                 }
 
@@ -4988,7 +5094,7 @@ public class Server implements Runnable {
                 addReport(r);
                 game.addControlRoll(new PilotingRollData(entity.getId(), 0, "stalled out"));
                 // check for crash
-                if (game.getBoard().getHex(step.getPosition()).ceiling() >= step.getElevation()) {
+                if(checkCrash(entity, step.getPosition(), step.getElevation())) {
                     addReport(processCrash(entity, 0, curPos));
                     // don't do the rest
                     break;
@@ -5821,7 +5927,7 @@ public class Server implements Runnable {
                 if ((a.isSpheroid() || game.getPlanetaryConditions().isVacuum()) && (startElevation == curElevation) && !md.contains(MovePath.STEP_HOVER)) {
                     a.setElevation(a.getElevation() - 1);
                     // check for crash
-                    if (game.getBoard().getHex(a.getPosition()).ceiling() >= a.getElevation()) {
+                    if(checkCrash(entity, entity.getPosition(), entity.getElevation())) {
                         addReport(processCrash(entity, md.getFinalVelocity(), curPos));
                     }
                 }
@@ -12842,12 +12948,10 @@ public class Server implements Runnable {
                             r.addDesc(entity);
                             r.add(loss);
                             addReport(r);
+                            a.setElevation(a.getElevation() - loss);
                             // check for crash
-                            if ((a.getElevation() - loss) <= game.getBoard().getHex(a.getPosition()).ceiling()) {
-                                a.setElevation(0);
+                            if (checkCrash(a, a.getPosition(), a.getElevation())) {
                                 addReport(processCrash(entity, a.getCurrentVelocity(), a.getPosition()));
-                            } else {
-                                a.setElevation(a.getElevation() - loss);
                             }
                         }
                         // force unit out of control through heat
@@ -14280,12 +14384,10 @@ public class Server implements Runnable {
                                     r.addDesc(e);
                                     r.add(loss);
                                     vReport.add(r);
+                                    a.setElevation(a.getElevation() - loss);
                                     // check for crash
-                                    if ((a.getElevation() - loss) <= game.getBoard().getHex(a.getPosition()).ceiling()) {
-                                        a.setElevation(game.getBoard().getHex(a.getPosition()).surface());
+                                    if (checkCrash(a, a.getPosition(), a.getElevation())) {
                                         vReport.addAll(processCrash(e, a.getCurrentVelocity(), a.getPosition()));
-                                    } else {
-                                        a.setElevation(a.getElevation() - loss);
                                     }
                                 }
                             } else {

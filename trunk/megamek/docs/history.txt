@@ -30,6 +30,7 @@ v0.35.4-dev (SVN)
 + no minimum range for air-to-air, air-to-ground, and ground-to-air attacks
 + Bug: -3 to hit for units performing air-to-ground attacks only applies for attacks from airborne units
 + Bug: aero movement on ground map should be able to split turning cost across turns
++ aerospace crashes
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

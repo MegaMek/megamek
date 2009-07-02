@@ -114,7 +114,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
      */
     private void beginMyTurn() {
         setArtyEnabled(5);
-        clientgui.bv.markDeploymentHexesFor(p);
+        //FIXME: had to disable this now that the boardview draws deployment based on entities not players
+        //clientgui.bv.markDeploymentHexesFor(p);
         butDone.setEnabled(true);
     }
 

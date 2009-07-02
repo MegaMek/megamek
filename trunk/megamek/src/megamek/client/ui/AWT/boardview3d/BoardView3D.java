@@ -411,8 +411,8 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
         return localPlayer;
     }
 
-    public void markDeploymentHexesFor(Player p) {
-        board.showDeployment(p);
+    public void markDeploymentHexesFor(Entity en) {
+        board.showDeployment(en.getOwner());
     }
 
     public void addAttack(AttackAction aa) {

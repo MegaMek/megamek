@@ -401,7 +401,7 @@ public abstract class BotClient extends Client {
                 test_hex.x = test_x;
                 test_hex.y = test_y;
                 if (game.getBoard().isLegalDeployment(test_hex,
-                        getLocalPlayer())) {
+                        deployed_ent.getStartingPos())) {
                     if (!deployed_ent.isHexProhibited(game.getBoard().getHex(
                             test_hex.x, test_hex.y))) {
                         valid_array[counter] = new Coords(test_hex);

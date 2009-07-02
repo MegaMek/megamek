@@ -160,7 +160,7 @@ public interface IBoard {
      * Can the player deploy an entity here? There are no canon rules for the
      * deployment phase (?!). I'm using 3 hexes from map edge.
      */
-    public abstract boolean isLegalDeployment(Coords c, Player p);
+    public abstract boolean isLegalDeployment(Coords c, int nDir);
 
     /**
      * Record that the given coordinates have recieved a hit from an inferno.

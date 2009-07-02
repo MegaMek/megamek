@@ -34,7 +34,7 @@ public interface IBoardView extends MechDisplayListener {
     public void removeAttacksFor(Entity ce);
 
     public void refreshMinefields();
-    public void markDeploymentHexesFor(Player p);
+    public void markDeploymentHexesFor(Entity ce);
     public void redrawEntity(Entity ce);
 
     public void drawMovementData(Entity ce, MovePath cmd);

@@ -200,6 +200,11 @@ public class Compute {
         if(!game.getBoard().onGround()) {
             return null;
         }
+        
+        //no stacking violations for flying aeros
+        if(entering.isAirborne()) {
+            return null;
+        }
 
         boolean isMech = entering instanceof Mech;
         Entity firstEntity = transport;
@@ -215,6 +220,10 @@ public class Compute {
         // Walk through the entities in the given hex.
         for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = i.nextElement();
+            
+            if(inHex.isAirborne()) {
+                continue;
+            }
 
             int lowStackinglevel = inHex.getElevation();
             int highStackingLevel = lowStackinglevel + inHex.height();

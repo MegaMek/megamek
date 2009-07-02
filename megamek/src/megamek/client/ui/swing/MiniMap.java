@@ -525,7 +525,7 @@ public class MiniMap extends Canvas {
                             for (int k = 0; k < m_board.getHeight(); k++) {
                                 if (m_board.isLegalDeployment(
                                         new Coords(j, k),
-                                        m_client.getLocalPlayer())) {
+                                        m_client.getLocalPlayer().getStartingPos())) {
                                     paintSingleCoordBorder(g, j, k,
                                             Color.yellow);
                                 }

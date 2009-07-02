@@ -4556,5 +4556,35 @@ public class Compute {
         return !attacker.isAirborne() && !target.isAirborne();
     }
     
+    /**
+     * This is a homebrew function partially drawn from pg. 40-1 of AT2R that allows 
+     * units that flee the field for any reason to return after a certain number of rounds
+     * It can potentially be expanded to include other conditions
+     * @param en
+     * @param velocity
+     * @return number of rounds until return (-1 if never)
+     */
+    public static int roundsUntilReturn(IGame game, Entity en) {
+        
+        if(!(en instanceof Aero)) {
+            return -1;
+        }
+        
+        if(!game.getOptions().booleanOption("return_flyover")) {
+            return -1;
+        }
+        
+        Aero a = (Aero)en;
+        
+        //the table in AT2R is backwards, it should take longer to return if your velocity is higher
+        int turns = 1 + (int) Math.ceil(a.getCurrentVelocity() / 4.0);
+        
+        //OOC units should take longer, how about two extra turns?
+        if(a.isOutControlTotal()) {
+            turns += 2;
+        }
+        return turns;       
+    }
+    
 } // End public class Compute
 

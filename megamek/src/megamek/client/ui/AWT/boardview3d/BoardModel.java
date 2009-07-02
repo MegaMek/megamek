@@ -168,11 +168,11 @@ class BoardModel extends BranchGroup {
         Coords c = new Coords(0,0);
         for (c.y = 0; c.y < h; c.y++) {
             for (c.x = 0; c.x < w; c.x++) {
-                if (!gboard.isLegalDeployment(c, deployer)) {
-                    hexAt(c.x, c.y).darken();
-                } else {
-                    hexAt(c.x, c.y).setEffect(highlight);
-                }
+               // if (!gboard.isLegalDeployment(c, deployer)) {
+                //    hexAt(c.x, c.y).darken();
+               // } else {
+               //     hexAt(c.x, c.y).setEffect(highlight);
+               // }
             }
         }
         universe.addBranchGraph(this);

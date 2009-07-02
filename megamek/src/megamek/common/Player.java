@@ -56,7 +56,7 @@ public final class Player extends TurnOrdered {
 
     // these are game-specific, and maybe should be seperate from the player
     // object
-    private int startingPos = 0;
+    private int startingPos = Board.START_ANY;
 
     // number of minefields
     private int num_mf_conv = 0;

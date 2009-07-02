@@ -109,6 +109,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem moveDFA;
     private JMenuItem moveGoProne;
     private JMenuItem moveFlee;
+    private JMenuItem moveFlyOff;
     private JMenuItem moveEject;
     private JMenuItem moveUnjam;
     private JMenuItem moveSearchlight;
@@ -479,6 +480,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         submenu.addSeparator();
         moveFlee = createMenuItem(submenu, Messages
                 .getString("CommonMenuBar.MoveFlee"), MovementDisplay.MOVE_FLEE); //$NON-NLS-1$
+        moveFlyOff = createMenuItem(submenu, Messages
+                .getString("CommonMenuBar.MoveFlyOff"), MovementDisplay.MOVE_FLY_OFF); //$NON-NLS-1$
         moveEject = createMenuItem(
                 submenu,
                 Messages.getString("CommonMenuBar.MoveEject"), MovementDisplay.MOVE_EJECT); //$NON-NLS-1$
@@ -936,6 +939,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
 
     public synchronized void setMoveFleeEnabled(boolean enabled) {
         moveFlee.setEnabled(enabled);
+    }
+    
+    public synchronized void setMoveFlyOffEnabled(boolean enabled) {
+        moveFlyOff.setEnabled(enabled);
     }
 
     public synchronized void setMoveEjectEnabled(boolean enabled) {

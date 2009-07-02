@@ -234,10 +234,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
 
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
+        clientgui.getBoardView().markDeploymentHexesFor(ce());
         // RACE : if player clicks fast enough, ce() is null.
         if (null != ce()) {
             // set facing according to starting position
-            switch (client.getLocalPlayer().getStartingPos()) {
+            switch (ce().getStartingPos()) {
                 case 8:
                     ce().setFacing(1);
                     ce().setSecondaryFacing(1);
@@ -304,7 +305,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         setNextEnabled(true);
         Player p = client.getLocalPlayer();
         // mark deployment hexes
-        clientgui.bv.markDeploymentHexesFor(p);
+        clientgui.bv.markDeploymentHexesFor(ce());
         if(client.getBoard().inSpace() && client.game.getOptions().booleanOption("stratops_capital_fighter")) {
             setFormSquadronEnabled(true);
         }
@@ -463,7 +464,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
             dlg.setVisible(true);
             return;
         } else if (!(client.game.getBoard().isLegalDeployment(moveto,
-                ce().getOwner()) || assaultDropPreference)
+                ce().getStartingPos()) || assaultDropPreference)
                 || ce().isHexProhibited(client.game.getBoard().getHex(moveto))) {
             AlertDialog dlg = new AlertDialog(clientgui.frame,
                     Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$

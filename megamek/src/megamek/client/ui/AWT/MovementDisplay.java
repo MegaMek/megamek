@@ -134,6 +134,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     public static final String MOVE_HOVER = "MoveHover"; //$NON-NLS-1$
     public static final String MOVE_MANEUVER = "MoveManeuver"; //$NON-NLS-1$
     public static final String MOVE_JOIN = "MoveJoin"; //$NON-NLS-1$
+    public static final String MOVE_FLY_OFF = "moveFlyOff"; //$NON-NLS-1$
     // Aero Vector Movement
     public static final String MOVE_TURN_LEFT = "MoveTurnLeft"; //$NON-NLS-1$
     public static final String MOVE_TURN_RIGHT = "MoveTurnRight"; //$NON-NLS-1$
@@ -161,6 +162,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
     private Button butRAC;
     private Button butFlee;
+    private Button butFlyOff;
     private Button butEject;
 
     private Button butLoad;
@@ -329,6 +331,12 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         butFlee.setEnabled(false);
         butFlee.setActionCommand(MOVE_FLEE);
         butFlee.addKeyListener(this);
+        
+        butFlyOff = new Button(Messages.getString("MovementDisplay.butFlyOff")); //$NON-NLS-1$
+        butFlyOff.addActionListener(this);
+        butFlyOff.setEnabled(false);
+        butFlyOff.setActionCommand(MOVE_FLY_OFF);
+        butFlyOff.addKeyListener(this);
 
         butEject = new Button(Messages.getString("MovementDisplay.butEject")); //$NON-NLS-1$
         butEject.addActionListener(this);
@@ -668,7 +676,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             buttonsAero.add(butRaise);
             buttonsAero.add(butManeuver);
             buttonsAero.add(butEject);
-            buttonsAero.add(butFlee);
+            buttonsAero.add(butFlyOff);
             buttonsAero.add(butLaunch);
             buttonsAero.add(butRecover);
             buttonsAero.add(butJoin);
@@ -688,7 +696,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             buttonsAero.add(butEndOver);
             buttonsAero.add(butRam);
             buttonsAero.add(butEject);
-            buttonsAero.add(butFlee);
+            buttonsAero.add(butFlyOff);
             buttonsAero.add(butLaunch);
             buttonsAero.add(butRecover);
             buttonsAero.add(butJoin);
@@ -906,7 +914,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         checkFuel();
         checkOOC();
         checkAtmosphere();
-        updateFleeButton();
+        updateFlyOffButton();
         updateLaunchButton();
         updateRecklessButton();
         updateHoverButton();
@@ -1003,6 +1011,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         setBackUpEnabled(false);
         setTurnEnabled(false);
         setFleeEnabled(false);
+        setFlyOffEnabled(false);
         setEjectEnabled(false);
         setUnjamEnabled(false);
         setSearchlightEnabled(false, false);
@@ -1069,7 +1078,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         updateRACButton();
         updateSearchlightButton();
         updateElevationButtons();
-        updateFleeButton();
+        updateFlyOffButton();
         updateLaunchButton();
         updateRecklessButton();
         updateHoverButton();
@@ -1237,7 +1246,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                     // check to see if velocity left is zero
                     MoveStep step = md.getLastStep();
                     if (step != null) {
-                        if ((step.getVelocityLeft() > 0) && !client.game.useVectorMove() && (step.getType() != MovePath.STEP_FLEE)) {
+                        if ((step.getVelocityLeft() > 0) && !client.game.useVectorMove() && (step.getType() != MovePath.STEP_OFF)) {
                             // pop up some dialog telling the unit that it did
                             // not spend enough
                             String title = Messages.getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
@@ -1558,7 +1567,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             updateLoadButtons();
             updateElevationButtons();
             updateEvadeButton();
-            updateFleeButton();
+            updateFlyOffButton();
             updateLaunchButton();
             updateRecklessButton();
             updateHoverButton();
@@ -1818,29 +1827,31 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     */
     }
 
-    private void updateFleeButton() {
+    private void updateFlyOffButton() {
         final Entity ce = ce();
 
         // Aeros should be able to flee if they reach a border hex with velocity
         // remaining
         // and facing the right direction
-        if (ce instanceof Aero) {
-            MoveStep step = cmd.getLastStep();
-            Coords position = ce.getPosition();
-            int facing = ce.getFacing();
-            Aero a = (Aero) ce;
-            int velocityLeft = a.getCurrentVelocity();
-            if (step != null) {
-                position = step.getPosition();
-                facing = step.getFacing();
-                velocityLeft = step.getVelocityLeft();
-            }
-            boolean evenx = (position.x % 2) == 0;
-            if ((velocityLeft > 0) && (((position.x == 0) && ((facing == 5) || (facing == 4))) || ((position.x == client.game.getBoard().getWidth() - 1) && ((facing == 1) || (facing == 2))) || ((position.y == 0) && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx) || ((position.y == 0) && (facing == 0)) || ((position.y == client.game.getBoard().getHeight() - 1) && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.y == client.game.getBoard().getHeight() - 1) && (facing == 3)))) {
-                setFleeEnabled(true);
-            } else {
-                setFleeEnabled(false);
-            }
+        if (!(ce instanceof Aero)) {
+            setFlyOffEnabled(false);
+            return;
+        }
+        MoveStep step = cmd.getLastStep();
+        Coords position = ce.getPosition();
+        int facing = ce.getFacing();
+        Aero a = (Aero) ce;
+        int velocityLeft = a.getCurrentVelocity();
+        if (step != null) {
+            position = step.getPosition();
+            facing = step.getFacing();
+            velocityLeft = step.getVelocityLeft();
+        }
+        boolean evenx = (position.x % 2) == 0;
+        if ((velocityLeft > 0) && (((position.x == 0) && ((facing == 5) || (facing == 4))) || ((position.x == client.game.getBoard().getWidth() - 1) && ((facing == 1) || (facing == 2))) || ((position.y == 0) && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx) || ((position.y == 0) && (facing == 0)) || ((position.y == client.game.getBoard().getHeight() - 1) && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.y == client.game.getBoard().getHeight() - 1) && (facing == 3)))) {
+            setFlyOffEnabled(true);
+        } else {
+            setFlyOffEnabled(false);
         }
     }
 
@@ -2845,7 +2856,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             clearAllMoves();
             cmd.addStep(MovePath.STEP_FLEE);
             moveTo(cmd);
-        } else if (ev.getActionCommand().equals(MOVE_EJECT)) {
+        } else if (ev.getActionCommand().equals(MOVE_FLY_OFF) && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.FlyOffDialog.title"), Messages.getString("MovementDisplay.FlyOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
+            cmd.addStep(MovePath.STEP_OFF);
+            moveTo(cmd);
+        } 
+        else if (ev.getActionCommand().equals(MOVE_EJECT)) {
             if (ce instanceof Tank) {
                 if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.AbandonDialog.title"), Messages.getString("MovementDisplay.AbandonDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
                     clearAllMoves();
@@ -3052,7 +3067,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         updateLoadButtons();
         updateElevationButtons();
         updateEvadeButton();
-        updateFleeButton();
+        updateFlyOffButton();
         updateLaunchButton();
         updateRecklessButton();
         updateHoverButton();
@@ -3306,6 +3321,11 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     private void setFleeEnabled(boolean enabled) {
         butFlee.setEnabled(enabled);
         clientgui.getMenuBar().setMoveFleeEnabled(enabled);
+    }
+    
+    private void setFlyOffEnabled(boolean enabled) {
+        butFlyOff.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveFlyOffEnabled(enabled);
     }
 
     private void setEjectEnabled(boolean enabled) {

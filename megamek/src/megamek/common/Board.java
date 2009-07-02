@@ -47,6 +47,21 @@ public class Board implements Serializable, IBoard {
     public static final int BOARD_MAX_WIDTH = Coords.MAX_BOARD_WIDTH;
     public static final int BOARD_MAX_HEIGHT = Coords.MAX_BOARD_HEIGHT;
 
+    //starting positions
+    public static final int START_NONE = -1;
+    public static final int START_ANY = 0;
+    public static final int START_NW = 1;
+    public static final int START_N = 2;
+    public static final int START_NE = 3;
+    public static final int START_E = 4;
+    public static final int START_SE = 5;
+    public static final int START_S = 6;
+    public static final int START_SW = 7;
+    public static final int START_W = 8;
+    public static final int START_EDGE = 9;
+    public static final int START_CENTER = 10;
+    
+    
     protected int width;
     protected int height;
 
@@ -495,13 +510,13 @@ public class Board implements Serializable, IBoard {
      * Can the player deploy an entity here? There are no canon rules for the
      * deployment phase (?!). I'm using 3 hexes from map edge.
      */
-    public boolean isLegalDeployment(Coords c, Player p) {
-        if (c == null || p == null || !contains(c)) {
+    public boolean isLegalDeployment(Coords c, int nDir) {
+        if (c == null || !contains(c)) {
             return false;
         }
 
         int nLimit = 3;
-        int nDir = p.getStartingPos();
+        //int nDir = en.getStartingPos();
         int minx = 0;
         int maxx = width;
         int miny = 0;
@@ -518,34 +533,34 @@ public class Board implements Serializable, IBoard {
             }
         }
         switch (nDir) {
-            case 0: // Any
+            case START_ANY:
                 return true;
-            case 1: // NW
+            case START_NW: 
                 return (c.x < minx + nLimit && c.x >= minx && c.y < height / 2)
                         || (c.y < miny + nLimit && c.y >= miny && c.x < width / 2);
-            case 2: // N
+            case START_N:
                 return c.y < miny + nLimit && c.y >= miny;
-            case 3: // NE
+            case START_NE:
                 return (c.x > (maxx - nLimit) && c.x < maxx && c.y < height / 2)
                         || (c.y < miny + nLimit && c.y >= miny && c.x > width / 2);
-            case 4: // E
+            case START_E:
                 return c.x >= (maxx - nLimit) && c.x < maxx;
-            case 5: // SE
+            case START_SE:
                 return (c.x >= (maxx - nLimit) && c.x < maxx && c.y > height / 2)
                         || (c.y >= (maxy - nLimit) && c.y < maxy && c.x > width / 2);
-            case 6: // S
+            case START_S:
                 return c.y >= (maxy - nLimit) && c.y < maxy;
-            case 7: // SW
+            case START_SW:
                 return (c.x < minx + nLimit && c.x >= minx && c.y > height / 2)
                         || (c.y >= (maxy - nLimit) && c.y < maxy && c.x < width / 2);
-            case 8: // W
+            case START_W:
                 return c.x < minx + nLimit && c.x >= minx;
-            case 9: // Edge
+            case START_EDGE:
                 return (c.x < minx + nLimit && c.x >= minx)
                         || (c.y < miny + nLimit && c.y >= miny)
                         || (c.x >= (maxx - nLimit) && c.x < maxx)
                         || (c.y >= (maxy - nLimit) && c.y < maxy);
-            case 10: // Centre
+            case START_CENTER:
                 return c.x >= width / 3 && c.x <= 2 * width / 3
                         && c.y >= height / 3 && c.y <= 2 * height / 3;
             default: // ummm. .

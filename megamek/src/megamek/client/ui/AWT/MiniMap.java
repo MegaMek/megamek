@@ -436,7 +436,7 @@ public class MiniMap extends Canvas {
                             for (int k = 0; k < m_game.getBoard().getHeight(); k++) {
                                 if (m_game.getBoard().isLegalDeployment(
                                         new Coords(j, k),
-                                        m_client.getLocalPlayer())) {
+                                        m_client.getLocalPlayer().getStartingPos())) {
                                     paintSingleCoordBorder(g, j, k,
                                             Color.yellow);
                                 }

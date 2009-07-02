@@ -189,43 +189,44 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setUnloadEnabled(true);
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
+        clientgui.getBoardView().markDeploymentHexesFor(ce());
         // RACE : if player clicks fast enough, ce() is null.
         if (null != ce()) {
             // set facing according to starting position
-            switch (clientgui.getClient().getLocalPlayer().getStartingPos()) {
-                case 8:
+            switch (ce().getStartingPos()) {
+                case Board.START_W:
                     ce().setFacing(1);
                     ce().setSecondaryFacing(1);
                     break;
-                case 7:
+                case Board.START_SW:
                     ce().setFacing(1);
                     ce().setSecondaryFacing(1);
                     break;
-                case 6:
+                case Board.START_S:
                     ce().setFacing(0);
                     ce().setSecondaryFacing(0);
                     break;
-                case 5:
+                case Board.START_SE:
                     ce().setFacing(5);
                     ce().setSecondaryFacing(5);
                     break;
-                case 4:
+                case Board.START_E:
                     ce().setFacing(5);
                     ce().setSecondaryFacing(5);
                     break;
-                case 3:
+                case Board.START_NE:
                     ce().setFacing(4);
                     ce().setSecondaryFacing(4);
                     break;
-                case 2:
+                case Board.START_N:
                     ce().setFacing(3);
                     ce().setSecondaryFacing(3);
                     break;
-                case 1:
+                case Board.START_NW:
                     ce().setFacing(2);
                     ce().setSecondaryFacing(2);
                     break;
-                case 0:
+                case Board.START_ANY:
                     ce().setFacing(0);
                     ce().setSecondaryFacing(0);
                     break;
@@ -258,7 +259,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setNextEnabled(true);
         Player p = clientgui.getClient().getLocalPlayer();
         // mark deployment hexes
-        clientgui.bv.markDeploymentHexesFor(p);
+        clientgui.bv.markDeploymentHexesFor(ce());
     }
 
     /**
@@ -404,7 +405,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             dlg.setVisible(true);
             return;
         } else if (!(clientgui.getClient().game.getBoard().isLegalDeployment(moveto,
-                ce().getOwner()) || assaultDropPreference)
+                ce().getStartingPos()) || assaultDropPreference)
                 || ce().isHexProhibited(clientgui.getClient().game.getBoard().getHex(moveto))) {
             JOptionPane
                     .showMessageDialog(

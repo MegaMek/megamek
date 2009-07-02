@@ -87,6 +87,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected transient Player owner;
     protected int ownerId;
 
+    private int startingPos = Board.START_NONE;
+    
     /**
      * The pilot of the entity. Even infantry has a 'pilot'.
      */
@@ -8584,5 +8586,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
     
-
+    public int getStartingPos() {
+        if(startingPos == Board.START_NONE) {
+            return owner.getStartingPos();
+        }
+        return startingPos;
+    }
+    
+    public void setStartingPos(int i) {
+        this.startingPos = i;
+    }
 }

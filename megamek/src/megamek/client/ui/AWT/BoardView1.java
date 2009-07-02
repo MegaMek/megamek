@@ -246,8 +246,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     // the player who owns this BoardView's client
     private Player localPlayer = null;
 
-    // should we mark deployment hexes for a player?
-    private Player m_plDeployer = null;
+    // should we mark deployment hexes for an entity?
+    private Entity en_Deployer = null;
 
     // should be able to turn it off(board editor)
     private boolean useLOSTool = true;
@@ -573,7 +573,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         drawSprite(secondLOSSprite);
 
         // draw deployment indicators
-        if (m_plDeployer != null) {
+        if (en_Deployer != null) {
             drawDeployment();
         }
 
@@ -782,7 +782,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 Coords c = new Coords(j + drawX, i + drawY);
                 Point p = getHexLocation(c);
                 p.translate(-(view.x), -(view.y));
-                if (board.isLegalDeployment(c, m_plDeployer)) {
+                if (board.isLegalDeployment(c, en_Deployer.getStartingPos())) {
                     backGraph.setColor(Color.yellow);
                     int[] xcoords = { p.x + (int) (21 * scale),
                             p.x + (int) (62 * scale), p.x + (int) (83 * scale),
@@ -1938,8 +1938,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * Specifies that this should mark the deployment hexes for a player. If the
      * player is set to null, no hexes will be marked.
      */
-    public void markDeploymentHexesFor(Player p) {
-        m_plDeployer = p;
+    public void markDeploymentHexesFor(Entity ce) {
+        en_Deployer = ce;
     }
 
     /**

@@ -2614,6 +2614,6 @@ public class Aero extends Entity
      * @see megamek.common.Targetable#isAirborne()
      */
     public boolean isAirborne() {
-        return getElevation() > 0;
+        return getElevation() > 0 || game.getBoard().inSpace();
     }
 }

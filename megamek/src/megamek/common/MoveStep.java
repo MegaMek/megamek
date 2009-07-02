@@ -399,8 +399,7 @@ public class MoveStep implements Serializable {
         if(useAeroAtmosphere(game, entity)) {
             setNStraight(getNStraight() + 1);
             if(game.getBoard().onGround() && getNStraight() > 7) {
-                //if flying on ground map, then you have to fly at least 8 straight hexes before you can 
-                //make a turn (free or not)
+                //if flying on ground map, then you have to fly at least 8 straight hexes between turns (free or not)
                 //http://www.classicbattletech.com/forums/index.php/topic,37171.new.html#new
                 setNTurns(0);
             }
@@ -1472,12 +1471,11 @@ public class MoveStep implements Serializable {
                 return;
             }
 
-            //if in atmosphere, then they cannot turn under any circumstances in the first hex
-            if (useAeroAtmosphere(game, entity)  && !isManeuver() &&
-                    ((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))) {
+            //if in atmosphere, then they cannot turn using thrust in the first hex
+            if (useAeroAtmosphere(game, entity)  && !isManeuver() && !prev.hasFreeTurn()
+                   && ((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))) {
                 if(game.getBoard().onGround()) {
                     //if flying on the ground map then they need to move 8 hexes first
-                    //TODO: they should carry over their straight movement from last turn
                     if(distance < 8) {
                         return;
                     }

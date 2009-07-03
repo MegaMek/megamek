@@ -4419,6 +4419,7 @@ public class Server implements Runnable {
             entity.setDeployed(false);
             entity.setDeployRound(1 + game.getRoundCount() + returnable);
             entity.setPosition(null);
+            entity.setDone(true);
             switch(fleeDirection) {
             case IOffBoardDirections.WEST:
                 entity.setStartingPos(Board.START_W);

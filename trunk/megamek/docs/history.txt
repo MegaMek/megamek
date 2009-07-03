@@ -37,6 +37,7 @@ v0.35.4-dev (SVN)
 + aero maneuvers on ground maps
 + Bug: Aero Bays not loading
 + Bug: air-to-air dead zone not working
++ Bug 2816106: Fly Off of Map NPE in 0.35.4-dev
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

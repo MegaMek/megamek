@@ -3145,7 +3145,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             graph.drawString(velString, costX - 1, stepPos.y + 27);
             
             //if we are in atmosphere, then report the free turn status as well
-            if(!game.getBoard().inSpace()) {
+            if(!game.getBoard().inSpace() && ((step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST) || (step
+                    .getMovementType() == IEntityMovementType.MOVE_OVER_THRUST))) {
                 String turnString = null;
                 StringBuffer turnStringBuf = new StringBuffer();
                 turnStringBuf.append("<").append(step.getNStraight()).append(">");

@@ -34,6 +34,7 @@ v0.35.4-dev (SVN)
 + Bug: airborne aero units on ground maps never affect stacking limits
 + deployment starting position held by entity not player (allows for entity specific deployment zones)
 + unofficial option to allow aeros that fly off the map to return after a certain number of turns
++ aero maneuvers on ground maps
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

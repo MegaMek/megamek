@@ -930,6 +930,9 @@ public class MoveStep implements Serializable {
             velocity = a.getCurrentVelocity();
             velocityN = a.getNextVelocity();
             velocityLeft = a.getCurrentVelocity() - a.delta_distance;
+            if(game.getBoard().onGround()) {
+                velocityLeft = a.getCurrentVelocity() - a.delta_distance / 16;
+            }          
             isRolled = false;//a.isRolled();
             nStraight = a.getStraightMoves();
         }

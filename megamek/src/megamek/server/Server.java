@@ -4659,6 +4659,9 @@ public class Server implements Runnable {
                 Aero a = (Aero) entity;
                 j++;
 
+                //increment straight moves (can't do it at end, because not all steps may be processed)
+                a.setStraightMoves(step.getNStraight());
+                
                 // TODO: change the way this check is made
                 if (!didMove && (md.length() != j)) {
                     thrustUsed += step.getMp();
@@ -4707,15 +4710,20 @@ public class Server implements Runnable {
                         if (forward < step.getVelocityLeft()) {
                             fellDuringMovement = true;
                         }
+                        //multiply forward by 16 when on ground hexes
+                        if(game.getBoard().onGround()) {
+                            forward *= 16;
+                        }
                         while (forward > 0) {
                             curPos = curPos.translated(step.getFacing());
                             forward--;
                             distance++;
+                            a.setStraightMoves(a.getStraightMoves() + 1);
                             // make sure it didn't fly off the map
                             if (!game.getBoard().contains(curPos)) {
                                 a.setCurrentVelocity(md.getFinalVelocity());
                                 processLeaveMap(entity, true, Compute.roundsUntilReturn(game, entity));
-                                forward = 0;
+                                return;
                             // make sure it didn't crash
                             } else if (checkCrash(entity, curPos, step.getElevation())) {
                                 addReport(processCrash(entity, step.getVelocity(), curPos));
@@ -4895,10 +4903,11 @@ public class Server implements Runnable {
                     // now apply any damage to bay doors
                     entity.resetBayDoors();
                 }
-
+                
                 if (step.getType() == MovePath.STEP_OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     processLeaveMap(entity, true, Compute.roundsUntilReturn(game, entity));
+                    return;
                 }
             }
 
@@ -5823,13 +5832,6 @@ public class Server implements Runnable {
 
             Aero a = (Aero) entity;
             int thrust = md.getMpUsed();
-
-            // set straight movement
-            if (null != md.getLastStep()) {
-                a.setStraightMoves(md.getLastStep().getNStraight());
-            } else {
-                a.setStraightMoves(0);
-            }
 
             // consume fuel
             if (((entity instanceof Aero) && game.getOptions().booleanOption("fuel_consumption")) || (entity instanceof TeleMissile)) {

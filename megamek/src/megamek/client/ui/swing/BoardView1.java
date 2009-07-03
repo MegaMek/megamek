@@ -2864,6 +2864,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.drawPolygon(myPoly);
                 offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
                 drawMovementCost(step, offsetCostPos, graph, col, false);
+                drawRemainingVelocity(step, stepPos, graph, true);
                 break;
             case MovePath.STEP_GET_UP:
             case MovePath.STEP_UP:
@@ -2880,6 +2881,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.drawPolygon(myPoly);
                 offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
                 drawMovementCost(step, offsetCostPos, graph, col, false);
+                drawRemainingVelocity(step, stepPos, graph, true);
                 break;
             case MovePath.STEP_CLIMB_MODE_ON:
                 // draw climb mode indicator
@@ -2918,6 +2920,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.drawString(climboff, climboffX, stepPos.y + 39);
                 graph.setColor(col);
                 graph.drawString(climboff, climboffX - 1, stepPos.y + 38);
+                
                 break;
             case MovePath.STEP_TURN_LEFT:
             case MovePath.STEP_TURN_RIGHT:

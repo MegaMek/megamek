@@ -41,6 +41,7 @@ v0.35.4-dev (SVN)
 + step movement display for aeros now shows hexes remaining to be moved
 + step movement display for aeros now shows turning eligibility
 + only report turn eligibility for aeros
++ report remaining velocity on aero elevation changes
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

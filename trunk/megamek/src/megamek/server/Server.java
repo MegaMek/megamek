@@ -2106,6 +2106,7 @@ public class Server implements Runnable {
             resolveOnlyWeaponAttacks();
             assignAMS();
             handleAttacks();
+            resolveAeroElevationLoss();
             resolveScheduledNukes();
             applyBuildingDamage();
             checkForPSRFromDamage();
@@ -8895,6 +8896,10 @@ public class Server implements Runnable {
                 AttackHandler ah = w.fire(waa, game, this);
                 if (ah != null) {
                     game.addAttack(ah);
+                    //check for aero elevation loss
+                    if(ae instanceof Aero && waa.getAeroElevationLoss(game) > ((Aero)ae).getElevLoss()) {
+                        ((Aero)ae).setElevLoss(waa.getAeroElevationLoss(game));
+                    }
                 }
             }
         }
@@ -19781,6 +19786,28 @@ public class Server implements Runnable {
         return doEntityFall(entity, entity.getPosition(), entity.getElevation() + game.getBoard().getHex(entity.getPosition()).depth(), roll);
     }
 
+    /**
+     * loops through aeros in game and checks for any elevation loss due to weapons firing
+     */
+    private void resolveAeroElevationLoss() {
+        Report r;
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            Entity entity = i.nextElement();
+            if(entity instanceof Aero) {
+                Aero a = (Aero)entity;
+                if(a.getElevLoss() > 0) {
+                    r = new Report(9095);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(a.getElevLoss());
+                    addReport(r);
+                    a.setElevation(a.getElevation() - a.getElevLoss());
+                    entityUpdate(entity.getId());
+                }
+            }
+        }
+    }
+    
     /**
      * Report: - Any ammo dumps beginning the following round. - Any ammo dumps
      * that have ended with the end of this round.

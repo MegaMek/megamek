@@ -125,7 +125,10 @@ public class Aero extends Entity
 
     //track straight movement from last turn
     private int straightMoves = 0;
-
+    
+    //are we tracking any elevation loss due to air-to-ground assaults
+    private int elevLoss = 0;
+    
     private boolean spheroid = false;
 
     //deal with heat
@@ -2615,5 +2618,17 @@ public class Aero extends Entity
      */
     public boolean isAirborne() {
         return getElevation() > 0 || game.getBoard().inSpace();
+    }
+    
+    public int getElevLoss() {
+        return elevLoss;
+    }
+    
+    public void setElevLoss(int i) {
+        this.elevLoss = i;
+    }
+    
+    public void resetElevLoss() {
+        this.elevLoss = 0;
     }
 }

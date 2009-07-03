@@ -405,7 +405,7 @@ public class MoveStep implements Serializable {
             }
             if(!hasFreeTurn()) {
                 //check conditions
-                if(dueFreeTurn(entity, getNStraight(), getVelocity())) {
+                if(dueFreeTurn()) {
                     setFreeTurn(true);
                 }
             }
@@ -2711,8 +2711,11 @@ public class MoveStep implements Serializable {
         nStraight = i;
     }
 
-    public boolean dueFreeTurn(Entity en, int straight, int vel) {
+    public boolean dueFreeTurn() {
 
+        Entity en = parent.getEntity();
+        int straight = getNStraight();
+        int vel = getVelocity();
         int thresh = 99;
 
         //I will assume that small craft should be treated as dropships?

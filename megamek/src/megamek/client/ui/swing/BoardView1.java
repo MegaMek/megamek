@@ -3115,11 +3115,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             String velString = null;
             StringBuffer velStringBuf = new StringBuffer();
 
+            int distTraveled = step.getDistance();
+            int velocity = step.getVelocity();
+            if(game.getBoard().onGround()) {
+                velocity *= 16;
+            }
             if (!game.useVectorMove()
                     && ((step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST) || (step
                             .getMovementType() == IEntityMovementType.MOVE_OVER_THRUST))) {
-                velStringBuf.append("(").append(step.getVelocityLeft()).append("/").append(
-                        step.getVelocity()).append(")");
+                velStringBuf.append("(").append(distTraveled).append("/").append(
+                        velocity).append(")");
             }
 
             Color col = Color.GREEN;
@@ -3138,7 +3143,29 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             graph.drawString(velString, costX, stepPos.y + 28);
             graph.setColor(col);
             graph.drawString(velString, costX - 1, stepPos.y + 27);
-
+            
+            //if we are in atmosphere, then report the free turn status as well
+            if(!game.getBoard().inSpace()) {
+                String turnString = null;
+                StringBuffer turnStringBuf = new StringBuffer();
+                turnStringBuf.append("<").append(step.getNStraight()).append(">");
+                
+                col = Color.RED;
+                if(step.dueFreeTurn()) {
+                    col = Color.GREEN;
+                }
+                //Convert the buffer to a String and draw it.
+                turnString = turnStringBuf.toString();
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 10)); //$NON-NLS-1$
+                costX = stepPos.x + 42;
+                if (shiftFlag) {
+                    costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(turnString) / 2);
+                }
+                graph.setColor(Color.darkGray);
+                graph.drawString(turnString, costX, stepPos.y + 49);
+                graph.setColor(col);
+                graph.drawString(turnString, costX - 1, stepPos.y + 48);              
+            }
         }
 
         private void drawMovementCost(MoveStep step, Point stepPos, Graphics graph, Color col,

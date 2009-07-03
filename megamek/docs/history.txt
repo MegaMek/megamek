@@ -43,6 +43,7 @@ v0.35.4-dev (SVN)
 + only report turn eligibility for aeros
 + report remaining velocity on aero elevation changes
 + improvements to Aero step cost reporting
++ aeros lose altitude from some air-to-ground attacks
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

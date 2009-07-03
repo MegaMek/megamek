@@ -169,6 +169,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     public boolean isGroundToAir(IGame game) {
         return Compute.isGroundToAir(getEntity(game), getTarget(game));
     }
+    
+    public int getAeroElevationLoss(IGame game) {
+        //TODOfor now all Air to Ground attacks lead to one elevation loss, but that will need to be 
+        //adjusted later when bombing and strafing are added
+        if(isAirToGround(game)) {
+            return 1;
+        }
+        return 0;
+    }
 
     public ToHitData toHit(IGame game) {
         return WeaponAttackAction.toHit(game, getEntityId(), game.getTarget(

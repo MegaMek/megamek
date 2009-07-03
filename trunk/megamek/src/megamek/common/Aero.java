@@ -2472,12 +2472,12 @@ public class Aero extends Entity
     public boolean canLoad( Entity unit ) {
         // capital fighters can load other capital fighters (becoming squadrons)
         //but not in the deployment phase
-        if ( !unit.isEnemyOf(this) && unit.isCapitalFighter()  && isCapitalFighter()
+        if ( isCapitalFighter() && !unit.isEnemyOf(this) && unit.isCapitalFighter() 
                 && (getId() != unit.getId()) && (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)) {
             return true;
         }
 
-        return false;
+        return super.canLoad(unit);
     }
 
     /***

@@ -1995,8 +1995,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (clientgui.getClient().game.getBoard().inSpace()
-                || clientgui.getClient().game.getBoard().onGround()) {
+        if (clientgui.getClient().game.getBoard().inSpace()) {
+            return;
+        }
+        
+        if(!ce.isAirborne()) {
             return;
         }
 

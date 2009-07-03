@@ -1456,63 +1456,48 @@ public class MoveStep implements Serializable {
                 }
             }
 
-            //if jumpships turn, they can't do anything else
-            if((entity instanceof Jumpship) && !(entity instanceof Warship) && !isFirstStep()
-                    && (prev.getParent().contains(MovePath.STEP_TURN_LEFT) || prev.getParent().contains(MovePath.STEP_TURN_RIGHT))) {
-                return;
-            }
-
-            //space stations can only turn
-            if((entity instanceof SpaceStation) && !((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))) {
-                return;
-            }
-
-            //unless velocity is zero ASFs must move forward one hex before making turns
-            if (!game.useVectorMove() && !isManeuver() && !useSpheroidAtmosphere(game, entity) &&
-                    (distance == 0) && (velocity != 0) &&
-                    ((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))) {
-                return;
-            }
-
-            //if in atmosphere, then they cannot turn using thrust in the first hex
-            if (useAeroAtmosphere(game, entity)  && !isManeuver() && !prev.hasFreeTurn()
-                   && ((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))) {
-                if(game.getBoard().onGround()) {
-                    //if flying on the ground map then they need to move 8 hexes first
-                    if(distance < 8) {
-                        return;
-                    }
-                } else if(distance == 0) {
+            //**Space turning limits**//
+            if(game.getBoard().inSpace()) {
+                //if jumpships turn, they can't do anything else
+                if((entity instanceof Jumpship) && !(entity instanceof Warship) && !isFirstStep()
+                        && (prev.getParent().contains(MovePath.STEP_TURN_LEFT) || prev.getParent().contains(MovePath.STEP_TURN_RIGHT))) {
+                    return;
+                }
+    
+                //space stations can only turn
+                if((entity instanceof SpaceStation) && !((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))) {
+                    return;
+                }
+    
+                //unless velocity is zero ASFs must move forward one hex before making turns in space
+                if (!game.useVectorMove() &&
+                        (distance == 0) && (velocity != 0) &&
+                        ((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))) {
+                    return;
+                }
+                
+                //no more than two turns in one hex unless velocity is zero for anything except ASF in space
+                if (!game.useVectorMove()
+                        && (a instanceof SmallCraft) && (velocity != 0)
+                        && (getNTurns() > 2)) {
+                    return;
+                }
+                
+                //for warships the limit is one
+                if(!game.useVectorMove() &&
+                        (a instanceof Jumpship) && (velocity != 0) && (getNTurns() > 1) ) {
                     return;
                 }
             }
-          
-            //no more than two turns in one hex unless velocity is zero for anything except ASF
-            if (!game.useVectorMove() && !isManeuver()
-                    && !useAeroAtmosphere(game, entity) && !useSpheroidAtmosphere(game, entity)
-                    && (a instanceof SmallCraft) && (velocity != 0)
-                    && (getNTurns() > 2)) {
+
+
+            //atmosphere has its own rules about turning
+            if(useAeroAtmosphere(game, entity) 
+                    && ((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))
+                            && !prev.canAeroTurn(game)) {
                 return;
             }
-
-            //for warships the limit is one
-            if( !game.useVectorMove() &&
-                    (a instanceof Jumpship) && (velocity != 0) && (getNTurns() > 1) ) {
-                return;
-            }
-
-            //if in atmosphere then only one turn no matter what
-            if(useAeroAtmosphere(game, entity) && (getNTurns() > 1) && !isManeuver()) {
-                return;
-            }
-
-            //conventional fighters cannot use thrust to get extra turns
-            if ((a instanceof ConvFighter) &&
-                    ((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))
-                    && !prev.hasFreeTurn() ) {
-                return;
-            }
-
+            
             if ((type == MovePath.STEP_FORWARDS) && game.getBoard().inAtmosphere()
                     && !a.isOutControl()) {
                 IHex desth = game.getBoard().getHex(getPosition());
@@ -2711,6 +2696,45 @@ public class MoveStep implements Serializable {
         nStraight = i;
     }
 
+    /**
+     * can this aero turn for any reason in atmosphere?
+     */
+    public boolean canAeroTurn(IGame game) {
+        Entity en = parent.getEntity();
+        if(!(en instanceof Aero)) {
+            return false;
+        }
+        
+        if(dueFreeTurn()) {
+            return true;
+        }
+        
+        //if its parf of a maneuver then you can turn
+        if(isManeuver()) {
+            return true;
+        }
+        
+        if(en instanceof ConvFighter) {
+            //conventional fighters can only turn on free turns or maneuvers
+            return false;
+        }
+        
+        //cant use thrust turns in the first hex of movement (or first 8 if ground)
+        if(game.getBoard().onGround()) {
+            //if flying on the ground map then they need to move 8 hexes first
+            if(distance < 8) {
+                return false;
+            }
+        } else if(distance == 0) {
+            return false;
+        }
+        
+        //must have been no prior turns in this hex (or 8 hexes if on ground)
+        return getNTurns() == 0;
+     
+        
+    }
+    
     public boolean dueFreeTurn() {
 
         Entity en = parent.getEntity();

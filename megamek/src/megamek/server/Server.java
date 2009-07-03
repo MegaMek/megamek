@@ -4245,7 +4245,7 @@ public class Server implements Runnable {
         int crash_damage = orig_crash_damage;
         //first check for buildings
         Building bldg = game.getBoard().getBuildingAt(c);
-        if(bldg.getType() == Building.HARDENED) {
+        if(null != bldg && bldg.getType() == Building.HARDENED) {
             crash_damage *= 2;
         }
         if(null != bldg) {

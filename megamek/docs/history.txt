@@ -40,6 +40,7 @@ v0.35.4-dev (SVN)
 + Bug 2816106: Fly Off of Map NPE in 0.35.4-dev
 + step movement display for aeros now shows hexes remaining to be moved
 + step movement display for aeros now shows turning eligibility
++ only report turn eligibility for aeros
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

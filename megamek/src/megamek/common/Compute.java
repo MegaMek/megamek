@@ -806,7 +806,7 @@ public class Compute {
         //Account for "dead zones" between Aeros at different altitudes
         if(Compute.isAirToAir(ae, target)) {
             int altDiff = Math.abs(ae.getElevation() - target.getElevation());           
-            if(altDiff >= ae.getPosition().distance(target.getPosition())) {
+            if(altDiff >= (distance - altDiff)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                 "Target in dead zone");
             }

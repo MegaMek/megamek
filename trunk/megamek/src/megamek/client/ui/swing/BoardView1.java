@@ -3118,17 +3118,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             String velString = null;
             StringBuffer velStringBuf = new StringBuffer();
 
+            if(game.useVectorMove()) {
+                return;
+            }
+            
+            if(!(step.getParent().getEntity() instanceof Aero)) {
+                return;
+            }
+            
+            if(((Aero)step.getParent().getEntity()).isSpheroid()) {
+                return;
+            }           
+            
             int distTraveled = step.getDistance();
             int velocity = step.getVelocity();
             if(game.getBoard().onGround()) {
                 velocity *= 16;
             }
-            if (!game.useVectorMove()
-                    && ((step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST) || (step
-                            .getMovementType() == IEntityMovementType.MOVE_OVER_THRUST))) {
-                velStringBuf.append("(").append(distTraveled).append("/").append(
-                        velocity).append(")");
-            }
+            
+            velStringBuf.append("(").append(distTraveled).append("/").append(velocity).append(")");
 
             Color col = Color.GREEN;
             if (step.getVelocityLeft() > 0) {
@@ -3148,8 +3156,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             graph.drawString(velString, costX - 1, stepPos.y + 27);
             
             //if we are in atmosphere, then report the free turn status as well
-            if(!game.getBoard().inSpace() && ((step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST) || (step
-                    .getMovementType() == IEntityMovementType.MOVE_OVER_THRUST))) {
+            if(!game.getBoard().inSpace()) {
                 String turnString = null;
                 StringBuffer turnStringBuf = new StringBuffer();
                 turnStringBuf.append("<").append(step.getNStraight()).append(">");
@@ -3157,18 +3164,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 col = Color.RED;
                 if(step.dueFreeTurn()) {
                     col = Color.GREEN;
+                } else if(step.canAeroTurn(game)) {
+                    col = Color.YELLOW;
                 }
                 //Convert the buffer to a String and draw it.
                 turnString = turnStringBuf.toString();
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 10)); //$NON-NLS-1$
-                costX = stepPos.x + 42;
-                if (shiftFlag) {
-                    costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(turnString) / 2);
-                }
+                costX = stepPos.x + 50;
                 graph.setColor(Color.darkGray);
-                graph.drawString(turnString, costX, stepPos.y + 49);
+                graph.drawString(turnString, costX, stepPos.y + 15);
                 graph.setColor(col);
-                graph.drawString(turnString, costX - 1, stepPos.y + 48);              
+                graph.drawString(turnString, costX - 1, stepPos.y + 14);              
             }
         }
 

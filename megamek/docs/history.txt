@@ -36,6 +36,8 @@ v0.35.4-dev (SVN)
 + unofficial option to allow aeros that fly off the map to return after a certain number of turns
 + aero maneuvers on ground maps
 + Bug: Aero Bays not loading
++ Bug: air-to-air dead zone not working
+
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing
 + Patch 2806831: fix typo in MovePath

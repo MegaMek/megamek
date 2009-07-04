@@ -24,17 +24,15 @@ import megamek.server.Server;
 /**
  * @author Jay Lawson
  */
-public class SpaceBombAttack extends Weapon {
-
-
+public class DiveBombAttack extends Weapon {
     /**
      * 
      */
-    private static final long serialVersionUID = -7842514353177676459L;
+    private static final long serialVersionUID = -179884141546884171L;
 
-    public SpaceBombAttack() {
-        this.name = "Space Bomb";
-        this.setInternalName(Aero.SPACE_BOMB_ATTACK);
+    public DiveBombAttack() {
+        this.name = "Dive Bomb";
+        this.setInternalName(Aero.DIVE_BOMB_ATTACK);
         this.heat = 0;
         this.damage = DAMAGE_SPECIAL;
         this.ammoType = AmmoType.T_NA;
@@ -47,7 +45,7 @@ public class SpaceBombAttack extends Weapon {
         this.criticals = 0;
         this.bv = 0;
         this.cost = 0;
-        this.flags |= WeaponType.F_SPACE_BOMB | WeaponType.F_SOLO_ATTACK;
+        this.flags |= WeaponType.F_DIVE_BOMB | WeaponType.F_SOLO_ATTACK;
         this.hittable = false;     
         this.capital = true;
     }
@@ -61,6 +59,6 @@ public class SpaceBombAttack extends Weapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new SpaceBombAttackHandler(toHit, waa, game, server);
+        return new DiveBombAttackHandler(toHit, waa, game, server);
     }
 }

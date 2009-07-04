@@ -137,6 +137,7 @@ public class Aero extends Entity
 
     //bombs
     public static final String  SPACE_BOMB_ATTACK      = "SpaceBombAttack";
+    public static final String  DIVE_BOMB_ATTACK      = "DiveBombAttack";
 
     private int maxBombPoints = 0;
     private int[] bombChoices = new int[BombType.B_NUM];
@@ -653,7 +654,7 @@ public class Aero extends Entity
     @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-        if(mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
+        if(mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
             return Compute.ARC_360;
         }
         int arc = Compute.ARC_NOSE;
@@ -2181,28 +2182,23 @@ public class Aero extends Entity
         }
         //add the space bomb attack
         //TODO: I don't know where else to put this (where do infantry attacks get added)
-        if(game.getOptions().booleanOption("stratops_space_bomb") && (getSpaceBombs().size() > 0)) {
+        if(game.getOptions().booleanOption("stratops_space_bomb") && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
             try{
                 addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK),LOC_NOSE,false);
             } catch (LocationFullException ex) {
                 //throw new LocationFullException(ex.getMessage());
             }
         }
-        updateWeaponGroups();
-        loadAllWeapons();
-    }
-
-    public Vector<Mounted> getSpaceBombs() {
-        Vector<Mounted> bombs = new Vector<Mounted>();
-        for(Mounted bomb : getBombs()) {
-            BombType btype = (BombType)bomb.getType();
-            if(!bomb.isInoperable() && (bomb.getShotsLeft() > 0)
-                    && ((btype.getBombType() == BombType.B_HE) || (btype.getBombType() == BombType.B_CLUSTER)
-                            || (btype.getBombType() == BombType.B_LG) || (btype.getBombType() == BombType.B_ARROW))) {
-                bombs.add(bomb);
+        if(getBombs(AmmoType.F_GROUND_BOMB).size() > 0) {
+            try{
+                addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK),LOC_NOSE,false);
+            } catch (LocationFullException ex) {
+                //throw new LocationFullException(ex.getMessage());
             }
         }
-        return bombs;
+        
+        updateWeaponGroups();
+        loadAllWeapons();
     }
 
     @Override

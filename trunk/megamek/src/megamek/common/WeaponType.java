@@ -93,6 +93,8 @@ public class WeaponType extends EquipmentType {
     public static final long F_ANTI_SHIP = 1l << 38; // for anti-ship missiles
     public static final long F_SPACE_BOMB = 1l << 39;
     public static final long F_ARTILLERY_CANNON = 11 << 40;
+    public static final long F_DIVE_BOMB = 1l << 41;
+    public static final long F_ALT_BOMB = 1l << 42;
 
     // Flag Field 1 Variables
     public static final long F_BA_WEAPON = 1l << 0; // Currently only used by
@@ -938,6 +940,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new BombISRL10());
         EquipmentType.addType(new AlamoMissileWeapon());
         EquipmentType.addType(new SpaceBombAttack());
+        EquipmentType.addType(new DiveBombAttack());
 
         // Weapon Bays
         EquipmentType.addType(new LaserBayWeapon());

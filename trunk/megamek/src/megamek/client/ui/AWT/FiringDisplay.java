@@ -833,7 +833,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if(!(ce() instanceof Aero)) {
             return payload;
         }
-        Vector<Mounted> bombs = ((Aero)ce()).getSpaceBombs();
+        Vector<Mounted> bombs = ce().getBombs(AmmoType.F_SPACE_BOMB);
         String[] bnames = new String[bombs.size()];
         for(int i = 0; i < bnames.length; i++) {
             bnames[i] = bombs.elementAt(i).getDesc();

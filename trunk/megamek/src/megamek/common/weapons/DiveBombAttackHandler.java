@@ -59,24 +59,6 @@ public class DiveBombAttackHandler extends WeaponHandler {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_NONE;
     }
-
-    /**
-     * Calculate the attack value based on range
-     * 
-     * @return an <code>int</code> representing the attack value at that range.
-     */
-    @Override
-    protected int calcAttackValue() {
-        int[] payload = waa.getBombPayload();
-        if(null == payload) {
-            return 0;
-        }
-        int nbombs = 0;
-        for(int i = 0; i < payload.length; i++) {
-            nbombs += payload[i];
-        }
-        return nbombs;
-    }
     
     /**
      * Does this attack use the cluster hit table?
@@ -174,43 +156,59 @@ public class DiveBombAttackHandler extends WeaponHandler {
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);   
         } else {
-            //scatter
-            coords = Compute.scatterDiveBombs(coords);
-            if (game.getBoard().contains(coords)) {
-                // misses and scatters to another hex
-                r = new Report(3195);
-                r.subject = subjectId;
-                r.add(coords.getBoardNum());
-                vPhaseReport.addElement(r);
-            } else {
-                // misses and scatters off-board
-                r = new Report(3200);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-                return !bMissed;
-            }
+            r = new Report(3196);
+            r.subject = subjectId;
+            r.add(coords.getBoardNum());
+            vPhaseReport.addElement(r);   
         }
         
         //now go through the payload and drop the bombs one at a time
         int[] payload = waa.getBombPayload();
+        Coords drop = coords;
         for(int type = 0; type < payload.length; type++) {   
             for(int i = 0; i < payload[type]; i++) {
-                r = new Report(6697);
-                r.indent(3);
-                r.add(BombType.getBombName(type));
-                r.subject = subjectId;
-                r.newlines = 1;
-                vPhaseReport.add(r);
+                drop = coords;
+                //each bomb can scatter a different direction
+                if(!bMissed) {
+                    r = new Report(6697);
+                    r.indent(1);
+                    r.add(BombType.getBombName(type));
+                    r.subject = subjectId;
+                    r.newlines = 1;
+                    vPhaseReport.add(r);
+                } else {
+                    drop = Compute.scatterDiveBombs(coords);
+                    if (game.getBoard().contains(drop)) {
+                        // misses and scatters to another hex
+                        r = new Report(6698);
+                        r.indent(1);
+                        r.subject = subjectId;
+                        r.newlines = 1;
+                        r.add(BombType.getBombName(type));
+                        r.add(drop.getBoardNum());
+                        vPhaseReport.addElement(r);
+                    } else {
+                        // misses and scatters off-board
+                        r = new Report(6699);
+                        r.indent(1);
+                        r.subject = subjectId;
+                        r.newlines = 1;
+                        r.add(BombType.getBombName(type));
+                        vPhaseReport.addElement(r);
+                        continue;
+                    } 
+                }
                 if(type == BombType.B_INFERNO) {
-                    server.deliverBombInferno(coords, ae, subjectId, vPhaseReport);
+                    server.deliverBombInferno(drop, ae, subjectId, vPhaseReport);
                 } else if (type == BombType.B_THUNDER) {
-                    server.deliverThunderMinefield(coords, subjectId, 20, ae.getId());
+                    server.deliverThunderMinefield(drop, subjectId, 20, ae.getId());
                 } else {
                     
-                    server.deliverBombDamage(coords, type, subjectId, ae, vPhaseReport);
+                    server.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
                 }
             }
         }
-        return false;
+        
+        return !bMissed;
     }
 }

@@ -56,7 +56,7 @@ public class HexTarget implements Targetable {
     }
 
     public boolean isImmobile() {
-        return (m_type != Targetable.TYPE_MINEFIELD_DELIVER && m_type != Targetable.TYPE_HEX_BOMB);
+        return (m_type != Targetable.TYPE_MINEFIELD_DELIVER && m_type != Targetable.TYPE_HEX_BOMB && m_type != Targetable.TYPE_HEX_DIVE_BOMB);
     }
 
     public String getDisplayName() {
@@ -85,6 +85,9 @@ public class HexTarget implements Targetable {
                 break;
             case (Targetable.TYPE_HEX_SCREEN):
                 name = Messages.getString("HexTarget.Screen");
+                break;
+            case (Targetable.TYPE_HEX_DIVE_BOMB):
+                name = Messages.getString("HexTarget.DiveBomb");
                 break;
         }
         return "Hex: " + m_coords.getBoardNum() + name;

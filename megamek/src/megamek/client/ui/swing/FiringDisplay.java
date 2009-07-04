@@ -848,7 +848,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (!(ce() instanceof Aero)) {
             return payload;
         }
-        Vector<Mounted> bombs = ((Aero) ce()).getSpaceBombs();
+        Vector<Mounted> bombs = ce().getBombs(AmmoType.F_SPACE_BOMB);
         String[] bnames = new String[bombs.size()];
         for (int i = 0; i < bnames.length; i++) {
             bnames[i] = bombs.elementAt(i).getDesc();
@@ -858,6 +858,34 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 Messages.getString("FiringDisplay.SpaceBombNumberDialog.title"), //$NON-NLS-1$
                 Messages
                         .getString("FiringDisplay.SpaceBombNumberDialog.message"), //$NON-NLS-1$
+                bnames);
+        bombsDialog.setVisible(true);
+        if (bombsDialog.getAnswer()) {
+            int[] choices = bombsDialog.getChoices();
+            for (int choice : choices) {
+                int type = ((BombType) bombs.elementAt(choice).getType())
+                        .getBombType();
+                payload[type] = payload[type] + 1;
+            }
+        }
+        return payload;
+    }
+    
+    private int[] doDiveBombing() {
+        int[] payload = new int[BombType.B_NUM];
+        if (!(ce() instanceof Aero)) {
+            return payload;
+        }
+        Vector<Mounted> bombs = ce().getBombs(AmmoType.F_GROUND_BOMB);
+        String[] bnames = new String[bombs.size()];
+        for (int i = 0; i < bnames.length; i++) {
+            bnames[i] = bombs.elementAt(i).getDesc();
+        }
+        ChoiceDialog bombsDialog = new ChoiceDialog(
+                clientgui.frame,
+                Messages.getString("FiringDisplay.BombNumberDialog.title"), //$NON-NLS-1$
+                Messages
+                        .getString("FiringDisplay.BombNumberDialog.message"), //$NON-NLS-1$
                 bnames);
         bombsDialog.setVisible(true);
         if (bombsDialog.getAnswer()) {
@@ -939,6 +967,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
             // if the user cancels, then return
             int[] payload = doSpaceBombing();
+            waa.setBombPayload(payload);
+        }
+        
+        //if this is a space bomb attack, then bring up the payload dialog
+        if (mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+            // if the user cancels, then return
+            int[] payload = doDiveBombing();
             waa.setBombPayload(payload);
         }
 

@@ -45,6 +45,7 @@ v0.35.4-dev (SVN)
 + improvements to Aero step cost reporting
 + aeros lose altitude from some air-to-ground attacks
 + Bug: NPE on processCrash
++ Dive bombing
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

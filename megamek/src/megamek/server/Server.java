@@ -24461,6 +24461,62 @@ public class Server implements Runnable {
             attackSource = centre; // all splash comes from ground zero
         }
     }
+    
+    public void deliverBombDamage(Coords centre, int type, int subjectId, Entity killer, Vector<Report> vPhaseReport) {
+      int range = 0 ;
+      int damage = 10;
+      if(type == BombType.B_CLUSTER) {
+          range = 1;
+          damage = 5;
+      }
+      artilleryDamageHex(centre, centre, damage, null, subjectId, killer, null, false, 0, vPhaseReport);
+      if(range > 0) {
+          ArrayList<Coords> hexes = Compute.coordsAtRange(centre, range);
+          for (Coords c : hexes) {
+              //TODO: should probably generalize the artilleryDamageHex method for bombs and artillery?
+              artilleryDamageHex(c, centre, damage, null, subjectId, killer, null, false, 0, vPhaseReport);
+          } 
+      }
+    }
+    
+    /**
+     * deliver inferno bomb
+     *
+     * @param coords
+     *            the <code>Coords</code> where to deliver
+     * @param ae
+     *           the attacking <code>entity<code>
+     * @param subjectId
+     *            the <code>int</code> id of the target
+     */
+    public void deliverBombInferno(Coords coords, Entity ae, int subjectId, Vector<Report> vPhaseReport) {
+        IHex h = game.getBoard().getHex(coords);
+        Report r;
+        // Unless there is a fire in the hex already, start one.
+        if (!h.containsTerrain(Terrains.FIRE)) {
+            ignite(coords, true, vPhaseReport);
+        }
+        //possibly melt ice and snow
+        if(h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
+            vPhaseReport.addAll(meltIceAndSnow(coords, subjectId));
+        }
+        for (Enumeration<Entity> impactHexHits = game.getEntities(coords); impactHexHits.hasMoreElements();) {
+            Entity entity = impactHexHits.nextElement();
+            //TacOps, p. 359 - treat as if hit by 5 inferno missiles
+            r = new Report(6696);
+            r.indent(3);
+            r.add(entity.getDisplayName());
+            r.subject = entity.getId();
+            r.newlines = 0;
+            vPhaseReport.add(r);
+            if(entity instanceof Tank) {
+                Report.addNewline(vPhaseReport);
+            }
+            Vector<Report> vDamageReport = deliverInfernoMissiles(ae, entity, 5);
+            Report.indentAll(vDamageReport, 2);
+            vPhaseReport.addAll(vDamageReport);
+        }
+    }
 
     /**
      * Resolve any Infantry units which are fortifying hexes

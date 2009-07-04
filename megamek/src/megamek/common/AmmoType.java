@@ -128,6 +128,8 @@ public class AmmoType extends EquipmentType {
     public static final long F_NUCLEAR = 1l << 9; // Nuclear missile
     public static final long F_TELE_MISSILE = 1l << 10; // Tele-Missile
     public static final long F_CAP_MISSILE = 1l << 11; // Tele-Missile
+    public static final long F_SPACE_BOMB = 1l << 12; //can be used to space bomb
+    public static final long F_GROUND_BOMB = 1l << 13; //can be used to ground bomb
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"

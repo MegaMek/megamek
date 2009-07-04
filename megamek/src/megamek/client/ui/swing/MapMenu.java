@@ -29,6 +29,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.AmmoType;
 import megamek.common.BipedMech;
+import megamek.common.BombType;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -916,6 +917,10 @@ public class MapMenu extends JPopupMenu {
                         if (hasAmmoType(AmmoType.T_BA_MICRO_BOMB)) {
                             menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_BOMB)));
                         }
+                        
+                        if (hasWeaponFlag(WeaponType.F_DIVE_BOMB)) {
+                            menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_DIVE_BOMB)));
+                        }
 
                         if (hasAmmoType(AmmoType.T_ARROW_IV) || hasAmmoType(AmmoType.T_SNIPER) || hasAmmoType(AmmoType.T_CRUISE_MISSILE) || hasAmmoType(AmmoType.T_ALAMO) || hasAmmoType(AmmoType.T_KILLER_WHALE) || hasAmmoType(AmmoType.T_LONG_TOM) || hasAmmoType(AmmoType.T_THUMPER)) {
                             menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
@@ -971,6 +976,20 @@ public class MapMenu extends JPopupMenu {
 
         for (Mounted ammo : myEntity.getAmmo()) {
             if (((AmmoType) ammo.getType()).getAmmoType() == ammoType) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    private boolean hasWeaponFlag(long weaponFlag) {
+
+        if (myEntity.getWeaponList().size() < 1)
+            return false;
+
+        for (Mounted wpn : myEntity.getWeaponList()) {
+            if(((WeaponType)wpn.getType()).hasFlag(weaponFlag)) {
                 return true;
             }
         }

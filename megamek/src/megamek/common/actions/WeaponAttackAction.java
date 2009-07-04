@@ -171,9 +171,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     }
     
     public int getAeroElevationLoss(IGame game) {
-        //TODOfor now all Air to Ground attacks lead to one elevation loss, but that will need to be 
-        //adjusted later when bombing and strafing are added
         if(isAirToGround(game)) {
+            if(((WeaponType)getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_DIVE_BOMB)) {
+                return 2;
+            }
+            if(((WeaponType)getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_ALT_BOMB)) {
+                return 0;
+            }
             return 1;
         }
         return 0;
@@ -1380,7 +1384,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // attacker terrain
         toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
 
-        // target terrain, not applicable when delivering minefields
+        // target terrain, not applicable when delivering minefields or bombs
         if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
             toHit.append(Compute.getTargetTerrainModifier(game, target,
                     eistatus, inSameBuilding));
@@ -2132,7 +2136,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
 
-            //if space bombing, then can't do other attacks
+            //if bombing, then can't do other attacks
             for ( Enumeration<EntityAction> i = game.getActions();
                 i.hasMoreElements(); ) {
                 Object o = i.nextElement();
@@ -2145,6 +2149,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                             ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
                         return "Already space bombing";
                     }
+                    if ( (weaponId != prevAttack.getWeaponId()) &&
+                            ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+                        return "Already dive bombing";
+                    }                  
                 }
             }
         }
@@ -2522,6 +2530,35 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && !(usesAmmo && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB))) {
             return "Weapon can't deliver bombs";
         }
+        
+        if(target.getTargetType() == Targetable.TYPE_HEX_DIVE_BOMB 
+                && !wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
+            return "Weapon can't be used to dive bomb";
+        }
+        
+        if(wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
+            if(ae.getBombs(AmmoType.F_GROUND_BOMB).size() == 0) {
+                return "no bombs left to drop";
+            }
+            if(ae instanceof Aero && ((Aero)ae).isSpheroid()) {
+                return "spheroid units cannot make bombing attacks";
+            }
+            if(!ae.isAirborne()) {
+                return "no dive bombing for grounded units";
+            }         
+            if(ae.getElevation() > 5) {
+                return "no dive bombing above altitude 5";
+            }          
+            if(ae.getElevation() < 3) {
+                return "no dive bombing below altitude 3";
+            }
+            if(target.getTargetType() != Targetable.TYPE_HEX_DIVE_BOMB) {
+                return "only hexes can be targeted for dive bomb attacks";
+            }
+            if(!ae.passedThrough(target.getPosition())) {
+                return "dive bombing only possible along flight path";
+            }
+        }
 
         Entity spotter = null;
         if (isIndirect) {
@@ -2748,22 +2785,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
-            //no space bombing if other attacks already declared
-            for ( Enumeration<EntityAction> i = game.getActions();
-                i.hasMoreElements(); ) {
-                EntityAction ea = i.nextElement();
-                if (!(ea instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction)ea;
-                if (prevAttack.getEntityId() == attackerId) {
-
-                    // If the attacker fires another weapon, this attack fails.
-                    if ( weaponId != prevAttack.getWeaponId() ) {
-                        return "Other weapon attacks declared.";
-                    }
-                }
-            }
             toHit = Compute.getSpaceBombBaseToHit( ae, te, game );
             // Return if the attack is impossible.
             if ( TargetRoll.IMPOSSIBLE == toHit.getValue() ) {

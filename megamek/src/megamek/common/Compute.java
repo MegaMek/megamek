@@ -1564,6 +1564,11 @@ public class Compute {
         boolean isAboveSmoke = ((entityTarget != null) && (hex != null)) && (entityTarget.absHeight() >= 3);
         ToHitData toHit = new ToHitData();
 
+        if(t.getTargetType() == Targetable.TYPE_HEX_DIVE_BOMB) {
+            //no terrain mods for dive bombing
+            return toHit;
+        }
+        
         // if we have in-building combat, it's a +1
         if (attackerInSameBuilding) {
             toHit.addModifier(1, "target in a building hex");
@@ -1585,7 +1590,12 @@ public class Compute {
             woodsText = "target in ultra heavy " + woodsText;
         }
 
-        if (!game.getOptions().booleanOption("tacops_woods_cover") && !isAboveWoods && !((t.getTargetType() == Targetable.TYPE_HEX_CLEAR) || (t.getTargetType() == Targetable.TYPE_HEX_IGNITE) || (t.getTargetType() == Targetable.TYPE_HEX_BOMB) || (t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) || (t.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER))) {
+        if (!game.getOptions().booleanOption("tacops_woods_cover") && !isAboveWoods 
+                && !((t.getTargetType() == Targetable.TYPE_HEX_CLEAR) 
+                        || (t.getTargetType() == Targetable.TYPE_HEX_IGNITE) 
+                        || (t.getTargetType() == Targetable.TYPE_HEX_BOMB) 
+                        || (t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) 
+                        || (t.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER))) {
             if ((woodsLevel == 1) && (eistatus != 2)) {
                 toHit.addModifier(1, woodsText);
             } else if (woodsLevel > 1) {
@@ -3413,7 +3423,7 @@ public class Compute {
         if(a.isOutControlTotal()) {
             reason.append("the attacker is out of control");
         }
-        else if(a.getSpaceBombs().size() < 1) {
+        else if(a.getBombs(AmmoType.F_SPACE_BOMB).size() < 1) {
             reason.append("the attacker has no useable bombs");
         } else if(!rightFacing) {
             reason.append("the attacker is not facing the direction of travel");

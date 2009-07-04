@@ -2545,6 +2545,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public ArrayList<Mounted> getBombs() {
         return bombList;
     }
+    
+    public Vector<Mounted> getBombs(long flag) {
+        Vector<Mounted> bombs = new Vector<Mounted>();
+        for(Mounted bomb : getBombs()) {
+            BombType btype = (BombType)bomb.getType();
+            if(!bomb.isInoperable() && (bomb.getShotsLeft() > 0)
+                    && btype.hasFlag(flag)) {
+                bombs.add(bomb);
+            }
+        }
+        return bombs;
+    }
 
     /**
      * Removes the first misc eq. whose name equals the specified string. Used

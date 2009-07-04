@@ -118,6 +118,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_HE;
+        bomb.flags |= AmmoType.F_SPACE_BOMB | AmmoType.F_GROUND_BOMB;
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -136,6 +137,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_CLUSTER;
+        bomb.flags |= AmmoType.F_SPACE_BOMB | AmmoType.F_GROUND_BOMB;
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -154,6 +156,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_LG;
+        bomb.flags |= AmmoType.F_SPACE_BOMB | AmmoType.F_GROUND_BOMB;
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -258,6 +261,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 20;
         bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
         bomb.bombType = BombType.B_ARROW;
+        bomb.flags |= AmmoType.F_SPACE_BOMB;
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -277,6 +281,7 @@ public class BombType extends AmmoType {
         bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
         bomb.bombType = BombType.B_HOMING;
         bomb.munitionType = AmmoType.M_HOMING;
+        bomb.flags |= AmmoType.F_SPACE_BOMB;
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -295,6 +300,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_INFERNO;
+        bomb.flags |= AmmoType.F_GROUND_BOMB;
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -330,6 +336,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_THUNDER;
+        bomb.flags |= AmmoType.F_GROUND_BOMB;
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;

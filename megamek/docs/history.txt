@@ -46,6 +46,7 @@ v0.35.4-dev (SVN)
 + aeros lose altitude from some air-to-ground attacks
 + Bug: NPE on processCrash
 + Dive bombing
++ Bug: each bomb should roll for scatter separately
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

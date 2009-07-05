@@ -50,6 +50,7 @@ v0.35.4-dev (SVN)
 + DiveBombAttackHandler changed to BombAttackHandler
 + Bug: Aeros on the ground map being hit by ground artillery
 + start of Artillery FLAK against Aero units
++ Bug 2816516: Dive Bombing subtracts levels all the time 0.35.4-dev
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing
@@ -94,6 +95,7 @@ v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Bug: NPE in Entity#getSensorDesc for infantry
 + removed sensor labels in MechDisplay when double-blind is not in play
 + Bug 2813002: SVN 6/26/09 Too much heat
+
 
 v0.35.2 (2009-06-18, 16:00 UTC+2)
 + Separate pilot tab (swing only)

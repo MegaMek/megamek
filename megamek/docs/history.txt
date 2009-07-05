@@ -48,6 +48,8 @@ v0.35.4-dev (SVN)
 + Dive bombing
 + Bug: each bomb should roll for scatter separately
 + DiveBombAttackHandler changed to BombAttackHandler
++ Bug: Aeros on the ground map being hit by ground artillery
++ start of Artillery FLAK against Aero units
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

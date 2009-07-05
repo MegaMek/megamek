@@ -4772,6 +4772,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         IHex curHex = game.getBoard().getHex(curPos);
         IHex prevHex = game.getBoard().getHex(prevPos);
         // ineligable because of movement type or unit type
+        if(isAirborne()) {
+        	return 0;
+        }
+        
         if ((this instanceof Infantry) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)) {
             return 0;
         }

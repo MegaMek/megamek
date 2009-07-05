@@ -19802,6 +19802,7 @@ public class Server implements Runnable {
                     r.add(a.getElevLoss());
                     addReport(r);
                     a.setElevation(a.getElevation() - a.getElevLoss());
+                    a.setElevLoss(0);
                     entityUpdate(entity.getId());
                 }
             }

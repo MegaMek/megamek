@@ -2064,7 +2064,7 @@ public class Server implements Runnable {
             changePhase(IGame.Phase.PHASE_INITIATIVE_REPORT);
             break;
         case PHASE_INITIATIVE_REPORT:
-            //NOTE: now that aeros can come and go from the battlefield, I need to update the 
+            //NOTE: now that aeros can come and go from the battlefield, I need to update the
             //deployment table every round. I think this it is OK to go here. (Taharqa)
             game.setupRoundDeployment();
             // boolean doDeploy = game.shouldDeployThisRound() &&
@@ -2832,7 +2832,7 @@ public class Server implements Runnable {
                 turn = new GameTurn.EntityClassTurn(player.getId(), GameTurn.CLASS_AERO);
                 turns.addElement(turn);
             }
-            
+
             // Add the calculated number of "even" turns.
             // Allow the player at least one "normal" turn before the
             // "even" turns to help with loading infantry in deployment.
@@ -4211,11 +4211,11 @@ public class Server implements Runnable {
     }
 
     private boolean checkCrash(Entity entity, Coords pos, int elev) {
-        
+
         //only Aeros can crach
         if(!(entity instanceof Aero)) {
             return false;
-        }       
+        }
         //no crashing in space
         if(game.getBoard().inSpace()) {
             return false;
@@ -4227,11 +4227,11 @@ public class Server implements Runnable {
             } else {
                 return false;
             }
-        }       
+        }
         //we must be in atmosphere
         return game.getBoard().getHex(pos).ceiling() >= elev;
     }
-    
+
     //TODO: need to fix calls to this for aero movement on ground maps
     private Vector<Report> processCrash(Entity entity, int vel, Coords c) {
         Vector<Report> vReport = new Vector<Report>();
@@ -4240,17 +4240,17 @@ public class Server implements Runnable {
         if (vel < 1) {
             vel = 1;
         }
-        
+
         int orig_crash_damage = Compute.d6(2) * 10 * vel;
         int crash_damage = orig_crash_damage;
         //first check for buildings
         Building bldg = game.getBoard().getBuildingAt(c);
-        if(null != bldg && bldg.getType() == Building.HARDENED) {
+        if((null != bldg) && (bldg.getType() == Building.HARDENED)) {
             crash_damage *= 2;
         }
         if(null != bldg) {
             vReport.addAll(damageBuilding(bldg, orig_crash_damage, c));
-        }    
+        }
         r = new Report(9700, Report.PUBLIC);
         r.indent();
         r.addDesc(entity);
@@ -4270,7 +4270,7 @@ public class Server implements Runnable {
             }
             crash_damage -= 10;
         }
-        
+
         //if the entity survived they are useless anyway because we have no
         // ground map yet so remove them
         //TODO: need to change this to allow entities to be on the ground
@@ -4281,9 +4281,9 @@ public class Server implements Runnable {
             vReport.add(r);
             entity.setDoomed(true);
         }
-        
+
         //TODO: check for watery death
-        
+
         //ok, now lets cycle through the entities in this spot and potentially damage them
         //TODO: dropships should hurt adjacent hexes and displace further
         //different for dropships and everybody else
@@ -4295,9 +4295,9 @@ public class Server implements Runnable {
             if(victim.getElevation() > 0) {
                 continue;
             }
-            //if the crasher is a dropship and the victim is not a mech, then it is automatically 
+            //if the crasher is a dropship and the victim is not a mech, then it is automatically
             //destroyed
-            if(entity instanceof Dropship && !(victim instanceof Mech)) {
+            if((entity instanceof Dropship) && !(victim instanceof Mech)) {
                 vReport.addAll(destroyEntity(victim, "hit by crashing dropship"));
             } else {
                 //roll dice to see if they got hit
@@ -4330,22 +4330,22 @@ public class Server implements Runnable {
                         }
                         crash_damage -= 5;
                     }
-                    
+
                 } else {
                     r.choose(false);
                     vReport.add(r);
                 }
             }
-            
+
             if (!victim.isDoomed() && !victim.isDestroyed()) {
-                //entity displacement         
+                //entity displacement
                 //TODO: it is unclear in what direction the entities should be displaced, until answered lets make it random
                 //http://www.classicbattletech.com/forums/index.php/topic,53909.new.html#new
                 doEntityDisplacement(victim, c, c.translated(Compute.d6() - 1), new PilotingRollData(victim.getId(), 0, "crash"));
             }
-            
+
         }
-        
+
         //reduce woods
         IHex h = game.getBoard().getHex(c);
         if(h.containsTerrain(Terrains.WOODS)) {
@@ -4380,7 +4380,7 @@ public class Server implements Runnable {
             }
         }
         sendChangedHex(c);
-        
+
         return vReport;
     }
 
@@ -4415,7 +4415,7 @@ public class Server implements Runnable {
         } else {
             fleeDirection = IOffBoardDirections.NORTH;
         }
-        
+
         if(returnable > -1) {
             entity.setDeployed(false);
             entity.setDeployRound(1 + game.getRoundCount() + returnable);
@@ -4440,7 +4440,7 @@ public class Server implements Runnable {
             this.entityUpdate(entity.getId());
             return vReport;
         }
-        
+
         // Is the unit carrying passengers?
         final Vector<Entity> passengers = entity.getLoadedUnits();
         if (!passengers.isEmpty()) {
@@ -4504,7 +4504,7 @@ public class Server implements Runnable {
         send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
         return vReport;
     }
-    
+
     /**
      * Steps through an entity movement packet, executing it.
      */
@@ -4663,7 +4663,7 @@ public class Server implements Runnable {
 
                 //increment straight moves (can't do it at end, because not all steps may be processed)
                 a.setStraightMoves(step.getNStraight());
-                
+
                 // TODO: change the way this check is made
                 if (!didMove && (md.length() != j)) {
                     thrustUsed += step.getMp();
@@ -4905,7 +4905,7 @@ public class Server implements Runnable {
                     // now apply any damage to bay doors
                     entity.resetBayDoors();
                 }
-                
+
                 if (step.getType() == MovePath.STEP_OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     processLeaveMap(entity, true, Compute.roundsUntilReturn(game, entity));
@@ -8897,7 +8897,7 @@ public class Server implements Runnable {
                 if (ah != null) {
                     game.addAttack(ah);
                     //check for aero elevation loss
-                    if(ae instanceof Aero && waa.getAeroElevationLoss(game) > ((Aero)ae).getElevLoss()) {
+                    if((ae instanceof Aero) && (waa.getAeroElevationLoss(game) > ((Aero)ae).getElevLoss())) {
                         ((Aero)ae).setElevLoss(waa.getAeroElevationLoss(game));
                     }
                 }
@@ -10068,7 +10068,7 @@ public class Server implements Runnable {
                 // destroy rotor
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_ROTOR_DESTROYED), false));
             }
-            if((null != te) && te.getQuirks().booleanOption("weak_legs")) {
+            if (te.getQuirks().booleanOption("weak_legs")) {
                 addNewLines();
                 addReport(criticalEntity(te, hit.getLocation(), 0));
             }
@@ -19807,7 +19807,7 @@ public class Server implements Runnable {
             }
         }
     }
-    
+
     /**
      * Report: - Any ammo dumps beginning the following round. - Any ammo dumps
      * that have ended with the end of this round.
@@ -24181,8 +24181,12 @@ public class Server implements Runnable {
      *            Flak, hits flying units only, instead of flyers being immune
      * @param altitude
      *            Absolute altitude for flak attack
+     * @param vPhaseReport
+     *            The Vector of Reports for the phasereport
+     * @param asfFlak
+     *            Is this flak against ASF?
      */
-    void artilleryDamageHex(Coords coords, Coords attackSource, int damage, AmmoType ammo, int subjectId, Entity killer, Entity exclude, boolean flak, int altitude, Vector<Report> vPhaseReport) {
+    void artilleryDamageHex(Coords coords, Coords attackSource, int damage, AmmoType ammo, int subjectId, Entity killer, Entity exclude, boolean flak, int altitude, Vector<Report> vPhaseReport, boolean asfFlak) {
 
         IHex hex = game.getBoard().getHex(coords);
         if (hex == null) {
@@ -24251,9 +24255,15 @@ public class Server implements Runnable {
                 }
             }
 
+            // flak against ASF should only hit Aeros, because their elevation
+            // is actualyl altitude, so shouldn't hit VTOLs
+            if (asfFlak && !(entity instanceof Aero)) {
+                continue;
+            }
+
             if (flak) {
-                // Check: is entity not a VTOL in flight
-                if (!((entity instanceof VTOL) || (entity.getMovementMode() == IEntityMovementMode.VTOL))) {
+                // Check: is entity not a VTOL in flight or an ASF
+                if (!((entity instanceof VTOL) || (entity.getMovementMode() == IEntityMovementMode.VTOL) || (entity instanceof Aero))) {
                     continue;
                 }
                 // Check: is entity at correct elevation?
@@ -24261,8 +24271,8 @@ public class Server implements Runnable {
                     continue;
                 }
             } else {
-                // Check: is entity a VTOL in flight?
-                if ((entity instanceof VTOL) || (entity.getMovementMode() == IEntityMovementMode.VTOL)) {
+                // Check: is entity a VTOL or Aero in flight?
+                if ((entity instanceof VTOL) || (entity.getMovementMode() == IEntityMovementMode.VTOL) || (entity instanceof Aero)) {
                     // VTOLs take no damage from normal artillery unless landed
                     if ((entity.getElevation() != 0) && (entity.getElevation() != hex.terrainLevel(Terrains.BLDG_ELEV)) && (entity.getElevation() != hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
                         continue;
@@ -24389,8 +24399,14 @@ public class Server implements Runnable {
      *            Flak, hits flying units only, instead of flyers being immune
      * @param altitude
      *            Absolute altitude for flak attack
+     * @param mineclear
+     *            Does this clear mines?
+     * @param vPhaseReport
+     *            The Vector of Reports for the phasereport
+     * @param asfFlak
+     *            Is this flak against ASF?
      */
-    public void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer, boolean flak, int altitude, boolean mineClear, Vector<Report> vPhaseReport) {
+    public void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer, boolean flak, int altitude, boolean mineClear, Vector<Report> vPhaseReport, boolean asfFlak) {
         int damage = ammo.getRackSize();
         int falloff = 10;
         if (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
@@ -24426,7 +24442,7 @@ public class Server implements Runnable {
         if (mineClear) {
             falloff = damage;
         }
-        artilleryDamageArea(centre, attackSource, ammo, subjectId, killer, damage, falloff, flak, altitude, vPhaseReport);
+        artilleryDamageArea(centre, attackSource, ammo, subjectId, killer, damage, falloff, flak, altitude, vPhaseReport, asfFlak);
     }
 
     /**
@@ -24451,34 +24467,38 @@ public class Server implements Runnable {
      *            Flak, hits flying units only, instead of flyers being immune
      * @param altitude
      *            Absolute altitude for flak attack
+     * @param vPhaseReport
+     *            The Vector of Reports for the phasereport
+     * @param asfFlak
+     *            Is this flak against ASF?
      */
-    public void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer, int damage, int falloff, boolean flak, int altitude, Vector<Report> vPhaseReport) {
+    public void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer, int damage, int falloff, boolean flak, int altitude, Vector<Report> vPhaseReport, boolean asfFlak) {
         for (int ring = 0; damage > 0; ring++, damage -= falloff) {
             ArrayList<Coords> hexes = Compute.coordsAtRange(centre, ring);
             for (Coords c : hexes) {
-                artilleryDamageHex(c, attackSource, damage, ammo, subjectId, killer, null, flak, altitude, vPhaseReport);
+                artilleryDamageHex(c, attackSource, damage, ammo, subjectId, killer, null, flak, altitude, vPhaseReport, asfFlak);
             }
             attackSource = centre; // all splash comes from ground zero
         }
     }
-    
+
     public void deliverBombDamage(Coords centre, int type, int subjectId, Entity killer, Vector<Report> vPhaseReport) {
-      int range = 0 ;
-      int damage = 10;
-      if(type == BombType.B_CLUSTER) {
-          range = 1;
-          damage = 5;
-      }
-      artilleryDamageHex(centre, centre, damage, null, subjectId, killer, null, false, 0, vPhaseReport);
-      if(range > 0) {
-          ArrayList<Coords> hexes = Compute.coordsAtRange(centre, range);
-          for (Coords c : hexes) {
-              //TODO: should probably generalize the artilleryDamageHex method for bombs and artillery?
-              artilleryDamageHex(c, centre, damage, null, subjectId, killer, null, false, 0, vPhaseReport);
-          } 
-      }
+        int range = 0 ;
+        int damage = 10;
+        if(type == BombType.B_CLUSTER) {
+            range = 1;
+            damage = 5;
+        }
+        artilleryDamageHex(centre, centre, damage, null, subjectId, killer, null, false, 0, vPhaseReport, false);
+        if(range > 0) {
+            ArrayList<Coords> hexes = Compute.coordsAtRange(centre, range);
+            for (Coords c : hexes) {
+                //TODO: should probably generalize the artilleryDamageHex method for bombs and artillery?
+                artilleryDamageHex(c, centre, damage, null, subjectId, killer, null, false, 0, vPhaseReport, false);
+            }
+        }
     }
-    
+
     /**
      * deliver inferno bomb
      *

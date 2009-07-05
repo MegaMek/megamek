@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
@@ -132,7 +133,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();
         final Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
-        boolean isFlak = target instanceof VTOL;
+        boolean isFlak = (target instanceof VTOL) || (target instanceof Aero);
+        boolean asfFlak = target instanceof Aero;
         Entity bestSpotter = null;
         if(ae == null) {
             System.err.println("Artillery Entity is null!");
@@ -389,7 +391,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
         int altitude = 0;
         if (isFlak) {
-            altitude = ((VTOL) target).getElevation();
+            altitude = target.getElevation();
         }
 
         //check to see if this is a mine clearing attack
@@ -417,7 +419,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
 
         server.artilleryDamageArea(coords, ae.getPosition(), atype,
-                subjectId, ae, isFlak, altitude, mineClear, vPhaseReport);
+                subjectId, ae, isFlak, altitude, mineClear, vPhaseReport, asfFlak);
 
         //artillery may unintentially clear minefields, but only if it wasn't trying to
         if(!mineClear && game.containsMinefield(coords)) {

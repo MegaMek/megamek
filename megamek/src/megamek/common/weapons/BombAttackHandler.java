@@ -42,7 +42,7 @@ import megamek.server.Server;
 /**
  * @author Jay Lawson
  */
-public class DiveBombAttackHandler extends WeaponHandler {
+public class BombAttackHandler extends WeaponHandler {
    
 
     /**
@@ -54,7 +54,7 @@ public class DiveBombAttackHandler extends WeaponHandler {
      * @param waa
      * @param g
      */
-    public DiveBombAttackHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+    public BombAttackHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
             Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_NONE;

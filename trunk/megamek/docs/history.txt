@@ -47,6 +47,7 @@ v0.35.4-dev (SVN)
 + Bug: NPE on processCrash
 + Dive bombing
 + Bug: each bomb should roll for scatter separately
++ DiveBombAttackHandler changed to BombAttackHandler
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

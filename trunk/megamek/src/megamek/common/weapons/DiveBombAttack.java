@@ -59,6 +59,6 @@ public class DiveBombAttack extends Weapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new DiveBombAttackHandler(toHit, waa, game, server);
+        return new BombAttackHandler(toHit, waa, game, server);
     }
 }

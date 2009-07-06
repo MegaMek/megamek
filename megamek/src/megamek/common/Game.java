@@ -1577,12 +1577,9 @@ public class Game implements Serializable, IGame {
      * @param start the entity id to start at
      */
     public int getNextEntityNum(GameTurn turn, int start) {
-        boolean startPassed = false;
-        for (Enumeration<Entity> i = entities.elements(); i.hasMoreElements();) {
-            final Entity entity = i.nextElement();
-            if (entity.getId() == start) {
-                startPassed = true;
-            } else if (startPassed && turn.isValidEntity(entity, this)) {
+        for(int i = start; i < entities.size(); i++) {
+            final Entity entity = entities.get(i);
+            if (turn.isValidEntity(entity, this)) {
                 return entity.getId();
             }
         }
@@ -1620,13 +1617,9 @@ public class Game implements Serializable, IGame {
     }
 
     public int getNextDeployableEntityNum(GameTurn turn, int start) {
-        // Repeat the logic from getNextEntityNum.
-        boolean startPassed = false;
-        for (Enumeration<Entity> i = entities.elements(); i.hasMoreElements();) {
-            final Entity entity = i.nextElement();
-            if (entity.getId() == start) {
-                startPassed = true;
-            } else if (startPassed && turn.isValidEntity(entity, this)
+        for(int i = start; i < entities.size(); i++) {
+            final Entity entity = entities.get(i);
+            if(turn.isValidEntity(entity, this)
                     && entity.shouldDeploy(getRoundCount())) {
                 return entity.getId();
             }

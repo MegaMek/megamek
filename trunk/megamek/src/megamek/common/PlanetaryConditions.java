@@ -320,7 +320,7 @@ public class PlanetaryConditions implements Serializable {
                     || (en.getMovementMode() == IEntityMovementMode.HOVER)) {
                 penalty = 2;
             }
-            else if((en instanceof Mech) || (en instanceof Aero)) {
+            else if((en instanceof Mech) || (en.isAirborne())) {
                 penalty = 1;
             }
             break;
@@ -329,7 +329,7 @@ public class PlanetaryConditions implements Serializable {
                     || (en.getMovementMode() == IEntityMovementMode.HOVER)) {
                 penalty = 3;
             }
-            else if(en instanceof Aero) {
+            else if(en.isAirborne()) {
                 penalty = 2;
             }
             break;
@@ -520,7 +520,7 @@ public class PlanetaryConditions implements Serializable {
             }
             break;
         case (WI_TORNADO_F13):
-            if(en instanceof Aero) {
+            if(en.isAirborne()) {
                 mod -= 1;
             }
             else {
@@ -532,17 +532,17 @@ public class PlanetaryConditions implements Serializable {
         //weather mods (clarified in an email exchange with TPTB)
         switch(weatherConditions) {
         case(WE_LIGHT_SNOW):
-            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank)) {
+            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || (en instanceof Aero && !en.isAirborne())) {
                 mod -= 1;
             }
             break;
         case(WE_MOD_SNOW):
-            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank)) {
+            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || (en instanceof Aero && !en.isAirborne())) {
                 mod -= 2;
             }
             break;
         case(WE_HEAVY_SNOW):
-            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank)) {
+            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || (en instanceof Aero && !en.isAirborne())) {
                 mod -= 3;
             }
             break;

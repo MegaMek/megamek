@@ -2613,14 +2613,6 @@ public class Aero extends Entity
         return Compute.ARC_AFT;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Targetable#isAirborne()
-     */
-    public boolean isAirborne() {
-        return getAltitude() > 0 || game.getBoard().inSpace();
-    }
-    
     public int getAltLoss() {
         return altLoss;
     }

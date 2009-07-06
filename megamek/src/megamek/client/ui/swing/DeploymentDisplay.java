@@ -511,17 +511,20 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (ev.getSource().equals(butDone)) {
             ready();
         } else if (ev.getActionCommand().equals(DEPLOY_NEXT)) {
-            ce().setPosition(null);
-            clientgui.bv.redrawEntity(ce());
-            // Unload any loaded units.
-            Enumeration<Entity> iter = ce().getLoadedUnits().elements();
-            while (iter.hasMoreElements()) {
-                Entity other = iter.nextElement();
-                // Please note, the Server never got this unit's load orders.
-                ce().unload(other);
-                other.setTransportId(Entity.NONE);
-                other.newRound(clientgui.getClient().game.getRoundCount());
-            }
+        	//fiX: ce() possible null pointer
+        	if( ce() != null) {
+	            ce().setPosition(null);
+	            clientgui.bv.redrawEntity(ce());
+	            // Unload any loaded units.
+	            Enumeration<Entity> iter = ce().getLoadedUnits().elements();
+	            while (iter.hasMoreElements()) {
+	                Entity other = iter.nextElement();
+	                // Please note, the Server never got this unit's load orders.
+	                ce().unload(other);
+	                other.setTransportId(Entity.NONE);
+	                other.newRound(clientgui.getClient().game.getRoundCount());
+	            }
+        	}
             selectEntity(clientgui.getClient().getNextDeployableEntityNum(cen));
         } else if (ev.getActionCommand().equals(DEPLOY_TURN)) {
             turnMode = true;

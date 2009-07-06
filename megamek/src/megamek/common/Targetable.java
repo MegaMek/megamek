@@ -56,6 +56,11 @@ public interface Targetable extends Serializable {
      *         surface
      */
     public int getElevation();
+    
+    /**
+     * @return altitude of target
+     */
+    public int getAltitude();
 
     /** @return true if the target is immobile (-4 to hit) */
     public boolean isImmobile();
@@ -72,6 +77,15 @@ public interface Targetable extends Serializable {
     /** @return if this is off the board */
     public boolean isOffBoard();
     
-    /** @return if this is airborne */
+    /**
+     * @return Is the entity airborne in the fashion of an aerospace unit?
+     * Does not include VTOL movement (see {@link Targetable#isAirborneVTOL()}
+     */
     public boolean isAirborne();
+    
+    /**
+     * @return is the entity airborne in the fashion of a VTOL
+     * Not used for aerospace units, see {@link Targetable#isAirborne()}
+     */
+    public boolean isAirborneVTOL();
 }

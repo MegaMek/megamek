@@ -4210,7 +4210,7 @@ public class Server implements Runnable {
 
     }
 
-    private boolean checkCrash(Entity entity, Coords pos, int elev) {
+    private boolean checkCrash(Entity entity, Coords pos, int altitude) {
 
         //only Aeros can crach
         if(!(entity instanceof Aero)) {
@@ -4222,14 +4222,14 @@ public class Server implements Runnable {
         }
         //if aero on the ground map, then only crash if elevation is zero
         else if(game.getBoard().onGround()) {
-            if(elev <= 0) {
+            if(altitude <= 0) {
                 return true;
             } else {
                 return false;
             }
         }
         //we must be in atmosphere
-        return game.getBoard().getHex(pos).ceiling() >= elev;
+        return game.getBoard().getHex(pos).ceiling() >= altitude;
     }
 
     //TODO: need to fix calls to this for aero movement on ground maps
@@ -4275,6 +4275,7 @@ public class Server implements Runnable {
         // ground map yet so remove them
         //TODO: need to change this to allow entities to be on the ground
         if (!entity.isDoomed() && !entity.isDestroyed()) {
+        	entity.setAltitude(0);
             r = new Report(9393, Report.PUBLIC);
             r.indent();
             r.addDesc(entity);
@@ -4548,6 +4549,9 @@ public class Server implements Runnable {
         int startElevation = entity.getElevation();
         int curElevation = entity.getElevation();
         int lastElevation = entity.getElevation();
+        int startAltitude = entity.getAltitude();
+        int curAltitude = entity.getAltitude();
+        int lastAltitude = entity.getAltitude();
         // if the entity already used some MPs,
         // it previously tried to get up and fell,
         // and then got another turn. set moveType
@@ -4727,7 +4731,7 @@ public class Server implements Runnable {
                                 processLeaveMap(entity, true, Compute.roundsUntilReturn(game, entity));
                                 return;
                             // make sure it didn't crash
-                            } else if (checkCrash(entity, curPos, step.getElevation())) {
+                            } else if (checkCrash(entity, curPos, step.getAltitude())) {
                                 addReport(processCrash(entity, step.getVelocity(), curPos));
                                 forward = 0;
                                 fellDuringMovement = false;
@@ -4840,7 +4844,7 @@ public class Server implements Runnable {
 
                 // if in the atmosphere, check for a potential crash
 
-                if(checkCrash(entity, step.getPosition(), step.getElevation())) {
+                if(checkCrash(entity, step.getPosition(), step.getAltitude())) {
                     addReport(processCrash(entity, md.getFinalVelocity(), curPos));
                     // don't do the rest
                     break;
@@ -5067,7 +5071,7 @@ public class Server implements Runnable {
                 addReport(r);
                 game.addControlRoll(new PilotingRollData(entity.getId(), 0, "stalled out"));
                 // check for crash
-                if(checkCrash(entity, step.getPosition(), step.getElevation())) {
+                if(checkCrash(entity, step.getPosition(), step.getAltitude())) {
                     addReport(processCrash(entity, 0, curPos));
                     // don't do the rest
                     break;
@@ -5113,6 +5117,7 @@ public class Server implements Runnable {
             // new elevation
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
             curVTOLElevation = step.getElevation();
+            curAltitude = step.getAltitude();
             curElevation = step.getElevation();
             // set elevation in case of collapses
             entity.setElevation(step.getElevation());
@@ -5782,6 +5787,7 @@ public class Server implements Runnable {
             // update lastPos, prevStep, prevFacing & prevHex
             lastPos = new Coords(curPos);
             lastElevation = curElevation;
+            lastAltitude = curAltitude;
             prevStep = step;
             /*
              * Bug 754610: Revert fix for bug 702735. if (prevHex != null &&
@@ -5805,6 +5811,7 @@ public class Server implements Runnable {
         if (!sideslipped && !fellDuringMovement) {
             entity.setElevation(curVTOLElevation);
         }
+        entity.setAltitude(curAltitude);
         entity.setClimbMode(md.getFinalClimbMode());
 
         // add a list of places passed through
@@ -5890,10 +5897,11 @@ public class Server implements Runnable {
                 // assume it occurs
                 // if there was no elevation change during the turn and no hover
                 // step
-                if ((a.isSpheroid() || game.getPlanetaryConditions().isVacuum()) && (startElevation == curElevation) && !md.contains(MovePath.STEP_HOVER)) {
-                    a.setElevation(a.getElevation() - 1);
+                if ((a.isSpheroid() || game.getPlanetaryConditions().isVacuum()) 
+                		&& (startAltitude == curAltitude) && !md.contains(MovePath.STEP_HOVER)) {
+                    a.setAltitude(a.getAltitude() - 1);
                     // check for crash
-                    if(checkCrash(entity, entity.getPosition(), entity.getElevation())) {
+                    if(checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
                         addReport(processCrash(entity, md.getFinalVelocity(), curPos));
                     }
                 }
@@ -8334,19 +8342,20 @@ public class Server implements Runnable {
                 throw new IllegalStateException("Entity #" + entity.getId() + " appears to be in an infinite loop trying to get a legal elevation.");
             }
         } else if (entity instanceof Aero) {
-            //this is a hack, because Aeros elevation is already set in the CustomMechDialog, so it would
+            //this is a hack, because Aeros altitude is already set in the CustomMechDialog, so it would
             //be doubled here
-            entity.setElevation(0);
             if (!game.getBoard().inSpace() ) {
                 // all spheroid craft should have velocity of zero in atmosphere
-                // regardless of
-                // what was entered
+                // regardless of what was entered
                 Aero a = (Aero) entity;
                 if (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()) {
                     a.setCurrentVelocity(0);
                     a.setNextVelocity(0);
                 }
-            } else if (game.getBoard().inSpace()) {
+            } else {
+            	//altitude and elevation don't matter in space
+            	entity.setAltitude(0);
+            	entity.setElevation(0);
                 elevation = 0;
             }
         } else if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
@@ -8897,8 +8906,8 @@ public class Server implements Runnable {
                 if (ah != null) {
                     game.addAttack(ah);
                     //check for aero elevation loss
-                    if((ae instanceof Aero) && (waa.getAeroElevationLoss(game) > ((Aero)ae).getElevLoss())) {
-                        ((Aero)ae).setElevLoss(waa.getAeroElevationLoss(game));
+                    if((ae instanceof Aero) && (waa.getAltitudeLoss(game) > ((Aero)ae).getAltLoss())) {
+                        ((Aero)ae).setAltLoss(waa.getAltitudeLoss(game));
                     }
                 }
             }
@@ -12918,9 +12927,9 @@ public class Server implements Runnable {
                             r.addDesc(entity);
                             r.add(loss);
                             addReport(r);
-                            a.setElevation(a.getElevation() - loss);
+                            a.setAltitude(a.getAltitude() - loss);
                             // check for crash
-                            if (checkCrash(a, a.getPosition(), a.getElevation())) {
+                            if (checkCrash(a, a.getPosition(), a.getAltitude())) {
                                 addReport(processCrash(entity, a.getCurrentVelocity(), a.getPosition()));
                             }
                         }
@@ -14354,9 +14363,9 @@ public class Server implements Runnable {
                                     r.addDesc(e);
                                     r.add(loss);
                                     vReport.add(r);
-                                    a.setElevation(a.getElevation() - loss);
+                                    a.setAltitude(a.getAltitude() - loss);
                                     // check for crash
-                                    if (checkCrash(a, a.getPosition(), a.getElevation())) {
+                                    if (checkCrash(a, a.getPosition(), a.getAltitude())) {
                                         vReport.addAll(processCrash(e, a.getCurrentVelocity(), a.getPosition()));
                                     }
                                 }
@@ -19795,14 +19804,14 @@ public class Server implements Runnable {
             Entity entity = i.nextElement();
             if(entity instanceof Aero) {
                 Aero a = (Aero)entity;
-                if(a.getElevLoss() > 0) {
+                if(a.getAltLoss() > 0) {
                     r = new Report(9095);
                     r.subject = entity.getId();
                     r.addDesc(entity);
-                    r.add(a.getElevLoss());
+                    r.add(a.getAltLoss());
                     addReport(r);
-                    a.setElevation(a.getElevation() - a.getElevLoss());
-                    a.setElevLoss(0);
+                    a.setElevation(a.getElevation() - a.getAltLoss());
+                    a.resetAltLoss();
                     entityUpdate(entity.getId());
                 }
             }

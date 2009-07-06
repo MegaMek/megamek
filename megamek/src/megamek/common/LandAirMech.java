@@ -379,7 +379,7 @@ public class LandAirMech extends BipedMech {
      * @return true iff the mech is flying
      */
     @Override
-    public boolean isFlying() {
+    public boolean isAirborne() {
         return !landed;
     }
 

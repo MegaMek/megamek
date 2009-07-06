@@ -221,10 +221,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private JTextField fldStartVelocity = new JTextField(3);
 
-    private JLabel labStartElevation = new JLabel(Messages
-            .getString("CustomMechDialog.labStartElevation"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JLabel labStartAltitude = new JLabel(Messages
+            .getString("CustomMechDialog.labStartAltitude"), SwingConstants.RIGHT); //$NON-NLS-1$
 
-    private JTextField fldStartElevation = new JTextField(3);
+    private JTextField fldStartAltitude = new JTextField(3);
 
     private JPanel panButtons = new JPanel();
 
@@ -522,8 +522,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panDeploy.add(labStartVelocity, GBC.std());
             panDeploy.add(fldStartVelocity, GBC.eol());
 
-            panDeploy.add(labStartElevation, GBC.std());
-            panDeploy.add(fldStartElevation, GBC.eol());
+            panDeploy.add(labStartAltitude, GBC.std());
+            panDeploy.add(fldStartAltitude, GBC.eol());
         }
 
         panDeploy.add(labDeployment, GBC.std());
@@ -586,8 +586,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     .toString());
             fldStartVelocity.addActionListener(this);
 
-            fldStartElevation.setText(new Integer(a.getElevation()).toString());
-            fldStartElevation.addActionListener(this);
+            fldStartAltitude.setText(new Integer(a.getAltitude()).toString());
+            fldStartAltitude.addActionListener(this);
         }
 
         if (!editable) {
@@ -614,7 +614,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);
             fldStartVelocity.setEnabled(false);
-            fldStartElevation.setEnabled(false);
+            fldStartAltitude.setEnabled(false);
         }
 
         addWindowListener(new WindowAdapter() {
@@ -1809,7 +1809,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             int init = 0;
             int command = 0;
             int velocity = 0;
-            int elev = 0;
+            int altitude = 0;
             int offBoardDistance;
             boolean autoEject = chAutoEject.isSelected();
             try {
@@ -1822,7 +1822,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 command = Integer.parseInt(fldCommandInit.getText());
                 if (entity instanceof Aero) {
                     velocity = Integer.parseInt(fldStartVelocity.getText());
-                    elev = Integer.parseInt(fldStartElevation.getText());
+                    altitude = Integer.parseInt(fldStartAltitude.getText());
                 }
             } catch (NumberFormatException e) {
                 JOptionPane
@@ -1854,12 +1854,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                                             .getString("CustomMechDialog.EnterCorrectVelocity"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                     return;
                 }
-                if ((elev < 1) || (elev > 10)) {
+                if ((altitude < 1) || (altitude > 10)) {
                     JOptionPane
                             .showMessageDialog(
                                     clientgui.frame,
                                     Messages
-                                            .getString("CustomMechDialog.EnterCorrectElevation"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                                            .getString("CustomMechDialog.EnterCorrectAltitude"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                     return;
                 }
             }
@@ -1907,7 +1907,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 Aero a = (Aero) entity;
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
-                a.setElevation(elev);
+                a.setAltitude(altitude);
             }
 
             // If the player wants to swap unit numbers, update both

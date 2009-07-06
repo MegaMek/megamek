@@ -216,6 +216,14 @@ public class Aero extends Entity
         if ( hasModularArmor() ) {
             j--;
         }
+        
+        //if they are not airborne, then they get MP halved (aerodyne) or no MP
+        if(!isAirborne()) {
+        	j = j / 2;
+        	if(isSpheroid()) {
+        		j = 0;
+        	}
+        }
 
         return j;
     }

@@ -804,12 +804,9 @@ public class Compute {
         }
 
         //Account for "dead zones" between Aeros at different altitudes
-        if(Compute.isAirToAir(ae, target)) {
-            int altDiff = Math.abs(ae.getAltitude() - target.getAltitude());           
-            if(altDiff >= (distance - altDiff)) {
+        if(inDeadZone(game, ae, target)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                 "Target in dead zone");
-            }
         }
 
         // find any c3 spotters that could help
@@ -4602,6 +4599,18 @@ public class Compute {
             turns += 2;
         }
         return turns;       
+    }
+    
+    public static boolean inDeadZone(IGame game, Entity ae, Targetable target) {
+    	//Account for "dead zones" between Aeros at different altitudes  	
+        if(Compute.isAirToAir(ae, target)) {
+        	int distance = Compute.effectiveDistance(game, ae, target);
+            int altDiff = Math.abs(ae.getAltitude() - target.getAltitude());           
+            if(altDiff >= (distance - altDiff)) {
+                return true;
+            }
+        }
+        return false;
     }
     
 } // End public class Compute

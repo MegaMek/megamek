@@ -721,7 +721,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             } else if (ce instanceof Tank) {
                 buttonList = buttonsTank;
             } else if (ce instanceof Aero) {
-                buttonList = buttonsAero;
+            	if(ce.isAirborne()) {
+            		buttonList = buttonsAero;
+            	} else {
+            		buttonList = buttonsTank;
+            	}
             }
         }
         // should this layout be skipped? (if nothing enabled)

@@ -77,7 +77,7 @@ public class SmallCraft extends Aero {
          * Unlike other units, ASFs determine potential crits based on the to-hit roll
          * so I need to set this potential value as well as return the to hit data
          */
-
+    	
         int roll = Compute.d6(2);
 
         if((table == ToHitData.HIT_ABOVE) || (table == ToHitData.HIT_BELOW)) {
@@ -318,30 +318,49 @@ public class SmallCraft extends Aero {
                     arc = Compute.ARC_360;
             }
         } else {
-            switch (mounted.getLocation()) {
-            case LOC_NOSE:
-                arc = Compute.ARC_NOSE;
-                break;
-            case LOC_RWING:
-                if(mounted.isRearMounted()) {
-                    arc = Compute.ARC_RIGHTSIDEA_SPHERE;
-                } else {
-                    arc = Compute.ARC_RIGHTSIDE_SPHERE;
-                }
-                break;
-            case LOC_LWING:
-                if(mounted.isRearMounted()) {
-                    arc = Compute.ARC_LEFTSIDEA_SPHERE;
-                } else {
-                    arc = Compute.ARC_LEFTSIDE_SPHERE;
-                }
-                break;
-            case LOC_AFT:
-                arc = Compute.ARC_AFT;
-                break;
-            default:
-                arc = Compute.ARC_360;
-            }
+        	if(game.getBoard().inSpace()) {
+	            switch (mounted.getLocation()) {
+	            case LOC_NOSE:
+	                arc = Compute.ARC_NOSE;
+	                break;
+	            case LOC_RWING:
+	                if(mounted.isRearMounted()) {
+	                    arc = Compute.ARC_RIGHTSIDEA_SPHERE;
+	                } else {
+	                    arc = Compute.ARC_RIGHTSIDE_SPHERE;
+	                }
+	                break;
+	            case LOC_LWING:
+	                if(mounted.isRearMounted()) {
+	                    arc = Compute.ARC_LEFTSIDEA_SPHERE;
+	                } else {
+	                    arc = Compute.ARC_LEFTSIDE_SPHERE;
+	                }
+	                break;
+	            case LOC_AFT:
+	                arc = Compute.ARC_AFT;
+	                break;
+	            default:
+	                arc = Compute.ARC_360;
+	            }
+        	} else {
+        		switch (mounted.getLocation()) {
+	            case LOC_NOSE:
+	                arc = Compute.ARC_360;
+	                break;
+	            case LOC_RWING:
+	                arc = Compute.ARC_RIGHT_SPHERE_GROUND;
+	                break;
+	            case LOC_LWING:
+	                arc = Compute.ARC_LEFT_SPHERE_GROUND;
+	                break;
+	            case LOC_AFT:
+	                arc = Compute.ARC_360;
+	                break;
+	            default:
+	                arc = Compute.ARC_360;
+	            }
+        	}
 
         }
 

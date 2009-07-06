@@ -148,7 +148,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         // check elevation
-        if (target instanceof VTOL && ((VTOL)target).isFlying()) {
+        if (target.isAirborneVTOL()) {
             if (targetElevation - attackerHeight > 2 || targetElevation - attackerHeight < 1) {
                 return "Target elevation not in range";
             }

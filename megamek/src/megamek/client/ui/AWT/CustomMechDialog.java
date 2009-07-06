@@ -153,9 +153,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             .getString("CustomMechDialog.labStartVelocity"), Label.RIGHT); //$NON-NLS-1$
     private TextField fldStartVelocity = new TextField(3);
 
-    private Label labStartElevation = new Label(Messages
-            .getString("CustomMechDialog.labStartElevation"), Label.RIGHT); //$NON-NLS-1$
-    private TextField fldStartElevation = new TextField(3);
+    private Label labStartAltitude = new Label(Messages
+            .getString("CustomMechDialog.labStartAltitude"), Label.RIGHT); //$NON-NLS-1$
+    private TextField fldStartAltitude = new TextField(3);
 
     private Panel panButtons = new Panel();
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
@@ -260,8 +260,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             tempPanel.add(labStartVelocity, GBC.std());
             tempPanel.add(fldStartVelocity, GBC.eol());
 
-            tempPanel.add(labStartElevation, GBC.std());
-            tempPanel.add(fldStartElevation, GBC.eol());
+            tempPanel.add(labStartAltitude, GBC.std());
+            tempPanel.add(fldStartAltitude, GBC.eol());
         }
 
         // Auto-eject checkbox.
@@ -464,8 +464,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     .toString());
             fldStartVelocity.addActionListener(this);
 
-            fldStartElevation.setText(new Integer(a.getElevation()).toString());
-            fldStartElevation.addActionListener(this);
+            fldStartAltitude.setText(new Integer(a.getElevation()).toString());
+            fldStartAltitude.addActionListener(this);
         }
 
         if (!editable) {
@@ -490,7 +490,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);
             fldStartVelocity.setEnabled(false);
-            fldStartElevation.setEnabled(false);
+            fldStartAltitude.setEnabled(false);
 
         }
         scrAll.add(tempPanel);
@@ -1588,7 +1588,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             int init = 0;
             int command = 0;
             int velocity = 0;
-            int elev = 0;
+            int altitude = 0;
             ;
             int offBoardDistance;
             boolean autoEject = chAutoEject.getState();
@@ -1602,7 +1602,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 command = Integer.parseInt(fldCommandInit.getText());
                 if (entity instanceof Aero) {
                     velocity = Integer.parseInt(fldStartVelocity.getText());
-                    elev = Integer.parseInt(fldStartElevation.getText());
+                    altitude = Integer.parseInt(fldStartAltitude.getText());
                 }
             } catch (NumberFormatException e) {
                 new AlertDialog(
@@ -1631,11 +1631,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 return;
             }
 
-            if ((elev < 0) || (elev > 10)) {
+            if ((altitude < 0) || (altitude > 10)) {
                 new AlertDialog(
                         clientgui.frame,
                         Messages
-                                .getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterCorrectElev")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                                .getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterCorrectAltitude")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
 
@@ -1679,7 +1679,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 Aero a = (Aero) entity;
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
-                a.setElevation(elev);
+                a.setAltitude(altitude);
             }
 
             // If the player wants to swap unit numbers, update both

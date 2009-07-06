@@ -340,6 +340,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * 3.
      */
     protected int elevation = 0;
+    
+    /**
+     * altitude is different from elevation. It is used to measure the vertical distance 
+     * of Aero units from the ground on low atmosphere and ground maps.  
+     */
+    protected int altitude = 0;
 
     /**
      * 2 vectors holding entity and weapon ids. to see who hit us this round
@@ -1100,13 +1106,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             break;
         case IEntityMovementMode.AERODYNE:
         case IEntityMovementMode.SPHEROID:
-            if (!game.getBoard().inSpace()) {
-                altitude = assumedElevation;
-                minAlt = hex.ceiling() + 1;
-                // if sensors are damaged then, one higher
-                if (((Aero) this).getSensorHits() > 0) {
-                    minAlt++;
-                }
+            altitude = assumedElevation;
+            if (game.getBoard().inAtmosphere()) {
+                minAlt = hex.ceiling() + 1;         
+            } else if (game.getBoard().onGround() && isAirborne()) {
+            	minAlt = 1;
+            }
+            //if sensors are damaged then, one higher
+            if (((Aero) this).getSensorHits() > 0) {
+                minAlt++;
             }
             break;
         case IEntityMovementMode.SUBMARINE:
@@ -7370,10 +7378,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return roll;
     }
 
-    /**
-     * returns true if the entity is flying.
-     */
-    public boolean isFlying() {
+    public boolean isAirborneVTOL() {
         // stuff that moves like a VTOL is flying unless at elevation 0 or on
         // top of/in a building,
         if (getMovementMode() == IEntityMovementMode.VTOL) {
@@ -7384,7 +7389,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return false;
     }
-
+    
     public void setSpotTargetId(int targetId) {
         spotTargetId = targetId;
     }
@@ -8577,10 +8582,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-" + maxSensorRange + ")";     
     }
     
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Targetable#isAirborne()
-     */
     public boolean isAirborne() {
         return false;
     }
@@ -8594,10 +8595,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return false;
         }
         if (game.getBoard().inAtmosphere()) {
-               return (1 == (getElevation() - game.getBoard().getHex(getPosition()).ceiling())); 
+               return (1 == (getAltitude() - game.getBoard().getHex(getPosition()).ceiling())); 
         }
         if(game.getBoard().onGround()) {
-            return 1 == getElevation();
+            return 1 == getAltitude();
         }
         return false;
     }
@@ -8611,5 +8612,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     
     public void setStartingPos(int i) {
         this.startingPos = i;
+    }
+    
+    public int getAltitude() {
+    	if(isAirborneVTOL()) {
+    		return 1;
+    	}
+    	return altitude;
+    }
+    
+    public void setAltitude(int a) {
+    	this.altitude = a;
     }
 }

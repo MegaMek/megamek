@@ -2658,7 +2658,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Target not in arc.";
         }
         
-        //for air to ground attacks, the target's position must be within the flight path
         if(Compute.isAirToGround(ae, target)) {
             if(ae.getAltitude() > 5) { 
                 return "attacker is too high";
@@ -2676,6 +2675,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
             
+            //for air to ground attacks, the target's position must be within the flight path
             if(!ae.passedThrough(target.getPosition())) {
                 return "target not along flight path";
             }
@@ -2690,7 +2690,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
                 WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
                 if (prevAttack.getEntityId() == ae.getId() && null != te && prevAttack.getTargetId() != te.getId()) {
-                    return "air-to-ground strike attack already declared against another target";
+                    return "attack already declared against another target";
                 }
             }
         }
@@ -2719,6 +2719,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
         if(target.getAltitude() > 8 && Compute.isGroundToAir(ae, target)) {
             return "cannot target aero units beyond altitude 8";
+        }
+        
+        if(ae instanceof Infantry && Compute.isGroundToAir(ae, target)) {
+        	return "Infantry cannot engage in ground-to-air attacks";
         }
 
         // Protomech can fire MGA only into front arc, TW page 137

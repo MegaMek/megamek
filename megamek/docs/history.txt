@@ -53,6 +53,7 @@ v0.35.4-dev (SVN)
 + Bug 2816516: Dive Bombing subtracts levels all the time 0.35.4-dev
 + Bug: Aeros on ground map checking for passing through buildings
 + Aeros use altitudes not elevations
++ Infantry cannot make ground-to-air attacks
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

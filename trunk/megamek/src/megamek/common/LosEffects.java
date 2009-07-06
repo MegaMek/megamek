@@ -285,11 +285,6 @@ public class LosEffects {
         } else {
             targEl = game.getBoard().getHex(target.getPosition()).surface();
         }
-        if(Compute.isGroundToAir(ae, target)) {
-            //HACK!!
-            //make sure that the elevation is set really high for flying aeros, so no terrain interference
-            targEl = 999;
-        }
 
 
         ai.attackAbsHeight = attEl;

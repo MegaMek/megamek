@@ -100,4 +100,16 @@ public class MinefieldTarget implements Targetable {
     public boolean isAirborne() {
         return false;
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Targetable#isAirborneVTOL()
+     */
+    public boolean isAirborneVTOL() {
+        return false;
+    }
+    
+    public int getAltitude() {
+    	return 0;
+    }
 }

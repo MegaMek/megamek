@@ -170,7 +170,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         return Compute.isGroundToAir(getEntity(game), getTarget(game));
     }
     
-    public int getAeroElevationLoss(IGame game) {
+    public int getAltitudeLoss(IGame game) {
         if(isAirToGround(game)) {
             if(((WeaponType)getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_DIVE_BOMB)) {
                 return 2;
@@ -738,12 +738,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
 
             // check for NOE
-            if (Compute.isAirToAir(ae, target) && ae.isNOE()) {
-                if (ae.isOmni()) {
-                    toHit.addModifier(+1, "attacker is flying at NOE (omni)");
-                } else {
-                    toHit.addModifier(+2, "attacker is flying at NOE");
-                }
+            if (Compute.isAirToAir(ae, target)) {
+            	if(target.isAirborneVTOL()) {
+            		toHit.addModifier(+5, "targeting non-aerospace airborne unit");
+            	}
+            	if(ae.isNOE()) {
+	                if (ae.isOmni()) {
+	                    toHit.addModifier(+1, "attacker is flying at NOE (omni)");
+	                } else {
+	                    toHit.addModifier(+2, "attacker is flying at NOE");
+	                }
+            	}
             }
             if(Compute.isGroundToAir(ae, target) && null != te && te.isNOE()) {
                 if(te.passedWithin(ae.getPosition(), 1)) {
@@ -1140,8 +1145,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
         if (target instanceof LandAirMech) {
             lam = (LandAirMech) target;
-            if (lam.isInMode(LandAirMech.MODE_AIRMECH) && lam.isFlying()) {
-                if (ae.isFlying()) {
+            if (lam.isInMode(LandAirMech.MODE_AIRMECH) && target.isAirborne()) {
+                if (ae.isAirborne()) {
                     toHit.addModifier(-1, "Target is a flying Airmek"); // and
                     // we
                     // are
@@ -1264,7 +1269,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
 
         if(ae.getQuirks().booleanOption("anti_air") && (target instanceof Entity)) {
-            if(((target instanceof VTOL) || (target instanceof Aero)) && (target.getElevation() > 0)) {
+            if(target.isAirborneVTOL() || target.isAirborne()) {
                 toHit.addModifier(-2, "anti-air targetting system vs. aerial unit");
             }
         }
@@ -1496,26 +1501,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         // ammo to-hit modifier
+        //TODO: shouldn't this use the Entity#isFlying() method?
         if ((te != null)
-                && ((te.getMovementMode() == IEntityMovementMode.VTOL)
-                        || (te.getMovementMode() == IEntityMovementMode.AERODYNE)
-                        || (te.getMovementMode() == IEntityMovementMode.AIRMECH)
-                        || (te.getMovementMode() == IEntityMovementMode.AEROSPACE)
-                        || (te.getMovementMode() == IEntityMovementMode.SPHEROID) || (te
-                        .getMovementMode() == IEntityMovementMode.WIGE))
+                && (te.isAirborne() || te.isAirborneVTOL())
                 && (atype != null)
                 && ((((atype.getAmmoType() == AmmoType.T_AC_LBX)
                         || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
                         || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
                         && (atype.getMunitionType() == AmmoType.M_CLUSTER))
                     || (atype.getMunitionType() == AmmoType.M_FLAK)
-                    || (atype.getAmmoType() == AmmoType.T_HAG))
-                   && (te.getElevation() > 0)
-                && (te.getElevation() > game.getBoard().getHex(te.getPosition())
-                        .terrainLevel(Terrains.BLDG_ELEV))
-                && (te.getElevation() != game.getBoard()
-                        .getHex(te.getPosition()).terrainLevel(
-                                Terrains.BRIDGE_ELEV))) {
+                    || (atype.getAmmoType() == AmmoType.T_HAG))) {
             toHit.addModifier(-2, "flak to-hit modifier");
         }
         if (usesAmmo && (atype.getToHitModifier() != 0)) {
@@ -1527,7 +1522,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && (atype.getAmmoType() == AmmoType.T_AAA_MISSILE || atype.getAmmoType() == AmmoType.T_LAA_MISSILE) 
                 && Compute.isAirToGround(ae, target)) {
             toHit.addModifier(+4, "AAA missile at ground target");
-            if(ae.getElevation() < 4) {
+            if(ae.getAltitude() < 4) {
                 toHit.addModifier(+3, "AAA missile below altitude 4");
             }
         }
@@ -1863,7 +1858,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // tasers only at non-flying units
         if (wtype.hasFlag(WeaponType.F_TASER)) {
             if (te != null) {
-                if (te.isFlying()) {
+                if (te.isAirborne() || te.isAirborneVTOL()) {
                     return "Tasers can't be fired at flying units.";
                 }
             } else {
@@ -1995,7 +1990,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Weapon can only deliver flares";
         }
 
-        if(wtype.hasFlag(WeaponType.F_ANTI_SHIP) && !game.getBoard().inSpace() && (ae.getElevation() < 4)) {
+        if(wtype.hasFlag(WeaponType.F_ANTI_SHIP) && !game.getBoard().inSpace() && (ae.getAltitude() < 4)) {
             return "Anti-ship missiles can only be used above elevation 3";
         }
 
@@ -2028,7 +2023,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     && !isArtilleryFLAK) {
                 return "Weapon must make artillery attacks.";
             }
-            if (ae.isFlying()) {
+            if (ae.isAirborne() || ae.isAirborneVTOL()) {
                 if (isArtilleryDirect) {
                     return "Flying units can't make direct-fire artillery attacks";
                 } else if (isArtilleryIndirect && (atype.getAmmoType() != AmmoType.T_ARROW_IV)) {
@@ -2519,7 +2514,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // BA Micro bombs only when flying
         if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
-            if (!ae.isFlying()) {
+            if (!ae.isAirborneVTOL()) {
                 return "attacker must be at least at elevation 1";
             } else if (target.getTargetType() != Targetable.TYPE_HEX_BOMB) {
                 return "must target hex with bombs";
@@ -2546,10 +2541,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if(!ae.isAirborne()) {
                 return "no dive bombing for grounded units";
             }         
-            if(ae.getElevation() > 5) {
+            if(ae.getAltitude() > 5) {
                 return "no dive bombing above altitude 5";
             }          
-            if(ae.getElevation() < 3) {
+            if(ae.getAltitude() < 3) {
                 return "no dive bombing below altitude 3";
             }
             if(target.getTargetType() != Targetable.TYPE_HEX_DIVE_BOMB) {
@@ -2665,7 +2660,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         
         //for air to ground attacks, the target's position must be within the flight path
         if(Compute.isAirToGround(ae, target)) {
-            if(ae.getElevation() > 5) { 
+            if(ae.getAltitude() > 5) { 
                 return "attacker is too high";
             }
             //only certain weapons can be used for air to ground attacks
@@ -2722,7 +2717,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         }
-        if(target.getElevation() > 8 && Compute.isGroundToAir(ae, target)) {
+        if(target.getAltitude() > 8 && Compute.isGroundToAir(ae, target)) {
             return "cannot target aero units beyond altitude 8";
         }
 
@@ -2736,7 +2731,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         //at units two elevations different
         //TODO: awaiting rules clarification on forums
         if((ae instanceof Aero) && ((Aero)ae).isSpheroid() && game.getBoard().inAtmosphere()) {
-            int altDif = ae.getElevation() - target.getElevation();
+            int altDif = ae.getAltitude() - target.getAltitude();
             if((weapon.getLocation() == Aero.LOC_NOSE) && (altDif > -3)) {
                 return "Target is too low";
             }

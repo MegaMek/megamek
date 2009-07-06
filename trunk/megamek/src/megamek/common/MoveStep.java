@@ -52,6 +52,7 @@ public class MoveStep implements Serializable {
     private int leapDistance;
 
     private int elevation = -999;
+    private int altitude = -999;
 
     private int mineToLay = -1;
 
@@ -100,7 +101,7 @@ public class MoveStep implements Serializable {
     private boolean freeTurn = false;
     //how many hexes straight has the unit traveled
     private int nStraight = 0;
-    //how many elevations down
+    //how many altitude down
     private int nDown = 0;
     //how many hexes moved in this velocity "chunk" (for aero on ground maps)
     private int nMoved = 0;
@@ -383,7 +384,7 @@ public class MoveStep implements Serializable {
 
         //need to reduce velocity left for aerospace units (and also reset nTurns)
         //this is handled differently by aerospace units operating on the ground map and by spheroids in atmosphere
-        if((entity instanceof Aero) && getElevation() > 0 && game.getBoard().onGround()) {
+        if(entity.isAirborne() && game.getBoard().onGround()) {
             setNMoved(getNMoved() + 1);
             if(entity.getMovementMode() != IEntityMovementMode.SPHEROID && getNMoved() >= 16) {
                     setVelocityLeft(getVelocityLeft() - 1);
@@ -661,27 +662,25 @@ public class MoveStep implements Serializable {
             case MovePath.STEP_START_JUMP:
                 break;
             case MovePath.STEP_UP:
-                setElevation(elevation + 1);
-                if(entity instanceof Aero) {
-                    setMp(2);
+            	if(entity instanceof Aero) {
+            		setAltitude(altitude + 1);
+            		setMp(2);
+                } else if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
+                	setMp(5);
                 } else {
                     setMp(parent.isJumping()?0:1);
-                }
-                if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
-                    setMp(5);
                 }
                 break;
             case MovePath.STEP_DOWN:
-                setElevation(elevation - 1);
-                if(entity instanceof Aero) {
-                    //it costs nothing (and may increase velocity)
+            	if(entity instanceof Aero) {
+            		setAltitude(altitude - 1);
+            		//it costs nothing (and may increase velocity)
                     setMp(0);
                     setNDown(getNDown() + 1);
-                } else {
+            	} else if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
+            		setMp(0);
+            	} else {
                     setMp(parent.isJumping()?0:1);
-                }
-                if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
-                    setMp(0);
                 }
                 break;
             case MovePath.STEP_HULL_DOWN:
@@ -791,7 +790,7 @@ public class MoveStep implements Serializable {
                 setMp(2);
                 break;
             case MovePath.STEP_STALL:
-                setElevation(getElevation() - 1);
+                setAltitude(getAltitude() - 1);
                 setMp(0);
                 break;
             case MovePath.STEP_HOVER:
@@ -843,6 +842,10 @@ public class MoveStep implements Serializable {
     public void setElevation(int el) {
         elevation = el;
     }
+    
+    public void setAltitude(int alt) {
+        altitude = alt;
+    }
 
     /**
      * Takes the given state as the previous state and sets flags from it.
@@ -872,7 +875,7 @@ public class MoveStep implements Serializable {
         isRunProhibited = prev.isRunProhibited;
         hasEverUnloaded = prev.hasEverUnloaded;
         elevation = prev.elevation;
-        elevation = prev.elevation;
+        altitude = prev.altitude;
         velocity = prev.velocity;
         velocityN = prev.velocityN;
         velocityLeft = prev.velocityLeft;
@@ -899,12 +902,13 @@ public class MoveStep implements Serializable {
         mpUsed = entity.mpUsed;
         distance = entity.delta_distance;
         isProne = entity.isProne();
-        isFlying = entity.isFlying();
+        isFlying = entity.isAirborne() || entity.isAirborneVTOL();
         isHullDown = entity.isHullDown();
         climbMode = entity.climbMode();
         thisStepBackwards = entity.inReverse;
 
         elevation = entity.getElevation();
+        altitude = entity.getAltitude();
         movementType = entity.moved;
 
         isRolled = false;
@@ -1501,7 +1505,7 @@ public class MoveStep implements Serializable {
             if ((type == MovePath.STEP_FORWARDS) && game.getBoard().inAtmosphere()
                     && !a.isOutControl()) {
                 IHex desth = game.getBoard().getHex(getPosition());
-                if (elevation<=desth.ceiling()) {
+                if (altitude<=desth.ceiling()) {
                     return; //can't fly into a cliff face or woods (unless out of control)
                 }
             }
@@ -2547,6 +2551,10 @@ public class MoveStep implements Serializable {
 
     public int getElevation() {
         return elevation;
+    }
+    
+    public int getAltitude() {
+        return altitude;
     }
 
     public int getMineToLay() {

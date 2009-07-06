@@ -3448,7 +3448,14 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 && !entity.canChangeSecondaryFacing();
                 ge = true;
             }
-            if(entity.getElevation() > 0) {
+            if(entity.isAirborne()) {
+            	if(!game.getBoard().inSpace()) {
+            		graph.setColor(Color.darkGray);
+                    graph.drawString(Integer.toString(entity.getAltitude()) + "A", 26, 15);
+                    graph.setColor(Color.PINK);
+                    graph.drawString(Integer.toString(entity.getAltitude()) + "A", 25, 14);
+            	}
+            } else if(entity.getElevation() > 0) {
                 graph.setColor(Color.darkGray);
                 graph.drawString(Integer.toString(entity.getElevation()), 26, 15);
                 graph.setColor(Color.PINK);
@@ -4283,10 +4290,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if ((step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
                     || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)
                     || (step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_WALK)
-                    || (step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN)
-                    || (step.getElevation() != 0)) {
+                    || (step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN)) {
                 costStringBuf.append("{").append(step.getElevation()).append(
                 "}");
+            }
+            
+            if(step.getParent().getEntity().isAirborne()) {
+            	costStringBuf.append("{").append(step.getAltitude()).append("}");
             }
 
             // Convert the buffer to a String and draw it.

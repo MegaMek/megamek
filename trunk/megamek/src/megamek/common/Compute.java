@@ -805,7 +805,7 @@ public class Compute {
 
         //Account for "dead zones" between Aeros at different altitudes
         if(Compute.isAirToAir(ae, target)) {
-            int altDiff = Math.abs(ae.getElevation() - target.getElevation());           
+            int altDiff = Math.abs(ae.getAltitude() - target.getAltitude());           
             if(altDiff >= (distance - altDiff)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                 "Target in dead zone");
@@ -946,15 +946,21 @@ public class Compute {
         // If the attack is completely inside a building, add the difference
         // in elevations between the attacker and target to the range.
         // TODO: should the player be explcitly notified?
-        //also for Aeros in atmosphere
-        if (Compute.isInSameBuilding(game, attacker, target)  
-                || Compute.isAirToAir(attacker, target)) {
+        if (Compute.isInSameBuilding(game, attacker, target)) {
             int aElev = attacker.getElevation();
             int tElev = target.getElevation();
             distance += Math.abs(aElev - tElev);
         }
+        
+        //air-to-air attacks add one for altitude differences
+        if (Compute.isAirToAir(attacker, target)) {
+            int aAlt = attacker.getAltitude();
+            int tAlt = target.getAltitude();
+            distance += Math.abs(aAlt - tAlt);
+        }
+        
         if(Compute.isGroundToAir(attacker, target)) {
-            distance += (2 * target.getElevation());
+            distance += (2 * target.getAltitude());
         }
 
         return distance;
@@ -4551,11 +4557,13 @@ public class Compute {
     }
     
     public static boolean isAirToGround(Entity attacker, Targetable target) {
-        return attacker.isAirborne() && !target.isAirborne();
+        return attacker.isAirborne() && !target.isAirborne() && !target.isAirborneVTOL() ;
     }
     
     public static boolean isAirToAir(Entity attacker, Targetable target) {
-        return attacker.isAirborne() && target.isAirborne();
+        return (attacker.isAirborne() && target.isAirborne()) 
+        	|| (attacker.isAirborne() && target.isAirborneVTOL()) 
+        	|| (attacker.isAirborneVTOL() && target.isAirborne());
     }
     
     public static boolean isGroundToAir(Entity attacker, Targetable target) {

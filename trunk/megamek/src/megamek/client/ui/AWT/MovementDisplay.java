@@ -1640,6 +1640,15 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             setLowerEnabled(false);
             return;
         }
+        
+        if(ce.isAirborne()) {
+        	//then use altitude not elevation
+        	setRaiseEnabled(ce.canGoUp(cmd.getFinalAltitude(), cmd
+                    .getFinalCoords()));
+            setLowerEnabled(ce.canGoDown(cmd.getFinalAltitude(), cmd
+                    .getFinalCoords()));
+            return;
+        }
 
         setRaiseEnabled(ce.canGoUp(cmd.getFinalElevation(), cmd.getFinalCoords()));
         setLowerEnabled(ce.canGoDown(cmd.getFinalElevation(), cmd.getFinalCoords()));
@@ -3003,17 +3012,17 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             Aero a = (Aero) ce;
             MoveStep last = cmd.getLastStep();
             int vel = a.getCurrentVelocity();
-            int elev = a.getElevation();
+            int altitude = a.getAltitude();
             Coords pos = a.getPosition();
             int distance = 0;
             if (null != last) {
                 vel = last.getVelocityLeft();
-                elev = last.getElevation();
+                altitude = last.getAltitude();
                 pos = last.getPosition();
                 distance = last.getDistance();
             }
             int ceil = client.game.getBoard().getHex(pos).ceiling();
-            choiceDialog.checkPerformability(vel, elev, ceil, a.isVSTOL(), distance);
+            choiceDialog.checkPerformability(vel, altitude, ceil, a.isVSTOL(), distance);
             choiceDialog.setVisible(true);
             int manType = choiceDialog.getChoice();
             if ((manType > ManeuverType.MAN_NONE) && addManeuver(manType)) {

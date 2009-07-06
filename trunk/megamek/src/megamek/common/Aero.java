@@ -126,8 +126,8 @@ public class Aero extends Entity
     //track straight movement from last turn
     private int straightMoves = 0;
     
-    //are we tracking any elevation loss due to air-to-ground assaults
-    private int elevLoss = 0;
+    //are we tracking any altitude loss due to air-to-ground assaults
+    private int altLoss = 0;
     
     private boolean spheroid = false;
 
@@ -191,6 +191,11 @@ public class Aero extends Entity
 
     private int eccmRoll = 0;
 
+    public Aero() {
+    	//need to set altitude to something different than entity
+    	altitude = 5;
+    }
+    
     /**
     * Returns this entity's safe thrust, factored
     * for heat, extreme temperatures, gravity, and bomb load.
@@ -2613,18 +2618,37 @@ public class Aero extends Entity
      * @see megamek.common.Targetable#isAirborne()
      */
     public boolean isAirborne() {
-        return getElevation() > 0 || game.getBoard().inSpace();
+        return getAltitude() > 0 || game.getBoard().inSpace();
     }
     
-    public int getElevLoss() {
-        return elevLoss;
+    public int getAltLoss() {
+        return altLoss;
     }
     
-    public void setElevLoss(int i) {
-        this.elevLoss = i;
+    public void setAltLoss(int i) {
+        this.altLoss = i;
     }
     
-    public void resetElevLoss() {
-        this.elevLoss = 0;
+    public void resetAltLoss() {
+        this.altLoss = 0;
+    }
+    
+    @Override
+    public int getElevation() {  	
+    	if(game.getBoard().inSpace()) {
+    		return 0;
+    	}
+    	//Altitude is not the same as elevation. If an aero is at 0 altitude, then it is 
+    	//grounded and uses elevation normally. Otherwise, just set elevation to a very 
+    	//large number so that a flying aero won't interact with the ground maps in any way
+    	if(isAirborne()) {
+    		return 999;
+    	}
+    	return super.getElevation();
+    }
+    
+    @Override
+    public boolean canGoDown() {
+        return canGoDown(altitude, getPosition());
     }
 }

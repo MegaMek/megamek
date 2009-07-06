@@ -417,6 +417,16 @@ public class MovePath implements Cloneable, Serializable {
         }
         return entity.getElevation();
     }
+    
+    /**
+     * get final altitude 
+     */
+    public int getFinalAltitude() {
+        if (getLastStep() != null) {
+            return getLastStep().getAltitude();
+        }
+        return entity.getAltitude();
+    }
 
     public int getFinalVelocity() {
         if (getLastStep() != null) {
@@ -628,7 +638,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     public boolean isFlying() {
         if (entity instanceof LandAirMech) {
-            boolean flying = entity.isFlying();
+            boolean flying = entity.isAirborne();
             for (MoveStep step : steps) {
                 if (step.getType() == STEP_TAKEOFF) {
                     flying = true;

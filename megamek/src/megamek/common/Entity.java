@@ -8583,7 +8583,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
     
     public boolean isAirborne() {
-        return false;
+        return getMovementMode() == IEntityMovementMode.AERODYNE || getMovementMode() == IEntityMovementMode.SPHEROID;
     }
     
     /**

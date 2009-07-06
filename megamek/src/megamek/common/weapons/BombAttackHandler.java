@@ -209,6 +209,6 @@ public class BombAttackHandler extends WeaponHandler {
             }
         }
         
-        return !bMissed;
+        return false;
     }
 }

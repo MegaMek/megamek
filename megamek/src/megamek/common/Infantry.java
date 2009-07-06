@@ -210,6 +210,14 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat) {
+    	if( game != null
+    			&& game.getOptions().booleanOption("tacops_fast_infantry_move") ) {
+    		if(getWalkMP(gravity, ignoreheat) > 0) {
+    			return getWalkMP(gravity, ignoreheat) + 1;
+    		} else {
+    			return getWalkMP(gravity, ignoreheat) + 2;
+    		}
+    	}
         return getWalkMP(gravity, ignoreheat);
     }
 
@@ -842,6 +850,16 @@ public class Infantry extends Entity implements Serializable {
             return false;
         }
         return super.isEligibleFor(phase);
+    }
+    
+    public boolean isEligibleForFiring() {
+    	if(game.getOptions().booleanOption("tacops_fast_infantry_move")
+    			&& super.isEligibleForFiring()) {
+    		if(getMovementMode() == IEntityMovementType.MOVE_RUN) {
+    			return false;
+    		}
+    	}
+    	return super.isEligibleForFiring();
     }
 
     @Override

@@ -176,6 +176,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, "tacops_taking_damage", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_leg_damage", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_walk_backwards", false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, "tacops_fast_infantry_move", false);  //$NON-NLS-1$
         addOption(advancedGroundMovement, "vehicle_lance_movement", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "vehicle_lance_movement_number", 4); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_hull_down", false); //$NON-NLS-1$

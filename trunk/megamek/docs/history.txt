@@ -54,6 +54,7 @@ v0.35.4-dev (SVN)
 + Bug: Aeros on ground map checking for passing through buildings
 + Aeros use altitudes not elevations
 + Infantry cannot make ground-to-air attacks
++ Bug 2817241: Dive Bombing Keeps Dropping Bombs after attack 0.35.4-dev
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

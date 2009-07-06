@@ -3129,7 +3129,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 return;
             }
             
-            if(!(step.getParent().getEntity() instanceof Aero)) {
+            if(!step.getParent().getEntity().isAirborne()) {
                 return;
             }
             

@@ -390,7 +390,7 @@ public class MoveStep implements Serializable {
                     setVelocityLeft(getVelocityLeft() - 1);
                     setNMoved(0);
             }
-        } else if((entity instanceof Aero) && !game.useVectorMove() && !useSpheroidAtmosphere(game, entity)) {
+        } else if(entity.isAirborne() && !game.useVectorMove() && !useSpheroidAtmosphere(game, entity)) {
             setVelocityLeft(getVelocityLeft() - 1);
             setNTurns(0);
         }   
@@ -489,8 +489,8 @@ public class MoveStep implements Serializable {
             }
         }
 
-        //if this is an aero, then there is no MP cost for moving
-        if(entity instanceof Aero) {
+        //if this is a flying aero, then there is no MP cost for moving
+        if(entity.isAirborne()) {
             setMp(0);
             //if this a spheroid in atmosphere then the cost is always two
             if(useSpheroidAtmosphere(game, entity)) {
@@ -582,7 +582,7 @@ public class MoveStep implements Serializable {
                 // Infantry can turn for free.
                 setMp((parent.isJumping() || isHasJustStood() || isInfantry) ? 0
                         : 1);
-                if(entity instanceof Aero) {
+                if(entity.isAirborne()) {
                     setMp(asfTurnCost(game, getType(), entity));
                     setNTurns(getNTurns() + 1);
 
@@ -609,7 +609,7 @@ public class MoveStep implements Serializable {
                 compileMove(game, entity, prev);
                 break;
             case MovePath.STEP_CHARGE :
-                if(!(entity instanceof Aero) || !game.useVectorMove()) {
+                if(!(entity.isAirborne()) || !game.useVectorMove()) {
                     moveInDir(getFacing());
                     setThisStepBackwards(false);
                     compileMove(game, entity, prev);
@@ -622,7 +622,7 @@ public class MoveStep implements Serializable {
                 setThisStepBackwards(true);
                 setRunProhibited(true);
                 compileMove(game, entity, prev);
-                if(entity instanceof Aero) {
+                if(entity.isAirborne()) {
                     setMp(0);
                 } else {
                     setMp(getMp() + 1); //+1 for side step
@@ -634,7 +634,7 @@ public class MoveStep implements Serializable {
                         .turnForLateralShift(getType())));
                 setThisStepBackwards(false);
                 compileMove(game, entity, prev);
-                if(entity instanceof Aero) {
+                if(entity.isAirborne()) {
                     setMp(0);
                 } else {
                     setMp(getMp() + 1); //+1 for side step
@@ -662,7 +662,7 @@ public class MoveStep implements Serializable {
             case MovePath.STEP_START_JUMP:
                 break;
             case MovePath.STEP_UP:
-            	if(entity instanceof Aero) {
+            	if(entity.isAirborne()) {
             		setAltitude(altitude + 1);
             		setMp(2);
                 } else if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
@@ -672,7 +672,7 @@ public class MoveStep implements Serializable {
                 }
                 break;
             case MovePath.STEP_DOWN:
-            	if(entity instanceof Aero) {
+            	if(entity.isAirborne()) {
             		setAltitude(altitude - 1);
             		//it costs nothing (and may increase velocity)
                     setMp(0);
@@ -752,7 +752,7 @@ public class MoveStep implements Serializable {
                 break;
             case MovePath.STEP_EVADE:
                 setEvading(true);
-                if(entity instanceof Aero) {
+                if(entity.isAirborne()) {
                     setMp(2);
                 }
                 break;
@@ -1437,7 +1437,8 @@ public class MoveStep implements Serializable {
 
         //AERO STUFF
         //I am going to put in a whole seperate section for Aeros and just return from it
-        if (entity instanceof Aero) {
+        //only if Aeros are airborne, otherwise they should move like other units
+        if (entity.isAirborne()) {
             int tmpSafeTh = entity.getWalkMP();
             Aero a = (Aero)entity;
 
@@ -2850,8 +2851,12 @@ public class MoveStep implements Serializable {
         if(((Aero)en).isSpheroid()) {
             return false;
         }
-        //are we in atmosphere?
-        return (game.getBoard().inAtmosphere()|| (game.getBoard().onGround() && getElevation() > 0)) && !game.getPlanetaryConditions().isVacuum();
+        //are we in space?
+        if(game.getBoard().inSpace()) {
+        	return false;
+        }
+        //are we airborne in non-vacuum?
+        return en.isAirborne() && !game.getPlanetaryConditions().isVacuum();
     }
 
     /**
@@ -2863,13 +2868,17 @@ public class MoveStep implements Serializable {
     private boolean useSpheroidAtmosphere(IGame game, Entity en) {
         if(!(en instanceof Aero)) {
             return false;
+        } 
+        //are we in space?
+        if(game.getBoard().inSpace()) {
+        	return false;
         }
         //aerodyne's will operate like spheroids in vacuum
         if(!((Aero)en).isSpheroid() && !game.getPlanetaryConditions().isVacuum()) {
             return false;
         }
         //are we in atmosphere?
-        return (game.getBoard().inAtmosphere() || (game.getBoard().onGround() && getElevation() > 0));
+        return en.isAirborne();
         
     }
     

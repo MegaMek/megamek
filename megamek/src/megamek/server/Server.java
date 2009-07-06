@@ -4661,7 +4661,7 @@ public class Server implements Runnable {
             didMove = step.getDistance() > distance;
 
             // check for aero stuff
-            if (entity instanceof Aero) {
+            if (entity.isAirborne()) {
                 Aero a = (Aero) entity;
                 j++;
 
@@ -4948,7 +4948,7 @@ public class Server implements Runnable {
 
                 // for Aeros this will end movement prematurely
                 // if we break
-                if (!(entity instanceof Aero)) {
+                if (!(entity.isAirborne())) {
                     break;
                 }
             }
@@ -5837,7 +5837,7 @@ public class Server implements Runnable {
             doSkillCheckInPlace(entity, entity.getBasePilotingRoll(IEntityMovementType.MOVE_SPRINT));
         }
 
-        if (entity instanceof Aero) {
+        if (entity.isAirborne()) {
 
             Aero a = (Aero) entity;
             int thrust = md.getMpUsed();
@@ -5897,7 +5897,7 @@ public class Server implements Runnable {
                 // assume it occurs
                 // if there was no elevation change during the turn and no hover
                 // step
-                if ((a.isSpheroid() || game.getPlanetaryConditions().isVacuum()) 
+                if ((a.isSpheroid() || game.getPlanetaryConditions().isVacuum()) && a.isAirborne()
                 		&& (startAltitude == curAltitude) && !md.contains(MovePath.STEP_HOVER)) {
                     a.setAltitude(a.getAltitude() - 1);
                     // check for crash
@@ -8344,7 +8344,12 @@ public class Server implements Runnable {
         } else if (entity instanceof Aero) {
             //this is a hack, because Aeros altitude is already set in the CustomMechDialog, so it would
             //be doubled here
-            if (!game.getBoard().inSpace() ) {
+        	if(game.getBoard().inSpace()) {
+        		//altitude and elevation don't matter in space
+            	entity.setAltitude(0);
+            	entity.setElevation(0);
+                elevation = 0;
+        	} else {
                 // all spheroid craft should have velocity of zero in atmosphere
                 // regardless of what was entered
                 Aero a = (Aero) entity;
@@ -8352,12 +8357,20 @@ public class Server implements Runnable {
                     a.setCurrentVelocity(0);
                     a.setNextVelocity(0);
                 }
-            } else {
-            	//altitude and elevation don't matter in space
-            	entity.setAltitude(0);
-            	entity.setElevation(0);
-                elevation = 0;
-            }
+                //check for grounding
+                if(game.getBoard().inAtmosphere() && a.getAltitude() <= hex.ceiling()) {
+                	//you can't be grounded on low atmosphere map
+                	a.setAltitude(hex.ceiling() + 1);
+                }
+                if(game.getBoard().onGround() && a.getAltitude() <= 0) {
+                	a.setAltitude(0);
+                	a.setElevation(0);
+                	elevation = 0;
+                	a.setMovementMode(IEntityMovementMode.WHEELED);
+                	a.setCurrentVelocity(0);
+                	a.setNextVelocity(0);
+                }
+            } 
         } else if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
             // TODO: Submarines should have a selectable height.
             // For now, pretend they're regular naval.
@@ -12919,7 +12932,7 @@ public class Server implements Runnable {
                         addReport(r);
                         // if not already out of control, this may lead to
                         // elevation decline
-                        if (!a.isOutControl() && !game.getBoard().inSpace()) {
+                        if (!a.isOutControl() && !game.getBoard().inSpace() && a.isAirborne()) {
                             int loss = Compute.d6(1);
                             r = new Report(9366);
                             r.newlines = 0;
@@ -14355,7 +14368,7 @@ public class Server implements Runnable {
                                 // if on the atmospheric map, then lose altitude
                                 // and check
                                 // for crash
-                                if (!game.getBoard().inSpace()) {
+                                if (!game.getBoard().inSpace() && a.isAirborne()) {
                                     int loss = Compute.d6(1);
                                     r = new Report(9366);
                                     r.newlines = 0;

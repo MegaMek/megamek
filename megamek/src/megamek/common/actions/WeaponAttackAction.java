@@ -759,6 +759,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     toHit.addModifier(+3, "target is NOE");
                 }
             }
+            
+            if(ae instanceof Aero && !((Aero)ae).isSpheroid() && !ae.isAirborne()) {
+            	toHit.addModifier(+2, "grounded aero");
+            }
 
             // check for particular kinds of weapons in weapon bays
             if (ae.usesWeaponBays()) {
@@ -841,7 +845,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.addModifier(4, "Anti-ship missile at a small target");
         }
 
-        if (target instanceof Aero) {
+        if (target.isAirborne()) {
 
             Aero a = (Aero) target;
 
@@ -1053,6 +1057,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // determine some more variables
         int aElev = ae.getElevation();
         int tElev = target.getElevation();
+        int aAlt = ae.getAltitude();
+    	int tAlt = target.getAltitude();
         int distance = Compute.effectiveDistance(game, ae, target);
 
         toHit.append(AbstractAttackAction.nightModifiers(game, target, atype, ae, true));
@@ -1563,7 +1569,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         toHit.addModifier(-2, "ammunition to-hit modifier");
                     }
                 }
-            } else if ((te instanceof Aero)
+            } else if ((te.isAirborne())
                     && (toHit.getSideTable() == ToHitData.SIDE_REAR)) {
                 toHit.addModifier(-2, "ammunition to-hit modifier");
             } else if (te.heat == 0) {
@@ -1573,8 +1579,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         "ammunition to-hit modifier");
             }
 
-            if (!(ae instanceof Aero)
-                    && LosEffects.hasFireBetween(ae.getPosition(), target
+            if (LosEffects.hasFireBetween(ae.getPosition(), target
                             .getPosition(), game)) {
                 toHit.addModifier(2, "fire between target and attacker");
             }
@@ -1637,18 +1642,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
 
-        }
-
-        // Aeros in atmosphere can hit above and below
-        if (Compute.isAirToAir(ae, target)) {
-            if ((aElev - tElev) > 2) {
-                toHit.setHitTable(ToHitData.HIT_ABOVE);
-            } else if ((tElev - aElev) > 2) {
-                toHit.setHitTable(ToHitData.HIT_BELOW);
-            }
-        }
-        if(Compute.isGroundToAir(ae, target) && tElev > 2) {
-            toHit.setHitTable(ToHitData.HIT_BELOW);
         }
 
         //is this attack originating from underwater
@@ -1724,14 +1717,27 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.setSideTable(Compute.targetSideTable(ae, target, weapon.getCalledShot().getCall()));
         }
 
-        if (target instanceof Aero) {
 
-            // hit locations for spheroids in atmosphere are handled differently
-            // TODO: awaiting rules clarification on forums
-            // http://www.classicbattletech.com/forums/index.php/topic,29329.0.
-            // html
-            // Until then assume that above/below are actually nose/aft
-            if (((Aero) target).isSpheroid() && game.getBoard().inAtmosphere()) {
+        // Aeros in atmosphere can hit above and below
+        if (Compute.isAirToAir(ae, target)) {
+            if ((aAlt - tAlt) > 2) {
+                toHit.setHitTable(ToHitData.HIT_ABOVE);
+            } else if ((tAlt - aAlt) > 2) {
+                toHit.setHitTable(ToHitData.HIT_BELOW);
+            }
+        }
+        if(Compute.isGroundToAir(ae, target) && (aAlt - tAlt) > 2) {
+            toHit.setHitTable(ToHitData.HIT_BELOW);
+        }
+        
+        if (target.isAirborne()) {
+        	//TODO: We are not following the rules for spheroid hit locations in atmosphere per the 
+        	//Errata 2.1, but those rules are completely unusable anyway, because there is no way to 
+        	//determine critical hit location
+        	//http://www.classicbattletech.com/forums/index.php/topic,54077.new.html#new
+        	//we just assume that hits from above/below (more than two altitudes different per
+        	//the rules in TW (pg. 241) actually strike FRONT/AFT respectively
+            if (((Aero) target).isSpheroid() && !game.getBoard().inSpace()) {
                 if (toHit.getHitTable() == ToHitData.HIT_ABOVE) {
                     toHit.setSideTable(ToHitData.SIDE_FRONT);
                     toHit.setHitTable(ToHitData.HIT_NORMAL);
@@ -2735,17 +2741,31 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Protomech can fire MGA only into front arc.";
         }
 
-        //for spheroid dropships in atmosphere, nose and aft mounted weapons can only be fired
-        //at units two elevations different
-        //TODO: awaiting rules clarification on forums
-        if((ae instanceof Aero) && ((Aero)ae).isSpheroid() && game.getBoard().inAtmosphere()) {
-            int altDif = ae.getAltitude() - target.getAltitude();
-            if((weapon.getLocation() == Aero.LOC_NOSE) && (altDif > -3)) {
-                return "Target is too low";
+        //for spheroid dropships in atmosphere (and on ground), the rules about firing arcs are more complicated
+        //TW errata 2.1
+        if((ae instanceof Aero) && ((Aero)ae).isSpheroid() && !game.getBoard().inSpace()) {
+            int altDif = target.getAltitude() - ae.getAltitude();
+            if((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1)) {
+                return "Target is too low for nose weapons";
             }
-            if((weapon.getLocation() == Aero.LOC_AFT) && (altDif < 3)) {
-                return "Target is too high";
+            if((!weapon.isRearMounted() && weapon.getLocation() != Aero.LOC_AFT) && (altDif < 0)) {
+                return "Target is too low for front-side weapons";
             }
+            if((weapon.getLocation() == Aero.LOC_AFT) && (altDif > -1)) {
+                return "Target is too high for aft weapons";
+            }
+            if((weapon.isRearMounted()) && (altDif > 0)) {
+                return "Target is too high for aft-side weapons";
+            }
+            if(Compute.inDeadZone(game, ae, target)) {
+            	if(altDif > 0 && weapon.getLocation() != Aero.LOC_NOSE) {
+            		return "only nose weapons can target higher units in the dead zone";
+            	}
+            	if(altDif < 0 && weapon.getLocation() != Aero.LOC_AFT) {
+            		return "only aft weapons can target lower units in the dead zone";
+            	}
+            }
+            
         }
 
         // Must target infantry in buildings from the inside.

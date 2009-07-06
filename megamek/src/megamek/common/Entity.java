@@ -7075,10 +7075,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         if (this instanceof Aero) {
             Aero a = (Aero) this;
-            // Handle spheroids in atmosphere differently
-            // TODO: awaiting a rules forum clarification
-            // until then assume that the side must either be left or right
-            if (a.isSpheroid() && game.getBoard().inAtmosphere()) {
+            // Handle spheroids in atmosphere or on the ground differently
+            if (a.isSpheroid() && !game.getBoard().inSpace()) {
                 fa = effectivePos.degree(src);
                 if ((fa >= 0) && (fa < 180)) {
                     return ToHitData.SIDE_RIGHT;

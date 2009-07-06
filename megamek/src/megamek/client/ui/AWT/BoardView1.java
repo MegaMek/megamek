@@ -4228,15 +4228,23 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             String velString = null;
             StringBuffer velStringBuf = new StringBuffer();
 
-            if (!game.useVectorMove() &&
-                    ((step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST)
-                            || (step.getMovementType() == IEntityMovementType.MOVE_OVER_THRUST))) {
-                velStringBuf.append("(")
-                .append(step.getVelocityLeft())
-                .append("/")
-                .append(step.getVelocity())
-                .append(")");
+            if(game.useVectorMove()) {
+                return;
             }
+            
+            if(!step.getParent().getEntity().isAirborne()) {
+                return;
+            }
+            
+            if(((Aero)step.getParent().getEntity()).isSpheroid()) {
+                return;
+            }   
+            
+            velStringBuf.append("(")
+            .append(step.getVelocityLeft())
+            .append("/")
+            .append(step.getVelocity())
+            .append(")");
 
             Color col = Color.GREEN;
             if(step.getVelocityLeft() > 0) {

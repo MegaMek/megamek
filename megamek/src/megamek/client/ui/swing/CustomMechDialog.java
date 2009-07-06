@@ -1854,7 +1854,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                                             .getString("CustomMechDialog.EnterCorrectVelocity"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                     return;
                 }
-                if ((altitude < 1) || (altitude > 10)) {
+                if ((altitude < 0) || (altitude > 10)) {
                     JOptionPane
                             .showMessageDialog(
                                     clientgui.frame,

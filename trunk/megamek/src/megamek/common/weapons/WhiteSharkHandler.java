@@ -38,7 +38,7 @@ public class WhiteSharkHandler extends AmmoWeaponHandler {
     public WhiteSharkHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-
+    
     @Override
     protected int getCapMisMod() {
         return 9;

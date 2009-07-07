@@ -61,7 +61,7 @@ public class PrototypeLBXHandler extends LBXHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             return 1;
         }
-
+        
         int shotMod = -1;
         if (bGlancing) {
             shotMod -= 4;
@@ -71,7 +71,7 @@ public class PrototypeLBXHandler extends LBXHandler {
         }
         int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
                 .missilesHit(wtype.getRackSize(), shotMod);
-
+        
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(shotsHit);

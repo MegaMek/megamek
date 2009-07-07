@@ -35,7 +35,7 @@ public class SeeAllCommand extends ServerCommand {
         super(
                 server,
                 "seeall",
-        "Allows player to see all in double blind game if you are an observer.  Usage: /seeall <password> <player id#>.   For a list of player id #s, use the /who command (default is yourself)");
+                "Allows player to see all in double blind game if you are an observer.  Usage: /seeall <password> <player id#>.   For a list of player id #s, use the /who command (default is yourself)");
     }
 
     /**
@@ -44,7 +44,7 @@ public class SeeAllCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         boolean doBlind = server.getGame().getOptions().booleanOption(
-        "double_blind");
+                "double_blind");
 
         int playerArg = server.isPassworded() ? 2 : 1;
 
@@ -56,8 +56,8 @@ public class SeeAllCommand extends ServerCommand {
         if (server.isPassworded()
                 && (args.length < 2 || !server.isPassword(args[1]))) {
             server
-            .sendServerChat(connId,
-                    "The password is incorrect.  Usage: /seeall <password> <id#>");
+                    .sendServerChat(connId,
+                            "The password is incorrect.  Usage: /seeall <password> <id#>");
         } else
             try {
                 int playerId;
@@ -92,13 +92,13 @@ public class SeeAllCommand extends ServerCommand {
 
             } catch (ArrayIndexOutOfBoundsException ex) {
                 server
-                .sendServerChat("/seeall : seeall failed.  Type /who for a list of players with id #s.");
+                        .sendServerChat("/seeall : seeall failed.  Type /who for a list of players with id #s.");
             } catch (NumberFormatException ex) {
                 server
-                .sendServerChat("/seeall : seeall failed.  Type /who for a list of players with id #s.");
+                        .sendServerChat("/seeall : seeall failed.  Type /who for a list of players with id #s.");
             } catch (NullPointerException ex) {
                 server
-                .sendServerChat("/seeall : seeall failed.  Type /who for a list of players with id #s.");
+                        .sendServerChat("/seeall : seeall failed.  Type /who for a list of players with id #s.");
             }
     }
 

@@ -32,7 +32,7 @@ public class LocalSaveGameCommand extends ServerCommand {
     /** Creates a new instance of SaveGameCommand */
     public LocalSaveGameCommand(Server server) {
         super(server, "localsave",
-        "Saves the game to a file on the client.  Usage: /localsave [filename]");
+                "Saves the game to a file on the client.  Usage: /localsave [filename]");
     }
 
     /**
@@ -43,7 +43,7 @@ public class LocalSaveGameCommand extends ServerCommand {
         if (server.getGame().getOptions().booleanOption("double_blind") &&
                 server.getGame().getOptions().booleanOption("disable_local_save")) {
             server
-            .sendServerChat("Local Save only outside double blind games.");
+                    .sendServerChat("Local Save only outside double blind games.");
         } else {
             String fileName = "savegame.sav";
             if (args.length > 1) {

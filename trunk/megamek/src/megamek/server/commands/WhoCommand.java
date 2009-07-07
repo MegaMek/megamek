@@ -36,15 +36,15 @@ public class WhoCommand extends ServerCommand {
     /** Creates new WhoCommand */
     public WhoCommand(Server server) {
         super(server, "who",
-        "Lists all of the players connected to the server.");
+                "Lists all of the players connected to the server.");
     }
 
     @Override
     public void run(int connId, String[] args) {
         server.sendServerChat(connId, "Listing all connections...");
         server
-        .sendServerChat(connId,
-                "[id#] : [name], [address], [pending], [bytes sent], [bytes received]");
+                .sendServerChat(connId,
+                        "[id#] : [name], [address], [pending], [bytes sent], [bytes received]");
         for (Enumeration<IConnection> i = server.getConnections(); i.hasMoreElements();) {
             IConnection conn = i.nextElement();
             StringBuffer cb = new StringBuffer();

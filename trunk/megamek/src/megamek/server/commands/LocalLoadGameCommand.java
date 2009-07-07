@@ -32,7 +32,7 @@ public class LocalLoadGameCommand extends ServerCommand {
     /** Creates a new instance of SaveGameCommand */
     public LocalLoadGameCommand(Server server) {
         super(server, "localload",
-        "loads a game from the savegame directory of the client. ATTENTION: This will overwrite a savegame on the server of the same filename. Usage: /localload [filename]");
+                "loads a game from the savegame directory of the client. ATTENTION: This will overwrite a savegame on the server of the same filename. Usage: /localload [filename]");
     }
 
     /**
@@ -42,7 +42,7 @@ public class LocalLoadGameCommand extends ServerCommand {
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
             server.sendServerChat(connId,
-            "Observers are restricted from loading games.");
+                    "Observers are restricted from loading games.");
             return;
         }
         if (args.length > 1) {

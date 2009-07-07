@@ -51,7 +51,7 @@ public class SpaceBombAttack extends Weapon {
         this.hittable = false;     
         this.capital = true;
     }
-
+    
     /*
      * (non-Javadoc)
      * 

@@ -63,8 +63,8 @@ public class ISSilverBulletGauss extends GaussWeapon {
         this.flags |= F_NO_AIM;
         this.atClass = CLASS_LBX_AC;
         this.explosionDamage = 20;
-    }
-
+   }
+    
     /*
      * (non-Javadoc)
      * 

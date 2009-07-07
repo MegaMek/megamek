@@ -88,7 +88,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int ownerId;
 
     private int startingPos = Board.START_NONE;
-
+    
     /**
      * The pilot of the entity. Even infantry has a 'pilot'.
      */
@@ -340,7 +340,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * 3.
      */
     protected int elevation = 0;
-
+    
     /**
      * altitude is different from elevation. It is used to measure the vertical distance 
      * of Aero units from the ground on low atmosphere and ground maps.  
@@ -1110,7 +1110,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (game.getBoard().inAtmosphere()) {
                 minAlt = hex.ceiling() + 1;         
             } else if (game.getBoard().onGround() && isAirborne()) {
-                minAlt = 1;
+            	minAlt = 1;
             }
             //if sensors are damaged then, one higher
             if (((Aero) this).getSensorHits() > 0) {
@@ -2553,7 +2553,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public ArrayList<Mounted> getBombs() {
         return bombList;
     }
-
+    
     public Vector<Mounted> getBombs(long flag) {
         Vector<Mounted> bombs = new Vector<Mounted>();
         for(Mounted bomb : getBombs()) {
@@ -4336,7 +4336,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         else if (!getCrew().isActive()) {
             return new PilotingRollData(entityId, TargetRoll.IMPOSSIBLE, "Pilot unconscious");
         }
-        // gyro operational?
+     // gyro operational?
         if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) && (getGyroType() != Mech.GYRO_HEAVY_DUTY)) {
             return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting() + 6, "Gyro destroyed");
         }
@@ -4494,27 +4494,27 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Checks if the entity is attempting to sprint with MASC engaged. If so,
-     * returns the target roll for the piloting skill check.
-     */
+    * Checks if the entity is attempting to sprint with MASC engaged. If so,
+    * returns the target roll for the piloting skill check.
+    */
     public PilotingRollData checkSprintingWithMASC(int overallMoveType, int mpUsed) {
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+       PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if((overallMoveType == IEntityMovementType.MOVE_SPRINT) && (mpUsed > ((int) Math.ceil(2.0 * this.getWalkMP())))) {
-            roll.append(new PilotingRollData(getId(), 0, "sprinting with active MASC/Supercharger"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to sprint with MASC");
-        }
+       if((overallMoveType == IEntityMovementType.MOVE_SPRINT) && (mpUsed > ((int) Math.ceil(2.0 * this.getWalkMP())))) {
+           roll.append(new PilotingRollData(getId(), 0, "sprinting with active MASC/Supercharger"));
+       } else {
+           roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to sprint with MASC");
+       }
 
-        addPilotingModifierForTerrain(roll);
-        return roll;
+       addPilotingModifierForTerrain(roll);
+       return roll;
     }
 
     /**
      * Checks if the entity is attempting to sprint with supercharger engaged. If so,
      * returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkSprintingWithSupercharger(int overallMoveType, int mpUsed) {
+     public PilotingRollData checkSprintingWithSupercharger(int overallMoveType, int mpUsed) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if((overallMoveType == IEntityMovementType.MOVE_SPRINT) && (mpUsed > ((int) Math.ceil(2.5 * this.getWalkMP())))) {
@@ -4525,7 +4525,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         addPilotingModifierForTerrain(roll);
         return roll;
-    }
+     }
 
     /**
      * Checks if an entity is passing through certain terrain while not moving
@@ -4549,7 +4549,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             roll.addModifier(TargetRoll.CHECK_FALSE, "jumping is not reckless?");
             return roll;
         }
-
+        
         // we need to make this check on the first move forward and anytime the
         // hex is not clear or is a level change
         if ((isFoggy || isDark) && !lastPos.equals(curPos) && lastPos.equals(step.getParent().getEntity().getPosition())) {
@@ -4781,9 +4781,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         IHex prevHex = game.getBoard().getHex(prevPos);
         // ineligable because of movement type or unit type
         if(isAirborne()) {
-            return 0;
+        	return 0;
         }
-
+        
         if ((this instanceof Infantry) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)) {
             return 0;
         }
@@ -4877,8 +4877,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 desc = desc + " Fortress";
             }
             //if(bldg.getBldgClass() == Building.CASTLE_BRIAN) {
-            //   mod = 4;
-            //   desc = desc + " Castle Brian";
+             //   mod = 4;
+             //   desc = desc + " Castle Brian";
             //}
             break;
         case Building.HARDENED:
@@ -7387,7 +7387,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return false;
     }
-
+    
     public void setSpotTargetId(int targetId) {
         spotTargetId = targetId;
     }
@@ -7625,7 +7625,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void addPassedThrough(Coords c) {
         passedThrough.add(c);
     }
-
+    
     public boolean passedThrough(Coords c) {
         for(Coords crd : passedThrough) {
             if(crd.equals(c)) {
@@ -7634,7 +7634,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return false;
     }
-
+    
     /**
      * Did the entity pass within a certain number of hexes of these coords?
      */
@@ -7646,7 +7646,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return false;
     }
-
+    
     /**
      * What coords were passed through previous to the given one
      */
@@ -8460,10 +8460,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void clearQuirks() {
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
             for (Enumeration<IOption> j = group.getOptions(); j
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 IOption option = j.nextElement();
                 option.clearValue();
             }
@@ -8478,10 +8478,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int count = 0;
 
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
             for (Enumeration<IOption> j = group.getOptions(); j
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 IOption quirk = j.nextElement();
 
                 if (quirk.booleanValue()) {
@@ -8500,13 +8500,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int count = 0;
 
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
             if (!group.getKey().equalsIgnoreCase(grpKey)) {
                 continue;
             }
             for (Enumeration<IOption> j = group.getOptions(); j
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 IOption quirk = j.nextElement();
 
                 if (quirk.booleanValue()) {
@@ -8548,21 +8548,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return qrk.toString();
     }
-
+    
     /**
      * Returns the forward firing arc for this entity - overrided by some units
      */
     public int getForwardArc() {
         return Compute.ARC_FORWARD;
     }
-
+    
     /**
      * Returns the rear firing arc for this entity - overrided by some units
      */
     public int getRearArc() {
         return Compute.ARC_REAR;
     }
-
+    
     /**
      * returns a description to the current sensing range of the active sensor
      */
@@ -8579,48 +8579,48 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-" + maxSensorRange + ")";     
     }
-
+    
     public boolean isAirborne() {
         return getMovementMode() == IEntityMovementMode.AERODYNE || getMovementMode() == IEntityMovementMode.SPHEROID;
     }
-
+    
     /**
      * is the unit flying Nape of the Earth? (i.e. one elevation above ground)
      */
     public boolean isNOE() {
-
+        
         if(!isAirborne()) {
             return false;
         }
         if (game.getBoard().inAtmosphere()) {
-            return (1 == (getAltitude() - game.getBoard().getHex(getPosition()).ceiling())); 
+               return (1 == (getAltitude() - game.getBoard().getHex(getPosition()).ceiling())); 
         }
         if(game.getBoard().onGround()) {
             return 1 == getAltitude();
         }
         return false;
     }
-
+    
     public int getStartingPos() {
         if(startingPos == Board.START_NONE) {
             return owner.getStartingPos();
         }
         return startingPos;
     }
-
+    
     public void setStartingPos(int i) {
         this.startingPos = i;
     }
-
+    
     public int getAltitude() {
-        if(isAirborneVTOL()) {
-            return 1;
-        }
-        return altitude;
+    	if(isAirborneVTOL()) {
+    		return 1;
+    	}
+    	return altitude;
     }
-
+    
     public void setAltitude(int a) {
-        this.altitude = a;
+    	this.altitude = a;
     }
     
     //produce an int array of the number of bombs of each type based on the current bomblist

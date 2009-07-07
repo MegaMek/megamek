@@ -122,7 +122,7 @@ public class BattleArmorEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                    "Couldn't decode the shootingStrength for an BattleArmor unit.");
+                            "Couldn't decode the shootingStrength for an BattleArmor unit.");
                 }
 
                 // Try to pull the number from the attribute string

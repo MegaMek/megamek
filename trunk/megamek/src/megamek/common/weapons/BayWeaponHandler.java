@@ -30,7 +30,7 @@ public class BayWeaponHandler extends WeaponHandler {
     /**
      * 
      */
-
+    
     private static final long serialVersionUID = -1618484541772117621L;
 
     /**
@@ -42,7 +42,7 @@ public class BayWeaponHandler extends WeaponHandler {
     public BayWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-
+ 
     /**
      * Calculate the attack value based on range
      * 
@@ -52,7 +52,7 @@ public class BayWeaponHandler extends WeaponHandler {
     protected int calcAttackValue() {
         double av = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
-
+        
         for(int wId: weapon.getBayWeapons()) {
             Mounted m = ae.getEquipment(wId);
             if(!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
@@ -71,7 +71,7 @@ public class BayWeaponHandler extends WeaponHandler {
         }
         return (int)Math.ceil(av);
     }
-
+    
     @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
@@ -90,5 +90,5 @@ public class BayWeaponHandler extends WeaponHandler {
             }
         }
     }
-
+    
 }

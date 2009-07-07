@@ -43,7 +43,7 @@ public abstract class AbstractConnection implements IConnection {
      */
 
     private static PacketMarshallerFactory marshallerFactory = PacketMarshallerFactory
-    .getInstance();
+            .getInstance();
 
     private static final int DEFAULT_MARSHALLING = PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING;
 
@@ -449,7 +449,7 @@ public abstract class AbstractConnection implements IConnection {
             }
         } catch (IOException e) {
             System.err
-            .println("IOException during AbstractConnection#update()");
+                    .println("IOException during AbstractConnection#update()");
             close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -530,7 +530,7 @@ public abstract class AbstractConnection implements IConnection {
      * @throws Exception
      */
     protected abstract void sendNetworkPacket(byte[] data, boolean zipped)
-    throws Exception;
+            throws Exception;
 
     static class SendQueue {
 
@@ -588,18 +588,18 @@ public abstract class AbstractConnection implements IConnection {
      */
     protected void processConnectionEvent(ConnectionEvent event) {
         for (Enumeration<ConnectionListener> e = connectionListeners.elements(); e
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             ConnectionListener l = e.nextElement();
             switch (event.getType()) {
-            case ConnectionEvent.CONNECTED:
-                l.connected((ConnectedEvent) event);
-                break;
-            case ConnectionEvent.DISCONNECTED:
-                l.disconnected((DisconnectedEvent) event);
-                break;
-            case ConnectionEvent.PACKET_RECEIVED:
-                l.packetReceived((PacketReceivedEvent) event);
-                break;
+                case ConnectionEvent.CONNECTED:
+                    l.connected((ConnectedEvent) event);
+                    break;
+                case ConnectionEvent.DISCONNECTED:
+                    l.disconnected((DisconnectedEvent) event);
+                    break;
+                case ConnectionEvent.PACKET_RECEIVED:
+                    l.packetReceived((PacketReceivedEvent) event);
+                    break;
             }
         }
     }

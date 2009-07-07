@@ -332,11 +332,11 @@ public class Ruler extends JDialog implements BoardViewListener {
         if (flip) {
             thd = LosEffects.calculateLos(client.game,
                     buildAttackInfo(start, end, h1, h2)).losModifiers(
-                            client.game);
+                    client.game);
         } else {
             thd = LosEffects.calculateLos(client.game,
                     buildAttackInfo(end, start, h2, h1)).losModifiers(
-                            client.game);
+                    client.game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit1 = thd.getValue() + " = "; //$NON-NLS-1$
@@ -346,11 +346,11 @@ public class Ruler extends JDialog implements BoardViewListener {
         if (flip) {
             thd = LosEffects.calculateLos(client.game,
                     buildAttackInfo(end, start, h2, h1)).losModifiers(
-                            client.game);
+                    client.game);
         } else {
             thd = LosEffects.calculateLos(client.game,
                     buildAttackInfo(start, end, h1, h2)).losModifiers(
-                            client.game);
+                    client.game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit2 = thd.getValue() + " = "; //$NON-NLS-1$

@@ -108,7 +108,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null)
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "You can't attack from a null entity!");
+                    "You can't attack from a null entity!");
 
         if (!game.getOptions().booleanOption("tacops_jump_jet_attack"))
             return new ToHitData(TargetRoll.IMPOSSIBLE, "no Jump Jet attack");
@@ -123,7 +123,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int attackerHeight = attackerElevation + ae.getHeight();
         final int targetElevation = target.getElevation()
-        + targHex.getElevation();
+                + targHex.getElevation();
         final int targetHeight = targetElevation + target.getHeight();
 
         int[] kickLegs = new int[2];
@@ -149,7 +149,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
         if (leg == BOTH && !ae.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Only prone mechs can attack with both legs");
+                    "Only prone mechs can attack with both legs");
         }
 
         // check if legs are present & working
@@ -170,7 +170,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             }
             if (!hasJJ) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                "Jump jets missing or destroyed");
+                        "Jump jets missing or destroyed");
             }
         }
 
@@ -181,7 +181,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
                 if (((leg == BOTH || leg == LEFT) && loc == kickLegs[0])
                         || ((leg == BOTH || leg == RIGHT) && loc == kickLegs[1])) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Weapons fired from leg this turn");
+                            "Weapons fired from leg this turn");
                 }
             }
         }
@@ -190,18 +190,18 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         final int range = ae.getPosition().distance(target.getPosition());
         if (1 != range) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Enemy must be at range 1");
+                    "Enemy must be at range 1");
         }
 
         // check elevation
         if (!ae.isProne() && attackerHeight - targetHeight != 1) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target elevation not in range");
+                    "Target elevation not in range");
         }
         if (ae.isProne()
                 && (attackerHeight > targetHeight || attackerHeight < targetElevation)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target elevation not in range");
+                    "Target elevation not in range");
         }
 
         // check facing
@@ -209,13 +209,13 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             if (!target.getPosition().equals(
                     ae.getPosition().translated(ae.getFacing()))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                "Target not directly ahead of feet");
+                        "Target not directly ahead of feet");
             }
         } else {
             if (!target.getPosition().equals(
                     ae.getPosition().translated((3 + ae.getFacing()) % 6))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                "Target not directly behind of feet");
+                        "Target not directly behind of feet");
             }
         }
 
@@ -224,7 +224,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
                 || target.getTargetType() == Targetable.TYPE_FUEL_TANK
                 || target instanceof GunEmplacement) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-            "Targeting adjacent building.");
+                    "Targeting adjacent building.");
         }
 
         // Set the base BTH

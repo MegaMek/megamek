@@ -46,7 +46,7 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
 public class CommonSettingsDialog extends ClientDialog implements
-ActionListener, ItemListener, FocusListener {
+        ActionListener, ItemListener, FocusListener {
     /**
      * 
      */
@@ -491,14 +491,14 @@ ActionListener, ItemListener, FocusListener {
         cs.setShowUnitId(showUnitId.getState());
 
         cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[locale
-                                                         .getSelectedIndex()]);
+                .getSelectedIndex()]);
 
         gs.setChatloungeTabs(chatloungeTabs.getState());
         gs.setShowMapsheets(showMapsheets.getState());
 
         if (tileSetChoice.getSelectedIndex() >= 0)
             cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
-                                      .getName());
+                    .getName());
 
         this.setVisible(false);
     }
@@ -558,7 +558,7 @@ ActionListener, ItemListener, FocusListener {
         Arrays.sort(s);
         for (int i = 0; i < s.length; i++) {
             keys.add(s[i]
-                       .substring(s[i].indexOf("Advanced") + 8, s[i].length()));
+                    .substring(s[i].indexOf("Advanced") + 8, s[i].length()));
         }
         keys.addItemListener(this);
         p.add(keys);

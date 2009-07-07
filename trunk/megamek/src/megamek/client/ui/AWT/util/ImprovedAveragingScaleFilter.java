@@ -72,10 +72,10 @@ public class ImprovedAveragingScaleFilter extends AreaAveragingScaleFilter {
             for (int xx = 0; xx < width; xx++)
                 if (bytearray)
                     savedPixels[destinationOffset++] = cm
-                    .getRGB(((byte[]) pixels)[sourceOffset++] & 0xff);
+                            .getRGB(((byte[]) pixels)[sourceOffset++] & 0xff);
                 else
                     savedPixels[destinationOffset++] = cm
-                    .getRGB(((int[]) pixels)[sourceOffset++]);
+                            .getRGB(((int[]) pixels)[sourceOffset++]);
             sourceOffset += (scansize - width);
             destinationOffset += (savedWidth - width);
         }

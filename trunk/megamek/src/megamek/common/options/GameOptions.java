@@ -99,7 +99,7 @@ public class GameOptions extends AbstractOptions {
 
         IBasicOptionGroup advancedRules = addGroup("advancedRules"); //$NON-NLS-1$
         addOption(advancedRules, "minefields", false); //$NON-NLS-1$
-        //        addOption(advancedRules, "hidden_units", false); //$NON-NLS-1$
+//        addOption(advancedRules, "hidden_units", false); //$NON-NLS-1$
         addOption(advancedRules, "double_blind", false); //$NON-NLS-1$
         addOption(advancedRules, "supress_all_double_blind_messages", false); //$NON-NLS-1$
         addOption(advancedRules, "team_vision", true); //$NON-NLS-1$
@@ -296,7 +296,7 @@ public class GameOptions extends AbstractOptions {
             return changedOptions;
         }
         System.out
-        .println("Root node of game options file is incorrectly named. Name should be 'options' but name is '" + optionsNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+                .println("Root node of game options file is incorrectly named. Name should be 'options' but name is '" + optionsNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         return changedOptions;
     }
 
@@ -313,10 +313,10 @@ public class GameOptions extends AbstractOptions {
 
                 if (child.getName().equals("optionname")) { //$NON-NLS-1$
                     name = ((ParsedXML) child.elements().nextElement())
-                    .getContent();
+                            .getContent();
                 } else if (child.getName().equals("optionvalue")) { //$NON-NLS-1$
                     value = ((ParsedXML) child.elements().nextElement())
-                    .getContent();
+                            .getContent();
                 }
             }
 
@@ -328,38 +328,38 @@ public class GameOptions extends AbstractOptions {
                             value.toString())) {
                         try {
                             switch (tempOption.getType()) {
-                            case IOption.STRING:
-                                tempOption.setValue((String) value);
-                                break;
+                                case IOption.STRING:
+                                    tempOption.setValue((String) value);
+                                    break;
 
-                            case IOption.BOOLEAN:
-                                tempOption.setValue(new Boolean(value
-                                        .toString()));
-                                break;
+                                case IOption.BOOLEAN:
+                                    tempOption.setValue(new Boolean(value
+                                            .toString()));
+                                    break;
 
-                            case IOption.INTEGER:
-                                tempOption.setValue(new Integer(value
-                                        .toString()));
-                                break;
+                                case IOption.INTEGER:
+                                    tempOption.setValue(new Integer(value
+                                            .toString()));
+                                    break;
 
-                            case IOption.FLOAT:
-                                tempOption.setValue(new Float(value
-                                        .toString()));
-                                break;
+                                case IOption.FLOAT:
+                                    tempOption.setValue(new Float(value
+                                            .toString()));
+                                    break;
                             }
 
                             System.out
-                            .println("Set option '" + name + "' to '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                    .println("Set option '" + name + "' to '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
                             option = tempOption;
                         } catch (IllegalArgumentException iaEx) {
                             System.out
-                            .println("Error trying to load option '" + name + "' with a value of '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                    .println("Error trying to load option '" + name + "' with a value of '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         }
                     }
                 } else {
                     System.out
-                    .println("Invalid option '" + name + "' when trying to load options file."); //$NON-NLS-1$ //$NON-NLS-2$
+                            .println("Invalid option '" + name + "' when trying to load options file."); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }

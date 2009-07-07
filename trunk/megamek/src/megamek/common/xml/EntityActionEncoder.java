@@ -43,7 +43,7 @@ public class EntityActionEncoder {
      * @throws <code>IOException</code> if there's any error on write.
      */
     public static void encode(EntityAction option, Writer out)
-    throws IOException {
+            throws IOException {
     }
 
     /**

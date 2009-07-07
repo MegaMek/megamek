@@ -78,51 +78,51 @@ public class CEntity {
 
     // Tank armor is either the side hit or the turret
     final static double TANK_ARMOR[][] = { { 0, 1.0, 0, 0, 0 },
-        { 0, 0, 0, 0, 1.0 }, { 0, 0, 0, 1.0, 0 }, { 0, 0, 1.0, 0, 0 } };
+            { 0, 0, 0, 0, 1.0 }, { 0, 0, 0, 1.0, 0 }, { 0, 0, 1.0, 0, 0 } };
     final static double TANK_WT_ARMOR[][] = {
-        { 0, 31.0 / 36, 0, 0, 0, 5.0 / 36 },
-        { 0, 0, 0, 0, 31.0 / 36, 5.0 / 36 },
-        { 0, 0, 0, 31.0 / 36, 0, 5.0 / 36 },
-        { 0, 0, 31.0 / 36, 0, 0, 5.0 / 36 } };
+            { 0, 31.0 / 36, 0, 0, 0, 5.0 / 36 },
+            { 0, 0, 0, 0, 31.0 / 36, 5.0 / 36 },
+            { 0, 0, 0, 31.0 / 36, 0, 5.0 / 36 },
+            { 0, 0, 31.0 / 36, 0, 0, 5.0 / 36 } };
 
     // Infantry don't have a facing. In fact, they don't have armor...
     final static double INFANTRY_ARMOR[][] = { { 1.0 }, { 1.0 }, { 1.0 },
-        { 1.0 } };
+            { 1.0 } };
 
     // Battle armor units have multiple suits
     final static double ISBA_ARMOR[][] = { { 0.25, 0.25, 0.25, 0.25 },
-        { 0.25, 0.25, 0.25, 0.25 }, { 0.25, 0.25, 0.25, 0.25 },
-        { 0.25, 0.25, 0.25, 0.25 } };
+            { 0.25, 0.25, 0.25, 0.25 }, { 0.25, 0.25, 0.25, 0.25 },
+            { 0.25, 0.25, 0.25, 0.25 } };
     final static double CLBA_ARMOR[][] = { { 0.2, 0.2, 0.2, 0.2, 0.2 },
-        { 0.2, 0.2, 0.2, 0.2, 0.2 }, { 0.2, 0.2, 0.2, 0.2, 0.2 },
-        { 0.2, 0.2, 0.2, 0.2, 0.2 } };
+            { 0.2, 0.2, 0.2, 0.2, 0.2 }, { 0.2, 0.2, 0.2, 0.2, 0.2 },
+            { 0.2, 0.2, 0.2, 0.2, 0.2 } };
     final static double PROTOMECH_ARMOR[][] = {
-        { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
-        { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
-        { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
-        { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 } };
+            { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
+            { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
+            { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
+            { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 } };
     final static double PROTOMECH_MG_ARMOR[][] = {
-        { 1.0 / 32, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
-        { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
-        { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
-        { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 } };
+            { 1.0 / 32, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
+            { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
+            { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
+            { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 } };
     final static double MECH_ARMOR[][] = {
-        { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
-            4.0 / 36, 4.0 / 36 },
             { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
-                4.0 / 36, 4.0 / 36 },
-                { 1.0 / 36, 6.0 / 36, 4.0 / 36, 7.0 / 36, 2.0 / 36, 6.0 / 36,
+                    4.0 / 36, 4.0 / 36 },
+            { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
+                    4.0 / 36, 4.0 / 36 },
+            { 1.0 / 36, 6.0 / 36, 4.0 / 36, 7.0 / 36, 2.0 / 36, 6.0 / 36,
                     2.0 / 36, 8.0 / 36 },
-                    { 1.0 / 36, 6.0 / 36, 7.0 / 36, 4.0 / 36, 6.0 / 36, 2.0 / 36,
-                        8.0 / 36, 2.0 / 36 } };
+            { 1.0 / 36, 6.0 / 36, 7.0 / 36, 4.0 / 36, 6.0 / 36, 2.0 / 36,
+                    8.0 / 36, 2.0 / 36 } };
     final static double GUN_EMPLACEMENT_ARMOR[][] = { { 1.0 / 4, 0, 0, 0 },
-        { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 } };
+            { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 } };
     final static double GUN_EMPLACEMENT_TURRET_ARMOR[][] = {
-        { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 },
-        { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 } };
+            { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 },
+            { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 } };
 
     public static final int MAX_RANGE = 36; // Updated to reflect longer ranges
-    // of level 2 equipment
+                                            // of level 2 equipment
     public static final int MIN_BRACKET = 6;
 
     public static final int OVERHEAT_NONE = 0;
@@ -349,7 +349,7 @@ public class CEntity {
                         * ((m.getCurrentHeat() > 0) ? heat_mod : 1));
             }
             long_range = Math
-            .max(long_range, Math.min(lr, MAX_RANGE));
+                    .max(long_range, Math.min(lr, MAX_RANGE));
         }
 
         // Add in approximate physical damages from Mechs
@@ -373,8 +373,8 @@ public class CEntity {
         for (int r = 1; r < minRangeMods.length; r++) {
             if (num_weapons > 0) {
                 minRangeMods[r] = (int) Math
-                .round(((double) minRangeMods[r])
-                        / (double) num_weapons);
+                        .round(((double) minRangeMods[r])
+                                / (double) num_weapons);
             }
         }
 
@@ -490,7 +490,7 @@ public class CEntity {
             // for each sub-entity type (Mech, Tank, etc)
             for (int i = 0; i < armor[arc].length; i++) {
                 armor_health[arc] += armor[arc][i]
-                                                * getArmorValue(i, arc == ToHitData.SIDE_REAR);
+                        * getArmorValue(i, arc == ToHitData.SIDE_REAR);
             }
 
             // ProtoMechs have a "near miss" location that isn't accounted for
@@ -521,11 +521,11 @@ public class CEntity {
         }
         if (entity instanceof Tank) {
             avg_iarmor = entity.getTotalInternal()
-            / (((Tank) entity).hasNoTurret() ? 4.0 : 5.0);
+                    / (((Tank) entity).hasNoTurret() ? 4.0 : 5.0);
         }
         if (entity instanceof Protomech) {
             avg_iarmor = entity.getTotalInternal()
-            / (((Protomech) entity).hasMainGun() ? 5.0 : 6.0);
+                    / (((Protomech) entity).hasMainGun() ? 5.0 : 6.0);
         }
         if (entity instanceof GunEmplacement) {
             avg_iarmor = 1.0;
@@ -715,16 +715,16 @@ public class CEntity {
             // expected_damage[] is set on the fly; it tracks damage
             // the entity expects to take
             if (((t2 + expected_damage[0] + expected_damage[1]
-                                                            + expected_damage[2] + expected_damage[3] > 3 * (avg_armor + avg_iarmor)) || (entity
-                                                                    .isProne()
-                                                                    && (base_psr_odds < .1) && !entity.isImmobile()))) { // If I
-                // have
-                // more
-                // friends,
-                // this
-                // isn't
-                // so
-                // bad
+                    + expected_damage[2] + expected_damage[3] > 3 * (avg_armor + avg_iarmor)) || (entity
+                    .isProne()
+                    && (base_psr_odds < .1) && !entity.isImmobile()))) { // If I
+                                                                                    // have
+                                                                                    // more
+                                                                                    // friends,
+                                                                                    // this
+                                                                                    // isn't
+                                                                                    // so
+                                                                                    // bad
                 if (entity.isEnemyOf(tb.getEntitiesOwned().get(0))) {
                     return Math.sqrt(t2) * strategy.target;
                 }
@@ -773,18 +773,18 @@ public class CEntity {
         }
 
         possible.add(base); // Add the base movement option to the arraylist of
-        // possibles
+                            // possibles
         discovered.put(base); // Add the base movement option to the movement
-        // option table
+                                // option table
 
         while (possible.size() > 0) { // Keep going until the arraylist is
-            // empty (why?)
+                                        // empty (why?)
 
             // Get the first movement option, while stripping it from the
             // arraylist
             MoveOption min = possible.remove(0);
             Iterator<MovePath> adjacent = min.getNextMoves(true, true)
-            .iterator();
+                    .iterator();
             while (adjacent.hasNext()) {
                 MoveOption next = (MoveOption) adjacent.next();
                 if (next.changeToPhysical() && next.isMoveLegal()) {
@@ -822,7 +822,7 @@ public class CEntity {
         }
         // Final check for illegal and extra weighting for heat
         for (Iterator<MoveOption> i = discovered.values().iterator(); i
-        .hasNext();) {
+                .hasNext();) {
             MoveOption next = i.next();
             next.clipToPossible();
             if (!next.isMoveLegal()) {
@@ -830,24 +830,24 @@ public class CEntity {
             }
             if (entity.heat > 4) {
                 next.movement_threat += bv / 1000
-                * next.getMovementheatBuildup();
+                        * next.getMovementheatBuildup();
                 if (entity.heat > 7) {
                     next.movement_threat += bv / 500
-                    * next.getMovementheatBuildup();
+                            * next.getMovementheatBuildup();
                 }
                 if (tsm_offset) {
                     if (entity.heat == 9) {
                         next.movement_threat -= bv / 100
-                        * next.getMovementheatBuildup();
+                                * next.getMovementheatBuildup();
                     }
                     if ((entity.heat < 12) && (entity.heat > 9)) {
                         next.movement_threat -= bv / 500
-                        * next.getMovementheatBuildup();
+                                * next.getMovementheatBuildup();
                     }
                 }
                 if (entity.heat > 12) {
                     next.movement_threat += bv / 100
-                    * next.getMovementheatBuildup();
+                            * next.getMovementheatBuildup();
                 }
             }
             String pilotChecks = SharedUtility.doPSRCheck(next,client);
@@ -1010,9 +1010,9 @@ public class CEntity {
         // are firing double rate, and RACs are fired in quad mode.
         if ((wt.getDamage() == WeaponType.DAMAGE_MISSILE)
                 && ((wt.getAmmoType() != AmmoType.T_TBOLT_5) ||
-                        (wt.getAmmoType() != AmmoType.T_TBOLT_10) ||
-                        (wt.getAmmoType() != AmmoType.T_TBOLT_15) ||
-                        (wt.getAmmoType() != AmmoType.T_TBOLT_20))) {
+                    (wt.getAmmoType() != AmmoType.T_TBOLT_10) ||
+                    (wt.getAmmoType() != AmmoType.T_TBOLT_15) ||
+                    (wt.getAmmoType() != AmmoType.T_TBOLT_20))) {
             use_table = true;
         }
         if ((wt.getAmmoType() == AmmoType.T_AC_LBX)
@@ -1114,7 +1114,7 @@ public class CEntity {
             if (attacker instanceof BattleArmor) {
                 // The number of troopers hitting
                 fHits = expectedHitsByRackSize[ba_attacker
-                                               .getShootingStrength()];
+                        .getShootingStrength()];
                 if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
                     fHits *= expectedHitsByRackSize[wt.getRackSize()];
                 }
@@ -1157,9 +1157,9 @@ public class CEntity {
                 }
             }
             if ((wt.getAmmoType() == AmmoType.T_TBOLT_5) ||
-                    (wt.getAmmoType() == AmmoType.T_TBOLT_10) ||
-                    (wt.getAmmoType() == AmmoType.T_TBOLT_15) ||
-                    (wt.getAmmoType() == AmmoType.T_TBOLT_20)) {
+                (wt.getAmmoType() == AmmoType.T_TBOLT_10) ||
+                (wt.getAmmoType() == AmmoType.T_TBOLT_15) ||
+                (wt.getAmmoType() == AmmoType.T_TBOLT_20)) {
                 if (range <= wt.getMinimumRange()) {
                     fDamage *= 0.5;
                 }
@@ -1255,18 +1255,18 @@ public class CEntity {
 
     public static int firingArcToHitArc(int arc) {
         switch (arc) {
-        case Compute.ARC_FORWARD:
-            return ToHitData.SIDE_FRONT;
-        case Compute.ARC_LEFTARM:
-            return ToHitData.SIDE_LEFT;
-        case Compute.ARC_RIGHTARM:
-            return ToHitData.SIDE_RIGHT;
-        case Compute.ARC_REAR:
-            return ToHitData.SIDE_REAR;
-        case Compute.ARC_LEFTSIDE:
-            return ToHitData.SIDE_LEFT;
-        case Compute.ARC_RIGHTSIDE:
-            return ToHitData.SIDE_RIGHT;
+            case Compute.ARC_FORWARD:
+                return ToHitData.SIDE_FRONT;
+            case Compute.ARC_LEFTARM:
+                return ToHitData.SIDE_LEFT;
+            case Compute.ARC_RIGHTARM:
+                return ToHitData.SIDE_RIGHT;
+            case Compute.ARC_REAR:
+                return ToHitData.SIDE_REAR;
+            case Compute.ARC_LEFTSIDE:
+                return ToHitData.SIDE_LEFT;
+            case Compute.ARC_RIGHTSIDE:
+                return ToHitData.SIDE_RIGHT;
         }
         return 0;
     }

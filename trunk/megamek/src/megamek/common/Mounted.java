@@ -62,7 +62,7 @@ public class Mounted implements Serializable, RoundUpdated {
     private Entity entity; // what I'm mounted on
 
     private WeaponQuirks quirks = new WeaponQuirks();
-
+    
     private transient EquipmentType type;
     private String typeName;
 
@@ -125,7 +125,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     //called shots status, sort of like another mode
     private CalledShot called = new CalledShot();
-
+    
     /** Creates new Mounted */
     public Mounted(Entity entity, EquipmentType type) {
         this.entity = entity;
@@ -480,7 +480,7 @@ public class Mounted implements Serializable, RoundUpdated {
                         && !m.isBreached()
                         && m.getType().hasFlag(WeaponType.F_MG)
                         && (((WeaponType) m.getType()).getRackSize() == ((WeaponType) getType())
-                                .getRackSize())) {
+                        .getRackSize())) {
                     nShots++;
                 }
             }
@@ -1067,7 +1067,7 @@ public class Mounted implements Serializable, RoundUpdated {
         if (getType() instanceof AmmoType) {
             armoredComponent = false;
         } else if (getType() instanceof MiscType && (getType().hasFlag(MiscType.F_HARJEL) || getType().hasFlag(MiscType.F_SPIKES) || getType().hasFlag(MiscType.F_REACTIVE) || getType().hasFlag(MiscType.F_MODULAR_ARMOR) || ((MiscType) getType()).isShield())) {
-            armoredComponent = false;
+                armoredComponent = false;
         } else {
             armoredComponent = armored;
         }
@@ -1076,7 +1076,7 @@ public class Mounted implements Serializable, RoundUpdated {
     public boolean isArmored() {
         return armoredComponent;
     }
-
+    
     public void setQuirks(WeaponQuirks quirks) {
         this.quirks = quirks;
     }
@@ -1087,10 +1087,10 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void clearQuirks() {
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
             for (Enumeration<IOption> j = group.getOptions(); j
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 IOption option = j.nextElement();
                 option.clearValue();
             }
@@ -1105,10 +1105,10 @@ public class Mounted implements Serializable, RoundUpdated {
         int count = 0;
 
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
             for (Enumeration<IOption> j = group.getOptions(); j
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 IOption quirk = j.nextElement();
                 if (quirk.booleanValue()) {
                     count++;
@@ -1118,7 +1118,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
         return count;
     }
-
+    
     /**
      * Returns a string of all the quirk "codes" for this entity,
      * using sep as the separator
@@ -1149,7 +1149,7 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         return qrk.toString();
     }
-
+    
     public CalledShot getCalledShot() {
         return called;
     }

@@ -71,8 +71,8 @@ import megamek.common.preference.PreferenceManager;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardView,
-BoardListener, MouseListener, MouseMotionListener, MechDisplayListener,
-IPreferenceChangeListener, GameListener {
+        BoardListener, MouseListener, MouseMotionListener, MechDisplayListener,
+        IPreferenceChangeListener, GameListener {
     // FIXME: this isn't actually serializable, I guess.
     static final long serialVersionUID = 475073852535962574L;
 

@@ -29,7 +29,7 @@ import megamek.server.Server;
  */
 public abstract class RACWeapon extends UACWeapon {
 
-
+    
     private static final long serialVersionUID = 659000035767322660L;
 
     /**
@@ -39,12 +39,12 @@ public abstract class RACWeapon extends UACWeapon {
         super();
         this.ammoType = AmmoType.T_AC_ROTARY;
         String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot", "5-shot",
-        "6-shot" };
+                "6-shot" };
         this.setModes(modeStrings);
         // explosive when jammed
         this.explosive = true;
         this.explosionDamage = damage;
-
+        
         this.atClass = CLASS_AC;
     }
 

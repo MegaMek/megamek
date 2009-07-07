@@ -55,7 +55,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
     public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
         return toHit(game,attackerId,target,Entity.GRAPPLE_BOTH);
     }
-
+    
     public static ToHitData toHit(IGame game, int attackerId, Targetable target, int grappleSide) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null)
@@ -68,7 +68,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         if (impossible != null && !impossible.equals("Locked in Grapple")) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
-
+        
         if (!game.getOptions().booleanOption("friendly_fire")) {
             // a friendly unit can never be the target of a direct attack.
             if (target.getTargetType() == Targetable.TYPE_ENTITY
@@ -99,7 +99,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         if(ae.getQuirks().booleanOption("no_arms")) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
         }
-
+   
         // requires 2 good arms
         if (grappleSide == Entity.GRAPPLE_BOTH ) {
 
@@ -128,8 +128,8 @@ public class GrappleAttackAction extends PhysicalAttackAction {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder missing/destroyed");
             }
         }
-
-
+        
+        
         // check range
         final int range = ae.getPosition().distance(target.getPosition());
         if (range != 1 && !counter) {
@@ -238,13 +238,13 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
         if ( grappleSide != Entity.GRAPPLE_BOTH && ae instanceof Mech ) {
             Mech attacker = (Mech)ae;
-
+            
             if ( attacker.hasTSM() && attacker.heat >= 9 
                     && ( !(te instanceof Mech) || !((Mech)te).hasTSM() || (((Mech)te).hasTSM() && te.heat < 9))) {
                 toHit.addModifier(-2, "TSM Active Bonus");
             }
         }
-
+        
         // Weight class difference
         int wmod = te.getWeightClass() - ae.getWeightClass();
 

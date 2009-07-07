@@ -212,7 +212,7 @@ public class EntityListFile {
                                 mount, slot.isHit(), slot.isDestroyed()));
                         haveSlot = true;
                     } 
-
+                    
                     //record any quirks
                     else if (null != mount && mount.countQuirks() > 0) {
                         thisLoc.append(formatSlot(String.valueOf(loop + 1),
@@ -318,14 +318,14 @@ public class EntityListFile {
         if (haveSlot) {
             output.insert(0, CommonConstants.NL);
             output.insert(0,
-            "      The first slot in a location is at index=\"1\".");
+                    "      The first slot in a location is at index=\"1\".");
 
             // Tanks do wierd things with ammo.
             if (entity instanceof Tank) {
                 output.insert(0, CommonConstants.NL);
                 output
-                .insert(0,
-                        "      Tanks have special needs, so don't delete any ammo slots.");
+                        .insert(0,
+                                "      Tanks have special needs, so don't delete any ammo slots.");
             }
         }
 
@@ -348,7 +348,7 @@ public class EntityListFile {
      * @throws IOException is thrown on any error.
      */
     public static void saveTo(File file, ArrayList<Entity> list)
-    throws IOException {
+            throws IOException {
 
         // Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
@@ -370,7 +370,7 @@ public class EntityListFile {
             if(entity instanceof FighterSquadron) {
                 continue;
             }
-
+            
             // Start writing this entity to the file.
             output.write("   <entity chassis=\"");
             output.write(entity.getChassis().replaceAll("\"", "&quot;"));
@@ -430,7 +430,7 @@ public class EntityListFile {
             }
             output.write("\"/>");
             output.write(CommonConstants.NL);
-
+            
             // If it's a tank, add a movement tag.
             if (entity instanceof Tank) {
                 Tank tentity = (Tank) entity;
@@ -438,51 +438,51 @@ public class EntityListFile {
                 if (tentity.isTurretLocked())
                     output.write(getTurretLockedString(tentity));
             }
-
+            
             //add a bunch of stuff for aeros
             if(entity instanceof Aero) {
                 Aero a = (Aero) entity;
-
+                
                 //SI
                 output.write("      <structural integrity=\"");
                 output.write(String.valueOf(a.getSI()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
-
+                
                 //heat sinks
                 output.write("      <heat sinks=\"");
                 output.write(String.valueOf(a.getHeatSinks()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
-
+                
                 //fuel
                 output.write("      <fuel left=\"");
                 output.write(String.valueOf(a.getFuel()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
-
+                
                 //TODO: dropship docking collars, bays
-
+                
                 //large craft stuff
                 if(a instanceof Jumpship) {
                     Jumpship j = (Jumpship) a;
-
+                    
                     //kf integrity
                     output.write("      <KF integrity=\"");
                     output.write(String.valueOf(j.getKFIntegrity()));
                     output.write("\"/>");
                     output.write(CommonConstants.NL);
-
+                    
                     //kf sail integrity
                     output.write("      <sail integrity=\"");
                     output.write(String.valueOf(j.getSailIntegrity()));
                     output.write("\"/>");
                     output.write(CommonConstants.NL);
                 }
-
+                
                 //crits
                 output.write(getAeroCritString(a));
-
+ 
             }
 
             // Add the locations of this entity (if any are needed).
@@ -521,13 +521,13 @@ public class EntityListFile {
         retVal = retVal.concat("\"/>\n");
         return retVal;
     }
-
-    //  Aero crits
+    
+//  Aero crits
     private static String getAeroCritString(Aero a) {
-
+        
         String retVal = "      <acriticals";
         String critVal = "";
-
+        
         //        crits
         if(a.getAvionicsHits() > 0) {
             critVal = critVal.concat(" avionics=\"");
@@ -570,8 +570,8 @@ public class EntityListFile {
         if(a.isGearHit()) {
             critVal = critVal.concat(" gear=\"none\"");
         }
-
-
+    
+        
         if(!critVal.equals("")) {
             //then add beginning and end
             retVal = retVal.concat(critVal);
@@ -579,7 +579,7 @@ public class EntityListFile {
         } else {
             return critVal;
         }
-
+        
         return retVal;
 
     }

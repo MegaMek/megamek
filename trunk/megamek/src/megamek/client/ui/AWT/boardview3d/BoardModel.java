@@ -63,7 +63,7 @@ class BoardModel extends BranchGroup {
     Material highlight = new Material(C.white, C.black, C.white, C.black, 1.0f);
     ColorInterpolator highlightEffect = new ColorInterpolator(C.dblAlpha, highlight, C.grey75, C.white);
     SharedGroup shared[];
-
+    
     static final int KEEP = 2;
     public BoardModel(TileTextureManager t, SimpleUniverse u, IGame g) {
         tileManager = t;
@@ -87,7 +87,7 @@ class BoardModel extends BranchGroup {
         bg.setApplicationBounds(bounds);
         addChild(bg);
     }
-
+    
     static final Point3d getHexLocation(Coords c, int level) {
         return new Point3d((c.x*BoardModel.HEX_SIDE_LENGTH*1.5), -(c.y*(BoardModel.HEX_DIAMETER) + ((c.x & 1) != 0? BoardModel.HEX_DIAMETER/2 : 0)), level*BoardModel.HEX_HEIGHT);
     }
@@ -97,7 +97,7 @@ class BoardModel extends BranchGroup {
     private final BoardHexModel hexAt(int x, int y) {
         return ((BoardHexModel)getChild(y*w+x+KEEP));
     }
-
+    
     void update(Player player) {
         IBoard gboard = game.getBoard();
         detach();
@@ -118,16 +118,16 @@ class BoardModel extends BranchGroup {
             }
 
             DirectionalLight pl = new DirectionalLight(
-                    true,
-                    new Color3f(0.5f, 0.45f, 0.4f),
-                    new Vector3f(-1, 1, -1)
+                true,
+                new Color3f(0.5f, 0.45f, 0.4f),
+                new Vector3f(-1, 1, -1)
             );
             pl.setInfluencingBounds(bounds);
             addChild(pl);
             pl = new DirectionalLight(
-                    true,
-                    new Color3f(0.5f, 0.45f, 0.4f),
-                    new Vector3f(-1, -0.5f, -2)
+                true,
+                new Color3f(0.5f, 0.45f, 0.4f),
+                new Vector3f(-1, -0.5f, -2)
             );
             pl.setInfluencingBounds(bounds);
             addChild(pl);
@@ -148,13 +148,13 @@ class BoardModel extends BranchGroup {
 
         universe.addBranchGraph(this);
     }
-
+    
     void update(Coords c, IHex hex, Player player) {
         detach();
         hexAt(c.x, c.y).update(hex, tileManager, player);
         universe.addBranchGraph(this);
     }
-
+    
     public void showDeployment(Player deployer) {
         if (deployer == null) {
             isDeploying = false;
@@ -168,11 +168,11 @@ class BoardModel extends BranchGroup {
         Coords c = new Coords(0,0);
         for (c.y = 0; c.y < h; c.y++) {
             for (c.x = 0; c.x < w; c.x++) {
-                // if (!gboard.isLegalDeployment(c, deployer)) {
+               // if (!gboard.isLegalDeployment(c, deployer)) {
                 //    hexAt(c.x, c.y).darken();
-                // } else {
-                //     hexAt(c.x, c.y).setEffect(highlight);
-                // }
+               // } else {
+               //     hexAt(c.x, c.y).setEffect(highlight);
+               // }
             }
         }
         universe.addBranchGraph(this);
@@ -180,13 +180,13 @@ class BoardModel extends BranchGroup {
 
     public void resetBoard() {
         boolean night = GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) && 
-        game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY;
+            game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY;
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 BoardHexModel bhm = hexAt(x, y);
-
+                
                 if (night && !game.isPositionIlluminated((Coords)bhm.getUserData())) {
-                    bhm.night(); 
+                   bhm.night(); 
                 } else {
                     bhm.reset();
                 }

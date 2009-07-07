@@ -33,7 +33,7 @@ public class ResetCommand extends ServerCommand {
     /** Creates new ResetCommand */
     public ResetCommand(Server server) {
         super(server, "reset",
-        "Resets the server back to the lobby.  Usage: /reset <password>");
+                "Resets the server back to the lobby.  Usage: /reset <password>");
     }
 
     /**
@@ -43,7 +43,7 @@ public class ResetCommand extends ServerCommand {
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
             server.sendServerChat(connId,
-            "Observers are restricted from resetting.");
+                    "Observers are restricted from resetting.");
             return;
         }
 
@@ -52,7 +52,7 @@ public class ResetCommand extends ServerCommand {
             reset(connId);
         } else {
             server.sendServerChat(connId,
-            "The password is incorrect.  Usage: /reset <password>");
+                    "The password is incorrect.  Usage: /reset <password>");
         }
     }
 

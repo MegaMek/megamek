@@ -68,7 +68,7 @@ class MoveStepModel extends ArrowModel {
         base.setColoringAttributes(new ColoringAttributes(color, ColoringAttributes.SHADE_FLAT));
         base.setPolygonAttributes(C.noCull);
         base.setLineAttributes(C.defLine);
-
+        
         Shape3D arrow = new Shape3D(polygon, base);
         Shape3D outline = new Shape3D(border, base);
 
@@ -78,7 +78,7 @@ class MoveStepModel extends ArrowModel {
 
         TransformGroup tg = new TransformGroup();
         tg.addChild(anim);
-
+        
         Transform3D trans = new Transform3D();
         double centerOffset = 0.0;
 
@@ -129,7 +129,7 @@ class MoveStepModel extends ArrowModel {
                 label = "(" + label + ")"; //$NON-NLS-1$ //$NON-NLS-2$
             }
             break;
-
+        
         case MovePath.STEP_TURN_LEFT:
         case MovePath.STEP_TURN_RIGHT:
             anim.removeChild(arrow);
@@ -143,7 +143,7 @@ class MoveStepModel extends ArrowModel {
         Vector3d translate = new Vector3d(0.0, centerOffset, -BoardModel.HEX_HEIGHT-count*.1);
         trans.transform(translate);
         trans.setTranslation(translate);
-
+        
         if (label == null) {
             StringBuffer costStringBuf = new StringBuffer();
             costStringBuf.append(step.getMpUsed());
@@ -181,7 +181,7 @@ class MoveStepModel extends ArrowModel {
 
         TransformGroup l = new TransformGroup(new Transform3D(C.nullRot, loc, 1.0));
         l.addChild(currentView.makeViewRelative(new LabelModel(label, C.black, color, LabelModel.BIGBOLD), count*.1));
-
+        
         l.addChild(tg);
 
         addChild(l);

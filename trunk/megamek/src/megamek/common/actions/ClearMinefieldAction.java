@@ -20,14 +20,14 @@ public class ClearMinefieldAction extends AbstractEntityAction {
      * 
      */
     private static final long serialVersionUID = 4465058967763135772L;
-
+    
     private Minefield mf;
 
     public ClearMinefieldAction(int entityId, Minefield mf) {
         super(entityId);
         this.mf = mf;
     }
-
+    
     public Minefield getMinefield() {
         return mf;
     }

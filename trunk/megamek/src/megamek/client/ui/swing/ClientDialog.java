@@ -110,9 +110,9 @@ public class ClientDialog extends JDialog {
     private Dimension getOwnersCenter() {
         Dimension center = new Dimension();
         center.height = this.owner.getLocation().y
-        + this.owner.getSize().height / 2;
+                + this.owner.getSize().height / 2;
         center.width = this.owner.getLocation().x + this.owner.getSize().width
-        / 2;
+                / 2;
         return center;
     }
 

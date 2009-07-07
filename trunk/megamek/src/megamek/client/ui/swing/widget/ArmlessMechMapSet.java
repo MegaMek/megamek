@@ -172,13 +172,13 @@ public class ArmlessMechMapSet implements DisplayMapSet {
                 vLabels[i + REAR_AREA_OFFSET].setValue(m
                         .getArmorString(i, true));
                 WidgetUtils.setAreaColor(areas[i + REAR_AREA_OFFSET], vLabels[i
-                                                                              + REAR_AREA_OFFSET], (double) a / (double) a0);
+                        + REAR_AREA_OFFSET], (double) a / (double) a0);
             }
             a = m.getInternal(i);
             a0 = m.getOInternal(i);
             vLabels[i + INT_STRUCTURE_OFFSET].setValue(m.getInternalString(i));
             WidgetUtils.setAreaColor(areas[i + INT_STRUCTURE_OFFSET], vLabels[i
-                                                                              + INT_STRUCTURE_OFFSET], (double) a / (double) a0);
+                    + INT_STRUCTURE_OFFSET], (double) a / (double) a0);
         }
 
         // heat
@@ -234,32 +234,32 @@ public class ArmlessMechMapSet implements DisplayMapSet {
                 .getString("MechMapSet.l_RL"), fm, Color.black, 98, 92); //$NON-NLS-1$
         // Labels for Back view
         labels[REAR_AREA_OFFSET + Mech.LOC_LT] = WidgetUtils
-        .createLabel(
-                Messages.getString("MechMapSet.l_LT"), fm, Color.black, 133, 39); //$NON-NLS-1$
+                .createLabel(
+                        Messages.getString("MechMapSet.l_LT"), fm, Color.black, 133, 39); //$NON-NLS-1$
         labels[REAR_AREA_OFFSET + Mech.LOC_CT] = WidgetUtils
-        .createLabel(
-                Messages.getString("MechMapSet.l_CT"), fm, Color.black, 156, 25); //$NON-NLS-1$
+                .createLabel(
+                        Messages.getString("MechMapSet.l_CT"), fm, Color.black, 156, 25); //$NON-NLS-1$
         labels[REAR_AREA_OFFSET + Mech.LOC_RT] = WidgetUtils
-        .createLabel(
-                Messages.getString("MechMapSet.l_RT"), fm, Color.black, 178, 39); //$NON-NLS-1$
+                .createLabel(
+                        Messages.getString("MechMapSet.l_RT"), fm, Color.black, 178, 39); //$NON-NLS-1$
         // Labels for Internal Structure
         labels[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.l_H"), fm, Color.black, 63, 130); //$NON-NLS-1$
         labels[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = WidgetUtils
-        .createLabel(
-                Messages.getString("MechMapSet.l_LT"), fm, Color.black, 42, 166); //$NON-NLS-1$
+                .createLabel(
+                        Messages.getString("MechMapSet.l_LT"), fm, Color.black, 42, 166); //$NON-NLS-1$
         labels[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = WidgetUtils
-        .createLabel(
-                Messages.getString("MechMapSet.L_CT"), fm, Color.black, 63, 168); //$NON-NLS-1$
+                .createLabel(
+                        Messages.getString("MechMapSet.L_CT"), fm, Color.black, 63, 168); //$NON-NLS-1$
         labels[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = WidgetUtils
-        .createLabel(
-                Messages.getString("MechMapSet.l_RT"), fm, Color.black, 85, 166); //$NON-NLS-1$
+                .createLabel(
+                        Messages.getString("MechMapSet.l_RT"), fm, Color.black, 85, 166); //$NON-NLS-1$
         labels[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = WidgetUtils
-        .createLabel(
-                Messages.getString("MechMapSet.l_LL"), fm, Color.black, 33, 210); //$NON-NLS-1$
+                .createLabel(
+                        Messages.getString("MechMapSet.l_LL"), fm, Color.black, 33, 210); //$NON-NLS-1$
         labels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = WidgetUtils
-        .createLabel(
-                Messages.getString("MechMapSet.l_RL"), fm, Color.black, 93, 210); //$NON-NLS-1$
+                .createLabel(
+                        Messages.getString("MechMapSet.l_RL"), fm, Color.black, 93, 210); //$NON-NLS-1$
 
         // Value labels for all parts of mek
         // front
@@ -281,17 +281,17 @@ public class ArmlessMechMapSet implements DisplayMapSet {
 
         // Internal structure
         vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = WidgetUtils
-        .createValueLabel(63, 142, "", fm); //$NON-NLS-1$
+                .createValueLabel(63, 142, "", fm); //$NON-NLS-1$
         vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = WidgetUtils
-        .createValueLabel(42, 180, "", fm); //$NON-NLS-1$
+                .createValueLabel(42, 180, "", fm); //$NON-NLS-1$
         vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = WidgetUtils
-        .createValueLabel(63, 182, "", fm); //$NON-NLS-1$
+                .createValueLabel(63, 182, "", fm); //$NON-NLS-1$
         vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = WidgetUtils
-        .createValueLabel(85, 180, "", fm); //$NON-NLS-1$
+                .createValueLabel(85, 180, "", fm); //$NON-NLS-1$
         vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = WidgetUtils
-        .createValueLabel(33, 223, "", fm); //$NON-NLS-1$
+                .createValueLabel(33, 223, "", fm); //$NON-NLS-1$
         vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = WidgetUtils
-        .createValueLabel(92, 223, "", fm); //$NON-NLS-1$
+                .createValueLabel(92, 223, "", fm); //$NON-NLS-1$
         // heat
         vLabels[19] = WidgetUtils.createValueLabel(155, 90, "", fm); //$NON-NLS-1$
     }
@@ -359,7 +359,7 @@ public class ArmlessMechMapSet implements DisplayMapSet {
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/bg_mech.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER
-        | BackGroundDrawer.HALIGN_CENTER;
+                | BackGroundDrawer.HALIGN_CENTER;
         BackGroundDrawer bgd = new BackGroundDrawer(tile, b);
         bgDrawers.addElement(bgd);
     }

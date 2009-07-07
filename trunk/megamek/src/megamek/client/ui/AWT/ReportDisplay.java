@@ -37,7 +37,7 @@ import megamek.common.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
 
 public class ReportDisplay extends StatusBarPhaseDisplay implements
-KeyListener, DoneButtoned {
+        KeyListener, DoneButtoned {
     /**
      * 
      */
@@ -75,7 +75,7 @@ KeyListener, DoneButtoned {
         // debugReport: add new client setting
         Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
                 GUIPreferences.getInstance().getInt(
-                "AdvancedChatLoungeTabFontSize"));
+                        "AdvancedChatLoungeTabFontSize"));
         tabs.setTabFont(tabPanelFont);
 
         resetTabs();

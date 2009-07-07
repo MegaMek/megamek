@@ -18,14 +18,14 @@ import java.util.Arrays;
 
 public abstract class GA {
     final double mutationProb; // probability of a mutation occuring during
-    // genetic mating. For example, 0.03 means 3% chance
+                               // genetic mating. For example, 0.03 means 3% chance
     final int maxGenerations; // maximum generations to evolve
     final double randomSelectionChance;
     final double crossoverProb; // probability that a crossover will occur
-    // during
+                                // during
     // genetic mating
     final protected int chromosomeDim; // dimension of chromosome (number of
-    // genes)
+                                        // genes)
     final protected int populationDim;
     final protected Chromosome[] chromosomes;
     Chromosome[] chromNextGen;
@@ -107,10 +107,10 @@ public abstract class GA {
             }
 
             if (// test for improvement and convergence
-                    (iGen > 5)
+            (iGen > 5)
                     && (getESquared()
                             - (genAvgFitness[iGen] * genAvgFitness[iGen]) < .2 * genAvgFitness[iGen])
-                            && (genAvgFitness[iGen] - genAvgFitness[iGen - 1] <= 0)) {
+                    && (genAvgFitness[iGen] - genAvgFitness[iGen - 1] <= 0)) {
                 converged = true;
             }
             iGen++;
@@ -132,7 +132,7 @@ public abstract class GA {
         double square_sum = 0;
         for (int i = 0; i < populationDim; i++) {
             square_sum += this.chromosomes[i].fitness
-            * this.chromosomes[i].fitness;
+                    * this.chromosomes[i].fitness;
         }
         return (square_sum / populationDim);
     }

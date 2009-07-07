@@ -138,8 +138,8 @@ import megamek.common.preference.PreferenceManager;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView1 extends Canvas implements IBoardView, BoardListener,
-MouseListener, MouseMotionListener, KeyListener, AdjustmentListener,
-MechDisplayListener, IPreferenceChangeListener {
+        MouseListener, MouseMotionListener, KeyListener, AdjustmentListener,
+        MechDisplayListener, IPreferenceChangeListener {
     private static final long serialVersionUID = -7518808415074725538L;
 
     private static final int TRANSPARENT = 0xFFFF00FF;
@@ -644,9 +644,9 @@ MechDisplayListener, IPreferenceChangeListener {
      */
     private void updateBoardSize() {
         int width = game.getBoard().getWidth() * (int) (HEX_WC * scale)
-        + (int) (HEX_W / 4 * scale);
+                + (int) (HEX_W / 4 * scale);
         int height = game.getBoard().getHeight() * (int) (HEX_H * scale)
-        + (int) (HEX_H / 2 * scale);
+                + (int) (HEX_H / 2 * scale);
         boardSize = new Dimension(width, height);
     }
 
@@ -970,7 +970,7 @@ MechDisplayListener, IPreferenceChangeListener {
             checkScrollBounds();
             boardRect = new Rectangle(view);
             System.out
-            .println("boardview1: made a new board buffer " + boardRect); //$NON-NLS-1$
+                    .println("boardview1: made a new board buffer " + boardRect); //$NON-NLS-1$
             drawHexes(view);
             dirtyBoard = false;
         }
@@ -1681,7 +1681,7 @@ MechDisplayListener, IPreferenceChangeListener {
             }
         } else if (isTipPossible
                 && (System.currentTimeMillis() - lastIdle > GUIPreferences
-                        .getInstance().getTooltipDelay())) {
+                .getInstance().getTooltipDelay())) {
             showTooltip();
         }
     }
@@ -1871,7 +1871,7 @@ MechDisplayListener, IPreferenceChangeListener {
                 break;
             default :
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
-                break;
+            break;
             }
         }
 
@@ -3449,19 +3449,19 @@ MechDisplayListener, IPreferenceChangeListener {
                 ge = true;
             }
             if(entity.isAirborne()) {
-                if(!game.getBoard().inSpace()) {
-                    graph.setColor(Color.darkGray);
+            	if(!game.getBoard().inSpace()) {
+            		graph.setColor(Color.darkGray);
                     graph.drawString(Integer.toString(entity.getAltitude()) + "A", 26, 15);
                     graph.setColor(Color.PINK);
                     graph.drawString(Integer.toString(entity.getAltitude()) + "A", 25, 14);
-                }
+            	}
             } else if(entity.getElevation() > 0) {
                 graph.setColor(Color.darkGray);
                 graph.drawString(Integer.toString(entity.getElevation()), 26, 15);
                 graph.setColor(Color.PINK);
                 graph.drawString(Integer.toString(entity.getElevation()), 25, 14);
             }
-
+            
             // draw condition strings
             if(entity instanceof Aero) {
                 Aero a = (Aero)entity;
@@ -3887,33 +3887,33 @@ MechDisplayListener, IPreferenceChangeListener {
             case IEntityMovementType.MOVE_OVER_THRUST:
                 if (step.isUsingMASC()) {
                     col = GUIPreferences.getInstance().getColor(
-                    "AdvancedMoveMASCColor");
+                            "AdvancedMoveMASCColor");
                 } else {
                     col = GUIPreferences.getInstance().getColor(
-                    "AdvancedMoveRunColor");
+                            "AdvancedMoveRunColor");
                 }
                 break;
             case IEntityMovementType.MOVE_JUMP:
                 col = GUIPreferences.getInstance().getColor(
-                "AdvancedMoveJumpColor");
+                        "AdvancedMoveJumpColor");
                 break;
             case IEntityMovementType.MOVE_SPRINT:
                 col = GUIPreferences.getInstance().getColor(
-                "AdvancedMoveSprintColor");
+                        "AdvancedMoveSprintColor");
                 break;
             case IEntityMovementType.MOVE_ILLEGAL:
                 col = GUIPreferences.getInstance().getColor(
-                "AdvancedMoveIllegalColor");
+                        "AdvancedMoveIllegalColor");
                 break;
             default:
                 if (step.getType() == MovePath.STEP_BACKWARDS) {
                     col = GUIPreferences.getInstance().getColor(
-                    "AdvancedMoveBackColor");
+                            "AdvancedMoveBackColor");
                 } else {
                     col = GUIPreferences.getInstance().getColor(
-                    "AdvancedMoveDefaultColor");
+                            "AdvancedMoveDefaultColor");
                 }
-                break;
+            break;
             }
 
             if(game.useVectorMove()) {
@@ -4231,20 +4231,20 @@ MechDisplayListener, IPreferenceChangeListener {
             if(game.useVectorMove()) {
                 return;
             }
-
+            
             if(!step.getParent().getEntity().isAirborne()) {
                 return;
             }
-
+            
             if(((Aero)step.getParent().getEntity()).isSpheroid()) {
                 return;
             }   
-
+            
             velStringBuf.append("(")
-                    .append(step.getVelocityLeft())
-                    .append("/")
-                    .append(step.getVelocity())
-                    .append(")");
+            .append(step.getVelocityLeft())
+            .append("/")
+            .append(step.getVelocity())
+            .append(")");
 
             Color col = Color.GREEN;
             if(step.getVelocityLeft() > 0) {
@@ -4302,9 +4302,9 @@ MechDisplayListener, IPreferenceChangeListener {
                 costStringBuf.append("{").append(step.getElevation()).append(
                 "}");
             }
-
+            
             if(step.getParent().getEntity().isAirborne()) {
-                costStringBuf.append("{").append(step.getAltitude()).append("}");
+            	costStringBuf.append("{").append(step.getAltitude()).append("}");
             }
 
             // Convert the buffer to a String and draw it.

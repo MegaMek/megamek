@@ -1,5 +1,5 @@
 /*
- * MegaAero - Copyright (C) 2007 Jay Lawson
+* MegaAero - Copyright (C) 2007 Jay Lawson
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
  *  Software Foundation; either version 2 of the License, or (at your option) 
@@ -21,7 +21,7 @@ package megamek.common;
  * @author Jay Lawson
  */
 public class ConvFighter extends Aero {
-
+    
     /**
      * 
      */
@@ -31,17 +31,17 @@ public class ConvFighter extends Aero {
     public boolean doomedInVacuum() {
         return true;
     }
-
+    
     @Override
     public boolean doomedInSpace() {
         return true;
     }  
-
+    
     @Override
     public int getHeatCapacity() {
         return 999;
     }
-
+    
     @Override
     public int getFuelUsed(int thrust) {
         int overThrust =  Math.max(thrust - getWalkMP(), 0);
@@ -54,10 +54,10 @@ public class ConvFighter extends Aero {
         }
         return used;
     }
-
+    
     @Override
     public double getBVTypeModifier() {
         return 1.1;
     }
-
+    
 }

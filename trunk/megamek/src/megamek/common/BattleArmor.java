@@ -41,14 +41,14 @@ public class BattleArmor extends Infantry {
      */
     private static final int[] IS_NUM_OF_SLOTS = { 7, 2, 2, 2, 2, 2, 2 };
     private static final String[] IS_LOCATION_ABBRS = { "Squad", "Trooper 1",
-        "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
+            "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
     private static final String[] IS_LOCATION_NAMES = { "Squad", "Trooper 1",
-        "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
+            "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
     private static final int[] CLAN_NUM_OF_SLOTS = { 10, 2, 2, 2, 2, 2, 2 };
     private static final String[] CLAN_LOCATION_ABBRS = { "Point", "Trooper 1",
-        "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
+            "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
     private static final String[] CLAN_LOCATION_NAMES = { "Point", "Trooper 1",
-        "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
+            "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
 
     public static final int MANIPULATOR_NONE = 0;
     public static final int MANIPULATOR_ARMORED_GLOVE = 1;
@@ -64,11 +64,11 @@ public class BattleArmor extends Infantry {
     public static final int MANIPULATOR_INDUSTRIAL_DRILL = 11;
 
     public static final String[] MANIPULATOR_TYPE_STRINGS = { "None",
-        "Armored Glove", "Basic Manipulator",
-        "Basic Manipulator (Mine Clearance)", "Battle Claw",
-        "Battle Claw (Magnets)", "Battle Claw (Vibro-Claws)",
-        "Heavy Battle Claw", "Heavy Battle Claw (Vibro-Claws)",
-        "Salvage Arm", "Cargo Lifter", "Industrial Drill" };
+            "Armored Glove", "Basic Manipulator",
+            "Basic Manipulator (Mine Clearance)", "Battle Claw",
+            "Battle Claw (Magnets)", "Battle Claw (Vibro-Claws)",
+            "Heavy Battle Claw", "Heavy Battle Claw (Vibro-Claws)",
+            "Salvage Arm", "Cargo Lifter", "Industrial Drill" };
 
     /**
      * The number of men alive in this unit at the beginning of the phase,
@@ -333,18 +333,18 @@ public class BattleArmor extends Infantry {
     @Override
     public String getMovementString(int mtype) {
         switch (mtype) {
-        case IEntityMovementType.MOVE_NONE:
-            return "None";
-        case IEntityMovementType.MOVE_WALK:
-        case IEntityMovementType.MOVE_RUN:
-            return "Walked";
-        case IEntityMovementType.MOVE_VTOL_WALK:
-        case IEntityMovementType.MOVE_VTOL_RUN:
-            return "Flew";
-        case IEntityMovementType.MOVE_JUMP:
-            return "Jumped";
-        default:
-            return "Unknown!";
+            case IEntityMovementType.MOVE_NONE:
+                return "None";
+            case IEntityMovementType.MOVE_WALK:
+            case IEntityMovementType.MOVE_RUN:
+                return "Walked";
+            case IEntityMovementType.MOVE_VTOL_WALK:
+            case IEntityMovementType.MOVE_VTOL_RUN:
+                return "Flew";
+            case IEntityMovementType.MOVE_JUMP:
+                return "Jumped";
+            default:
+                return "Unknown!";
         }
     }
 
@@ -355,19 +355,19 @@ public class BattleArmor extends Infantry {
     @Override
     public String getMovementAbbr(int mtype) {
         switch (mtype) {
-        case IEntityMovementType.MOVE_NONE:
-            return "N";
-        case IEntityMovementType.MOVE_WALK:
-            return "W";
-        case IEntityMovementType.MOVE_RUN:
-            return "R";
-        case IEntityMovementType.MOVE_JUMP:
-            return "J";
-        case IEntityMovementType.MOVE_VTOL_WALK:
-        case IEntityMovementType.MOVE_VTOL_RUN:
-            return "F";
-        default:
-            return "?";
+            case IEntityMovementType.MOVE_NONE:
+                return "N";
+            case IEntityMovementType.MOVE_WALK:
+                return "W";
+            case IEntityMovementType.MOVE_RUN:
+                return "R";
+            case IEntityMovementType.MOVE_JUMP:
+                return "J";
+            case IEntityMovementType.MOVE_VTOL_WALK:
+            case IEntityMovementType.MOVE_VTOL_RUN:
+                return "F";
+            default:
+                return "?";
         }
     }
 
@@ -398,7 +398,7 @@ public class BattleArmor extends Infantry {
         int loc = Compute.d6();
 
 
-        /*        if ((aimedLocation != LOC_NONE)
+/*        if ((aimedLocation != LOC_NONE)
                 && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
 
             int roll = Compute.d6(2);
@@ -446,27 +446,27 @@ public class BattleArmor extends Infantry {
         if (transport instanceof Mech) {
             int loc = 99;
             switch (hit.getLocation()) {
-            case Mech.LOC_RT:
-                if (hit.isRear()) {
-                    loc = 3;
-                } else {
-                    loc = 1;
-                }
-                break;
-            case Mech.LOC_LT:
-                if (hit.isRear()) {
-                    loc = 4;
-                } else {
-                    loc = 2;
-                }
-                break;
-            case Mech.LOC_CT:
-                if (hit.isRear()) {
-                    loc = 5;
-                } else {
-                    loc = 6;
-                }
-                break;
+                case Mech.LOC_RT:
+                    if (hit.isRear()) {
+                        loc = 3;
+                    } else {
+                        loc = 1;
+                    }
+                    break;
+                case Mech.LOC_LT:
+                    if (hit.isRear()) {
+                        loc = 4;
+                    } else {
+                        loc = 2;
+                    }
+                    break;
+                case Mech.LOC_CT:
+                    if (hit.isRear()) {
+                        loc = 5;
+                    } else {
+                        loc = 6;
+                    }
+                    break;
             }
             if (loc < locations()) {
                 return new HitData(loc);
@@ -474,35 +474,35 @@ public class BattleArmor extends Infantry {
         } else if (transport instanceof Tank) {
             int loc = 99;
             switch (hit.getLocation()) {
-            case Tank.LOC_RIGHT:
-                // There are 2 troopers on each location, so pick
-                // one randomly if both are alive.
-                if ((getInternal(1) > 0) && (getInternal(2) > 0)) {
-                    loc = Compute.randomInt(2) + 1;
-                } else if (getInternal(1) > 0) {
-                    loc = 1;
-                } else {
-                    loc = 2;
-                }
-                break;
-            case Tank.LOC_LEFT:
-                if ((getInternal(3) > 0) && (getInternal(4) > 0)) {
-                    loc = Compute.randomInt(2) + 3;
-                } else if (getInternal(3) > 0) {
-                    loc = 3;
-                } else {
-                    loc = 4;
-                }
-                break;
-            case Tank.LOC_REAR:
-                if ((getInternal(5) > 0) && (getInternal(6) > 0)) {
-                    loc = Compute.randomInt(2) + 5;
-                } else if (getInternal(5) > 0) {
-                    loc = 5;
-                } else {
-                    loc = 6;
-                }
-                break;
+                case Tank.LOC_RIGHT:
+                    // There are 2 troopers on each location, so pick
+                    // one randomly if both are alive.
+                    if ((getInternal(1) > 0) && (getInternal(2) > 0)) {
+                        loc = Compute.randomInt(2) + 1;
+                    } else if (getInternal(1) > 0) {
+                        loc = 1;
+                    } else {
+                        loc = 2;
+                    }
+                    break;
+                case Tank.LOC_LEFT:
+                    if ((getInternal(3) > 0) && (getInternal(4) > 0)) {
+                        loc = Compute.randomInt(2) + 3;
+                    } else if (getInternal(3) > 0) {
+                        loc = 3;
+                    } else {
+                        loc = 4;
+                    }
+                    break;
+                case Tank.LOC_REAR:
+                    if ((getInternal(5) > 0) && (getInternal(6) > 0)) {
+                        loc = Compute.randomInt(2) + 5;
+                    } else if (getInternal(5) > 0) {
+                        loc = 5;
+                    } else {
+                        loc = 6;
+                    }
+                    break;
             }
             if (loc < locations()) {
                 return new HitData(loc);
@@ -610,8 +610,8 @@ public class BattleArmor extends Infantry {
     }
 
     /**
-     * Set the troopers in the unit to the given values.
-     */
+    * Set the troopers in the unit to the given values.
+    */
     public void setInternal(int value) {
         // Initialize the troopers.
         for (int loop = 1; loop < locations(); loop++) {
@@ -624,7 +624,7 @@ public class BattleArmor extends Infantry {
      */
     @Override
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
-    throws LocationFullException {
+            throws LocationFullException {
         // Implement parent's behavior.
         super.addEquipment(mounted, loc, rearMounted);
 
@@ -1019,81 +1019,81 @@ public class BattleArmor extends Infantry {
                     && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
                 // Basic Stealth
                 switch (range) {
-                case RangeType.RANGE_MINIMUM:
-                case RangeType.RANGE_SHORT:
-                    // At short range, basic stealth doesn't get a mod!
-                    break;
-                case RangeType.RANGE_MEDIUM:
-                    result = new TargetRoll(+1, "Basic Stealth Armor");
-                    break;
-                case RangeType.RANGE_LONG:
-                case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                    // modifier?
-                    result = new TargetRoll(+2, "Basic Stealth Armor");
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            "Unknown range constant: " + range);
+                    case RangeType.RANGE_MINIMUM:
+                    case RangeType.RANGE_SHORT:
+                        // At short range, basic stealth doesn't get a mod!
+                        break;
+                    case RangeType.RANGE_MEDIUM:
+                        result = new TargetRoll(+1, "Basic Stealth Armor");
+                        break;
+                    case RangeType.RANGE_LONG:
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                                                    // modifier?
+                        result = new TargetRoll(+2, "Basic Stealth Armor");
+                        break;
+                    default:
+                        throw new IllegalArgumentException(
+                                "Unknown range constant: " + range);
                 }
             } else if ((armorType == 4)
                     && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
                 // Prototype Stealth
                 switch (range) {
-                case RangeType.RANGE_MINIMUM:
-                case RangeType.RANGE_SHORT:
-                    // At short range, prototype stealth doesn't get a mod!
-                    break;
-                case RangeType.RANGE_MEDIUM:
-                    result = new TargetRoll(+1, "Prototype Stealth Armor");
-                    break;
-                case RangeType.RANGE_LONG:
-                case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                    // modifier?
-                    result = new TargetRoll(+2, "Prototype Stealth Armor");
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            "Unknown range constant: " + range);
+                    case RangeType.RANGE_MINIMUM:
+                    case RangeType.RANGE_SHORT:
+                        // At short range, prototype stealth doesn't get a mod!
+                        break;
+                    case RangeType.RANGE_MEDIUM:
+                        result = new TargetRoll(+1, "Prototype Stealth Armor");
+                        break;
+                    case RangeType.RANGE_LONG:
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                                                    // modifier?
+                        result = new TargetRoll(+2, "Prototype Stealth Armor");
+                        break;
+                    default:
+                        throw new IllegalArgumentException(
+                                "Unknown range constant: " + range);
                 }
             } else if ((armorType == 5)
                     && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
                 // Standard Stealth
                 switch (range) {
-                case RangeType.RANGE_MINIMUM:
-                case RangeType.RANGE_SHORT:
-                    result = new TargetRoll(+1, "Standard Stealth Armor");
-                    break;
-                case RangeType.RANGE_MEDIUM:
-                    result = new TargetRoll(+1, "Standard Stealth Armor");
-                    break;
-                case RangeType.RANGE_LONG:
-                case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                    // modifier?
-                    result = new TargetRoll(+2, "Standard Stealth Armor");
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            "Unknown range constant: " + range);
+                    case RangeType.RANGE_MINIMUM:
+                    case RangeType.RANGE_SHORT:
+                        result = new TargetRoll(+1, "Standard Stealth Armor");
+                        break;
+                    case RangeType.RANGE_MEDIUM:
+                        result = new TargetRoll(+1, "Standard Stealth Armor");
+                        break;
+                    case RangeType.RANGE_LONG:
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                                                    // modifier?
+                        result = new TargetRoll(+2, "Standard Stealth Armor");
+                        break;
+                    default:
+                        throw new IllegalArgumentException(
+                                "Unknown range constant: " + range);
                 }
             } else if ((armorType == 6)
                     && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
                 // Improved Stealth
                 switch (range) {
-                case RangeType.RANGE_MINIMUM:
-                case RangeType.RANGE_SHORT:
-                    result = new TargetRoll(+1, "Improved Stealth Armor");
-                    break;
-                case RangeType.RANGE_MEDIUM:
-                    result = new TargetRoll(+2, "Improved Stealth Armor");
-                    break;
-                case RangeType.RANGE_LONG:
-                case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                    // modifier?
-                    result = new TargetRoll(+3, "Improved Stealth Armor");
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            "Unknown range constant: " + range);
+                    case RangeType.RANGE_MINIMUM:
+                    case RangeType.RANGE_SHORT:
+                        result = new TargetRoll(+1, "Improved Stealth Armor");
+                        break;
+                    case RangeType.RANGE_MEDIUM:
+                        result = new TargetRoll(+2, "Improved Stealth Armor");
+                        break;
+                    case RangeType.RANGE_LONG:
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                                                    // modifier?
+                        result = new TargetRoll(+3, "Improved Stealth Armor");
+                        break;
+                    default:
+                        throw new IllegalArgumentException(
+                                "Unknown range constant: " + range);
                 }
             } else if (armorType == 8) {
                 int mmod = 3 - delta_distance;
@@ -1117,24 +1117,24 @@ public class BattleArmor extends Infantry {
             if (isStealthy
                     && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
                 switch (range) {
-                case RangeType.RANGE_MINIMUM:
-                case RangeType.RANGE_SHORT:
-                    result = new TargetRoll(shortStealthMod,
-                            stealthName);
-                    break;
-                case RangeType.RANGE_MEDIUM:
-                    result = new TargetRoll(mediumStealthMod,
-                            stealthName);
-                    break;
-                case RangeType.RANGE_LONG:
-                case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                    // modifier?
-                    result = new TargetRoll(longStealthMod,
-                            stealthName);
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            "Unknown range constant: " + range);
+                    case RangeType.RANGE_MINIMUM:
+                    case RangeType.RANGE_SHORT:
+                        result = new TargetRoll(shortStealthMod,
+                                stealthName);
+                        break;
+                    case RangeType.RANGE_MEDIUM:
+                        result = new TargetRoll(mediumStealthMod,
+                                stealthName);
+                        break;
+                    case RangeType.RANGE_LONG:
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                                                    // modifier?
+                        result = new TargetRoll(longStealthMod,
+                                stealthName);
+                        break;
+                    default:
+                        throw new IllegalArgumentException(
+                                "Unknown range constant: " + range);
                 }
             }
         }
@@ -1361,21 +1361,21 @@ public class BattleArmor extends Infantry {
         buff.append("<type>");
         buff.append(newline);
         switch (getTechLevel()) {
-        case TechConstants.T_INTRO_BOXSET:
-            buff.append("IS Level 1");
-            break;
-        case TechConstants.T_IS_TW_NON_BOX:
-            buff.append("IS Level 2");
-            break;
-        case TechConstants.T_IS_ADVANCED:
-            buff.append("IS Level 3");
-            break;
-        case TechConstants.T_CLAN_TW:
-            buff.append("Clan Level 2");
-            break;
-        case TechConstants.T_CLAN_ADVANCED:
-            buff.append("Clan Level 3");
-            break;
+            case TechConstants.T_INTRO_BOXSET:
+                buff.append("IS Level 1");
+                break;
+            case TechConstants.T_IS_TW_NON_BOX:
+                buff.append("IS Level 2");
+                break;
+            case TechConstants.T_IS_ADVANCED:
+                buff.append("IS Level 3");
+                break;
+            case TechConstants.T_CLAN_TW:
+                buff.append("Clan Level 2");
+                break;
+            case TechConstants.T_CLAN_ADVANCED:
+                buff.append("Clan Level 3");
+                break;
         }
         buff.append(newline);
         buff.append("</type>");
@@ -1398,18 +1398,18 @@ public class BattleArmor extends Infantry {
         buff.append("<motion_type>");
         buff.append(newline);
         switch (getMovementMode()) {
-        case IEntityMovementMode.INF_JUMP:
-            buff.append("jump");
-            break;
-        case IEntityMovementMode.INF_LEG:
-            buff.append("leg");
-            break;
-        case IEntityMovementMode.VTOL:
-            buff.append("vtol");
-            break;
-        case IEntityMovementMode.INF_UMU:
-            buff.append("submarine");
-            break;
+            case IEntityMovementMode.INF_JUMP:
+                buff.append("jump");
+                break;
+            case IEntityMovementMode.INF_LEG:
+                buff.append("leg");
+                break;
+            case IEntityMovementMode.VTOL:
+                buff.append("vtol");
+                break;
+            case IEntityMovementMode.INF_UMU:
+                buff.append("submarine");
+                break;
         }
         buff.append(newline);
         buff.append("</motion_type>");
@@ -1485,7 +1485,7 @@ public class BattleArmor extends Infantry {
         // when BA is created from custom BA dialog
         if (armorType == 7) {
             return true;
-            // else
+        // else
         } else if (armorType == -1) {
             for (Mounted equip : getMisc()) {
                 if (equip.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {

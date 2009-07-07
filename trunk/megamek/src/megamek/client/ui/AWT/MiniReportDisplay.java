@@ -70,7 +70,7 @@ public class MiniReportDisplay extends Dialog implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == butOkay) {
             GUIPreferences.getInstance()
-            .setMiniReportSizeWidth(getSize().width);
+                    .setMiniReportSizeWidth(getSize().width);
             GUIPreferences.getInstance().setMiniReportSizeHeight(
                     getSize().height);
             GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);

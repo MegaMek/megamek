@@ -31,7 +31,7 @@ public class RulerCommand extends ClientCommand {
         super(
                 client,
                 "ruler",
-        "Show Line of Sight (LOS) information between two points of the map. Usage: #ruler x1 y1 x2 y2 [elev1 [elev2]]. Where x1, y1 and x2, y2 are the coordiantes of the tiles, and the optional elev numbers are the elevations of the targets over the terrain. If elev is not given 1 is assumed which is for standing mechs. Prone mechs and most other units are at elevation 0.");
+                "Show Line of Sight (LOS) information between two points of the map. Usage: #ruler x1 y1 x2 y2 [elev1 [elev2]]. Where x1, y1 and x2, y2 are the coordiantes of the tiles, and the optional elev numbers are the elevations of the targets over the terrain. If elev is not given 1 is assumed which is for standing mechs. Prone mechs and most other units are at elevation 0.");
     }
 
     @Override
@@ -65,7 +65,7 @@ public class RulerCommand extends ClientCommand {
                     LosEffects.buildAttackInfo(start, end, elev1, elev2,
                             client.getBoard().getHex(start).floor(),
                             client.getBoard().getHex(end).floor())).losModifiers(
-                                    client.game);
+                    client.game);
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit1 = thd.getValue() + " because "; //$NON-NLS-1$
             }
@@ -75,18 +75,18 @@ public class RulerCommand extends ClientCommand {
                     LosEffects.buildAttackInfo(end, start, elev2, elev1,
                             client.getBoard().getHex(end).floor(),
                             client.getBoard().getHex(start).floor())).losModifiers(
-                                    client.game);
+                    client.game);
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit2 = thd.getValue() + " because  "; //$NON-NLS-1$
             }
             toHit2 += thd.getDesc();
 
             return "The ToHit from hex (" + (start.x + 1) + ", "
-            + (start.y + 1) + ") at elevation " + elev1 + " to ("
-            + (end.x + 1) + ", " + (end.y + 1) + ") at elevation "
-            + elev2 + " has a range of " + start.distance(end)
-            + " and a modifier of " + toHit1
-            + " and return fire has a modifier of " + toHit2 + ".";
+                    + (start.y + 1) + ") at elevation " + elev1 + " to ("
+                    + (end.x + 1) + ", " + (end.y + 1) + ") at elevation "
+                    + elev2 + " has a range of " + start.distance(end)
+                    + " and a modifier of " + toHit1
+                    + " and return fire has a modifier of " + toHit2 + ".";
         } catch (NumberFormatException nfe) {
         } catch (NullPointerException npe) {
         } catch (IndexOutOfBoundsException ioobe) {

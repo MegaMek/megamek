@@ -175,10 +175,10 @@ public class StreakHandler extends MissileWeaponHandler {
     @Override
     protected void reportMiss(Vector<Report> vPhaseReport) {
         //if (!isAngelECMAffected) {
-        // no lock
-        Report r = new Report(3215);
-        r.subject = subjectId;
-        vPhaseReport.addElement(r);
+            // no lock
+            Report r = new Report(3215);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
         /*} else {
             super.reportMiss(vPhaseReport);
         }*/

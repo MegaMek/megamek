@@ -29,12 +29,12 @@ public class VTOL extends Tank {
     private static final long serialVersionUID = -7406911547399249173L;
 
     public static final int LOC_ROTOR = 5; // will this cause problems w/r/t
-    // turrets?
+                                            // turrets?
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
-    "RO" };
+            "RO" };
     private static String[] LOCATION_NAMES = { "Body", "Front", "Right",
-        "Left", "Rear", "Rotor" };
+            "Left", "Rear", "Rotor" };
 
     // critical hits
     public static final int CRIT_COPILOT = 15;
@@ -71,7 +71,7 @@ public class VTOL extends Tank {
             int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         roll.addModifier(TargetRoll.CHECK_FALSE,
-        "Check false: VTOLs can't skid");
+                "Check false: VTOLs can't skid");
         return roll;
     }
 
@@ -91,14 +91,14 @@ public class VTOL extends Tank {
     @Override
     public String getMovementString(int mtype) {
         switch (mtype) {
-        case IEntityMovementType.MOVE_VTOL_WALK:
-            return "Cruised";
-        case IEntityMovementType.MOVE_VTOL_RUN:
-            return "Flanked";
-        case IEntityMovementType.MOVE_NONE:
-            return "None";
-        default:
-            return "Unknown!";
+            case IEntityMovementType.MOVE_VTOL_WALK:
+                return "Cruised";
+            case IEntityMovementType.MOVE_VTOL_RUN:
+                return "Flanked";
+            case IEntityMovementType.MOVE_NONE:
+                return "None";
+            default:
+                return "Unknown!";
         }
     }
 
@@ -108,14 +108,14 @@ public class VTOL extends Tank {
     @Override
     public String getMovementAbbr(int mtype) {
         switch (mtype) {
-        case IEntityMovementType.MOVE_VTOL_WALK:
-            return "C";
-        case IEntityMovementType.MOVE_VTOL_RUN:
-            return "F";
-        case IEntityMovementType.MOVE_NONE:
-            return "N";
-        default:
-            return "?";
+            case IEntityMovementType.MOVE_VTOL_WALK:
+                return "C";
+            case IEntityMovementType.MOVE_VTOL_RUN:
+                return "F";
+            case IEntityMovementType.MOVE_NONE:
+                return "N";
+            default:
+                return "?";
         }
     }
 
@@ -128,10 +128,10 @@ public class VTOL extends Tank {
     public boolean isHexProhibited(IHex hex) {
         if (hex.containsTerrain(Terrains.IMPASSABLE))
             return true;
-
+        
         if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
             return true;
-
+        
         return false;
     }
 
@@ -148,7 +148,7 @@ public class VTOL extends Tank {
             int loc_is = this.getInternal(loc);
             loc++;
             retval = (loc_is != IArmorState.ARMOR_DOOMED)
-            && (loc_is != IArmorState.ARMOR_DESTROYED);
+                    && (loc_is != IArmorState.ARMOR_DESTROYED);
         }
         return retval;
     }
@@ -174,7 +174,7 @@ public class VTOL extends Tank {
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE)
                 && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-
+            
             int roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
@@ -232,12 +232,12 @@ public class VTOL extends Tank {
     public boolean doomedInVacuum() {
         return true;
     }
-
+    
     @Override
     public boolean doomedInAtmosphere() {
         return true;
     }
-
+    
     @Override
     public boolean doomedInSpace() {
         return true;
@@ -268,145 +268,145 @@ public class VTOL extends Tank {
                 roll = 6;
             if (loc == LOC_FRONT) {
                 switch (roll) {
-                case 6:
-                    if (!isDriverHit())
-                        return CRIT_COPILOT;
-                    else if (!crew.isDead() && !crew.isDoomed())
-                        return CRIT_CREW_KILLED;
-                case 7:
-                    for (Mounted m : getWeaponList()) {
-                        if (m.getLocation() == loc && !m.isDestroyed()
-                                && !m.isJammed() && !m.isHit()) {
-                            return CRIT_WEAPON_JAM;
-                        }
-                    }
-                case 8:
-                    if (!isStabiliserHit(loc)) {
+                    case 6:
+                        if (!isDriverHit())
+                            return CRIT_COPILOT;
+                        else if (!crew.isDead() && !crew.isDoomed())
+                            return CRIT_CREW_KILLED;
+                    case 7:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc) {
-                                return CRIT_STABILIZER;
+                            if (m.getLocation() == loc && !m.isDestroyed()
+                                    && !m.isJammed() && !m.isHit()) {
+                                return CRIT_WEAPON_JAM;
                             }
                         }
-                    }
-                case 9:
-                    if (getSensorHits() < 4)
-                        return CRIT_SENSOR;
-                case 10:
-                    if (!isCommanderHit())
-                        return CRIT_PILOT;
-                    else if (!crew.isDead() && !crew.isDoomed()) {
-                        return CRIT_CREW_KILLED;
-                    }
-                case 11:
-                    for (Mounted m : getWeaponList()) {
-                        if (m.getLocation() == loc && !m.isDestroyed()
-                                && !m.isHit()) {
-                            return CRIT_WEAPON_DESTROYED;
+                    case 8:
+                        if (!isStabiliserHit(loc)) {
+                            for (Mounted m : getWeaponList()) {
+                                if (m.getLocation() == loc) {
+                                    return CRIT_STABILIZER;
+                                }
+                            }
                         }
-                    }
-                case 12:
-                    if (!crew.isDead() && !crew.isDoomed())
-                        return CRIT_CREW_KILLED;
+                    case 9:
+                        if (getSensorHits() < 4)
+                            return CRIT_SENSOR;
+                    case 10:
+                        if (!isCommanderHit())
+                            return CRIT_PILOT;
+                        else if (!crew.isDead() && !crew.isDoomed()) {
+                            return CRIT_CREW_KILLED;
+                        }
+                    case 11:
+                        for (Mounted m : getWeaponList()) {
+                            if (m.getLocation() == loc && !m.isDestroyed()
+                                    && !m.isHit()) {
+                                return CRIT_WEAPON_DESTROYED;
+                            }
+                        }
+                    case 12:
+                        if (!crew.isDead() && !crew.isDoomed())
+                            return CRIT_CREW_KILLED;
                 }
             } else if (loc == LOC_REAR) {
                 switch (roll) {
-                case 6:
-                    if (getLoadedUnits().size() > 0)
-                        return CRIT_CARGO;
-                case 7:
-                    for (Mounted m : getWeaponList()) {
-                        if (m.getLocation() == loc && !m.isDestroyed()
-                                && !m.isJammed() && !m.isHit()) {
-                            return CRIT_WEAPON_JAM;
-                        }
-                    }
-                case 8:
-                    if (!isStabiliserHit(loc)) {
+                    case 6:
+                        if (getLoadedUnits().size() > 0)
+                            return CRIT_CARGO;
+                    case 7:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc) {
-                                return CRIT_STABILIZER;
+                            if (m.getLocation() == loc && !m.isDestroyed()
+                                    && !m.isJammed() && !m.isHit()) {
+                                return CRIT_WEAPON_JAM;
                             }
                         }
-                    }
-                case 9:
-                    for (Mounted m : getWeaponList()) {
-                        if (m.getLocation() == loc && !m.isDestroyed()
-                                && !m.isHit()) {
-                            return CRIT_WEAPON_DESTROYED;
+                    case 8:
+                        if (!isStabiliserHit(loc)) {
+                            for (Mounted m : getWeaponList()) {
+                                if (m.getLocation() == loc) {
+                                    return CRIT_STABILIZER;
+                                }
+                            }
                         }
-                    }
-                case 10:
-                    if (getSensorHits() < 4)
-                        return CRIT_SENSOR;
-                case 11:
-                    if (!engineHit)
-                        return CRIT_ENGINE;
-                case 12:
-                    if (getEngine().isFusion() && !engineHit)
-                        return CRIT_ENGINE;
-                    else if (!getEngine().isFusion())
-                        return CRIT_FUEL_TANK;
+                    case 9:
+                        for (Mounted m : getWeaponList()) {
+                            if (m.getLocation() == loc && !m.isDestroyed()
+                                    && !m.isHit()) {
+                                return CRIT_WEAPON_DESTROYED;
+                            }
+                        }
+                    case 10:
+                        if (getSensorHits() < 4)
+                            return CRIT_SENSOR;
+                    case 11:
+                        if (!engineHit)
+                            return CRIT_ENGINE;
+                    case 12:
+                        if (getEngine().isFusion() && !engineHit)
+                            return CRIT_ENGINE;
+                        else if (!getEngine().isFusion())
+                            return CRIT_FUEL_TANK;
                 }
             } else if (loc == LOC_ROTOR) {
                 switch (roll) {
-                case 6:
-                case 7:
-                case 8:
-                    if (!isImmobile())
-                        return CRIT_ROTOR_DAMAGE;
-                case 9:
-                case 10:
-                    if (!isStabiliserHit(loc))
-                        return CRIT_FLIGHT_STABILIZER;
-                case 11:
-                case 12:
-                    return CRIT_ROTOR_DESTROYED;
+                    case 6:
+                    case 7:
+                    case 8:
+                        if (!isImmobile())
+                            return CRIT_ROTOR_DAMAGE;
+                    case 9:
+                    case 10:
+                        if (!isStabiliserHit(loc))
+                            return CRIT_FLIGHT_STABILIZER;
+                    case 11:
+                    case 12:
+                        return CRIT_ROTOR_DESTROYED;
                 }
             } else {
                 switch (roll) {
-                case 6:
-                    for (Mounted m : getWeaponList()) {
-                        if (m.getLocation() == loc && !m.isDestroyed()
-                                && !m.isJammed() && !m.isHit()) {
-                            return CRIT_WEAPON_JAM;
-                        }
-                    }
-                case 7:
-                    if (getLoadedUnits().size() > 0)
-                        return CRIT_CARGO;
-                case 8:
-                    if (!isStabiliserHit(loc)) {
+                    case 6:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc) {
-                                return CRIT_STABILIZER;
+                            if (m.getLocation() == loc && !m.isDestroyed()
+                                    && !m.isJammed() && !m.isHit()) {
+                                return CRIT_WEAPON_JAM;
                             }
                         }
-                    }
-                case 9:
-                    // TODO: fix for new TW rules
-                    // roll 1d6, 1-3, defending player
-                    // chooses which weapon gets destroyed
-                    // 4-6: attacker chooses which weapon gets destroyed
-                    for (Mounted m : getWeaponList()) {
-                        if (m.getLocation() == loc && !m.isDestroyed()
-                                && !m.isHit()) {
-                            return CRIT_WEAPON_DESTROYED;
+                    case 7:
+                        if (getLoadedUnits().size() > 0)
+                            return CRIT_CARGO;
+                    case 8:
+                        if (!isStabiliserHit(loc)) {
+                            for (Mounted m : getWeaponList()) {
+                                if (m.getLocation() == loc) {
+                                    return CRIT_STABILIZER;
+                                }
+                            }
                         }
-                    }
-                case 10:
-                    if (!engineHit)
-                        return CRIT_ENGINE;
-                case 11:
-                    for (Mounted m : getAmmo()) {
-                        if (!m.isDestroyed() && !m.isHit()) {
-                            return CRIT_AMMO;
+                    case 9:
+                        // TODO: fix for new TW rules
+                        // roll 1d6, 1-3, defending player
+                        // chooses which weapon gets destroyed
+                        // 4-6: attacker chooses which weapon gets destroyed
+                        for (Mounted m : getWeaponList()) {
+                            if (m.getLocation() == loc && !m.isDestroyed()
+                                    && !m.isHit()) {
+                                return CRIT_WEAPON_DESTROYED;
+                            }
                         }
-                    }
-                case 12:
-                    if (getEngine().isFusion() && !engineHit)
-                        return CRIT_ENGINE;
-                    else if (!getEngine().isFusion())
-                        return CRIT_FUEL_TANK;
+                    case 10:
+                        if (!engineHit)
+                            return CRIT_ENGINE;
+                    case 11:
+                        for (Mounted m : getAmmo()) {
+                            if (!m.isDestroyed() && !m.isHit()) {
+                                return CRIT_AMMO;
+                            }
+                        }
+                    case 12:
+                        if (getEngine().isFusion() && !engineHit)
+                            return CRIT_ENGINE;
+                        else if (!getEngine().isFusion())
+                            return CRIT_FUEL_TANK;
                 }
             }
         }
@@ -428,7 +428,7 @@ public class VTOL extends Tank {
                 && !getCrew().getOptions().booleanOption("bvdni")) {
             prd.addModifier(-1, "VDNI");
         }
-
+     
         return prd;
     }
 }

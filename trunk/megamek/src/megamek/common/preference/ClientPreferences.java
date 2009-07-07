@@ -24,7 +24,7 @@ import megamek.common.MovePath;
 import megamek.common.util.LocaleParser;
 
 class ClientPreferences extends PreferenceStoreProxy implements
-IClientPreferences {
+        IClientPreferences {
 
     ClientPreferences(IPreferenceStore store) {
         this.store = store;
@@ -39,7 +39,7 @@ IClientPreferences {
         store.setDefault(MECH_DIRECTORY, store.getDefaultString(DATA_DIRECTORY)
                 + File.separator + "mechfiles");
         store.setDefault(METASERVER_NAME,
-        "http://www.damour.info/cgi-bin/james/metaserver");
+                "http://www.damour.info/cgi-bin/james/metaserver");
         store.setDefault(GOAL_PLAYERS, 2);
         store.setDefault(GAMELOG_KEEP, true);
         store.setDefault(GAMELOG_FILENAME, "gamelog.txt");

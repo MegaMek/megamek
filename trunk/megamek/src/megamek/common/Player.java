@@ -31,11 +31,11 @@ public final class Player extends TurnOrdered {
     public static final int TEAM_NONE = 0;
 
     public static final String colorNames[] = { "Blue", "Yellow", "Red",
-        "Green", "White", "Cyan", "Pink", "Orange", "Gray", "Brown",
-    "Purple" };
+            "Green", "White", "Cyan", "Pink", "Orange", "Gray", "Brown",
+            "Purple" };
 
     public static final String teamNames[] = { "No Team", "Team 1", "Team 2",
-        "Team 3", "Team 4", "Team 5" };
+            "Team 3", "Team 4", "Team 5" };
     public static final int MAX_TEAMS = teamNames.length;
 
     private transient IGame game;
@@ -421,7 +421,7 @@ public final class Player extends TurnOrdered {
             Team teamObj = game.getTeamForPlayer(this);
             if (teamObj != null) {
                 for (Enumeration<Player> e = teamObj.getPlayers(); e
-                .hasMoreElements();) {
+                        .hasMoreElements();) {
                     Player p = e.nextElement();
                     if (!p.equals(this)) {
                         ourUnitCount += game.getEntitiesOwnedBy(p);
@@ -432,7 +432,7 @@ public final class Player extends TurnOrdered {
                 Team t = e.nextElement();
                 if (t.getId() != getTeam()) {
                     for (Enumeration<Player> players = t.getPlayers(); players
-                    .hasMoreElements();) {
+                            .hasMoreElements();) {
                         Player p = players.nextElement();
                         enemyUnitCount += game.getEntitiesOwnedBy(p);
                     }
@@ -445,7 +445,7 @@ public final class Player extends TurnOrdered {
         }
 
         return (enemyUnitCount / ourUnitCount)
-        + (ourUnitCount / enemyUnitCount) - 1;
+                + (ourUnitCount / enemyUnitCount) - 1;
     }
 
     public void setConstantInitBonus(int b) {
@@ -467,11 +467,11 @@ public final class Player extends TurnOrdered {
             if (entity.getOwner().equals(this)) {
                 if (game.getOptions().booleanOption("tacops_mobile_hqs")
                         && (bonusHQ == 0) && (entity.getHQIniBonus() > 0)) {
-                    bonusHQ = entity.getHQIniBonus();
+                            bonusHQ = entity.getHQIniBonus();
                 }
                 if (game.getOptions().booleanOption("manei_domini")
                         && (bonusMD == 0) && (entity.getMDIniBonus() > 0)) {
-                    bonusMD = entity.getMDIniBonus();
+                            bonusMD = entity.getMDIniBonus();
                 }
                 if(entity.getQuirkIniBonus() > bonusQ) {
                     //TODO: I am assuming that the quirk initiative bonuses go to the highest,

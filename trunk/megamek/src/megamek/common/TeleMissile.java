@@ -1,5 +1,5 @@
 /*
- * MegaAero - Copyright (C) 2007 Jay Lawson
+* MegaAero - Copyright (C) 2007 Jay Lawson
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
  *  Software Foundation; either version 2 of the License, or (at your option) 
@@ -195,7 +195,7 @@ public class TeleMissile extends Aero {
     public int getCritMod() {
         return critMod;
     }
-
+    
     @Override
     public int locations() {
         return 1;

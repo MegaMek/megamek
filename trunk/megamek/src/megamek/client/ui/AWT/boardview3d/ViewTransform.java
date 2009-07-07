@@ -104,7 +104,7 @@ class PlayerViewTransform extends ViewTransform implements MouseBehaviorCallback
         MultiTransformGroup mtg = universe.getViewingPlatform().getMultiTransformGroup();
 
         mtg.getTransformGroup(0).setTransform(
-                new Transform3D(rotfix, new Vector3d(BoardModel.getHexLocation(c, hex.getElevation())), 1.0)
+            new Transform3D(rotfix, new Vector3d(BoardModel.getHexLocation(c, hex.getElevation())), 1.0)
         );
     }
 
@@ -286,7 +286,7 @@ class MapViewTransform extends ViewTransform implements MouseBehaviorCallback {
         MultiTransformGroup mtg = universe.getViewingPlatform().getMultiTransformGroup();
 
         mtg.getTransformGroup(0).setTransform(
-                new Transform3D(C.nullRot, new Vector3d(BoardModel.getHexLocation(c, hex.getElevation())), 1.0)
+            new Transform3D(C.nullRot, new Vector3d(BoardModel.getHexLocation(c, hex.getElevation())), 1.0)
         );
 
         center();

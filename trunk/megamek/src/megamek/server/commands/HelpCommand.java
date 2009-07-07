@@ -39,7 +39,7 @@ public class HelpCommand extends ServerCommand {
         super(
                 server,
                 "help",
-        "Lists all of the commands available, or gives help on a specific command.  Usage: /help [command]");
+                "Lists all of the commands available, or gives help on a specific command.  Usage: /help [command]");
     }
 
     @Override
@@ -48,14 +48,14 @@ public class HelpCommand extends ServerCommand {
             // no args
             server.sendServerChat(connId,
                     "Type /help [command] for help on a specific command.  Commands available: "
-                    + commandList());
+                            + commandList());
         } else {
             // argument
             ServerCommand command = server.getCommand(args[1]);
             if (command == null) {
                 server.sendServerChat(connId, "Command \"" + args[1]
-                                                                  + "\" not recognized.  Commands available: "
-                                                                  + commandList());
+                        + "\" not recognized.  Commands available: "
+                        + commandList());
             } else {
                 server.sendServerChat(connId, "/" + command.getName() + " : "
                         + command.getHelp());
@@ -67,7 +67,7 @@ public class HelpCommand extends ServerCommand {
         StringBuffer commandList = new StringBuffer();
 
         for (Enumeration<String> i = server.getAllCommandNames(); i
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             ServerCommand command = server.getCommand(i.nextElement());
             if (commandList.length() > 0) {
                 commandList.append(", ");

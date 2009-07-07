@@ -110,18 +110,18 @@ public class PushAttackAction extends DisplacementAttackAction {
 
         if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "You can't attack from a null entity!");
+                    "You can't attack from a null entity!");
         }
         if (te == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "You can't target a null entity!");
+                    "You can't target a null entity!");
         }
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(te.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int targetElevation = target.getElevation()
-        + targHex.getElevation();
+                + targHex.getElevation();
         boolean inSameBuilding = (game.getBoard().getBuildingAt(ae.getPosition()) != null)
         && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
@@ -134,7 +134,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         // can't target yourself
         if (ae.equals(te)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "You can't target yourself");
+                    "You can't target yourself");
         }
 
         // non-mechs can't push
@@ -155,26 +155,26 @@ public class PushAttackAction extends DisplacementAttackAction {
         // Can't push with flipped arms
         if (ae.getArmsFlipped()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Arms are flipped to the rear. Can not push.");
+                    "Arms are flipped to the rear. Can not push.");
         }
 
         // Can't target a transported entity.
         if (Entity.NONE != te.getTransportId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target is a passenger.");
+                    "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
         if (Entity.NONE != te.getSwarmTargetId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target is swarming a Mek.");
+                    "Target is swarming a Mek.");
         }
 
         // check if both arms are present
         if (ae.isLocationBad(Mech.LOC_RARM) || ae.isLocationBad(Mech.LOC_LARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
-
+        
         //check for no/minimal arms quirk
         if(ae.getQuirks().booleanOption("no_arms")) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
@@ -184,7 +184,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         if (ae.weaponFiredFrom(Mech.LOC_RARM)
                 || ae.weaponFiredFrom(Mech.LOC_LARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Weapons fired from arm this turn");
+                    "Weapons fired from arm this turn");
         }
 
         // check range
@@ -195,20 +195,20 @@ public class PushAttackAction extends DisplacementAttackAction {
         // target must be at same elevation
         if (attackerElevation != targetElevation) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target not at same elevation");
+                    "Target not at same elevation");
         }
 
         // can't push mech making non-pushing displacement attack
         if (te.hasDisplacementAttack() && !te.isPushing()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target is making a charge/DFA attack");
+                    "Target is making a charge/DFA attack");
         }
 
         // can't push mech pushing another, different mech
         if (te.isPushing()
                 && (te.getDisplacementAttack().getTargetId() != ae.getId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target is pushing another mech");
+                    "Target is pushing another mech");
         }
 
         // can't do anything but counter-push if the target of another attack
@@ -216,21 +216,21 @@ public class PushAttackAction extends DisplacementAttackAction {
                 && (ae.findTargetedDisplacement().getEntityId() != target
                         .getTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Attacker is the target of another push/charge/DFA");
+                    "Attacker is the target of another push/charge/DFA");
         }
 
         // can't attack the target of another displacement attack
         if (te.isTargetOfDisplacementAttack()
                 && (te.findTargetedDisplacement().getEntityId() != ae.getId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target is the target of another push/charge/DFA");
+                    "Target is the target of another push/charge/DFA");
         }
 
         // check facing
         if (!target.getPosition().equals(
                 ae.getPosition().translated(ae.getFacing()))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target not directly ahead of feet");
+                    "Target not directly ahead of feet");
         }
 
         // can't push while prone
@@ -247,11 +247,11 @@ public class PushAttackAction extends DisplacementAttackAction {
         if (targetInBuilding) {
             if (!Compute.isInBuilding(game, ae)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                "Target is inside building");
+                        "Target is inside building");
             } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(
                     bldg)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                "Target is inside differnt building");
+                        "Target is inside differnt building");
             }
         }
 
@@ -259,7 +259,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
                 || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "You can not push a building (well, you can, but it won't do anything).");
+                    "You can not push a building (well, you can, but it won't do anything).");
         }
 
         // Can't target woods or ignite a building with a physical.
@@ -328,10 +328,10 @@ public class PushAttackAction extends DisplacementAttackAction {
                     Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                        "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
                 toHit.addModifier(4,
-                "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                        "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
 

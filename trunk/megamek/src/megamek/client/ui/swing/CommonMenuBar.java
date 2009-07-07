@@ -940,7 +940,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     public synchronized void setMoveFleeEnabled(boolean enabled) {
         moveFlee.setEnabled(enabled);
     }
-
+    
     public synchronized void setMoveFlyOffEnabled(boolean enabled) {
         moveFlyOff.setEnabled(enabled);
     }
@@ -1164,7 +1164,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     public synchronized void setFireModeEnabled(boolean enabled) {
         fireMode.setEnabled(enabled);
     }
-
+    
     public synchronized void setFireCalledEnabled(boolean enabled) {
         fireCalled.setEnabled(enabled);
     }

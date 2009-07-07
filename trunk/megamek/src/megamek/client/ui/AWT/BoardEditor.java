@@ -73,7 +73,7 @@ import megamek.common.util.BoardUtilities;
  * The BoardEditor class is a
  */
 public class BoardEditor extends Container implements ItemListener,
-ActionListener, TextListener, IMapSettingsObserver {
+        ActionListener, TextListener, IMapSettingsObserver {
 
     /**
      * Serialization ID.
@@ -189,7 +189,7 @@ ActionListener, TextListener, IMapSettingsObserver {
         if (true == GUIPreferences.getInstance().getNagForMapEdReadme()) {
             final String title = Messages.getString("BoardEditor.readme.title"); //$NON-NLS-1$
             final String body = Messages
-            .getString("BoardEditor.readme.message"); //$NON-NLS-1$
+                    .getString("BoardEditor.readme.message"); //$NON-NLS-1$
             final ConfirmDialog confirm = new ConfirmDialog(frame, title, body,
                     true);
             confirm.setVisible(true);
@@ -589,8 +589,8 @@ ActionListener, TextListener, IMapSettingsObserver {
                 .getString("BoardEditor.loadBoard"), FileDialog.LOAD); //$NON-NLS-1$
         fd.setDirectory("data" + File.separator + "boards"); //$NON-NLS-1$ //$NON-NLS-2$
         fd
-        .setLocation(frame.getLocation().x + 150,
-                frame.getLocation().y + 100);
+                .setLocation(frame.getLocation().x + 150,
+                        frame.getLocation().y + 100);
         fd.setVisible(true);
 
         if (fd.getFile() == null) {
@@ -659,8 +659,8 @@ ActionListener, TextListener, IMapSettingsObserver {
         // move to middle of screen
         waitD.setLocation(
                 frame.getSize().width / 2 - waitD.getSize().width / 2, frame
-                .getSize().height
-                / 2 - waitD.getSize().height / 2);
+                        .getSize().height
+                        / 2 - waitD.getSize().height / 2);
         waitD.setVisible(true);
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -696,8 +696,8 @@ ActionListener, TextListener, IMapSettingsObserver {
                 .getString("BoardEditor.saveBoardAs"), FileDialog.SAVE); //$NON-NLS-1$
         fd.setDirectory("data" + File.separator + "boards"); //$NON-NLS-1$ //$NON-NLS-2$
         fd
-        .setLocation(frame.getLocation().x + 150,
-                frame.getLocation().y + 100);
+                .setLocation(frame.getLocation().x + 150,
+                        frame.getLocation().y + 100);
         fd.setVisible(true);
 
         if (fd.getFile() == null) {
@@ -726,8 +726,8 @@ ActionListener, TextListener, IMapSettingsObserver {
                 .getString("BoardEditor.saveAsImage"), FileDialog.SAVE); //$NON-NLS-1$
         // fd.setDirectory("data" + File.separator + "boards");
         fd
-        .setLocation(frame.getLocation().x + 150,
-                frame.getLocation().y + 100);
+                .setLocation(frame.getLocation().x + 150,
+                        frame.getLocation().y + 100);
 
         // Add a filter for PNG files
         fd.setFilenameFilter(new FilenameFilter() {
@@ -867,12 +867,12 @@ ActionListener, TextListener, IMapSettingsObserver {
         } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAs")) { //$NON-NLS-1$
             boardSaveAs();
         } else if (ae.getActionCommand().equalsIgnoreCase(
-        "fileBoardSaveAsImage")) { //$NON-NLS-1$
+                "fileBoardSaveAsImage")) { //$NON-NLS-1$
             boardSaveAsImage();
         } else if (ae.getSource() == butDelTerrain
                 && lisTerrain.getSelectedItem() != null) {
             final ITerrain toRemove = Terrains.getTerrainFactory()
-            .createTerrain(lisTerrain.getSelectedItem());
+                    .createTerrain(lisTerrain.getSelectedItem());
             curHex.removeTerrain(toRemove.getType());
             refreshTerrainList();
             repaintWorkingHex();
@@ -940,8 +940,8 @@ ActionListener, TextListener, IMapSettingsObserver {
                 }
                 g.setFont(new Font("SansSerif", Font.PLAIN, 9)); //$NON-NLS-1$
                 g
-                .drawString(
-                        Messages.getString("BoardEditor.LEVEL") + curHex.getElevation(), 24, 70); //$NON-NLS-1$
+                        .drawString(
+                                Messages.getString("BoardEditor.LEVEL") + curHex.getElevation(), 24, 70); //$NON-NLS-1$
             } else {
                 g.clearRect(0, 0, 72, 72);
             }

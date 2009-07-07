@@ -144,7 +144,7 @@ public class RotateFilter extends RGBImageFilter {
 
     private final int combine(int alpha, int red, int green, int blue) {
         return (alpha > ALPHA_CLIP ? 0xFF000000 : 0) | (red << 16)
-        | (green << 8) | (blue);
+                | (green << 8) | (blue);
     }
 
     /**

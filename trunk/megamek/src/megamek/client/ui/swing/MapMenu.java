@@ -29,6 +29,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.AmmoType;
 import megamek.common.BipedMech;
+import megamek.common.BombType;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -557,7 +558,7 @@ public class MapMenu extends JPopupMenu {
         menu.add(createFireJMenuItem());
         menu.add(createSkipJMenuItem());
         menu.add(createAlphaStrikeJMenuItem());
-
+        
         if ( myEntity.canFlipArms() ) {
             menu.add(createFlipArmsJMenuItem());
         }
@@ -637,7 +638,7 @@ public class MapMenu extends JPopupMenu {
             public void actionPerformed(ActionEvent e) {
                 try {
                     FiringDisplay display = (FiringDisplay)currentPanel;
-
+                    
                     int id = Integer.parseInt(e.getActionCommand());
                     display.updateFlipArms(!game.getEntity(id).getArmsFlipped());
                 } catch (Exception ex) {
@@ -706,7 +707,7 @@ public class MapMenu extends JPopupMenu {
 
             if (myEntity instanceof BipedMech 
                     && (!myEntity.isLocationBad(Mech.LOC_LARM) 
-                            || !myEntity.isLocationBad(Mech.LOC_RARM)) ) {
+                    || !myEntity.isLocationBad(Mech.LOC_RARM)) ) {
                 item = createPunchJMenuItem();
 
                 if (item != null) {
@@ -916,7 +917,7 @@ public class MapMenu extends JPopupMenu {
                         if (hasAmmoType(AmmoType.T_BA_MICRO_BOMB)) {
                             menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_BOMB)));
                         }
-
+                        
                         if (hasWeaponFlag(WeaponType.F_DIVE_BOMB) || hasWeaponFlag(WeaponType.F_ALT_BOMB)) {
                             menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_AERO_BOMB)));
                         }
@@ -981,7 +982,7 @@ public class MapMenu extends JPopupMenu {
 
         return false;
     }
-
+    
     private boolean hasWeaponFlag(long weaponFlag) {
 
         if (myEntity.getWeaponList().size() < 1)
@@ -1107,7 +1108,7 @@ public class MapMenu extends JPopupMenu {
             myTarget = selectedEntity = list.firstElement();
 
             //gui.bv.centerOnHex(myTarget.getPosition());
-            // gui.getBoardView().select(myTarget.getPosition());
+           // gui.getBoardView().select(myTarget.getPosition());
 
             if (currentPanel instanceof FiringDisplay) {
                 FiringDisplay panel = (FiringDisplay) currentPanel; 
@@ -1212,10 +1213,10 @@ public class MapMenu extends JPopupMenu {
 
         return item;
     }
-
+    
     private JMenuItem createVibroClawMenuItem() {
         JMenuItem item = new JMenuItem("Vibro Claw Attack");
-
+        
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -1338,7 +1339,7 @@ public class MapMenu extends JPopupMenu {
 
         return item;
     }
-
+    
     @Override
     public void show(Component comp, int x, int y){
         if (client.isMyTurn() && myEntity != null) {

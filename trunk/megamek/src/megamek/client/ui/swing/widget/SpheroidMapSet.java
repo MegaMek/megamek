@@ -163,9 +163,9 @@ public class SpheroidMapSet implements DisplayMapSet{
         labels[Aero.LOC_NOSE] = WidgetUtils.createLabel("NOS", fm, Color.black,50,20); //$NON-NLS-1$
         //   labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black,10,57); //$NON-NLS-1$
         labels[Aero.LOC_LWING] = WidgetUtils.createLabel("LWG", fm, Color.black,20,90); //$NON-NLS-1$
-        //      labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,10,106); //$NON-NLS-1$
+//      labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,10,106); //$NON-NLS-1$
         labels[Aero.LOC_RWING] = WidgetUtils.createLabel("RWG", fm, Color.black,80,90); //$NON-NLS-1$
-        //      labels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black,10,106); //$NON-NLS-1$
+//      labels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black,10,106); //$NON-NLS-1$
         labels[Aero.LOC_AFT] = WidgetUtils.createLabel("AFT", fm, Color.black,50,160); //$NON-NLS-1$
         labels[4] = WidgetUtils.createLabel("SI", fm, Color.black,50,120); //$NON-NLS-1$
         labels[5] = WidgetUtils.createLabel("Avionics:", fm, Color.white,10,210); //$NON-NLS-1$

@@ -64,7 +64,7 @@ public class SpecialHexDisplay implements Serializable {
             }
         },
         PLAYER_NOTE         (null);
-
+    
         private transient Image defaultImage;
         private final String defaultImagePath;
 
@@ -86,11 +86,11 @@ public class SpecialHexDisplay implements Serializable {
         public void setDefaultImage(Image defaultImage) {
             this.defaultImage = defaultImage;
         }
-
+        
         public boolean drawBefore() {
             return true;
         }
-
+        
         public boolean drawAfter() {
             return false;
         }
@@ -101,16 +101,16 @@ public class SpecialHexDisplay implements Serializable {
     private int round;
 
     private String owner = null;
-
+    
     private boolean obscured = true;
-
+    
     public static int NO_ROUND = -99;
 
     @SuppressWarnings("unused")
     private SpecialHexDisplay() {
         //deserialization use only
     }
-
+    
     public SpecialHexDisplay(Type type) {
         this.type = type;
         round = NO_ROUND;
@@ -134,7 +134,7 @@ public class SpecialHexDisplay implements Serializable {
         this.round = round;
         this.owner = owner;
     }
-
+    
     public SpecialHexDisplay(Type type, int round, String owner, String info, boolean obscured) {
         this.type = type;
         this.info = info;
@@ -157,7 +157,7 @@ public class SpecialHexDisplay implements Serializable {
         }
         return testRound > this.round;
     }
-
+    
     /** Does this SpecialHexDisplayObjet concern a round in the past? */
     public boolean pastRound(int testRound) {
         if(NO_ROUND == this.round) {
@@ -165,7 +165,7 @@ public class SpecialHexDisplay implements Serializable {
         }
         return testRound < this.round;
     }
-
+    
     public String getInfo() {
         return info;
     }
@@ -213,17 +213,17 @@ public class SpecialHexDisplay implements Serializable {
      */
     public boolean drawNow(IGame.Phase phase, int curRound) {
         boolean shouldDisplay = thisRound(curRound) || 
-        (pastRound(curRound) && type.drawBefore()) ||
-        (futureRound(curRound) && type.drawAfter());
+            (pastRound(curRound) && type.drawBefore()) ||
+            (futureRound(curRound) && type.drawAfter());
         if(phase.isBefore(IGame.Phase.PHASE_OFFBOARD) && 
                 (type == Type.ARTILLERY_TARGET || type == Type.ARTILLERY_HIT)
         ) {
             //hack to display atry targets the round after the hit.
             shouldDisplay = shouldDisplay || thisRound(curRound-1);
         }
-
+        
         //System.err.println("turn: " + round + " Special type: " + type + " drawing: " + shouldDisplay + " details: " + info);
-
+            
         return shouldDisplay;
     }
 
@@ -235,7 +235,7 @@ public class SpecialHexDisplay implements Serializable {
         if(owner == null || owner.equals(toPlayer)) {
             return true;
         }
-
+        
         return false;
     }
 }

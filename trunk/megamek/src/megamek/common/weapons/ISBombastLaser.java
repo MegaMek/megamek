@@ -59,7 +59,7 @@ public class ISBombastLaser extends LaserWeapon {
         this.maxRange = RANGE_MED;
         this.flags |= F_BOMBAST_LASER;
     }
-
+    
     /*
      * (non-Javadoc)
      * 

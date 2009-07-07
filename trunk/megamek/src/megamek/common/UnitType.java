@@ -36,9 +36,9 @@ public class UnitType {
     public static final int SPACE_STATION = 14;
 
     private static String[] names = { "Mek", "Tank", "BattleArmor", "Infantry",
-        "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Conventional Fighter", 
-        "Aero", "Small Craft", "Dropship", 
-        "Jumpship", "Warship", "Space Station" };
+            "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Conventional Fighter", 
+            "Aero", "Small Craft", "Dropship", 
+            "Jumpship", "Warship", "Space Station" };
 
     public static final int SIZE = names.length;
 

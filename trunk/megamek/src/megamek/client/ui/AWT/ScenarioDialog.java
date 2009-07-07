@@ -97,7 +97,7 @@ public class ScenarioDialog extends Dialog implements ActionListener {
                     if (null == player.getCamoFileName()) {
                         dialog.setCategory(Player.NO_CAMO);
                         dialog.setItemName(Player.colorNames[player
-                                                             .getColorIndex()]);
+                                .getColorIndex()]);
                     } else {
                         dialog.setCategory(player.getCamoCategory());
                         dialog.setItemName(player.getCamoFileName());
@@ -156,7 +156,7 @@ public class ScenarioDialog extends Dialog implements ActionListener {
                         new AlertDialog(
                                 m_frame,
                                 Messages
-                                .getString("MegaMek.ScenarioErrorAllert.title"), Messages.getString("MegaMek.ScenarioErrorAllert.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                                        .getString("MegaMek.ScenarioErrorAllert.title"), Messages.getString("MegaMek.ScenarioErrorAllert.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                         return;
                     }
                     bMeSet = true;

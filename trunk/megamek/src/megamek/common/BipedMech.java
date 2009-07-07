@@ -68,15 +68,15 @@ public class BipedMech extends Mech {
         } else if (hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)) {
             canFlip = false;
         }
-
+        
         if(getQuirks().booleanOption("hyper_actuator")) {
             canFlip = true;
         }
-
+        
         if(getQuirks().booleanOption("no_arms")) {
             canFlip = false;
         }
-
+        
         if(isProne()) {
             canFlip = false;
         }
@@ -758,10 +758,10 @@ public class BipedMech extends Mech {
     @Override
     public boolean canGoHullDown() {
         return game.getOptions().booleanOption("tacops_hull_down")
-        && !isLocationBad(Mech.LOC_LLEG)
-        && !isLocationBad(Mech.LOC_RLEG)
-        && !isLocationDoomed(Mech.LOC_LLEG)
-        && !isLocationDoomed(Mech.LOC_RLEG);
+            && !isLocationBad(Mech.LOC_LLEG)
+            && !isLocationBad(Mech.LOC_RLEG)
+            && !isLocationDoomed(Mech.LOC_LLEG)
+            && !isLocationDoomed(Mech.LOC_RLEG);
     }
 
     @Override
@@ -786,10 +786,10 @@ public class BipedMech extends Mech {
 
         if(game.getOptions().booleanOption("tacops_attempting_stand")) {
             int[] locsToCheck = new int[2];
-
+    
             locsToCheck[0] = Mech.LOC_RARM;
             locsToCheck[1] = Mech.LOC_LARM;
-
+    
             for (int i = 0; i < locsToCheck.length; i++) {
                 int loc = locsToCheck[i];
                 if (isLocationBad(loc)) {

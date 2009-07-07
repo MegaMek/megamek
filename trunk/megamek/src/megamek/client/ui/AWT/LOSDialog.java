@@ -145,7 +145,7 @@ public class LOSDialog extends Dialog implements ActionListener {
 
             public void focusLost(FocusEvent e) {
                 checkboxes1[0].removeFocusListener(this); // refers to
-                // listener
+                                                            // listener
             }
         });
     }

@@ -40,11 +40,11 @@ public abstract class TestEntity implements TestEntityOption {
     public final static float CEIL_QUARTERTON = 4.0f;
     public final static float CEIL_TENTHTON = 10.0f;
     public final static String[] MOVEMENT_CHASSIS_NAMES = { "Building",
-        "Biped Mech", "Quad Mech", "Tracked Vehicle", "Wheeled Vehicle",
-        "Hovercraft", "VTOL", "Naval Vehicle", "Hydrofoil Vehicle",
-        "Submarine", "Leg Infantry", "Motorized Infantry", "Jump Infantry",
-        "Biped Mech", "Quad Mech", "WIGE Vehicle", "Aerodyne Dropship",
-        "Spheroid Dropship", "UMU Infantry", "Airmech", "Aerospace"};
+            "Biped Mech", "Quad Mech", "Tracked Vehicle", "Wheeled Vehicle",
+            "Hovercraft", "VTOL", "Naval Vehicle", "Hydrofoil Vehicle",
+            "Submarine", "Leg Infantry", "Motorized Infantry", "Jump Infantry",
+            "Biped Mech", "Quad Mech", "WIGE Vehicle", "Aerodyne Dropship",
+            "Spheroid Dropship", "UMU Infantry", "Airmech", "Aerospace"};
 
     protected Engine engine = null;
     protected Armor armor = null;
@@ -202,8 +202,8 @@ public abstract class TestEntity implements TestEntityOption {
 
     protected static String makeWeightString(float weight) {
         return (weight < 100 ? " " : "") + (weight < 10 ? " " : "")
-        + Float.toString(weight)
-        + ((Math.ceil(weight * 10) == weight * 10) ? "0" : "");
+                + Float.toString(weight)
+                + ((Math.ceil(weight * 10) == weight * 10) ? "0" : "");
     }
 
     private boolean hasMASC() {
@@ -215,26 +215,26 @@ public abstract class TestEntity implements TestEntityOption {
 
     public String printShortMovement() {
         return "Movement: "
-        + Integer.toString(getEntity().getOriginalWalkMP())
-        + "/"
-        + Integer.toString((int) Math.ceil(getEntity()
-                .getOriginalWalkMP() * 1.5))
+                + Integer.toString(getEntity().getOriginalWalkMP())
+                + "/"
+                + Integer.toString((int) Math.ceil(getEntity()
+                        .getOriginalWalkMP() * 1.5))
                 + (hasMASC() ? "("
                         + Integer.toString(getEntity().getOriginalWalkMP() * 2)
                         + ")" : "")
-                        + (getEntity().getOriginalJumpMP() != 0 ? "/"
-                                + Integer.toString(getEntity().getOriginalJumpMP())
-                                : "") + "\n";
+                + (getEntity().getOriginalJumpMP() != 0 ? "/"
+                        + Integer.toString(getEntity().getOriginalJumpMP())
+                        : "") + "\n";
     }
 
     public String printWeightHeatSinks() {
         return StringUtil.makeLength(
                 "Heat Sinks: "
-                + Integer.toString(getCountHeatSinks())
-                + (hasDoubleHeatSinks() ? " ["
-                        + Integer.toString(2 * getCountHeatSinks())
-                        + "]" : ""), getPrintSize() - 5)
-                        + makeWeightString(getWeightHeatSinks()) + "\n";
+                        + Integer.toString(getCountHeatSinks())
+                        + (hasDoubleHeatSinks() ? " ["
+                                + Integer.toString(2 * getCountHeatSinks())
+                                + "]" : ""), getPrintSize() - 5)
+                + makeWeightString(getWeightHeatSinks()) + "\n";
     }
 
     public String printWeightEngine() {
@@ -378,7 +378,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
-                                    makeWeightString(getWeightMiscEquip(mt)));
+                    makeWeightString(getWeightMiscEquip(mt)));
             buff.append("\n");
         }
         return buff;
@@ -414,7 +414,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
-                                    makeWeightString(mt.getTonnage(getEntity()))).append("\n");
+                    makeWeightString(mt.getTonnage(getEntity()))).append("\n");
         }
         return buff;
     }
@@ -455,7 +455,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
-                                    makeWeightString(mt.getTonnage(getEntity()))).append("\n");
+                    makeWeightString(mt.getTonnage(getEntity()))).append("\n");
         }
         return buff;
     }
@@ -541,23 +541,23 @@ public abstract class TestEntity implements TestEntityOption {
                 weight = ceil(fTons / 5.0f, getWeightCeilingTargComp());
             }
             switch (getTargCompCrits()) {
-            case CEIL_TARGCOMP_CRITS:
-                return (int) Math.ceil(weight);
-            case ROUND_TARGCOMP_CRITS:
-                return Math.round(weight);
-            case FLOOR_TARGCOMP_CRITS:
-                return (int) Math.floor(weight);
+                case CEIL_TARGCOMP_CRITS:
+                    return (int) Math.ceil(weight);
+                case ROUND_TARGCOMP_CRITS:
+                    return Math.round(weight);
+                case FLOOR_TARGCOMP_CRITS:
+                    return (int) Math.floor(weight);
             }
         } else if (EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_FERRO_FIBROUS).equals(
-                        mt.getInternalName())) {
+                mt.getInternalName())) {
             if (isClanArmor()) {
                 return 7;
             }
             return 14;
         } else if (EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO).equals(
-                        mt.getInternalName())) {
+                mt.getInternalName())) {
             return 16;
         } else if (EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_LIGHT_FERRO).equals(mt.getInternalName())) {
@@ -567,14 +567,14 @@ public abstract class TestEntity implements TestEntityOption {
             return 21;
         } else if (EquipmentType.getStructureTypeName(
                 EquipmentType.T_STRUCTURE_ENDO_STEEL).equals(
-                        mt.getInternalName())) {
+                mt.getInternalName())) {
             if (isClan()) {
                 return 7;
             }
             return 14;
         } else if (EquipmentType.getStructureTypeName(
                 EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE).equals(
-                        mt.getInternalName())) {
+                mt.getInternalName())) {
             return 16;
         } else if (EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_REACTIVE).equals(mt.getInternalName())) {
@@ -613,10 +613,10 @@ public abstract class TestEntity implements TestEntityOption {
 
     public String printWeightCalculation() {
         return printWeightEngine() + printWeightStructure()
-        + printWeightControls() + printWeightHeatSinks()
-        + printWeightArmor() + printWeightMisc()
-        + printWeightCarryingSpace() + "Equipment:\n"
-        + printMiscEquip() + printWeapon() + printAmmo();
+                + printWeightControls() + printWeightHeatSinks()
+                + printWeightArmor() + printWeightMisc()
+                + printWeightCarryingSpace() + "Equipment:\n"
+                + printMiscEquip() + printWeapon() + printAmmo();
     }
 
     public boolean correctWeight(StringBuffer buff) {
@@ -630,13 +630,13 @@ public abstract class TestEntity implements TestEntityOption {
 
         if (showO && (weight + getMaxOverweight() < weightSum)) {
             buff.append("Weight: ").append(calculateWeight()).append(
-            " is greater then ").append(getWeight()).append("\n");
+                    " is greater then ").append(getWeight()).append("\n");
             // buff.append(printWeightCalculation()).append("\n");
             return false;
         }
         if (showU && (weight - getMinUnderweight() > weightSum)) {
             buff.append("Weight: ").append(calculateWeight()).append(
-            " is lesser then ").append(getWeight()).append("\n");
+                    " is lesser then ").append(getWeight()).append("\n");
             // buff.append(printWeightCalculation()).append("\n");
             return false;
         }
@@ -712,15 +712,15 @@ public abstract class TestEntity implements TestEntityOption {
                         EquipmentType et = m.getType();
                         if ((m.getLocation() == loc) &&
                                 (et.hasSubType(MiscType.S_CHAINSAW)
-                                        || et.hasSubType(MiscType.S_BACKHOE)
-                                        || et.hasSubType(MiscType.S_DUAL_SAW)
-                                        || et.hasSubType(MiscType.S_COMBINE)
-                                        || et.hasSubType(MiscType.S_PILE_DRIVER)
-                                        || et.hasSubType(MiscType.S_MINING_DRILL)
-                                        || et.hasSubType(MiscType.S_ROCK_CUTTER)
-                                        || et.hasSubType(MiscType.S_SPOT_WELDER)
-                                        || et.hasSubType(MiscType.S_WRECKING_BALL)
-                                        || et.hasFlag(MiscType.F_SALVAGE_ARM))) {
+                                || et.hasSubType(MiscType.S_BACKHOE)
+                                || et.hasSubType(MiscType.S_DUAL_SAW)
+                                || et.hasSubType(MiscType.S_COMBINE)
+                                || et.hasSubType(MiscType.S_PILE_DRIVER)
+                                || et.hasSubType(MiscType.S_MINING_DRILL)
+                                || et.hasSubType(MiscType.S_ROCK_CUTTER)
+                                || et.hasSubType(MiscType.S_SPOT_WELDER)
+                                || et.hasSubType(MiscType.S_WRECKING_BALL)
+                                || et.hasFlag(MiscType.F_SALVAGE_ARM))) {
                             buff.append("Unit mounts hand-actuator incompatible system in arm with hand\n");
                             illegal = true;
                         }
@@ -792,7 +792,7 @@ public abstract class TestEntity implements TestEntityOption {
                     }
                     for (Mounted mounted : mech.getMisc()) {
                         if (mounted.getType().hasFlag(MiscType.F_ARTEMIS) || 
-                                mounted.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                            mounted.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                             buff.append("industrial mech without advanced fire control can't use artemis");
                             illegal = true;
                         }
@@ -885,11 +885,11 @@ public abstract class TestEntity implements TestEntityOption {
                     + StringUtil.makeLength(getEntity().getOArmor(loc), 3)
                     + " / "
                     + StringUtil
-                    .makeLength(getEntity().getOArmor(loc, true), 2);
+                            .makeLength(getEntity().getOArmor(loc, true), 2);
         }
         return StringUtil.makeLength(getEntity().getLocationAbbr(loc) + ":", 5)
-        + StringUtil.makeLength(getEntity().getOInternal(loc), 4)
-        + StringUtil.makeLength(getEntity().getOArmor(loc), 6) + "  ";
+                + StringUtil.makeLength(getEntity().getOInternal(loc), 4)
+                + StringUtil.makeLength(getEntity().getOArmor(loc), 6) + "  ";
     }
 
     public String printArmorPlacement() {
@@ -903,9 +903,9 @@ public abstract class TestEntity implements TestEntityOption {
 
     public String printTechLevel() {
         return "Chassis: "
-        + MOVEMENT_CHASSIS_NAMES[getEntity().getMovementMode()] + " - "
-        + TechConstants.getLevelName(getEntity().getTechLevel()) + " ("
-        + Integer.toString(getEntity().getYear()) + ")\n";
+                + MOVEMENT_CHASSIS_NAMES[getEntity().getMovementMode()] + " - "
+                + TechConstants.getLevelName(getEntity().getTechLevel()) + " ("
+                + Integer.toString(getEntity().getYear()) + ")\n";
     }
 
     public float getArmoredComponentWeight() {

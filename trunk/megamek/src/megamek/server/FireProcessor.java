@@ -119,7 +119,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                 }
 
             }
-        }
+         }
 
         debugTime("resolve fire 1", true);
 
@@ -342,17 +342,17 @@ public class FireProcessor extends DynamicTerrainProcessor {
         // reporting it
         for ( SmokeCloud cloud : server.getSmokeCloudList() ){
 
-            int roll = Compute.d6(2);
+                int roll = Compute.d6(2);
 
-            boolean dissipated = driftSmokeDissipate(cloud, roll, windStr);
+                boolean dissipated = driftSmokeDissipate(cloud, roll, windStr);
 
-            if ( dissipated || cloud.didDrift() ){
-                driftSmokeReport(cloud,dissipated);
-                if ( dissipated ) {
-                    cloud.setSmokeLevel(cloud.getSmokeLevel()-1);
+                if ( dissipated || cloud.didDrift() ){
+                    driftSmokeReport(cloud,dissipated);
+                    if ( dissipated ) {
+                        cloud.setSmokeLevel(cloud.getSmokeLevel()-1);
+                    }
                 }
-            }
-            cloud.setDrift(false);
+                cloud.setDrift(false);
         }
 
     } // end smoke resolution
@@ -419,7 +419,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
             //Try Left
             else if ( directionChanges == 1) {
                 return driftAddSmoke(src, (windDir - 2 ) % 6, windStr, ++directionChanges);
-                //Stay put
+            //Stay put
             } else {
                 return src;
             }

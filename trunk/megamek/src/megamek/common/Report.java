@@ -192,7 +192,7 @@ public class Report implements Serializable {
         type = r.type;
         subject = r.subject;
         obscuredIndexes = (Hashtable<Integer, Boolean>) r.obscuredIndexes
-        .clone();
+                .clone();
         obscuredRecipients = (Vector<String>) r.obscuredRecipients.clone();
         tagCounter = r.tagCounter;
     }
@@ -356,11 +356,11 @@ public class Report implements Serializable {
             return value;
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out
-            .println("Error: Report#getText --> Array Index out of Bounds Exception (index: "
-                    + index
-                    + ") for a report with ID "
-                    + messageId
-                    + ".  Maybe Report#add wasn't called enough times for the amount of tags in the message?");
+                    .println("Error: Report#getText --> Array Index out of Bounds Exception (index: "
+                            + index
+                            + ") for a report with ID "
+                            + messageId
+                            + ".  Maybe Report#add wasn't called enough times for the amount of tags in the message?");
             return "[Reporting Error: see megameklog.txt for details]";
         }
     }
@@ -410,9 +410,9 @@ public class Report implements Serializable {
                         }
                         text.setLength(text.length() - 2); // trim last comma
                     } else if (raw.substring(i + 1, endTagIdx).startsWith(
-                    "msg:")) {
+                            "msg:")) {
                         boolean selector = Boolean.valueOf(getTag())
-                        .booleanValue();
+                                .booleanValue();
                         if (selector) {
                             text.append(ReportMessages.getString(raw.substring(
                                     i + 5, raw.indexOf(',', i))));

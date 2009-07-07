@@ -37,7 +37,7 @@ import megamek.common.Player;
  * @version 1
  */
 public class TestCamoChoice extends Frame implements ActionListener,
-ItemListener {
+        ItemListener {
 
     /**
      * 

@@ -75,7 +75,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     // mech images
     private MechTileset mechTileset = new MechTileset("data/images/units/"); //$NON-NLS-1$
     private MechTileset wreckTileset = new MechTileset(
-    "data/images/units/wrecks/"); //$NON-NLS-1$
+            "data/images/units/wrecks/"); //$NON-NLS-1$
     private ArrayList<EntityImage> mechImageList = new ArrayList<EntityImage>();
     private HashMap<Integer, EntityImage> mechImages = new HashMap<Integer, EntityImage>();
 
@@ -134,13 +134,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         if (entityImage == null) {
             // probably double_blind. Try to load on the fly
             System.out
-            .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+                    .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
             entityImage = mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
                 System.out
-                .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                        .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
                 return null;
             }
         }
@@ -152,13 +152,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         if (entityImage == null) {
             // probably double_blind. Try to load on the fly
             System.out
-            .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+                    .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
             entityImage = mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
                 System.out
-                .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                        .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
                 return null;
             }
         }
@@ -181,13 +181,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         if (entityImage == null) {
             // probably double_blind. Try to load on the fly
             System.out
-            .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+                    .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
             entityImage = mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
                 System.out
-                .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                        .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
                 return null;
             }
         }
@@ -233,12 +233,12 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 pgMech.grabPixels();
             } catch (InterruptedException e) {
                 System.err
-                .println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
+                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
                 return image;
             }
             if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
                 System.err
-                .println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
+                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
                 return image;
             }
 
@@ -262,13 +262,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     public Image getArtilleryTarget(int which) {
         switch (which) {
-        case ARTILLERY_AUTOHIT:
-            return artilleryAutohit;
-        case ARTILLERY_ADJUSTED:
-            return artilleryAdjusted;
-        case ARTILLERY_INCOMING:
-        default:
-            return artilleryIncoming;
+            case ARTILLERY_AUTOHIT:
+                return artilleryAutohit;
+            case ARTILLERY_ADJUSTED:
+                return artilleryAdjusted;
+            case ARTILLERY_INCOMING:
+            default:
+                return artilleryIncoming;
         }
     }
 
@@ -381,7 +381,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             // should never come here
 
         }
-
+        
         return preview;
     }
 
@@ -509,7 +509,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 for (int i = 0; i < 6; i++) {
                     ImageProducer rotSource = new FilteredImageSource(wreck
                             .getSource(), new RotateFilter((Math.PI / 3)
-                                    * (6 - i)));
+                            * (6 - i)));
                     wreckFacings[i] = parent.createImage(rotSource);
                 }
             }
@@ -551,12 +551,12 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 pgMech.grabPixels();
             } catch (InterruptedException e) {
                 System.err
-                .println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
+                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
                 return image;
             }
             if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
                 System.err
-                .println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
+                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
                 return image;
             }
 
@@ -567,12 +567,12 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                     pgCamo.grabPixels();
                 } catch (InterruptedException e) {
                     System.err
-                    .println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage()); //$NON-NLS-1$
+                            .println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage()); //$NON-NLS-1$
                     return image;
                 }
                 if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
                     System.err
-                    .println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
+                            .println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
                     return image;
                 }
             }
@@ -594,7 +594,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                     int blue2 = Math.round(blue1 * black);
 
                     pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8)
-                    | blue2;
+                            | blue2;
                 }
             }
 

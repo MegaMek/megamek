@@ -64,15 +64,15 @@ public class GameTurn implements Serializable {
     public boolean isValidEntity(Entity entity, IGame game) {
 
         return (entity != null) && (entity.getOwnerId() == playerId)
-        && entity.isSelectableThisTurn()
-        // This next bit enforces the "A players Infantry/Protos
-        // move after that players other units" options.
-        && !((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
-                && (((entity instanceof Infantry) && game.getOptions()
-                        .booleanOption("inf_move_later")) || ((entity instanceof Protomech) && game
+                && entity.isSelectableThisTurn()
+                // This next bit enforces the "A players Infantry/Protos
+                // move after that players other units" options.
+                && !((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                        && (((entity instanceof Infantry) && game.getOptions()
+                                .booleanOption("inf_move_later")) || ((entity instanceof Protomech) && game
                                 .getOptions()
                                 .booleanOption("protos_move_later"))) && game
-                                .checkForValidNonInfantryAndOrProtomechs(playerId));
+                        .checkForValidNonInfantryAndOrProtomechs(playerId));
     }
 
     /**
@@ -124,7 +124,7 @@ public class GameTurn implements Serializable {
         @Override
         public boolean isValidEntity(Entity entity, IGame game) {
             return super.isValidEntity(entity, game)
-            && (entity.getId() == entityId);
+                    && (entity.getId() == entityId);
         }
     }
 
@@ -330,7 +330,7 @@ public class GameTurn implements Serializable {
             // The entity must be in the mask, and pass
             // the requirements of the parent class.
             return ((GameTurn.getClassCode(entity) & mask) != 0)
-            && super.isValidEntity(entity, game);
+                    && super.isValidEntity(entity, game);
         }
 
         /**
@@ -376,11 +376,11 @@ public class GameTurn implements Serializable {
             // Validate input.
             if (null == ids) {
                 throw new IllegalArgumentException(
-                "the passed array of ids is null");
+                        "the passed array of ids is null");
             }
             if (0 == ids.length) {
                 throw new IllegalArgumentException(
-                "the passed array of ids is empty");
+                        "the passed array of ids is empty");
             }
 
             // Create a copy of the array to prevent any post-call shenanigans.
@@ -404,11 +404,11 @@ public class GameTurn implements Serializable {
             // Validate input.
             if (null == entities) {
                 throw new IllegalArgumentException(
-                "the passed enumeration of entities is null");
+                        "the passed enumeration of entities is null");
             }
             if (!entities.hasMoreElements()) {
                 throw new IllegalArgumentException(
-                "the passed enumeration of entities is empty");
+                        "the passed enumeration of entities is empty");
             }
 
             // Get the first entity.

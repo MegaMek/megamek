@@ -55,7 +55,7 @@ import megamek.common.util.DirectoryItems;
  * @version 1
  */
 public class CamoChoiceDialog extends Dialog implements ActionListener,
-ItemListener, ItemSelectable {
+        ItemListener, ItemSelectable {
 
     /**
      * 
@@ -221,7 +221,7 @@ ItemListener, ItemSelectable {
                 AlertDialog dlg = new AlertDialog(
                         frame,
                         Messages
-                        .getString("CamoChoiceDialog.error_getting_camo"), err.getMessage()); //$NON-NLS-1$
+                                .getString("CamoChoiceDialog.error_getting_camo"), err.getMessage()); //$NON-NLS-1$
                 dlg.setVisible(true);
                 dlg.dispose();
             }

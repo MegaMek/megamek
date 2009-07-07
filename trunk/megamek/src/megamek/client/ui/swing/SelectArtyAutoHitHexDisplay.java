@@ -147,12 +147,12 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         if (!artyAutoHitHexes.contains(coords)
                 && artyAutoHitHexes.size() < 5
                 && clientgui
-                .doYesNoDialog(
-                        Messages
-                        .getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"), //$NON-NLS-1$
-                        Messages
-                        .getString(
-                                "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[] { coords.getBoardNum() }))) { //$NON-NLS-1$
+                        .doYesNoDialog(
+                                Messages
+                                        .getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"), //$NON-NLS-1$
+                                Messages
+                                        .getString(
+                                                "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[] { coords.getBoardNum() }))) { //$NON-NLS-1$
             artyAutoHitHexes.addElement(coords);
             setArtyEnabled(5 - artyAutoHitHexes.size());
             clientgui.getClient().game.getBoard().addSpecialHexDisplay(
@@ -160,7 +160,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
                     new SpecialHexDisplay(
                             SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
                             SpecialHexDisplay.NO_ROUND, clientgui.getClient().getLocalPlayer()
-                            .getName(),
+                                    .getName(),
                             "Artilery autohit, better text later"));
         }
     }
@@ -266,7 +266,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     protected void clear() {
         //TODO no clear action currently defined
     }
-
+    
     public void ready() {
         endMyTurn();
         clientgui.getClient().sendArtyAutoHitHexes(artyAutoHitHexes);
@@ -275,9 +275,9 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     private void setArtyEnabled(int nbr) {
         butA
-        .setText(Messages
-                .getString(
-                        "SelectArtyAutoHitHexDisplay.designatedTargets", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+                .setText(Messages
+                        .getString(
+                                "SelectArtyAutoHitHexDisplay.designatedTargets", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         butA.setEnabled(nbr > 0);
         // clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
     }

@@ -72,7 +72,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(butOkay)) {
             GUIPreferences.getInstance()
-            .setMiniReportSizeWidth(getSize().width);
+                    .setMiniReportSizeWidth(getSize().width);
             GUIPreferences.getInstance().setMiniReportSizeHeight(
                     getSize().height);
             GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);

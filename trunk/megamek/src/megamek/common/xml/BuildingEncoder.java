@@ -138,7 +138,7 @@ public class BuildingEncoder {
                 // There should be only one buildingData node.
                 if (null != retVal) {
                     throw new IllegalStateException(
-                    "More than one 'buildingData' node in a building node.");
+                            "More than one 'buildingData' node in a building node.");
                 }
 
                 // Read the coords of the building.
@@ -201,14 +201,14 @@ public class BuildingEncoder {
                 // We *did* find at least one coords for the building, right?
                 if (0 >= coordVec.size()) {
                     throw new IllegalStateException(
-                    "Couldn't decode the coords for the building.");
+                            "Couldn't decode the coords for the building.");
                 }
 
                 // Get the building type.
                 attrStr = child.getAttribute("type");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                    "Couldn't decode the buildingData for a building node.");
+                            "Couldn't decode the buildingData for a building node.");
                 }
 
                 // Try to pull the type from the attribute string
@@ -230,7 +230,7 @@ public class BuildingEncoder {
                 attrStr = child.getAttribute("id");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                    "Couldn't decode the buildingData for a building node.");
+                            "Couldn't decode the buildingData for a building node.");
                 }
 
                 // Try to pull the id from the attribute string
@@ -252,7 +252,7 @@ public class BuildingEncoder {
                 attrStr = child.getAttribute("name");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                    "Couldn't decode the buildingData for a building node.");
+                            "Couldn't decode the buildingData for a building node.");
                 }
                 name = attrStr;
 

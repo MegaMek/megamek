@@ -19,6 +19,7 @@ import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
+import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -48,7 +49,7 @@ public class BombastLaserWeaponHandler extends WeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage(nRange);
-
+        
         toReturn = Compute.dialDownDamage(weapon, wtype,nRange);
         // during a swarm, all damage gets applied as one block to one location
         if (ae instanceof BattleArmor
@@ -66,7 +67,7 @@ public class BombastLaserWeaponHandler extends WeaponHandler {
                 toReturn--;
             } 
         }
-
+        
         if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
             toReturn -=1;
         }

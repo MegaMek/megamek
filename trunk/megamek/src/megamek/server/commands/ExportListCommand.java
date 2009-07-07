@@ -36,7 +36,7 @@ public class ExportListCommand extends ServerCommand {
     /** Creates new RollCommand */
     public ExportListCommand(Server server) {
         super(server, "exportlist",
-        "Exports a unit list.  Usage: /exportlist <filename>");
+                "Exports a unit list.  Usage: /exportlist <filename>");
     }
 
     /**

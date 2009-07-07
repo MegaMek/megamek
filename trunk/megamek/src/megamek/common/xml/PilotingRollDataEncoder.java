@@ -43,7 +43,7 @@ public class PilotingRollDataEncoder {
      * @throws <code>IOException</code> if there's any error on write.
      */
     public static void encode(PilotingRollData option, Writer out)
-    throws IOException {
+            throws IOException {
     }
 
     /**

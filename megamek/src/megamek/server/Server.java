@@ -1981,6 +1981,9 @@ public class Server implements Runnable {
             if (game.checkForMagneticClamp()) {
                 entityAllUpdate();
             }
+            //we need to check the altitudes of the Aero entities and make sure they are valid for 
+            //the given map
+            checkAeroAltitude();
             // transmit the board to everybody
             send(createBoardPacket());
             break;
@@ -2008,6 +2011,29 @@ public class Server implements Runnable {
     public void calculatePlayerBVs() {
         for (Enumeration<Player> players = game.getPlayers(); players.hasMoreElements();) {
             players.nextElement().setInitialBV();
+        }
+    }
+    
+    /**
+     * loop through Aero entities and make sure that altitude/elevation is valid for map
+     */
+    public void checkAeroAltitude() {
+        for (Enumeration<Entity> entities = game.getEntities(); entities.hasMoreElements();) {
+            Entity entity = entities.nextElement();
+            if(!(entity instanceof Aero)) {
+            	continue;
+            }
+            Aero a = (Aero)entity;
+            if(game.getBoard().inSpace()) {
+        		//altitude and elevation don't matter in space
+                a.liftOff(0);
+        	} else {
+                //check for grounding
+                if(game.getBoard().inAtmosphere() && !entity.isAirborne()) {
+                	//you have to be airborne on the atmospheric map
+                	a.liftOff(a.getAltitude());
+                }
+            }
         }
     }
 
@@ -4282,12 +4308,7 @@ public class Server implements Runnable {
 	            vReport.add(r);
 	            entity.setDoomed(true);
         	} else {
-        		//if we are on the ground map, then we are "grounded"
-        		entity.setMovementMode(IEntityMovementMode.WHEELED);
-        		entity.setAltitude(0);
-        		entity.setElevation(0);
-        		((Aero)entity).setCurrentVelocity(0);
-        		((Aero)entity).setNextVelocity(0);
+        		((Aero)entity).land();
         	}
         	
         }
@@ -8356,14 +8377,13 @@ public class Server implements Runnable {
                 throw new IllegalStateException("Entity #" + entity.getId() + " appears to be in an infinite loop trying to get a legal elevation.");
             }
         } else if (entity instanceof Aero) {
-            //this is a hack, because Aeros altitude is already set in the CustomMechDialog, so it would
-            //be doubled here
-        	if(game.getBoard().inSpace()) {
-        		//altitude and elevation don't matter in space
-            	entity.setAltitude(0);
-            	entity.setElevation(0);
+            //if the entity is airborne, then we don't want to set its elevation below, because that will
+            //default to 999
+            if(entity.isAirborne()) {
+                entity.setElevation(0);
                 elevation = 0;
-        	} else {
+            }
+        	if(!game.getBoard().inSpace()) {
                 // all spheroid craft should have velocity of zero in atmosphere
                 // regardless of what was entered
                 Aero a = (Aero) entity;
@@ -8371,18 +8391,10 @@ public class Server implements Runnable {
                     a.setCurrentVelocity(0);
                     a.setNextVelocity(0);
                 }
-                //check for grounding
+                //make sure that entity is above the level of the hex if in atmosphere
                 if(game.getBoard().inAtmosphere() && a.getAltitude() <= hex.ceiling()) {
                 	//you can't be grounded on low atmosphere map
                 	a.setAltitude(hex.ceiling() + 1);
-                }
-                if(game.getBoard().onGround() && a.getAltitude() <= 0) {
-                	a.setAltitude(0);
-                	a.setElevation(0);
-                	elevation = 0;
-                	a.setMovementMode(IEntityMovementMode.WHEELED);
-                	a.setCurrentVelocity(0);
-                	a.setNextVelocity(0);
                 }
             } 
         } else if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {

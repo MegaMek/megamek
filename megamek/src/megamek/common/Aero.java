@@ -2667,4 +2667,21 @@ public class Aero extends Entity
     public boolean canGoDown() {
         return canGoDown(altitude, getPosition());
     }
+    
+    public void liftOff(int altitude) {
+    	if(isSpheroid()) {
+    		setMovementMode(IEntityMovementMode.SPHEROID);
+    	} else {
+    		setMovementMode(IEntityMovementMode.AERODYNE);
+    	}
+    	setAltitude(altitude);
+    }
+    
+    public void land() {
+    	setMovementMode(IEntityMovementMode.WHEELED);
+    	setAltitude(0);
+    	setElevation(0);
+    	setCurrentVelocity(0);
+    	setNextVelocity(0);
+    }
 }

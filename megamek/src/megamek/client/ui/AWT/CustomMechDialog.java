@@ -55,6 +55,7 @@ import megamek.common.EntitySelector;
 import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
+import megamek.common.IEntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.IOffBoardDirections;
 import megamek.common.Infantry;
@@ -1680,6 +1681,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
                 a.setAltitude(altitude);
+                //we need to determine whether this aero is airborne or not in order for
+                //prohibited terrain and stacking to work right in the deployment phase
+                //this is very tricky because in atmosphere, zero altitude does not 
+                //necessarily mean grounded
+                if(altitude <= 0) {
+                	a.land();
+                } else {
+                	a.liftOff(altitude);
+                }
             }
 
             // If the player wants to swap unit numbers, update both

@@ -110,20 +110,20 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
             // ASSUMPTION: buildings CAN'T absorb *this* damage.
             // specialDamage = damageEntity(entityTarget, hit, damage);
             specialDamageReport = server
-            .damageEntity(
-                    entityTarget,
-                    hit,
-                    damage,
-                    false,
-                    ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
-                            : damageType, false, false, throughFront, underWater);
+                    .damageEntity(
+                            entityTarget,
+                            hit,
+                            damage,
+                            false,
+                            ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
+                                    : damageType, false, false, throughFront, underWater);
         } else {
             // add newline _before_ last report
             try {
                 (specialDamageReport.elementAt(specialDamageReport.size() - 2)).newlines++;
             } catch (ArrayIndexOutOfBoundsException aiobe) {
                 System.err
-                .println("ERROR: no previous report when trying to add newline");
+                        .println("ERROR: no previous report when trying to add newline");
             }
         }
         // Report the result

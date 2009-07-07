@@ -21,7 +21,7 @@ package megamek.common;
 
 public final class HeavyVehicleBay extends Bay {
 
-
+ 
     /**
      * 
      */
@@ -49,8 +49,8 @@ public final class HeavyVehicleBay extends Bay {
         this.currentSpace = space;
         this.doors = doors;
     }
-
-
+    
+ 
     /**
      * Determines if this object can accept the given unit.  The unit may
      * not be of the appropriate type or there may be no room for the unit.
@@ -74,7 +74,7 @@ public final class HeavyVehicleBay extends Bay {
         if ( this.currentSpace < 1 ) {
             result = false;
         }
-
+        
         //is the door functional
         if( this.doors < 1 ) {
             result = false;
@@ -83,7 +83,7 @@ public final class HeavyVehicleBay extends Bay {
         // Return our result.
         return result;
     }
-
+    
     @Override
     public String getUnusedString() {
         return "Heavy Vehicle - " + this.currentSpace + " units";
@@ -93,5 +93,5 @@ public final class HeavyVehicleBay extends Bay {
     public String getType() {
         return "Heavy Vehicle";
     }
-
+    
 } // End package class TroopSpace implements Transporter

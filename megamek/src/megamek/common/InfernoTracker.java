@@ -115,21 +115,21 @@ public class InfernoTracker implements Serializable, RoundUpdated {
         // Make sure the # of hits is valid.
         if (hits < 0) {
             throw new IllegalArgumentException(
-            "InfernoTracker can't track negative hits. ");
+                    "InfernoTracker can't track negative hits. ");
         }
 
         // Add a number of turns to the appropriate
         // track, based on the round that hit.
         switch (round.getHeatPerRound()) {
-        case 6:
-            this.turnsLeftToBurn += round.getBurnRoundsPerHit() * hits;
-            break;
-        case 10:
-            this.turnsIVLeftToBurn += round.getBurnRoundsPerHit() * hits;
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "Unknown Inferno round added to the InfernoTracker.");
+            case 6:
+                this.turnsLeftToBurn += round.getBurnRoundsPerHit() * hits;
+                break;
+            case 10:
+                this.turnsIVLeftToBurn += round.getBurnRoundsPerHit() * hits;
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Unknown Inferno round added to the InfernoTracker.");
         }
 
     }

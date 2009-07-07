@@ -116,7 +116,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                 SpecialHexDisplay.Type.ARTILLERY_INCOMING,
                                 game.getRoundCount() + aaa.turnsTilHit,
                                 game.getPlayer(aaa.getPlayerId()).getName(),
-                        "Artilery Incoming. Better text later."));
+                                "Artilery Incoming. Better text later."));
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
@@ -146,24 +146,24 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if ((null != spottersBefore) && !isFlak) {
             // fetch possible spotters now
             Enumeration<Entity> spottersAfter = game
-            .getSelectedEntities(new EntitySelector() {
-                public int player = playerId;
+                    .getSelectedEntities(new EntitySelector() {
+                        public int player = playerId;
 
-                public Targetable targ = target;
+                        public Targetable targ = target;
 
-                public boolean accept(Entity entity) {
-                    Integer id = new Integer(entity.getId());
-                    if ((player == entity.getOwnerId())
-                            && spottersBefore.contains(id)
-                            && !(LosEffects.calculateLos(game, entity
-                                    .getId(), targ)).isBlocked()
+                        public boolean accept(Entity entity) {
+                            Integer id = new Integer(entity.getId());
+                            if ((player == entity.getOwnerId())
+                                    && spottersBefore.contains(id)
+                                    && !(LosEffects.calculateLos(game, entity
+                                            .getId(), targ)).isBlocked()
                                     && entity.isActive()
                                     && !entity.isINarcedWith(INarcPod.HAYWIRE)) {
-                        return true;
-                    }
-                    return false;
-                }
-            });
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
 
             // Out of any valid spotters, pick the best.
             while (spottersAfter.hasMoreElements()) {
@@ -201,7 +201,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                 "Artilery AutoHit. Better text later.",
                                 false
                         )
-                );
+                 );
             }
             // If the shot missed, but was adjusted by a
             // spotter, future shots are more likely to hit.
@@ -211,11 +211,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
                 game.getBoard().addSpecialHexDisplay(targetPos,
                         new SpecialHexDisplay(
-                                SpecialHexDisplay.Type.ARTILLERY_ADJUSTED,
-                                game.getRoundCount(),
-                                game.getPlayer(aaa.getPlayerId()).getName(),
-                                "Artilery toHit Adjusted. Better text later.",
-                                false
+                            SpecialHexDisplay.Type.ARTILLERY_ADJUSTED,
+                            game.getRoundCount(),
+                            game.getPlayer(aaa.getPlayerId()).getName(),
+                            "Artilery toHit Adjusted. Better text later.",
+                            false
                         )
                 );
             }
@@ -300,7 +300,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         new SpecialHexDisplay(
                                 SpecialHexDisplay.Type.ARTILLERY_HIT,
                                 game.getRoundCount(),
-                        "Artilery Hit. Better text later."));
+                                "Artilery Hit. Better text later."));
             } else {
                 r = new Report(3191);
             }
@@ -311,7 +311,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             game.getBoard().addSpecialHexDisplay(targetPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                             game.getRoundCount(),
-                    "Artilery Hit. Better text later."));
+                            "Artilery Hit. Better text later."));
 
         } else {
             // direct fire artillery only scatters by one d6
@@ -327,12 +327,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 if (!isFlak) {
                     r = new Report(3195);
                     game.getBoard().addSpecialHexDisplay(
-                            coords,
-                            new SpecialHexDisplay(
-                                    SpecialHexDisplay.Type.ARTILLERY_HIT,
-                                    game.getRoundCount(),
-                                    "Artilery Scatered Here. Better text later."
-                            )
+                        coords,
+                        new SpecialHexDisplay(
+                                SpecialHexDisplay.Type.ARTILLERY_HIT,
+                                game.getRoundCount(),
+                                "Artilery Scatered Here. Better text later."
+                        )
                     );
                 } else {
                     r = new Report(3192);
@@ -450,7 +450,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         float toReturn = wtype.getDamage();
         // area effect damage is double
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn /= 0.5;
+                toReturn /= 0.5;
         }
 
         if (bGlancing) {

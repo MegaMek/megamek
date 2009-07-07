@@ -54,7 +54,7 @@ public class ISHeavyPPC extends PPCWeapon {
         this.waterLongRange = 10;
         this.waterExtremeRange = 14;
         this.setModes(new String[] { "Field Inhibitor ON",
-        "Field Inhibitor OFF" });
+                "Field Inhibitor OFF" });
         this.tonnage = 10.0f;
         this.criticals = 4;
         this.bv = 317;

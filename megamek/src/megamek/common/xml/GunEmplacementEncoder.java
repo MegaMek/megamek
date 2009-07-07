@@ -68,7 +68,7 @@ public class GunEmplacementEncoder {
         if (!node.getName().equals("class")
                 || !"GunEmplacement".equals(node.getAttribute("name"))) {
             throw new IllegalStateException(
-            "Not passed an GunEmplacement node.");
+                    "Not passed an GunEmplacement node.");
         }
 
         GunEmplacement ge = new GunEmplacement();
@@ -88,7 +88,7 @@ public class GunEmplacementEncoder {
                 } catch (NumberFormatException nfe) {
                     throw new IllegalStateException(
                             "Invalid integer value for facing attribute: "
-                            + facing);
+                                    + facing);
                 }
             }
         }

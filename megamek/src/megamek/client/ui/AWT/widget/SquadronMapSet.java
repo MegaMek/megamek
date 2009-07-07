@@ -33,9 +33,9 @@ import megamek.common.Entity;
 public class SquadronMapSet implements DisplayMapSet{
 
     private static final String IMAGE_DIR = "data/images/widgets";
-
+    
     private Component comp;
-    //  Images that shows how much armor left.
+//  Images that shows how much armor left.
     private Image[] armorImage = new Image[FighterSquadron.MAX_SIZE];
     // Set of areas to show fighter armor left
     private PMPicArea[] armorArea = new PMPicArea[FighterSquadron.MAX_SIZE];
@@ -65,9 +65,9 @@ public class SquadronMapSet implements DisplayMapSet{
     private int squareSize = 7;
     private int armorRows = 6;
     private int armorCols = 8;
-
+    
     private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, 9); //$NON-NLS-1$
-
+ 
     public SquadronMapSet(Component c){
         comp = c;
         setAreas();
@@ -90,12 +90,12 @@ public class SquadronMapSet implements DisplayMapSet{
 
     public void setEntity(Entity e){
         FighterSquadron fs = (FighterSquadron) e;
-
+        
         for(int i = 0; i < fs.getN0Fighters(); i++) {
             Aero fighter = fs.getFighter(i);
             int armor = fighter.getCapArmor();
             int armorO = fighter.getCap0Armor();
-
+            
             drawArmorImage(armorImage[i], armor, armorO);
             armorVLabel[i].setValue(Integer.toString(armor));
             drawCrits(avCritImage[i], fighter.getAvionicsHits());
@@ -103,9 +103,9 @@ public class SquadronMapSet implements DisplayMapSet{
             drawCrits(fcsCritImage[i], fighter.getFCSHits());
             drawCrits(sensorCritImage[i], fighter.getSensorHits());
             drawCrits(pilotCritImage[i], fighter.getCrew().getHits());
-
+            
             nameLabel[i].setString(fighter.getDisplayName());
-
+            
             armorArea[i].setVisible(true);
             armorVLabel[i].setVisible(true);
             avCritArea[i].setVisible(true);
@@ -120,7 +120,7 @@ public class SquadronMapSet implements DisplayMapSet{
             sensorCritLabel[i].setVisible(true);
             pilotCritLabel[i].setVisible(true);
         }
-
+        
         for(int j = fs.getN0Fighters(); j < FighterSquadron.MAX_SIZE; j++) {
             armorArea[j].setVisible(false);
             armorVLabel[j].setVisible(false);
@@ -136,11 +136,11 @@ public class SquadronMapSet implements DisplayMapSet{
             sensorCritLabel[j].setVisible(false);
             pilotCritLabel[j].setVisible(false);
         }
-
+        
     }
 
     private void setContent(){
-
+        
         for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
             content.addArea(nameLabel[i]);
             content.addArea(armorArea[i]);
@@ -162,7 +162,7 @@ public class SquadronMapSet implements DisplayMapSet{
         for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
             armorImage[i] = comp.createImage(armorCols*(squareSize+1), armorRows*(squareSize+1));
             armorArea[i] = new PMPicArea(armorImage[i]);
-
+            
             avCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
             avCritArea[i] = new PMPicArea(avCritImage[i]);
             engineCritImage[i] = comp.createImage(3*(squareSize+1), squareSize+1);
@@ -248,7 +248,7 @@ public class SquadronMapSet implements DisplayMapSet{
         PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
     }
-
+    
     private void translateAreas() { 
         //get size of each fighter block
         int blockSize = 6*stepY;
@@ -256,13 +256,13 @@ public class SquadronMapSet implements DisplayMapSet{
             nameLabel[i].translate(0, blockSize*i);
             armorArea[i].translate(0, squareSize+blockSize*i);
             armorVLabel[i].translate((armorCols*(squareSize+1))/2, blockSize*i+squareSize+(armorRows*(squareSize+1))/2);
-
+            
             avCritLabel[i].translate(5+armorCols*(squareSize+1), stepY+blockSize*i);
             engineCritLabel[i].translate(5+armorCols*(squareSize+1), 2*stepY+blockSize*i);
             fcsCritLabel[i].translate(5+armorCols*(squareSize+1), 3*stepY+blockSize*i);
             sensorCritLabel[i].translate(5+armorCols*(squareSize+1), 4*stepY+blockSize*i);
             pilotCritLabel[i].translate(5+armorCols*(squareSize+1), 5*stepY+blockSize*i);
-
+            
             avCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), stepY-(squareSize+1)+blockSize*i);
             engineCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 2*stepY-(squareSize+1)+blockSize*i);
             fcsCritArea[i].translate(10+pilotCritLabel[0].width+armorCols*(squareSize+1), 3*stepY-(squareSize+1)+blockSize*i);
@@ -282,8 +282,8 @@ public class SquadronMapSet implements DisplayMapSet{
             g.fillRect(i*(squareSize+1), 0, squareSize, squareSize);
         }
     }
-
-    //  Redraws armor images
+    
+//  Redraws armor images
     private void drawArmorImage(Image im, int a, int initial) {
         int w = im.getWidth(null);
         int h = im.getHeight(null);

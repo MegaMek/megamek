@@ -70,19 +70,19 @@ public class FireCommand extends ClientCommand {
                     cen = Integer.parseInt(args[2]);
 
                     return "Entity " + ce().toString()
-                    + " selected for firing.";
+                            + " selected for firing.";
                 } catch (Exception e) {
                     return "Not an entity ID or valid number." + e.toString();
                 }
             } else if (args[1].equalsIgnoreCase("HELP")) {
                 return "Available commands:\n"
-                + "#fire ABORT = aborts planed fireing and deselect unit.\n"
-                + "#fire SELECT unitID = Selects the unit named unit ID for fireing. This is a prerequisite for all commands listed after this.\n"
-                + "#fire COMMIT = executs the current fireing plan.\n"
-                + "#fire LIST unitID = List targeting information for all weapons at the specified target. This is currently the only way to get weapon IDs.\n"
-                + "#fire TWIST heading = used for torso twisitng, the heading being to which direction (N, NE, SE, etc) to try and turn.\n"
-                + "#fire TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified target. Any number of weapons may be specified.\n"
-                + "#fire TARGET unitID ALL = fires all remaining weapons at the specified target.\n";
+                        + "#fire ABORT = aborts planed fireing and deselect unit.\n"
+                        + "#fire SELECT unitID = Selects the unit named unit ID for fireing. This is a prerequisite for all commands listed after this.\n"
+                        + "#fire COMMIT = executs the current fireing plan.\n"
+                        + "#fire LIST unitID = List targeting information for all weapons at the specified target. This is currently the only way to get weapon IDs.\n"
+                        + "#fire TWIST heading = used for torso twisitng, the heading being to which direction (N, NE, SE, etc) to try and turn.\n"
+                        + "#fire TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified target. Any number of weapons may be specified.\n"
+                        + "#fire TARGET unitID ALL = fires all remaining weapons at the specified target.\n";
             } else if (ce() != null) {
                 if (args[1].equalsIgnoreCase("COMMIT")) {
                     commit();
@@ -102,12 +102,12 @@ public class FireCommand extends ClientCommand {
                                     }
                                 }
                                 return "Fireing all remaining weapons at "
-                                + target.toString() + ".";
+                                        + target.toString() + ".";
                             } else {
                                 for (int i = 3; i < args.length; i++) {
                                     fire(Integer.parseInt(args[i]), target);
                                     str += "Firing weapon " + args[i] + " at "
-                                    + target.toString() + "\n";
+                                            + target.toString() + "\n";
                                 }
                             }
                         } catch (NumberFormatException nfe) {
@@ -120,17 +120,17 @@ public class FireCommand extends ClientCommand {
                                     .parseInt(args[2]));
                             if (target != null) {
                                 String str = " Weapons for " + ce() + " at "
-                                + target.toString() + ":\n";
+                                        + target.toString() + ":\n";
 
                                 for (Mounted weapon : ce().getWeaponList()) {
                                     str += "("
-                                        + ce().getEquipmentNum(weapon)
-                                        + ") "
-                                        + weapon.getName()
-                                        + " = "
-                                        + calculateToHit(ce()
-                                                .getEquipmentNum(weapon),
-                                                target) + "\n";
+                                            + ce().getEquipmentNum(weapon)
+                                            + ") "
+                                            + weapon.getName()
+                                            + " = "
+                                            + calculateToHit(ce()
+                                                    .getEquipmentNum(weapon),
+                                                    target) + "\n";
                                 }
 
                                 return str;
@@ -213,7 +213,7 @@ public class FireCommand extends ClientCommand {
         if (ce() == null || target == null || mounted == null
                 || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException(
-            "current fire parameters are invalid"); //$NON-NLS-1$
+                    "current fire parameters are invalid"); //$NON-NLS-1$
         }
 
         // declare searchlight, if possible
@@ -234,7 +234,7 @@ public class FireCommand extends ClientCommand {
                     || ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
 
                 waa.setOtherAttackInfo(50); // /hardcode vibrobomb setting for
-                // now.
+                                            // now.
             }
         }
 
@@ -255,7 +255,7 @@ public class FireCommand extends ClientCommand {
         // validate
         if (ce() == null || target == null) {
             throw new IllegalArgumentException(
-            "current searchlight parameters are invalid"); //$NON-NLS-1$
+                    "current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
         if (!SearchlightAttackAction.isPossible(client.game, cen, target, null))
@@ -280,22 +280,22 @@ public class FireCommand extends ClientCommand {
             // str += "Target: " + target.toString();
 
             str += " Range: "
-                + ce().getPosition().distance(target.getPosition());
+                    + ce().getPosition().distance(target.getPosition());
 
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 str += " Can't shoot: "
-                    + Messages.getString("FiringDisplay.alreadyFired");
+                        + Messages.getString("FiringDisplay.alreadyFired");
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
                 str += " Can't shoot: "
-                    + Messages.getString("FiringDisplay.autoFiringWeapon");
+                        + Messages.getString("FiringDisplay.autoFiringWeapon");
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 str += " Can't shoot: " + toHit.getValueAsString();
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 str += " Automatic Failure: " + toHit.getValueAsString();
             } else {
                 str += " To hit: " + toHit.getValueAsString() + " ("
-                + Compute.oddsAbove(toHit.getValue()) + "%)";
+                        + Compute.oddsAbove(toHit.getValue()) + "%)";
             }
             str += " To Hit modifiers: " + toHit.getDesc();
         }
@@ -311,7 +311,7 @@ public class FireCommand extends ClientCommand {
         // Re-compute the to-hit numbers by adding in correct order.
         Vector<EntityAction> newAttacks = new Vector<EntityAction>();
         for (Enumeration<AbstractEntityAction> e = attacks.elements(); e
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             AbstractEntityAction o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
@@ -334,7 +334,7 @@ public class FireCommand extends ClientCommand {
             }
         }
         for (Enumeration<AbstractEntityAction> e = attacks.elements(); e
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             Object o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;

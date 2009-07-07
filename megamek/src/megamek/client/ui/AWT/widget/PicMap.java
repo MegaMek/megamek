@@ -335,21 +335,21 @@ public abstract class PicMap extends Component {
     protected void processMouseEvent(MouseEvent e) {
         PMHotArea ha = getAreaUnder(e.getX(), e.getY());
         switch (e.getID()) {
-        case MouseEvent.MOUSE_CLICKED:
-            if (ha != null) {
-                ha.onMouseClick(e);
-            }
-            break;
-        case MouseEvent.MOUSE_PRESSED:
-            if (ha != null) {
-                ha.onMouseDown(e);
-            }
-            break;
-        case MouseEvent.MOUSE_RELEASED:
-            if (ha != null) {
-                ha.onMouseUp(e);
-            }
-            break;
+            case MouseEvent.MOUSE_CLICKED:
+                if (ha != null) {
+                    ha.onMouseClick(e);
+                }
+                break;
+            case MouseEvent.MOUSE_PRESSED:
+                if (ha != null) {
+                    ha.onMouseDown(e);
+                }
+                break;
+            case MouseEvent.MOUSE_RELEASED:
+                if (ha != null) {
+                    ha.onMouseUp(e);
+                }
+                break;
         }
         update();
     }
@@ -357,32 +357,32 @@ public abstract class PicMap extends Component {
     @Override
     protected void processMouseMotionEvent(MouseEvent e) {
         switch (e.getID()) {
-        case MouseEvent.MOUSE_MOVED:
-            PMHotArea ha = getAreaUnder(e.getX(), e.getY());
-            if (ha != activeHotArea) {
-                if (activeHotArea != null) {
-                    activeHotArea.onMouseExit(e);
+            case MouseEvent.MOUSE_MOVED:
+                PMHotArea ha = getAreaUnder(e.getX(), e.getY());
+                if (ha != activeHotArea) {
+                    if (activeHotArea != null) {
+                        activeHotArea.onMouseExit(e);
+                    }
+                    activeHotArea = ha;
+                    if (ha != null) {
+                        ha.onMouseOver(e);
+                        setCursor(ha.getCursor());
+                    } else {
+                        setCursor(Cursor.getDefaultCursor());
+                    }
+                    update();
                 }
-                activeHotArea = ha;
-                if (ha != null) {
-                    ha.onMouseOver(e);
-                    setCursor(ha.getCursor());
-                } else {
-                    setCursor(Cursor.getDefaultCursor());
-                }
-                update();
-            }
-            break;
+                break;
         }
     }
 
     @Override
     protected void processComponentEvent(ComponentEvent e) {
         switch (e.getID()) {
-        case ComponentEvent.COMPONENT_RESIZED:
-            onResize();
-            update();
-            break;
+            case ComponentEvent.COMPONENT_RESIZED:
+                onResize();
+                update();
+                break;
         }
     }
 }

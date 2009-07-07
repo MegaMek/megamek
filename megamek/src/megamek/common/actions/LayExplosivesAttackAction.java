@@ -67,16 +67,16 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
         if ((target.getTargetType() != Targetable.TYPE_BUILDING)
                 || (target.getTargetType() != Targetable.TYPE_FUEL_TANK)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "You can only target buildings");
+                    "You can only target buildings");
         }
         if (ae == null)
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "You can't attack from a null entity!");
+                    "You can't attack from a null entity!");
         // if(b == null || b.getId() != target.getTargetId())
         // return new ToHitData(TargetRoll.IMPOSSIBLE, "Target out of range");
         if (!(ae instanceof Infantry))
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Attacker is not infantry");
+                    "Attacker is not infantry");
         Infantry inf = (Infantry) ae;
         if (inf.turnsLayingExplosives > 0)
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
@@ -92,6 +92,6 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
         if (!ok)
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No explosives carried");
         return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-        "START: Can't move or fire while laying explosives");
+                "START: Can't move or fire while laying explosives");
     }
 }

@@ -18,6 +18,7 @@ import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
+import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;

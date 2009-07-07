@@ -63,7 +63,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
                 attacker.getForwardArc()))
             return false;
         for (Enumeration<EntityAction> actions = game.getActions(); actions
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             EntityAction action = actions.nextElement();
             if (action instanceof SearchlightAttackAction) {
                 SearchlightAttackAction act = (SearchlightAttackAction) action;
@@ -106,11 +106,11 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         attacker.setUsedSearchlight(true);
 
         ArrayList<Coords> in = Coords.intervening(apos, tpos); // nb includes
-        // attacker &
-        // target
+                                                                // attacker &
+                                                                // target
         for (Coords c : in) {
             for (Enumeration<Entity> e = game.getEntities(c); e
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 Entity en = e.nextElement();
                 LosEffects los = LosEffects.calculateLos(game, getEntityId(),
                         en);
@@ -137,11 +137,11 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         final Coords tpos = target.getPosition();
 
         ArrayList<Coords> in = Coords.intervening(apos, tpos); // nb includes
-        // attacker &
-        // target
+                                                                // attacker &
+                                                                // target
         for (Coords c : in) {
             for (Enumeration<Entity> e = game.getEntities(c); e
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 Entity en = e.nextElement();
                 LosEffects los = LosEffects.calculateLos(game, getEntityId(),
                         en);

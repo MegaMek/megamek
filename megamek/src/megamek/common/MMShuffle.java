@@ -121,8 +121,8 @@ public class MMShuffle extends Roll {
 
         // Include the id.
         buffer.append("Roll #").append(this.id).append(" - range: [").append(1)
-        .append(",").append(6).append("], result: ").append(
-                this.one + this.two);
+                .append(",").append(6).append("], result: ").append(
+                        this.one + this.two);
 
         // Report the two "dice".
         buffer.append(", rolls: ");

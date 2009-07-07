@@ -63,7 +63,7 @@ import megamek.common.event.GameTurnChangeEvent;
  * too easy to confuse with something else
  */
 public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
-DoneButtoned, KeyListener, ItemListener {
+        DoneButtoned, KeyListener, ItemListener {
     /**
      * 
      */
@@ -252,17 +252,17 @@ DoneButtoned, KeyListener, ItemListener {
         panButtons.setLayout(new GridLayout(0, 8));
 
         switch (buttonLayout) {
-        case 0:
-            panButtons.add(butNext);
-            panButtons.add(butFire);
-            panButtons.add(butSkip);
-            panButtons.add(butNextTarg);
-            panButtons.add(butFlipArms);
-            panButtons.add(butTwist);
-            panButtons.add(butFireMode);
-            panButtons.add(butSearchlight);
-            // panButtons.add(butDone);
-            break;
+            case 0:
+                panButtons.add(butNext);
+                panButtons.add(butFire);
+                panButtons.add(butSkip);
+                panButtons.add(butNextTarg);
+                panButtons.add(butFlipArms);
+                panButtons.add(butTwist);
+                panButtons.add(butFireMode);
+                panButtons.add(butSearchlight);
+                // panButtons.add(butDone);
+                break;
 
         }
 
@@ -290,7 +290,7 @@ DoneButtoned, KeyListener, ItemListener {
 
                 // Walk through the list of entities for this player.
                 for (int nextId = client.getNextEntityNum(en); nextId != en; nextId = client
-                .getNextEntityNum(nextId)) {
+                        .getNextEntityNum(nextId)) {
 
                     if (null != client.game.getEntity(nextId).getPosition()) {
                         this.cen = nextId;
@@ -302,8 +302,8 @@ DoneButtoned, KeyListener, ItemListener {
                 // We were *supposed* to have found an on-board entity.
                 if (null == ce().getPosition()) {
                     System.err
-                    .println("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
-                            en);
+                            .println("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
+                                    en);
                     return;
                 }
 
@@ -333,7 +333,7 @@ DoneButtoned, KeyListener, ItemListener {
             setFireModeEnabled(true);
         } else {
             System.err
-            .println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
+                    .println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
     }
 
@@ -367,7 +367,7 @@ DoneButtoned, KeyListener, ItemListener {
                 && null != ce()) {
             disableButtons();
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
-                    ((GameTurn.TriggerBPodTurn)turn).getAttackType());
+            ((GameTurn.TriggerBPodTurn)turn).getAttackType());
             dialog.setVisible(true);
             attacks.removeAllElements();
             Enumeration<EntityAction> actions = dialog.getActions();
@@ -440,14 +440,14 @@ DoneButtoned, KeyListener, ItemListener {
         // notify the player
         if (m.canInstantSwitch(nMode)) {
             clientgui
-            .systemMessage(Messages
-                    .getString(
-                            "FiringDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName() })); //$NON-NLS-1$
+                    .systemMessage(Messages
+                            .getString(
+                                    "FiringDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName() })); //$NON-NLS-1$
         } else {
             clientgui
-            .systemMessage(Messages
-                    .getString(
-                            "FiringDisplay.willSwitch", new Object[] { m.getName(), m.pendingMode().getDisplayableName() })); //$NON-NLS-1$
+                    .systemMessage(Messages
+                            .getString(
+                                    "FiringDisplay.willSwitch", new Object[] { m.getName(), m.pendingMode().getDisplayableName() })); //$NON-NLS-1$
         }
 
         this.updateTarget();
@@ -464,9 +464,9 @@ DoneButtoned, KeyListener, ItemListener {
                 && GUIPreferences.getInstance().getNagForNoAction()) {
             // comfirm this action
             String title = Messages
-            .getString("TargetingPhaseDisplay.DontFireDialog.title"); //$NON-NLS-1$
+                    .getString("TargetingPhaseDisplay.DontFireDialog.title"); //$NON-NLS-1$
             String body = Messages
-            .getString("TargetingPhaseDisplay.DontFireDialog.message"); //$NON-NLS-1$
+                    .getString("TargetingPhaseDisplay.DontFireDialog.message"); //$NON-NLS-1$
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForNoAction(false);
@@ -498,7 +498,7 @@ DoneButtoned, KeyListener, ItemListener {
         // validate
         if (ce() == null || target == null) {
             throw new IllegalArgumentException(
-            "current searchlight parameters are invalid"); //$NON-NLS-1$
+                    "current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
         if (!SearchlightAttackAction.isPossible(client.game, cen, target, null))
@@ -531,7 +531,7 @@ DoneButtoned, KeyListener, ItemListener {
         if (ce() == null || target == null || mounted == null
                 || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException(
-            "current fire parameters are invalid"); //$NON-NLS-1$
+                    "current fire parameters are invalid"); //$NON-NLS-1$
         }
 
         // declare searchlight, if possible
@@ -680,7 +680,7 @@ DoneButtoned, KeyListener, ItemListener {
             clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
 
             clientgui.mechD.wPan.wRangeR
-            .setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
+                    .setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
@@ -883,7 +883,7 @@ DoneButtoned, KeyListener, ItemListener {
         if (client.isMyTurn() && b.getCoords() != null && ce() != null
                 && !b.getCoords().equals(ce().getPosition())) {
             boolean friendlyFire = client.game.getOptions().booleanOption(
-            "friendly_fire"); //$NON-NLS-1$
+                    "friendly_fire"); //$NON-NLS-1$
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());

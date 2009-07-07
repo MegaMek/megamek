@@ -152,7 +152,7 @@ public class LOSDialog extends JDialog implements ActionListener {
 
             public void focusLost(FocusEvent e) {
                 checkboxes1[0].removeFocusListener(this); // refers to
-                // listener
+                                                            // listener
             }
         });
     }

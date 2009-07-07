@@ -20,6 +20,7 @@ import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
+import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -48,7 +49,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         double toReturn = ((AmmoType)ammo.getType()).getRackSize() * ((AmmoType)ammo.getType()).getDamagePerShot(); 
-
+        
         // during a swarm, all damage gets applied as one block to one location
         if (ae instanceof BattleArmor
                 && weapon.getLocation() == BattleArmor.LOC_SQUAD
@@ -65,7 +66,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
                 toReturn--;
             } 
         }
-
+        
         if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
             toReturn -=1;
         }

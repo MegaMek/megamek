@@ -331,9 +331,9 @@ public class MoveOption extends MovePath {
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         if (attHex.containsTerrain(Terrains.WATER) && attHex.surface() > attEl) {
             toHita.addModifier(TargetRoll.IMPOSSIBLE,
-            "Attacker in depth 2+ water");
+                    "Attacker in depth 2+ water");
             toHitd.addModifier(TargetRoll.IMPOSSIBLE,
-            "Defender in depth 2+ water");
+                    "Defender in depth 2+ water");
         } else if (attHex.surface() == attEl && ae.height() > 0) {
             apc = true;
         }
@@ -343,9 +343,9 @@ public class MoveOption extends MovePath {
                 pc = true;
             } else if (targHex.surface() > targEl) {
                 toHita.addModifier(TargetRoll.IMPOSSIBLE,
-                "Attacker in depth 2+ water");
+                        "Attacker in depth 2+ water");
                 toHitd.addModifier(TargetRoll.IMPOSSIBLE,
-                "Defender in depth 2+ water");
+                        "Defender in depth 2+ water");
             }
         }
 
@@ -407,11 +407,11 @@ public class MoveOption extends MovePath {
     public double getUtility() {
         // self threat and self damage are considered transient
         double temp_threat = (threat + movement_threat + self_threat + (double) getMovementheatBuildup() / 20)
-        / getCEntity().strategy.attack;
+                / getCEntity().strategy.attack;
         double temp_damage = (damage + self_damage) * centity.strategy.attack;
         if (threat + movement_threat > 4 * centity.avg_armor) {
             double ratio = (threat + movement_threat)
-            / (centity.avg_armor + .25 * centity.avg_iarmor);
+                    / (centity.avg_armor + .25 * centity.avg_iarmor);
             if (ratio > 2) {
                 temp_threat += centity.bv / 15.0; // likely to die
                 doomed = true;
@@ -431,7 +431,7 @@ public class MoveOption extends MovePath {
         if (hasActiveMASC()) {
             int mascTN = 0;
             for (final Enumeration<MoveStep> i = getSteps(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 MoveStep step = i.nextElement();
                 if (step.isUsingMASC() && step.getTargetNumberMASC() > mascTN) {
                     mascTN = step.getTargetNumberMASC();
@@ -446,7 +446,7 @@ public class MoveOption extends MovePath {
         // If getting up is difficult...
         if (prone) {
             PilotingRollData tmpPRD = centity.getEntity()
-            .checkGetUp(getStep(0));
+                    .checkGetUp(getStep(0));
             if ((tmpPRD != null)
                     && ((tmpPRD.getValue() == TargetRoll.IMPOSSIBLE) || (tmpPRD
                             .getValue() == TargetRoll.AUTOMATIC_FAIL))) {
@@ -481,7 +481,7 @@ public class MoveOption extends MovePath {
         for (int i = 0; i < enemy_firing_arcs.length; i++) {
             enemy_firing_arcs[i] = CEntity.getThreatHitArc(enemy
                     .getFinalCoords(), MovePath.getAdjustedFacing(enemy
-                            .getFinalFacing(), enemy_firing_arcs[i]), getFinalCoords());
+                    .getFinalFacing(), enemy_firing_arcs[i]), getFinalCoords());
         }
         max = enemy.centity.getModifiedDamage((apc == 1) ? CEntity.TT
                 : enemy_firing_arcs[0], distance, modifier);
@@ -512,11 +512,11 @@ public class MoveOption extends MovePath {
                         : 1)
                         * ((enemy_firing_arcs[0] == ToHitData.SIDE_FRONT) ? .2
                                 : .05)
-                                * centity.entity.getWeight()
-                                * Compute.oddsAbove(3 + modifier)
-                                / 100
-                                + (1 - enemy.centity.base_psr_odds)
-                                * enemy.entity.getWeight() / 10.0;
+                        * centity.entity.getWeight()
+                        * Compute.oddsAbove(3 + modifier)
+                        / 100
+                        + (1 - enemy.centity.base_psr_odds)
+                        * enemy.entity.getWeight() / 10.0;
             }
         }
         return max;
@@ -553,7 +553,7 @@ public class MoveOption extends MovePath {
     @Override
     public String toString() {
         return getEntity().getShortName() + " " + getEntity().getId() + " "
-        + getFinalCoords() + " " + super.toString() + "\r\n Utility: "
-        + getUtility() + " \r\n" + tv + "\r\n";
+                + getFinalCoords() + " " + super.toString() + "\r\n Utility: "
+                + getUtility() + " \r\n" + tv + "\r\n";
     }
 }

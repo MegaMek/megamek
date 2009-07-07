@@ -119,7 +119,7 @@ public class TripAttackAction extends PhysicalAttackAction {
         IHex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int targetElevation = target.getElevation()
-        + targHex.getElevation();
+                + targHex.getElevation();
 
         if (attackerElevation != targetElevation){
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker and Target must be at the same elevation");

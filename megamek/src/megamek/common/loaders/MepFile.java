@@ -146,13 +146,13 @@ public class MepFile implements IMechLoader {
             r.close();
         } catch (IOException ex) {
             throw new EntityLoadingException(
-            "I/O error occured during file read");
+                    "I/O error occured during file read");
         } catch (StringIndexOutOfBoundsException ex) {
             throw new EntityLoadingException(
-            "StringIndexOutOfBoundsException reading file (format error)");
+                    "StringIndexOutOfBoundsException reading file (format error)");
         } catch (NumberFormatException ex) {
             throw new EntityLoadingException(
-            "NumberFormatException reading file (format error)");
+                    "NumberFormatException reading file (format error)");
         }
     }
 
@@ -195,7 +195,7 @@ public class MepFile implements IMechLoader {
                 engineFlags = Engine.CLAN_ENGINE;
             }
             int engineRating = Integer.parseInt(walkMP.trim())
-            * (int) mech.getWeight();
+                    * (int) mech.getWeight();
             mech.setEngine(new Engine(engineRating, Engine
                     .getEngineTypeByString(engineType), engineFlags));
             // No support for moveable system crits due to goofy critical
@@ -296,8 +296,8 @@ public class MepFile implements IMechLoader {
                                 // use the existing one
                                 mech.addCritical(loc, new CriticalSlot(
                                         CriticalSlot.TYPE_EQUIPMENT, mech
-                                        .getEquipmentNum(m), etype
-                                        .isHittable(), m));
+                                                .getEquipmentNum(m), etype
+                                                .isHittable(), m));
                                 continue;
                             }
                             m = mech.addEquipment(etype, loc, rearMounted);
@@ -324,10 +324,10 @@ public class MepFile implements IMechLoader {
             return mech;
         } catch (NumberFormatException ex) {
             throw new EntityLoadingException(
-            "NumberFormatException parsing file");
+                    "NumberFormatException parsing file");
         } catch (NullPointerException ex) {
             throw new EntityLoadingException(
-            "NullPointerException parsing file");
+                    "NullPointerException parsing file");
         }
     }
 

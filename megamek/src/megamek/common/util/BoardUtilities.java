@@ -57,8 +57,8 @@ public class BoardUtilities {
                 if (b.getWidth() != width || b.getHeight() != height) {
                     throw new IllegalArgumentException(
                             "board is the wrong size, expected " + width + "x"
-                            + height + ", got " + b.getWidth() + "x"
-                            + b.getHeight());
+                                    + height + ", got " + b.getWidth() + "x"
+                                    + b.getHeight());
                 }
                 copyBoardInto(resultData, resultWidth, j * width, i * height,
                         boards[i * sheetWidth + j]);
@@ -76,7 +76,7 @@ public class BoardUtilities {
 
         //assuming that the map setting and board types match
         result.setType(medium);
-
+        
         return result;
     }
 
@@ -102,7 +102,7 @@ public class BoardUtilities {
      */
     public static IBoard generateRandom(MapSettings mapSettings) {
         int elevationMap[][] = new int[mapSettings.getBoardWidth()][mapSettings
-                                                                    .getBoardHeight()];
+                .getBoardHeight()];
         double sizeScale = (double) (mapSettings.getBoardWidth() * mapSettings
                 .getBoardHeight())
                 / ((double) (16 * 17));
@@ -114,7 +114,7 @@ public class BoardUtilities {
                 .getAlgorithmToUse());
 
         IHex[] nb = new IHex[mapSettings.getBoardWidth()
-                             * mapSettings.getBoardHeight()];
+                * mapSettings.getBoardHeight()];
         int index = 0;
         for (int h = 0; h < mapSettings.getBoardHeight(); h++) {
             for (int w = 0; w < mapSettings.getBoardWidth(); w++) {
@@ -129,12 +129,12 @@ public class BoardUtilities {
 
         IBoard result = new Board(mapSettings.getBoardWidth(), mapSettings
                 .getBoardHeight(), nb);
-
+        
         if(mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
             result.setType(Board.T_SPACE);
             return result;
         }
-
+        
         /* initalize reverseHex */
         HashMap<IHex, Point> reverseHex = new HashMap<IHex, Point>(2
                 * mapSettings.getBoardWidth() * mapSettings.getBoardHeight());
@@ -148,11 +148,11 @@ public class BoardUtilities {
         while (peaks > 0) {
             peaks--;
             int mountainHeight = mapSettings.getMountainHeightMin()
-            + Compute.randomInt(1 + mapSettings.getMountainHeightMax()
-                    - mapSettings.getMountainHeightMin());
+                    + Compute.randomInt(1 + mapSettings.getMountainHeightMax()
+                            - mapSettings.getMountainHeightMin());
             int mountainWidth = mapSettings.getMountainWidthMin()
-            + Compute.randomInt(1 + mapSettings.getMountainWidthMax()
-                    - mapSettings.getMountainWidthMin());
+                    + Compute.randomInt(1 + mapSettings.getMountainWidthMax()
+                            - mapSettings.getMountainWidthMin());
             int mapWidth = result.getWidth();
             int mapHeight = result.getHeight();
 
@@ -236,7 +236,7 @@ public class BoardUtilities {
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.WATER, mapSettings.getProbDeep(),
                     mapSettings.getMinWaterSize(), mapSettings
-                    .getMaxWaterSize(), reverseHex, true);
+                            .getMaxWaterSize(), reverseHex, true);
         }
         /* Add the pavements */
         count = mapSettings.getMinPavementSpots();
@@ -468,7 +468,7 @@ public class BoardUtilities {
                     .randomInt(height));
 
             int radius = Compute.randomInt(maxRadius - minRadius + 1)
-            + minRadius;
+                    + minRadius;
             int maxLevel = 3;
             if (radius < 3) {
                 maxLevel = 1;
@@ -557,25 +557,25 @@ public class BoardUtilities {
         }
         /* First select start and the direction */
         switch (Compute.randomInt(4)) {
-        case 0:
-            p = new Point(0, Compute.randomInt(5) - 2 + height / 2);
-            direction = Compute.randomInt(2) + 1;
-            nextLeft = direction - 1;
-            nextRight = direction + 1;
-            break;
-        case 1:
-            p = new Point(width - 1, Compute.randomInt(5) - 2 + height / 2);
-            direction = Compute.randomInt(2) + 4;
-            nextLeft = direction - 1;
-            nextRight = (direction + 1) % 6;
-            break;
-        case 2:
-        case 3:
-            p = new Point(Compute.randomInt(5) - 2 + width / 2, 0);
-            direction = 2;
-            nextRight = 3;
-            nextLeft = 4;
-            break;
+            case 0:
+                p = new Point(0, Compute.randomInt(5) - 2 + height / 2);
+                direction = Compute.randomInt(2) + 1;
+                nextLeft = direction - 1;
+                nextRight = direction + 1;
+                break;
+            case 1:
+                p = new Point(width - 1, Compute.randomInt(5) - 2 + height / 2);
+                direction = Compute.randomInt(2) + 4;
+                nextLeft = direction - 1;
+                nextRight = (direction + 1) % 6;
+                break;
+            case 2:
+            case 3:
+                p = new Point(Compute.randomInt(5) - 2 + width / 2, 0);
+                direction = 2;
+                nextRight = 3;
+                nextLeft = 4;
+                break;
         } // switch
         /* place the river */
         field = board.getHex(p.x, p.y);
@@ -592,15 +592,15 @@ public class BoardUtilities {
             riverHexes.addAll(extendRiverToSide(board, p, Compute.randomInt(3),
                     nextRight, reverseHex));
             switch (Compute.randomInt(4)) {
-            case 0:
-                field = board.getHexInDir(p.x, p.y, (direction + 5) % 6);
-                break;
-            case 1:
-                field = board.getHexInDir(p.x, p.y, (direction + 1) % 6);
-                break;
-            default:
-                field = board.getHexInDir(p.x, p.y, direction);
-                break;
+                case 0:
+                    field = board.getHexInDir(p.x, p.y, (direction + 5) % 6);
+                    break;
+                case 1:
+                    field = board.getHexInDir(p.x, p.y, (direction + 1) % 6);
+                    break;
+                default:
+                    field = board.getHexInDir(p.x, p.y, direction);
+                    break;
             }
 
         } while (field != null);
@@ -703,7 +703,7 @@ public class BoardUtilities {
                     field.removeTerrain(Terrains.WATER);
                     if (level > 0) {
                         field.addTerrain(f.createTerrain(Terrains.WATER,
-                                level));
+                                        level));
                     }
                 }
                 field.addTerrain(f.createTerrain(Terrains.ICE, 1));
@@ -768,7 +768,7 @@ public class BoardUtilities {
             field = hexSet[n];
             if (field.containsTerrain(Terrains.SWAMP)) {
                 field.removeTerrain(Terrains.SWAMP); // any swamps are dried
-                // up to hardened mud
+                                                        // up to hardened mud
                 if (field.terrainsPresent() == 0 && Compute.randomInt(100) < 30) {
                     // if no other terrains present, 30% chance to change to
                     // rough
@@ -840,7 +840,7 @@ public class BoardUtilities {
 
     protected static void addCliffs(IBoard board, int modifier) {
         HashSet<Coords> ignore = new HashSet<Coords>(); // previously considered
-        // hexes
+                                                        // hexes
         ArrayList<Coords> candidate = new ArrayList<Coords>();
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -870,18 +870,18 @@ public class BoardUtilities {
             }
         }
     }
-
+    
     /*
      * adjust the board based on weather conditions
      */
     public static void addWeatherConditions(IBoard board, int weatherCond, int windCond) {
         ITerrainFactory tf = Terrains.getTerrainFactory();
-
+        
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
                 IHex hex = board.getHex(c);
-
+                
                 //moderate rain - mud in clear hexes, depth 0 water, and dirt roads (not implemented yet)
                 if(weatherCond == PlanetaryConditions.WE_MOD_RAIN) {
                     if(hex.terrainsPresent() == 0 || (hex.containsTerrain(Terrains.WATER) && hex.depth() == 0)) {
@@ -891,7 +891,7 @@ public class BoardUtilities {
                         }
                     }
                 }   
-
+                
                 //heavy rain - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
                 //rapids in all depth 1+ water
                 if(weatherCond == PlanetaryConditions.WE_HEAVY_RAIN) {
@@ -905,7 +905,7 @@ public class BoardUtilities {
                         }
                     }
                 }
-
+                
                 //torrential downpour - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
                 //torrent in all depth 1+ water, swamps in all depth 0 water hexes
                 if(weatherCond == PlanetaryConditions.WE_DOWNPOUR) {
@@ -920,11 +920,11 @@ public class BoardUtilities {
                         hex.addTerrain(tf.createTerrain(Terrains.MUD, 1));
                     }
                 }
-
+                
                 //check for rapids/torrents created by wind
                 if(windCond > PlanetaryConditions.WI_MOD_GALE 
                         && hex.containsTerrain(Terrains.WATER) && hex.depth() > 0) {
-
+                    
                     if(windCond > PlanetaryConditions.WI_STORM) {
                         if(!(hex.terrainLevel(Terrains.RAPIDS) > 1)) {
                             hex.addTerrain(tf.createTerrain(Terrains.RAPIDS, 2));
@@ -965,16 +965,16 @@ public class BoardUtilities {
         }
         /* generate landscape */
         switch (algorithm) {
-        case 0:
-            cutSteps(hilliness, width, height, elevationMap);
-            break;
-        case 1:
-            midPoint(hilliness, width, height, elevationMap);
-            break;
-        case 2:
-            cutSteps(hilliness, width, height, elevationMap);
-            midPoint(hilliness, width, height, elevationMap);
-            break;
+            case 0:
+                cutSteps(hilliness, width, height, elevationMap);
+                break;
+            case 1:
+                midPoint(hilliness, width, height, elevationMap);
+                break;
+            case 2:
+                cutSteps(hilliness, width, height, elevationMap);
+                midPoint(hilliness, width, height, elevationMap);
+                break;
         }
 
         /* and now normalize it */
@@ -1040,48 +1040,48 @@ public class BoardUtilities {
                 int distance = c.distance(centre);
                 int elev = (100 * height * (width - distance)) / width;
                 elev = (elev / 100)
-                + (Compute.randomInt(100) < (elev % 100) ? 1 : 0);
+                        + (Compute.randomInt(100) < (elev % 100) ? 1 : 0);
 
                 IHex hex = board.getHex(c);
 
                 if (elev >= height - 2) {
                     switch (capStyle) {
-                    case MapSettings.MOUNTAIN_SNOWCAPPED:
-                        hex.setTheme("snow");
-                        break;
-                    case MapSettings.MOUNTAIN_VOLCANO_ACTIVE:
-                    case MapSettings.MOUNTAIN_VOLCANO_DORMANT:
-                        hex.setTheme("lunar");
-                        break;
-                    case MapSettings.MOUNTAIN_LAKE:
-                        int lake = (width / 4);
-                        int depth = ((lake - distance) + 1);
-                        if (depth < 1) { // eliminates depth 0 water
-                            depth = 1;
-                        }
-                        hex.addTerrain(tf.createTerrain(Terrains.WATER,
-                                (depth)));
-                        elev -= (Math.abs(lake - elev) - 1);
-                        break;
+                        case MapSettings.MOUNTAIN_SNOWCAPPED:
+                            hex.setTheme("snow");
+                            break;
+                        case MapSettings.MOUNTAIN_VOLCANO_ACTIVE:
+                        case MapSettings.MOUNTAIN_VOLCANO_DORMANT:
+                            hex.setTheme("lunar");
+                            break;
+                        case MapSettings.MOUNTAIN_LAKE:
+                            int lake = (width / 4);
+                            int depth = ((lake - distance) + 1);
+                            if (depth < 1) { // eliminates depth 0 water
+                                depth = 1;
+                            }
+                            hex.addTerrain(tf.createTerrain(Terrains.WATER,
+                                    (depth)));
+                            elev -= (Math.abs(lake - elev) - 1);
+                            break;
                     }
                 }
                 if (elev == height) {
                     // for volcanoes, invert the peak
                     switch (capStyle) {
-                    case MapSettings.MOUNTAIN_VOLCANO_ACTIVE:
-                        hex.removeAllTerrains();
-                        hex.addTerrain(tf.createTerrain(Terrains.MAGMA, 2));
-                        elev -= 2;
-                        break;
-                    case MapSettings.MOUNTAIN_VOLCANO_DORMANT:
-                        hex.removeAllTerrains();
-                        hex.addTerrain(tf.createTerrain(Terrains.MAGMA, 1));
-                        elev -= 2;
-                        break;
-                    case MapSettings.MOUNTAIN_VOLCANO_EXTINCT:
-                        hex.setTheme("lunar");
-                        elev -= 2;
-                        break;
+                        case MapSettings.MOUNTAIN_VOLCANO_ACTIVE:
+                            hex.removeAllTerrains();
+                            hex.addTerrain(tf.createTerrain(Terrains.MAGMA, 2));
+                            elev -= 2;
+                            break;
+                        case MapSettings.MOUNTAIN_VOLCANO_DORMANT:
+                            hex.removeAllTerrains();
+                            hex.addTerrain(tf.createTerrain(Terrains.MAGMA, 1));
+                            elev -= 2;
+                            break;
+                        case MapSettings.MOUNTAIN_VOLCANO_EXTINCT:
+                            hex.setTheme("lunar");
+                            elev -= 2;
+                            break;
                     }
                 }
 
@@ -1218,46 +1218,46 @@ public class BoardUtilities {
              * possible
              */
             switch (type) {
-            case 0: /* left to upper border */
-                p1.setLocation(0, Compute.randomInt(height));
-                p2.setLocation(Compute.randomInt(width), height - 1);
-                markSides(p1, p2, sideB, sideA, elevationMap, height);
-                markRect(p2.x, width, sideA, elevationMap, height);
-                break;
-            case 1: /* upper to lower border */
-                p1.setLocation(Compute.randomInt(width), 0);
-                p2.setLocation(Compute.randomInt(width), height - 1);
-                if (p1.x < p2.x) {
+                case 0: /* left to upper border */
+                    p1.setLocation(0, Compute.randomInt(height));
+                    p2.setLocation(Compute.randomInt(width), height - 1);
+                    markSides(p1, p2, sideB, sideA, elevationMap, height);
+                    markRect(p2.x, width, sideA, elevationMap, height);
+                    break;
+                case 1: /* upper to lower border */
+                    p1.setLocation(Compute.randomInt(width), 0);
+                    p2.setLocation(Compute.randomInt(width), height - 1);
+                    if (p1.x < p2.x) {
+                        markSides(p1, p2, sideA, sideB, elevationMap, height);
+                    } else {
+                        markSides(p2, p1, sideB, sideA, elevationMap, height);
+                    }
+                    markRect(0, p1.x, sideA, elevationMap, height);
+                    markRect(p2.x, width, sideB, elevationMap, height);
+                    break;
+                case 2: /* upper to right border */
+                    p1.setLocation(Compute.randomInt(width), height - 1);
+                    p2.setLocation(width, Compute.randomInt(height));
+                    markSides(p1, p2, sideB, sideA, elevationMap, height);
+                    markRect(0, p1.x, sideA, elevationMap, height);
+                    break;
+                case 3: /* left to right border */
+                    p1.setLocation(0, Compute.randomInt(height));
+                    p2.setLocation(width, Compute.randomInt(height));
                     markSides(p1, p2, sideA, sideB, elevationMap, height);
-                } else {
-                    markSides(p2, p1, sideB, sideA, elevationMap, height);
-                }
-                markRect(0, p1.x, sideA, elevationMap, height);
-                markRect(p2.x, width, sideB, elevationMap, height);
-                break;
-            case 2: /* upper to right border */
-                p1.setLocation(Compute.randomInt(width), height - 1);
-                p2.setLocation(width, Compute.randomInt(height));
-                markSides(p1, p2, sideB, sideA, elevationMap, height);
-                markRect(0, p1.x, sideA, elevationMap, height);
-                break;
-            case 3: /* left to right border */
-                p1.setLocation(0, Compute.randomInt(height));
-                p2.setLocation(width, Compute.randomInt(height));
-                markSides(p1, p2, sideA, sideB, elevationMap, height);
-                break;
-            case 4: /* left to lower border */
-                p1.setLocation(0, Compute.randomInt(height));
-                p2.setLocation(Compute.randomInt(width), 0);
-                markSides(p1, p2, sideB, sideA, elevationMap, height);
-                markRect(p2.x, width, sideB, elevationMap, height);
-                break;
-            case 5: /* lower to right border */
-                p1.setLocation(Compute.randomInt(width), 0);
-                p2.setLocation(width, Compute.randomInt(height));
-                markSides(p1, p2, sideB, sideA, elevationMap, height);
-                markRect(0, p1.x, sideB, elevationMap, height);
-                break;
+                    break;
+                case 4: /* left to lower border */
+                    p1.setLocation(0, Compute.randomInt(height));
+                    p2.setLocation(Compute.randomInt(width), 0);
+                    markSides(p1, p2, sideB, sideA, elevationMap, height);
+                    markRect(p2.x, width, sideB, elevationMap, height);
+                    break;
+                case 5: /* lower to right border */
+                    p1.setLocation(Compute.randomInt(width), 0);
+                    p2.setLocation(width, Compute.randomInt(height));
+                    markSides(p1, p2, sideB, sideA, elevationMap, height);
+                    markRect(0, p1.x, sideB, elevationMap, height);
+                    break;
             }
 
         }
@@ -1339,45 +1339,45 @@ public class BoardUtilities {
         int x, y;
 
         d1 = size >> (step - 1);
-            d2 = d1 / 2;
-            fracdim = (1.0 - fracdim) / 2.0;
-            delta = (int) (delta * Math.exp(-0.6931 * fracdim * (2.0 * step - 1)));
-            delta5 = delta << 5;
+        d2 = d1 / 2;
+        fracdim = (1.0 - fracdim) / 2.0;
+        delta = (int) (delta * Math.exp(-0.6931 * fracdim * (2.0 * step - 1)));
+        delta5 = delta << 5;
+        x = d2;
+        do {
+            y = d2;
+            do {
+                elevationMap[x][y] = middleValue(elevationMap[x + d2][y + d2],
+                        elevationMap[x + d2][y - d2], elevationMap[x - d2][y
+                                + d2], elevationMap[x - d2][y - d2], delta5);
+                y += d1;
+            } while (y < size - d2);
+            x += d1;
+        } while (x < size - d2);
+
+        delta = (int) (delta * Math.exp(-0.6931 * fracdim));
+        delta5 = delta << 5;
+        if (newBorder) {
             x = d2;
             do {
-                y = d2;
-                do {
-                    elevationMap[x][y] = middleValue(elevationMap[x + d2][y + d2],
-                            elevationMap[x + d2][y - d2], elevationMap[x - d2][y
-                                                                               + d2], elevationMap[x - d2][y - d2], delta5);
-                    y += d1;
-                } while (y < size - d2);
+                y = x;
+                elevationMap[0][x] = middleValue(elevationMap[0][x + d2],
+                        elevationMap[0][x - d2], elevationMap[d2][x], delta5);
+                elevationMap[size][x] = middleValue(elevationMap[size - 1][x
+                        + d2], elevationMap[size - 1][x - d2],
+                        elevationMap[size - d2 - 1][x], delta5);
+                y = 0;
+                elevationMap[x][0] = middleValue(elevationMap[x + d2][0],
+                        elevationMap[x - d2][0], elevationMap[x][d2], delta5);
+                elevationMap[x][size] = middleValue(
+                        elevationMap[x + d2][size - 1],
+                        elevationMap[x - d2][size - 1], elevationMap[x][size
+                                - d2 - 1], delta5);
                 x += d1;
             } while (x < size - d2);
-
-            delta = (int) (delta * Math.exp(-0.6931 * fracdim));
-            delta5 = delta << 5;
-            if (newBorder) {
-                x = d2;
-                do {
-                    y = x;
-                    elevationMap[0][x] = middleValue(elevationMap[0][x + d2],
-                            elevationMap[0][x - d2], elevationMap[d2][x], delta5);
-                    elevationMap[size][x] = middleValue(elevationMap[size - 1][x
-                                                                               + d2], elevationMap[size - 1][x - d2],
-                                                                               elevationMap[size - d2 - 1][x], delta5);
-                    y = 0;
-                    elevationMap[x][0] = middleValue(elevationMap[x + d2][0],
-                            elevationMap[x - d2][0], elevationMap[x][d2], delta5);
-                    elevationMap[x][size] = middleValue(
-                            elevationMap[x + d2][size - 1],
-                            elevationMap[x - d2][size - 1], elevationMap[x][size
-                                                                            - d2 - 1], delta5);
-                    x += d1;
-                } while (x < size - d2);
-            }
-            diagMid(new Point(d2, d1), d1, d2, delta5, size, elevationMap);
-            diagMid(new Point(d1, d2), d1, d2, delta5, size, elevationMap);
+        }
+        diagMid(new Point(d2, d1), d1, d2, delta5, size, elevationMap);
+        diagMid(new Point(d1, d2), d1, d2, delta5, size, elevationMap);
     }
 
     /**

@@ -43,22 +43,22 @@ import megamek.client.ui.AWT.widget.SimpleLine;
 import megamek.common.MapSettings;
 
 public class RandomMapDialog extends Dialog implements ActionListener,
-FocusListener {
+        FocusListener {
     /**
      *
      */
     private static final long serialVersionUID = -1676096571134662220L;
     private static final String NONE = Messages
-    .getString("RandomMapDialog.elevNONE"); //$NON-NLS-1$
+            .getString("RandomMapDialog.elevNONE"); //$NON-NLS-1$
     private static final String LOW = Messages
-    .getString("RandomMapDialog.elevLow"); //$NON-NLS-1$
+            .getString("RandomMapDialog.elevLow"); //$NON-NLS-1$
     private static final String MEDIUM = Messages
-    .getString("RandomMapDialog.elevMedium"); //$NON-NLS-1$
+            .getString("RandomMapDialog.elevMedium"); //$NON-NLS-1$
     private static final String HIGH = Messages
-    .getString("RandomMapDialog.elevHigh"); //$NON-NLS-1$
+            .getString("RandomMapDialog.elevHigh"); //$NON-NLS-1$
 
     private static final String INVALID_SETTING = Messages
-    .getString("RandomMapDialog.InvalidSetting"); //$NON-NLS-1$
+            .getString("RandomMapDialog.InvalidSetting"); //$NON-NLS-1$
 
     private static final int NORMAL_LINE_WIDTH = 195;
     private static final int ADVANCED_LINE_WIDTH = 295;
@@ -453,14 +453,14 @@ FocusListener {
             addLabelTextField(labRoughSpots, texMinRoughSpots,
                     texMaxRoughSpots, "-"); //$NON-NLS-1$
             addLabelTextField(labRoughSize, texMinRoughSize, texMaxRoughSize,
-            "-"); //$NON-NLS-1$
+                    "-"); //$NON-NLS-1$
 
             addSeparator(slRoughAd);
 
             addLabelTextField(labSwampSpots, texMinSwampSpots,
                     texMaxSwampSpots, "-"); //$NON-NLS-1$
             addLabelTextField(labSwampSize, texMinSwampSize, texMaxSwampSize,
-            "-"); //$NON-NLS-1$
+                    "-"); //$NON-NLS-1$
 
             addSeparator(slSwampAd);
 
@@ -471,7 +471,7 @@ FocusListener {
             addLabelTextField(labWaterSpots, texMinWaterSpots,
                     texMaxWaterSpots, "-"); //$NON-NLS-1$
             addLabelTextField(labWaterSize, texMinWaterSize, texMaxWaterSize,
-            "-"); //$NON-NLS-1$
+                    "-"); //$NON-NLS-1$
             addLabelTextField(labProbDeep, texProbDeep);
 
             addSeparator(slLakesAd);
@@ -1029,72 +1029,72 @@ FocusListener {
 
     private void loadValues() {
         texBoardWidth.setText(new Integer(mapSettings.getBoardWidth())
-        .toString());
+                .toString());
         texBoardHeight.setText(new Integer(mapSettings.getBoardHeight())
-        .toString());
+                .toString());
         texTheme.setText(mapSettings.getTheme());
 
         texHilliness
-        .setText(new Integer(mapSettings.getHilliness()).toString());
+                .setText(new Integer(mapSettings.getHilliness()).toString());
         texRange.setText(new Integer(mapSettings.getRange()).toString());
         texProbInvert.setText(new Integer(mapSettings.getProbInvert())
-        .toString());
+                .toString());
         texCliffs.setText(new Integer(mapSettings.getCliffs()).toString());
         texMinWaterSpots.setText(new Integer(mapSettings.getMinWaterSpots())
-        .toString());
+                .toString());
         texMaxWaterSpots.setText(new Integer(mapSettings.getMaxWaterSpots())
-        .toString());
+                .toString());
         texMinWaterSize.setText(new Integer(mapSettings.getMinWaterSize())
-        .toString());
+                .toString());
         texMaxWaterSize.setText(new Integer(mapSettings.getMaxWaterSize())
-        .toString());
+                .toString());
 
         texMinForestSpots.setText(new Integer(mapSettings.getMinForestSpots())
-        .toString());
+                .toString());
         texMaxForestSpots.setText(new Integer(mapSettings.getMaxForestSpots())
-        .toString());
+                .toString());
         texMinForestSize.setText(new Integer(mapSettings.getMinForestSize())
-        .toString());
+                .toString());
         texMaxForestSize.setText(new Integer(mapSettings.getMaxForestSize())
-        .toString());
+                .toString());
 
         texMinRoughSpots.setText(new Integer(mapSettings.getMinRoughSpots())
-        .toString());
+                .toString());
         texMaxRoughSpots.setText(new Integer(mapSettings.getMaxRoughSpots())
-        .toString());
+                .toString());
         texMinRoughSize.setText(new Integer(mapSettings.getMinRoughSize())
-        .toString());
+                .toString());
         texMaxRoughSize.setText(new Integer(mapSettings.getMaxRoughSize())
-        .toString());
+                .toString());
 
         texMinSwampSpots.setText(new Integer(mapSettings.getMinSwampSpots())
-        .toString());
+                .toString());
         texMaxSwampSpots.setText(new Integer(mapSettings.getMaxSwampSpots())
-        .toString());
+                .toString());
         texMinSwampSize.setText(new Integer(mapSettings.getMinSwampSize())
-        .toString());
+                .toString());
         texMaxSwampSize.setText(new Integer(mapSettings.getMaxSwampSize())
-        .toString());
+                .toString());
 
         texMinPavementSpots.setText(new Integer(mapSettings
                 .getMinPavementSpots()).toString());
         texMaxPavementSpots.setText(new Integer(mapSettings
                 .getMaxPavementSpots()).toString());
         texMinPavementSize
-        .setText(new Integer(mapSettings.getMinPavementSize())
-        .toString());
+                .setText(new Integer(mapSettings.getMinPavementSize())
+                        .toString());
         texMaxPavementSize
-        .setText(new Integer(mapSettings.getMaxPavementSize())
-        .toString());
+                .setText(new Integer(mapSettings.getMaxPavementSize())
+                        .toString());
 
         texMinRubbleSpots.setText(new Integer(mapSettings.getMinRubbleSpots())
-        .toString());
+                .toString());
         texMaxRubbleSpots.setText(new Integer(mapSettings.getMaxRubbleSpots())
-        .toString());
+                .toString());
         texMinRubbleSize.setText(new Integer(mapSettings.getMinRubbleSize())
-        .toString());
+                .toString());
         texMaxRubbleSize.setText(new Integer(mapSettings.getMaxRubbleSize())
-        .toString());
+                .toString());
 
         texMinFortifiedSpots.setText(new Integer(mapSettings
                 .getMinFortifiedSpots()).toString());
@@ -1106,56 +1106,56 @@ FocusListener {
                 .getMaxFortifiedSize()).toString());
 
         texMinIceSpots.setText(new Integer(mapSettings.getMinIceSpots())
-        .toString());
+                .toString());
         texMaxIceSpots.setText(new Integer(mapSettings.getMaxIceSpots())
-        .toString());
+                .toString());
         texMinIceSize.setText(new Integer(mapSettings.getMinIceSize())
-        .toString());
+                .toString());
         texMaxIceSize.setText(new Integer(mapSettings.getMaxIceSize())
-        .toString());
+                .toString());
 
         texProbDeep.setText(new Integer(mapSettings.getProbDeep()).toString());
         texProbHeavy
-        .setText(new Integer(mapSettings.getProbHeavy()).toString());
+                .setText(new Integer(mapSettings.getProbHeavy()).toString());
         texProbRiver
-        .setText(new Integer(mapSettings.getProbRiver()).toString());
+                .setText(new Integer(mapSettings.getProbRiver()).toString());
         texProbRoad.setText(new Integer(mapSettings.getProbRoad()).toString());
         texProbCrater.setText(new Integer(mapSettings.getProbCrater())
-        .toString());
+                .toString());
         texMinRadius
-        .setText(new Integer(mapSettings.getMinRadius()).toString());
+                .setText(new Integer(mapSettings.getMinRadius()).toString());
         texMaxRadius
-        .setText(new Integer(mapSettings.getMaxRadius()).toString());
+                .setText(new Integer(mapSettings.getMaxRadius()).toString());
         texMaxCraters.setText(new Integer(mapSettings.getMaxCraters())
-        .toString());
+                .toString());
         texMinCraters.setText(new Integer(mapSettings.getMinCraters())
-        .toString());
+                .toString());
 
         texProbDrought.setText(new Integer(mapSettings.getProbDrought())
-        .toString());
+                .toString());
         texProbFire.setText(new Integer(mapSettings.getProbForestFire())
-        .toString());
+                .toString());
         texProbFreeze.setText(new Integer(mapSettings.getProbFreeze())
-        .toString());
+                .toString());
         texProbFlood
-        .setText(new Integer(mapSettings.getProbFlood()).toString());
+                .setText(new Integer(mapSettings.getProbFlood()).toString());
         texFxMod.setText(new Integer(mapSettings.getFxMod()).toString());
 
         choCity.select(mapSettings.getCityType());
         texInvertNegative.setText(new Integer(mapSettings
                 .getInvertNegativeTerrain()).toString());
         texCityBlocks.setText(new Integer(mapSettings.getCityBlocks())
-        .toString());
+                .toString());
         texCityMinCF
-        .setText(new Integer(mapSettings.getCityMinCF()).toString());
+                .setText(new Integer(mapSettings.getCityMinCF()).toString());
         texCityMaxCF
-        .setText(new Integer(mapSettings.getCityMaxCF()).toString());
+                .setText(new Integer(mapSettings.getCityMaxCF()).toString());
         texCityMinFloors.setText(new Integer(mapSettings.getCityMinFloors())
-        .toString());
+                .toString());
         texCityMaxFloors.setText(new Integer(mapSettings.getCityMaxFloors())
-        .toString());
+                .toString());
         texCityDensity.setText(new Integer(mapSettings.getCityDensity())
-        .toString());
+                .toString());
         texTownSize.setText(new Integer(mapSettings.getTownSize()).toString());
 
         texMountainPeaks.setText(Integer.toString(mapSettings
@@ -1171,7 +1171,7 @@ FocusListener {
         texMountainWidthMax.setText(Integer.toString(mapSettings
                 .getMountainWidthMax()));
         texAlgorithmToUse.setText(new Integer(mapSettings.getAlgorithmToUse())
-        .toString());
+                .toString());
     }
 
     private boolean applyValues() {
@@ -1247,9 +1247,9 @@ FocusListener {
                 maxPavementSpots = Integer.parseInt(texMaxPavementSpots
                         .getText());
                 minPavementSize = Integer
-                .parseInt(texMinPavementSize.getText());
+                        .parseInt(texMinPavementSize.getText());
                 maxPavementSize = Integer
-                .parseInt(texMaxPavementSize.getText());
+                        .parseInt(texMaxPavementSize.getText());
                 minRubbleSpots = Integer.parseInt(texMinRubbleSpots.getText());
                 maxRubbleSpots = Integer.parseInt(texMaxRubbleSpots.getText());
                 minRubbleSize = Integer.parseInt(texMinRubbleSize.getText());
@@ -1651,7 +1651,7 @@ FocusListener {
                         frame,
                         INVALID_SETTING,
                         Messages
-                        .getString("RandomMapDialog.MountainWidthOutOfRangeWarn")).setVisible(true); //$NON-NLS-1$
+                                .getString("RandomMapDialog.MountainWidthOutOfRangeWarn")).setVisible(true); //$NON-NLS-1$
             }
 
         } else {

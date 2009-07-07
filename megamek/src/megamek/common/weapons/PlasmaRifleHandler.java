@@ -45,7 +45,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
-
+        
     }
 
     /*
@@ -111,7 +111,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         // pain shunted infantry get half damage
         if (target instanceof Infantry
                 && ((Entity) target).getCrew().getOptions().booleanOption(
-                "pain_shunt")) {
+                        "pain_shunt")) {
             toReturn = Math.max(toReturn / 2, 1);
         }
         return toReturn;
@@ -141,7 +141,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         }
         return toReturn;
     }
-
+    
 
     /**
      * @return a <code>boolean</code> value indicating wether or not this
@@ -159,7 +159,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             server.tryIgniteHex(target.getPosition(), subjectId, true, false, new TargetRoll(wtype.getFireTN(), wtype.getName()),
                     3, vPhaseReport);
         }
-
+        
         //shots that miss an entity can also potential cause explosions in a heavy industrial hex
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
@@ -170,7 +170,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         }
         return true;
     }
-
+    
     @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
             Building bldg, int hits) {
@@ -188,7 +188,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                     true, -1, vPhaseReport);
         }
     }
-
+    
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage) {

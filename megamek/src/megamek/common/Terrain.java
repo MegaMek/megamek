@@ -250,7 +250,7 @@ public class Terrain implements ITerrain, Serializable {
     @Override
     public String toString() {
         return Terrains.getName(type) + ":" + level
-        + (exitsSpecified ? ":" + exits : "");
+                + (exitsSpecified ? ":" + exits : "");
     }
 
     public int pilotingModifier(int moveType) {
@@ -412,15 +412,15 @@ public class Terrain implements ITerrain, Serializable {
             if (level > 1) {
                 return TargetRoll.AUTOMATIC_FAIL;
             }
-        if (moveType == IEntityMovementMode.VTOL) {
-            return TargetRoll.AUTOMATIC_FAIL;
-        }
-        return 0;
+            if (moveType == IEntityMovementMode.VTOL) {
+                return TargetRoll.AUTOMATIC_FAIL;
+            }
+            return 0;
         case (Terrains.MAGMA):
             if (level == 2) {
                 return 0;
             }
-        return TargetRoll.AUTOMATIC_SUCCESS;
+            return TargetRoll.AUTOMATIC_SUCCESS;
         case (Terrains.MUD):
             if ((moveType == IEntityMovementMode.BIPED)
                     || (moveType == IEntityMovementMode.QUAD)) {
@@ -432,12 +432,12 @@ public class Terrain implements ITerrain, Serializable {
             if (level == 2) {
                 return -1;
             }
-        return TargetRoll.AUTOMATIC_SUCCESS;
+            return TargetRoll.AUTOMATIC_SUCCESS;
         case (Terrains.SAND):
             if (largeVee) {
                 return 0;
             }
-        return TargetRoll.AUTOMATIC_SUCCESS;
+            return TargetRoll.AUTOMATIC_SUCCESS;
         default:
             return TargetRoll.AUTOMATIC_SUCCESS;
         }
@@ -449,7 +449,7 @@ public class Terrain implements ITerrain, Serializable {
             if (level > 1) {
                 return 3 + ((-3) * elev);
             }
-        return 0;
+            return 0;
         case (Terrains.TUNDRA):
             return -1;
         case (Terrains.SNOW):

@@ -33,20 +33,20 @@ public class Engine implements Serializable {
     private static final long serialVersionUID = -246032529363109609L;
 
     public final static float[] ENGINE_RATINGS = { 0.0f, 0.25f, 0.5f, 0.5f,
-        0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.5f, 1.5f, 1.5f, 2.0f, 2.0f,
-        2.0f, 2.5f, 2.5f, 3.0f, 3.0f, 3.0f, 3.5f, 3.5f, 4.0f, 4.0f, 4.0f,
-        4.5f, 4.5f, 5.0f, 5.0f, 5.5f, 5.5f, 6.0f, 6.0f, 6.0f, 7.0f, 7.0f,
-        7.5f, 7.5f, 8.0f, 8.5f,
+            0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.5f, 1.5f, 1.5f, 2.0f, 2.0f,
+            2.0f, 2.5f, 2.5f, 3.0f, 3.0f, 3.0f, 3.5f, 3.5f, 4.0f, 4.0f, 4.0f,
+            4.5f, 4.5f, 5.0f, 5.0f, 5.5f, 5.5f, 6.0f, 6.0f, 6.0f, 7.0f, 7.0f,
+            7.5f, 7.5f, 8.0f, 8.5f,
 
-        8.5f, 9.0f, 9.5f, 10.0f, 10.0f, 10.5f, 11.0f, 11.5f, 12.0f, 12.5f,
-        13.0f, 13.5f, 14.0f, 14.5f, 15.5f, 16.0f, 16.5f, 17.5f, 18.0f,
-        19.0f, 19.5f, 10.5f, 21.5f, 22.5f, 23.5f, 24.5f, 25.5f, 27.0f,
-        28.5f, 29.5f, 31.5f, 33.0f, 34.5f, 36.5f, 38.5f, 41.0f, 43.5f,
-        46.0f, 49.0f, 52.5f,
+            8.5f, 9.0f, 9.5f, 10.0f, 10.0f, 10.5f, 11.0f, 11.5f, 12.0f, 12.5f,
+            13.0f, 13.5f, 14.0f, 14.5f, 15.5f, 16.0f, 16.5f, 17.5f, 18.0f,
+            19.0f, 19.5f, 10.5f, 21.5f, 22.5f, 23.5f, 24.5f, 25.5f, 27.0f,
+            28.5f, 29.5f, 31.5f, 33.0f, 34.5f, 36.5f, 38.5f, 41.0f, 43.5f,
+            46.0f, 49.0f, 52.5f,
 
-        56.5f, 61.0f, 66.5f, 72.5f, 79.5f, 87.5f, 97.0f, 107.5f, 119.5f,
-        133.5f, 150.0f, 168.5f, 190.0f, 214.5f, 243.0f, 275.5f, 313.0f,
-        356.0f, 405.5f, 462.5f };
+            56.5f, 61.0f, 66.5f, 72.5f, 79.5f, 87.5f, 97.0f, 107.5f, 119.5f,
+            133.5f, 150.0f, 168.5f, 190.0f, 214.5f, 243.0f, 275.5f, 313.0f,
+            356.0f, 405.5f, 462.5f };
 
     // flags
     public final static int CLAN_ENGINE = 0x1;
@@ -129,35 +129,35 @@ public class Engine implements Serializable {
         }
 
         switch (engineType) {
-        case COMBUSTION_ENGINE:
-        case NORMAL_ENGINE:
-        case XL_ENGINE:
-        case XXL_ENGINE:
-        case FUEL_CELL:
-            break;
-        case COMPACT_ENGINE:
-            if (hasFlag(TANK_ENGINE)) {
-                problem.append(Messages
-                        .getString("Engine.invalidMechOnly"));
+            case COMBUSTION_ENGINE:
+            case NORMAL_ENGINE:
+            case XL_ENGINE:
+            case XXL_ENGINE:
+            case FUEL_CELL:
+                break;
+            case COMPACT_ENGINE:
+                if (hasFlag(TANK_ENGINE)) {
+                    problem.append(Messages
+                            .getString("Engine.invalidMechOnly"));
+                    return false;
+                }
+                if (hasFlag(LARGE_ENGINE)) {
+                    problem.append(Messages
+                            .getString("Engine.invalidCompactLarge"));
+                    return false;
+                }
+                break;
+            case LIGHT_ENGINE:
+            case FISSION:
+                if (hasFlag(CLAN_ENGINE)) {
+                    problem.append(Messages
+                            .getString("Engine.invalidSphereOnly"));
+                    return false;
+                }
+                break;
+            default:
+                problem.append("Type:" + engineType);
                 return false;
-            }
-            if (hasFlag(LARGE_ENGINE)) {
-                problem.append(Messages
-                        .getString("Engine.invalidCompactLarge"));
-                return false;
-            }
-            break;
-        case LIGHT_ENGINE:
-        case FISSION:
-            if (hasFlag(CLAN_ENGINE)) {
-                problem.append(Messages
-                        .getString("Engine.invalidSphereOnly"));
-                return false;
-            }
-            break;
-        default:
-            problem.append("Type:" + engineType);
-            return false;
         }
 
         return true;
@@ -223,30 +223,30 @@ public class Engine implements Serializable {
     public float getWeightEngine(float roundWeight) {
         float weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5)];
         switch (engineType) {
-        case COMBUSTION_ENGINE:
-            weight *= 2.0f;
-            break;
-        case NORMAL_ENGINE:
-            break;
-        case XL_ENGINE:
-            weight *= 0.5f;
-            break;
-        case LIGHT_ENGINE:
-            weight *= 0.75f;
-            break;
-        case XXL_ENGINE:
-            weight *= 0.33f;
-            break;
-        case COMPACT_ENGINE:
-            weight *= 1.5f;
-            break;
-        case FISSION:
-            weight *= 1.75;
-            weight = Math.max(5, weight);
-            break;
-        case FUEL_CELL:
-            weight *= 1.2;
-            break;
+            case COMBUSTION_ENGINE:
+                weight *= 2.0f;
+                break;
+            case NORMAL_ENGINE:
+                break;
+            case XL_ENGINE:
+                weight *= 0.5f;
+                break;
+            case LIGHT_ENGINE:
+                weight *= 0.75f;
+                break;
+            case XXL_ENGINE:
+                weight *= 0.33f;
+                break;
+            case COMPACT_ENGINE:
+                weight *= 1.5f;
+                break;
+            case FISSION:
+                weight *= 1.75;
+                weight = Math.max(5, weight);
+                break;
+            case FUEL_CELL:
+                weight *= 1.2;
+                break;
         }
 
         if (hasFlag(TANK_ENGINE) && (engineType != COMBUSTION_ENGINE)) {
@@ -291,31 +291,31 @@ public class Engine implements Serializable {
      */
     public String getShortEngineName() {
         switch (engineType) {
-        case COMBUSTION_ENGINE:
-            return Integer.toString(engineRating)
-            + Messages.getString("Engine.ICE");
-        case NORMAL_ENGINE:
-            return Integer.toString(engineRating);
-        case XL_ENGINE:
-            return Integer.toString(engineRating)
-            + Messages.getString("Engine.XL");
-        case LIGHT_ENGINE:
-            return Integer.toString(engineRating)
-            + Messages.getString("Engine.Light");
-        case XXL_ENGINE:
-            return Integer.toString(engineRating)
-            + Messages.getString("Engine.XXL");
-        case COMPACT_ENGINE:
-            return Integer.toString(engineRating)
-            + Messages.getString("Engine.Compact");
-        case FISSION:
-            return Integer.toString(engineRating)
-            + Messages.getString("Engine.Fission");
-        case FUEL_CELL:
-            return Integer.toString(engineRating)
-            + Messages.getString("Engine.FuelCell");
-        default:
-            return Messages.getString("Engine.invalid");
+            case COMBUSTION_ENGINE:
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.ICE");
+            case NORMAL_ENGINE:
+                return Integer.toString(engineRating);
+            case XL_ENGINE:
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.XL");
+            case LIGHT_ENGINE:
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.Light");
+            case XXL_ENGINE:
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.XXL");
+            case COMPACT_ENGINE:
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.Compact");
+            case FISSION:
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.Fission");
+            case FUEL_CELL:
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.FuelCell");
+            default:
+                return Messages.getString("Engine.invalid");
         }
     }
 
@@ -332,32 +332,32 @@ public class Engine implements Serializable {
             sb.append(Messages.getString("Engine.Large"));
         }
         switch (engineType) {
-        case COMBUSTION_ENGINE:
-            sb.append(" ICE"); //$NON-NLS-1$
-            break;
-        case NORMAL_ENGINE:
-            sb.append(" Fusion"); //$NON-NLS-1$
-            break;
-        case XL_ENGINE:
-            sb.append(" XL"); //$NON-NLS-1$
-            break;
-        case LIGHT_ENGINE:
-            sb.append(" Light"); //$NON-NLS-1$
-            break;
-        case XXL_ENGINE:
-            sb.append(" XXL"); //$NON-NLS-1$
-            break;
-        case COMPACT_ENGINE:
-            sb.append(" Compact"); //$NON-NLS-1$
-            break;
-        case FUEL_CELL:
-            sb.append(" Fuel Cell"); //$NON-NLS-1$
-            break;
-        case FISSION:
-            sb.append(" FISSION"); //$NON-NLS-1$
-            break;
-        default:
-            return problem.toString();
+            case COMBUSTION_ENGINE:
+                sb.append(" ICE"); //$NON-NLS-1$
+                break;
+            case NORMAL_ENGINE:
+                sb.append(" Fusion"); //$NON-NLS-1$
+                break;
+            case XL_ENGINE:
+                sb.append(" XL"); //$NON-NLS-1$
+                break;
+            case LIGHT_ENGINE:
+                sb.append(" Light"); //$NON-NLS-1$
+                break;
+            case XXL_ENGINE:
+                sb.append(" XXL"); //$NON-NLS-1$
+                break;
+            case COMPACT_ENGINE:
+                sb.append(" Compact"); //$NON-NLS-1$
+                break;
+            case FUEL_CELL:
+                sb.append(" Fuel Cell"); //$NON-NLS-1$
+                break;
+            case FISSION:
+                sb.append(" FISSION"); //$NON-NLS-1$
+                break;
+            default:
+                return problem.toString();
         }
         if (hasFlag(CLAN_ENGINE)) {
             sb.append(Messages.getString("Engine.Clan"));
@@ -440,56 +440,56 @@ public class Engine implements Serializable {
      */
     public int getStandingHeat() {
         switch (engineType) {
-        case XXL_ENGINE:
-            return 2;
-        default:
-            return 0;
+            case XXL_ENGINE:
+                return 2;
+            default:
+                return 0;
         }
     }
 
     public int getWalkHeat() {
         switch (engineType) {
-        case COMBUSTION_ENGINE:
-            return 0;
-        case XXL_ENGINE:
-            return 4;
-        default:
-            return 1;
+            case COMBUSTION_ENGINE:
+                return 0;
+            case XXL_ENGINE:
+                return 4;
+            default:
+                return 1;
         }
     }
 
     public int getRunHeat() {
         switch (engineType) {
-        case COMBUSTION_ENGINE:
-            return 0;
-        case XXL_ENGINE:
-            return 6;
-        default:
-            return 2;
+            case COMBUSTION_ENGINE:
+                return 0;
+            case XXL_ENGINE:
+                return 6;
+            default:
+                return 2;
         }
     }
-
+    
     /*
      * TODO: Waiting for a rules clarification on XXL engines. Until then guess 8
      * http://www.classicbattletech.com/forums/index.php/topic,52221.msg1256924.html#msg1256924
      */
     public int getSprintHeat() {
         switch (engineType) {
-        case COMBUSTION_ENGINE:
-            return 0;
-        case XXL_ENGINE:
-            return 8;
-        default:
-            return 3;
+            case COMBUSTION_ENGINE:
+                return 0;
+            case XXL_ENGINE:
+                return 8;
+            default:
+                return 3;
         }
     }
 
     public int getJumpHeat(int movedMP) {
         switch (engineType) {
-        case XXL_ENGINE:
-            return Math.max(6, movedMP * 2);
-        default:
-            return Math.max(3, movedMP);
+            case XXL_ENGINE:
+                return Math.max(6, movedMP * 2);
+            default:
+                return Math.max(3, movedMP);
         }
 
     }
@@ -508,31 +508,31 @@ public class Engine implements Serializable {
     public int getBaseCost() {
         int cost = 0;
         switch (engineType) {
-        case COMBUSTION_ENGINE:
-            cost = 1250;
-            break;
-        case NORMAL_ENGINE:
-            cost = 5000;
-            break;
-        case XL_ENGINE:
-            cost = 20000;
-            break;
-        case XXL_ENGINE:
-            cost = 100000;
-            break;
-        case COMPACT_ENGINE:
-            cost = 10000;
-            break;
-        case LIGHT_ENGINE:
-            cost = 15000;
-            break;
-        case FUEL_CELL:
-            cost = 3500;
-            break;
-        case FISSION:
-            cost = 7500;
-            break;
-        }
+            case COMBUSTION_ENGINE:
+                cost = 1250;
+                break;
+            case NORMAL_ENGINE:
+                cost = 5000;
+                break;
+            case XL_ENGINE:
+                cost = 20000;
+                break;
+            case XXL_ENGINE:
+                cost = 100000;
+                break;
+            case COMPACT_ENGINE:
+                cost = 10000;
+                break;
+            case LIGHT_ENGINE:
+                cost = 15000;
+                break;
+            case FUEL_CELL:
+                cost = 3500;
+                break;
+            case FISSION:
+                cost = 7500;
+                break;
+            }
         if (hasFlag(LARGE_ENGINE)) {
             cost *= 2;
         }
@@ -542,16 +542,16 @@ public class Engine implements Serializable {
     public int getTechType() {
         int level = 1;
         switch (engineType) {
-        case FISSION:
-        case FUEL_CELL:
-        case XL_ENGINE:
-        case LIGHT_ENGINE:
-            level = 2;
-            break;
-        case XXL_ENGINE:
-        case COMPACT_ENGINE:
-            level = 3;
-            break;
+            case FISSION:
+            case FUEL_CELL:
+            case XL_ENGINE:
+            case LIGHT_ENGINE:
+                level = 2;
+                break;
+            case XXL_ENGINE:
+            case COMPACT_ENGINE:
+                level = 3;
+                break;
         }
         if (hasFlag(LARGE_ENGINE)) {
             level = 3;

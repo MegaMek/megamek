@@ -133,10 +133,10 @@ public class MechTileset {
 
         if (entry == null) {
             System.err
-            .println("Entry is null make sure that their is a default entry for "
-                    + entity.getShortNameRaw()
-                    + " in both mechset.txt and wreckset.txt.  Default to "
-                    + LIGHT_STRING);
+                    .println("Entry is null make sure that their is a default entry for "
+                            + entity.getShortNameRaw()
+                            + " in both mechset.txt and wreckset.txt.  Default to "
+                            + LIGHT_STRING);
             System.err.flush();
             entry = default_light;
         }
@@ -228,16 +228,16 @@ public class MechTileset {
         }
 
         if (entity instanceof Aero) {
-
+            
             if(entity instanceof SpaceStation)
                 return default_space_station;
-
+            
             if(entity instanceof Warship)
                 return default_warship;
-
+                
             if(entity instanceof Jumpship)
                 return default_jumpship;
-
+            
             if(entity instanceof Dropship) {
                 Dropship ds = (Dropship)entity;
                 if(ds.isSpheroid()) 
@@ -245,10 +245,10 @@ public class MechTileset {
                 else
                     return default_dropship_aero;
             }
-
+            
             if(entity instanceof FighterSquadron)
                 return default_fighter_squadron;
-
+            
             if(entity instanceof SmallCraft) {
                 SmallCraft sc = (SmallCraft)entity;
                 if(sc.isSpheroid())
@@ -256,16 +256,16 @@ public class MechTileset {
                 else
                     return default_small_craft_aero;
             }
-
+            
             if(entity instanceof TeleMissile) {
                 return default_tele_missile;
             }
-
+            
             return default_aero;
         }
-
+        
         // TODO: better exception?
-                throw new IndexOutOfBoundsException("can't find an image for that mech"); //$NON-NLS-1$
+        throw new IndexOutOfBoundsException("can't find an image for that mech"); //$NON-NLS-1$
     }
 
     public void loadFromFile(String filename) throws IOException {

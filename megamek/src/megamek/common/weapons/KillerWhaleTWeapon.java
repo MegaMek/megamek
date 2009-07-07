@@ -57,7 +57,7 @@ public class KillerWhaleTWeapon extends CapitalMissileWeapon {
         this.extAV =4;
         this.maxRange = RANGE_EXT;
     }
-
+    
     /*
      * (non-Javadoc)
      * 

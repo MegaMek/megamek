@@ -60,7 +60,7 @@ import megamek.common.util.BoardUtilities;
  * @author Ben
  */
 public class BoardSelectionDialog extends JDialog implements ActionListener,
-IMapSettingsObserver, ListSelectionListener, MouseListener {
+        IMapSettingsObserver, ListSelectionListener, MouseListener {
     /**
      *
      */
@@ -119,7 +119,7 @@ IMapSettingsObserver, ListSelectionListener, MouseListener {
 
     JDialog mapPreviewW;
     MiniMap miniMap = null;
-
+    
     /**
      * Creates new BoardSelectionDialog
      */
@@ -173,26 +173,26 @@ IMapSettingsObserver, ListSelectionListener, MouseListener {
         getContentPane().add(panButtons);
 
 
-
+        
         mapPreviewW = new JDialog(this, Messages
                 .getString("BoardSelectionDialog.MapPreview"), false); //$NON-NLS-1$
 
         mapPreviewW.setLocation(GUIPreferences.getInstance().getMinimapPosX(),
                 GUIPreferences.getInstance().getMinimapPosY());
-
+        
         mapPreviewW.setVisible(false);
         try {
             miniMap = new MiniMap(mapPreviewW, null);
         } catch (IOException e) {
             JOptionPane
-            .showMessageDialog(
-                    this,
-                    Messages
-                    .getString("BoardEditor.CouldNotInitialiseMinimap") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                    .showMessageDialog(
+                            this,
+                            Messages
+                                    .getString("BoardEditor.CouldNotInitialiseMinimap") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             this.dispose();
         }
         mapPreviewW.add(miniMap);
-
+        
         mapPreviewW.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -296,7 +296,7 @@ IMapSettingsObserver, ListSelectionListener, MouseListener {
         refreshBoardsSelected();
         lisBoardsSelected.addListSelectionListener(this);
         lisBoardsSelected
-        .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+                .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         chkSelectAll.addActionListener(this);
 
         panBoardsSelected.setLayout(new BorderLayout());
@@ -311,7 +311,7 @@ IMapSettingsObserver, ListSelectionListener, MouseListener {
         refreshBoardsAvailable();
         lisBoardsAvailable.addListSelectionListener(this);
         lisBoardsAvailable
-        .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+                .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         panBoardsAvailable.setLayout(new BorderLayout());
 
@@ -402,7 +402,7 @@ IMapSettingsObserver, ListSelectionListener, MouseListener {
         int index = 0;
         for (Iterator<String> i = mapSettings.getBoardsSelected(); i.hasNext();) {
             ((DefaultListModel) lisBoardsSelected.getModel())
-            .addElement(index++ + ": " + i.next()); //$NON-NLS-1$
+                    .addElement(index++ + ": " + i.next()); //$NON-NLS-1$
         }
         lisBoardsSelected.setSelectedIndex(0);
         refreshSelectAllCheck();
@@ -410,7 +410,7 @@ IMapSettingsObserver, ListSelectionListener, MouseListener {
 
     private void refreshSelectAllCheck() {
         boolean newVal = lisBoardsSelected.getSelectedIndices().length == lisBoardsSelected
-        .getModel().getSize();
+                .getModel().getSize();
         if (chkSelectAll.isSelected() != newVal) {
             chkSelectAll.setSelected(newVal);
         }
@@ -522,30 +522,30 @@ IMapSettingsObserver, ListSelectionListener, MouseListener {
                 Integer.toString(mapSettings.getBoardWidth()))
                 || !texBoardHeight.getText().equals(
                         Integer.toString(mapSettings.getBoardHeight()))
-                        || !texMapWidth.getText().equals(
-                                Integer.toString(mapSettings.getMapWidth()))
-                                || !texMapHeight.getText().equals(
-                                        Integer.toString(mapSettings.getMapHeight()))) {
+                || !texMapWidth.getText().equals(
+                        Integer.toString(mapSettings.getMapWidth()))
+                || !texMapHeight.getText().equals(
+                        Integer.toString(mapSettings.getMapHeight()))) {
             JOptionPane
-            .showMessageDialog(
-                    client.frame,
-                    Messages
-                    .getString("BoardSelectionDialog.UpdateMapSize.message"),
-                    Messages
-                    .getString("BoardSelectionDialog.UpdateMapSize.title"),
-                    JOptionPane.ERROR_MESSAGE);
+                    .showMessageDialog(
+                            client.frame,
+                            Messages
+                                    .getString("BoardSelectionDialog.UpdateMapSize.message"),
+                            Messages
+                                    .getString("BoardSelectionDialog.UpdateMapSize.title"),
+                            JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (mapSettings.getBoardsAvailableVector().size() <= 0) {
             JOptionPane
-            .showMessageDialog(
-                    client.frame,
-                    Messages
-                    .getString("BoardSelectionDialog.NoBoardOfSelectedSize.message"),
-                    Messages
-                    .getString("BoardSelectionDialog.NoBoardOfSelectedSize.title"),
-                    JOptionPane.ERROR_MESSAGE);
+                    .showMessageDialog(
+                            client.frame,
+                            Messages
+                                    .getString("BoardSelectionDialog.NoBoardOfSelectedSize.message"),
+                            Messages
+                                    .getString("BoardSelectionDialog.NoBoardOfSelectedSize.title"),
+                            JOptionPane.ERROR_MESSAGE);
             return;
         }
 

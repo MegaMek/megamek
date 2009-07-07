@@ -54,7 +54,7 @@ public class ISLightMG extends MGWeapon {
         this.cost = 5000;
         this.shortAV = 1;
         this.maxRange = RANGE_SHORT;
-
+        
         this.atClass = CLASS_AC;
     }
 

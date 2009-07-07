@@ -97,13 +97,13 @@ public interface ITerrain {
      * @return the additional movement cost for this terrain
      */
     public abstract int movementCost(int moveType);
-
+    
     /**the fire ignition modifier for this terrain
      */
     public abstract int ignitionModifier();
-
+    
     public abstract int getBogDownModifier(int moveType, boolean largeVee);
-
+    
     public abstract int getUnstuckModifier(int elev);
-
+    
 }

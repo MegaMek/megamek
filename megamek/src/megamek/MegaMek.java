@@ -92,14 +92,14 @@ public class MegaMek {
                 String interfaceName = cp.getGuiName();
                 if (interfaceName == null) {
                     interfaceName = PreferenceManager.getClientPreferences()
-                    .getGUIName();
+                            .getGUIName();
                 }
                 MegaMek.startGUI(interfaceName, restArgs);
             }
 
         } catch (CommandLineParser.ParseException e) {
             StringBuffer message = new StringBuffer(INCORRECT_ARGUMENTS_MESSAGE)
-            .append(e.getMessage()).append('\n');
+                    .append(e.getMessage()).append('\n');
             message.append(ARGUMENTS_DESCRIPTION_MESSAGE);
             MegaMek.displayMessageAndExit(message.toString());
         }
@@ -128,7 +128,7 @@ public class MegaMek {
         try {
             System.out.println("Redirecting output to " + logFileName); //$NON-NLS-1$
             String sLogDir = PreferenceManager.getClientPreferences()
-            .getLogDirectory();
+                    .getLogDirectory();
             File logDir = new File(sLogDir);
             if (!logDir.exists()) {
                 logDir.mkdir();
@@ -167,7 +167,7 @@ public class MegaMek {
      */
     private static void startGUI(String guiName, String[] args) {
         megamek.debug.Assert.assertTrue(guiName != null,
-        "guiName must be non-null"); //$NON-NLS-1$
+                "guiName must be non-null"); //$NON-NLS-1$
         megamek.debug.Assert.assertTrue(args != null, "args must be non-null");
         IMegaMekGUI mainGui = MegaMek.getGui(guiName);
         if (mainGui == null) {
@@ -192,7 +192,7 @@ public class MegaMek {
     @SuppressWarnings("unchecked")
     private static IMegaMekGUI getGui(String guiName) {
         megamek.debug.Assert.assertTrue(guiName != null,
-        "guiName must be non-null"); //$NON-NLS-1$
+                "guiName must be non-null"); //$NON-NLS-1$
         String guiClassName = MegaMek.getGUIClassName(guiName);
         if (guiClassName != null) {
             try {
@@ -210,7 +210,7 @@ public class MegaMek {
 
     private static String getGUIClassName(String guiName) {
         megamek.debug.Assert.assertTrue(guiName != null,
-        "guiName must be non-null"); //$NON-NLS-1$
+                "guiName must be non-null"); //$NON-NLS-1$
         Properties p = new Properties();
         String key = "gui." + guiName;
         InputStream is = MegaMek.class.getClassLoader().getResourceAsStream(
@@ -234,7 +234,7 @@ public class MegaMek {
      */
     private static void dumpArgs(StringBuffer buffer, String[] args) {
         megamek.debug.Assert.assertTrue(buffer != null,
-        "buffer must be non-null"); //$NON-NLS-1$
+                "buffer must be non-null"); //$NON-NLS-1$
         megamek.debug.Assert.assertTrue(args != null, "args must be non-null"); //$NON-NLS-1$
         if (buffer != null) {
             buffer.append("args: ["); //$NON-NLS-1$
@@ -282,7 +282,7 @@ public class MegaMek {
         System.out.println("Today is " + new Date().toString());
         System.out.println("Java vendor " + System.getProperty("java.vendor")); //$NON-NLS-1$ //$NON-NLS-2$
         System.out
-        .println("Java version " + System.getProperty("java.version")); //$NON-NLS-1$ //$NON-NLS-2$
+                .println("Java version " + System.getProperty("java.version")); //$NON-NLS-1$ //$NON-NLS-2$
         System.out.println("Platform " //$NON-NLS-1$
                 + System.getProperty("os.name") //$NON-NLS-1$
                 + " " //$NON-NLS-1$
@@ -460,7 +460,7 @@ public class MegaMek {
                         filename);
                 if (ms == null) {
                     MechSummary[] units = MechSummaryCache.getInstance()
-                    .getAllMechs();
+                            .getAllMechs();
                     // System.err.println("units: "+units.length);
                     for (MechSummary unit : units) {
                         // System.err.println(unit.getSourceFile().getName());
@@ -474,8 +474,8 @@ public class MegaMek {
 
                 if (ms == null) {
                     System.err
-                    .println(filename
-                            + " not found try using \"chassis model\" for input.");
+                            .println(filename
+                                    + " not found try using \"chassis model\" for input.");
                 } else {
                     try {
                         Entity entity = new MechFileParser(ms.getSourceFile(),
@@ -484,7 +484,7 @@ public class MegaMek {
                                 + entity.getShortNameRaw());
                         EntityVerifier entityVerifier = new EntityVerifier(
                                 new File(
-                                "data/mechfiles/UnitVerifierOptions.xml"));
+                                        "data/mechfiles/UnitVerifierOptions.xml"));
                         MechView mechView = new MechView(entity, false);
                         StringBuffer sb = new StringBuffer(mechView.getMechReadout());
                         if ((entity instanceof Mech) || (entity instanceof Tank)) {

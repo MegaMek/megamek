@@ -49,7 +49,7 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewListener,
-GameListener, Distractable, DoneButtoned {
+        GameListener, Distractable, DoneButtoned {
 
     /**
      * 
@@ -60,12 +60,12 @@ GameListener, Distractable, DoneButtoned {
     protected DistractableAdapter distracted = new DistractableAdapter();
 
     protected JButton butDone;
-
+    
     protected ClientGUI clientgui;
-
+    
     protected AbstractPhaseDisplay() {        
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,InputEvent.CTRL_DOWN_MASK),
-                "doneButton");
+        "doneButton");
 
         getActionMap().put("doneButton", new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;
@@ -80,7 +80,7 @@ GameListener, Distractable, DoneButtoned {
             }
         });
     }
-
+    
     /**
      * Determine if the listener is currently distracted.
      * 

@@ -34,7 +34,7 @@ public class GunEmplacementMapSet implements DisplayMapSet {
     private PMAreasGroup content = new PMAreasGroup();
 
     private static final String IMAGE_DIR = "data/images/widgets";
-
+  
     public GunEmplacementMapSet(JComponent c) {
         comp = c;
         setAreas();
@@ -60,15 +60,15 @@ public class GunEmplacementMapSet implements DisplayMapSet {
     }
 
     private void setContent() {
-
+       
     }
 
     private void setAreas() {
-
+       
     }
 
     private void setLabels() {
-
+        
     }
 
     private void setBackGround() {
@@ -98,31 +98,31 @@ public class GunEmplacementMapSet implements DisplayMapSet {
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-        | BackGroundDrawer.HALIGN_LEFT;
+                | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-        | BackGroundDrawer.HALIGN_LEFT;
+                | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-        | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-        | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }
 
     private void translateAreas() {
-
+    
     }
 }

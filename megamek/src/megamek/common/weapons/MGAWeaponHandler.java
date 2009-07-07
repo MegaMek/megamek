@@ -185,7 +185,7 @@ public class MGAWeaponHandler extends MGHandler {
         if(null != bldg) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
-
+        
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             Report r = new Report(3415);
@@ -199,10 +199,10 @@ public class MGAWeaponHandler extends MGHandler {
                 hit.makeGlancingBlow();
             }
             vPhaseReport
-            .addAll(server.damageEntity(entityTarget, hit, nDamage,
-                    false, ae.getSwarmTargetId() == entityTarget
-                    .getId() ? DamageType.IGNORE_PASSENGER
-                            : damageType, false, false, throughFront,
+                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
+                            false, ae.getSwarmTargetId() == entityTarget
+                                    .getId() ? DamageType.IGNORE_PASSENGER
+                                    : damageType, false, false, throughFront,
                             underWater));
         }
     }

@@ -36,7 +36,7 @@ public abstract class CapitalMissileWeapon extends AmmoWeapon {
         this.atClass = CLASS_CAPITAL_MISSILE;
         this.capital = true;
     }
-
+    
     /*
      * (non-Javadoc)
      * 

@@ -43,7 +43,7 @@ class AttackGroup extends BranchGroup {
 
     Entity selectedEntity;
     Mounted selectedWeapon;
-
+    
 
     public AttackGroup(IGame g, TileTextureManager t, ViewTransform v) {
         game = g;
@@ -53,7 +53,7 @@ class AttackGroup extends BranchGroup {
         setCapability(Group.ALLOW_CHILDREN_WRITE);
         setPickable(false);
     }
-
+    
     public void add(AttackAction aa) {
         if (aa instanceof ArtilleryAttackAction) {
             add((ArtilleryAttackAction)aa);
@@ -69,16 +69,16 @@ class AttackGroup extends BranchGroup {
                 || !game.getBoard().contains(t.getPosition())) {
             return;
         }
-
+        
         AttackModel attack = null;
 
         attack = new AttackModel(aa, ae, t, game);
-
+        
         attack.add(aa, currentView);
 
         addChild(attack);
     }
-
+    
     public void add(ArtilleryAttackAction aaa) {
         addChild(new ArtilleryAttackModel(TilesetManager.ARTILLERY_INCOMING, aaa, game, tileManager));
     }

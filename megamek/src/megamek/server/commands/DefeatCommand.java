@@ -34,7 +34,7 @@ public class DefeatCommand extends ServerCommand {
     /** Creates new DefeatCommand */
     public DefeatCommand(Server server) {
         super(server, "defeat",
-        "Acknowledges another players victory command.  Usage: /defeat");
+                "Acknowledges another players victory command.  Usage: /defeat");
     }
 
     /**
@@ -44,7 +44,7 @@ public class DefeatCommand extends ServerCommand {
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
             server.sendServerChat(connId,
-            "Observers are restricted from declaring defeat.");
+                    "Observers are restricted from declaring defeat.");
             return;
         }
 

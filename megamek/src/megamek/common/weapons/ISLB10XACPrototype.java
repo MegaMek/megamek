@@ -60,7 +60,7 @@ public class ISLB10XACPrototype extends LBXACWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-        .getEquipment(waa.getWeaponId()).getLinked().getType();
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
             return new PrototypeLBXHandler(toHit, waa, game, server);
         }

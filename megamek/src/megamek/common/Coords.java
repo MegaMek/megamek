@@ -130,27 +130,27 @@ public class Coords implements Serializable {
      */
     public final static int xInDir(int x, int y, int dir) {
         switch (dir) {
-        case 1:
-        case 2:
-            return x + 1;
-        case 4:
-        case 5:
-            return x - 1;
-        default:
-            return x;
+            case 1:
+            case 2:
+                return x + 1;
+            case 4:
+            case 5:
+                return x - 1;
+            default:
+                return x;
         }
     }
 
     public final static int xInDir(int x, int y, int dir, int distance) {
         switch (dir) {
-        case 1:
-        case 2:
-            return x + distance;
-        case 4:
-        case 5:
-            return x - distance;
-        default:
-            return x;
+            case 1:
+            case 2:
+                return x + distance;
+            case 4:
+            case 5:
+                return x - distance;
+            default:
+                return x;
         }
     }
 
@@ -159,39 +159,39 @@ public class Coords implements Serializable {
      */
     public final static int yInDir(int x, int y, int dir) {
         switch (dir) {
-        case 0:
-            return y - 1;
-        case 1:
-        case 5:
-            return y - ((x + 1) & 1);
-        case 2:
-        case 4:
-            return y + (x & 1);
-        case 3:
-            return y + 1;
-        default:
-            return y;
+            case 0:
+                return y - 1;
+            case 1:
+            case 5:
+                return y - ((x + 1) & 1);
+            case 2:
+            case 4:
+                return y + (x & 1);
+            case 3:
+                return y + 1;
+            default:
+                return y;
         }
     }
 
     public final static int yInDir(int x, int y, int dir, int distance) {
         switch (dir) {
-        case 0:
-            return y - distance;
-        case 1:
-        case 5:
-            if ((x & 1) == 1)
-                return y - (distance / 2);
-            return y - ((distance + 1) / 2);
-        case 2:
-        case 4:
-            if ((x & 1) == 0)
-                return y + (distance / 2);
-            return y + ((distance + 1) / 2);
-        case 3:
-            return y + distance;
-        default:
-            return y;
+            case 0:
+                return y - distance;
+            case 1:
+            case 5:
+                if ((x & 1) == 1)
+                    return y - (distance / 2);
+                return y - ((distance + 1) / 2);
+            case 2:
+            case 4:
+                if ((x & 1) == 0)
+                    return y + (distance / 2);
+                return y + ((distance + 1) / 2);
+            case 3:
+                return y + distance;
+            default:
+                return y;
         }
     }
 

@@ -117,8 +117,8 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
 
         labMessage = new JTextArea(
                 Messages
-                .getString(
-                        "TriggerAPPodDialog.selectPodsToTrigger", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$
+                        .getString(
+                                "TriggerAPPodDialog.selectPodsToTrigger", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$
         labMessage.setEditable(false);
         labMessage.setOpaque(false);
 
@@ -135,8 +135,8 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
                 // Create a checkbox for the pod, and add it to the panel.
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
-                .append(' ')
-                .append(mount.getName());
+                        .append(' ')
+                        .append(mount.getName());
                 JCheckBox pod = new JCheckBox(message.toString());
                 panPods.add(pod);
 

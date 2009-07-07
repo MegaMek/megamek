@@ -36,7 +36,7 @@ public class DedicatedServer {
                 usePort = cp.getPort();
             } else {
                 usePort = PreferenceManager.getClientPreferences()
-                .getLastServerPort();
+                        .getLastServerPort();
             }
 
             // kick off a RNG check
@@ -49,8 +49,8 @@ public class DedicatedServer {
             } catch (IOException ex) {
                 StringBuffer error = new StringBuffer();
                 error.append("Error: could not start server at localhost")
-                .append(":").append(usePort).append(" (").append(
-                        ex.getMessage()).append(").");
+                        .append(":").append(usePort).append(" (").append(
+                                ex.getMessage()).append(").");
                 System.err.println(error.toString());
                 return;
             }
@@ -60,7 +60,7 @@ public class DedicatedServer {
             return;
         } catch (AbstractCommandLineParser.ParseException e) {
             StringBuffer message = new StringBuffer(INCORRECT_ARGUMENTS_MESSAGE)
-            .append(e.getMessage()).append('\n');
+                    .append(e.getMessage()).append('\n');
             message.append(ARGUMENTS_DESCRIPTION_MESSAGE);
             displayMessage(message.toString());
         }

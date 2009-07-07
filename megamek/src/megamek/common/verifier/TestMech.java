@@ -320,8 +320,8 @@ public class TestMech extends TestEntity {
         if (!unallocated.isEmpty()) {
             buff.append("Unallocated Equipment:\n");
             for (Mounted m : unallocated) {
-                buff.append(m.getType().getInternalName()).append("\n");
-            }
+            buff.append(m.getType().getInternalName()).append("\n");
+         }
             correct = false;
         }
         if (!allocation.isEmpty()) {
@@ -413,9 +413,9 @@ public class TestMech extends TestEntity {
             return false;
         }
         if ((mech.getJumpMP(false) > mech.getOriginalWalkMP()) &&
-                ((mech.getJumpType() != Mech.JUMP_IMPROVED) && !mech.hasWorkingMisc(MiscType.F_TALON, -1))) {
-            buff.append("Jump MP exceeds walk MP without IJJs");
-            return false;
+               ((mech.getJumpType() != Mech.JUMP_IMPROVED) && !mech.hasWorkingMisc(MiscType.F_TALON, -1))) {
+          buff.append("Jump MP exceeds walk MP without IJJs");
+          return false;
         }
         return true;
     }

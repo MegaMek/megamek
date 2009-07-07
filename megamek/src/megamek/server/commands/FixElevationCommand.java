@@ -34,7 +34,7 @@ public class FixElevationCommand extends ServerCommand {
     /** Creates new FixElevationCommand */
     public FixElevationCommand(Server server) {
         super(server, "fixelevation",
-        "Fix elevation of any units that are messed up");
+                "Fix elevation of any units that are messed up");
     }
 
     /**
@@ -44,7 +44,7 @@ public class FixElevationCommand extends ServerCommand {
     public void run(int connId, String[] args) {
         int countbad = 0;
         for (Enumeration<Entity> e = server.getGame().getEntities(); e
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             Entity entity = e.nextElement();
             if (entity.fixElevation()) {
                 server.sendServerChat(entity.getDisplayName()

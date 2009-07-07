@@ -275,7 +275,7 @@ public class ManeuverChoiceDialog extends Dialog implements ActionListener {
         }
         return -1;
     }
-
+    
     public void checkPerformability(int velocity, int altitude, int ceiling, boolean isVTOL, int distance) {
         for(int type = 0; type < ManeuverType.MAN_SIZE; type++ ) {
             checkboxes[type].setEnabled(ManeuverType.canPerform(type, velocity, altitude, ceiling, isVTOL, distance));

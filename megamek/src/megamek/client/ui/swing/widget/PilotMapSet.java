@@ -1,20 +1,21 @@
 /**
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
+* MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
+* 
+*  This program is free software; you can redistribute it and/or modify it 
+*  under the terms of the GNU General Public License as published by the Free 
+*  Software Foundation; either version 2 of the License, or (at your option) 
+*  any later version.
+* 
+*  This program is distributed in the hope that it will be useful, but 
+*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+*  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+*  for more details.
+*/
 
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
@@ -30,13 +31,13 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 
 /**
- * Set of elements to reperesent pilot information in MechDisplay
- */
+* Set of elements to reperesent pilot information in MechDisplay
+*/
 
 public class PilotMapSet implements DisplayMapSet {
-
+    
     private static final String IMAGE_DIR = "data/images/widgets";
-
+    
     private static String STAR3 = "***"; //$NON-NLS-1$
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
@@ -45,14 +46,14 @@ public class PilotMapSet implements DisplayMapSet {
     private PMSimpleLabel[] advantagesR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
+                "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
     private static final Font FONT_TITLE = new Font(
-            "SansSerif", Font.ITALIC, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
+           "SansSerif", Font.ITALIC, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
     private int yCoord = 1;
-
+    
     /**
-     * This constructor have to be called anly from addNotify() method
-     */
+    * This constructor have to be called anly from addNotify() method
+    */
     public PilotMapSet(JComponent c) {
         comp = c;
         setAreas();
@@ -64,76 +65,76 @@ public class PilotMapSet implements DisplayMapSet {
     private int getYCoord() {
         return yCoord * 15 - 5;
     }
-
+    
     private int getNewYCoord() {
         yCoord++;
         return getYCoord();
     }
-
+    
     private void setAreas() {
         FontMetrics fm = comp.getFontMetrics(FONT_TITLE);
         nameL = createLabel(Messages
                 .getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord()); //$NON-NLS-1$
         nameL.setColor(Color.yellow);
         content.addArea(nameL);
-
+            
         fm = comp.getFontMetrics(FONT_VALUE);       
         nickL = createLabel(Messages
                 .getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(nickL);
-
+        
         hitsR = createLabel(STAR3, fm, 0, getNewYCoord());
         hitsR.setColor(Color.RED);
         content.addArea(hitsR);
         getNewYCoord();
-
+        
         pilotL = createLabel(Messages.getString("PilotMapSet.pilotL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(pilotL);
         pilotR = createLabel(STAR3, fm, pilotL.getSize().width + 5, getYCoord());
         content.addArea(pilotR);
-
+        
         initBL = createLabel(
                 Messages.getString("PilotMapSet.initBL"), fm, pilotL.getSize().width + 50, getYCoord()); //$NON-NLS-1$
         content.addArea(initBL);
         initBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 15,
                 getYCoord());
         content.addArea(initBR);
-
+            
         gunneryL = createLabel(
                 Messages.getString("PilotMapSet.gunneryL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(gunneryL);
         gunneryR = createLabel(STAR3, fm, pilotL.getSize().width + 5,
-                getYCoord());
+                    getYCoord());
         content.addArea(gunneryR);
-
+        
         commandBL = createLabel(
                 Messages.getString("PilotMapSet.commandBL"), fm, pilotL.getSize().width + 50, getYCoord()); //$NON-NLS-1$
         content.addArea(commandBL);
         commandBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 15,
                 getYCoord());
         content.addArea(commandBR);
-
+    
         gunneryLL = createLabel(
-                Messages.getString("PilotMapSet.gunneryLL"), fm, 0, getYCoord()); //$NON-NLS-1$
+                    Messages.getString("PilotMapSet.gunneryLL"), fm, 0, getYCoord()); //$NON-NLS-1$
         content.addArea(gunneryLL);
         gunneryLR = createLabel(STAR3, fm, pilotL.getSize().width + 25,
-                getYCoord());
+                    getYCoord());
         content.addArea(gunneryLR);
-
+    
         gunneryML = createLabel(
-                Messages.getString("PilotMapSet.gunneryML"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+                    Messages.getString("PilotMapSet.gunneryML"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(gunneryML);
         gunneryMR = createLabel(STAR3, fm, pilotL.getSize().width + 25,
-                getYCoord());
+                    getYCoord());
         content.addArea(gunneryMR);
-
+            
         gunneryBL = createLabel(
-                Messages.getString("PilotMapSet.gunneryBL"), fm, 0, getNewYCoord()); //$NON-NLS-1$       
+                    Messages.getString("PilotMapSet.gunneryBL"), fm, 0, getNewYCoord()); //$NON-NLS-1$       
         content.addArea(gunneryBL);
         gunneryBR = createLabel(STAR3, fm, pilotL.getSize().width + 25,
-                getYCoord());
+                    getYCoord());
         content.addArea(gunneryBR);
-
+        
         getNewYCoord();
         advantagesR = new PMSimpleLabel[24];
         for (int i = 0; i < advantagesR.length; i++) {
@@ -146,17 +147,17 @@ public class PilotMapSet implements DisplayMapSet {
         // labels required instead of a hard 24? Because we don't have
         // an entity at this point. Bleh.
     }
-
+    
     /**
      * updates fields for the unit
      */
     public void setEntity(Entity en) {
-
+        
         nameL.setString(en.crew.getName());
         nickL.setString(en.crew.getNickname());
         pilotR.setString(Integer.toString(en.crew.getPiloting()));
         gunneryR.setString(Integer.toString(en.crew.getGunnery()));
-
+        
         if (en.getGame() != null
                 && en.getGame().getOptions().booleanOption("rpg_gunnery")) {
             gunneryLR.setString(Integer.toString(en.crew.getGunneryL()));
@@ -231,48 +232,48 @@ public class PilotMapSet implements DisplayMapSet {
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
-
+        
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
-
+        
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
-
+        
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
-
+        
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
         | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
-
+        
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
         | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
-
+        
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
         | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
-
+        
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
         | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
-
+        
     }
-
+        
     private PMSimpleLabel createLabel(String s, FontMetrics fm, int x, int y) {
         PMSimpleLabel l = new PMSimpleLabel(s, fm, Color.white);
         l.moveTo(x, y);

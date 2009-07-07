@@ -56,7 +56,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
         this.capital = false;
         this.atClass = CLASS_SCREEN;
     }
-
+    
     /*
      * (non-Javadoc)
      * 

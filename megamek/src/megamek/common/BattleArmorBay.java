@@ -73,7 +73,7 @@ public final class BattleArmorBay extends Bay {
         if ( this.currentSpace < 1 ) {
             result = false;
         }
-
+        
         //is the door functional
         if( this.doors < 1 ) {
             result = false;
@@ -82,7 +82,7 @@ public final class BattleArmorBay extends Bay {
         // Return our result.
         return result;
     }
-
+    
     @Override
     public String getUnusedString() {
         return "Battle Armor - " + this.currentSpace + " squads";
@@ -92,5 +92,5 @@ public final class BattleArmorBay extends Bay {
     public String getType() {
         return "Battle Armor";
     }
-
+    
 } 

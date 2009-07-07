@@ -45,7 +45,7 @@ public class NL45Weapon extends NavalLaserWeapon {
         this.tonnage = 900.0f;
         this.bv = 1134;
         this.cost = 850000;
-
+        
         this.shortAV = 4.5;
         this.medAV = 4.5;
         this.longAV = 4.5;

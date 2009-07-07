@@ -134,7 +134,7 @@ public class TankEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                    "Couldn't decode the stunnedTurns for a Tank unit.");
+                            "Couldn't decode the stunnedTurns for a Tank unit.");
                 }
 
                 // Try to pull the number from the attribute string
@@ -154,7 +154,7 @@ public class TankEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                    "Couldn't decode hasNoTurret for a Tank unit.");
+                            "Couldn't decode hasNoTurret for a Tank unit.");
                 }
 
                 // If the value is "true", the Tank has a no turret.
@@ -172,7 +172,7 @@ public class TankEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                    "Couldn't decode moveHit for a Tank unit.");
+                            "Couldn't decode moveHit for a Tank unit.");
                 }
 
                 // If the value is "true", the Tank move a hit pending.
@@ -189,7 +189,7 @@ public class TankEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                    "Couldn't decode moveHitPending for a Tank unit.");
+                            "Couldn't decode moveHitPending for a Tank unit.");
                 }
 
                 // If the value is "true", the Tank move a hit pending.
@@ -205,7 +205,7 @@ public class TankEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                    "Couldn't decode the facing for a Tank unit.");
+                            "Couldn't decode the facing for a Tank unit.");
                 }
 
                 // Try to pull the number from the attribute string
@@ -225,7 +225,7 @@ public class TankEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                    "Couldn't decode the turret's secondaryFacing for a Tank unit.");
+                            "Couldn't decode the turret's secondaryFacing for a Tank unit.");
                 }
 
                 // Try to pull the number from the attribute string
@@ -245,7 +245,7 @@ public class TankEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                    "Couldn't decode turretLocked for a Tank unit.");
+                            "Couldn't decode turretLocked for a Tank unit.");
                 }
 
                 // If the value is "true", the Tank move a hit pending.

@@ -49,7 +49,7 @@ public class DiveBombAttack extends Weapon {
         this.hittable = false;     
         this.capital = true;
     }
-
+    
     /*
      * (non-Javadoc)
      * 

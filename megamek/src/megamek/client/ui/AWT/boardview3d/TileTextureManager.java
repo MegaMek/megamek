@@ -58,10 +58,10 @@ class TileTextureManager implements IPreferenceChangeListener {
     // texture image cache
     private static ImageCache<ImageAlpha, Texture2D> textureCache = new ImageCache<ImageAlpha, Texture2D>();
     private static final int TEXSIZE = 256;
-
+    
     static final float HEX_ALPHA = 2/3f;
     static final float HEX_ALPHA2 = .4f;
-
+    
     public TileTextureManager(Component c, IGame g) throws IOException {
         comp = c;
         game = g;
@@ -74,7 +74,7 @@ class TileTextureManager implements IPreferenceChangeListener {
     public TilesetManager getTilesetManager() {
         return tileManager;
     }
-
+    
     public Shape3D getModel(Entity entity) {
         return getModel(tileManager.imageFor(entity, 0), 1.0f, true);
     }
@@ -126,7 +126,7 @@ class TileTextureManager implements IPreferenceChangeListener {
 
         return model;
     }
-
+    
     public Texture2D getTexture(Entity entity) {
         return getTexture(tileManager.imageFor(entity, 0), false, Color.GRAY, 1.0f, true);
     }
@@ -142,7 +142,7 @@ class TileTextureManager implements IPreferenceChangeListener {
     Shape3D getArtilleryTarget(int type) {
         return getModel(tileManager.getArtilleryTarget(type), .5f, false);
     }
-
+    
     public Texture2D getTexture(String filename) {
         TextureLoader tl = new TextureLoader(filename, TextureLoader.GENERATE_MIPMAP, null);
         Texture2D tex = (Texture2D)tl.getTexture();
@@ -226,7 +226,7 @@ class TileTextureManager implements IPreferenceChangeListener {
                 int[] yvals = { 0, 0, TEXSIZE/2, TEXSIZE-1, TEXSIZE-1, TEXSIZE/2, 0 };
                 gr.drawPolygon(xvals, yvals, xvals.length);
             }
-
+            
             if (alpha < 1.0f) {
                 WritableRaster wr = src.getAlphaRaster();
                 for (int y = 0; y < src.getHeight(); y++) {
@@ -245,7 +245,7 @@ class TileTextureManager implements IPreferenceChangeListener {
         }
         return tex;
     }
-
+    
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
             System.out.println("BoardView3D: loading images for board"); //$NON-NLS-1$

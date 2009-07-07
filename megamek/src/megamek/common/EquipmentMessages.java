@@ -25,8 +25,8 @@ public class EquipmentMessages {
     private static final String BUNDLE_NAME = "megamek.common.equipmentmessages";//$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-    .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences()
-            .getLocale());
+            .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences()
+                    .getLocale());
 
     private EquipmentMessages() {
     }

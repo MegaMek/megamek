@@ -29,6 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.event.GameEntityChangeEvent;
@@ -116,7 +118,7 @@ public class ChatterBox implements KeyListener {
         chatArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
         playerList = new JList(new DefaultListModel());
         playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(
-        "AdvancedChatboxSize"));
+                "AdvancedChatboxSize"));
         scrPlayers = new JScrollPane(playerList);
         scrPlayers.setMinimumSize(new Dimension(400,400));
         inputField = new JTextField();

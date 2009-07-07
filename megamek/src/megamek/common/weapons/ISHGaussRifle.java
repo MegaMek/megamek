@@ -69,11 +69,11 @@ public class ISHGaussRifle extends GaussWeapon {
     public int getDamage(int range) {
         if ( range <= shortRange )
             return damageShort;
-
+        
         if ( range <= mediumRange )
             return damageMedium;
-
-        return damageLong;
+        
+            return damageLong;
     }
 
 

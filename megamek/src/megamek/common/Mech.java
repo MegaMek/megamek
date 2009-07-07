@@ -1377,7 +1377,7 @@ public abstract class Mech extends Entity implements Serializable {
         default:
             return engine.getJumpHeat(movedMP);
         }
-    }
+	}
 
 
     /**
@@ -1570,13 +1570,13 @@ public abstract class Mech extends Entity implements Serializable {
         }
 
         for (Mounted mount : getMisc()) {
-            if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) && //unless all crits are destroyed, we get the bonus
-                    ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_RT) > 0) ||
-                            (getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_LT) > 0))) {
-                capacity += getPartialWingHeatBonus();
-                break;
+    		if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) && //unless all crits are destroyed, we get the bonus
+    		   ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_RT) > 0) ||
+    			(getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_LT) > 0))) {
+            	capacity += getPartialWingHeatBonus();
+            	break;
             }
-        }
+    	}
 
         return capacity;
     }
@@ -1696,7 +1696,7 @@ public abstract class Mech extends Entity implements Serializable {
         if (canChangeSecondaryFacing()) {
             if(getQuirks().booleanOption("ext_twist")) {
                 return (rotate == 0) || (rotate == 1) || (rotate == 2) || (rotate == -1) || (rotate == -2)
-                || (rotate == -5) || (rotate == -4) || (rotate == 5) || (rotate == 4);
+                    || (rotate == -5) || (rotate == -4) || (rotate == 5) || (rotate == 4);
             }
             return (rotate == 0) || (rotate == 1) || (rotate == -1) || (rotate == -5) || (rotate == 5);
         }
@@ -2662,7 +2662,7 @@ public abstract class Mech extends Entity implements Serializable {
             break;
         default:
             armorMultiplier = 1.0;
-            break;
+        break;
 
         }
 
@@ -5362,7 +5362,7 @@ public abstract class Mech extends Entity implements Serializable {
                 if (this.hasActiveShield(Mech.LOC_RARM)) {
                     damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
                 }
-                break;
+            break;
             }
         }
 

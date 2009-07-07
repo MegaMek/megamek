@@ -62,7 +62,7 @@ public class CommonAboutDialog extends JDialog {
         if (imgTitleImage == null) {
             // Nope. Load it.
             Image image = frame.getToolkit().getImage(
-            "data/images/misc/megamek-splash2.gif"); //$NON-NLS-1$
+                    "data/images/misc/megamek-splash2.gif"); //$NON-NLS-1$
             MediaTracker tracker = new MediaTracker(frame);
             tracker.addImage(image, 0);
             try {
@@ -103,13 +103,13 @@ public class CommonAboutDialog extends JDialog {
         // Make a label containing the version of this app.
         StringBuffer buff = new StringBuffer();
         buff.append(Messages.getString("CommonAboutDialog.version"))//$NON-NLS-1$
-        .append(VERSION).append(
-                Messages.getString("CommonAboutDialog.timestamp"))//$NON-NLS-1$
+                .append(VERSION).append(
+                        Messages.getString("CommonAboutDialog.timestamp"))//$NON-NLS-1$
                 .append(new Date(TIMESTAMP).toString()).append(
                         Messages.getString("CommonAboutDialog.javaVendor"))//$NON-NLS-1$
-                        .append(System.getProperty("java.vendor"))//$NON-NLS-1$
-                        .append(Messages.getString("CommonAboutDialog.javaVersion"))//$NON-NLS-1$
-                        .append(System.getProperty("java.version")); //$NON-NLS-1$
+                .append(System.getProperty("java.vendor"))//$NON-NLS-1$
+                .append(Messages.getString("CommonAboutDialog.javaVersion"))//$NON-NLS-1$
+                .append(System.getProperty("java.version")); //$NON-NLS-1$
         JTextArea lblVersion = new JTextArea(buff.toString());
         lblVersion.setEditable(false);
         lblVersion.setOpaque(false);

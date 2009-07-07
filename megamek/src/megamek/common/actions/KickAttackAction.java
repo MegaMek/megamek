@@ -28,6 +28,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.VTOL;
 
 /**
  * The attacker kicks the target.
@@ -78,7 +79,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         final int legLoc = (leg == RIGHT || leg == RIGHTMULE) ? kickLegs[0]
-                                                                         : kickLegs[1];
+                : kickLegs[1];
         int damage = (int) Math.floor(entity.getWeight() / 5.0);
         float multiplier = 1.0f;
 
@@ -100,7 +101,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         int toReturn = (int) Math.floor(damage * multiplier)
-        + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
+                + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
         // underwater damage is half, round up (see bug 1110692)
         if (entity.getLocationStatus(legLoc) == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);
@@ -124,7 +125,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "You can't attack from a null entity!");
+                    "You can't attack from a null entity!");
         }
 
         String impossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
@@ -136,7 +137,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         IHex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int targetElevation = target.getElevation()
-        + targHex.getElevation();
+                + targHex.getElevation();
         final int targetHeight = targetElevation + target.getHeight();
 
         int mule = 0;
@@ -156,7 +157,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             kickLegs[1] = Mech.LOC_LLEG;
         }
         final int legLoc = ((leg == KickAttackAction.RIGHTMULE) || (leg == KickAttackAction.RIGHT)) ? kickLegs[0]
-                                                                                                               : kickLegs[1];
+                : kickLegs[1];
 
         ToHitData toHit;
 
@@ -166,7 +167,7 @@ public class KickAttackAction extends PhysicalAttackAction {
                 && leg != KickAttackAction.RIGHTMULE
                 && leg != KickAttackAction.LEFTMULE) {
             throw new IllegalArgumentException(
-            "Leg must be one of LEFT, RIGHT, LEFTMULE, or RIGHTMULE");
+                    "Leg must be one of LEFT, RIGHT, LEFTMULE, or RIGHTMULE");
         }
 
         // non-mechs can't kick
@@ -194,7 +195,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         for (Mounted mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound() && mounted.getLocation() == legLoc) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                "Weapons fired from leg this turn");
+                        "Weapons fired from leg this turn");
             }
         }
 
@@ -209,7 +210,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         } else if (attackerElevation < targetElevation
                 || attackerElevation > targetHeight) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target elevation not in range");
+                    "Target elevation not in range");
         }
 
         // check facing
@@ -244,7 +245,7 @@ public class KickAttackAction extends PhysicalAttackAction {
                 || target.getTargetType() == Targetable.TYPE_FUEL_TANK
                 || target instanceof GunEmplacement) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-            "Targeting adjacent building.");
+                    "Targeting adjacent building.");
         }
 
         // Set the base BTH

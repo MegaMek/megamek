@@ -100,7 +100,7 @@ public class UnitOverview implements IDisplayable {
 
         graph.setFont(FONT);
         ArrayList<Entity> v = clientgui.getClient().game
-        .getPlayerEntities(clientgui.getClient().getLocalPlayer(), true);
+                .getPlayerEntities(clientgui.getClient().getLocalPlayer(), true);
         unitIds = new int[v.size()];
 
         scroll = v.size() > unitsPerPage;
@@ -122,11 +122,11 @@ public class UnitOverview implements IDisplayable {
             graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
                     null);
             y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
-            + BUTTON_PADDING;
+                    + BUTTON_PADDING;
         }
 
         for (int i = scrollOffset; (i < v.size())
-        && (i < actUnitsPerPage + scrollOffset); i++) {
+                && (i < actUnitsPerPage + scrollOffset); i++) {
             Entity e = v.get(i);
             unitIds[i] = e.getId();
             String name = getIconName(e, fm);
@@ -193,7 +193,7 @@ public class UnitOverview implements IDisplayable {
         }
 
         for (int i = scrollOffset; (i < unitIds.length)
-        && (i < actUnits + scrollOffset); i++) {
+                && (i < actUnits + scrollOffset); i++) {
             if ((y > yOffset) && (y < yOffset + ICON_HEIGHT)) {
                 clientgui.bv.processBoardViewEvent(new BoardViewEvent(
                         clientgui.bv, BoardViewEvent.SELECT_UNIT, unitIds[i]));
@@ -344,7 +344,7 @@ public class UnitOverview implements IDisplayable {
     private void drawConditionStrings(Graphics graph, Entity entity, int x,
             int y) {
 
-        //      out of control conditions for ASF
+//      out of control conditions for ASF
         if(entity instanceof Aero) {
             Aero a = (Aero)entity;
 
@@ -433,7 +433,7 @@ public class UnitOverview implements IDisplayable {
                     Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 33); //$NON-NLS-1$
         } else if (!entity.isDeployed()) {
             int roundsLeft = entity.getDeployRound()
-            - clientgui.getClient().game.getRoundCount();
+                    - clientgui.getClient().game.getRoundCount();
             if (roundsLeft > 0) {
                 printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft));
             }

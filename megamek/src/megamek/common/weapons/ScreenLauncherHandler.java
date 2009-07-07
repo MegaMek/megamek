@@ -47,7 +47,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
     public ScreenLauncherHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-
+    
     /**
      * handle this weapons firing
      * 
@@ -59,7 +59,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
         if (!this.cares(phase)) {
             return true;
         }
-
+     
         //Report weapon attack and its to-hit value.
         Report r = new Report(3115);
         r.indent();
@@ -88,13 +88,13 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
         }
-
+        
         addHeat();
-
+        
         //deliver screen
         Coords coords = target.getPosition();
         server.deliverScreen(coords, vPhaseReport);
-
+        
         //damage any entities in the hex
         for (Enumeration<Entity> impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
             Entity entity = impactHexHits.nextElement();

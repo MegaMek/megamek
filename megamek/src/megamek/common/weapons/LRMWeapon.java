@@ -33,7 +33,7 @@ public abstract class LRMWeapon extends MissileWeapon {
         super();
         this.ammoType = AmmoType.T_LRM;
         this.setModes(new String[] { "", "Indirect" });
-
+        
         this.atClass = CLASS_LRM;
     }
 
@@ -48,7 +48,7 @@ public abstract class LRMWeapon extends MissileWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-        .getEquipment(waa.getWeaponId()).getLinked().getType();
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_FRAGMENTATION) {
             return new LRMFragHandler(toHit, waa, game, server);
         }

@@ -36,7 +36,7 @@ package megamek.common;
      * The set of front locations that load troopers externally.
      */
     private static final int[] EXTERIOR_LOCATIONS = { Tank.LOC_RIGHT,
-        Tank.LOC_LEFT, Tank.LOC_REAR };
+            Tank.LOC_LEFT, Tank.LOC_REAR };
 
     /**
      * The <code>String</code> reported when the handles are in use.

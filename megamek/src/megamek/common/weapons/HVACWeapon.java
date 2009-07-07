@@ -40,7 +40,7 @@ public class HVACWeapon extends ACWeapon {
         this.explosionDamage = damage;
         this.ammoType = AmmoType.T_HYPER_VELOCITY;
     }
-
+    
     /*
      * (non-Javadoc)
      * @see megamek.common.weapons.ACWeapon#getCorrectHandler(megamek.common.ToHitData, megamek.common.actions.WeaponAttackAction, megamek.common.IGame, megamek.server.Server)

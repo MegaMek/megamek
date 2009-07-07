@@ -50,14 +50,14 @@ public class SeaMineDepthDialog extends JDialog implements ActionListener {
         super.setResizable(false);
         //frame = p;
         butOk.addActionListener(this);
-
-
+        
+        
         choDepth.removeAllItems();
         for(int i =0; i < (totalDepth + 1); i++) {
             choDepth.addItem(Integer.toString(i));
         }
         choDepth.setSelectedIndex(0);
-
+        
         getContentPane().setLayout(gridbag);
         c.fill = GridBagConstraints.VERTICAL;
         c.insets = new Insets(1, 1, 1, 1);

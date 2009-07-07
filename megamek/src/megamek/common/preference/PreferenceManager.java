@@ -96,7 +96,7 @@ public class PreferenceManager {
             root = TinyParser.parseXML(is);
         } catch (ParseException e) {
             System.out
-            .println("Error parsing settings file'" + fileName + ",.");
+                    .println("Error parsing settings file'" + fileName + ",.");
             e.printStackTrace(System.out);
             return;
         }
@@ -120,10 +120,10 @@ public class PreferenceManager {
 
         } else {
             System.out
-            .println("Root node of settings file is incorrectly named. Name should be '"
-                    + "ROOT_NODE_NAME"
-                    + "' but name is '"
-                    + optionsNode.getName() + "'");
+                    .println("Root node of settings file is incorrectly named. Name should be '"
+                            + "ROOT_NODE_NAME"
+                            + "' but name is '"
+                            + optionsNode.getName() + "'");
         }
     }
 
@@ -170,7 +170,7 @@ public class PreferenceManager {
     }
 
     protected void saveStore(Writer output, String name, PreferenceStore ps)
-    throws IOException {
+            throws IOException {
         output.write("\t<" + STORE_NODE_NAME + " " + NAME_ATTRIBUTE + "=\""
                 + quoteXMLChars(name) + "\">");
         output.write(CommonConstants.NL);
@@ -215,7 +215,7 @@ public class PreferenceManager {
                 String temp = result.toString();
                 String firstHalf = temp.substring(0, i + delta);
                 String secondHalf = temp
-                .substring(i + delta + 1, temp.length());
+                        .substring(i + delta + 1, temp.length());
                 result = new StringBuffer(firstHalf + replacement + secondHalf);
                 delta += (replacement.length() - 1);
             }

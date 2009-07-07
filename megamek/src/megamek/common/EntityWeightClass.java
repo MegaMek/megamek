@@ -29,7 +29,7 @@ public class EntityWeightClass {
     public static final int WEIGHT_LARGE_DROP = 7;
     public static final int WEIGHT_SMALL_WAR = 8;
     public static final int WEIGHT_LARGE_WAR = 9;
-
+    
 
     private static int[] weightLimits = { 35, 55, 75, 100, 200, 2499, 9999, 100000, 749999, 2500000 };
 

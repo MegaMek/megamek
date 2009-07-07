@@ -33,7 +33,7 @@ public class AddBotCommand extends ClientCommand {
         super(
                 client,
                 "replacePlayer",
-        "Replaces a player who is a ghost with a bot. Usage #replacePlayer name, to replace the player named name. they must be a ghost.");
+                "Replaces a player who is a ghost with a bot. Usage #replacePlayer name, to replace the player named name. they must be a ghost.");
     }
 
     /*
@@ -48,7 +48,7 @@ public class AddBotCommand extends ClientCommand {
         }
         Player target = null;
         for (Enumeration<Player> i = client.game.getPlayers(); i
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             Player player = i.nextElement();
             if (player.getName().equals(args[1])) {
                 target = player;

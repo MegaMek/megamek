@@ -46,13 +46,13 @@ import java.util.Vector;
      * The set of front locations that load troopers externally.
      */
     private static final int[] EXTERIOR_LOCATIONS_FRONT = { Mech.LOC_RT,
-        Mech.LOC_LT };
+            Mech.LOC_LT };
 
     /**
      * The set of rear locations that load troopers externally.
      */
     private static final int[] EXTERIOR_LOCATIONS_REAR = { Mech.LOC_CT,
-        Mech.LOC_RT, Mech.LOC_LT };
+            Mech.LOC_RT, Mech.LOC_LT };
 
     /**
      * The <code>String</code> reported when the handles are in use.
@@ -256,18 +256,18 @@ import java.util.Vector;
             // Is the relevant trooper alive?
             int tloc = BattleArmor.LOC_SQUAD;
             switch (loc) {
-            case Mech.LOC_CT:
-                tloc = isRear ? BattleArmor.LOC_TROOPER_5
-                        : BattleArmor.LOC_TROOPER_6;
-                break;
-            case Mech.LOC_LT:
-                tloc = isRear ? BattleArmor.LOC_TROOPER_4
-                        : BattleArmor.LOC_TROOPER_2;
-                break;
-            case Mech.LOC_RT:
-                tloc = isRear ? BattleArmor.LOC_TROOPER_3
-                        : BattleArmor.LOC_TROOPER_1;
-                break;
+                case Mech.LOC_CT:
+                    tloc = isRear ? BattleArmor.LOC_TROOPER_5
+                            : BattleArmor.LOC_TROOPER_6;
+                    break;
+                case Mech.LOC_LT:
+                    tloc = isRear ? BattleArmor.LOC_TROOPER_4
+                            : BattleArmor.LOC_TROOPER_2;
+                    break;
+                case Mech.LOC_RT:
+                    tloc = isRear ? BattleArmor.LOC_TROOPER_3
+                            : BattleArmor.LOC_TROOPER_1;
+                    break;
             }
             if (troopers.locations() > tloc && troopers.getInternal(tloc) > 0)
                 result = true;

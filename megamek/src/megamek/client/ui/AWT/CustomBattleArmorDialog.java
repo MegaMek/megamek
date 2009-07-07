@@ -59,7 +59,7 @@ import megamek.common.TechConstants;
  * Allows a user to sort through a list of MechSummaries and select one
  */
 public class CustomBattleArmorDialog extends Dialog implements ActionListener,
-ItemListener, KeyListener, Runnable, TextListener, WindowListener {
+        ItemListener, KeyListener, Runnable, TextListener, WindowListener {
     /**
      *
      */
@@ -145,14 +145,14 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             .getString("CustomBattleArmorDialog.m_buttonRemove"));
     private Label m_labelRightArmCurrentEquipment = new Label(
             Messages
-            .getString("CustomBattleArmorDialog.m_labelCurrentRightArmEquipment"),
+                    .getString("CustomBattleArmorDialog.m_labelCurrentRightArmEquipment"),
             Label.RIGHT);
     private Choice m_chRightArmCurrentEquipment = new Choice();
     private Button m_buttonRemoveRightArm = new Button(Messages
             .getString("CustomBattleArmorDialog.m_buttonRemove"));
     private Label m_labelLeftArmCurrentEquipment = new Label(
             Messages
-            .getString("CustomBattleArmorDialog.m_labelCurrentLeftArmEquipment"),
+                    .getString("CustomBattleArmorDialog.m_labelCurrentLeftArmEquipment"),
             Label.RIGHT);
     private Choice m_chLeftArmCurrentEquipment = new Choice();
     private Button m_buttonRemoveLeftArm = new Button(Messages
@@ -223,36 +223,36 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
     public static int EQUIPMENT_TYPE_OTHER = 4;
 
     private static final int[][] ARMOR_TYPE_WEIGHT = {
-        { 50, 40, 100, 55, 100, 60, 60, 0, 50 },
-        { 25, 0, 0, 30, 0, 35, 35, 30, 0 } };
+            { 50, 40, 100, 55, 100, 60, 60, 0, 50 },
+            { 25, 0, 0, 30, 0, 35, 35, 30, 0 } };
 
     private static final int[] ARMOR_TYPE_SLOTS = { 0, 5, 4, 3, 4, 4, 5, 5, 5 };
 
     private static final int[] ARMOR_TYPE_COSTS = { 10000, 12500, 10000, 12000,
-        50000, 15000, 20000, 10000, 15000 };
+            50000, 15000, 20000, 10000, 15000 };
 
     private static final String[] ARMOR_TYPE_STRINGS = { "Standard",
-        "Advanced", "Prototype", "Basic Stealth", "Prototype Stealth",
-        "Standard Stealth", "Improved Stealth", "Fire Resistant", "Mimetic" };
+            "Advanced", "Prototype", "Basic Stealth", "Prototype Stealth",
+            "Standard Stealth", "Improved Stealth", "Fire Resistant", "Mimetic" };
 
     private static final int[] GROUND_MP_WEIGHT = { 25, 30, 40, 80, 160 };
 
     private static final int[][] JUMP_MP_LIMITS = { { 3, 3, 3, 2, 2 },
-        { 7, 6, 5, 0, 0 }, { 5, 5, 4, 3, 2 } };
+            { 7, 6, 5, 0, 0 }, { 5, 5, 4, 3, 2 } };
 
     private static final int[][] JUMP_MP_WEIGHT = { { 25, 25, 50, 125, 250 },
-        { 30, 40, 60, 0, 0 }, { 45, 45, 85, 160, 250 } };
+            { 30, 40, 60, 0, 0 }, { 45, 45, 85, 160, 250 } };
 
     private static final int[][] JUMP_MP_COST = {
-        { 50000, 50000, 75000, 150000, 300000 },
-        { 50000, 50000, 100000, 0, 0 },
-        { 50000, 50000, 75000, 100000, 150000 } };
+            { 50000, 50000, 75000, 150000, 300000 },
+            { 50000, 50000, 100000, 0, 0 },
+            { 50000, 50000, 75000, 100000, 150000 } };
 
     private static final int[] MANIPULATOR_TYPE_WEIGHT = { 0, 0, 0, 15, 15, 35,
-        50, 20, 60, 30, 30, 30 };
+            50, 20, 60, 30, 30, 30 };
 
     private static final int[] MANIPULATOR_TYPE_COSTS = { 0, 2500, 5000, 7500,
-        10000, 12500, 15000, 25000, 30000, 500, 2500 };
+            10000, 12500, 15000, 25000, 30000, 500, 2500 };
 
     public static final int[] ARM_MAX_SLOTS = { 2, 2, 3, 3, 4 };
     public static final int[] TORSO_MAX_SLOTS = { 2, 4, 4, 6, 8 };
@@ -490,7 +490,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(m_clientgui.getClient().getName());
         for (Iterator<Client> i = m_clientgui.getBots().values().iterator(); i
-        .hasNext();) {
+                .hasNext();) {
             m_chPlayer.addItem(i.next().getName());
         }
         if (m_chPlayer.getItemCount() == 1) {
@@ -629,7 +629,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         m_chLeftArmCurrentEquipment.removeAll();
         if (leftArmEquipment != null) {
             Enumeration<BattleArmorEquipment> tmpEE = leftArmEquipment
-            .elements();
+                    .elements();
             while (tmpEE.hasMoreElements()) {
                 BattleArmorEquipment tmpBAE = (tmpEE.nextElement());
                 m_chLeftArmCurrentEquipment.add(tmpBAE.name);
@@ -638,7 +638,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         m_chRightArmCurrentEquipment.removeAll();
         if (rightArmEquipment != null) {
             Enumeration<BattleArmorEquipment> tmpEE = rightArmEquipment
-            .elements();
+                    .elements();
             while (tmpEE.hasMoreElements()) {
                 BattleArmorEquipment tmpBAE = (tmpEE.nextElement());
                 m_chRightArmCurrentEquipment.add(tmpBAE.name);
@@ -737,12 +737,12 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
 
     private Point computeDesiredLocation() {
         int desiredX = m_clientgui.frame.getLocation().x
-        + m_clientgui.frame.getSize().width / 2 - getSize().width / 2;
+                + m_clientgui.frame.getSize().width / 2 - getSize().width / 2;
         if (desiredX < 0) {
             desiredX = 0;
         }
         int desiredY = m_clientgui.frame.getLocation().y
-        + m_clientgui.frame.getSize().height / 2 - getSize().height / 2;
+                + m_clientgui.frame.getSize().height / 2 - getSize().height / 2;
         if (desiredY < 0) {
             desiredY = 0;
         }
@@ -821,7 +821,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             if (torsoEquipment != null) {
                 String removeItem = m_chTorsoCurrentEquipment.getSelectedItem();
                 Enumeration<BattleArmorEquipment> tmpE = torsoEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     if (tmpBAE.name.equals(removeItem)) {
@@ -846,9 +846,9 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         } else if (ae.getSource() == m_buttonRemoveRightArm) {
             if (rightArmEquipment != null) {
                 String removeItem = m_chRightArmCurrentEquipment
-                .getSelectedItem();
+                        .getSelectedItem();
                 Enumeration<BattleArmorEquipment> tmpE = rightArmEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     if (tmpBAE.name.equals(removeItem)) {
@@ -873,9 +873,9 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         } else if (ae.getSource() == m_buttonRemoveLeftArm) {
             if (leftArmEquipment != null) {
                 String removeItem = m_chLeftArmCurrentEquipment
-                .getSelectedItem();
+                        .getSelectedItem();
                 Enumeration<BattleArmorEquipment> tmpE = leftArmEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     if (tmpBAE.name.equals(removeItem)) {
@@ -904,7 +904,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             if (!isOK()) {
                 new megamek.client.ui.AWT.AlertDialog(m_clientgui.frame,
                         "Can't do that!", "You can't add an invalid unit.")
-                .setVisible(true);
+                        .setVisible(true);
                 return;
             }
             try {
@@ -928,7 +928,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             FileDialog fd = new FileDialog(
                     m_clientgui.frame,
                     Messages
-                    .getString("CustomBattleArmorDialog.FileSaveDialog"), FileDialog.SAVE); //$NON-NLS-1$
+                            .getString("CustomBattleArmorDialog.FileSaveDialog"), FileDialog.SAVE); //$NON-NLS-1$
             fd.setDirectory("data" + File.separatorChar + "mechfiles");
             fd.setFile(m_tfBAName.getText() + ".blk");
             fd.setFilenameFilter(new FilenameFilter() {
@@ -1024,26 +1024,26 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
                 stateWeightClass = m_chWeightClass.getSelectedIndex();
                 // Needs to update min and max weights!
                 switch (stateWeightClass) {
-                case WEIGHT_CLASS_PAL:
-                    stateMinWeight = 0;
-                    stateMaxWeight = 400;
-                    break;
-                case WEIGHT_CLASS_LIGHT:
-                    stateMinWeight = 401;
-                    stateMaxWeight = 750;
-                    break;
-                case WEIGHT_CLASS_MEDIUM:
-                    stateMinWeight = 751;
-                    stateMaxWeight = 1000;
-                    break;
-                case WEIGHT_CLASS_HEAVY:
-                    stateMinWeight = 1001;
-                    stateMaxWeight = 1500;
-                    break;
-                case WEIGHT_CLASS_ASSAULT:
-                    stateMinWeight = 1501;
-                    stateMaxWeight = 2000;
-                    break;
+                    case WEIGHT_CLASS_PAL:
+                        stateMinWeight = 0;
+                        stateMaxWeight = 400;
+                        break;
+                    case WEIGHT_CLASS_LIGHT:
+                        stateMinWeight = 401;
+                        stateMaxWeight = 750;
+                        break;
+                    case WEIGHT_CLASS_MEDIUM:
+                        stateMinWeight = 751;
+                        stateMaxWeight = 1000;
+                        break;
+                    case WEIGHT_CLASS_HEAVY:
+                        stateMinWeight = 1001;
+                        stateMaxWeight = 1500;
+                        break;
+                    case WEIGHT_CLASS_ASSAULT:
+                        stateMinWeight = 1501;
+                        stateMaxWeight = 2000;
+                        break;
                 }
                 updateGroundMPChoices();
                 updateJumpMPChoices();
@@ -1053,7 +1053,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             if (stateGroundMP != Integer.parseInt(m_chGroundMP
                     .getSelectedItem())) {
                 stateGroundMP = Integer
-                .parseInt(m_chGroundMP.getSelectedItem());
+                        .parseInt(m_chGroundMP.getSelectedItem());
             }
         } else if (ie.getSource() == m_chJumpValue) {
             if (stateJumpMP != m_chJumpValue.getSelectedIndex()) {
@@ -1063,13 +1063,13 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             if (stateManipulatorTypeLeft != m_chLeftManipulator
                     .getSelectedIndex()) {
                 stateManipulatorTypeLeft = m_chLeftManipulator
-                .getSelectedIndex();
+                        .getSelectedIndex();
             }
         } else if (ie.getSource() == m_chRightManipulator) {
             if (stateManipulatorTypeRight != m_chRightManipulator
                     .getSelectedIndex()) {
                 stateManipulatorTypeRight = m_chRightManipulator
-                .getSelectedIndex();
+                        .getSelectedIndex();
             }
         } else if (ie.getSource() == m_chArmorType) {
             if (stateArmorType != m_chArmorType.getSelectedIndex()) {
@@ -1155,8 +1155,8 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         } else {
             retVal.append(">>>");
             retVal
-            .append(Messages
-                    .getString("CustomBattleArmorDialog.invalid"));
+                    .append(Messages
+                            .getString("CustomBattleArmorDialog.invalid"));
             retVal.append("<<<\n");
             if (invalidReason != null) {
                 retVal.append(invalidReason);
@@ -1182,8 +1182,8 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
                 .getString("CustomBattleArmorDialog.m_labelTechBase"));
         if (stateTechBase == TECH_BASE_IS) {
             retVal
-            .append(Messages
-                    .getString("CustomBattleArmorDialog.tech_base_inner_sphere"));
+                    .append(Messages
+                            .getString("CustomBattleArmorDialog.tech_base_inner_sphere"));
         } else {
             retVal.append(Messages
                     .getString("CustomBattleArmorDialog.tech_base_clan"));
@@ -1204,30 +1204,30 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         retVal.append(Messages
                 .getString("CustomBattleArmorDialog.m_labelWeightClass"));
         switch (stateWeightClass) {
-        case WEIGHT_CLASS_PAL:
-            retVal.append(Messages
-                    .getString("CustomBattleArmorDialog.weight_class_pal"));
-            break;
-        case WEIGHT_CLASS_LIGHT:
-            retVal
-            .append(Messages
-                    .getString("CustomBattleArmorDialog.weight_class_light"));
-            break;
-        case WEIGHT_CLASS_MEDIUM:
-            retVal
-            .append(Messages
-                    .getString("CustomBattleArmorDialog.weight_class_medium"));
-            break;
-        case WEIGHT_CLASS_HEAVY:
-            retVal
-            .append(Messages
-                    .getString("CustomBattleArmorDialog.weight_class_heavy"));
-            break;
-        case WEIGHT_CLASS_ASSAULT:
-            retVal
-            .append(Messages
-                    .getString("CustomBattleArmorDialog.weight_class_assault"));
-            break;
+            case WEIGHT_CLASS_PAL:
+                retVal.append(Messages
+                        .getString("CustomBattleArmorDialog.weight_class_pal"));
+                break;
+            case WEIGHT_CLASS_LIGHT:
+                retVal
+                        .append(Messages
+                                .getString("CustomBattleArmorDialog.weight_class_light"));
+                break;
+            case WEIGHT_CLASS_MEDIUM:
+                retVal
+                        .append(Messages
+                                .getString("CustomBattleArmorDialog.weight_class_medium"));
+                break;
+            case WEIGHT_CLASS_HEAVY:
+                retVal
+                        .append(Messages
+                                .getString("CustomBattleArmorDialog.weight_class_heavy"));
+                break;
+            case WEIGHT_CLASS_ASSAULT:
+                retVal
+                        .append(Messages
+                                .getString("CustomBattleArmorDialog.weight_class_assault"));
+                break;
         }
         retVal.append(" (");
         retVal.append(Messages.getString("CustomBattleArmorDialog.weight"));
@@ -1293,7 +1293,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         retVal.append(Messages
                 .getString("CustomBattleArmorDialog.m_labelLeftManipulator"));
         retVal
-        .append(BattleArmor.MANIPULATOR_TYPE_STRINGS[stateManipulatorTypeLeft]);
+                .append(BattleArmor.MANIPULATOR_TYPE_STRINGS[stateManipulatorTypeLeft]);
         retVal.append(" (");
         retVal.append(Messages.getString("CustomBattleArmorDialog.weight"));
         retVal.append(MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeLeft]);
@@ -1302,7 +1302,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         retVal.append(Messages
                 .getString("CustomBattleArmorDialog.m_labelRightManipulator"));
         retVal
-        .append(BattleArmor.MANIPULATOR_TYPE_STRINGS[stateManipulatorTypeRight]);
+                .append(BattleArmor.MANIPULATOR_TYPE_STRINGS[stateManipulatorTypeRight]);
         retVal.append(" (");
         retVal.append(Messages.getString("CustomBattleArmorDialog.weight"));
         retVal.append(MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeRight]);
@@ -1319,7 +1319,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         }
         if (rightArmEquipment != null) {
             Enumeration<BattleArmorEquipment> tmpE = rightArmEquipment
-            .elements();
+                    .elements();
             while (tmpE.hasMoreElements()) {
                 BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                 retVal.append(tmpBAE.getDescription());
@@ -1328,7 +1328,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         }
         if (leftArmEquipment != null) {
             Enumeration<BattleArmorEquipment> tmpE = leftArmEquipment
-            .elements();
+                    .elements();
             while (tmpE.hasMoreElements()) {
                 BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                 retVal.append(tmpBAE.getDescription());
@@ -1375,7 +1375,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         stateCurrentWeight += getManipulatorWeight();
         if (leftArmEquipment != null) {
             Enumeration<BattleArmorEquipment> tmpE = leftArmEquipment
-            .elements();
+                    .elements();
             while (tmpE.hasMoreElements()) {
                 BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                 stateCurrentWeight += tmpBAE.weight;
@@ -1383,7 +1383,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         }
         if (rightArmEquipment != null) {
             Enumeration<BattleArmorEquipment> tmpE = rightArmEquipment
-            .elements();
+                    .elements();
             while (tmpE.hasMoreElements()) {
                 BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                 stateCurrentWeight += tmpBAE.weight;
@@ -1437,7 +1437,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             // And include this slightly cludgy way of detecting illegal
             // armor/tech base pairings.
             invalidReason = ARMOR_TYPE_STRINGS[stateArmorType]
-                                               + " Armor not legal for chosen tech base.";
+                    + " Armor not legal for chosen tech base.";
             return false;
         }
 
@@ -1469,7 +1469,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             if (torsoEquipment != null) {
                 int totalSlots = 0;
                 Enumeration<BattleArmorEquipment> tmpE = torsoEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     totalSlots += tmpBAE.slots;
@@ -1482,11 +1482,11 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         } else {
             // Here, we have to check all three locations individually.
             int totalFreeSlots = (2 * ARM_MAX_SLOTS[stateWeightClass])
-            + TORSO_MAX_SLOTS[stateWeightClass];
+                    + TORSO_MAX_SLOTS[stateWeightClass];
             if (leftArmEquipment != null) {
                 int totalSlots = 0;
                 Enumeration<BattleArmorEquipment> tmpE = leftArmEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     totalSlots += tmpBAE.slots;
@@ -1500,7 +1500,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             if (rightArmEquipment != null) {
                 int totalSlots = 0;
                 Enumeration<BattleArmorEquipment> tmpE = rightArmEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     totalSlots += tmpBAE.slots;
@@ -1514,7 +1514,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             if (torsoEquipment != null) {
                 int totalSlots = 0;
                 Enumeration<BattleArmorEquipment> tmpE = torsoEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     totalSlots += tmpBAE.slots;
@@ -1543,7 +1543,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             if (torsoEquipment != null) {
                 int totalWeapons = 0;
                 Enumeration<BattleArmorEquipment> tmpE = torsoEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON)
@@ -1561,7 +1561,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
                 int totalAPWeapons = 0;
                 int totalAMWeapons = 0;
                 Enumeration<BattleArmorEquipment> tmpE = torsoEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
@@ -1583,7 +1583,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
                 int totalWeapons = 0;
                 int totalAMWeapons = 0;
                 Enumeration<BattleArmorEquipment> tmpE = rightArmEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
@@ -1605,7 +1605,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
                 int totalWeapons = 0;
                 int totalAMWeapons = 0;
                 Enumeration<BattleArmorEquipment> tmpE = leftArmEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
@@ -1637,30 +1637,30 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         if (techBase == TECH_BASE_IS) {
             // Inner Sphere tech base.
             switch (weightClass) {
-            case WEIGHT_CLASS_PAL:
-                return 80;
-            case WEIGHT_CLASS_LIGHT:
-                return 100;
-            case WEIGHT_CLASS_MEDIUM:
-                return 175;
-            case WEIGHT_CLASS_HEAVY:
-                return 300;
-            case WEIGHT_CLASS_ASSAULT:
-                return 550;
+                case WEIGHT_CLASS_PAL:
+                    return 80;
+                case WEIGHT_CLASS_LIGHT:
+                    return 100;
+                case WEIGHT_CLASS_MEDIUM:
+                    return 175;
+                case WEIGHT_CLASS_HEAVY:
+                    return 300;
+                case WEIGHT_CLASS_ASSAULT:
+                    return 550;
             }
         } else {
             // Clan tech base
             switch (weightClass) {
-            case WEIGHT_CLASS_PAL:
-                return 130;
-            case WEIGHT_CLASS_LIGHT:
-                return 150;
-            case WEIGHT_CLASS_MEDIUM:
-                return 250;
-            case WEIGHT_CLASS_HEAVY:
-                return 400;
-            case WEIGHT_CLASS_ASSAULT:
-                return 700;
+                case WEIGHT_CLASS_PAL:
+                    return 130;
+                case WEIGHT_CLASS_LIGHT:
+                    return 150;
+                case WEIGHT_CLASS_MEDIUM:
+                    return 250;
+                case WEIGHT_CLASS_HEAVY:
+                    return 400;
+                case WEIGHT_CLASS_ASSAULT:
+                    return 700;
             }
         }
         // This is an error case...
@@ -1683,7 +1683,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
     public static int getGroundMPWeight(int chassisType, int weightClass,
             int groundMP) {
         return (groundMP - (chassisType == CHASSIS_TYPE_BIPED ? 1 : 2))
-        * GROUND_MP_WEIGHT[weightClass];
+                * GROUND_MP_WEIGHT[weightClass];
     }
 
     public int getJumpMPWeight() {
@@ -1697,7 +1697,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
 
     public int getManipulatorWeight() {
         return MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeLeft]
-                                       + MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeRight];
+                + MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeRight];
     }
 
     public int calcSuitBV() {
@@ -1783,42 +1783,42 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
         int speedFactor = Math.max(stateGroundMP, getTotalJumpMP());
         float speedFactorMult = 0;
         switch (speedFactor) {
-        case 1:
-            speedFactorMult = 0.54f;
-            break;
-        case 2:
-            speedFactorMult = 0.65f;
-            break;
-        case 3:
-            speedFactorMult = 0.77f;
-            break;
-        case 4:
-            speedFactorMult = 0.88f;
-            break;
-        case 5:
-            speedFactorMult = 1f;
-            break;
-        case 6:
-            speedFactorMult = 1.12f;
-            break;
-        case 7:
-            speedFactorMult = 1.24f;
-            break;
-        case 8:
-            speedFactorMult = 1.37f;
-            break;
-        case 9:
-            speedFactorMult = 1.5f;
-            break;
-        case 10:
-            speedFactorMult = 1.63f;
-            break;
-        case 11:
-            speedFactorMult = 1.76f;
-            break;
-        case 12:
-            speedFactorMult = 1.89f;
-            break;
+            case 1:
+                speedFactorMult = 0.54f;
+                break;
+            case 2:
+                speedFactorMult = 0.65f;
+                break;
+            case 3:
+                speedFactorMult = 0.77f;
+                break;
+            case 4:
+                speedFactorMult = 0.88f;
+                break;
+            case 5:
+                speedFactorMult = 1f;
+                break;
+            case 6:
+                speedFactorMult = 1.12f;
+                break;
+            case 7:
+                speedFactorMult = 1.24f;
+                break;
+            case 8:
+                speedFactorMult = 1.37f;
+                break;
+            case 9:
+                speedFactorMult = 1.5f;
+                break;
+            case 10:
+                speedFactorMult = 1.63f;
+                break;
+            case 11:
+                speedFactorMult = 1.76f;
+                break;
+            case 12:
+                speedFactorMult = 1.89f;
+                break;
         }
         oBV *= speedFactorMult;
 
@@ -1836,20 +1836,20 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
 
         // Chassis Cost
         switch (stateWeightClass) {
-        case WEIGHT_CLASS_PAL:
-        case WEIGHT_CLASS_LIGHT:
-            // They're both 50,000 C-Bill chassis
-            retVal += 50000;
-            break;
-        case WEIGHT_CLASS_MEDIUM:
-            retVal += 100000;
-            break;
-        case WEIGHT_CLASS_HEAVY:
-            retVal += 200000;
-            break;
-        case WEIGHT_CLASS_ASSAULT:
-            retVal += 400000;
-            break;
+            case WEIGHT_CLASS_PAL:
+            case WEIGHT_CLASS_LIGHT:
+                // They're both 50,000 C-Bill chassis
+                retVal += 50000;
+                break;
+            case WEIGHT_CLASS_MEDIUM:
+                retVal += 100000;
+                break;
+            case WEIGHT_CLASS_HEAVY:
+                retVal += 200000;
+                break;
+            case WEIGHT_CLASS_ASSAULT:
+                retVal += 400000;
+                break;
         }
 
         // Motice Systems Cost
@@ -1988,7 +1988,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             // Now all other equipment.
             if (leftArmEquipment != null) {
                 Enumeration<BattleArmorEquipment> tmpE = leftArmEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON)
@@ -2005,7 +2005,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             }
             if (rightArmEquipment != null) {
                 Enumeration<BattleArmorEquipment> tmpE = rightArmEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON)
@@ -2022,7 +2022,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
             }
             if (torsoEquipment != null) {
                 Enumeration<BattleArmorEquipment> tmpE = torsoEquipment
-                .elements();
+                        .elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (tmpE.nextElement());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON)
@@ -2135,7 +2135,7 @@ ItemListener, KeyListener, Runnable, TextListener, WindowListener {
     }
 
     protected class BattleArmorEquipment implements
-    Comparable<BattleArmorEquipment> {
+            Comparable<BattleArmorEquipment> {
         // WeaponType/EquipmentType fields
         String name;
         String weaponTypeName;

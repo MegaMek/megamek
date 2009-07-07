@@ -154,7 +154,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             return 0;
         return Compute.d6(3);
     }
-
+    
 
     /**
      * @return a <code>boolean</code> value indicating wether or not this
@@ -172,7 +172,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             server.tryIgniteHex(target.getPosition(), subjectId, true, false, new TargetRoll(wtype.getFireTN(), wtype.getName()),
                     3, vPhaseReport);
         }
-
+        
         //shots that miss an entity can also potential cause explosions in a heavy industrial hex
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
@@ -183,7 +183,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         }
         return true;
     }
-
+    
     @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
             Building bldg, int hits) {
@@ -201,7 +201,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                     true, -1, vPhaseReport);
         }
     }
-
+    
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage) {
@@ -232,5 +232,5 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
         return;
     }
-
+    
 }

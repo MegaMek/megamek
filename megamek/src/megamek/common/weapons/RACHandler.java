@@ -53,25 +53,25 @@ public class RACHandler extends UltraWeaponHandler {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         boolean jams = false;
         switch (howManyShots) {
-        case 6:
-            if (roll <= 4) {
-                jams = true;
-            }
-            break;
-        case 5:
-        case 4:
-            if (roll <= 3) {
-                jams = true;
-            }
-            break;
-        case 3:
-        case 2:
-            if (roll <= 2) {
-                jams = true;
-            }
-            break;
-        default:
-            break;
+            case 6:
+                if (roll <= 4) {
+                    jams = true;
+                }
+                break;
+            case 5:
+            case 4:
+                if (roll <= 3) {
+                    jams = true;
+                }
+                break;
+            case 3:
+            case 2:
+                if (roll <= 2) {
+                    jams = true;
+                }
+                break;
+            default:
+                break;
         }
         if (jams) {
             Report r = new Report(3160);
@@ -137,12 +137,12 @@ public class RACHandler extends UltraWeaponHandler {
         }
         ammo.setShotsLeft(ammo.getShotsLeft() - shotsNeedFiring);
     }
-
+    
     @Override
     protected boolean usesClusterTable() {
         return true;
     }
-
+    
     @Override
     protected boolean canDoDirectBlowDamage(){
         return false;

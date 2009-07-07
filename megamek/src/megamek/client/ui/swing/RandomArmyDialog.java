@@ -48,7 +48,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.RandomArmyCreator;
 
 public class RandomArmyDialog extends JDialog implements ActionListener,
-WindowListener {
+        WindowListener {
 
     /**
      * 
@@ -119,7 +119,7 @@ WindowListener {
         m_tMaxYear.setText("3100");
         m_tInfantry.setText("0");
         m_chkCanon.setSelected(m_client.game.getOptions().booleanOption(
-        "canon_only"));
+                "canon_only"));
         updateTechChoice(true);
 
         // construct the buttons panel
@@ -228,7 +228,7 @@ WindowListener {
                     c.sendAddEntity(e);
                 } catch (EntityLoadingException ex) {
                     System.out
-                    .println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            .println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     ex.printStackTrace();
                     return;
                 }
@@ -299,7 +299,7 @@ WindowListener {
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(clientName);
         for (Iterator<Client> i = m_clientgui.getBots().values().iterator(); i
-        .hasNext();) {
+                .hasNext();) {
             m_chPlayer.addItem(i.next().getName());
         }
         if (m_chPlayer.getItemCount() == 1) {
@@ -312,7 +312,7 @@ WindowListener {
 
     private void updateTechChoice(boolean force) {
         boolean maxTechOption = m_client.game.getOptions().booleanOption(
-        "allow_advanced_units");
+                "allow_advanced_units");
         int maxTech = (maxTechOption ? TechConstants.SIZE
                 : TechConstants.SIZE_LEVEL_2);
         if (includeMaxTech == maxTechOption && !force) {

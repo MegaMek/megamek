@@ -86,16 +86,16 @@ public class TargetRoll implements Serializable {
      */
     public String getValueAsString() {
         switch (total) {
-        case IMPOSSIBLE:
-            return "Impossible";
-        case AUTOMATIC_FAIL:
-            return "Automatic Failure";
-        case AUTOMATIC_SUCCESS:
-            return "Automatic Success";
-        case CHECK_FALSE:
-            return "Did not need to roll";
-        default:
-            return Integer.toString(total);
+            case IMPOSSIBLE:
+                return "Impossible";
+            case AUTOMATIC_FAIL:
+                return "Automatic Failure";
+            case AUTOMATIC_SUCCESS:
+                return "Automatic Success";
+            case CHECK_FALSE:
+                return "Did not need to roll";
+            default:
+                return Integer.toString(total);
         }
     }
 

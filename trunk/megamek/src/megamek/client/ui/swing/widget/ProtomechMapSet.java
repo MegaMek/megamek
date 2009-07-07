@@ -56,7 +56,7 @@ public class ProtomechMapSet implements DisplayMapSet {
     private Polygon legs = new Polygon(new int[] { 0, 0, 10, 30, 30, 40, 100,
             110, 110, 130, 140, 140, 100, 90, 90, 80, 60, 50, 50, 40 },
             new int[] { 240, 230, 220, 220, 160, 130, 130, 160, 220, 220, 230,
-                    240, 240, 230, 190, 170, 170, 190, 230, 240 }, 20);
+            240, 240, 230, 190, 170, 170, 190, 230, 240 }, 20);
 
     // Reference to Component (required for Image handling)
     private JComponent comp;
@@ -188,25 +188,25 @@ public class ProtomechMapSet implements DisplayMapSet {
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_LEFT;
+        | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_LEFT;
+        | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_RIGHT;
+        | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_RIGHT;
+        | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));

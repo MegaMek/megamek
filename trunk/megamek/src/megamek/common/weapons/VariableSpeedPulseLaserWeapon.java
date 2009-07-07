@@ -31,7 +31,7 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
     public VariableSpeedPulseLaserWeapon() {
         super();
         this.flags |= F_PULSE;
-        
+
         this.atClass = CLASS_PULSE_LASER;
     }
     /*
@@ -46,7 +46,7 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new VariableSpeedPulseLaserWeaponHandler(toHit, waa, game, server);
     }
-    
+
     /*
      * 
      * (non-Javadoc)
@@ -56,11 +56,11 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
     public int getDamage(int range) {
         if ( range <= shortRange )
             return damageShort;
-        
+
         if ( range <= mediumRange )
             return damageMedium;
-        
-            return damageLong;
+
+        return damageLong;
     }
 
 }

@@ -60,8 +60,8 @@ public class Board implements Serializable, IBoard {
     public static final int START_W = 8;
     public static final int START_EDGE = 9;
     public static final int START_CENTER = 10;
-    
-    
+
+
     protected int width;
     protected int height;
 
@@ -533,38 +533,38 @@ public class Board implements Serializable, IBoard {
             }
         }
         switch (nDir) {
-            case START_ANY:
-                return true;
-            case START_NW: 
-                return (c.x < minx + nLimit && c.x >= minx && c.y < height / 2)
-                        || (c.y < miny + nLimit && c.y >= miny && c.x < width / 2);
-            case START_N:
-                return c.y < miny + nLimit && c.y >= miny;
-            case START_NE:
-                return (c.x > (maxx - nLimit) && c.x < maxx && c.y < height / 2)
-                        || (c.y < miny + nLimit && c.y >= miny && c.x > width / 2);
-            case START_E:
-                return c.x >= (maxx - nLimit) && c.x < maxx;
-            case START_SE:
-                return (c.x >= (maxx - nLimit) && c.x < maxx && c.y > height / 2)
-                        || (c.y >= (maxy - nLimit) && c.y < maxy && c.x > width / 2);
-            case START_S:
-                return c.y >= (maxy - nLimit) && c.y < maxy;
-            case START_SW:
-                return (c.x < minx + nLimit && c.x >= minx && c.y > height / 2)
-                        || (c.y >= (maxy - nLimit) && c.y < maxy && c.x < width / 2);
-            case START_W:
-                return c.x < minx + nLimit && c.x >= minx;
-            case START_EDGE:
-                return (c.x < minx + nLimit && c.x >= minx)
-                        || (c.y < miny + nLimit && c.y >= miny)
-                        || (c.x >= (maxx - nLimit) && c.x < maxx)
-                        || (c.y >= (maxy - nLimit) && c.y < maxy);
-            case START_CENTER:
-                return c.x >= width / 3 && c.x <= 2 * width / 3
-                        && c.y >= height / 3 && c.y <= 2 * height / 3;
-            default: // ummm. .
-                return false;
+        case START_ANY:
+            return true;
+        case START_NW: 
+            return (c.x < minx + nLimit && c.x >= minx && c.y < height / 2)
+            || (c.y < miny + nLimit && c.y >= miny && c.x < width / 2);
+        case START_N:
+            return c.y < miny + nLimit && c.y >= miny;
+        case START_NE:
+            return (c.x > (maxx - nLimit) && c.x < maxx && c.y < height / 2)
+            || (c.y < miny + nLimit && c.y >= miny && c.x > width / 2);
+        case START_E:
+            return c.x >= (maxx - nLimit) && c.x < maxx;
+        case START_SE:
+            return (c.x >= (maxx - nLimit) && c.x < maxx && c.y > height / 2)
+            || (c.y >= (maxy - nLimit) && c.y < maxy && c.x > width / 2);
+        case START_S:
+            return c.y >= (maxy - nLimit) && c.y < maxy;
+        case START_SW:
+            return (c.x < minx + nLimit && c.x >= minx && c.y > height / 2)
+            || (c.y >= (maxy - nLimit) && c.y < maxy && c.x < width / 2);
+        case START_W:
+            return c.x < minx + nLimit && c.x >= minx;
+        case START_EDGE:
+            return (c.x < minx + nLimit && c.x >= minx)
+            || (c.y < miny + nLimit && c.y >= miny)
+            || (c.x >= (maxx - nLimit) && c.x < maxx)
+            || (c.y >= (maxy - nLimit) && c.y < maxy);
+        case START_CENTER:
+            return c.x >= width / 3 && c.x <= 2 * width / 3
+            && c.y >= height / 3 && c.y <= 2 * height / 3;
+        default: // ummm. .
+        return false;
         }
 
     }
@@ -610,7 +610,7 @@ public class Board implements Serializable, IBoard {
                     int i = 0;
                     while (st.nextToken() == StreamTokenizer.TT_WORD
                             || st.ttype == '"'
-                            || st.ttype == StreamTokenizer.TT_NUMBER) {
+                                || st.ttype == StreamTokenizer.TT_NUMBER) {
                         args[i++] = st.ttype == StreamTokenizer.TT_NUMBER ? (int) st.nval
                                 + ""
                                 : st.sval;
@@ -626,7 +626,7 @@ public class Board implements Serializable, IBoard {
                     int i = 0;
                     while (st.nextToken() == StreamTokenizer.TT_WORD
                             || st.ttype == '"'
-                            || st.ttype == StreamTokenizer.TT_NUMBER) {
+                                || st.ttype == StreamTokenizer.TT_NUMBER) {
                         args[i++] = st.ttype == StreamTokenizer.TT_NUMBER ? (int) st.nval
                                 + ""
                                 : st.sval;
@@ -646,7 +646,7 @@ public class Board implements Serializable, IBoard {
                     int i = 0;
                     while (st.nextToken() == StreamTokenizer.TT_WORD
                             || st.ttype == '"'
-                            || st.ttype == StreamTokenizer.TT_NUMBER) {
+                                || st.ttype == StreamTokenizer.TT_NUMBER) {
                         args[i++] = st.ttype == StreamTokenizer.TT_NUMBER ? (int) st.nval
                                 + ""
                                 : st.sval;
@@ -786,7 +786,7 @@ public class Board implements Serializable, IBoard {
         // Make sure the # of hits is valid.
         if (hits < 0) {
             throw new IllegalArgumentException(
-                    "Board can't track negative hits. ");
+            "Board can't track negative hits. ");
         }
 
         // Do nothing if the coords aren't on this board.
@@ -1169,7 +1169,7 @@ public class Board implements Serializable, IBoard {
      * @throws <code>ClassNotFoundException</code>
      */
     private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    ClassNotFoundException {
         in.defaultReadObject();
 
         // Restore bldgByCoords from buildings.
@@ -1232,15 +1232,15 @@ public class Board implements Serializable, IBoard {
 
     public void setBridgeCF(int value) {
         for (Building bldg : buildings) {
-         for (Enumeration<Coords> coords = bldg.getCoords(); coords
+            for (Enumeration<Coords> coords = bldg.getCoords(); coords
             .hasMoreElements();) {
-        Coords c = coords.nextElement();
-        IHex h = getHex(c);
-        if (h.containsTerrain(Terrains.BRIDGE)) {
-            bldg.setCurrentCF(value, c);
+                Coords c = coords.nextElement();
+                IHex h = getHex(c);
+                if (h.containsTerrain(Terrains.BRIDGE)) {
+                    bldg.setCurrentCF(value, c);
+                }
+            }
         }
-         }
-      }
     }
 
     /*

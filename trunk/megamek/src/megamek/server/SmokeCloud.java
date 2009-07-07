@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import megamek.common.Coords;
 
 public class SmokeCloud implements Serializable{
-    
+
     /**
      * 
      */
@@ -30,55 +30,55 @@ public class SmokeCloud implements Serializable{
     private ArrayList<Coords> smokeHexList = new ArrayList<Coords>();
     private int smokeLevel = 1;
     private boolean didDrift = false;
-    
+
     public SmokeCloud(){
-        
+
     }
-    
+
     public SmokeCloud(Coords coords, int level, int duration){
         this.smokeDuration = duration;
         this.smokeHexList.add(coords);
         this.smokeLevel = level;
     }
-    
+
     public SmokeCloud(ArrayList<Coords> coords, int level, int duration){
         this.smokeDuration = duration;
         this.smokeLevel = level;
         this.smokeHexList.addAll(coords);
     }
-    
+
     public void setSmokeLevel(int level){
         this.smokeLevel = Math.min(2, level);
     }
-    
+
     public int getSmokeLevel(){
         return smokeLevel;
     }
-    
+
     public void addCoords(Coords coords){
         this.smokeHexList.add(coords);
     }
-    
+
     public void removeCoords(Coords coords){
         this.smokeHexList.remove(coords);
     }
-    
+
     public ArrayList<Coords> getCoordsList(){
         return this.smokeHexList;
     }
-    
+
     public void setDuration(int duration){
         this.smokeDuration = duration;
     }
-    
+
     public int getDuration(){
         return this.smokeDuration;
     }
-    
+
     public void setDrift(boolean drift){
         this.didDrift = drift;
     }
-    
+
     public boolean didDrift(){
         return this.didDrift;
     }

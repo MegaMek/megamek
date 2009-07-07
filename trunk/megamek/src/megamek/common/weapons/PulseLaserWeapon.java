@@ -31,7 +31,7 @@ public class PulseLaserWeapon extends LaserWeapon {
     public PulseLaserWeapon() {
         super();
         this.flags |= F_PULSE;
-        
+
         this.atClass = CLASS_PULSE_LASER;
     }
 

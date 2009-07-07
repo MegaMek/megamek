@@ -37,7 +37,7 @@ import megamek.common.util.StringUtil;
 public class GameLog {
 
     public static final String LOG_DIR = PreferenceManager
-            .getClientPreferences().getLogDirectory();
+    .getClientPreferences().getLogDirectory();
 
     public static final String LOG_FILE = "gamelog.txt"; //$NON-NLS-1$
 

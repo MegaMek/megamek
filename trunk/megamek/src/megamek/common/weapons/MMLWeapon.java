@@ -33,7 +33,7 @@ public abstract class MMLWeapon extends MissileWeapon {
         super();
         this.ammoType = AmmoType.T_MML;
         this.setModes(new String[] { "", "Indirect" });
-        
+
         this.atClass = CLASS_MML;
     }
 
@@ -48,7 +48,7 @@ public abstract class MMLWeapon extends MissileWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
+        .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.hasFlag(AmmoType.F_MML_LRM)) {
             if (atype.getMunitionType() == AmmoType.M_FRAGMENTATION) {
                 return new LRMFragHandler(toHit, waa, game, server);

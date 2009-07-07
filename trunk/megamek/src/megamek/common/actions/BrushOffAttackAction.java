@@ -104,7 +104,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         Entity te = null;
         if (ae == null || target == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Attacker or target not valid");
+            "Attacker or target not valid");
         }
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
@@ -117,7 +117,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         // non-mechs can't BrushOff
         if (!(ae instanceof Mech)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only mechs can brush off swarming infantry or iNarc Pods");
+            "Only mechs can brush off swarming infantry or iNarc Pods");
         }
 
         // arguments legal?
@@ -128,7 +128,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         if ((targetId != ae.getSwarmAttackerId() || te == null || !(te instanceof Infantry))
                 && target.getTargetType() != Targetable.TYPE_INARC_POD) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Can only brush off swarming infantry or iNarc Pods");
+            "Can only brush off swarming infantry or iNarc Pods");
         }
 
         // Quads can't brush off.
@@ -139,14 +139,14 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         // Can't brush off with flipped arms
         if (ae.getArmsFlipped()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Arms are flipped to the rear. Can not punch.");
+            "Arms are flipped to the rear. Can not punch.");
         }
 
         // check if arm is present
         if (ae.isLocationBad(armLoc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
-        
+
         //check for no/minimal arms quirk
         if(ae.getQuirks().booleanOption("no_arms")) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
@@ -160,13 +160,13 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         // check if attacker has fired arm-mounted weapons
         if (ae.weaponFiredFrom(armLoc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Weapons fired from arm this turn");
+            "Weapons fired from arm this turn");
         }
 
         // can't physically attack mechs making dfa attacks
         if (te != null && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is making a DFA attack");
+            "Target is making a DFA attack");
         }
 
         // Can't brush off while prone.
@@ -209,10 +209,10 @@ public class BrushOffAttackAction extends AbstractAttackAction {
                     Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
                 toHit.addModifier(4,
-                        "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
 

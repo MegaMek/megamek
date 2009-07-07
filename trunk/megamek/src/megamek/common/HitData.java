@@ -33,7 +33,7 @@ public class HitData {
     public static final int DAMAGE_BALLISTIC = -5;
     public static final int DAMAGE_ARMOR_PIERCING = -6;
     public static final int DAMAGE_ARMOR_PIERCING_MISSILE = -7;
-    
+
     private int location;
     private boolean rear;
     private int effect;
@@ -54,8 +54,8 @@ public class HitData {
     //need to keep track of the attack value for a single attack in the case of fighter squadrons
     //probably not the best place for this, but I don't want to add another parameter to damageEntity
     private int singleAV = -1;
-    
-    
+
+
     public HitData(int location) {
         this(location, false, EFFECT_NONE, false, 0);
     }
@@ -78,7 +78,7 @@ public class HitData {
                 HitData.DAMAGE_NONE);
 
     }
-    
+
     public HitData(int location, boolean rear, int effect,
             boolean hitAimedLocation, int specCrit, boolean fromWhere,
             int damageType) {
@@ -116,7 +116,7 @@ public class HitData {
             specCritMod = -2;
         else if (inType.getRackSize() == 20)
             specCritMod = -1;
-        
+
         specCritMod += modifer;
     }
 
@@ -127,7 +127,7 @@ public class HitData {
     public void makeDirectBlow(int mod){
         glancing = mod;
     }
-    
+
     public int glancingMod() {
         return glancing;
     }
@@ -143,7 +143,7 @@ public class HitData {
     public boolean isRear() {
         return rear;
     }
-    
+
     public int getEffect() {
         return effect;
     }
@@ -192,44 +192,44 @@ public class HitData {
     public void setGeneralDamageType(int type) {
         this.generalDamageType = type;
     }
-    
+
     public void setCapital(boolean b) {
         this.capital = b;
     }
-    
+
     public boolean isCapital() {
         return capital;
     }
 
-    
+
     public int getCapMisCritMod() {
         return capMisCritMod;
     }
-    
+
     public void setCapMisCritMod(int m) {
         this.capMisCritMod = m;
     }
-    
+
     public void setBoxCars(boolean b) {
         this.boxcars = b;
     }
-    
+
     public boolean rolledBoxCars() {
         return boxcars;
     }
-    
+
     public void setBurstFire(boolean b) {
         this.burstFire = b;
     }
-    
+
     public boolean isBurstFire() {
         return burstFire;
     }
-    
+
     public void setSingleAV(int i) {
         this.singleAV = i;
     }
-    
+
     public int getSingleAV() {
         return singleAV;
     }

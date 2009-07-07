@@ -41,7 +41,7 @@ import megamek.common.Mounted;
  * @version $version: $
  */
 public class BombPayloadDialog
-    extends Dialog implements ActionListener
+extends Dialog implements ActionListener
 {
     /**
      *
@@ -116,7 +116,7 @@ public class BombPayloadDialog
             row++;
             i++;
         }
-        */
+         */
         // Allow the player to confirm or abort the choice.
         setupButtons();
         c.gridy++;
@@ -125,9 +125,9 @@ public class BombPayloadDialog
         butOK.requestFocus();
 
         addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) { setVisible(false); }
-            });
+            @Override
+            public void windowClosing(WindowEvent e) { setVisible(false); }
+        });
 
         pack();
         Dimension size = getSize();
@@ -143,7 +143,7 @@ public class BombPayloadDialog
             size = getSize();
         }
         setLocation(parent.getLocation().x + parent.getSize().width/2 - size.width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - size.height/2);
+                parent.getLocation().y + parent.getSize().height/2 - size.height/2);
     }
 
     private void setupButtons() {
@@ -233,7 +233,7 @@ public class BombPayloadDialog
             }
             temp = choices;
         }
-        */
+         */
         return choices;
     }
 

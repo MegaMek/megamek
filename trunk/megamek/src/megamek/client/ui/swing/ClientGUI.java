@@ -223,7 +223,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
             if (!file.exists()) {
                 System.err
-                        .println("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename()); //$NON-NLS-1$
+                .println("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename()); //$NON-NLS-1$
                 return;
             }
             bingClip = Applet.newAudioClip(file.toURI().toURL());
@@ -311,7 +311,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             // Create the board viewer.
             Class<?> c = getClass().getClassLoader().loadClass(
                     System.getProperty("megamek.client.ui.AWT.boardView",
-                            "megamek.client.ui.swing.BoardView1"));
+                    "megamek.client.ui.swing.BoardView1"));
             bv = (IBoardView) c.getConstructor(IGame.class).newInstance(client.game);
             bvc = bv.getComponent();
             bv.addBoardViewListener(this);
@@ -949,9 +949,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         textArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            textArea.setText(message);
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        textArea.setText(message);
         JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
     }
 
@@ -1003,7 +1003,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             dlgLoadList = new JFileChooser(".");
             dlgLoadList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             dlgLoadList
-                    .setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
+            .setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
             dlgLoadList.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File dir) {
@@ -1067,7 +1067,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             dlgSaveList = new JFileChooser(".");
             dlgSaveList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             dlgSaveList
-                    .setDialogTitle(Messages.getString("ClientGUI.saveUnitListFileDialog.title"));
+            .setDialogTitle(Messages.getString("ClientGUI.saveUnitListFileDialog.title"));
             dlgSaveList.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File dir) {
@@ -1093,7 +1093,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         File unitFile = dlgSaveList.getSelectedFile();
         if (unitFile != null) {
             if (!(unitFile.getName().toLowerCase().endsWith(".mul") //$NON-NLS-1$
-            || unitFile.getName().toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
+                    || unitFile.getName().toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
                 try {
                     unitFile = new File(unitFile.getCanonicalPath() + ".mul"); //$NON-NLS-1$
                 } catch (IOException ie) {
@@ -1188,9 +1188,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
             JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            Messages.getString("ClientGUI.Disconnected.message"), Messages.getString("ClientGUI.Disconnected.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            .showMessageDialog(
+                    frame,
+                    Messages.getString("ClientGUI.Disconnected.message"), Messages.getString("ClientGUI.Disconnected.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             frame.setVisible(false);
             die();
         }
@@ -1304,7 +1304,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter = getClient().game.getRetreatedEntities(); iter
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 living.add(iter.nextElement());
             }
 

@@ -30,18 +30,18 @@ public class PacketMarshallerFactory {
 
     public PacketMarshaller getMarshaller(int marshallingType) {
         switch (marshallingType) {
-            case PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING:
-                if (nativeSerializationMarshaller == null) {
-                    nativeSerializationMarshaller = new NativeSerializationMarshaller();
-                }
-                return nativeSerializationMarshaller;
-            case PacketMarshaller.XML_MARSHALING:
-                if (XMLMarshaller == null) {
-                    XMLMarshaller = new XMLMarshaller();
-                }
-                return XMLMarshaller;
-            default:
-                return null;
+        case PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING:
+            if (nativeSerializationMarshaller == null) {
+                nativeSerializationMarshaller = new NativeSerializationMarshaller();
+            }
+            return nativeSerializationMarshaller;
+        case PacketMarshaller.XML_MARSHALING:
+            if (XMLMarshaller == null) {
+                XMLMarshaller = new XMLMarshaller();
+            }
+            return XMLMarshaller;
+        default:
+            return null;
         }
     }
 

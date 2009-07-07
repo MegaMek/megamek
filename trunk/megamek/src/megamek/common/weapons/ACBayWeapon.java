@@ -51,7 +51,7 @@ public class ACBayWeapon extends AmmoBayWeapon {
         this.cost = 0;
         this.atClass = CLASS_AC;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

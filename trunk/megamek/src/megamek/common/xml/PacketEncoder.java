@@ -56,7 +56,7 @@ public class PacketEncoder {
      * @throws <code>IOException</code> if there's any error on write.
      */
     private static void encodeData(Packet packet, Writer out)
-            throws IOException {
+    throws IOException {
         // Packet data encoding is based on data type.
         Object[] data = packet.getData();
         for (int loop = 0; loop < data.length; loop++) {
@@ -212,14 +212,14 @@ public class PacketEncoder {
         }
         if (!node.getName().equals("packet")) {
             throw new IllegalStateException(
-                    "The passed node is not for a packet.");
+            "The passed node is not for a packet.");
         }
 
         // Figure out what type of packet this is.
         String commandStr = node.getAttribute("type");
         if (null == commandStr) {
             throw new IllegalStateException(
-                    "Could not determine the packet type.");
+            "Could not determine the packet type.");
         }
         command = Integer.parseInt(commandStr);
 
@@ -246,7 +246,7 @@ public class PacketEncoder {
                         Enumeration<?> cdataEnum = subNode.elements();
                         while (cdataEnum.hasMoreElements() && null == cdata) {
                             final ParsedXML cdataNode = (ParsedXML) cdataEnum
-                                    .nextElement();
+                            .nextElement();
                             if (cdataNode.getTypeName().equals("text")) {
                                 cdata = cdataNode.getContent();
                             } else if (cdataNode.getTypeName().equals("cdata")) {
@@ -258,7 +258,7 @@ public class PacketEncoder {
                     // Did we find the zipped content?
                     if (null == cdata) {
                         throw new IllegalStateException(
-                                "Could not find CDATA for packetData.");
+                        "Could not find CDATA for packetData.");
                     }
 
                     // Yup. Unencode the data from Base64.
@@ -291,7 +291,7 @@ public class PacketEncoder {
                     } catch (ParseException parseErr) {
                         StringBuffer parsebuf = new StringBuffer();
                         parsebuf.append("Could not parse data elements: ")
-                                .append(parseErr.getMessage());
+                        .append(parseErr.getMessage());
                         throw new IllegalStateException(parsebuf.toString());
                     }
                 } else {

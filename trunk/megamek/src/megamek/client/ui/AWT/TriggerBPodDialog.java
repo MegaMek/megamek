@@ -129,8 +129,8 @@ public class TriggerBPodDialog extends Dialog implements ActionListener {
                 // Create a checkbox for the pod, and add it to the panel.
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
-                        .append(" ") //$NON-NLS-1$
-                        .append(mount.getName());
+                .append(" ") //$NON-NLS-1$
+                .append(mount.getName());
                 Checkbox pod = new Checkbox(message.toString());
                 panPods.add(pod);
 
@@ -144,18 +144,18 @@ public class TriggerBPodDialog extends Dialog implements ActionListener {
                         if (entity instanceof QuadMech) {
                             if ((mount.getLocation() != Mech.LOC_LARM)
                                     || (mount.getLocation() != Mech.LOC_RARM)) {
-                                        pod.setEnabled(false);
-                        }
+                                pod.setEnabled(false);
+                            }
                         } else {
                             pod.setEnabled(false);
                         }
                     } //Only Forward Mounted Arm and Side Torso B-Pod's can be used against
-                      //Swarm attacks
+                    //Swarm attacks
                     else if ( attackType.equals(Infantry.SWARM_MEK)
                             && (mount.isRearMounted()
-                            || (mount.getLocation() == Mech.LOC_CT)
-                            || (mount.getLocation() == Mech.LOC_LLEG)
-                            || (mount.getLocation() == Mech.LOC_RLEG))  ){
+                                    || (mount.getLocation() == Mech.LOC_CT)
+                                    || (mount.getLocation() == Mech.LOC_LLEG)
+                                    || (mount.getLocation() == Mech.LOC_RLEG))  ){
                         pod.setEnabled(false);
                     } else {
                         // Yup. Add a traker for this pod.
@@ -293,8 +293,8 @@ public class TriggerBPodDialog extends Dialog implements ActionListener {
                     clientgui.frame,
                     Messages.getString("TriggerBPodDialog.ChooseTargetDialog.title"), //$NON-NLS-1$
                     Messages.getString(
-                                    "TriggerBPodDialog.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$
-                    names);
+                            "TriggerBPodDialog.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$
+                            names);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer() == true) {
                 choice = targets.elementAt(choiceDialog.getChoice());

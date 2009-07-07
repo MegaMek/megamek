@@ -108,10 +108,10 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
     // Turret armor
     private Polygon turretArmor = new Polygon(
             new int[] { 87, 87, 84, 80, 71, 59,  59,  75,  90,  90,  80,  65,
-            65,  115, 115, 100, 90,  90,  105, 121, 121, 109, 100, 96, 93, 93 },
-            new int[] { 42, 80, 80, 87, 87, 109, 149, 177, 177, 165, 165, 142,
-            125, 125, 142, 165, 165, 177, 177, 149, 109, 87,  87 , 80, 80, 42 },
-            26);
+                    65,  115, 115, 100, 90,  90,  105, 121, 121, 109, 100, 96, 93, 93 },
+                    new int[] { 42, 80, 80, 87, 87, 109, 149, 177, 177, 165, 165, 142,
+                    125, 125, 142, 165, 165, 177, 177, 149, 109, 87,  87 , 80, 80, 42 },
+                    26);
     // Turret internal structure
     private Polygon turretIS = new Polygon(
             new int[] { 65,  65,  80,  100, 115, 115 },
@@ -209,8 +209,8 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
         labels[7] = WidgetUtils.createLabel(Messages
                 .getString("LargeSupportTankMapSet.TurretArmor"), fm, Color.black, 90, 104); //$NON-NLS-1$
         labels[8] = WidgetUtils
-                .createLabel(
-                        Messages.getString("LargeSupportTankMapSet.FrontIS"), fm, Color.black, 80, 30); //$NON-NLS-1$
+        .createLabel(
+                Messages.getString("LargeSupportTankMapSet.FrontIS"), fm, Color.black, 80, 30); //$NON-NLS-1$
         labels[9] = WidgetUtils.createLabel(
                 Messages.getString("LargeSupportTankMapSet.FRIS"), fm, Color.black, 120, 80); //$NON-NLS-1$
         labels[10] = WidgetUtils.createLabel(
@@ -220,11 +220,11 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
         labels[12] = WidgetUtils.createLabel(
                 Messages.getString("LargeSupportTankMapSet.RLIS"), fm, Color.black, 43, 155); //$NON-NLS-1$
         labels[13] = WidgetUtils
-                .createLabel(
-                        Messages.getString("LargeSupportTankMapSet.RearIS"), fm, Color.black, 85, 185); //$NON-NLS-1$
+        .createLabel(
+                Messages.getString("LargeSupportTankMapSet.RearIS"), fm, Color.black, 85, 185); //$NON-NLS-1$
         labels[14] = WidgetUtils
-                .createLabel(
-                        Messages.getString("LargeSupportTankMapSet.TurretIS"), fm, Color.black, 90, 140); //$NON-NLS-1$
+        .createLabel(
+                Messages.getString("LargeSupportTankMapSet.TurretIS"), fm, Color.black, 90, 140); //$NON-NLS-1$
         labels[15] = WidgetUtils.createLabel(Messages
                 .getString("LargeSupportTankMapSet.BARRating"), fm, Color.white, 80, 220); //$NON-NLS-1$
 
@@ -287,25 +287,25 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_LEFT;
+        | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_LEFT;
+        | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_RIGHT;
+        | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_RIGHT;
+        | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));

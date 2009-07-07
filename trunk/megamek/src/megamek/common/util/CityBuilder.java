@@ -101,7 +101,7 @@ public class CityBuilder {
 
         Coords centre = new Coords(width / 2, height / 2);
         double falloff = (double) mapSettings.getCityDensity()
-                / (double) (radius * radius);
+        / (double) (radius * radius);
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -140,22 +140,22 @@ public class CityBuilder {
                 }
 
                 int floors = mapSettings.getCityMaxFloors()
-                        - mapSettings.getCityMinFloors();
+                - mapSettings.getCityMinFloors();
 
                 if (floors <= 0)
                     floors = mapSettings.getCityMinFloors();
                 else
                     floors = Compute.randomInt(floors + 1)
-                            + mapSettings.getCityMinFloors();
+                    + mapSettings.getCityMinFloors();
 
                 int totalCF = mapSettings.getCityMaxCF()
-                        - mapSettings.getCityMinCF();
+                - mapSettings.getCityMinCF();
 
                 if (totalCF <= 0)
                     totalCF = mapSettings.getCityMinCF();
                 else
                     totalCF = Compute.randomInt(totalCF + 1)
-                            + mapSettings.getCityMinCF();
+                    + mapSettings.getCityMinCF();
 
                 int type = getBuildingTypeByCF(totalCF);
 
@@ -226,26 +226,26 @@ public class CityBuilder {
                         .size()));
             } else {
                 switch (Compute.randomInt(4)) {
-                    case 1:
-                        x = Compute.randomInt(maxX);
-                        y = -1;
-                        baseDirection = S;
-                        break;
-                    case 2:
-                        x = Compute.randomInt(maxX);
-                        y = maxY;
-                        baseDirection = N;
-                        break;
-                    case 3:
-                        x = -1;
-                        y = Compute.randomInt(maxY);
-                        baseDirection = NE + Compute.randomInt(2);
-                        break;
-                    default:
-                        x = maxX;
-                        y = Compute.randomInt(maxY);
-                        baseDirection = SW + Compute.randomInt(2);
-                        break;
+                case 1:
+                    x = Compute.randomInt(maxX);
+                    y = -1;
+                    baseDirection = S;
+                    break;
+                case 2:
+                    x = Compute.randomInt(maxX);
+                    y = maxY;
+                    baseDirection = N;
+                    break;
+                case 3:
+                    x = -1;
+                    y = Compute.randomInt(maxY);
+                    baseDirection = NE + Compute.randomInt(2);
+                    break;
+                default:
+                    x = maxX;
+                    y = Compute.randomInt(maxY);
+                    baseDirection = SW + Compute.randomInt(2);
+                    break;
                 }
             }
             Coords coords = new Coords(x, y);
@@ -445,8 +445,8 @@ public class CityBuilder {
             // build the bridge
             int exits = (1 << direction) | (1 << ((direction + 3) % 6));
             int cf = mapSettings.getCityMinCF()
-                    + Compute.randomInt(1 + mapSettings.getCityMaxCF()
-                            - mapSettings.getCityMinCF());
+            + Compute.randomInt(1 + mapSettings.getCityMaxCF()
+                    - mapSettings.getCityMinCF());
 
             for (Enumeration<Coords> e = hexes.elements(); e.hasMoreElements();) {
                 Coords c = e.nextElement();

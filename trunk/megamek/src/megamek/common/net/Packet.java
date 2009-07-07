@@ -92,7 +92,7 @@ public class Packet {
     public static final int COMMAND_SENDING_PLANETARY_CONDITIONS = 530;
     public static final int COMMAND_SQUADRON_ADD = 540;
     public static final int COMMAND_ENTITY_CALLEDSHOTCHANGE = 550;
-    
+
     private int command;
 
     private Object[] data;

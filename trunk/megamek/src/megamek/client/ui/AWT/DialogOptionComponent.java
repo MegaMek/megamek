@@ -34,7 +34,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 
 public class DialogOptionComponent extends Panel implements MouseListener,
-        ItemListener {
+ItemListener {
     /**
      * 
      */
@@ -61,49 +61,49 @@ public class DialogOptionComponent extends Panel implements MouseListener,
 
         setLayout(new BorderLayout());
         switch (option.getType()) {
-            case IOption.BOOLEAN:
-                checkbox = new Checkbox(option.getDisplayableName(), option
-                        .booleanValue());
-                checkbox.addMouseListener(this);
-                checkbox.addItemListener(this);
-                add(checkbox, BorderLayout.CENTER);
+        case IOption.BOOLEAN:
+            checkbox = new Checkbox(option.getDisplayableName(), option
+                    .booleanValue());
+            checkbox.addMouseListener(this);
+            checkbox.addItemListener(this);
+            add(checkbox, BorderLayout.CENTER);
 
-                if (!editable)
-                    checkbox.setEnabled(false);
+            if (!editable)
+                checkbox.setEnabled(false);
 
-                break;
-            case IOption.CHOICE:
-                choice = new Choice();
+            break;
+        case IOption.CHOICE:
+            choice = new Choice();
 
-                choice.addMouseListener(this);
-                label = new Label(option.getDisplayableName());
-                label.addMouseListener(this);
-                add(label, BorderLayout.WEST);
-                add(choice, BorderLayout.CENTER);
+            choice.addMouseListener(this);
+            label = new Label(option.getDisplayableName());
+            label.addMouseListener(this);
+            add(label, BorderLayout.WEST);
+            add(choice, BorderLayout.CENTER);
 
-                if (!editable)
-                    choice.setEnabled(false);
+            if (!editable)
+                choice.setEnabled(false);
 
-                break;
-            default:
-                textField = new TextField(option.stringValue(), option
-                        .getTextFieldLength());
-                textField.addMouseListener(this);
-                label = new Label(option.getDisplayableName());
-                label.addMouseListener(this);
+            break;
+        default:
+            textField = new TextField(option.stringValue(), option
+                    .getTextFieldLength());
+            textField.addMouseListener(this);
+            label = new Label(option.getDisplayableName());
+            label.addMouseListener(this);
 
-                if (option.isLabelBeforeTextField()) {
-                    add(label, BorderLayout.CENTER);
-                    add(textField, BorderLayout.WEST);
-                } else {
-                    add(textField, BorderLayout.WEST);
-                    add(label, BorderLayout.CENTER);
-                }
+            if (option.isLabelBeforeTextField()) {
+                add(label, BorderLayout.CENTER);
+                add(textField, BorderLayout.WEST);
+            } else {
+                add(textField, BorderLayout.WEST);
+                add(label, BorderLayout.CENTER);
+            }
 
-                if (!editable)
-                    textField.setEnabled(false);
+            if (!editable)
+                textField.setEnabled(false);
 
-                break;
+            break;
         }
 
     }
@@ -115,26 +115,26 @@ public class DialogOptionComponent extends Panel implements MouseListener,
     public Object getValue() {
         String text = "";
         switch (option.getType()) {
-            case IOption.BOOLEAN:
-                return new Boolean(checkbox.getState());
-            case IOption.INTEGER:
-                text = textField.getText();
-                if (text.trim().equals("")) {
-                    text = "0";
-                }
-                return Integer.valueOf(text);
-            case IOption.FLOAT:
-                text = textField.getText();
-                if (text.trim().equals("")) {
-                    text = "0";
-                }
-                return Float.valueOf(text);
-            case IOption.STRING:
-                return textField.getText();
-            case IOption.CHOICE:
-                return choice.getSelectedItem();
-            default:
-                return null;
+        case IOption.BOOLEAN:
+            return new Boolean(checkbox.getState());
+        case IOption.INTEGER:
+            text = textField.getText();
+            if (text.trim().equals("")) {
+                text = "0";
+            }
+            return Integer.valueOf(text);
+        case IOption.FLOAT:
+            text = textField.getText();
+            if (text.trim().equals("")) {
+                text = "0";
+            }
+            return Float.valueOf(text);
+        case IOption.STRING:
+            return textField.getText();
+        case IOption.CHOICE:
+            return choice.getSelectedItem();
+        default:
+            return null;
         }
     }
 
@@ -152,15 +152,15 @@ public class DialogOptionComponent extends Panel implements MouseListener,
 
         // Update the correct control.
         switch (option.getType()) {
-            case IOption.BOOLEAN:
-                checkbox.setEnabled(editable);
-                break;
-            case IOption.CHOICE:
-                choice.setEnabled(editable);
-                break;
-            default:
-                textField.setEnabled(editable);
-                break;
+        case IOption.BOOLEAN:
+            checkbox.setEnabled(editable);
+            break;
+        case IOption.CHOICE:
+            choice.setEnabled(editable);
+            break;
+        default:
+            textField.setEnabled(editable);
+            break;
         }
     }
 
@@ -178,16 +178,16 @@ public class DialogOptionComponent extends Panel implements MouseListener,
 
     public void resetToDefault() {
         switch (option.getType()) {
-            case IOption.BOOLEAN:
-                checkbox.setState(((Boolean) option.getDefault())
-                        .booleanValue());
-                break;
-            case IOption.CHOICE:
-                choice.select(0); // Assume first choice is always default
-                break;
-            default:
-                textField.setText(String.valueOf(option.getDefault()));
-                break;
+        case IOption.BOOLEAN:
+            checkbox.setState(((Boolean) option.getDefault())
+                    .booleanValue());
+            break;
+        case IOption.CHOICE:
+            choice.select(0); // Assume first choice is always default
+            break;
+        default:
+            textField.setText(String.valueOf(option.getDefault()));
+            break;
         }
     }
 

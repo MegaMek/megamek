@@ -66,7 +66,7 @@ public class Infantry extends Entity implements Serializable {
     private boolean sneak_camo = false;
     private boolean sneak_ir = false;
     private boolean sneak_ecm = false;
-   
+
     /**
      * Infantry have no critical slot limitations or locations.
      */
@@ -85,9 +85,9 @@ public class Infantry extends Entity implements Serializable {
     public static final int DUG_IN_WORKING = 1; // no protection, can't attack
     public static final int DUG_IN_COMPLETE = 2; // protected, restricted arc
     public static final int DUG_IN_FORTIFYING1 = 3; // no protection, can't
-                                                    // attack
+    // attack
     public static final int DUG_IN_FORTIFYING2 = 4; // no protection, can't
-                                                    // attack
+    // attack
     private int dugIn = DUG_IN_NONE;
 
     // Public and Protected constants, constructors, and methods.
@@ -210,14 +210,14 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat) {
-    	if( game != null
-    			&& game.getOptions().booleanOption("tacops_fast_infantry_move") ) {
-    		if(getWalkMP(gravity, ignoreheat) > 0) {
-    			return getWalkMP(gravity, ignoreheat) + 1;
-    		} else {
-    			return getWalkMP(gravity, ignoreheat) + 2;
-    		}
-    	}
+        if( game != null
+                && game.getOptions().booleanOption("tacops_fast_infantry_move") ) {
+            if(getWalkMP(gravity, ignoreheat) > 0) {
+                return getWalkMP(gravity, ignoreheat) + 1;
+            } else {
+                return getWalkMP(gravity, ignoreheat) + 2;
+            }
+        }
         return getWalkMP(gravity, ignoreheat);
     }
 
@@ -298,30 +298,30 @@ public class Infantry extends Entity implements Serializable {
     @Override
     public String getMovementString(int mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_NONE:
-                return "None";
-            case IEntityMovementType.MOVE_WALK:
-            case IEntityMovementType.MOVE_RUN:
-                switch (getMovementMode()) {
-                    case IEntityMovementMode.INF_LEG:
-                        return "Walked";
-                    case IEntityMovementMode.INF_MOTORIZED:
-                        return "Biked";
-                    case IEntityMovementMode.HOVER:
-                    case IEntityMovementMode.TRACKED:
-                    case IEntityMovementMode.WHEELED:
-                        return "Drove";
-                    case IEntityMovementMode.INF_JUMP:
-                    default:
-                        return "Unknown!";
-                }
-            case IEntityMovementType.MOVE_VTOL_WALK:
-            case IEntityMovementType.MOVE_VTOL_RUN:
-                return "Flew";
-            case IEntityMovementType.MOVE_JUMP:
-                return "Jumped";
+        case IEntityMovementType.MOVE_NONE:
+            return "None";
+        case IEntityMovementType.MOVE_WALK:
+        case IEntityMovementType.MOVE_RUN:
+            switch (getMovementMode()) {
+            case IEntityMovementMode.INF_LEG:
+                return "Walked";
+            case IEntityMovementMode.INF_MOTORIZED:
+                return "Biked";
+            case IEntityMovementMode.HOVER:
+            case IEntityMovementMode.TRACKED:
+            case IEntityMovementMode.WHEELED:
+                return "Drove";
+            case IEntityMovementMode.INF_JUMP:
             default:
                 return "Unknown!";
+            }
+        case IEntityMovementType.MOVE_VTOL_WALK:
+        case IEntityMovementType.MOVE_VTOL_RUN:
+            return "Flew";
+        case IEntityMovementType.MOVE_JUMP:
+            return "Jumped";
+        default:
+            return "Unknown!";
         }
     }
 
@@ -332,27 +332,27 @@ public class Infantry extends Entity implements Serializable {
     @Override
     public String getMovementAbbr(int mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_NONE:
-                return "N";
-            case IEntityMovementType.MOVE_WALK:
-                return "W";
-            case IEntityMovementType.MOVE_RUN:
-                switch (getMovementMode()) {
-                    case IEntityMovementMode.INF_LEG:
-                        return "R";
-                    case IEntityMovementMode.INF_MOTORIZED:
-                        return "B";
-                    case IEntityMovementMode.HOVER:
-                    case IEntityMovementMode.TRACKED:
-                    case IEntityMovementMode.WHEELED:
-                        return "D";
-                    default:
-                        return "?";
-                }
-            case IEntityMovementType.MOVE_JUMP:
-                return "J";
+        case IEntityMovementType.MOVE_NONE:
+            return "N";
+        case IEntityMovementType.MOVE_WALK:
+            return "W";
+        case IEntityMovementType.MOVE_RUN:
+            switch (getMovementMode()) {
+            case IEntityMovementMode.INF_LEG:
+                return "R";
+            case IEntityMovementMode.INF_MOTORIZED:
+                return "B";
+            case IEntityMovementMode.HOVER:
+            case IEntityMovementMode.TRACKED:
+            case IEntityMovementMode.WHEELED:
+                return "D";
             default:
                 return "?";
+            }
+        case IEntityMovementType.MOVE_JUMP:
+            return "J";
+        default:
+            return "?";
         }
     }
 
@@ -474,16 +474,16 @@ public class Infantry extends Entity implements Serializable {
 
         // IS platoon strength is based upon movement type.
         switch (getMovementMode()) {
-            case IEntityMovementMode.INF_LEG:
-            case IEntityMovementMode.INF_MOTORIZED:
-                initializeInternal(INF_PLT_FOOT_MAX_MEN, LOC_INFANTRY);
-                break;
-            case IEntityMovementMode.INF_JUMP:
-                initializeInternal(INF_PLT_JUMP_MAX_MEN, LOC_INFANTRY);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown movement type: "
-                        + getMovementMode());
+        case IEntityMovementMode.INF_LEG:
+        case IEntityMovementMode.INF_MOTORIZED:
+            initializeInternal(INF_PLT_FOOT_MAX_MEN, LOC_INFANTRY);
+            break;
+        case IEntityMovementMode.INF_JUMP:
+            initializeInternal(INF_PLT_JUMP_MAX_MEN, LOC_INFANTRY);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown movement type: "
+                    + getMovementMode());
         }
 
         if (hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
@@ -497,7 +497,7 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
-            throws LocationFullException {
+    throws LocationFullException {
         EquipmentType equip = mounted.getType();
 
         // If the infantry can swarm, they're anti-mek infantry.
@@ -529,8 +529,8 @@ public class Infantry extends Entity implements Serializable {
                 || wtype.hasFlag(WeaponType.F_EXTINGUISHER)
                 || (wtype.getInternalName() == LEG_ATTACK)
                 || (wtype.getInternalName() == SWARM_MEK) || (wtype
-                .getInternalName() == STOP_SWARM))
-                && (dugIn == DUG_IN_NONE)) {
+                        .getInternalName() == STOP_SWARM))
+                        && (dugIn == DUG_IN_NONE)) {
             return Compute.ARC_360;
         }
         return Compute.ARC_FORWARD;
@@ -607,10 +607,10 @@ public class Infantry extends Entity implements Serializable {
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv;
-   
+
         dbv = this.getInternal(Entity.LOC_NONE) * 1.5 * getDamageDivisor();
         int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true), false, false)
-                .getValue();
+        .getValue();
         int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false),
                 true, false).getValue();
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
@@ -637,13 +637,13 @@ public class Infantry extends Entity implements Serializable {
         // http://forums.classicbattletech.com/index.php/topic,20468.0.html
         double speedFactor;
         double speedFactorTableLookup = getRunMP(false, true)
-                + Math.round((double) getJumpMP(false) / 2);
+        + Math.round((double) getJumpMP(false) / 2);
         if (speedFactorTableLookup > 25) {
             speedFactor = Math.pow(1 + (((double) walkMP
                     + (Math.round((double) getJumpMP(false) / 2)) - 5) / 10), 1.2);
         } else {
             speedFactor = Math
-                    .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
+            .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
         }
         speedFactor = Math.round(speedFactor * 100) / 100.0;
         ArrayList<Mounted> weapons = getWeaponList();
@@ -659,7 +659,7 @@ public class Infantry extends Entity implements Serializable {
                 // each weapon is carried once by each platoon member
                 // if an antiMek platoon, count twice
                 wbv += wtype.getBV(this) * this.getInternal(Entity.LOC_NONE)
-                        * (antiMek ? 2 : 0);
+                * (antiMek ? 2 : 0);
             } else {
                 // field guns count only once
                 wbv += wtype.getBV(this);
@@ -766,7 +766,7 @@ public class Infantry extends Entity implements Serializable {
     public PilotingRollData checkBogDown(MoveStep step, IHex curHex,
             Coords lastPos, Coords curPos, boolean isPavementStep) {
         PilotingRollData roll = new PilotingRollData(getId(), 5,
-                "entering boggy terrain");
+        "entering boggy terrain");
         int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
         if (!lastPos.equals(curPos) && (bgMod != TargetRoll.AUTOMATIC_SUCCESS) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) && (getMovementMode() != IEntityMovementMode.HOVER) && (getMovementMode() != IEntityMovementMode.VTOL) && (getMovementMode() != IEntityMovementMode.WIGE) && (step.getElevation() == 0) && !isPavementStep) {
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
@@ -851,15 +851,16 @@ public class Infantry extends Entity implements Serializable {
         }
         return super.isEligibleFor(phase);
     }
-    
+
+    @Override
     public boolean isEligibleForFiring() {
-    	if(game.getOptions().booleanOption("tacops_fast_infantry_move")
-    			&& super.isEligibleForFiring()) {
-    		if(getMovementMode() == IEntityMovementType.MOVE_RUN) {
-    			return false;
-    		}
-    	}
-    	return super.isEligibleForFiring();
+        if(game.getOptions().booleanOption("tacops_fast_infantry_move")
+                && super.isEligibleForFiring()) {
+            if(getMovementMode() == IEntityMovementType.MOVE_RUN) {
+                return false;
+            }
+        }
+        return super.isEligibleForFiring();
     }
 
     @Override
@@ -868,7 +869,7 @@ public class Infantry extends Entity implements Serializable {
             turnsLayingExplosives++;
             if (!(Compute.isInBuilding(game, this))) {
                 turnsLayingExplosives = -1; // give up if no longer in a
-                                            // building
+                // building
             }
         }
         if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
@@ -951,63 +952,63 @@ public class Infantry extends Entity implements Serializable {
     public int getTotalCommGearTons() {
         return 0;
     }
-    
+
     public double getDamageDivisor() {
         return damageDivisor;
     }
-    
+
     public void setDamageDivisor(double d) {
         this.damageDivisor = d;
     }
-    
+
     public boolean isArmorEncumbering() {
         return encumbering;
     }
-    
+
     public void setArmorEncumbering(boolean b) {
         this.encumbering = b;
     }
-    
+
     public boolean hasSpaceSuit() {
         return spaceSuit;
     }
-    
+
     public void setSpaceSuit(boolean b) {
         this.spaceSuit = b;
     }
-    
+
     public boolean hasDEST() {
         return dest;
     }
-    
+
     public void setDEST(boolean b) {
         this.dest = b;
     }
-    
+
     public boolean hasSneakCamo() {
         return sneak_camo;
     }
-    
+
     public void setSneakCamo(boolean b) {
         this.sneak_camo = b;
     }
-    
+
     public boolean hasSneakIR() {
         return sneak_ir;
     }
-    
+
     public void setSneakIR(boolean b) {
         this.sneak_ir = b;
     }
-    
+
     public boolean hasSneakECM() {
         return sneak_ecm;
     }
-    
+
     public void setSneakECM(boolean b) {
         this.sneak_ecm = b;
     }
-    
+
     /**
      * Determine the stealth modifier for firing at this unit from the given
      * range. If the value supplied for <code>range</code> is not one of the
@@ -1027,7 +1028,7 @@ public class Infantry extends Entity implements Serializable {
 
         // Note: infantry are immune to stealth, but not camoflage
         // or mimetic armor
-        
+
         if ((sneak_ir || dest) 
                 && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
             switch (range) {
@@ -1046,7 +1047,7 @@ public class Infantry extends Entity implements Serializable {
                         "Unknown range constant: " + range);
             }
         }
-            
+
         // Simple camo modifier is on top of the movement modifier
         // This can also be in addition to IR/DEST stealth mods!
         if (sneak_camo && (delta_distance < 3)) {
@@ -1057,7 +1058,7 @@ public class Infantry extends Entity implements Serializable {
                 result.append(new TargetRoll(mod, "sneak, Camo"));
             }
         }
-        
+
         if (dest && (delta_distance == 0)) {
             if (result == null) {
                 result = new TargetRoll(1, "DEST suit");
@@ -1065,7 +1066,7 @@ public class Infantry extends Entity implements Serializable {
                 result.append(new TargetRoll(1, "DEST Suit"));
             }
         }
-        
+
 
         if (result == null) {
             result = new TargetRoll(0, "no sneak mods");

@@ -75,7 +75,7 @@ import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
-        ItemListener, DoneButtoned {
+ItemListener, DoneButtoned {
     /**
      *
      */
@@ -191,7 +191,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         panTabs = new TabPanel();
         Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
                 GUIPreferences.getInstance().getInt(
-                        "AdvancedChatLoungeTabFontSize"));
+                "AdvancedChatLoungeTabFontSize"));
         panTabs.setTabFont(tabPanelFont);
 
         // Create a new camo selection dialog.
@@ -212,7 +212,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
         if (null == font) {
             System.err
-                    .println("Couldn't find the new font for the 'Done' button."); //$NON-NLS-1$
+            .println("Couldn't find the new font for the 'Done' button."); //$NON-NLS-1$
         } else {
             butDone.setFont(font);
         }
@@ -336,8 +336,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             butCamo.setImage(images[0]);
         } else {
             butCamo
-                    .setBackground(PlayerColors
-                            .getColor(player.getColorIndex()));
+            .setBackground(PlayerColors
+                    .getColor(player.getColorIndex()));
         }
 
         butInit = new Button(Messages.getString("ChatLounge.butInit")); //$NON-NLS-1$
@@ -615,22 +615,22 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         labBoardSize.setText(Messages
                 .getString("ChatLounge.BoardSize", //$NON-NLS-1$
                         new Object[] {
-                                new Integer(client.getMapSettings()
-                                        .getBoardWidth()),
+                        new Integer(client.getMapSettings()
+                                .getBoardWidth()),
                                 new Integer(client.getMapSettings()
                                         .getBoardHeight()) }));
         labMapSize.setText(Messages.getString("ChatLounge.MapSize", //$NON-NLS-1$
                 new Object[] {
-                        new Integer(client.getMapSettings().getMapWidth()),
-                        new Integer(client.getMapSettings().getMapHeight()) }));
+                new Integer(client.getMapSettings().getMapWidth()),
+                new Integer(client.getMapSettings().getMapHeight()) }));
 
         lisBoardsSelected.removeAll();
         int index = 0;
 
         for (Iterator<String> i = client.getMapSettings().getBoardsSelected(); i.hasNext();) {
             if(client.getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE) {
-              lisBoardsSelected.add((index++) + ": " + Messages.getString("ChatLounge.SPACE")); //$NON-NLS-1$
-              i.next();
+                lisBoardsSelected.add((index++) + ": " + Messages.getString("ChatLounge.SPACE")); //$NON-NLS-1$
+                i.next();
             } else {
                 lisBoardsSelected.add((index++) + ": " + i.next()); //$NON-NLS-1$
             }
@@ -1015,22 +1015,22 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
 
             boolean rpgSkills = client.game.getOptions().booleanOption(
-                    "rpg_gunnery");
+            "rpg_gunnery");
 
             // Handle the "Blind Drop" option.
             if (!entity.getOwner().equals(client.getLocalPlayer())
                     && client.game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
                     && !client.game.getOptions().booleanOption(
-                            "real_blind_drop")) { //$NON-NLS-1$
+                    "real_blind_drop")) { //$NON-NLS-1$
 
                 lisEntities.add(ChatLounge.formatUnit(entity, true, rpgSkills));
                 entityCorrespondance[listIndex++] = entity.getId();
             } else if (entity.getOwner().equals(client.getLocalPlayer())
                     || (!client.game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
-                    && !client.game.getOptions().booleanOption(
+                            && !client.game.getOptions().booleanOption(
                             "real_blind_drop"))) { //$NON-NLS-1$
                 lisEntities
-                        .add(ChatLounge.formatUnit(entity, false, rpgSkills));
+                .add(ChatLounge.formatUnit(entity, false, rpgSkills));
                 entityCorrespondance[listIndex++] = entity.getId();
             }
         }
@@ -1105,43 +1105,43 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 }
             }
             value = Messages
-                    .getString(
-                            "ChatLounge.EntityListEntry1", new Object[] { //$NON-NLS-1$
-                                    entity.getOwner().getName(),
-                                    gunnery,
-                                    new Integer(entity.getCrew().getPiloting()),
-                                    (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                    (isManeiDomini ? Messages
-                                            .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$
+            .getString(
+                    "ChatLounge.EntityListEntry1", new Object[] { //$NON-NLS-1$
+                            entity.getOwner().getName(),
+                            gunnery,
+                            new Integer(entity.getCrew().getPiloting()),
+                            (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            (isManeiDomini ? Messages
+                                    .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$
                                     unitClass,
                                     (posQuirkCount > 0 ? " <" + posQuirkCount + Messages.getString("ChatLounge.pquirk") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                     (negQuirkCount > 0 ? " <" + negQuirkCount + Messages.getString("ChatLounge.nquirk") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                     ((entity.isOffBoard()) ? Messages
                                             .getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
-                                    ((entity.getDeployRound() > 0) ? Messages
-                                            .getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : "") }); //$NON-NLS-1$ //$NON-NLS-2$
+                                            ((entity.getDeployRound() > 0) ? Messages
+                                                    .getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : "") }); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             value = strTreeSet
-                    + Messages
-                            .getString(
-                                    "ChatLounge.EntityListEntry2", new Object[] { //$NON-NLS-1$
-                                            entity.getDisplayName(),
-                                            gunnery,
-                                            new Integer(entity.getCrew()
-                                                    .getPiloting()),
-                                            (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                            (isManeiDomini ? Messages
-                                                    .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$
+            + Messages
+            .getString(
+                    "ChatLounge.EntityListEntry2", new Object[] { //$NON-NLS-1$
+                            entity.getDisplayName(),
+                            gunnery,
+                            new Integer(entity.getCrew()
+                                    .getPiloting()),
+                                    (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                    (isManeiDomini ? Messages
+                                            .getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$
                                             (posQuirkCount > 0 ? " <" + posQuirkCount + Messages.getString("ChatLounge.pquirk") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                             (negQuirkCount > 0 ? " <" + negQuirkCount + Messages.getString("ChatLounge.nquirk") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                             new Integer(entity
                                                     .calculateBattleValue()),
-                                            strTreeView,
-                                            ((entity.isOffBoard()) ? Messages
-                                                    .getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
-                                            ((entity.getDeployRound() > 0) ? Messages
-                                                    .getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : ""), //$NON-NLS-1$ //$NON-NLS-2$
-                                            (entity.isDesignValid() ? "" : Messages.getString("ChatLounge.invalidDesign")) }); //$NON-NLS-1$ //$NON-NLS-2$
+                                                    strTreeView,
+                                                    ((entity.isOffBoard()) ? Messages
+                                                            .getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
+                                                            ((entity.getDeployRound() > 0) ? Messages
+                                                                    .getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : ""), //$NON-NLS-1$ //$NON-NLS-2$
+                                                                    (entity.isDesignValid() ? "" : Messages.getString("ChatLounge.invalidDesign")) }); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return value;
     }
@@ -1162,7 +1162,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
                 if ((null == plyrCamo) || Player.NO_CAMO.equals(plyrCamo)) {
                     pi
-                            .append(", ").append(Player.colorNames[player.getColorIndex()]); //$NON-NLS-1$
+                    .append(", ").append(Player.colorNames[player.getColorIndex()]); //$NON-NLS-1$
                 } else {
                     pi.append(", ").append(player.getCamoFileName()); //$NON-NLS-1$
                 }
@@ -1231,7 +1231,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
             float playerValue = 0;
             for (Enumeration<Entity> j = client.getEntities(); j
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 Entity entity = j.nextElement();
                 if (entity.getOwner().equals(player)) {
                     if (useBv) {
@@ -1249,8 +1249,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
             if (useBv) {
                 lisBVs
-                        .add(player.getName()
-                                + Messages.getString("ChatLounge.BV") + (int) playerValue + " (FM:" + (int) (playerValue * player.getForceSizeBVMod()) + ")"); //$NON-NLS-1$
+                .add(player.getName()
+                        + Messages.getString("ChatLounge.BV") + (int) playerValue + " (FM:" + (int) (playerValue * player.getForceSizeBVMod()) + ")"); //$NON-NLS-1$
             } else if (useCost) {
                 lisBVs.add(player.getName()
                         + Messages.getString("ChatLounge.Cost")
@@ -1301,11 +1301,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         else {
             butCamo.setLabel(""); //$NON-NLS-1$
             butCamo.setBackground(butOptions.getBackground()); // butOptions.getBackground()
-                                                                // == default
-                                                                // background.
-                                                                // This needs to
-                                                                // be cleaned
-                                                                // up.
+            // == default
+            // background.
+            // This needs to
+            // be cleaned
+            // up.
         }
 
         // Update the butCamo's image.
@@ -1323,7 +1323,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
                 ssb.append(IStartingPositions.START_LOCATION_NAMES[player
-                        .getStartingPos()]);
+                                                                   .getStartingPos()]);
                 lisStarts.add(ssb.toString());
             }
         }
@@ -1358,7 +1358,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      */
     private void refreshDoneButton(boolean done) {
         butDone
-                .setLabel(done ? Messages.getString("ChatLounge.notDone") : Messages.getString("ChatLounge.imDone")); //$NON-NLS-1$ //$NON-NLS-2$
+        .setLabel(done ? Messages.getString("ChatLounge.notDone") : Messages.getString("ChatLounge.imDone")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void refreshDoneButton() {
@@ -1438,7 +1438,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             return;
         }
         Entity entity = client.game.getEntity(entityCorrespondance[lisEntities
-                .getSelectedIndex()]);
+                                                                   .getSelectedIndex()]);
         customizeMech(entity);
     }
 
@@ -1494,7 +1494,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             return;
         }
         Entity entity = client.game.getEntity(entityCorrespondance[lisEntities
-                .getSelectedIndex()]);
+                                                                   .getSelectedIndex()]);
         MechView mechView = new MechView(entity, client.game.getOptions().booleanOption("show_bay_detail"));
         TextArea ta = new TextArea();
         ta.setEditable(false);
@@ -1562,12 +1562,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         client.sendAddEntity(fs);
         /*
         clientgui.getCustomFSDialog().setVisible(true);
-        */
+         */
     }
 
     public void viewGroup() {
         new MechGroupView(clientgui.getFrame(), client, entityCorrespondance)
-                .setVisible(true);
+        .setVisible(true);
     }
 
     //
@@ -1674,8 +1674,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             if (selected
                     && client.game.getOptions().booleanOption("blind_drop")) { //$NON-NLS-1$
                 Entity entity = client.game
-                        .getEntity(entityCorrespondance[lisEntities
-                                .getSelectedIndex()]);
+                .getEntity(entityCorrespondance[lisEntities
+                                                .getSelectedIndex()]);
                 butMechReadout.setEnabled(entity.getOwner().equals(
                         client.getLocalPlayer()));
                 butCustom.setEnabled(entity.getOwner().equals(
@@ -1703,16 +1703,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             // enforce exclusive deployment zones in double blind
             if (client.game.getOptions().booleanOption("double_blind")
                     && client.game.getOptions().booleanOption(
-                            "exclusive_db_deployment")) {
+                    "exclusive_db_deployment")) {
                 int i = client.getLocalPlayer().getStartingPos();
                 if (i == 0) {
                     clientgui
-                            .doAlertDialog("Starting Position not allowed",
-                                    "In Double Blind play, you cannot choose 'Any' as starting position.");
+                    .doAlertDialog("Starting Position not allowed",
+                    "In Double Blind play, you cannot choose 'Any' as starting position.");
                     return;
                 }
                 for (Enumeration<Player> e = client.game.getPlayers(); e
-                        .hasMoreElements();) {
+                .hasMoreElements();) {
                     Player player = e.nextElement();
                     if (player.getStartingPos() == 0) {
                         continue;
@@ -1720,13 +1720,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     // check for overlapping starting directions
                     if (((player.getStartingPos() == i)
                             || (player.getStartingPos() + 1 == i) || (player
-                            .getStartingPos() - 1 == i))
-                            && (player.getId() != client.getLocalPlayer()
-                                    .getId())) {
+                                    .getStartingPos() - 1 == i))
+                                    && (player.getId() != client.getLocalPlayer()
+                                            .getId())) {
                         clientgui
-                                .doAlertDialog(
-                                        "Must choose exclusive deployment zone",
-                                        "When using double blind, each player needs to have an exclusive deployment zone.");
+                        .doAlertDialog(
+                                "Must choose exclusive deployment zone",
+                        "When using double blind, each player needs to have an exclusive deployment zone.");
                         return;
                     }
                 }
@@ -1736,7 +1736,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             client.sendDone(done);
             refreshDoneButton(done);
             for (Iterator<Client> i = clientgui.getBots().values().iterator(); i
-                    .hasNext();) {
+            .hasNext();) {
                 i.next().sendDone(done);
             }
         } else if (ev.getSource() == butLoad) {
@@ -1754,19 +1754,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         } else if (ev.getSource() == butDelete) {
             // delete mech
             Entity e = client.getEntity(entityCorrespondance[lisEntities
-                    .getSelectedIndex()]);
+                                                             .getSelectedIndex()]);
             Client c = clientgui.getBots().get(e.getOwner().getName());
             if (c == null) {
                 c = client;
             }
             if (lisEntities.getSelectedIndex() != -1) {
                 c.sendDeleteEntity(entityCorrespondance[lisEntities
-                        .getSelectedIndex()]);
+                                                        .getSelectedIndex()]);
             }
         } else if (ev.getSource() == butDeleteAll) {
             // Build a Vector of this player's entities.
             ArrayList<Entity> currentUnits = client.game
-                    .getPlayerEntities(client.getLocalPlayer(), false);
+            .getPlayerEntities(client.getLocalPlayer(), false);
 
             // Walk through the vector, deleting the entities.
             Iterator<Entity> entities = currentUnits.iterator();
@@ -1793,9 +1793,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             Client c = getPlayerListSelected(lisStarts);
             if (c == null) {
                 clientgui
-                        .doAlertDialog(
-                                Messages
-                                        .getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
+                .doAlertDialog(
+                        Messages
+                        .getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             clientgui.getStartingPositionDialog().setClient(c);
@@ -1821,7 +1821,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         } else if (ev.getSource() == butInit) {
             // alert about teams
             if (clientgui.client.game.getOptions().booleanOption(
-                    "team_initiative")) {
+            "team_initiative")) {
                 AlertDialog id = new AlertDialog(
                         clientgui.frame,
                         Messages.getString("ChatLounge.InitiativeAlert.title"), Messages.getString("ChatLounge.InitiativeAlert.message")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1830,9 +1830,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             Client c = getPlayerListSelected(lisPlayerInfo);
             if (c == null) {
                 clientgui
-                        .doAlertDialog(
-                                Messages
-                                        .getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
+                .doAlertDialog(
+                        Messages
+                        .getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             clientgui.getCustomInitiativeDialog().setClient(c);
@@ -1857,8 +1857,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 c.connect();
             } catch (Exception e) {
                 clientgui
-                        .doAlertDialog(
-                                Messages.getString("ChatLounge.AlertBot.title"), Messages.getString("ChatLounge.AlertBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
+                .doAlertDialog(
+                        Messages.getString("ChatLounge.AlertBot.title"), Messages.getString("ChatLounge.AlertBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
             }
             c.retrieveServerInfo();
             clientgui.getBots().put(name, c);
@@ -1866,9 +1866,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             Client c = getPlayerListSelected(lisPlayerInfo);
             if ((c == null) || (c == client)) {
                 clientgui
-                        .doAlertDialog(
-                                Messages
-                                        .getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBo")); //$NON-NLS-1$ //$NON-NLS-2$
+                .doAlertDialog(
+                        Messages
+                        .getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBo")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             c.die();

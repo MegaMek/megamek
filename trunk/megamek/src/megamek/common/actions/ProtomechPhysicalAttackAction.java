@@ -81,7 +81,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
             te = (Entity) target;
             targetId = target.getTargetId();
         }
-        
+
         if (!game.getOptions().booleanOption("friendly_fire")) {
             // a friendly unit can never be the target of a direct attack.
             if (target.getTargetType() == Targetable.TYPE_ENTITY
@@ -91,7 +91,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
                                     && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
         }
-        
+
         final IHex attHex = game.getBoard().getHex(ae.getPosition());
         final IHex targHex = game.getBoard().getHex(target.getPosition());
         if (attHex == null || targHex == null) {
@@ -100,10 +100,10 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int targetHeight = target.absHeight() + targHex.getElevation();
         final int targetElevation = target.getElevation()
-                + targHex.getElevation();
+        + targHex.getElevation();
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         boolean inSameBuilding = te != null && game.getBoard().getBuildingAt(ae.getPosition()) != null
-                && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
+        && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
         Building bldg = null;
         if (targetInBuilding) {
             bldg = game.getBoard().getBuildingAt(te.getPosition());
@@ -113,25 +113,25 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         // can't target yourself
         if (ae.equals(te)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "You can't target yourself");
+            "You can't target yourself");
         }
 
         // non-protos can't make protomech-physicalattacks
         if (!(ae instanceof Protomech)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Non-protos can't make proto-physicalattacks");
+            "Non-protos can't make proto-physicalattacks");
         }
 
         // Can't target a transported entity.
         if (te != null && Entity.NONE != te.getTransportId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is a passenger.");
+            "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
         if (te != null && Entity.NONE != te.getSwarmTargetId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is swarming a Mek.");
+            "Target is swarming a Mek.");
         }
 
         // check range
@@ -144,19 +144,19 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         if (attackerElevation < targetElevation
                 || attackerElevation > targetHeight) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target elevation not in range");
+            "Target elevation not in range");
         }
 
         // can't physically attack mechs making dfa attacks
         if (te != null && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is making a DFA attack");
+            "Target is making a DFA attack");
         }
 
         // can only target targets in adjacent hexes, not in same hex
         if (range == 0) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target not in adjacent hex");
+            "Target not in adjacent hex");
         }
 
         // check facing
@@ -171,11 +171,11 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         if (0 != range && targetInBuilding) {
             if (!Compute.isInBuilding(game, ae)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Target is inside building");
+                "Target is inside building");
             } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(
                     bldg)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Target is inside differnt building");
+                "Target is inside differnt building");
             }
         }
 
@@ -184,7 +184,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
                 || target.getTargetType() == Targetable.TYPE_FUEL_TANK
                 || target instanceof GunEmplacement) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                    "Targeting adjacent building.");
+            "Targeting adjacent building.");
         }
 
         // Can't target woods or ignite a building with a physical.

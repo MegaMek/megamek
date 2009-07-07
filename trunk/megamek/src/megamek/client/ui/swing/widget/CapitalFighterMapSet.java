@@ -34,9 +34,9 @@ import megamek.common.Entity;
 public class CapitalFighterMapSet implements DisplayMapSet{
 
     private static final String IMAGE_DIR = "data/images/widgets";
-    
+
     private JComponent comp;
-//  Images that shows how much armor left.
+    //  Images that shows how much armor left.
     private Image armorImage;
     // Set of areas to show fighter armor left
     private PMPicArea armorArea;
@@ -66,9 +66,9 @@ public class CapitalFighterMapSet implements DisplayMapSet{
     private int squareSize = 7;
     private int armorRows = 8;
     private int armorCols = 6;
-    
+
     private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
- 
+
     public CapitalFighterMapSet(JComponent c){
         comp = c;
         setAreas();
@@ -91,10 +91,10 @@ public class CapitalFighterMapSet implements DisplayMapSet{
 
     public void setEntity(Entity e){
         Aero t = (Aero) e;
-        
+
         int armor = t.getCapArmor();
         int armorO = t.getCap0Armor();
-        
+
         drawArmorImage(armorImage, armor, armorO);
         armorVLabel.setValue(Integer.toString(armor));
         drawCrits(avCritImage, t.getAvionicsHits());
@@ -123,7 +123,7 @@ public class CapitalFighterMapSet implements DisplayMapSet{
     private void setAreas(){
         armorImage = comp.createImage(armorCols*(squareSize+1), armorRows*(squareSize+1));
         armorArea = new PMPicArea(armorImage);
-        
+
         avCritImage = comp.createImage(3*(squareSize+1), squareSize+1);
         avCritArea = new PMPicArea(avCritImage);
         engineCritImage = comp.createImage(3*(squareSize+1), squareSize+1);
@@ -207,18 +207,18 @@ public class CapitalFighterMapSet implements DisplayMapSet{
         PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
     }
-    
+
     private void translateAreas() {  
         armorLabel.translate(0, 0);
         armorArea.translate(0, squareSize);
         armorVLabel.translate((armorCols*(squareSize+1))/2, squareSize+(armorRows*(squareSize+1))/2);
-        
+
         avCritLabel.translate(5+armorCols*(squareSize+1), stepY);
         engineCritLabel.translate(5+armorCols*(squareSize+1), 2*stepY);
         fcsCritLabel.translate(5+armorCols*(squareSize+1), 3*stepY);
         sensorCritLabel.translate(5+armorCols*(squareSize+1), 4*stepY);
         pilotCritLabel.translate(5+armorCols*(squareSize+1), 5*stepY);
-        
+
         avCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), stepY-(squareSize+1));
         engineCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), 2*stepY-(squareSize+1));
         fcsCritArea.translate(10+pilotCritLabel.width+armorCols*(squareSize+1), 3*stepY-(squareSize+1));
@@ -237,8 +237,8 @@ public class CapitalFighterMapSet implements DisplayMapSet{
             g.fillRect(i*(squareSize+1), 0, squareSize, squareSize);
         }
     }
-    
-//  Redraws armor images
+
+    //  Redraws armor images
     private void drawArmorImage(Image im, int a, int initial) {
         int w = im.getWidth(null);
         int h = im.getHeight(null);

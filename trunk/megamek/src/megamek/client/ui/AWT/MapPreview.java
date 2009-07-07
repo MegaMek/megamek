@@ -170,71 +170,71 @@ public class MapPreview extends Canvas {
             blue = 0;
 
             switch (st.nextToken()) {
-                case StreamTokenizer.TT_EOF:
-                    break scan;
-                case StreamTokenizer.TT_EOL:
-                    break scan;
-                case StreamTokenizer.TT_WORD:
-                    // read in
-                    String key = st.sval;
-                    if (key.equals("unitsize")) { //$NON-NLS-1$
-                        st.nextToken();
-                    } else if (key.equals("background")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+            case StreamTokenizer.TT_EOF:
+                break scan;
+            case StreamTokenizer.TT_EOL:
+                break scan;
+            case StreamTokenizer.TT_WORD:
+                // read in
+                String key = st.sval;
+                if (key.equals("unitsize")) { //$NON-NLS-1$
+                    st.nextToken();
+                } else if (key.equals("background")) { //$NON-NLS-1$
+                    st.nextToken();
+                    red = (int) st.nval;
+                    st.nextToken();
+                    green = (int) st.nval;
+                    st.nextToken();
+                    blue = (int) st.nval;
 
-                        BACKGROUND = new Color(red, green, blue);
-                    } else if (key.equals("heavywoods")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                    BACKGROUND = new Color(red, green, blue);
+                } else if (key.equals("heavywoods")) { //$NON-NLS-1$
+                    st.nextToken();
+                    red = (int) st.nval;
+                    st.nextToken();
+                    green = (int) st.nval;
+                    st.nextToken();
+                    blue = (int) st.nval;
 
-                        HEAVY_WOODS = new Color(red, green, blue);
-                    } else if (key.equals("ultraheavywoods")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                    HEAVY_WOODS = new Color(red, green, blue);
+                } else if (key.equals("ultraheavywoods")) { //$NON-NLS-1$
+                    st.nextToken();
+                    red = (int) st.nval;
+                    st.nextToken();
+                    green = (int) st.nval;
+                    st.nextToken();
+                    blue = (int) st.nval;
 
-                        ULTRA_HEAVY_WOODS = new Color(red, green, blue);
-                    } else if (key.equals("sinkhole")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                    ULTRA_HEAVY_WOODS = new Color(red, green, blue);
+                } else if (key.equals("sinkhole")) { //$NON-NLS-1$
+                    st.nextToken();
+                    red = (int) st.nval;
+                    st.nextToken();
+                    green = (int) st.nval;
+                    st.nextToken();
+                    blue = (int) st.nval;
 
-                        SINKHOLE = new Color(red, green, blue);
-                    } else if (key.equals("smokeandfire")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                    SINKHOLE = new Color(red, green, blue);
+                } else if (key.equals("smokeandfire")) { //$NON-NLS-1$
+                    st.nextToken();
+                    red = (int) st.nval;
+                    st.nextToken();
+                    green = (int) st.nval;
+                    st.nextToken();
+                    blue = (int) st.nval;
 
-                        SMOKE_AND_FIRE = new Color(red, green, blue);
-                    } else {
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                    SMOKE_AND_FIRE = new Color(red, green, blue);
+                } else {
+                    st.nextToken();
+                    red = (int) st.nval;
+                    st.nextToken();
+                    green = (int) st.nval;
+                    st.nextToken();
+                    blue = (int) st.nval;
 
-                        m_terrainColors[Terrains.getType(key)] = new Color(red,
-                                green, blue);
-                    }
+                    m_terrainColors[Terrains.getType(key)] = new Color(red,
+                            green, blue);
+                }
             }
         }
 
@@ -255,10 +255,10 @@ public class MapPreview extends Canvas {
         topMargin = margin;
         leftMargin = margin;
         requiredWidth = m_board.getWidth()
-                * (currentHexSide + currentHexSideBySin30)
-                + currentHexSideBySin30 + 2 * margin;
+        * (currentHexSide + currentHexSideBySin30)
+        + currentHexSideBySin30 + 2 * margin;
         requiredHeight = (2 * m_board.getHeight() + 1) * currentHexSideByCos30
-                + 2 * margin + buttonHeight;
+        + 2 * margin + buttonHeight;
         setSize(requiredWidth, requiredHeight);
         m_dialog.pack();
         // m_dialog.show();
@@ -331,7 +331,7 @@ public class MapPreview extends Canvas {
             } else if (heightDisplayMode == SHOW_TOTAL_HEIGHT) {
                 height = ((h.getTerrain(Terrains.BUILDING) != null) || (h
                         .getTerrain(Terrains.FUEL_TANK) != null)) ? h.ceiling()
-                        : h.floor();
+                                : h.floor();
             }
             if (height != 0) {
                 g.drawString(height + "", baseX + 5, baseY + 5); //$NON-NLS-1$
@@ -373,12 +373,12 @@ public class MapPreview extends Canvas {
         Color oldColor = g.getColor();
         g.setColor(m_terrainColors[Terrains.ROAD]);
         for (Enumeration<int[]> iter = roadHexIndexes.elements(); iter
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             int[] hex = iter.nextElement();
             x = hex[0];
             y = hex[1];
             baseX = x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin
-                    + hexSide[zoom];
+            + hexSide[zoom];
             baseY = (2 * y + 1 + x % 2) * hexSideByCos30[zoom] + topMargin;
             exits = hex[2];
             // Is there a North exit?
@@ -510,47 +510,47 @@ public class MapPreview extends Canvas {
 
         int r, g, b;
         switch (terrain) {
-            case 0:
-            case Terrains.WOODS:
-            case Terrains.JUNGLE:
-            case Terrains.ROUGH:
-            case Terrains.RUBBLE:
-            case Terrains.WATER:
-            case Terrains.PAVEMENT:
-            case Terrains.ICE:
-            case Terrains.FIELDS:
-                level = Math.abs(x.floor());
-                // By experiment it is possible to make only 6 distinctive color
-                // steps
-                if (level > 10)
-                    level = 10;
-                r = terrColor.getRed() - level * 15;
-                g = terrColor.getGreen() - level * 15;
-                b = terrColor.getBlue() - level * 15;
-                if (r < 0)
-                    r = 0;
-                if (g < 0)
-                    g = 0;
-                if (b < 0)
-                    b = 0;
-                return new Color(r, g, b);
-            case Terrains.FUEL_TANK:
-            case Terrains.BUILDING:
-                level = Math.abs(x.ceiling());
-                // By experiment it is possible to make only 6 distinctive color
-                // steps
-                if (level > 10)
-                    level = 10;
-                r = terrColor.getRed() - level * 15;
-                g = terrColor.getGreen() - level * 15;
-                b = terrColor.getBlue() - level * 15;
-                if (r < 0)
-                    r = 0;
-                if (g < 0)
-                    g = 0;
-                if (b < 0)
-                    b = 0;
-                return new Color(r, g, b);
+        case 0:
+        case Terrains.WOODS:
+        case Terrains.JUNGLE:
+        case Terrains.ROUGH:
+        case Terrains.RUBBLE:
+        case Terrains.WATER:
+        case Terrains.PAVEMENT:
+        case Terrains.ICE:
+        case Terrains.FIELDS:
+            level = Math.abs(x.floor());
+            // By experiment it is possible to make only 6 distinctive color
+            // steps
+            if (level > 10)
+                level = 10;
+            r = terrColor.getRed() - level * 15;
+            g = terrColor.getGreen() - level * 15;
+            b = terrColor.getBlue() - level * 15;
+            if (r < 0)
+                r = 0;
+            if (g < 0)
+                g = 0;
+            if (b < 0)
+                b = 0;
+            return new Color(r, g, b);
+        case Terrains.FUEL_TANK:
+        case Terrains.BUILDING:
+            level = Math.abs(x.ceiling());
+            // By experiment it is possible to make only 6 distinctive color
+            // steps
+            if (level > 10)
+                level = 10;
+            r = terrColor.getRed() - level * 15;
+            g = terrColor.getGreen() - level * 15;
+            b = terrColor.getBlue() - level * 15;
+            if (r < 0)
+                r = 0;
+            if (g < 0)
+                g = 0;
+            if (b < 0)
+                b = 0;
+            return new Color(r, g, b);
         }
         return terrColor;
     }
@@ -628,21 +628,21 @@ public class MapPreview extends Canvas {
                 g.setColor(Color.yellow);
                 String label;
                 switch (heightDisplayMode) {
-                    case SHOW_NO_HEIGHT:
-                        label = Messages.getString("MiniMap.NoHeightLabel"); //$NON-NLS-1$
-                        break;
-                    case SHOW_GROUND_HEIGHT:
-                        label = Messages.getString("MiniMap.GroundHeightLabel"); //$NON-NLS-1$
-                        break;
-                    case SHOW_BUILDING_HEIGHT:
-                        label = Messages
-                                .getString("MiniMap.BuildingHeightLabel"); //$NON-NLS-1$
-                        break;
-                    case SHOW_TOTAL_HEIGHT:
-                        label = Messages.getString("MiniMap.TotalHeightLabel"); //$NON-NLS-1$
-                        break;
-                    default:
-                        label = ""; //$NON-NLS-1$
+                case SHOW_NO_HEIGHT:
+                    label = Messages.getString("MiniMap.NoHeightLabel"); //$NON-NLS-1$
+                    break;
+                case SHOW_GROUND_HEIGHT:
+                    label = Messages.getString("MiniMap.GroundHeightLabel"); //$NON-NLS-1$
+                    break;
+                case SHOW_BUILDING_HEIGHT:
+                    label = Messages
+                    .getString("MiniMap.BuildingHeightLabel"); //$NON-NLS-1$
+                    break;
+                case SHOW_TOTAL_HEIGHT:
+                    label = Messages.getString("MiniMap.TotalHeightLabel"); //$NON-NLS-1$
+                    break;
+                default:
+                    label = ""; //$NON-NLS-1$
                 }
                 g.drawString(label, 17, getSize().height - 14 + 12);
             }

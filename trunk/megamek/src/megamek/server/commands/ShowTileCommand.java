@@ -21,7 +21,7 @@ public class ShowTileCommand extends ServerCommand {
         super(
                 server,
                 "tile",
-                "print the information about a tile into the chat window. Ussage: /tile 01 01 whih would show the details for the hex numbered 01 01.");
+        "print the information about a tile into the chat window. Ussage: /tile 01 01 whih would show the details for the hex numbered 01 01.");
     }
 
     /**
@@ -42,20 +42,20 @@ public class ShowTileCommand extends ServerCommand {
                 hex = server.getGame().getBoard().getHex(coord);
                 if (hex != null) {
                     str = "Details for hex (" + (coord.x + 1) + ", "
-                            + (coord.y + 1) + ") : " + hex.toString();
+                    + (coord.y + 1) + ") : " + hex.toString();
 
                     // if we are not playing in double blind mode also list the
                     // units in this tile.
                     if (!server.getGame().getOptions().booleanOption(
-                            "double_blind")) {
+                    "double_blind")) {
                         Enumeration<Entity> entList = server.getGame()
-                                .getEntities(coord);
+                        .getEntities(coord);
                         if (entList.hasMoreElements()) {
                             str = str + "; Contains entities: "
-                                    + entList.nextElement().getId();
+                            + entList.nextElement().getId();
                             while (entList.hasMoreElements()) {
                                 str = str + ", "
-                                        + entList.nextElement().getId();
+                                + entList.nextElement().getId();
                             }
                         }
                     }

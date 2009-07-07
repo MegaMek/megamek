@@ -326,17 +326,17 @@ public interface IBoard {
      * @param value - The value to set the bridge CF to.
      */
     public abstract void setBridgeCF(int value);
-    
+
     public abstract void setType(int t);
-    
+
     public abstract int getType();
-    
+
     public abstract boolean onGround();
-    
+
     public abstract boolean inAtmosphere();
-    
+
     public abstract boolean inSpace();
-    
+
     /**
      * Loads this board from a filename in data/boards
      * 

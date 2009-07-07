@@ -69,8 +69,8 @@ public class MineLayingDialog extends JDialog implements ActionListener {
 
         labMessage = new JLabel(
                 Messages
-                        .getString(
-                                "MineLayingDialog.selectMineToLay", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$
+                .getString(
+                        "MineLayingDialog.selectMineToLay", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$
 
         // Walk through the entity's misc equipment, looking for mines.
         for (Mounted mount : entity.getMisc()) {
@@ -80,8 +80,8 @@ public class MineLayingDialog extends JDialog implements ActionListener {
 
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
-                        .append(' ')
-                        .append(mount.getDesc());
+                .append(' ')
+                .append(mount.getDesc());
                 chMines.addItem(message.toString());
                 vMines.add(mount);
 

@@ -64,7 +64,7 @@ public class SRMInfernoHandler extends SRMHandler {
         server.tryIgniteHex(target.getPosition(), ae.getId(), true, new TargetRoll(wtype.getFireTN(), wtype.getName()),
                 3, vPhaseReport);
     }
-    */
+     */
 
     /*
      * (non-Javadoc)

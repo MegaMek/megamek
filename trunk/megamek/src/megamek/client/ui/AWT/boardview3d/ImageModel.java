@@ -39,7 +39,7 @@ class ImageModel extends Shape3D {
     private static final int LEFT = 3;
     private static final int ALPHA_THRESHOLD = 128;
     private static final double MODEL_SIZE_CORRECTION = 1.5;
-    
+
     public ImageModel(BufferedImage img, boolean scale) {
         super();
         GeometryArray geoms[] = tracePixels(img, scale);
@@ -50,14 +50,14 @@ class ImageModel extends Shape3D {
         if (scale) p *= MODEL_SIZE_CORRECTION;
         this.setBounds(new BoundingBox(new Point3d(-p, -p, -p), new Point3d(p, p, p)));
     }
-    
+
     private static final GeometryArray[] tracePixels(BufferedImage img, boolean scale) {
         WritableRaster r = img.getAlphaRaster();
         int w = img.getWidth();
         int h = img.getHeight();
         int[] pixels = new int[w*h];
         r.getPixels(0, 0, w, h, pixels);
-        
+
         boolean[][][] border = new boolean[h+1][w+1][4];
         boolean[] set = new boolean[4];
 
@@ -145,12 +145,12 @@ class ImageModel extends Shape3D {
 
         NormalGenerator ng = new NormalGenerator();
         ng.generateNormals(gi);
-        
+
         Stripifier st = new Stripifier();
         st.stripify(gi);
 
         geom[0] = gi.getGeometryArray();
-        
+
         // top
         int[] strips = new int[scounts.size()];
         for (int i = 0; i < strips.length; i++) {
@@ -224,7 +224,7 @@ class ImageModel extends Shape3D {
         st.stripify(gi);
 
         geom[2] = gi.getIndexedGeometryArray(false);
-        
+
         return geom;
     }
 
@@ -266,7 +266,7 @@ class ImageModel extends Shape3D {
     private static final Vector<int[]> getContour(boolean[][][] border, int x, int y, int start, byte[][] removed) {
         Vector<int[]> contour = new Vector<int[]>();
         int nx, ny, ortho, dir = start;//, sx = x, sy = y;
-        
+
         // find start of current segment
         nx = x - next[dir][0];
         ny = y - next[dir][1];
@@ -276,7 +276,7 @@ class ImageModel extends Shape3D {
             nx -= next[dir][0];
             ny -= next[dir][1];
         }
-        
+
         // check if we started on a sloped segment, adjust start
         ortho = (dir-1)&3;
         nx = x + next[ortho][0];
@@ -294,7 +294,7 @@ class ImageModel extends Shape3D {
             dir = ortho;
         }
         contour.add(new int[] { 2*x, 2*y });
-        
+
         // main loop
         while (true) {
             // assumption at start: border[dir] is false
@@ -323,7 +323,7 @@ class ImageModel extends Shape3D {
                 ortho = (dir-1)&3;
                 contour.lastElement()[0] -= next[dir][0];
                 contour.lastElement()[1] -= next[dir][1];
-                
+
                 // follow new segment as long as it lasts
                 length = 0;
                 while (border[y][x][dir]) {
@@ -334,7 +334,7 @@ class ImageModel extends Shape3D {
                     length++;
                 }
             }
-            
+
             // check if the end is sloped
             if (border[y][x][ortho]) {
                 nx = x + next[ortho][0];

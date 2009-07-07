@@ -34,39 +34,39 @@ import megamek.common.SmallCraft;
 public class AeroMapSet implements DisplayMapSet{
 
     private static final String IMAGE_DIR = "data/images/widgets";
-    
+
     private Component comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[5];
     private PMSimpleLabel[] labels = new PMSimpleLabel[11];
     private PMValueLabel[] vLabels = new PMValueLabel[11];
     private Vector<BackGroundDrawer>  bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
-  
+
     //private static final int INT_STR_OFFSET = 4;
     //Polygons for all areas
     private Polygon noseArmor = new Polygon( new int[]{45,50,60,65,75,80},
-                                              new int[]{80,20,0,0,20,80}, 6);
+            new int[]{80,20,0,0,20,80}, 6);
     //front internal structure
     private Polygon Structure = new Polygon(new int[]{50,50,75,75},
-                                          new int[]{80,160,160,80},4);
+            new int[]{80,160,160,80},4);
     //Left armor
     private Polygon leftWingArmor = new Polygon(new int[]{50,45,0,0,45,50},
-                                                new int[]{80,80,140,180,160,160},6);  
-       
-    
+            new int[]{80,80,140,180,160,160},6);  
+
+
     //Right armor
     private Polygon rightWingArmor = new Polygon(new int[]{75,80,125,125,80,75},
-                                             new int[]{80,80,140,180,160,160}, 6);
-       
+            new int[]{80,80,140,180,160,160}, 6);
+
     //Rear armor
     private Polygon aftArmor = new Polygon (new int[]{45,45,30,30,95,95,80,80},
-                                             new int[]{160,180,190,200,200,190,180,160},8);
-    
+            new int[]{160,180,190,200,200,190,180,160},8);
+
     private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
- 
-  
-  
+
+
+
     public AeroMapSet(Component c){
         comp = c;
         setAreas();
@@ -162,9 +162,9 @@ public class AeroMapSet implements DisplayMapSet{
         labels[Aero.LOC_NOSE] = WidgetUtils.createLabel("NOS", fm, Color.black,62,30); //$NON-NLS-1$
         //   labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black,10,57); //$NON-NLS-1$
         labels[Aero.LOC_LWING] = WidgetUtils.createLabel("LWG", fm, Color.black,32,120); //$NON-NLS-1$
-//      labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,10,106); //$NON-NLS-1$
+        //      labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,10,106); //$NON-NLS-1$
         labels[Aero.LOC_RWING] = WidgetUtils.createLabel("RWG", fm, Color.black,92,120); //$NON-NLS-1$
-//      labels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black,10,106); //$NON-NLS-1$
+        //      labels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black,10,106); //$NON-NLS-1$
         labels[Aero.LOC_AFT] = WidgetUtils.createLabel("AFT", fm, Color.black,62,170); //$NON-NLS-1$
         labels[4] = WidgetUtils.createLabel("SI", fm, Color.black,62,120); //$NON-NLS-1$
         labels[5] = WidgetUtils.createLabel("Avionics:", fm, Color.white,10,210); //$NON-NLS-1$

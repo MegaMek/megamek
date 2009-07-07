@@ -385,7 +385,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getNagForReadme() {
         return store.getBoolean(NAG_FOR_README);
     }
-    
+
     public boolean getNagForSprint() {
         return store.getBoolean(NAG_FOR_SPRINT);
     }
@@ -623,7 +623,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setNagForReadme(boolean b) {
         store.setValue(NAG_FOR_README, b);
     }
-    
+
     public void setNagForSprint(boolean b) {
         store.setValue(NAG_FOR_SPRINT, b);
     }

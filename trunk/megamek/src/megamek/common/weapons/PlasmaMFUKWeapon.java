@@ -28,7 +28,7 @@ import megamek.server.Server;
  */
 public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
 
-    
+
     private static final long serialVersionUID = -6903718412622554494L;
 
     /**
@@ -38,7 +38,7 @@ public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
         super();
         this.flags |= F_PLASMA_MFUK | F_DIRECT_FIRE;
         ammoType = AmmoType.T_NA;
-        
+
         this.atClass = CLASS_PLASMA;
     }
 

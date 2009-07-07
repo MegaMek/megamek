@@ -73,7 +73,7 @@ public class InfantryMGHandler extends InfantryWeaponHandler {
             //that is called up before misses are determined and will lead to weird reporting
             nDamPerHit = damageDealt;
             return 1;
-            
+
         }
         return super.calcHits(vPhaseReport);
     }

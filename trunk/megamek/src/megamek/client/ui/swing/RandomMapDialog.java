@@ -47,22 +47,22 @@ import megamek.client.ui.swing.widget.SimpleLine;
 import megamek.common.MapSettings;
 
 public class RandomMapDialog extends JDialog implements ActionListener,
-        FocusListener {
+FocusListener {
     /**
      *
      */
     private static final long serialVersionUID = -1932447917045308611L;
     private static final String NONE = Messages
-            .getString("RandomMapDialog.elevNONE"); //$NON-NLS-1$
+    .getString("RandomMapDialog.elevNONE"); //$NON-NLS-1$
     private static final String LOW = Messages
-            .getString("RandomMapDialog.elevLow"); //$NON-NLS-1$
+    .getString("RandomMapDialog.elevLow"); //$NON-NLS-1$
     private static final String MEDIUM = Messages
-            .getString("RandomMapDialog.elevMedium"); //$NON-NLS-1$
+    .getString("RandomMapDialog.elevMedium"); //$NON-NLS-1$
     private static final String HIGH = Messages
-            .getString("RandomMapDialog.elevHigh"); //$NON-NLS-1$
+    .getString("RandomMapDialog.elevHigh"); //$NON-NLS-1$
 
     private static final String INVALID_SETTING = Messages
-            .getString("RandomMapDialog.InvalidSetting"); //$NON-NLS-1$
+    .getString("RandomMapDialog.InvalidSetting"); //$NON-NLS-1$
 
     private static final int NORMAL_LINE_WIDTH = 195;
     private static final int ADVANCED_LINE_WIDTH = 295;
@@ -386,7 +386,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 @Override
                 public boolean accept(File dir) {
                     return ((null != dir.getName()) && dir.getName().endsWith(
-                            ".xml")); //$NON-NLS-1$
+                    ".xml")); //$NON-NLS-1$
                 }
 
                 @Override
@@ -427,7 +427,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 @Override
                 public boolean accept(File dir) {
                     return ((null != dir.getName()) && dir.getName().endsWith(
-                            ".xml")); //$NON-NLS-1$
+                    ".xml")); //$NON-NLS-1$
                 }
 
                 @Override
@@ -527,14 +527,14 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             addLabelTextField(labRoughSpots, texMinRoughSpots,
                     texMaxRoughSpots, "-"); //$NON-NLS-1$
             addLabelTextField(labRoughSize, texMinRoughSize, texMaxRoughSize,
-                    "-"); //$NON-NLS-1$
+            "-"); //$NON-NLS-1$
 
             addSeparator(slRoughAd);
 
             addLabelTextField(labSwampSpots, texMinSwampSpots,
                     texMaxSwampSpots, "-"); //$NON-NLS-1$
             addLabelTextField(labSwampSize, texMinSwampSize, texMaxSwampSize,
-                    "-"); //$NON-NLS-1$
+            "-"); //$NON-NLS-1$
 
             addSeparator(slSwampAd);
 
@@ -545,7 +545,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             addLabelTextField(labWaterSpots, texMinWaterSpots,
                     texMaxWaterSpots, "-"); //$NON-NLS-1$
             addLabelTextField(labWaterSize, texMinWaterSize, texMaxWaterSize,
-                    "-"); //$NON-NLS-1$
+            "-"); //$NON-NLS-1$
             addLabelTextField(labProbDeep, texProbDeep);
 
             addSeparator(slLakesAd);
@@ -1126,9 +1126,9 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         texMaxWaterSpots.setText(Integer.toString(mapSettings
                 .getMaxWaterSpots()));
         texMinWaterSize
-                .setText(Integer.toString(mapSettings.getMinWaterSize()));
+        .setText(Integer.toString(mapSettings.getMinWaterSize()));
         texMaxWaterSize
-                .setText(Integer.toString(mapSettings.getMaxWaterSize()));
+        .setText(Integer.toString(mapSettings.getMaxWaterSize()));
 
         texMinForestSpots.setText(Integer.toString(mapSettings
                 .getMinForestSpots()));
@@ -1144,18 +1144,18 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         texMaxRoughSpots.setText(Integer.toString(mapSettings
                 .getMaxRoughSpots()));
         texMinRoughSize
-                .setText(Integer.toString(mapSettings.getMinRoughSize()));
+        .setText(Integer.toString(mapSettings.getMinRoughSize()));
         texMaxRoughSize
-                .setText(Integer.toString(mapSettings.getMaxRoughSize()));
+        .setText(Integer.toString(mapSettings.getMaxRoughSize()));
 
         texMinSwampSpots.setText(Integer.toString(mapSettings
                 .getMinSwampSpots()));
         texMaxSwampSpots.setText(Integer.toString(mapSettings
                 .getMaxSwampSpots()));
         texMinSwampSize
-                .setText(Integer.toString(mapSettings.getMinSwampSize()));
+        .setText(Integer.toString(mapSettings.getMinSwampSize()));
         texMaxSwampSize
-                .setText(Integer.toString(mapSettings.getMaxSwampSize()));
+        .setText(Integer.toString(mapSettings.getMaxSwampSize()));
 
         texMinPavementSpots.setText(Integer.toString(mapSettings
                 .getMinPavementSpots()));
@@ -1268,18 +1268,18 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             boardHeight = Integer.parseInt(texBoardHeight.getText());
         } catch (NumberFormatException ex) {
             JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            Messages
-                                    .getString("RandomMapDialog.OnlyIntegersWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            .showMessageDialog(
+                    frame,
+                    Messages
+                    .getString("RandomMapDialog.OnlyIntegersWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             return false;
         }
 
         if ((boardWidth <= 0) || (boardHeight <= 0)) {
             JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            Messages.getString("RandomMapDialog.BoardSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            .showMessageDialog(
+                    frame,
+                    Messages.getString("RandomMapDialog.BoardSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             return false;
         }
 
@@ -1312,9 +1312,9 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 maxPavementSpots = Integer.parseInt(texMaxPavementSpots
                         .getText());
                 minPavementSize = Integer
-                        .parseInt(texMinPavementSize.getText());
+                .parseInt(texMinPavementSize.getText());
                 maxPavementSize = Integer
-                        .parseInt(texMaxPavementSize.getText());
+                .parseInt(texMaxPavementSize.getText());
                 minRubbleSpots = Integer.parseInt(texMinRubbleSpots.getText());
                 maxRubbleSpots = Integer.parseInt(texMaxRubbleSpots.getText());
                 minRubbleSize = Integer.parseInt(texMinRubbleSize.getText());
@@ -1367,560 +1367,560 @@ public class RandomMapDialog extends JDialog implements ActionListener,
 
             } catch (NumberFormatException ex) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.OnlyIntegersWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.OnlyIntegersWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
 
             if ((hilliness < 0) || (hilliness > 99)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.AmmountOfElevationWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.AmmountOfElevationWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if ((cliffs < 0) || (cliffs > 100)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.CliffsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.CliffsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (range < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.elevRangeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.elevRangeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if ((probInvert < 0) || (probInvert > 100)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.depressionWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.depressionWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minWaterSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinLakesWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinLakesWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxWaterSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxLakesWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxLakesWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxWaterSpots < minWaterSpots) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxLakesWarn2"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxLakesWarn2"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minWaterSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinLakeSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinLakeSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxWaterSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxLakeSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxLakeSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxWaterSize < minWaterSize) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxLakeSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxLakeSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if ((probDeep < 0) || (probDeep > 100)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.DeepWaterProbWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.DeepWaterProbWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minForestSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinForestsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinForestsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxForestSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxForestsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxForestsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxForestSpots < minForestSpots) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxForestsWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxForestsWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minForestSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinForestSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinForestSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxForestSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxForestSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxForestSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxForestSize < minForestSize) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxForestSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxForestSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if ((probHeavy < 0) || (probHeavy > 100)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.HeavyForestProbWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.HeavyForestProbWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minRoughSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinRoughsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinRoughsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxRoughSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRoughsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxRoughsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxRoughSpots < minRoughSpots) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRoughsWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxRoughsWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minRoughSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinRoughSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinRoughSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxRoughSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRoughSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxRoughSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxRoughSize < minRoughSize) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRoughSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxRoughSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minSwampSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinSwampsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinSwampsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxSwampSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxSwampsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxSwampsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxSwampSpots < minSwampSpots) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxSwampsWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxSwampsWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minSwampSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinSwampSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinSwampSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxSwampSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxSwampSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxSwampSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxSwampSize < minSwampSize) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxSwampSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxSwampSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minPavementSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinPavementWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinPavementWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxPavementSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxPavementWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxPavementWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxPavementSpots < minPavementSpots) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxPavementWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxPavementWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minPavementSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinPavementSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinPavementSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxPavementSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxPavementSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxPavementSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxPavementSize < minPavementSize) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxPavementSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxPavementSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minRubbleSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinRubbleWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinRubbleWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxRubbleSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRubbleWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxRubbleWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxRubbleSpots < minRubbleSpots) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRubbleWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxRubbleWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minRubbleSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinRubbleSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinRubbleSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxRubbleSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRubbleSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxRubbleSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxRubbleSize < minRubbleSize) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRubbleSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxRubbleSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minFortifiedSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinFortifiedWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinFortifiedWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxFortifiedSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxFortifiedWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxFortifiedWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxFortifiedSpots < minFortifiedSpots) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxFortifiedWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxFortifiedWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minFortifiedSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinFortifiedSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinFortifiedSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxFortifiedSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxFortifiedSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxFortifiedSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxFortifiedSize < minFortifiedSize) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxFortifiedSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxFortifiedSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minIceSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinIceWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinIceWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxIceSpots < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxIceWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxIceWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxIceSpots < minIceSpots) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxIceWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxIceWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minIceSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinIceSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinIceSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxIceSize < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxIceSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxIceSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxIceSize < minIceSize) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxIceSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxIceSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if ((probRiver < 0) || (probRiver > 100)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.RiverProbWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.RiverProbWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if ((probRoad < 0) || (probRoad > 100)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.RoadProbWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.RoadProbWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if ((probCrater < 0) || (probCrater > 100)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.CratersProbWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.CratersProbWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minRadius < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinCraterRadiusWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinCraterRadiusWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxRadius < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxCraterRadiusWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxCraterRadiusWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxRadius < minRadius) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxCraterRadiusWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxCraterRadiusWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxCraters < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxCratersWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxCratersWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minCraters < 0) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinCratersWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MinCratersWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (maxCraters < minCraters) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxCratersWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MaxCratersWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if ((algorithmToUse < 0) || (algorithmToUse > 2)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.AlgorithmWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.AlgorithmWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
 
             if ((cityMinCF < 1) || (cityMaxCF > 150)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.CFOutOfRangeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.CFOutOfRangeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
 
             if ((cityMinFloors < 1) || (cityMaxFloors > 100)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.FloorsOutOfRangeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.FloorsOutOfRangeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
 
             if ((cityDensity < 1) || (cityDensity > 100)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.DensityOutOfRangeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.DensityOutOfRangeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
 
             if (((mountainWidthMin < 1) || (mountainWidthMax < mountainWidthMin))
                     && (mountainPeaks > 0)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MountainWidthOutOfRange"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("RandomMapDialog.MountainWidthOutOfRange"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
 
         } else {

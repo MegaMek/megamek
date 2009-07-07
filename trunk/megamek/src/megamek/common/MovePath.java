@@ -143,7 +143,7 @@ public class MovePath implements Cloneable, Serializable {
     public String toString() {
         final StringBuffer sb = new StringBuffer();
         for (final Enumeration<MoveStep> i = steps.elements(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             sb.append(i.nextElement().toString());
             sb.append(' ');
         }
@@ -208,7 +208,7 @@ public class MovePath implements Cloneable, Serializable {
 
     public boolean canShift() {
         return ((entity instanceof QuadMech) || entity.isUsingManAce())
-                && !isJumping();
+        && !isJumping();
     }
 
     /**
@@ -417,7 +417,7 @@ public class MovePath implements Cloneable, Serializable {
         }
         return entity.getElevation();
     }
-    
+
     /**
      * get final altitude 
      */
@@ -490,7 +490,7 @@ public class MovePath implements Cloneable, Serializable {
         // hopefully there's no impossible steps in the middle of possible ones
         final Vector<MoveStep> goodSteps = new Vector<MoveStep>();
         for (final Enumeration<MoveStep> i = steps.elements(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             final MoveStep step = i.nextElement();
             if (step.getMovementType() != IEntityMovementType.MOVE_ILLEGAL) {
                 goodSteps.addElement(step);
@@ -535,21 +535,21 @@ public class MovePath implements Cloneable, Serializable {
     public static int lateralShiftForTurn(final int turn, final int direction) {
         if (direction == MovePath.STEP_FORWARDS) {
             switch (turn) {
-                case MovePath.STEP_TURN_LEFT:
-                    return MovePath.STEP_LATERAL_LEFT;
-                case MovePath.STEP_TURN_RIGHT:
-                    return MovePath.STEP_LATERAL_RIGHT;
-                default:
-                    return turn;
+            case MovePath.STEP_TURN_LEFT:
+                return MovePath.STEP_LATERAL_LEFT;
+            case MovePath.STEP_TURN_RIGHT:
+                return MovePath.STEP_LATERAL_RIGHT;
+            default:
+                return turn;
             }
         }
         switch (turn) {
-            case MovePath.STEP_TURN_LEFT:
-                return MovePath.STEP_LATERAL_LEFT_BACKWARDS;
-            case MovePath.STEP_TURN_RIGHT:
-                return MovePath.STEP_LATERAL_RIGHT_BACKWARDS;
-            default:
-                return turn;
+        case MovePath.STEP_TURN_LEFT:
+            return MovePath.STEP_LATERAL_LEFT_BACKWARDS;
+        case MovePath.STEP_TURN_RIGHT:
+            return MovePath.STEP_LATERAL_RIGHT_BACKWARDS;
+        default:
+            return turn;
         }
     }
 
@@ -558,16 +558,16 @@ public class MovePath implements Cloneable, Serializable {
      */
     static int turnForLateralShift(final int shift) {
         switch (shift) {
-            case MovePath.STEP_LATERAL_LEFT:
-                return MovePath.STEP_TURN_LEFT;
-            case MovePath.STEP_LATERAL_RIGHT:
-                return MovePath.STEP_TURN_RIGHT;
-            case MovePath.STEP_LATERAL_LEFT_BACKWARDS:
-                return MovePath.STEP_TURN_LEFT;
-            case MovePath.STEP_LATERAL_RIGHT_BACKWARDS:
-                return MovePath.STEP_TURN_RIGHT;
-            default:
-                return shift;
+        case MovePath.STEP_LATERAL_LEFT:
+            return MovePath.STEP_TURN_LEFT;
+        case MovePath.STEP_LATERAL_RIGHT:
+            return MovePath.STEP_TURN_RIGHT;
+        case MovePath.STEP_LATERAL_LEFT_BACKWARDS:
+            return MovePath.STEP_TURN_LEFT;
+        case MovePath.STEP_LATERAL_RIGHT_BACKWARDS:
+            return MovePath.STEP_TURN_RIGHT;
+        default:
+            return shift;
         }
     }
 
@@ -660,7 +660,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     public void findPathTo(final Coords dest, final int type) {
         final int timeLimit = PreferenceManager.getClientPreferences()
-                .getMaxPathfinderTime();
+        .getMaxPathfinderTime();
 
         if (timeLimit >= 5000) {
             System.out.print("WARNING!!!  Settings allow up to ");
@@ -754,7 +754,7 @@ public class MovePath implements Cloneable, Serializable {
                 if (expandedPath.getLastStep().isMovementPossible(game,
                         startingPos, startingElev)) {
                     final MovePath found = discovered
-                            .get(expandedPath.getKey());
+                    .get(expandedPath.getKey());
                     if ((found != null) && (mpc.compare(found, expandedPath) <= 0)) {
                         continue;
                     }
@@ -962,11 +962,11 @@ public class MovePath implements Cloneable, Serializable {
 
         public int compare(final MovePath first, final MovePath second) {
             final int firstDist = first.getMpUsed()
-                    + first.getFinalCoords().distance(destination)
-                    + getFacingDiff(first);
+            + first.getFinalCoords().distance(destination)
+            + getFacingDiff(first);
             final int secondDist = second.getMpUsed()
-                    + second.getFinalCoords().distance(destination)
-                    + getFacingDiff(second);
+            + second.getFinalCoords().distance(destination)
+            + getFacingDiff(second);
             return firstDist - secondDist;
         }
 
@@ -1000,13 +1000,13 @@ public class MovePath implements Cloneable, Serializable {
             return priorPos;
         }
 
-         for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements();) {
-             final MoveStep step = i.nextElement();
-             if(step.getPosition() != finalPos) {
-                 priorPos = step.getPosition();
-             }
-         }
-         return priorPos;
+        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
+            if(step.getPosition() != finalPos) {
+                priorPos = step.getPosition();
+            }
+        }
+        return priorPos;
 
     }
 

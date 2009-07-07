@@ -50,7 +50,7 @@ public final class InfantryBay extends Bay {
         this.currentSpace = space;
         this.doors = doors;
     }
-  
+
     /**
      * Determines if this object can accept the given unit.  The unit may
      * not be of the appropriate type or there may be no room for the unit.
@@ -74,7 +74,7 @@ public final class InfantryBay extends Bay {
         if ( this.currentSpace < 1 ) {
             result = false;
         }
-        
+
         //is the door functional
         if( this.doors < 1 ) {
             result = false;
@@ -88,10 +88,10 @@ public final class InfantryBay extends Bay {
     public String getUnusedString() {
         return "Infantry - " + this.currentSpace + " platoons";
     }
-    
+
     @Override
     public String getType() {
         return "Infantry";
     }
-    
+
 } // End package class TroopSpace implements Transporter

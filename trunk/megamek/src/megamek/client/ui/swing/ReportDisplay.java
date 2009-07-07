@@ -61,7 +61,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
 
         Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
                 GUIPreferences.getInstance().getInt(
-                        "AdvancedChatLoungeTabFontSize"));
+                "AdvancedChatLoungeTabFontSize"));
         tabs.setFont(tabPanelFont);
 
         resetTabs();
@@ -189,13 +189,13 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
                     ((JTextArea) ((JScrollPane) tabs.getComponentAt(tabs
                             .indexOfTab("Round " + catchup))).getViewport()
                             .getView()).setText(clientgui.getClient()
-                            .receiveReport(clientgui.getClient().game.getReports(catchup)));
+                                    .receiveReport(clientgui.getClient().game.getReports(catchup)));
                     continue;
                 }
                 String text = roundText;
                 if (catchup != round) {
                     text = clientgui.getClient()
-                            .receiveReport(clientgui.getClient().game.getReports(catchup));
+                    .receiveReport(clientgui.getClient().game.getReports(catchup));
                 }
                 ta = new JTextArea(text, 40, 25);
                 ta.setEditable(false);
@@ -261,7 +261,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         resetButtons();
         rerolled = false;
     }
-    
+
     @Override
     protected void clear() {
         //move along, move along, nothing to see here

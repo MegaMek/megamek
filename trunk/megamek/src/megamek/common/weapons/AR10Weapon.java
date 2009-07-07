@@ -60,7 +60,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.maxRange = RANGE_EXT;
         this.atClass = CLASS_AR10;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

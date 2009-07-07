@@ -34,7 +34,7 @@ public class ListCamoFiles {
 
         try {
             String rootDir = PreferenceManager.getClientPreferences()
-                    .getDataDirectory();
+            .getDataDirectory();
             File camoLib = new File(rootDir + "/images/camo");
             DirectoryItems images = new DirectoryItems(camoLib, "",
                     ImageFileFactory.getInstance());

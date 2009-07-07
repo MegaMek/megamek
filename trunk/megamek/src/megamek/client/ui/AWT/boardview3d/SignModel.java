@@ -32,42 +32,42 @@ class SignModel extends Shape3D {
         GeometryInfo gi = new GeometryInfo(GeometryInfo.QUAD_ARRAY);
         final double top = Math.sqrt(BoardModel.HEX_SIDE_LENGTH/2*BoardModel.HEX_SIDE_LENGTH/2-BoardModel.HEX_DIAMETER/6*BoardModel.HEX_DIAMETER/6);
         double[] coords = {
-            -BoardModel.HEX_SIDE_LENGTH/4, BoardModel.HEX_DIAMETER/12, 0.0,
-            -BoardModel.HEX_SIDE_LENGTH/4, 0, top,
-             BoardModel.HEX_SIDE_LENGTH/4, 0, top,
-             BoardModel.HEX_SIDE_LENGTH/4, BoardModel.HEX_DIAMETER/12, 0.0,
+                -BoardModel.HEX_SIDE_LENGTH/4, BoardModel.HEX_DIAMETER/12, 0.0,
+                -BoardModel.HEX_SIDE_LENGTH/4, 0, top,
+                BoardModel.HEX_SIDE_LENGTH/4, 0, top,
+                BoardModel.HEX_SIDE_LENGTH/4, BoardModel.HEX_DIAMETER/12, 0.0,
 
-             0.0, -BoardModel.HEX_DIAMETER/6, 0.0,
-             BoardModel.HEX_SIDE_LENGTH/8, -BoardModel.HEX_DIAMETER/8, top,
-            -BoardModel.HEX_SIDE_LENGTH/8, BoardModel.HEX_DIAMETER/8, top,
-            -BoardModel.HEX_SIDE_LENGTH/4, BoardModel.HEX_DIAMETER/12, 0.0,
+                0.0, -BoardModel.HEX_DIAMETER/6, 0.0,
+                BoardModel.HEX_SIDE_LENGTH/8, -BoardModel.HEX_DIAMETER/8, top,
+                -BoardModel.HEX_SIDE_LENGTH/8, BoardModel.HEX_DIAMETER/8, top,
+                -BoardModel.HEX_SIDE_LENGTH/4, BoardModel.HEX_DIAMETER/12, 0.0,
 
-             BoardModel.HEX_SIDE_LENGTH/4, BoardModel.HEX_DIAMETER/12, 0.0,
-             BoardModel.HEX_SIDE_LENGTH/8, BoardModel.HEX_DIAMETER/8, top,
-            -BoardModel.HEX_SIDE_LENGTH/8, -BoardModel.HEX_DIAMETER/8, top,
-             0.0, -BoardModel.HEX_DIAMETER/6, 0.0,
+                BoardModel.HEX_SIDE_LENGTH/4, BoardModel.HEX_DIAMETER/12, 0.0,
+                BoardModel.HEX_SIDE_LENGTH/8, BoardModel.HEX_DIAMETER/8, top,
+                -BoardModel.HEX_SIDE_LENGTH/8, -BoardModel.HEX_DIAMETER/8, top,
+                0.0, -BoardModel.HEX_DIAMETER/6, 0.0,
         };
         float[] tcoords = {
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 1.0f,
-            0.0f, 0.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f,
+                0.0f, 0.0f,
 
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 1.0f,
-            0.0f, 0.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f,
+                0.0f, 0.0f,
 
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 1.0f,
-            0.0f, 0.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f,
+                0.0f, 0.0f,
 
         };
         gi.setCoordinates(coords);
         gi.setTextureCoordinateParams(1, 2);
         gi.setTextureCoordinates(0, tcoords);
-        
+
         NormalGenerator ng = new NormalGenerator();
         ng.generateNormals(gi);
 

@@ -46,7 +46,7 @@ public class ACIncendiaryHandler extends AmmoWeaponHandler {
         super(t, w, g, s);
         damageType = DamageType.INCENDIARY;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

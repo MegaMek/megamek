@@ -35,7 +35,7 @@ import megamek.common.IGame;
  * menu bar, and the current state of the program.
  */
 public class CommonMenuBar extends MenuBar implements ActionListener,
-        KeyListener {
+KeyListener {
     private static final long serialVersionUID = 4348769145034437972L;
 
     /**
@@ -977,7 +977,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     public synchronized void setMoveFleeEnabled(boolean enabled) {
         moveFlee.setEnabled(enabled);
     }
-    
+
     public synchronized void setMoveFlyOffEnabled(boolean enabled) {
         moveFlyOff.setEnabled(enabled);
     }
@@ -1218,7 +1218,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     public synchronized void setFireModeEnabled(boolean enabled) {
         fireMode.setEnabled(enabled);
     }
-    
+
     public synchronized void setFireCalledEnabled(boolean enabled) {
         fireCalled.setEnabled(enabled);
     }
@@ -1252,7 +1252,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
                 .getMenuShortcutKeyMask()) != 0) {
             // for every menu accelerator...
             for (Enumeration<MenuShortcut> shortcuts = shortcuts(); shortcuts
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 MenuShortcut shortcut = shortcuts.nextElement();
 
                 // is this keyPress the same as a menu accelerator?
@@ -1262,7 +1262,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
                     if (getShortcutMenuItem(shortcut).isEnabled()) {
                         actionPerformed(new ActionEvent(this, 1,
                                 getShortcutMenuItem(shortcut)
-                                        .getActionCommand()));
+                                .getActionCommand()));
                     }
                 }
             }

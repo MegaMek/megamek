@@ -206,9 +206,9 @@ public class HexTileset {
         r.close();
 
         System.out
-                .println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-1$ //$NON-NLS-2$
+        .println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-1$ //$NON-NLS-2$
         System.out
-                .println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-1$ //$NON-NLS-2$
+        .println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -282,8 +282,8 @@ public class HexTileset {
             } else if (oTerr == null
                     || (cTerr.getLevel() != ITerrain.WILDCARD && oTerr
                             .getLevel() != cTerr.getLevel())
-                    || (cTerr.hasExitsSpecified() && oTerr.getExits() != cTerr
-                            .getExits())) {
+                            || (cTerr.hasExitsSpecified() && oTerr.getExits() != cTerr
+                                    .getExits())) {
                 return 0;
             }
         }

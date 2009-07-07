@@ -45,7 +45,7 @@ import megamek.common.Tank;
 import megamek.common.VTOL;
 
 public class RandomSkillDialog extends Dialog implements
-        ActionListener, ItemListener {
+ActionListener, ItemListener {
 
     /**
      * 
@@ -179,8 +179,8 @@ public class RandomSkillDialog extends Dialog implements
         setLocation(clientgui.frame.getLocation().x
                 + clientgui.frame.getSize().width / 2 - getSize().width / 2,
                 clientgui.frame.getLocation().y
-                        + clientgui.frame.getSize().height / 2
-                        - getSize().height / 2);
+                + clientgui.frame.getSize().height / 2
+                - getSize().height / 2);
     }
 
     private void setupButtons() {
@@ -249,13 +249,13 @@ public class RandomSkillDialog extends Dialog implements
                 c = client;
             }
             for (Enumeration<Entity> e = c.game.getEntities(); e
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 Entity ent = e.nextElement();
                 if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
                     int skills[] = Compute.getRandomSkills(chMethod
                             .getSelectedIndex(), chType.getSelectedIndex(),
                             chLevel.getSelectedIndex(), ent instanceof Tank
-                                    || ent instanceof VTOL);
+                            || ent instanceof VTOL);
                     if (cForceClose.getState()) {
                         skills[1] = skills[0] + 1;
                     }

@@ -54,7 +54,7 @@ class AttackModel extends ArrowModel {
         source.z += BoardModel.HEX_HEIGHT/2;
         Point3d target = BoardModel.getHexLocation(t.getPosition(), thex.surface()+t.getHeight());
         target.z += BoardModel.HEX_HEIGHT/2;
-        
+
         setCapability(ALLOW_DETACH);
         setUserData(aa);
 
@@ -84,7 +84,7 @@ class AttackModel extends ArrowModel {
 
         TransformGroup tg = new TransformGroup(new Transform3D(rot, new Vector3d(source), 1.0));
         tg.addChild(anim);
-        
+
         labelLocation = new Vector3d(target);
         labelLocation.negate();
         labelLocation.add(source);
@@ -95,37 +95,37 @@ class AttackModel extends ArrowModel {
 
         addChild(tg);
     }
-    
+
     void add(AttackAction aa, ViewTransform currentView) {
         for (Enumeration<?> e = getAllChildren(); e.hasMoreElements();) {
             Node tg = (Node)e.nextElement();
             if (aa.equals(tg.getUserData())) return;
         }
-        
+
         String label = "?";
-        
+
         if (aa instanceof WeaponAttackAction) {
             WeaponAttackAction action = (WeaponAttackAction)aa;
             final WeaponType wtype = (WeaponType)game.getEntity(aa.getEntityId()).getEquipment(action.getWeaponId()).getType();
             label = wtype.getName()+Messages.getString("BoardView1.needs")+
-                action.toHit(game).getValueAsString()+" "+action.toHit(game).getTableDesc();
+            action.toHit(game).getValueAsString()+" "+action.toHit(game).getTableDesc();
         } else if (aa instanceof KickAttackAction) {
             KickAttackAction action = (KickAttackAction)aa;
             switch (action.getLeg()) {
             case KickAttackAction.BOTH:
                 label = Messages.getString("BoardView1.kickBoth", new Object[] {
-                    KickAttackAction.toHit(game, aa.getEntityId(), trg, KickAttackAction.LEFT).getValueAsString(),
-                    KickAttackAction.toHit(game, aa.getEntityId(), trg, KickAttackAction.RIGHT).getValueAsString(),
+                        KickAttackAction.toHit(game, aa.getEntityId(), trg, KickAttackAction.LEFT).getValueAsString(),
+                        KickAttackAction.toHit(game, aa.getEntityId(), trg, KickAttackAction.RIGHT).getValueAsString(),
                 });
                 break;
             case KickAttackAction.LEFT:
                 label = Messages.getString("BoardView1.kickLeft", new Object[] {
-                    KickAttackAction.toHit(game, aa.getEntityId(), trg, KickAttackAction.LEFT).getValueAsString(),
+                        KickAttackAction.toHit(game, aa.getEntityId(), trg, KickAttackAction.LEFT).getValueAsString(),
                 });
                 break;
             case KickAttackAction.RIGHT:
                 label = Messages.getString("BoardView1.kickRight", new Object[] {
-                    KickAttackAction.toHit(game, aa.getEntityId(), trg, KickAttackAction.RIGHT).getValueAsString(),
+                        KickAttackAction.toHit(game, aa.getEntityId(), trg, KickAttackAction.RIGHT).getValueAsString(),
                 });
                 break;
             }
@@ -134,46 +134,46 @@ class AttackModel extends ArrowModel {
             switch (action.getArm()) {
             case PunchAttackAction.BOTH:
                 label = Messages.getString("BoardView1.punchBoth", new Object[] {
-                    PunchAttackAction.toHit(game, aa.getEntityId(), trg, PunchAttackAction.LEFT).getValueAsString(),
-                    PunchAttackAction.toHit(game, aa.getEntityId(), trg, PunchAttackAction.RIGHT).getValueAsString(),
+                        PunchAttackAction.toHit(game, aa.getEntityId(), trg, PunchAttackAction.LEFT).getValueAsString(),
+                        PunchAttackAction.toHit(game, aa.getEntityId(), trg, PunchAttackAction.RIGHT).getValueAsString(),
                 });
                 break;
             case PunchAttackAction.LEFT:
                 label = Messages.getString("BoardView1.punchLeft", new Object[] {
-                    PunchAttackAction.toHit(game, aa.getEntityId(), trg, PunchAttackAction.LEFT).getValueAsString(),
+                        PunchAttackAction.toHit(game, aa.getEntityId(), trg, PunchAttackAction.LEFT).getValueAsString(),
                 });
                 break;
             case PunchAttackAction.RIGHT:
                 label = Messages.getString("BoardView1.punchRight", new Object[] {
-                    PunchAttackAction.toHit(game, aa.getEntityId(), trg, PunchAttackAction.RIGHT).getValueAsString(),
+                        PunchAttackAction.toHit(game, aa.getEntityId(), trg, PunchAttackAction.RIGHT).getValueAsString(),
                 });
                 break;
             }
         } else if (aa instanceof PushAttackAction) {
             label = Messages.getString("BoardView1.push", new Object[] {
-                ((PushAttackAction)aa).toHit(game).getValueAsString()
+                    ((PushAttackAction)aa).toHit(game).getValueAsString()
             });
         } else if (aa instanceof ClubAttackAction) {
             label = Messages.getString("BoardView1.hit", new Object[] {
-                ((ClubAttackAction)aa).getClub().getName(),
-                ((ClubAttackAction)aa).toHit(game).getValueAsString(),
+                    ((ClubAttackAction)aa).getClub().getName(),
+                    ((ClubAttackAction)aa).toHit(game).getValueAsString(),
             });
         } else if (aa instanceof ChargeAttackAction) {
             label = Messages.getString("BoardView1.charge", new Object[] {
-                ((ChargeAttackAction)aa).toHit(game).getValueAsString()
+                    ((ChargeAttackAction)aa).toHit(game).getValueAsString()
             });
         } else if (aa instanceof DfaAttackAction) {
             label = Messages.getString("BoardView1.DFA", new Object[] {
-                ((DfaAttackAction)aa).toHit(game).getValueAsString()
+                    ((DfaAttackAction)aa).toHit(game).getValueAsString()
             });
         } else if (aa instanceof ProtomechPhysicalAttackAction) {
             label = Messages.getString("BoardView1.proto", new Object[] {
-                ((ProtomechPhysicalAttackAction)aa).toHit(game).getValueAsString()
+                    ((ProtomechPhysicalAttackAction)aa).toHit(game).getValueAsString()
             });
         } else if (aa instanceof SearchlightAttackAction) {
             label = Messages.getString("BoardView1.Searchlight");
         }
-        
+
         TransformGroup l = new TransformGroup(new Transform3D(C.nullRot, labelLocation, 1.0));
         labelLocation.z += 3;
         labelLocation.y += 3;

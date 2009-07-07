@@ -46,6 +46,6 @@ public class CLSupportPPC extends PPCWeapon {
         this.extremeRange = 10;
         this.bv = 14;
         this.setModes(new String[] { "Field Inhibitor ON",
-                "Field Inhibitor OFF" });
+        "Field Inhibitor OFF" });
     }
 }

@@ -116,7 +116,7 @@ public class InfantryEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                            "Couldn't decode the shootingStrength for an Infantry unit.");
+                    "Couldn't decode the shootingStrength for an Infantry unit.");
                 }
 
                 // Try to pull the number from the attribute string

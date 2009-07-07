@@ -28,23 +28,23 @@ import megamek.common.IHex;
 
 class CursorModel extends HexModel {
     public CursorModel(Color3f color) {
-    setTransform(new Transform3D(C.nullRot, new Vector3d(), 1.0));
+        setTransform(new Transform3D(C.nullRot, new Vector3d(), 1.0));
         setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 
         Appearance base = new Appearance();
         base.setColoringAttributes(new ColoringAttributes(color, ColoringAttributes.SHADE_FLAT));
         base.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
         base.setLineAttributes(C.defLine);
-        
+
         Shape3D shape = new Shape3D(border, base);
         shape.setAppearance(base);
-    addChild(shape);
+        addChild(shape);
     }    
 
     public void setColor(Color3f color) {
         ((Shape3D)getChild(0)).getAppearance().setColoringAttributes(new ColoringAttributes(color, ColoringAttributes.SHADE_FLAT));
     }
-    
+
     public void move(Coords c, IHex hex) {
         if (c == null || hex == null) {
             hide();

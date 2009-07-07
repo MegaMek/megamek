@@ -47,7 +47,7 @@ public abstract class AmmoBayWeapon extends BayWeapon {
         checkAmmo(waa, game);
         return super.fire(waa, game, server);
     }
-    
+
     /**
      * 
      */

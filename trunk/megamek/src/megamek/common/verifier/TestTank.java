@@ -128,7 +128,7 @@ public class TestTank extends TestEntity {
     @Override
     public float getWeightMisc() {
         return getTankWeightTurret() + getTankWeightLifting()
-                + getTankPowerAmplifier();
+        + getTankPowerAmplifier();
     }
 
     @Override
@@ -195,15 +195,15 @@ public class TestTank extends TestEntity {
                 + (getTankWeightLifting() != 0 ? StringUtil.makeLength(
                         "Lifting Equip:", getPrintSize() - 5)
                         + makeWeightString(getTankWeightLifting()) + "\n" : "")
-                + (getTankPowerAmplifier() != 0 ? StringUtil.makeLength(
-                        "Power Amp:", getPrintSize() - 5)
-                        + makeWeightString(getTankPowerAmplifier()) + "\n" : "");
+                        + (getTankPowerAmplifier() != 0 ? StringUtil.makeLength(
+                                "Power Amp:", getPrintSize() - 5)
+                                + makeWeightString(getTankPowerAmplifier()) + "\n" : "");
     }
 
     @Override
     public String printWeightControls() {
         return StringUtil.makeLength("Controls:", getPrintSize() - 5)
-                + makeWeightString(getWeightControls()) + "\n";
+        + makeWeightString(getWeightControls()) + "\n";
     }
 
     public Tank getTank() {
@@ -220,7 +220,7 @@ public class TestTank extends TestEntity {
         if ((tank instanceof VTOL) || (tank instanceof SupportTank)) {
             return true;
         } // don't bother checking, won't work. Needs fixing (new class
-            // needed.)
+        // needed.)
         boolean correct = true;
         if (skip()) {
             return true;

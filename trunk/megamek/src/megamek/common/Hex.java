@@ -57,7 +57,7 @@ public class Hex implements IHex, Serializable {
     public Hex(int elevation, String terrain, String theme) {
         this(elevation, new ITerrain[Terrains.SIZE], theme);
         for (StringTokenizer st = new StringTokenizer(terrain, ";", false); st
-                .hasMoreTokens();) {
+        .hasMoreTokens();) {
             addTerrain(Terrains.getTerrainFactory().createTerrain(
                     st.nextToken()));
         }
@@ -150,20 +150,20 @@ public class Hex implements IHex, Serializable {
                     && other.containsTerrain(Terrains.PAVEMENT)) {
                 cTerr.setExit(direction, true);
             }
-            
+
             //buildings must have the same building class 
             if(other != null && cTerr.getType() == Terrains.BUILDING
                     && terrainLevel(Terrains.BLDG_CLASS) != other.terrainLevel(Terrains.BLDG_CLASS)) {
                 cTerr.setExit(direction, false);
             }
-            
+
             //gun emplacements can only be single hex buildings
             if(cTerr.getType() == Terrains.BUILDING 
                     && terrainLevel(Terrains.BLDG_CLASS) == Building.GUN_EMPLACEMENT) {
                 cTerr.setExit(direction, false);
             }
-                
-            
+
+
         }
     }
 
@@ -198,12 +198,12 @@ public class Hex implements IHex, Serializable {
         int maxFeature = 0;
 
         //TODO: maxfeature should really be a method in Terrain.java
-        
+
         //planted fields rise one level above the terrain
         if (containsTerrain(Terrains.FIELDS)) {
             maxFeature = 1;
         }
-        
+
         // Account for woods. They are 2 levels high
         // N.B. VTOLs are allowed to enter smoke.
         if (containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE)) {
@@ -218,7 +218,7 @@ public class Hex implements IHex, Serializable {
         if (maxFeature < this.terrainLevel(Terrains.INDUSTRIAL)) {
             maxFeature = this.terrainLevel(Terrains.INDUSTRIAL);
         }
-        
+
         // Account for buildings.
         if (maxFeature < this.terrainLevel(Terrains.BLDG_ELEV)) {
             maxFeature = this.terrainLevel(Terrains.BLDG_ELEV);
@@ -297,8 +297,8 @@ public class Hex implements IHex, Serializable {
      */
     public boolean hasPavement() {
         return containsTerrain(Terrains.PAVEMENT)
-                || containsTerrain(Terrains.ROAD)
-                || containsTerrain(Terrains.BRIDGE);
+        || containsTerrain(Terrains.ROAD)
+        || containsTerrain(Terrains.BRIDGE);
     }
 
     /*
@@ -366,7 +366,7 @@ public class Hex implements IHex, Serializable {
         }
         return present;
     }
-    
+
     /*
      * report the number of displayable terrains present for the tooltips. 
      * This should not include any terrains which don't report back a display name
@@ -423,47 +423,47 @@ public class Hex implements IHex, Serializable {
         for (ITerrain terrain : terrains) {
             if (terrain != null) {
                 switch (terrain.getType()) {
-                    case Terrains.WOODS:
-                        if (terrain.getLevel() == 2) {
-                            temp = temp + "Heavy Woods";
-                        } else if (terrain.getLevel() == 1) {
-                            temp = temp + "Light Woods";
-                        } else {
-                            temp = temp + "??? Woods";
-                        }
-                        break;
-                    case Terrains.WATER:
-                        temp = temp + "Water, depth: " + terrain.getLevel();
-                        break;
-                    case Terrains.ROAD:
-                        temp = temp + "Road";
-                        break;
-                    case Terrains.ROUGH:
-                        temp = temp + "Rough";
-                        break;
-                    case Terrains.RUBBLE:
-                        temp = temp + "Rubble";
-                        break;
-                    case Terrains.SWAMP:
-                        temp = temp + "Swamp";
-                        break;
-                    case Terrains.ARMS:
-                        temp = temp + "Arm";
-                        break;
-                    case Terrains.LEGS:
-                        temp = temp + "Leg";
-                        break;
-                    default:
-                        temp = temp + Terrains.getName(terrain.getType()) + "("
-                                + terrain.getLevel() + ", "
-                                + terrain.getTerrainFactor() + ")";
+                case Terrains.WOODS:
+                    if (terrain.getLevel() == 2) {
+                        temp = temp + "Heavy Woods";
+                    } else if (terrain.getLevel() == 1) {
+                        temp = temp + "Light Woods";
+                    } else {
+                        temp = temp + "??? Woods";
+                    }
+                    break;
+                case Terrains.WATER:
+                    temp = temp + "Water, depth: " + terrain.getLevel();
+                    break;
+                case Terrains.ROAD:
+                    temp = temp + "Road";
+                    break;
+                case Terrains.ROUGH:
+                    temp = temp + "Rough";
+                    break;
+                case Terrains.RUBBLE:
+                    temp = temp + "Rubble";
+                    break;
+                case Terrains.SWAMP:
+                    temp = temp + "Swamp";
+                    break;
+                case Terrains.ARMS:
+                    temp = temp + "Arm";
+                    break;
+                case Terrains.LEGS:
+                    temp = temp + "Leg";
+                    break;
+                default:
+                    temp = temp + Terrains.getName(terrain.getType()) + "("
+                    + terrain.getLevel() + ", "
+                    + terrain.getTerrainFactor() + ")";
                 }
                 temp = temp + "; ";
             }
         }
         return temp;
     }
-    
+
     /*
      * Get the fire ignition modifier for this hex, based on its terrain
      */
@@ -475,7 +475,7 @@ public class Hex implements IHex, Serializable {
         }
         return mod;
     }
-    
+
     /**
      * Is this hex ignitable?
      */
@@ -486,21 +486,21 @@ public class Hex implements IHex, Serializable {
                 || containsTerrain(Terrains.FUEL_TANK)
                 || containsTerrain(Terrains.FIELDS)
                 || containsTerrain(Terrains.INDUSTRIAL));
-        
+
     }
-    
+
     public int getFireTurn() {
         return fireTurn;
     }
-    
+
     public void incrementFireTurn() {
         fireTurn = fireTurn + 1;
     }
-    
+
     public void resetFireTurn() {
         fireTurn = 0;
     }
-    
+
     /**
      * get any modifiers to a bog-down roll in this hex. Takes the worst modifier
      * If there is no bog-down chance in this hex, then it returns TargetRoll.AUTOMATIC_SUCCESS
@@ -513,7 +513,7 @@ public class Hex implements IHex, Serializable {
         }
         return mod;
     }
-    
+
     /**
      * get any modifiers to a an unstuck roll in this hex.
      */

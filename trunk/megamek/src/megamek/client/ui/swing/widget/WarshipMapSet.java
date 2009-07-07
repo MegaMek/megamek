@@ -161,7 +161,7 @@ public class WarshipMapSet implements DisplayMapSet{
         labels[Jumpship.LOC_NOSE] = WidgetUtils.createLabel("NOS", fm, Color.black,50,15); //$NON-NLS-1$
         //   labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black,10,57); //$NON-NLS-1$
         labels[Jumpship.LOC_FLS] = WidgetUtils.createLabel("FLS", fm, Color.black,17,70); //$NON-NLS-1$
-//      labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,10,106); //$NON-NLS-1$
+        //      labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,10,106); //$NON-NLS-1$
         labels[Jumpship.LOC_FRS] = WidgetUtils.createLabel("FRS", fm, Color.black,83,70); //$NON-NLS-1$
         labels[Jumpship.LOC_ALS] = WidgetUtils.createLabel("ALS", fm, Color.black,17,120); //$NON-NLS-1$
         labels[Jumpship.LOC_ARS] = WidgetUtils.createLabel("ARS", fm, Color.black,83,120); //$NON-NLS-1$

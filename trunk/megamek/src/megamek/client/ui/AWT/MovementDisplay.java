@@ -331,7 +331,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         butFlee.setEnabled(false);
         butFlee.setActionCommand(MOVE_FLEE);
         butFlee.addKeyListener(this);
-        
+
         butFlyOff = new Button(Messages.getString("MovementDisplay.butFlyOff")); //$NON-NLS-1$
         butFlyOff.addActionListener(this);
         butFlyOff.setEnabled(false);
@@ -855,7 +855,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if (client.game.containsMinefield(ce.getPosition())) {
                 setClearEnabled(true);
             } else {
-              setClearEnabled(false);
+                setClearEnabled(false);
             }
         } else {
             setClearEnabled(false);
@@ -881,7 +881,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         updateLoadButtons();
         updateElevationButtons();
         updateEvadeButton();
-        
+
         updateRecoveryButton();
         updateJoinButton();
         updateDumpButton();
@@ -1273,7 +1273,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 if (!client.game.useVectorMove() && (check.length() > 0) && GUIPreferences.getInstance().getNagForPSR()) {
                     ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                             Messages.getString("MovementDisplay.ConfirmPilotingRoll") + //$NON-NLS-1$
-                                    check, true);
+                            check, true);
                     nag.setVisible(true);
                     if (nag.getAnswer()) {
                         // do they want to be bothered again?
@@ -1322,7 +1322,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         if ((check.length() > 0) && GUIPreferences.getInstance().getNagForPSR() && !dontCheckPSR) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                     Messages.getString("MovementDisplay.ConfirmPilotingRoll") + //$NON-NLS-1$
-                            check, true);
+                    check, true);
             nag.setVisible(true);
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
@@ -1640,10 +1640,10 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             setLowerEnabled(false);
             return;
         }
-        
+
         if(ce.isAirborne()) {
-        	//then use altitude not elevation
-        	setRaiseEnabled(ce.canGoUp(cmd.getFinalAltitude(), cmd
+            //then use altitude not elevation
+            setRaiseEnabled(ce.canGoUp(cmd.getFinalAltitude(), cmd
                     .getFinalCoords()));
             setLowerEnabled(ce.canGoDown(cmd.getFinalAltitude(), cmd
                     .getFinalCoords()));
@@ -1833,7 +1833,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         } else {
             setDumpEnabled(false);
         }
-    */
+         */
     }
 
     private void updateFlyOffButton() {
@@ -1875,7 +1875,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         setLaunchEnabled((ce.getLaunchableFighters().size() > 0) || (ce.getLaunchableSmallCraft().size() > 0));
 
     }
-    
+
     private void updateEvadeButton() {
 
         final Entity ce = ce();
@@ -1883,17 +1883,17 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         if (null == ce) {
             return;
         }
-        
+
         if(clientgui.getClient().game.getOptions().booleanOption("tacops_evade")) {
             return;
         }
-        
+
         if(!(ce instanceof Mech || ce instanceof Tank)) {
             return;
         }
-        
+
         setEvadeEnabled(cmd.getLastStepMovementType() != IEntityMovementType.MOVE_JUMP 
-                          && cmd.getLastStepMovementType() != IEntityMovementType.MOVE_SPRINT);
+                && cmd.getLastStepMovementType() != IEntityMovementType.MOVE_SPRINT);
     }
 
     private void updateRecklessButton() {
@@ -2199,7 +2199,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                         // load up the choices
                         int[] unitsLaunched = choiceDialog.getChoices();
                         for (int element : unitsLaunched) {
-                                bayChoices.add(currentFighters.elementAt(element).getId());
+                            bayChoices.add(currentFighters.elementAt(element).getId());
                         }
                         choices.put(i, bayChoices);
                         // now remove them (must be a better way?)
@@ -2262,7 +2262,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if (client.game.getEntity(choices.elementAt(0)).mpUsed > 0) {
                 if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.RecoverSureDialog.title"), //$NON-NLS-1$
                         Messages.getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$
-                        )) {
+                )) {
                     return choices.elementAt(0);
                 }
             } else {
@@ -2284,7 +2284,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             if (client.game.getEntity(choices.elementAt(choiceDialog.getChoice())).mpUsed > 0) {
                 if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.RecoverSureDialog.title"), //$NON-NLS-1$
                         Messages.getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$
-                        )) {
+                )) {
                     return choices.elementAt(choiceDialog.getChoice());
                 }
             } else {
@@ -2538,8 +2538,8 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                 String body = Messages.getString("MovementDisplay.DumpSuccessful.message"); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
                 // addReport(r);
-                 *
-                 */
+             *
+             */
             //}
             /*
             // now unload the bombs
@@ -2556,7 +2556,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             // update the bomb load immediately
             a.updateBombLoad();
             client.sendUpdateEntity(ce());
-            */
+             */
             // not sure how to update mech display, but everything else is
             // working
         }
@@ -2571,44 +2571,44 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         switch (type) {
         case (ManeuverType.MAN_HAMMERHEAD):
             cmd.addStep(MovePath.STEP_YAW, true, true);
-            return true;
+        return true;
         case (ManeuverType.MAN_HALF_ROLL):
             cmd.addStep(MovePath.STEP_ROLL, true, true);
-            return true;
+        return true;
         case (ManeuverType.MAN_BARREL_ROLL):
             cmd.addStep(MovePath.STEP_DEC, true, true);
-            return true;
+        return true;
         case (ManeuverType.MAN_IMMELMAN):
             gear = MovementDisplay.GEAR_IMMEL;
-            return false;
+        return false;
         case (ManeuverType.MAN_SPLIT_S):
             gear = MovementDisplay.GEAR_SPLIT_S;
-            return false;
+        return false;
         case (ManeuverType.MAN_VIFF):
             if (!(ce() instanceof Aero)) {
                 return false;
             }
-            Aero a = (Aero) ce();
-            MoveStep last = cmd.getLastStep();
-            int vel = a.getCurrentVelocity();
-            if (null != last) {
-                vel = last.getVelocityLeft();
-            }
-            while (vel > 0) {
-                cmd.addStep(MovePath.STEP_DEC, true, true);
-                vel--;
-            }
-            cmd.addStep(MovePath.STEP_UP);
-            return true;
+        Aero a = (Aero) ce();
+        MoveStep last = cmd.getLastStep();
+        int vel = a.getCurrentVelocity();
+        if (null != last) {
+            vel = last.getVelocityLeft();
+        }
+        while (vel > 0) {
+            cmd.addStep(MovePath.STEP_DEC, true, true);
+            vel--;
+        }
+        cmd.addStep(MovePath.STEP_UP);
+        return true;
         case (ManeuverType.MAN_SIDE_SLIP_LEFT):
             cmd.addStep(MovePath.STEP_LATERAL_LEFT, true, true);
-            return true;
+        return true;
         case (ManeuverType.MAN_SIDE_SLIP_RIGHT):
             cmd.addStep(MovePath.STEP_LATERAL_RIGHT, true, true);
-            return true;
+        return true;
         case (ManeuverType.MAN_LOOP):
             cmd.addStep(MovePath.STEP_LOOP, true, true);
-            return true;
+        return true;
         default:
             return false;
         }
@@ -2770,7 +2770,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                     break;
                 }
             }
-            */
+             */
 
             //need to choose a mine
             Vector<Minefield> mfs = client.game.getMinefields(ce.getPosition());
@@ -3008,7 +3008,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_MANEUVER)) {
             ManeuverChoiceDialog choiceDialog = new ManeuverChoiceDialog(clientgui.frame, Messages.getString("MovementDisplay.ManeuverDialog.title"), //$NON-NLS-1$
-                    "huh?");
+            "huh?");
             Aero a = (Aero) ce;
             MoveStep last = cmd.getLastStep();
             int vel = a.getCurrentVelocity();
@@ -3331,7 +3331,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         butFlee.setEnabled(enabled);
         clientgui.getMenuBar().setMoveFleeEnabled(enabled);
     }
-    
+
     private void setFlyOffEnabled(boolean enabled) {
         butFlyOff.setEnabled(enabled);
         clientgui.getMenuBar().setMoveFlyOffEnabled(enabled);

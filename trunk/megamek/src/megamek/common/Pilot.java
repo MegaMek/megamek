@@ -31,7 +31,7 @@ public class Pilot implements Serializable {
     private int gunnery;
     private int piloting;
     private int hits; // hits taken
-    
+
     private String nickname;
 
     private boolean unconscious;
@@ -49,22 +49,22 @@ public class Pilot implements Serializable {
     private int initBonus;
     //commander bonus
     private int commandBonus;
-    
+
     // these are only used on the server:
     private boolean koThisRound; // did I go KO this game round?
 
     private PilotOptions options = new PilotOptions();
-    
+
     private static double[][] bvMod = new double[][] {
-            {2.8,  2.63, 2.45, 2.28, 2.01, 1.82, 1.75, 1.67, 1.59},
-            {2.56, 2.4,  2.24, 2.08, 1.84, 1.60, 1.58, 1.51, 1.44},
-            {2.24, 2.1,  1.96, 1.82, 1.61, 1.4,  1.33, 1.31, 1.25},
-            {1.92, 1.8,  1.68, 1.56, 1.38, 1.2,  1.14, 1.08, 1.06},
-            {1.6,  1.5,  1.4,  1.3,  1.15, 1.0,  0.95, 0.9,  0.85},
-            {1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77},
-            {1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72},
-            {1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68},
-            {1.28, 1.19, 1.1,  1.01, 0.86, 0.75, 0.71, 0.68, 0.64},
+        {2.8,  2.63, 2.45, 2.28, 2.01, 1.82, 1.75, 1.67, 1.59},
+        {2.56, 2.4,  2.24, 2.08, 1.84, 1.60, 1.58, 1.51, 1.44},
+        {2.24, 2.1,  1.96, 1.82, 1.61, 1.4,  1.33, 1.31, 1.25},
+        {1.92, 1.8,  1.68, 1.56, 1.38, 1.2,  1.14, 1.08, 1.06},
+        {1.6,  1.5,  1.4,  1.3,  1.15, 1.0,  0.95, 0.9,  0.85},
+        {1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77},
+        {1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72},
+        {1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68},
+        {1.28, 1.19, 1.1,  1.01, 0.86, 0.75, 0.71, 0.68, 0.64},
     };
 
     /** The number of hits that a pilot can take before he dies. */
@@ -114,7 +114,7 @@ public class Pilot implements Serializable {
     public String getName() {
         return name;
     }
-    
+
     public String getNickname() {
         return nickname;
     }
@@ -146,15 +146,15 @@ public class Pilot implements Serializable {
     public int getInitBonus() {
         return initBonus;
     }
-    
+
     public int getCommandBonus() {
         return commandBonus;
     }
-    
+
     public void setNickname(String nick) {
         this.nickname = nick;
     }
-    
+
     public void setGunnery(int gunnery) {
         this.gunnery = gunnery;
     }
@@ -185,11 +185,11 @@ public class Pilot implements Serializable {
     public void setInitBonus(int bonus) {
         this.initBonus = bonus;
     }
-    
+
     public void setCommandBonus(int bonus) {
         this.commandBonus = bonus;
     }
-    
+
     public boolean isUnconscious() {
         return unconscious;
     }
@@ -248,11 +248,11 @@ public class Pilot implements Serializable {
 
     public void clearOptions() {
         for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
             for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 IOption option = j.nextElement();
 
                 option.clearValue();
@@ -265,10 +265,10 @@ public class Pilot implements Serializable {
         int count = 0;
 
         for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
             for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 IOption option = j.nextElement();
 
                 if (option.booleanValue())
@@ -278,19 +278,19 @@ public class Pilot implements Serializable {
 
         return count;
     }
-    
+
     public int countOptions(String grpKey) {
         int count = 0;
 
         for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
             if (!group.getKey().equalsIgnoreCase(grpKey))
                 continue;
 
             for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 IOption option = j.nextElement();
 
                 if (option.booleanValue())
@@ -306,7 +306,7 @@ public class Pilot implements Serializable {
      */
     public Enumeration<IOption> getOptions(String grpKey) {
         for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
             if (group.getKey().equalsIgnoreCase(grpKey))
@@ -334,12 +334,12 @@ public class Pilot implements Serializable {
                 continue;
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
                 IOption option = j.nextElement();
-    
+
                 if (option.booleanValue()) {
                     if (adv.length() > 0) {
                         adv.append(sep);
                     }
-    
+
                     adv.append(option.getName());
                     if (option.getType() == IOption.STRING
                             || option.getType() == IOption.CHOICE
@@ -453,7 +453,7 @@ public class Pilot implements Serializable {
      */
     public double getBVSkillMultiplier() {
         return getBVImplantMultiplier()
-                * getBVSkillMultiplier(gunnery, piloting);
+        * getBVSkillMultiplier(gunnery, piloting);
     }
 
     public double getBVImplantMultiplier() {
@@ -531,8 +531,8 @@ public class Pilot implements Serializable {
     public String getGunneryRPG() {
         return "" + gunneryL + "(L)/" + gunneryM + "(M)/" + gunneryB + "(B)";
     }
-    
-    
+
+
     /**
      * for sensor ops, so these might be easily expanded later for rpg
      */
@@ -543,9 +543,9 @@ public class Pilot implements Serializable {
             return gunnery;
         }
     }
-    
+
     public boolean isPilotingFatigued(int turn) {
-        
+
         if(piloting > 5 && turn > 9) {
             return true;
         }
@@ -560,9 +560,9 @@ public class Pilot implements Serializable {
         }
         return false;
     }
-    
+
     public boolean isGunneryFatigued(int turn) {
-        
+
         if(piloting > 5 && turn > 13) {
             return true;
         }
@@ -574,7 +574,7 @@ public class Pilot implements Serializable {
         }
         return false;
     }
-    
+
     public String getStatusDesc() {
         String s = new String("");
         if(hits > 0) {
@@ -588,6 +588,6 @@ public class Pilot implements Serializable {
         return s;
     }
 
-    
+
 
 }

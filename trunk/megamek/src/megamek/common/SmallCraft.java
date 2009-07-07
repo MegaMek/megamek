@@ -1,5 +1,5 @@
 /*
-* MegaAero - Copyright (C) 2007 Jay Lawson
+ * MegaAero - Copyright (C) 2007 Jay Lawson
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -46,7 +46,7 @@ public class SmallCraft extends Aero {
     }
 
     public int getNPassenger() {
-         return nPassenger;
+        return nPassenger;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class SmallCraft extends Aero {
     @Override
     public int locations() {
         return 4;
-   }
+    }
 
     @Override
     public void setEngine(Engine e) {
@@ -77,7 +77,7 @@ public class SmallCraft extends Aero {
          * Unlike other units, ASFs determine potential crits based on the to-hit roll
          * so I need to set this potential value as well as return the to hit data
          */
-    	
+
         int roll = Compute.d6(2);
 
         if((table == ToHitData.HIT_ABOVE) || (table == ToHitData.HIT_BELOW)) {
@@ -283,8 +283,8 @@ public class SmallCraft extends Aero {
                 return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         }
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        }
+        return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+    }
 
     //weapon arcs
     @Override
@@ -294,21 +294,47 @@ public class SmallCraft extends Aero {
         int arc = Compute.ARC_NOSE;
         if(!isSpheroid()) {
             switch (mounted.getLocation()) {
+            case LOC_NOSE:
+                arc = Compute.ARC_NOSE;
+                break;
+            case LOC_RWING:
+                if(mounted.isRearMounted()) {
+                    arc = Compute.ARC_RWINGA;
+                } else {
+                    arc = Compute.ARC_RWING;
+                }
+                break;
+            case LOC_LWING:
+                if(mounted.isRearMounted()) {
+                    arc = Compute.ARC_LWINGA;
+                } else {
+                    arc = Compute.ARC_LWING;
+                }
+                break;
+            case LOC_AFT:
+                arc = Compute.ARC_AFT;
+                break;
+            default:
+                arc = Compute.ARC_360;
+            }
+        } else {
+            if(game.getBoard().inSpace()) {
+                switch (mounted.getLocation()) {
                 case LOC_NOSE:
                     arc = Compute.ARC_NOSE;
                     break;
                 case LOC_RWING:
                     if(mounted.isRearMounted()) {
-                        arc = Compute.ARC_RWINGA;
+                        arc = Compute.ARC_RIGHTSIDEA_SPHERE;
                     } else {
-                        arc = Compute.ARC_RWING;
+                        arc = Compute.ARC_RIGHTSIDE_SPHERE;
                     }
                     break;
                 case LOC_LWING:
                     if(mounted.isRearMounted()) {
-                        arc = Compute.ARC_LWINGA;
+                        arc = Compute.ARC_LEFTSIDEA_SPHERE;
                     } else {
-                        arc = Compute.ARC_LWING;
+                        arc = Compute.ARC_LEFTSIDE_SPHERE;
                     }
                     break;
                 case LOC_AFT:
@@ -316,51 +342,25 @@ public class SmallCraft extends Aero {
                     break;
                 default:
                     arc = Compute.ARC_360;
+                }
+            } else {
+                switch (mounted.getLocation()) {
+                case LOC_NOSE:
+                    arc = Compute.ARC_360;
+                    break;
+                case LOC_RWING:
+                    arc = Compute.ARC_RIGHT_SPHERE_GROUND;
+                    break;
+                case LOC_LWING:
+                    arc = Compute.ARC_LEFT_SPHERE_GROUND;
+                    break;
+                case LOC_AFT:
+                    arc = Compute.ARC_360;
+                    break;
+                default:
+                    arc = Compute.ARC_360;
+                }
             }
-        } else {
-        	if(game.getBoard().inSpace()) {
-	            switch (mounted.getLocation()) {
-	            case LOC_NOSE:
-	                arc = Compute.ARC_NOSE;
-	                break;
-	            case LOC_RWING:
-	                if(mounted.isRearMounted()) {
-	                    arc = Compute.ARC_RIGHTSIDEA_SPHERE;
-	                } else {
-	                    arc = Compute.ARC_RIGHTSIDE_SPHERE;
-	                }
-	                break;
-	            case LOC_LWING:
-	                if(mounted.isRearMounted()) {
-	                    arc = Compute.ARC_LEFTSIDEA_SPHERE;
-	                } else {
-	                    arc = Compute.ARC_LEFTSIDE_SPHERE;
-	                }
-	                break;
-	            case LOC_AFT:
-	                arc = Compute.ARC_AFT;
-	                break;
-	            default:
-	                arc = Compute.ARC_360;
-	            }
-        	} else {
-        		switch (mounted.getLocation()) {
-	            case LOC_NOSE:
-	                arc = Compute.ARC_360;
-	                break;
-	            case LOC_RWING:
-	                arc = Compute.ARC_RIGHT_SPHERE_GROUND;
-	                break;
-	            case LOC_LWING:
-	                arc = Compute.ARC_LEFT_SPHERE_GROUND;
-	                break;
-	            case LOC_AFT:
-	                arc = Compute.ARC_360;
-	                break;
-	            default:
-	                arc = Compute.ARC_360;
-	            }
-        	}
 
         }
 
@@ -372,13 +372,13 @@ public class SmallCraft extends Aero {
         //return the number
         int nArcs = 0;
         for(int i = 0; i < locations(); i++) {
-                if(hasWeaponInArc(i, false)) {
-                    nArcs++;
-                }
-                //check for rear locations
-                if(hasWeaponInArc(i, true)) {
-                    nArcs++;
-                }
+            if(hasWeaponInArc(i, false)) {
+                nArcs++;
+            }
+            //check for rear locations
+            if(hasWeaponInArc(i, true)) {
+                nArcs++;
+            }
         }
         return nArcs;
     }

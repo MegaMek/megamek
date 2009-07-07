@@ -33,7 +33,7 @@ public abstract class MRMWeapon extends MissileWeapon {
         super();
         this.ammoType = AmmoType.T_MRM;
         this.toHitModifier = 1;
-        
+
         this.atClass = CLASS_MRM;
     }
 

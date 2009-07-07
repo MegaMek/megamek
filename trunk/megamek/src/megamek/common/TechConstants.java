@@ -43,10 +43,10 @@ public class TechConstants {
 
     public static final int T_IS_ADVANCED = 5;
     public static final int T_CLAN_ADVANCED = 6;
-    
+
     public static final int T_IS_EXPERIMENTAL = 7;
     public static final int T_CLAN_EXPERIMENTAL = 8;
-    
+
     public static final int T_IS_UNOFFICIAL = 9;
     public static final int T_CLAN_UNOFFICIAL = 10;
 
@@ -58,8 +58,8 @@ public class TechConstants {
     // this made public because MekWars accesses it
     // It must match the index to the constant's value.
     public static final String[] T_NAMES = { "IS_Box_Set", "IS_TW_Non_Box",
-            "Clan_TW", "IS_TW", "All_TW", "IS_Advanced",
-            "Clan_Advanced", "IS_Experimental", "Clan_Experimental", "IS_Unofficial", "Clan_Unofficial", "All" };
+        "Clan_TW", "IS_TW", "All_TW", "IS_Advanced",
+        "Clan_Advanced", "IS_Experimental", "Clan_Experimental", "IS_Unofficial", "Clan_Unofficial", "All" };
 
     public static final int SIZE = T_NAMES.length;
 
@@ -67,7 +67,7 @@ public class TechConstants {
     // The "all" selections return -1, since they don't apply to
     // individual units.
     public static final String[] T_SIMPLE_LEVEL = { "1", "2", "2", "-1", "-1",
-            "3", "3", "4", "4", "5", "5", "-1" };
+        "3", "3", "4", "4", "5", "5", "-1" };
 
     public static String getLevelName(int level) {
         if(level == T_ALLOWED_ALL)
@@ -122,7 +122,7 @@ public class TechConstants {
             return true;
 
         // If none of the catch-alls above are true, we go to specific cases
-        
+
         // IS box set can be in any IS, or in clan advanced (mixed tech)
         if ((equipmentTechlevel == T_INTRO_BOXSET)
                 && ((entityTechlevel == T_IS_TW_NON_BOX)
@@ -132,7 +132,7 @@ public class TechConstants {
                         || (entityTechlevel == T_CLAN_ADVANCED)
                         || (entityTechlevel == T_ALL)))
             return true;
-        
+
         // IS TW stuff can be in any IS unit, or in clan advanced (mixed tech)
         if ((equipmentTechlevel == T_IS_TW_NON_BOX)
                 && ((entityTechlevel == T_IS_TW_ALL)

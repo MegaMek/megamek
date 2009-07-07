@@ -42,7 +42,6 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.VTOL;
 
 /**
  * @author Ben
@@ -116,25 +115,25 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
         if (ae.getJumpType() == Mech.JUMP_BOOSTER) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Can't D.F.A. using mechanical jump boosters.");
+            "Can't D.F.A. using mechanical jump boosters.");
         }
 
         // let's just check this
         if (!md.contains(MovePath.STEP_DFA)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "D.F.A. action not found in movment path");
+            "D.F.A. action not found in movment path");
         }
 
         // have to jump
         if (!md.contains(MovePath.STEP_START_JUMP)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "D.F.A. must involve jumping");
+            "D.F.A. must involve jumping");
         }
 
         // Can't target a transported entity.
         if ((te != null) && (Entity.NONE != te.getTransportId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is a passenger.");
+            "Target is a passenger.");
         }
 
         //no evading
@@ -145,7 +144,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // Can't target a entity conducting a swarm attack.
         if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is swarming a Mek.");
+            "Target is swarming a Mek.");
         }
 
         // determine last valid step
@@ -166,13 +165,13 @@ public class DfaAttackAction extends DisplacementAttackAction {
         if ((chargeStep == null)
                 || !target.getPosition().equals(chargeStep.getPosition())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Could not reach target with movement");
+            "Could not reach target with movement");
         }
 
         // target must have moved already
         if ((te != null) && !te.isDone()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target must be done with movement");
+            "Target must be done with movement");
         }
 
         return toHit(game, attackerId, target, chargeSrc);
@@ -226,21 +225,21 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
         final int attackerElevation = ae.getElevation() + game.getBoard().getHex(ae.getPosition()).getElevation();
         final int targetElevation = target.getElevation()
-                + game.getBoard().getHex(target.getPosition()).getElevation();
+        + game.getBoard().getHex(target.getPosition()).getElevation();
         final int attackerHeight = attackerElevation + ae.getHeight();
 
         // check elevation of target flying VTOL
         if (target.isAirborneVTOL()) {
             if (targetElevation - attackerHeight > ae.getJumpMP()) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Elevation difference to high");
+                "Elevation difference to high");
             }
         }
 
         // can't target yourself
         if (ae.equals(te)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "You can't target yourself");
+            "You can't target yourself");
         }
 
         // Infantry CAN'T dfa!!!
@@ -251,13 +250,13 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // Can't target a transported entity.
         if ((te != null) && (Entity.NONE != te.getTransportId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is a passenger.");
+            "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
         if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is swarming a Mek.");
+            "Target is swarming a Mek.");
         }
 
         // check range
@@ -273,20 +272,20 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // can't attack mech making a different displacement attack
         if ((te != null) && te.hasDisplacementAttack()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is already making a charge/DFA attack");
+            "Target is already making a charge/DFA attack");
         }
 
         // can't attack the target of another displacement attack
         if ((te != null) && te.isTargetOfDisplacementAttack()
                 && (te.findTargetedDisplacement().getEntityId() != ae.getId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is the target of another charge/DFA");
+            "Target is the target of another charge/DFA");
         }
 
         // Can't target units in buildings (from the outside).
         if (targetInBuilding) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is inside building");
+            "Target is inside building");
         }
 
         // Attacks against adjacent buildings automatically hit.
@@ -294,7 +293,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
                 || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
                 || (target instanceof GunEmplacement)) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                    "Targeting adjacent building.");
+            "Targeting adjacent building.");
         }
 
         // Can't target woods or ignite a building with a physical.
@@ -330,9 +329,9 @@ public class DfaAttackAction extends DisplacementAttackAction {
         if ((te != null)
                 && (ae.getCrew().getPiloting() != te.getCrew().getPiloting())) {
             toHit
-                    .addModifier(ae.getCrew().getPiloting()
-                            - te.getCrew().getPiloting(),
-                            "piloting skill differential");
+            .addModifier(ae.getCrew().getPiloting()
+                    - te.getCrew().getPiloting(),
+                    "piloting skill differential");
         }
 
         // attacker is spotting
@@ -356,10 +355,10 @@ public class DfaAttackAction extends DisplacementAttackAction {
                     Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
                 toHit.addModifier(4,
-                        "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
 

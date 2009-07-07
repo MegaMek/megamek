@@ -49,13 +49,13 @@ public class GALance extends GA {
             for (int i = 1; i < populationDim; i++) {
                 for (int iGene = 0; iGene < chromosomeDim; iGene++) {
                     (this.chromosomes[i]).genes[iGene] = Compute
-                            .randomInt(moves.get(iGene).length);
+                    .randomInt(moves.get(iGene).length);
                 }
                 this.chromosomes[i].fitness = getFitness(i);
             }
         } catch (Exception e) {
             System.out
-                    .println("Error occured with " + populationDim + " pop " + chromosomeDim + " chromDim"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            .println("Error occured with " + populationDim + " pop " + chromosomeDim + " chromDim"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             Iterator<MoveOption[]> i = moves.iterator();
             while (i.hasNext()) {
                 System.out.println(i.next());
@@ -140,7 +140,7 @@ public class GALance extends GA {
                             CEntity target = null;
                             for (int e = 0; e < enemy_array.length; e++) {
                                 CEntity cen = tb.centities
-                                        .get((Entity) this.enemy_array[e]);
+                                .get((Entity) this.enemy_array[e]);
                                 if (!cen.canMove()) {
                                     if ((next.getFinalCoords() != null)
                                             && (other.getFinalCoords() != null)
@@ -149,23 +149,23 @@ public class GALance extends GA {
                                                     .getFinalCoords()
                                                     .distance(
                                                             next
-                                                                    .getFinalCoords()) == 1 && cen.current
-                                                    .getFinalCoords()
-                                                    .distance(
-                                                            other
-                                                                    .getFinalCoords()) == 1) || (cen.current
-                                                    .getFinalCoords()
-                                                    .distance(
-                                                            next
-                                                                    .getFinalCoords()) <= 3
-                                                    && cen.current
+                                                            .getFinalCoords()) == 1 && cen.current
                                                             .getFinalCoords()
                                                             .distance(
                                                                     other
-                                                                            .getFinalCoords()) <= 3 && cen.current
-                                                    .getFinalProne())
-                                                    && !(next.inDanger || next
-                                                            .getFinalProne()))) {
+                                                                    .getFinalCoords()) == 1) || (cen.current
+                                                                            .getFinalCoords()
+                                                                            .distance(
+                                                                                    next
+                                                                                    .getFinalCoords()) <= 3
+                                                                                    && cen.current
+                                                                                    .getFinalCoords()
+                                                                                    .distance(
+                                                                                            other
+                                                                                            .getFinalCoords()) <= 3 && cen.current
+                                                                                            .getFinalProne())
+                                                                                            && !(next.inDanger || next
+                                                                                                    .getFinalProne()))) {
                                         target = cen;
                                     }
                                 }
@@ -281,7 +281,7 @@ public class GALance extends GA {
             int iGene = (i + r1 - 1) % (c1.genes.length - 1);
             if (this.moves.get(iGene).length > 1) {
                 c1.genes[iGene] = Compute
-                        .randomInt(this.moves.get(iGene).length);
+                .randomInt(this.moves.get(iGene).length);
                 return;
             }
         }

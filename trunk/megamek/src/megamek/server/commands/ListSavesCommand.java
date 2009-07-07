@@ -35,7 +35,7 @@ public class ListSavesCommand extends ServerCommand {
     /** Creates new WhoCommand */
     public ListSavesCommand(Server server) {
         super(server, "listSaves",
-                "List all saved games in the saved games directory.");
+        "List all saved games in the saved games directory.");
     }
 
     @Override

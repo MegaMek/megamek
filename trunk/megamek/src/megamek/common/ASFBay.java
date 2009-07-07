@@ -26,7 +26,7 @@ public final class ASFBay extends Bay {
      * 
      */
     private static final long serialVersionUID = -4110012474950158433L;
-  
+
     /**
      * The default constructor is only for serialization.
      */
@@ -75,15 +75,15 @@ public final class ASFBay extends Bay {
             result = false;
         }
 
-//      is there at least one recovery slot available?
+        //      is there at least one recovery slot available?
         if(getRecoverySlots() < 1) {
             result = false;
         }
-        
+
         // Return our result.
         return result;
     }
-    
+
     /**
      * Load the given unit.  
      *
@@ -96,12 +96,12 @@ public final class ASFBay extends Bay {
         // If we can't load the unit, throw an exception.
         if ( !this.canLoad(unit) ) {
             throw new IllegalArgumentException( "Can not load " +
-                        unit.getShortName() +
-                        " into this bay. " + this.currentSpace);
+                    unit.getShortName() +
+                    " into this bay. " + this.currentSpace);
         }
 
         this.currentSpace -= 1;
-        
+
         // Add the unit to our list of troops.
         this.troops.addElement( unit );
     }
@@ -112,22 +112,22 @@ public final class ASFBay extends Bay {
         // If we can't load the unit, throw an exception.
         if ( !this.canLoad(unit) ) {
             throw new IllegalArgumentException( "Can not recover " +
-                        unit.getShortName() +
-                        " into this bay. " + this.currentSpace);
+                    unit.getShortName() +
+                    " into this bay. " + this.currentSpace);
         }
 
         this.currentSpace -= 1;
-        
+
 
         //get the closest open recovery slot and make it unavailable
         closeSlot();
-        
+
         // Add the unit to our list of troops.
         this.troops.addElement( unit );
     }
-    
-    
-    
+
+
+
     @Override
     public String getUnusedString() {
         return "Aerospace Fighter - " + this.currentSpace + " units (" + getRecoverySlots() + " recovery open)";
@@ -137,34 +137,34 @@ public final class ASFBay extends Bay {
     public String getType() {
         return "Fighter";
     }
-    
-//  update the time remaining in recovery slots
+
+    //  update the time remaining in recovery slots
     public void updateSlots() {
         if(this.recoverySlots.size() < 1) {
             return;
         }
-        
+
         for(int i = this.recoverySlots.size() - 1; i >= 0; i--) {
-             if(this.recoverySlots.elementAt(i) > 0) {
-                 int temp = this.recoverySlots.elementAt(i) - 1;
-                 this.recoverySlots.remove(i);
-                 this.recoverySlots.add(temp);
-             }
+            if(this.recoverySlots.elementAt(i) > 0) {
+                int temp = this.recoverySlots.elementAt(i) - 1;
+                this.recoverySlots.remove(i);
+                this.recoverySlots.add(temp);
+            }
         }
     }
-    
+
     public Vector<Integer> initializeRecoverySlots() {
-        
+
         Vector<Integer> slots = new Vector<Integer>();
- 
+
         for(int i = 0; i < this.doors; i++) {
             slots.add(0);
             slots.add(0);
         }
-         
+
         return slots;
     }
-    
+
     //check how many available slots we have  
     public int getRecoverySlots() {
         //a zero means it is available
@@ -173,29 +173,29 @@ public final class ASFBay extends Bay {
             return avail;
         }        
         for(int i = 0; i < this.recoverySlots.size(); i++) {
-             if(this.recoverySlots.elementAt(i) == 0) {
-                 avail++;
-             }
+            if(this.recoverySlots.elementAt(i) == 0) {
+                avail++;
+            }
         }
         return avail;
     }
-    
+
     public void closeSlot() {
         for(int i = 0; i < this.recoverySlots.size(); i++) {
-             if(this.recoverySlots.elementAt(i) == 0) {
-                 this.recoverySlots.remove(i);
-                 this.recoverySlots.add(5);
-                 break;
-             }
+            if(this.recoverySlots.elementAt(i) == 0) {
+                this.recoverySlots.remove(i);
+                this.recoverySlots.add(5);
+                break;
+            }
         }
     }
-    
+
     //  destroy a door
     @Override
     public void destroyDoorNext() {
-        
+
         setDoorsNext(getDoorsNext() - 1);
-        
+
         //get rid of two empty recovery slots
         //it doesn't matter which ones
         if(this.recoverySlots.size() > 0) {
@@ -205,13 +205,13 @@ public final class ASFBay extends Bay {
             this.recoverySlots.remove(0);
         }
     }
-    
+
     //  destroy a door
     @Override
     public void destroyDoor() {
-        
+
         this.doors -= 1;
-        
+
         //get rid of two empty recovery slots
         //it doesn't matter which ones
         if(this.recoverySlots.size() > 0) {
@@ -221,15 +221,15 @@ public final class ASFBay extends Bay {
             this.recoverySlots.remove(0);
         }
     }
-  
+
     //get doors should be different - first I must subtract the number of active recoveries
     @Override
     public int getDoors() {
-        
+
         //just take the available recovery slots, divided by two
         return (int)Math.floor(getRecoverySlots()/2.0);
-        
-        
+
+
     }
-    
+
 } 

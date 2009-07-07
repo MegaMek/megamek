@@ -31,7 +31,7 @@ public class DeployCommand extends ClientCommand {
         super(
                 client,
                 "deploy",
-                "This command deploys a given unit to the specified hex. Usage: '#deploy unit x y facing' where unit is the unit id number and x and y are the coordinates of the hex, and facing is the direction it's looking in. #deploy without any options will provide legal deployment zones.");
+        "This command deploys a given unit to the specified hex. Usage: '#deploy unit x y facing' where unit is the unit id number and x and y are the coordinates of the hex, and facing is the direction it's looking in. #deploy without any options will provide legal deployment zones.");
     }
 
     /*
@@ -53,7 +53,7 @@ public class DeployCommand extends ClientCommand {
 
             client.deploy(id, coord, nFacing, 0);
             return "Unit " + id + " deployed to " + coord.toFriendlyString()
-                    + ". (this is assuming it worked. No error checking done.)";
+            + ". (this is assuming it worked. No error checking done.)";
         }
 
         return "Wrong number of arguments supplied. No deployment done.";
@@ -78,36 +78,36 @@ public class DeployCommand extends ClientCommand {
             maxy -= height / 5;
         }
         switch (nDir) {
-            case 0: // Any
-                return deep + "Deploy nearly anywhere. MinX: " + (minx + 1)
-                        + " MinY: " + (miny + 1) + " MaxX: " + (maxx + 1)
-                        + " MaxY: " + (maxy + 1);
-            case 1: // NW
-                return deep + "Deploy NW.";
-            case 2: // N
-                return deep + "Deploy N.";
-            case 3: // NE
-                return deep + "Deploy NE.";
-            case 4: // E
-                return deep + "Deploy E.";
-            case 5: // SE
-                return deep + "Deploy SE.";
-            case 6: // S
-                return deep + "Deploy S.";
-            case 7: // SW
-                return deep + "Deploy SW.";
-            case 8: // W
-                return deep + "Deploy W.";
-            case 9: // Edge
-                return deep + "Deploy at any edge.";
-            case 10: // Centre
-                return deep + "Deploy in the center. MinX: "
-                        + (Math.max(minx, width / 3) + 1) + " MinY: "
-                        + (Math.max(miny, height / 3) + 1) + " MaxX: "
-                        + (Math.min(maxx, 2 * width / 3) + 1) + " MaxY: "
-                        + (Math.min(miny, 2 * height / 3) + 1);
-            default: // ummm. .
-                return "Something went wrong, unknown deployment schema.";
+        case 0: // Any
+            return deep + "Deploy nearly anywhere. MinX: " + (minx + 1)
+            + " MinY: " + (miny + 1) + " MaxX: " + (maxx + 1)
+            + " MaxY: " + (maxy + 1);
+        case 1: // NW
+            return deep + "Deploy NW.";
+        case 2: // N
+            return deep + "Deploy N.";
+        case 3: // NE
+            return deep + "Deploy NE.";
+        case 4: // E
+            return deep + "Deploy E.";
+        case 5: // SE
+            return deep + "Deploy SE.";
+        case 6: // S
+            return deep + "Deploy S.";
+        case 7: // SW
+            return deep + "Deploy SW.";
+        case 8: // W
+            return deep + "Deploy W.";
+        case 9: // Edge
+            return deep + "Deploy at any edge.";
+        case 10: // Centre
+            return deep + "Deploy in the center. MinX: "
+            + (Math.max(minx, width / 3) + 1) + " MinY: "
+            + (Math.max(miny, height / 3) + 1) + " MaxX: "
+            + (Math.min(maxx, 2 * width / 3) + 1) + " MaxY: "
+            + (Math.min(miny, 2 * height / 3) + 1);
+        default: // ummm. .
+            return "Something went wrong, unknown deployment schema.";
         }
     }
 }

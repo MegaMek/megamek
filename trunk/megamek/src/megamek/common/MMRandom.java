@@ -45,13 +45,13 @@ public abstract class MMRandom {
         System.err.println("MMRandom: generating RNG type #" + type);
         try {
             switch (type) {
-                case R_CRYPTO:
-                    return new MMRandom.CryptoRandom();
-                case R_POOL36:
-                    return new MMRandom.Pool36Random();
-                case R_SUN:
-                default:
-                    return new MMRandom.SunRandom();
+            case R_CRYPTO:
+                return new MMRandom.CryptoRandom();
+            case R_POOL36:
+                return new MMRandom.Pool36Random();
+            case R_SUN:
+            default:
+                return new MMRandom.SunRandom();
             }
         } catch (Exception ex) {
             System.err.println("MMRandom: could not create desired RNG #"

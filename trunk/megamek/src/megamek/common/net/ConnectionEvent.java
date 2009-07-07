@@ -66,18 +66,18 @@ public abstract class ConnectionEvent extends java.util.EventObject {
     public String toString() {
         StringBuffer buff = new StringBuffer();
         switch (this.type) {
-            case CONNECTED:
-                buff.append("Connected");
-                break;
-            case DISCONNECTED:
-                buff.append("Disconnected");
-                break;
-            case PACKET_RECEIVED:
-                buff.append("Packet Received");
-                break;
-            default:
-                buff.append("Unknown");
-                break;
+        case CONNECTED:
+            buff.append("Connected");
+            break;
+        case DISCONNECTED:
+            buff.append("Disconnected");
+            break;
+        case PACKET_RECEIVED:
+            buff.append("Packet Received");
+            break;
+        default:
+            buff.append("Unknown");
+            break;
         }
         buff.append(" connection event ");
         return buff.toString();

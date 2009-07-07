@@ -79,20 +79,20 @@ public abstract class ClientCommand {
 
     public static String getDirection(int arg) {
         switch (arg) {
-            case 0:
-                return "N";
-            case 1:
-                return "NE";
-            case 2:
-                return "SE";
-            case 3:
-                return "S";
-            case 4:
-                return "SW";
-            case 5:
-                return "NW";
-            default:
-                return "Unk";
+        case 0:
+            return "N";
+        case 1:
+            return "NE";
+        case 2:
+            return "SE";
+        case 3:
+            return "S";
+        case 4:
+            return "SW";
+        case 5:
+            return "NW";
+        default:
+            return "Unk";
         }
     }
 }

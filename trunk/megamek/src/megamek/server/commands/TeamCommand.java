@@ -36,7 +36,7 @@ public class TeamCommand extends ServerCommand {
     /** Creates new WhoCommand */
     public TeamCommand(Server server) {
         super(server, "t",
-                "Allows players on the same team to chat with each other in the game.");
+        "Allows players on the same team to chat with each other in the game.");
     }
 
     @Override
@@ -54,7 +54,7 @@ public class TeamCommand extends ServerCommand {
             StringBuilder message = new StringBuilder();
 
             String origin = "Team Chat[" + server.getPlayer(connId).getName()
-                    + "]";
+            + "]";
 
             for (int pos = 1; pos < args.length; pos++) {
                 message.append(" ");

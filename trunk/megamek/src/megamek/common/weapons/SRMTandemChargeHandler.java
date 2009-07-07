@@ -118,7 +118,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
         if(null != bldg) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
-        
+
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             Report r = new Report(3415);
@@ -158,10 +158,10 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 }
             }
             vPhaseReport
-                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
-                                    .getId() ? DamageType.IGNORE_PASSENGER
-                                    : DamageType.NONE, false, false,
+            .addAll(server.damageEntity(entityTarget, hit, nDamage,
+                    false, ae.getSwarmTargetId() == entityTarget
+                    .getId() ? DamageType.IGNORE_PASSENGER
+                            : DamageType.NONE, false, false,
                             throughFront, underWater));
         }
     }
@@ -176,7 +176,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             double toReturn = Compute.directBlowInfantryDamage(wtype
                     .getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                    Compute.WEAPON_CLUSTER_MISSILE, ((Infantry) target)
+                            Compute.WEAPON_CLUSTER_MISSILE, ((Infantry) target)
                             .isMechanized());
             if (bGlancing) {
                 toReturn /= 2;

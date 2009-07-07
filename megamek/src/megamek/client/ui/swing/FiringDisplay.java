@@ -1181,9 +1181,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         setFireEnabled(false);
 
         // make sure we're showing the current entity in the mech display
-        if ((ce() != null) && !ce().equals(clientgui.mechD.getCurrentEntity())) {
+        // this is causing bug 2816058 by imediatly after a change of view replacing it with the selected unit.
+        /*if ((ce() != null) && !ce().equals(clientgui.mechD.getCurrentEntity())) {
             clientgui.mechD.displayEntity(ce());
-        }
+        }*/
 
         // allow spotting
         if ((ce() != null) && ce().canSpot() && (target != null)

@@ -62,6 +62,8 @@ v0.35.4-dev (SVN)
 + Bug: max elevation change for grounded aeros is 1
 + Bug: grounded aeros have the same terrain prohibitions as wheeled tanks
 + Bug: grounded aeros don't add atmospheric operation penalties to PSRs
++ grounded aero stacking limits
++ Bug: Aero airborne/landed status not set correctly before deployment
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

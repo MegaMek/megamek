@@ -249,7 +249,10 @@ public class Compute {
                 // If the entering entity is a mech,
                 // then any other mech in the hex is a violation.
                 // Unless grappled
-                if (isMech && (inHex instanceof Mech) && (((Mech) inHex).getGrappled() != entering.getId())) {
+                //grounded small craft are also treated as mechs for purposes of stacking
+                if (isMech 
+                		&& (((inHex instanceof Mech) && (((Mech) inHex).getGrappled() != entering.getId()))
+                				|| inHex instanceof SmallCraft)) {
                     return inHex;
                 }
 

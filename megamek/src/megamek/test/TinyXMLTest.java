@@ -81,14 +81,14 @@ public class TinyXMLTest implements XMLResponder {
     }
 
     public void recordElementDeclaration(String name, String content)
-            throws ParseException {
+    throws ParseException {
         System.out.print(prefix + "!ELEMENT: " + name);
         System.out.println("  content = " + content);
     }
 
     public void recordAttlistDeclaration(String element, String attr,
             boolean notation, String type, String defmod, String def)
-            throws ParseException {
+    throws ParseException {
         System.out.print(prefix + "!ATTLIST: " + element);
         System.out.print("  attr = " + attr);
         System.out.print("  type = " + ((notation) ? "NOTATIONS " : "") + type);
@@ -97,7 +97,7 @@ public class TinyXMLTest implements XMLResponder {
     }
 
     public void recordDoctypeDeclaration(String name, String pubID, String sysID)
-            throws ParseException {
+    throws ParseException {
         System.out.print(prefix + "!DOCTYPE: " + name);
         if (pubID != null)
             System.out.print("  pubID = " + pubID);
@@ -119,7 +119,7 @@ public class TinyXMLTest implements XMLResponder {
 
     @SuppressWarnings("unchecked")
     public void recordElementStart(String name, Hashtable attr)
-            throws ParseException {
+    throws ParseException {
         System.out.println(prefix + "Element: " + name);
         if (attr != null) {
             Enumeration<?> e = attr.keys();
@@ -175,7 +175,7 @@ public class TinyXMLTest implements XMLResponder {
     }
 
     public InputStream resolveDTDEntity(String name, String pubID, String sysID)
-            throws ParseException {
+    throws ParseException {
         return resolveExternalEntity(name, pubID, sysID);
     }
 

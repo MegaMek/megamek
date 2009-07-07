@@ -192,7 +192,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener {
             add(b_choice_inf);
 
             String mineDesc = Messages
-                    .getString("CustomMechDialog.labBombMine");
+            .getString("CustomMechDialog.labBombMine");
             JLabel lmine = new JLabel(mineDesc);
             c.gridx = 0;
             c.gridy = 4;
@@ -208,7 +208,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener {
             if (bombDump) {
 
                 String tagDesc = Messages
-                        .getString("CustomMechDialog.labBombTAG");
+                .getString("CustomMechDialog.labBombTAG");
                 JLabel ltag = new JLabel(tagDesc);
                 c.gridx = 2;
                 c.gridy = 0;
@@ -222,7 +222,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener {
                 add(b_choice_tag);
 
                 String arrowDesc = Messages
-                        .getString("CustomMechDialog.labBombArrow");
+                .getString("CustomMechDialog.labBombArrow");
                 JLabel larrow = new JLabel(arrowDesc);
                 c.gridx = 2;
                 c.gridy = 1;
@@ -236,7 +236,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener {
                 add(b_choice_arrow);
 
                 String rlDesc = Messages
-                        .getString("CustomMechDialog.labBombRL");
+                .getString("CustomMechDialog.labBombRL");
                 JLabel lrl = new JLabel(rlDesc);
                 c.gridx = 2;
                 c.gridy = 2;
@@ -250,7 +250,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener {
                 add(b_choice_rl);
 
                 String alamoDesc = Messages
-                        .getString("CustomMechDialog.labBombAlamo");
+                .getString("CustomMechDialog.labBombAlamo");
                 JLabel lalamo = new JLabel(alamoDesc);
                 c.gridx = 2;
                 c.gridy = 3;

@@ -60,7 +60,7 @@ import megamek.common.TechConstants;
  */
 
 public class CustomBattleArmorDialog extends JDialog implements ActionListener,
-        ItemListener, KeyListener, Runnable, DocumentListener, WindowListener {
+ItemListener, KeyListener, Runnable, DocumentListener, WindowListener {
 
     /**
      *
@@ -149,14 +149,14 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
             .getString("CustomBattleArmorDialog.m_buttonRemove"));
     private JLabel m_labelRightArmCurrentEquipment = new JLabel(
             Messages
-                    .getString("CustomBattleArmorDialog.m_labelCurrentRightArmEquipment"),
+            .getString("CustomBattleArmorDialog.m_labelCurrentRightArmEquipment"),
             SwingConstants.RIGHT);
     private JComboBox m_chRightArmCurrentEquipment = new JComboBox();
     private JButton m_buttonRemoveRightArm = new JButton(Messages
             .getString("CustomBattleArmorDialog.m_buttonRemove"));
     private JLabel m_labelLeftArmCurrentEquipment = new JLabel(
             Messages
-                    .getString("CustomBattleArmorDialog.m_labelCurrentLeftArmEquipment"),
+            .getString("CustomBattleArmorDialog.m_labelCurrentLeftArmEquipment"),
             SwingConstants.RIGHT);
     private JComboBox m_chLeftArmCurrentEquipment = new JComboBox();
     private JButton m_buttonRemoveLeftArm = new JButton(Messages
@@ -225,36 +225,36 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
     private static int EQUIPMENT_TYPE_OTHER = 4;
 
     private static final int[][] ARMOR_TYPE_WEIGHT = {
-            { 50, 40, 100, 55, 100, 60, 60, 0, 50 },
-            { 25, 0, 0, 30, 0, 35, 35, 30, 0 } };
+        { 50, 40, 100, 55, 100, 60, 60, 0, 50 },
+        { 25, 0, 0, 30, 0, 35, 35, 30, 0 } };
 
     private static final int[] ARMOR_TYPE_SLOTS = { 0, 5, 4, 3, 4, 4, 5, 5, 5 };
 
     private static final int[] ARMOR_TYPE_COSTS = { 10000, 12500, 10000, 12000,
-            50000, 15000, 20000, 10000, 15000 };
+        50000, 15000, 20000, 10000, 15000 };
 
     private static final String[] ARMOR_TYPE_STRINGS = { "Standard",
-            "Advanced", "Prototype", "Basic Stealth", "Prototype Stealth",
-            "Standard Stealth", "Improved Stealth", "Fire Resistant", "Mimetic" };
+        "Advanced", "Prototype", "Basic Stealth", "Prototype Stealth",
+        "Standard Stealth", "Improved Stealth", "Fire Resistant", "Mimetic" };
 
     private static final int[] GROUND_MP_WEIGHT = { 25, 30, 40, 80, 160 };
 
     private static final int[][] JUMP_MP_LIMITS = { { 3, 3, 3, 2, 2 },
-            { 7, 6, 5, 0, 0 }, { 5, 5, 4, 3, 2 } };
+        { 7, 6, 5, 0, 0 }, { 5, 5, 4, 3, 2 } };
 
     private static final int[][] JUMP_MP_WEIGHT = { { 25, 25, 50, 125, 250 },
-            { 30, 40, 60, 0, 0 }, { 45, 45, 85, 160, 250 } };
+        { 30, 40, 60, 0, 0 }, { 45, 45, 85, 160, 250 } };
 
     private static final int[][] JUMP_MP_COST = {
-            { 50000, 50000, 75000, 150000, 300000 },
-            { 50000, 50000, 100000, 0, 0 },
-            { 50000, 50000, 75000, 100000, 150000 } };
+        { 50000, 50000, 75000, 150000, 300000 },
+        { 50000, 50000, 100000, 0, 0 },
+        { 50000, 50000, 75000, 100000, 150000 } };
 
     private static final int[] MANIPULATOR_TYPE_WEIGHT = { 0, 0, 0, 15, 15, 35,
-            50, 20, 60, 30, 30, 30 };
+        50, 20, 60, 30, 30, 30 };
 
     private static final int[] MANIPULATOR_TYPE_COSTS = { 0, 2500, 5000, 7500,
-            10000, 12500, 15000, 25000, 30000, 500, 2500 };
+        10000, 12500, 15000, 25000, 30000, 500, 2500 };
 
     private static final int[] ARM_MAX_SLOTS = { 2, 2, 3, 3, 4 };
     private static final int[] TORSO_MAX_SLOTS = { 2, 4, 4, 6, 8 };
@@ -493,7 +493,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(m_clientgui.getClient().getName());
         for (Iterator<Client> i = m_clientgui.getBots().values().iterator(); i
-                .hasNext();) {
+        .hasNext();) {
             m_chPlayer.addItem(i.next().getName());
         }
         if (m_chPlayer.getItemCount() == 1) {
@@ -568,9 +568,9 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         // Next we populate the manipulator choicees.
         for (int x = 0; x < BattleArmor.MANIPULATOR_TYPE_STRINGS.length; x++) {
             m_chLeftManipulator
-                    .addItem(BattleArmor.MANIPULATOR_TYPE_STRINGS[x]);
+            .addItem(BattleArmor.MANIPULATOR_TYPE_STRINGS[x]);
             m_chRightManipulator
-                    .addItem(BattleArmor.MANIPULATOR_TYPE_STRINGS[x]);
+            .addItem(BattleArmor.MANIPULATOR_TYPE_STRINGS[x]);
         }
         m_chLeftManipulator.setSelectedIndex(0);
         m_chRightManipulator.setSelectedIndex(0);
@@ -740,12 +740,12 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
 
     private Point computeDesiredLocation() {
         int desiredX = m_clientgui.frame.getLocation().x
-                + m_clientgui.frame.getSize().width / 2 - getSize().width / 2;
+        + m_clientgui.frame.getSize().width / 2 - getSize().width / 2;
         if (desiredX < 0) {
             desiredX = 0;
         }
         int desiredY = m_clientgui.frame.getLocation().y
-                + m_clientgui.frame.getSize().height / 2 - getSize().height / 2;
+        + m_clientgui.frame.getSize().height / 2 - getSize().height / 2;
         if (desiredY < 0) {
             desiredY = 0;
         }
@@ -823,7 +823,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         } else if (ae.getSource().equals(m_buttonRemoveTorso)) {
             if (torsoEquipment != null) {
                 String removeItem = (String) m_chTorsoCurrentEquipment
-                        .getSelectedItem();
+                .getSelectedItem();
                 Iterator<BattleArmorEquipment> tmpE = torsoEquipment.iterator();
                 while (tmpE.hasNext()) {
                     BattleArmorEquipment tmpBAE = (tmpE.next());
@@ -849,9 +849,9 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         } else if (ae.getSource().equals(m_buttonRemoveRightArm)) {
             if (rightArmEquipment != null) {
                 String removeItem = (String) m_chRightArmCurrentEquipment
-                        .getSelectedItem();
+                .getSelectedItem();
                 Iterator<BattleArmorEquipment> tmpE = rightArmEquipment
-                        .iterator();
+                .iterator();
                 while (tmpE.hasNext()) {
                     BattleArmorEquipment tmpBAE = (tmpE.next());
                     if (tmpBAE.name.equals(removeItem)) {
@@ -876,9 +876,9 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         } else if (ae.getSource().equals(m_buttonRemoveLeftArm)) {
             if (leftArmEquipment != null) {
                 String removeItem = (String) m_chLeftArmCurrentEquipment
-                        .getSelectedItem();
+                .getSelectedItem();
                 Iterator<BattleArmorEquipment> tmpE = leftArmEquipment
-                        .iterator();
+                .iterator();
                 while (tmpE.hasNext()) {
                     BattleArmorEquipment tmpBAE = (tmpE.next());
                     if (tmpBAE.name.equals(removeItem)) {
@@ -997,26 +997,26 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
                 stateWeightClass = m_chWeightClass.getSelectedIndex();
                 // Needs to update min and max weights!
                 switch (stateWeightClass) {
-                    case WEIGHT_CLASS_PAL:
-                        stateMinWeight = 0;
-                        stateMaxWeight = 400;
-                        break;
-                    case WEIGHT_CLASS_LIGHT:
-                        stateMinWeight = 401;
-                        stateMaxWeight = 750;
-                        break;
-                    case WEIGHT_CLASS_MEDIUM:
-                        stateMinWeight = 751;
-                        stateMaxWeight = 1000;
-                        break;
-                    case WEIGHT_CLASS_HEAVY:
-                        stateMinWeight = 1001;
-                        stateMaxWeight = 1500;
-                        break;
-                    case WEIGHT_CLASS_ASSAULT:
-                        stateMinWeight = 1501;
-                        stateMaxWeight = 2000;
-                        break;
+                case WEIGHT_CLASS_PAL:
+                    stateMinWeight = 0;
+                    stateMaxWeight = 400;
+                    break;
+                case WEIGHT_CLASS_LIGHT:
+                    stateMinWeight = 401;
+                    stateMaxWeight = 750;
+                    break;
+                case WEIGHT_CLASS_MEDIUM:
+                    stateMinWeight = 751;
+                    stateMaxWeight = 1000;
+                    break;
+                case WEIGHT_CLASS_HEAVY:
+                    stateMinWeight = 1001;
+                    stateMaxWeight = 1500;
+                    break;
+                case WEIGHT_CLASS_ASSAULT:
+                    stateMinWeight = 1501;
+                    stateMaxWeight = 2000;
+                    break;
                 }
                 updateGroundMPChoices();
                 updateJumpMPChoices();
@@ -1036,13 +1036,13 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
             if (stateManipulatorTypeLeft != m_chLeftManipulator
                     .getSelectedIndex()) {
                 stateManipulatorTypeLeft = m_chLeftManipulator
-                        .getSelectedIndex();
+                .getSelectedIndex();
             }
         } else if (ie.getSource().equals(m_chRightManipulator)) {
             if (stateManipulatorTypeRight != m_chRightManipulator
                     .getSelectedIndex()) {
                 stateManipulatorTypeRight = m_chRightManipulator
-                        .getSelectedIndex();
+                .getSelectedIndex();
             }
         } else if (ie.getSource().equals(m_chArmorType)) {
             if (stateArmorType != m_chArmorType.getSelectedIndex()) {
@@ -1123,8 +1123,8 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         } else {
             retVal.append(">>>");
             retVal
-                    .append(Messages
-                            .getString("CustomBattleArmorDialog.invalid"));
+            .append(Messages
+                    .getString("CustomBattleArmorDialog.invalid"));
             retVal.append("<<<\n");
             if (invalidReason != null) {
                 retVal.append(invalidReason);
@@ -1150,8 +1150,8 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
                 .getString("CustomBattleArmorDialog.m_labelTechBase"));
         if (stateTechBase == TECH_BASE_IS) {
             retVal
-                    .append(Messages
-                            .getString("CustomBattleArmorDialog.tech_base_inner_sphere"));
+            .append(Messages
+                    .getString("CustomBattleArmorDialog.tech_base_inner_sphere"));
         } else {
             retVal.append(Messages
                     .getString("CustomBattleArmorDialog.tech_base_clan"));
@@ -1172,30 +1172,30 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         retVal.append(Messages
                 .getString("CustomBattleArmorDialog.m_labelWeightClass"));
         switch (stateWeightClass) {
-            case WEIGHT_CLASS_PAL:
-                retVal.append(Messages
-                        .getString("CustomBattleArmorDialog.weight_class_pal"));
-                break;
-            case WEIGHT_CLASS_LIGHT:
-                retVal
-                        .append(Messages
-                                .getString("CustomBattleArmorDialog.weight_class_light"));
-                break;
-            case WEIGHT_CLASS_MEDIUM:
-                retVal
-                        .append(Messages
-                                .getString("CustomBattleArmorDialog.weight_class_medium"));
-                break;
-            case WEIGHT_CLASS_HEAVY:
-                retVal
-                        .append(Messages
-                                .getString("CustomBattleArmorDialog.weight_class_heavy"));
-                break;
-            case WEIGHT_CLASS_ASSAULT:
-                retVal
-                        .append(Messages
-                                .getString("CustomBattleArmorDialog.weight_class_assault"));
-                break;
+        case WEIGHT_CLASS_PAL:
+            retVal.append(Messages
+                    .getString("CustomBattleArmorDialog.weight_class_pal"));
+            break;
+        case WEIGHT_CLASS_LIGHT:
+            retVal
+            .append(Messages
+                    .getString("CustomBattleArmorDialog.weight_class_light"));
+            break;
+        case WEIGHT_CLASS_MEDIUM:
+            retVal
+            .append(Messages
+                    .getString("CustomBattleArmorDialog.weight_class_medium"));
+            break;
+        case WEIGHT_CLASS_HEAVY:
+            retVal
+            .append(Messages
+                    .getString("CustomBattleArmorDialog.weight_class_heavy"));
+            break;
+        case WEIGHT_CLASS_ASSAULT:
+            retVal
+            .append(Messages
+                    .getString("CustomBattleArmorDialog.weight_class_assault"));
+            break;
         }
         retVal.append(" (");
         retVal.append(Messages.getString("CustomBattleArmorDialog.weight"));
@@ -1261,7 +1261,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         retVal.append(Messages
                 .getString("CustomBattleArmorDialog.m_labelLeftManipulator"));
         retVal
-                .append(BattleArmor.MANIPULATOR_TYPE_STRINGS[stateManipulatorTypeLeft]);
+        .append(BattleArmor.MANIPULATOR_TYPE_STRINGS[stateManipulatorTypeLeft]);
         retVal.append(" (");
         retVal.append(Messages.getString("CustomBattleArmorDialog.weight"));
         retVal.append(MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeLeft]);
@@ -1270,7 +1270,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         retVal.append(Messages
                 .getString("CustomBattleArmorDialog.m_labelRightManipulator"));
         retVal
-                .append(BattleArmor.MANIPULATOR_TYPE_STRINGS[stateManipulatorTypeRight]);
+        .append(BattleArmor.MANIPULATOR_TYPE_STRINGS[stateManipulatorTypeRight]);
         retVal.append(" (");
         retVal.append(Messages.getString("CustomBattleArmorDialog.weight"));
         retVal.append(MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeRight]);
@@ -1392,7 +1392,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
             // And include this slightly cludgy way of detecting illegal
             // armor/tech base pairings.
             invalidReason = ARMOR_TYPE_STRINGS[stateArmorType]
-                    + " Armor not legal for chosen tech base.";
+                                               + " Armor not legal for chosen tech base.";
             return false;
         }
 
@@ -1436,11 +1436,11 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         } else {
             // Here, we have to check all three locations individually.
             int totalFreeSlots = (2 * ARM_MAX_SLOTS[stateWeightClass])
-                    + TORSO_MAX_SLOTS[stateWeightClass];
+            + TORSO_MAX_SLOTS[stateWeightClass];
             if (leftArmEquipment != null) {
                 int totalSlots = 0;
                 Iterator<BattleArmorEquipment> tmpE = leftArmEquipment
-                        .iterator();
+                .iterator();
                 while (tmpE.hasNext()) {
                     BattleArmorEquipment tmpBAE = (tmpE.next());
                     totalSlots += tmpBAE.slots;
@@ -1454,7 +1454,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
             if (rightArmEquipment != null) {
                 int totalSlots = 0;
                 Iterator<BattleArmorEquipment> tmpE = rightArmEquipment
-                        .iterator();
+                .iterator();
                 while (tmpE.hasNext()) {
                     BattleArmorEquipment tmpBAE = (tmpE.next());
                     totalSlots += tmpBAE.slots;
@@ -1534,7 +1534,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
                 int totalWeapons = 0;
                 int totalAMWeapons = 0;
                 Iterator<BattleArmorEquipment> tmpE = rightArmEquipment
-                        .iterator();
+                .iterator();
                 while (tmpE.hasNext()) {
                     BattleArmorEquipment tmpBAE = (tmpE.next());
                     if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
@@ -1556,7 +1556,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
                 int totalWeapons = 0;
                 int totalAMWeapons = 0;
                 Iterator<BattleArmorEquipment> tmpE = leftArmEquipment
-                        .iterator();
+                .iterator();
                 while (tmpE.hasNext()) {
                     BattleArmorEquipment tmpBAE = (tmpE.next());
                     if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
@@ -1588,30 +1588,30 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         if (techBase == TECH_BASE_IS) {
             // Inner Sphere tech base.
             switch (weightClass) {
-                case WEIGHT_CLASS_PAL:
-                    return 80;
-                case WEIGHT_CLASS_LIGHT:
-                    return 100;
-                case WEIGHT_CLASS_MEDIUM:
-                    return 175;
-                case WEIGHT_CLASS_HEAVY:
-                    return 300;
-                case WEIGHT_CLASS_ASSAULT:
-                    return 550;
+            case WEIGHT_CLASS_PAL:
+                return 80;
+            case WEIGHT_CLASS_LIGHT:
+                return 100;
+            case WEIGHT_CLASS_MEDIUM:
+                return 175;
+            case WEIGHT_CLASS_HEAVY:
+                return 300;
+            case WEIGHT_CLASS_ASSAULT:
+                return 550;
             }
         } else {
             // Clan tech base
             switch (weightClass) {
-                case WEIGHT_CLASS_PAL:
-                    return 130;
-                case WEIGHT_CLASS_LIGHT:
-                    return 150;
-                case WEIGHT_CLASS_MEDIUM:
-                    return 250;
-                case WEIGHT_CLASS_HEAVY:
-                    return 400;
-                case WEIGHT_CLASS_ASSAULT:
-                    return 700;
+            case WEIGHT_CLASS_PAL:
+                return 130;
+            case WEIGHT_CLASS_LIGHT:
+                return 150;
+            case WEIGHT_CLASS_MEDIUM:
+                return 250;
+            case WEIGHT_CLASS_HEAVY:
+                return 400;
+            case WEIGHT_CLASS_ASSAULT:
+                return 700;
             }
         }
         // This is an error case...
@@ -1635,7 +1635,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
     private static int getGroundMPWeight(int chassisType, int weightClass,
             int groundMP) {
         return (groundMP - (chassisType == CHASSIS_TYPE_BIPED ? 1 : 2))
-                * GROUND_MP_WEIGHT[weightClass];
+        * GROUND_MP_WEIGHT[weightClass];
     }
 
     private int getJumpMPWeight() {
@@ -1649,7 +1649,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
 
     private int getManipulatorWeight() {
         return MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeLeft]
-                + MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeRight];
+                                       + MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeRight];
     }
 
     private int calcSuitCost() {
@@ -1657,20 +1657,20 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
 
         // Chassis Cost
         switch (stateWeightClass) {
-            case WEIGHT_CLASS_PAL:
-            case WEIGHT_CLASS_LIGHT:
-                // They're both 50,000 C-Bill chassis
-                retVal += 50000;
-                break;
-            case WEIGHT_CLASS_MEDIUM:
-                retVal += 100000;
-                break;
-            case WEIGHT_CLASS_HEAVY:
-                retVal += 200000;
-                break;
-            case WEIGHT_CLASS_ASSAULT:
-                retVal += 400000;
-                break;
+        case WEIGHT_CLASS_PAL:
+        case WEIGHT_CLASS_LIGHT:
+            // They're both 50,000 C-Bill chassis
+            retVal += 50000;
+            break;
+        case WEIGHT_CLASS_MEDIUM:
+            retVal += 100000;
+            break;
+        case WEIGHT_CLASS_HEAVY:
+            retVal += 200000;
+            break;
+        case WEIGHT_CLASS_ASSAULT:
+            retVal += 400000;
+            break;
         }
 
         // Motice Systems Cost
@@ -1805,7 +1805,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
             // Now all other equipment.
             if (leftArmEquipment != null) {
                 Iterator<BattleArmorEquipment> tmpE = leftArmEquipment
-                        .iterator();
+                .iterator();
                 while (tmpE.hasNext()) {
                     BattleArmorEquipment tmpBAE = (tmpE.next());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON)
@@ -1822,7 +1822,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
             }
             if (rightArmEquipment != null) {
                 Iterator<BattleArmorEquipment> tmpE = rightArmEquipment
-                        .iterator();
+                .iterator();
                 while (tmpE.hasNext()) {
                     BattleArmorEquipment tmpBAE = (tmpE.next());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON)

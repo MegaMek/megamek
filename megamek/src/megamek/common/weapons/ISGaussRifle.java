@@ -60,7 +60,7 @@ public class ISGaussRifle extends GaussWeapon {
         this.maxRange = RANGE_LONG;
         this.explosionDamage = 20;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

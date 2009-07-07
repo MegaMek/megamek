@@ -43,7 +43,7 @@ import megamek.common.Entity;
  * @since 0.31
  */
 public class MechGroupView extends Dialog implements ActionListener,
-        ItemListener {
+ItemListener {
 
     /**
      * 
@@ -62,7 +62,7 @@ public class MechGroupView extends Dialog implements ActionListener,
         entityArray = eA;
 
         boolean rpgSkills = client.game.getOptions().booleanOption(
-                "rpg_gunnery");
+        "rpg_gunnery");
 
         for (int i = 0; i < entityArray.length; i++) {
             Entity entity = client.game.getEntity(entityArray[i]);
@@ -72,7 +72,7 @@ public class MechGroupView extends Dialog implements ActionListener,
             if (!entity.getOwner().equals(client.getLocalPlayer())
                     && client.game.getOptions().booleanOption("blind_drop")
                     && !client.game.getOptions().booleanOption(
-                            "real_blind_drop")) {
+                    "real_blind_drop")) {
                 entities.add(ChatLounge.formatUnit(entity, true, rpgSkills));
             } else if (entity.getOwner().equals(client.getLocalPlayer())
                     || (!client.game.getOptions().booleanOption("blind_drop") && !client.game

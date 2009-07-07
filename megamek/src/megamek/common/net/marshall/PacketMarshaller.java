@@ -63,7 +63,7 @@ public abstract class PacketMarshaller {
      * @throws Exception
      */
     public abstract void marshall(Packet packet, OutputStream stream)
-            throws Exception;
+    throws Exception;
 
     /**
      * Unmarshalls the packet data from the given <code>byte[]</code> array

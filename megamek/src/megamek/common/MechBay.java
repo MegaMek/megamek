@@ -49,7 +49,7 @@ public final class MechBay extends Bay {
         this.doors = doors;
     }
 
-    
+
     /**
      * Determines if this object can accept the given unit.  The unit may
      * not be of the appropriate type or there may be no room for the unit.
@@ -73,7 +73,7 @@ public final class MechBay extends Bay {
         if ( this.currentSpace < 1 ) {
             result = false;
         }
-        
+
         //is the door functional
         if( this.doors < 1 ) {
             result = false;
@@ -82,12 +82,12 @@ public final class MechBay extends Bay {
         // Return our result.
         return result;
     }
-    
+
     @Override
     public String getUnusedString() {
         return "Mech - " + this.currentSpace + " units";
     }
-    
+
     @Override
     public String getType() {
         return "Mech";

@@ -56,9 +56,9 @@ public class MechSummaryCache {
 
     private StringBuffer loadReport = new StringBuffer();
     private final static String CONFIG_FILENAME = "data/mechfiles/UnitVerifierOptions.xml"; // should
-                                                                                            // be a
-                                                                                            // client
-                                                                                            // option?
+    // be a
+    // client
+    // option?
     private EntityVerifier entityVerifier = null;
     private Thread loader;
 
@@ -192,8 +192,8 @@ public class MechSummaryCache {
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms
-                            .setSourceFile(new File(s.substring(nIndex1 + 1,
-                                    nIndex2)));
+                    .setSourceFile(new File(s.substring(nIndex1 + 1,
+                            nIndex2)));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setEntryName(s.substring(nIndex1 + 1, nIndex2));
@@ -262,12 +262,12 @@ public class MechSummaryCache {
 
                 if (unitName.indexOf("\\") > -1) {
                     unitName = unitName
-                            .substring(unitName.lastIndexOf("\\") + 1);
+                    .substring(unitName.lastIndexOf("\\") + 1);
                 }
 
                 if (unitName.indexOf("/") > -1) {
                     unitName = unitName
-                            .substring(unitName.lastIndexOf("/") + 1);
+                    .substring(unitName.lastIndexOf("/") + 1);
                 }
 
                 m_fileNameMap.put(unitName, m_data[x]);
@@ -287,7 +287,7 @@ public class MechSummaryCache {
 
         if (hFailedFiles.size() > 0) {
             loadReport.append("  ").append(hFailedFiles.size()).append(
-                    " units failed to load...\n");
+            " units failed to load...\n");
         }
         /*
          * Enumeration failedUnits = hFailedFiles.keys(); Enumeration
@@ -372,7 +372,7 @@ public class MechSummaryCache {
             Set<String> sKnownFiles, long lLastCheck, File fDir) {
         boolean bNeedsUpdate = false;
         loadReport.append("  Looking in ").append(fDir.getPath()).append(
-                "...\n");
+        "...\n");
         int thisDirectoriesFileCount = 0;
         String[] sa = fDir.list();
 
@@ -439,16 +439,16 @@ public class MechSummaryCache {
                     Iterator<String> failedEquipment = e.getFailedEquipment();
                     if (failedEquipment.hasNext()) {
                         loadReport.append("    Loading from ").append(f)
-                                .append("\n");
+                        .append("\n");
                         while (failedEquipment.hasNext()) {
                             loadReport.append(
-                                    "      Failed to load equipment: ").append(
+                            "      Failed to load equipment: ").append(
                                     failedEquipment.next()).append("\n");
                         }
                     }
                 } catch (EntityLoadingException ex) {
                     loadReport.append("    Loading from ").append(f).append(
-                            "\n");
+                    "\n");
                     loadReport.append("***   Unable to load file: ");
                     StringWriter stringWriter = new StringWriter();
                     PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -461,7 +461,7 @@ public class MechSummaryCache {
         }
 
         loadReport.append("  ...loaded ").append(thisDirectoriesFileCount)
-                .append(" files.\n");
+        .append(" files.\n");
 
         return bNeedsUpdate;
     }
@@ -483,7 +483,7 @@ public class MechSummaryCache {
             return false;
         }
         loadReport.append("  Looking in zip file ").append(fZipFile.getPath())
-                .append("...\n");
+        .append("...\n");
 
         for (Enumeration<?> i = zFile.entries(); i.hasMoreElements();) {
             if (Thread.interrupted()) {
@@ -495,7 +495,7 @@ public class MechSummaryCache {
             if (zEntry.isDirectory()) {
                 if (zEntry.getName().toLowerCase().equals("unsupported")) {
                     loadReport
-                            .append("  Do not place special 'unsupported' type folders in zip files, they must\n    be uncompressed directories to work properly.  Note that you may place\n    zip files inside of 'unsupported' type folders, though.\n");
+                    .append("  Do not place special 'unsupported' type folders in zip files, they must\n    be uncompressed directories to work properly.  Note that you may place\n    zip files inside of 'unsupported' type folders, though.\n");
                 }
                 continue;
             }
@@ -520,15 +520,15 @@ public class MechSummaryCache {
                 Iterator<String> failedEquipment = e.getFailedEquipment();
                 if (failedEquipment.hasNext()) {
                     loadReport.append("    Loading from zip file").append(
-                            " >> ").append(zEntry.getName()).append("\n");
+                    " >> ").append(zEntry.getName()).append("\n");
                     while (failedEquipment.hasNext()) {
                         loadReport.append("      Failed to load equipment: ")
-                                .append(failedEquipment.next()).append("\n");
+                        .append(failedEquipment.next()).append("\n");
                     }
                 }
             } catch (Exception ex) {
                 loadReport.append("    Loading from zip file").append(" >> ")
-                        .append(zEntry.getName()).append("\n");
+                .append(zEntry.getName()).append("\n");
                 loadReport.append("      Unable to load file: ");
                 StringWriter stringWriter = new StringWriter();
                 PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -548,7 +548,7 @@ public class MechSummaryCache {
         }
 
         loadReport.append("  ...loaded ").append(thisZipFileCount).append(
-                " files.\n");
+        " files.\n");
 
         return bNeedsUpdate;
     }

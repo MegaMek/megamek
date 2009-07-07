@@ -53,7 +53,7 @@ public class SubCapitalMissileBayWeapon extends AmmoBayWeapon {
         this.capital = true;
         this.subCapital = true;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

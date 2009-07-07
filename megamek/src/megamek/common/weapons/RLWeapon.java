@@ -37,7 +37,7 @@ public abstract class RLWeapon extends MissileWeapon {
         this.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         this.flags |= F_ONESHOT;
         this.toHitModifier = 1;
-        
+
         this.atClass = CLASS_ROCKET_LAUNCHER;
     }
 

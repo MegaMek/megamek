@@ -36,7 +36,6 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
-import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
@@ -271,7 +270,7 @@ public class TdbFile implements IMechLoader {
             cockpitType = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(TARGSYS)) {
             targSysStr = ((ParsedXML) children.nextElement()).getContent()
-                    .trim();
+            .trim();
             if ((targSysStr.length() >= 3)
                     && (targSysStr.substring(0, 3).equals("(C)"))) {
                 clanTC = true;
@@ -403,7 +402,7 @@ public class TdbFile implements IMechLoader {
                 // Drawing Board (pre 2.0.23) due to incomplete xml
                 // file information in those versions.
                 throw new EntityLoadingException(
-                        "This xml file is not a valid Drawing Board mech.  Make sure you are using version 2.0.23 or later of The Drawing Board.");
+                "This xml file is not a valid Drawing Board mech.  Make sure you are using version 2.0.23 or later of The Drawing Board.");
             }
 
             if (gyroType.equals("Extra-Light")) {
@@ -456,30 +455,30 @@ public class TdbFile implements IMechLoader {
             }
             if (techBase.equals("Inner Sphere")) {
                 switch (Integer.parseInt(rulesLevel)) {
-                    case 1:
-                        mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
-                        break;
-                    case 2:
-                        mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-                        break;
-                    case 3:
-                        mech.setTechLevel(TechConstants.T_IS_ADVANCED);
-                        break;
-                    default:
-                        throw new EntityLoadingException(
-                                "Unsupported tech level: " + rulesLevel);
+                case 1:
+                    mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
+                    break;
+                case 2:
+                    mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                    break;
+                case 3:
+                    mech.setTechLevel(TechConstants.T_IS_ADVANCED);
+                    break;
+                default:
+                    throw new EntityLoadingException(
+                            "Unsupported tech level: " + rulesLevel);
                 }
             } else if (techBase.equals("Clan")) {
                 switch (Integer.parseInt(rulesLevel)) {
-                    case 2:
-                        mech.setTechLevel(TechConstants.T_CLAN_TW);
-                        break;
-                    case 3:
-                        mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
-                        break;
-                    default:
-                        throw new EntityLoadingException(
-                                "Unsupported tech level: " + rulesLevel);
+                case 2:
+                    mech.setTechLevel(TechConstants.T_CLAN_TW);
+                    break;
+                case 3:
+                    mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+                    break;
+                default:
+                    throw new EntityLoadingException(
+                            "Unsupported tech level: " + rulesLevel);
                 }
             } else if (techBase.equals("Mixed (IS Chassis)")
                     || techBase.equals("Inner Sphere 'C'")) {
@@ -538,13 +537,13 @@ public class TdbFile implements IMechLoader {
             return mech;
         } catch (NumberFormatException ex) {
             throw new EntityLoadingException(
-                    "NumberFormatException parsing file");
+            "NumberFormatException parsing file");
         } catch (NullPointerException ex) {
             throw new EntityLoadingException(
-                    "NullPointerException parsing file");
+            "NullPointerException parsing file");
         } catch (StringIndexOutOfBoundsException ex) {
             throw new EntityLoadingException(
-                    "StringIndexOutOfBoundsException parsing file");
+            "StringIndexOutOfBoundsException parsing file");
         }
     }
 
@@ -666,8 +665,8 @@ public class TdbFile implements IMechLoader {
                             // use the existing one
                             mech.addCritical(loc, new CriticalSlot(
                                     CriticalSlot.TYPE_EQUIPMENT, mech
-                                            .getEquipmentNum(m), etype
-                                            .isHittable(), m));
+                                    .getEquipmentNum(m), etype
+                                    .isHittable(), m));
                             continue;
                         }
                         m = mech.addEquipment(etype, loc, rearMounted);

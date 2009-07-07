@@ -89,7 +89,7 @@ public class ChatProcessor {
                         }
                         if (command.equalsIgnoreCase("calm down")) { //$NON-NLS-1$
                             Iterator<Entity> i = tb.getEntitiesOwned()
-                                    .iterator();
+                            .iterator();
                             while (i.hasNext()) {
                                 CEntity cen = tb.centities.get(i.next());
                                 if (cen.strategy.attack > 1) {
@@ -99,7 +99,7 @@ public class ChatProcessor {
                             understood = true;
                         } else if (command.equalsIgnoreCase("be aggressive")) { //$NON-NLS-1$
                             Iterator<Entity> i = tb.getEntitiesOwned()
-                                    .iterator();
+                            .iterator();
                             while (i.hasNext()) {
                                 CEntity cen = tb.centities.get(i.next());
                                 cen.strategy.attack = Math.min(

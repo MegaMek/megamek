@@ -117,8 +117,8 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
         setLocation(clientgui.frame.getLocation().x
                 + clientgui.frame.getSize().width / 2 - getSize().width / 2,
                 clientgui.frame.getLocation().y
-                        + clientgui.frame.getSize().height / 2
-                        - getSize().height / 2);
+                + clientgui.frame.getSize().height / 2
+                - getSize().height / 2);
     }
 
     private void setupStartGrid() {
@@ -173,7 +173,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
                 ssb.append(IStartingPositions.START_LOCATION_NAMES[player
-                        .getStartingPos()]);
+                                                                   .getStartingPos()]);
                 ((DefaultListModel) lisStartList.getModel()).addElement(ssb
                         .toString());
             }
@@ -185,15 +185,15 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
             if (ev.getSource().equals(butStartPos[i])) {
                 if (client.game.getOptions().booleanOption("double_blind")
                         && client.game.getOptions().booleanOption(
-                                "exclusive_db_deployment")) {
+                        "exclusive_db_deployment")) {
                     if (i == 0) {
                         clientgui
-                                .doAlertDialog("Starting Position not allowed",
-                                        "In Double Blind play, you cannot choose 'Any' as starting position.");
+                        .doAlertDialog("Starting Position not allowed",
+                        "In Double Blind play, you cannot choose 'Any' as starting position.");
                         return;
                     }
                     for (Enumeration<Player> e = client.game.getPlayers(); e
-                            .hasMoreElements();) {
+                    .hasMoreElements();) {
                         Player player = e.nextElement();
                         if (player.getStartingPos() == 0) {
                             continue;
@@ -203,11 +203,11 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                                 || player.getStartingPos() + 1 == i || player
                                 .getStartingPos() - 1 == i)
                                 && player.getId() != client.getLocalPlayer()
-                                        .getId()) {
+                                .getId()) {
                             clientgui
-                                    .doAlertDialog(
-                                            "Must choose exclusive deployment zone",
-                                            "When using double blind, each player needs to have an exclusive deployment zone.");
+                            .doAlertDialog(
+                                    "Must choose exclusive deployment zone",
+                            "When using double blind, each player needs to have an exclusive deployment zone.");
                             return;
                         }
                     }
@@ -222,54 +222,54 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                 // newly
                 // selected home edge.
                 if (client.game.getOptions().booleanOption(
-                        "set_arty_player_homeedge")) { //$NON-NLS-1$
+                "set_arty_player_homeedge")) { //$NON-NLS-1$
                     int direction = IOffBoardDirections.NONE;
                     switch (i) {
-                        case 0:
-                            break;
-                        case 1:
-                        case 2:
-                        case 3:
-                            direction = IOffBoardDirections.NORTH;
-                            break;
-                        case 4:
-                            direction = IOffBoardDirections.EAST;
-                            break;
-                        case 5:
-                        case 6:
-                        case 7:
-                            direction = IOffBoardDirections.SOUTH;
-                            break;
-                        case 8:
-                            direction = IOffBoardDirections.WEST;
-                            break;
-                        case 11:
-                        case 12:
-                        case 13:
-                            direction = IOffBoardDirections.NORTH;
-                            break;
-                        case 14:
-                            direction = IOffBoardDirections.EAST;
-                            break;
-                        case 15:
-                        case 16:
-                        case 17:
-                            direction = IOffBoardDirections.SOUTH;
-                            break;
-                        case 18:
-                            direction = IOffBoardDirections.WEST;
-                            break;
-                        default:
+                    case 0:
+                        break;
+                    case 1:
+                    case 2:
+                    case 3:
+                        direction = IOffBoardDirections.NORTH;
+                        break;
+                    case 4:
+                        direction = IOffBoardDirections.EAST;
+                        break;
+                    case 5:
+                    case 6:
+                    case 7:
+                        direction = IOffBoardDirections.SOUTH;
+                        break;
+                    case 8:
+                        direction = IOffBoardDirections.WEST;
+                        break;
+                    case 11:
+                    case 12:
+                    case 13:
+                        direction = IOffBoardDirections.NORTH;
+                        break;
+                    case 14:
+                        direction = IOffBoardDirections.EAST;
+                        break;
+                    case 15:
+                    case 16:
+                    case 17:
+                        direction = IOffBoardDirections.SOUTH;
+                        break;
+                    case 18:
+                        direction = IOffBoardDirections.WEST;
+                        break;
+                    default:
                     }
                     Enumeration<Entity> thisPlayerArtyUnits = client.game
-                            .getSelectedEntities(new EntitySelector() {
-                                public boolean accept(Entity entity) {
-                                    if (entity.getOwnerId() == client
-                                            .getLocalPlayer().getId())
-                                        return true;
-                                    return false;
-                                }
-                            });
+                    .getSelectedEntities(new EntitySelector() {
+                        public boolean accept(Entity entity) {
+                            if (entity.getOwnerId() == client
+                                    .getLocalPlayer().getId())
+                                return true;
+                            return false;
+                        }
+                    });
                     while (thisPlayerArtyUnits.hasMoreElements()) {
                         Entity entity = thisPlayerArtyUnits.nextElement();
                         if (entity.getOffBoardDirection() != IOffBoardDirections.NONE) {

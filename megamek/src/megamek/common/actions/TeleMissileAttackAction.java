@@ -49,14 +49,14 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         }
         return 0;
     }
-    
+
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
     public ToHitData toHit(IGame game) {
         return toHit(game, game.getTarget(getTargetType(), getTargetId()));
     }
-    
+
     public ToHitData toHit(IGame game, Targetable target) {
         final Entity ae = getEntity(game);
 
@@ -69,7 +69,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         if (target == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is null");
         }
-        
+
         if (!game.getOptions().booleanOption("friendly_fire")) {
             // a friendly unit can never be the target of a direct attack.
             if (target.getTargetType() == Targetable.TYPE_ENTITY
@@ -84,18 +84,18 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         ToHitData toHit = new ToHitData(2, "base");
 
         TeleMissile tm = (TeleMissile)ae;
-        
+
         //thrust used
         if(ae.mpUsed > 0) 
             toHit.addModifier(ae.mpUsed, "thrust used");
-        
+
         //out of fuel
         if(tm.getFuel() <= 0) 
             toHit.addModifier(+6, "out of fuel");
-        
+
         //modifiers for the originating unit need to be added later, because
         //they may change as a result of damage
-        
+
         // done!
         return toHit;
     }

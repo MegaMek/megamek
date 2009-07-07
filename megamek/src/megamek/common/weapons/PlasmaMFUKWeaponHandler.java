@@ -77,7 +77,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
                     nCluster, bldgAbsorbs);
         }
     }
-    
+
 
     /**
      * @return a <code>boolean</code> value indicating wether or not this
@@ -95,7 +95,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
             server.tryIgniteHex(target.getPosition(), subjectId, true, false, new TargetRoll(wtype.getFireTN(), wtype.getName()),
                     3, vPhaseReport);
         }
-        
+
         //shots that miss an entity can also potential cause explosions in a heavy industrial hex
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
@@ -106,7 +106,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
         }
         return true;
     }
-    
+
     @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
             Building bldg, int hits) {
@@ -124,7 +124,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
                     true, -1, vPhaseReport);
         }
     }
-    
+
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage) {

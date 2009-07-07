@@ -26,7 +26,7 @@ public class NukeCommand extends ServerCommand {
     /** Creates new NukeCommand */
     public NukeCommand(Server server) {
         super(server, "nuke", "Drops a nuke onto the board, to be exploded at" +
-                "the end of the next weapons attack phase.");
+        "the end of the next weapons attack phase.");
     }
 
     /**
@@ -49,7 +49,7 @@ public class NukeCommand extends ServerCommand {
                 for (int i = 1; i < 4; i++) {
                     nuke[i-1] = Integer.parseInt(args[i]);
                 }
-             // is the hex on the board?
+                // is the hex on the board?
                 if (!server.getGame().getBoard().contains(nuke[0]-1, nuke[1]-1)) {
                     server.sendServerChat(connId, "Specified hex is not on the board.");
                     return;

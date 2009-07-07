@@ -56,7 +56,7 @@ import megamek.common.options.IOptionGroup;
  * @version
  */
 public class GameOptionsDialog extends Dialog implements ActionListener,
-        DialogOptionListener {
+DialogOptionListener {
 
     /**
      *
@@ -166,7 +166,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         Vector<IBasicOption> changed = new Vector<IBasicOption>();
 
         for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             DialogOptionComponent comp = i.nextElement();
 
             if (comp.hasChanged()) {
@@ -187,7 +187,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         Vector<IBasicOption> output = new Vector<IBasicOption>();
 
         for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             DialogOptionComponent comp = i.nextElement();
             IBasicOption option = comp.changedOption();
             output.addElement(option);
@@ -197,7 +197,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
 
     public void resetToDefaults() {
         for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             DialogOptionComponent comp = i.nextElement();
             comp.resetToDefault();
         }
@@ -218,13 +218,13 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         c.ipady = 0;
 
         for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
             addGroup(group, gridbag, c);
 
             for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 IOption option = j.nextElement();
 
                 addOption(option, gridbag, c);
@@ -351,7 +351,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
             boolean state) {
         if (option.getName().equals("inf_move_even")) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("inf_deploy_even")) { //$NON-NLS-1$
                     comp_i.setEditable(state);
@@ -367,7 +367,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         }
         if (option.getName().equals("inf_move_multi")) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("inf_move_even")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
@@ -379,7 +379,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         }
         if (option.getName().equals("inf_move_later")) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("inf_move_even")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
@@ -391,7 +391,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         }
         if (option.getName().equals("protos_move_even")) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("protos_deploy_even")) { //$NON-NLS-1$
                     comp_i.setEditable(state);
@@ -407,7 +407,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         }
         if (option.getName().equals("protos_move_multi")) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("protos_move_even")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
@@ -419,7 +419,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         }
         if (option.getName().equals("protos_move_later")) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("protos_move_even")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
@@ -468,7 +468,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         }
         if (option.getName().equals("vacuum")) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("fire")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
@@ -478,7 +478,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         }
         if (option.getName().equals("double_blind")) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("visibility")) { //$NON-NLS-1$
                     comp_i.setEditable(state);
@@ -495,7 +495,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                 }
             }
         }
-        
+
         if (option.getName().equals("tacops_LOS1") ){
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
@@ -505,7 +505,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                 }
             }
         }
-        
+
         if (option.getName().equals("tacops_dead_zones") ){
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
@@ -515,7 +515,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                 }
             }
         }
-        
+
     }
 
     private void setupButtons() {
@@ -582,7 +582,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
 
         // Set enabled state of all of the option components in the dialog.
         for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             DialogOptionComponent comp = i.nextElement();
             comp.setEditable(editable);
         }

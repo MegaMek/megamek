@@ -171,7 +171,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         // hmm, sometimes this gets called when there's no ready entities?
         if (clientgui.getClient().game.getEntity(en) == null) {
             System.err
-                    .println("DeploymentDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
+            .println("DeploymentDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
 
@@ -194,49 +194,49 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (null != ce()) {
             // set facing according to starting position
             switch (ce().getStartingPos()) {
-                case Board.START_W:
-                    ce().setFacing(1);
-                    ce().setSecondaryFacing(1);
-                    break;
-                case Board.START_SW:
-                    ce().setFacing(1);
-                    ce().setSecondaryFacing(1);
-                    break;
-                case Board.START_S:
-                    ce().setFacing(0);
-                    ce().setSecondaryFacing(0);
-                    break;
-                case Board.START_SE:
-                    ce().setFacing(5);
-                    ce().setSecondaryFacing(5);
-                    break;
-                case Board.START_E:
-                    ce().setFacing(5);
-                    ce().setSecondaryFacing(5);
-                    break;
-                case Board.START_NE:
-                    ce().setFacing(4);
-                    ce().setSecondaryFacing(4);
-                    break;
-                case Board.START_N:
-                    ce().setFacing(3);
-                    ce().setSecondaryFacing(3);
-                    break;
-                case Board.START_NW:
-                    ce().setFacing(2);
-                    ce().setSecondaryFacing(2);
-                    break;
-                case Board.START_ANY:
-                    ce().setFacing(0);
-                    ce().setSecondaryFacing(0);
-                    break;
+            case Board.START_W:
+                ce().setFacing(1);
+                ce().setSecondaryFacing(1);
+                break;
+            case Board.START_SW:
+                ce().setFacing(1);
+                ce().setSecondaryFacing(1);
+                break;
+            case Board.START_S:
+                ce().setFacing(0);
+                ce().setSecondaryFacing(0);
+                break;
+            case Board.START_SE:
+                ce().setFacing(5);
+                ce().setSecondaryFacing(5);
+                break;
+            case Board.START_E:
+                ce().setFacing(5);
+                ce().setSecondaryFacing(5);
+                break;
+            case Board.START_NE:
+                ce().setFacing(4);
+                ce().setSecondaryFacing(4);
+                break;
+            case Board.START_N:
+                ce().setFacing(3);
+                ce().setSecondaryFacing(3);
+                break;
+            case Board.START_NW:
+                ce().setFacing(2);
+                ce().setSecondaryFacing(2);
+                break;
+            case Board.START_ANY:
+                ce().setFacing(0);
+                ce().setSecondaryFacing(0);
+                break;
             }
             setAssaultDropEnabled(ce().canAssaultDrop()
                     && ce().getGame().getOptions()
-                            .booleanOption("assault_drop"));
+                    .booleanOption("assault_drop"));
             if (!ce().canAssaultDrop()
                     && ce().getGame().getOptions()
-                            .booleanOption("assault_drop")) {
+                    .booleanOption("assault_drop")) {
                 butAssaultDrop.setText(Messages
                         .getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
                 assaultDropPreference = false;
@@ -400,19 +400,19 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             AlertDialog dlg = new AlertDialog(clientgui.frame,
                     Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
                     Messages
-                            .getString(
-                                    "DeploymentDisplay.wrongMapType", new Object[] { ce().getShortName(), Board.getTypeName(clientgui.getClient().game.getBoard().getType()) })); //$NON-NLS-1$
+                    .getString(
+                            "DeploymentDisplay.wrongMapType", new Object[] { ce().getShortName(), Board.getTypeName(clientgui.getClient().game.getBoard().getType()) })); //$NON-NLS-1$
             dlg.setVisible(true);
             return;
         } else if (!(clientgui.getClient().game.getBoard().isLegalDeployment(moveto,
                 ce().getStartingPos()) || assaultDropPreference)
                 || ce().isHexProhibited(clientgui.getClient().game.getBoard().getHex(moveto))) {
             JOptionPane
-                    .showMessageDialog(
-                            clientgui.frame,
-                            Messages
-                                    .getString(
-                                            "DeploymentDisplay.cantDeployInto", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
+            .showMessageDialog(
+                    clientgui.frame,
+                    Messages
+                    .getString(
+                            "DeploymentDisplay.cantDeployInto", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
                             , JOptionPane.ERROR_MESSAGE);
             return;
         } else if((ce() instanceof Aero) && clientgui.getClient().game.getBoard().inAtmosphere() &&
@@ -422,9 +422,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             .showMessageDialog(
                     clientgui.frame,
                     Messages
-                            .getString(
-                                    "DeploymentDisplay.elevationTooLow", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
-                    , JOptionPane.ERROR_MESSAGE);
+                    .getString(
+                            "DeploymentDisplay.elevationTooLow", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
+                            , JOptionPane.ERROR_MESSAGE);
             return;
         } else if (Compute.stackingViolation(clientgui.getClient().game, ce().getId(), moveto) != null) {
             // check if deployed unit violates stacking
@@ -444,11 +444,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     SingleChoiceDialog floorsDialog = new SingleChoiceDialog(
                             clientgui.frame,
                             Messages
-                                    .getString("DeploymentDisplay.floorsDialog.title"), //$NON-NLS-1$
+                            .getString("DeploymentDisplay.floorsDialog.title"), //$NON-NLS-1$
                             Messages
-                                    .getString(
-                                            "DeploymentDisplay.floorsDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
-                            floors);
+                            .getString(
+                                    "DeploymentDisplay.floorsDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
+                                    floors);
                     floorsDialog.setVisible(true);
                     if (floorsDialog.getAnswer()) {
                         ce().setElevation(floorsDialog.getChoice());
@@ -463,11 +463,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     SingleChoiceDialog floorsDialog = new SingleChoiceDialog(
                             clientgui.frame,
                             Messages
-                                    .getString("DeploymentDisplay.bridgeDialog.title"), //$NON-NLS-1$
+                            .getString("DeploymentDisplay.bridgeDialog.title"), //$NON-NLS-1$
                             Messages
-                                    .getString(
-                                            "DeploymentDisplay.bridgeDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
-                            floors);
+                            .getString(
+                                    "DeploymentDisplay.bridgeDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
+                                    floors);
                     floorsDialog.setVisible(true);
                     if (floorsDialog.getAnswer()) {
                         if (floorsDialog.getChoice() == 1) {
@@ -511,20 +511,20 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (ev.getSource().equals(butDone)) {
             ready();
         } else if (ev.getActionCommand().equals(DEPLOY_NEXT)) {
-        	//fiX: ce() possible null pointer
-        	if( ce() != null) {
-	            ce().setPosition(null);
-	            clientgui.bv.redrawEntity(ce());
-	            // Unload any loaded units.
-	            Enumeration<Entity> iter = ce().getLoadedUnits().elements();
-	            while (iter.hasMoreElements()) {
-	                Entity other = iter.nextElement();
-	                // Please note, the Server never got this unit's load orders.
-	                ce().unload(other);
-	                other.setTransportId(Entity.NONE);
-	                other.newRound(clientgui.getClient().game.getRoundCount());
-	            }
-        	}
+            //fiX: ce() possible null pointer
+            if( ce() != null) {
+                ce().setPosition(null);
+                clientgui.bv.redrawEntity(ce());
+                // Unload any loaded units.
+                Enumeration<Entity> iter = ce().getLoadedUnits().elements();
+                while (iter.hasMoreElements()) {
+                    Entity other = iter.nextElement();
+                    // Please note, the Server never got this unit's load orders.
+                    ce().unload(other);
+                    other.setTransportId(Entity.NONE);
+                    other.newRound(clientgui.getClient().game.getRoundCount());
+                }
+            }
             selectEntity(clientgui.getClient().getNextDeployableEntityNum(cen));
         } else if (ev.getActionCommand().equals(DEPLOY_TURN)) {
             turnMode = true;
@@ -549,11 +549,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
                         clientgui.frame,
                         Messages
-                                .getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
+                        .getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
                         Messages
-                                .getString(
-                                        "DeploymentDisplay.loadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
-                        names);
+                        .getString(
+                                "DeploymentDisplay.loadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
+                                names);
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getAnswer()) {
                     other = choices.elementAt(choiceDialog.getChoice());
@@ -565,11 +565,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             } // End have-choices
             else {
                 JOptionPane
-                        .showMessageDialog(
-                                clientgui.frame,
-                                Messages
-                                        .getString(
-                                                "DeploymentDisplay.allertDialog1.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.allertDialog1.title") //$NON-NLS-1$
+                .showMessageDialog(
+                        clientgui.frame,
+                        Messages
+                        .getString(
+                                "DeploymentDisplay.allertDialog1.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.allertDialog1.title") //$NON-NLS-1$
                                 , JOptionPane.ERROR_MESSAGE);
             }
         } // End load-unit
@@ -585,11 +585,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
                         clientgui.frame,
                         Messages
-                                .getString("DeploymentDisplay.unloadUnitDialog.title"), //$NON-NLS-1$
+                        .getString("DeploymentDisplay.unloadUnitDialog.title"), //$NON-NLS-1$
                         Messages
-                                .getString(
-                                        "DeploymentDisplay.unloadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
-                        names);
+                        .getString(
+                                "DeploymentDisplay.unloadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
+                                names);
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getAnswer()) {
                     other = choices.elementAt(choiceDialog.getChoice());
@@ -607,11 +607,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             } // End have-choices
             else {
                 JOptionPane
-                        .showMessageDialog(
-                                clientgui.frame,
-                                Messages
-                                        .getString(
-                                                "DeploymentDisplay.allertDialog2.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.allertDialog2.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        clientgui.frame,
+                        Messages
+                        .getString(
+                                "DeploymentDisplay.allertDialog2.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.allertDialog2.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         } // End unload-unit
         else if (ev.getActionCommand().equals(DEPLOY_REMOVE)) {

@@ -62,33 +62,33 @@ public class HexTarget implements Targetable {
     public String getDisplayName() {
         String name = "";
         switch (m_type) {
-            case (Targetable.TYPE_FLARE_DELIVER):
-                name = Messages.getString("HexTarget.DeliverFlare");
-                break;
-            case (Targetable.TYPE_MINEFIELD_DELIVER):
-                name = Messages.getString("HexTarget.DeliverMinefield");
-                break;
-            case (Targetable.TYPE_HEX_BOMB):
-                name = Messages.getString("HexTarget.Bomb");
-                break;
-            case (Targetable.TYPE_HEX_CLEAR):
-                name = Messages.getString("HexTarget.Clear");
-                break;
-            case (Targetable.TYPE_HEX_IGNITE):
-                name = Messages.getString("HexTarget.Ignite");
-                break;
-            case (Targetable.TYPE_HEX_ARTILLERY):
-                name = Messages.getString("HexTarget.Artillery");
-                break;
-            case Targetable.TYPE_HEX_EXTINGUISH:
-                name = Messages.getString("HexTarget.Extinguish");
-                break;
-            case (Targetable.TYPE_HEX_SCREEN):
-                name = Messages.getString("HexTarget.Screen");
-                break;
-            case (Targetable.TYPE_HEX_DIVE_BOMB):
-                name = Messages.getString("HexTarget.DiveBomb");
-                break;
+        case (Targetable.TYPE_FLARE_DELIVER):
+            name = Messages.getString("HexTarget.DeliverFlare");
+        break;
+        case (Targetable.TYPE_MINEFIELD_DELIVER):
+            name = Messages.getString("HexTarget.DeliverMinefield");
+        break;
+        case (Targetable.TYPE_HEX_BOMB):
+            name = Messages.getString("HexTarget.Bomb");
+        break;
+        case (Targetable.TYPE_HEX_CLEAR):
+            name = Messages.getString("HexTarget.Clear");
+        break;
+        case (Targetable.TYPE_HEX_IGNITE):
+            name = Messages.getString("HexTarget.Ignite");
+        break;
+        case (Targetable.TYPE_HEX_ARTILLERY):
+            name = Messages.getString("HexTarget.Artillery");
+        break;
+        case Targetable.TYPE_HEX_EXTINGUISH:
+            name = Messages.getString("HexTarget.Extinguish");
+            break;
+        case (Targetable.TYPE_HEX_SCREEN):
+            name = Messages.getString("HexTarget.Screen");
+        break;
+        case (Targetable.TYPE_HEX_DIVE_BOMB):
+            name = Messages.getString("HexTarget.DiveBomb");
+        break;
         }
         return "Hex: " + m_coords.getBoardNum() + name;
     }
@@ -122,7 +122,7 @@ public class HexTarget implements Targetable {
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src);
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isOffBoard()
@@ -130,7 +130,7 @@ public class HexTarget implements Targetable {
     public boolean isOffBoard() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborne()
@@ -138,7 +138,7 @@ public class HexTarget implements Targetable {
     public boolean isAirborne() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborneVTOL()
@@ -146,8 +146,8 @@ public class HexTarget implements Targetable {
     public boolean isAirborneVTOL() {
         return false;
     }
-    
+
     public int getAltitude() {
-    	return 0;
+        return 0;
     }
 }

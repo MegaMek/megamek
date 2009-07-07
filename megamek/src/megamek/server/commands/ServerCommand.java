@@ -70,7 +70,7 @@ public abstract class ServerCommand {
      */
     public boolean canRunRestrictedCommand(int connId) {
         if (!server.getGame().getOptions().booleanOption(
-                "restrict_game_commands")) {
+        "restrict_game_commands")) {
             return true;
         }
 
@@ -79,7 +79,7 @@ public abstract class ServerCommand {
 
         if (server.getPlayer(connId).isObserver()) {
             for (Enumeration<Player> e = server.getGame().getPlayers(); e
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 Player p = e.nextElement();
 
                 if (!p.isObserver() && !p.isGhost()) {

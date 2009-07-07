@@ -31,7 +31,7 @@ import javax.swing.SwingConstants;
 import megamek.client.Client;
 
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
-        implements ActionListener {
+implements ActionListener {
 
     private static final long serialVersionUID = 639696875125581395L;
     // displays
@@ -61,7 +61,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      * clears the actions of this phase
      */
     protected abstract void clear();
-    
+
     /**
      * Sets up the status bar with toggle buttons for the mek display and map.
      */

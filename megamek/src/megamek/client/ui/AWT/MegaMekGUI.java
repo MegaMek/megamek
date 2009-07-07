@@ -66,7 +66,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     private CommonHelpDialog help = null;
     private GameOptionsDialog optdlg = null;
     private CommonSettingsDialog setdlg = null;
-    
+
     public void start(String[] args) {
         createGUI();
     }
@@ -87,7 +87,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         frame.setForeground(SystemColor.menuText);
 
         frame.setIconImage(frame.getToolkit().getImage(
-                "data/images/misc/megamek-icon.gif")); //$NON-NLS-1$
+        "data/images/misc/megamek-icon.gif")); //$NON-NLS-1$
 
         CommonMenuBar menuBar = new CommonMenuBar();
         menuBar.addActionListener(actionListener);
@@ -132,7 +132,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         Label labVersion = new Label();
 
         labVersion
-                .setText(Messages.getString("MegaMek.Version") + MegaMek.VERSION); //$NON-NLS-1$
+        .setText(Messages.getString("MegaMek.Version") + MegaMek.VERSION); //$NON-NLS-1$
 
         hostB = new Button(Messages.getString("MegaMek.hostNewGame.label")); //$NON-NLS-1$
         hostB.setActionCommand("fileGameNew"); //$NON-NLS-1$
@@ -164,7 +164,7 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         // initialize splash image
         Image imgSplash = frame.getToolkit().getImage(
-                "data/images/misc/megamek-splash.jpg"); //$NON-NLS-1$
+        "data/images/misc/megamek-splash.jpg"); //$NON-NLS-1$
 
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);
@@ -313,8 +313,8 @@ public class MegaMekGUI implements IMegaMekGUI {
                     + hd.port);
             StringBuffer error = new StringBuffer();
             error.append("Error: could not start server at localhost").append(
-                    ":").append(hd.port).append(" (").append(ex.getMessage())
-                    .append(").");
+            ":").append(hd.port).append(" (").append(ex.getMessage())
+            .append(").");
             new AlertDialog(
                     frame,
                     Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
@@ -328,7 +328,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();
             error.append("Error: could not connect to server at localhost")
-                    .append(":").append(hd.port).append(".");
+            .append(":").append(hd.port).append(".");
             new AlertDialog(
                     frame,
                     Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
@@ -395,8 +395,8 @@ public class MegaMekGUI implements IMegaMekGUI {
                     + hd.port);
             StringBuffer error = new StringBuffer();
             error.append("Error: could not start server at localhost").append(
-                    ":").append(hd.port).append(" (").append(ex.getMessage())
-                    .append(").");
+            ":").append(hd.port).append(" (").append(ex.getMessage())
+            .append(").");
             new AlertDialog(
                     frame,
                     Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
@@ -417,7 +417,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();
             error.append("Error: could not connect to server at localhost")
-                    .append(":").append(hd.port).append(".");
+            .append(":").append(hd.port).append(".");
             new AlertDialog(
                     frame,
                     Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
@@ -446,7 +446,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         };
         fd.setFilenameFilter(ff);
         fd.setFile("*.mms"); // see comment above for load game dialog
-                                // //$NON-NLS-1$
+        // //$NON-NLS-1$
         fd.setVisible(true);
         if (fd.getFile() == null) {
             return;
@@ -522,8 +522,8 @@ public class MegaMekGUI implements IMegaMekGUI {
                     + hd.port);
             StringBuffer error = new StringBuffer();
             error.append("Error: could not start server at localhost").append(
-                    ":").append(hd.port).append(" (").append(ex.getMessage())
-                    .append(").");
+            ":").append(hd.port).append(" (").append(ex.getMessage())
+            .append(").");
             new AlertDialog(
                     frame,
                     Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
@@ -543,7 +543,7 @@ public class MegaMekGUI implements IMegaMekGUI {
             if (!client.connect()) {
                 StringBuffer error = new StringBuffer();
                 error.append("Error: could not connect to server at localhost")
-                        .append(":").append(hd.port).append(".");
+                .append(":").append(hd.port).append(".");
                 new AlertDialog(
                         frame,
                         Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$

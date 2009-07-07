@@ -64,15 +64,15 @@ public class BAMGHandler extends WeaponHandler {
         } else {
             if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
                 switch (wtype.getDamage()) {
-                    case 1:
-                        nDamPerHit = (int) Math.ceil(Compute.d6() / 2);
-                        break;
-                    case 2:
-                        nDamPerHit = Compute.d6();
-                        break;
-                    case 3:
-                        nDamPerHit = Compute.d6(2);
-                        break;
+                case 1:
+                    nDamPerHit = (int) Math.ceil(Compute.d6() / 2);
+                    break;
+                case 2:
+                    nDamPerHit = Compute.d6();
+                    break;
+                case 3:
+                    nDamPerHit = Compute.d6(2);
+                    break;
                 }
                 if ( bDirect ) {
                     nDamPerHit += toHit.getMoS()/3;

@@ -68,7 +68,7 @@ public class SRMAntiTSMHandler extends SRMHandler {
         int missilesHit;
         int nMissilesModifier = nSalvoBonus;
         boolean tacopscluster = game.getOptions().booleanOption(
-                "tacops_clusterhitpen");
+        "tacops_clusterhitpen");
         if (tacopscluster) {
             if (nRange <= 1) {
                 nMissilesModifier += 1;
@@ -78,7 +78,7 @@ public class SRMAntiTSMHandler extends SRMHandler {
                 nMissilesModifier -= 1;
             } 
         }
-        
+
         if (bGlancing) {
             nMissilesModifier -= 4;
         }
@@ -93,7 +93,7 @@ public class SRMAntiTSMHandler extends SRMHandler {
         if(game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
-        
+
         // Add ams mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
         if (allShotsHit()) {
@@ -101,7 +101,7 @@ public class SRMAntiTSMHandler extends SRMHandler {
         } else {
             // anti tsm hit with half the normal number, round up
             missilesHit = Compute
-                    .missilesHit(wtype.getRackSize(), nMissilesModifier, bGlancing || tacopscluster);
+            .missilesHit(wtype.getRackSize(), nMissilesModifier, bGlancing || tacopscluster);
             missilesHit = (int) Math.ceil((double) missilesHit / 2);
         }
         Report r = new Report(3325);

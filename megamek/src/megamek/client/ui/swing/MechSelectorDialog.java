@@ -86,8 +86,8 @@ import megamek.common.verifier.TestTank;
  */
 
 public class MechSelectorDialog extends JDialog implements ActionListener,
-        ItemListener, KeyListener, Runnable, WindowListener,
-        ListSelectionListener {
+ItemListener, KeyListener, Runnable, WindowListener,
+ListSelectionListener {
     /**
      *
      */
@@ -197,7 +197,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
     private boolean includeMaxTech;
 
     private EntityVerifier entityVerifier = new EntityVerifier(new File(
-            "data/mechfiles/UnitVerifierOptions.xml"));
+    "data/mechfiles/UnitVerifierOptions.xml"));
 
     public MechSelectorDialog(ClientGUI cl, UnitLoadingDialog uld) {
         super(cl.frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
@@ -400,7 +400,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
 
     private void updateTechChoice() {
         boolean maxTechOption = m_client.game.getOptions().booleanOption(
-                "allow_advanced_units");
+        "allow_advanced_units");
         int maxTech = (maxTechOption ? TechConstants.SIZE
                 : TechConstants.SIZE_LEVEL_2);
         if (includeMaxTech == maxTechOption) {
@@ -420,8 +420,8 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(clientName);
         for (Client client : m_clientgui.getBots().values()) {
-         m_chPlayer.addItem(client.getName());
-      }
+            m_chPlayer.addItem(client.getName());
+        }
         if (m_chPlayer.getItemCount() == 1) {
             m_chPlayer.setEnabled(false);
         }
@@ -443,10 +443,10 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         unitLoadingDialog.setVisible(false);
 
         final Map<String, String> hFailedFiles = MechSummaryCache.getInstance()
-                .getFailedFiles();
+        .getFailedFiles();
         if (hFailedFiles != null && hFailedFiles.size() > 0) {
             new UnitFailureDialog(m_clientgui.frame, hFailedFiles); // self-showing
-                                                                    // dialog
+            // dialog
         }
     }
 
@@ -459,7 +459,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         m_chWeightClass.setSelectedIndex(0);
 
         includeMaxTech = m_client.game.getOptions().booleanOption(
-                "allow_advanced_units");
+        "allow_advanced_units");
         int maxTech = (includeMaxTech ? TechConstants.SIZE
                 : TechConstants.SIZE_LEVEL_2);
         for (int i = 0; i < maxTech; i++) {
@@ -484,19 +484,19 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         m_chUnitType.setSelectedIndex(0);
 
         m_cWalk
-                .addItem(Messages
-                        .getString("MechSelectorDialog.Search.AtLeast"));
+        .addItem(Messages
+                .getString("MechSelectorDialog.Search.AtLeast"));
         m_cWalk
-                .addItem(Messages
-                        .getString("MechSelectorDialog.Search.EqualTo"));
+        .addItem(Messages
+                .getString("MechSelectorDialog.Search.EqualTo"));
         m_cWalk.addItem(Messages
                 .getString("MechSelectorDialog.Search.NoMoreThan"));
         m_cJump
-                .addItem(Messages
-                        .getString("MechSelectorDialog.Search.AtLeast"));
+        .addItem(Messages
+                .getString("MechSelectorDialog.Search.AtLeast"));
         m_cJump
-                .addItem(Messages
-                        .getString("MechSelectorDialog.Search.EqualTo"));
+        .addItem(Messages
+                .getString("MechSelectorDialog.Search.EqualTo"));
         m_cJump.addItem(Messages
                 .getString("MechSelectorDialog.Search.NoMoreThan"));
         m_cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
@@ -525,20 +525,20 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         int nType = m_chType.getSelectedIndex();
         int nUnitType = m_chUnitType.getSelectedIndex();
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             EquipmentType et = e.nextElement();
             if (et instanceof WeaponType
                     && (et.getTechLevel() == nType
                             || ((nType == TechConstants.T_TW_ALL) && ((et
                                     .getTechLevel() == TechConstants.T_INTRO_BOXSET)
                                     || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (et
-                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL || nType == TechConstants.T_IS_TW_NON_BOX) && ((et
-                            .getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et
-                            .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
+                                            .getTechLevel() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL || nType == TechConstants.T_IS_TW_NON_BOX) && ((et
+                                                    .getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et
+                                                            .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
                 if (!(nUnitType == UnitType.SIZE)
                         && ((UnitType.getTypeName(nUnitType).equals("Mek") || UnitType
                                 .getTypeName(nUnitType).equals("Tank")) && (et
-                                .hasFlag(WeaponType.F_INFANTRY)))) {
+                                        .hasFlag(WeaponType.F_INFANTRY)))) {
                     continue;
                 }
                 weapons.add(et.getName());
@@ -553,9 +553,9 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
                             || ((nType == TechConstants.T_TW_ALL) && ((et
                                     .getTechLevel() == TechConstants.T_INTRO_BOXSET)
                                     || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (et
-                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL || nType == TechConstants.T_IS_TW_NON_BOX) && ((et
-                            .getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et
-                            .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
+                                            .getTechLevel() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL || nType == TechConstants.T_IS_TW_NON_BOX) && ((et
+                                                    .getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et
+                                                            .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
                 equipment.add(et.getName());
             }
         }
@@ -584,21 +584,21 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         }
         for (MechSummary mech : mechs) {
             if (/* Weight */
-            (nClass == EntityWeightClass.SIZE || mech.getWeightClass() == nClass)
+                    (nClass == EntityWeightClass.SIZE || mech.getWeightClass() == nClass)
                     && /* Technology Level */
                     ((nType == TechConstants.T_ALL)
                             || (nType == mech.getType())
                             || ((nType == TechConstants.T_TW_ALL) && ((mech
                                     .getType() == TechConstants.T_INTRO_BOXSET)
                                     || (mech.getType() == TechConstants.T_IS_TW_NON_BOX) || (mech
-                                    .getType() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL) && ((mech
-                            .getType() == TechConstants.T_INTRO_BOXSET) || (mech
-                            .getType() == TechConstants.T_IS_TW_NON_BOX))))
-                    && /* Unit Type (Mek, Infantry, etc.) */
-                    (nUnitType == UnitType.SIZE || mech.getUnitType()
-                            .equals(UnitType.getTypeName(nUnitType)))
-                    && /* canon required */(!m_client.game.getOptions()
-                            .booleanOption("canon_only") || mech.isCanon())) {
+                                            .getType() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL) && ((mech
+                                                    .getType() == TechConstants.T_INTRO_BOXSET) || (mech
+                                                            .getType() == TechConstants.T_IS_TW_NON_BOX))))
+                                                            && /* Unit Type (Mek, Infantry, etc.) */
+                                                            (nUnitType == UnitType.SIZE || mech.getUnitType()
+                                                                    .equals(UnitType.getTypeName(nUnitType)))
+                                                                    && /* canon required */(!m_client.game.getOptions()
+                                                                            .booleanOption("canon_only") || mech.isCanon())) {
                 vMechs.add(mech);
             }
         }
@@ -623,7 +623,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
 
             for (MechSummary element : m_mechsCurrent) {
                 ((DefaultComboBoxModel) m_mechList.getModel())
-                        .addElement(formatMech(element));
+                .addElement(formatMech(element));
             }
         } finally {
             setCursor(Cursor.getDefaultCursor());
@@ -761,7 +761,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
             weaponLine1Active = true;
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 WeaponType wt = (WeaponType) (entity.getWeaponList().get(i))
-                        .getType();
+                .getType();
                 if (wt.getName().equals(m_cWeapons1.getSelectedItem())) {
                     count++;
                 }
@@ -782,7 +782,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
             weaponLine2Active = true;
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 WeaponType wt = (WeaponType) (entity.getWeaponList().get(i))
-                        .getType();
+                .getType();
                 if (wt.getName().equals(m_cWeapons2.getSelectedItem())) {
                     count++;
                 }
@@ -859,12 +859,12 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
 
     private Point computeDesiredLocation() {
         int desiredX = m_clientgui.frame.getLocation().x
-                + m_clientgui.frame.getSize().width / 2 - getSize().width / 2;
+        + m_clientgui.frame.getSize().width / 2 - getSize().width / 2;
         if (desiredX < 0) {
             desiredX = 0;
         }
         int desiredY = m_clientgui.frame.getLocation().y
-                + m_clientgui.frame.getSize().height / 2 - getSize().height / 2;
+        + m_clientgui.frame.getSize().height / 2 - getSize().height / 2;
         if (desiredY < 0) {
             desiredY = 0;
         }
@@ -938,7 +938,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
                 c.sendAddEntity(e);
             } catch (EntityLoadingException ex) {
                 System.out
-                        .println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                .println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 ex.printStackTrace();
                 return;
             }
@@ -1168,7 +1168,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
                 previewMech(entity);
             } catch (EntityLoadingException ex) {
                 System.out
-                        .println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                .println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 ex.printStackTrace();
                 clearMechPreview();
                 return;

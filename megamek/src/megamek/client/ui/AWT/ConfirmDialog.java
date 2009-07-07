@@ -217,7 +217,7 @@ public class ConfirmDialog extends Dialog implements ActionListener {
 
                 public void focusLost(FocusEvent e) {
                     firstFocusable.removeFocusListener(this); // refers to
-                                                                // listener
+                    // listener
                 }
             });
         }

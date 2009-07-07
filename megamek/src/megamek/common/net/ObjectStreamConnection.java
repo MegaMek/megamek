@@ -70,7 +70,7 @@ class ObjectStreamConnection extends AbstractConnection {
 
     @Override
     protected void sendNetworkPacket(byte[] data, boolean zipped)
-            throws Exception {
+    throws Exception {
         if (out == null) {
             out = new ObjectOutputStream(getOutputStream());
             out.flush();

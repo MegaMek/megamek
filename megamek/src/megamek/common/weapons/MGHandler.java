@@ -41,7 +41,7 @@ public class MGHandler extends AmmoWeaponHandler {
      * 
      */
     private static final long serialVersionUID = 5635871269404561702L;
-    
+
     private int nRapidDamHeatPerHit;
 
     /**

@@ -36,7 +36,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
-        implements DoneButtoned {
+implements DoneButtoned {
     private static final long serialVersionUID = -6733665205235744376L;
 
     // parent game
@@ -153,12 +153,12 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
         if (!artyAutoHitHexes.contains(coords)
                 && artyAutoHitHexes.size() < 5
                 && clientgui
-                        .doYesNoDialog(
-                                Messages
-                                        .getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"), //$NON-NLS-1$
-                                Messages
-                                        .getString(
-                                                "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[] { coords.getBoardNum() }))) { //$NON-NLS-1$
+                .doYesNoDialog(
+                        Messages
+                        .getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"), //$NON-NLS-1$
+                        Messages
+                        .getString(
+                                "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[] { coords.getBoardNum() }))) { //$NON-NLS-1$
             artyAutoHitHexes.addElement(coords);
             setArtyEnabled(5 - artyAutoHitHexes.size());
             client.game.getBoard().addSpecialHexDisplay(coords,
@@ -273,9 +273,9 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
 
     private void setArtyEnabled(int nbr) {
         butA
-                .setLabel(Messages
-                        .getString(
-                                "SelectArtyAutoHitHexDisplay.designatedTargets", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        .setLabel(Messages
+                .getString(
+                        "SelectArtyAutoHitHexDisplay.designatedTargets", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         butA.setEnabled(nbr > 0);
         // clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
     }

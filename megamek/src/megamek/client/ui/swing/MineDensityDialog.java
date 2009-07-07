@@ -50,13 +50,13 @@ public class MineDensityDialog extends JDialog implements ActionListener {
         super.setResizable(false);
         //frame = p;
         butOk.addActionListener(this);
-        
+
         choDensity.removeAllItems();
         for(int i =5; i < 35; i = i + 5) {
             choDensity.addItem(Integer.toString(i));
         }
         choDensity.setSelectedIndex(0);
-        
+
         getContentPane().setLayout(gridbag);
         c.fill = GridBagConstraints.VERTICAL;
         c.insets = new Insets(1, 1, 1, 1);

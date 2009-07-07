@@ -55,7 +55,7 @@ import megamek.common.UnitLocation;
  * @author jwalt
  */
 class EntityModel extends BranchGroup {
-    
+
     Alpha alpha;
     TransformGroup facing, label, mech;
 
@@ -72,12 +72,12 @@ class EntityModel extends BranchGroup {
     static final double facing(int dir) {
         return -Math.PI/3 * dir;
     }
-    
+
     static final double pitch(Entity entity) {
         if (entity.isProne() && entity instanceof Mech) return -Math.PI/2;
         return 0.0;
     }
-    
+
     static final Vector3d scale(Entity entity) {
         if (entity.isProne() && entity instanceof Mech) {
             return new Vector3d(BoardModel.UNIT_SIZE, height(entity), BoardModel.HEX_HEIGHT*2);
@@ -159,7 +159,7 @@ class EntityModel extends BranchGroup {
             ecm.setPickable(false);
             facing.addChild(ecm);
         }
-        
+
         Appearance sapp = new Appearance();
         sapp.setMaterial(new Material(new Color3f(tint), C.black, c50, C.white, 64.0f));
 
@@ -216,23 +216,23 @@ class EntityModel extends BranchGroup {
         int dir = prev.getFacing();
         if (dir == -1) dir = 0;
         keyframes1[pos] = new KBKeyFrame(
-            pos*1.0f/knots,
-            0,
-            new Point3f(location(hex, prev.getPosition(), prev.getElevation(), height(pos < mpos?prev:entity))),
-            0.0f, 0.0f, (float)facing(dir),
-            scale,
-            -1.0f, -0.7f, 0.2f
+                pos*1.0f/knots,
+                0,
+                new Point3f(location(hex, prev.getPosition(), prev.getElevation(), height(pos < mpos?prev:entity))),
+                0.0f, 0.0f, (float)facing(dir),
+                scale,
+                -1.0f, -0.7f, 0.2f
         );
         keyframes2[pos] = new KBKeyFrame(
-            pos*1.0f/knots, 0,
-            new Point3f(labelLocation(hex, prev.getPosition(), prev.getElevation())),
-            0.0f, 0.0f, 0.0f, scale, -1.0f, -0.7f, 0.2f
+                pos*1.0f/knots, 0,
+                new Point3f(labelLocation(hex, prev.getPosition(), prev.getElevation())),
+                0.0f, 0.0f, 0.0f, scale, -1.0f, -0.7f, 0.2f
         );
         keyframes3[pos] = new KBKeyFrame(
-            pos*1.0f/knots, 0,
-            zero,
-            0.0f, (pos < mpos?pitchA:pitchB), 0.0f,
-            (pos < mpos?scaleA:scaleB), -1.0f, -0.7f, 0.2f
+                pos*1.0f/knots, 0,
+                zero,
+                0.0f, (pos < mpos?pitchA:pitchB), 0.0f,
+                (pos < mpos?scaleA:scaleB), -1.0f, -0.7f, 0.2f
         );
         pos++;
         for (UnitLocation step : movePath) {
@@ -240,68 +240,68 @@ class EntityModel extends BranchGroup {
             dir = step.getFacing();
             if (dir == -1) dir = 0;
             keyframes1[pos] = new KBKeyFrame(
-                pos*1.0f/knots,
-                0,
-                new Point3f(location(hex, step.getCoords(), step.getElevation(), height(pos < mpos?prev:entity))),
-                0.0f, 0.0f, (float)facing(dir),
-                scale,
-                -1.0f, -0.7f, 0.2f
+                    pos*1.0f/knots,
+                    0,
+                    new Point3f(location(hex, step.getCoords(), step.getElevation(), height(pos < mpos?prev:entity))),
+                    0.0f, 0.0f, (float)facing(dir),
+                    scale,
+                    -1.0f, -0.7f, 0.2f
             );
             keyframes2[pos] = new KBKeyFrame(
-                pos*1.0f/knots, 0,
-                new Point3f(labelLocation(hex, step.getCoords(), step.getElevation())),
-                0.0f, 0.0f, 0.0f, scale, -1.0f, -0.7f, 0.2f
+                    pos*1.0f/knots, 0,
+                    new Point3f(labelLocation(hex, step.getCoords(), step.getElevation())),
+                    0.0f, 0.0f, 0.0f, scale, -1.0f, -0.7f, 0.2f
             );
             keyframes3[pos] = new KBKeyFrame(
-                pos*1.0f/knots, 0,
-                zero,
-                0.0f, (pos < mpos?pitchA:pitchB), 0.0f,
-                (pos < mpos?scaleA:scaleB), -1.0f, -0.7f, 0.2f
+                    pos*1.0f/knots, 0,
+                    zero,
+                    0.0f, (pos < mpos?pitchA:pitchB), 0.0f,
+                    (pos < mpos?scaleA:scaleB), -1.0f, -0.7f, 0.2f
             );
             pos++;
         }
-        
+
         setUserData(entity);
 
         alpha = new Alpha(1, 500*movePath.size());
         KBRotPosScaleSplinePathInterpolator interpolator1 = 
             new KBRotPosScaleSplinePathInterpolator(alpha, facing, new Transform3D(), keyframes1) {
-                @Override
-                public void computeTransform(float alphaValue, Transform3D transform) {
-                    super.computeTransform(alphaValue, transform);
-                    Vector3d trans = new Vector3d();
-                    transform.get(trans);
-                    Point3d vecPos = new Point3d(trans);
-                    double h = height(((int)(knots*alphaValue)) < mpos?prev:entity);
-                    vecPos.z = vecPos.z - h/2 + (h-BoardModel.HEX_HEIGHT) + BoardModel.HEX_HEIGHT/2;
-                    EntityGroup g = ((EntityGroup)getParent().getParent().getParent());
-                    if (alphaValue < 0.999f) {
-                        g.removeC3LinksFor(entity);
-                        g.addC3LinksFor(entity, vecPos);
-                    } else {
-                        g.update(entity);
-                    }
+            @Override
+            public void computeTransform(float alphaValue, Transform3D transform) {
+                super.computeTransform(alphaValue, transform);
+                Vector3d trans = new Vector3d();
+                transform.get(trans);
+                Point3d vecPos = new Point3d(trans);
+                double h = height(((int)(knots*alphaValue)) < mpos?prev:entity);
+                vecPos.z = vecPos.z - h/2 + (h-BoardModel.HEX_HEIGHT) + BoardModel.HEX_HEIGHT/2;
+                EntityGroup g = ((EntityGroup)getParent().getParent().getParent());
+                if (alphaValue < 0.999f) {
+                    g.removeC3LinksFor(entity);
+                    g.addC3LinksFor(entity, vecPos);
+                } else {
+                    g.update(entity);
                 }
-            };
+            }
+        };
 
         KBRotPosScaleSplinePathInterpolator interpolator2 = 
             new KBRotPosScaleSplinePathInterpolator(alpha, label, new Transform3D(), keyframes2);
-        
+
         // as of 2008-06-01, this does not handle scaling because KBRotPosScale is lacking non-uniform scale support
         // too bad, but visually acceptable
         // since the scale value at alpha==1.0 could be wrong, override it.
         KBRotPosScaleSplinePathInterpolator interpolator3 = 
             new KBRotPosScaleSplinePathInterpolator(alpha, mech, new Transform3D(), keyframes3) {
-                @Override
-                public void computeTransform(float alphaValue, Transform3D transform) {
-                    if (alphaValue < 0.999f) {
-                        super.computeTransform(alphaValue, transform);
-                    } else {
-                        transform.rotX(pitch(entity));
-                        transform.setScale(new Vector3d(scaleB));
-                    }
+            @Override
+            public void computeTransform(float alphaValue, Transform3D transform) {
+                if (alphaValue < 0.999f) {
+                    super.computeTransform(alphaValue, transform);
+                } else {
+                    transform.rotX(pitch(entity));
+                    transform.setScale(new Vector3d(scaleB));
                 }
-            };
+            }
+        };
 
         interpolator1.setSchedulingBounds(BoardModel.bounds);
         interpolator2.setSchedulingBounds(BoardModel.bounds);
@@ -315,37 +315,37 @@ class EntityModel extends BranchGroup {
 
         alpha.setStartTime(System.currentTimeMillis()+1000);
     }
-    
+
     private static final double[] makeECMCoords(int range) {
         double[] top = new double[3*6*(2*range+1)+3];
         int coord = 0;
         double[] pos = new double[]{
-            -range*1.5*BoardModel.HEX_SIDE_LENGTH - BoardModel.HEX_SIDE_LENGTH,
-            range*BoardModel.HEX_DIAMETER/2,
-            10.0*BoardModel.HEX_HEIGHT
+                -range*1.5*BoardModel.HEX_SIDE_LENGTH - BoardModel.HEX_SIDE_LENGTH,
+                range*BoardModel.HEX_DIAMETER/2,
+                10.0*BoardModel.HEX_HEIGHT
         };
         coord = makeECMPart(range, coord, top, pos,
-            -BoardModel.HEX_SIDE_LENGTH/2, BoardModel.HEX_SIDE_LENGTH/2,
-            -BoardModel.HEX_DIAMETER/2, -BoardModel.HEX_DIAMETER/2);
+                -BoardModel.HEX_SIDE_LENGTH/2, BoardModel.HEX_SIDE_LENGTH/2,
+                -BoardModel.HEX_DIAMETER/2, -BoardModel.HEX_DIAMETER/2);
         coord = makeECMPart(range, coord, top, pos,
-            BoardModel.HEX_SIDE_LENGTH/2, BoardModel.HEX_SIDE_LENGTH,
-            -BoardModel.HEX_DIAMETER/2, 0);
+                BoardModel.HEX_SIDE_LENGTH/2, BoardModel.HEX_SIDE_LENGTH,
+                -BoardModel.HEX_DIAMETER/2, 0);
         coord = makeECMPart(range, coord, top, pos,
-            BoardModel.HEX_SIDE_LENGTH, BoardModel.HEX_SIDE_LENGTH/2,
-            0, BoardModel.HEX_DIAMETER/2);
+                BoardModel.HEX_SIDE_LENGTH, BoardModel.HEX_SIDE_LENGTH/2,
+                0, BoardModel.HEX_DIAMETER/2);
         coord = makeECMPart(range, coord, top, pos,
-            BoardModel.HEX_SIDE_LENGTH/2, -BoardModel.HEX_SIDE_LENGTH/2,
-            BoardModel.HEX_DIAMETER/2, BoardModel.HEX_DIAMETER/2);
+                BoardModel.HEX_SIDE_LENGTH/2, -BoardModel.HEX_SIDE_LENGTH/2,
+                BoardModel.HEX_DIAMETER/2, BoardModel.HEX_DIAMETER/2);
         coord = makeECMPart(range, coord, top, pos,
-            -BoardModel.HEX_SIDE_LENGTH/2, -BoardModel.HEX_SIDE_LENGTH,
-            BoardModel.HEX_DIAMETER/2, 0);
+                -BoardModel.HEX_SIDE_LENGTH/2, -BoardModel.HEX_SIDE_LENGTH,
+                BoardModel.HEX_DIAMETER/2, 0);
         coord = makeECMPart(range, coord, top, pos,
-            -BoardModel.HEX_SIDE_LENGTH, -BoardModel.HEX_SIDE_LENGTH/2,
-            0, -BoardModel.HEX_DIAMETER/2);
+                -BoardModel.HEX_SIDE_LENGTH, -BoardModel.HEX_SIDE_LENGTH/2,
+                0, -BoardModel.HEX_DIAMETER/2);
         top[coord++] = top[0];
         top[coord++] = top[1];
         top[coord++] = top[2];
-        
+
         return top;
     }
 
@@ -362,14 +362,14 @@ class EntityModel extends BranchGroup {
 
         Stripifier st = new Stripifier();
         st.stripify(gi);
-        
+
         return new Shape3D(gi.getGeometryArray());
     }
-    
+
     private static final Shape3D makeECMBorder(int range) {
         double[] top = makeECMCoords(range);
         double[] border = new double[top.length*2];
-        
+
         int j = 0;
         for (int i = 0; i < top.length; i += 3) {
             border[j++] = top[i];
@@ -390,10 +390,10 @@ class EntityModel extends BranchGroup {
 
         Stripifier st = new Stripifier();
         st.stripify(gi);
-        
+
         return new Shape3D(gi.getGeometryArray());
     }
-    
+
     private static final Shape3D makeECMOutline(int range) {
         double[] outline = makeECMCoords(range);
 
@@ -402,7 +402,7 @@ class EntityModel extends BranchGroup {
 
         return new Shape3D(l);
     }
-    
+
     private static final int makeECMPart(int range, int coord, double[] dest, double[] pos, double dx1, double dx2, double dy1, double dy2) {
         dest[coord++] = pos[0];
         pos[0] += dx2;

@@ -124,8 +124,8 @@ public class StringUtil {
             return filename + formatter.format(current);
         }
         return filename.substring(0, filename.lastIndexOf("."))
-                + formatter.format(current)
-                + filename.substring(filename.lastIndexOf("."));
+        + formatter.format(current)
+        + filename.substring(filename.lastIndexOf("."));
     }
 
 }

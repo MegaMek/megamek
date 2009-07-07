@@ -36,7 +36,7 @@ public class VictoryCommand extends ServerCommand {
         super(
                 server,
                 "victory",
-                "Causes automatic victory for the issuing player or his/her team at the end of this turn. Must be acknowledged by all opponents using the /defeat command. Usage: /victory <password>");
+        "Causes automatic victory for the issuing player or his/her team at the end of this turn. Must be acknowledged by all opponents using the /defeat command. Usage: /victory <password>");
     }
 
     /**
@@ -46,7 +46,7 @@ public class VictoryCommand extends ServerCommand {
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
             server.sendServerChat(connId,
-                    "Observers are restricted from declaring victory.");
+            "Observers are restricted from declaring victory.");
             return;
         }
 
@@ -55,7 +55,7 @@ public class VictoryCommand extends ServerCommand {
             reset(connId);
         } else {
             server.sendServerChat(connId,
-                    "The password is incorrect.  Usage: /victory <password>");
+            "The password is incorrect.  Usage: /victory <password>");
         }
     }
 
@@ -68,12 +68,12 @@ public class VictoryCommand extends ServerCommand {
          */// okay, declare force victory
         if (player.getTeam() == Player.TEAM_NONE) {
             server
-                    .sendServerChat(player.getName()
-                            + " declares individual victory at the end of the turn. This must be acknowledged by all opponents using the /defeat command or no victory will occur.");
+            .sendServerChat(player.getName()
+                    + " declares individual victory at the end of the turn. This must be acknowledged by all opponents using the /defeat command or no victory will occur.");
         } else {
             server
-                    .sendServerChat(player.getName()
-                            + " declares team victory at the end of the turn. This must be acknowledged by all opponents using the /defeat command or no victory will occur.");
+            .sendServerChat(player.getName()
+                    + " declares team victory at the end of the turn. This must be acknowledged by all opponents using the /defeat command or no victory will occur.");
         }
         server.forceVictory(player);
     }

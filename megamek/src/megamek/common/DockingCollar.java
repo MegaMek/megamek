@@ -25,7 +25,7 @@ import java.util.Vector;
 public class DockingCollar implements Transporter {
 
     // Private attributes and helper functions.
-    
+
     /**
      * 
      */
@@ -37,7 +37,7 @@ public class DockingCollar implements Transporter {
     /* package */ Vector<Entity> troops = new Vector<Entity>();
 
     private boolean damaged = false;
-    
+
     /**
      * The total amount of space available for troops.
      */
@@ -85,12 +85,12 @@ public class DockingCollar implements Transporter {
     /**
      * The default constructor is only for serialization.
      */
-   
+
     protected DockingCollar() {
         this.totalSpace = 0;
         this.currentSpace = 0;
     }
-   
+
 
     // Public constructors and methods.
 
@@ -133,8 +133,8 @@ public class DockingCollar implements Transporter {
         if ( this.currentSpace < 1 || isDamaged()) {
             result = false;
         }
-        */
-        
+         */
+
         // Return our result.
         return result;
     }
@@ -150,8 +150,8 @@ public class DockingCollar implements Transporter {
         // If we can't load the unit, throw an exception.
         if ( !this.canLoad(unit) ) {
             throw new IllegalArgumentException( "Can not load " +
-                        unit.getShortName() +
-                        " into this bay." );
+                    unit.getShortName() +
+            " into this bay." );
         }
 
         // Decrement the available space.
@@ -184,15 +184,15 @@ public class DockingCollar implements Transporter {
      *          <code>false</code> otherwise.
      */
     public boolean unload( Entity unit ) {
-        
+
         //can we unload?
         if( isDamaged() ) {
             return false;
         }
-        
+
         // Remove the unit if we are carrying it.
         boolean retval = this.troops.removeElement( unit );
-        
+
 
         // If we removed it, restore our space.
         if ( retval ) {
@@ -249,11 +249,11 @@ public class DockingCollar implements Transporter {
     public int getCargoMpReduction() {
         return 0;
     }
-    
+
     public boolean isDamaged() {
         return damaged;
     }
-    
+
     public void setDamaged(boolean b) {
         this.damaged = b;
     }

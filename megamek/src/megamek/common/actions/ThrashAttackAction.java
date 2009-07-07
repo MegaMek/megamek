@@ -68,7 +68,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
         }
-        
+
         if (!game.getOptions().booleanOption("friendly_fire")) {
             // a friendly unit can never be the target of a direct attack.
             if (target.getTargetType() == Targetable.TYPE_ENTITY
@@ -82,37 +82,37 @@ public class ThrashAttackAction extends AbstractAttackAction {
         // Non-mechs can't thrash.
         if (!(ae instanceof Mech)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only mechs can thrash at infantry");
+            "Only mechs can thrash at infantry");
         }
 
         // Mech must be prone.
         if (!ae.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only prone mechs can thrash at infantry");
+            "Only prone mechs can thrash at infantry");
         }
 
         // Can't thrash against non-infantry
         if (te == null || !(te instanceof Infantry)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Can only thrash at infantry");
+            "Can only thrash at infantry");
         }
 
         // Can't thrash against swarming infantry.
         else if (Entity.NONE != te.getSwarmTargetId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Can't thrash at swarming infantry");
+            "Can't thrash at swarming infantry");
         }
 
         // Check range.
         if (target.getPosition() == null
                 || ae.getPosition().distance(target.getPosition()) > 0) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target not in same hex");
+            "Target not in same hex");
         }
 
         if (target.getElevation() != ae.getElevation()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target not at same elevation");
+            "Target not at same elevation");
         }
 
         // Check terrain.
@@ -124,7 +124,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
                 || hex.containsTerrain(Terrains.FUEL_TANK)
                 || hex.containsTerrain(Terrains.BUILDING)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Not a clear or pavement hex.");
+            "Not a clear or pavement hex.");
         }
 
         // Can't target woods or a building with a thrash attack.
@@ -142,7 +142,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
             if (ae.weaponFiredFrom(loop)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Weapons fired from " + ae.getLocationName(loop)
-                                + " this turn");
+                        + " this turn");
             }
         }
 
@@ -151,12 +151,12 @@ public class ThrashAttackAction extends AbstractAttackAction {
                 && ae.isLocationBad(Mech.LOC_RLEG)
                 && ae.isLocationBad(Mech.LOC_LLEG)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Mech has no arms or legs to thrash");
+            "Mech has no arms or legs to thrash");
         }
 
         // If the attack isn't impossible, it's automatically successful.
         return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                "thrash attacks always hit");
+        "thrash attacks always hit");
     }
 
     /**

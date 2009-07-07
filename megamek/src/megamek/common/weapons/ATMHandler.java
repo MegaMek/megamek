@@ -78,7 +78,7 @@ public class ATMHandler extends MissileWeaponHandler {
             toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS() : 0, Compute.WEAPON_CLUSTER_MISSILE, ((Infantry)target).isMechanized());
             return (int) toReturn;
         }
-            
+
         return (int)toReturn;
     }
 
@@ -117,7 +117,7 @@ public class ATMHandler extends MissileWeaponHandler {
         nDamPerHit = 1;
         return hits;
     }
-    
+
     /**
      * Calculate the attack value based on range
      * 
@@ -157,7 +157,7 @@ public class ATMHandler extends MissileWeaponHandler {
         }
         return av;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -196,7 +196,7 @@ public class ATMHandler extends MissileWeaponHandler {
         if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
             nMissilesModifier -= 2;
         }
-        
+
         boolean bMekStealthActive = false;
         if (ae instanceof Mech) {
             bMekStealthActive = ae.isStealthActive();
@@ -211,12 +211,12 @@ public class ATMHandler extends MissileWeaponHandler {
         if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
             bECMAffected = true;
         }
-        
+
         if ((mLinker != null && mLinker.getType() instanceof MiscType
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS))
-                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+                        MiscType.F_ARTEMIS))
+                        && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);
@@ -257,11 +257,11 @@ public class ATMHandler extends MissileWeaponHandler {
             bTargetECMAffected = Compute.isAffectedByECM(ae, 
                     target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.T_LRM) ||
-                 (atype.getAmmoType() == AmmoType.T_SRM)) ||
-                 (atype.getAmmoType() == AmmoType.T_MML)
+                    (atype.getAmmoType() == AmmoType.T_SRM)) ||
+                    (atype.getAmmoType() == AmmoType.T_MML)
                     && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE
                     && (weapon.curMode() == null || !weapon.curMode().equals(
-                            "Indirect"))) {
+                    "Indirect"))) {
                 if (bTargetECMAffected) {
                     // ECM prevents bonus
                     Report r = new Report(3330);
@@ -279,7 +279,7 @@ public class ATMHandler extends MissileWeaponHandler {
         if ( bDirect ){
             nMissilesModifier += (toHit.getMoS()/3)*2;
         }
-        
+
         if(game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
@@ -325,7 +325,7 @@ public class ATMHandler extends MissileWeaponHandler {
         bSalvo = true;
         return missilesHit;
     }
-    
+
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
             Entity entityTarget) {

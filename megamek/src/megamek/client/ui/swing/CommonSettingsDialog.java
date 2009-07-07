@@ -49,7 +49,7 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
 public class CommonSettingsDialog extends ClientDialog implements
-        ActionListener, ItemListener, FocusListener, ListSelectionListener {
+ActionListener, ItemListener, FocusListener, ListSelectionListener {
     /**
      *
      */
@@ -499,14 +499,14 @@ public class CommonSettingsDialog extends ClientDialog implements
         cs.setShowUnitId(showUnitId.isSelected());
 
         cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale
-                .getSelectedIndex()]);
+                                                         .getSelectedIndex()]);
 
         gs.setChatloungeTabs(chatloungeTabs.isSelected());
         gs.setShowMapsheets(showMapsheets.isSelected());
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
             cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
-                    .getName());
+                                      .getName());
         }
 
         setVisible(false);

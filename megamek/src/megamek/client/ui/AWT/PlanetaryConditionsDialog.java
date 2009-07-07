@@ -44,9 +44,9 @@ import megamek.common.PlanetaryConditions;
  * @version
  */
 public class PlanetaryConditionsDialog extends Dialog implements ActionListener {
-    
+
     private static final long serialVersionUID = -4426594323169113468L;
-    
+
     private ClientGUI client;
     private PlanetaryConditions conditions;
     private Label labLight = new Label(Messages
@@ -80,13 +80,13 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
             .getString("PlanetaryConditionsDialog.EMI"));   
     private Checkbox cTerrainAffected = new Checkbox(Messages
             .getString("PlanetaryConditionsDialog.TerrainAffected"));
-            
+
     private Panel panButtons = new Panel();    
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
-    
+
     private Panel panOptions = new Panel();
-    
+
     /**
      * Initialize this dialog.
      * 
@@ -95,10 +95,10 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
      */
     private void init(Frame frame, PlanetaryConditions startConditions) {
         this.conditions = (PlanetaryConditions)startConditions.clone();
-        
+
         setupConditions();
         setupButtons();
-        
+
         //layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -132,17 +132,17 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
                 - getSize().width / 2, frame.getLocation().y
                 + frame.getSize().height / 2 - getSize().height / 2);
 
-        
+
     }
-    
-    
+
+
     /** Creates new PlanetaryConditionsDialog */
     public PlanetaryConditionsDialog(ClientGUI client) {
         super(client.frame, Messages.getString("PlanetaryConditionsDialog.title"), true); //$NON-NLS-1$
         this.client = client;
         this.init(client.frame, client.getClient().game.getPlanetaryConditions());
     }    
-    
+
     private void setupButtons() {
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
@@ -167,11 +167,11 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         gridbag.setConstraints(butCancel, c);
         panButtons.add(butCancel);
     }
-    
+
     private void setupConditions() {
-        
+
         refreshConditions();
-        
+
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panOptions.setLayout(gridbag);
@@ -189,7 +189,7 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(fldTemp, c);
         panOptions.add(fldTemp);
-        
+
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labLight, c);
@@ -199,7 +199,7 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(choLight, c);
         panOptions.add(choLight);
-        
+
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labWeather, c);
@@ -209,7 +209,7 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(choWeather, c);
         panOptions.add(choWeather);
-        
+
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labWind, c);
@@ -219,7 +219,7 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(choWind, c);
         panOptions.add(choWind);
-        
+
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labAtmosphere, c);
@@ -229,7 +229,7 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(choAtmosphere, c);
         panOptions.add(choAtmosphere);
-        
+
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labFog, c);
@@ -244,17 +244,17 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(cBlowingSands, c);
         panOptions.add(cBlowingSands);
-        
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(cShiftWindDir, c);
         panOptions.add(cShiftWindDir);
-        
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(cShiftWindStr, c);
         panOptions.add(cShiftWindStr);
-        
+
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labGrav, c);
@@ -269,65 +269,65 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(cEMI, c);
         panOptions.add(cEMI);
-        
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(cTerrainAffected, c);
         panOptions.add(cTerrainAffected);
-        
+
     }
-    
+
     public void update(PlanetaryConditions newConditions) {
         this.conditions = (PlanetaryConditions)newConditions.clone();
         refreshConditions();
     }
-    
+
     private void refreshConditions() {
-        
+
         choLight.removeAll();
         for(int i = 0; i < PlanetaryConditions.L_SIZE; i++) {
             choLight.add(PlanetaryConditions.getLightDisplayableName(i));
         }
         choLight.select(conditions.getLight());    
-        
+
         choWeather.removeAll();
         for(int i = 0; i < PlanetaryConditions.WE_SIZE; i++) {
             choWeather.add(PlanetaryConditions.getWeatherDisplayableName(i));
         }
         choWeather.select(conditions.getWeather());    
-        
+
         choWind.removeAll();
         for(int i = 0; i < PlanetaryConditions.WI_SIZE; i++) {
             choWind.add(PlanetaryConditions.getWindDisplayableName(i));
         }
         choWind.select(conditions.getWindStrength());    
-        
+
         choAtmosphere.removeAll();
         for(int i = 0; i < PlanetaryConditions.ATMO_SIZE; i++) {
             choAtmosphere.add(PlanetaryConditions.getAtmosphereDisplayableName(i));
         }
         choAtmosphere.select(conditions.getAtmosphere());    
-        
+
         choFog.removeAll();
         for(int i = 0; i < PlanetaryConditions.FOG_SIZE; i++) {
             choFog.add(PlanetaryConditions.getFogDisplayableName(i));
         }
         choFog.select(conditions.getFog());    
-        
+
         cBlowingSands.setState(conditions.isSandBlowing());
         cShiftWindDir.setState(conditions.shiftingWindDirection());
         cShiftWindStr.setState(conditions.shiftingWindStrength());
-        
+
         fldTemp.setText(Integer.toString(conditions.getTemperature()));
         fldGrav.setText(Float.toString(conditions.getGravity()));
-        
+
         cEMI.setState(conditions.hasEMI());
-        
+
         cTerrainAffected.setState(conditions.isTerrainAffected());
     }
-    
+
     public void send() {
-        
+
         //make the changes to the planetary conditions
         conditions.setLight(choLight.getSelectedIndex());
         conditions.setWeather(choWeather.getSelectedIndex());
@@ -341,10 +341,10 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         conditions.setGravity(Float.parseFloat(fldGrav.getText()));
         conditions.setEMI(cEMI.getState());
         conditions.setTerrainAffected(cTerrainAffected.getState());
-            
+
         client.getClient().sendPlanetaryConditions(conditions);
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butOkay) {
             //check for reasonable values and some conditionals
@@ -356,7 +356,7 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
                 new AlertDialog(
                         client.frame,
                         Messages
-                                .getString("PlanetaryConditionsDialog.NumberFormatError"), Messages.getString("PlanetaryConditionsDialog.EnterValidTemperature")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        .getString("PlanetaryConditionsDialog.NumberFormatError"), Messages.getString("PlanetaryConditionsDialog.EnterValidTemperature")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             try {
@@ -365,26 +365,26 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
                 new AlertDialog(
                         client.frame,
                         Messages
-                                .getString("PlanetaryConditionsDialog.NumberFormatError"), Messages.getString("PlanetaryConditionsDialog.EnterValidGravity")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        .getString("PlanetaryConditionsDialog.NumberFormatError"), Messages.getString("PlanetaryConditionsDialog.EnterValidGravity")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
-            
+
             if(temper > 200 || temper < -200) {
                 new AlertDialog(
                         client.frame,
                         Messages
-                                .getString("PlanetaryConditionsDialog.NumberFormatError"), Messages.getString("PlanetaryConditionsDialog.EnterValidTemperature")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        .getString("PlanetaryConditionsDialog.NumberFormatError"), Messages.getString("PlanetaryConditionsDialog.EnterValidTemperature")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
-   
+
             if(grav < 0.1 || grav > 10.0) {
                 new AlertDialog(
                         client.frame,
                         Messages
-                                .getString("PlanetaryConditionsDialog.NumberFormatError"), Messages.getString("PlanetaryConditionsDialog.EnterValidGravity")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        .getString("PlanetaryConditionsDialog.NumberFormatError"), Messages.getString("PlanetaryConditionsDialog.EnterValidGravity")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
-            
+
             //can't combine certain wind conditions with certain atmospheres
             int wind = choWind.getSelectedIndex();
             int atmo = choAtmosphere.getSelectedIndex();
@@ -392,24 +392,24 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
                 new AlertDialog(
                         client.frame,
                         Messages
-                                .getString("PlanetaryConditionsDialog.Incompatible"), Messages.getString("PlanetaryConditionsDialog.VacuumWind")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        .getString("PlanetaryConditionsDialog.Incompatible"), Messages.getString("PlanetaryConditionsDialog.VacuumWind")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             if(atmo == PlanetaryConditions.ATMO_TRACE && wind > PlanetaryConditions.WI_STORM) {
                 new AlertDialog(
                         client.frame,
                         Messages
-                                .getString("PlanetaryConditionsDialog.Incompatible"), Messages.getString("PlanetaryConditionsDialog.TraceWind")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        .getString("PlanetaryConditionsDialog.Incompatible"), Messages.getString("PlanetaryConditionsDialog.TraceWind")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             if(atmo == PlanetaryConditions.ATMO_THIN && wind > PlanetaryConditions.WI_TORNADO_F13) {
                 new AlertDialog(
                         client.frame,
                         Messages
-                                .getString("PlanetaryConditionsDialog.Incompatible"), Messages.getString("PlanetaryConditionsDialog.ThinWind")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        .getString("PlanetaryConditionsDialog.Incompatible"), Messages.getString("PlanetaryConditionsDialog.ThinWind")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
-            
+
             if (client != null) {
                 send();
             }
@@ -419,4 +419,3 @@ public class PlanetaryConditionsDialog extends Dialog implements ActionListener 
         this.setVisible(false);
     }
 }
-    

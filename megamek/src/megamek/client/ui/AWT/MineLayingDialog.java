@@ -66,8 +66,8 @@ public class MineLayingDialog extends Dialog implements ActionListener {
 
         labMessage = new AdvancedLabel(
                 Messages
-                        .getString(
-                                "MineLayingDialog.selectMineToLay", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$ 
+                .getString(
+                        "MineLayingDialog.selectMineToLay", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$ 
 
         // Walk through the entity's misc equipment, looking for mines.
         for (Mounted mount : entity.getMisc()) {
@@ -77,8 +77,8 @@ public class MineLayingDialog extends Dialog implements ActionListener {
 
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
-                        .append(" ") //$NON-NLS-1$
-                        .append(mount.getDesc());
+                .append(" ") //$NON-NLS-1$
+                .append(mount.getDesc());
                 chMines.add(message.toString());
                 vMines.addElement(entity.getEquipmentNum(mount));
 

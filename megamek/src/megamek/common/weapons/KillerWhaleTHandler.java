@@ -38,7 +38,7 @@ public class KillerWhaleTHandler extends TeleMissileHandler {
     public KillerWhaleTHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     @Override
     protected int getCapMisMod() {
         return 10;

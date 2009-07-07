@@ -57,7 +57,7 @@ public class WhiteSharkTWeapon extends CapitalMissileWeapon {
         this.extAV = 3;
         this.maxRange = RANGE_EXT;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

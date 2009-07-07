@@ -60,7 +60,7 @@ public class AmmoType extends EquipmentType {
     public static final int T_LAC = 34;
     public static final int T_HEAVY_FLAMER = 35;
     public static final int T_COOLANT_POD = 36; // not really ammo, but explodes
-                                                // and is depleted
+    // and is depleted
     public static final int T_EXLRM = 37;
     public static final int T_APGAUSS = 38;
     public static final int T_MAGSHOT = 39;
@@ -120,7 +120,7 @@ public class AmmoType extends EquipmentType {
     public static final long F_PROTOMECH = 1l << 2; // only used by Protomechs
     public static final long F_HOTLOAD = 1l << 3; // Ammo Can be hotloaded
     public static final long F_ENCUMBERING = 1l << 4; // BA can't jump or make
-                                                      // antimech until dumped
+    // antimech until dumped
     public static final long F_MML_LRM = 1l << 5; // LRM type
     public static final long F_AR10_WHITE_SHARK = 1l << 6; // White shark type
     public static final long F_AR10_KILLER_WHALE = 1l << 7; // Killer Whale type
@@ -7871,18 +7871,18 @@ public class AmmoType extends EquipmentType {
                 munition.shortName = munition.name;
                 munition.addBeforeString(base, "Ammo", name + " ");
                 break;
-            /*
-             * // Add the munition name to the beginning of the display name.
-             * nameBuf = new StringBuffer( name ); nameBuf.append( " " );
-             * nameBuf.append( base.name ); munition.name = nameBuf.toString();
-             * 
-             * // Add the munition name to the end of some of the ammo names.
-             * nameBuf = new StringBuffer( " " ); nameBuf.append( name );
-             * munition.setInternalName(base.internalName + nameBuf.toString());
-             * munition.addToEnd(base, nameBuf.toString()); nameBuf.insert( 0,
-             * " -" ); munition.shortName = munition.name;
-             * munition.addToEnd(base, nameBuf.toString()); break;
-             */
+                /*
+                 * // Add the munition name to the beginning of the display name.
+                 * nameBuf = new StringBuffer( name ); nameBuf.append( " " );
+                 * nameBuf.append( base.name ); munition.name = nameBuf.toString();
+                 * 
+                 * // Add the munition name to the end of some of the ammo names.
+                 * nameBuf = new StringBuffer( " " ); nameBuf.append( name );
+                 * munition.setInternalName(base.internalName + nameBuf.toString());
+                 * munition.addToEnd(base, nameBuf.toString()); nameBuf.insert( 0,
+                 * " -" ); munition.shortName = munition.name;
+                 * munition.addToEnd(base, nameBuf.toString()); break;
+                 */
             case AmmoType.T_LONG_TOM:
             case AmmoType.T_SNIPER:
             case AmmoType.T_THUMPER:

@@ -377,7 +377,7 @@ public class TestBoardEncoder {
         writer.println("hex 0614 0 \"\" \"\"");
         writer.println("hex 0714 0 \"\" \"\"");
         writer.println("hex 0814 0 \"building:2;bldg_cf:40;bldg_elev:2\" \"\""); // Inferno
-                                                                                    // hex
+        // hex
         writer.println("hex 0914 0 \"\" \"\"");
         writer.println("hex 1014 0 \"\" \"\"");
         writer.println("hex 1114 0 \"\" \"\"");
@@ -398,8 +398,8 @@ public class TestBoardEncoder {
         writer.println("hex 1015 0 \"rough:1\" \"\"");
         writer.println("hex 1115 1 \"\" \"\"");
         writer
-                .println("hex 1215 2 \"building:4;bldg_cf:100;bldg_elev:1\" \"\""); // Fire
-                                                                                    // hex
+        .println("hex 1215 2 \"building:4;bldg_cf:100;bldg_elev:1\" \"\""); // Fire
+        // hex
         writer.println("hex 1315 3 \"woods:1\" \"\"");
         writer.println("hex 1415 0 \"\" \"\"");
         writer.println("hex 1515 0 \"\" \"\"");

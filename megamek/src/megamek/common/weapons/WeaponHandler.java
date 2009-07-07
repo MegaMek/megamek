@@ -109,7 +109,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    ClassNotFoundException {
         in.defaultReadObject();
 
         server = Server.getServerInstance();
@@ -600,7 +600,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if(null != bldg) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
-        
+
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             Report r = new Report(3415);
@@ -615,10 +615,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 hit.makeGlancingBlow();
             }
             vPhaseReport
-                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
-                                    .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront, underWater, nukeS2S));
+            .addAll(server.damageEntity(entityTarget, hit, nDamage,
+                    false, ae.getSwarmTargetId() == entityTarget
+                    .getId() ? DamageType.IGNORE_PASSENGER
+                            : damageType, false, false, throughFront, underWater, nukeS2S));
         }
     }
 
@@ -790,7 +790,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     public int checkTerrain(int nDamage, Entity entityTarget, Vector<Report>vPhaseReport){
         if ( game.getOptions().booleanOption("tacops_woods_cover") &&
                 (game.getBoard().getHex(entityTarget.getPosition()).containsTerrain(Terrains.WOODS)
-                || game.getBoard().getHex(entityTarget.getPosition()).containsTerrain(Terrains.JUNGLE)) ) {
+                        || game.getBoard().getHex(entityTarget.getPosition()).containsTerrain(Terrains.JUNGLE)) ) {
             ITerrain woodHex = game.getBoard().getHex(entityTarget.getPosition()).getTerrain(Terrains.WOODS);
             ITerrain jungleHex = game.getBoard().getHex(entityTarget.getPosition()).getTerrain(Terrains.JUNGLE);
             int treeAbsorbs = 0;

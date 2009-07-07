@@ -17,25 +17,18 @@
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.Aero;
-import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.HitData;
 import megamek.common.IGame;
-import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.Report;
-import megamek.common.SpecialHexDisplay;
 import megamek.common.TargetRoll;
-import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.VTOL;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -43,7 +36,7 @@ import megamek.server.Server;
  * @author Jay Lawson
  */
 public class BombAttackHandler extends WeaponHandler {
-   
+
 
     /**
      * 
@@ -59,7 +52,7 @@ public class BombAttackHandler extends WeaponHandler {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_NONE;
     }
-    
+
     /**
      * Does this attack use the cluster hit table?
      * necessary to determine how Aero damage should be applied
@@ -68,7 +61,7 @@ public class BombAttackHandler extends WeaponHandler {
     protected boolean usesClusterTable() {
         return true;
     }
-    
+
     @Override
     protected void useAmmo() {
         int[] payload = waa.getBombPayload();
@@ -80,7 +73,7 @@ public class BombAttackHandler extends WeaponHandler {
                 //find the first mounted bomb of this type and drop it
                 for(Mounted bomb : ae.getBombs()) {
                     if(!bomb.isDestroyed() && bomb.getShotsLeft() > 0
-                           && ((BombType)bomb.getType()).getBombType() == type) {
+                            && ((BombType)bomb.getType()).getBombType() == type) {
                         bomb.setShotsLeft(0);
                         break;
                     }
@@ -89,7 +82,7 @@ public class BombAttackHandler extends WeaponHandler {
         }
         super.useAmmo();
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -107,7 +100,7 @@ public class BombAttackHandler extends WeaponHandler {
         } else {
             r.add("Error: From Nowhwere");
         }
-    
+
         r.add(target.getDisplayName(), true);
         vPhaseReport.addElement(r);
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
@@ -136,19 +129,19 @@ public class BombAttackHandler extends WeaponHandler {
             r.add(toHit.getValue());
             vPhaseReport.addElement(r);
         }
-    
+
         // dice have been rolled, thanks
         r = new Report(3155);
         r.newlines = 0;
         r.subject = subjectId;
         r.add(roll);
         vPhaseReport.addElement(r);
-    
+
         // do we hit?
         bMissed = roll < toHit.getValue();
         // Set Margin of Success/Failure.
         toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-    
+
         Coords coords = target.getPosition();
         if (!bMissed) {
             r = new Report(3190);
@@ -161,7 +154,7 @@ public class BombAttackHandler extends WeaponHandler {
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);   
         }
-        
+
         //now go through the payload and drop the bombs one at a time
         int[] payload = waa.getBombPayload();
         Coords drop = coords;
@@ -203,12 +196,12 @@ public class BombAttackHandler extends WeaponHandler {
                 } else if (type == BombType.B_THUNDER) {
                     server.deliverThunderMinefield(drop, subjectId, 20, ae.getId());
                 } else {
-                    
+
                     server.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
                 }
             }
         }
-        
+
         return false;
     }
 }

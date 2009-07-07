@@ -42,7 +42,7 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.ui.Messages;
 
 public class UnitFailureDialog extends JDialog implements ActionListener,
-        ListSelectionListener, KeyListener {
+ListSelectionListener, KeyListener {
 
     /**
      *

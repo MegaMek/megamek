@@ -102,7 +102,7 @@ public class TestImageButtons {
                 imgButton.setImage(Toolkit.getDefaultToolkit()
                         .getImage(
                                 (String) event.getItemSelectable()
-                                        .getSelectedObjects()[0]));
+                                .getSelectedObjects()[0]));
             }
         });
         list.addKeyListener(new KeyAdapter() {
@@ -152,7 +152,7 @@ public class TestImageButtons {
             }
         });
         imgButton.setImage(Toolkit.getDefaultToolkit().getImage(
-                "data/images/camo/Wood1.jpg"));
+        "data/images/camo/Wood1.jpg"));
         panel.add(imgButton);
 
         // Create a "no camo" button on the panel.

@@ -79,7 +79,7 @@ import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
 public class ClientGUI extends Panel implements WindowListener, ActionListener,
-        BoardViewListener {
+BoardViewListener {
     /**
      *
      */
@@ -111,7 +111,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
     public Dialog minimapW;
     public MiniMap minimap;
     public PopupMenu popup;// = new
-                           // PopupMenu(Messages.getString("ClientGUI.BoardPopup"));
+    // PopupMenu(Messages.getString("ClientGUI.BoardPopup"));
     private UnitOverview uo;
     public Ruler ruler; // added by kenn
     protected Component curPanel;
@@ -221,7 +221,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
                     .getSoundBingFilename());
             if (!file.exists()) {
                 System.err
-                        .println("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename()); //$NON-NLS-1$
+                .println("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename()); //$NON-NLS-1$
                 return;
             }
             bingClip = Applet.newAudioClip(file.toURI().toURL());
@@ -249,7 +249,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
         frame.setMenuBar(menuBar);
         Rectangle virtualBounds = new Rectangle();
         GraphicsEnvironment ge = GraphicsEnvironment
-                .getLocalGraphicsEnvironment();
+        .getLocalGraphicsEnvironment();
         GraphicsDevice[] gs = ge.getScreenDevices();
         for (int j = 0; j < gs.length; j++) {
             GraphicsDevice gd = gs[j];
@@ -320,7 +320,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
             // Create the board viewer.
             Class<?> c = getClass().getClassLoader().loadClass(
                     System.getProperty("megamek.client.ui.AWT.boardView",
-                            "megamek.client.ui.AWT.BoardView1"));
+                    "megamek.client.ui.AWT.BoardView1"));
             bv = (IBoardView) c.getConstructor(IGame.class).newInstance(
                     client.game);
             bvc = bv.getComponent();
@@ -597,7 +597,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
         GUIPreferences.getInstance().setWindowPosY(frame.getLocation().y);
         GUIPreferences.getInstance().setWindowSizeWidth(frame.getSize().width);
         GUIPreferences.getInstance()
-                .setWindowSizeHeight(frame.getSize().height);
+        .setWindowSizeHeight(frame.getSize().height);
 
         // also minimap
         if ((minimapW != null)
@@ -1079,7 +1079,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
             dlgLoadList = new FileDialog(
                     frame,
                     Messages
-                            .getString("ClientGUI.openUnitListFileDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
+                    .getString("ClientGUI.openUnitListFileDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
 
             // Add a filter for MUL files
             dlgLoadList.setFilenameFilter(new FilenameFilter() {
@@ -1112,7 +1112,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
 
                 // Add the units from the file.
                 for (Enumeration<Entity> iter = loadedUnits.elements(); iter
-                        .hasMoreElements();) {
+                .hasMoreElements();) {
                     final Entity entity = iter.nextElement();
                     entity.setOwner(client.getLocalPlayer());
                     client.sendAddEntity(entity);
@@ -1150,7 +1150,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
             dlgSaveList = new FileDialog(
                     frame,
                     Messages
-                            .getString("ClientGUI.saveUnitListFileDialog.title"), FileDialog.SAVE); //$NON-NLS-1$
+                    .getString("ClientGUI.saveUnitListFileDialog.title"), FileDialog.SAVE); //$NON-NLS-1$
 
             // Add a filter for MUL files
             dlgSaveList.setFilenameFilter(new FilenameFilter() {
@@ -1174,7 +1174,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
         String unitFile = dlgSaveList.getFile();
         if (null != unitFile) {
             if (!(unitFile.toLowerCase().endsWith(".mul") //$NON-NLS-1$
-            || unitFile.toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
+                    || unitFile.toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
                 unitFile += ".mul"; //$NON-NLS-1$
             }
             try {
@@ -1445,7 +1445,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
             bv.clearMovementData();
 
             for (Iterator<Client> i = getBots().values().iterator(); i
-                    .hasNext();) {
+            .hasNext();) {
                 i.next().die();
             }
             getBots().clear();
@@ -1456,7 +1456,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
 
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 living.add(iter.nextElement());
             }
 
@@ -1465,9 +1465,9 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
             if (!living.isEmpty()
                     && doYesNoDialog(
                             Messages
-                                    .getString("ClientGUI.SaveUnitsDialog.title"), //$NON-NLS-1$
+                            .getString("ClientGUI.SaveUnitsDialog.title"), //$NON-NLS-1$
                             Messages
-                                    .getString("ClientGUI.SaveUnitsDialog.message"))) { //$NON-NLS-1$
+                            .getString("ClientGUI.SaveUnitsDialog.message"))) { //$NON-NLS-1$
 
                 // Allow the player to save the units to a file.
                 saveListFile(living);
@@ -1487,7 +1487,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
             if (curPanel instanceof ChatLounge) {
                 ChatLounge cl = (ChatLounge) curPanel;
                 boolean useMinefields = client.game.getOptions().booleanOption(
-                        "minefields"); //$NON-NLS-1$
+                "minefields"); //$NON-NLS-1$
                 cl.enableMinefields(useMinefields);
 
                 if (!useMinefields) {

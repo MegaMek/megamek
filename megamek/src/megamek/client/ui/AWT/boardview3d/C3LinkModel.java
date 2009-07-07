@@ -42,15 +42,15 @@ class C3LinkModel extends ConnectionModel {
 
     public C3LinkModel(Entity a, Entity b, IGame game, Point3d source) {
         super(
-            a.getPosition(),
-            b.getPosition(),
-            game.getBoard().getHex(a.getPosition()).getElevation()+a.absHeight(),
-            game.getBoard().getHex(b.getPosition()).getElevation()+b.absHeight(),
-            source,
-            new Color3f(PlayerColors.getColor(a.getOwner().getColorIndex())),
-            .8f
+                a.getPosition(),
+                b.getPosition(),
+                game.getBoard().getHex(a.getPosition()).getElevation()+a.absHeight(),
+                game.getBoard().getHex(b.getPosition()).getElevation()+b.absHeight(),
+                source,
+                new Color3f(PlayerColors.getColor(a.getOwner().getColorIndex())),
+                .8f
         );
-            
+
         if (a.getId() < b.getId()) {
             src = a;
             dst = b;

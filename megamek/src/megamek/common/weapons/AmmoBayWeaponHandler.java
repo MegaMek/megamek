@@ -26,9 +26,9 @@ import megamek.server.Server;
  * @author Jay Lawson
  */
 public class AmmoBayWeaponHandler extends BayWeaponHandler {
-    
+
     private static final long serialVersionUID = -1618484541772117621L;
-    
+
     /**
      * @param t
      * @param w
@@ -38,7 +38,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
     public AmmoBayWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
- 
+
     /**
      * Calculate the attack value based on range
      * This needs to do additional work for Weapon Bays with ammo.
@@ -70,7 +70,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                 //need to cycle through weapons and add av
                 double current_av = 0;                             
                 AmmoType atype = (AmmoType)bayWAmmo.getType();              
-                
+
                 if(range == WeaponType.RANGE_SHORT) {
                     current_av =  bayWType.getShortAV();
                 } else if(range == WeaponType.RANGE_MED) {
@@ -81,7 +81,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                     current_av = bayWType.getExtAV();
                 }
                 current_av = updateAVforAmmo(current_av, atype, 
-                                             bayWType, range, wId);               
+                        bayWType, range, wId);               
                 av = av + current_av;
                 //now use the ammo that we had loaded
                 if(current_av > 0) {
@@ -97,7 +97,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                         }
                     }
                 }
-                
+
                 //check for nukes and tele-missiles and if they are there then I will need to 
                 //add them to an inserted attack list and reset the av
                 if(atype.hasFlag(AmmoType.F_NUCLEAR) || atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
@@ -108,22 +108,22 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
         }       
         return (int)Math.ceil(av);
     }
-    
+
     /*
      * check for special munitions and their effect on av
      * TODO: it might be better to have unique weapon handlers 
      * for these by bay, but I am lazy
      */   
     protected double updateAVforAmmo(double current_av, AmmoType atype, WeaponType bayWType, int range, int wId) {     
-        
+
         //check for artemisIV
         Mounted mLinker = weapon.getLinkedBy();
         int bonus = 0;
         if ((mLinker != null && mLinker.getType() instanceof MiscType
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS))
-                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+                        MiscType.F_ARTEMIS))
+                        && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
             bonus = (int)Math.ceil(atype.getRackSize() / 5.0);
             if(atype.getAmmoType() == AmmoType.T_SRM) {
                 bonus = 2;
@@ -134,15 +134,15 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
         if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS_V))
-                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+                        MiscType.F_ARTEMIS_V))
+                        && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
             //MML3 WOULD get a bonus from Artemis V, if you were crazy enough to cross-tech it
             bonus = (int)Math.ceil(atype.getRackSize() / 5.0);
             if(atype.getAmmoType() == AmmoType.T_SRM) {
                 bonus = 2;
             }
         }
-        
+
         if(atype.getMunitionType() == AmmoType.M_CLUSTER) {
             current_av = Math.floor(0.6*current_av);
         }
@@ -157,10 +157,10 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
             } 
         }
         else if (atype.getAmmoType() == AmmoType.T_MML && !atype.hasFlag(AmmoType.F_MML_LRM)) {
-          current_av = 2 * current_av;
-          if(range > WeaponType.RANGE_SHORT) {
-              current_av = 0;
-          }
+            current_av = 2 * current_av;
+            if(range > WeaponType.RANGE_SHORT) {
+                current_av = 0;
+            }
         } 
         else if (atype.getAmmoType() == AmmoType.T_AR10) {
             if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {

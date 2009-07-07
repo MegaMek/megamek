@@ -62,7 +62,7 @@ class EntityGroup extends BranchGroup {
         }
         return null;
     }
-    
+
     public void move(Entity entity, Vector<UnitLocation> movePath) {
         EntityModel em = find(entity);
 
@@ -124,7 +124,7 @@ class EntityGroup extends BranchGroup {
 
     public void update() {
         clear();
-        
+
         final IBoard gboard = game.getBoard();
         if (gboard == null) return;
 
@@ -141,7 +141,7 @@ class EntityGroup extends BranchGroup {
             }
         }
     }
-    
+
     void addC3LinksFor(Entity e, Point3d pos) {
         if (e.getPosition() == null)
             return;

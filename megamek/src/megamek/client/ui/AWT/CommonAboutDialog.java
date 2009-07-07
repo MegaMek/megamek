@@ -60,7 +60,7 @@ public class CommonAboutDialog extends Dialog {
         if (imgTitleImage == null) {
             // Nope. Load it.
             Image image = frame.getToolkit().getImage(
-                    "data/images/misc/megamek-splash2.gif"); //$NON-NLS-1$
+            "data/images/misc/megamek-splash2.gif"); //$NON-NLS-1$
             MediaTracker tracker = new MediaTracker(frame);
             tracker.addImage(image, 0);
             try {
@@ -103,13 +103,13 @@ public class CommonAboutDialog extends Dialog {
         // Make a label containing the version of this app.
         StringBuffer buff = new StringBuffer();
         buff.append(Messages.getString("CommonAboutDialog.version")) //$NON-NLS-1$
-                .append(megamek.MegaMek.VERSION).append(
-                        Messages.getString("CommonAboutDialog.timestamp")) //$NON-NLS-1$
+        .append(megamek.MegaMek.VERSION).append(
+                Messages.getString("CommonAboutDialog.timestamp")) //$NON-NLS-1$
                 .append(new Date(megamek.MegaMek.TIMESTAMP).toString()).append(
                         Messages.getString("CommonAboutDialog.javaVendor")) //$NON-NLS-1$
-                .append(System.getProperty("java.vendor")) //$NON-NLS-1$
-                .append(Messages.getString("CommonAboutDialog.javaVersion")) //$NON-NLS-1$
-                .append(System.getProperty("java.version")); //$NON-NLS-1$
+                        .append(System.getProperty("java.vendor")) //$NON-NLS-1$
+                        .append(Messages.getString("CommonAboutDialog.javaVersion")) //$NON-NLS-1$
+                        .append(System.getProperty("java.version")); //$NON-NLS-1$
         AdvancedLabel lblVersion = new AdvancedLabel(buff.toString());
 
         AdvancedLabel lblCopyright = new AdvancedLabel(Messages

@@ -63,7 +63,7 @@ public class GameEntityChangeEvent extends GameEntityEvent {
     public String toString() {
         try {
             return getEntity().toString() + " moved to "
-                    + movePath.lastElement().getCoords().toFriendlyString();
+            + movePath.lastElement().getCoords().toFriendlyString();
         } catch (NoSuchElementException nsee) {
             if (getEntity() != null) {
                 return getEntity().toString() + " probably deployed.";

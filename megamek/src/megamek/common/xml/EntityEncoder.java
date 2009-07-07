@@ -662,7 +662,7 @@ public class EntityEncoder {
                 attrStr = detail.getAttribute("turns");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                            "Couldn't decode the burn turns for an Arrow IV inferno round.");
+                    "Couldn't decode the burn turns for an Arrow IV inferno round.");
                 }
 
                 // Try to pull the value from the string
@@ -685,7 +685,7 @@ public class EntityEncoder {
                 attrStr = detail.getAttribute("turns");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                            "Couldn't decode the burn turns for a standard inferno round.");
+                    "Couldn't decode the burn turns for a standard inferno round.");
                 }
 
                 // Try to pull the value from the string
@@ -802,7 +802,7 @@ public class EntityEncoder {
                 attrStr = child.getAttribute("name");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                            "Couldn't decode the name of a class node.");
+                    "Couldn't decode the name of a class node.");
                 } else if (attrStr.equals("BipedMech")) {
                     entity = BipedMechEncoder.decode(child, game);
                 } else if (attrStr.equals("QuadMech")) {
@@ -829,7 +829,7 @@ public class EntityEncoder {
         // Did we find the entity yet?
         if (null == entity) {
             throw new IllegalStateException(
-                    "Couldn't locate the class for an entityData node.");
+            "Couldn't locate the class for an entityData node.");
         }
 
         // Decode the inferno node.
@@ -900,7 +900,7 @@ public class EntityEncoder {
                 // Did we find the entity already?
                 if (null != entity) {
                     throw new IllegalStateException(
-                            "Found two entityData nodes for an Entity node.");
+                    "Found two entityData nodes for an Entity node.");
                 }
 
                 // Decode the entity data.
@@ -929,19 +929,19 @@ public class EntityEncoder {
         // Did we find the needed elements?
         if (null == entity) {
             throw new IllegalStateException(
-                    "Couldn't locate the entityData for an Entity node.");
+            "Couldn't locate the entityData for an Entity node.");
         } else if (null == pilotNode) {
             throw new IllegalStateException(
-                    "Couldn't locate the pilot for an Entity node.");
+            "Couldn't locate the pilot for an Entity node.");
         } else if (null == equipNode) {
             throw new IllegalStateException(
-                    "Couldn't locate the entityEquipment for an Entity node.");
+            "Couldn't locate the entityEquipment for an Entity node.");
         } else if (locations.size() != entity.locations()) {
             StringBuffer msgBuf = new StringBuffer();
             msgBuf.append("Found ").append(locations.size()).append(
-                    " locations for an Entity node. ").append(
-                    "Was expecting to find ").append(entity.locations())
-                    .append(".");
+            " locations for an Entity node. ").append(
+            "Was expecting to find ").append(entity.locations())
+            .append(".");
             throw new IllegalStateException(msgBuf.toString());
         }
 
@@ -949,7 +949,7 @@ public class EntityEncoder {
         attrStr = node.getAttribute("chassis");
         if (null == attrStr) {
             throw new IllegalStateException(
-                    "Couldn't decode the chassis from an Entity node.");
+            "Couldn't decode the chassis from an Entity node.");
         }
         entity.setChassis(attrStr);
 
@@ -957,7 +957,7 @@ public class EntityEncoder {
         attrStr = node.getAttribute("model");
         if (null == attrStr) {
             throw new IllegalStateException(
-                    "Couldn't decode the model from an Entity node.");
+            "Couldn't decode the model from an Entity node.");
         }
         entity.setModel(attrStr);
 
@@ -965,7 +965,7 @@ public class EntityEncoder {
         attrStr = node.getAttribute("typeVal");
         if (null == attrStr) {
             throw new IllegalStateException(
-                    "Couldn't decode the typeVal from an Entity node.");
+            "Couldn't decode the typeVal from an Entity node.");
         }
 
         // Try to pull the value from the string
@@ -981,7 +981,7 @@ public class EntityEncoder {
         attrStr = node.getAttribute("year");
         if (null == attrStr) {
             throw new IllegalStateException(
-                    "Couldn't decode the year from an Entity node.");
+            "Couldn't decode the year from an Entity node.");
         }
 
         // Try to pull the value from the string
@@ -997,7 +997,7 @@ public class EntityEncoder {
         attrStr = node.getAttribute("techBase");
         if (null == attrStr) {
             throw new IllegalStateException(
-                    "Couldn't decode the techBase from an Entity node.");
+            "Couldn't decode the techBase from an Entity node.");
         }
 
         // Try to pull the value from the string
@@ -1013,7 +1013,7 @@ public class EntityEncoder {
         attrStr = node.getAttribute("mass");
         if (null == attrStr) {
             throw new IllegalStateException(
-                    "Couldn't decode the mass from an Entity node.");
+            "Couldn't decode the mass from an Entity node.");
         }
 
         // Try to pull the value from the string
@@ -1029,7 +1029,7 @@ public class EntityEncoder {
         attrStr = node.getAttribute("walkMp");
         if (null == attrStr) {
             throw new IllegalStateException(
-                    "Couldn't decode the walkMp from an Entity node.");
+            "Couldn't decode the walkMp from an Entity node.");
         }
 
         // Try to pull the value from the string
@@ -1045,7 +1045,7 @@ public class EntityEncoder {
         attrStr = node.getAttribute("jumpMp");
         if (null == attrStr) {
             throw new IllegalStateException(
-                    "Couldn't decode the jumpMp from an Entity node.");
+            "Couldn't decode the jumpMp from an Entity node.");
         }
 
         // Try to pull the value from the string

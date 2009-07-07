@@ -59,7 +59,7 @@ public class BarracudaTWeapon extends CapitalMissileWeapon {
         this.maxRange = RANGE_EXT;
         this.toHitModifier = -2;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

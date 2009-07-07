@@ -33,7 +33,7 @@ public class Terrains implements ITerrainFactory {
     //unimplemented
     //Level 1 Foliage
     //Sheer Cliffs
-    
+
     //Terrain modifications
     public static final int PAVEMENT = 12;
     public static final int ROAD     = 13;
@@ -53,7 +53,7 @@ public class Terrains implements ITerrainFactory {
     //Rail
     //Dirt Roads, Gravel Roads
     //Water Flow
-    
+
     //Building stuff
     public static final int BUILDING       = 22; // 1: light 2: medium 3: heavy 4: hardened 5: wall
     public static final int BLDG_CF        = 23;
@@ -75,7 +75,7 @@ public class Terrains implements ITerrainFactory {
     public static final int ELEVATOR   = 36; // level=elevation it moves to,exits=d6 rolls it moves on
     public static final int FORTIFIED  = 37;
     public static final int SCREEN     = 38;
-    
+
     //fluff
     public static final int FLUFF = 39;
     public static final int ARMS  = 40; // blown off arms for use as clubs, level = number of arms in that hex
@@ -113,137 +113,137 @@ public class Terrains implements ITerrainFactory {
      */
     public static String getDisplayName(int type, int level) {   
         switch(type) {
-            case(WOODS):
-                if(level == 1) {
-                    return "light woods";
-                }
-                if(level == 2) {
-                    return "heavy woods";
-                }
-                if(level == 3) {
-                    return "ultra-heavy woods";
-                }
-                return "woods (unknown)";
-            case(ROUGH):
-                if(level == 1) {
-                    return "rough";
-                }
-                if(level == 2) {
-                    return "ultra rough";
-                }
-                return "rough (unknown)";
-            case(RUBBLE):
-                if(level < 6) {
-                    return "rubble";
-                }
-                if(level > 5) {
-                    return "ultra rubble";
-                }
-                return "rubble (unknown)";
-            case(WATER):
-                return "water (depth " + level + ")";
-            case(PAVEMENT):
-                return "pavement";
-            case(ROAD):
-                return "road";
-            case(FIRE):
-                if(level == 1) {
-                    return "fire";
-                }
-                if(level == 2) {
-                    return "inferno fire";
-                }
-                return "fire (unknown)";
-            case(SMOKE):
-                if(level == 1) {
-                    return "light smoke";
-                }
-                if(level == 2) {
-                    return "heavy smoke";
-                }
-                return "smoke (unknown)";
-            case(SWAMP):
-                if(level == 1) {
-                    return "swamp";
-                }
-                if(level == 2 || level == 3) {
-                    return "quicksand";
-                }
-                return "swamp";
-            case(ICE):
-                return "ice";
-            case(FORTIFIED):
-                return "improved position";
-            case(GEYSER):
-                if(level == 1) {
-                    return "dormant";
-                }
-                if(level == 2) {
-                    return "active";
-                }
-                if(level == 3) {
-                    return "magma vent";
-                }
-                return "geyser (unknown)";
-            case(JUNGLE):
-                if(level == 1) {
-                    return "light jungle";
-                }
-                if(level == 2) {
-                    return "heavy jungle";
-                }
-                if(level == 3) {
-                    return "ultra-heavy jungle";
-                }
-                return "jungle (unknown)";
-            case(MAGMA):
-                if(level == 1) {
-                    return "magma crust";
-                }
-                if(level == 2) {
-                    return "magma liquid";
-                }
-                return "magma (unknown)";
-            case(MUD):
-                return "mud";
-            case(RAPIDS):
-                if(level == 1) {
-                    return "rapids";
-                }
-                if(level == 2) {
-                    return "torrent";
-                }
-                return "rapids (unknown)";
-            case(SAND):
-                return "sand";
-            case(SNOW):
-                if(level == 1) {
-                    return "thin snow";
-                }
-                if(level == 2) {
-                    return "heavy snow";
-                }
-                return "snow (unknown)";
-            case(TUNDRA):
-                return "tundra";
-            case(SPACE):
-                return "space";
-            case(SCREEN):
-                return "screen";
-            case(FIELDS):
-                return "planted fields";
-            case(INDUSTRIAL):
-                return "heavy industrial zone (height " + level + ")";
-            case(IMPASSABLE):
-                return "impassable terrain";
-            case(ELEVATOR):
-                return "elevator";
-            default:
-                return null;
+        case(WOODS):
+            if(level == 1) {
+                return "light woods";
+            }
+        if(level == 2) {
+            return "heavy woods";
         }
-        
+        if(level == 3) {
+            return "ultra-heavy woods";
+        }
+        return "woods (unknown)";
+        case(ROUGH):
+            if(level == 1) {
+                return "rough";
+            }
+        if(level == 2) {
+            return "ultra rough";
+        }
+        return "rough (unknown)";
+        case(RUBBLE):
+            if(level < 6) {
+                return "rubble";
+            }
+        if(level > 5) {
+            return "ultra rubble";
+        }
+        return "rubble (unknown)";
+        case(WATER):
+            return "water (depth " + level + ")";
+        case(PAVEMENT):
+            return "pavement";
+        case(ROAD):
+            return "road";
+        case(FIRE):
+            if(level == 1) {
+                return "fire";
+            }
+        if(level == 2) {
+            return "inferno fire";
+        }
+        return "fire (unknown)";
+        case(SMOKE):
+            if(level == 1) {
+                return "light smoke";
+            }
+        if(level == 2) {
+            return "heavy smoke";
+        }
+        return "smoke (unknown)";
+        case(SWAMP):
+            if(level == 1) {
+                return "swamp";
+            }
+        if(level == 2 || level == 3) {
+            return "quicksand";
+        }
+        return "swamp";
+        case(ICE):
+            return "ice";
+        case(FORTIFIED):
+            return "improved position";
+        case(GEYSER):
+            if(level == 1) {
+                return "dormant";
+            }
+        if(level == 2) {
+            return "active";
+        }
+        if(level == 3) {
+            return "magma vent";
+        }
+        return "geyser (unknown)";
+        case(JUNGLE):
+            if(level == 1) {
+                return "light jungle";
+            }
+        if(level == 2) {
+            return "heavy jungle";
+        }
+        if(level == 3) {
+            return "ultra-heavy jungle";
+        }
+        return "jungle (unknown)";
+        case(MAGMA):
+            if(level == 1) {
+                return "magma crust";
+            }
+        if(level == 2) {
+            return "magma liquid";
+        }
+        return "magma (unknown)";
+        case(MUD):
+            return "mud";
+        case(RAPIDS):
+            if(level == 1) {
+                return "rapids";
+            }
+        if(level == 2) {
+            return "torrent";
+        }
+        return "rapids (unknown)";
+        case(SAND):
+            return "sand";
+        case(SNOW):
+            if(level == 1) {
+                return "thin snow";
+            }
+        if(level == 2) {
+            return "heavy snow";
+        }
+        return "snow (unknown)";
+        case(TUNDRA):
+            return "tundra";
+        case(SPACE):
+            return "space";
+        case(SCREEN):
+            return "screen";
+        case(FIELDS):
+            return "planted fields";
+        case(INDUSTRIAL):
+            return "heavy industrial zone (height " + level + ")";
+        case(IMPASSABLE):
+            return "impassable terrain";
+        case(ELEVATOR):
+            return "elevator";
+        default:
+            return null;
+        }
+
     }
-    
+
     /**
      * This function converts the name of a terrain into the constant.
      * 
@@ -313,7 +313,7 @@ public class Terrains implements ITerrainFactory {
     public ITerrain createTerrain(ITerrain other) {
         return getTerrainFactory().createTerrain(other);
     }
-    
+
     /**
      * 
      * @param level
@@ -325,13 +325,13 @@ public class Terrains implements ITerrainFactory {
             if(level == 1) {
                 return 50;
             }
-            if(level == 2) {
-                return 90;
-            }
-            if(level == 3) {
-                return 130;
-            }
-            return 50;
+        if(level == 2) {
+            return 90;
+        }
+        if(level == 3) {
+            return 130;
+        }
+        return 50;
         case(ROUGH):
             return 200;
         case(PAVEMENT):
@@ -344,28 +344,28 @@ public class Terrains implements ITerrainFactory {
             if(level == 1) {
                 return 50;
             }
-            if(level == 2) {
-                return 90;
-            }
-            if(level == 3) {
-                return 130;
-            }
-            return 50;
+        if(level == 2) {
+            return 90;
+        }
+        if(level == 3) {
+            return 130;
+        }
+        return 50;
         case(MAGMA):
             if(level == 1) {
                 return 30;
             }
-            return 0;
+        return 0;
         case(SAND):
             return 100;
         case(SNOW):
             if(level == 1) {
                 return 15;
             }
-            if(level == 2) {
-                return 30;
-            }
-            return 15;
+        if(level == 2) {
+            return 30;
+        }
+        return 15;
         case(TUNDRA):
             return 70;
         case(FIELDS):

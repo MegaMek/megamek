@@ -45,10 +45,10 @@ public class Minefield implements Serializable, Cloneable {
     public static final String IMAGE_FILE = "data/images/hexes/minefieldsign.gif";
 
     private static String[] names = { "Conventional", "Command-detonated",
-            "Vibrabomb", "Active", "EMP", "Inferno"};
-            //"Thunder", "Thunder-Inferno", "Thunder-Active",
-            //"Thunder-Vibrabomb" };
-    
+        "Vibrabomb", "Active", "EMP", "Inferno"};
+    //"Thunder", "Thunder-Inferno", "Thunder-Active",
+    //"Thunder-Vibrabomb" };
+
     public static int TYPE_SIZE = names.length;
 
     private Coords coords = null;
@@ -66,22 +66,22 @@ public class Minefield implements Serializable, Cloneable {
     private Minefield() {
         //Creates a minefield
     }
-    
+
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density) {
         return createMinefield(coords, playerId, type, density, 0);
     }
-    
+
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density, boolean sea, int depth) {
         return createMinefield(coords, playerId, type, density, 0, sea, depth);
     }
-    
+
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density, int setting) {
         return createMinefield(coords, playerId, type, density, setting, false, 0);
     }
 
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density, int setting, boolean sea, int depth) {
         Minefield mf = new Minefield();
-        
+
         mf.type = type;
         mf.density = density;
         mf.coords = coords;
@@ -91,8 +91,8 @@ public class Minefield implements Serializable, Cloneable {
         mf.depth = depth;
         return mf;
     }
-    
-    
+
+
     public static String getDisplayableName(int type) {
         if (type >= 0 && type < TYPE_SIZE) {
             return names[type];
@@ -172,7 +172,7 @@ public class Minefield implements Serializable, Cloneable {
     public int getType() {
         return type;
     }
-    
+
     public int getDepth() {
         return depth;
     }
@@ -184,15 +184,15 @@ public class Minefield implements Serializable, Cloneable {
     public int getPlayerId() {
         return playerId;
     }
-    
+
     public void setDetonated(boolean b) {
         this.detonated = b;
     }
-    
+
     public boolean hasDetonated() {
         return detonated;
     }
-    
+
     /**
      * check for a reduction in density
      * @param bonus - an <code>int</code> indicating the modifier to the target roll for reduction
@@ -208,5 +208,5 @@ public class Minefield implements Serializable, Cloneable {
             setDensity(getDensity() - 5);
         }    
     }
-    
+
 }

@@ -89,7 +89,7 @@ public final class Team extends TurnOrdered {
         // Sum the even turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             sum += loop.nextElement().getEvenTurns();
         }
         return sum;
@@ -100,7 +100,7 @@ public final class Team extends TurnOrdered {
         // Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             sum += loop.nextElement().getOtherTurns();
         }
         return sum;
@@ -111,73 +111,73 @@ public final class Team extends TurnOrdered {
         // Sum the multi turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             sum += loop.nextElement().getMultiTurns(game);
         }
         return sum;
     }
-    
+
     @Override
     public int getSpaceStationTurns() {
-//      Sum the other turns of all Players in this Team.
+        //      Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             sum += loop.nextElement().getSpaceStationTurns();
         }
         return sum;
     }
-    
+
     @Override
     public int getJumpshipTurns() {
-//      Sum the other turns of all Players in this Team.
+        //      Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             sum += loop.nextElement().getJumpshipTurns();
         }
         return sum;
     }
-    
+
     @Override
     public int getWarshipTurns() {
-//      Sum the other turns of all Players in this Team.
+        //      Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             sum += loop.nextElement().getWarshipTurns();
         }
         return sum;
     }
-    
+
     @Override
     public int getDropshipTurns() {
-//      Sum the other turns of all Players in this Team.
+        //      Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             sum += loop.nextElement().getDropshipTurns();
         }
         return sum;
     }
-    
+
     @Override
     public int getSmallCraftTurns() {
-//      Sum the other turns of all Players in this Team.
+        //      Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             sum += loop.nextElement().getSmallCraftTurns();
         }
         return sum;
     }
-    
+
     @Override
     public int getAeroTurns() {
-//      Sum the other turns of all Players in this Team.
+        //      Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             sum += loop.nextElement().getAeroTurns();
         }
         return sum;
@@ -242,23 +242,23 @@ public final class Team extends TurnOrdered {
                 constantb = player.getConstantInitBonus();
             }
         }
-        
+
         for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
             Player player = p.nextElement();
             turnb += player.getTurnInitBonus();
             if(player.getCommandBonus() > commandb)
                 commandb = player.getCommandBonus();
         }
-        
+
         return constantb + turnb + commandb;
     }
-    
+
     /**
      * cycle through entities on team and collect all the airborne VTOL/WIGE
      * @return a vector of relevant entity ids
      */
     public Vector<Integer> getAirborneVTOL() {
-    
+
         //a vector of unit ids
         Vector<Integer> units = new Vector<Integer>();       
         for (Enumeration<Player> loop = players.elements(); loop.hasMoreElements();) {

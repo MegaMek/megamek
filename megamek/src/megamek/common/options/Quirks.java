@@ -33,7 +33,7 @@ public class Quirks extends AbstractOptions {
     private static final long serialVersionUID = 7618380522964885740L;
     public static final String POS_QUIRKS = "PosQuirks"; //$NON-NLS-1$
     public static final String NEG_QUIRKS = "NegQuirks"; //$NON-NLS-1$
-  
+
     public Quirks() {
         super();
     }
@@ -76,7 +76,7 @@ public class Quirks extends AbstractOptions {
         //Searchlight
         //Variable Range Targeting
         //VTOL Rotor Arrangement (no vee adv move rules)
-        
+
         // negative quirks
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS); //$NON-NLS-1$
         addOption(negQuirk, "atmo_instability", false); //$NON-NLS-1$
@@ -122,11 +122,11 @@ public class Quirks extends AbstractOptions {
     protected AbstractOptionsInfo getOptionsInfoImp() {
         return QuirksInfo.getInstance();
     }
-    
+
     public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
-        
-        
-        
+
+
+
         if(en instanceof Mech) {
             if(quirk.getName().equals("atmo_flyer")
                     || quirk.getName().equals("atmo_instability")
@@ -140,7 +140,7 @@ public class Quirks extends AbstractOptions {
             }
             return true;
         }
-        
+
         if(en instanceof Tank) {
             if(quirk.getName().equals("atmo_flyer")
                     || quirk.getName().equals("combat_computer")
@@ -179,15 +179,15 @@ public class Quirks extends AbstractOptions {
             }
             return true;
         }
-        
+
         if(en instanceof BattleArmor) {
             if(quirk.getName().equals("atmo_flyer")
                     || quirk.getName().equals("anti_air")
                     || quirk.getName().equals("battle_computer")
                     || quirk.getName().equals("combat_computer")
                     || quirk.getName().equals("command_mech")                
-                     || quirk.getName().equals("cowl")
-                     || quirk.getName().equals("docking_arms")
+                    || quirk.getName().equals("cowl")
+                    || quirk.getName().equals("docking_arms")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("hyper_actuator")
                     || quirk.getName().equals("imp_sensors")
@@ -220,14 +220,14 @@ public class Quirks extends AbstractOptions {
             }
             return true;
         }
-        
+
         if(en instanceof Jumpship) {
             if(quirk.getName().equals("atmo_flyer")
                     || quirk.getName().equals("anti_air")
                     || quirk.getName().equals("battle_computer")
                     || quirk.getName().equals("combat_computer")
                     || quirk.getName().equals("command_mech")                   
-                     || quirk.getName().equals("cowl")                   
+                    || quirk.getName().equals("cowl")                   
                     || quirk.getName().equals("docking_arms")
                     || quirk.getName().equals("ext_twist")                 
                     || quirk.getName().equals("fast_reload")
@@ -315,10 +315,10 @@ public class Quirks extends AbstractOptions {
             }
             return true;
         }
-        
-        
+
+
         return false;
-        
+
     }
 
     private static class QuirksInfo extends AbstractOptionsInfo {
@@ -332,7 +332,7 @@ public class Quirks extends AbstractOptions {
             super("QuirksInfo"); //$NON-NLS-1$
         }
     }
-    
-    
-    
+
+
+
 }

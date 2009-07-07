@@ -27,9 +27,9 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 
 abstract class ArrowModel extends BranchGroup {
-    
+
     TransformGroup anim = new TransformGroup();
-    
+
     ArrowModel() {
         setCapability(ALLOW_DETACH);
         anim.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -40,34 +40,34 @@ abstract class ArrowModel extends BranchGroup {
     }
 
     private static final double[] arrowVertices = {
-         BoardModel.HEX_SIDE_LENGTH/18,  BoardModel.HEX_DIAMETER/18, 0,
-         BoardModel.HEX_SIDE_LENGTH/6,   BoardModel.HEX_DIAMETER/18, 0,
-         0,                               BoardModel.HEX_DIAMETER/6, 0,
+        BoardModel.HEX_SIDE_LENGTH/18,  BoardModel.HEX_DIAMETER/18, 0,
+        BoardModel.HEX_SIDE_LENGTH/6,   BoardModel.HEX_DIAMETER/18, 0,
+        0,                               BoardModel.HEX_DIAMETER/6, 0,
         -BoardModel.HEX_SIDE_LENGTH/6,   BoardModel.HEX_DIAMETER/18, 0,
         -BoardModel.HEX_SIDE_LENGTH/18,  BoardModel.HEX_DIAMETER/18, 0,
         -BoardModel.HEX_SIDE_LENGTH/18, -BoardModel.HEX_DIAMETER/9, 0,
-         BoardModel.HEX_SIDE_LENGTH/18, -BoardModel.HEX_DIAMETER/9, 0,
-         BoardModel.HEX_SIDE_LENGTH/18,  BoardModel.HEX_DIAMETER/18, 0,
+        BoardModel.HEX_SIDE_LENGTH/18, -BoardModel.HEX_DIAMETER/9, 0,
+        BoardModel.HEX_SIDE_LENGTH/18,  BoardModel.HEX_DIAMETER/18, 0,
     };
     private static final int[] arrowStrips = { 8 };
 
     static final GeometryArray polygon = makeArrow();
     static final GeometryArray border = makeArrowOutline();
-    
+
     private static final GeometryArray makeArrow() {
         GeometryInfo gi = new GeometryInfo(GeometryInfo.POLYGON_ARRAY);
         int[] contours = { 1 };
         float[] normals = {
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
         };
-        
+
         gi.setCoordinates(arrowVertices);
         gi.setStripCounts(arrowStrips);
         gi.setContourCounts(contours);
@@ -75,7 +75,7 @@ abstract class ArrowModel extends BranchGroup {
 
         Stripifier st = new Stripifier();
         st.stripify(gi);
-        
+
         return gi.getGeometryArray();
     }
 
@@ -89,24 +89,24 @@ abstract class ArrowModel extends BranchGroup {
         GeometryInfo gi = new GeometryInfo(GeometryInfo.POLYGON_ARRAY);
         int[] contours = { 1 };
         float[] normals = {
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
         };
         double[] vertices = new double[arrowVertices.length];
         System.arraycopy(arrowVertices, 0, vertices, 0, vertices.length);
-        
+
         length -= BoardModel.HEX_DIAMETER/2;
         for (int i = 0; i < 5; i++) vertices[3*i+1] += length;
         vertices[3*5+1] += BoardModel.HEX_DIAMETER/2;
         vertices[3*6+1] += BoardModel.HEX_DIAMETER/2;
         vertices[3*7+1] += length;
-        
+
         gi.setCoordinates(vertices);
         gi.setStripCounts(arrowStrips);
         gi.setContourCounts(contours);
@@ -114,7 +114,7 @@ abstract class ArrowModel extends BranchGroup {
 
         Stripifier st = new Stripifier();
         st.stripify(gi);
-        
+
         return gi.getGeometryArray();
     }
 
@@ -122,13 +122,13 @@ abstract class ArrowModel extends BranchGroup {
         LineStripArray l = new LineStripArray(arrowVertices.length, GeometryArray.COORDINATES, arrowStrips);
         double[] vertices = new double[arrowVertices.length];
         System.arraycopy(arrowVertices, 0, vertices, 0, vertices.length);
-        
+
         length -= BoardModel.HEX_DIAMETER/2;
         for (int i = 0; i < 5; i++) vertices[3*i+1] += length;
         vertices[3*5+1] += BoardModel.HEX_DIAMETER/2;
         vertices[3*6+1] += BoardModel.HEX_DIAMETER/2;
         vertices[3*7+1] += length;
-        
+
         l.setCoordinates(0, vertices);
         return l;
     }

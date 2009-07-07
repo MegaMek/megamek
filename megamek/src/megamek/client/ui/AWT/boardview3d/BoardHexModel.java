@@ -45,18 +45,18 @@ class BoardHexModel extends HexModel {
     private static final Material normalWater = new Material(C.grey75, C.black, C.grey75, C.white, 128.0f);
     private static final Material night = new Material(C.grey25, C.black, C.grey25, C.black, 1.0f);
     private static final Material dark = new Material(C.grey10, C.black, C.grey10, C.black, 1.0f);
-    
+
     private static final Material side = new Material(C.plain, C.black, C.plain, C.black, 1.0f);
     private static final Material sideWater = new Material(C.water, C.black, C.water, C.black, 1.0f);
 
     private static final int KEEP = 3;
-    
+
     Shape3D floor;
     Shape3D surface;
     IHex hex;
     Material current = normal;
     IGame game;
-    
+
     public static SharedGroup[] mkShared() {
         SharedGroup[] shafts = new SharedGroup[2];
         // sides of hex
@@ -74,12 +74,12 @@ class BoardHexModel extends HexModel {
         sh = new Shape3D(shaft, sapp);
         shafts[1] = new SharedGroup();
         shafts[1].addChild(sh);
-        
+
         return shafts;
     }
-    
 
-    
+
+
     public BoardHexModel(IGame g, Coords c, IHex h, TileTextureManager tileManager, SharedGroup shafts[]) {
         game = g;
         hex = h;
@@ -92,7 +92,7 @@ class BoardHexModel extends HexModel {
         addChild(floor);
 
         addChild(new Link(hex.depth() > 0?shafts[1]:shafts[0]));
-        
+
         setUserData(new Coords(c));
         ypos = 0;
         addText(""+c.getBoardNum(), new Color3f(GUIPreferences.getInstance().getMapTextColor()));
@@ -128,7 +128,7 @@ class BoardHexModel extends HexModel {
         int keep = (surface == null?KEEP:KEEP+1);
         for (int i = numChildren()-1; i >= keep; i--) removeChild(i);
 
-        
+
         // mine fields
         if (game.containsMinefield((Coords)getUserData())){
             Coords c = (Coords)getUserData();
@@ -178,7 +178,7 @@ class BoardHexModel extends HexModel {
         for (Shape3D sup : supers) {
             superTrans.addChild(sup);
         }
-        
+
         superTrans.setPickable(false);
         addChild(superTrans);
 
@@ -195,8 +195,8 @@ class BoardHexModel extends HexModel {
         }
 
         setBounds(new BoundingBox(
-            new Point3d(-BoardModel.HEX_SIDE_LENGTH, -BoardModel.HEX_DIAMETER/2, BoardModel.HEX_HEIGHT*hex.floor()),
-            new Point3d(BoardModel.HEX_SIDE_LENGTH, BoardModel.HEX_DIAMETER/2, height)
+                new Point3d(-BoardModel.HEX_SIDE_LENGTH, -BoardModel.HEX_DIAMETER/2, BoardModel.HEX_HEIGHT*hex.floor()),
+                new Point3d(BoardModel.HEX_SIDE_LENGTH, BoardModel.HEX_DIAMETER/2, height)
         ));
 
         if (hex.getElevation() != 0) addText(Messages.getString("BoardView1.LEVEL") + hex.getElevation(), col);
@@ -223,18 +223,18 @@ class BoardHexModel extends HexModel {
         app.setMaterial(current);
         app.setTextureAttributes(new TextureAttributes(TextureAttributes.MODULATE, new Transform3D(), new Color4f(), TextureAttributes.NICEST));
         floor.setAppearance(app);
-        
+
         if (surface != null) setSurfaceEffect(mat, surface.getAppearance().getTexture());
     }
-    
+
     void setEffect(Material mat) {
         setEffect(mat, floor.getAppearance().getTexture());
     }
-    
+
     public void darken() {
         setEffect(dark);
     }
-    
+
     public void night() {
         setEffect(night);
     }

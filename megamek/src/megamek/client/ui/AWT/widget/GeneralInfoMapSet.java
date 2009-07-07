@@ -25,7 +25,6 @@ import java.util.Vector;
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.GUIPreferences;
 import megamek.common.Aero;
-import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IEntityMovementType;
@@ -48,11 +47,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private Component comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
-            weightL, bvL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
-            movementTypeL, ejectL, elevationL, buildingTypeL, buildingHeightL, fuelL;
+    weightL, bvL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
+    movementTypeL, ejectL, elevationL, buildingTypeL, buildingHeightL, fuelL;
     private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, pilotR, mpR0,
-            mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
-            elevationR, buildingTypeR, buildingHeightR, fuelR;
+    mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
+    elevationR, buildingTypeR, buildingHeightR, fuelR;
     private PMSimpleLabel[] advantagesR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font(
@@ -251,11 +250,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         mechTypeL1.setVisible(false);
 
         if (s.length() > GUIPreferences.getInstance().getInt(
-                "AdvancedMechDisplayWrapLength")) {
+        "AdvancedMechDisplayWrapLength")) {
             mechTypeL1.setColor(Color.yellow);
             int i = s
-                    .lastIndexOf(
-                            " ", GUIPreferences.getInstance().getInt("AdvancedMechDisplayWrapLength")); //$NON-NLS-1$
+            .lastIndexOf(
+                    " ", GUIPreferences.getInstance().getInt("AdvancedMechDisplayWrapLength")); //$NON-NLS-1$
             mechTypeL0.setString(s.substring(0, i));
             mechTypeL1.setString(s.substring(i).trim());
             mechTypeL1.setVisible(true);
@@ -274,8 +273,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         statusR
-                .setString(en.isProne() ? Messages
-                        .getString("GeneralInfoMapSet.prone") : Messages.getString("GeneralInfoMapSet.normal")); //$NON-NLS-1$ //$NON-NLS-2$
+        .setString(en.isProne() ? Messages
+                .getString("GeneralInfoMapSet.prone") : Messages.getString("GeneralInfoMapSet.normal")); //$NON-NLS-1$ //$NON-NLS-2$
         playerR.setString(en.getOwner().getName());
         if (en.getOwner().getTeam() == 0) {
             teamL.setVisible(false);
@@ -283,7 +282,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         } else {
             teamL.setVisible(true);
             teamR
-                    .setString(Messages.getString("GeneralInfoMapSet.Team") + en.getOwner().getTeam()); //$NON-NLS-1$
+            .setString(Messages.getString("GeneralInfoMapSet.Team") + en.getOwner().getTeam()); //$NON-NLS-1$
             teamR.setVisible(true);
         }
         weightR.setString(Integer.toString((int) en.getWeight()));
@@ -291,12 +290,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         if ((en.getGame() != null)
                 && en.getGame().getOptions().booleanOption("rpg_gunnery")) {
             pilotR
-                    .setString(en.crew.getDesc()
-                            + " (" + en.crew.getGunneryRPG() + "/" + en.crew.getPiloting() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            .setString(en.crew.getDesc()
+                    + " (" + en.crew.getGunneryRPG() + "/" + en.crew.getPiloting() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         } else {
             pilotR
-                    .setString(en.crew.getDesc()
-                            + " (" + en.crew.getGunnery() + "/" + en.crew.getPiloting() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            .setString(en.crew.getDesc()
+                    + " (" + en.crew.getGunnery() + "/" + en.crew.getPiloting() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
 
         ejectR.setString(Messages.getString("GeneralInfoMapSet.NA")); //$NON-NLS-1$
@@ -312,14 +311,14 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         elevationR.setString(Messages.getString("GeneralInfoMapSet.NA")); //$NON-NLS-1$
         elevationR.setString(Integer.toString(en.getElevation()));
         if(en.isAirborne()) {
-        	elevationL.setString(Messages.getString("GeneralInfoMapSet.altitudeL"));
-        	elevationR.setString(Integer.toString(en.getAltitude()));
+            elevationL.setString(Messages.getString("GeneralInfoMapSet.altitudeL"));
+            elevationR.setString(Integer.toString(en.getAltitude()));
         }
 
         for (PMSimpleLabel element : advantagesR) {
             element.setString(""); //$NON-NLS-1$
         }
-        
+
         int i = 0;
         for (Enumeration<IOptionGroup> advGroups = en.crew.getOptions().getGroups(); advGroups.hasMoreElements();) {
             IOptionGroup advGroup = advGroups.nextElement();
@@ -369,8 +368,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         heatR
-                .setString(Integer.toString(en.heat)
-                        + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        .setString(Integer.toString(en.heat)
+                + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
         if (en instanceof Mech) {
             heatL.setVisible(true);
@@ -444,8 +443,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             fuelR.setVisible(false);
         }
         if(en.getGame().getBoard().inSpace()) {
-        	elevationL.setVisible(false);
-        	elevationR.setVisible(false);
+            elevationL.setVisible(false);
+            elevationR.setVisible(false);
         }
 
         bvR.setString(new Integer(en.calculateBattleValue()).toString());
@@ -486,25 +485,25 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_LEFT;
+        | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_LEFT;
+        | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_RIGHT;
+        | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_RIGHT;
+        | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));

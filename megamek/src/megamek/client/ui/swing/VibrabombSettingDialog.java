@@ -89,22 +89,22 @@ public class VibrabombSettingDialog extends JDialog implements ActionListener {
                 }
             } catch (NumberFormatException e) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("VibrabombSettingDialog.alert.Message"), //$NON-NLS-1$
-                                Messages
-                                        .getString("VibrabombSettingDialog.alert.Title"), JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("VibrabombSettingDialog.alert.Message"), //$NON-NLS-1$
+                        Messages
+                        .getString("VibrabombSettingDialog.alert.Title"), JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
                 return;
             }
             if ((setting < 20) || (setting > 100)) {
                 JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("VibrabombSettingDialog.alert.Message"), //$NON-NLS-1$
-                                Messages
-                                        .getString("VibrabombSettingDialog.alert.Title"), JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
+                .showMessageDialog(
+                        frame,
+                        Messages
+                        .getString("VibrabombSettingDialog.alert.Message"), //$NON-NLS-1$
+                        Messages
+                        .getString("VibrabombSettingDialog.alert.Title"), JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
                 return;
             }
         }

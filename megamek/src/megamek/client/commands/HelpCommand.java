@@ -31,7 +31,7 @@ public class HelpCommand extends ClientCommand {
         super(
                 client,
                 "help",
-                "Lists all of the commands available, or gives help on a specific command.  Usage: #help [command]");
+        "Lists all of the commands available, or gives help on a specific command.  Usage: #help [command]");
         cmdHandler = client;
     }
 
@@ -40,14 +40,14 @@ public class HelpCommand extends ClientCommand {
         if (args.length == 1) {
             // no args
             return "Type #help [command] for help on a specific command.  Commands available: "
-                    + commandList();
+            + commandList();
         }
         // argument
         ClientCommand command = cmdHandler.getCommand(args[1]);
         if (command == null) {
             return "Command \"" + args[1]
-                    + "\" not recognized.  Commands available: "
-                    + commandList();
+                                       + "\" not recognized.  Commands available: "
+                                       + commandList();
         }
         return "#" + command.getName() + " : " + command.getHelp();
     }
@@ -56,7 +56,7 @@ public class HelpCommand extends ClientCommand {
         StringBuffer commandList = new StringBuffer();
 
         for (Enumeration<String> i = cmdHandler.getAllCommandNames(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             ClientCommand command = cmdHandler.getCommand(i.nextElement());
             if (commandList.length() > 0) {
                 commandList.append(", ");

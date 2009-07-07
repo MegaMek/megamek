@@ -41,28 +41,28 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
             this.vPhaseReport = null;
         }
     }
-    
+
     private void resolveSmoke() {
         updateSmoke();
         removeEmptyClouds();
     }
-    
+
     /**
      * Remove any empty clouds from the array
      */
     public void removeEmptyClouds() {
         Iterator<SmokeCloud> clouds = server.getSmokeCloudList().iterator();
-        
+
         while ( clouds.hasNext() ) {
             SmokeCloud cloud = clouds.next();
-            
+
             if ( cloud.getCoordsList().size() < 1 ) {
                 clouds.remove();
             }else if ( cloud.getSmokeLevel() < 1 ) {
                 server.removeSmokeTerrain(cloud);
                 clouds.remove();
             }
-            
+
         }
     }
 
@@ -71,7 +71,7 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
      * @param cloud
      */
     public void createSmokeTerrain(SmokeCloud cloud){
-        
+
         for( Coords coords : cloud.getCoordsList() ){
             IHex smokeHex = game.getBoard().getHex(coords);
             if ( smokeHex != null ){
@@ -89,7 +89,7 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
             }
         }
     }
-    
+
     /**
      * Update the Map
      */

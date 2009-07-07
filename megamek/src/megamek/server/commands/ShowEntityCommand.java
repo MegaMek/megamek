@@ -17,7 +17,7 @@ public class ShowEntityCommand extends ServerCommand {
         super(
                 server,
                 "entity",
-                "print the information about a entity into the chat window. Ussage: /entity # whih would show the details for the entity numbered #.");
+        "print the information about a entity into the chat window. Ussage: /entity # whih would show the details for the entity numbered #.");
         // to be extended by adding /entity unit# loc# to list details on
         // locations.
     }
@@ -31,7 +31,7 @@ public class ShowEntityCommand extends ServerCommand {
     public void run(int connId, String[] args) {
         if (server.getGame().getOptions().booleanOption("double_blind")) {
             server.sendServerChat(connId,
-                    "Sorry, this command is disabled during double blind.");
+            "Sorry, this command is disabled during double blind.");
             return;
         }
         try {

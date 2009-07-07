@@ -35,7 +35,7 @@ public abstract class SRMWeapon extends MissileWeapon {
     public SRMWeapon() {
         super();
         this.ammoType = AmmoType.T_SRM;
-        
+
         this.atClass = CLASS_SRM;
     }
 
@@ -50,7 +50,7 @@ public abstract class SRMWeapon extends MissileWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
+        .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_FRAGMENTATION) {
             return new SRMFragHandler(toHit, waa, game, server);
         }

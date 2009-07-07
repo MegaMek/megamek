@@ -198,8 +198,8 @@ class HoverInfo implements IDisplayable {
             ai.attackAbsHeight = game.getBoard().getHex(src).floor() + ai.attackHeight;
             ai.targetAbsHeight = game.getBoard().getHex(coords).floor() + ai.targetHeight;
             out.add(Messages.getString("BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
-                (s != null ? s.getDisplayName() : mechInFirst  ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech")), //$NON-NLS-1$ //$NON-NLS-2$
-                src.getBoardNum()
+                    (s != null ? s.getDisplayName() : mechInFirst  ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech")), //$NON-NLS-1$ //$NON-NLS-2$
+                    src.getBoardNum()
             }));
         }
 
@@ -207,7 +207,7 @@ class HoverInfo implements IDisplayable {
             // show out hypothetical target
             out.add(Messages.getString("BoardView1.Target", new Object[]{ //$NON-NLS-1$
                     ai.targetHeight == 1 ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
-                    coords.getBoardNum()
+                            coords.getBoardNum()
             }));
         }
 
@@ -219,9 +219,9 @@ class HoverInfo implements IDisplayable {
             while ((eq = s.getEquipment(i++)) != null) {
                 if (eq.getType() instanceof WeaponType && !done.containsKey(eq.getName())) {
                     ToHitData toHit = WeaponAttackAction.toHit(game, s.getId(), t, s.getEquipmentNum(eq),
-                        Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
+                            Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
                     out.add(eq.getType().getName() + Messages.getString("BoardView1.needs") + toHit.getValueAsString() + " " + toHit.getTableDesc() //$NON-NLS-1$
-                        + " ["+toHit.getDesc()+"]");
+                            + " ["+toHit.getDesc()+"]");
                     done.put(eq.getName(), null);
                 }
             }
@@ -230,7 +230,7 @@ class HoverInfo implements IDisplayable {
             LosEffects le = LosEffects.calculateLos(game, ai);
             if (le.isBlocked()) {
                 out.add(Messages.getString("BoardView1.LOSBlocked", new Object[]{ //$NON-NLS-1$
-                    new Integer(src.distance(coords))}));
+                        new Integer(src.distance(coords))}));
             } else {
                 out.add(Messages.getString("BoardView1.LOSNotBlocked", new Object[]{ //$NON-NLS-1$
                         new Integer(src.distance(coords))}));
@@ -298,7 +298,7 @@ class HoverInfo implements IDisplayable {
         Vector<String> out = new Vector<String>();
 
         out.add(Messages.getString("BoardView1.Hex") + coords.getBoardNum() //$NON-NLS-1$
-                    + Messages.getString("BoardView1.level") + mhex.getElevation()); //$NON-NLS-1$
+                + Messages.getString("BoardView1.level") + mhex.getElevation()); //$NON-NLS-1$
 
         if (mhex.containsTerrain(Terrains.JUNGLE)) {
             int ttl = mhex.getTerrain(Terrains.JUNGLE).getLevel();
@@ -381,23 +381,23 @@ class HoverInfo implements IDisplayable {
                 switch (mf.getType()) {
                 case (Minefield.TYPE_CONVENTIONAL) :
                     out.add(mf.getName()+Messages.getString("BoardView1.minefield") + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
+                break;
                 case (Minefield.TYPE_COMMAND_DETONATED) :
                     out.add(mf.getName()+Messages.getString("BoardView1.minefield") + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
+                break;
                 case (Minefield.TYPE_VIBRABOMB) :
                     if (mf.getPlayerId() == localPlayer.getId()) {
                         out.add(mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getSetting() + ") " + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     } else {
                         out.add(mf.getName()+Messages.getString("BoardView1.minefield") + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
                     }
-                    break;
+                break;
                 case (Minefield.TYPE_ACTIVE) :
                     out.add(mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDensity() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    break;
+                break;
                 case (Minefield.TYPE_INFERNO) :
                     out.add(mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDensity() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    break;
+                break;
                 }
             }
         }
@@ -425,9 +425,9 @@ class HoverInfo implements IDisplayable {
                 s = Messages.getString("BoardView1.Artillery");
             }
             out.add(Messages.getString("BoardView1.ArtilleryAttack", new Object[] {
-                s,
-                new Integer(aaa.turnsTilHit),
-                aaa.toHit(game).getValueAsString()
+                    s,
+                    new Integer(aaa.turnsTilHit),
+                    aaa.toHit(game).getValueAsString()
             }));
 
         }
@@ -453,16 +453,16 @@ class HoverInfo implements IDisplayable {
     private void addEntityText(Vector<String> out, Entity e) {
         StringBuffer buffer = new StringBuffer();
         buffer.append(e.getChassis()).append(" (") //$NON-NLS-1$
-                .append(e.getOwner().getName()).append("); ") //$NON-NLS-1$
-                .append(e.getCrew().getGunnery()).append("/") //$NON-NLS-1$
-                .append(e.getCrew().getPiloting()).append(
-                        Messages.getString("BoardView1.pilot")); //$NON-NLS-1$
+        .append(e.getOwner().getName()).append("); ") //$NON-NLS-1$
+        .append(e.getCrew().getGunnery()).append("/") //$NON-NLS-1$
+        .append(e.getCrew().getPiloting()).append(
+                Messages.getString("BoardView1.pilot")); //$NON-NLS-1$
         int numAdv = e.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES);
         boolean isMD = e.getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0;
         if (numAdv > 0) {
             buffer.append(" <") //$NON-NLS-1$
-                    .append(numAdv).append(
-                            Messages.getString("BoardView1.advs")); //$NON-NLS-1$
+            .append(numAdv).append(
+                    Messages.getString("BoardView1.advs")); //$NON-NLS-1$
         }
         if (isMD) {
             buffer.append(Messages.getString("BoardView1.md")); //$NON-NLS-1$
@@ -477,28 +477,28 @@ class HoverInfo implements IDisplayable {
         buffer = new StringBuffer();
         if (ge == null) {
             buffer.append(Messages.getString("BoardView1.move")) //$NON-NLS-1$
-                    .append(e.getMovementAbbr(e.moved)).append(
-                            ":") //$NON-NLS-1$
-                    .append(e.delta_distance).append(" (+") //$NON-NLS-1$
-                    .append(
-                            Compute.getTargetMovementModifier(game,
-                                    e.getId()).getValue())
-                    .append(");") //$NON-NLS-1$
-                    .append(Messages.getString("BoardView1.Heat")) //$NON-NLS-1$
-                    .append(e.heat);
+            .append(e.getMovementAbbr(e.moved)).append(
+            ":") //$NON-NLS-1$
+            .append(e.delta_distance).append(" (+") //$NON-NLS-1$
+            .append(
+                    Compute.getTargetMovementModifier(game,
+                            e.getId()).getValue())
+                            .append(");") //$NON-NLS-1$
+                            .append(Messages.getString("BoardView1.Heat")) //$NON-NLS-1$
+                            .append(e.heat);
             if (e.isCharging()) {
                 buffer.append(" ") //$NON-NLS-1$
-                        .append(Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
+                .append(Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
             }
             if (e.isMakingDfa()) {
                 buffer.append(" ") //$NON-NLS-1$
-                        .append(Messages.getString("BoardBiew1.DFA1")); //$NON-NLS-1$
+                .append(Messages.getString("BoardBiew1.DFA1")); //$NON-NLS-1$
             }
         } else {
             if (ge.isTurret() && ge.isTurretLocked()) {
                 buffer
-                        .append(Messages
-                                .getString("BoardView1.TurretLocked"));
+                .append(Messages
+                        .getString("BoardView1.TurretLocked"));
                 if (ge.getFirstWeapon() == -1) {
                     buffer.append(",");
                     buffer.append(Messages
@@ -520,8 +520,8 @@ class HoverInfo implements IDisplayable {
         buffer = new StringBuffer();
         if (ge == null) {
             buffer.append(Messages.getString("BoardView1.Armor")) //$NON-NLS-1$
-                    .append(e.getTotalArmor()).append(
-                            Messages.getString("BoardView1.internal")) //$NON-NLS-1$
+            .append(e.getTotalArmor()).append(
+                    Messages.getString("BoardView1.internal")) //$NON-NLS-1$
                     .append(e.getTotalInternal());
         }
         out.add(buffer.toString());
@@ -565,13 +565,13 @@ class HoverInfo implements IDisplayable {
                         attack.getEntityId(),
                         game.getTarget(attack.getTargetType(), attack
                                 .getTargetId()), KickAttackAction.LEFT)
-                        .getValueAsString();
+                                .getValueAsString();
                 rollRight = KickAttackAction.toHit(
                         game,
                         attack.getEntityId(),
                         game.getTarget(attack.getTargetType(), attack
                                 .getTargetId()), KickAttackAction.RIGHT)
-                        .getValueAsString();
+                                .getValueAsString();
                 out = Messages.getString("BoardView1.kickBoth", new Object[] { rollLeft, rollRight }); //$NON-NLS-1$
                 break;
             case KickAttackAction.LEFT:
@@ -580,7 +580,7 @@ class HoverInfo implements IDisplayable {
                         attack.getEntityId(),
                         game.getTarget(attack.getTargetType(), attack
                                 .getTargetId()), KickAttackAction.LEFT)
-                        .getValueAsString();
+                                .getValueAsString();
                 out = Messages.getString("BoardView1.kickLeft", new Object[] { rollLeft }); //$NON-NLS-1$
                 break;
             case KickAttackAction.RIGHT:
@@ -589,7 +589,7 @@ class HoverInfo implements IDisplayable {
                         attack.getEntityId(),
                         game.getTarget(attack.getTargetType(), attack
                                 .getTargetId()), KickAttackAction.RIGHT)
-                        .getValueAsString();
+                                .getValueAsString();
                 out = Messages.getString("BoardView1.kickRight", new Object[] { rollRight }); //$NON-NLS-1$
                 break;
             }
@@ -607,13 +607,13 @@ class HoverInfo implements IDisplayable {
                         attack.getEntityId(),
                         game.getTarget(attack.getTargetType(), attack
                                 .getTargetId()), PunchAttackAction.LEFT)
-                        .getValueAsString();
+                                .getValueAsString();
                 rollRight = PunchAttackAction.toHit(
                         game,
                         attack.getEntityId(),
                         game.getTarget(attack.getTargetType(), attack
                                 .getTargetId()), PunchAttackAction.RIGHT)
-                        .getValueAsString();
+                                .getValueAsString();
                 out = Messages.getString("BoardView1.punchBoth", new Object[] { rollLeft, rollRight }); //$NON-NLS-1$
                 break;
             case PunchAttackAction.LEFT:
@@ -622,7 +622,7 @@ class HoverInfo implements IDisplayable {
                         attack.getEntityId(),
                         game.getTarget(attack.getTargetType(), attack
                                 .getTargetId()), PunchAttackAction.LEFT)
-                        .getValueAsString();
+                                .getValueAsString();
                 out = Messages.getString("BoardView1.punchLeft", new Object[] { rollLeft }); //$NON-NLS-1$
                 break;
             case PunchAttackAction.RIGHT:
@@ -631,7 +631,7 @@ class HoverInfo implements IDisplayable {
                         attack.getEntityId(),
                         game.getTarget(attack.getTargetType(), attack
                                 .getTargetId()), PunchAttackAction.RIGHT)
-                        .getValueAsString();
+                                .getValueAsString();
                 out = Messages.getString("BoardView1.punchRight", new Object[] { rollRight }); //$NON-NLS-1$
                 break;
             }

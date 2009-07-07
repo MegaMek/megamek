@@ -21,5 +21,5 @@ public interface IAimingModes {
     public static final int AIM_MODE_NONE = 0;
     public static final int AIM_MODE_IMMOBILE = 1;
     public static final int AIM_MODE_TARG_COMP = 2;
-    
+
 }

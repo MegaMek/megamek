@@ -31,7 +31,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     /**
      * 
      */
-    
+
     private static final long serialVersionUID = -1618484541772117621L;
 
     /**
@@ -43,7 +43,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
- 
+
     @Override
     protected int getCapMisMod() {
         int mod = 0;
@@ -60,7 +60,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         }
         return mod;
     }
-    
+
     /*
      * get the cap mis mod given a single ammo type
      */
@@ -82,7 +82,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             return 11;
         }
     }
-    
+
     /**
      * Insert any additionaly attacks that should occur before this attack
      */

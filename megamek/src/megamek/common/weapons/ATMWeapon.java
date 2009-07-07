@@ -32,7 +32,7 @@ public abstract class ATMWeapon extends MissileWeapon {
     public ATMWeapon() {
         super();
         this.ammoType = AmmoType.T_ATM;
-        
+
         this.atClass = CLASS_ATM;
     }
 

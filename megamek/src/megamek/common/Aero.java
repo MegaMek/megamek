@@ -2124,7 +2124,10 @@ public class Aero extends Entity
 
     @Override
     public int getMaxElevationChange() {
-        return 999;
+    	if(isAirborne()) {
+    		return 999;
+    	}
+    	return 1;
     }
 
     @Override

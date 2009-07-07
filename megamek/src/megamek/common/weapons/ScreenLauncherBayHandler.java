@@ -35,7 +35,7 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
     /**
      * 
      */
-    
+
     private static final long serialVersionUID = -1618484541772117621L;
 
     /**
@@ -47,7 +47,7 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
     public ScreenLauncherBayHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     /**
      * handle this weapons firing
      * 
@@ -59,10 +59,10 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
         if (!this.cares(phase)) {
             return true;
         }
-     
+
         //same as ScreenLauncher handler, except run multiple times depending on
         //how many screen launchers in bay
-        
+
         //Report weapon attack and its to-hit value.
         Report r = new Report(3115);
         r.indent();
@@ -91,9 +91,9 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
         }
-        
+
         addHeat();
-        
+
         //iterate through by number of weapons in bay
         for(int i = 0; i < weapon.getBayWeapons().size(); i++) {      
             //deliver screen
@@ -124,5 +124,5 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
         }
         return false;
     }
-    
+
 }

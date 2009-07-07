@@ -86,7 +86,7 @@ public class BuildingTarget implements Targetable {
         // Generate a name.
         StringBuffer buff = new StringBuffer();
         buff.append("Hex ").append(position.getBoardNum()).append(" of ")
-                .append(bldg.getName());
+        .append(bldg.getName());
         if (isIgnite) {
             buff.append(" (Ignite)");
         } else {
@@ -198,7 +198,7 @@ public class BuildingTarget implements Targetable {
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
     }
-    
+
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src);
     }
@@ -210,7 +210,7 @@ public class BuildingTarget implements Targetable {
     public boolean isOffBoard() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborne()
@@ -218,7 +218,7 @@ public class BuildingTarget implements Targetable {
     public boolean isAirborne() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborneVTOL()
@@ -226,8 +226,8 @@ public class BuildingTarget implements Targetable {
     public boolean isAirborneVTOL() {
         return false;
     }
-    
+
     public int getAltitude() {
-    	return 0;
+        return 0;
     }
 }

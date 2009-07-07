@@ -23,7 +23,7 @@ public class AddBotCommand extends ServerCommand {
         super(
                 server,
                 "replacePlayer",
-                "Replaces a player who is a ghost with a bot. Usage /replacePlayer name, to replace the player named name. they must be a ghost.");
+        "Replaces a player who is a ghost with a bot. Usage /replacePlayer name, to replace the player named name. they must be a ghost.");
     }
 
     /*
@@ -41,10 +41,10 @@ public class AddBotCommand extends ServerCommand {
         for(int i = 2; i < args.length; i++) {
             playerName = playerName + " " + args[i];
         }
-        
+
         Player target = null;
         for (Enumeration<Player> i = server.getGame().getPlayers(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             Player player = i.nextElement();
             if (player.getName().equals(playerName)) {
                 target = player;
@@ -53,7 +53,7 @@ public class AddBotCommand extends ServerCommand {
 
         if (target == null) {
             server.sendServerChat(connId, "No player with the name '" + args[1]
-                    + "'.");
+                                                                             + "'.");
             return;
         }
 

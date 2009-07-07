@@ -26,7 +26,7 @@ import megamek.server.Server;
  * @author Sebastian Brocks
  */
 public class ArtilleryWeaponDirectHomingHandler extends
-        ArtilleryWeaponIndirectHomingHandler {
+ArtilleryWeaponIndirectHomingHandler {
 
     /**
      * 

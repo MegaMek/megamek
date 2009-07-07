@@ -42,7 +42,7 @@ class MoveGroup extends BranchGroup {
         setCapability(Group.ALLOW_CHILDREN_WRITE);
         setPickable(false);
     }
-    
+
     public void clear() {
         for (Enumeration<?> e = getAllChildren(); e.hasMoreElements();) {
             ((BranchGroup)e.nextElement()).detach();

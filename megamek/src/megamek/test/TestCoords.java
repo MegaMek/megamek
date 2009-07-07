@@ -30,7 +30,7 @@ public class TestCoords {
                 + Coords.MAX_BOARD_HEIGHT);
 
         System.out
-                .println("The maximum board width: " + Coords.MAX_BOARD_WIDTH);
+        .println("The maximum board width: " + Coords.MAX_BOARD_WIDTH);
 
         Coords coords = new Coords(1, 2);
         System.out.println("The hash of " + coords + " is: "

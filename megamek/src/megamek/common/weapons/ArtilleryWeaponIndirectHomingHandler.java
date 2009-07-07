@@ -35,7 +35,7 @@ import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
 public class ArtilleryWeaponIndirectHomingHandler extends
-        ArtilleryWeaponIndirectFireHandler {
+ArtilleryWeaponIndirectFireHandler {
 
     /**
      *
@@ -272,12 +272,12 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         ratedDamage -= bldgAbsorbs;
         if (ratedDamage > 0) {
             for (Enumeration<Entity> impactHexHits = game.getEntities(coords); impactHexHits
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 Entity entity = impactHexHits.nextElement();
                 if (!bMissed) {
                     if (entity == entityTarget) {
                         continue; // don't splash the target unless missile
-                    // missed
+                        // missed
                     }
                 }
                 toHit.setSideTable(entity.sideTable(aaa.getCoords()));
@@ -327,7 +327,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                             bestDistance = tc.distance(entityTarget
                                     .getPosition());
                             if (!game.getOptions().booleanOption(
-                                    "a4homing_target_area")) {
+                            "a4homing_target_area")) {
                                 break; // first will do if mapsheets can't
                                 // overlap
                             }
@@ -350,7 +350,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
         if ((entityTarget == null) || (info == null)) {
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "no targets tagged on map sheet");
+            "no targets tagged on map sheet");
         } else if (info.missed) {
             aaa.setTargetId(entityTarget.getId());
             aaa.setTargetType(Targetable.TYPE_ENTITY);

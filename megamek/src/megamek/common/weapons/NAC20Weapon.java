@@ -50,6 +50,6 @@ public class NAC20Weapon extends NavalACWeapon {
         this.medAV = 20;
         this.longAV = 20;
         this.maxRange = RANGE_LONG;
-    
+
     }
 }

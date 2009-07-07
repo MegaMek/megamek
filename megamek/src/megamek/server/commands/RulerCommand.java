@@ -19,7 +19,7 @@ public class RulerCommand extends ServerCommand {
         super(
                 server,
                 "ruler",
-                "Show Line of Sight (LOS) information between two points of the map. Usage: /ruler x1 y1 x2 y2 [elev1 [elev2]]. Where x1, y1 and x2, y2 are the coordiantes of the tiles, and the optional elev numbers are the elevations of the targets over the terrain. If elev is not given 1 is assumed which is for standing mechs. Prone mechs and most other units are at elevation 0.");
+        "Show Line of Sight (LOS) information between two points of the map. Usage: /ruler x1 y1 x2 y2 [elev1 [elev2]]. Where x1, y1 and x2, y2 are the coordiantes of the tiles, and the optional elev numbers are the elevations of the targets over the terrain. If elev is not given 1 is assumed which is for standing mechs. Prone mechs and most other units are at elevation 0.");
     }
 
     /*
@@ -56,7 +56,7 @@ public class RulerCommand extends ServerCommand {
 
             thd = LosEffects.calculateLos(server.getGame(),
                     buildAttackInfo(start, end, elev1, elev2)).losModifiers(
-                    server.getGame());
+                            server.getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit1 = thd.getValue() + " because "; //$NON-NLS-1$
             }
@@ -64,7 +64,7 @@ public class RulerCommand extends ServerCommand {
 
             thd = LosEffects.calculateLos(server.getGame(),
                     buildAttackInfo(end, start, elev2, elev1)).losModifiers(
-                    server.getGame());
+                            server.getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit2 = thd.getValue() + " because  "; //$NON-NLS-1$
             }
@@ -100,9 +100,9 @@ public class RulerCommand extends ServerCommand {
         ai.attackHeight = h1;
         ai.targetHeight = h2;
         ai.attackAbsHeight = server.getGame().getBoard().getHex(c1).floor()
-                + h1;
+        + h1;
         ai.targetAbsHeight = server.getGame().getBoard().getHex(c2).floor()
-                + h2;
+        + h2;
         return ai;
     }
 

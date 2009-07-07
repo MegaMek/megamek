@@ -52,7 +52,7 @@ public class ScreenLauncherBayWeapon extends AmmoBayWeapon {
         this.atClass = CLASS_SCREEN;
         this.capital = false;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

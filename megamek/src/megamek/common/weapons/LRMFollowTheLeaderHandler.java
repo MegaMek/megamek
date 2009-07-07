@@ -60,5 +60,5 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
     protected int calcDamagePerHit() {
         return 1;
     }
-    
+
 }

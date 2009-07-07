@@ -129,7 +129,7 @@ public class SharedUtility {
                     nagReport.append(SharedUtility.addNag(rollTarget));
                 }
             }
-            
+
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing, lastPos, curPos, isInfantry, distance-1);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -291,13 +291,13 @@ public class SharedUtility {
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             nagReport.append(SharedUtility.addNag(rollTarget));
         }
-        
+
         //if we sprinted with MASC or a supercharger, then we need a PSR
         rollTarget = entity.checkSprintingWithMASC(overallMoveType, md.getMpUsed());
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             nagReport.append(SharedUtility.addNag(rollTarget));
         }
-        
+
         rollTarget = entity.checkSprintingWithSupercharger(overallMoveType, md.getMpUsed());
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             nagReport.append(SharedUtility.addNag(rollTarget));

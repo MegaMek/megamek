@@ -357,7 +357,7 @@ public class Game implements Serializable, IGame {
     public void setupTeams() {
         Vector<Team> initTeams = new Vector<Team>();
         boolean useTeamInit = getOptions().getOption("team_initiative")
-                .booleanValue();
+        .booleanValue();
 
         // Get all NO_TEAM players. If team_initiative is false, all
         // players are on their own teams for initiative purposes.
@@ -582,17 +582,17 @@ public class Game implements Serializable, IGame {
      */
     public boolean phaseHasTurns(IGame.Phase thisPhase) {
         switch (thisPhase) {
-            case PHASE_SET_ARTYAUTOHITHEXES:
-            case PHASE_DEPLOY_MINEFIELDS:
-            case PHASE_DEPLOYMENT:
-            case PHASE_MOVEMENT:
-            case PHASE_FIRING:
-            case PHASE_PHYSICAL:
-            case PHASE_TARGETING:
-            case PHASE_OFFBOARD:
-                return true;
-            default:
-                return false;
+        case PHASE_SET_ARTYAUTOHITHEXES:
+        case PHASE_DEPLOY_MINEFIELDS:
+        case PHASE_DEPLOYMENT:
+        case PHASE_MOVEMENT:
+        case PHASE_FIRING:
+        case PHASE_PHYSICAL:
+        case PHASE_TARGETING:
+        case PHASE_OFFBOARD:
+            return true;
+        default:
+            return false;
         }
     }
 
@@ -690,29 +690,29 @@ public class Game implements Serializable, IGame {
         this.phase = phase;
         // Handle phase-specific items.
         switch (phase) {
-            case PHASE_LOUNGE:
-                reset();
-                break;
-            case PHASE_MOVEMENT:
-                resetActions();
-                break;
-            case PHASE_FIRING:
-                resetActions();
-                break;
-            case PHASE_PHYSICAL:
-                resetActions();
-                break;
-            case PHASE_INITIATIVE:
-                resetActions();
-                resetCharges();
-                resetRams();
-                break;
+        case PHASE_LOUNGE:
+            reset();
+            break;
+        case PHASE_MOVEMENT:
+            resetActions();
+            break;
+        case PHASE_FIRING:
+            resetActions();
+            break;
+        case PHASE_PHYSICAL:
+            resetActions();
+            break;
+        case PHASE_INITIATIVE:
+            resetActions();
+            resetCharges();
+            resetRams();
+            break;
             // TODO Is there better solution to handle charges?
-            case PHASE_PHYSICAL_REPORT:
-            case PHASE_END:
-                resetCharges();
-                resetRams();
-                break;
+        case PHASE_PHYSICAL_REPORT:
+        case PHASE_END:
+            resetCharges();
+            resetRams();
+            break;
 
         }
 
@@ -753,7 +753,7 @@ public class Game implements Serializable, IGame {
             if (null == roundVec) {
                 roundVec = new Vector<Entity>();
                 deploymentTable
-                        .put(new Integer(ent.getDeployRound()), roundVec);
+                .put(new Integer(ent.getDeployRound()), roundVec);
             }
 
             roundVec.addElement(ent);
@@ -869,13 +869,13 @@ public class Game implements Serializable, IGame {
      */
     public void setOutOfGameEntitiesVector(Vector<Entity> vOutOfGame) {
         megamek.debug.Assert.assertTrue(vOutOfGame != null,
-                "New out-of-game list should not be null.");
+        "New out-of-game list should not be null.");
         if (vOutOfGame != null) {
             Vector<Entity> newOutOfGame = new Vector<Entity>();
 
             // Add entities for the existing players to the game.
             for (Enumeration<Entity> i = vOutOfGame.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 final Entity entity = i.nextElement();
                 int ownerId = entity.getOwnerId();
                 if ((ownerId != Entity.NONE) && (getPlayer(ownerId) != null)) {
@@ -1108,32 +1108,32 @@ public class Game implements Serializable, IGame {
     public Targetable getTarget(int nType, int nID) {
         try {
             switch (nType) {
-                case Targetable.TYPE_ENTITY:
-                    return getEntity(nID);
-                case Targetable.TYPE_HEX_CLEAR:
-                case Targetable.TYPE_HEX_IGNITE:
-                case Targetable.TYPE_HEX_BOMB:
-                case Targetable.TYPE_MINEFIELD_DELIVER:
-                case Targetable.TYPE_FLARE_DELIVER:
-                case Targetable.TYPE_HEX_EXTINGUISH:
-                case Targetable.TYPE_HEX_ARTILLERY:
-                case Targetable.TYPE_HEX_SCREEN:
-                case Targetable.TYPE_HEX_DIVE_BOMB:
-                    return new HexTarget(HexTarget.idToCoords(nID), board,
-                            nType);
-                case Targetable.TYPE_FUEL_TANK:
-                case Targetable.TYPE_FUEL_TANK_IGNITE:
-                case Targetable.TYPE_BUILDING:
-                case Targetable.TYPE_BLDG_IGNITE:
-                    return new BuildingTarget(BuildingTarget.idToCoords(nID),
-                            board, nType);
-                case Targetable.TYPE_MINEFIELD_CLEAR:
-                    return new MinefieldTarget(MinefieldTarget.idToCoords(nID),
-                            board);
-                case Targetable.TYPE_INARC_POD:
-                    return INarcPod.idToInstance(nID);
-                default:
-                    return null;
+            case Targetable.TYPE_ENTITY:
+                return getEntity(nID);
+            case Targetable.TYPE_HEX_CLEAR:
+            case Targetable.TYPE_HEX_IGNITE:
+            case Targetable.TYPE_HEX_BOMB:
+            case Targetable.TYPE_MINEFIELD_DELIVER:
+            case Targetable.TYPE_FLARE_DELIVER:
+            case Targetable.TYPE_HEX_EXTINGUISH:
+            case Targetable.TYPE_HEX_ARTILLERY:
+            case Targetable.TYPE_HEX_SCREEN:
+            case Targetable.TYPE_HEX_DIVE_BOMB:
+                return new HexTarget(HexTarget.idToCoords(nID), board,
+                        nType);
+            case Targetable.TYPE_FUEL_TANK:
+            case Targetable.TYPE_FUEL_TANK_IGNITE:
+            case Targetable.TYPE_BUILDING:
+            case Targetable.TYPE_BLDG_IGNITE:
+                return new BuildingTarget(BuildingTarget.idToCoords(nID),
+                        board, nType);
+            case Targetable.TYPE_MINEFIELD_CLEAR:
+                return new MinefieldTarget(MinefieldTarget.idToCoords(nID),
+                        board);
+            case Targetable.TYPE_INARC_POD:
+                return INarcPod.idToInstance(nID);
+            default:
+                return null;
             }
         } catch (IllegalArgumentException t) {
             return null;
@@ -1305,7 +1305,7 @@ public class Game implements Serializable, IGame {
         if (entities != null) {
             // Add these entities to the game.
             for (Enumeration<Entity> i = entities.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 final Entity entity = i.nextElement();
                 final int id = entity.getId();
                 entityIds.put(new Integer(id), entity);
@@ -1361,7 +1361,7 @@ public class Game implements Serializable, IGame {
         // Only build the list if the coords are on the board.
         if (board.contains(c)) {
             for (Enumeration<Entity> i = entities.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 final Entity entity = i.nextElement();
                 if (c.equals(entity.getPosition()) && entity.isTargetable()) {
                     vector.addElement(entity);
@@ -1383,7 +1383,7 @@ public class Game implements Serializable, IGame {
         // Only build the list if the coords are on the board.
         if (board.contains(c)) {
             for (Enumeration<Entity> i = entities.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 final Entity entity = i.nextElement();
                 if (c.equals(entity.getPosition()) && entity.isTargetable()) {
                     vector.addElement(entity);
@@ -1407,7 +1407,7 @@ public class Game implements Serializable, IGame {
         Vector<Entity> vector = new Vector<Entity>();
         if (board.contains(c)) {
             for (Enumeration<Entity> i = entities.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 final Entity entity = i.nextElement();
                 if (c.equals(entity.getPosition()) && entity.isTargetable()
                         && !(entity instanceof Infantry) && (entity != ignore)) {
@@ -1761,7 +1761,7 @@ public class Game implements Serializable, IGame {
         if (getOptions().booleanOption("inf_move_multi")
                 && (entity instanceof Infantry) && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getInfantryLeft(entity.getOwnerId()) % getOptions().intOption(
-                    "inf_proto_move_multi")) != 1) {
+            "inf_proto_move_multi")) != 1) {
                 // exception, if the _next_ turn is an infantry turn, remove
                 // that
                 // contrived, but may come up e.g. one inf accidently kills
@@ -1889,7 +1889,7 @@ public class Game implements Serializable, IGame {
 
             // Walk through the game's entities again.
             for (Enumeration<Entity> i = entities.elements(); i
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
 
                 // Get this unit's player.
                 unit = i.nextElement();
@@ -1955,7 +1955,7 @@ public class Game implements Serializable, IGame {
         // or rather, only keeps actions NOT by that entity
         Vector<EntityAction> toKeep = new Vector<EntityAction>(actions.size());
         for (Enumeration<EntityAction> i = actions.elements(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             EntityAction ea = i.nextElement();
             if (ea.getEntityId() != entityId) {
                 toKeep.addElement(ea);
@@ -2559,7 +2559,7 @@ public class Game implements Serializable, IGame {
      */
     public boolean checkForValidNonInfantryAndOrProtomechs(int playerId) {
         Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
+        .iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             boolean excluded = false;
@@ -2648,60 +2648,60 @@ public class Game implements Serializable, IGame {
      */
     public void processGameEvent(GameEvent event) {
         for (Enumeration<GameListener> e = gameListeners.elements(); e
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             GameListener l = e.nextElement();
             switch (event.getType()) {
-                case GameEvent.GAME_PLAYER_CONNECTED:
-                    l.gamePlayerConnected((GamePlayerConnectedEvent) event);
-                    break;
-                case GameEvent.GAME_PLAYER_DISCONNECTED:
-                    l.gamePlayerDisconnected((GamePlayerDisconnectedEvent) event);
-                    break;
-                case GameEvent.GAME_PLAYER_CHANGE:
-                    l.gamePlayerChange((GamePlayerChangeEvent) event);
-                    break;
-                case GameEvent.GAME_PLAYER_CHAT:
-                    l.gamePlayerChat((GamePlayerChatEvent) event);
-                    break;
-                case GameEvent.GAME_PHASE_CHANGE:
-                    l.gamePhaseChange((GamePhaseChangeEvent) event);
-                    break;
-                case GameEvent.GAME_TURN_CHANGE:
-                    l.gameTurnChange((GameTurnChangeEvent) event);
-                    break;
-                case GameEvent.GAME_REPORT:
-                    l.gameReport((GameReportEvent) event);
-                    break;
-                case GameEvent.GAME_END:
-                    l.gameEnd((GameEndEvent) event);
-                    break;
-                case GameEvent.GAME_BOARD_NEW:
-                    l.gameBoardNew((GameBoardNewEvent) event);
-                    break;
-                case GameEvent.GAME_BOARD_CHANGE:
-                    l.gameBoardChanged((GameBoardChangeEvent) event);
-                    break;
-                case GameEvent.GAME_SETTINGS_CHANGE:
-                    l.gameSettingsChange((GameSettingsChangeEvent) event);
-                    break;
-                case GameEvent.GAME_MAP_QUERY:
-                    l.gameMapQuery((GameMapQueryEvent) event);
-                    break;
-                case GameEvent.GAME_ENTITY_NEW:
-                    l.gameEntityNew((GameEntityNewEvent) event);
-                    break;
-                case GameEvent.GAME_ENTITY_REMOVE:
-                    l.gameEntityRemove((GameEntityRemoveEvent) event);
-                    break;
-                case GameEvent.GAME_ENTITY_NEW_OFFBOARD:
-                    l.gameEntityNewOffboard((GameEntityNewOffboardEvent) event);
-                    break;
-                case GameEvent.GAME_ENTITY_CHANGE:
-                    l.gameEntityChange((GameEntityChangeEvent) event);
-                    break;
-                case GameEvent.GAME_NEW_ACTION:
-                    l.gameNewAction((GameNewActionEvent) event);
-                    break;
+            case GameEvent.GAME_PLAYER_CONNECTED:
+                l.gamePlayerConnected((GamePlayerConnectedEvent) event);
+                break;
+            case GameEvent.GAME_PLAYER_DISCONNECTED:
+                l.gamePlayerDisconnected((GamePlayerDisconnectedEvent) event);
+                break;
+            case GameEvent.GAME_PLAYER_CHANGE:
+                l.gamePlayerChange((GamePlayerChangeEvent) event);
+                break;
+            case GameEvent.GAME_PLAYER_CHAT:
+                l.gamePlayerChat((GamePlayerChatEvent) event);
+                break;
+            case GameEvent.GAME_PHASE_CHANGE:
+                l.gamePhaseChange((GamePhaseChangeEvent) event);
+                break;
+            case GameEvent.GAME_TURN_CHANGE:
+                l.gameTurnChange((GameTurnChangeEvent) event);
+                break;
+            case GameEvent.GAME_REPORT:
+                l.gameReport((GameReportEvent) event);
+                break;
+            case GameEvent.GAME_END:
+                l.gameEnd((GameEndEvent) event);
+                break;
+            case GameEvent.GAME_BOARD_NEW:
+                l.gameBoardNew((GameBoardNewEvent) event);
+                break;
+            case GameEvent.GAME_BOARD_CHANGE:
+                l.gameBoardChanged((GameBoardChangeEvent) event);
+                break;
+            case GameEvent.GAME_SETTINGS_CHANGE:
+                l.gameSettingsChange((GameSettingsChangeEvent) event);
+                break;
+            case GameEvent.GAME_MAP_QUERY:
+                l.gameMapQuery((GameMapQueryEvent) event);
+                break;
+            case GameEvent.GAME_ENTITY_NEW:
+                l.gameEntityNew((GameEntityNewEvent) event);
+                break;
+            case GameEvent.GAME_ENTITY_REMOVE:
+                l.gameEntityRemove((GameEntityRemoveEvent) event);
+                break;
+            case GameEvent.GAME_ENTITY_NEW_OFFBOARD:
+                l.gameEntityNewOffboard((GameEntityNewOffboardEvent) event);
+                break;
+            case GameEvent.GAME_ENTITY_CHANGE:
+                l.gameEntityChange((GameEntityChangeEvent) event);
+                break;
+            case GameEvent.GAME_NEW_ACTION:
+                l.gameNewAction((GameNewActionEvent) event);
+                break;
             }
         }
     }
@@ -2850,7 +2850,7 @@ public class Game implements Serializable, IGame {
      */
     public void createVictoryConditions() {
         victory = vf
-                .createVictory("this string should be taken from game options");
+        .createVictory("this string should be taken from game options");
     }
 
     public Victory getVictory() {
@@ -2912,7 +2912,7 @@ public class Game implements Serializable, IGame {
     }
 
     public boolean checkForValidJumpships(int playerId) {
-           Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
+        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if ((entity instanceof Jumpship) && !(entity instanceof Warship) && getTurn().isValidEntity(entity, this)) {
@@ -2923,7 +2923,7 @@ public class Game implements Serializable, IGame {
     }
 
     public boolean checkForValidWarships(int playerId) {
-           Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
+        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if ((entity instanceof Warship) && getTurn().isValidEntity(entity, this)) {
@@ -2934,7 +2934,7 @@ public class Game implements Serializable, IGame {
     }
 
     public boolean checkForValidDropships(int playerId) {
-           Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
+        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if ((entity instanceof Dropship) && getTurn().isValidEntity(entity, this)) {
@@ -2945,7 +2945,7 @@ public class Game implements Serializable, IGame {
     }
 
     public boolean checkForValidSmallCraft(int playerId) {
-           Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
+        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if ((entity instanceof SmallCraft) && getTurn().isValidEntity(entity, this)) {

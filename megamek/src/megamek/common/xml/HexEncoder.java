@@ -132,7 +132,7 @@ public class HexEncoder {
                 // There should be only one terrains node.
                 if (null != retVal) {
                     throw new IllegalStateException(
-                            "More than one 'terrains' node in a hex node.");
+                    "More than one 'terrains' node in a hex node.");
                 }
 
                 // Create an array to hold all the terrains.
@@ -151,8 +151,8 @@ public class HexEncoder {
                             final int type = Integer.parseInt(subnode
                                     .getAttribute("type"));
                             final boolean exitsSpecified = StringUtil
-                                    .parseBoolean(subnode
-                                            .getAttribute("exitsSpecified"));
+                            .parseBoolean(subnode
+                                    .getAttribute("exitsSpecified"));
                             final int level = Integer.parseInt(subnode
                                     .getAttribute("level"));
                             final int exits = Integer.parseInt(subnode
@@ -161,7 +161,7 @@ public class HexEncoder {
                                     exitsSpecified, exits);
                         } catch (Throwable thrown) {
                             throw new IllegalStateException(
-                                    "Couldn't parse a terrain from a hex node.");
+                            "Couldn't parse a terrain from a hex node.");
                         }
 
                     } // End found-"terrain"-node
@@ -172,7 +172,7 @@ public class HexEncoder {
                 attrStr = child.getAttribute("elevation");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                            "Couldn't decode the terrains for a hex node.");
+                    "Couldn't decode the terrains for a hex node.");
                 }
 
                 // Try to pull the elevation from the attribute string

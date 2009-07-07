@@ -87,7 +87,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                     if (player.getCamoFileName() == null) {
                         dialog.setCategory(Player.NO_CAMO);
                         dialog.setItemName(Player.colorNames[player
-                                .getColorIndex()]);
+                                                             .getColorIndex()]);
                     } else {
                         dialog.setCategory(player.getCamoCategory());
                         dialog.setItemName(player.getCamoFileName());
@@ -141,13 +141,13 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                 if (playerTypes[x] == T_ME) {
                     if (bMeSet) {
                         JOptionPane
-                                .showMessageDialog(
-                                        m_frame,
-                                        Messages
-                                                .getString("MegaMek.ScenarioErrorAllert.message"),
-                                        Messages
-                                                .getString("MegaMek.ScenarioErrorAllert.title"),
-                                        JOptionPane.ERROR_MESSAGE);
+                        .showMessageDialog(
+                                m_frame,
+                                Messages
+                                .getString("MegaMek.ScenarioErrorAllert.message"),
+                                Messages
+                                .getString("MegaMek.ScenarioErrorAllert.title"),
+                                JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     bMeSet = true;

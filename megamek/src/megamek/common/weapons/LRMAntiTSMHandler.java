@@ -80,11 +80,11 @@ public class LRMAntiTSMHandler extends LRMHandler {
         if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
             nMissilesModifier -= 2;
         }
-        
+
         if ( bDirect ){
             nMissilesModifier += (toHit.getMoS()/3)*2;
         }
-        
+
         if(game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
@@ -97,7 +97,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
         else {
             // anti tsm hit with half the normal number, round up
             missilesHit = Compute
-                    .missilesHit(wtype.getRackSize(), nMissilesModifier, bGlancing );
+            .missilesHit(wtype.getRackSize(), nMissilesModifier, bGlancing );
             missilesHit = (int) Math.ceil((double) missilesHit / 2);
         }
         Report r = new Report(3325);

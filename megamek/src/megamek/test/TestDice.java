@@ -20,7 +20,7 @@ public class TestDice {
         System.out.println("done testing dice in " + (end - start) + " ms.");
         for (int i = 0; i < hits.length; i++) {
             System.out.println("hits on " + (i + 2) + " : " + hits[i]
-                    + "; probability = " + ((double) hits[i] / (double) rolls));
+                                                                   + "; probability = " + ((double) hits[i] / (double) rolls));
         }
 
         int[][] pairs = new int[6][6];
@@ -35,7 +35,7 @@ public class TestDice {
         for (int x = 0; x < pairs.length; x++) {
             for (int y = 0; y < pairs[x].length; y++) {
                 System.out
-                        .println((x + 1) + "," + (y + 1) + ": " + pairs[x][y]);
+                .println((x + 1) + "," + (y + 1) + ": " + pairs[x][y]);
             }
         }
         // odd, but necessary

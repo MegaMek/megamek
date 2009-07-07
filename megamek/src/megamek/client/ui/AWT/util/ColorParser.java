@@ -22,13 +22,13 @@ import java.io.StringReader;
 public class ColorParser {
 
     private static String[] colorNames = { "black", "blue", "cyan", "darkgray",
-            "gray", "green", "lightgray", "magenta", "orange", "pink", "red",
-            "white", "yellow" };
+        "gray", "green", "lightgray", "magenta", "orange", "pink", "red",
+        "white", "yellow" };
 
     private static Color[] colorValues = { Color.black, Color.blue, Color.cyan,
-            Color.darkGray, Color.gray, Color.green, Color.lightGray,
-            Color.magenta, Color.orange, Color.pink, Color.red, Color.white,
-            Color.yellow };
+        Color.darkGray, Color.gray, Color.green, Color.lightGray,
+        Color.magenta, Color.orange, Color.pink, Color.red, Color.white,
+        Color.yellow };
 
     protected StreamTokenizer st;
     protected int currentToken;
@@ -100,7 +100,7 @@ public class ColorParser {
             color = new Color(red, green, blue);
         } else {
             throw new ParseException(
-                    "color name or integer read component value expected");
+            "color name or integer read component value expected");
         }
     }
 

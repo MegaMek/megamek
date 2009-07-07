@@ -34,7 +34,7 @@ public abstract class TurnOrdered implements Serializable {
     private transient int turns_other = 0; 
     private transient int turns_even = 0;
     private transient int turns_multi = 0;
-    
+
     //these are special turns for all of the aero units (only used in the movement phase)
     private transient int turns_aero = 0; 
     private transient int turns_ss = 0;
@@ -65,39 +65,39 @@ public abstract class TurnOrdered implements Serializable {
     }
 
     public int getMultiTurns(IGame game) {
-        
+
         int turns = 0;
-        
+
         if ( game.getOptions().booleanOption("vehicle_lance_movement") ) {
             turns += game.getOptions().intOption("vehicle_lance_movement_number");
         }
-        
+
         if ( game.getOptions().booleanOption("protos_move_multi") || game.getOptions().booleanOption("inf_move_multi") ) {
             turns += game.getOptions().intOption("inf_proto_move_multi");
         }
         return (int) Math.ceil(((double) turns_multi)/ (double)turns); 
     }
-    
+
     public int getSpaceStationTurns() {
         return turns_ss;
     }
-    
+
     public int getJumpshipTurns() {
         return turns_js;
     }
-    
+
     public int getWarshipTurns() {
         return turns_ws;
     }
-    
+
     public int getDropshipTurns() {
         return turns_ds;
     }
-    
+
     public int getSmallCraftTurns() {
         return turns_sc;
     }
-    
+
     public int getAeroTurns() {
         return turns_aero;
     }
@@ -113,27 +113,27 @@ public abstract class TurnOrdered implements Serializable {
     public void incrementMultiTurns() {
         turns_multi++;
     }
-    
+
     public void incrementSpaceStationTurns() {
         turns_ss++;
     }
-    
+
     public void incrementJumpshipTurns() {
         turns_js++;
     }
-    
+
     public void incrementWarshipTurns() {
         turns_ws++;
     }
-    
+
     public void incrementDropshipTurns() {
         turns_ds++;
     }
-    
+
     public void incrementSmallCraftTurns() {
         turns_sc++;
     }
-    
+
     public void incrementAeroTurns() {
         turns_aero++;
     }
@@ -149,27 +149,27 @@ public abstract class TurnOrdered implements Serializable {
     public void resetMultiTurns() {
         turns_multi = 0;
     }
-    
+
     public void resetSpaceStationTurns() {
         turns_ss = 0;
     }
-    
+
     public void resetJumpshipTurns() {
         turns_js = 0;
     }
-    
+
     public void resetWarshipTurns() {
         turns_ws = 0;
     }
-    
+
     public void resetDropshipTurns() {
         turns_ds = 0;
     }
-    
+
     public void resetSmallCraftTurns() {
         turns_sc = 0;
     }
-    
+
     public void resetAeroTurns() {
         turns_aero = 0;
     }
@@ -188,7 +188,7 @@ public abstract class TurnOrdered implements Serializable {
     public static void rollInitiative(Vector<? extends TurnOrdered> v) {
         // Clear all rolls
         for (Enumeration<? extends TurnOrdered> i = v.elements(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             final TurnOrdered item = i.nextElement();
             item.clearInitiative();
         }
@@ -228,7 +228,7 @@ public abstract class TurnOrdered implements Serializable {
     public static void rollInitAndResolveTies(Vector<? extends TurnOrdered> v,
             Vector<? extends TurnOrdered> rerollRequests) {
         for (Enumeration<? extends TurnOrdered> i = v.elements(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             final TurnOrdered item = i.nextElement();
             int bonus = 0;
             if (item instanceof Team) {
@@ -240,7 +240,7 @@ public abstract class TurnOrdered implements Serializable {
             }
             if (rerollRequests == null) { // normal init roll
                 item.getInitiative().addRoll(bonus); // add a roll for all
-                                                        // teams
+                // teams
             } else {
                 // Resolve Tactical Genius (lvl 3) pilot ability
                 for (Enumeration<? extends TurnOrdered> j = rerollRequests
@@ -257,12 +257,12 @@ public abstract class TurnOrdered implements Serializable {
         // check for ties
         Vector<TurnOrdered> ties = new Vector<TurnOrdered>();
         for (Enumeration<? extends TurnOrdered> i = v.elements(); i
-                .hasMoreElements();) {
+        .hasMoreElements();) {
             final TurnOrdered item = i.nextElement();
             ties.removeAllElements();
             ties.addElement(item);
             for (Enumeration<? extends TurnOrdered> j = v.elements(); j
-                    .hasMoreElements();) {
+            .hasMoreElements();) {
                 final TurnOrdered other = j.nextElement();
                 if (item != other
                         && item.getInitiative().equals(other.getInitiative())) {
@@ -325,7 +325,7 @@ public abstract class TurnOrdered implements Serializable {
             num_dropship_turns[orderedItems] = item.getDropshipTurns();
             num_small_craft_turns[orderedItems] = item.getSmallCraftTurns();
             num_aero_turns[orderedItems] = item.getAeroTurns();
-      
+
             // Keep a running total.
             total_even_turns += num_even_turns[orderedItems];
             total_normal_turns += num_normal_turns[orderedItems];
@@ -345,10 +345,10 @@ public abstract class TurnOrdered implements Serializable {
         int minDS;
         int minSC;
         int minAero;
-        
+
         //ok first we have to add in the special Aero turns and then go to 
         //'normal' turns which are really just ground turns
-        
+
         // We will do the 'normal' turns first, and then the 'even' turns.
         min = Integer.MAX_VALUE;
         minSS = Integer.MAX_VALUE;
@@ -375,8 +375,8 @@ public abstract class TurnOrdered implements Serializable {
         }
 
         int total_turns = total_normal_turns + total_space_station_turns + total_jumpship_turns 
-                          + total_warship_turns + total_dropship_turns + total_small_craft_turns + total_aero_turns;
-        
+        + total_warship_turns + total_dropship_turns + total_small_craft_turns + total_aero_turns;
+
         TurnVectors turns = new TurnVectors(total_normal_turns, total_turns,
                 total_space_station_turns,
                 total_jumpship_turns, total_warship_turns, total_dropship_turns, 
@@ -436,7 +436,7 @@ public abstract class TurnOrdered implements Serializable {
                 min--;
             } // Handle the next 'even' turn
         } // End have-'even'-turns
-        
+
         // Allocate the space station turns.
         turns_left = total_space_station_turns;
         while (turns_left > 0) {
@@ -459,7 +459,7 @@ public abstract class TurnOrdered implements Serializable {
             minSS--;
 
         } // Handle the next 'space station' turn.
-        
+
         // Allocate the jumpship turns.
         turns_left = total_jumpship_turns;
         while (turns_left > 0) {
@@ -482,7 +482,7 @@ public abstract class TurnOrdered implements Serializable {
             minJS--;
 
         } // Handle the next 'jumpship' turn.
-        
+
         //Allocate the warship turns.
         turns_left = total_warship_turns;
         while (turns_left > 0) {
@@ -505,7 +505,7 @@ public abstract class TurnOrdered implements Serializable {
             minWS--;
 
         } // Handle the next 'warship' turn.
-        
+
         //Allocate the dropship turns.
         turns_left = total_dropship_turns;
         while (turns_left > 0) {
@@ -528,7 +528,7 @@ public abstract class TurnOrdered implements Serializable {
             minDS--;
 
         } // Handle the next 'dropship' turn.
-        
+
         //Allocate the small craft turns.
         turns_left = total_small_craft_turns;
         while (turns_left > 0) {
@@ -551,7 +551,7 @@ public abstract class TurnOrdered implements Serializable {
             minSC--;
 
         } // Handle the next 'smal craft' turn.
-        
+
         //Allocate the aero turns.
         turns_left = total_aero_turns;
         while (turns_left > 0) {
@@ -574,8 +574,8 @@ public abstract class TurnOrdered implements Serializable {
             minAero--;
 
         } // Handle the next 'aero' turn.
-        
-        
+
+
         return turns;
     }
 }

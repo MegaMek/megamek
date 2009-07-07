@@ -94,8 +94,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         butM = new JButton(
                 Messages
-                        .getString(
-                                "DeploymentDisplay.buttonMinefield", new Object[] { new Integer(p.getNbrMFConventional()) })); //$NON-NLS-1$
+                .getString(
+                        "DeploymentDisplay.buttonMinefield", new Object[] { new Integer(p.getNbrMFConventional()) })); //$NON-NLS-1$
         butM.addActionListener(this);
         butM.setActionCommand(DEPLOY_MINE_CONV);
         butM.setEnabled(false);
@@ -111,8 +111,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         butC = new JButton(
                 Messages
-                        .getString(
-                                "DeploymentDisplay.buttonCommand", new Object[] { new Integer(p.getNbrMFCommand()) })); //$NON-NLS-1$
+                .getString(
+                        "DeploymentDisplay.buttonCommand", new Object[] { new Integer(p.getNbrMFCommand()) })); //$NON-NLS-1$
         butC.addActionListener(this);
         butC.setActionCommand(DEPLOY_MINE_COM);
         butC.setEnabled(false);
@@ -123,24 +123,24 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         butV = new JButton(
                 Messages
-                        .getString(
-                                "DeploymentDisplay.buttonVibrabomb", new Object[] { new Integer(p.getNbrMFVibra()) })); //$NON-NLS-1$
+                .getString(
+                        "DeploymentDisplay.buttonVibrabomb", new Object[] { new Integer(p.getNbrMFVibra()) })); //$NON-NLS-1$
         butV.addActionListener(this);
         butV.setActionCommand(DEPLOY_MINE_VIBRA);
         butV.setEnabled(false);
 
         butA = new JButton(
                 Messages
-                        .getString(
-                                "DeploymentDisplay.buttonActive", new Object[] { new Integer(p.getNbrMFActive()) })); //$NON-NLS-1$
+                .getString(
+                        "DeploymentDisplay.buttonActive", new Object[] { new Integer(p.getNbrMFActive()) })); //$NON-NLS-1$
         butA.addActionListener(this);
         butA.setActionCommand(DEPLOY_MINE_ACTIVE);
         butA.setEnabled(false);
 
         butI = new JButton(
                 Messages
-                        .getString(
-                                "DeploymentDisplay.buttonInferno", new Object[] { new Integer(p.getNbrMFInferno()) })); //$NON-NLS-1$
+                .getString(
+                        "DeploymentDisplay.buttonInferno", new Object[] { new Integer(p.getNbrMFInferno()) })); //$NON-NLS-1$
         butI.addActionListener(this);
         butI.setActionCommand(DEPLOY_MINE_INFERNO);
         butI.setEnabled(false);
@@ -293,9 +293,9 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                         || (deployA && mf.getType() == Minefield.TYPE_ACTIVE)
                         || (deployI && mf.getType() == Minefield.TYPE_INFERNO)) {
                     clientgui
-                            .doAlertDialog(
-                                    Messages
-                                            .getString("DeployMinefieldDisplay.IllegalPlacement"), Messages.getString("DeployMinefieldDisplay.DuplicateMinefield")); //$NON-NLS-1$ //$NON-NLS-2$
+                    .doAlertDialog(
+                            Messages
+                            .getString("DeployMinefieldDisplay.IllegalPlacement"), Messages.getString("DeployMinefieldDisplay.DuplicateMinefield")); //$NON-NLS-1$ //$NON-NLS-2$
                     return;
                 }
             }
@@ -303,9 +303,9 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             Minefield mf;
             if (sea && !(deployM || deployI)) {
                 clientgui
-                        .doAlertDialog(
-                                Messages
-                                        .getString("DeployMinefieldDisplay.IllegalPlacement"), Messages.getString("DeployMinefieldDisplay.WaterPlacement")); //$NON-NLS-1$ //$NON-NLS-2$
+                .doAlertDialog(
+                        Messages
+                        .getString("DeployMinefieldDisplay.IllegalPlacement"), Messages.getString("DeployMinefieldDisplay.WaterPlacement")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             int depth = 0;
@@ -356,7 +356,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
                 mf = Minefield.createMinefield(coords, p.getId(),
                         Minefield.TYPE_VIBRABOMB, mfd.getDensity(), vsd
-                                .getSetting());
+                        .getSetting());
                 p.setNbrMFVibra(p.getNbrMFVibra() - 1);
             } else {
                 return;
@@ -395,7 +395,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         }
 
     }
-    
+
     @Override
     protected void clear() {
         //TODO: undefined for now
@@ -543,45 +543,45 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
     private void setConventionalEnabled(int nbr) {
         butM
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonMinefield", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        .setText(Messages
+                .getString(
+                        "DeploymentDisplay.buttonMinefield", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         butM.setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployConventionalEnabled(nbr);
     }
 
     private void setCommandEnabled(int nbr) {
         butC
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonCommand", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        .setText(Messages
+                .getString(
+                        "DeploymentDisplay.buttonCommand", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         butC.setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployCommandEnabled(nbr);
     }
 
     private void setVibrabombEnabled(int nbr) {
         butV
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonVibrabomb", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        .setText(Messages
+                .getString(
+                        "DeploymentDisplay.buttonVibrabomb", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         butV.setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployVibrabombEnabled(nbr);
     }
 
     private void setActiveEnabled(int nbr) {
         butA
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonActive", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        .setText(Messages
+                .getString(
+                        "DeploymentDisplay.buttonActive", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         butA.setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployActiveEnabled(nbr);
     }
 
     private void setInfernoEnabled(int nbr) {
         butI
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonInferno", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        .setText(Messages
+                .getString(
+                        "DeploymentDisplay.buttonInferno", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         butI.setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployInfernoEnabled(nbr);
     }
@@ -590,7 +590,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         butRemove.setEnabled(enable);
         // clientgui.getMenuBar().setRemoveMineEnabled(enable);
     }
-    
+
     /**
      * Stop just ignoring events and actually stop listening to them.
      */

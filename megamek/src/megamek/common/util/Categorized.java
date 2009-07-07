@@ -55,6 +55,6 @@ public interface Categorized {
      * @throws  <code>Exception</code> if there's any error getting the item.
      */
     public Object getItem(String categoryName, String itemName)
-            throws Exception;
+    throws Exception;
 
 }

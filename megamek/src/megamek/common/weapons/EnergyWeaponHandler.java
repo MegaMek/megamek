@@ -19,7 +19,6 @@ import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
-import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -49,7 +48,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage(nRange);
-        
+
         if ( game.getOptions().booleanOption("tacops_energy_weapons") && wtype.hasModes()){
             toReturn = Compute.dialDownDamage(weapon, wtype,nRange);
         }
@@ -69,7 +68,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
                 toReturn--;
             } 
         }
-        
+
         if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
             toReturn -=1;
         }
@@ -86,5 +85,5 @@ public class EnergyWeaponHandler extends WeaponHandler {
         return (int) Math.ceil(toReturn);
     } 
 
-    
+
 }

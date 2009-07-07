@@ -61,7 +61,7 @@ public class FlamerHeatHandler extends WeaponHandler {
             // heat
             HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(), waa
-                            .getAimingMode());
+                    .getAimingMode());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                     .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
@@ -115,7 +115,7 @@ public class FlamerHeatHandler extends WeaponHandler {
         }
         return toReturn;
     }
-    
+
 
     /**
      * @return a <code>boolean</code> value indicating wether or not this
@@ -133,7 +133,7 @@ public class FlamerHeatHandler extends WeaponHandler {
             server.tryIgniteHex(target.getPosition(), subjectId, true, false, new TargetRoll(wtype.getFireTN(), wtype.getName()),
                     3, vPhaseReport);
         }
-        
+
         //shots that miss an entity can also potential cause explosions in a heavy industrial hex
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
@@ -144,7 +144,7 @@ public class FlamerHeatHandler extends WeaponHandler {
         }
         return true;
     }
-    
+
     @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
             Building bldg, int hits) {
@@ -162,7 +162,7 @@ public class FlamerHeatHandler extends WeaponHandler {
                     true, -1, vPhaseReport);
         }
     }
-    
+
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage) {

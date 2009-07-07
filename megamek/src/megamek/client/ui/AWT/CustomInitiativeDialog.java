@@ -32,7 +32,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 
 public class CustomInitiativeDialog extends Dialog implements ActionListener,
-        WindowListener {
+WindowListener {
 
     /**
      * 

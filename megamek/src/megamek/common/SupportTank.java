@@ -73,39 +73,39 @@ public class SupportTank extends Tank implements Serializable {
             return true;
         }
         switch (movementMode) {
-            case IEntityMovementMode.TRACKED:
-                return (hex.terrainLevel(Terrains.WOODS) > 1)
-                        || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE)
-                                && !hasEnvironmentalSealing())
-                        || hex.containsTerrain(Terrains.JUNGLE)
-                        || (hex.terrainLevel(Terrains.MAGMA) > 1);
-            case IEntityMovementMode.WHEELED:
-                return hex.containsTerrain(Terrains.WOODS)
-                        || hex.containsTerrain(Terrains.ROUGH)
-                        || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE)
-                                && !hasEnvironmentalSealing())
-                        || hex.containsTerrain(Terrains.RUBBLE)
-                        || hex.containsTerrain(Terrains.MAGMA)
-                        || hex.containsTerrain(Terrains.JUNGLE)
-                        || (hex.terrainLevel(Terrains.SNOW) > 1)
-                        || (hex.terrainLevel(Terrains.GEYSER) == 2);
-            case IEntityMovementMode.HOVER:
-                return hex.containsTerrain(Terrains.WOODS)
-                        || hex.containsTerrain(Terrains.JUNGLE)
-                        || (hex.terrainLevel(Terrains.MAGMA) > 1);
-            case IEntityMovementMode.NAVAL:
-            case IEntityMovementMode.HYDROFOIL:
-                return (hex.terrainLevel(Terrains.WATER) <= 0)
-                        || hex.containsTerrain(Terrains.ICE);
-            case IEntityMovementMode.SUBMARINE:
-                return (hex.terrainLevel(Terrains.WATER) <= 0);
-            case IEntityMovementMode.WIGE:
-                return (hex.containsTerrain(Terrains.WOODS)
-                        || hex.containsTerrain(Terrains.BUILDING));
-            default:
-                return false;
+        case IEntityMovementMode.TRACKED:
+            return (hex.terrainLevel(Terrains.WOODS) > 1)
+            || ((hex.terrainLevel(Terrains.WATER) > 0)
+                    && !hex.containsTerrain(Terrains.ICE)
+                    && !hasEnvironmentalSealing())
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.MAGMA) > 1);
+        case IEntityMovementMode.WHEELED:
+            return hex.containsTerrain(Terrains.WOODS)
+            || hex.containsTerrain(Terrains.ROUGH)
+            || ((hex.terrainLevel(Terrains.WATER) > 0)
+                    && !hex.containsTerrain(Terrains.ICE)
+                    && !hasEnvironmentalSealing())
+                    || hex.containsTerrain(Terrains.RUBBLE)
+                    || hex.containsTerrain(Terrains.MAGMA)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.SNOW) > 1)
+                    || (hex.terrainLevel(Terrains.GEYSER) == 2);
+        case IEntityMovementMode.HOVER:
+            return hex.containsTerrain(Terrains.WOODS)
+            || hex.containsTerrain(Terrains.JUNGLE)
+            || (hex.terrainLevel(Terrains.MAGMA) > 1);
+        case IEntityMovementMode.NAVAL:
+        case IEntityMovementMode.HYDROFOIL:
+            return (hex.terrainLevel(Terrains.WATER) <= 0)
+            || hex.containsTerrain(Terrains.ICE);
+        case IEntityMovementMode.SUBMARINE:
+            return (hex.terrainLevel(Terrains.WATER) <= 0);
+        case IEntityMovementMode.WIGE:
+            return (hex.containsTerrain(Terrains.WOODS)
+                    || hex.containsTerrain(Terrains.BUILDING));
+        default:
+            return false;
         }
     }
 

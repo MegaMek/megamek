@@ -33,7 +33,7 @@ public class SkipCommand extends ServerCommand {
     /** Creates a new instance of SkipCommand */
     public SkipCommand(Server server) {
         super(server, "skip",
-                "Skips the current turn, if possible.  Usage: /skip");
+        "Skips the current turn, if possible.  Usage: /skip");
     }
 
     /**
@@ -43,7 +43,7 @@ public class SkipCommand extends ServerCommand {
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
             server.sendServerChat(connId,
-                    "Observers are restricted from skipping turns.");
+            "Observers are restricted from skipping turns.");
             return;
         }
 

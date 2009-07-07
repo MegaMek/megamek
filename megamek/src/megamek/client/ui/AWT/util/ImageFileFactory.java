@@ -70,7 +70,7 @@ public class ImageFileFactory implements ItemFileFactory {
      *             is <code>null</code>.
      */
     public ItemFile getItemFile(final File file)
-            throws IllegalArgumentException {
+    throws IllegalArgumentException {
 
         // Validate the input.
         if (null == file) {
@@ -111,7 +111,7 @@ public class ImageFileFactory implements ItemFileFactory {
      *             <code>null</code>.
      */
     public ItemFile getItemFile(final ZipEntry zipEntry, final ZipFile zipFile)
-            throws IllegalArgumentException {
+    throws IllegalArgumentException {
 
         // Validate the input.
         if (null == zipEntry) {
@@ -156,8 +156,8 @@ public class ImageFileFactory implements ItemFileFactory {
                     if (itemEntry.getSize() <= index) {
                         throw new IOException(
                                 "Error reading " + itemEntry.getName() + //$NON-NLS-1$
-                                        "\nYou may want to unzip " + //$NON-NLS-1$
-                                        zipFile.getName());
+                                "\nYou may want to unzip " + //$NON-NLS-1$
+                                zipFile.getName());
                     }
 
                     // Create the image from the buffer.

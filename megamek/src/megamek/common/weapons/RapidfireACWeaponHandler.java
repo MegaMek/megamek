@@ -92,12 +92,12 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
         }
         return false;
     }
-    
+
     @Override
     protected boolean usesClusterTable() {
         return true;
     }
-    
+
     @Override
     protected boolean canDoDirectBlowDamage(){
         return false;

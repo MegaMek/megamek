@@ -41,7 +41,7 @@ class LabelModel extends TransformGroup {
     public static final Font3D BOLD = new Font3D(new Font("sans-serif", Font.BOLD, 2), tolerance, null);
     public static final Font3D BIG = new Font3D(new Font("sans-serif", Font.PLAIN, 3), tolerance, null);
     public static final Font3D BIGBOLD = new Font3D(new Font("sans-serif", Font.BOLD, 3), tolerance, null);
-    
+
 
     public LabelModel(String text, Color3f fg, Color3f bg, Font3D font) {
         Text3D geom = new Text3D(font, text, new Point3f(0.0f, 0.0f, 0.0f), Text3D.ALIGN_CENTER, Text3D.PATH_RIGHT);
@@ -50,7 +50,7 @@ class LabelModel extends TransformGroup {
         Point3d upper = new Point3d(), lower = new Point3d();
         b.getLower(lower);
         b.getUpper(upper);
-        
+
         // Workaround for a bounding box bug -- assumes that M and ( have same ascent
         GlyphVector fix = font.getFont().createGlyphVector(new FontRenderContext(null, false, false), "M(");
         Point3d fixu = new Point3d(), fixl = new Point3d();
@@ -98,24 +98,24 @@ class LabelModel extends TransformGroup {
     static final Shape3D makeQuad(double orgX, double orgY, double width, double height, double z, Appearance app) {
         GeometryInfo gi = new GeometryInfo(GeometryInfo.QUAD_ARRAY);
         double[] vertices = {
-            orgX,       orgY, z,
-            orgX+width, orgY, z,
-            orgX+width, orgY+height, z,
-            orgX,       orgY+height, z,
+                orgX,       orgY, z,
+                orgX+width, orgY, z,
+                orgX+width, orgY+height, z,
+                orgX,       orgY+height, z,
         };
         float[] texCoords = {
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 1.0f,
+                0.0f, 0.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f,
         };
         float[] normals = {
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1,
         };
-        
+
         gi.setCoordinates(vertices);
         gi.setNormals(normals);
 
@@ -124,7 +124,7 @@ class LabelModel extends TransformGroup {
 
         Stripifier st = new Stripifier();
         st.stripify(gi);
-        
+
         return new Shape3D(gi.getGeometryArray(), app);
     }
 }

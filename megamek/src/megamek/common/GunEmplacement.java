@@ -233,7 +233,7 @@ public class GunEmplacement extends Entity implements Serializable {
             if (((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_AMS))
                     || ((etype instanceof AmmoType) && (((AmmoType) etype)
                             .getAmmoType() == AmmoType.T_AMS))
-                    || etype.hasFlag(MiscType.F_ECM)) {
+                            || etype.hasFlag(MiscType.F_ECM)) {
                 dEquipmentBV += etype.getBV(this);
             }
         }
@@ -501,7 +501,7 @@ public class GunEmplacement extends Entity implements Serializable {
 
     @Override
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
-            throws LocationFullException {
+    throws LocationFullException {
         super.addEquipment(mounted, loc, rearMounted);
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,

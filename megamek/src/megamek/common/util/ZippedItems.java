@@ -77,7 +77,7 @@ public class ZippedItems implements Categorized {
         // file extensions. Yeah, it's a bit of a hack, but whatever.
         String ucName = name.toUpperCase();
         return (ucName.endsWith("ZIP") || //$NON-NLS-1$
-        ucName.endsWith("JAR")); //$NON-NLS-1$
+                ucName.endsWith("JAR")); //$NON-NLS-1$
     }
 
     /**
@@ -122,7 +122,7 @@ public class ZippedItems implements Categorized {
         }
         if (null == itemFactory) {
             throw new IllegalArgumentException(
-                    "A null item factory was passed."); //$NON-NLS-1$
+            "A null item factory was passed."); //$NON-NLS-1$
         }
 
         // Save the root category name and the item factory.
@@ -163,7 +163,7 @@ public class ZippedItems implements Categorized {
                 // Construct the category name for this sub-directory.
                 StringBuffer buffer = new StringBuffer();
                 buffer.append(rootName).append(" : ") //$NON-NLS-1$
-                        .append(name);
+                .append(name);
                 catName = buffer.toString();
 
                 // Add the category to the map.
@@ -179,7 +179,7 @@ public class ZippedItems implements Categorized {
             else if (ZippedItems.isZipName(name)) {
                 // TODO : implement me!!!
                 System.out
-                        .print("... found a ZIP file **inside** a ZIP file: "); //$NON-NLS-1$
+                .print("... found a ZIP file **inside** a ZIP file: "); //$NON-NLS-1$
                 System.out.println(name);
             }
 
@@ -297,7 +297,7 @@ public class ZippedItems implements Categorized {
      * @throws  <code>Exception</code> if there's any error getting the item.
      */
     public Object getItem(String categoryName, String itemName)
-            throws Exception {
+    throws Exception {
 
         // Get the map with the given category name.
         Map<String, Object> items = categories.get(categoryName);

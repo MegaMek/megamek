@@ -70,14 +70,14 @@ public class MechFileParser {
     private static final File ROOT = new File(PreferenceManager
             .getClientPreferences().getMechDirectory());
     private static final File OFFICIALUNITS = new File(ROOT,
-            "OfficialUnitList.txt");
+    "OfficialUnitList.txt");
 
     public MechFileParser(File f) throws EntityLoadingException {
         this(f, null);
     }
 
     public MechFileParser(File f, String entryName)
-            throws EntityLoadingException {
+    throws EntityLoadingException {
         if (entryName == null) {
             // try normal file
             try {
@@ -112,7 +112,7 @@ public class MechFileParser {
     }
 
     public MechFileParser(InputStream is, String fileName)
-            throws EntityLoadingException {
+    throws EntityLoadingException {
         try {
             parse(is, fileName);
         } catch (Exception ex) {
@@ -130,7 +130,7 @@ public class MechFileParser {
     }
 
     public void parse(InputStream is, String fileName)
-            throws EntityLoadingException {
+    throws EntityLoadingException {
         String lowerName = fileName.toLowerCase();
         IMechLoader loader;
 
@@ -192,7 +192,7 @@ public class MechFileParser {
             }
         } else if (lowerName.endsWith(".dbm")) {
             throw new EntityLoadingException(
-                    "In order to use mechs from The Drawing Board with MegaMek, you must save your mech as an XML file (look in the 'File' menu of TDB.)  Then use the resulting '.xml' file instead of the '.dbm' file.  Note that only version 2.0.23 or later of TDB is compatible with MegaMek.");
+            "In order to use mechs from The Drawing Board with MegaMek, you must save your mech as an XML file (look in the 'File' menu of TDB.)  Then use the resulting '.xml' file instead of the '.dbm' file.  Note that only version 2.0.23 or later of TDB is compatible with MegaMek.");
         } else {
             throw new EntityLoadingException("Unsupported file suffix");
         }
@@ -269,7 +269,7 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "Unable to match Artemis to launcher");
+                    "Unable to match Artemis to launcher");
                 }
             } // End link-Artemis
             else if ((m.getType().hasFlag(MiscType.F_STEALTH)
@@ -290,7 +290,7 @@ public class MechFileParser {
                     // This mech has stealth armor but no ECM. Probably
                     // an improperly created custom.
                     throw new EntityLoadingException(
-                            "Unable to find an ECM Suite.  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
+                    "Unable to find an ECM Suite.  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
                 }
             } // End link-Stealth
             // Link PPC Capacitor to PPC it its location.
@@ -329,7 +329,7 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "Unable to match Capacitor to PPC");
+                    "Unable to match Capacitor to PPC");
                 }
             } // End link-PPC Capacitor
             // Link MRM Apollo fire-control systems to their missle racks.
@@ -361,7 +361,7 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "Unable to match Apollo to launcher");
+                    "Unable to match Apollo to launcher");
                 }
             } // End link-Apollo
             //now find any active probes and add them to the sensor list
@@ -426,28 +426,28 @@ public class MechFileParser {
             }
 
             if ( m.getType().hasFlag(MiscType.F_TALON) ){
-               if ( ent instanceof BipedMech ){
-                   if ( m.getLocation() != Mech.LOC_LLEG && m.getLocation() != Mech.LOC_RLEG ){
-                       throw new EntityLoadingException("Talons are only legal in the Legs");
-                   }
+                if ( ent instanceof BipedMech ){
+                    if ( m.getLocation() != Mech.LOC_LLEG && m.getLocation() != Mech.LOC_RLEG ){
+                        throw new EntityLoadingException("Talons are only legal in the Legs");
+                    }
 
-                   if ( !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LLEG) ){
-                       throw new EntityLoadingException("Talons must be in all legs");
-                   }
-               }else if ( ent instanceof QuadMech ){
-                   if ( m.getLocation() != Mech.LOC_LLEG && m.getLocation() != Mech.LOC_RLEG  &&
-                           m.getLocation() != Mech.LOC_LARM && m.getLocation() != Mech.LOC_RARM){
-                       throw new EntityLoadingException("Talons are only legal in the Legs");
-                   }
+                    if ( !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LLEG) ){
+                        throw new EntityLoadingException("Talons must be in all legs");
+                    }
+                }else if ( ent instanceof QuadMech ){
+                    if ( m.getLocation() != Mech.LOC_LLEG && m.getLocation() != Mech.LOC_RLEG  &&
+                            m.getLocation() != Mech.LOC_LARM && m.getLocation() != Mech.LOC_RARM){
+                        throw new EntityLoadingException("Talons are only legal in the Legs");
+                    }
 
-                   if ( !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LLEG) ||
-                           !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LARM) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LARM)){
-                       throw new EntityLoadingException("Talons must be in all legs");
-                   }
+                    if ( !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LLEG) ||
+                            !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LARM) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LARM)){
+                        throw new EntityLoadingException("Talons must be in all legs");
+                    }
 
-               }else {
-                   throw new EntityLoadingException("Unable to load talons in non-Mek entity");
-               }
+                }else {
+                    throw new EntityLoadingException("Unable to load talons in non-Mek entity");
+                }
             }
 
         } // Check the next piece of equipment.
@@ -495,20 +495,20 @@ public class MechFileParser {
     public static void main(String[] args) {
         if (args.length == 0) {
             System.out
-                    .println("Files in a supported MegaMek file format can be specified on");
+            .println("Files in a supported MegaMek file format can be specified on");
             System.out
-                    .println("the command line.  Multiple files may be processed at once.");
+            .println("the command line.  Multiple files may be processed at once.");
             System.out.println("The supported formats are:");
             System.out
-                    .println("\t.mtf    The native MegaMek format that your file will be converted into");
+            .println("\t.mtf    The native MegaMek format that your file will be converted into");
             System.out.println("\t.blk    Another native MegaMek format");
             System.out.println("\t.hmp    Heavy Metal Pro (c)RCW Enterprises");
             System.out
-                    .println("\t.mep    MechEngineer Pro (c)Howling Moon SoftWorks");
+            .println("\t.mep    MechEngineer Pro (c)Howling Moon SoftWorks");
             System.out
-                    .println("\t.xml    The Drawing Board (c)Blackstone Interactive");
+            .println("\t.xml    The Drawing Board (c)Blackstone Interactive");
             System.out
-                    .println("Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
+            .println("Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
             MechFileParser.getResponse("Press <enter> to exit...");
             return;
         }

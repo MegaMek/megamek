@@ -26,7 +26,6 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.VTOL;
 
 /**
  * The attacker punches the target.
@@ -100,7 +99,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         IHex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerHeight = ae.absHeight() + attHex.getElevation();
         final int targetElevation = target.getElevation()
-                + targHex.getElevation();
+        + targHex.getElevation();
         final int targetHeight = targetElevation + target.getHeight();
         final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
                 : Mech.LOC_LARM;
@@ -131,7 +130,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (ae.isLocationBad(armLoc)) {
             return "Arm missing";
         }
-        
+
         //check for no/minimal arms quirk
         if(ae.getQuirks().booleanOption("no_arms")) {
             return "No/minimal arms";
@@ -182,7 +181,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         IHex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerHeight = ae.absHeight() + attHex.getElevation();
         final int targetElevation = target.getElevation()
-                + targHex.getElevation();
+        + targHex.getElevation();
         final int armArc = (arm == PunchAttackAction.RIGHT) ? Compute.ARC_RIGHTARM
                 : Compute.ARC_LEFTARM;
 
@@ -227,7 +226,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
                 || target.getTargetType() == Targetable.TYPE_FUEL_TANK
                 || target instanceof GunEmplacement) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                    "Targeting adjacent building.");
+            "Targeting adjacent building.");
         }
 
         final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
@@ -309,7 +308,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
             multiplier *= 2.0f;
         }
         int toReturn = (int) Math.floor(damage * multiplier)
-                + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
+        + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
         // underwater damage is half, round up (see bug 1110692)
         if (entity.getLocationStatus(armLoc) == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);

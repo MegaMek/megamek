@@ -50,14 +50,14 @@ public class Building implements Serializable {
      * The construction type of the building.
      */
     private int type = Building.UNKNOWN;
-    
+
     /**
      * the class of the building
      */
     private int bldgClass =Building.STANDARD;
-    
+
     private int collapsedHexes = 0;
-    
+
     private int originalHexes = 0;
 
     /**
@@ -75,7 +75,7 @@ public class Building implements Serializable {
      * The current armor of the building hexes.
      */
     private Map<Coords, Integer> armor = new HashMap<Coords, Integer>();
-    
+
     /**
      * The name of the building.
      */
@@ -140,7 +140,7 @@ public class Building implements Serializable {
                         + ", should contain the same class of building as "
                         + this.coordinates.elementAt(0).getBoardNum());
             }
-            
+
         }
         // We passed our tests, add the next hex to this building.
         this.coordinates.addElement(coords);
@@ -152,7 +152,7 @@ public class Building implements Serializable {
         } else {
             this.armor.put(coords,0);
         }
-        
+
         this.burning.put(coords, false);
 
         // Walk through the exit directions and
@@ -181,7 +181,7 @@ public class Building implements Serializable {
     public static final int HEAVY = 3;
     public static final int HARDENED = 4;
     public static final int WALL = 5;
-    
+
     /**
      * Various building types
      */
@@ -215,7 +215,7 @@ public class Building implements Serializable {
         // The building occupies the given coords, at least.
         this.coordinates.addElement(coords);
         originalHexes++;
-        
+
         this.burning.put(coords, false);
 
         // Get the Hex for those coords.
@@ -254,7 +254,7 @@ public class Building implements Serializable {
         } else {
             this.armor.put(coords, 0);
         }
-        
+
         this.phaseCF.putAll(currentCF);
 
         // Walk through the exit directions and
@@ -348,7 +348,7 @@ public class Building implements Serializable {
      */
     public boolean hasCFIn(Coords coords) {
         return this.currentCF.containsKey(coords);
-        
+
     }
     /**
      * Get the coordinates that the building occupies.
@@ -369,7 +369,7 @@ public class Building implements Serializable {
     public int getType() {
         return this.type;
     }
-    
+
     /**
      * Get the building class, per TacOps rules. 
      * @return the <code>int</code> code of the building's classification.
@@ -410,7 +410,7 @@ public class Building implements Serializable {
     public int getArmor(Coords coords) {
         return this.armor.get(coords);
     }
-    
+
     /**
      * Set the current construction factor of the building hex. Call this method
      * immediately when the building sustains any damage.
@@ -430,7 +430,7 @@ public class Building implements Serializable {
 
         this.currentCF.put(coords, cf);
     }
-    
+
     /**
      * Set the construction factor of the building hex for the start of the next
      * phase. Call this method at the end of the phase to apply damage sustained
@@ -451,7 +451,7 @@ public class Building implements Serializable {
 
         this.phaseCF.put(coords, cf);
     }
-    
+
     public void setArmor(int a, Coords coords) {
         if (a < 0) {
             throw new IllegalArgumentException(
@@ -481,19 +481,19 @@ public class Building implements Serializable {
     public static int getDefaultCF(int type) {
         int retval = Building.UNKNOWN;
         switch (type) {
-            case Building.LIGHT:
-                retval = 15;
-                break;
-            case Building.MEDIUM:
-                retval = 40;
-                break;
-            case Building.HEAVY:
-                retval = 90;
-                break;
-            case Building.HARDENED:
-            case Building.WALL:
-                retval = 120;
-                break;
+        case Building.LIGHT:
+            retval = 15;
+            break;
+        case Building.MEDIUM:
+            retval = 40;
+            break;
+        case Building.HEAVY:
+            retval = 90;
+            break;
+        case Building.HARDENED:
+        case Building.WALL:
+            retval = 120;
+            break;
         }
         return retval;
     }
@@ -531,23 +531,23 @@ public class Building implements Serializable {
 
         // Add the building type to the buffer.
         switch (this.getType()) {
-            case Building.LIGHT:
-                buf.append("Light ");
-                break;
-            case Building.MEDIUM:
-                buf.append("Medium ");
-                break;
-            case Building.HEAVY:
-                buf.append("Heavy ");
-                break;
-            case Building.HARDENED:
-                buf.append("Hardened ");
-                break;
-            case Building.WALL:
-                buf.append("");
-                break;
+        case Building.LIGHT:
+            buf.append("Light ");
+            break;
+        case Building.MEDIUM:
+            buf.append("Medium ");
+            break;
+        case Building.HEAVY:
+            buf.append("Heavy ");
+            break;
+        case Building.HARDENED:
+            buf.append("Hardened ");
+            break;
+        case Building.WALL:
+            buf.append("");
+            break;
         }
-        
+
         switch(this.getBldgClass()) {
         case Building.HANGAR:
             buf.append("Hangar ");
@@ -558,9 +558,9 @@ public class Building implements Serializable {
         case Building.GUN_EMPLACEMENT:
             buf.append("Gun Emplacement");
             break;
-       // case Building.CASTLE_BRIAN:
-         //   buf.append("Castle Brian ");
-        //    break;
+            // case Building.CASTLE_BRIAN:
+            //   buf.append("Castle Brian ");
+            //    break;
         default:
             buf.append("Standard ");
         }
@@ -595,7 +595,7 @@ public class Building implements Serializable {
         DemolitionCharge charge = new DemolitionCharge(playerId, damage);
         demolitionCharges.add(charge);
     }
-    
+
     /**
      * Remove one building hex from the building
      * 
@@ -607,15 +607,15 @@ public class Building implements Serializable {
         this.phaseCF.remove(coords);
         collapsedHexes++;
     }
-    
+
     public int getOriginalHexCount() {
         return originalHexes;
     }
-    
+
     public int getCollapsedHexCount() {
         return collapsedHexes;
     }
-    
+
     /**
      * 
      * @return the damage scale multiplier for units passing through this building
@@ -627,13 +627,13 @@ public class Building implements Serializable {
         case Building.FORTRESS:
         case Building.GUN_EMPLACEMENT:
             return 2.0;
-        //case Building.CASTLE_BRIAN:
-          //  return 10.0;
+            //case Building.CASTLE_BRIAN:
+            //  return 10.0;
         default:
             return 1.0;
         }
     }
-    
+
     /**
      * 
      * @return the damage scale multiplier for damage applied to this building (and occupants)
@@ -643,22 +643,22 @@ public class Building implements Serializable {
         case Building.FORTRESS:
         case Building.GUN_EMPLACEMENT:
             return 0.5;
-        //case Building.CASTLE_BRIAN:
-          //  return 0.1;
+            //case Building.CASTLE_BRIAN:
+            //  return 0.1;
         default:
             return 1.0;
         }
     }
-    
+
     /**
      * 
      * @return the amount of damage the building absorbs
      */
     public int getAbsorbtion(Coords pos) {
         //if(getBldgClass() == Building.CASTLE_BRIAN) {
-          //  return (int) Math.ceil(getPhaseCF(pos));
+        //  return (int) Math.ceil(getPhaseCF(pos));
         //}
         return (int) Math.ceil(getPhaseCF(pos) / 10.0);
     }
-    
+
 } // End public class Building implements Serializable

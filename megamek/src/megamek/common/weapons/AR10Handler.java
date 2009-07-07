@@ -39,7 +39,7 @@ public class AR10Handler extends AmmoWeaponHandler {
     public AR10Handler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     /**
      * Calculate the attack value based on range
      * 
@@ -58,7 +58,7 @@ public class AR10Handler extends AmmoWeaponHandler {
         }
         return av;
     }
-    
+
     @Override
     protected int getCapMisMod() {
         int mod = 0;

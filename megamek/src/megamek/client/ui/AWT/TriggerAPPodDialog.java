@@ -106,8 +106,8 @@ public class TriggerAPPodDialog extends Dialog implements ActionListener {
 
         labMessage = new AdvancedLabel(
                 Messages
-                        .getString(
-                                "TriggerAPPodDialog.selectPodsToTrigger", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$ 
+                .getString(
+                        "TriggerAPPodDialog.selectPodsToTrigger", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$ 
 
         // AP Pod checkbox panel.
         Panel panPods = new Panel();
@@ -122,8 +122,8 @@ public class TriggerAPPodDialog extends Dialog implements ActionListener {
                 // Create a checkbox for the pod, and add it to the panel.
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
-                        .append(" ") //$NON-NLS-1$
-                        .append(mount.getName());
+                .append(" ") //$NON-NLS-1$
+                .append(mount.getName());
                 Checkbox pod = new Checkbox(message.toString());
                 panPods.add(pod);
 

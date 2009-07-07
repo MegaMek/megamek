@@ -20,7 +20,7 @@ import java.io.Serializable;
  * Abstract superclass for any action that an entity takes.
  */
 public abstract class AbstractEntityAction implements Serializable,
-        EntityAction {
+EntityAction {
     /**
      * 
      */

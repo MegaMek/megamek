@@ -179,7 +179,7 @@ public final class PhysicalCalculator {
                 Iterator<INarcPod> pod_list = entity.getINarcPodsAttached();
                 best_pod = pod_list.next();
                 for (pod_list = entity.getINarcPodsAttached(); pod_list
-                        .hasNext();) {
+                .hasNext();) {
                     test_ranking = 1.0;
                     test_pod = pod_list.next();
                     // If pod is homing and attacker has no ECM
@@ -381,7 +381,7 @@ public final class PhysicalCalculator {
                     PunchAttackAction.LEFT, targetConvInfantry);
             dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
             double dmg_a = Compute.oddsAbove(odds_a.getValue()) / 100.0
-                    * damage;
+            * damage;
             dmg += dmg_a;
             dmg *= punchThroughMod(to, location_table, target_arc, dmg,
                     dmg / 2.0);
@@ -471,12 +471,12 @@ public final class PhysicalCalculator {
                 // against full target armor
                 if (!game.getBoard().contains(disp_c)) {
                     dmg = to.getTotalArmor()
-                            * Compute.oddsAbove(odds.getValue()) / 100.0;
+                    * Compute.oddsAbove(odds.getValue()) / 100.0;
                 }
                 if (game.getBoard().contains(disp_c)) {
                     // Find the elevation difference
                     elev_diff = game.getBoard().getHex(to.getPosition())
-                            .getElevation();
+                    .getElevation();
                     elev_diff -= game.getBoard().getHex(disp_c).getElevation();
                     if (elev_diff < 0) {
                         elev_diff = 0;
@@ -502,8 +502,8 @@ public final class PhysicalCalculator {
                     // prone
                     if (to.getWalkMP() > 0) {
                         dmg = dmg
-                                * Math.sqrt(1.0 / to.getWalkMP()
-                                        + to.getJumpMP());
+                        * Math.sqrt(1.0 / to.getWalkMP()
+                                + to.getJumpMP());
                     } else {
                         dmg *= Math.max(1.0, Math.sqrt(to.getJumpMP()));
                     }
@@ -532,7 +532,7 @@ public final class PhysicalCalculator {
                 // Modify damage to reflect how bad it is for target to be prone
                 if (to.getWalkMP() > 0) {
                     dmg = dmg
-                            * Math.sqrt(1.0 / to.getWalkMP() + to.getJumpMP());
+                    * Math.sqrt(1.0 / to.getWalkMP() + to.getJumpMP());
                 } else {
                     dmg = dmg * Math.max(1.0, Math.sqrt(to.getJumpMP()));
                 }
@@ -598,7 +598,7 @@ public final class PhysicalCalculator {
         }
 
         damage = KickAttackAction
-                .getDamageFor(from, action, targetConvInfantry);
+        .getDamageFor(from, action, targetConvInfantry);
         dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
         // Adjust damage for targets armor
         dmg *= punchThroughMod(to, locTable, arc, dmg, dmg);
@@ -607,7 +607,7 @@ public final class PhysicalCalculator {
                 .getValue()) / 100.0, from);
         if (from.getWalkMP() > 0) {
             self_damage = self_damage
-                    * Math.sqrt(1.0 / from.getWalkMP() + from.getJumpMP());
+            * Math.sqrt(1.0 / from.getWalkMP() + from.getJumpMP());
         } else {
             self_damage = self_damage * Math.sqrt(from.getJumpMP());
         }
@@ -744,18 +744,18 @@ public final class PhysicalCalculator {
             // Create vector of armor locations
             max_index = 0;
             switch (hitSide) {
-                case ToHitData.SIDE_FRONT:
-                    armor_values[0] = target.getArmor(Tank.LOC_FRONT);
-                    break;
-                case ToHitData.SIDE_RIGHT:
-                    armor_values[0] = target.getArmor(Tank.LOC_RIGHT);
-                    break;
-                case ToHitData.SIDE_LEFT:
-                    armor_values[0] = target.getArmor(Tank.LOC_LEFT);
-                    break;
-                case ToHitData.SIDE_REAR:
-                    armor_values[0] = target.getArmor(Tank.LOC_REAR);
-                    break;
+            case ToHitData.SIDE_FRONT:
+                armor_values[0] = target.getArmor(Tank.LOC_FRONT);
+                break;
+            case ToHitData.SIDE_RIGHT:
+                armor_values[0] = target.getArmor(Tank.LOC_RIGHT);
+                break;
+            case ToHitData.SIDE_LEFT:
+                armor_values[0] = target.getArmor(Tank.LOC_LEFT);
+                break;
+            case ToHitData.SIDE_REAR:
+                armor_values[0] = target.getArmor(Tank.LOC_REAR);
+                break;
             }
             if (!((Tank) target).hasNoTurret()) {
                 max_index++;

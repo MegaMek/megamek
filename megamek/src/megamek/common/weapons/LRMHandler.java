@@ -147,8 +147,8 @@ public class LRMHandler extends MissileWeaponHandler {
         if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS))
-                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+                        MiscType.F_ARTEMIS))
+                        && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);
@@ -167,8 +167,8 @@ public class LRMHandler extends MissileWeaponHandler {
         } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS_V))
-                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+                        MiscType.F_ARTEMIS_V))
+                        && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);
@@ -211,10 +211,10 @@ public class LRMHandler extends MissileWeaponHandler {
             bTargetECMAffected = Compute.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.T_LRM) ||
-                 (atype.getAmmoType() == AmmoType.T_SRM)) ||
-                 ((atype.getAmmoType() == AmmoType.T_MML)
-                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
-                    && ((weapon.curMode() == null) || !weapon.curMode().equals(
+                    (atype.getAmmoType() == AmmoType.T_SRM)) ||
+                    ((atype.getAmmoType() == AmmoType.T_MML)
+                            && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
+                            && ((weapon.curMode() == null) || !weapon.curMode().equals(
                             "Indirect")))) {
                 if (bTargetECMAffected) {
                     // ECM prevents bonus

@@ -52,7 +52,7 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
         this.atClass = CLASS_CAPITAL_MISSILE;
         this.capital = true;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

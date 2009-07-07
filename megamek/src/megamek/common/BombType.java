@@ -35,23 +35,23 @@ public class BombType extends AmmoType {
     public static final int B_NUM     = 15;
 
     public static final String[] bombNames = {"HE Bomb","Cluster Bomb","Laser-guided Bomb",
-                                              "Rocket", "TAG", "AAA Missile", "AS Missile",
-                                              "ASEW Missile", "Arrow IV Missile",
-                                              "Arrow IV Homing Missile", "Inferno Bomb",
-                                              "LAA Missile", "Thunder Bomb", "Torpedo Bomb",
-                                              "Alamo Missile"};
+        "Rocket", "TAG", "AAA Missile", "AS Missile",
+        "ASEW Missile", "Arrow IV Missile",
+        "Arrow IV Homing Missile", "Inferno Bomb",
+        "LAA Missile", "Thunder Bomb", "Torpedo Bomb",
+    "Alamo Missile"};
 
     public static final String[] bombInternalNames = {"HEBomb","ClusterBomb","LGBomb",
-                                                      "RocketBomb", "TAGBomb", "AAAMissile Ammo",
-                                                      "ASMissile Ammo",
-                                                      "ASEWMissile Ammo", "ArrowIVMissile Ammo",
-                                                      "ArrowIVHomingMissile Ammo", "InfernoBomb",
-                                                      "LAAMissile Ammo", "ThunderBomb", "TorpedoBomb",
-                                                      "AlamoMissile Ammo"};
+        "RocketBomb", "TAGBomb", "AAAMissile Ammo",
+        "ASMissile Ammo",
+        "ASEWMissile Ammo", "ArrowIVMissile Ammo",
+        "ArrowIVHomingMissile Ammo", "InfernoBomb",
+        "LAAMissile Ammo", "ThunderBomb", "TorpedoBomb",
+    "AlamoMissile Ammo"};
 
     public static final String[] bombWeaponNames = {null, null, null, "BombRL", "BombTAG", "AAAMissile",
-                                                    "ASMissile", "ASEWMissile", "BombArrowIV", "BombArrowIV",
-                                                    null,"LAAMissile",null,null,"AlamoMissile"};
+        "ASMissile", "ASEWMissile", "BombArrowIV", "BombArrowIV",
+        null,"LAAMissile",null,null,"AlamoMissile"};
 
 
     public static final int[] bombCosts = {1,1,1,1,1,5,6,6,5,5,1,1,1,1,10};

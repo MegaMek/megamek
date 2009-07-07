@@ -99,9 +99,9 @@ public class VibrabombSettingDialog extends Dialog implements ActionListener {
                 AlertDialog ad = new AlertDialog(
                         frame,
                         Messages
-                                .getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
+                        .getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
                         Messages
-                                .getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
+                        .getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
                 ad.setVisible(true);
                 return;
             }
@@ -110,9 +110,9 @@ public class VibrabombSettingDialog extends Dialog implements ActionListener {
                 AlertDialog ad = new AlertDialog(
                         frame,
                         Messages
-                                .getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
+                        .getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
                         Messages
-                                .getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
+                        .getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
                 ad.setVisible(true);
                 return;
             }

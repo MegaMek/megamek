@@ -63,7 +63,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
         }
 
         boolean targetHex = target.getTargetType() == Targetable.TYPE_HEX_CLEAR
-                            || target.getTargetType() == Targetable.TYPE_HEX_IGNITE;
+        || target.getTargetType() == Targetable.TYPE_HEX_IGNITE;
         int missilesHit;
         int nMissilesModifier = 0;
 

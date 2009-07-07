@@ -119,7 +119,7 @@ public class QuadMechEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                            "Couldn't decode the mascTurns for a QuadMech unit.");
+                    "Couldn't decode the mascTurns for a QuadMech unit.");
                 }
 
                 // Try to pull the number from the attribute string
@@ -139,7 +139,7 @@ public class QuadMechEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                            "Couldn't decode mascUsed for a QuadMech unit.");
+                    "Couldn't decode mascUsed for a QuadMech unit.");
                 }
 
                 // If the value is "true", the Mech used MASC.

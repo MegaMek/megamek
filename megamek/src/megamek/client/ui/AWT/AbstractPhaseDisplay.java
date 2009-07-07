@@ -41,7 +41,7 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public abstract class AbstractPhaseDisplay extends Panel implements BoardViewListener,
-        GameListener, Distractable {
+GameListener, Distractable {
 
     /**
      * 

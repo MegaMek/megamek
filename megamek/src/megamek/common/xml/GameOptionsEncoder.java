@@ -46,7 +46,7 @@ public class GameOptionsEncoder {
      * @throws <code>IOException</code> if there's any error on write.
      */
     public static void encode(GameOptions options, Writer output)
-            throws IOException {
+    throws IOException {
         // First, validate our input.
         if (null == options) {
             throw new IllegalArgumentException("The game options is null.");

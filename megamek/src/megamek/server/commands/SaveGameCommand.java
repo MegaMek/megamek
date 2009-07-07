@@ -32,7 +32,7 @@ public class SaveGameCommand extends ServerCommand {
     /** Creates a new instance of SaveGameCommand */
     public SaveGameCommand(Server server) {
         super(server, "save",
-                "Saves the game to a file.  Usage: /save [filename]");
+        "Saves the game to a file.  Usage: /save [filename]");
     }
 
     /**

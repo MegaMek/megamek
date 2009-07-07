@@ -97,7 +97,7 @@ public class ChatterBox implements KeyListener {
                 " \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
         chatArea.setEditable(false);
         playerList = new List(GUIPreferences.getInstance().getInt(
-                "AdvancedChatboxSize"));
+        "AdvancedChatboxSize"));
         inputField = new TextField();
         inputField.addKeyListener(this);
         butDone = new Button(Messages.getString("ChatterBox.ImDone")); //$NON-NLS-1$

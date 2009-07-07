@@ -128,7 +128,7 @@ public class ProtomechEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                            "Couldn't decode hasMainGun for a Protomech unit.");
+                    "Couldn't decode hasMainGun for a Protomech unit.");
                 }
 
                 // If the value is "true", the Proto has a main gun.
@@ -146,7 +146,7 @@ public class ProtomechEncoder {
                 attrStr = child.getAttribute("value");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                            "Couldn't decode the damage for a Protomech unit.");
+                    "Couldn't decode the damage for a Protomech unit.");
                 }
 
                 // Try to pull the number from the attribute string
@@ -161,7 +161,7 @@ public class ProtomechEncoder {
                 attrStr = child.getAttribute("loc");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                            "Couldn't decode the location for a Protomech unit.");
+                    "Couldn't decode the location for a Protomech unit.");
                 }
 
                 // Try to pull the number from the attribute string

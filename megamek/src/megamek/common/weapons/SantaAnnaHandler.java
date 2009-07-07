@@ -39,7 +39,7 @@ public class SantaAnnaHandler extends AmmoWeaponHandler {
         super(t, w, g, s);
         nukeS2S = true;
     }
-    
+
     /**
      * Calculate the attack value based on range
      * 
@@ -49,7 +49,7 @@ public class SantaAnnaHandler extends AmmoWeaponHandler {
     protected int calcAttackValue() {
         return 100;
     }
-    
+
     @Override
     protected int getCapMisMod() {
         return 9;

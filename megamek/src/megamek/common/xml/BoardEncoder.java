@@ -181,14 +181,14 @@ public class BoardEncoder {
                 // There should be only one boardData node.
                 if (null != hexes) {
                     throw new IllegalStateException(
-                            "More than one 'boardData' node in a board node.");
+                    "More than one 'boardData' node in a board node.");
                 }
 
                 // Get the number of boardData.
                 attrStr = child.getAttribute("height");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                            "Couldn't decode the boardData for a board node.");
+                    "Couldn't decode the boardData for a board node.");
                 }
 
                 // Try to pull the height from the attribute string
@@ -210,7 +210,7 @@ public class BoardEncoder {
                 attrStr = child.getAttribute("width");
                 if (null == attrStr) {
                     throw new IllegalStateException(
-                            "Couldn't decode the boardData for a board node.");
+                    "Couldn't decode the boardData for a board node.");
                 }
 
                 // Try to pull the width from the attribute string
@@ -248,7 +248,7 @@ public class BoardEncoder {
                         // Are there too many hex nodes?
                         if (hexes.length == numHexes) {
                             throw new IllegalStateException(
-                                    "Too many hexes in a board node.");
+                            "Too many hexes in a board node.");
                         }
 
                         // Parse out this hex node.
@@ -264,7 +264,7 @@ public class BoardEncoder {
                 // Have we found enough hex nodes?
                 if (numHexes < hexes.length) {
                     throw new IllegalStateException(
-                            "Not enough hexes in a board node.");
+                    "Not enough hexes in a board node.");
                 }
 
             } // End found-"boardData"-node
@@ -282,7 +282,7 @@ public class BoardEncoder {
                         Enumeration<?> details = subnode.elements();
                         while (details.hasMoreElements()) {
                             ParsedXML detail = (ParsedXML) details
-                                    .nextElement();
+                            .nextElement();
 
                             // Have we found the coords detail?
                             if (detail.getName().equals("coords")) {
@@ -296,7 +296,7 @@ public class BoardEncoder {
                                 attrStr = detail.getAttribute("turns");
                                 if (null == attrStr) {
                                     throw new IllegalStateException(
-                                            "Couldn't decode the burn turns for an Arrow IV inferno round.");
+                                    "Couldn't decode the burn turns for an Arrow IV inferno round.");
                                 }
 
                                 // Try to pull the value from the string
@@ -305,7 +305,7 @@ public class BoardEncoder {
                                 } catch (NumberFormatException exp) {
                                     throw new IllegalStateException(
                                             "Couldn't get an integer from "
-                                                    + attrStr);
+                                            + attrStr);
                                 }
 
                                 // Add the number of Arrow IV burn turns.
@@ -321,7 +321,7 @@ public class BoardEncoder {
                                 attrStr = detail.getAttribute("turns");
                                 if (null == attrStr) {
                                     throw new IllegalStateException(
-                                            "Couldn't decode the burn turns for a standard inferno round.");
+                                    "Couldn't decode the burn turns for a standard inferno round.");
                                 }
 
                                 // Try to pull the value from the string
@@ -330,7 +330,7 @@ public class BoardEncoder {
                                 } catch (NumberFormatException exp) {
                                     throw new IllegalStateException(
                                             "Couldn't get an integer from "
-                                                    + attrStr);
+                                            + attrStr);
                                 }
 
                                 // Add the number of standard burn turns.
@@ -344,7 +344,7 @@ public class BoardEncoder {
                         // We *did* find the coords, right?
                         if (null == coords) {
                             throw new IllegalStateException(
-                                    "Couldn't decode the coordinates for an inferno round.");
+                            "Couldn't decode the coordinates for an inferno round.");
                         }
 
                         // Add this inferno tracker to the hashtable.
@@ -375,7 +375,7 @@ public class BoardEncoder {
         // Did we find all needed child nodes?
         if (null == hexes) {
             throw new IllegalStateException(
-                    "Couldn't locate the boardData for a board node.");
+            "Couldn't locate the boardData for a board node.");
         }
 
         // Construct the board.

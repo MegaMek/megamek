@@ -112,7 +112,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find walkingMP block.");
         }
         int engineRating = dataFile.getDataAsInt("walkingMP")[0]
-                * (int) mech.getWeight();
+                                                              * (int) mech.getWeight();
         mech.setEngine(new Engine(engineRating, BLKFile
                 .translateEngineCode(engineCode), engineFlags));
 
@@ -143,7 +143,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
 
         if (dataFile.getDataAsInt("armor").length < 11) {
             System.err
-                    .println("BLKMechFile->Read armor array doesn't match my armor array...");
+            .println("BLKMechFile->Read armor array doesn't match my armor array...");
             throw new EntityLoadingException("Could not find block.");
 
         }
@@ -240,9 +240,9 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     continue;
                 } else if (critName.equalsIgnoreCase("Life Support")) {
                     mech
-                            .setCritical(loc, c, new CriticalSlot(
-                                    CriticalSlot.TYPE_SYSTEM,
-                                    Mech.SYSTEM_LIFE_SUPPORT));
+                    .setCritical(loc, c, new CriticalSlot(
+                            CriticalSlot.TYPE_SYSTEM,
+                            Mech.SYSTEM_LIFE_SUPPORT));
                     continue;
                 } else if (critName.equalsIgnoreCase("Sensors")) {
                     mech.setCritical(loc, c, new CriticalSlot(

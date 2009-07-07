@@ -43,7 +43,7 @@ public class MinefieldEncoder {
      * @throws <code>IOException</code> if there's any error on write.
      */
     public static void encode(Minefield minefield, Writer out)
-            throws IOException {
+    throws IOException {
         // First, validate our input.
         if (null == minefield) {
             throw new IllegalArgumentException("The minefield is null.");

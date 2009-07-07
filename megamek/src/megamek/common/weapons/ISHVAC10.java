@@ -50,5 +50,5 @@ public class ISHVAC10 extends HVACWeapon {
         this.longAV = 10;
         this.maxRange = RANGE_LONG;
     }
-    
+
 }

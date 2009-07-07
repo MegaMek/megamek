@@ -89,18 +89,18 @@ public class INarcPod implements Serializable, Targetable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         switch (type) {
-            case HOMING:
-                buf.append("Homing");
-                break;
-            case ECM:
-                buf.append("ECM");
-                break;
-            case HAYWIRE:
-                buf.append("Haywire");
-                break;
-            case NEMESIS:
-                buf.append("Nemesis");
-                break;
+        case HOMING:
+            buf.append("Homing");
+            break;
+        case ECM:
+            buf.append("ECM");
+            break;
+        case HAYWIRE:
+            buf.append("Haywire");
+            break;
+        case NEMESIS:
+            buf.append("Nemesis");
+            break;
         }
         buf.append(" iNarc pod from Team #").append(team);
         return buf.toString();
@@ -133,7 +133,7 @@ public class INarcPod implements Serializable, Targetable {
     public Coords getPosition() {
         // Hopefully, this will **never** get called.
         throw new IllegalStateException(
-                "Never ask for the coords of an INarcPod.");
+        "Never ask for the coords of an INarcPod.");
     }
 
     public int absHeight() {
@@ -160,7 +160,7 @@ public class INarcPod implements Serializable, Targetable {
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
     }
-    
+
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src);
     }
@@ -172,7 +172,7 @@ public class INarcPod implements Serializable, Targetable {
     public boolean isOffBoard() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborne()
@@ -180,7 +180,7 @@ public class INarcPod implements Serializable, Targetable {
     public boolean isAirborne() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborneVTOL()
@@ -188,8 +188,8 @@ public class INarcPod implements Serializable, Targetable {
     public boolean isAirborneVTOL() {
         return false;
     }
-    
+
     public int getAltitude() {
-    	return 0;
+        return 0;
     }
 }

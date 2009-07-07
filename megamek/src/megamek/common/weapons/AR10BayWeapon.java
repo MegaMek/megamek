@@ -53,7 +53,7 @@ public class AR10BayWeapon extends AmmoBayWeapon {
         this.atClass = CLASS_AR10;
         this.capital = true;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

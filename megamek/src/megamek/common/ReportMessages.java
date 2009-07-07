@@ -25,8 +25,8 @@ public class ReportMessages {
     private static final String BUNDLE_NAME = "megamek.common.report-messages";//$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences()
-                    .getLocale());
+    .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences()
+            .getLocale());
 
     private ReportMessages() {
     }

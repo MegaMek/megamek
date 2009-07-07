@@ -622,4 +622,15 @@ public class SmallCraft extends Aero {
     public boolean isCrewProtected() {
         return isMilitary() && (getOriginalWalkMP() > 4);
     }
+    
+    /**
+     * Return the height of this small craft above the terrain.
+     */
+    @Override
+    public int height() {
+        if(isAirborne()) {
+            return 0;
+        }
+        return 1;
+    }
 }

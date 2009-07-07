@@ -1181,7 +1181,9 @@ Serializable {
             }
             toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
             toHit.append(losMods);
-            toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
+            if(!wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
+            }
             // actuator & sensor damage to attacker
             toHit.append(Compute.getDamageWeaponMods(ae, weapon));
             // heat
@@ -1288,7 +1290,11 @@ Serializable {
 
         //air-to-ground strikes apply a +2 mod
         if(Compute.isAirToGround(ae, target)) {
-            toHit.addModifier(+2, "air to ground strike");
+            if(wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                toHit.addModifier(ae.getAltitude(), "bombing altitude");
+            } else {
+                toHit.addModifier(+2, "air to ground strike");
+            }
         }
 
         //units making air to ground attacks are easier to hit by air-to-air attacks
@@ -2144,6 +2150,9 @@ Serializable {
             }
 
             //if bombing, then can't do other attacks
+            //also for altitude bombing, you must either be the first or be adjacent to a prior one
+            boolean adjacentAltBomb = false;
+            boolean firstAltBomb = true;
             for ( Enumeration<EntityAction> i = game.getActions();
             i.hasMoreElements(); ) {
                 Object o = i.nextElement();
@@ -2159,8 +2168,27 @@ Serializable {
                     if ( (weaponId != prevAttack.getWeaponId()) &&
                             ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
                         return "Already dive bombing";
-                    }                  
+                    } 
+                    if ( (weaponId != prevAttack.getWeaponId()) &&
+                            ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_ALT_BOMB)) {
+                        //if the current attack is not an altitude bombing then return
+                        if(!wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                            return "Already altitude bombing";
+                        } 
+                        firstAltBomb = false;
+                        int distance = prevAttack.getTarget(game).getPosition().distance(target.getPosition());
+                        if(distance == 1) {
+                            adjacentAltBomb = true;
+                        }
+                        if(distance == 0) {
+                            return "already bombing this hex";
+                        }
+                        
+                    }
                 }
+            }
+            if(wtype.hasFlag(WeaponType.F_ALT_BOMB) && !firstAltBomb && !adjacentAltBomb) {
+                return "not adjacent to existing altitude bombing attacks";
             }
         }
 
@@ -2542,12 +2570,12 @@ Serializable {
             return "Weapon can't deliver bombs";
         }
 
-        if(target.getTargetType() == Targetable.TYPE_HEX_DIVE_BOMB 
-                && !wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
-            return "Weapon can't be used to dive bomb";
+        if(target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB 
+                && !wtype.hasFlag(WeaponType.F_DIVE_BOMB) && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+            return "Weapon can't be used to bomb";
         }
 
-        if(wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
+        if(wtype.hasFlag(WeaponType.F_DIVE_BOMB) || wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
             if(ae.getBombs(AmmoType.F_GROUND_BOMB).size() == 0) {
                 return "no bombs left to drop";
             }
@@ -2555,19 +2583,23 @@ Serializable {
                 return "spheroid units cannot make bombing attacks";
             }
             if(!ae.isAirborne()) {
-                return "no dive bombing for grounded units";
+                return "no bombing for grounded units";
             }         
-            if(ae.getAltitude() > 5) {
-                return "no dive bombing above altitude 5";
-            }          
-            if(ae.getAltitude() < 3) {
-                return "no dive bombing below altitude 3";
-            }
-            if(target.getTargetType() != Targetable.TYPE_HEX_DIVE_BOMB) {
-                return "only hexes can be targeted for dive bomb attacks";
+            
+            if(target.getTargetType() != Targetable.TYPE_HEX_AERO_BOMB) {
+                return "only hexes can be targeted for bomb attacks";
             }
             if(!ae.passedThrough(target.getPosition())) {
-                return "dive bombing only possible along flight path";
+                return "bombing only possible along flight path";
+            }
+            
+            if(wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
+                if(ae.getAltitude() > 5) {
+                    return "no dive bombing above altitude 5";
+                }          
+                if(ae.getAltitude() < 3) {
+                    return "no dive bombing below altitude 3";
+                }
             }
         }
 
@@ -2675,7 +2707,7 @@ Serializable {
         }
 
         if(Compute.isAirToGround(ae, target)) {
-            if(ae.getAltitude() > 5) { 
+            if(ae.getAltitude() > 5 && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) { 
                 return "attacker is too high";
             }
             //only certain weapons can be used for air to ground attacks

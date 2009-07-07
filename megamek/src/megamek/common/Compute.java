@@ -1570,8 +1570,8 @@ public class Compute {
         boolean isAboveSmoke = ((entityTarget != null) && (hex != null)) && (entityTarget.absHeight() >= 3);
         ToHitData toHit = new ToHitData();
 
-        if(t.getTargetType() == Targetable.TYPE_HEX_DIVE_BOMB) {
-            //no terrain mods for dive bombing
+        if(t.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) {
+            //no terrain mods for aero bombing
             return toHit;
         }
 

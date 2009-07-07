@@ -843,58 +843,32 @@ KeyListener, ItemListener, ListSelectionListener {
         updateTarget();
     }
 
-    private int[] doSpaceBombing() {
+    private int[] getBombPayload(boolean isSpace, int limit) {
         int[] payload = new int[BombType.B_NUM];
         if (!(ce() instanceof Aero)) {
             return payload;
         }
-        Vector<Mounted> bombs = ce().getBombs(AmmoType.F_SPACE_BOMB);
-        String[] bnames = new String[bombs.size()];
-        for (int i = 0; i < bnames.length; i++) {
-            bnames[i] = bombs.elementAt(i).getDesc();
-        }
-        ChoiceDialog bombsDialog = new ChoiceDialog(
-                clientgui.frame,
-                Messages.getString("FiringDisplay.SpaceBombNumberDialog.title"), //$NON-NLS-1$
-                Messages
-                .getString("FiringDisplay.SpaceBombNumberDialog.message"), //$NON-NLS-1$
-                bnames);
-        bombsDialog.setVisible(true);
-        if (bombsDialog.getAnswer()) {
-            int[] choices = bombsDialog.getChoices();
-            for (int choice : choices) {
-                int type = ((BombType) bombs.elementAt(choice).getType())
-                .getBombType();
-                payload[type] = payload[type] + 1;
+        int[] loadout = ce().getBombLoadout();
+        //this part is ugly, but we need to find any other bombing attacks by this
+        //entity in the attack list and subtract those payloads from the loadout
+        for (EntityAction o : attacks) {
+            if (o instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction) o;
+                if(waa.getEntityId() == ce().getId()) {
+                    int[] priorLoad = waa.getBombPayload();
+                    for(int i = 0; i < priorLoad.length; i++) {
+                        loadout[i] = loadout[i] - priorLoad[i];
+                    }
+                }
             }
         }
-        return payload;
-    }
-
-    private int[] doDiveBombing() {
-        int[] payload = new int[BombType.B_NUM];
-        if (!(ce() instanceof Aero)) {
-            return payload;
-        }
-        Vector<Mounted> bombs = ce().getBombs(AmmoType.F_GROUND_BOMB);
-        String[] bnames = new String[bombs.size()];
-        for (int i = 0; i < bnames.length; i++) {
-            bnames[i] = bombs.elementAt(i).getDesc();
-        }
-        ChoiceDialog bombsDialog = new ChoiceDialog(
-                clientgui.frame,
-                Messages.getString("FiringDisplay.BombNumberDialog.title"), //$NON-NLS-1$
-                Messages
-                .getString("FiringDisplay.BombNumberDialog.message"), //$NON-NLS-1$
-                bnames);
+        BombPayloadDialog bombsDialog = new BombPayloadDialog(
+                clientgui.frame, Messages
+                .getString("FiringDisplay.BombNumberDialog.title"), //$NON-NLS-1$
+                loadout, isSpace, false, limit);
         bombsDialog.setVisible(true);
         if (bombsDialog.getAnswer()) {
-            int[] choices = bombsDialog.getChoices();
-            for (int choice : choices) {
-                int type = ((BombType) bombs.elementAt(choice).getType())
-                .getBombType();
-                payload[type] = payload[type] + 1;
-            }
+            payload = bombsDialog.getChoices();
         }
         return payload;
     }
@@ -963,17 +937,16 @@ KeyListener, ItemListener, ListSelectionListener {
                     .getTargetId(), weaponNum, clientgui.getClient().game);
         }
 
-        // if this is a space bomb attack, then bring up the payload dialog
+        //check for a bomb payload dialog
         if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
-            // if the user cancels, then return
-            int[] payload = doSpaceBombing();
+            int[] payload = getBombPayload(true, -1);
             waa.setBombPayload(payload);
-        }
-
-        //if this is a space bomb attack, then bring up the payload dialog
-        if (mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+        } else if(mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+            int[] payload = getBombPayload(false, -1);
+            waa.setBombPayload(payload);
+        } else if(mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
             // if the user cancels, then return
-            int[] payload = doDiveBombing();
+            int[] payload = getBombPayload(false, 2);
             waa.setBombPayload(payload);
         }
 

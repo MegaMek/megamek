@@ -2681,7 +2681,7 @@ KeyListener {
         BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(
                 clientgui.frame, Messages
                 .getString("MovementDisplay.BombDumpDialog.title"), //$NON-NLS-1$
-                a.getBombChoices(), false, true);
+                a.getBombChoices(), false, true, -1);
         dumpBombsDialog.setVisible(true);
         if (dumpBombsDialog.getAnswer()) {
             int[] bombsDumped = dumpBombsDialog.getChoices();

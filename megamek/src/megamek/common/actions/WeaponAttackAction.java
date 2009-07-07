@@ -212,6 +212,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             Entity oldTarget) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
+        
+        if(!(weapon.getType() instanceof WeaponType)) {
+            return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
+                    "Not a weapon");
+        }
+        
         final WeaponType wtype = (WeaponType) weapon.getType();
         if (exchangeSwarmTarget) {
             // Quick check, is the new target out of range for the weapon?

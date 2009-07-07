@@ -85,6 +85,33 @@ public class BombType extends AmmoType {
         return bombCosts[type];
     }
 
+    public static boolean canGroundBomb(int type) {
+        switch(type) {
+        case B_HE:
+        case B_CLUSTER:
+        case B_LG:
+        case B_INFERNO:
+        case B_THUNDER:
+        case B_TORPEDO:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    public static boolean canSpaceBomb(int type) {
+        switch(type) {
+        case B_HE:
+        case B_CLUSTER:
+        case B_LG:
+        case B_ARROW:
+        case B_HOMING:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
     public int getBombType() {
         return bombType;
     }

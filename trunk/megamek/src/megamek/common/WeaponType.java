@@ -941,6 +941,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new AlamoMissileWeapon());
         EquipmentType.addType(new SpaceBombAttack());
         EquipmentType.addType(new DiveBombAttack());
+        EquipmentType.addType(new AltitudeBombAttack());
 
         // Weapon Bays
         EquipmentType.addType(new LaserBayWeapon());

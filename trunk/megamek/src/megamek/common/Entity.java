@@ -8622,4 +8622,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void setAltitude(int a) {
         this.altitude = a;
     }
+    
+    //produce an int array of the number of bombs of each type based on the current bomblist
+    public int[] getBombLoadout() {
+        int[] loadout = new int[BombType.B_NUM];
+        for(Mounted bomb : getBombs()) {
+            if(bomb.getShotsLeft() > 0 && bomb.getType() instanceof BombType) {
+                int type = ((BombType) bomb.getType()).getBombType();
+                loadout[type] = loadout[type] + 1;
+            }
+        }
+        return loadout;
+    }
 }

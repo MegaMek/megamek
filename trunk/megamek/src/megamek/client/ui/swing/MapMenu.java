@@ -917,8 +917,8 @@ public class MapMenu extends JPopupMenu {
                             menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_BOMB)));
                         }
 
-                        if (hasWeaponFlag(WeaponType.F_DIVE_BOMB)) {
-                            menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_DIVE_BOMB)));
+                        if (hasWeaponFlag(WeaponType.F_DIVE_BOMB) || hasWeaponFlag(WeaponType.F_ALT_BOMB)) {
+                            menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_AERO_BOMB)));
                         }
 
                         if (hasAmmoType(AmmoType.T_ARROW_IV) || hasAmmoType(AmmoType.T_SNIPER) || hasAmmoType(AmmoType.T_CRUISE_MISSILE) || hasAmmoType(AmmoType.T_ALAMO) || hasAmmoType(AmmoType.T_KILLER_WHALE) || hasAmmoType(AmmoType.T_LONG_TOM) || hasAmmoType(AmmoType.T_THUMPER)) {

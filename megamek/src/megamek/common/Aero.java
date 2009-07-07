@@ -1539,7 +1539,7 @@ public class Aero extends Entity
         }
 
         //add in atmospheric effects later
-        if(!game.getBoard().inSpace()) {
+        if(!game.getBoard().inSpace() && isAirborne()) {
             prd.addModifier(+2, "Atmospheric operations");
 
             //check type

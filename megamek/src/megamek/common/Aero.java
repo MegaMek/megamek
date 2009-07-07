@@ -2132,10 +2132,23 @@ public class Aero extends Entity
 
     @Override
     public boolean isHexProhibited(IHex hex) {
-        if(hex.containsTerrain(Terrains.IMPASSABLE)) {
-            return true;
-        }
-        return false;
+    	if(isAirborne()) {
+	        if(hex.containsTerrain(Terrains.IMPASSABLE)) {
+	            return true;
+	        }
+	        return false;
+    	} else {
+    		//grounded aeros have the same prohibitions as wheeled tanks
+    		return hex.containsTerrain(Terrains.WOODS)
+            || hex.containsTerrain(Terrains.ROUGH)
+            || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex
+                    .containsTerrain(Terrains.ICE))
+            || hex.containsTerrain(Terrains.RUBBLE)
+            || hex.containsTerrain(Terrains.MAGMA)
+            || hex.containsTerrain(Terrains.JUNGLE)
+            || (hex.terrainLevel(Terrains.SNOW) > 1)
+            || (hex.terrainLevel(Terrains.GEYSER) == 2);
+    	}
     }
 
     public boolean isSpheroid() {

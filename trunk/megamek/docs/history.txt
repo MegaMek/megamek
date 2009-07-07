@@ -60,6 +60,7 @@ v0.35.4-dev (SVN)
 + grounded aero movement and attacks (no landing or liftoff though)
 + aeros that survive crash on ground map are grounded rather than removed
 + Bug: max elevation change for grounded aeros is 1
++ Bug: grounded aeros have the same terrain prohibitions as wheeled tanks
 
 v0.35.3 (2009-06-27, 20:37 UTC+2)
 + Changed default UI to swing

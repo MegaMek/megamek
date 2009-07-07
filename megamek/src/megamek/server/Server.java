@@ -4275,12 +4275,21 @@ public class Server implements Runnable {
         // ground map yet so remove them
         //TODO: need to change this to allow entities to be on the ground
         if (!entity.isDoomed() && !entity.isDestroyed()) {
-        	entity.setAltitude(0);
-            r = new Report(9393, Report.PUBLIC);
-            r.indent();
-            r.addDesc(entity);
-            vReport.add(r);
-            entity.setDoomed(true);
+        	if(game.getBoard().inAtmosphere()) {
+	            r = new Report(9393, Report.PUBLIC);
+	            r.indent();
+	            r.addDesc(entity);
+	            vReport.add(r);
+	            entity.setDoomed(true);
+        	} else {
+        		//if we are on the ground map, then we are "grounded"
+        		entity.setMovementMode(IEntityMovementMode.WHEELED);
+        		entity.setAltitude(0);
+        		entity.setElevation(0);
+        		((Aero)entity).setCurrentVelocity(0);
+        		((Aero)entity).setNextVelocity(0);
+        	}
+        	
         }
 
         //TODO: check for watery death
@@ -4564,6 +4573,7 @@ public class Server implements Runnable {
         boolean firstStep;
         boolean wasProne;
         boolean fellDuringMovement = false;
+        boolean crashedDuringMovement = false;
         boolean turnOver;
         boolean wigeStartedLanded = false;
         int prevFacing = curFacing;
@@ -4735,6 +4745,7 @@ public class Server implements Runnable {
                                 addReport(processCrash(entity, step.getVelocity(), curPos));
                                 forward = 0;
                                 fellDuringMovement = false;
+                                crashedDuringMovement = true;
                             }
                         }
                         break;
@@ -4846,6 +4857,7 @@ public class Server implements Runnable {
 
                 if(checkCrash(entity, step.getPosition(), step.getAltitude())) {
                     addReport(processCrash(entity, md.getFinalVelocity(), curPos));
+                    crashedDuringMovement = true;
                     // don't do the rest
                     break;
                 }
@@ -5073,6 +5085,7 @@ public class Server implements Runnable {
                 // check for crash
                 if(checkCrash(entity, step.getPosition(), step.getAltitude())) {
                     addReport(processCrash(entity, 0, curPos));
+                    crashedDuringMovement = true;
                     // don't do the rest
                     break;
                 }
@@ -5808,7 +5821,7 @@ public class Server implements Runnable {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
-        if (!sideslipped && !fellDuringMovement) {
+        if (!sideslipped && !fellDuringMovement && !crashedDuringMovement) {
             entity.setElevation(curVTOLElevation);
         }
         entity.setAltitude(curAltitude);
@@ -5903,6 +5916,7 @@ public class Server implements Runnable {
                     // check for crash
                     if(checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
                         addReport(processCrash(entity, md.getFinalVelocity(), curPos));
+                        crashedDuringMovement = true;
                     }
                 }
 

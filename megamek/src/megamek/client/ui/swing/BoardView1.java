@@ -29,9 +29,9 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
@@ -48,12 +48,17 @@ import java.util.Iterator;
 import java.util.TimerTask;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneLayout;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
@@ -135,7 +140,7 @@ import megamek.common.preference.PreferenceManager;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardListener,
-        MouseListener, KeyListener, MechDisplayListener, IPreferenceChangeListener {
+        MouseListener, MechDisplayListener, IPreferenceChangeListener {
 
     private static final long serialVersionUID = -5582195884759007416L;
 
@@ -187,6 +192,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     // scrolly stuff:
     private JScrollPane scrollpane = null;
+    private JScrollBar vbar;
+    private JScrollBar hbar;
 
     // entity sprites
     private ArrayList<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
@@ -280,7 +287,77 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         game.getBoard().addBoardListener(this);
         scheduleRedrawTimer();// call only once
         addMouseListener(this);
-        addKeyListener(this);
+        
+        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD1, 0, false), "scrollSW");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD2, 0, false), "scrollS");      
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD3, 0, false), "scrollSE");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD4, 0, false), "scrollW");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD5, 0, false), "centerOnSelected");      
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD6, 0, false), "scrollE");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD7, 0, false), "scrollNW");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD8, 0, false), "scrollN");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD9, 0, false), "scrollNE");
+        
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false), "scrollS");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false), "scrollN");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), "scrollW");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), "scrollE");
+        
+        ActionMap actionMap = getActionMap();
+        actionMap.put("centerOnSelected", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                //FIXME: Doesn't work right because selected entity is not always current.
+                if (selectedEntity != null) {
+                    centerOnHex(selectedEntity.getPosition());
+                }
+            }
+        });
+        actionMap.put("scrollNW", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
+                vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
+            }
+        });
+        actionMap.put("scrollN", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
+            }
+        });
+        actionMap.put("scrollNE", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
+                vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
+            }
+        });
+        actionMap.put("scrollW", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
+            }
+        });
+        actionMap.put("scrollE", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
+            }
+        });
+        actionMap.put("scrollSW", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
+                vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
+            }
+        });
+        actionMap.put("scrollS", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
+            }
+        });
+        actionMap.put("scrollSE", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
+                vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
+            }
+        });
+        
         MouseMotionListener doScrollRectToVisible = new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -1690,63 +1767,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             }
         }
         return movingSomething;
-    }
-
-    //
-    // KeyListener
-    //
-    public void keyPressed(KeyEvent ke) {
-        JScrollBar vbar = scrollpane.getVerticalScrollBar();
-        JScrollBar hbar = scrollpane.getHorizontalScrollBar();
-        switch (ke.getKeyCode()) {
-        case KeyEvent.VK_NUMPAD7:
-            hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
-            vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
-            break;
-        case KeyEvent.VK_NUMPAD8:
-        case KeyEvent.VK_UP:
-            vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
-            break;
-        case KeyEvent.VK_NUMPAD9:
-            hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
-            vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
-            break;
-        case KeyEvent.VK_NUMPAD1:
-            hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
-            vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
-            break;
-        case KeyEvent.VK_NUMPAD2:
-        case KeyEvent.VK_DOWN:
-            vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
-            break;
-        case KeyEvent.VK_NUMPAD3:
-            hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
-            vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
-            break;
-        case KeyEvent.VK_NUMPAD4:
-        case KeyEvent.VK_LEFT:
-            hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
-            break;
-        case KeyEvent.VK_NUMPAD6:
-        case KeyEvent.VK_RIGHT:
-            hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
-            break;
-        case KeyEvent.VK_NUMPAD5:
-            // center on the selected entity
-            if (selectedEntity != null) {
-                centerOnHex(selectedEntity.getPosition());
-            }
-            break;
-        }
-
-        repaint();
-        return;
-    }
-
-    public void keyReleased(KeyEvent ke) {
-    }
-
-    public void keyTyped(KeyEvent ke) {
     }
 
     //
@@ -4680,6 +4700,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         // IDisplayables that are drawn in fixed positions in the viewport
         // leave artifacts when scrolling
         scrollpane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        
+        vbar = scrollpane.getVerticalScrollBar();
+        hbar = scrollpane.getHorizontalScrollBar();
 
         return scrollpane;
     }

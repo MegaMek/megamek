@@ -651,4 +651,18 @@ public class Dropship extends SmallCraft implements Serializable {
         range = range - getFCSHits() - getSensorHits();
         return range;
     }
+    
+    /**
+     * Return the height of this dropship above the terrain.
+     */
+    @Override
+    public int height() {
+        if(isAirborne()) {
+            return 0;
+        }
+        if(isSpheroid()) {
+            return 10;
+        }
+        return 5;
+    }
 }

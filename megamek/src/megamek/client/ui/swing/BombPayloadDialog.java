@@ -20,8 +20,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -31,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import megamek.client.ui.Messages;
+import megamek.common.BombType;
 
 /**
  * A dialog to determine bomb payload Right now it is just for space bombing
@@ -38,27 +42,22 @@ import megamek.client.ui.Messages;
  * @author suvarov454@sourceforge.net
  * @version $version: $
  */
-public class BombPayloadDialog extends JDialog implements ActionListener {
+public class BombPayloadDialog extends JDialog implements ActionListener, ItemListener {
     /**
      *
      */
     private static final long serialVersionUID = -4629867982571421459L;
 
     private boolean confirm = false;
+    private int limit;
+    private int[] bombs;
 
     private JPanel panButtons = new JPanel();
     private JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
-    private JComboBox b_choice_he;
-    private JComboBox b_choice_cl;
-    private JComboBox b_choice_lg;
-    private JComboBox b_choice_inf;
-    private JComboBox b_choice_mine;
-    private JComboBox b_choice_tag;
-    private JComboBox b_choice_arrow;
-    private JComboBox b_choice_rl;
-    private JComboBox b_choice_alamo;
+    private JComboBox[] b_choices;
+    private JLabel[] b_labels;
 
     /**
      * Create and initialize the dialog.
@@ -77,10 +76,13 @@ public class BombPayloadDialog extends JDialog implements ActionListener {
      *            supposed to be a single choice dialog or support multiple
      *            choices.
      */
-    private void initialize(JFrame parent, String title, int[] bombs,
-            boolean spaceBomb, boolean bombDump) {
+    private void initialize(JFrame parent, String title, int[] b,
+            boolean spaceBomb, boolean bombDump, int lim) {
         super.setResizable(false);
 
+        this.bombs = b;
+        this.limit = lim;
+        
         GridBagLayout gridbag = new GridBagLayout();
         setLayout(gridbag);
 
@@ -89,180 +91,41 @@ public class BombPayloadDialog extends JDialog implements ActionListener {
         c.gridheight = 1;
         c.gridx = 0;
 
-        // add the bomb choices
-        b_choice_he = new JComboBox();
-        b_choice_cl = new JComboBox();
-        b_choice_lg = new JComboBox();
-        b_choice_inf = new JComboBox();
-        b_choice_mine = new JComboBox();
-        b_choice_tag = new JComboBox();
-        b_choice_arrow = new JComboBox();
-        b_choice_rl = new JComboBox();
-        b_choice_alamo = new JComboBox();
-        /*
-         * for (int x = 0; x<=bombs[Aero.BOMB_HE]; x++) {
-         * b_choice_he.add(Integer.toString(x)); }
-         * 
-         * for (int x = 0; x<=bombs[Aero.BOMB_CL]; x++) {
-         * b_choice_cl.add(Integer.toString(x)); }
-         * 
-         * for (int x = 0; x<=bombs[Aero.BOMB_LG]; x++) {
-         * b_choice_lg.add(Integer.toString(x)); }
-         * 
-         * for (int x = 0; x<=bombs[Aero.BOMB_INF]; x++) {
-         * b_choice_inf.add(Integer.toString(x)); }
-         * 
-         * for (int x = 0; x<=bombs[Aero.BOMB_MINE]; x++) {
-         * b_choice_mine.add(Integer.toString(x)); }
-         * 
-         * for (int x = 0; x<=bombs[Aero.BOMB_TAG]; x++) {
-         * b_choice_tag.add(Integer.toString(x)); }
-         * 
-         * for (int x = 0; x<=bombs[Aero.BOMB_ARROW]; x++) {
-         * b_choice_arrow.add(Integer.toString(x)); }
-         * 
-         * for (int x = 0; x<=bombs[Aero.BOMB_RL]; x++) {
-         * b_choice_rl.add(Integer.toString(x)); }
-         * 
-         * for (int x = 0; x<=bombs[Aero.BOMB_ALAMO]; x++) {
-         * b_choice_alamo.add(Integer.toString(x)); }
-         */
-        b_choice_he.setSelectedIndex(0);
-        b_choice_cl.setSelectedIndex(0);
-        b_choice_lg.setSelectedIndex(0);
-        b_choice_inf.setSelectedIndex(0);
-        b_choice_mine.setSelectedIndex(0);
-        b_choice_tag.setSelectedIndex(0);
-        b_choice_arrow.setSelectedIndex(0);
-        b_choice_rl.setSelectedIndex(0);
-        b_choice_alamo.setSelectedIndex(0);
-
-        String heDesc = Messages.getString("CustomMechDialog.labBombHE");
-        JLabel lhe = new JLabel(heDesc);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(lhe, c);
-        add(lhe);
-        c.gridx = 1;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(b_choice_he, c);
-        add(b_choice_he);
-
-        String clDesc = Messages.getString("CustomMechDialog.labBombCL");
-        JLabel lcl = new JLabel(clDesc);
-        c.gridx = 0;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(lcl, c);
-        add(lcl);
-        c.gridx = 1;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(b_choice_cl, c);
-        add(b_choice_cl);
-
-        String lgDesc = Messages.getString("CustomMechDialog.labBombLG");
-        JLabel llg = new JLabel(lgDesc);
-        c.gridx = 0;
-        c.gridy = 2;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(llg, c);
-        add(llg);
-        c.gridx = 1;
-        c.gridy = 2;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(b_choice_lg, c);
-        add(b_choice_lg);
-
-        if (!spaceBomb) {
-
-            String infDesc = Messages.getString("CustomMechDialog.labBombInf");
-            JLabel linf = new JLabel(infDesc);
-            c.gridx = 0;
-            c.gridy = 3;
-            c.anchor = GridBagConstraints.EAST;
-            gridbag.setConstraints(linf, c);
-            add(linf);
-            c.gridx = 1;
-            c.gridy = 3;
-            c.anchor = GridBagConstraints.WEST;
-            gridbag.setConstraints(b_choice_inf, c);
-            add(b_choice_inf);
-
-            String mineDesc = Messages
-            .getString("CustomMechDialog.labBombMine");
-            JLabel lmine = new JLabel(mineDesc);
-            c.gridx = 0;
-            c.gridy = 4;
-            c.anchor = GridBagConstraints.EAST;
-            gridbag.setConstraints(lmine, c);
-            add(lmine);
-            c.gridx = 1;
-            c.gridy = 4;
-            c.anchor = GridBagConstraints.WEST;
-            gridbag.setConstraints(b_choice_mine, c);
-            add(b_choice_mine);
-
-            if (bombDump) {
-
-                String tagDesc = Messages
-                .getString("CustomMechDialog.labBombTAG");
-                JLabel ltag = new JLabel(tagDesc);
-                c.gridx = 2;
-                c.gridy = 0;
-                c.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(ltag, c);
-                add(ltag);
-                c.gridx = 3;
-                c.gridy = 0;
-                c.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(b_choice_tag, c);
-                add(b_choice_tag);
-
-                String arrowDesc = Messages
-                .getString("CustomMechDialog.labBombArrow");
-                JLabel larrow = new JLabel(arrowDesc);
-                c.gridx = 2;
-                c.gridy = 1;
-                c.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(larrow, c);
-                add(larrow);
-                c.gridx = 3;
-                c.gridy = 1;
-                c.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(b_choice_arrow, c);
-                add(b_choice_arrow);
-
-                String rlDesc = Messages
-                .getString("CustomMechDialog.labBombRL");
-                JLabel lrl = new JLabel(rlDesc);
-                c.gridx = 2;
-                c.gridy = 2;
-                c.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(lrl, c);
-                add(lrl);
-                c.gridx = 3;
-                c.gridy = 2;
-                c.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(b_choice_rl, c);
-                add(b_choice_rl);
-
-                String alamoDesc = Messages
-                .getString("CustomMechDialog.labBombAlamo");
-                JLabel lalamo = new JLabel(alamoDesc);
-                c.gridx = 2;
-                c.gridy = 3;
-                c.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(lalamo, c);
-                add(lalamo);
-                c.gridx = 3;
-                c.gridy = 3;
-                c.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(b_choice_alamo, c);
-                add(b_choice_alamo);
+        b_choices = new JComboBox[bombs.length];
+        b_labels = new JLabel[bombs.length];
+        //initialize the bomb choices
+        for(int i = 0; i< bombs.length; i++) {
+            b_choices[i] = new JComboBox();
+            b_labels[i] = new JLabel(BombType.getBombName(i));
+            int max = bombs[i];
+            if(limit > -1 && max > limit) {
+                max = limit;
             }
+            for (int x = 0; x <= max; x++) {
+                b_choices[i].addItem(Integer.toString(x)); 
+            }
+            b_choices[i].setSelectedIndex(0);
+            b_choices[i].addItemListener(this);
+            //only display eligible bomb drops
+            if(spaceBomb && !BombType.canSpaceBomb(i)) {
+                continue;
+            }
+            if(!spaceBomb && !bombDump && !BombType.canGroundBomb(i)) {
+                continue;
+            }
+            if(bombs[i] == 0) {
+                continue;
+            }
+            c.gridx = 0;
+            c.gridy = i;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(b_labels[i], c);
+            add(b_labels[i]);
+            c.gridx = 1;
+            c.gridy = i;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(b_choices[i], c);
+            add(b_choices[i]);
         }
 
         // Allow the player to confirm or abort the choice.
@@ -342,9 +205,9 @@ public class BombPayloadDialog extends JDialog implements ActionListener {
      *            - a <code>boolean</code> that identifies that
      */
     /* package */BombPayloadDialog(JFrame parent, String title, int[] bombs,
-            boolean spaceBomb, boolean bombDump) {
+            boolean spaceBomb, boolean bombDump, int limit) {
         super(parent, title, true);
-        initialize(parent, title, bombs, spaceBomb, bombDump);
+        initialize(parent, title, bombs, spaceBomb, bombDump, limit);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -357,6 +220,43 @@ public class BombPayloadDialog extends JDialog implements ActionListener {
         }
     }
 
+    public void itemStateChanged(ItemEvent ie) {
+
+        if(limit < 0) {
+            return;
+        }
+        
+        int[] current = new int[b_choices.length];
+        for(int i = 0; i < b_choices.length; i++) {
+            current[i] = b_choices[i].getSelectedIndex();
+        }
+
+        //don't factor in your own choice when determining how much is left
+        int[] left = new int[b_choices.length];
+        for(int i = 0; i < left.length; i++) {
+            left[i] = limit;
+            for(int j = 0; j < current.length; j++) {
+                if(i != j) {
+                    left[i] -= current[j];
+                }
+            }
+        }
+
+        for(int i = 0; i < b_choices.length; i++) {
+            b_choices[i].removeItemListener(this);
+            b_choices[i].removeAllItems();
+            int max = bombs[i];
+            if(max > left[i]) {
+                max = left[i];
+            }
+            for (int x = 0; x <= max; x++) {
+                b_choices[i].addItem(Integer.toString(x));
+            }
+            b_choices[i].setSelectedIndex(current[i]);
+            b_choices[i].addItemListener(this);
+        }
+    }
+    
     /**
      * See if the player confirmed a choice.
      * 
@@ -381,18 +281,10 @@ public class BombPayloadDialog extends JDialog implements ActionListener {
 
         int[] choices = null;
         if (confirm) {
-            /*
-             * int[] temp = new int[ Aero.BOMB_NUM ]; temp[Aero.BOMB_HE] =
-             * b_choice_he.getSelectedIndex(); temp[Aero.BOMB_CL] =
-             * b_choice_cl.getSelectedIndex(); temp[Aero.BOMB_LG] =
-             * b_choice_lg.getSelectedIndex(); temp[Aero.BOMB_INF] =
-             * b_choice_inf.getSelectedIndex(); temp[Aero.BOMB_MINE] =
-             * b_choice_mine.getSelectedIndex(); temp[Aero.BOMB_TAG] =
-             * b_choice_tag.getSelectedIndex(); temp[Aero.BOMB_ARROW] =
-             * b_choice_arrow.getSelectedIndex(); temp[Aero.BOMB_RL] =
-             * b_choice_rl.getSelectedIndex(); temp[Aero.BOMB_ALAMO] =
-             * b_choice_alamo.getSelectedIndex(); choices = temp;
-             */
+            choices = new int[b_choices.length];
+            for(int i = 0; i < b_choices.length; i++) {
+                choices[i] = b_choices[i].getSelectedIndex();
+            }
         }
 
         return choices;

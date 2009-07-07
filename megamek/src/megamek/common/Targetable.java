@@ -33,7 +33,7 @@ public interface Targetable extends Serializable {
     public static final int TYPE_FUEL_TANK = 15;
     public static final int TYPE_FUEL_TANK_IGNITE = 16;
     public static final int TYPE_HEX_SCREEN = 17;
-    public static final int TYPE_HEX_DIVE_BOMB = 18;
+    public static final int TYPE_HEX_AERO_BOMB = 18;
 
     public int getTargetType();
 

@@ -138,6 +138,7 @@ public class Aero extends Entity
     //bombs
     public static final String  SPACE_BOMB_ATTACK      = "SpaceBombAttack";
     public static final String  DIVE_BOMB_ATTACK      = "DiveBombAttack";
+    public static final String  ALT_BOMB_ATTACK      = "AltBombAttack";
 
     private int maxBombPoints = 0;
     private int[] bombChoices = new int[BombType.B_NUM];
@@ -667,7 +668,9 @@ public class Aero extends Entity
     @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-        if(mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+        if(mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) 
+                || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB) 
+                || mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
             return Compute.ARC_360;
         }
         int arc = Compute.ARC_NOSE;
@@ -2223,6 +2226,13 @@ public class Aero extends Entity
                 addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK),LOC_NOSE,false);
             } catch (LocationFullException ex) {
                 //throw new LocationFullException(ex.getMessage());
+            }
+            for(int i = 0; i < Math.min(10, getBombs(AmmoType.F_GROUND_BOMB).size()); i++) {
+                try{
+                    addEquipment(EquipmentType.get(ALT_BOMB_ATTACK),LOC_NOSE,false);
+                } catch (LocationFullException ex) {
+                    //throw new LocationFullException(ex.getMessage());
+                }
             }
         }
 

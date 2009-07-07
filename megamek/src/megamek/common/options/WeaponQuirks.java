@@ -32,7 +32,7 @@ public class WeaponQuirks extends AbstractOptions {
      */
     private static final long serialVersionUID = -8455685281028804229L;
     public static final String WPN_QUIRKS = "WeaponQuirks"; //$NON-NLS-1$
-
+  
     public WeaponQuirks() {
         super();
     }
@@ -61,9 +61,9 @@ public class WeaponQuirks extends AbstractOptions {
     protected AbstractOptionsInfo getOptionsInfoImp() {
         return WeaponQuirksInfo.getInstance();
     }
-
+    
     public static boolean isQuirkLegalFor(IOption quirk, Entity en, WeaponType wtype) {
-
+        
         if(en instanceof Tank || en instanceof BattleArmor) {
             if(quirk.getName().equals("imp_cooling")
                     || quirk.getName().equals("poor_cooling")
@@ -71,11 +71,11 @@ public class WeaponQuirks extends AbstractOptions {
                 return false;
             }
         }
-
+        
         if(en instanceof Infantry && !(en instanceof BattleArmor)) {
             return false;
         }
-
+        
         if(wtype.getHeat() == 0) {
             if(quirk.getName().equals("imp_cooling")
                     || quirk.getName().equals("poor_cooling")
@@ -83,11 +83,11 @@ public class WeaponQuirks extends AbstractOptions {
                 return false;
             }
         }
-
-
-
+        
+        
+        
         return true;
-
+        
     }
 
     private static class WeaponQuirksInfo extends AbstractOptionsInfo {
@@ -101,7 +101,7 @@ public class WeaponQuirks extends AbstractOptions {
             super("WeaponQuirksInfo"); //$NON-NLS-1$
         }
     }
-
-
-
+    
+    
+    
 }

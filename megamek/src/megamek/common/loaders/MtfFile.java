@@ -82,10 +82,10 @@ public class MtfFile implements IMechLoader {
     Vector<Mounted> vSplitWeapons = new Vector<Mounted>();
 
     public static final int locationOrder[] = { Mech.LOC_LARM, Mech.LOC_RARM,
-        Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT, Mech.LOC_HEAD,
-        Mech.LOC_LLEG, Mech.LOC_RLEG };
+            Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT, Mech.LOC_HEAD,
+            Mech.LOC_LLEG, Mech.LOC_RLEG };
     public static final int rearLocationOrder[] = { Mech.LOC_LT, Mech.LOC_RT,
-        Mech.LOC_CT };
+            Mech.LOC_CT };
 
     public static final String EMPTY = "-Empty-";
     public static final String ARMORED = "(armored)";
@@ -117,11 +117,11 @@ public class MtfFile implements IMechLoader {
         } catch (StringIndexOutOfBoundsException ex) {
             ex.printStackTrace();
             throw new EntityLoadingException(
-            "StringIndexOutOfBoundsException reading file (format error)");
+                    "StringIndexOutOfBoundsException reading file (format error)");
         } catch (NumberFormatException ex) {
             ex.printStackTrace();
             throw new EntityLoadingException(
-            "NumberFormatException reading file (format error)");
+                    "NumberFormatException reading file (format error)");
         }
     }
 
@@ -224,44 +224,44 @@ public class MtfFile implements IMechLoader {
 
             if (techBase.substring(9).trim().equals("Inner Sphere")) {
                 switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
-                case 1:
-                    mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
-                    break;
-                case 2:
-                    mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-                    break;
-                case 3:
-                    mech.setTechLevel(TechConstants.T_IS_ADVANCED);
-                    break;
-                case 4:
-                    mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
-                    break;
-                case 5:
-                    mech.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
-                    break;
-                default:
-                    throw new EntityLoadingException(
-                            "Unsupported tech level: "
-                            + rulesLevel.substring(12).trim());
+                    case 1:
+                        mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
+                        break;
+                    case 2:
+                        mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                        break;
+                    case 3:
+                        mech.setTechLevel(TechConstants.T_IS_ADVANCED);
+                        break;
+                    case 4:
+                        mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+                        break;
+                    case 5:
+                        mech.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
+                        break;
+                    default:
+                        throw new EntityLoadingException(
+                                "Unsupported tech level: "
+                                        + rulesLevel.substring(12).trim());
                 }
             } else if (techBase.substring(9).trim().equals("Clan")) {
                 switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
-                case 2:
-                    mech.setTechLevel(TechConstants.T_CLAN_TW);
-                    break;
-                case 3:
-                    mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
-                    break;
-                case 4:
-                    mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
-                    break;
-                case 5:
-                    mech.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
-                    break;
-                default:
-                    throw new EntityLoadingException(
-                            "Unsupported tech level: "
-                            + rulesLevel.substring(12).trim());
+                    case 2:
+                        mech.setTechLevel(TechConstants.T_CLAN_TW);
+                        break;
+                    case 3:
+                        mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+                        break;
+                    case 4:
+                        mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
+                        break;
+                    case 5:
+                        mech.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
+                        break;
+                    default:
+                        throw new EntityLoadingException(
+                                "Unsupported tech level: "
+                                        + rulesLevel.substring(12).trim());
                 }
             } else if (techBase.substring(9).trim()
                     .equals("Mixed (IS Chassis)")) {
@@ -278,11 +278,11 @@ public class MtfFile implements IMechLoader {
                 default:
                     throw new EntityLoadingException(
                             "Unsupported tech level: "
-                            + rulesLevel.substring(12).trim());
+                                    + rulesLevel.substring(12).trim());
                 }
                 mech.setMixedTech(true);
             } else if (techBase.substring(9).trim().equals(
-            "Mixed (Clan Chassis)")) {
+                    "Mixed (Clan Chassis)")) {
                 switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                 case 3:
                     mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
@@ -296,12 +296,12 @@ public class MtfFile implements IMechLoader {
                 default:
                     throw new EntityLoadingException(
                             "Unsupported tech level: "
-                            + rulesLevel.substring(12).trim());
+                                    + rulesLevel.substring(12).trim());
                 }
                 mech.setMixedTech(true);
             } else if (techBase.substring(9).trim().equals("Mixed")) {
                 throw new EntityLoadingException(
-                "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+                        "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
             } else {
                 throw new EntityLoadingException("Unsupported tech base: "
                         + techBase.substring(9).trim());
@@ -340,7 +340,7 @@ public class MtfFile implements IMechLoader {
             mech.autoSetInternal();
 
             String thisArmorType = armorType
-            .substring(armorType.indexOf(':') + 1);
+                    .substring(armorType.indexOf(':') + 1);
             if (thisArmorType.indexOf('(') != -1) {
                 if (thisArmorType.toLowerCase().indexOf("clan") != -1) {
                     switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
@@ -395,12 +395,12 @@ public class MtfFile implements IMechLoader {
             }
             for (int x = 0; x < locationOrder.length; x++) {
                 mech.initializeArmor(Integer.parseInt(armorValues[x]
-                                                                  .substring(armorValues[x].indexOf(':')+1)), locationOrder[x]);
+                        .substring(armorValues[x].indexOf(':')+1)), locationOrder[x]);
             }
             for (int x = 0; x < rearLocationOrder.length; x++) {
                 mech.initializeRearArmor(Integer.parseInt(armorValues[x
-                                                                      + locationOrder.length].substring(10)),
-                                                                      rearLocationOrder[x]);
+                        + locationOrder.length].substring(10)),
+                        rearLocationOrder[x]);
             }
 
             // oog, crits.
@@ -433,15 +433,15 @@ public class MtfFile implements IMechLoader {
         } catch (NumberFormatException ex) {
             ex.printStackTrace();
             throw new EntityLoadingException(
-            "NumberFormatException parsing file");
+                    "NumberFormatException parsing file");
         } catch (NullPointerException ex) {
             ex.printStackTrace();
             throw new EntityLoadingException(
-            "NullPointerException parsing file");
+                    "NullPointerException parsing file");
         } catch (StringIndexOutOfBoundsException ex) {
             ex.printStackTrace();
             throw new EntityLoadingException(
-            "StringIndexOutOfBoundsException parsing file");
+                    "StringIndexOutOfBoundsException parsing file");
         }
     }
 
@@ -521,8 +521,8 @@ public class MtfFile implements IMechLoader {
                             // use the existing one
                             mech.addCritical(loc, new CriticalSlot(
                                     CriticalSlot.TYPE_EQUIPMENT, mech
-                                    .getEquipmentNum(m), etype
-                                    .isHittable(), isArmored, m));
+                                            .getEquipmentNum(m), etype
+                                            .isHittable(), isArmored, m));
                             continue;
                         }
                         m = mech.addEquipment(etype, loc, rearMounted);

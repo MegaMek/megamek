@@ -76,7 +76,7 @@ public class ScenarioLoader {
         for (int x = 0, n = m_vDamagePlans.size(); x < n; x++) {
             DamagePlan dp = m_vDamagePlans.elementAt(x);
             System.out
-            .println("Applying damage to " + dp.entity.getShortName());
+                    .println("Applying damage to " + dp.entity.getShortName());
             for (int y = 0; y < dp.nBlocks; y++) {
                 HitData hit = dp.entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         ToHitData.SIDE_FRONT);
@@ -90,9 +90,9 @@ public class ScenarioLoader {
                 SpecDam sd = dp.specificDammage.elementAt(dpspot);
 
                 if (dp.entity.locations() <= sd.loc) // Make sure the the
-                    // location is valid
+                                                        // location is valid
                     System.out
-                    .println("\tInvalid Location Specified " + sd.loc);
+                            .println("\tInvalid Location Specified " + sd.loc);
                 else {
                     // Infantry only take dammage to "internal"
                     if (sd.internal
@@ -100,9 +100,9 @@ public class ScenarioLoader {
                         if (dp.entity.getOInternal(sd.loc) > sd.setArmorTo) {
                             dp.entity.setInternal(sd.setArmorTo, sd.loc);
                             System.out
-                            .println("\tSet Armor Value for (Internal "
-                                    + dp.entity.getLocationName(sd.loc)
-                                    + ") To " + sd.setArmorTo);
+                                    .println("\tSet Armor Value for (Internal "
+                                            + dp.entity.getLocationName(sd.loc)
+                                            + ") To " + sd.setArmorTo);
                             if (sd.setArmorTo == 0) {
                                 // Mark destroy if internal armor is set to zero
                                 System.out.println("\tSection Destoyed "
@@ -114,10 +114,10 @@ public class ScenarioLoader {
                         if (sd.rear && dp.entity.hasRearArmor(sd.loc)) {
                             if (dp.entity.getOArmor(sd.loc, true) > sd.setArmorTo) {
                                 System.out
-                                .println("\tSet Armor Value for (Rear "
-                                        + dp.entity
-                                        .getLocationName(sd.loc)
-                                        + ") To " + sd.setArmorTo);
+                                        .println("\tSet Armor Value for (Rear "
+                                                + dp.entity
+                                                        .getLocationName(sd.loc)
+                                                + ") To " + sd.setArmorTo);
                                 dp.entity.setArmor(sd.setArmorTo, sd.loc, true);
                             }
                         } else {
@@ -186,7 +186,7 @@ public class ScenarioLoader {
                         // Is this a valid slot number?
                         else if (ch.slot < 0
                                 || ch.slot > chp.entity
-                                .getNumberOfCriticals(ch.loc)) {
+                                        .getNumberOfCriticals(ch.loc)) {
                             System.out.println("\n\tInvalid Slot Specified "
                                     + ch.loc + ":" + (ch.slot + 1));
                         }
@@ -201,7 +201,7 @@ public class ScenarioLoader {
                                     + ch.loc + ":" + (ch.slot + 1));
                         } else {
                             System.out
-                            .print("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
+                                    .print("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
                             s.applyCriticalHit(chp.entity, ch.loc, cs, false);
                         }
                     }
@@ -214,7 +214,7 @@ public class ScenarioLoader {
                             CriticalSlot cs = new CriticalSlot(
                                     CriticalSlot.TYPE_SYSTEM, ch.slot + 1);
                             System.out
-                            .print("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
+                                    .print("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
                             s.applyCriticalHit(chp.entity, Entity.NONE, cs,
                                     false);
                         }
@@ -315,7 +315,7 @@ public class ScenarioLoader {
 
         // Read the external game id from the scenario file
         g.setExternalGameId(parseExternalGameId(p));
-
+        
         g.setVictoryContext(new HashMap<String, Object>());
         g.createVictoryConditions();
 
@@ -323,7 +323,7 @@ public class ScenarioLoader {
     }
 
     private Entity[] buildFactionEntities(Properties p, Player player)
-    throws Exception {
+            throws Exception {
         String sFaction = player.getName();
 
         Vector<Entity> vEntities = new Vector<Entity>();
@@ -423,8 +423,8 @@ public class ScenarioLoader {
 
             // Check for deployment
             s = p
-            .getProperty("Unit_" + sFaction + "_" + i
-                    + "_DeploymentRound");
+                    .getProperty("Unit_" + sFaction + "_" + i
+                            + "_DeploymentRound");
             if (null != s) {
                 int round = 0;
 
@@ -445,7 +445,7 @@ public class ScenarioLoader {
                 if (round > 0) {
                     if (player.getStartingPos() == 0) {
                         throw new Exception(
-                        "Can not combine a starting position of 'any' with delayed deployment.");
+                                "Can not combine a starting position of 'any' with delayed deployment.");
                     }
 
                     System.out.println(e.getDisplayName()
@@ -468,10 +468,10 @@ public class ScenarioLoader {
             }
             System.out.println("Loading " + ms.getName());
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName())
-            .getEntity();
+                    .getEntity();
             e
-            .setCrew(new Pilot(st.nextToken(), Integer.parseInt(st
-                    .nextToken()), Integer.parseInt(st.nextToken())));
+                    .setCrew(new Pilot(st.nextToken(), Integer.parseInt(st
+                            .nextToken()), Integer.parseInt(st.nextToken())));
             try {
                 String direction = st.nextToken();
                 if (direction.equalsIgnoreCase("N")) {
@@ -648,7 +648,7 @@ public class ScenarioLoader {
         int cf = 0;
         if (p.getProperty("BridgeCF") == null) {
             System.out
-            .println("No CF for bridges defined. Using map file defaults.");
+                    .println("No CF for bridges defined. Using map file defaults.");
         } else {
             cf = Integer.parseInt(p.getProperty("BridgeCF"));
             System.out.println("Overriding map-defined bridge CFs with " + cf
@@ -663,7 +663,7 @@ public class ScenarioLoader {
         for (int i = 0; i < fileList.length; i++) {
             if (fileList[i].endsWith(".board")) {
                 vBoards.addElement(fileList[i].substring(0, fileList[i]
-                                                                     .lastIndexOf(".board")));
+                        .lastIndexOf(".board")));
             }
         }
 

@@ -26,7 +26,7 @@ public class BotConfiguration {
             BotProperties.load(new FileInputStream("mmconf/bot.properties")); //$NON-NLS-1$
         } catch (Exception e) {
             System.out
-            .println("Bot properties could not be loaded, will use defaults"); //$NON-NLS-1$
+                    .println("Bot properties could not be loaded, will use defaults"); //$NON-NLS-1$
         }
     }
 
@@ -63,7 +63,7 @@ public class BotConfiguration {
     public boolean isDebug() {
         try {
             if ("true".equalsIgnoreCase(BotProperties.getProperty("Debug",
-            "false"))) {
+                    "false"))) {
                 return true;
             }
             return false;

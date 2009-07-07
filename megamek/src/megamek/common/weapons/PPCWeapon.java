@@ -34,10 +34,10 @@ public abstract class PPCWeapon extends EnergyWeapon {
     public PPCWeapon() {
         super();
         this.flags |= F_PPC | F_DIRECT_FIRE;
-
+        
         this.atClass = CLASS_PPC;
     }
-
+    
     /*
      * (non-Javadoc)
      * 

@@ -32,5 +32,5 @@ public class WeaponResult implements Serializable {
     public boolean revertsToSingleShot = false;
     public boolean amsEngaged = false;
     public Coords artyAttackerCoords = null; // HACK. Someone do something
-    // much neater, PLEASE.
+                                                // much neater, PLEASE.
 }

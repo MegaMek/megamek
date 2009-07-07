@@ -22,6 +22,7 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -39,6 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
@@ -56,7 +58,7 @@ import megamek.common.options.IOptionGroup;
  * @author Ben
  */
 public class GameOptionsDialog extends JDialog implements ActionListener,
-DialogOptionListener {
+        DialogOptionListener {
 
     /**
      *
@@ -74,7 +76,7 @@ DialogOptionListener {
     private JTabbedPane panOptions = new JTabbedPane();
     private JScrollPane scrOptions;
     private JPanel groupPanel;
-
+    
     private JPanel panPassword = new JPanel();
     private JLabel labPass = new JLabel(Messages
             .getString("GameOptionsDialog.Password")); //$NON-NLS-1$
@@ -162,7 +164,7 @@ DialogOptionListener {
         Vector<IBasicOption> changed = new Vector<IBasicOption>();
 
         for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             DialogOptionComponent comp = i.nextElement();
 
             if (comp.hasChanged()) {
@@ -183,7 +185,7 @@ DialogOptionListener {
         Vector<IBasicOption> output = new Vector<IBasicOption>();
 
         for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             DialogOptionComponent comp = i.nextElement();
             IBasicOption option = comp.changedOption();
             output.addElement(option);
@@ -193,7 +195,7 @@ DialogOptionListener {
 
     private void resetToDefaults() {
         for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             DialogOptionComponent comp = i.nextElement();
             comp.resetToDefault();
         }
@@ -204,13 +206,13 @@ DialogOptionListener {
         optionComps = new Vector<DialogOptionComponent>();
 
         for (Enumeration<IOptionGroup> i = options.getGroups(); i
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
             addGroup(group);
 
             for (Enumeration<IOption> j = group.getOptions(); j
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 IOption option = j.nextElement();
 
                 addOption(option);
@@ -328,7 +330,7 @@ DialogOptionListener {
             boolean state) {
         if ("inf_move_even".equals(option.getName())) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("inf_deploy_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(state);
@@ -344,7 +346,7 @@ DialogOptionListener {
         }
         if ("inf_move_multi".equals(option.getName())) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("inf_move_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
@@ -356,7 +358,7 @@ DialogOptionListener {
         }
         if ("inf_move_later".equals(option.getName())) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("inf_move_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
@@ -368,7 +370,7 @@ DialogOptionListener {
         }
         if ("protos_move_even".equals(option.getName())) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("protos_deploy_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(state);
@@ -384,7 +386,7 @@ DialogOptionListener {
         }
         if ("protos_move_multi".equals(option.getName())) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("protos_move_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
@@ -396,7 +398,7 @@ DialogOptionListener {
         }
         if ("protos_move_later".equals(option.getName())) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("protos_move_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
@@ -408,7 +410,7 @@ DialogOptionListener {
         }
         if (option.getName().equals("individual_initiative")) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("protos_deploy_even")) { //$NON-NLS-1$
                     comp_i.setEditable(false);
@@ -446,7 +448,7 @@ DialogOptionListener {
         }
         if ("vacuum".equals(option.getName())) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("fire".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
@@ -456,7 +458,7 @@ DialogOptionListener {
         }
         if ("tacops_hull_down".equals(option.getName())) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("tacops_falling_expanded".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(state);
@@ -466,7 +468,7 @@ DialogOptionListener {
         }
         if ("double_blind".equals(option.getName())) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("visibility".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(state);
@@ -475,7 +477,7 @@ DialogOptionListener {
         }
         if ("tacops_dead_zones".equals(option.getName())) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("tacops_LOS1".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
@@ -485,7 +487,7 @@ DialogOptionListener {
         }
         if ("tacops_LOS1".equals(option.getName())) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("tacops_dead_zones".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
@@ -538,7 +540,7 @@ DialogOptionListener {
 
         // Set enabled state of all of the option components in the dialog.
         for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             DialogOptionComponent comp = i.nextElement();
             comp.setEditable(editable);
         }

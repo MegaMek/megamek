@@ -94,7 +94,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             if (ae.equals(te)) {
                 return "You can't target yourself";
             }
-
+            
             //can't target airborne aeros
             if(te.isAirborne()) {
                 return "can't target airborne aero units";
@@ -107,7 +107,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
             if ( (ae.getGrappled() != Entity.NONE) &&
                     (ae.getGrappleSide() == Entity.GRAPPLE_BOTH) ) {
-                return "Locked in Grapple";
+                    return "Locked in Grapple";
 
             }
 
@@ -146,7 +146,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
     protected static void setCommonModifiers(ToHitData toHit, IGame game,
             Entity ae, Targetable target) {
         boolean inSameBuilding = (target instanceof Entity) && (game.getBoard().getBuildingAt(ae.getPosition()) != null)
-        && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(target.getPosition()));
+                && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(target.getPosition()));
         int attackerId = ae.getId();
         int targetId = target.getTargetId();
         // Battle Armor targets are hard for Meks and Tanks to hit.
@@ -177,11 +177,11 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                     Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                        "Sensors Completely Destroyed for Torso-Mounted Cockpit");
                 return;
             } else if (sensorHits == 2) {
                 toHit.addModifier(4,
-                "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                        "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
 

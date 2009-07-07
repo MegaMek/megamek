@@ -67,7 +67,7 @@ import megamek.common.event.GameTurnChangeEvent;
  */
 
 public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
-KeyListener, ItemListener, ListSelectionListener {
+        KeyListener, ItemListener, ListSelectionListener {
     /**
      * 
      */
@@ -294,7 +294,7 @@ KeyListener, ItemListener, ListSelectionListener {
 
                 // Walk through the list of entities for this player.
                 for (int nextId = clientgui.getClient().getNextEntityNum(en); nextId != en; nextId = clientgui.getClient()
-                .getNextEntityNum(nextId)) {
+                        .getNextEntityNum(nextId)) {
 
                     if (null != clientgui.getClient().game.getEntity(nextId).getPosition()) {
                         cen = nextId;
@@ -306,8 +306,8 @@ KeyListener, ItemListener, ListSelectionListener {
                 // We were *supposed* to have found an on-board entity.
                 if (null == ce().getPosition()) {
                     System.err
-                    .println("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
-                            en);
+                            .println("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
+                                    en);
                     return;
                 }
 
@@ -337,7 +337,7 @@ KeyListener, ItemListener, ListSelectionListener {
             setFireModeEnabled(true);
         } else {
             System.err
-            .println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
+                    .println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
     }
 
@@ -442,14 +442,14 @@ KeyListener, ItemListener, ListSelectionListener {
         // notify the player
         if (m.canInstantSwitch(nMode)) {
             clientgui
-            .systemMessage(Messages
-                    .getString(
-                            "FiringDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName() })); //$NON-NLS-1$
+                    .systemMessage(Messages
+                            .getString(
+                                    "FiringDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName() })); //$NON-NLS-1$
         } else {
             clientgui
-            .systemMessage(Messages
-                    .getString(
-                            "FiringDisplay.willSwitch", new Object[] { m.getName(), m.pendingMode().getDisplayableName() })); //$NON-NLS-1$
+                    .systemMessage(Messages
+                            .getString(
+                                    "FiringDisplay.willSwitch", new Object[] { m.getName(), m.pendingMode().getDisplayableName() })); //$NON-NLS-1$
         }
 
         updateTarget();
@@ -466,9 +466,9 @@ KeyListener, ItemListener, ListSelectionListener {
                 && GUIPreferences.getInstance().getNagForNoAction()) {
             // comfirm this action
             String title = Messages
-            .getString("TargetingPhaseDisplay.DontFireDialog.title"); //$NON-NLS-1$
+                    .getString("TargetingPhaseDisplay.DontFireDialog.title"); //$NON-NLS-1$
             String body = Messages
-            .getString("TargetingPhaseDisplay.DontFireDialog.message"); //$NON-NLS-1$
+                    .getString("TargetingPhaseDisplay.DontFireDialog.message"); //$NON-NLS-1$
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForNoAction(false);
@@ -500,7 +500,7 @@ KeyListener, ItemListener, ListSelectionListener {
         // validate
         if (ce() == null || target == null) {
             throw new IllegalArgumentException(
-            "current searchlight parameters are invalid"); //$NON-NLS-1$
+                    "current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
         if (!SearchlightAttackAction.isPossible(clientgui.getClient().game, cen, target, null)) {
@@ -534,7 +534,7 @@ KeyListener, ItemListener, ListSelectionListener {
         if (ce() == null || target == null || mounted == null
                 || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException(
-            "current fire parameters are invalid"); //$NON-NLS-1$
+                    "current fire parameters are invalid"); //$NON-NLS-1$
         }
 
         // declare searchlight, if possible
@@ -684,7 +684,7 @@ KeyListener, ItemListener, ListSelectionListener {
             clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
 
             clientgui.mechD.wPan.wRangeR
-            .setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
+                    .setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
@@ -899,7 +899,7 @@ KeyListener, ItemListener, ListSelectionListener {
         if (clientgui.getClient().isMyTurn() && b.getCoords() != null && ce() != null
                 && !b.getCoords().equals(ce().getPosition())) {
             boolean friendlyFire = clientgui.getClient().game.getOptions().booleanOption(
-            "friendly_fire"); //$NON-NLS-1$
+                    "friendly_fire"); //$NON-NLS-1$
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());

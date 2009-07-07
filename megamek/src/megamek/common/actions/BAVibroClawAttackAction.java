@@ -87,43 +87,43 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "off board");
         }
         boolean inSameBuilding = (te != null) && (game.getBoard().getBuildingAt(ae.getPosition()) != null)
-        && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
+            && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
 
         ToHitData toHit;
 
         // can't target yourself
         if ((te != null) && ae.equals(te)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "You can't target yourself");
+                    "You can't target yourself");
         }
 
         // only BA can make this attack
         if (!(ae instanceof BattleArmor)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Non-BA can't make vibroclaw-physicalattacks");
+                    "Non-BA can't make vibroclaw-physicalattacks");
         }
 
         if ((te != null) && !((te instanceof Infantry))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "can't target non-infantry");
+                    "can't target non-infantry");
         }
 
         // need to have vibroclaws to make this attack
         if (ae.getVibroClaws() == 0) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "no vibro claws mounted");
+                    "no vibro claws mounted");
         }
 
         // Can't target a transported entity.
         if ((te != null) && (Entity.NONE != te.getTransportId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target is a passenger.");
+                    "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
         if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target is swarming a Mek.");
+                    "Target is swarming a Mek.");
         }
 
         // check range
@@ -135,13 +135,13 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         // check elevation
         if ((te != null) && (te.getElevation() > 0)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target elevation not in range");
+                    "Target elevation not in range");
         }
 
         // can't physically attack mechs making dfa attacks
         if ((te != null) && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Target is making a DFA attack");
+                    "Target is making a DFA attack");
         }
 
         // Can't target woods or ignite a building with a physical.

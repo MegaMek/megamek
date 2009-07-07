@@ -39,7 +39,7 @@ import java.util.Map;
 import megamek.client.ui.Messages;
 
 public class UnitFailureDialog extends Dialog implements ActionListener,
-ItemListener, KeyListener {
+        ItemListener, KeyListener {
 
     /**
      * 

@@ -33,7 +33,7 @@ import megamek.client.ui.Messages;
  * A simple prompt.
  */
 public class Slider extends Dialog implements ActionListener,
-AdjustmentListener {
+        AdjustmentListener {
 
     /**
      *
@@ -45,7 +45,7 @@ AdjustmentListener {
     private Label lblText = new Label();
     private boolean ok = false;
     private Label minText = new Label(), maxText = new Label(),
-    curText = new Label();
+            curText = new Label();
 
     public Slider(Frame parent, String title, String question,
             int defaultValue, int min, int max) {

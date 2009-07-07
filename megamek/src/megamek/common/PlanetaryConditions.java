@@ -31,7 +31,7 @@ public class PlanetaryConditions implements Serializable {
     public static final int L_MOONLESS     = 3;
     public static final int L_PITCH_BLACK  = 4;
     private static String[] lightNames = { "Daylight", "Dusk", "Full Moon Night", "Moonless Night",
-    "Pitch Black"};
+                                           "Pitch Black"};
     public static final int L_SIZE = lightNames.length;
 
     //Weather
@@ -48,8 +48,8 @@ public class PlanetaryConditions implements Serializable {
     public static final int WE_LIGHT_HAIL  = 10;
     public static final int WE_HEAVY_HAIL  = 11;
     private static String[] weatherNames = { "Clear", "Light Rain", "Moderate Rain", "Heavy Rain", "Torrential Downpour",
-        "Light Snowfall", "Moderate Snowfall", "Heavy Snowfall", "Sleet", "Ice Storm"};//,
-    //"Light Hail", "Heavy Hail"};
+                                             "Light Snowfall", "Moderate Snowfall", "Heavy Snowfall", "Sleet", "Ice Storm"};//,
+                                             //"Light Hail", "Heavy Hail"};
     public static final int WE_SIZE = weatherNames.length;
 
     //Wind
@@ -171,7 +171,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public String getWindDirName() {
-        return dirNames[windDirection];
+            return dirNames[windDirection];
     }
 
     public String getLightCurrentName() {
@@ -314,7 +314,7 @@ public class PlanetaryConditions implements Serializable {
             if((en instanceof VTOL) || (en.getMovementMode() == IEntityMovementMode.WIGE)) {
                 penalty = 1;
             }
-        break;
+            break;
         case (WI_STRONG_GALE):
             if((en instanceof VTOL) || (en.getMovementMode() == IEntityMovementMode.WIGE)
                     || (en.getMovementMode() == IEntityMovementMode.HOVER)) {
@@ -323,7 +323,7 @@ public class PlanetaryConditions implements Serializable {
             else if((en instanceof Mech) || (en.isAirborne())) {
                 penalty = 1;
             }
-        break;
+            break;
         case (WI_STORM):
             if((en instanceof VTOL) || (en instanceof Mech) || (en.getMovementMode() == IEntityMovementMode.WIGE)
                     || (en.getMovementMode() == IEntityMovementMode.HOVER)) {
@@ -332,13 +332,13 @@ public class PlanetaryConditions implements Serializable {
             else if(en.isAirborne()) {
                 penalty = 2;
             }
-        break;
+            break;
         case (WI_TORNADO_F13):
             penalty = 3;
-        break;
+            break;
         case (WI_TORNADO_F4):
             penalty = 5;
-        break;
+            break;
         default:
             penalty = 0;
         }
@@ -353,11 +353,11 @@ public class PlanetaryConditions implements Serializable {
         } else if (shiftWindDirection) {
             // Wind direction changes on a roll of 1 or 6
             switch (Compute.d6()) {
-            case 1: // rotate clockwise
-                windDirection = (windDirection + 1) % 6;
-                break;
-            case 6: // rotate counter-clockwise
-                windDirection = (windDirection + 5) % 6;
+                case 1: // rotate clockwise
+                    windDirection = (windDirection + 1) % 6;
+                    break;
+                case 6: // rotate counter-clockwise
+                    windDirection = (windDirection + 5) % 6;
             }
         }
         if (shiftWindStrength) {
@@ -419,19 +419,19 @@ public class PlanetaryConditions implements Serializable {
         case(WE_LIGHT_RAIN):
         case(WE_LIGHT_SNOW):
             roll = roll + 1;
-        break;
+            break;
         case(WE_HEAVY_HAIL):
         case(WE_MOD_RAIN):
         case(WE_MOD_SNOW):
             roll = roll + 2;
-        break;
+            break;
         case(WE_HEAVY_RAIN):
         case(WE_HEAVY_SNOW):
             roll = roll + 3;
-        break;
+            break;
         case(WE_DOWNPOUR):
             roll = roll + 4;
-        break;
+            break;
         default:
             roll = -1;
         }
@@ -440,7 +440,7 @@ public class PlanetaryConditions implements Serializable {
             return true;
         }
 
-        return false;
+          return false;
     }
 
     /**
@@ -504,12 +504,12 @@ public class PlanetaryConditions implements Serializable {
                             || en.getMovementMode() == IEntityMovementMode.INF_JUMP)) {
                 mod -= 1;
             }
-        break;
+            break;
         case (WI_MOD_GALE):
             if((en instanceof Infantry) && !(en instanceof BattleArmor)) {
                 mod -= 1;
             }
-        break;
+            break;
         case (WI_STRONG_GALE):
         case (WI_STORM):
             if(en instanceof BattleArmor) {
@@ -518,7 +518,7 @@ public class PlanetaryConditions implements Serializable {
             else if(en instanceof Infantry) {
                 mod -= 2;
             }
-        break;
+            break;
         case (WI_TORNADO_F13):
             if(en.isAirborne()) {
                 mod -= 1;
@@ -526,7 +526,7 @@ public class PlanetaryConditions implements Serializable {
             else {
                 mod -= 2;
             }
-        break;
+            break;
         }
 
         //weather mods (clarified in an email exchange with TPTB)
@@ -535,17 +535,17 @@ public class PlanetaryConditions implements Serializable {
             if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || (en instanceof Aero && !en.isAirborne())) {
                 mod -= 1;
             }
-        break;
+            break;
         case(WE_MOD_SNOW):
             if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || (en instanceof Aero && !en.isAirborne())) {
                 mod -= 2;
             }
-        break;
+            break;
         case(WE_HEAVY_SNOW):
             if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || (en instanceof Aero && !en.isAirborne())) {
                 mod -= 3;
             }
-        break;
+            break;
         }
 
         //atmospheric pressure mods
@@ -556,7 +556,7 @@ public class PlanetaryConditions implements Serializable {
                     || (en.getMovementMode() == IEntityMovementMode.VTOL)) {
                 mod -= 2;
             }
-        break;
+            break;
         case(ATMO_HIGH):
         case(ATMO_VHIGH):
             if((en.getMovementMode() == IEntityMovementMode.HOVER)
@@ -564,7 +564,7 @@ public class PlanetaryConditions implements Serializable {
                     || (en.getMovementMode() == IEntityMovementMode.VTOL)) {
                 mod += 1;
             }
-        break;
+            break;
         }
 
         //temperature difference
@@ -591,8 +591,8 @@ public class PlanetaryConditions implements Serializable {
         if((windStrength == WI_TORNADO_F13)
                 && (((en instanceof Infantry) && !(en instanceof BattleArmor))
                         || ((en.getMovementMode() == IEntityMovementMode.HOVER)
-                                || (en.getMovementMode() == IEntityMovementMode.WIGE)
-                                || (en.getMovementMode() == IEntityMovementMode.VTOL)))) {
+                    || (en.getMovementMode() == IEntityMovementMode.WIGE)
+                    || (en.getMovementMode() == IEntityMovementMode.VTOL)))) {
             return "tornado";
         }
         if((windStrength == WI_STORM) && ((en instanceof Infantry) && !(en instanceof BattleArmor))) {

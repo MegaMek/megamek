@@ -24,8 +24,8 @@ public class Messages {
     private static final String BUNDLE_NAME = "megamek.client.messages";//$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-    .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences()
-            .getLocale());
+            .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences()
+                    .getLocale());
 
     private Messages() {
     }

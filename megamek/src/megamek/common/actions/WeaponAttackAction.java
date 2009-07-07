@@ -73,7 +73,7 @@ import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
  * Represents intention to fire a weapon at the target.
  */
 public class WeaponAttackAction extends AbstractAttackAction implements
-Serializable {
+        Serializable {
     /**
      *
      */
@@ -157,19 +157,19 @@ Serializable {
     public int getOtherAttackInfo() {
         return otherAttackInfo;
     }
-
+    
     public boolean isAirToGround(IGame game) {
         return Compute.isAirToGround(getEntity(game), getTarget(game));
     }
-
+    
     public boolean isAirToAir(IGame game) {
         return Compute.isAirToAir(getEntity(game), getTarget(game));
     }
-
+    
     public boolean isGroundToAir(IGame game) {
         return Compute.isGroundToAir(getEntity(game), getTarget(game));
     }
-
+    
     public int getAltitudeLoss(IGame game) {
         if(isAirToGround(game)) {
             if(((WeaponType)getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_DIVE_BOMB)) {
@@ -193,8 +193,8 @@ Serializable {
     public static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId) {
         return WeaponAttackAction
-        .toHit(game, attackerId, target, weaponId, Entity.LOC_NONE,
-                IAimingModes.AIM_MODE_NONE, false, false, null);
+                .toHit(game, attackerId, target, weaponId, Entity.LOC_NONE,
+                        IAimingModes.AIM_MODE_NONE, false, false, null);
     }
 
     public static ToHitData toHit(IGame game, int attackerId,
@@ -212,12 +212,12 @@ Serializable {
             Entity oldTarget) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
-
+        
         if(!(weapon.getType() instanceof WeaponType)) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
                     "Not a weapon");
         }
-
+        
         final WeaponType wtype = (WeaponType) weapon.getType();
         if (exchangeSwarmTarget) {
             // Quick check, is the new target out of range for the weapon?
@@ -225,7 +225,7 @@ Serializable {
                     target.getPosition()), wtype.getRanges(weapon), game
                     .getOptions().booleanOption("tacops_range")) == RangeType.RANGE_OUT) {
                 return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
-                "swarm target out of range");
+                        "swarm target out of range");
             }
             // this is a swarm attack against a new target
             // first, exchange old and new targets to get all mods
@@ -245,7 +245,7 @@ Serializable {
         // 2003-01-02 BattleArmor MG and Small Lasers have unlimited ammo.
         // 2002-09-16 Infantry weapons have unlimited ammo.
         final boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA)
-        && !isWeaponInfantry;
+                && !isWeaponInfantry;
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
@@ -254,23 +254,23 @@ Serializable {
             bMekStealthActive = ae.isStealthActive();
         }
         boolean isIndirect = wtype.hasModes()
-        && weapon.curMode().equals("Indirect");
+                && weapon.curMode().equals("Indirect");
         boolean isInferno = ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_SRM) || (atype
                         .getAmmoType() == AmmoType.T_MML))
-                        && (atype.getMunitionType() == AmmoType.M_INFERNO))
-                        || (isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO)));
+                && (atype.getMunitionType() == AmmoType.M_INFERNO))
+                || (isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO)));
         boolean isArtilleryDirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
-        && (game.getPhase() == IGame.Phase.PHASE_FIRING);
+                && (game.getPhase() == IGame.Phase.PHASE_FIRING);
         boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
-        && ((game.getPhase() == IGame.Phase.PHASE_TARGETING) || (game
-                .getPhase() == IGame.Phase.PHASE_OFFBOARD));
+                && ((game.getPhase() == IGame.Phase.PHASE_TARGETING) || (game
+                        .getPhase() == IGame.Phase.PHASE_OFFBOARD));
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect
-        && (target.getTargetType() == Targetable.TYPE_ENTITY)
-        && (te.getMovementMode() == IEntityMovementMode.VTOL)
-        && (te.getElevation() > 0)
-        && (usesAmmo && (atype.getMunitionType() == AmmoType.M_STANDARD));
+                && (target.getTargetType() == Targetable.TYPE_ENTITY)
+                && (te.getMovementMode() == IEntityMovementMode.VTOL)
+                && (te.getElevation() > 0)
+                && (usesAmmo && (atype.getMunitionType() == AmmoType.M_STANDARD));
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
         // for attacks where ECM along flight path makes a difference
@@ -282,13 +282,13 @@ Serializable {
         boolean isTAG = wtype.hasFlag(WeaponType.F_TAG);
         boolean isHoming = false;
         boolean bHeatSeeking = (atype != null)
-        && ((atype.getAmmoType() == AmmoType.T_SRM)
-                || (atype.getAmmoType() == AmmoType.T_MML) || (atype
+                && ((atype.getAmmoType() == AmmoType.T_SRM)
+                        || (atype.getAmmoType() == AmmoType.T_MML) || (atype
                         .getAmmoType() == AmmoType.T_LRM))
-                        && (atype.getMunitionType() == AmmoType.M_HEAT_SEEKING);
+                && (atype.getMunitionType() == AmmoType.M_HEAT_SEEKING);
         boolean bFTL = (atype != null)
-        && ((atype.getAmmoType() == AmmoType.T_MML) || (atype
-                .getAmmoType() == AmmoType.T_LRM))
+                && ((atype.getAmmoType() == AmmoType.T_MML) || (atype
+                        .getAmmoType() == AmmoType.T_LRM))
                 && (atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER);
 
         Mounted mLinker = weapon.getLinkedBy();
@@ -296,18 +296,18 @@ Serializable {
                 && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                        MiscType.F_APOLLO))
-                        && (atype.getAmmoType() == AmmoType.T_MRM);
+                MiscType.F_APOLLO))
+                && (atype.getAmmoType() == AmmoType.T_MRM);
         boolean bArtemisV = ((mLinker != null )
                 && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                        MiscType.F_ARTEMIS_V)
-                        && !isECMAffected
-                        && !bMekStealthActive
-                        && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE ));
+                MiscType.F_ARTEMIS_V)
+                && !isECMAffected
+                && !bMekStealthActive
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE ));
         boolean inSameBuilding = (te != null) && (game.getBoard().getBuildingAt(ae.getPosition()) != null)
-        && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
+                && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
 
 
         if (te != null) {
@@ -316,8 +316,8 @@ Serializable {
                     && (atype != null)
                     && ((atype.getAmmoType() == AmmoType.T_LRM)
                             || (atype.getAmmoType() == AmmoType.T_MML) || (atype
-                                    .getAmmoType() == AmmoType.T_SRM))
-                                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
+                            .getAmmoType() == AmmoType.T_SRM))
+                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
                 isINarcGuided = true;
             }
         }
@@ -433,13 +433,13 @@ Serializable {
             if ((atype != null)
                     && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                             || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO) || (((atype
-                                    .getAmmoType() == AmmoType.T_SRM)
-                                    || (atype.getAmmoType() == AmmoType.T_MRM)
-                                    || (atype.getAmmoType() == AmmoType.T_LRM) || (atype
-                                            .getAmmoType() == AmmoType.T_MML)) && (munition == AmmoType.M_TORPEDO)))
-                                            && (los.getMinimumWaterDepth() < 1)) {
+                            .getAmmoType() == AmmoType.T_SRM)
+                            || (atype.getAmmoType() == AmmoType.T_MRM)
+                            || (atype.getAmmoType() == AmmoType.T_LRM) || (atype
+                            .getAmmoType() == AmmoType.T_MML)) && (munition == AmmoType.M_TORPEDO)))
+                    && (los.getMinimumWaterDepth() < 1)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                "Torpedos must follow water their entire LOS");
+                        "Torpedos must follow water their entire LOS");
             }
         } else {
             los = LosEffects.calculateLos(game, spotter.getId(), target);
@@ -552,7 +552,7 @@ Serializable {
         } else if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
             // Can't stop if we're not swarming, otherwise automatic.
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-            "End swarm attack.");
+                    "End swarm attack.");
         } else if (BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName())) {
             // Mine launchers can not hit infantry.
             toHit = new ToHitData(8, "magnetic mine attack");
@@ -584,15 +584,15 @@ Serializable {
             if (game.getOptions().booleanOption("rpg_gunnery")) {
                 if (wtype.hasFlag(WeaponType.F_ENERGY)) {
                     toHit = new ToHitData(ae.crew.getGunneryL(),
-                    "gunnery (L) skill");
+                            "gunnery (L) skill");
                 }
                 if (wtype.hasFlag(WeaponType.F_MISSILE)) {
                     toHit = new ToHitData(ae.crew.getGunneryM(),
-                    "gunnery (M) skill");
+                            "gunnery (M) skill");
                 }
                 if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
                     toHit = new ToHitData(ae.crew.getGunneryB(),
-                    "gunnery (B) skill");
+                            "gunnery (B) skill");
                 }
             }
             if (ae.getTaserFeedBackRounds() > 0) {
@@ -601,7 +601,7 @@ Serializable {
             if (ae.getTaserInterferenceRounds() > 0) {
                 toHit.addModifier(ae.getTaserInterference(), "Taser interference");
             }
-        }
+         }
 
         // Engineer's fire extinguisher has fixed to hit number,
         // Note that coolant trucks make a regular attack.
@@ -610,7 +610,7 @@ Serializable {
             if (((target instanceof Entity)
                     && ((Entity) target).infernos.isStillBurning())
                     || ((target instanceof Tank)
-                            && ((Tank) target).isInfernoFire())) {
+                    && ((Tank) target).isInfernoFire())) {
                 toHit.addModifier(2, "inferno fire");
             }
             if ((Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType())
@@ -657,14 +657,14 @@ Serializable {
                         && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
                         && (!usesAmmo || !(((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
                                 .getAmmoType() == AmmoType.T_AC_LBX_THB)) && (atype
-                                        .getMunitionType() == AmmoType.M_CLUSTER)))) {
+                                .getMunitionType() == AmmoType.M_CLUSTER)))) {
                     tcMod = 2;
                 }
                 int ghostTargetMoF = (ae.getCrew().getSensorOps() + ghostTargetMod)
-                - (ae.getGhostTargetOverride() + bapMod + tcMod);
+                        - (ae.getGhostTargetOverride() + bapMod + tcMod);
                 if (ghostTargetMoF > 1) {
                     toHit.addModifier(Math.min(4, ghostTargetMoF / 2),
-                    "ghost targets");
+                            "ghost targets");
                 }
             }
         }
@@ -745,16 +745,16 @@ Serializable {
 
             // check for NOE
             if (Compute.isAirToAir(ae, target)) {
-                if(target.isAirborneVTOL()) {
-                    toHit.addModifier(+5, "targeting non-aerospace airborne unit");
-                }
-                if(ae.isNOE()) {
-                    if (ae.isOmni()) {
-                        toHit.addModifier(+1, "attacker is flying at NOE (omni)");
-                    } else {
-                        toHit.addModifier(+2, "attacker is flying at NOE");
-                    }
-                }
+            	if(target.isAirborneVTOL()) {
+            		toHit.addModifier(+5, "targeting non-aerospace airborne unit");
+            	}
+            	if(ae.isNOE()) {
+	                if (ae.isOmni()) {
+	                    toHit.addModifier(+1, "attacker is flying at NOE (omni)");
+	                } else {
+	                    toHit.addModifier(+2, "attacker is flying at NOE");
+	                }
+            	}
             }
             if(Compute.isGroundToAir(ae, target) && null != te && te.isNOE()) {
                 if(te.passedWithin(ae.getPosition(), 1)) {
@@ -765,9 +765,9 @@ Serializable {
                     toHit.addModifier(+3, "target is NOE");
                 }
             }
-
+            
             if(ae instanceof Aero && !((Aero)ae).isSpheroid() && !ae.isAirborne()) {
-                toHit.addModifier(+2, "grounded aero");
+            	toHit.addModifier(+2, "grounded aero");
             }
 
             // check for particular kinds of weapons in weapon bays
@@ -959,26 +959,26 @@ Serializable {
                 && (ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te))
                 && !Compute.isAffectedByECM(ae, ae.getPosition(), te
                         .getPosition())
-                        && (game.getBoard().getHex(te.getPosition()).containsTerrain(
-                                Terrains.WOODS)
-                                || game.getBoard().getHex(te.getPosition())
+                && (game.getBoard().getHex(te.getPosition()).containsTerrain(
+                        Terrains.WOODS)
+                        || game.getBoard().getHex(te.getPosition())
                                 .containsTerrain(Terrains.JUNGLE)
-                                || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los
-                                        .getUltraWoods() > 0))) {
+                        || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los
+                        .getUltraWoods() > 0))) {
             toHit
-            .addModifier(-1,
-                    "target in/behind woods and attacker has BAP");
+                    .addModifier(-1,
+                            "target in/behind woods and attacker has BAP");
         }
 
         //quirks
         if(ae.getQuirks().booleanOption("sensor_ghosts")) {
             toHit.addModifier(+1, "sensor ghosts");
         }
-
+        
         if(weapon.getQuirks().booleanOption("accurate")) {
             toHit.addModifier(-1, "accurate weapon");
         }
-
+        
         if(weapon.getQuirks().booleanOption("inaccurate")) {
             toHit.addModifier(+1, "inaccurate weapon");
         }
@@ -1031,7 +1031,7 @@ Serializable {
                     Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
             if (sensorHits == 2) {
                 toHit.addModifier(4,
-                "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                        "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
 
@@ -1054,9 +1054,9 @@ Serializable {
                 && (atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_LRM)
                         || (atype.getAmmoType() == AmmoType.T_MML) || (atype
-                                .getAmmoType() == AmmoType.T_SRM))
-                                && (atype.getMunitionType() == AmmoType.M_LISTEN_KILL)
-                                && !((te != null) && te.isClan())) {
+                        .getAmmoType() == AmmoType.T_SRM))
+                && (atype.getMunitionType() == AmmoType.M_LISTEN_KILL)
+                && !((te != null) && te.isClan())) {
             toHit.addModifier(-1, "Listen-Kill ammo");
         }
 
@@ -1064,7 +1064,7 @@ Serializable {
         int aElev = ae.getElevation();
         int tElev = target.getElevation();
         int aAlt = ae.getAltitude();
-        int tAlt = target.getAltitude();
+    	int tAlt = target.getAltitude();
         int distance = Compute.effectiveDistance(game, ae, target);
 
         toHit.append(AbstractAttackAction.nightModifiers(game, target, atype, ae, true));
@@ -1217,13 +1217,13 @@ Serializable {
                 }
             } else if (wtype.getToHitModifier() != 0) {
                 toHit.addModifier(wtype.getToHitModifier(),
-                "weapon to-hit modifier");
+                        "weapon to-hit modifier");
             }
 
             // ammo to-hit modifier
             if (usesAmmo && (atype.getToHitModifier() != 0)) {
                 toHit.addModifier(atype.getToHitModifier(),
-                "ammunition to-hit modifier");
+                        "ammunition to-hit modifier");
             }
             if (isHoming) {
                 return new ToHitData(4, "Homing shot");
@@ -1233,7 +1233,7 @@ Serializable {
                     .contains(target.getPosition())
                     && !isArtilleryFLAK) {
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                "Artillery firing at designated artillery target.");
+                        "Artillery firing at designated artillery target.");
             }
             return toHit;
         }
@@ -1245,13 +1245,13 @@ Serializable {
             if (game.getEntity(attackerId).getOwner().getArtyAutoHitHexes()
                     .contains(target.getPosition())) {
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                "Artillery firing at designated artillery target.");
+                        "Artillery firing at designated artillery target.");
             }
             toHit.addModifier(7, "indirect artillery modifier");
             int adjust = ae.aTracker.getModifier(weapon, target.getPosition());
             if (adjust == TargetRoll.AUTOMATIC_SUCCESS) {
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                "Artillery firing at target that's been hit before.");
+                        "Artillery firing at target that's been hit before.");
             } else if (adjust != 0) {
                 toHit.addModifier(adjust, "adjusted fire");
             }
@@ -1266,7 +1266,7 @@ Serializable {
                         || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
                         || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE) || (target instanceof GunEmplacement))) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-            "Targeting adjacent building.");
+                    "Targeting adjacent building.");
         }
 
         // Attacks against buildings from inside automatically hit.
@@ -1276,7 +1276,7 @@ Serializable {
                         || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
                         || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE) || (target instanceof GunEmplacement))) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-            "Targeting building from inside (are you SURE this is a good idea?).");
+                    "Targeting building from inside (are you SURE this is a good idea?).");
         }
 
         // add range mods
@@ -1287,7 +1287,7 @@ Serializable {
                 toHit.addModifier(-2, "anti-air targetting system vs. aerial unit");
             }
         }
-
+        
         //air-to-ground strikes apply a +2 mod
         if(Compute.isAirToGround(ae, target)) {
             if(wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
@@ -1311,7 +1311,7 @@ Serializable {
                 }
             }
         }
-
+        
         //units with the narrow/low profile quirk are harder to hit
         if((te != null) && te.getQuirks().booleanOption("low_profile")) {
             toHit.addModifier(1, "narrow/low profile");
@@ -1356,19 +1356,19 @@ Serializable {
             if ((atype != null)
                     && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype
                             .getAmmoType() == AmmoType.T_MML))
-                            && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
-                            && (te.getTaggedBy() != -1)) {
+                    && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
+                    && (te.getTaggedBy() != -1)) {
                 int nAdjust = thTemp.getValue();
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust,
-                    "Semi-guided ammo vs tagged target"));
+                            "Semi-guided ammo vs tagged target"));
                 }
             }
             // precision ammo reduces this modifier
             else if ((atype != null)
                     && ((atype.getAmmoType() == AmmoType.T_AC) || (atype
                             .getAmmoType() == AmmoType.T_LAC))
-                            && (atype.getMunitionType() == AmmoType.M_PRECISION)) {
+                    && (atype.getMunitionType() == AmmoType.M_PRECISION)) {
                 int nAdjust = Math.min(2, thTemp.getValue());
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust, "Precision Ammo"));
@@ -1389,17 +1389,17 @@ Serializable {
             if ((atype != null)
                     && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype
                             .getAmmoType() == AmmoType.T_MML))
-                            && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
-                            && (te.getTaggedBy() != -1)) {
+                    && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
+                    && (te.getTaggedBy() != -1)) {
                 toHit
-                .addModifier(-1,
-                "semiguided ignores spotter movement & indirect fire penalties");
+                        .addModifier(-1,
+                                "semiguided ignores spotter movement & indirect fire penalties");
             } else if (!narcSpotter && (spotter != null)) {
                 toHit.append(Compute.getSpotterMovementModifier(game, spotter
                         .getId()));
                 if (spotter.isAttackingThisTurn()) {
                     toHit.addModifier(1,
-                    "spotter is making an attack this turn");
+                            "spotter is making an attack this turn");
                 }
             }
         }
@@ -1440,8 +1440,8 @@ Serializable {
                 && te.isHullDown()
                 && (((te instanceof Mech)
                         && (los.getTargetCover() > LosEffects.COVER_NONE)) || ((te instanceof Tank)
-                                && targHex.containsTerrain(Terrains.FORTIFIED)
-                                && (te.sideTable(ae.getPosition()) == ToHitData.SIDE_FRONT)))) {
+                        && targHex.containsTerrain(Terrains.FORTIFIED)
+                        && (te.sideTable(ae.getPosition()) == ToHitData.SIDE_FRONT)))) {
             toHit.addModifier(2, "Hull down target");
         }
 
@@ -1515,7 +1515,7 @@ Serializable {
             }
         } else if (wtype.getToHitModifier() != 0) {
             toHit.addModifier(wtype.getToHitModifier(),
-            "weapon to-hit modifier");
+                    "weapon to-hit modifier");
         }
 
         // ammo to-hit modifier
@@ -1527,15 +1527,15 @@ Serializable {
                         || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
                         || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
                         && (atype.getMunitionType() == AmmoType.M_CLUSTER))
-                        || (atype.getMunitionType() == AmmoType.M_FLAK)
-                        || (atype.getAmmoType() == AmmoType.T_HAG))) {
+                    || (atype.getMunitionType() == AmmoType.M_FLAK)
+                    || (atype.getAmmoType() == AmmoType.T_HAG))) {
             toHit.addModifier(-2, "flak to-hit modifier");
         }
         if (usesAmmo && (atype.getToHitModifier() != 0)) {
             toHit.addModifier(atype.getToHitModifier(),
-            "ammunition to-hit modifier");
+                    "ammunition to-hit modifier");
         }
-
+        
         if(atype != null 
                 && (atype.getAmmoType() == AmmoType.T_AAA_MISSILE || atype.getAmmoType() == AmmoType.T_LAA_MISSILE) 
                 && Compute.isAirToGround(ae, target)) {
@@ -1544,7 +1544,7 @@ Serializable {
                 toHit.addModifier(+3, "AAA missile below altitude 4");
             }
         }
-
+        
 
         // add iNarc bonus
         if (isINarcGuided) {
@@ -1564,7 +1564,7 @@ Serializable {
         if ((toHit.getValue() != TargetRoll.IMPOSSIBLE)
                 && ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) || (wtype instanceof ScreenLauncherBayWeapon))) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-            "Screen launchers always hit");
+                    "Screen launchers always hit");
         }
 
         // Heat Seeking Missles
@@ -1588,11 +1588,11 @@ Serializable {
                 toHit.addModifier(1, "ammunition to-hit modifier");
             } else {
                 toHit.addModifier(-te.getHeatMPReduction(),
-                "ammunition to-hit modifier");
+                        "ammunition to-hit modifier");
             }
 
             if (LosEffects.hasFireBetween(ae.getPosition(), target
-                    .getPosition(), game)) {
+                            .getPosition(), game)) {
                 toHit.addModifier(2, "fire between target and attacker");
             }
         }
@@ -1622,7 +1622,7 @@ Serializable {
             if (ae.hasActiveEiCockpit()) {
                 if (ae.hasTargComp()) {
                     toHit.addModifier(2,
-                    "aiming with targeting computer & EI system");
+                            "aiming with targeting computer & EI system");
                 } else {
                     toHit.addModifier(6, "aiming with EI system");
                 }
@@ -1634,7 +1634,7 @@ Serializable {
                     && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
                     && (!usesAmmo || !(((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
                             .getAmmoType() == AmmoType.T_AC_LBX_THB)) && (atype
-                                    .getMunitionType() == AmmoType.M_CLUSTER)))) {
+                            .getMunitionType() == AmmoType.M_CLUSTER)))) {
                 toHit.addModifier(-1, "targeting computer");
             }
         }
@@ -1690,27 +1690,27 @@ Serializable {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "you can't combine aimed shots and called shots");
             }
             switch(call) {          
-            case CalledShot.CALLED_NONE:
-                break;
-            case CalledShot.CALLED_HIGH:
-                toHit.addModifier(+3, "called shot, high");
-                toHit.setHitTable(ToHitData.HIT_ABOVE);
-                break;
-            case CalledShot.CALLED_LOW:
-                if(los.getTargetCover() == LosEffects.COVER_HORIZONTAL) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "low called shots not possible in partial cover");
-                }                  
-                toHit.addModifier(+3, "called shot, low");
-                toHit.setHitTable(ToHitData.HIT_BELOW);
-                break;
-            case CalledShot.CALLED_LEFT:
-                //handled by Compute#targetSideTable
-                toHit.addModifier(+3, "called shot, left");
-                break;
-            case CalledShot.CALLED_RIGHT:
-                //handled by Compute#targetSideTable
-                toHit.addModifier(+3, "called shot, right");
-                break;
+                case CalledShot.CALLED_NONE:
+                    break;
+                case CalledShot.CALLED_HIGH:
+                    toHit.addModifier(+3, "called shot, high");
+                    toHit.setHitTable(ToHitData.HIT_ABOVE);
+                    break;
+                case CalledShot.CALLED_LOW:
+                    if(los.getTargetCover() == LosEffects.COVER_HORIZONTAL) {
+                        return new ToHitData(TargetRoll.IMPOSSIBLE, "low called shots not possible in partial cover");
+                    }                  
+                    toHit.addModifier(+3, "called shot, low");
+                    toHit.setHitTable(ToHitData.HIT_BELOW);
+                    break;
+                case CalledShot.CALLED_LEFT:
+                    //handled by Compute#targetSideTable
+                    toHit.addModifier(+3, "called shot, left");
+                    break;
+                case CalledShot.CALLED_RIGHT:
+                    //handled by Compute#targetSideTable
+                    toHit.addModifier(+3, "called shot, right");
+                    break;
             }       
         }
 
@@ -1741,14 +1741,14 @@ Serializable {
         if(Compute.isGroundToAir(ae, target) && (aAlt - tAlt) > 2) {
             toHit.setHitTable(ToHitData.HIT_BELOW);
         }
-
+        
         if (target.isAirborne()) {
-            //TODO: We are not following the rules for spheroid hit locations in atmosphere per the 
-            //Errata 2.1, but those rules are completely unusable anyway, because there is no way to 
-            //determine critical hit location
-            //http://www.classicbattletech.com/forums/index.php/topic,54077.new.html#new
-            //we just assume that hits from above/below (more than two altitudes different per
-            //the rules in TW (pg. 241) actually strike FRONT/AFT respectively
+        	//TODO: We are not following the rules for spheroid hit locations in atmosphere per the 
+        	//Errata 2.1, but those rules are completely unusable anyway, because there is no way to 
+        	//determine critical hit location
+        	//http://www.classicbattletech.com/forums/index.php/topic,54077.new.html#new
+        	//we just assume that hits from above/below (more than two altitudes different per
+        	//the rules in TW (pg. 241) actually strike FRONT/AFT respectively
             if (((Aero) target).isSpheroid() && !game.getBoard().inSpace()) {
                 if (toHit.getHitTable() == ToHitData.HIT_ABOVE) {
                     toHit.setSideTable(ToHitData.SIDE_FRONT);
@@ -1815,7 +1815,7 @@ Serializable {
             toHit.setCover(LosEffects.COVER_NONE);
             distance = Compute.effectiveDistance(game, ae, oldTarget);
             LosEffects swarmlos = LosEffects.calculateLos(game, te.getId(), oldTarget);
-            // reset cover
+         // reset cover
             if (swarmlos.getTargetCover() != LosEffects.COVER_NONE) {
                 if (game.getOptions().booleanOption("tacops_partial_cover")) {
                     toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
@@ -1852,9 +1852,9 @@ Serializable {
                     && !oldTarget.isEnemyOf(ae)
                     && !(oldTarget.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                             Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
-                            && (atype.getMunitionType() == AmmoType.M_SWARM_I)) {
+                    && (atype.getMunitionType() == AmmoType.M_SWARM_I)) {
                 toHit.addModifier(+2,
-                "Swarm-I at friendly unit with intact sensors");
+                        "Swarm-I at friendly unit with intact sensors");
             }
         }
 
@@ -1872,7 +1872,7 @@ Serializable {
             boolean isArtilleryDirect, boolean isTargetECMAffected) {
         boolean isHoming = false;
         ToHitData toHit = null;
-
+    
         // tasers only at non-flying units
         if (wtype.hasFlag(WeaponType.F_TASER)) {
             if (te != null) {
@@ -1947,7 +1947,7 @@ Serializable {
                 && LosEffects.calculateLos(game, ae.getId(), target).canSee() 
                 && (!game.getOptions().booleanOption("double_blind") || Compute.canSee(game, ae, target))) {
             return new String(
-            "Indirect-fire LRM cannot be fired with direct LOS from attacker to target.");
+                    "Indirect-fire LRM cannot be fired with direct LOS from attacker to target.");
         }
 
         // If we're lying mines, we can't shoot.
@@ -1964,7 +1964,7 @@ Serializable {
                 && !(usesAmmo
                         && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype
                                 .getAmmoType() == AmmoType.T_MML)) && (atype
-                                        .getMunitionType() == AmmoType.M_FLARE))) {
+                        .getMunitionType() == AmmoType.M_FLARE))) {
             return "Weapon can't deliver flares";
         }
         if ((game.getPhase() == IGame.Phase.PHASE_TARGETING) && !isArtilleryIndirect) {
@@ -1987,24 +1987,24 @@ Serializable {
                 return reason;
             }
         }
-
+        
         if ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_LRM)
                         || (atype.getAmmoType() == AmmoType.T_MML)
                         || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
-                        && ((atype.getMunitionType() == AmmoType.M_THUNDER)
-                                || (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
-                                || (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
-                                || (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
-                                || (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED))
-                                && (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER)) {
+                && ((atype.getMunitionType() == AmmoType.M_THUNDER)
+                        || (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
+                        || (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
+                        || (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
+                        || (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED))
+                && (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER)) {
             return "Weapon can only deliver minefields";
         }
         if ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype
                         .getAmmoType() == AmmoType.T_MML))
-                        && (atype.getMunitionType() == AmmoType.M_FLARE)
-                        && (target.getTargetType() != Targetable.TYPE_FLARE_DELIVER)) {
+                && (atype.getMunitionType() == AmmoType.M_FLARE)
+                && (target.getTargetType() != Targetable.TYPE_FLARE_DELIVER)) {
             return "Weapon can only deliver flares";
         }
 
@@ -2096,7 +2096,7 @@ Serializable {
                 return "Weapon is not in a state where it can be fired";
             }
 
-            // got ammo?
+             // got ammo?
             if (usesAmmo && ((ammo == null)
                     || (ammo.getShotsLeft() == 0)
                     || ammo.isBreached())) {
@@ -2154,7 +2154,7 @@ Serializable {
             boolean adjacentAltBomb = false;
             boolean firstAltBomb = true;
             for ( Enumeration<EntityAction> i = game.getActions();
-            i.hasMoreElements(); ) {
+                i.hasMoreElements(); ) {
                 Object o = i.nextElement();
                 if (!(o instanceof WeaponAttackAction)) {
                     continue;
@@ -2260,9 +2260,9 @@ Serializable {
         }
 
         if ((Targetable.TYPE_HEX_SCREEN != target.getTargetType()) &&
-                ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) ||
-                        (wtype instanceof ScreenLauncherBayWeapon))) {
-            return "Screen launchers may only target hexes";
+            ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) ||
+                    (wtype instanceof ScreenLauncherBayWeapon))) {
+                return "Screen launchers may only target hexes";
         }
 
 
@@ -2280,11 +2280,11 @@ Serializable {
                         || game.getBoard().getHex(
                                 ((HexTarget) target).getPosition())
                                 .containsTerrain(Terrains.JUNGLE)
-                                || game.getBoard().getHex(
-                                        ((HexTarget) target).getPosition())
-                                        .containsTerrain(Terrains.FUEL_TANK) || game
-                                        .getBoard().getHex(((HexTarget) target).getPosition())
-                                        .containsTerrain(Terrains.BUILDING))) {
+                        || game.getBoard().getHex(
+                                ((HexTarget) target).getPosition())
+                                .containsTerrain(Terrains.FUEL_TANK) || game
+                        .getBoard().getHex(((HexTarget) target).getPosition())
+                        .containsTerrain(Terrains.BUILDING))) {
             return "Only woods and building hexes can be set on fire intentionally.";
         }
 
@@ -2293,7 +2293,7 @@ Serializable {
         // if those options are checked.
         if (isInferno
                 && (((te instanceof Tank) && game.getOptions().booleanOption(
-                "vehicles_safe_from_infernos")) || ((te instanceof Protomech) && game
+                        "vehicles_safe_from_infernos")) || ((te instanceof Protomech) && game
                         .getOptions()
                         .booleanOption("protos_safe_from_infernos")))) {
             return "Can not target that unit type with Inferno rounds.";
@@ -2340,7 +2340,7 @@ Serializable {
                 if (m.canFire()) {
                     if(bayWUsesAmmo) {
                         if ((m.getLinked() != null)
-                                && (m.getLinked().getShotsLeft() > 0)) {
+                                    && (m.getLinked().getShotsLeft() > 0)) {
                             useable = true;
                             break;
                         }
@@ -2451,7 +2451,7 @@ Serializable {
         // Handle solo attack weapons.
         if (wtype.hasFlag(WeaponType.F_SOLO_ATTACK)) {
             for (Enumeration<EntityAction> i = game.getActions(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 EntityAction ea = i.nextElement();
                 if (!(ea instanceof WeaponAttackAction)) {
                     continue;
@@ -2473,8 +2473,8 @@ Serializable {
                 return "Foot platoons with 0 MP can move or shoot, not both";
             }
             if(game.getOptions().booleanOption("tacops_fast_infantry_move")
-                    && (ae.moved == IEntityMovementType.MOVE_RUN)) {
-                return "Infantry fast moved this turn and so can not shoot.";
+            		&& (ae.moved == IEntityMovementType.MOVE_RUN)) {
+            	return "Infantry fast moved this turn and so can not shoot.";
             }
             // check for trying to fire field gun after moving
             if (!wtype.hasFlag(WeaponType.F_INFANTRY)
@@ -2483,7 +2483,7 @@ Serializable {
             }
             // check for mixing infantry and field gun attacks
             for (Enumeration<EntityAction> i = game.getActions(); i
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 EntityAction ea = i.nextElement();
                 if (!(ea instanceof WeaponAttackAction)) {
                     continue;
@@ -2502,7 +2502,7 @@ Serializable {
             // can fire only at one target at a time
             if (wtype.getName().equals("Compact Narc")) {
                 for (Enumeration<EntityAction> i = game.getActions(); i
-                .hasMoreElements();) {
+                        .hasMoreElements();) {
                     EntityAction ea = i.nextElement();
                     if (!(ea instanceof WeaponAttackAction)) {
                         continue;
@@ -2569,12 +2569,12 @@ Serializable {
                 && !(usesAmmo && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB))) {
             return "Weapon can't deliver bombs";
         }
-
+        
         if(target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB 
                 && !wtype.hasFlag(WeaponType.F_DIVE_BOMB) && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
             return "Weapon can't be used to bomb";
         }
-
+        
         if(wtype.hasFlag(WeaponType.F_DIVE_BOMB) || wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
             if(ae.getBombs(AmmoType.F_GROUND_BOMB).size() == 0) {
                 return "no bombs left to drop";
@@ -2700,12 +2700,12 @@ Serializable {
                 return "outside of visual and sensor range";
             }
         }
-
+        
         // Weapon in arc?
         if (!Compute.isInArc(game, attackerId, weaponId, target) && !Compute.isAirToGround(ae, target)) {
             return "Target not in arc.";
         }
-
+        
         if(Compute.isAirToGround(ae, target)) {
             if(ae.getAltitude() > 5 && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) { 
                 return "attacker is too high";
@@ -2722,7 +2722,7 @@ Serializable {
                     }
                 }
             }
-
+            
             //for air to ground attacks, the target's position must be within the flight path
             if(!ae.passedThrough(target.getPosition())) {
                 return "target not along flight path";
@@ -2742,7 +2742,7 @@ Serializable {
                 }
             }
         }
-
+        
         //only one ground-to-air attack allowed per turn
         if(!ae.isAirborne()) {
             for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
@@ -2752,25 +2752,25 @@ Serializable {
                 }
                 WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
                 if(prevAttack.getEntityId() == ae.getId()) {
-                    if(prevAttack.isGroundToAir(game) && !Compute.isGroundToAir(ae, target)) {
-                        return "ground-to-air attack already declared";
-                    }
-                    if(!prevAttack.isGroundToAir(game) && Compute.isGroundToAir(ae, target)) {
-                        return "ground-to-ground attack already declared";
-                    }
-                    if(prevAttack.isGroundToAir(game) && Compute.isGroundToAir(ae, target) 
-                            && null != te && prevAttack.getTargetId() != te.getId()) {
-                        return "only one target allowed for all ground-to-air attacks";
-                    }
+                   if(prevAttack.isGroundToAir(game) && !Compute.isGroundToAir(ae, target)) {
+                       return "ground-to-air attack already declared";
+                   }
+                   if(!prevAttack.isGroundToAir(game) && Compute.isGroundToAir(ae, target)) {
+                       return "ground-to-ground attack already declared";
+                   }
+                   if(prevAttack.isGroundToAir(game) && Compute.isGroundToAir(ae, target) 
+                           && null != te && prevAttack.getTargetId() != te.getId()) {
+                       return "only one target allowed for all ground-to-air attacks";
+                   }
                 }
             }
         }
         if(target.getAltitude() > 8 && Compute.isGroundToAir(ae, target)) {
             return "cannot target aero units beyond altitude 8";
         }
-
+        
         if(ae instanceof Infantry && Compute.isGroundToAir(ae, target)) {
-            return "Infantry cannot engage in ground-to-air attacks";
+        	return "Infantry cannot engage in ground-to-air attacks";
         }
 
         // Protomech can fire MGA only into front arc, TW page 137
@@ -2796,14 +2796,14 @@ Serializable {
                 return "Target is too high for aft-side weapons";
             }
             if(Compute.inDeadZone(game, ae, target)) {
-                if(altDif > 0 && weapon.getLocation() != Aero.LOC_NOSE) {
-                    return "only nose weapons can target higher units in the dead zone";
-                }
-                if(altDif < 0 && weapon.getLocation() != Aero.LOC_AFT) {
-                    return "only aft weapons can target lower units in the dead zone";
-                }
+            	if(altDif > 0 && weapon.getLocation() != Aero.LOC_NOSE) {
+            		return "only nose weapons can target higher units in the dead zone";
+            	}
+            	if(altDif < 0 && weapon.getLocation() != Aero.LOC_AFT) {
+            		return "only aft weapons can target lower units in the dead zone";
+            	}
             }
-
+            
         }
 
         // Must target infantry in buildings from the inside.
@@ -2836,11 +2836,11 @@ Serializable {
         if (ae.isHullDown()) {
             if (((ae instanceof BipedMech) &&
                     ((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG))) ||
-                    ((ae instanceof QuadMech) &&
-                            ((weapon.getLocation() == Mech.LOC_LLEG) ||
-                                    (weapon.getLocation() == Mech.LOC_RLEG) ||
-                                    (weapon.getLocation() == Mech.LOC_LARM) ||
-                                    (weapon.getLocation() == Mech.LOC_RARM)))) {
+               ((ae instanceof QuadMech) &&
+                    ((weapon.getLocation() == Mech.LOC_LLEG) ||
+                            (weapon.getLocation() == Mech.LOC_RLEG) ||
+                            (weapon.getLocation() == Mech.LOC_LARM) ||
+                            (weapon.getLocation() == Mech.LOC_RARM)))) {
                 return "Leg weapons cannot be fired while hull down.";
             }
         }

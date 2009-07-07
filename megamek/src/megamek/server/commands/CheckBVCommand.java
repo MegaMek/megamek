@@ -23,7 +23,7 @@ public class CheckBVCommand extends ServerCommand {
 
     public CheckBVCommand(Server server) {
         super(server, "checkbv",
-        "Shows the remaining BV of each player in the game.");
+                "Shows the remaining BV of each player in the game.");
     }
 
     @Override

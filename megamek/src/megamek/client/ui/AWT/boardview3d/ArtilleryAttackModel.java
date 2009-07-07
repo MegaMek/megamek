@@ -55,7 +55,7 @@ class ArtilleryAttackModel extends BranchGroup {
         TransformGroup tg = new TransformGroup(t);
         tg.addChild(anim);
         addChild(tg);
-
+        
         // FIXME: somehow, this looks weird. find mistake.
         //RotationInterpolator ri = new RotationInterpolator(C.defAlpha, anim);
         //ri.setSchedulingBounds(BoardModel.bounds);

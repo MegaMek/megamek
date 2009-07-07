@@ -28,7 +28,7 @@ import megamek.server.Server;
  * @author Jay Lawson
  */
 public class ACBayHandler extends AmmoBayWeaponHandler {
-
+    
     private static final long serialVersionUID = -1618484541772117621L;
 
     /**
@@ -40,7 +40,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
     public ACBayHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -55,25 +55,25 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
             if(bayWType.getAmmoType() == AmmoType.T_AC_ROTARY) {
                 boolean jams = false;
                 switch (ammoUsed) {
-                case 6:
-                    if (roll <= 4) {
-                        jams = true;
-                    }
-                    break;
-                case 5:
-                case 4:
-                    if (roll <= 3) {
-                        jams = true;
-                    }
-                    break;
-                case 3:
-                case 2:
-                    if (roll <= 2) {
-                        jams = true;
-                    }
-                    break;
-                default:
-                    break;
+                    case 6:
+                        if (roll <= 4) {
+                            jams = true;
+                        }
+                        break;
+                    case 5:
+                    case 4:
+                        if (roll <= 3) {
+                            jams = true;
+                        }
+                        break;
+                    case 3:
+                    case 2:
+                        if (roll <= 2) {
+                            jams = true;
+                        }
+                        break;
+                    default:
+                        break;
                 }
                 if (jams) {
                     Report r = new Report(3170);
@@ -96,7 +96,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
                 }
             }
         }
-
-        return false;
+        
+            return false;
     }
 }

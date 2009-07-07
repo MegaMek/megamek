@@ -35,10 +35,10 @@ public class Protomech extends Entity {
     public static final int NUM_PMECH_LOCATIONS = 6;
 
     private static final String[] LOCATION_NAMES = { "Head", "Torso",
-        "Right Arm", "Left Arm", "Legs", "Main Gun" };
+            "Right Arm", "Left Arm", "Legs", "Main Gun" };
 
     private static final String[] LOCATION_ABBRS = { "HD", "T", "RA", "LA", "L",
-    "MG" };
+            "MG" };
 
     // weapon bools
     private boolean bHasMainGun;
@@ -186,7 +186,7 @@ public class Protomech extends Entity {
     @Override
     public PilotingRollData getBasePilotingRoll() {
         return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,
-        "Protomeks never take PSRs.");
+                "Protomeks never take PSRs.");
     }
 
     /**
@@ -195,17 +195,17 @@ public class Protomech extends Entity {
      */
     public boolean shaded(int loc, int numHit) {
         switch (loc) {
-        case LOC_HEAD:
-        case LOC_LARM:
-        case LOC_RARM:
-            return (2 == numHit);
-        case LOC_TORSO:
-            return (0 < numHit);
-        case LOC_MAINGUN:
-        case LOC_NMISS:
-            return false;
-        case LOC_LEG:
-            return (3 == numHit);
+            case LOC_HEAD:
+            case LOC_LARM:
+            case LOC_RARM:
+                return (2 == numHit);
+            case LOC_TORSO:
+                return (0 < numHit);
+            case LOC_MAINGUN:
+            case LOC_NMISS:
+                return false;
+            case LOC_LEG:
+                return (3 == numHit);
         }
         return false;
     }
@@ -231,17 +231,17 @@ public class Protomech extends Entity {
             wmp = j;
         }
         switch (legCrits) {
-        case 0:
-            break;
-        case 1:
-            wmp--;
-            break;
-        case 2:
-            wmp = wmp / 2;
-            break;
-        case 3:
-            wmp = 0;
-            break;
+            case 0:
+                break;
+            case 1:
+                wmp--;
+                break;
+            case 2:
+                wmp = wmp / 2;
+                break;
+            case 3:
+                wmp = 0;
+                break;
         }
         return wmp;
     }
@@ -280,15 +280,15 @@ public class Protomech extends Entity {
     @Override
     public int getNumberOfCriticals(int loc) {
         switch (loc) {
-        case LOC_MAINGUN:
-            return 0;
-        case LOC_HEAD:
-        case LOC_LARM:
-        case LOC_RARM:
-            return 2;
-        case LOC_LEG:
-        case LOC_TORSO:
-            return 3;
+            case LOC_MAINGUN:
+                return 0;
+            case LOC_HEAD:
+            case LOC_LARM:
+            case LOC_RARM:
+                return 2;
+            case LOC_LEG:
+            case LOC_TORSO:
+                return 3;
         }
         return 0;
     }
@@ -312,16 +312,16 @@ public class Protomech extends Entity {
         int jump = jumpMP;
         int torsoCrits = getCritsHit(LOC_TORSO);
         switch (torsoCrits) {
-        case 0:
-            break;
-        case 1:
-            if (jump > 0) {
-                jump--;
-            }
-            break;
-        case 2:
-            jump = jump / 2;
-            break;
+            case 0:
+                break;
+            case 1:
+                if (jump > 0) {
+                    jump--;
+                }
+                break;
+            case 2:
+                jump = jump / 2;
+                break;
         }
         if (applyGravityEffectsOnMP(jump) > jump) {
             return jump;
@@ -373,16 +373,16 @@ public class Protomech extends Entity {
     @Override
     public String getMovementString(int mtype) {
         switch (mtype) {
-        case IEntityMovementType.MOVE_NONE:
-            return "None";
-        case IEntityMovementType.MOVE_WALK:
-            return "Walked";
-        case IEntityMovementType.MOVE_RUN:
-            return "Ran";
-        case IEntityMovementType.MOVE_JUMP:
-            return "Jumped";
-        default:
-            return "Unknown!";
+            case IEntityMovementType.MOVE_NONE:
+                return "None";
+            case IEntityMovementType.MOVE_WALK:
+                return "Walked";
+            case IEntityMovementType.MOVE_RUN:
+                return "Ran";
+            case IEntityMovementType.MOVE_JUMP:
+                return "Jumped";
+            default:
+                return "Unknown!";
         }
     }
 
@@ -392,16 +392,16 @@ public class Protomech extends Entity {
     @Override
     public String getMovementAbbr(int mtype) {
         switch (mtype) {
-        case IEntityMovementType.MOVE_NONE:
-            return "N";
-        case IEntityMovementType.MOVE_WALK:
-            return "W";
-        case IEntityMovementType.MOVE_RUN:
-            return "R";
-        case IEntityMovementType.MOVE_JUMP:
-            return "J";
-        default:
-            return "?";
+            case IEntityMovementType.MOVE_NONE:
+                return "N";
+            case IEntityMovementType.MOVE_WALK:
+                return "W";
+            case IEntityMovementType.MOVE_RUN:
+                return "R";
+            case IEntityMovementType.MOVE_JUMP:
+                return "J";
+            default:
+                return "?";
         }
     }
 
@@ -462,16 +462,16 @@ public class Protomech extends Entity {
         }
         // front mounted
         switch (mounted.getLocation()) {
-        case LOC_TORSO:
-            return Compute.ARC_FORWARD;
-        case LOC_RARM:
-            return Compute.ARC_RIGHTARM;
-        case LOC_LARM:
-            return Compute.ARC_LEFTARM;
-        case LOC_MAINGUN:
-            return Compute.ARC_MAINGUN;
-        default:
-            return Compute.ARC_360;
+            case LOC_TORSO:
+                return Compute.ARC_FORWARD;
+            case LOC_RARM:
+                return Compute.ARC_RIGHTARM;
+            case LOC_LARM:
+                return Compute.ARC_LEFTARM;
+            case LOC_MAINGUN:
+                return Compute.ARC_MAINGUN;
+            default:
+                return Compute.ARC_360;
         }
     }
 
@@ -512,7 +512,7 @@ public class Protomech extends Entity {
         roll = Compute.d6(2);
         try {
             PrintWriter pw = PreferenceManager.getClientPreferences()
-            .getMekHitLocLog();
+                    .getMekHitLocLog();
 
             if (pw != null) {
                 pw.print(table);
@@ -526,24 +526,24 @@ public class Protomech extends Entity {
         }
 
         switch (roll) {
-        case 2:
-            return new HitData(Protomech.LOC_MAINGUN);
-        case 3:
-        case 11:
-            return new HitData(Protomech.LOC_NMISS);
-        case 4:
-            return new HitData(Protomech.LOC_RARM);
-        case 5:
-        case 9:
-            return new HitData(Protomech.LOC_LEG);
-        case 6:
-        case 7:
-        case 8:
-            return new HitData(Protomech.LOC_TORSO);
-        case 10:
-            return new HitData(Protomech.LOC_RARM);
-        case 12:
-            return new HitData(Protomech.LOC_HEAD);
+            case 2:
+                return new HitData(Protomech.LOC_MAINGUN);
+            case 3:
+            case 11:
+                return new HitData(Protomech.LOC_NMISS);
+            case 4:
+                return new HitData(Protomech.LOC_RARM);
+            case 5:
+            case 9:
+                return new HitData(Protomech.LOC_LEG);
+            case 6:
+            case 7:
+            case 8:
+                return new HitData(Protomech.LOC_TORSO);
+            case 10:
+                return new HitData(Protomech.LOC_RARM);
+            case 12:
+                return new HitData(Protomech.LOC_HEAD);
 
         }
 
@@ -565,20 +565,20 @@ public class Protomech extends Entity {
     @Override
     public HitData getTransferLocation(HitData hit) {
         switch (hit.getLocation()) {
-        case LOC_NMISS:
-            return new HitData(LOC_NONE);
-        case LOC_LARM:
-        case LOC_LEG:
-        case LOC_RARM:
-        case LOC_HEAD:
-        case LOC_MAINGUN:
-            return new HitData(LOC_TORSO, hit.isRear(), hit.getEffect(),
-                    hit.hitAimedLocation(), hit.getSpecCritMod(), hit
-                    .isFromFront(), hit.getGeneralDamageType(), hit
-                    .glancingMod());
-        case LOC_TORSO:
-        default:
-            return new HitData(LOC_DESTROYED);
+            case LOC_NMISS:
+                return new HitData(LOC_NONE);
+            case LOC_LARM:
+            case LOC_LEG:
+            case LOC_RARM:
+            case LOC_HEAD:
+            case LOC_MAINGUN:
+                return new HitData(LOC_TORSO, hit.isRear(), hit.getEffect(),
+                        hit.hitAimedLocation(), hit.getSpecCritMod(), hit
+                                .isFromFront(), hit.getGeneralDamageType(), hit
+                                .glancingMod());
+            case LOC_TORSO:
+            default:
+                return new HitData(LOC_DESTROYED);
         }
     }
 
@@ -617,31 +617,31 @@ public class Protomech extends Entity {
     public void autoSetInternal() {
         int mainGunIS = hasMainGun() ? 1 : IArmorState.ARMOR_NA;
         switch ((int) weight) {
-        // H, TSO,ARM,LEGS,MainGun
-        case 2:
-            setInternal(1, 2, 1, 2, mainGunIS);
-            break;
-        case 3:
-            setInternal(1, 3, 1, 2, mainGunIS);
-            break;
-        case 4:
-            setInternal(1, 4, 1, 3, mainGunIS);
-            break;
-        case 5:
-            setInternal(1, 5, 1, 3, mainGunIS);
-            break;
-        case 6:
-            setInternal(2, 6, 2, 4, mainGunIS);
-            break;
-        case 7:
-            setInternal(2, 7, 2, 4, mainGunIS);
-            break;
-        case 8:
-            setInternal(2, 8, 2, 5, mainGunIS);
-            break;
-        case 9:
-            setInternal(2, 9, 2, 5, mainGunIS);
-            break;
+            // H, TSO,ARM,LEGS,MainGun
+            case 2:
+                setInternal(1, 2, 1, 2, mainGunIS);
+                break;
+            case 3:
+                setInternal(1, 3, 1, 2, mainGunIS);
+                break;
+            case 4:
+                setInternal(1, 4, 1, 3, mainGunIS);
+                break;
+            case 5:
+                setInternal(1, 5, 1, 3, mainGunIS);
+                break;
+            case 6:
+                setInternal(2, 6, 2, 4, mainGunIS);
+                break;
+            case 7:
+                setInternal(2, 7, 2, 4, mainGunIS);
+                break;
+            case 8:
+                setInternal(2, 8, 2, 5, mainGunIS);
+                break;
+            case 9:
+                setInternal(2, 9, 2, 5, mainGunIS);
+                break;
         }
     }
 
@@ -650,7 +650,7 @@ public class Protomech extends Entity {
      */
     @Override
     public Mounted addEquipment(EquipmentType etype, int loc)
-    throws LocationFullException {
+            throws LocationFullException {
         return addEquipment(etype, loc, false, -1);
     }
 
@@ -688,63 +688,63 @@ public class Protomech extends Entity {
 
         if (mounted.getType() instanceof WeaponType) {
             switch (loc) {
-            case LOC_HEAD:
-            case LOC_LEG:
-            case LOC_NMISS:
-                throw new LocationFullException("Weapon "
-                        + mounted.getName() + " can't be mounted in "
-                        + getLocationAbbr(loc));
-            case LOC_MAINGUN:
-                if (bHasMainGun) {
-                    throw new LocationFullException("Already has Main Gun");
-                }
-                bHasMainGun = true;
-                mounted.setLocation(loc, rearMounted);
-                equipmentList.add(mounted);
-                weaponList.add(mounted);
-                totalWeaponList.add(mounted);
-                break;
-            case LOC_LARM:
-                if (bHasLArmGun) {
-                    throw new LocationFullException("Already has LArm Gun");
-                }
-                bHasLArmGun = true;
-                mounted.setLocation(loc, rearMounted);
-                equipmentList.add(mounted);
-                weaponList.add(mounted);
-                totalWeaponList.add(mounted);
-                break;
-            case LOC_RARM:
-                if (bHasRArmGun) {
-                    throw new LocationFullException("Already has RArm Gun");
-                }
-                bHasRArmGun = true;
-                mounted.setLocation(loc, rearMounted);
-                equipmentList.add(mounted);
-                weaponList.add(mounted);
-                totalWeaponList.add(mounted);
-                break;
-            case LOC_TORSO:
-                if (bHasTorsoAGun) {
-                    if (bHasTorsoBGun) {
-                        throw new LocationFullException(
-                                "Already has both torso guns");
+                case LOC_HEAD:
+                case LOC_LEG:
+                case LOC_NMISS:
+                    throw new LocationFullException("Weapon "
+                            + mounted.getName() + " can't be mounted in "
+                            + getLocationAbbr(loc));
+                case LOC_MAINGUN:
+                    if (bHasMainGun) {
+                        throw new LocationFullException("Already has Main Gun");
                     }
-                    bHasTorsoBGun = true;
+                    bHasMainGun = true;
                     mounted.setLocation(loc, rearMounted);
                     equipmentList.add(mounted);
                     weaponList.add(mounted);
                     totalWeaponList.add(mounted);
-                    torsoBGunNum = getEquipmentNum(mounted);
-                } else {
-                    bHasTorsoAGun = true;
+                    break;
+                case LOC_LARM:
+                    if (bHasLArmGun) {
+                        throw new LocationFullException("Already has LArm Gun");
+                    }
+                    bHasLArmGun = true;
                     mounted.setLocation(loc, rearMounted);
                     equipmentList.add(mounted);
                     weaponList.add(mounted);
                     totalWeaponList.add(mounted);
-                    torsoAGunNum = getEquipmentNum(mounted);
-                }
-                break;
+                    break;
+                case LOC_RARM:
+                    if (bHasRArmGun) {
+                        throw new LocationFullException("Already has RArm Gun");
+                    }
+                    bHasRArmGun = true;
+                    mounted.setLocation(loc, rearMounted);
+                    equipmentList.add(mounted);
+                    weaponList.add(mounted);
+                    totalWeaponList.add(mounted);
+                    break;
+                case LOC_TORSO:
+                    if (bHasTorsoAGun) {
+                        if (bHasTorsoBGun) {
+                            throw new LocationFullException(
+                                    "Already has both torso guns");
+                        }
+                        bHasTorsoBGun = true;
+                        mounted.setLocation(loc, rearMounted);
+                        equipmentList.add(mounted);
+                        weaponList.add(mounted);
+                        totalWeaponList.add(mounted);
+                        torsoBGunNum = getEquipmentNum(mounted);
+                    } else {
+                        bHasTorsoAGun = true;
+                        mounted.setLocation(loc, rearMounted);
+                        equipmentList.add(mounted);
+                        weaponList.add(mounted);
+                        totalWeaponList.add(mounted);
+                        torsoAGunNum = getEquipmentNum(mounted);
+                    }
+                    break;
             }
         } else {
             super.addEquipment(mounted, loc, rearMounted);
@@ -787,9 +787,9 @@ public class Protomech extends Entity {
             if (((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_AMS))
                     || ((etype instanceof AmmoType) && (((AmmoType) etype)
                             .getAmmoType() == AmmoType.T_AMS))
-                            || ((etype instanceof MiscType) && (etype
-                                    .hasFlag(MiscType.F_ECM) || etype
-                                    .hasFlag(MiscType.F_BAP)))) {
+                    || ((etype instanceof MiscType) && (etype
+                            .hasFlag(MiscType.F_ECM) || etype
+                            .hasFlag(MiscType.F_BAP)))) {
                 dEquipmentBV += etype.getBV(this);
             }
         }
@@ -851,7 +851,7 @@ public class Protomech extends Entity {
             if (!(wtype.hasFlag(WeaponType.F_ENERGY)
                     || wtype.hasFlag(WeaponType.F_ONESHOT)
                     || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype
-                            .getAmmoType() == AmmoType.T_NA))) {
+                    .getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
@@ -896,7 +896,7 @@ public class Protomech extends Entity {
                     tagBV += atype.getBV(this);
                 } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (game != null)) {
                     for (Enumeration<Team> e = game.getTeams(); e
-                    .hasMoreElements();) {
+                            .hasMoreElements();) {
                         Team m = e.nextElement();
                         if (m.getId() == tmpP.getTeam()) {
                             if (m.hasTAG(game)) {

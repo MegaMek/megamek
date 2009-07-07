@@ -38,7 +38,7 @@ public class StopSwarmAttack extends InfantryAttack {
         this.name = "Stop Swarm Attack";
         this.setInternalName(Infantry.STOP_SWARM);
     }
-
+    
     /*
      * (non-Javadoc)
      * 

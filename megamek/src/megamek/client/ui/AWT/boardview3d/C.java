@@ -53,7 +53,7 @@ class C {
     static final Alpha defAlpha = new Alpha(-1, 4000);
     static final Alpha dblAlpha = new Alpha(-1, Alpha.INCREASING_ENABLE|Alpha.DECREASING_ENABLE, 0, 0, 500, 0, 0, 500, 0, 0);
     static final Alpha halfAlpha = new Alpha(-1, Alpha.INCREASING_ENABLE|Alpha.DECREASING_ENABLE, 0, 0, 4000, 0, 0, 4000, 0, 0);
-
+    
     /**
      * Create a quaternion that describes a rotation of alpha around the given axis.
      * The axis must describe a unit vector.

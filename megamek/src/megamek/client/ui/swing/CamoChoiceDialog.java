@@ -67,7 +67,7 @@ import megamek.common.util.DirectoryItems;
  * @version 1
  */
 public class CamoChoiceDialog extends JDialog implements ActionListener,
-ItemListener, ItemSelectable, ListSelectionListener {
+        ItemListener, ItemSelectable, ListSelectionListener {
 
     /**
      *
@@ -236,11 +236,11 @@ ItemListener, ItemSelectable, ListSelectionListener {
                 // Print the stack trace and display the message.
                 err.printStackTrace();
                 JOptionPane
-                .showMessageDialog(
-                        frame,
-                        err.getMessage(),
-                        Messages
-                        .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                        .showMessageDialog(
+                                frame,
+                                err.getMessage(),
+                                Messages
+                                        .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         }
     }
@@ -511,11 +511,11 @@ ItemListener, ItemSelectable, ListSelectionListener {
             // Print the stack trace and display the message.
             err.printStackTrace();
             JOptionPane
-            .showMessageDialog(
-                    frame,
-                    err.getMessage(),
-                    Messages
-                    .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                    .showMessageDialog(
+                            frame,
+                            err.getMessage(),
+                            Messages
+                                    .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         }
     }
 
@@ -553,11 +553,11 @@ ItemListener, ItemSelectable, ListSelectionListener {
             // Print the stack trace and display the message.
             err.printStackTrace();
             JOptionPane
-            .showMessageDialog(
-                    frame,
-                    err.getMessage(),
-                    Messages
-                    .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                    .showMessageDialog(
+                            frame,
+                            err.getMessage(),
+                            Messages
+                                    .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         }
         if (image == null) {
             return null;

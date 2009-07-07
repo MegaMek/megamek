@@ -35,7 +35,7 @@ public class BLKFile {
     public static final int FISSION = 7;
 
     protected void loadEquipment(Entity t, String sName, int nLoc)
-    throws EntityLoadingException {
+            throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
         if (saEquip == null) {
             return;

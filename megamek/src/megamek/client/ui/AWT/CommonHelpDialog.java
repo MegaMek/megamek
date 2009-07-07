@@ -108,7 +108,7 @@ public class CommonHelpDialog extends Dialog {
         } else {
             // Set our title.
             this
-            .setTitle(Messages.getString("CommonHelpDialog.helpFile") + helpfile.getName()); //$NON-NLS-1$
+                    .setTitle(Messages.getString("CommonHelpDialog.helpFile") + helpfile.getName()); //$NON-NLS-1$
 
             // Try to read in the help file.
             boolean firstLine = true;
@@ -122,7 +122,7 @@ public class CommonHelpDialog extends Dialog {
                         firstLine = false;
                     } else {
                         buff.append(" \n"); // the space is to force a line-feed
-                        // on empty lines //$NON-NLS-1$
+                                            // on empty lines //$NON-NLS-1$
                     }
                     buff.append(line);
                     line = input.readLine();
@@ -132,9 +132,9 @@ public class CommonHelpDialog extends Dialog {
                     buff.append("\n \n"); //$NON-NLS-1$
                 }
                 buff
-                .append(
-                        Messages
-                        .getString("CommonHelpDialog.errorReading")) //$NON-NLS-1$
+                        .append(
+                                Messages
+                                        .getString("CommonHelpDialog.errorReading")) //$NON-NLS-1$
                         .append(exp.getMessage());
                 exp.printStackTrace();
             }

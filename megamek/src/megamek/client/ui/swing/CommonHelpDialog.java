@@ -141,7 +141,7 @@ public class CommonHelpDialog extends JDialog {
                         firstLine = false;
                     } else {
                         buff.append(" \n"); // the space is to force a line-feed
-                        // on empty lines //$NON-NLS-1$
+                                            // on empty lines //$NON-NLS-1$
                     }
                     buff.append(line);
                     line = input.readLine();
@@ -151,9 +151,9 @@ public class CommonHelpDialog extends JDialog {
                     buff.append("\n \n"); //$NON-NLS-1$
                 }
                 buff
-                .append(
-                        Messages
-                        .getString("CommonHelpDialog.errorReading"))//$NON-NLS-1$
+                        .append(
+                                Messages
+                                        .getString("CommonHelpDialog.errorReading"))//$NON-NLS-1$
                         .append(exp.getMessage());
                 exp.printStackTrace();
             }

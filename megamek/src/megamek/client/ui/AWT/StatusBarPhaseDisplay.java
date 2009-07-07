@@ -25,7 +25,7 @@ import java.awt.event.ActionListener;
 import megamek.client.Client;
 
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
-implements ActionListener {
+        implements ActionListener {
 
     /**
      * 

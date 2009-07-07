@@ -94,14 +94,14 @@ public class DirectoryItems implements Categorized {
         // Validate input.
         if (null == rootDir) {
             throw new IllegalArgumentException(
-            "A null root directory was passed."); //$NON-NLS-1$
+                    "A null root directory was passed."); //$NON-NLS-1$
         } else if (!rootDir.isDirectory()) {
             throw new IllegalArgumentException(
-            "The passed file is not a directory."); //$NON-NLS-1$
+                    "The passed file is not a directory."); //$NON-NLS-1$
         }
         if (null == itemFactory) {
             throw new IllegalArgumentException(
-            "A null item factory was passed."); //$NON-NLS-1$
+                    "A null item factory was passed."); //$NON-NLS-1$
         }
 
         // Save the root category name and the item factory.
@@ -230,12 +230,12 @@ public class DirectoryItems implements Categorized {
      * @throws  <code>Exception</code> if there's any error getting the item.
      */
     public Object getItem(String categoryName, String itemName)
-    throws Exception {
+            throws Exception {
 
         // Validate input.
         if (null == categoryName) {
             throw new IllegalArgumentException(
-            "A null category name was passed."); //$NON-NLS-1$
+                    "A null category name was passed."); //$NON-NLS-1$
         }
         if (null == itemName) {
             throw new IllegalArgumentException("A null item name was passed."); //$NON-NLS-1$

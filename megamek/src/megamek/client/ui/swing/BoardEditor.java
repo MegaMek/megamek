@@ -77,8 +77,8 @@ import megamek.common.Terrains;
 import megamek.common.util.BoardUtilities;
 
 public class BoardEditor extends JComponent implements ItemListener,
-ListSelectionListener, ActionListener, DocumentListener,
-IMapSettingsObserver {
+        ListSelectionListener, ActionListener, DocumentListener,
+        IMapSettingsObserver {
     /**
      *
      */
@@ -140,9 +140,9 @@ IMapSettingsObserver {
             bvc = bv.getComponent();
         } catch (IOException e) {
             JOptionPane
-            .showMessageDialog(
-                    frame,
-                    Messages.getString("BoardEditor.CouldntInitialize") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                    .showMessageDialog(
+                            frame,
+                            Messages.getString("BoardEditor.CouldntInitialize") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();
         }
         bv.addBoardViewListener(new BoardViewListenerAdapter() {
@@ -346,10 +346,10 @@ IMapSettingsObserver {
             minimap = new MiniMap(minimapW, game, bv);
         } catch (IOException e) {
             JOptionPane
-            .showMessageDialog(
-                    frame,
-                    Messages
-                    .getString("BoardEditor.CouldNotInitialiseMinimap") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                    .showMessageDialog(
+                            frame,
+                            Messages
+                                    .getString("BoardEditor.CouldNotInitialiseMinimap") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();
         }
         minimapW.add(minimap);
@@ -496,14 +496,14 @@ IMapSettingsObserver {
     public void boardLoad() {
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
         fc
-        .setLocation(frame.getLocation().x + 150,
-                frame.getLocation().y + 100);
+                .setLocation(frame.getLocation().x + 150,
+                        frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
                 return (null != dir.getName())
-                && dir.getName().endsWith(".board"); //$NON-NLS-1$
+                        && dir.getName().endsWith(".board"); //$NON-NLS-1$
             }
 
             @Override
@@ -573,8 +573,8 @@ IMapSettingsObserver {
         // move to middle of screen
         waitD.setLocation(
                 frame.getSize().width / 2 - waitD.getSize().width / 2, frame
-                .getSize().height
-                / 2 - waitD.getSize().height / 2);
+                        .getSize().height
+                        / 2 - waitD.getSize().height / 2);
         waitD.setVisible(true);
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -608,14 +608,14 @@ IMapSettingsObserver {
     private void boardSaveAs() {
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
         fc
-        .setLocation(frame.getLocation().x + 150,
-                frame.getLocation().y + 100);
+                .setLocation(frame.getLocation().x + 150,
+                        frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
                 return (null != dir.getName())
-                && dir.getName().endsWith(".board"); //$NON-NLS-1$
+                        && dir.getName().endsWith(".board"); //$NON-NLS-1$
             }
 
             @Override
@@ -651,8 +651,8 @@ IMapSettingsObserver {
     private void boardSaveAsImage() {
         JFileChooser fc = new JFileChooser(".");
         fc
-        .setLocation(frame.getLocation().x + 150,
-                frame.getLocation().y + 100);
+                .setLocation(frame.getLocation().x + 150,
+                        frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveAsImage"));
         fc.setFileFilter(new FileFilter() {
             @Override
@@ -869,8 +869,8 @@ IMapSettingsObserver {
                 }
                 g.setFont(new Font("SansSerif", Font.PLAIN, 9)); //$NON-NLS-1$
                 g
-                .drawString(
-                        Messages.getString("BoardEditor.LEVEL") + curHex.getElevation(), 24, 70); //$NON-NLS-1$
+                        .drawString(
+                                Messages.getString("BoardEditor.LEVEL") + curHex.getElevation(), 24, 70); //$NON-NLS-1$
             } else {
                 g.clearRect(0, 0, 72, 72);
             }

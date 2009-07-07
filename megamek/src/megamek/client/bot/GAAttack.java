@@ -95,7 +95,7 @@ public class GAAttack extends GA {
                     0).intValue();
         }
         Entity target = target_array
-        .get(chromArrayList.genes[chromosomeDim - 1]);
+                .get(chromArrayList.genes[chromosomeDim - 1]);
         for (int iGene = 0; iGene < chromosomeDim - 1; iGene++) {
             AttackOption a = attack.get(iGene).get(chromArrayList.genes[iGene]);
             if (a.target != null) { // if not the no fire option
@@ -103,10 +103,10 @@ public class GAAttack extends GA {
                 double mod = 1;
                 if (a.target.entity.getId() == target.getId()) {
                     a.target.possible_damage[a.toHit.getSideTable()] += mod
-                    * a.primary_expected;
+                            * a.primary_expected;
                 } else {
                     a.target.possible_damage[a.toHit.getSideTable()] += mod
-                    * a.expected;
+                            * a.expected;
                 }
                 heat_total += a.heat;
             }
@@ -187,10 +187,10 @@ public class GAAttack extends GA {
                 }
                 if (a.target.entity.getId() == target.getId()) {
                     a.target.possible_damage[a.toHit.getSideTable()] += mod
-                    * a.primary_expected;
+                            * a.primary_expected;
                 } else {
                     a.target.possible_damage[a.toHit.getSideTable()] += mod
-                    * a.expected;
+                            * a.expected;
                 }
                 heat_total += a.heat;
             }
@@ -227,7 +227,7 @@ public class GAAttack extends GA {
             if (game.getBoard().getHex(attacker.entity.getPosition())
                     .containsTerrain(Terrains.FIRE)
                     && game.getBoard().getHex(attacker.entity.getPosition())
-                    .getFireTurn() > 0) {
+                            .getFireTurn() > 0) {
                 overheat += 5;
             }
         }

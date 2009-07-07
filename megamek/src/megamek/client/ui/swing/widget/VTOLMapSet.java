@@ -118,30 +118,30 @@ public class VTOLMapSet implements DisplayMapSet {
         int x = 0;
         for (int i = 1; i <= 8; i++) {
             switch (i) {
-            case 1:
-                x = 1;
-                break;
-            case 2:
-                x = 2;
-                break;
-            case 3:
-                x = 2;
-                break;
-            case 4:
-                x = 3;
-                break;
-            case 5:
-                x = 3;
-                break;
-            case 6:
-                x = 4;
-                break;
-            case 7:
-                x = 5;
-                break;
-            case 8:
-                x = 5;
-                break;
+                case 1:
+                    x = 1;
+                    break;
+                case 2:
+                    x = 2;
+                    break;
+                case 3:
+                    x = 2;
+                    break;
+                case 4:
+                    x = 3;
+                    break;
+                case 5:
+                    x = 3;
+                    break;
+                case 6:
+                    x = 4;
+                    break;
+                case 7:
+                    x = 5;
+                    break;
+                case 8:
+                    x = 5;
+                    break;
             }
             a = t.getArmor(x);
             a0 = t.getOArmor(x);
@@ -151,27 +151,27 @@ public class VTOLMapSet implements DisplayMapSet {
         }
         for (int i = 9; i <= 15; i++) {
             switch (i) {
-            case 9:
-                x = 1;
-                break;
-            case 10:
-                x = 2;
-                break;
-            case 11:
-                x = 2;
-                break;
-            case 12:
-                x = 3;
-                break;
-            case 13:
-                x = 3;
-                break;
-            case 14:
-                x = 4;
-                break;
-            case 15:
-                x = 5;
-                break;
+                case 9:
+                    x = 1;
+                    break;
+                case 10:
+                    x = 2;
+                    break;
+                case 11:
+                    x = 2;
+                    break;
+                case 12:
+                    x = 3;
+                    break;
+                case 13:
+                    x = 3;
+                    break;
+                case 14:
+                    x = 4;
+                    break;
+                case 15:
+                    x = 5;
+                    break;
             }
             a = t.getInternal(x);
             a0 = t.getOInternal(x);
@@ -265,7 +265,7 @@ public class VTOLMapSet implements DisplayMapSet {
                 .getString("VTOLMapSet.RotorIS"), fm, Color.black, 73, 82); //$NON-NLS-1$
         labels[22] = WidgetUtils.createLabel(Messages
                 .getString("VTOLMapSet.BARRating"), fm, Color.white, 65, 198); //$NON-NLS-1$
-
+        
 
         // Value labels for all parts of mek
         // front
@@ -315,25 +315,25 @@ public class VTOLMapSet implements DisplayMapSet {
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-        | BackGroundDrawer.HALIGN_LEFT;
+                | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-        | BackGroundDrawer.HALIGN_LEFT;
+                | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-        | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-        | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));

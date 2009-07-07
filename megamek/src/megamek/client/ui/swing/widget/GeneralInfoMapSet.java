@@ -21,15 +21,21 @@ import java.awt.Image;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Aero;
+import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IEntityMovementType;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
+import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
@@ -47,11 +53,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
-    weightL, bvL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
-    movementTypeL, ejectL, elevationL, fuelL, curSensorsL, visualRangeL;
+            weightL, bvL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
+            movementTypeL, ejectL, elevationL, fuelL, curSensorsL, visualRangeL;
     private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, mpR0,
-    mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
-    elevationR, fuelR, curSensorsR, visualRangeR;
+            mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
+            elevationR, fuelR, curSensorsR, visualRangeR;
     private PMSimpleLabel[] quirksR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font(
@@ -204,28 +210,28 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         elevationR = createLabel(STAR3, fm, elevationL.getSize().width + 10,
                 getYCoord());
         content.addArea(elevationR);
-
+        
         curSensorsL = createLabel(
                 Messages.getString("GeneralInfoMapSet.currentSensorsL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(curSensorsL);
         curSensorsR = createLabel(STAR3, fm, curSensorsL.getSize().width + 10,
                 getYCoord());
         content.addArea(curSensorsR);
-
+        
         visualRangeL = createLabel(
                 Messages.getString("GeneralInfoMapSet.visualRangeL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(visualRangeL);
         visualRangeR = createLabel(STAR3, fm, visualRangeL.getSize().width + 10,
                 getYCoord());
         content.addArea(visualRangeR);
-
+     
         quirksR = new PMSimpleLabel[40];
         for (int i = 0; i < quirksR.length; i++) {
             quirksR[i] = createLabel(new Integer(i).toString(), fm, 0, getNewYCoord());
             content.addArea(quirksR[i]);
         }
-
-
+        
+        
     }
 
     /**
@@ -237,11 +243,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         mechTypeL1.setVisible(false);
 
         if (s.length() > GUIPreferences.getInstance().getInt(
-        "AdvancedMechDisplayWrapLength")) {
+                "AdvancedMechDisplayWrapLength")) {
             mechTypeL1.setColor(Color.yellow);
             int i = s
-            .lastIndexOf(
-                    " ", GUIPreferences.getInstance().getInt("AdvancedMechDisplayWrapLength")); //$NON-NLS-1$
+                    .lastIndexOf(
+                            " ", GUIPreferences.getInstance().getInt("AdvancedMechDisplayWrapLength")); //$NON-NLS-1$
             mechTypeL0.setString(s.substring(0, i));
             mechTypeL1.setString(s.substring(i).trim());
             mechTypeL1.setVisible(true);
@@ -260,8 +266,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         statusR
-        .setString(en.isProne() ? Messages
-                .getString("GeneralInfoMapSet.prone") : Messages.getString("GeneralInfoMapSet.normal")); //$NON-NLS-1$ //$NON-NLS-2$
+                .setString(en.isProne() ? Messages
+                        .getString("GeneralInfoMapSet.prone") : Messages.getString("GeneralInfoMapSet.normal")); //$NON-NLS-1$ //$NON-NLS-2$
         playerR.setString(en.getOwner().getName());
         if (en.getOwner().getTeam() == 0) {
             teamL.setVisible(false);
@@ -269,7 +275,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         } else {
             teamL.setVisible(true);
             teamR
-            .setString(Messages.getString("GeneralInfoMapSet.Team") + en.getOwner().getTeam()); //$NON-NLS-1$
+                    .setString(Messages.getString("GeneralInfoMapSet.Team") + en.getOwner().getTeam()); //$NON-NLS-1$
             teamR.setVisible(true);
         }
         weightR.setString(Integer.toString((int) en.getWeight()));
@@ -287,14 +293,14 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         elevationR.setString(Messages.getString("GeneralInfoMapSet.NA")); //$NON-NLS-1$
         elevationR.setString(Integer.toString(en.getElevation()));
         if(en.isAirborne()) {
-            elevationL.setString(Messages.getString("GeneralInfoMapSet.altitudeL"));
-            elevationR.setString(Integer.toString(en.getAltitude()));
+        	elevationL.setString(Messages.getString("GeneralInfoMapSet.altitudeL"));
+        	elevationR.setString(Integer.toString(en.getAltitude()));
         }
 
         for(PMSimpleLabel element: quirksR) {
             element.setString(""); //$NON-NLS-1$
         }
-
+        
         int i = 0;
         for (Enumeration<IOptionGroup> qGroups = en.getQuirks().getGroups(); qGroups.hasMoreElements();) {
             IOptionGroup qGroup = qGroups.nextElement();
@@ -308,7 +314,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 }
             }
         }
-
+        
         if (en.mpUsed > 0) {
             mpR0.setString("(" + en.mpUsed + " used)"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
@@ -344,8 +350,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         heatR
-        .setString(Integer.toString(en.heat)
-                + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                .setString(Integer.toString(en.heat)
+                        + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
         if (en instanceof Mech) {
             heatL.setVisible(true);
@@ -377,7 +383,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             curSensorsR.setVisible(false);
             visualRangeR.setVisible(false);
         }
-
+        
         if (en instanceof GunEmplacement) {
             weightL.setVisible(false);
             weightR.setVisible(false);
@@ -424,8 +430,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             fuelR.setVisible(false);
         }
         if(en.getGame().getBoard().inSpace()) {
-            elevationL.setVisible(false);
-            elevationR.setVisible(false);
+        	elevationL.setVisible(false);
+        	elevationR.setVisible(false);
         }
 
         bvR.setString(Integer.toString(en.calculateBattleValue()));
@@ -466,25 +472,25 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-        | BackGroundDrawer.HALIGN_LEFT;
+                | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-        | BackGroundDrawer.HALIGN_LEFT;
+                | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-        | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-        | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));

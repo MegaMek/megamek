@@ -55,7 +55,7 @@ public interface ItemFileFactory extends FilenameFilter {
      *             is <code>null</code>.
      */
     public ItemFile getItemFile(ZipEntry entry, ZipFile zipFile)
-    throws IllegalArgumentException;
+            throws IllegalArgumentException;
 
     /**
      * The method that must be implemented by any object that filters filenames

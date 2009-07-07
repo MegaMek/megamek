@@ -21,7 +21,7 @@ package megamek.common;
 
 public final class CargoBay extends Bay {
 
-
+  
     /**
      * 
      */
@@ -65,7 +65,7 @@ public final class CargoBay extends Bay {
 
         return result;
     }
-
+    
     @Override
     public String getUnusedString() {
         return "Cargo Space - " + this.currentSpace + " tons";
@@ -75,5 +75,5 @@ public final class CargoBay extends Bay {
     public String getType() {
         return "Cargo";
     }
-
+    
 } // End package class TroopSpace implements Transporter

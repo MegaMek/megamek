@@ -57,7 +57,7 @@ public class KrakenTWeapon extends CapitalMissileWeapon {
         this.extAV =10;
         this.maxRange = RANGE_EXT;
     }
-
+    
     /*
      * (non-Javadoc)
      * 

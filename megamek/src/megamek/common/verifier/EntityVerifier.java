@@ -139,7 +139,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             if (ms[i].getUnitType().equals("Mek")
                     || ms[i].getUnitType().equals("Tank")) {
                 Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
-                                                                     .getEntryName());
+                        .getEntryName());
                 if (entity == null) {
                     continue;
                 }
@@ -190,7 +190,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             } else {
                 System.err.println("Error: Invalid argument.\n");
                 System.err
-                .println("Usage:\n\tEntityVerifier [-file <FILENAME>]");
+                        .println("Usage:\n\tEntityVerifier [-file <FILENAME>]");
                 return;
             }
         }

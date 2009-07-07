@@ -61,7 +61,7 @@ public class GameReports implements Serializable {
             return reports.elementAt(round - 1);
         }
         System.err
-        .println("ERROR: GameReports.get() was asked for reports of a round which it does not posses.");
+                .println("ERROR: GameReports.get() was asked for reports of a round which it does not posses.");
         return null;
     }
 

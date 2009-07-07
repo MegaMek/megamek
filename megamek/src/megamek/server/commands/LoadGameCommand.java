@@ -35,7 +35,7 @@ public class LoadGameCommand extends ServerCommand {
     /** Creates new ResetCommand */
     public LoadGameCommand(Server server) {
         super(server, "load",
-        "load a saved game from the savegames directory.  Usage: /load [filename]");
+                "load a saved game from the savegames directory.  Usage: /load [filename]");
     }
 
     /**
@@ -45,7 +45,7 @@ public class LoadGameCommand extends ServerCommand {
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
             server.sendServerChat(connId,
-            "Observers are restricted from loading games.");
+                    "Observers are restricted from loading games.");
             return;
         }
         if (args.length > 1) {

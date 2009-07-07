@@ -86,7 +86,7 @@ public class TestXMLOption implements TestEntityOption {
         if (node.elements().hasMoreElements()) {
             return Float.valueOf(
                     ((ParsedXML) node.elements().nextElement()).getContent()
-                    .trim()).floatValue();
+                            .trim()).floatValue();
         }
         return 0;
     }
@@ -270,32 +270,32 @@ public class TestXMLOption implements TestEntityOption {
 
     public String printOptions() {
         return "Skip: " + skip() + "\n" + "Show Overweighted Entity: "
-        + showOverweightedEntity() + "\n" + "Max Overweight: "
-        + Float.toString(getMaxOverweight()) + "\n"
-        + "Show Underweighted Entity: " + showUnderweightedEntity()
-        + "\n" + "Min Underweight: "
-        + Float.toString(getMinUnderweight()) + "\n"
-        + "Show bad Armor Placement: " + showCorrectArmor() + "\n"
-        + "Show bad Critical Allocation: " + showCorrectCritical()
-        + "\n" + "Show Failed to Load Equipment: " + showFailedEquip()
-        + "\n" + "Weight Ceiling Engine: "
-        + Float.toString(1 / getWeightCeilingEngine()) + "\n"
-        + "Weight Ceiling Structure: "
-        + Float.toString(1 / getWeightCeilingStructure()) + "\n"
-        + "Weight Ceiling Armor: "
-        + Float.toString(1 / getWeightCeilingArmor()) + "\n"
-        + "Weight Ceiling Controls: "
-        + Float.toString(1 / getWeightCeilingControls()) + "\n"
-        + "Weight Ceiling Weapons: "
-        + Float.toString(1 / getWeightCeilingWeapons()) + "\n"
-        + "Weight Ceiling TargComp: "
-        + Float.toString(1 / getWeightCeilingTargComp()) + "\n"
-        + "Weight Ceiling Gyro: "
-        + Float.toString(1 / getWeightCeilingGyro()) + "\n"
-        + "Weight Ceiling Turret: "
-        + Float.toString(1 / getWeightCeilingTurret()) + "\n"
-        + "Weight Ceiling PowerAmp: "
-        + Float.toString(1 / getWeightCeilingPowerAmp()) + "\n"
-        + "Ignore Failed Equipment: \n" + printIgnoredFailedEquip();
+                + showOverweightedEntity() + "\n" + "Max Overweight: "
+                + Float.toString(getMaxOverweight()) + "\n"
+                + "Show Underweighted Entity: " + showUnderweightedEntity()
+                + "\n" + "Min Underweight: "
+                + Float.toString(getMinUnderweight()) + "\n"
+                + "Show bad Armor Placement: " + showCorrectArmor() + "\n"
+                + "Show bad Critical Allocation: " + showCorrectCritical()
+                + "\n" + "Show Failed to Load Equipment: " + showFailedEquip()
+                + "\n" + "Weight Ceiling Engine: "
+                + Float.toString(1 / getWeightCeilingEngine()) + "\n"
+                + "Weight Ceiling Structure: "
+                + Float.toString(1 / getWeightCeilingStructure()) + "\n"
+                + "Weight Ceiling Armor: "
+                + Float.toString(1 / getWeightCeilingArmor()) + "\n"
+                + "Weight Ceiling Controls: "
+                + Float.toString(1 / getWeightCeilingControls()) + "\n"
+                + "Weight Ceiling Weapons: "
+                + Float.toString(1 / getWeightCeilingWeapons()) + "\n"
+                + "Weight Ceiling TargComp: "
+                + Float.toString(1 / getWeightCeilingTargComp()) + "\n"
+                + "Weight Ceiling Gyro: "
+                + Float.toString(1 / getWeightCeilingGyro()) + "\n"
+                + "Weight Ceiling Turret: "
+                + Float.toString(1 / getWeightCeilingTurret()) + "\n"
+                + "Weight Ceiling PowerAmp: "
+                + Float.toString(1 / getWeightCeilingPowerAmp()) + "\n"
+                + "Ignore Failed Equipment: \n" + printIgnoredFailedEquip();
     }
 }

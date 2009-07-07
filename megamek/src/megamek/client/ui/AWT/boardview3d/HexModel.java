@@ -29,9 +29,9 @@ abstract class HexModel extends TransformGroup {
         -BoardModel.HEX_SIDE_LENGTH/2,  BoardModel.HEX_DIAMETER/2, 0,
         -BoardModel.HEX_SIDE_LENGTH,    0,              0,
         -BoardModel.HEX_SIDE_LENGTH/2, -BoardModel.HEX_DIAMETER/2, 0,
-        BoardModel.HEX_SIDE_LENGTH/2, -BoardModel.HEX_DIAMETER/2, 0,
-        BoardModel.HEX_SIDE_LENGTH,    0,              0,
-        BoardModel.HEX_SIDE_LENGTH/2,  BoardModel.HEX_DIAMETER/2, 0,
+         BoardModel.HEX_SIDE_LENGTH/2, -BoardModel.HEX_DIAMETER/2, 0,
+         BoardModel.HEX_SIDE_LENGTH,    0,              0,
+         BoardModel.HEX_SIDE_LENGTH/2,  BoardModel.HEX_DIAMETER/2, 0,
         -BoardModel.HEX_SIDE_LENGTH/2,  BoardModel.HEX_DIAMETER/2, 0,
     };
 
@@ -42,24 +42,24 @@ abstract class HexModel extends TransformGroup {
     private static final GeometryArray makeHex() {
         GeometryInfo gi = new GeometryInfo(GeometryInfo.POLYGON_ARRAY);
         float[] texCoords = {
-                0.25f, 1.0f,
-                0.00f, 0.5f,
-                0.25f, 0.0f,
-                0.75f, 0.0f,
-                1.00f, 0.5f,
-                0.75f, 1.0f,
-                0.25f, 1.0f,
+            0.25f, 1.0f,
+            0.00f, 0.5f,
+            0.25f, 0.0f,
+            0.75f, 0.0f,
+            1.00f, 0.5f,
+            0.75f, 1.0f,
+            0.25f, 1.0f,
         };
         float[] normals = {
-                0, 0, 1,
-                0, 0, 1,
-                0, 0, 1,
-                0, 0, 1,
-                0, 0, 1,
-                0, 0, 1,
-                0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
         };
-
+        
         gi.setCoordinates(hexVertices);
         gi.setStripCounts(new int[] { hexVertices.length/3 });
         gi.setContourCounts(new int[] { 1 });
@@ -67,18 +67,18 @@ abstract class HexModel extends TransformGroup {
 
         gi.setTextureCoordinateParams(1, 2);
         gi.setTextureCoordinates(0, texCoords);
-
+        
         Stripifier st = new Stripifier();
         st.stripify(gi);
-
+        
         return gi.getGeometryArray();
     }
 
     private static final GeometryArray makeHexShaft() {
         GeometryInfo gi = new GeometryInfo(GeometryInfo.TRIANGLE_STRIP_ARRAY);
-
+        
         double[] coords = new double[hexVertices.length*2];
-
+        
         int s = 0;
         for (int d = 0; d < coords.length; d += 6, s += 3) {
             coords[d] = hexVertices[s];
@@ -88,16 +88,16 @@ abstract class HexModel extends TransformGroup {
             coords[d+4] = hexVertices[s+1];
             coords[d+5] = -20*BoardModel.HEX_HEIGHT;
         }
-
+        
         gi.setCoordinates(coords);
         gi.setStripCounts(new int[] { coords.length/3 });
-
+        
         NormalGenerator ng = new NormalGenerator(0);
         ng.generateNormals(gi);
 
         Stripifier st = new Stripifier();
         st.stripify(gi);
-
+        
         return gi.getGeometryArray();
     }
 

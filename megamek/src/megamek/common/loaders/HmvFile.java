@@ -135,7 +135,7 @@ public class HmvFile implements IMechLoader {
                 baseTechType = HMVTechType.getType(readUnsignedShort(dis));
                 engineTechType = HMVTechType.getType(readUnsignedShort(dis));
                 targetingComputerTechType = HMVTechType
-                .getType(readUnsignedShort(dis));
+                        .getType(readUnsignedShort(dis));
 
                 armorTechType = HMVTechType.getType(readUnsignedShort(dis));
             } else if (techType.equals(HMVTechType.CLAN)) {
@@ -217,7 +217,7 @@ public class HmvFile implements IMechLoader {
                 dis.skipBytes(readUnsignedShort(dis));
 
                 HMVWeaponLocation weaponLocation = HMVWeaponLocation
-                .getType(readUnsignedShort(dis));
+                        .getType(readUnsignedShort(dis));
                 if (weaponLocation == HMVWeaponLocation.TURRET) {
                     hasTurret = true;
                 }
@@ -237,34 +237,34 @@ public class HmvFile implements IMechLoader {
                             if ((weaponAmmo < ammoType.getShots())
                                     || (weaponAmmo % ammoType.getShots() > 0)) {
                                 switch (ammoType.getAmmoType()) {
-                                case AmmoType.T_MG:
-                                    if (ammoType.getTechLevel() == TechConstants.T_INTRO_BOXSET) {
+                                    case AmmoType.T_MG:
+                                        if (ammoType.getTechLevel() == TechConstants.T_INTRO_BOXSET) {
+                                            ammoType = (AmmoType) EquipmentType
+                                                    .get("ISMG Ammo (100)");
+                                        } else {
+                                            ammoType = (AmmoType) EquipmentType
+                                                    .get("CLMG Ammo (100)");
+                                        }
+                                        break;
+                                    case AmmoType.T_MG_LIGHT:
                                         ammoType = (AmmoType) EquipmentType
-                                        .get("ISMG Ammo (100)");
-                                    } else {
+                                                .get("CLLightMG Ammo (100)");
+                                        break;
+                                    case AmmoType.T_MG_HEAVY:
                                         ammoType = (AmmoType) EquipmentType
-                                        .get("CLMG Ammo (100)");
-                                    }
-                                    break;
-                                case AmmoType.T_MG_LIGHT:
-                                    ammoType = (AmmoType) EquipmentType
-                                    .get("CLLightMG Ammo (100)");
-                                    break;
-                                case AmmoType.T_MG_HEAVY:
-                                    ammoType = (AmmoType) EquipmentType
-                                    .get("CLHeavyMG Ammo (50)");
-                                    break;
-                                default:
-                                    // Only MG ammo comes in half ton lots.
-                                    throw new EntityLoadingException(
-                                            ammoType.getName()
-                                            + " has "
-                                            + ammoType.getShots()
-                                            + " shots per ton, but "
-                                            + name + " " + model
-                                            + " wants "
-                                            + weaponAmmo
-                                            + " shots.");
+                                                .get("CLHeavyMG Ammo (50)");
+                                        break;
+                                    default:
+                                        // Only MG ammo comes in half ton lots.
+                                        throw new EntityLoadingException(
+                                                ammoType.getName()
+                                                        + " has "
+                                                        + ammoType.getShots()
+                                                        + " shots per ton, but "
+                                                        + name + " " + model
+                                                        + " wants "
+                                                        + weaponAmmo
+                                                        + " shots.");
                                 }
                             }
 
@@ -446,7 +446,7 @@ public class HmvFile implements IMechLoader {
         // Integer.reverseBytes is not supported in 1.4
         // return Float.intBitsToFloat(Integer.reverseBytes(bits));
         bits = ((bits & 0xFF000000) >> 24) | ((bits & 0x00FF0000) >> 8)
-        | ((bits & 0x0000FF00) << 8) | ((bits & 0x000000FF) << 24);
+                | ((bits & 0x0000FF00) << 8) | ((bits & 0x000000FF) << 24);
         return Float.intBitsToFloat(bits);
     }
 
@@ -515,11 +515,11 @@ public class HmvFile implements IMechLoader {
                 vehicle.setMovementMode(IEntityMovementMode.VTOL);
             } else {
                 vehicle
-                .setMovementMode(movementType == HMVMovementType.DISPLACEMENT_HULL ? IEntityMovementMode.NAVAL
-                        : movementType == HMVMovementType.HYDROFOIL ? IEntityMovementMode.HYDROFOIL
-                                : movementType == HMVMovementType.HOVER ? IEntityMovementMode.HOVER
-                                        : movementType == HMVMovementType.WHEELED ? IEntityMovementMode.WHEELED
-                                                : movementType == HMVMovementType.SUBMARINE ? IEntityMovementMode.SUBMARINE
+                        .setMovementMode(movementType == HMVMovementType.DISPLACEMENT_HULL ? IEntityMovementMode.NAVAL
+                                : movementType == HMVMovementType.HYDROFOIL ? IEntityMovementMode.HYDROFOIL
+                                        : movementType == HMVMovementType.HOVER ? IEntityMovementMode.HOVER
+                                                : movementType == HMVMovementType.WHEELED ? IEntityMovementMode.WHEELED
+                                                        : movementType == HMVMovementType.SUBMARINE ? IEntityMovementMode.SUBMARINE
                                                         : IEntityMovementMode.TRACKED);
             }
 
@@ -537,9 +537,9 @@ public class HmvFile implements IMechLoader {
                 engineFlags |= Engine.CLAN_ENGINE;
             }
             vehicle
-            .setEngine(new Engine(engineRating, Engine
-                    .getEngineTypeByString(engineType.toString()),
-                    engineFlags));
+                    .setEngine(new Engine(engineRating, Engine
+                            .getEngineTypeByString(engineType.toString()),
+                            engineFlags));
 
             vehicle.setOriginalJumpMP(jumpMP);
 
@@ -615,7 +615,7 @@ public class HmvFile implements IMechLoader {
     private void addEquipmentType(EquipmentType equipmentType, int weaponCount,
             HMVWeaponLocation weaponLocation) {
         Hashtable<EquipmentType, Integer> equipmentAtLocation = equipment
-        .get(weaponLocation);
+                .get(weaponLocation);
         if (equipmentAtLocation == null) {
             equipmentAtLocation = new Hashtable<EquipmentType, Integer>();
             equipment.put(weaponLocation, equipmentAtLocation);
@@ -630,10 +630,10 @@ public class HmvFile implements IMechLoader {
     private void addEquipment(Tank tank, HMVWeaponLocation weaponLocation,
             int location) throws Exception {
         Hashtable<EquipmentType, Integer> equipmentAtLocation = equipment
-        .get(weaponLocation);
+                .get(weaponLocation);
         if (equipmentAtLocation != null) {
             for (Enumeration<EquipmentType> e = equipmentAtLocation.keys(); e
-            .hasMoreElements();) {
+                    .hasMoreElements();) {
                 EquipmentType equipmentType = e.nextElement();
                 Integer count = equipmentAtLocation.get(equipmentType);
 
@@ -662,7 +662,7 @@ public class HmvFile implements IMechLoader {
                     if ((artemisType != 0) && (equipmentType instanceof WeaponType)) {
                         String artemis = null;
                         int ammoType = ((WeaponType) equipmentType)
-                        .getAmmoType();
+                                .getAmmoType();
                         if (ammoType == AmmoType.T_LRM) {
                             if ((artemisType & 2) == 2) {
                                 artemis = "ArtemisIV";
@@ -686,7 +686,7 @@ public class HmvFile implements IMechLoader {
                             }
                             if (artEq != null) {
                                 Mounted fcs = tank
-                                .addEquipment(artEq, location);
+                                        .addEquipment(artEq, location);
                                 fcs.setLinked(weapon);
                             }
                         }
@@ -1264,7 +1264,7 @@ public class HmvFile implements IMechLoader {
         if ((ammoName == null) && (value != 0)) {
             System.out.print("unknown critical: 0x");
             System.out
-            .print(Integer.toHexString(ammo.intValue()).toUpperCase());
+                    .print(Integer.toHexString(ammo.intValue()).toUpperCase());
             System.out.print(" (");
             System.out.print(techType);
             System.out.println(")");

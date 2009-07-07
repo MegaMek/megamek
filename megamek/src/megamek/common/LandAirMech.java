@@ -15,8 +15,8 @@ public class LandAirMech extends BipedMech {
     public static final int MODE_MECH = 0x001;
     public static final int MODE_AIRMECH = 0x002;
     public static final int MODE_AIRCRAFT = 0x004; // this is supposed to be an
-    // areospace fighter. don't
-    // know their rules though
+                                                    // areospace fighter. don't
+                                                    // know their rules though
 
     // conversion modes: all conversions take a turn and the mech uses an
     // intermediate mode in them.
@@ -28,13 +28,13 @@ public class LandAirMech extends BipedMech {
 
     public static final int MODE_CONVERT_MECH_TO_AIRMECH = 0x112;
     public static final int MODE_CONVERT_MECH_TO_AIRCRAFT = 0x114; // illegal
-    // conversion
+                                                                    // conversion
 
     public static final int MODE_CONVERT_AIRMECH_TO_MECH = 0x121;
     public static final int MODE_CONVERT_AIRMECH_TO_AIRCRAFT = 0x124;
 
     public static final int MODE_CONVERT_AIRCRAFT_TO_MECH = 0x141; // illegal
-    // conversion
+                                                                    // conversion
     public static final int MODE_CONVERT_AIRCRAFT_TO_AIRMECH = 0x142;
 
     private int mode = MODE_MECH;
@@ -216,12 +216,12 @@ public class LandAirMech extends BipedMech {
      */
     public boolean canConvertToMode(int convertMode) {
         switch (convertMode) {
-        case MODE_MECH:
-            return canConvertToMech();
-        case MODE_AIRMECH:
-            return canConvertToAirmech();
-        case MODE_AIRCRAFT:
-            return canConvertToAircraft();
+            case MODE_MECH:
+                return canConvertToMech();
+            case MODE_AIRMECH:
+                return canConvertToAirmech();
+            case MODE_AIRCRAFT:
+                return canConvertToAircraft();
         }
         throw new IllegalArgumentException("Not a valid mode.");
     }
@@ -234,7 +234,7 @@ public class LandAirMech extends BipedMech {
      */
     public void convertToMode(int newMode) {
         if (!isDeployed()) { // during deployment we can change our mode at
-            // will.
+                                // will.
             mode = newMode;
             startMode = mode;
             return;
@@ -244,19 +244,19 @@ public class LandAirMech extends BipedMech {
             mode = startMode;
         } else if (canConvertToMode(newMode)) {
             switch (newMode) {
-            case MODE_MECH:
-                mode = MODE_CONVERT_AIRMECH_TO_MECH;
-                break;
-            case MODE_AIRMECH:
-                if (startMode == MODE_MECH) {
-                    mode = MODE_CONVERT_MECH_TO_AIRMECH;
-                } else if (startMode == MODE_AIRCRAFT) {
-                    mode = MODE_CONVERT_AIRCRAFT_TO_AIRMECH;
-                }
-                break;
-            case MODE_AIRCRAFT:
-                mode = MODE_CONVERT_AIRMECH_TO_AIRCRAFT;
-                break;
+                case MODE_MECH:
+                    mode = MODE_CONVERT_AIRMECH_TO_MECH;
+                    break;
+                case MODE_AIRMECH:
+                    if (startMode == MODE_MECH) {
+                        mode = MODE_CONVERT_MECH_TO_AIRMECH;
+                    } else if (startMode == MODE_AIRCRAFT) {
+                        mode = MODE_CONVERT_AIRCRAFT_TO_AIRMECH;
+                    }
+                    break;
+                case MODE_AIRCRAFT:
+                    mode = MODE_CONVERT_AIRMECH_TO_AIRCRAFT;
+                    break;
             }
         }
     }
@@ -272,34 +272,34 @@ public class LandAirMech extends BipedMech {
     public void newRound(int roundNumber) {
         if (mode >= MODE_CONVERT) { // if we are undergoing a conversiuon
             switch (mode) {
-            case MODE_CONVERT_AIRMECH_TO_MECH:
-            case MODE_CONVERT_AIRCRAFT_TO_MECH:
-                // I am not sure if changing back while in the air to mech
-                // form is allowed.
-                // It is almost always a bad idea however. I'll assume the
-                // mech crashes prone.
-                mode = MODE_MECH;
-                if (getElevation() > 0) { // the mech was up in the air,
-                    // now it comes crashing down.
-                    // TODO do crash damage.
-                }
-                setProne(true);
-                landed = true;
-                break;
-            case MODE_CONVERT_MECH_TO_AIRMECH:
-            case MODE_CONVERT_AIRCRAFT_TO_AIRMECH:
-                mode = MODE_AIRMECH;
-                break;
-            case MODE_CONVERT_AIRMECH_TO_AIRCRAFT:
-            case MODE_CONVERT_MECH_TO_AIRCRAFT:
-                mode = MODE_AIRCRAFT;
-                break;
-            default:
-                // unknown mode, don't know what to do.
+                case MODE_CONVERT_AIRMECH_TO_MECH:
+                case MODE_CONVERT_AIRCRAFT_TO_MECH:
+                    // I am not sure if changing back while in the air to mech
+                    // form is allowed.
+                    // It is almost always a bad idea however. I'll assume the
+                    // mech crashes prone.
+                    mode = MODE_MECH;
+                    if (getElevation() > 0) { // the mech was up in the air,
+                                                // now it comes crashing down.
+                        // TODO do crash damage.
+                    }
+                    setProne(true);
+                    landed = true;
+                    break;
+                case MODE_CONVERT_MECH_TO_AIRMECH:
+                case MODE_CONVERT_AIRCRAFT_TO_AIRMECH:
+                    mode = MODE_AIRMECH;
+                    break;
+                case MODE_CONVERT_AIRMECH_TO_AIRCRAFT:
+                case MODE_CONVERT_MECH_TO_AIRCRAFT:
+                    mode = MODE_AIRCRAFT;
+                    break;
+                default:
+                    // unknown mode, don't know what to do.
             }
         }
         startMode = mode; // set the mode we start the turn in. Can never be
-        // on of the conversion modes.
+                            // on of the conversion modes.
 
         super.newRound(roundNumber);
     }
@@ -311,19 +311,19 @@ public class LandAirMech extends BipedMech {
     public int getOriginalJumpMP() {
         int base = super.getOriginalJumpMP();
         switch (mode) {
-        case MODE_AIRMECH:
-        case MODE_CONVERT_AIRMECH_TO_AIRCRAFT:
-            base *= 3;
-            break;
-        case MODE_CONVERT_AIRMECH_TO_MECH:
-            base *= 1.5;
-            break;
-        case MODE_CONVERT_MECH_TO_AIRMECH:
-            base *= 0.5;
-            break;
-        case MODE_AIRCRAFT:
-        case MODE_CONVERT_AIRCRAFT_TO_AIRMECH:
-            return 0; // aircraft can't jump.
+            case MODE_AIRMECH:
+            case MODE_CONVERT_AIRMECH_TO_AIRCRAFT:
+                base *= 3;
+                break;
+            case MODE_CONVERT_AIRMECH_TO_MECH:
+                base *= 1.5;
+                break;
+            case MODE_CONVERT_MECH_TO_AIRMECH:
+                base *= 0.5;
+                break;
+            case MODE_AIRCRAFT:
+            case MODE_CONVERT_AIRCRAFT_TO_AIRMECH:
+                return 0; // aircraft can't jump.
         }
         return base;
     }
@@ -359,16 +359,16 @@ public class LandAirMech extends BipedMech {
     public int getOriginalWalkMP() {
         int base = super.getOriginalWalkMP();
         switch (mode) {
-        case MODE_AIRMECH:
-        case MODE_CONVERT_AIRMECH_TO_AIRCRAFT:
-            base = (int) Math.ceil(base / 3.0);
-            break;
-        case MODE_CONVERT_AIRMECH_TO_MECH:
-            base = (int) Math.ceil(base / 6.0);
-            break;
-        case MODE_CONVERT_MECH_TO_AIRMECH:
-            base = (int) Math.ceil(base / 2.0);
-            break;
+            case MODE_AIRMECH:
+            case MODE_CONVERT_AIRMECH_TO_AIRCRAFT:
+                base = (int) Math.ceil(base / 3.0);
+                break;
+            case MODE_CONVERT_AIRMECH_TO_MECH:
+                base = (int) Math.ceil(base / 6.0);
+                break;
+            case MODE_CONVERT_MECH_TO_AIRMECH:
+                base = (int) Math.ceil(base / 2.0);
+                break;
         }
         return base;
     }

@@ -76,7 +76,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class MovementDisplay extends StatusBarPhaseDisplay implements
-KeyListener {
+        KeyListener {
     /**
      *
      */
@@ -721,18 +721,18 @@ KeyListener {
             } else if (ce instanceof Tank) {
                 buttonList = buttonsTank;
             } else if (ce instanceof Aero) {
-                if(ce.isAirborne()) {
-                    buttonList = buttonsAero;
-                } else {
-                    buttonList = buttonsTank;
-                }
+            	if(ce.isAirborne()) {
+            		buttonList = buttonsAero;
+            	} else {
+            		buttonList = buttonsTank;
+            	}
             }
         }
         // should this layout be skipped? (if nothing enabled)
         boolean ok = false;
         while (!ok && (buttonLayout != 0)) {
             for (int i = buttonLayout * 6; (i < (buttonLayout + 1) * 6)
-            && (i < buttonList.size()); i++) {
+                    && (i < buttonList.size()); i++) {
                 if (buttonList.get(i).isEnabled()) {
                     ok = true;
                     break;
@@ -748,7 +748,7 @@ KeyListener {
         }
         panButtons.add(butNext);
         for (int i = buttonLayout * 6; (i < (buttonLayout + 1) * 6)
-        && (i < buttonList.size()); i++) {
+                && (i < buttonList.size()); i++) {
             panButtons.add(buttonList.get(i));
         }
         panButtons.add(butMore);
@@ -765,7 +765,7 @@ KeyListener {
         // hmm, sometimes this gets called when there's no ready entities?
         if (ce == null) {
             System.err
-            .println("MovementDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
+                    .println("MovementDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
         cen = en;
@@ -805,7 +805,7 @@ KeyListener {
                 && !ce.isImmobile()
                 && ce.hasUMU()
                 && clientgui.getClient().game.getBoard().getHex(ce.getPosition())
-                .containsTerrain(Terrains.WATER));
+                        .containsTerrain(Terrains.WATER));
         setBackUpEnabled(!isAero && butWalk.isEnabled());
         setChargeEnabled(ce.canCharge());
         setDFAEnabled(ce.canDFA());
@@ -1118,8 +1118,8 @@ KeyListener {
                     if ((vel == 0) && cmd.getFinalElevation() > 0
                             && !(a.isSpheroid() || clientgui.getClient().game
                                     .getPlanetaryConditions().isVacuum())
-                                    && clientgui.getClient().game.getBoard().inSpace()
-                                    && !a.isVSTOL()) {
+                            && clientgui.getClient().game.getBoard().inSpace()
+                            && !a.isVSTOL()) {
                         // add a stall to the movement path
                         cmd.addStep(MovePath.STEP_STALL);
                     }
@@ -1139,13 +1139,13 @@ KeyListener {
                         if ((((position.x == 0) && ((facing == 5) || (facing == 4)))
                                 || ((position.x == clientgui.getClient().game.getBoard()
                                         .getWidth() - 1) && ((facing == 1) || (facing == 2)))
-                                        || ((position.y == 0)
-                                                && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx)
-                                                || ((position.y == 0) && (facing == 0))
-                                                || ((position.y == clientgui.getClient().game.getBoard()
-                                                        .getHeight() - 1)
-                                                        && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.y == clientgui.getClient().game
-                                                                .getBoard().getHeight() - 1) && (facing == 3)))) {
+                                || ((position.y == 0)
+                                        && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx)
+                                || ((position.y == 0) && (facing == 0))
+                                || ((position.y == clientgui.getClient().game.getBoard()
+                                        .getHeight() - 1)
+                                        && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.y == clientgui.getClient().game
+                                .getBoard().getHeight() - 1) && (facing == 3)))) {
                             // then this birdie go bye-bye
                             // set the conditions for removal
                             cmd.addStep(MovePath.STEP_OFF);
@@ -1208,9 +1208,9 @@ KeyListener {
                             // pop up some dialog telling the unit that it did
                             // not spend enough
                             String title = Messages
-                            .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
+                                    .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
                             String body = Messages
-                            .getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
+                                    .getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
                             clientgui.doAlertDialog(title, body);
                             return;
                         }
@@ -1222,9 +1222,9 @@ KeyListener {
                             // pop up some dialog telling the unit that it did
                             // not spend enough
                             String title = Messages
-                            .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
+                                    .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
                             String body = Messages
-                            .getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
+                                    .getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
                             clientgui.doAlertDialog(title, body);
                             return;
                         }
@@ -1239,8 +1239,8 @@ KeyListener {
                             clientgui.frame,
                             Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                             Messages
-                            .getString("MovementDisplay.ConfirmPilotingRoll") + //$NON-NLS-1$
-                            check, true);
+                                    .getString("MovementDisplay.ConfirmPilotingRoll") + //$NON-NLS-1$
+                                    check, true);
                     nag.setVisible(true);
                     if (nag.getAnswer()) {
                         // do they want to be bothered again?
@@ -1259,9 +1259,9 @@ KeyListener {
                 && GUIPreferences.getInstance().getNagForNoAction()) {
             // Hmm....no movement steps, comfirm this action
             String title = Messages
-            .getString("MovementDisplay.ConfirmNoMoveDlg.title"); //$NON-NLS-1$
+                    .getString("MovementDisplay.ConfirmNoMoveDlg.title"); //$NON-NLS-1$
             String body = Messages
-            .getString("MovementDisplay.ConfirmNoMoveDlg.message"); //$NON-NLS-1$
+                    .getString("MovementDisplay.ConfirmNoMoveDlg.message"); //$NON-NLS-1$
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForNoAction(false);
@@ -1277,9 +1277,9 @@ KeyListener {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                     Messages
-                    .getString(
-                            "MovementDisplay.ConfirmMoveRoll", new Object[] { new Integer(m.getMASCTarget()) }), //$NON-NLS-1$
-                            true);
+                            .getString(
+                                    "MovementDisplay.ConfirmMoveRoll", new Object[] { new Integer(m.getMASCTarget()) }), //$NON-NLS-1$
+                    true);
             nag.setVisible(true);
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
@@ -1309,7 +1309,7 @@ KeyListener {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages
                     .getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                     Messages.getString("MovementDisplay.ConfirmPilotingRoll") + //$NON-NLS-1$
-                    check, true);
+                            check, true);
             nag.setVisible(true);
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
@@ -1320,7 +1320,7 @@ KeyListener {
                 return;
             }
         }
-
+        
         disableButtons();
         clientgui.bv.clearMovementData();
         if (ce().hasUMU()) {
@@ -1433,9 +1433,9 @@ KeyListener {
                 if ((target == null) || target.equals(ce)
                         || !(target instanceof Aero)) {
                     clientgui
-                    .doAlertDialog(
-                            Messages
-                            .getString("MovementDisplay.CantRam"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
+                            .doAlertDialog(
+                                    Messages
+                                            .getString("MovementDisplay.CantRam"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
                     clear();
                     return;
                 }
@@ -1459,7 +1459,7 @@ KeyListener {
                     Aero ae = (Aero) ce;
                     int toAttacker = RamAttackAction.getDamageTakenBy(ae, ta,
                             cmd.getSecondFinalPosition(ae.getPosition()), cmd
-                            .getHexesMoved(), ta.getCurrentVelocity());
+                                    .getHexesMoved(), ta.getCurrentVelocity());
                     int toDefender = RamAttackAction.getDamageFor(ae, ta, cmd
                             .getSecondFinalPosition(ae.getPosition()), cmd
                             .getHexesMoved(), ta.getCurrentVelocity());
@@ -1468,24 +1468,24 @@ KeyListener {
                     if (clientgui
                             .doYesNoDialog(
                                     Messages
-                                    .getString(
-                                            "MovementDisplay.RamDialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
-                                            Messages
+                                            .getString(
+                                                    "MovementDisplay.RamDialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
+                                    Messages
                                             .getString(
                                                     "MovementDisplay.RamDialog.message", new Object[] { //$NON-NLS-1$
                                                             toHit
-                                                            .getValueAsString(),
+                                                                    .getValueAsString(),
                                                             new Double(
                                                                     Compute
-                                                                    .oddsAbove(toHit
-                                                                            .getValue())),
-                                                                            toHit.getDesc(),
-                                                                            new Integer(
-                                                                                    toDefender),
-                                                                                    toHit
-                                                                                    .getTableDesc(),
-                                                                                    new Integer(
-                                                                                            toAttacker) }))) {
+                                                                            .oddsAbove(toHit
+                                                                                    .getValue())),
+                                                            toHit.getDesc(),
+                                                            new Integer(
+                                                                    toDefender),
+                                                            toHit
+                                                                    .getTableDesc(),
+                                                            new Integer(
+                                                                    toAttacker) }))) {
                         // if they answer yes, charge the target.
                         cmd.getLastStep().setTarget(target);
                         ready();
@@ -1506,9 +1506,9 @@ KeyListener {
                 final Targetable target = chooseTarget(b.getCoords());
                 if ((target == null) || target.equals(ce)) {
                     clientgui
-                    .doAlertDialog(
-                            Messages
-                            .getString("MovementDisplay.CantCharge"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
+                            .doAlertDialog(
+                                    Messages
+                                            .getString("MovementDisplay.CantCharge"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
                     clear();
                     return;
                 }
@@ -1523,11 +1523,11 @@ KeyListener {
                     if (target.getTargetType() == Targetable.TYPE_ENTITY) {
                         Entity te = (Entity) target;
                         toAttacker = ChargeAttackAction
-                        .getDamageTakenBy(
-                                ce,
-                                te,
-                                clientgui.getClient().game.getOptions().booleanOption(
-                                        "tacops_charge_damage"), cmd.getHexesMoved()); //$NON-NLS-1$
+                                .getDamageTakenBy(
+                                        ce,
+                                        te,
+                                        clientgui.getClient().game.getOptions().booleanOption(
+                                                "tacops_charge_damage"), cmd.getHexesMoved()); //$NON-NLS-1$
                     } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK)
                             || (target.getTargetType() == Targetable.TYPE_BUILDING)) {
                         Building bldg = clientgui.getClient().game.getBoard().getBuildingAt(
@@ -1540,32 +1540,32 @@ KeyListener {
                     if (clientgui
                             .doYesNoDialog(
                                     Messages
-                                    .getString(
-                                            "MovementDisplay.ChargeDialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
-                                            Messages
+                                            .getString(
+                                                    "MovementDisplay.ChargeDialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
+                                    Messages
                                             .getString(
                                                     "MovementDisplay.ChargeDialog.message", new Object[] {//$NON-NLS-1$
                                                             toHit
-                                                            .getValueAsString(),
+                                                                    .getValueAsString(),
                                                             new Double(
                                                                     Compute
-                                                                    .oddsAbove(toHit
-                                                                            .getValue())),
-                                                                            toHit.getDesc(),
-                                                                            new Integer(
-                                                                                    ChargeAttackAction
-                                                                                    .getDamageFor(
-                                                                                            ce,
-                                                                                            clientgui.getClient().game
+                                                                            .oddsAbove(toHit
+                                                                                    .getValue())),
+                                                            toHit.getDesc(),
+                                                            new Integer(
+                                                                    ChargeAttackAction
+                                                                            .getDamageFor(
+                                                                                    ce,
+                                                                                    clientgui.getClient().game
                                                                                             .getOptions()
                                                                                             .booleanOption(
-                                                                                            "tacops_charge_damage"),
-                                                                                            cmd
+                                                                                                    "tacops_charge_damage"),
+                                                                                    cmd
                                                                                             .getHexesMoved())),
-                                                                                            toHit
-                                                                                            .getTableDesc(),
-                                                                                            new Integer(
-                                                                                                    toAttacker) }))) {
+                                                            toHit
+                                                                    .getTableDesc(),
+                                                            new Integer(
+                                                                    toAttacker) }))) {
                         // if they answer yes, charge the target.
                         cmd.getLastStep().setTarget(target);
                         ready();
@@ -1586,9 +1586,9 @@ KeyListener {
                 final Targetable target = chooseTarget(b.getCoords());
                 if ((target == null) || target.equals(ce)) {
                     clientgui
-                    .doAlertDialog(
-                            Messages
-                            .getString("MovementDisplay.CantDFA"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
+                            .doAlertDialog(
+                                    Messages
+                                            .getString("MovementDisplay.CantDFA"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
                     clear();
                     return;
                 }
@@ -1601,29 +1601,29 @@ KeyListener {
                     if (clientgui
                             .doYesNoDialog(
                                     Messages
-                                    .getString(
-                                            "MovementDisplay.DFADialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
-                                            Messages
+                                            .getString(
+                                                    "MovementDisplay.DFADialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
+                                    Messages
                                             .getString(
                                                     "MovementDisplay.DFADialog.message", new Object[] {//$NON-NLS-1$
                                                             toHit
-                                                            .getValueAsString(),
+                                                                    .getValueAsString(),
                                                             new Double(
                                                                     Compute
-                                                                    .oddsAbove(toHit
-                                                                            .getValue())),
-                                                                            toHit.getDesc(),
-                                                                            new Integer(
-                                                                                    DfaAttackAction
-                                                                                    .getDamageFor(
-                                                                                            ce,
-                                                                                            (target instanceof Infantry)
+                                                                            .oddsAbove(toHit
+                                                                                    .getValue())),
+                                                            toHit.getDesc(),
+                                                            new Integer(
+                                                                    DfaAttackAction
+                                                                            .getDamageFor(
+                                                                                    ce,
+                                                                                    (target instanceof Infantry)
                                                                                             && !(target instanceof BattleArmor))),
-                                                                                            toHit
-                                                                                            .getTableDesc(),
-                                                                                            new Integer(
-                                                                                                    DfaAttackAction
-                                                                                                    .getDamageTakenBy(ce)) }))) {
+                                                            toHit
+                                                                    .getTableDesc(),
+                                                            new Integer(
+                                                                    DfaAttackAction
+                                                                            .getDamageTakenBy(ce)) }))) {
                         // if they answer yes, DFA the target
                         cmd.getLastStep().setTarget(target);
                         ready();
@@ -1700,7 +1700,7 @@ KeyListener {
         setUnjamEnabled(ce.canUnjamRAC()
                 && ((gear == MovementDisplay.GEAR_LAND)
                         || (gear == MovementDisplay.GEAR_TURN) || (gear == MovementDisplay.GEAR_BACKUP))
-                        && (cmd.getMpUsed() <= ce.getWalkMP()));
+                && (cmd.getMpUsed() <= ce.getWalkMP()));
     }
 
     private void updateSearchlightButton() {
@@ -1718,10 +1718,10 @@ KeyListener {
         if (null == ce) {
             return;
         }
-
+        
         if(ce.isAirborne()) {
-            //then use altitude not elevation
-            setRaiseEnabled(ce.canGoUp(cmd.getFinalAltitude(), cmd
+        	//then use altitude not elevation
+        	setRaiseEnabled(ce.canGoUp(cmd.getFinalAltitude(), cmd
                     .getFinalCoords()));
             setLowerEnabled(ce.canGoDown(cmd.getFinalAltitude(), cmd
                     .getFinalCoords()));
@@ -1964,7 +1964,7 @@ KeyListener {
                 || (ce.getLaunchableSmallCraft().size() > 0));
 
     }
-
+    
     private void updateEvadeButton() {
 
         final Entity ce = ce();
@@ -1972,17 +1972,17 @@ KeyListener {
         if (null == ce) {
             return;
         }
-
+        
         if(clientgui.getClient().game.getOptions().booleanOption("tacops_evade")) {
             return;
         }
-
+        
         if(!(ce instanceof Mech || ce instanceof Tank)) {
             return;
         }
-
+        
         setEvadeEnabled(cmd.getLastStepMovementType() != IEntityMovementType.MOVE_JUMP 
-                && cmd.getLastStepMovementType() != IEntityMovementType.MOVE_SPRINT);
+                          && cmd.getLastStepMovementType() != IEntityMovementType.MOVE_SPRINT);
     }
 
     private void updateRecklessButton() {
@@ -2011,7 +2011,7 @@ KeyListener {
         if (clientgui.getClient().game.getBoard().inSpace()) {
             return;
         }
-
+        
         if(!ce.isAirborne()) {
             return;
         }
@@ -2108,7 +2108,7 @@ KeyListener {
         // Handle error condition.
         if (loadedUnits.size() == 0) {
             System.err
-            .println("MovementDisplay#getUnloadedUnit() called without loaded units."); //$NON-NLS-1$
+                    .println("MovementDisplay#getUnloadedUnit() called without loaded units."); //$NON-NLS-1$
         }
 
         // If we have multiple choices, display a selection dialog.
@@ -2116,14 +2116,14 @@ KeyListener {
             String[] names = new String[loadedUnits.size()];
             String question = Messages.getString(
                     "MovementDisplay.UnloadUnitDialog.message", new Object[] {//$NON-NLS-1$
-                            ce.getShortName(), ce.getUnusedString() });
+                    ce.getShortName(), ce.getUnusedString() });
             for (int loop = 0; loop < names.length; loop++) {
                 names[loop] = loadedUnits.elementAt(loop).getShortName();
             }
             SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
                     clientgui.frame,
                     Messages
-                    .getString("MovementDisplay.UnloadUnitDialog.title"), //$NON-NLS-1$
+                            .getString("MovementDisplay.UnloadUnitDialog.title"), //$NON-NLS-1$
                     question, names);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer()) {
@@ -2286,7 +2286,7 @@ KeyListener {
         if ((launchableFighters.size() <= 0)
                 && (launchableSmallCraft.size() <= 0)) {
             System.err
-            .println("MovementDisplay#getUnloadedUnit() called without loaded units."); //$NON-NLS-1$
+                    .println("MovementDisplay#getUnloadedUnit() called without loaded units."); //$NON-NLS-1$
 
         } else {
             // cycle through the fighter bays and then the small craft bays
@@ -2308,20 +2308,20 @@ KeyListener {
                 if (currentFighters.size() > 0) {
                     String[] names = new String[currentFighters.size()];
                     String question = Messages
-                    .getString(
-                            "MovementDisplay.LaunchFighterDialog.message", new Object[] { //$NON-NLS-1$
+                            .getString(
+                                    "MovementDisplay.LaunchFighterDialog.message", new Object[] { //$NON-NLS-1$
                                     ce.getShortName(), doors * 2, bayNum });
                     for (int loop = 0; loop < names.length; loop++) {
                         names[loop] = currentFighters.elementAt(loop)
-                        .getShortName();
+                                .getShortName();
                     }
                     ChoiceDialog choiceDialog = new ChoiceDialog(
                             clientgui.frame,
                             Messages
-                            .getString(
-                                    "MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
+                                    .getString(
+                                            "MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
                                             currentBay.getType(), bayNum }),
-                                            question, names);
+                            question, names);
                     choiceDialog.setVisible(true);
                     if (choiceDialog.getAnswer() == true) {
                         // load up the choices
@@ -2399,9 +2399,9 @@ KeyListener {
                 if (clientgui
                         .doYesNoDialog(
                                 Messages
-                                .getString("MovementDisplay.RecoverSureDialog.title"), //$NON-NLS-1$
+                                        .getString("MovementDisplay.RecoverSureDialog.title"), //$NON-NLS-1$
                                 Messages
-                                .getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$
+                                        .getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$
                         )) {
                     return choices.elementAt(0);
                 }
@@ -2414,14 +2414,14 @@ KeyListener {
         String[] names = new String[choices.size()];
         for (int loop = 0; loop < names.length; loop++) {
             names[loop] = clientgui.getClient().game.getEntity(choices.elementAt(loop))
-            .getShortName();
+                    .getShortName();
         }
         String question = Messages
-        .getString("MovementDisplay.RecoverFighterDialog.message");
+                .getString("MovementDisplay.RecoverFighterDialog.message");
         SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
                 clientgui.frame,
                 Messages
-                .getString("MovementDisplay.RecoverFighterDialog.title"),
+                        .getString("MovementDisplay.RecoverFighterDialog.title"),
                 question, names);
         choiceDialog.setVisible(true);
 
@@ -2432,9 +2432,9 @@ KeyListener {
                 if (clientgui
                         .doYesNoDialog(
                                 Messages
-                                .getString("MovementDisplay.RecoverSureDialog.title"), //$NON-NLS-1$
+                                        .getString("MovementDisplay.RecoverSureDialog.title"), //$NON-NLS-1$
                                 Messages
-                                .getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$
+                                        .getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$
                         )) {
                     return choices.elementAt(choiceDialog.getChoice());
                 }
@@ -2502,13 +2502,13 @@ KeyListener {
         String[] names = new String[choices.size()];
         for (int loop = 0; loop < names.length; loop++) {
             names[loop] = clientgui.getClient().game.getEntity(choices.elementAt(loop))
-            .getShortName();
+                    .getShortName();
         }
         String question = Messages
-        .getString("MovementDisplay.JoinSquadronDialog.message");
+                .getString("MovementDisplay.JoinSquadronDialog.message");
         SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
                 clientgui.frame, Messages
-                .getString("MovementDisplay.JoinSquadronDialog.title"),
+                        .getString("MovementDisplay.JoinSquadronDialog.title"),
                 question, names);
         choiceDialog.setVisible(true);
 
@@ -2636,14 +2636,14 @@ KeyListener {
             String[] names = new String[targets.size()];
             String question = Messages.getString(
                     "MovementDisplay.ChooseTargetDialog.message", new Object[] {//$NON-NLS-1$
-                            pos.getBoardNum() });
+                    pos.getBoardNum() });
             for (int loop = 0; loop < names.length; loop++) {
                 names[loop] = targets.get(loop).getDisplayName();
             }
             SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
                     clientgui.frame,
                     Messages
-                    .getString("MovementDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
+                            .getString("MovementDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
                     question, names);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer()) {
@@ -2680,7 +2680,7 @@ KeyListener {
         // should update mp available
         BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(
                 clientgui.frame, Messages
-                .getString("MovementDisplay.BombDumpDialog.title"), //$NON-NLS-1$
+                        .getString("MovementDisplay.BombDumpDialog.title"), //$NON-NLS-1$
                 a.getBombChoices(), false, true, -1);
         dumpBombsDialog.setVisible(true);
         if (dumpBombsDialog.getAnswer()) {
@@ -2699,9 +2699,9 @@ KeyListener {
                 r.choose(false);
                 // addReport(r);
                 String title = Messages
-                .getString("MovementDisplay.DumpingBombs.title"); //$NON-NLS-1$
+                        .getString("MovementDisplay.DumpingBombs.title"); //$NON-NLS-1$
                 String body = Messages
-                .getString("MovementDisplay.DumpFailure.message"); //$NON-NLS-1$
+                        .getString("MovementDisplay.DumpFailure.message"); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
                 // failed the roll, so dump all bombs
                 bombsDumped = a.getBombChoices();
@@ -2709,9 +2709,9 @@ KeyListener {
                 // avoided damage
                 r.choose(true);
                 String title = Messages
-                .getString("MovementDisplay.DumpingBombs.title"); //$NON-NLS-1$
+                        .getString("MovementDisplay.DumpingBombs.title"); //$NON-NLS-1$
                 String body = Messages
-                .getString("MovementDisplay.DumpSuccessful.message"); //$NON-NLS-1$
+                        .getString("MovementDisplay.DumpSuccessful.message"); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
                 // addReport(r);
             }
@@ -2739,44 +2739,44 @@ KeyListener {
         switch (type) {
         case (ManeuverType.MAN_HAMMERHEAD):
             cmd.addStep(MovePath.STEP_YAW, true, true);
-        return true;
+            return true;
         case (ManeuverType.MAN_HALF_ROLL):
             cmd.addStep(MovePath.STEP_ROLL, true, true);
-        return true;
+            return true;
         case (ManeuverType.MAN_BARREL_ROLL):
             cmd.addStep(MovePath.STEP_DEC, true, true);
-        return true;
+            return true;
         case (ManeuverType.MAN_IMMELMAN):
             gear = MovementDisplay.GEAR_IMMEL;
-        return false;
+            return false;
         case (ManeuverType.MAN_SPLIT_S):
             gear = MovementDisplay.GEAR_SPLIT_S;
-        return false;
+            return false;
         case (ManeuverType.MAN_VIFF):
             if (!(ce() instanceof Aero)) {
                 return false;
             }
-        Aero a = (Aero) ce();
-        MoveStep last = cmd.getLastStep();
-        int vel = a.getCurrentVelocity();
-        if (null != last) {
-            vel = last.getVelocityLeft();
-        }
-        while (vel > 0) {
-            cmd.addStep(MovePath.STEP_DEC, true, true);
-            vel--;
-        }
-        cmd.addStep(MovePath.STEP_UP);
-        return true;
+            Aero a = (Aero) ce();
+            MoveStep last = cmd.getLastStep();
+            int vel = a.getCurrentVelocity();
+            if (null != last) {
+                vel = last.getVelocityLeft();
+            }
+            while (vel > 0) {
+                cmd.addStep(MovePath.STEP_DEC, true, true);
+                vel--;
+            }
+            cmd.addStep(MovePath.STEP_UP);
+            return true;
         case (ManeuverType.MAN_SIDE_SLIP_LEFT):
             cmd.addStep(MovePath.STEP_LATERAL_LEFT, true, true);
-        return true;
+            return true;
         case (ManeuverType.MAN_SIDE_SLIP_RIGHT):
             cmd.addStep(MovePath.STEP_LATERAL_RIGHT, true, true);
-        return true;
+            return true;
         case (ManeuverType.MAN_LOOP):
             cmd.addStep(MovePath.STEP_LOOP, true, true);
-        return true;
+            return true;
         default:
             return false;
         }
@@ -2898,8 +2898,8 @@ KeyListener {
             // dcmd.addStep(MovePath.STEP_SWIM);
             gear = MovementDisplay.GEAR_SWIM;
             ce
-            .setMovementMode((ce instanceof BipedMech) ? IEntityMovementMode.BIPED_SWIM
-                    : IEntityMovementMode.QUAD_SWIM);
+                    .setMovementMode((ce instanceof BipedMech) ? IEntityMovementMode.BIPED_SWIM
+                            : IEntityMovementMode.QUAD_SWIM);
         } else if (ev.getActionCommand().equals(MOVE_TURN)) {
             gear = MovementDisplay.GEAR_TURN;
         } else if (ev.getActionCommand().equals(MOVE_BACK_UP)) {
@@ -2938,9 +2938,9 @@ KeyListener {
             SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
                     clientgui.frame,
                     Messages
-                    .getString("MovementDisplay.ChooseMinefieldDialog.title"), //$NON-NLS-1$
+                            .getString("MovementDisplay.ChooseMinefieldDialog.title"), //$NON-NLS-1$
                     Messages
-                    .getString("MovementDisplay.ChooseMinefieldDialog.message"),
+                            .getString("MovementDisplay.ChooseMinefieldDialog.message"),
                     choices);
             choiceDialog.setVisible(true);
             Minefield mf = null;
@@ -2950,14 +2950,14 @@ KeyListener {
 
             if ((null != mf)
                     && clientgui
-                    .doYesNoDialog(
-                            Messages
-                            .getString("MovementDisplay.ClearMinefieldDialog.title"), //$NON-NLS-1$
-                            Messages
-                            .getString(
-                                    "MovementDisplay.ClearMinefieldDialog.message", new Object[] {//$NON-NLS-1$
-                                            new Integer(clear),
-                                            new Integer(boom) }))) {
+                            .doYesNoDialog(
+                                    Messages
+                                            .getString("MovementDisplay.ClearMinefieldDialog.title"), //$NON-NLS-1$
+                                    Messages
+                                            .getString(
+                                                    "MovementDisplay.ClearMinefieldDialog.message", new Object[] {//$NON-NLS-1$
+                                                    new Integer(clear),
+                                                            new Integer(boom) }))) {
                 cmd.addStep(MovePath.STEP_CLEAR_MINEFIELD, mf);
                 ready();
             }
@@ -2989,10 +2989,10 @@ KeyListener {
             if (clientgui.getClient().game.getOptions().booleanOption("tacops_careful_stand")
                     && (ce.getWalkMP() > 2)) {
                 ConfirmDialog response = clientgui.doYesNoBotherDialog(
-                        Messages
-                        .getString("MovementDisplay.CarefulStand.title"),//$NON-NLS-1$
-                        Messages
-                        .getString("MovementDisplay.CarefulStand.message"));
+                                Messages
+                                        .getString("MovementDisplay.CarefulStand.title"),//$NON-NLS-1$
+                                Messages
+                                        .getString("MovementDisplay.CarefulStand.message"));
                 if (response.getAnswer()) {
                     ce.setCarefulStand(true);
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
@@ -3027,17 +3027,17 @@ KeyListener {
             butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
         } else if (ev.getActionCommand().equals(MOVE_FLEE)
                 && clientgui
-                .doYesNoDialog(
-                        Messages
-                        .getString("MovementDisplay.EscapeDialog.title"), Messages.getString("MovementDisplay.EscapeDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                        .doYesNoDialog(
+                                Messages
+                                        .getString("MovementDisplay.EscapeDialog.title"), Messages.getString("MovementDisplay.EscapeDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
             clear();
             cmd.addStep(MovePath.STEP_FLEE);
             ready();
         } else if (ev.getActionCommand().equals(MOVE_FLY_OFF)
                 && clientgui
-                .doYesNoDialog(
-                        Messages
-                        .getString("MovementDisplay.FlyOffDialog.title"), Messages.getString("MovementDisplay.FlyOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                    .doYesNoDialog(
+                            Messages
+                            .getString("MovementDisplay.FlyOffDialog.title"), Messages.getString("MovementDisplay.FlyOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
             //clear();
             cmd.addStep(MovePath.STEP_OFF);
             ready();
@@ -3046,7 +3046,7 @@ KeyListener {
                 if (clientgui
                         .doYesNoDialog(
                                 Messages
-                                .getString("MovementDisplay.AbandonDialog.title"), Messages.getString("MovementDisplay.AbandonDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                                        .getString("MovementDisplay.AbandonDialog.title"), Messages.getString("MovementDisplay.AbandonDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
                     clear();
                     cmd.addStep(MovePath.STEP_EJECT);
                     ready();
@@ -3054,7 +3054,7 @@ KeyListener {
             } else if (clientgui
                     .doYesNoDialog(
                             Messages
-                            .getString("MovementDisplay.AbandonDialog1.title"), Messages.getString("MovementDisplay.AbandonDialog1.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                                    .getString("MovementDisplay.AbandonDialog1.title"), Messages.getString("MovementDisplay.AbandonDialog1.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
                 clear();
                 cmd.addStep(MovePath.STEP_EJECT);
                 ready();
@@ -3162,8 +3162,8 @@ KeyListener {
         } else if (ev.getActionCommand().equals(MOVE_MANEUVER)) {
             ManeuverChoiceDialog choiceDialog = new ManeuverChoiceDialog(
                     clientgui.frame, Messages
-                    .getString("MovementDisplay.ManeuverDialog.title"), //$NON-NLS-1$
-            "huh?");
+                            .getString("MovementDisplay.ManeuverDialog.title"), //$NON-NLS-1$
+                    "huh?");
             Aero a = (Aero) ce;
             MoveStep last = cmd.getLastStep();
             int vel = a.getCurrentVelocity();
@@ -3265,18 +3265,18 @@ KeyListener {
         // Collect the stranded entities into the vector.
         // TODO : get a better interface to "game" and "turn"
         Enumeration<Entity> entities = clientgui.getClient()
-        .getSelectedEntities(new EntitySelector() {
-            private final IGame game = clientgui.getClient().game;
-            private final GameTurn turn = clientgui.getClient().game.getTurn();
-            private final int ownerId = clientgui.getClient().getLocalPlayer().getId();
+                .getSelectedEntities(new EntitySelector() {
+                    private final IGame game = clientgui.getClient().game;
+                    private final GameTurn turn = clientgui.getClient().game.getTurn();
+                    private final int ownerId = clientgui.getClient().getLocalPlayer().getId();
 
-            public boolean accept(Entity acc) {
-                if (turn.isValid(ownerId, acc, game)) {
-                    return true;
-                }
-                return false;
-            }
-        });
+                    public boolean accept(Entity acc) {
+                        if (turn.isValid(ownerId, acc, game)) {
+                            return true;
+                        }
+                        return false;
+                    }
+                });
         while (entities.hasMoreElements()) {
             stranded.addElement(entities.nextElement());
         }
@@ -3291,8 +3291,8 @@ KeyListener {
                 buffer = entity.getDisplayName();
             } else {
                 buffer = Messages
-                .getString(
-                        "MovementDisplay.EntityAt", new Object[] { entity.getDisplayName(), transport.getPosition().getBoardNum() }); //$NON-NLS-1$
+                        .getString(
+                                "MovementDisplay.EntityAt", new Object[] { entity.getDisplayName(), transport.getPosition().getBoardNum() }); //$NON-NLS-1$
             }
             names[index] = buffer.toString();
         }
@@ -3300,12 +3300,12 @@ KeyListener {
         // Show the choices to the player
 
         int[] indexes = clientgui
-        .doChoiceDialog(
-                Messages
-                .getString("MovementDisplay.UnloadStrandedUnitsDialog.title"), //$NON-NLS-1$
-                Messages
-                .getString("MovementDisplay.UnloadStrandedUnitsDialog.message"), //$NON-NLS-1$
-                names);
+                .doChoiceDialog(
+                        Messages
+                                .getString("MovementDisplay.UnloadStrandedUnitsDialog.title"), //$NON-NLS-1$
+                        Messages
+                                .getString("MovementDisplay.UnloadStrandedUnitsDialog.message"), //$NON-NLS-1$
+                        names);
 
         // Convert the indexes into selected entity IDs and tell the server.
         int[] ids = null;
@@ -3488,7 +3488,7 @@ KeyListener {
         butFlee.setEnabled(enabled);
         clientgui.getMenuBar().setMoveFleeEnabled(enabled);
     }
-
+    
     private void setFlyOffEnabled(boolean enabled) {
         butFlyOff.setEnabled(enabled);
         clientgui.getMenuBar().setMoveFlyOffEnabled(enabled);
@@ -3698,7 +3698,7 @@ KeyListener {
                     leftTonnage += leftTargets.nextElement().getWeight();
                 }
                 Enumeration<Entity> rightTargets = clientgui.getClient().game
-                .getEntities(right);
+                        .getEntities(right);
                 double rightTonnage = 0;
                 while (rightTargets.hasMoreElements()) {
                     rightTonnage += rightTargets.nextElement().getWeight();

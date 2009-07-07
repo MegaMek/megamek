@@ -140,7 +140,7 @@ import megamek.common.preference.PreferenceManager;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardListener,
-MouseListener, MechDisplayListener, IPreferenceChangeListener {
+        MouseListener, MechDisplayListener, IPreferenceChangeListener {
 
     private static final long serialVersionUID = -5582195884759007416L;
 
@@ -287,7 +287,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
         game.getBoard().addBoardListener(this);
         scheduleRedrawTimer();// call only once
         addMouseListener(this);
-
+        
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD1, 0, false), "scrollSW");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD2, 0, false), "scrollS");      
@@ -298,12 +298,12 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD7, 0, false), "scrollNW");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD8, 0, false), "scrollN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD9, 0, false), "scrollNE");
-
+        
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false), "scrollS");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false), "scrollN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), "scrollW");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), "scrollE");
-
+        
         ActionMap actionMap = getActionMap();
         actionMap.put("centerOnSelected", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -357,7 +357,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
             }
         });
-
+        
         MouseMotionListener doScrollRectToVisible = new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -611,7 +611,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
     private void updateBoardSize() {
         int width = game.getBoard().getWidth() * (int) (HEX_WC * scale) + (int) (HEX_W / 4 * scale);
         int height = game.getBoard().getHeight() * (int) (HEX_H * scale)
-        + (int) (HEX_H / 2 * scale);
+                + (int) (HEX_H / 2 * scale);
         boardSize = new Dimension(width, height);
     }
 
@@ -740,10 +740,10 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                         if (amod == TargetRoll.AUTOMATIC_SUCCESS) {
                             // predesignated or already hit
                             scaledImage = tileManager
-                            .getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
+                                    .getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
                         } else {
                             scaledImage = tileManager
-                            .getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED);
+                                    .getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED);
                         }
 
                         g.drawImage(scaledImage, p.x, p.y, this);
@@ -753,12 +753,12 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 // view of game
 
                 for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks
-                .hasMoreElements();) {
+                        .hasMoreElements();) {
                     ArtilleryAttackAction a = attacks.nextElement();
 
                     if (a.getTarget(game).getPosition().equals(c)) {
                         scaledImage = tileManager
-                        .getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING);
+                                .getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING);
                         g.drawImage(scaledImage, p.x, p.y, this);
                         break; // do not draw multiple times, tooltop will show
                         // all attacks
@@ -814,31 +814,31 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                     case (Minefield.TYPE_CONVENTIONAL):
                         drawCenteredString(Messages.getString("BoardView1.Conventional"), //$NON-NLS-1$
                                 p.x, p.y + (int) (51 * scale), font_minefield, g);
-                    break;
+                        break;
                     case (Minefield.TYPE_INFERNO):
                         drawCenteredString(
                                 Messages.getString("BoardView1.Inferno") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
                                 p.x, p.y + (int) (51 * scale), font_minefield, g);
-                    break;
+                        break;
                     case (Minefield.TYPE_ACTIVE):
                         drawCenteredString(
                                 Messages.getString("BoardView1.Active") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
                                 p.x, p.y + (int) (51 * scale), font_minefield, g);
-                    break;
+                        break;
                     case (Minefield.TYPE_COMMAND_DETONATED):
                         drawCenteredString(Messages.getString("BoardView1.Command-"), //$NON-NLS-1$
                                 p.x, p.y + (int) (51 * scale), font_minefield, g);
-                    drawCenteredString(Messages.getString("BoardView1.detonated"), //$NON-NLS-1$
-                            p.x, p.y + (int) (60 * scale), font_minefield, g);
-                    break;
+                        drawCenteredString(Messages.getString("BoardView1.detonated"), //$NON-NLS-1$
+                                p.x, p.y + (int) (60 * scale), font_minefield, g);
+                        break;
                     case (Minefield.TYPE_VIBRABOMB):
                         drawCenteredString(Messages.getString("BoardView1.Vibrabomb"), //$NON-NLS-1$
                                 p.x, p.y + (int) (51 * scale), font_minefield, g);
-                    if (mf.getPlayerId() == localPlayer.getId()) {
-                        drawCenteredString("(" + mf.getSetting() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-                                p.x, p.y + (int) (60 * scale), font_minefield, g);
-                    }
-                    break;
+                        if (mf.getPlayerId() == localPlayer.getId()) {
+                            drawCenteredString("(" + mf.getSetting() + ")", //$NON-NLS-1$ //$NON-NLS-2$
+                                    p.x, p.y + (int) (60 * scale), font_minefield, g);
+                        }
+                        break;
                     }
                 }
             }
@@ -980,7 +980,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             }
             if (height > 0) {
                 boardGraph.setColor(GUIPreferences.getInstance().getColor(
-                "AdvancedBuildingTextColor"));
+                        "AdvancedBuildingTextColor"));
                 drawCenteredString(Messages.getString("BoardView1.HEIGHT") + height, //$NON-NLS-1$
                         drawX, drawY + (int) (ypos * scale), font_elev, boardGraph);
                 ypos -= 10;
@@ -1108,7 +1108,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
     Coords getCoordsAt(Point p) {
         final int x = (p.x ) / (int) (HEX_WC * scale);
         final int y = ((p.y ) - ((x & 1) == 1 ? (int) (HEX_H / 2 * scale) : 0))
-        / (int) (HEX_H * scale);
+                / (int) (HEX_H * scale);
         return new Coords(x, y);
     }
 
@@ -1569,17 +1569,17 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + ai.targetHeight;
                 le = LosEffects.calculateLos(game, ai);
                 message
-                .append(Messages
-                        .getString(
-                                "BoardView1.Attacker", new Object[] { //$NON-NLS-1$
-                                        mechInFirst ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                        .append(Messages
+                                .getString(
+                                        "BoardView1.Attacker", new Object[] { //$NON-NLS-1$
+                                                mechInFirst ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
                                                 c1.getBoardNum() }));
                 message
-                .append(Messages
-                        .getString(
-                                "BoardView1.Target", new Object[] { //$NON-NLS-1$
-                                        mechInSecond ? Messages
-                                                .getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                        .append(Messages
+                                .getString(
+                                        "BoardView1.Target", new Object[] { //$NON-NLS-1$
+                                                mechInSecond ? Messages
+                                                        .getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
                                                 c2.getBoardNum() }));
             } else {
                 le = LosEffects.calculateLos(game, ae.getId(), te);
@@ -2203,7 +2203,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
             Rectangle tempRect = new Rectangle(47, 55,
                     getFontMetrics(font).stringWidth(shortName) + 1, getFontMetrics(font)
-                    .getAscent());
+                            .getAscent());
 
             // create image for buffer
             Image tempImage;
@@ -2344,7 +2344,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
             Rectangle tempRect = new Rectangle(47, 55,
                     getFontMetrics(font).stringWidth(shortName) + 1, getFontMetrics(font)
-                    .getAscent());
+                            .getAscent());
 
             // create image for buffer
             Image tempImage;
@@ -2420,27 +2420,27 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 crewStunned = ((Tank) entity).getStunnedTurns();
             } else if (entity instanceof GunEmplacement) {
                 turretLocked = ((GunEmplacement) entity).isTurret()
-                && !entity.canChangeSecondaryFacing();
+                        && !entity.canChangeSecondaryFacing();
                 ge = true;
             }
 
             // draw condition strings
-
+            
             //draw elevation/altitude if non-zero
             if(entity.isAirborne()) {
-                if(!game.getBoard().inSpace()) {
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(Integer.toString(entity.getAltitude()) + "A", 26, 15);
-                    graph.setColor(Color.PINK);
-                    graph.drawString(Integer.toString(entity.getAltitude()) + "A", 25, 14);
-                }
+            	if(!game.getBoard().inSpace()) {
+	            	graph.setColor(Color.darkGray);
+	                graph.drawString(Integer.toString(entity.getAltitude()) + "A", 26, 15);
+	                graph.setColor(Color.PINK);
+	                graph.drawString(Integer.toString(entity.getAltitude()) + "A", 25, 14);
+            	}
             } else if(entity.getElevation() != 0) {
                 graph.setColor(Color.darkGray);
                 graph.drawString(Integer.toString(entity.getElevation()), 26, 15);
                 graph.setColor(Color.PINK);
                 graph.drawString(Integer.toString(entity.getElevation()), 25, 14);
             }
-
+            
             if(entity instanceof Aero) {
                 Aero a = (Aero)entity;
 
@@ -2662,7 +2662,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             if (game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
                     && ((e.getOwner().getId() == getLocalPlayer().getId()) || (game.getOptions()
                             .booleanOption("team_vision") //$NON-NLS-1$
-                            && (e.getOwner().getTeam() == getLocalPlayer().getTeam())))) {
+                    && (e.getOwner().getTeam() == getLocalPlayer().getTeam())))) {
                 return true;
             }
             return false;
@@ -2693,9 +2693,9 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
 
             buffer = new StringBuffer();
             buffer.append(entity.getChassis()).append(" (") //$NON-NLS-1$
-            .append(entity.getOwner().getName()).append(")"); //$NON-NLS-1$
+                    .append(entity.getOwner().getName()).append(")"); //$NON-NLS-1$
             tipStrings[0] = buffer.toString();  
-
+                    
             boolean hasNick = (null != entity.getCrew().getNickname() && !entity.getCrew().getNickname().equals(""));
             buffer = new StringBuffer();
             buffer.append(Messages.getString("BoardView1.pilot"));
@@ -2703,14 +2703,14 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 buffer.append(" '").append(entity.getCrew().getNickname()).append("'");
             }
             buffer.append(" (")
-            .append(entity.getCrew().getGunnery()).append("/") //$NON-NLS-1$
-            .append(entity.getCrew().getPiloting()).append(")").append("; ")
-            .append(entity.getCrew().getStatusDesc()); 
+                    .append(entity.getCrew().getGunnery()).append("/") //$NON-NLS-1$
+                    .append(entity.getCrew().getPiloting()).append(")").append("; ")
+                    .append(entity.getCrew().getStatusDesc()); //$NON-NLS-1$
             int numAdv = entity.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES);
             boolean isMD = entity.getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0;
             if (numAdv > 0) {
                 buffer.append(" <") //$NON-NLS-1$
-                .append(numAdv).append(Messages.getString("BoardView1.advs")); //$NON-NLS-1$
+                        .append(numAdv).append(Messages.getString("BoardView1.advs")); //$NON-NLS-1$
             }
             if (isMD) {
                 buffer.append(Messages.getString("BoardView1.md")); //$NON-NLS-1$
@@ -2725,19 +2725,19 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             buffer = new StringBuffer();
             if (ge == null) {
                 buffer.append(Messages.getString("BoardView1.move")) //$NON-NLS-1$
-                .append(entity.getMovementAbbr(entity.moved)).append(":") //$NON-NLS-1$
-                .append(entity.delta_distance).append(" (+") //$NON-NLS-1$
-                .append(Compute.getTargetMovementModifier(game, entity.getId()).getValue())
-                .append(");") //$NON-NLS-1$
-                .append(Messages.getString("BoardView1.Heat")) //$NON-NLS-1$
-                .append(entity.heat);
+                        .append(entity.getMovementAbbr(entity.moved)).append(":") //$NON-NLS-1$
+                        .append(entity.delta_distance).append(" (+") //$NON-NLS-1$
+                        .append(Compute.getTargetMovementModifier(game, entity.getId()).getValue())
+                        .append(");") //$NON-NLS-1$
+                        .append(Messages.getString("BoardView1.Heat")) //$NON-NLS-1$
+                        .append(entity.heat);
                 if (entity.isCharging()) {
                     buffer.append(" ") //$NON-NLS-1$
-                    .append(Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
+                            .append(Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
                 }
                 if (entity.isMakingDfa()) {
                     buffer.append(" ") //$NON-NLS-1$
-                    .append(Messages.getString("BoardBiew1.DFA1")); //$NON-NLS-1$
+                            .append(Messages.getString("BoardBiew1.DFA1")); //$NON-NLS-1$
                 }
             } else {
                 if (ge.isTurret() && ge.isTurretLocked()) {
@@ -2760,8 +2760,8 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             buffer = new StringBuffer();
             if (ge == null) {
                 buffer.append(Messages.getString("BoardView1.Armor")) //$NON-NLS-1$
-                .append(entity.getTotalArmor()).append(
-                        Messages.getString("BoardView1.internal")) //$NON-NLS-1$
+                        .append(entity.getTotalArmor()).append(
+                                Messages.getString("BoardView1.internal")) //$NON-NLS-1$
                         .append(entity.getTotalInternal());
             } 
             /*
@@ -2771,7 +2771,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                                 Messages.getString("BoardView1.turretArmor")) //$NON-NLS-1$
                         .append(ge.getCurrentTurretArmor());
             }
-             */
+            */
             tipStrings[3] = buffer.toString();
 
             return tipStrings;
@@ -2923,7 +2923,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int climbX = stepPos.x + 42
-                - (graph.getFontMetrics(graph.getFont()).stringWidth(climb) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(climb) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(climb, climbX, stepPos.y + 39);
                 graph.setColor(col);
@@ -2942,12 +2942,12 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int climboffX = stepPos.x + 42
-                - (graph.getFontMetrics(graph.getFont()).stringWidth(climboff) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(climboff) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(climboff, climboffX, stepPos.y + 39);
                 graph.setColor(col);
                 graph.drawString(climboff, climboffX - 1, stepPos.y + 38);
-
+                
                 break;
             case MovePath.STEP_TURN_LEFT:
             case MovePath.STEP_TURN_RIGHT:
@@ -2975,7 +2975,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int loadX = stepPos.x + 42
-                - (graph.getFontMetrics(graph.getFont()).stringWidth(load) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(load) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(load, loadX, stepPos.y + 39);
                 graph.setColor(col);
@@ -2989,7 +2989,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int launchX = stepPos.x + 42
-                - (graph.getFontMetrics(graph.getFont()).stringWidth(launch) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(launch) / 2);
                 int launchY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
                 graph.drawString(launch, launchX, launchY + 1);
@@ -3004,7 +3004,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int recoverX = stepPos.x + 42
-                - (graph.getFontMetrics(graph.getFont()).stringWidth(recover) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(recover) / 2);
                 int recoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
                 graph.drawString(recover, recoverX, recoverY + 1);
@@ -3033,7 +3033,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int unloadX = stepPos.x + 42
-                - (graph.getFontMetrics(graph.getFont()).stringWidth(unload) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(unload) / 2);
                 int unloadY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
                 graph.drawString(unload, unloadX, unloadY + 1);
@@ -3048,7 +3048,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int hoverX = stepPos.x + 42
-                - (graph.getFontMetrics(graph.getFont()).stringWidth(hover) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(hover) / 2);
                 int hoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
                 graph.drawString(hover, hoverX, hoverY + 1);
@@ -3084,7 +3084,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 String evade = Messages.getString("BoardView1.Evade"); //$NON-NLS-1$
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int evadeX = stepPos.x + 42
-                - (graph.getFontMetrics(graph.getFont()).stringWidth(evade) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(evade) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(evade, evadeX, stepPos.y + 64);
                 graph.setColor(col);
@@ -3096,7 +3096,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                 String roll = Messages.getString("BoardView1.Roll"); //$NON-NLS-1$
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int rollX = stepPos.x + 42
-                - (graph.getFontMetrics(graph.getFont()).stringWidth(roll) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(roll) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(roll, rollX, stepPos.y + 18);
                 graph.setColor(col);
@@ -3148,21 +3148,21 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             if(game.useVectorMove()) {
                 return;
             }
-
+            
             if(!step.getParent().getEntity().isAirborne()) {
                 return;
             }
-
+            
             if(((Aero)step.getParent().getEntity()).isSpheroid()) {
                 return;
             }           
-
+            
             int distTraveled = step.getDistance();
             int velocity = step.getVelocity();
             if(game.getBoard().onGround()) {
                 velocity *= 16;
             }
-
+            
             velStringBuf.append("(").append(distTraveled).append("/").append(velocity).append(")");
 
             Color col = Color.GREEN;
@@ -3181,13 +3181,13 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             graph.drawString(velString, costX, stepPos.y + 28);
             graph.setColor(col);
             graph.drawString(velString, costX - 1, stepPos.y + 27);
-
+            
             //if we are in atmosphere, then report the free turn status as well
             if(!game.getBoard().inSpace()) {
                 String turnString = null;
                 StringBuffer turnStringBuf = new StringBuffer();
                 turnStringBuf.append("<").append(step.getNStraight()).append(">");
-
+                
                 col = Color.RED;
                 if(step.dueFreeTurn()) {
                     col = Color.GREEN;
@@ -3239,9 +3239,9 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                     || (step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN)) {
                 costStringBuf.append("{").append(step.getElevation()).append("}");
             }
-
+            
             if(step.getParent().getEntity().isAirborne()) {
-                costStringBuf.append("{").append(step.getAltitude()).append("}");
+            	costStringBuf.append("{").append(step.getAltitude()).append("}");
             }
 
             // Convert the buffer to a String and draw it.
@@ -3319,22 +3319,22 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             final Point t = getHexLocation(entityM.getPosition());
 
             final double an = (entityE.getPosition().radian(entityM.getPosition()) + (Math.PI * 1.5))
-            % (Math.PI * 2); // angle
+                    % (Math.PI * 2); // angle
             final double lw = scale * C3_LINE_WIDTH; // line width
 
             c3Poly = new Polygon();
             c3Poly.addPoint(
                     a.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), a.y
-                    + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+                            + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
             c3Poly.addPoint(
                     a.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), a.y
-                    + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
+                            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
             c3Poly.addPoint(
                     t.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), t.y
-                    + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
+                            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
             c3Poly.addPoint(
                     t.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), t.y
-                    + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+                            + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
         }
 
         @Override
@@ -3424,7 +3424,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             attackColor = PlayerColors.getColor(ae.getOwner().getColorIndex());
             // angle of line connecting two hexes
             an = (ae.getPosition().radian(target.getPosition()) + (Math.PI * 1.5))
-            % (Math.PI * 2); // angle
+                    % (Math.PI * 2); // angle
             makePoly();
 
             // set bounds
@@ -3482,13 +3482,13 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             // in the centes of hex and hiding mek under.
 
             a.x = a.x + (int) (HEX_W / 2 * scale)
-            + (int) Math.round(Math.cos(an) * (int) (18 * scale));
+                    + (int) Math.round(Math.cos(an) * (int) (18 * scale));
             t.x = t.x + (int) (HEX_W / 2 * scale)
-            - (int) Math.round(Math.cos(an) * (int) (18 * scale));
+                    - (int) Math.round(Math.cos(an) * (int) (18 * scale));
             a.y = a.y + (int) (HEX_H / 2 * scale)
-            + (int) Math.round(Math.sin(an) * (int) (18 * scale));
+                    + (int) Math.round(Math.sin(an) * (int) (18 * scale));
             t.y = t.y + (int) (HEX_H / 2 * scale)
-            - (int) Math.round(Math.sin(an) * (int) (18 * scale));
+                    - (int) Math.round(Math.sin(an) * (int) (18 * scale));
 
             // Checking if given attack is mutual. In this case we building
             // halved arrow
@@ -3582,7 +3582,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
         public void addWeapon(WeaponAttackAction attack) {
             final Entity entity = game.getEntity(attack.getEntityId());
             final WeaponType wtype = (WeaponType) entity.getEquipment(attack.getWeaponId())
-            .getType();
+                    .getType();
             final String roll = attack.toHit(game).getValueAsString();
             final String table = attack.toHit(game).getTableDesc();
             weaponDescs.add(wtype.getName()
@@ -3688,7 +3688,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             String[] tipStrings = new String[1 + weaponDescs.size()];
             int tip = 1;
             tipStrings[0] = attackerDesc
-            + " " + Messages.getString("BoardView1.on") + " " + targetDesc; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    + " " + Messages.getString("BoardView1.on") + " " + targetDesc; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             for (Iterator<String> i = weaponDescs.iterator(); i.hasNext();) {
                 tipStrings[tip++] = i.next();
             }
@@ -3791,13 +3791,13 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             // in the centes of hex and hiding mek under.
 
             a.x = a.x + (int) (HEX_W / 2 * scale)
-            + (int) Math.round(Math.cos(an) * (int) (18 * scale));
+                    + (int) Math.round(Math.cos(an) * (int) (18 * scale));
             t.x = t.x + (int) (HEX_W / 2 * scale)
-            - (int) Math.round(Math.cos(an) * (int) (18 * scale));
+                    - (int) Math.round(Math.cos(an) * (int) (18 * scale));
             a.y = a.y + (int) (HEX_H / 2 * scale)
-            + (int) Math.round(Math.sin(an) * (int) (18 * scale));
+                    + (int) Math.round(Math.sin(an) * (int) (18 * scale));
             t.y = t.y + (int) (HEX_H / 2 * scale)
-            - (int) Math.round(Math.sin(an) * (int) (18 * scale));
+                    - (int) Math.round(Math.sin(an) * (int) (18 * scale));
             movePoly = new StraightArrowPolygon(a, t, (int) (4 * scale), (int) (8 * scale), false);
         }
 
@@ -4420,9 +4420,9 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             SingleChoiceDialog choiceDialog = new SingleChoiceDialog(null,
                     Messages.getString("BoardView1.ChooseEntityDialog.title"), //$NON-NLS-1$
                     Messages
-                    .getString(
-                            "BoardView1.ChooseEntityDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$
-                            names);
+                            .getString(
+                                    "BoardView1.ChooseEntityDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$
+                    names);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer() == true) {
                 choice = entities.elementAt(choiceDialog.getChoice());
@@ -4505,7 +4505,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
         // are we on a hex?
         if (mhex != null) {
             strings[stringsIndex] = Messages.getString("BoardView1.Hex") + mcoords.getBoardNum() //$NON-NLS-1$
-            + Messages.getString("BoardView1.level") + mhex.getElevation(); //$NON-NLS-1$
+                    + Messages.getString("BoardView1.level") + mhex.getElevation(); //$NON-NLS-1$
             stringsIndex += 1;
 
             //cycle through the terrains and report types found
@@ -4579,29 +4579,29 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
                     switch (mf.getType()) {
                     case (Minefield.TYPE_CONVENTIONAL):
                         strings[stringsIndex] = mf.getName()
-                        + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
+                                + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
                     case (Minefield.TYPE_COMMAND_DETONATED):
                         strings[stringsIndex] = mf.getName()
-                        + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
+                                + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
                     case (Minefield.TYPE_VIBRABOMB):
                         if (mf.getPlayerId() == localPlayer.getId()) {
                             strings[stringsIndex] = mf.getName()
-                            + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + "(" + mf.getSetting() + ") " + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                    + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + "(" + mf.getSetting() + ") " + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         } else {
                             strings[stringsIndex] = mf.getName()
-                            + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
+                                    + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
                         }
-                    break;
+                        break;
                     case (Minefield.TYPE_ACTIVE):
                         strings[stringsIndex] = mf.getName()
-                        + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    break;
+                                + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        break;
                     case (Minefield.TYPE_INFERNO):
                         strings[stringsIndex] = mf.getName()
-                        + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    break;
+                                + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        break;
                     }
                     stringsIndex++;
                 }
@@ -4644,7 +4644,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
             }
             strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAttack",
                     new Object[] { s, new Integer(aaa.turnsTilHit),
-                    aaa.toHit(game).getValueAsString() });
+                            aaa.toHit(game).getValueAsString() });
         }
 
         // check artillery fire adjustment
@@ -4679,7 +4679,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
     private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {
         ArrayList<ArtilleryAttackAction> v = new ArrayList<ArtilleryAttackAction>();
         for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks
-        .hasMoreElements();) {
+                .hasMoreElements();) {
             ArtilleryAttackAction a = attacks.nextElement();
             if (a.getTarget(game).getPosition().equals(c)) {
                 v.add(a);
@@ -4700,7 +4700,7 @@ MouseListener, MechDisplayListener, IPreferenceChangeListener {
         // IDisplayables that are drawn in fixed positions in the viewport
         // leave artifacts when scrolling
         scrollpane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
-
+        
         vbar = scrollpane.getVerticalScrollBar();
         hbar = scrollpane.getHorizontalScrollBar();
 

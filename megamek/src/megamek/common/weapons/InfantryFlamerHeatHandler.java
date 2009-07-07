@@ -50,8 +50,8 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
             IGame g, Server s) {
         super(t, w, g, s);
     }
-
-
+    
+    
 
     /*
      * (non-Javadoc)
@@ -63,7 +63,7 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
                 .getShootingStrength());
         return damage[troopersHit - 1];
     }
-
+    
     /*
      * (non-Javadoc)
      * @see megamek.common.weapons.InfantryWeaponHandler#calcHits(java.util.Vector)
@@ -82,7 +82,7 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
             // heat
             HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(), waa
-                    .getAimingMode());
+                            .getAimingMode());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                     .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {

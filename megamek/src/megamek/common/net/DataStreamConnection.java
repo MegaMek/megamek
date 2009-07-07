@@ -77,27 +77,27 @@ class DataStreamConnection extends AbstractConnection {
         }
 
         switch (state) {
-        case Header:
-            if (in.available() < 9)
-                return null;
-            zipped = in.readBoolean();
-            encoding = in.readInt();
-            len = in.readInt();
-            state = PacketReadState.Data;
-            // drop through on purpose
-        case Data:
-            // we want to let huge packets block a bit..
-            if (len < 1000 || in.available() < 500) {
-                if (in.available() < len)
+            case Header:
+                if (in.available() < 9)
                     return null;
-            }
-            byte[] data = new byte[len];
-            in.readFully(data);
-            packet = new NetworkPacket(zipped, encoding, data);
-            state = PacketReadState.Header;
-            return packet;
-        default:
-            assert (false);
+                zipped = in.readBoolean();
+                encoding = in.readInt();
+                len = in.readInt();
+                state = PacketReadState.Data;
+                // drop through on purpose
+            case Data:
+                // we want to let huge packets block a bit..
+                if (len < 1000 || in.available() < 500) {
+                    if (in.available() < len)
+                        return null;
+                }
+                byte[] data = new byte[len];
+                in.readFully(data);
+                packet = new NetworkPacket(zipped, encoding, data);
+                state = PacketReadState.Header;
+                return packet;
+            default:
+                assert (false);
         }
         assert (false);
         return null;
@@ -105,7 +105,7 @@ class DataStreamConnection extends AbstractConnection {
 
     @Override
     protected void sendNetworkPacket(byte[] data, boolean iszipped)
-    throws Exception {
+            throws Exception {
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(
                     getOutputStream()));

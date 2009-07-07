@@ -51,7 +51,7 @@ public class ISBATaser extends AmmoWeapon {
         this.toHitModifier = 1;
         this.flags |= F_ONESHOT | F_TASER ; flags1 |= F_BA_WEAPON;
     }
-
+    
     /*
      * (non-Javadoc)
      * 

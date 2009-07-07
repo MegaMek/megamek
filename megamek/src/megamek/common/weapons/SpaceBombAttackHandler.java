@@ -65,7 +65,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
         }
         return nbombs;
     }
-
+    
     /**
      * Does this attack use the cluster hit table?
      * necessary to determine how Aero damage should be applied
@@ -74,7 +74,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
     protected boolean usesClusterTable() {
         return true;
     }
-
+    
     @Override
     protected void useAmmo() {
         int[] payload = waa.getBombPayload();
@@ -86,7 +86,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
                 //find the first mounted bomb of this type and drop it
                 for(Mounted bomb : ae.getBombs()) {
                     if(!bomb.isDestroyed() && bomb.getShotsLeft() > 0
-                            && ((BombType)bomb.getType()).getBombType() == type) {
+                           && ((BombType)bomb.getType()).getBombType() == type) {
                         bomb.setShotsLeft(0);
                         break;
                     }

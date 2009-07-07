@@ -133,7 +133,7 @@ public class ACAPHandler extends AmmoWeaponHandler {
         }
 
         nDamage = checkTerrain(nDamage, entityTarget,vPhaseReport);
-
+        
         //some buildings scale remaining damage that is not absorbed
         //TODO: this isn't quite right for castles brian
         if(null != bldg) {
@@ -163,10 +163,10 @@ public class ACAPHandler extends AmmoWeaponHandler {
 
             hit.makeArmorPiercing(atype,critModifer);
             vPhaseReport
-            .addAll(server.damageEntity(entityTarget, hit, nDamage,
-                    false, ae.getSwarmTargetId() == entityTarget
-                    .getId() ? DamageType.IGNORE_PASSENGER
-                            : damageType, false, false, throughFront, underWater));
+                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
+                            false, ae.getSwarmTargetId() == entityTarget
+                                    .getId() ? DamageType.IGNORE_PASSENGER
+                                    : damageType, false, false, throughFront, underWater));
         }
     }
 }

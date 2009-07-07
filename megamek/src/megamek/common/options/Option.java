@@ -56,7 +56,7 @@ public class Option implements IOption, Serializable {
             this.value = defaultValue;
         } else {
             throw new IllegalArgumentException(
-            "Tried to give wrong type of value for option type."); //$NON-NLS-1$
+                    "Tried to give wrong type of value for option type."); //$NON-NLS-1$
         }
     }
 
@@ -71,7 +71,7 @@ public class Option implements IOption, Serializable {
     public String getDisplayableNameWithValue() {
         updateInfo();
         return info.getDisplayableName()
-        + (type == IOption.INTEGER ? " " + value : "");
+                + (type == IOption.INTEGER ? " " + value : "");
     }
 
     public String getDisplayableName() {
@@ -136,7 +136,7 @@ public class Option implements IOption, Serializable {
             this.value = value;
         } else {
             throw new IllegalArgumentException(
-            "Tried to give wrong type of value for option type."); //$NON-NLS-1$
+                    "Tried to give wrong type of value for option type."); //$NON-NLS-1$
         }
     }
 
@@ -145,7 +145,7 @@ public class Option implements IOption, Serializable {
             this.value = value;
         } else {
             throw new IllegalArgumentException(
-            "Tried to give String value to non-String option."); //$NON-NLS-1$
+                    "Tried to give String value to non-String option."); //$NON-NLS-1$
         }
     }
 
@@ -154,7 +154,7 @@ public class Option implements IOption, Serializable {
             this.value = new Boolean(value);
         } else {
             throw new IllegalArgumentException(
-            "Tried to give boolean value to non-boolean option."); //$NON-NLS-1$
+                    "Tried to give boolean value to non-boolean option."); //$NON-NLS-1$
         }
     }
 
@@ -163,7 +163,7 @@ public class Option implements IOption, Serializable {
             this.value = new Integer(value);
         } else {
             throw new IllegalArgumentException(
-            "Tried to give integer value to non-integer option."); //$NON-NLS-1$
+                    "Tried to give integer value to non-integer option."); //$NON-NLS-1$
         }
     }
 
@@ -172,41 +172,41 @@ public class Option implements IOption, Serializable {
             this.value = new Float(value);
         } else {
             throw new IllegalArgumentException(
-            "Tried to give float value to non-float option."); //$NON-NLS-1$
+                    "Tried to give float value to non-float option."); //$NON-NLS-1$
         }
     }
 
     // Turns this option "off"
     public void clearValue() {
         switch (type) {
-        case STRING:
-        case CHOICE:
-            setValue(""); //$NON-NLS-1$
-            break;
-        case BOOLEAN:
-            setValue(false);
-            break;
-        case INTEGER:
-            setValue(0);
-            break;
-        case FLOAT:
-            setValue(0);
+            case STRING:
+            case CHOICE:
+                setValue(""); //$NON-NLS-1$
+                break;
+            case BOOLEAN:
+                setValue(false);
+                break;
+            case INTEGER:
+                setValue(0);
+                break;
+            case FLOAT:
+                setValue(0);
         }
     }
 
     private boolean isValidValue(Object object) {
         switch (type) {
-        case STRING:
-        case CHOICE:
-            return object instanceof String;
-        case BOOLEAN:
-            return object instanceof Boolean;
-        case INTEGER:
-            return object instanceof Integer;
-        case FLOAT:
-            return object instanceof Float;
-        default:
-            return false;
+            case STRING:
+            case CHOICE:
+                return object instanceof String;
+            case BOOLEAN:
+                return object instanceof Boolean;
+            case INTEGER:
+                return object instanceof Integer;
+            case FLOAT:
+                return object instanceof Float;
+            default:
+                return false;
         }
     }
 

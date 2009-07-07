@@ -1164,6 +1164,7 @@ public class MechDisplay extends JPanel {
             // update weapon list
             ((DefaultListModel) weaponList.getModel()).removeAllElements();
             ((DefaultComboBoxModel) m_chAmmo.getModel()).removeAllElements();
+            
             m_chAmmo.setEnabled(false);
             m_chBayWeapon.removeAllItems();
             m_chBayWeapon.setEnabled(false);

@@ -6,7 +6,6 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -18,16 +17,13 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Player;
 
 /**
  * Allow a user to set types and colors for scenario players
  */
 public class ScenarioDialog extends JDialog implements ActionListener {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -5682593522064612790L;
     private static final int T_ME = 0;
     public static final int T_BOT = 2;
@@ -36,19 +32,14 @@ public class ScenarioDialog extends JDialog implements ActionListener {
     private JComboBox[] m_typeChoices;
     private JButton[] m_camoButtons;
     private JFrame m_frame;
-    /**
-     * The camo selection dialog.
-     */
-    private CamoChoiceDialog camoDialog;
-    private ItemListener prevListener;
+
     public boolean bSet;
     public int[] playerTypes;
     public String localName = ""; //$NON-NLS-1$
 
-    public ScenarioDialog(JFrame frame, Player[] pa) {
+    public ScenarioDialog(final JFrame frame, Player[] pa) {
         super(frame, Messages.getString("MegaMek.ScenarioDialog.title"), true); //$NON-NLS-1$
         m_frame = frame;
-        camoDialog = new CamoChoiceDialog(frame);
         m_players = pa;
         m_labels = new JLabel[pa.length];
         m_typeChoices = new JComboBox[pa.length];
@@ -69,32 +60,12 @@ public class ScenarioDialog extends JDialog implements ActionListener {
             final JButton curButton = m_camoButtons[x];
             curButton.setText(Messages.getString("MegaMek.NoCamoBtn")); //$NON-NLS-1$
             curButton.setPreferredSize(new Dimension(84, 72));
-            curButton.setBackground(PlayerColors.getColor(x));
-            curButton.setActionCommand("camo"); //$NON-NLS-1$
 
-            // When a camo button is pressed, remove any previous
-            // listener from the dialog, update the dialog for the
-            // button's player, and add a new listener.
             curButton.addActionListener(new ActionListener() {
-                private final CamoChoiceDialog dialog = camoDialog;
-                private final JButton button = curButton;
-                private final Player player = curPlayer;
-
                 public void actionPerformed(ActionEvent e) {
-                    if (prevListener != null) {
-                        dialog.removeItemListener(prevListener);
-                    }
-                    if (player.getCamoFileName() == null) {
-                        dialog.setCategory(Player.NO_CAMO);
-                        dialog.setItemName(Player.colorNames[player
-                                .getColorIndex()]);
-                    } else {
-                        dialog.setCategory(player.getCamoCategory());
-                        dialog.setItemName(player.getCamoFileName());
-                    }
-                    prevListener = new CamoChoiceListener(dialog, button,
-                            player);
-                    dialog.addItemListener(prevListener);
+                    CamoChoiceDialog dialog = new CamoChoiceDialog(frame,
+                            curButton);
+                    dialog.setPlayer(curPlayer);
                     dialog.setVisible(true);
                 }
             });

@@ -18,10 +18,8 @@ package megamek.client.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,7 +30,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,7 +39,6 @@ import java.util.LinkedList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -67,7 +63,6 @@ import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.MechView;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
@@ -94,13 +89,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      */
     private static final long serialVersionUID = 1454736776730903786L;
 
-    // The camo selection dialog.
-    private CamoChoiceDialog camoDialog;
-
     // buttons & such
     private JPanel panPlayerInfo;
     private JLabel labPlayerInfo;
-    private JList lisPlayerInfo;
+    JList lisPlayerInfo;
     private JScrollPane scrPlayerInfo;
 
     private JLabel labTeam;
@@ -152,9 +144,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JButton butCustom;
     private JButton butMechReadout;
     private JButton butViewGroup;
-    private JList lisEntities;
+    JList lisEntities;
     private JScrollPane scrEntities;
-    private int[] entityCorrespondance;
+    int[] entityCorrespondance;
     private JPanel panEntities;
 
     private JLabel labStarts;
@@ -194,6 +186,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
     };
 
+    CamoChoiceDialog camoDialog;
+
     /**
      * Creates a new chat lounge for the clientgui.getClient().
      */
@@ -206,9 +200,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 GUIPreferences.getInstance().getInt(
                         "AdvancedChatLoungeTabFontSize"));
         panTabs.setFont(tabPanelFont);
-
-        // Create a new camo selection dialog.
-        camoDialog = new CamoChoiceDialog(clientgui.getFrame());
 
         clientgui.getClient().game.addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
@@ -268,18 +259,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             addBag(panMain, gridbag, c);
         }
 
-        // c.weightx = 1.0; c.weighty = 0.0;
-        // addBag(labStatus, gridbag, c);
-
-        // c.gridwidth = 1;
-        // c.weightx = 1.0; c.weighty = 0.0;
-        // addBag(clientgui.getClient().cb.getComponent(), gridbag, c);
-
-        // c.gridwidth = 1;
-        // c.anchor = GridBagConstraints.EAST;
-        // c.weightx = 0.0; c.weighty = 0.0;
-        // c.ipady = 10;
-        // addBag(butDone, gridbag, c);
         validate();
     }
 
@@ -293,8 +272,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Sets up the player info (team, camo) panel
      */
     private void setupPlayerInfo() {
-        Player player = clientgui.getClient().getLocalPlayer();
-
         panPlayerInfo = new JPanel();
 
         labPlayerInfo = new JLabel(Messages
@@ -303,7 +280,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         lisPlayerInfo = new JList(new DefaultListModel());
         lisPlayerInfo.addListSelectionListener(this);
         scrPlayerInfo = new JScrollPane(lisPlayerInfo);
-        scrPlayerInfo.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrPlayerInfo
+                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot")); //$NON-NLS-1$
         butAddBot.setActionCommand("add_bot"); //$NON-NLS-1$
@@ -327,22 +305,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butCamo = new JButton();
         butCamo.setPreferredSize(new Dimension(84, 72));
         butCamo.setActionCommand("camo"); //$NON-NLS-1$
-        butCamo.addActionListener(this);
-        camoDialog.addItemListener(new CamoChoiceListener(camoDialog, butCamo,
-                this));
+        butCamo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                camoDialog.setPlayer(getPlayerListSelected(lisPlayerInfo)
+                        .getLocalPlayer());
+                camoDialog.setVisible(true);
+                getPlayerListSelected(lisPlayerInfo).sendPlayerInfo();
+            }
+        });
+        camoDialog = new CamoChoiceDialog(clientgui.getFrame(), butCamo);
         refreshCamos();
-
-        // If we have a camo pattern, use it. Otherwise set a background.
-        Image[] images = (Image[]) camoDialog.getSelectedObjects();
-        if (images != null) {
-            butCamo.setIcon(new ImageIcon(images[0]));
-        } else {
-            BufferedImage tempImage = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
-            Graphics2D graphics = tempImage.createGraphics();
-            graphics.setColor(PlayerColors.getColor(player.getColorIndex()));
-            graphics.fillRect(0, 0, 84, 72);
-            butCamo.setIcon(new ImageIcon(tempImage));
-        }
 
         butInit = new JButton(Messages.getString("ChatLounge.butInit")); //$NON-NLS-1$
         butInit.setEnabled(true);
@@ -423,7 +395,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         lisMinefield = new JList(new DefaultListModel());
         scrMinefield = new JScrollPane(lisMinefield);
-        scrMinefield.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrMinefield
+                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         labConventional = new JLabel(Messages
                 .getString("ChatLounge.labConventional"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -446,7 +419,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 .getString("ChatLounge.butMinefield")); //$NON-NLS-1$
         butMinefield.addActionListener(this);
 
-        enableMinefields(clientgui.getClient().game.getOptions().booleanOption("minefields")); //$NON-NLS-1$
+        enableMinefields(clientgui.getClient().game.getOptions().booleanOption(
+                "minefields")); //$NON-NLS-1$
 
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -570,7 +544,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         lisBoardsSelected = new JList(new DefaultListModel());
         lisBoardsSelected.addListSelectionListener(this);
         scrBoardsSelected = new JScrollPane(lisBoardsSelected);
-        scrBoardsSelected.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrBoardsSelected
+                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         butChangeBoard = new JButton(Messages
                 .getString("ChatLounge.butChangeBoard")); //$NON-NLS-1$
@@ -623,24 +598,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private void refreshBoardSettings() {
         labMapType.setText(Messages.getString("ChatLounge.MapType")
                 + " "
-                + MapSettings
-                        .getMediumName(clientgui.getClient().getMapSettings().getMedium()));
-        labBoardSize.setText(Messages
-                .getString("ChatLounge.BoardSize", //$NON-NLS-1$
-                        new Object[] {
-                                new Integer(clientgui.getClient().getMapSettings()
-                                        .getBoardWidth()),
-                                new Integer(clientgui.getClient().getMapSettings()
-                                        .getBoardHeight()) }));
+                + MapSettings.getMediumName(clientgui.getClient()
+                        .getMapSettings().getMedium()));
+        labBoardSize.setText(Messages.getString("ChatLounge.BoardSize", //$NON-NLS-1$
+                new Object[] {
+                        new Integer(clientgui.getClient().getMapSettings()
+                                .getBoardWidth()),
+                        new Integer(clientgui.getClient().getMapSettings()
+                                .getBoardHeight()) }));
         labMapSize.setText(Messages.getString("ChatLounge.MapSize", //$NON-NLS-1$
                 new Object[] {
-                        new Integer(clientgui.getClient().getMapSettings().getMapWidth()),
-                        new Integer(clientgui.getClient().getMapSettings().getMapHeight()) }));
+                        new Integer(clientgui.getClient().getMapSettings()
+                                .getMapWidth()),
+                        new Integer(clientgui.getClient().getMapSettings()
+                                .getMapHeight()) }));
 
         ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
         int index = 0;
-        for (Iterator<String> i = clientgui.getClient().getMapSettings().getBoardsSelected(); i
-                .hasNext();) {
+        for (Iterator<String> i = clientgui.getClient().getMapSettings()
+                .getBoardsSelected(); i.hasNext();) {
             if (clientgui.getClient().getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE) {
                 ((DefaultListModel) lisBoardsSelected.getModel())
                         .addElement((index++)
@@ -729,16 +705,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         MouseListener doubleClick = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if ((e.getClickCount() == 2) && (lisEntities.locationToIndex(e.getPoint()) > -1)) {
-                    Entity entity = clientgui.getClient().game.getEntity(entityCorrespondance[lisEntities.locationToIndex(e.getPoint())]);
+                if ((e.getClickCount() == 2)
+                        && (lisEntities.locationToIndex(e.getPoint()) > -1)) {
+                    Entity entity = clientgui.getClient().game
+                            .getEntity(entityCorrespondance[lisEntities
+                                    .locationToIndex(e.getPoint())]);
                     customizeMech(entity);
-                 }
+                }
             }
         };
         lisEntities.addMouseListener(doubleClick);
         lisEntities.addListSelectionListener(this);
         scrEntities = new JScrollPane(lisEntities);
-        scrEntities.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrEntities
+                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList")); //$NON-NLS-1$
         butLoadList.setActionCommand("load_list"); //$NON-NLS-1$
@@ -890,7 +870,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         lisBVs = new JList(new DefaultListModel());
         scrBVs = new JScrollPane(lisBVs);
-        scrBVs.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrBVs
+                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         panBVs = new JPanel();
 
@@ -949,7 +930,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         lisStarts = new JList(new DefaultListModel());
         scrStarts = new JScrollPane(lisStarts);
-        scrStarts.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrStarts
+                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         butChangeStart = new JButton(Messages
                 .getString("ChatLounge.butChangeStart")); //$NON-NLS-1$
@@ -995,7 +977,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         ((DefaultListModel) lisEntities.getModel()).removeAllElements();
         int listIndex = 0;
         boolean localUnits = false;
-        entityCorrespondance = new int[clientgui.getClient().game.getNoOfEntities()];
+        entityCorrespondance = new int[clientgui.getClient().game
+                .getNoOfEntities()];
 
         /*
          * We will attempt to sort by the following criteria: My units first,
@@ -1004,7 +987,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
          * units will be sorted by the order they were "added" to the list.
          */
         LinkedList<Entity> sortedEntities = new LinkedList<Entity>();
-        for (Enumeration<Entity> i = clientgui.getClient().getEntities(); i.hasMoreElements();) {
+        for (Enumeration<Entity> i = clientgui.getClient().getEntities(); i
+                .hasMoreElements();) {
             Entity entity = i.nextElement();
             sortedEntities.add(entity);
         }
@@ -1020,11 +1004,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 } else if (p_b.equals(clientgui.getClient().getLocalPlayer())
                         && !p_a.equals(clientgui.getClient().getLocalPlayer())) {
                     return 1;
-                } else if ((t_a == clientgui.getClient().getLocalPlayer().getTeam())
-                        && (t_b != clientgui.getClient().getLocalPlayer().getTeam())) {
+                } else if ((t_a == clientgui.getClient().getLocalPlayer()
+                        .getTeam())
+                        && (t_b != clientgui.getClient().getLocalPlayer()
+                                .getTeam())) {
                     return -1;
-                } else if ((t_b == clientgui.getClient().getLocalPlayer().getTeam())
-                        && (t_a != clientgui.getClient().getLocalPlayer().getTeam())) {
+                } else if ((t_b == clientgui.getClient().getLocalPlayer()
+                        .getTeam())
+                        && (t_a != clientgui.getClient().getLocalPlayer()
+                                .getTeam())) {
                     return 1;
                 } else if (t_a != t_b) {
                     return t_a - t_b;
@@ -1039,32 +1027,39 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         for (Entity entity : sortedEntities) {
             // Remember if the local player has units.
             if (!localUnits
-                    && entity.getOwner().equals(clientgui.getClient().getLocalPlayer())) {
+                    && entity.getOwner().equals(
+                            clientgui.getClient().getLocalPlayer())) {
                 localUnits = true;
             }
 
-            if (!clientgui.getClient().game.getOptions().booleanOption("pilot_advantages")) { //$NON-NLS-1$
+            if (!clientgui.getClient().game.getOptions().booleanOption(
+                    "pilot_advantages")) { //$NON-NLS-1$
                 entity.getCrew().clearOptions();
             }
 
-            if(!clientgui.getClient().game.getOptions().booleanOption("stratops_quirks")) { //$NON-NLS-1$
+            if (!clientgui.getClient().game.getOptions().booleanOption(
+                    "stratops_quirks")) { //$NON-NLS-1$
                 entity.clearQuirks();
             }
 
-            boolean rpgSkills = clientgui.getClient().game.getOptions().booleanOption(
-                    "rpg_gunnery");
+            boolean rpgSkills = clientgui.getClient().game.getOptions()
+                    .booleanOption("rpg_gunnery");
 
             // Handle the "Blind Drop" option.
-            if (!entity.getOwner().equals(clientgui.getClient().getLocalPlayer())
-                    && clientgui.getClient().game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
+            if (!entity.getOwner().equals(
+                    clientgui.getClient().getLocalPlayer())
+                    && clientgui.getClient().game.getOptions().booleanOption(
+                            "blind_drop") //$NON-NLS-1$
                     && !clientgui.getClient().game.getOptions().booleanOption(
                             "real_blind_drop")) { //$NON-NLS-1$
 
                 ((DefaultListModel) lisEntities.getModel())
                         .addElement(formatUnit(entity, true, rpgSkills));
                 entityCorrespondance[listIndex++] = entity.getId();
-            } else if (entity.getOwner().equals(clientgui.getClient().getLocalPlayer())
-                    || (!clientgui.getClient().game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
+            } else if (entity.getOwner().equals(
+                    clientgui.getClient().getLocalPlayer())
+                    || (!clientgui.getClient().game.getOptions().booleanOption(
+                            "blind_drop") //$NON-NLS-1$
                     && !clientgui.getClient().game.getOptions().booleanOption(
                             "real_blind_drop"))) { //$NON-NLS-1$
                 ((DefaultListModel) lisEntities.getModel())
@@ -1118,8 +1113,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
         }
 
-        int crewAdvCount = entity.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES);
-        boolean isManeiDomini = entity.getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0;
+        int crewAdvCount = entity.getCrew().countOptions(
+                PilotOptions.LVL3_ADVANTAGES);
+        boolean isManeiDomini = entity.getCrew().countOptions(
+                PilotOptions.MD_ADVANTAGES) > 0;
         int posQuirkCount = entity.countQuirks(Quirks.POS_QUIRKS);
         int negQuirkCount = entity.countQuirks(Quirks.NEG_QUIRKS);
 
@@ -1189,7 +1186,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      */
     private void refreshPlayerInfo() {
         ((DefaultListModel) lisPlayerInfo.getModel()).removeAllElements();
-        for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i.hasMoreElements();) {
+        for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i
+                .hasMoreElements();) {
             final Player player = i.nextElement();
             if (player != null) {
                 StringBuffer pi = new StringBuffer();
@@ -1225,7 +1223,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      */
     private void refreshMinefield() {
         ((DefaultListModel) lisMinefield.getModel()).removeAllElements();
-        for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i.hasMoreElements();) {
+        for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i
+                .hasMoreElements();) {
             final Player player = i.nextElement();
             if (player != null) {
                 StringBuffer pi = new StringBuffer();
@@ -1264,7 +1263,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         final boolean useCost = chkCost.isSelected();
 
         ((DefaultListModel) lisBVs.getModel()).removeAllElements();
-        for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i.hasMoreElements();) {
+        for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i
+                .hasMoreElements();) {
             final Player player = i.nextElement();
             if (player == null) {
                 continue;
@@ -1283,8 +1283,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     }
                 }
             }
-            if (clientgui.getClient().game.getOptions().booleanOption("real_blind_drop")
-                    && (player.getId() != clientgui.getClient().getLocalPlayer().getId())) {
+            if (clientgui.getClient().game.getOptions().booleanOption(
+                    "real_blind_drop")
+                    && (player.getId() != clientgui.getClient()
+                            .getLocalPlayer().getId())) {
                 playerValue = playerValue > 0 ? 9999 : 0;
             }
             if (useBv) {
@@ -1304,47 +1306,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     private void refreshCamos() {
-        // Get the seleted player's selected camo.
         Client c = getPlayerListSelected(lisPlayerInfo);
-        String curCat = c.getLocalPlayer().getCamoCategory();
-        String curItem = c.getLocalPlayer().getCamoFileName();
-
-        // If the player has no camo selected, show his color.
-        if (null == curItem) {
-            curCat = Player.NO_CAMO;
-            curItem = Player.colorNames[c.getLocalPlayer().getColorIndex()];
-        }
-
-        // Now update the camo selection dialog.
-        camoDialog.setCategory(curCat);
-        camoDialog.setItemName(curItem);
-
-        // TODO argoCult Programing at its best. I have only a vague idea what
-        // the section below does, but I do know it needs cleanup.
-        // however it is working.
-        Image image = null;
-        Image[] array = (Image[]) camoDialog.getSelectedObjects();
-        if (null != array) {
-            image = array[0];
-        }
-
-        if (null == image) {
-            for (int color = 0; color < Player.colorNames.length; color++) {
-                if (Player.colorNames[color].equals(curItem)) {
-                    BufferedImage tempImage = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
-                    Graphics2D graphics = tempImage.createGraphics();
-                    graphics.setColor(PlayerColors.getColor(color));
-                    graphics.fillRect(0, 0, 84, 72);
-                    butCamo.setIcon(new ImageIcon(tempImage));
-                    break;
-                }
-            }
-        }
-        // We need to copy the image to make it appear.
-        else {
-            // Update the butCamo's image.
-            butCamo.setIcon(new ImageIcon(image));
-        }
+        camoDialog.setPlayer(c.getLocalPlayer());
     }
 
     /**
@@ -1352,7 +1315,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      */
     private void refreshStarts() {
         ((DefaultListModel) lisStarts.getModel()).removeAllElements();
-        for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i.hasMoreElements();) {
+        for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i
+                .hasMoreElements();) {
             Player player = i.nextElement();
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
@@ -1374,7 +1338,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             choTeam.addItem(Player.teamNames[i]);
         }
         if (clientgui.getClient().getLocalPlayer() != null) {
-            choTeam.setSelectedIndex(clientgui.getClient().getLocalPlayer().getTeam());
+            choTeam.setSelectedIndex(clientgui.getClient().getLocalPlayer()
+                    .getTeam());
         } else {
             choTeam.setSelectedIndex(0);
         }
@@ -1384,7 +1349,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Highlight the team the player is playing on.
      */
     private void refreshTeams() {
-        choTeam.setSelectedIndex(clientgui.getClient().getLocalPlayer().getTeam());
+        choTeam.setSelectedIndex(clientgui.getClient().getLocalPlayer()
+                .getTeam());
     }
 
     /**
@@ -1476,8 +1442,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (lisEntities.getSelectedIndex() == -1) {
             return;
         }
-        Entity entity = clientgui.getClient().game.getEntity(entityCorrespondance[lisEntities
-                .getSelectedIndex()]);
+        Entity entity = clientgui.getClient().game
+                .getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
         customizeMech(entity);
     }
 
@@ -1487,7 +1453,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (editable) {
             c = clientgui.getBots().get(entity.getOwner().getName());
         } else {
-            editable |= entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId();
+            editable |= entity.getOwnerId() == clientgui.getClient()
+                    .getLocalPlayer().getId();
             c = clientgui.getClient();
         }
         // When we customize a single entity's C3 network setting,
@@ -1531,10 +1498,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (lisEntities.getSelectedIndex() == -1) {
             return;
         }
-        Entity entity = clientgui.getClient().game.getEntity(entityCorrespondance[lisEntities
-                .getSelectedIndex()]);
-        MechView mechView = new MechView(entity, clientgui.getClient().game.getOptions()
-                .booleanOption("show_bay_detail"));
+        Entity entity = clientgui.getClient().game
+                .getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
+        MechView mechView = new MechView(entity, clientgui.getClient().game
+                .getOptions().booleanOption("show_bay_detail"));
         JTextArea ta = new JTextArea();
         ta.setEditable(false);
         ta.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
@@ -1607,8 +1574,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     private void viewGroup() {
-        new MechGroupView(clientgui.getFrame(), clientgui.getClient(), entityCorrespondance)
-                .setVisible(true);
+        new MechGroupView(clientgui.getFrame(), clientgui.getClient(),
+                entityCorrespondance).setVisible(true);
     }
 
     //
@@ -1738,8 +1705,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             customizeMech();
         } else if (ev.getSource().equals(butDelete)) {
             // delete mech
-            Entity e = clientgui.getClient().getEntity(entityCorrespondance[lisEntities
-                    .getSelectedIndex()]);
+            Entity e = clientgui.getClient().getEntity(
+                    entityCorrespondance[lisEntities.getSelectedIndex()]);
             Client c = clientgui.getBots().get(e.getOwner().getName());
             if (c == null) {
                 c = clientgui.getClient();
@@ -1750,8 +1717,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
         } else if (ev.getSource().equals(butDeleteAll)) {
             // Build a Vector of this player's entities.
-            ArrayList<Entity> currentUnits = clientgui.getClient().game.getPlayerEntities(
-                    clientgui.getClient().getLocalPlayer(), false);
+            ArrayList<Entity> currentUnits = clientgui.getClient().game
+                    .getPlayerEntities(clientgui.getClient().getLocalPlayer(),
+                            false);
 
             // Walk through the vector, deleting the entities.
             Iterator<Entity> entities = currentUnits.iterator();
@@ -1762,8 +1730,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         } else if (ev.getSource().equals(butChangeBoard)
                 || ev.getSource().equals(lisBoardsSelected)) {
             // board settings
-            clientgui.getBoardSelectionDialog().update(clientgui.getClient().getMapSettings(),
-                    true);
+            clientgui.getBoardSelectionDialog().update(
+                    clientgui.getClient().getMapSettings(), true);
             clientgui.getBoardSelectionDialog().setVisible(true);
         } else if (ev.getSource().equals(butOptions)) {
             // Make sure the game options dialog is editable.
@@ -1771,7 +1739,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 clientgui.getGameOptionsDialog().setEditable(true);
             }
             // Display the game options dialog.
-            clientgui.getGameOptionsDialog().update(clientgui.getClient().game.getOptions());
+            clientgui.getGameOptionsDialog().update(
+                    clientgui.getClient().game.getOptions());
             clientgui.getGameOptionsDialog().setVisible(true);
         } else if (ev.getSource().equals(butChangeStart)
                 || ev.getSource().equals(lisStarts)) {
@@ -1797,12 +1766,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         } else if (ev.getSource().equals(butSaveList)) {
             // Allow the player to save their current
             // list of entities to a file.
-            clientgui.saveListFile(clientgui.getClient().game.getPlayerEntities(clientgui.getClient()
-                    .getLocalPlayer(), false));
+            clientgui.saveListFile(clientgui.getClient().game
+                    .getPlayerEntities(clientgui.getClient().getLocalPlayer(),
+                            false));
         } else if (ev.getSource().equals(butMinefield)) {
             updateMinefield();
-        } else if (ev.getSource().equals(butCamo)) {
-            camoDialog.setVisible(true);
         } else if (ev.getSource() == butInit) {
             // alert about teams
             if (clientgui.getClient().game.getOptions().booleanOption(
@@ -1839,7 +1807,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 name = "Bot" + lisPlayerInfo.getModel().getSize(); //$NON-NLS-1$
             }
 
-            BotClient c = new TestBot(name, clientgui.getClient().getHost(), clientgui.getClient().getPort());
+            BotClient c = new TestBot(name, clientgui.getClient().getHost(),
+                    clientgui.getClient().getPort());
             c.game.addGameListener(new BotGUI(c));
             try {
                 c.connect();
@@ -1871,7 +1840,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     public void ready() {
         // enforce exclusive deployment zones in double blind
-        if (clientgui.getClient().game.getOptions().booleanOption("double_blind")
+        if (clientgui.getClient().game.getOptions().booleanOption(
+                "double_blind")
                 && clientgui.getClient().game.getOptions().booleanOption(
                         "exclusive_db_deployment")) {
             int i = clientgui.getClient().getLocalPlayer().getStartingPos();
@@ -1881,8 +1851,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                 "In Double Blind play, you cannot choose 'Any' as starting position.");
                 return;
             }
-            for (Enumeration<Player> e = clientgui.getClient().game.getPlayers(); e
-                    .hasMoreElements();) {
+            for (Enumeration<Player> e = clientgui.getClient().game
+                    .getPlayers(); e.hasMoreElements();) {
                 Player player = e.nextElement();
                 if (player.getStartingPos() == 0) {
                     continue;
@@ -1891,8 +1861,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if (((player.getStartingPos() == i)
                         || (player.getStartingPos() + 1 == i) || (player
                         .getStartingPos() - 1 == i))
-                        && (player.getId() != clientgui.getClient().getLocalPlayer()
-                                .getId())) {
+                        && (player.getId() != clientgui.getClient()
+                                .getLocalPlayer().getId())) {
                     clientgui
                             .doAlertDialog(
                                     "Must choose exclusive deployment zone",
@@ -1910,32 +1880,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
     }
 
-    private Client getPlayerListSelected(JList l) {
+    Client getPlayerListSelected(JList l) {
         if (l.getSelectedIndex() == -1) {
             return clientgui.getClient();
         }
         String name = ((String) l.getSelectedValue()).substring(0, Math.max(0,
                 ((String) l.getSelectedValue()).indexOf(" :"))); //$NON-NLS-1$
-        BotClient c = (BotClient) clientgui.getBots().get(name);
-        if ((c == null) && clientgui.getClient().getName().equals(name)) {
-            return clientgui.getClient();
-        }
-        return c;
-    }
-
-    /**
-     * Allow others to see what player is currently selected. Nessecary for
-     * CameoChoieListener.
-     *
-     * @return
-     */
-    protected Client getPlayerListSelectedClient() {
-        if (lisPlayerInfo.getSelectedIndex() == -1) {
-            return clientgui.getClient();
-        }
-        String name = ((String) lisPlayerInfo.getSelectedValue()).substring(0,
-                Math.max(0, ((String) lisPlayerInfo.getSelectedValue())
-                        .indexOf(" :"))); //$NON-NLS-1$
         BotClient c = (BotClient) clientgui.getBots().get(name);
         if ((c == null) && clientgui.getClient().getName().equals(name)) {
             return clientgui.getClient();
@@ -1953,7 +1903,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     /**
      * Get the secondary display section of this phase.
-     *
+     * 
      * @return the <code>Component</code> which is displayed in the secondary
      *         section during this phase.
      */
@@ -1986,7 +1936,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
             // Handle "Blind drop" option.
             if (selected
-                    && clientgui.getClient().game.getOptions().booleanOption("blind_drop")) { //$NON-NLS-1$
+                    && clientgui.getClient().game.getOptions().booleanOption(
+                            "blind_drop")) { //$NON-NLS-1$
                 Entity entity = clientgui.getClient().game
                         .getEntity(entityCorrespondance[lisEntities
                                 .getSelectedIndex()]);

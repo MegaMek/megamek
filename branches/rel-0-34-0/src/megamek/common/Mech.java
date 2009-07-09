@@ -1136,8 +1136,7 @@ public abstract class Mech extends Entity implements Serializable {
     public int getJumpType() {
         if (jumpType == JUMP_UNKNOWN) {
             jumpType = JUMP_NONE;
-            for (Object oMount : miscList) {
-                Mounted m = (Mounted) oMount;
+            for (Mounted m : miscList) {
                 if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
                     if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
                         jumpType = JUMP_IMPROVED;

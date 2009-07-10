@@ -21,7 +21,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -33,6 +32,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
@@ -68,8 +68,8 @@ import megamek.common.util.DirectoryItems;
  * @author James Damour
  * @version 1
  */
-public class CamoChoiceDialog extends JDialog implements ActionListener,
-        ItemListener, ListSelectionListener {
+public class CamoChoiceDialog extends JDialog implements 
+        ListSelectionListener {
 
     private static final long serialVersionUID = 9220162367683378065L;
 
@@ -86,12 +86,12 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     /**
      * The menu containing the category names.
      */
-    private JComboBox categories;
+    JComboBox categories;
 
     /**
      * The list containing the item names.
      */
-    private JList items;
+    JList items;
     private JScrollPane scrItems;
 
     /**
@@ -107,133 +107,22 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     /**
      * The button that launched this dialog
      */
-    private JButton sourceButton;
+    JButton sourceButton;
 
     /**
      * The previously selected category.
      */
-    private String prevCat;
+    String prevCat;
 
     /**
      * The previously selected item.
      */
-    private String prevItem;
+    String prevItem;
 
     /**
      * Player that is changing his pants
      */
-    private Player player;
-
-    /**
-     * A helper function to fill the list with items in the selected category.
-     * 
-     * @param category
-     *            - the <code>String</code> name of the category whose items
-     *            should be displayed.
-     */
-    void fillList(String category) {
-
-        // Clear the list of items.
-        ((DefaultListModel) items.getModel()).removeAllElements();
-
-        // If this is the "no camos" category, then
-        // fill the item list with the colors.
-        if (Player.NO_CAMO.equals(category)) {
-            for (String color : Player.colorNames) {
-                ((DefaultListModel) items.getModel()).addElement(color);
-            }
-        }
-
-        // Otherwise, fill the list with the camo names.
-        else {
-
-            // Translate the "root camo" category name.
-            Iterator<String> camoNames;
-            if (Player.ROOT_CAMO.equals(category)) {
-                camoNames = camos.getItemNames(""); //$NON-NLS-1$
-            } else {
-                camoNames = camos.getItemNames(category);
-            }
-
-            // Get the camo names for this category.
-            while (camoNames.hasNext()) {
-                ((DefaultListModel) items.getModel()).addElement(camoNames
-                        .next());
-            }
-        }
-
-    }
-
-    /**
-     * A helper function to assign values for the previously selected camo. This
-     * function will also set the "keep old camo" button's image. Please note,
-     * if the specified selection does not exist, or if there is an error when
-     * generating the selection's image, the values won't change.
-     * 
-     * @param category
-     *            - the <code>String</code> category name. This value must be
-     *            one of the categories from the <code>DirectoryItems</code>.
-     * @param item
-     *            - the <code>String</code> name of the item. This value must be
-     *            one of the items in the named category from
-     *            <code>DirectoryItems</code>.
-     */
-    /* package */
-    private void setPrevSelection(String category, String item) {
-
-        // If a "no camo" item is selected, clear the image.
-        if (Player.NO_CAMO.equals(category)) {
-
-            // Find the correct background color.
-            for (int color = 0; color < Player.colorNames.length; color++) {
-                if (Player.colorNames[color].equals(item)) {
-                    BufferedImage tempImage = generateColorImage(color);
-                    keep.setIcon(new ImageIcon(tempImage));
-                    prevCat = category;
-                    prevItem = item;
-                    break;
-                }
-            }
-        }
-
-        // Otherwise, clear the background color and try to
-        // set the camo image for the "keep old camo" button.
-        else {
-            try {
-                // Don't forget to translate the ROOT_CAMO.
-                String curCat = category;
-                if (Player.ROOT_CAMO.equals(curCat)) {
-                    curCat = ""; //$NON-NLS-1$
-                }
-
-                // We need to copy the image to make it appear.
-                Image image = (Image) camos.getItem(curCat, item);
-
-                // Now, we're ready.
-                keep.setIcon(new ImageIcon(image));
-                prevCat = category;
-                prevItem = item;
-            } catch (Exception err) {
-                // Print the stack trace and display the message.
-                err.printStackTrace();
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                err.getMessage(),
-                                Messages
-                                        .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            }
-        }
-    }
-
-    private BufferedImage generateColorImage(int color) {
-        BufferedImage tempImage = new BufferedImage(84, 72,
-                BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics = tempImage.createGraphics();
-        graphics.setColor(PlayerColors.getColor(color));
-        graphics.fillRect(0, 0, 84, 72);
-        return tempImage;
-    }
+    Player player;
 
     /**
      * Create a dialog that allows players to choose a camo pattern.
@@ -369,7 +258,6 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         // Create the "select new camo" button.
         select = new JButton();
         select.setPreferredSize(new Dimension(84, 72));
-        select.addActionListener(this);
         panel.add(select, layout);
 
         // Fire the "select new camo" action when the enter key is pressed
@@ -379,6 +267,21 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         Action acceptAction = new AbstractAction() {
             private static final long serialVersionUID = 402810917672002505L;
             public void actionPerformed(ActionEvent e) {
+                // Did the worker change their selection?
+                String curCat = (String) categories.getSelectedItem();
+                String curItem = (String) items.getSelectedValue();
+                if (!curCat.equals(prevCat) || !curItem.equals(prevItem)) {
+
+                    // Save the new values.
+                    setPrevSelection(curCat, curItem);
+
+                    // Update the local player's camo info.
+                    player.setCamoCategory(prevCat);
+                    player.setCamoFileName(prevItem);
+                    sourceButton.setIcon(generateIcon(prevCat, prevItem));
+                } // End selection-changed
+
+                // Now exit.
                 setVisible(false);
             }
         };
@@ -392,61 +295,109 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         // Perform the initial layout.
         pack();
     }
-
+    
     /**
-     * Handle the "select new camo" button's action.
-     * <p/>
-     * Implements <code>ActionListener</code>.
+     * A helper function to fill the list with items in the selected category.
      * 
-     * @param event
-     *            - the <code>ActionEvent</code> that was invoked.
+     * @param category
+     *            - the <code>String</code> name of the category whose items
+     *            should be displayed.
      */
-    public void actionPerformed(ActionEvent event) {
+    void fillList(String category) {
 
-        // Did the worker change their selection?
-        String curCat = (String) categories.getSelectedItem();
-        String curItem = (String) items.getSelectedValue();
-        if (!curCat.equals(prevCat) || !curItem.equals(prevItem)) {
+        // Clear the list of items.
+        ((DefaultListModel) items.getModel()).removeAllElements();
 
-            // Save the new values.
-            setPrevSelection(curCat, curItem);
-
-            // Update the local player's camo info.
-            player.setCamoCategory(prevCat);
-            player.setCamoFileName(prevItem);
-            updateSourceButton();
-        } // End selection-changed
-
-        // Now exit.
-        setVisible(false);
-    }
-
-    private void updateSourceButton() {
-        // Get the Image.
-        Image image = null;
-        Image[] array = (Image[]) getSelectedObjects();
-        if (array != null) {
-            image = array[0];
+        // If this is the "no camos" category, then
+        // fill the item list with the colors.
+        if (Player.NO_CAMO.equals(category)) {
+            for (String color : Player.colorNames) {
+                ((DefaultListModel) items.getModel()).addElement(color);
+            }
         }
 
-        // If the image is null, a color was selected instead.
-        if (null == image) {
+        // Otherwise, fill the list with the camo names.
+        else {
+
+            // Translate the "root camo" category name.
+            Iterator<String> camoNames;
+            if (Player.ROOT_CAMO.equals(category)) {
+                camoNames = camos.getItemNames(""); //$NON-NLS-1$
+            } else {
+                camoNames = camos.getItemNames(category);
+            }
+
+            // Get the camo names for this category.
+            while (camoNames.hasNext()) {
+                ((DefaultListModel) items.getModel()).addElement(camoNames
+                        .next());
+            }
+        }
+        items.setSelectedIndex(0);
+    }
+
+    /**
+     * A helper function to assign values for the previously selected camo. This
+     * function will also set the "keep old camo" button's image.
+     * 
+     * @param category
+     *            - the <code>String</code> category name. This value must be
+     *            one of the categories from the <code>DirectoryItems</code>.
+     * @param item
+     *            - the <code>String</code> name of the item. This value must be
+     *            one of the items in the named category from
+     *            <code>DirectoryItems</code>.
+     */
+    void setPrevSelection(String category, String item) {
+        prevCat = category;
+        prevItem = item;
+        keep.setIcon(generateIcon(prevCat, prevItem));
+    }
+
+    Icon generateIcon(String cat, String item) {
+        String actualCat = cat;
+        // Replace the ROOT_CAMO string with "".
+        if (Player.ROOT_CAMO.equals(actualCat)) {
+            actualCat = ""; //$NON-NLS-1$
+        }
+
+        int colorInd = -1;
+        //no camo, just color
+        if (Player.NO_CAMO.equals(actualCat)) {
             for (int color = 0; color < Player.colorNames.length; color++) {
-                if (Player.colorNames[color].equals(prevItem)) {
-                    BufferedImage tempImage = generateColorImage(color);
-                    sourceButton.setIcon(new ImageIcon(tempImage));
-                    player.setColorIndex(color);
+                if (Player.colorNames[color].equals(item)) {
+                    colorInd = color;
                     break;
                 }
             }
-        } else {
-            // We need to copy the image to make it appear.
-            sourceButton.setIcon(new ImageIcon(image));
+            if (colorInd == -1) {
+                colorInd = 0;
+            }
+            BufferedImage tempImage = new BufferedImage(84, 72,
+                    BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = tempImage.createGraphics();
+            graphics.setColor(PlayerColors.getColor(colorInd));
+            graphics.fillRect(0, 0, 84, 72);
+            return new ImageIcon(tempImage);
         }
-    }
+        
+        //an actual camo
+        try {
+            // We need to copy the image to make it appear.
+            Image image = (Image) camos.getItem(actualCat, item);
 
-    public void itemStateChanged(ItemEvent event) {
-        updateButton();
+            return new ImageIcon(image);
+        } catch (Exception err) {
+            // Print the stack trace and display the message.
+            err.printStackTrace();
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            err.getMessage(),
+                            Messages
+                                    .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            return null;
+        }
     }
 
     /**
@@ -454,129 +405,15 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
      * <p/>
      */
     void updateButton() {
-        // Get the category and the index of the selected item.
+        // Get the category and the item.
         String curCat = (String) categories.getSelectedItem();
-
-        // If a "no camo" item is selected, clear the image.
-        if (Player.NO_CAMO.equals(curCat)) {
-            int colorInd = items.getSelectedIndex();
-            if (colorInd == -1) {
-                for (int color = 0; color < Player.colorNames.length; color++) {
-                    if (Player.colorNames[color].equals(prevItem)) {
-                        colorInd = color;
-                        break;
-                    }
-                }
-            }
-            if (colorInd == -1) {
-                return;
-            }
-            BufferedImage tempImage = generateColorImage(colorInd);
-            select.setIcon(new ImageIcon(tempImage));
+        String curItem = (String) items.getSelectedValue();
+        if (curItem == null) {
+            //nothing selected yet
+            select.setIcon(null);
             return;
         }
-
-        // Replace the ROOT_CAMO string with "".
-        if (Player.ROOT_CAMO.equals(curCat)) {
-            curCat = ""; //$NON-NLS-1$
-        }
-
-        // Clear the background and try to set the camo image.
-        try {
-            String back = (String) items.getSelectedValue();
-            if (back != null) {
-                Image img = (Image) camos.getItem(curCat, back);
-                if (img != null) {
-                    select.setIcon(new ImageIcon(img));
-                } else {
-                    select.setIcon(null);
-                }
-            } else {
-                select.setIcon(null);
-            }
-        } catch (Exception err) {
-            // Print the stack trace and display the message.
-            err.printStackTrace();
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            err.getMessage(),
-                            Messages
-                                    .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-        }
-    }
-
-    /**
-     * Get the most recently selected (and confirmed) image. The player must
-     * click the "select new camo" button to change this value.
-     * <p/>
-     * Implements <code>ItemSelectable</code>.
-     * 
-     * @return If the player has selected from the "no camo" category, or if an
-     *         error occurs in getting the selected image, a <code>null</code>
-     *         is returned. Otherwise, the array will contain a single
-     *         <code>Image</code>.
-     */
-    public Object[] getSelectedObjects() {
-
-        // Update the prev selection.
-        setPrevSelection((String) categories.getSelectedItem(), (String) items
-                .getSelectedValue());
-
-        // Return a null if the "no camo" category is selected.
-        if (Player.NO_CAMO.equals(prevCat)) {
-            return null;
-        }
-
-        // Try to get the selected camo's Image.
-        // Don't forget to translate the ROOT_CAMO.
-        Image image = null;
-        try {
-            String curCat = prevCat;
-            if (Player.ROOT_CAMO.equals(curCat)) {
-                curCat = ""; //$NON-NLS-1$
-            }
-            image = (Image) camos.getItem(curCat, prevItem);
-        } catch (Exception err) {
-            // Print the stack trace and display the message.
-            err.printStackTrace();
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            err.getMessage(),
-                            Messages
-                                    .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-        }
-        if (image == null) {
-            return null;
-        }
-
-        // Return an array containing the image.
-        Image[] ret = new Image[1];
-        ret[0] = image;
-        return ret;
-    }
-
-    /**
-     * Get the selected category.
-     * 
-     * @return the <code>String</code> name of the most recently selected
-     *         category. This value will not be <code>null</code>.
-     */
-    public String getCategory() {
-        return prevCat;
-    }
-
-    /**
-     * Get the selected item's name. If the most recently selected category is
-     * <code>Player.NO_CAMO</code>, then the item named is a color from
-     * <code>Player.colorNames</code>.
-     * 
-     * @return the <code>String</code> name of the most recently selected item.
-     *         This value will not be <code>null</code>.
-     */
-    public String getItemName() {
-        return prevItem;
+        select.setIcon(generateIcon(curCat, curItem));
     }
 
     /**
@@ -587,7 +424,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
      *            value may be <code>null</code>. If no match is found, the
      *            category will not change.
      */
-    public void setCategory(String category) {
+    private void setCategory(String category) {
 
         // Get the current selection.
         String cur = (String) categories.getSelectedItem();
@@ -626,7 +463,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
      *            may be <code>null</code>. If no match is found, the item
      *            selection will not change.
      */
-    public void setItemName(String item) {
+    private void setItemName(String item) {
 
         // Do nothing is we're passed a null.
         if (item != null) {
@@ -664,7 +501,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     public void valueChanged(ListSelectionEvent event) {
         updateButton();
     }
-
+    
     public void setPlayer(Player player) {
         this.player = player;
         if (player.getCamoFileName() == null) {
@@ -678,7 +515,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
             setPrevSelection(player.getCamoCategory(), player.getCamoFileName());
         }
         if (sourceButton.isVisible()) {
-            updateSourceButton();
+            sourceButton.setIcon(generateIcon(prevCat, prevItem));
         }
     }
 }

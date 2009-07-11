@@ -51,7 +51,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -280,7 +279,7 @@ public class CamoChoiceDialog extends JDialog implements
                     player.setCamoCategory(prevCat);
                     if (Player.NO_CAMO.equals(prevCat)) {
                         player.setColorIndex(items.getSelectedIndex());
-                        player.setCamoFileName("");
+                        player.setCamoFileName(prevItem);
                     } else {
                         player.setCamoFileName(prevItem);
                         player.setColorIndex(0);

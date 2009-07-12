@@ -92,7 +92,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     // buttons & such
     private JPanel panPlayerInfo;
     private JLabel labPlayerInfo;
-    private JList lisPlayerInfo;
+    JList lisPlayerInfo;
     private JScrollPane scrPlayerInfo;
 
     private JLabel labTeam;
@@ -150,7 +150,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JPanel panEntities;
 
     private JLabel labStarts;
-    JList lisStarts;
+    private JList lisStarts;
     private JScrollPane scrStarts;
     private JPanel panStarts;
     private JButton butChangeStart;
@@ -307,10 +307,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butCamo.setActionCommand("camo"); //$NON-NLS-1$
         butCamo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                camoDialog.setPlayer(getPlayerListSelected(lisStarts)
+                camoDialog.setPlayer(getPlayerListSelected(lisPlayerInfo)
                         .getLocalPlayer());
                 camoDialog.setVisible(true);
-                getPlayerListSelected(lisStarts).sendPlayerInfo();
+                getPlayerListSelected(lisPlayerInfo).sendPlayerInfo();
             }
         });
         camoDialog = new CamoChoiceDialog(clientgui.getFrame(), butCamo);
@@ -929,7 +929,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 Messages.getString("ChatLounge.labStarts"), SwingConstants.CENTER); //$NON-NLS-1$
 
         lisStarts = new JList(new DefaultListModel());
-        lisStarts.addListSelectionListener(this);
         scrStarts = new JScrollPane(lisStarts);
         scrStarts
                 .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -1198,8 +1197,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 String plyrCamo = player.getCamoFileName();
 
                 if ((plyrCamo == null) || Player.NO_CAMO.equals(plyrCamo)) {
-                    pi
-                            .append(", ").append(Player.colorNames[player.getColorIndex()]); //$NON-NLS-1$
+                    pi.append(", ").append(Player.colorNames[player.getColorIndex()]); //$NON-NLS-1$
                 } else {
                     pi.append(", ").append(player.getCamoFileName()); //$NON-NLS-1$
                 }
@@ -1307,7 +1305,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     private void refreshCamos() {
-        Client c = getPlayerListSelected(lisStarts);
+        Client c = getPlayerListSelected(lisPlayerInfo);
         camoDialog.setPlayer(c.getLocalPlayer());
     }
 
@@ -1316,7 +1314,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      */
     private void refreshStarts() {
         //stores the current selection if it exists
-        Object value = lisStarts.getSelectedValue();
         ((DefaultListModel) lisStarts.getModel()).removeAllElements();
         for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i
                 .hasMoreElements();) {
@@ -1330,7 +1327,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         .toString());
             }
         }
-        lisStarts.setSelectedValue(value, true);
     }
 
     /**
@@ -1963,9 +1959,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             if (c instanceof BotClient) {
                 butRemoveBot.setEnabled(true);
             }
-            choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());
-        } else if (event.getSource().equals(lisStarts)) {
             refreshCamos();
+            choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());
         }
     }
 }

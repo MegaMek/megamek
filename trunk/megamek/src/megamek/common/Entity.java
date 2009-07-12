@@ -88,7 +88,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int ownerId;
 
     private int startingPos = Board.START_NONE;
-    
+
     /**
      * The pilot of the entity. Even infantry has a 'pilot'.
      */
@@ -340,10 +340,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * 3.
      */
     protected int elevation = 0;
-    
+
     /**
-     * altitude is different from elevation. It is used to measure the vertical distance 
-     * of Aero units from the ground on low atmosphere and ground maps.  
+     * altitude is different from elevation. It is used to measure the vertical distance
+     * of Aero units from the ground on low atmosphere and ground maps.
      */
     protected int altitude = 0;
 
@@ -1108,7 +1108,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         case IEntityMovementMode.SPHEROID:
             altitude = assumedElevation;
             if (game.getBoard().inAtmosphere()) {
-                minAlt = hex.ceiling() + 1;         
+                minAlt = hex.ceiling() + 1;
             } else if (game.getBoard().onGround() && isAirborne()) {
             	minAlt = 1;
             }
@@ -2553,7 +2553,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public ArrayList<Mounted> getBombs() {
         return bombList;
     }
-    
+
     public Vector<Mounted> getBombs(long flag) {
         Vector<Mounted> bombs = new Vector<Mounted>();
         for(Mounted bomb : getBombs()) {
@@ -4549,16 +4549,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             roll.addModifier(TargetRoll.CHECK_FALSE, "jumping is not reckless?");
             return roll;
         }
-        
+
         // we need to make this check on the first move forward and anytime the
         // hex is not clear or is a level change
         if ((isFoggy || isDark) && !lastPos.equals(curPos) && lastPos.equals(step.getParent().getEntity().getPosition())) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
-        }        
+        }
         // FIXME: no perfect solution in the current code to determine if hex is clear. I will use movement costs
-        else if ((isFoggy || isDark) && !lastPos.equals(curPos) 
-                && ((curHex.movementCost(step.getParent().getLastStepMovementType()) > 0) 
-                        || (null != prevHex && prevHex.getElevation() != curHex.getElevation()))) {
+        else if ((isFoggy || isDark) && !lastPos.equals(curPos)
+                && ((curHex.movementCost(step.getParent().getLastStepMovementType()) > 0)
+                        || ((null != prevHex) && (prevHex.getElevation() != curHex.getElevation())))) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
             // ice conditions
         } else if (curHex.containsTerrain(Terrains.ICE)) {
@@ -4783,7 +4783,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if(isAirborne()) {
         	return 0;
         }
-        
+
         if ((this instanceof Infantry) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)) {
             return 0;
         }
@@ -7076,7 +7076,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (this instanceof Aero) {
             Aero a = (Aero) this;
             // Handle spheroids in atmosphere or on the ground differently
-            if (a.isSpheroid() && !game.getBoard().inSpace()) {
+            if (a.isSpheroid() && (game != null) && !game.getBoard().inSpace()) {
                 fa = effectivePos.degree(src);
                 if ((fa >= 0) && (fa < 180)) {
                     return ToHitData.SIDE_RIGHT;
@@ -7387,7 +7387,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return false;
     }
-    
+
     public void setSpotTargetId(int targetId) {
         spotTargetId = targetId;
     }
@@ -7625,7 +7625,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void addPassedThrough(Coords c) {
         passedThrough.add(c);
     }
-    
+
     public boolean passedThrough(Coords c) {
         for(Coords crd : passedThrough) {
             if(crd.equals(c)) {
@@ -7634,7 +7634,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return false;
     }
-    
+
     /**
      * Did the entity pass within a certain number of hexes of these coords?
      */
@@ -7646,7 +7646,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return false;
     }
-    
+
     /**
      * What coords were passed through previous to the given one
      */
@@ -8548,21 +8548,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return qrk.toString();
     }
-    
+
     /**
      * Returns the forward firing arc for this entity - overrided by some units
      */
     public int getForwardArc() {
         return Compute.ARC_FORWARD;
     }
-    
+
     /**
      * Returns the rear firing arc for this entity - overrided by some units
      */
     public int getRearArc() {
         return Compute.ARC_REAR;
     }
-    
+
     /**
      * returns a description to the current sensing range of the active sensor
      */
@@ -8577,57 +8577,57 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if(game.getOptions().booleanOption("inclusive_sensor_range")) {
             minSensorRange = 0;
         }
-        return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-" + maxSensorRange + ")";     
+        return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-" + maxSensorRange + ")";
     }
-    
+
     public boolean isAirborne() {
-        return getMovementMode() == IEntityMovementMode.AERODYNE || getMovementMode() == IEntityMovementMode.SPHEROID;
+        return (getMovementMode() == IEntityMovementMode.AERODYNE) || (getMovementMode() == IEntityMovementMode.SPHEROID);
     }
-    
+
     /**
      * is the unit flying Nape of the Earth? (i.e. one elevation above ground)
      */
     public boolean isNOE() {
-        
+
         if(!isAirborne()) {
             return false;
         }
         if (game.getBoard().inAtmosphere()) {
-               return (1 == (getAltitude() - game.getBoard().getHex(getPosition()).ceiling())); 
+               return (1 == (getAltitude() - game.getBoard().getHex(getPosition()).ceiling()));
         }
         if(game.getBoard().onGround()) {
             return 1 == getAltitude();
         }
         return false;
     }
-    
+
     public int getStartingPos() {
         if(startingPos == Board.START_NONE) {
             return owner.getStartingPos();
         }
         return startingPos;
     }
-    
+
     public void setStartingPos(int i) {
-        this.startingPos = i;
+        startingPos = i;
     }
-    
+
     public int getAltitude() {
     	if(isAirborneVTOL()) {
     		return 1;
     	}
     	return altitude;
     }
-    
+
     public void setAltitude(int a) {
-    	this.altitude = a;
+    	altitude = a;
     }
-    
+
     //produce an int array of the number of bombs of each type based on the current bomblist
     public int[] getBombLoadout() {
         int[] loadout = new int[BombType.B_NUM];
         for(Mounted bomb : getBombs()) {
-            if(bomb.getShotsLeft() > 0 && bomb.getType() instanceof BombType) {
+            if((bomb.getShotsLeft() > 0) && (bomb.getType() instanceof BombType)) {
                 int type = ((BombType) bomb.getType()).getBombType();
                 loadout[type] = loadout[type] + 1;
             }

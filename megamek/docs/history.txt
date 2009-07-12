@@ -4,6 +4,7 @@ v0.35.5-dev (SVN)
 + Bug: Can't change Camo
 + removed entity#getGame check from EntityListFile#saveTo method
 + revert change to EntityListFile
++ Bug: small craft don't load
 
 v0.35.4 (2009-07-09, 19:14 UTC+2)
 + Bug: Scenarios can't start

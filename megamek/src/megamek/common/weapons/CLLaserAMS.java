@@ -43,8 +43,8 @@ public class CLLaserAMS extends LaserWeapon {
         rackSize = 2;
         damage = 2; // # of d6 of missiles affected
         ammoType = AmmoType.T_AMS;
-        tonnage = 1.5f;
-        criticals = 2;
+        tonnage = 1f;
+        criticals = 1;
         bv = 45;
         flags |= F_AUTO_TARGET | F_AMS;
         flags1 = F_MECH_WEAPON | F_TANK_WEAPON | F_AERO_WEAPON | F_PROTO_WEAPON;

@@ -260,6 +260,24 @@ public class Pilot implements Serializable {
         }
 
     }
+    
+    public void clearOptions(String grpKey) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i
+                .hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+
+            if (!group.getKey().equalsIgnoreCase(grpKey))
+                continue;
+            
+            for (Enumeration<IOption> j = group.getOptions(); j
+                    .hasMoreElements();) {
+                IOption option = j.nextElement();
+
+                option.clearValue();
+            }
+        }
+
+    }
 
     public int countOptions() {
         int count = 0;

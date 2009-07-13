@@ -4418,7 +4418,7 @@ public class Server implements Runnable {
      *          the number of rounds until the unit can return to the map (-1 if it can't return)
      * @return
      */
-    private Vector<Report> processLeaveMap(Entity entity, boolean flewOff, int returnable) {
+    private Vector<Report> processLeaveMap(Entity entity, Coords pos, boolean flewOff, int returnable) {
         Vector<Report> vReport = new Vector<Report>();
         Report r;
         //Unit has fled the battlefield.
@@ -4428,16 +4428,15 @@ public class Server implements Runnable {
         }
         r.addDesc(entity);
         addReport(r);
-        Coords pos = entity.getPosition();
         int fleeDirection;
         if (pos.x == 0) {
             fleeDirection = IOffBoardDirections.WEST;
         } else if (pos.y == 0) {
-            fleeDirection = IOffBoardDirections.SOUTH;
+            fleeDirection = IOffBoardDirections.NORTH;
         } else if (pos.x == game.getBoard().getWidth()) {
             fleeDirection = IOffBoardDirections.EAST;
         } else {
-            fleeDirection = IOffBoardDirections.NORTH;
+            fleeDirection = IOffBoardDirections.SOUTH;
         }
 
         if(returnable > -1) {
@@ -4538,7 +4537,7 @@ public class Server implements Runnable {
 
         // check for fleeing
         if (md.contains(MovePath.STEP_FLEE)) {
-            addReport(processLeaveMap(entity, false, -1));
+            addReport(processLeaveMap(entity, entity.getPosition(), false, -1));
             return;
         }
 
@@ -4752,7 +4751,7 @@ public class Server implements Runnable {
                             // make sure it didn't fly off the map
                             if (!game.getBoard().contains(curPos)) {
                                 a.setCurrentVelocity(md.getFinalVelocity());
-                                processLeaveMap(entity, true, Compute.roundsUntilReturn(game, entity));
+                                processLeaveMap(entity, lastPos, true, Compute.roundsUntilReturn(game, entity));
                                 return;
                             // make sure it didn't crash
                             } else if (checkCrash(entity, curPos, step.getAltitude())) {
@@ -4761,6 +4760,7 @@ public class Server implements Runnable {
                                 fellDuringMovement = false;
                                 crashedDuringMovement = true;
                             }
+                            lastPos = curPos;
                         }
                         break;
                     }
@@ -4938,7 +4938,7 @@ public class Server implements Runnable {
 
                 if (step.getType() == MovePath.STEP_OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
-                    processLeaveMap(entity, true, Compute.roundsUntilReturn(game, entity));
+                    processLeaveMap(entity, curPos, true, Compute.roundsUntilReturn(game, entity));
                     return;
                 }
             }

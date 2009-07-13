@@ -1227,21 +1227,6 @@ public class Server implements Runnable {
                 entity.setDone(false);
             }
 
-            //if this is the deployment phase, then apply bombs and santa annas to
-            //the appropriate aero entities
-            //FIXME: there must be a better place to do this
-            if( phase == IGame.Phase.PHASE_DEPLOYMENT ) {
-                if(entity instanceof Aero) {
-                    if(game.getOptions().booleanOption("at2_nukes") &&
-                            ((entity instanceof Dropship) || (entity instanceof Jumpship))) {
-                        entity.applySantaAnna();
-                    }
-                    if(!((entity instanceof SmallCraft) || (entity instanceof Jumpship))) {
-                        ((Aero)entity).applyBombs();
-                    }
-                }
-            }
-
             // reset spotlights
             entity.setIlluminated(false);
             entity.setUsedSearchlight(false);
@@ -1981,9 +1966,8 @@ public class Server implements Runnable {
             if (game.checkForMagneticClamp()) {
                 entityAllUpdate();
             }
-            //we need to check the altitudes of the Aero entities and make sure they are valid for 
-            //the given map
-            checkAeroAltitude();
+            //some entities may need to be checked and updated
+            checkEntityExchange();
             // transmit the board to everybody
             send(createBoardPacket());
             break;
@@ -2015,25 +1999,34 @@ public class Server implements Runnable {
     }
     
     /**
-     * loop through Aero entities and make sure that altitude/elevation is valid for map
+     * loop through entitis in the exchange phase (i.e. after leaving chatlounge) and
+     * do any actions that need to be done
      */
-    public void checkAeroAltitude() {
+    public void checkEntityExchange() {
         for (Enumeration<Entity> entities = game.getEntities(); entities.hasMoreElements();) {
             Entity entity = entities.nextElement();
-            if(!(entity instanceof Aero)) {
-            	continue;
-            }
-            Aero a = (Aero)entity;
-            if(game.getBoard().inSpace()) {
-        		//altitude and elevation don't matter in space
-                a.liftOff(0);
-        	} else {
-                //check for grounding
-                if(game.getBoard().inAtmosphere() && !entity.isAirborne()) {
-                	//you have to be airborne on the atmospheric map
-                	a.liftOff(a.getAltitude());
+            if(entity instanceof Aero) {
+                Aero a = (Aero)entity;
+                if(game.getBoard().inSpace()) {
+            		//altitude and elevation don't matter in space
+                    a.liftOff(0);
+            	} else {
+                    //check for grounding
+                    if(game.getBoard().inAtmosphere() && !entity.isAirborne()) {
+                    	//you have to be airborne on the atmospheric map
+                    	a.liftOff(a.getAltitude());
+                    }
+                }
+                //apply bombs and santa annas
+                if(game.getOptions().booleanOption("at2_nukes") &&
+                        ((entity instanceof Dropship) || (entity instanceof Jumpship))) {
+                    entity.applySantaAnna();
+                }
+                if(!((entity instanceof SmallCraft) || (entity instanceof Jumpship))) {
+                    ((Aero)entity).applyBombs();
                 }
             }
+            entityUpdate(entity.getId());
         }
     }
 

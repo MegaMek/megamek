@@ -1,7 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.35.5-dev (SVN)
-+ Bug: Can't change Camo
++ Bug 2819713: Can't change Camo
 + removed entity#getGame check from EntityListFile#saveTo method
 + revert change to EntityListFile
 + Bug: small craft don't load
@@ -9,6 +9,7 @@ v0.35.5-dev (SVN)
 + Bug 2819401: Problems in the lobby (MD options not saving)
 + Bug 2818326: Bombs duplicate on aircraft 0.35.4-dev
 + Bug: North/South flee directions backwards
++ Bug: 2819401: generate map settings was going blank
 
 v0.35.4 (2009-07-09, 19:14 UTC+2)
 + Bug: Scenarios can't start

@@ -67,7 +67,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
     private static final int NORMAL_LINE_WIDTH = 195;
     private static final int ADVANCED_LINE_WIDTH = 295;
 
-    private JScrollPane scrAll;
+    private JScrollPane scrAll = new JScrollPane();
 
     private JButton butOK;
     private JButton butAdvanced;
@@ -605,7 +605,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             addSeparator(slInvertNegativeAd);
             addLabelTextField(labInvertNegative, texInvertNegative);
         }
-        scrAll = new JScrollPane(panOptions);
+        scrAll.setViewportView(panOptions);
 
         if (initiated) {
             pack();

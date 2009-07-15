@@ -10,6 +10,7 @@ v0.35.5-dev (SVN)
 + Bug 2818326: Bombs duplicate on aircraft 0.35.4-dev
 + Bug: North/South flee directions backwards
 + Bug: 2819401: generate map settings was going blank
++ Some new or improved unit images (Thanks devil877 and BH21)
 
 v0.35.4 (2009-07-09, 19:14 UTC+2)
 + Bug: Scenarios can't start

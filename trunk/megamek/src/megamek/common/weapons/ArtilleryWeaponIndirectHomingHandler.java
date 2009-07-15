@@ -309,58 +309,92 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         final Coords tc = target.getPosition();
         Entity entityTarget = null;
 
-        TagInfo info = null;
-        Entity tagger = null;
-
-        for (int pass = 0; pass < 2; pass++) {
-            int bestDistance = Integer.MAX_VALUE;
-            int bestIndex = -1;
-            Vector<TagInfo> v = game.getTagInfo();
-            for (int i = 0; i < v.size(); i++) {
-                info = v.elementAt(i);
-                tagger = game.getEntity(info.attackerId);
-                if ((info.shots < info.priority) && !ae.isEnemyOf(tagger)) {
-                    entityTarget = game.getEntity(info.targetId);
-                    if ((entityTarget != null) && entityTarget.isOnSameSheet(tc)) {
-                        if (tc.distance(entityTarget.getPosition()) < bestDistance) {
-                            bestIndex = i;
-                            bestDistance = tc.distance(entityTarget
-                                    .getPosition());
-                            if (!game.getOptions().booleanOption(
-                                    "a4homing_target_area")) {
-                                break; // first will do if mapsheets can't
-                                // overlap
-                            }
-                        }
-                    }
-                }
+        Vector<TagInfo> v = game.getTagInfo();
+        Vector<TagInfo> allowed = new Vector<TagInfo>();
+        //get only TagInfo on the same side
+        for (TagInfo ti : v) {
+            if (ae.isEnemyOf(game.getEntity(ti.targetId))) {
+                allowed.add(ti);
             }
-            if (bestIndex != -1) {
-                info = v.elementAt(bestIndex);
-                entityTarget = game.getEntity(info.targetId);
-                tagger = game.getEntity(info.attackerId);
-                info.shots++;
-                game.updateTagInfo(info, bestIndex);
-                break; // got a target, stop searching
-            }
-            entityTarget = null;
-            // nothing found on 1st pass, so clear shots fired to 0
-            game.clearTagInfoShots(ae, tc);
         }
-
-        if ((entityTarget == null) || (info == null)) {
+        if (allowed.size() == 0) {
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "no targets tagged on map sheet");
-        } else if (info.missed) {
+            "no targets tagged this turn");
+            return;
+        }
+        
+        //get TAGs that hit
+        v = new Vector<TagInfo>();
+        for (TagInfo ti : allowed) {
+            entityTarget = game.getEntity(ti.targetId);
+            if (!ti.missed && entityTarget != null) {
+                v.add(ti);
+            }
+        }
+        assert(entityTarget != null);
+        if (v.size() == 0) {
             aaa.setTargetId(entityTarget.getId());
             aaa.setTargetType(Targetable.TYPE_ENTITY);
             target = entityTarget;
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "tag missed the target");
-        } else {
-            target = entityTarget;
-            aaa.setTargetId(entityTarget.getId());
-            aaa.setTargetType(Targetable.TYPE_ENTITY);
         }
+        //get TAGs that are on the same map
+        allowed = new Vector<TagInfo>();
+        for (TagInfo ti : v) {
+            entityTarget = game.getEntity(ti.targetId);
+            //homing target area is 8 hexes
+            if (game.getOptions().booleanOption(
+                                    "a4homing_target_area")) {
+                if (tc.distance(entityTarget.getPosition()) <=8) {
+                    allowed.add(ti);
+                }
+            } else if (entityTarget.isOnSameSheet(tc)) {
+                allowed.add(ti);
+            }
+        }
+        if (allowed.size() == 0) {
+            aaa.setTargetId(entityTarget.getId());
+            aaa.setTargetType(entityTarget.getTargetType());
+            target = entityTarget;
+            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "no tag on the same mapsheet");
+        }
+        //find the TAG hit with the most shots left, and closest
+        int bestDistance = Integer.MAX_VALUE;
+        TagInfo targetTag = allowed.firstElement();
+        for (TagInfo ti : allowed) {
+            int distance = tc.distance(entityTarget.getPosition());
+            
+            //higher # of shots left
+            if (ti.shots> targetTag.shots) {
+                bestDistance = distance;
+                targetTag = ti;
+                continue;
+            }
+            //same # of shots left
+            if (ti.shots == targetTag.shots) {
+                //higher priority
+                if (ti.priority > targetTag.priority) {
+                    bestDistance = distance;
+                    targetTag = ti;
+                    continue;
+                }
+                //same priority and closer
+                if (ti.priority == targetTag.priority && bestDistance > distance) {
+                    bestDistance = distance;
+                    targetTag = ti;
+                }
+            }
+        }
+        
+        //if the best TAG has no shots left
+        if (targetTag.shots == 0) {
+            game.clearTagInfoShots(ae, tc);
+        }
+        
+        targetTag.shots--;
+        target = game.getEntity(targetTag.targetId);
+        aaa.setTargetId(targetTag.targetId);
+        aaa.setTargetType(target.getTargetType());
     }
 
     /*

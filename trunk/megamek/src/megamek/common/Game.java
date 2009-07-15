@@ -149,7 +149,7 @@ public class Game implements Serializable, IGame {
      * Constructor
      */
     public Game() {
-
+        //empty
     }
 
     // Added public accessors for external game id
@@ -713,7 +713,7 @@ public class Game implements Serializable, IGame {
             resetCharges();
             resetRams();
             break;
-
+        default:
         }
 
         processGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));
@@ -2717,10 +2717,6 @@ public class Game implements Serializable, IGame {
         tagInfoForTurn.addElement(info);
     }
 
-    public void updateTagInfo(TagInfo info, int index) {
-        tagInfoForTurn.setElementAt(info, index);
-    }
-
     public void resetTagInfo() {
         tagInfoForTurn.removeAllElements();
     }
@@ -2731,7 +2727,7 @@ public class Game implements Serializable, IGame {
             Entity attacker = getEntity(info.attackerId);
             Entity target = getEntity(info.targetId);
             if (!ae.isEnemyOf(attacker) && target.isOnSameSheet(tc)) {
-                info.shots = 0;
+                info.shots = info.priority;
                 tagInfoForTurn.setElementAt(info, i);
             }
         }

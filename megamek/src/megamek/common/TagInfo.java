@@ -32,5 +32,6 @@ public class TagInfo implements Serializable {
         this.targetId = targetId;
         this.priority = priority;
         this.missed = missed;
+        this.shots = priority;
     }
 }

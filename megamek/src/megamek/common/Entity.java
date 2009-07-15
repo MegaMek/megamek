@@ -700,6 +700,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * be an enemy of itself.
      */
     public boolean isEnemyOf(Entity other) {
+        if (other == null) {
+            return false;
+        }
         if (null == owner) {
             return ((id != other.getId()) && (ownerId != other.ownerId));
         }
@@ -1086,7 +1089,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean canGoDown(int assumedElevation, Coords assumedPos) {
         boolean inWaterOrWoods = false;
         IHex hex = getGame().getBoard().getHex(assumedPos);
-        int altitude = assumedElevation + hex.surface();
+        int assumedAlt = assumedElevation + hex.surface();
         int minAlt = hex.surface();
         if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.WATER) || hex.containsTerrain(Terrains.JUNGLE)) {
             inWaterOrWoods = true;
@@ -1106,7 +1109,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             break;
         case IEntityMovementMode.AERODYNE:
         case IEntityMovementMode.SPHEROID:
-            altitude = assumedElevation;
+            assumedAlt = assumedElevation;
             if (game.getBoard().inAtmosphere()) {
                 minAlt = hex.ceiling() + 1;
             } else if (game.getBoard().onGround() && isAirborne()) {
@@ -1126,7 +1129,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         default:
             return false;
         }
-        return (altitude > minAlt);
+        return (assumedAlt > minAlt);
     }
 
     /**
@@ -1135,7 +1138,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean canGoUp(int assumedElevation, Coords assumedPos) {
         IHex hex = getGame().getBoard().getHex(assumedPos);
-        int altitude = assumedElevation + hex.surface();
+        int assumedAlt = assumedElevation + hex.surface();
         int maxAlt = hex.surface();
         switch (getMovementMode()) {
         case IEntityMovementMode.INF_JUMP:
@@ -1149,7 +1152,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         case IEntityMovementMode.AERODYNE:
         case IEntityMovementMode.SPHEROID:
             if (!game.getBoard().inSpace()) {
-                altitude = assumedElevation;
+                assumedAlt = assumedElevation;
                 maxAlt = 10;
             }
             break;
@@ -1165,7 +1168,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         default:
             return false;
         }
-        return (altitude < maxAlt);
+        return (assumedAlt < maxAlt);
     }
 
     /**
@@ -1173,36 +1176,36 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * check stacking, only terrain limitations
      */
     public boolean isElevationValid(int assumedElevation, IHex hex) {
-        int altitude = assumedElevation + hex.surface();
+        int assumedAlt = assumedElevation + hex.surface();
         if (getMovementMode() == IEntityMovementMode.VTOL) {
             if ((this instanceof Infantry) && (hex.containsTerrain(Terrains.BUILDING) || hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE))) {
                 // VTOL BA (sylph) can move as ground unit as well
-                return ((assumedElevation <= 50) && (altitude >= hex.floor()));
+                return ((assumedElevation <= 50) && (assumedAlt >= hex.floor()));
             } else if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.WATER) || hex.containsTerrain(Terrains.JUNGLE)) {
-                return ((assumedElevation <= 50) && (altitude > hex.ceiling()));
+                return ((assumedElevation <= 50) && (assumedAlt > hex.ceiling()));
             }
-            return ((assumedElevation <= 50) && (altitude >= hex.ceiling()));
+            return ((assumedElevation <= 50) && (assumedAlt >= hex.ceiling()));
         } else if ((getMovementMode() == IEntityMovementMode.SUBMARINE) || ((getMovementMode() == IEntityMovementMode.INF_UMU) && hex.containsTerrain(Terrains.WATER)) || ((getMovementMode() == IEntityMovementMode.QUAD_SWIM) && hasUMU()) || ((getMovementMode() == IEntityMovementMode.BIPED_SWIM) && hasUMU())) {
-            return ((altitude >= hex.floor()) && (altitude <= hex.surface()));
+            return ((assumedAlt >= hex.floor()) && (assumedAlt <= hex.surface()));
         } else if ((getMovementMode() == IEntityMovementMode.HYDROFOIL) || (getMovementMode() == IEntityMovementMode.NAVAL)) {
-            return altitude == hex.surface();
+            return assumedAlt == hex.surface();
         } else if (getMovementMode() == IEntityMovementMode.WIGE) {
             // WiGEs can possibly be at any location above or on the surface
-            return (altitude >= hex.floor());
+            return (assumedAlt >= hex.floor());
         } else {
             // regular ground units
             if (hex.containsTerrain(Terrains.ICE) || ((getMovementMode() == IEntityMovementMode.HOVER) && hex.containsTerrain(Terrains.WATER))) {
                 // surface of ice is OK, surface of water is OK for hovers
-                if (altitude == hex.surface()) {
+                if (assumedAlt == hex.surface()) {
                     return true;
                 }
             }
             // only mechs can move underwater
-            if (hex.containsTerrain(Terrains.WATER) && (altitude < hex.surface()) && !(this instanceof Mech) && !(this instanceof Protomech)) {
+            if (hex.containsTerrain(Terrains.WATER) && (assumedAlt < hex.surface()) && !(this instanceof Mech) && !(this instanceof Protomech)) {
                 return false;
             }
             // can move on the ground unless its underwater
-            if (altitude == hex.floor()) {
+            if (assumedAlt == hex.floor()) {
                 return true;
             }
             if (hex.containsTerrain(Terrains.BRIDGE)) {
@@ -1215,7 +1218,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 // Mechs, protos and infantry can occupy any floor in the
                 // building
                 if ((this instanceof Mech) || (this instanceof Protomech) || (this instanceof Infantry)) {
-                    if ((altitude >= hex.floor()) && (altitude <= hex.ceiling())) {
+                    if ((assumedAlt >= hex.floor()) && (assumedAlt <= hex.ceiling())) {
                         return true;
                     }
                 }
@@ -4497,10 +4500,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     * Checks if the entity is attempting to sprint with MASC engaged. If so,
     * returns the target roll for the piloting skill check.
     */
-    public PilotingRollData checkSprintingWithMASC(int overallMoveType, int mpUsed) {
+    public PilotingRollData checkSprintingWithMASC(int overallMoveType, int used) {
        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-       if((overallMoveType == IEntityMovementType.MOVE_SPRINT) && (mpUsed > ((int) Math.ceil(2.0 * this.getWalkMP())))) {
+       if((overallMoveType == IEntityMovementType.MOVE_SPRINT) && (used > ((int) Math.ceil(2.0 * this.getWalkMP())))) {
            roll.append(new PilotingRollData(getId(), 0, "sprinting with active MASC/Supercharger"));
        } else {
            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to sprint with MASC");
@@ -4514,10 +4517,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity is attempting to sprint with supercharger engaged. If so,
      * returns the target roll for the piloting skill check.
      */
-     public PilotingRollData checkSprintingWithSupercharger(int overallMoveType, int mpUsed) {
+     public PilotingRollData checkSprintingWithSupercharger(int overallMoveType, int used) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if((overallMoveType == IEntityMovementType.MOVE_SPRINT) && (mpUsed > ((int) Math.ceil(2.5 * this.getWalkMP())))) {
+        if((overallMoveType == IEntityMovementType.MOVE_SPRINT) && (used > ((int) Math.ceil(2.5 * this.getWalkMP())))) {
             roll.append(new PilotingRollData(getId(), 0, "sprinting with active MASC/Supercharger"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to sprint with Supercharger");
@@ -4774,7 +4777,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *         stepping on roof
      */
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep, Coords curPos, Coords prevPos) {
-        if (prevPos.equals(curPos)) {
+        if (prevPos == null || prevPos.equals(curPos)) {
             return 0;
         }
         IHex curHex = game.getBoard().getHex(curPos);
@@ -4794,7 +4797,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         //check for movement inside a hangar
         Building curBldg = game.getBoard().getBuildingAt(curPos);
-        if((null != prevPos) && (null != curBldg) && curBldg.isIn(prevPos)
+        if((null != curBldg) && curBldg.isIn(prevPos)
                 && (curBldg.getBldgClass() == Building.HANGAR) && (curHex.terrainLevel(Terrains.BLDG_ELEV) > height())
                 && (step.getElevation() < curHex.terrainLevel(Terrains.BLDG_ELEV))) {
             return 0;

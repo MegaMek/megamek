@@ -1552,7 +1552,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     public void loadCustomBA() {
         clientgui.getCustomBADialog().setVisible(true);
     }
-    /*
+    /**
      * This button will now just load an empty fighter squadron which must be loaded with
      * fighters during the deployment phase
      */

@@ -369,6 +369,7 @@ KeyListener, ItemListener, ListSelectionListener {
 
             cen = en;
             clientgui.setSelectedEntityNum(en);
+            clientgui.mechD.displayEntity(ce());
 
             // If the selected entity is not on the board, use the next one.
             // ASSUMPTION: there will always be *at least one* entity on map.

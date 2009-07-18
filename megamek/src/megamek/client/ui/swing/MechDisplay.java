@@ -632,7 +632,7 @@ public class MechDisplay extends JPanel {
             weaponList.addListSelectionListener(this);
             JScrollPane tWeaponScroll = new JScrollPane(weaponList);
             tWeaponScroll.setMinimumSize(new Dimension(200, 100));
-            add(tWeaponScroll, GBC.eol().insets(15, 9, 15, 9).fill(GridBagConstraints.BOTH).anchor(GridBagConstraints.CENTER));
+            add(tWeaponScroll, GBC.eol().insets(15, 9, 15, 9).fill(GridBagConstraints.BOTH).anchor(GridBagConstraints.CENTER).gridy(0).gridx(0));
 
             // adding Ammo choice + label
 
@@ -650,14 +650,14 @@ public class MechDisplay extends JPanel {
             m_chBayWeapon = new JComboBox();
             m_chBayWeapon.addActionListener(this);
 
-            add(wBayWeapon, GBC.std().insets(15, 1, 1, 1));
+            add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridy(1).gridx(0));
 
-            add(m_chBayWeapon, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 1, 15, 1));
+            add(m_chBayWeapon, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 1, 15, 1).gridy(1).gridx(1));
 
-            add(wAmmo, GBC.std().insets(15, 9, 1, 1));
+            add(wAmmo, GBC.std().insets(15, 9, 1, 1).gridy(2).gridx(0));
 
 
-            add(m_chAmmo, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 15, 1));
+            add(m_chAmmo, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 15, 1).gridy(2).gridx(1));
 
             // Adding Heat Buildup
 
@@ -669,9 +669,9 @@ public class MechDisplay extends JPanel {
             currentHeatBuildupR.setOpaque(false);
             currentHeatBuildupR.setForeground(Color.WHITE);
 
-            add(currentHeatBuildupL, GBC.std().fill(GridBagConstraints.BOTH).anchor(GridBagConstraints.EAST).insets(9, 1, 1, 9));
+            add(currentHeatBuildupL, GBC.std().fill(GridBagConstraints.BOTH).anchor(GridBagConstraints.EAST).insets(9, 1, 1, 9).gridy(3).gridx(0));
 
-            add(currentHeatBuildupR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 1, 9, 9));
+            add(currentHeatBuildupR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 1, 9, 9).gridy(3).gridx(1));
 
             // Adding weapon display labels
             wNameL = new JLabel(
@@ -780,7 +780,7 @@ public class MechDisplay extends JPanel {
 
             add(wLongL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(3));
 
-            add(wExtL, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(4));
+            add(wExtL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(4));
             // ----------------
 
             add(wMinR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(0));
@@ -791,7 +791,7 @@ public class MechDisplay extends JPanel {
 
             add(wLongR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(3));
 
-            add(wExtR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(4));
+            add(wExtR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(4));
 
             // ----------------
             add(wAVL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(0));
@@ -802,7 +802,7 @@ public class MechDisplay extends JPanel {
 
             add(wLongAVR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(3));
 
-            add(wExtAVR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(4));
+            add(wExtAVR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(4));
 
             // target panel
             wTargetL = new JLabel(
@@ -828,24 +828,24 @@ public class MechDisplay extends JPanel {
             wToHitR.setOpaque(false);
             wToHitR.setForeground(Color.WHITE);
 
-            add(wTargetL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1));
+            add(wTargetL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(9).gridx(0));
 
-            add(wTargetR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1));
+            add(wTargetR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(9).gridx(1));
 
-            add(wRangeL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1));
+            add(wRangeL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(10).gridx(0));
 
-            add(wRangeR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1));
+            add(wRangeR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(10).gridx(1));
 
-            add(wToHitL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1));
+            add(wToHitL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(11).gridx(0));
 
-            add(wToHitR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1));
+            add(wToHitR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(11).gridx(1));
 
             // to-hit text
             toHitText = new JTextArea("", 2, 20); //$NON-NLS-1$
             toHitText.setEditable(false);
             toHitText.setLineWrap(true);
             toHitText.setFont(new Font("SansSerif", Font.PLAIN, 10)); //$NON-NLS-1$
-            add(toHitText, GBC.eol().fill(GridBagConstraints.BOTH).insets(15, 9, 15, 9));
+            add(toHitText, GBC.eol().fill(GridBagConstraints.BOTH).insets(15, 9, 15, 9).gridy(12).gridx(0).gridheight(2));
 
             setBackGround();
             onResize();

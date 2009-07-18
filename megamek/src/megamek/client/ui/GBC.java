@@ -104,6 +104,12 @@ public class GBC extends GridBagConstraints {
      */
     public GBC fill(int value) {
         fill = value;
+        if ((value == HORIZONTAL) || (value == BOTH)) {
+            weightx = 1.0;
+        }
+        if ((value == VERTICAL) || (value == BOTH)) {
+            weighty = 1.0;
+        }
         return this;
     }
 

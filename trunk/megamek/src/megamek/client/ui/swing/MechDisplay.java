@@ -1159,6 +1159,7 @@ public class MechDisplay extends JPanel {
             }
             int index = entity.getWeaponList().indexOf(entity.getEquipment(wn));
             weaponList.setSelectedIndex(index);
+            weaponList.ensureIndexIsVisible(index);
             displaySelected();
         }
 
@@ -1786,6 +1787,7 @@ public class MechDisplay extends JPanel {
                                 .isHotLoaded())) {
                     displayMech(entity);
                     weaponList.setSelectedIndex(n);
+                    weaponList.ensureIndexIsVisible(n);
                     displaySelected();
                 }
 

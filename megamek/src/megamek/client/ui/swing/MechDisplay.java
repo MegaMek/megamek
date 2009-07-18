@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -47,6 +48,7 @@ import javax.swing.event.ListSelectionListener;
 
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.AeroMapSet;
 import megamek.client.ui.swing.widget.ArmlessMechMapSet;
@@ -170,7 +172,6 @@ public class MechDisplay extends JPanel {
         addBag(displayP, c);
 
         ((CardLayout) displayP.getLayout()).show(displayP, "movement"); //$NON-NLS-1$
-        // tabStrip.setTab(0);
     }
 
     private void addBag(JComponent comp, GridBagConstraints c) {
@@ -365,7 +366,7 @@ public class MechDisplay extends JPanel {
         }
 
     }
-    
+
     /**
      * This panel contains the armor readout display.
      */
@@ -624,25 +625,14 @@ public class MechDisplay extends JPanel {
 
         WeaponPanel() {
 
-            GridBagLayout gridBagLayout = new GridBagLayout();
-            setLayout(gridBagLayout);
+            setLayout(new GridBagLayout());
 
             // weapon list
             weaponList = new JList(new DefaultListModel());
             weaponList.addListSelectionListener(this);
-
-            // layout main panel
-            GridBagConstraints c = new GridBagConstraints();
-
-            // adding Weapon List
-            c.fill = GridBagConstraints.BOTH;
-            c.insets = new Insets(15, 9, 1, 9);
-            c.weightx = 0.0;
-            c.gridx = 0;
-            c.gridy = 0;
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            gridBagLayout.setConstraints(weaponList, c);
-            add(weaponList);
+            JScrollPane tWeaponScroll = new JScrollPane(weaponList);
+            tWeaponScroll.setMinimumSize(new Dimension(200, 100));
+            add(tWeaponScroll, GBC.eol().insets(15, 9, 15, 9).fill(GridBagConstraints.BOTH).anchor(GridBagConstraints.CENTER));
 
             // adding Ammo choice + label
 
@@ -660,39 +650,14 @@ public class MechDisplay extends JPanel {
             m_chBayWeapon = new JComboBox();
             m_chBayWeapon.addActionListener(this);
 
-            c.insets = new Insets(1, 9, 1, 1);
-            c.gridwidth = 1;
-            c.weighty = 0.0;
-            c.fill = GridBagConstraints.NONE;
-            c.gridx = 0;
-            c.gridy = 1;
-            ((GridBagLayout) getLayout()).setConstraints(wBayWeapon, c);
-            add(wBayWeapon);
+            add(wBayWeapon, GBC.std().insets(15, 1, 1, 1));
 
-            c.insets = new Insets(1, 1, 1, 9);
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            c.gridx = 1;
-            c.gridy = 1;
-            c.fill = GridBagConstraints.HORIZONTAL;
-            ((GridBagLayout) getLayout()).setConstraints(m_chBayWeapon, c);
-            add(m_chBayWeapon);
+            add(m_chBayWeapon, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 1, 15, 1));
 
-            c.insets = new Insets(1, 9, 1, 1);
-            c.gridwidth = 1;
-            c.weighty = 0.0;
-            c.fill = GridBagConstraints.NONE;
-            c.gridx = 0;
-            c.gridy = 2;
-            gridBagLayout.setConstraints(wAmmo, c);
-            add(wAmmo);
+            add(wAmmo, GBC.std().insets(15, 9, 1, 1));
 
-            c.insets = new Insets(1, 1, 1, 9);
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            c.gridx = 1;
-            c.gridy = 2;
-            c.fill = GridBagConstraints.HORIZONTAL;
-            gridBagLayout.setConstraints(m_chAmmo, c);
-            add(m_chAmmo);
+
+            add(m_chAmmo, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 15, 1));
 
             // Adding Heat Buildup
 
@@ -704,22 +669,9 @@ public class MechDisplay extends JPanel {
             currentHeatBuildupR.setOpaque(false);
             currentHeatBuildupR.setForeground(Color.WHITE);
 
-            c.insets = new Insets(2, 9, 2, 1);
-            c.gridwidth = 2;
-            c.gridx = 0;
-            c.gridy = 3;
-            c.fill = GridBagConstraints.NONE;
-            c.anchor = GridBagConstraints.EAST;
-            gridBagLayout.setConstraints(currentHeatBuildupL, c);
-            add(currentHeatBuildupL);
+            add(currentHeatBuildupL, GBC.std().fill(GridBagConstraints.BOTH).anchor(GridBagConstraints.EAST).insets(9, 1, 1, 9));
 
-            c.insets = new Insets(2, 1, 2, 9);
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            c.gridx = 2;
-            c.anchor = GridBagConstraints.WEST;
-            // c.fill = GridBagConstraints.HORIZONTAL;
-            gridBagLayout.setConstraints(currentHeatBuildupR, c);
-            add(currentHeatBuildupR);
+            add(currentHeatBuildupR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 1, 9, 9));
 
             // Adding weapon display labels
             wNameL = new JLabel(
@@ -751,56 +703,21 @@ public class MechDisplay extends JPanel {
             wArcHeatR.setOpaque(false);
             wArcHeatR.setForeground(Color.WHITE);
 
-            c.anchor = GridBagConstraints.CENTER;
-            c.fill = GridBagConstraints.BOTH;
-            c.insets = new Insets(2, 9, 1, 1);
-            c.gridwidth = 2;
-            c.gridx = 0;
-            c.gridy = 4;
-            gridBagLayout.setConstraints(wNameL, c);
-            add(wNameL);
+            add(wNameL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(0));
 
-            c.insets = new Insets(2, 1, 1, 1);
-            c.gridwidth = 1;
-            c.gridx = 2;
-            gridBagLayout.setConstraints(wHeatL, c);
-            add(wHeatL);
+            add(wHeatL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(1));
 
-            c.insets = new Insets(2, 1, 1, 9);
-            c.gridwidth = 1;
-            c.gridx = 3;
-            gridBagLayout.setConstraints(wDamL, c);
-            add(wDamL);
+            add(wDamL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(2));
 
-            c.insets = new Insets(2, 1, 1, 9);
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            c.gridx = 4;
-            ((GridBagLayout) getLayout()).setConstraints(wArcHeatL, c);
-            add(wArcHeatL);
+            add(wArcHeatL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(3));
 
-            c.insets = new Insets(1, 9, 2, 1);
-            c.gridwidth = 2;
-            c.gridx = 0;
-            c.gridy = 5;
-            gridBagLayout.setConstraints(wNameR, c);
-            add(wNameR);
+            add(wNameR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(0));
 
-            c.gridwidth = 1;
-            c.gridx = 2;
-            gridBagLayout.setConstraints(wHeatR, c);
-            add(wHeatR);
+            add(wHeatR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(1));
 
-            c.insets = new Insets(1, 1, 2, 9);
-            c.gridx = 3;
-            c.gridwidth = 1;
-            gridBagLayout.setConstraints(wDamR, c);
-            add(wDamR);
+            add(wDamR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(2));
 
-            c.insets = new Insets(1, 1, 2, 9);
-            c.gridx = 4;
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            ((GridBagLayout) getLayout()).setConstraints(wArcHeatR, c);
-            add(wArcHeatR);
+            add(wArcHeatR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(3));
 
             // Adding range labels
             wMinL = new JLabel(
@@ -855,102 +772,37 @@ public class MechDisplay extends JPanel {
             wExtAVR.setOpaque(false);
             wExtAVR.setForeground(Color.WHITE);
 
-            c.weightx = 1.0;
-            c.insets = new Insets(2, 9, 1, 1);
-            c.gridx = 0;
-            c.gridy = 6;
-            c.gridwidth = 1;
-            gridBagLayout.setConstraints(wMinL, c);
-            add(wMinL);
+            add(wMinL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(0));
 
-            c.insets = new Insets(2, 1, 1, 1);
-            c.gridx = 1;
-            c.gridy = 6;
-            gridBagLayout.setConstraints(wShortL, c);
-            add(wShortL);
+            add(wShortL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(1));
 
-            c.gridx = 2;
-            c.gridy = 6;
-            gridBagLayout.setConstraints(wMedL, c);
-            add(wMedL);
+            add(wMedL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(2));
 
-            // c.insets = new Insets(2, 1, 1, 9);
-            c.gridx = 3;
-            c.gridy = 6;
-            // c.gridwidth = GridBagConstraints.REMAINDER;
-            gridBagLayout.setConstraints(wLongL, c);
-            add(wLongL);
+            add(wLongL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(3));
 
-            c.insets = new Insets(2, 1, 1, 9);
-            c.gridx = 4;
-            c.gridy = 6;
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            gridBagLayout.setConstraints(wExtL, c);
-            add(wExtL);
+            add(wExtL, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(4));
             // ----------------
 
-            c.insets = new Insets(1, 9, 2, 1);
-            c.gridx = 0;
-            c.gridy = 7;
-            c.gridwidth = 1;
-            gridBagLayout.setConstraints(wMinR, c);
-            add(wMinR);
+            add(wMinR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(0));
 
-            c.insets = new Insets(1, 1, 2, 1);
-            c.gridx = 1;
-            c.gridy = 7;
-            gridBagLayout.setConstraints(wShortR, c);
-            add(wShortR);
+            add(wShortR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(1));
 
-            c.gridx = 2;
-            c.gridy = 7;
-            gridBagLayout.setConstraints(wMedR, c);
-            add(wMedR);
+            add(wMedR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(2));
 
-            // c.insets = new Insets(1, 1, 2, 9);
-            c.gridx = 3;
-            c.gridy = 7;
-            // c.gridwidth = GridBagConstraints.REMAINDER;
-            gridBagLayout.setConstraints(wLongR, c);
-            add(wLongR);
+            add(wLongR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(3));
 
-            c.insets = new Insets(1, 1, 2, 9);
-            c.gridx = 4;
-            c.gridy = 7;
-            gridBagLayout.setConstraints(wExtR, c);
-            add(wExtR);
+            add(wExtR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(4));
 
             // ----------------
-            c.insets = new Insets(1, 9, 2, 1);
-            c.gridx = 0;
-            c.gridy = 8;
-            c.gridwidth = 1;
-            ((GridBagLayout) getLayout()).setConstraints(wAVL, c);
-            add(wAVL);
+            add(wAVL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(0));
 
-            c.insets = new Insets(1, 1, 2, 1);
-            c.gridx = 1;
-            c.gridy = 8;
-            ((GridBagLayout) getLayout()).setConstraints(wShortAVR, c);
-            add(wShortAVR);
+            add(wShortAVR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(1));
 
-            c.gridx = 2;
-            c.gridy = 8;
-            ((GridBagLayout) getLayout()).setConstraints(wMedAVR, c);
-            add(wMedAVR);
+            add(wMedAVR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(2));
 
-            // c.insets = new Insets(1, 1, 2, 9);
-            c.gridx = 3;
-            c.gridy = 8;
-            // c.gridwidth = GridBagConstraints.REMAINDER;
-            ((GridBagLayout) getLayout()).setConstraints(wLongAVR, c);
-            add(wLongAVR);
+            add(wLongAVR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(3));
 
-            c.insets = new Insets(1, 1, 2, 9);
-            c.gridx = 4;
-            c.gridy = 8;
-            ((GridBagLayout) getLayout()).setConstraints(wExtAVR, c);
-            add(wExtAVR);
+            add(wExtAVR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(4));
 
             // target panel
             wTargetL = new JLabel(
@@ -976,61 +828,24 @@ public class MechDisplay extends JPanel {
             wToHitR.setOpaque(false);
             wToHitR.setForeground(Color.WHITE);
 
-            c.weightx = 0.0;
-            c.insets = new Insets(2, 9, 1, 1);
-            c.gridx = 0;
-            c.gridy = 9;
-            c.gridwidth = 1;
-            gridBagLayout.setConstraints(wTargetL, c);
-            add(wTargetL);
+            add(wTargetL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1));
 
-            c.insets = new Insets(2, 1, 1, 9);
-            c.gridx = 1;
-            c.gridy = 9;
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            gridBagLayout.setConstraints(wTargetR, c);
-            add(wTargetR);
+            add(wTargetR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1));
 
-            c.insets = new Insets(1, 9, 1, 1);
-            c.gridx = 0;
-            c.gridy = 10;
-            c.gridwidth = 1;
-            gridBagLayout.setConstraints(wRangeL, c);
-            add(wRangeL);
+            add(wRangeL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1));
 
-            c.insets = new Insets(1, 1, 1, 9);
-            c.gridx = 1;
-            c.gridy = 10;
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            gridBagLayout.setConstraints(wRangeR, c);
-            add(wRangeR);
+            add(wRangeR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1));
 
-            c.insets = new Insets(1, 9, 1, 1);
-            c.gridx = 0;
-            c.gridy = 11;
-            c.gridwidth = 1;
-            gridBagLayout.setConstraints(wToHitL, c);
-            add(wToHitL);
+            add(wToHitL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1));
 
-            c.insets = new Insets(1, 1, 1, 9);
-            c.gridx = 1;
-            c.gridy = 11;
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            gridBagLayout.setConstraints(wToHitR, c);
-            add(wToHitR);
+            add(wToHitR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1));
 
             // to-hit text
             toHitText = new JTextArea("", 2, 20); //$NON-NLS-1$
             toHitText.setEditable(false);
             toHitText.setLineWrap(true);
             toHitText.setFont(new Font("SansSerif", Font.PLAIN, 10)); //$NON-NLS-1$
-
-            c.insets = new Insets(1, 9, 15, 9);
-            c.gridx = 0;
-            c.gridy = 12;
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            gridBagLayout.setConstraints(toHitText, c);
-            add(toHitText);
+            add(toHitText, GBC.eol().fill(GridBagConstraints.BOTH).insets(15, 9, 15, 9));
 
             setBackGround();
             onResize();
@@ -1164,7 +979,7 @@ public class MechDisplay extends JPanel {
             // update weapon list
             ((DefaultListModel) weaponList.getModel()).removeAllElements();
             ((DefaultComboBoxModel) m_chAmmo.getModel()).removeAllElements();
-            
+
             m_chAmmo.setEnabled(false);
             m_chBayWeapon.removeAllItems();
             m_chBayWeapon.setEnabled(false);
@@ -2148,8 +1963,10 @@ public class MechDisplay extends JPanel {
             c.weightx = 0.0;
             c.weighty = 1.0;
             c.insets = new Insets(1, 1, 1, 9);
-            gridbag.setConstraints(slotList, c);
-            add(slotList);
+            JScrollPane tSlotScroll = new JScrollPane(slotList);
+            tSlotScroll.setMinimumSize(new Dimension(200, 100));
+            gridbag.setConstraints(tSlotScroll, c);
+            add(tSlotScroll);
 
             c.gridwidth = 1;
             c.gridy = 2;
@@ -2227,7 +2044,7 @@ public class MechDisplay extends JPanel {
          * updates fields for the specified mech
          */
         public void displayMech(Entity newEntity) {
-            this.en = newEntity;
+            en = newEntity;
             entities.clear();
             entities.add(newEntity);
             ((DefaultListModel) unitList.getModel()).removeAllElements();

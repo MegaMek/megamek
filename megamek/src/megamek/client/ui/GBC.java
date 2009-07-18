@@ -104,12 +104,6 @@ public class GBC extends GridBagConstraints {
      */
     public GBC fill(int value) {
         fill = value;
-        if ((value == HORIZONTAL) || (value == BOTH)) {
-            weightx = 1.0;
-        }
-        if ((value == VERTICAL) || (value == BOTH)) {
-            weighty = 1.0;
-        }
         return this;
     }
 
@@ -132,6 +126,26 @@ public class GBC extends GridBagConstraints {
     public GBC pad(int padx, int pady) {
         ipadx = padx;
         ipady = pady;
+        return this;
+    }
+
+    /**
+     * Set the gridx of this <code>GridBagConstraints</code>
+     * @param gridx the <code>int</code> gridx to set
+     * @return <code>this</code>
+     */
+    public GBC gridx(int gridx) {
+        this.gridx = gridx;
+        return this;
+    }
+
+    /**
+     * Set the gridy of this <code>GridBagConstraints</code>
+     * @param gridy the <code>int</code> gridy to set
+     * @return <code>this</code>
+     */
+    public GBC gridy(int gridy) {
+        this.gridy = gridy;
         return this;
     }
 }

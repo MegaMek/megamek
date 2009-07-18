@@ -2549,6 +2549,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             CriticalSlot crit = getCritical(location, slot);
             if ((null != crit) && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
                 Mounted mount = crit.getMount();
+                if (mount == null) {
+                    continue;
+                }
                 if ((mount.getType() instanceof MiscType) && mount.isReady()) {
                     MiscType type = (MiscType) mount.getType();
                     if (type.hasFlag(flag) && ((secondary == -1) || type.hasSubType(secondary))) {

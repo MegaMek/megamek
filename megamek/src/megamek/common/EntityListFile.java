@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -39,7 +39,7 @@ public class EntityListFile {
     /**
      * Produce a string describing this armor value. Valid output values are any
      * integer from 0 to 100, N/A, or Destroyed.
-     * 
+     *
      * @param points - the <code>int</code> value of the armor. This value may
      *            be any valid value of entity armor (including NA, DOOMED, and
      *            DESTROYED).
@@ -63,7 +63,7 @@ public class EntityListFile {
 
     /**
      * Produce a string describing the equipment in a critical slot.
-     * 
+     *
      * @param index - the <code>String</code> index of the slot. This value
      *            should be a positive integer or "N/A".
      * @param mount - the <code>Mounted</code> object of the equipment. This
@@ -121,7 +121,7 @@ public class EntityListFile {
     /**
      * Helper function that generates a string identifying the state of the
      * locations for an entity.
-     * 
+     *
      * @param entity - the <code>Entity</code> whose location state is needed
      */
     private static String getLocString(Entity entity) {
@@ -147,13 +147,13 @@ public class EntityListFile {
             if (!isDestroyed) {
                 if (entity.getOArmor(loc) != entity.getArmor(loc)) {
                     thisLoc.append("         <armor points=\"");
-                    thisLoc.append(formatArmor(entity.getArmor(loc)));
+                    thisLoc.append(EntityListFile.formatArmor(entity.getArmor(loc)));
                     thisLoc.append("\"/>");
                     thisLoc.append(CommonConstants.NL);
                 }
                 if (entity.getOInternal(loc) != entity.getInternal(loc)) {
                     thisLoc.append("         <armor points=\"");
-                    thisLoc.append(formatArmor(entity.getInternal(loc)));
+                    thisLoc.append(EntityListFile.formatArmor(entity.getInternal(loc)));
                     thisLoc.append("\" type=\"Internal\"/>");
                     thisLoc.append(CommonConstants.NL);
                 }
@@ -161,7 +161,7 @@ public class EntityListFile {
                         && entity.getOArmor(loc, true) != entity.getArmor(loc,
                                 true)) {
                     thisLoc.append("         <armor points=\"");
-                    thisLoc.append(formatArmor(entity.getArmor(loc, true)));
+                    thisLoc.append(EntityListFile.formatArmor(entity.getArmor(loc, true)));
                     thisLoc.append("\" type=\"Rear\"/>");
                     thisLoc.append(CommonConstants.NL);
                 }
@@ -200,7 +200,7 @@ public class EntityListFile {
                     // have been blown off.
                     if (isDestroyed && isMech && slot.isMissing()
                             && !slot.isHit() && !slot.isDestroyed()) {
-                        thisLoc.append(formatSlot(String.valueOf(loop + 1),
+                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                                 mount, slot.isHit(), slot.isDestroyed()));
                         haveSlot = true;
                         blownOff = true;
@@ -208,14 +208,14 @@ public class EntityListFile {
 
                     // Record damaged slots in undestroyed locations.
                     else if (!isDestroyed && slot.isDamaged()) {
-                        thisLoc.append(formatSlot(String.valueOf(loop + 1),
+                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                                 mount, slot.isHit(), slot.isDestroyed()));
                         haveSlot = true;
-                    } 
-                    
+                    }
+
                     //record any quirks
                     else if (null != mount && mount.countQuirks() > 0) {
-                        thisLoc.append(formatSlot(String.valueOf(loop + 1),
+                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                                 mount, slot.isHit(), slot.isDestroyed()));
                         haveSlot = true;
                     }
@@ -239,7 +239,7 @@ public class EntityListFile {
                     else if (!isDestroyed && mount != null
                             && mount.getType() instanceof WeaponType
                             && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
-                        thisLoc.append(formatSlot(String.valueOf(loop + 1),
+                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                                 mount, slot.isHit(), slot.isDestroyed()));
                         haveSlot = true;
                     }
@@ -255,7 +255,7 @@ public class EntityListFile {
 
                     // Is this ammo in the current location?
                     if (mount.getLocation() == loc) {
-                        thisLoc.append(formatSlot("N/A", mount, false, false));
+                        thisLoc.append(EntityListFile.formatSlot("N/A", mount, false, false));
                         haveSlot = true;
                     }
 
@@ -339,7 +339,7 @@ public class EntityListFile {
      * <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
      * other campaign-related information are retained but data specific to a
      * particular game is ignored.
-     * 
+     *
      * @param file - The current contents of the file will be discarded and all
      *            <code>Entity</code>s in the list will be written to the
      *            file.
@@ -370,7 +370,7 @@ public class EntityListFile {
             if(entity instanceof FighterSquadron) {
                 continue;
             }
-            
+
             // Start writing this entity to the file.
             output.write("   <entity chassis=\"");
             output.write(entity.getChassis().replaceAll("\"", "&quot;"));
@@ -378,6 +378,8 @@ public class EntityListFile {
             output.write(entity.getModel().replaceAll("\"", "&quot;"));
             output.write("\" type=\"");
             output.write(entity.getMovementModeAsString());
+            output.write("\" commander=\"");
+            output.write(String.valueOf(entity.isCommander()));
             if (entity.countQuirks() > 0) {
                 output.write("\" quirks=\"");
                 output.write(String.valueOf(entity.getQuirkList("::")));
@@ -430,63 +432,64 @@ public class EntityListFile {
             }
             output.write("\"/>");
             output.write(CommonConstants.NL);
-            
+
             // If it's a tank, add a movement tag.
             if (entity instanceof Tank) {
                 Tank tentity = (Tank) entity;
-                output.write(getMovementString(tentity));
-                if (tentity.isTurretLocked())
-                    output.write(getTurretLockedString(tentity));
+                output.write(EntityListFile.getMovementString(tentity));
+                if (tentity.isTurretLocked()) {
+                    output.write(EntityListFile.getTurretLockedString(tentity));
+                }
             }
-            
+
             //add a bunch of stuff for aeros
             if(entity instanceof Aero) {
                 Aero a = (Aero) entity;
-                
+
                 //SI
                 output.write("      <structural integrity=\"");
                 output.write(String.valueOf(a.getSI()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
-                
+
                 //heat sinks
                 output.write("      <heat sinks=\"");
                 output.write(String.valueOf(a.getHeatSinks()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
-                
+
                 //fuel
                 output.write("      <fuel left=\"");
                 output.write(String.valueOf(a.getFuel()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
-                
+
                 //TODO: dropship docking collars, bays
-                
+
                 //large craft stuff
                 if(a instanceof Jumpship) {
                     Jumpship j = (Jumpship) a;
-                    
+
                     //kf integrity
                     output.write("      <KF integrity=\"");
                     output.write(String.valueOf(j.getKFIntegrity()));
                     output.write("\"/>");
                     output.write(CommonConstants.NL);
-                    
+
                     //kf sail integrity
                     output.write("      <sail integrity=\"");
                     output.write(String.valueOf(j.getSailIntegrity()));
                     output.write("\"/>");
                     output.write(CommonConstants.NL);
                 }
-                
+
                 //crits
-                output.write(getAeroCritString(a));
- 
+                output.write(EntityListFile.getAeroCritString(a));
+
             }
 
             // Add the locations of this entity (if any are needed).
-            String loc = getLocString(entity);
+            String loc = EntityListFile.getLocString(entity);
             if (null != loc) {
                 output.write(loc);
             }
@@ -514,20 +517,21 @@ public class EntityListFile {
 
     private static String getMovementString(Tank e) {
         String retVal = "      <movement speed=\"";
-        if (e.isImmobile())
+        if (e.isImmobile()) {
             retVal = retVal.concat("immobile");
-        else
+        } else {
             retVal = retVal.concat(Integer.toString(e.getOriginalWalkMP()));
+        }
         retVal = retVal.concat("\"/>\n");
         return retVal;
     }
-    
+
 //  Aero crits
     private static String getAeroCritString(Aero a) {
-        
+
         String retVal = "      <acriticals";
         String critVal = "";
-        
+
         //        crits
         if(a.getAvionicsHits() > 0) {
             critVal = critVal.concat(" avionics=\"");
@@ -570,8 +574,8 @@ public class EntityListFile {
         if(a.isGearHit()) {
             critVal = critVal.concat(" gear=\"none\"");
         }
-    
-        
+
+
         if(!critVal.equals("")) {
             //then add beginning and end
             retVal = retVal.concat(critVal);
@@ -579,7 +583,7 @@ public class EntityListFile {
         } else {
             return critVal;
         }
-        
+
         return retVal;
 
     }
@@ -589,7 +593,7 @@ public class EntityListFile {
      * <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
      * other campaign-related information are retained but data specific to a
      * particular game is ignored.
-     * 
+     *
      * @param file - the <code>File</code> to load from.
      * @return A <code>Vector</code> containing <code>Entity</code>s loaded
      *         from the file. This vector may be empty, but it will not be

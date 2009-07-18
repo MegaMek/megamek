@@ -32,7 +32,7 @@ import megamek.common.loaders.EntityLoadingException;
  * described by the file, "xml-spec.txt", then this class can return entities.
  * If unexpected entities are encountered while parsing a well-formed stream, a
  * warning message will be available.
- * 
+ *
  * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $Revision$
  */
@@ -129,13 +129,13 @@ public class XMLStreamParser implements XMLResponder {
     public static final String SLOT = "slot";
     public static final String MOVEMENT = "movement";
     public static final String TURRETLOCK = "turretlock";
-    public static final String  SI = "structural";
-    public static final String  HEAT = "Heat";
-    public static final String  FUEL = "fuel";
-    public static final String  KF = "KF";
-    public static final String  SAIL = "sail";
-    public static final String  AEROCRIT = "acriticals";
- 
+    public static final String SI = "structural";
+    public static final String HEAT = "Heat";
+    public static final String FUEL = "fuel";
+    public static final String KF = "KF";
+    public static final String SAIL = "sail";
+    public static final String AEROCRIT = "acriticals";
+
 
     /**
      * The names of the attributes recognized by this parser. Not every
@@ -156,6 +156,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String ADVS = "advantages";
     public static final String IMPLANTS = "implants";
     public static final String QUIRKS = "quirks";
+    public static final String COMMANDER = "commander";
     public static final String AUTOEJECT = "autoeject";
     public static final String INDEX = "index";
     public static final String IS_DESTROYED = "isDestroyed";
@@ -203,7 +204,7 @@ public class XMLStreamParser implements XMLResponder {
      * Parse the indicated XML stream. Any warning message or
      * <code>Entity</code>s from a previously parsed stream will be
      * discarded.
-     * 
+     *
      * @param input - the <code>InputStream</code> to be parsed.
      * @exception ParseException is thrown if a fatal error occurs during
      *                parsing. Typically, this only occurs when the XML is not
@@ -211,49 +212,49 @@ public class XMLStreamParser implements XMLResponder {
      */
     public void parse(InputStream input) throws ParseException {
         // Reset the warning message.
-        this.warning = new StringBuffer();
+        warning = new StringBuffer();
 
         // Clear the entities.
-        this.entities.removeAllElements();
+        entities.removeAllElements();
 
         // Parse the input stream.
-        this.inStream = input;
-        this.parser.parseXML(this);
+        inStream = input;
+        parser.parseXML(this);
     }
 
     /**
      * Construct an object and parse the XML stream. Any warning message or
      * <code>Entity</code>s from a previously parsed stream will be
      * discarded.
-     * 
+     *
      * @param input - the <code>InputStream</code> to be parsed.
      * @exception ParseException is thrown if a fatal warning occurs during
      *                parsing. Typically, this only occurs when the XML is not
      *                well-formed.
      */
     public XMLStreamParser(InputStream input) throws ParseException {
-        this.parse(input);
+        parse(input);
     }
 
     /**
      * Determine if unexpected XML entities were encountered during parsing.
-     * 
+     *
      * @return <code>true</code> if a non-fatal warning occured.
      */
     public boolean hasWarningMessage() {
-        return (this.warning.length() > 0);
+        return (warning.length() > 0);
     }
 
     /**
      * Get the warning message from the last parse.
-     * 
+     *
      * @return The <code>String</code> warning message from the last parse. If
      *         there is no warning message, then an <code>null</code> value is
      *         returned.
      */
     public String getWarningMessage() {
-        if (this.warning.length() > 0) {
-            return this.warning.toString();
+        if (warning.length() > 0) {
+            return warning.toString();
         }
         return null;
     }
@@ -262,7 +263,7 @@ public class XMLStreamParser implements XMLResponder {
      * Get any <code>Entity</code>s parsed from the last input stream.
      * Entities may have been parsed out of the stream, even if errors were
      * encountered.
-     * 
+     *
      * @return A <code>Vector</code> containing <code>Entity</code>s parsed
      *         from the stream. This <code>Vector</code> may be empty, but it
      *         will never be <code>null</code>.
@@ -270,7 +271,7 @@ public class XMLStreamParser implements XMLResponder {
     public Vector<Entity> getEntities() {
         // ASSUMPTION : it is safe to return a modifiable reference to the
         // vector. If assumption is wrong, clone the vector.
-        return this.entities;
+        return entities;
     }
 
     // Implementation of the XMLResponder interface:
@@ -319,17 +320,17 @@ public class XMLStreamParser implements XMLResponder {
         if (name.equals(UNIT)) {
 
             // Are we in the middle of parsing an Entity?
-            if (this.entity != null) {
-                this.warning.append("Found a unit while parsing an Entity.\n");
+            if (entity != null) {
+                warning.append("Found a unit while parsing an Entity.\n");
             }
 
             // Are there *multiple* units?
-            else if (!this.entities.isEmpty()) {
-                this.warning
+            else if (!entities.isEmpty()) {
+                warning
                         .append("Found a second unit.  Clearing first unit.\n");
 
                 // Restart the unit list.
-                this.entities.removeAllElements();
+                entities.removeAllElements();
             }
 
         } else if (name.equals(TEMPLATE)) {
@@ -337,14 +338,14 @@ public class XMLStreamParser implements XMLResponder {
         } else if (name.equals(ENTITY)) {
 
             // Are we in the middle of parsing an Entity?
-            if (this.entity != null) {
-                this.warning
+            if (entity != null) {
+                warning
                         .append("Found another Entity while parsing an Entity.\n");
             }
 
             // Are we in the middle of parsing an Entity's location?
-            else if (this.loc != Entity.LOC_NONE) {
-                this.warning
+            else if (loc != Entity.LOC_NONE) {
+                warning
                         .append("Found another Entity while parsing a location.\n");
             }
 
@@ -357,7 +358,7 @@ public class XMLStreamParser implements XMLResponder {
 
                 // Did we find required attributes?
                 if (chassis == null || chassis.length() == 0) {
-                    this.warning.append("Could not find chassis for Entity.\n");
+                    warning.append("Could not find chassis for Entity.\n");
                 } else {
 
                     // Try to find the entity.
@@ -379,24 +380,24 @@ public class XMLStreamParser implements XMLResponder {
 
                     // We should have found the mech.
                     if (ms == null) {
-                        this.warning
+                        warning
                         .append("Could not find Entity with chassis: ");
-                        this.warning.append(chassis);
+                        warning.append(chassis);
                         if (model != null && model.length() > 0) {
-                            this.warning.append(", and model: ");
-                            this.warning.append(model);
+                            warning.append(", and model: ");
+                            warning.append(model);
                         }
-                        this.warning.append(".\n");
+                        warning.append(".\n");
                     } else {
 
                         // Try to load the new mech.
                         try {
-                            this.entity = new MechFileParser(
+                            entity = new MechFileParser(
                                     ms.getSourceFile(), ms.getEntryName())
                                     .getEntity();
                         } catch (EntityLoadingException excep) {
                             excep.printStackTrace(System.err);
-                            this.warning.append("Unable to load mech: ")
+                            warning.append("Unable to load mech: ")
                                     .append(ms.getSourceFile()).append(": ")
                                     .append(ms.getEntryName()).append(": ")
                                     .append(excep.getMessage());
@@ -404,6 +405,10 @@ public class XMLStreamParser implements XMLResponder {
                     } // End found-MechSummary
 
                 } // End have-chassis
+
+                //commander
+                boolean commander = Boolean.parseBoolean((String)attr.get(COMMANDER));
+                entity.setCommander(commander);
 
                 //quirks
                 String quirks = (String) attr.get(QUIRKS);
@@ -420,13 +425,13 @@ public class XMLStreamParser implements XMLResponder {
                             entity.getQuirks().getOption(quirkName).setValue(
                                     value);
                         } catch (Exception e) {
-                            this.warning.append(
+                            warning.append(
                                     "Error restoring quirk: ").append(
                                     quirk).append(".\n");
                         }
                     }
                 }
-                
+
             } // End ready-for-new-Entity
 
         } else if (name.equals(FLUFF)) {
@@ -434,13 +439,13 @@ public class XMLStreamParser implements XMLResponder {
         } else if (name.equals(PILOT)) {
 
             // Are we in the outside of an Entity?
-            if (this.entity == null) {
-                this.warning.append("Found a pilot outside of an Entity.\n");
+            if (entity == null) {
+                warning.append("Found a pilot outside of an Entity.\n");
             }
 
             // Are we in the middle of parsing an Entity's location?
-            else if (this.loc != Entity.LOC_NONE) {
-                this.warning
+            else if (loc != Entity.LOC_NONE) {
+                warning
                         .append("Found a pilot while parsing a location.\n");
             }
 
@@ -464,9 +469,9 @@ public class XMLStreamParser implements XMLResponder {
 
                 // Did we find required attributes?
                 if (gunnery == null || gunnery.length() == 0) {
-                    this.warning.append("Could not find gunnery for pilot.\n");
+                    warning.append("Could not find gunnery for pilot.\n");
                 } else if (piloting == null || piloting.length() == 0) {
-                    this.warning.append("Could not find piloting for pilot.\n");
+                    warning.append("Could not find piloting for pilot.\n");
                 } else {
 
                     // Try to get a good gunnery value.
@@ -477,7 +482,7 @@ public class XMLStreamParser implements XMLResponder {
                         // Handled by the next if test.
                     }
                     if (gunVal < 0 || gunVal > 7) {
-                        this.warning.append("Found invalid gunnery value: ")
+                        warning.append("Found invalid gunnery value: ")
                                 .append(gunnery).append(".\n");
                         return;
                     }
@@ -490,7 +495,7 @@ public class XMLStreamParser implements XMLResponder {
                         // Handled by the next if test.
                     }
                     if (pilotVal < 0 || pilotVal > 7) {
-                        this.warning.append("Found invalid piloting value: ")
+                        warning.append("Found invalid piloting value: ")
                                 .append(piloting).append(".\n");
                         return;
                     }
@@ -523,7 +528,7 @@ public class XMLStreamParser implements XMLResponder {
                             // Handled by the next if test.
                         }
                         if (gunneryLVal < 0 || gunneryLVal > 7) {
-                            this.warning.append(
+                            warning.append(
                                     "Found invalid piloting value: ").append(
                                     gunneryL).append(".\n");
                             return;
@@ -536,7 +541,7 @@ public class XMLStreamParser implements XMLResponder {
                             // Handled by the next if test.
                         }
                         if (gunneryMVal < 0 || gunneryMVal > 7) {
-                            this.warning.append(
+                            warning.append(
                                     "Found invalid piloting value: ").append(
                                     gunneryM).append(".\n");
                             return;
@@ -549,7 +554,7 @@ public class XMLStreamParser implements XMLResponder {
                             // Handled by the next if test.
                         }
                         if (gunneryBVal < 0 || gunneryBVal > 7) {
-                            this.warning.append(
+                            warning.append(
                                     "Found invalid piloting value: ").append(
                                     gunneryB).append(".\n");
                             return;
@@ -583,7 +588,7 @@ public class XMLStreamParser implements XMLResponder {
                                 crew.getOptions().getOption(advName).setValue(
                                         value);
                             } catch (Exception e) {
-                                this.warning.append(
+                                warning.append(
                                         "Error restoring advantage: ").append(
                                         adv).append(".\n");
                             }
@@ -603,7 +608,7 @@ public class XMLStreamParser implements XMLResponder {
                                 crew.getOptions().getOption(implantName)
                                         .setValue(value);
                             } catch (Exception e) {
-                                this.warning.append(
+                                warning.append(
                                         "Error restoring advantage: ").append(
                                         implant).append(".\n");
                             }
@@ -622,10 +627,10 @@ public class XMLStreamParser implements XMLResponder {
                         }
                         if (hits.equals(DEAD)) {
                             crew.setDead(true);
-                            this.warning.append("The pilot, ")
+                            warning.append("The pilot, ")
                                     .append(pilotName).append(", is dead.\n");
                         } else if (hitVal < 0 || hitVal > 5) {
-                            this.warning.append("Found invalid hits value: ")
+                            warning.append("Found invalid hits value: ")
                                     .append(hits).append(".\n");
                         } else {
                             crew.setHits(hitVal);
@@ -634,13 +639,13 @@ public class XMLStreamParser implements XMLResponder {
                     } // End have-hits
 
                     // Set the crew for this entity.
-                    this.entity.setCrew(crew);
+                    entity.setCrew(crew);
 
                     if (autoeject != null) {
                         if (autoeject.equals("true")) {
-                            ((Mech) this.entity).setAutoEject(true);
+                            ((Mech) entity).setAutoEject(true);
                         } else {
-                            ((Mech) this.entity).setAutoEject(false);
+                            ((Mech) entity).setAutoEject(false);
                         }
                     }
 
@@ -649,13 +654,13 @@ public class XMLStreamParser implements XMLResponder {
         } else if (name.equals(LOCATION)) {
 
             // Are we in the outside of an Entity?
-            if (this.entity == null) {
-                this.warning.append("Found a location outside of an Entity.\n");
+            if (entity == null) {
+                warning.append("Found a location outside of an Entity.\n");
             }
 
             // Are we in the middle of parsing an Entity's location?
-            else if (this.loc != Entity.LOC_NONE) {
-                this.warning
+            else if (loc != Entity.LOC_NONE) {
+                warning
                         .append("Found a location while parsing a location.\n");
             }
 
@@ -668,7 +673,7 @@ public class XMLStreamParser implements XMLResponder {
 
                 // Did we find required attributes?
                 if (index == null || index.length() == 0) {
-                    this.warning.append("Could not find index for location.\n");
+                    warning.append("Could not find index for location.\n");
                 } else {
 
                     // Try to get a good index value.
@@ -679,12 +684,12 @@ public class XMLStreamParser implements XMLResponder {
                         // Handled by the next if test.
                     }
                     if (indexVal < 0 || indexVal > 7) {
-                        this.warning.append(
+                        warning.append(
                                 "Found invalid index value for location: ")
                                 .append(index).append(".\n");
                         return;
                     } else if (indexVal >= entity.locations()) {
-                        this.warning.append("The entity, ").append(
+                        warning.append("The entity, ").append(
                                 entity.getShortName()).append(
                                 " does not have a location at index: ").append(
                                 indexVal).append(".\n");
@@ -692,19 +697,19 @@ public class XMLStreamParser implements XMLResponder {
                     } else {
 
                         // We're now parsing the indexed location.
-                        this.loc = indexVal;
+                        loc = indexVal;
 
                         // Reset the ammo count.
-                        this.locAmmoCount = 0;
+                        locAmmoCount = 0;
 
                         // Is the location destroyed?
-                        this.locDestroyed = false;
+                        locDestroyed = false;
                         try {
                             if (destroyed != null) {
-                                this.locDestroyed = destroyed.equals("true");
+                                locDestroyed = destroyed.equals("true");
                             }
                         } catch (Throwable excep) {
-                            this.warning.append(
+                            warning.append(
                                     "Found invalid isDestroyed value: ")
                                     .append(destroyed).append(".\n");
                         }
@@ -714,55 +719,55 @@ public class XMLStreamParser implements XMLResponder {
             } // End ready-for-location
         } else if (name.equals(TURRETLOCK)) {
             // Are we in the outside of an Entity?
-            if (this.entity == null) {
-                this.warning
+            if (entity == null) {
+                warning
                         .append("Found turret lock outside of an Entity.\n");
-            } else if (!(this.entity instanceof Tank)) {
-                this.warning
+            } else if (!(entity instanceof Tank)) {
+                warning
                         .append("Turret crit record found outside a Tank.\n");
             }
             String value = (String) attr.get(DIRECTION);
             try {
                 int turDir = Integer.parseInt(value);
-                ((Tank) this.entity).setSecondaryFacing(turDir);
-                ((Tank) this.entity).lockTurret();
+                ((Tank) entity).setSecondaryFacing(turDir);
+                ((Tank) entity).lockTurret();
             } catch (Exception e) {
                 System.err.println(e);
                 e.printStackTrace();
-                this.warning
+                warning
                         .append("Invalid turret lock direction value in movement tag.\n");
             }
         } else if (name.equals(MOVEMENT)) {
             // Are we in the outside of an Entity?
-            if (this.entity == null) {
-                this.warning
+            if (entity == null) {
+                warning
                         .append("Found movement crit outside of an Entity.\n");
-            } else if (!(this.entity instanceof Tank)) {
-                this.warning
+            } else if (!(entity instanceof Tank)) {
+                warning
                         .append("Movement crit record found outside a Tank.\n");
             }
             String value = (String) attr.get(SPEED);
             if (value.equals("immobile")) {
-                ((Tank) (this.entity)).immobilize();
+                ((Tank) (entity)).immobilize();
             } else {
                 try {
                     int newSpeed = Integer.parseInt(value);
-                    this.entity.setOriginalWalkMP(newSpeed);
+                    entity.setOriginalWalkMP(newSpeed);
                 } catch (Exception e) {
-                    this.warning
+                    warning
                             .append("Invalid speed value in movement tag.\n");
                 }
             }
         } else if (name.equals(ARMOR)) {
 
             // Are we in the outside of an Entity?
-            if (this.entity == null) {
-                this.warning.append("Found armor outside of an Entity.\n");
+            if (entity == null) {
+                warning.append("Found armor outside of an Entity.\n");
             }
 
             // Are we in the outside of parsing an Entity's location?
-            else if (this.loc == Entity.LOC_NONE) {
-                this.warning
+            else if (loc == Entity.LOC_NONE) {
+                warning
                         .append("Found armor while outside of a location.\n");
             }
 
@@ -775,7 +780,7 @@ public class XMLStreamParser implements XMLResponder {
 
                 // Did we find required attributes?
                 if (points == null || points.length() == 0) {
-                    this.warning.append("Could not find points for armor.\n");
+                    warning.append("Could not find points for armor.\n");
                 } else {
 
                     // Try to get a good points value.
@@ -790,7 +795,7 @@ public class XMLStreamParser implements XMLResponder {
                     } else if (points.equals(DESTROYED)) {
                         pointsVal = IArmorState.ARMOR_DESTROYED;
                     } else if (pointsVal < 0 || pointsVal > 2000) {
-                        this.warning.append("Found invalid points value: ")
+                        warning.append("Found invalid points value: ")
                                 .append(points).append(".\n");
                         return;
                     }
@@ -798,143 +803,143 @@ public class XMLStreamParser implements XMLResponder {
                     // Assign the points to the correct location.
                     // Sanity check the armor value before setting it.
                     if (type == null || type.equals(FRONT)) {
-                        if (this.entity.getOArmor(this.loc) < pointsVal) {
-                            this.warning.append("The entity, ").append(
-                                    this.entity.getShortName()).append(
+                        if (entity.getOArmor(loc) < pointsVal) {
+                            warning.append("The entity, ").append(
+                                    entity.getShortName()).append(
                                     " does not start with ").append(pointsVal)
                                     .append(" points of armor for location: ")
-                                    .append(this.loc).append(".\n");
+                                    .append(loc).append(".\n");
                         } else {
-                            this.entity.setArmor(pointsVal, this.loc);
+                            entity.setArmor(pointsVal, loc);
                         }
                     } else if (type.equals(INTERNAL)) {
-                        if (this.entity.getOInternal(this.loc) < pointsVal) {
-                            this.warning
+                        if (entity.getOInternal(loc) < pointsVal) {
+                            warning
                                     .append("The entity, ")
-                                    .append(this.entity.getShortName())
+                                    .append(entity.getShortName())
                                     .append(" does not start with ")
                                     .append(pointsVal)
                                     .append(
                                             " points of internal structure for location: ")
-                                    .append(this.loc).append(".\n");
+                                    .append(loc).append(".\n");
                         } else {
-                            this.entity.setInternal(pointsVal, this.loc);
+                            entity.setInternal(pointsVal, loc);
                         }
                     } else if (type.equals(REAR)) {
-                        if (!this.entity.hasRearArmor(this.loc)) {
-                            this.warning.append("The entity, ").append(
-                                    this.entity.getShortName()).append(
+                        if (!entity.hasRearArmor(loc)) {
+                            warning.append("The entity, ").append(
+                                    entity.getShortName()).append(
                                     " has no rear armor for location: ")
-                                    .append(this.loc).append(".\n");
-                        } else if (this.entity.getOArmor(this.loc, true) < pointsVal) {
-                            this.warning
+                                    .append(loc).append(".\n");
+                        } else if (entity.getOArmor(loc, true) < pointsVal) {
+                            warning
                                     .append("The entity, ")
-                                    .append(this.entity.getShortName())
+                                    .append(entity.getShortName())
                                     .append(" does not start with ")
                                     .append(pointsVal)
                                     .append(
                                             " points of rear armor for location: ")
-                                    .append(this.loc).append(".\n");
+                                    .append(loc).append(".\n");
                         } else {
-                            this.entity.setArmor(pointsVal, this.loc, true);
+                            entity.setArmor(pointsVal, loc, true);
                         }
                     }
                 } // End have-required-fields
             } // End ready-for-armor
         } else if ( name.equals(SI) ) {
-            if ( this.entity == null ) {
-                this.warning.append
+            if ( entity == null ) {
+                warning.append
                     ( "Found structural integrity outside of an Entity.\n" );
-            } else if (!(this.entity instanceof Aero)) {
-                this.warning.append
+            } else if (!(entity instanceof Aero)) {
+                warning.append
                     ( "structural integrity record found outside an Aero.\n" );
             }
             String value = (String) attr.get( INTEGRITY );
             try {
                 int newSI = Integer.parseInt(value);
-                ((Aero)this.entity).setSI(newSI);
+                ((Aero)entity).setSI(newSI);
             } catch (Exception e) {
-                this.warning.append
+                warning.append
                     ( "Invalid SI value in structural integrity tag.\n" );
             }
         }
         else if ( name.equals(HEAT) ) {
-            if ( this.entity == null ) {
-                this.warning.append
+            if ( entity == null ) {
+                warning.append
                     ( "Found heat sink outside of an Entity.\n" );
-            } else if (!(this.entity instanceof Aero)) {
-                this.warning.append
+            } else if (!(entity instanceof Aero)) {
+                warning.append
                     ( "heat sink record found outside an Aero.\n" );
             }
             String value = (String) attr.get( SINK );
             try {
                 int newSinks = Integer.parseInt(value);
-                ((Aero)this.entity).setHeatSinks(newSinks);
+                ((Aero)entity).setHeatSinks(newSinks);
             } catch (Exception e) {
-                this.warning.append
+                warning.append
                     ( "Invalid heat sink value in heat sink tag.\n" );
             }
         }
         else if ( name.equals(FUEL) ) {
-            if ( this.entity == null ) {
-                this.warning.append
+            if ( entity == null ) {
+                warning.append
                     ( "Found fuel outside of an Entity.\n" );
-            } else if (!(this.entity instanceof Aero)) {
-                this.warning.append
+            } else if (!(entity instanceof Aero)) {
+                warning.append
                     ( "fuel record found outside an Aero.\n" );
             }
             String value = (String) attr.get( LEFT );
             try {
                 int newFuel = Integer.parseInt(value);
-                ((Aero)this.entity).setFuel(newFuel);
+                ((Aero)entity).setFuel(newFuel);
             } catch (Exception e) {
-                this.warning.append
+                warning.append
                     ( "Invalid fuel value in fuel tag.\n" );
             }
         }
         else if ( name.equals(KF) ) {
-            if ( this.entity == null ) {
-                this.warning.append
+            if ( entity == null ) {
+                warning.append
                     ( "Found KF integrity outside of an Entity.\n" );
-            } else if (!(this.entity instanceof Jumpship)) {
-                this.warning.append
+            } else if (!(entity instanceof Jumpship)) {
+                warning.append
                     ( "KF integrity record found outside a Jumpship.\n" );
             }
             String value = (String) attr.get( INTEGRITY );
             try {
                 int newIntegrity = Integer.parseInt(value);
-                ((Jumpship)this.entity).setKFIntegrity(newIntegrity);
+                ((Jumpship)entity).setKFIntegrity(newIntegrity);
             } catch (Exception e) {
-                this.warning.append
+                warning.append
                     ( "Invalid KF integrity value in KF integrity tag.\n" );
             }
         }
         else if ( name.equals(SAIL) ) {
-            if ( this.entity == null ) {
-                this.warning.append
+            if ( entity == null ) {
+                warning.append
                     ( "Found sail integrity outside of an Entity.\n" );
-            } else if (!(this.entity instanceof Jumpship)) {
-                this.warning.append
+            } else if (!(entity instanceof Jumpship)) {
+                warning.append
                     ( "sail integrity record found outside a Jumpship.\n" );
             }
             String value = (String) attr.get( INTEGRITY );
             try {
                 int newIntegrity = Integer.parseInt(value);
-                ((Jumpship)this.entity).setSailIntegrity(newIntegrity);
+                ((Jumpship)entity).setSailIntegrity(newIntegrity);
             } catch (Exception e) {
-                this.warning.append
+                warning.append
                     ( "Invalid sail integrity value in sail integrity tag.\n" );
             }
         }
         else if ( name.equals(AEROCRIT) ) {
-            if ( this.entity == null ) {
-                this.warning.append
+            if ( entity == null ) {
+                warning.append
                     ( "Found aero crits outside of an Entity.\n" );
-            } else if (!(this.entity instanceof Aero)) {
-                this.warning.append
+            } else if (!(entity instanceof Aero)) {
+                warning.append
                 ( "Found aero crits outside of an Aero.\n" );
             }
-            else 
+            else
             {
                 String avionics = (String) attr.get( AVIONICS );
                 String sensors = (String) attr.get( SENSORS );
@@ -945,55 +950,55 @@ public class XMLStreamParser implements XMLResponder {
                 String rightThrust = (String) attr.get( RIGHT_THRUST );
                 String lifeSupport = (String) attr.get( LIFE_SUPPORT );
                 String gear = (String) attr.get( GEAR );
-                
-                Aero a = (Aero)this.entity;
-                
+
+                Aero a = (Aero)entity;
+
                 if ( avionics != null ) {
                     a.setAvionicsHits(Integer.parseInt( avionics ));
                 }
-                
+
                 if ( sensors != null ) {
                     a.setSensorHits(Integer.parseInt( sensors ));
                 }
-                
+
                 if ( engine != null ) {
                     a.setEngineHits(Integer.parseInt( engine ));
                 }
-                
+
                 if ( fcs != null ) {
                     a.setFCSHits(Integer.parseInt( fcs ));
                 }
-                
+
                 if ( cic != null ) {
                     a.setCICHits(Integer.parseInt( cic ));
                 }
-                
+
                 if ( leftThrust != null ) {
                     a.setLeftThrustHits(Integer.parseInt( leftThrust ));
                 }
-                
+
                 if ( rightThrust != null ) {
                     a.setRightThrustHits(Integer.parseInt( rightThrust ));
                 }
-                
+
                 if ( lifeSupport != null ) {
                     a.setLifeSupport(false);
                 }
-                
+
                 if ( gear != null ) {
                     a.setGearHit(true);
                 }
-            }     
+            }
         } else if (name.equals(SLOT)) {
 
             // Are we in the outside of an Entity?
-            if (this.entity == null) {
-                this.warning.append("Found a slot outside of an Entity.\n");
+            if (entity == null) {
+                warning.append("Found a slot outside of an Entity.\n");
             }
 
             // Are we in the outside of parsing an Entity's location?
-            else if (this.loc == Entity.LOC_NONE) {
-                this.warning
+            else if (loc == Entity.LOC_NONE) {
+                warning
                         .append("Found a slot while outside of a location.\n");
             }
 
@@ -1012,9 +1017,9 @@ public class XMLStreamParser implements XMLResponder {
 
                 // Did we find required attributes?
                 if (index == null || index.length() == 0) {
-                    this.warning.append("Could not find index for slot.\n");
+                    warning.append("Could not find index for slot.\n");
                 } else if (type == null || type.length() == 0) {
-                    this.warning.append("Could not find type for slot.\n");
+                    warning.append("Could not find type for slot.\n");
                 } else {
 
                     // Try to get a good index value.
@@ -1042,7 +1047,7 @@ public class XMLStreamParser implements XMLResponder {
                                 Iterator<Mounted> ammo = entity.getAmmo()
                                         .iterator();
                                 while (ammo.hasNext()
-                                        && counter < this.locAmmoCount) {
+                                        && counter < locAmmoCount) {
 
                                     // Is this mounted in the current location?
                                     Mounted mounted = ammo.next();
@@ -1052,11 +1057,11 @@ public class XMLStreamParser implements XMLResponder {
                                         counter++;
 
                                         // Is this the one we want to handle?
-                                        if (counter == this.locAmmoCount) {
+                                        if (counter == locAmmoCount) {
 
                                             // Increment the counter of ammo
                                             // handled for this location.
-                                            this.locAmmoCount++;
+                                            locAmmoCount++;
 
                                             // Reset transient values.
                                             mounted.restore();
@@ -1071,7 +1076,7 @@ public class XMLStreamParser implements XMLResponder {
                                             }
                                             if (shots.equals(NA)) {
                                                 shotsVal = IArmorState.ARMOR_NA;
-                                                this.warning
+                                                warning
                                                         .append(
                                                                 "Expected to find number of shots for ")
                                                         .append(type).append(
@@ -1080,7 +1085,7 @@ public class XMLStreamParser implements XMLResponder {
                                                                 " instead.\n");
                                             } else if (shotsVal < 0
                                                     || shotsVal > 200) {
-                                                this.warning
+                                                warning
                                                         .append(
                                                                 "Found invalid shots value for slot: ")
                                                         .append(shots).append(
@@ -1106,11 +1111,11 @@ public class XMLStreamParser implements XMLResponder {
 
                             } else {
                                 // Bad XML equipment.
-                                this.warning
+                                warning
                                         .append("XML file lists ")
                                         .append(type)
                                         .append(" equipment at location ")
-                                        .append(this.loc)
+                                        .append(loc)
                                         .append(
                                                 ".  XML parser expected ammo.\n");
                             } // End not-ammo-type
@@ -1120,18 +1125,18 @@ public class XMLStreamParser implements XMLResponder {
                         // TODO: handle slotless equipment.
                         return;
                     } else if (indexVal < 0 || indexVal > 12) {
-                        this.warning.append(
+                        warning.append(
                                 "Found invalid index value for slot: ").append(
                                 index).append(".\n");
                         return;
                     }
 
                     // Is this index valid for this entity?
-                    if (indexVal > entity.getNumberOfCriticals(this.loc)) {
-                        this.warning.append("The entity, ").append(
-                                this.entity.getShortName()).append(
+                    if (indexVal > entity.getNumberOfCriticals(loc)) {
+                        warning.append("The entity, ").append(
+                                entity.getShortName()).append(
                                 " does not have ").append(index).append(
-                                " slots in location ").append(this.loc).append(
+                                " slots in location ").append(loc).append(
                                 ".\n");
                         return;
                     }
@@ -1143,7 +1148,7 @@ public class XMLStreamParser implements XMLResponder {
                             hitFlag = hit.equals("true");
                         }
                     } catch (Throwable excep) {
-                        this.warning.append("Found invalid isHit value: ")
+                        warning.append("Found invalid isHit value: ")
                                 .append(hit).append(".\n");
                     }
 
@@ -1154,23 +1159,23 @@ public class XMLStreamParser implements XMLResponder {
                             destFlag = destroyed.equals("true");
                         }
                     } catch (Throwable excep) {
-                        this.warning
+                        warning
                                 .append("Found invalid isDestroyed value: ")
                                 .append(destroyed).append(".\n");
                     }
 
                     // Try to get the critical slot.
-                    CriticalSlot slot = this.entity.getCritical(this.loc,
+                    CriticalSlot slot = entity.getCritical(loc,
                             indexVal);
 
                     // Did we get it?
                     if (slot == null) {
                         if (!type.equals(EMPTY)) {
-                            this.warning.append("Could not find the ").append(
+                            warning.append("Could not find the ").append(
                                     type).append(
                                     " equipment that was expected at index ")
                                     .append(indexVal).append(" of location ")
-                                    .append(this.loc).append(".\n");
+                                    .append(loc).append(".\n");
                         }
                         return;
                     }
@@ -1180,18 +1185,18 @@ public class XMLStreamParser implements XMLResponder {
 
                         // Does the XML file have some other kind of equipment?
                         if (!type.equals(SYSTEM)) {
-                            this.warning.append("XML file expects to find ")
+                            warning.append("XML file expects to find ")
                                     .append(type)
                                     .append(" equipment at index ").append(
                                             indexVal).append(" of location ")
-                                    .append(this.loc).append(
+                                    .append(loc).append(
                                             ", but Entity has a system.\n");
                         }
 
                     } else {
 
                         // Nope, we've got equipment. Get this slot's mounted.
-                        Mounted mounted = this.entity.getEquipment(slot
+                        Mounted mounted = entity.getEquipment(slot
                                 .getIndex());
 
                         // Reset transient values.
@@ -1211,13 +1216,13 @@ public class XMLStreamParser implements XMLResponder {
                                     mounted.getQuirks().getOption(quirkName).setValue(
                                             value);
                                 } catch (Exception e) {
-                                    this.warning.append(
+                                    warning.append(
                                             "Error restoring quirk: ").append(
                                             quirk).append(".\n");
                                 }
                             }
                         }
-                        
+
                         // Hit and destroy the mounted, according to the flags.
                         mounted.setDestroyed(hitFlag || destFlag);
 
@@ -1237,7 +1242,7 @@ public class XMLStreamParser implements XMLResponder {
                                 }
                                 if (shots.equals(NA)) {
                                     shotsVal = IArmorState.ARMOR_NA;
-                                    this.warning
+                                    warning
                                             .append(
                                                     "Expected to find number of shots for ")
                                             .append(type)
@@ -1245,7 +1250,7 @@ public class XMLStreamParser implements XMLResponder {
                                                     shots)
                                             .append(" instead.\n");
                                 } else if (shotsVal < 0 || shotsVal > 200) {
-                                    this.warning
+                                    warning
                                             .append(
                                                     "Found invalid shots value for slot: ")
                                             .append(shots).append(".\n");
@@ -1259,12 +1264,12 @@ public class XMLStreamParser implements XMLResponder {
 
                             } else {
                                 // Bad XML equipment.
-                                this.warning.append("XML file expects ")
+                                warning.append("XML file expects ")
                                         .append(type).append(
                                                 " equipment at index ").append(
                                                 indexVal).append(
                                                 " of location ").append(
-                                                this.loc).append(
+                                                loc).append(
                                                 ", but Entity has ").append(
                                                 mounted.getType()
                                                         .getInternalName())
@@ -1277,13 +1282,13 @@ public class XMLStreamParser implements XMLResponder {
                         else if (!mounted.getType().getInternalName().equals(
                                 type)) {
                             // Bad XML equipment.
-                            this.warning
+                            warning
                                     .append("XML file expects ")
                                     .append(type)
                                     .append(" equipment at index ")
                                     .append(indexVal)
                                     .append(" of location ")
-                                    .append(this.loc)
+                                    .append(loc)
                                     .append(", but Entity has ")
                                     .append(mounted.getType().getInternalName())
                                     .append("there .\n");
@@ -1301,7 +1306,7 @@ public class XMLStreamParser implements XMLResponder {
                                         (AmmoType) munType);
                             } else {
                                 // Bad XML equipment.
-                                this.warning
+                                warning
                                         .append("XML file expects ")
                                         .append(
                                                 " ammo for munition argument of ")
@@ -1329,29 +1334,29 @@ public class XMLStreamParser implements XMLResponder {
         if (name.equals(UNIT)) {
 
             // Are we in the middle of parsing an Entity?
-            if (this.entity != null) {
-                this.warning.append("End of unit while parsing an Entity.\n");
+            if (entity != null) {
+                warning.append("End of unit while parsing an Entity.\n");
 
                 // Are we in the middle of parsing an Entity's location?
-                if (this.loc != Entity.LOC_NONE) {
-                    this.warning
+                if (loc != Entity.LOC_NONE) {
+                    warning
                             .append("Found end of unit while parsing a location.\n");
 
                     // If the open location is marked destroyed, destroy it.
-                    if (this.locDestroyed) {
-                        this.destroyLocation(this.entity, this.loc);
+                    if (locDestroyed) {
+                        destroyLocation(entity, loc);
                     }
-                    this.loc = Entity.LOC_NONE;
+                    loc = Entity.LOC_NONE;
                 }
 
                 // Add the entity to the vector.
-                this.entities.addElement(this.entity);
-                this.entity = null;
+                entities.addElement(entity);
+                entity = null;
             }
 
             // Is this an empty unit?
-            else if (this.entities.isEmpty()) {
-                this.warning.append("Found an empty unit.\n");
+            else if (entities.isEmpty()) {
+                warning.append("Found an empty unit.\n");
             }
 
         } else if (name.equals(TEMPLATE)) {
@@ -1359,26 +1364,26 @@ public class XMLStreamParser implements XMLResponder {
         } else if (name.equals(ENTITY)) {
 
             // We should be in the middle of parsing an Entity.
-            if (this.entity == null) {
-                this.warning
+            if (entity == null) {
+                warning
                         .append("Found end of Entity, but not parsing an Entity.\n");
             } else {
 
                 // Are we in the middle of parsing an Entity's location?
-                if (this.loc != Entity.LOC_NONE) {
-                    this.warning
+                if (loc != Entity.LOC_NONE) {
+                    warning
                             .append("Found end of Entity while parsing a location.\n");
 
                     // If the open location is marked destroyed, destroy it.
-                    if (this.locDestroyed) {
-                        this.destroyLocation(this.entity, this.loc);
+                    if (locDestroyed) {
+                        destroyLocation(entity, loc);
                     }
-                    this.loc = Entity.LOC_NONE;
+                    loc = Entity.LOC_NONE;
                 }
 
                 // Add the entity to the vector.
-                this.entities.addElement(this.entity);
-                this.entity = null;
+                entities.addElement(entity);
+                entity = null;
 
             } // End save-entity
         } else if (name.equals(FLUFF)) {
@@ -1388,25 +1393,25 @@ public class XMLStreamParser implements XMLResponder {
         } else if (name.equals(LOCATION)) {
 
             // We should be in the middle of parsing an Entity.
-            if (this.entity == null) {
-                this.warning
+            if (entity == null) {
+                warning
                         .append("Found end of location, but not parsing an Entity.\n");
             }
 
             // Are we in the middle of parsing an Entity's location?
-            else if (this.loc == Entity.LOC_NONE) {
-                this.warning
+            else if (loc == Entity.LOC_NONE) {
+                warning
                         .append("Found end of location, but not parsing a location.\n");
 
             } else {
 
                 // If the location is marked destroyed, destroy the location.
-                if (this.locDestroyed) {
-                    this.destroyLocation(this.entity, this.loc);
+                if (locDestroyed) {
+                    destroyLocation(entity, loc);
                 }
 
                 // Reset the location.
-                this.loc = Entity.LOC_NONE;
+                loc = Entity.LOC_NONE;
 
             } // End finish-location
 
@@ -1431,10 +1436,10 @@ public class XMLStreamParser implements XMLResponder {
     }
 
     public InputStream getDocumentStream() throws ParseException {
-        if (this.inStream == null) {
+        if (inStream == null) {
             throw new ParseException("Input document stream not defined.");
         }
-        return this.inStream;
+        return inStream;
     }
 
     public InputStream resolveExternalEntity(String name, String pubID,

@@ -513,7 +513,7 @@ public class Game implements Serializable, IGame {
 
     /**
      * Returns the number of non-destroyed deployed entities owned by the
-     * player that are commanders. Ignore offboard units and captured Mek pilots.
+     * player. Ignore offboard units and captured Mek pilots.
      */
     public int getLiveCommandersOwnedBy(Player player) {
         int count = 0;
@@ -991,7 +991,7 @@ public class Game implements Serializable, IGame {
 
         // Walk through the entities in this game.
         for (Entity entity : entities) {
-            // Get the vector for this entity's position.
+             // Get the vector for this entity's position.
             final Coords coords = entity.getPosition();
             if (coords != null) {
                 atPos = positionMap.get(coords);
@@ -2607,7 +2607,8 @@ public class Game implements Serializable, IGame {
      * @param event the game event.
      */
     public void processGameEvent(GameEvent event) {
-        for (GameListener l : gameListeners) {
+        for (Enumeration<GameListener> e = gameListeners.elements(); e.hasMoreElements();) {
+            GameListener l = e.nextElement();
             switch (event.getType()) {
             case GameEvent.GAME_PLAYER_CONNECTED:
                 l.gamePlayerConnected((GamePlayerConnectedEvent) event);

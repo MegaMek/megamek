@@ -62,7 +62,6 @@ import megamek.common.EntitySelector;
 import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
-import megamek.common.IEntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.IOffBoardDirections;
 import megamek.common.Infantry;
@@ -244,7 +243,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private ArrayList<RapidfireMGPanel> m_vMGs = new ArrayList<RapidfireMGPanel>();
 
     private JPanel panRapidfireMGs = new JPanel();
-    
+
     private InfantryArmorPanel panInfArmor = new InfantryArmorPanel();
 
     private ArrayList<MineChoicePanel> m_vMines = new ArrayList<MineChoicePanel>();
@@ -323,7 +322,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         this.clientgui = clientgui;
         this.client = client;
         options = entity.getCrew().getOptions();
-        this.quirks = entity.getQuirks();
+        quirks = entity.getQuirks();
         for (Mounted m : entity.getWeaponList()) {
             h_wpnQuirks.put(entity.getEquipmentNum(m), m.getQuirks());
         }
@@ -492,7 +491,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             setupRapidfireMGs();
             panEquip.add(panRapidfireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
-        
+
         //set up infantry armor
         if(entity instanceof Infantry && !(entity instanceof BattleArmor)) {
             panInfArmor.initialize();
@@ -1247,10 +1246,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             chRapid.setEnabled(enabled);
         }
     }
-    
+
     class InfantryArmorPanel extends JPanel {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -909995917737642853L;
 
@@ -1270,8 +1269,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         JCheckBox chSneakCamo = new JCheckBox();
         JCheckBox chSneakIR = new JCheckBox();
         JCheckBox chSneakECM = new JCheckBox();
-        
-        InfantryArmorPanel() {         
+
+        InfantryArmorPanel() {
             GridBagLayout g = new GridBagLayout();
             setLayout(g);
             add(labArmor, GBC.eol());
@@ -1290,7 +1289,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             add(labSneakECM, GBC.std());
             add(chSneakECM, GBC.eol());
         }
-        
+
         public void initialize() {
             inf = (Infantry)entity;
             fldDivisor.setText(Double.toString(inf.getDamageDivisor()));
@@ -1331,7 +1330,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             inf.setSneakCamo(chSneakCamo.isSelected());
             inf.setSneakIR(chSneakIR.isSelected());
             inf.setSneakECM(chSneakECM.isSelected());
-            
+
         }
 
         @Override
@@ -1441,7 +1440,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         validate();
     }
-    
+
     private void setQuirks() {
         IOption option;
         for (final Object newVar : quirkComps) {
@@ -1475,7 +1474,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
         }
     }
-    
+
     public void refreshQuirks() {
         panQuirks.removeAll();
         quirkComps = new ArrayList<DialogOptionComponent>();
@@ -1488,7 +1487,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             IOptionGroup group = i.nextElement();
 
             panQuirks.add(new JLabel(group.getDisplayableName()), GBC.eol());
-            
+
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption option = j.nextElement();
@@ -1496,7 +1495,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 if(!Quirks.isQuirkLegalFor(option, entity)) {
                     continue;
                 }
-                
+
                 addQuirk(option, editable);
             }
         }
@@ -1513,7 +1512,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements();) {
                 IOptionGroup group = i.nextElement();
                 for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
-                    IOption option = j.nextElement(); 
+                    IOption option = j.nextElement();
                     if(!WeaponQuirks.isQuirkLegalFor(option, entity, (WeaponType)m.getType())) {
                         continue;
                     }
@@ -1521,7 +1520,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 }
             }
         }
-        
+
         validate();
     }
 
@@ -1556,7 +1555,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         optionComps.add(optionComp);
     }
-    
+
     private void addQuirk(IOption option, boolean editable) {
         DialogOptionComponent optionComp = new DialogOptionComponent(this,
                 option, editable);
@@ -1564,7 +1563,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         quirkComps.add(optionComp);
     }
-    
+
     private void addWeaponQuirk(int key, IOption option, boolean editable) {
         DialogOptionComponent optionComp = new DialogOptionComponent(this,
                 option, editable);
@@ -1910,12 +1909,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 a.setNextVelocity(velocity);
                 //we need to determine whether this aero is airborne or not in order for
                 //prohibited terrain and stacking to work right in the deployment phase
-                //this is very tricky because in atmosphere, zero altitude does not 
+                //this is very tricky because in atmosphere, zero altitude does not
                 //necessarily mean grounded
                 if(altitude <= 0) {
-                	a.land();
+                    a.land();
                 } else {
-                	a.liftOff(altitude);
+                    a.liftOff(altitude);
                 }
             }
 
@@ -1937,7 +1936,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             if(entity instanceof Infantry && !(entity instanceof BattleArmor)) {
                 panInfArmor.applyChoice();
             }
-            
+
             // update munitions selections
             for (final Object newVar2 : m_vMunitions) {
                 ((MunitionChoicePanel) newVar2).applyChoice();
@@ -1961,6 +1960,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // update searchlight setting
             entity.setSpotlight(chSearchlight.isSelected());
             entity.setSpotlightState(chSearchlight.isSelected());
+
+            // update commander status
+            entity.setCommander(chCommander.isSelected());
+
             setOptions();
             setQuirks();
             if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {

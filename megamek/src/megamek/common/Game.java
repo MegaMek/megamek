@@ -1256,6 +1256,7 @@ public class Game implements Serializable, IGame {
         forceVictory = false;
         victoryPlayerId = Player.PLAYER_NONE;
         victoryTeam = Player.TEAM_NONE;
+        lastEntityId = 0;
     }
 
     private void removeArtyAutoHitHexes() {

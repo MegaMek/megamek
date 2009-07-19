@@ -29,7 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
@@ -66,7 +65,7 @@ public class ChatterBox implements KeyListener {
         client.game.addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
-                chatArea.append('\n' + e.getMessage()); 
+                chatArea.append('\n' + e.getMessage());
                 PlayerListDialog.refreshPlayerList(playerList, client);
                 moveToEnd();
             }

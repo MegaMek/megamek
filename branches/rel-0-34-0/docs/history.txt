@@ -4,6 +4,7 @@ v0.34.7-dev (SVN)
 + Bug: Clan Laser AMS has wrong crits/tonnage
 + Some new or improved unit images (Thanks devil877 and BH21)
 + Bug: Some crits have no mounteds
++ Bug: next unit button not working correctly after a reset
 
 v0.34.6 (2009-07-09, 19:14 UTC+2)
 + Bug 2813397: Spikes

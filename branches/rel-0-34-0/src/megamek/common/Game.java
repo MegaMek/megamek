@@ -1269,6 +1269,7 @@ public class Game implements Serializable, IGame {
         flares.removeAllElements();
         clearAllReports();
         smokeCloudList.clear();
+        lastEntityId = 0;
 
         forceVictory = false;
         victoryPlayerId = Player.PLAYER_NONE;

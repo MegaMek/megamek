@@ -1334,12 +1334,7 @@ public class MechDisplay extends JPanel {
             if (wtype.getAmmoType() == AmmoType.T_NA) {
                 m_chAmmo.setEnabled(false);
             } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
-                if (mounted.getLinked().getShotsLeft() == 1) {
-                    m_chAmmo.addItem(formatAmmo(mounted.getLinked()));
-                    m_chAmmo.setEnabled(true);
-                } else {
-                    m_chAmmo.setEnabled(false);
-                }
+                m_chAmmo.setEnabled(false);
             } else {
                 if (!(entity instanceof Infantry)
                         || (entity instanceof BattleArmor)) {

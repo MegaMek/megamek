@@ -287,23 +287,23 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         game.getBoard().addBoardListener(this);
         scheduleRedrawTimer();// call only once
         addMouseListener(this);
-        
+
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD1, 0, false), "scrollSW");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD2, 0, false), "scrollS");      
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD2, 0, false), "scrollS");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD3, 0, false), "scrollSE");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD4, 0, false), "scrollW");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD5, 0, false), "centerOnSelected");      
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD5, 0, false), "centerOnSelected");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD6, 0, false), "scrollE");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD7, 0, false), "scrollNW");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD8, 0, false), "scrollN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD9, 0, false), "scrollNE");
-        
+
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false), "scrollS");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false), "scrollN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), "scrollW");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), "scrollE");
-        
+
         ActionMap actionMap = getActionMap();
         actionMap.put("centerOnSelected", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -357,7 +357,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
             }
         });
-        
+
         MouseMotionListener doScrollRectToVisible = new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -812,7 +812,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 } else if (nbrMfs == 1) {
                     switch (mf.getType()) {
                     case (Minefield.TYPE_CONVENTIONAL):
-                        drawCenteredString(Messages.getString("BoardView1.Conventional"), //$NON-NLS-1$
+                        drawCenteredString(Messages.getString("BoardView1.Conventional") + mf.getDensity() + ")", //$NON-NLS-1$
                                 p.x, p.y + (int) (51 * scale), font_minefield, g);
                         break;
                     case (Minefield.TYPE_INFERNO):
@@ -828,7 +828,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     case (Minefield.TYPE_COMMAND_DETONATED):
                         drawCenteredString(Messages.getString("BoardView1.Command-"), //$NON-NLS-1$
                                 p.x, p.y + (int) (51 * scale), font_minefield, g);
-                        drawCenteredString(Messages.getString("BoardView1.detonated"), //$NON-NLS-1$
+                        drawCenteredString(Messages.getString("BoardView1.detonated" + mf.getDensity() + ")"), //$NON-NLS-1$
                                 p.x, p.y + (int) (60 * scale), font_minefield, g);
                         break;
                     case (Minefield.TYPE_VIBRABOMB):
@@ -2392,7 +2392,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             graph.setColor(Color.white);
             if ((entity.getFacing() != -1)
                     && !((entity instanceof Infantry) && (((Infantry) entity).getDugIn() == Infantry.DUG_IN_NONE))
-                    && !((entity instanceof Aero) && ((Aero) entity).isSpheroid() 
+                    && !((entity instanceof Aero) && ((Aero) entity).isSpheroid()
                             && !game.getBoard().inSpace())) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
@@ -2425,7 +2425,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             }
 
             // draw condition strings
-            
+
             //draw elevation/altitude if non-zero
             if(entity.isAirborne()) {
             	if(!game.getBoard().inSpace()) {
@@ -2440,7 +2440,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(Color.PINK);
                 graph.drawString(Integer.toString(entity.getElevation()), 25, 14);
             }
-            
+
             if(entity instanceof Aero) {
                 Aero a = (Aero)entity;
 
@@ -2694,9 +2694,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             buffer = new StringBuffer();
             buffer.append(entity.getChassis()).append(" (") //$NON-NLS-1$
                     .append(entity.getOwner().getName()).append(")"); //$NON-NLS-1$
-            tipStrings[0] = buffer.toString();  
-                    
-            boolean hasNick = (null != entity.getCrew().getNickname() && !entity.getCrew().getNickname().equals(""));
+            tipStrings[0] = buffer.toString();
+
+            boolean hasNick = ((null != entity.getCrew().getNickname()) && !entity.getCrew().getNickname().equals(""));
             buffer = new StringBuffer();
             buffer.append(Messages.getString("BoardView1.pilot"));
             if(hasNick) {
@@ -2763,7 +2763,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                         .append(entity.getTotalArmor()).append(
                                 Messages.getString("BoardView1.internal")) //$NON-NLS-1$
                         .append(entity.getTotalInternal());
-            } 
+            }
             /*
             else {
                 buffer.append(Messages.getString("BoardView1.cf")) //$NON-NLS-1$
@@ -2947,7 +2947,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.drawString(climboff, climboffX, stepPos.y + 39);
                 graph.setColor(col);
                 graph.drawString(climboff, climboffX - 1, stepPos.y + 38);
-                
+
                 break;
             case MovePath.STEP_TURN_LEFT:
             case MovePath.STEP_TURN_RIGHT:
@@ -3148,21 +3148,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             if(game.useVectorMove()) {
                 return;
             }
-            
+
             if(!step.getParent().getEntity().isAirborne()) {
                 return;
             }
-            
+
             if(((Aero)step.getParent().getEntity()).isSpheroid()) {
                 return;
-            }           
-            
+            }
+
             int distTraveled = step.getDistance();
             int velocity = step.getVelocity();
             if(game.getBoard().onGround()) {
                 velocity *= 16;
             }
-            
+
             velStringBuf.append("(").append(distTraveled).append("/").append(velocity).append(")");
 
             Color col = Color.GREEN;
@@ -3181,13 +3181,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             graph.drawString(velString, costX, stepPos.y + 28);
             graph.setColor(col);
             graph.drawString(velString, costX - 1, stepPos.y + 27);
-            
+
             //if we are in atmosphere, then report the free turn status as well
             if(!game.getBoard().inSpace()) {
                 String turnString = null;
                 StringBuffer turnStringBuf = new StringBuffer();
                 turnStringBuf.append("<").append(step.getNStraight()).append(">");
-                
+
                 col = Color.RED;
                 if(step.dueFreeTurn()) {
                     col = Color.GREEN;
@@ -3201,7 +3201,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(Color.darkGray);
                 graph.drawString(turnString, costX, stepPos.y + 15);
                 graph.setColor(col);
-                graph.drawString(turnString, costX - 1, stepPos.y + 14);              
+                graph.drawString(turnString, costX - 1, stepPos.y + 14);
             }
         }
 
@@ -3239,7 +3239,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     || (step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN)) {
                 costStringBuf.append("{").append(step.getElevation()).append("}");
             }
-            
+
             if(step.getParent().getEntity().isAirborne()) {
             	costStringBuf.append("{").append(step.getAltitude()).append("}");
             }
@@ -4700,7 +4700,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         // IDisplayables that are drawn in fixed positions in the viewport
         // leave artifacts when scrolling
         scrollpane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
-        
+
         vbar = scrollpane.getVerticalScrollBar();
         hbar = scrollpane.getHorizontalScrollBar();
 

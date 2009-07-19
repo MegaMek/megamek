@@ -119,7 +119,7 @@ public class ChatterBox implements KeyListener {
         playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(
                 "AdvancedChatboxSize"));
         scrPlayers = new JScrollPane(playerList);
-        scrPlayers.setMinimumSize(new Dimension(400,400));
+        scrPlayers.setPreferredSize(new Dimension(100,100));
         inputField = new JTextField();
         inputField.addKeyListener(this);
         butDone = new JButton(Messages.getString("ChatterBox.ImDone")); //$NON-NLS-1$

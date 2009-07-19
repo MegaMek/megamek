@@ -44,6 +44,7 @@ public class GBC extends GridBagConstraints {
     /**
      * @return a <code>GridBagConstraints</code> that will have a component
      *         fill a line
+     * @see GridBagConstraints#REMAINDER
      */
     public static GBC eol() {
         GBC c = std();
@@ -60,10 +61,10 @@ public class GBC extends GridBagConstraints {
     }
 
     /**
-     * change the anchor of this <code>GridBagConstraints</code> to
-     * @param a
-     * and
+     * change the anchor of this <code>GridBagConstraints</code>
+     * @param a the <code>int</code> anchor to set
      * @return <code>this</code>
+     * @see GridBagConstraints#anchor
      */
     public GBC anchor(int a) {
         anchor = a;
@@ -71,13 +72,13 @@ public class GBC extends GridBagConstraints {
     }
 
     /**
-     * change the insets of this <code>GridBagConstraints</code> to
+     * change the insets of this <code>GridBagConstraints</code>
      * @param left
      * @param top
      * @param right
      * @param bottom
-     *  and
-     * @returns <code>this</code>
+     * @return <code>this</code>
+     * @see GridBagConstraints#insets
      */
     public GBC insets(int left, int top, int right, int bottom) {
         insets = new Insets(top, left, bottom, right);
@@ -114,20 +115,12 @@ public class GBC extends GridBagConstraints {
     }
 
     /**
-     * set the gridwidth of this <code>GridBagConstraints</code>
-     * @param value the <code>int</code> gridwidth to set
-     * @return <code>this</code>
-     */
-    public GBC width(int value) {
-        gridwidth = value;
-        return this;
-    }
-
-    /**
      * Set the padding of this <code>GridBagConstraints</code>
      * @param padx the <code>int</code> ipadx to set
      * @param pady the <code>int</code> ipady to set
      * @return <code>this</code>
+     * @see GridBagConstraints#ipadx
+     * @see GridBagConstraints#ipady
      */
     public GBC pad(int padx, int pady) {
         ipadx = padx;
@@ -139,6 +132,7 @@ public class GBC extends GridBagConstraints {
      * Set the gridx of this <code>GridBagConstraints</code>
      * @param gridx the <code>int</code> gridx to set
      * @return <code>this</code>
+     * @see GridBagConstraints#gridx
      */
     public GBC gridx(int gridx) {
         this.gridx = gridx;
@@ -149,9 +143,32 @@ public class GBC extends GridBagConstraints {
      * Set the gridy of this <code>GridBagConstraints</code>
      * @param gridy the <code>int</code> gridy to set
      * @return <code>this</code>
+     * @see GridBagConstraints#gridy
      */
     public GBC gridy(int gridy) {
         this.gridy = gridy;
+        return this;
+    }
+
+    /**
+     * Set the gridheight of  this <code>GridBagConstraints</code>
+     * @param gridheight the <code>int</code> gridheight to set
+     * @return <code>this</code>
+     * @see GridBagConstraints#gridheight
+     */
+    public GBC gridheight(int height) {
+        gridheight = height;
+        return this;
+    }
+
+    /**
+     * Set the gridwidth of  this <code>GridBagConstraints</code>
+     * @param gridwidth the <code>int</code> gridheight to set
+     * @return <code>this</code>
+     * @see GridBagConstraints#gridwidth
+     */
+    public GBC gridwidth(int width) {
+        gridwidth = width;
         return this;
     }
 }

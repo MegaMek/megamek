@@ -493,7 +493,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         submenu.addSeparator();
         moveFlee = createMenuItem(submenu, Messages
                 .getString("CommonMenuBar.MoveFlee"), MovementDisplay.MOVE_FLEE); //$NON-NLS-1$
-        moveFlee = createMenuItem(submenu, Messages
+        moveFlyOff = createMenuItem(submenu, Messages
                 .getString("CommonMenuBar.MoveFlyOff"), MovementDisplay.MOVE_FLY_OFF); //$NON-NLS-1$
         moveEject = createMenuItem(
                 submenu,
@@ -1270,9 +1270,11 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     }
 
     public void keyReleased(KeyEvent ev) {
+        //ignored
     }
 
     public void keyTyped(KeyEvent ev) {
+        //ignored
     }
 
 }

@@ -618,6 +618,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
             int shortcut) {
         JMenuItem mi = createMenuItem(m, label, command);
         mi.setMnemonic(shortcut);
+        mi.setAccelerator(KeyStroke.getKeyStroke(shortcut,
+                getToolkit().getMenuShortcutKeyMask()));
         return mi;
     }
 

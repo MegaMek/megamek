@@ -1311,6 +1311,16 @@ public class Aero extends Entity
                     dBV /= 2;
                 }
                 int weaponHeat = ((WeaponType)weapon.getType()).getHeat();
+                // double heat for ultras
+                if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+                    weaponHeat *= 2;
+                }
+
+                // Six times heat for RAC
+                if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                    weaponHeat *= 6;
+                }
+
                 double[] weaponValues = new double[2];
                 weaponValues[0] = dBV;
                 weaponValues[1] = weaponHeat;

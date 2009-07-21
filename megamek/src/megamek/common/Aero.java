@@ -1043,6 +1043,11 @@ public class Aero extends Entity
                 continue;
             }
 
+            // do not count weapon groups
+            if(mounted.isWeaponGroup()) {
+                continue;
+            }
+
             // CASE means no subtraction
             // clan ASF have CASE automatically
             if (hasCase() || isClan()) {

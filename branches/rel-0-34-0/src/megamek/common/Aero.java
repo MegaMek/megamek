@@ -1047,24 +1047,20 @@ public class Aero
 
 
             //only ammo counts from here on out
-            if(!(etype instanceof AmmoType)) {
-                continue;
+            if((etype instanceof AmmoType)) {
+                AmmoType aType = (AmmoType)etype;
+                // empty ammo shouldn't count
+                if (mounted.getShotsLeft() == 0) {
+                    continue;
+                }
+                // only subtract once for each weapon
+                // we identify by matching via the ammoType var and the racksize
+                if (ammoTypesUsed[aType.ammoType][aType.getRackSize()]) {
+                    continue;
+                }
+                ammoTypesUsed[aType.ammoType][aType.getRackSize()] = true;
             }
-
-            AmmoType aType = (AmmoType)etype;
-            // empty ammo shouldn't count
-            if (mounted.getShotsLeft() == 0) {
-                continue;
-            }
-            // only subtract once for each weapon
-            // we identify by matching via the ammoType var and the racksize
-            if (ammoTypesUsed[aType.ammoType][aType.getRackSize()]) {
-                continue;
-            }
-
             ammoPenalty += toSubtract;
-
-            ammoTypesUsed[aType.ammoType][aType.getRackSize()] = true;
         }
         dbv = Math.max(1, dbv - ammoPenalty);
 

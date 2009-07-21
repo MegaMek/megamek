@@ -8,6 +8,7 @@ v0.34.7-dev (SVN)
 + Bug: BA AP Gauss Rifle not doing correct damage against Infantry
 + Bug: CASE in ASF prevents explosive equipment BV penalty
 + Bug: For Aeros Ultras should count as 2*heat and RACs at 6*heat for BV
++ Bug: Explosive Weapons not counted for DBV reduction for aeros
 
 v0.34.6 (2009-07-09, 19:14 UTC+2)
 + Bug 2813397: Spikes

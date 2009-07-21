@@ -1029,6 +1029,11 @@ public class Aero
                 continue;
             }
 
+            // do not count weapon groups
+            if (mounted.isWeaponGroup()) {
+                continue;
+            }
+
             // CASE means no subtraction
             // clan aeros automatically have CASE
             if (hasCase() || isClan()) {

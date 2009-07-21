@@ -1029,18 +1029,14 @@ public class Aero
                 continue;
             }
 
-            // CASE II means no subtraction
-            if (hasCASEII(loc)) {
+            // CASE means no subtraction
+            // clan aeros automatically have CASE
+            if (hasCase() || isClan()) {
                 continue;
             }
 
             // don't count oneshot ammo
             if (loc == LOC_NONE) {
-                continue;
-            }
-
-            if (isClan()) {
-                //clan aeros automatically have CASE
                 continue;
             }
 

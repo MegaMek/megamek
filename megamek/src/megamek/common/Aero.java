@@ -125,10 +125,10 @@ public class Aero extends Entity
 
     //track straight movement from last turn
     private int straightMoves = 0;
-    
+
     //are we tracking any altitude loss due to air-to-ground assaults
     private int altLoss = 0;
-    
+
     private boolean spheroid = false;
 
     //deal with heat
@@ -196,7 +196,7 @@ public class Aero extends Entity
     	//need to set altitude to something different than entity
     	altitude = 5;
     }
-    
+
     /**
     * Returns this entity's safe thrust, factored
     * for heat, extreme temperatures, gravity, and bomb load.
@@ -217,7 +217,7 @@ public class Aero extends Entity
         if ( hasModularArmor() ) {
             j--;
         }
-        
+
         //if they are not airborne, then they get MP halved (aerodyne) or no MP
         if(!isAirborne()) {
         	j = j / 2;
@@ -668,8 +668,8 @@ public class Aero extends Entity
     @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-        if(mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) 
-                || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB) 
+        if(mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)
+                || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)
                 || mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
             return Compute.ARC_360;
         }
@@ -1031,7 +1031,7 @@ public class Aero extends Entity
 
         // subtract for explosive ammo
         double ammoPenalty = 0;
-      //need to keep track of any ammo type already used
+        //need to keep track of any ammo type already used
         boolean[][] ammoTypesUsed = new boolean[AmmoType.NUM_TYPES][41];
         for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();
@@ -1043,18 +1043,14 @@ public class Aero extends Entity
                 continue;
             }
 
-            // CASE II means no subtraction
-            if (hasCASEII(loc)) {
+            // CASE means no subtraction
+            // clan ASF have CASE automatically
+            if (hasCase() || isClan()) {
                 continue;
             }
 
             // don't count oneshot ammo
             if (loc == LOC_NONE) {
-                continue;
-            }
-
-            if (isClan()) {
-                //clan aeros automatically have CASE
                 continue;
             }
 
@@ -2235,7 +2231,7 @@ public class Aero extends Entity
                 }
             }
         }
-        
+
         updateWeaponGroups();
         loadAllWeapons();
     }
@@ -2510,7 +2506,7 @@ public class Aero extends Entity
     public boolean canLoad( Entity unit ) {
         // capital fighters can load other capital fighters (becoming squadrons)
         //but not in the deployment phase
-        if ( isCapitalFighter() && !unit.isEnemyOf(this) && unit.isCapitalFighter() 
+        if ( isCapitalFighter() && !unit.isEnemyOf(this) && unit.isCapitalFighter()
                 && (getId() != unit.getId()) && (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)) {
             return true;
         }
@@ -2631,7 +2627,7 @@ public class Aero extends Entity
         }
         return false;
     }
-    
+
     /**
      * see {@link Entity#getForwardArc()}
      */
@@ -2639,45 +2635,46 @@ public class Aero extends Entity
     public int getForwardArc() {
         return Compute.ARC_NOSE;
     }
-    
+
     /**
      * see {@link Entity#getRearArc()}
      */
+    @Override
     public int getRearArc() {
         return Compute.ARC_AFT;
     }
-    
+
     public int getAltLoss() {
         return altLoss;
     }
-    
+
     public void setAltLoss(int i) {
-        this.altLoss = i;
+        altLoss = i;
     }
-    
+
     public void resetAltLoss() {
-        this.altLoss = 0;
+        altLoss = 0;
     }
-    
+
     @Override
-    public int getElevation() {  	
+    public int getElevation() {
     	if(game.getBoard().inSpace()) {
     		return 0;
     	}
-    	//Altitude is not the same as elevation. If an aero is at 0 altitude, then it is 
-    	//grounded and uses elevation normally. Otherwise, just set elevation to a very 
+    	//Altitude is not the same as elevation. If an aero is at 0 altitude, then it is
+    	//grounded and uses elevation normally. Otherwise, just set elevation to a very
     	//large number so that a flying aero won't interact with the ground maps in any way
     	if(isAirborne()) {
     		return 999;
     	}
     	return super.getElevation();
     }
-    
+
     @Override
     public boolean canGoDown() {
         return canGoDown(altitude, getPosition());
     }
-    
+
     public void liftOff(int altitude) {
     	if(isSpheroid()) {
     		setMovementMode(IEntityMovementMode.SPHEROID);
@@ -2686,7 +2683,7 @@ public class Aero extends Entity
     	}
     	setAltitude(altitude);
     }
-    
+
     public void land() {
     	setMovementMode(IEntityMovementMode.WHEELED);
     	setAltitude(0);

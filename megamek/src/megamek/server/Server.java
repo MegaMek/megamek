@@ -19841,8 +19841,8 @@ public class Server implements Runnable {
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(a.getAltLoss());
-                    addReport(r);
-                    a.setElevation(a.getElevation() - a.getAltLoss());
+                    addReport(r);             
+                    a.setAltitude(a.getAltitude() - a.getAltLoss());
                     a.resetAltLoss();
                     entityUpdate(entity.getId());
                 }

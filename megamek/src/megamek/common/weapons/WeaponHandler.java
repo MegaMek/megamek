@@ -788,8 +788,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     public int checkTerrain(int nDamage, Entity entityTarget, Vector<Report>vPhaseReport){
-        if ( game.getOptions().booleanOption("tacops_woods_cover") &&
-                (game.getBoard().getHex(entityTarget.getPosition()).containsTerrain(Terrains.WOODS)
+        boolean isAboveWoods = ((entityTarget != null) && (entityTarget.absHeight() >= 2));
+        if ( game.getOptions().booleanOption("tacops_woods_cover") && !isAboveWoods
+                && (game.getBoard().getHex(entityTarget.getPosition()).containsTerrain(Terrains.WOODS)
                 || game.getBoard().getHex(entityTarget.getPosition()).containsTerrain(Terrains.JUNGLE)) ) {
             ITerrain woodHex = game.getBoard().getHex(entityTarget.getPosition()).getTerrain(Terrains.WOODS);
             ITerrain jungleHex = game.getBoard().getHex(entityTarget.getPosition()).getTerrain(Terrains.JUNGLE);

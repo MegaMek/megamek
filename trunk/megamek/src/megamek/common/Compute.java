@@ -4605,6 +4605,9 @@ public class Compute {
     }
     
     public static boolean inDeadZone(IGame game, Entity ae, Targetable target) {
+        if(game.getBoard().inSpace()) {
+            return false;
+        }
     	//Account for "dead zones" between Aeros at different altitudes  	
         if(Compute.isAirToAir(ae, target)) {
         	int distance = Compute.effectiveDistance(game, ae, target);

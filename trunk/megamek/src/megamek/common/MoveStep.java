@@ -665,10 +665,13 @@ public class MoveStep implements Serializable {
             	if(entity.isAirborne()) {
             		setAltitude(altitude + 1);
             		setMp(2);
-                } else if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
-                	setMp(5);
-                } else {
-                    setMp(parent.isJumping()?0:1);
+                } else { 
+                    setElevation(elevation + 1);
+                    if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
+                        setMp(5);
+                    } else {
+                        setMp(parent.isJumping()?0:1);
+                    }
                 }
                 break;
             case MovePath.STEP_DOWN:
@@ -677,11 +680,14 @@ public class MoveStep implements Serializable {
             		//it costs nothing (and may increase velocity)
                     setMp(0);
                     setNDown(getNDown() + 1);
-            	} else if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
-            		setMp(0);
-            	} else {
-                    setMp(parent.isJumping()?0:1);
-                }
+            	} else { 
+            	    setElevation(elevation - 1);
+            	    if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
+            	        setMp(0);
+            	    } else {
+            	        setMp(parent.isJumping()?0:1);
+            	    }
+            	}
                 break;
             case MovePath.STEP_HULL_DOWN:
                 if ( isProne() && (entity instanceof Mech)){

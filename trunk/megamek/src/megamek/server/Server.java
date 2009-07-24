@@ -2501,7 +2501,7 @@ public class Server implements Runnable {
             TurnOrdered.rollInitiative(game.getEntitiesVector(), false);
         } else {
             // Roll for initative on the teams.
-	    TurnOrdered.rollInitiative(game.getTeamsVector(), game.getOptions().booleanOption("initiative_streak_compensation") && !game.shouldDeployThisRound());
+            TurnOrdered.rollInitiative(game.getTeamsVector(), game.getOptions().booleanOption("initiative_streak_compensation") && !game.shouldDeployThisRound());
         }
 
         transmitAllPlayerUpdates();

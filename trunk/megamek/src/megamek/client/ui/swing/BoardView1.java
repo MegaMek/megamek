@@ -18,6 +18,7 @@ package megamek.client.ui.swing;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -375,6 +376,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 // appear when we stop scrolling
                 if (!dragging) {
                     dragging = true;
+                    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 }
                 Point p = scrollpane.getViewport().getViewPosition();
                 int newX = p.x - (e.getX()-scrollXDifference);
@@ -1861,6 +1863,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             scrollYDifference = 0;
             dragging = false;
             shouldScroll = false;
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
 
         if (me.getClickCount() == 1) {

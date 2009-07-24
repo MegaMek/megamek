@@ -30,7 +30,6 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -194,6 +193,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private JScrollPane scrollpane = null;
     private JScrollBar vbar;
     private JScrollBar hbar;
+    private int scrollXDifference = 0;
+    private int scrollYDifference = 0;
+    // are we drag-scrolling?
+    private boolean dragging = false;
+    // should we scroll when the mouse is dragged?
+    private boolean shouldScroll = false;
 
     // entity sprites
     private ArrayList<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
@@ -358,13 +363,41 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             }
         });
 
-        MouseMotionListener doScrollRectToVisible = new MouseMotionAdapter() {
+        MouseMotionListener rightClickDragScroll = new MouseMotionAdapter() {
             @Override
+
             public void mouseDragged(MouseEvent e) {
-                centerOnHex(getCoordsAt(new Point(e.getX(), e.getY())));
+                // only scroll when we should
+                if (!shouldScroll) {
+                    return;
+                }
+                //if we have not yet been dragging, set the var so popups don't
+                // appear when we stop scrolling
+                if (!dragging) {
+                    dragging = true;
+                }
+                Point p = scrollpane.getViewport().getViewPosition();
+                int newX = p.x - (e.getX()-scrollXDifference);
+                int newY = p.y - (e.getY()-scrollYDifference);
+                int maxX = getWidth()- scrollpane.getViewport().getWidth();
+                int maxY = getHeight() - scrollpane.getViewport().getHeight();
+                if (newX < 0) {
+                    newX = 0;
+                }
+                if (newX > maxX) {
+                    newX = maxX;
+                }
+                if (newY < 0) {
+                    newY = 0;
+                }
+                if (newY > maxY) {
+                    newY = maxY;
+                }
+                scrollpane.getViewport().setViewPosition(new Point(newX, newY));
             }
         };
-        addMouseMotionListener(doScrollRectToVisible);
+        addMouseMotionListener(rightClickDragScroll);
+
         setAutoscrolls(true);
 
         updateBoardSize();
@@ -1778,8 +1811,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         if (null == point) {
             return;
         }
+        // we clicked the right mouse button,
+        // remember the position if we start to scroll
+        // if we drag, we should scroll
+        if (me.getButton() == MouseEvent.BUTTON3) {
+            scrollXDifference = me.getX();
+            scrollYDifference = me.getY();
+            shouldScroll = true;
+        }
 
-        if (me.isPopupTrigger()) {
+        if (me.isPopupTrigger() && !dragging) {
             mouseAction(getCoordsAt(point), BOARD_HEX_POPUP, me.getModifiers());
             return;
         }
@@ -1796,33 +1837,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 return;
             }
         }
-
-        // Disable scrolling when ctrl or alt is held down, since this
-        // means the user wants to use the LOS/ruler tools.
-        int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
-        if (!GUIPreferences.getInstance().getRightDragScroll()
-                && !GUIPreferences.getInstance().getAlwaysRightClickScroll()
-                && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
-            // In the firing phase, also disable scrolling if
-            // the right or middle buttons are clicked, since
-            // this means the user wants to activate the
-            // popup menu or ruler tool.
-            mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
-        }
-
-        // disable auto--edge-scrolling if no option set
-        if (!GUIPreferences.getInstance().getAutoEdgeScroll()) {
-            mask |= InputEvent.BUTTON1_MASK;
-        }
-        // disable edge-scrolling if no option set
-        if (!GUIPreferences.getInstance().getClickEdgeScroll()) {
-            mask |= InputEvent.BUTTON3_MASK;
-        }
-
-        if (GUIPreferences.getInstance().getRightDragScroll()) {
-            mask |= InputEvent.BUTTON2_MASK;
-        }
-
         mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, me.getModifiers());
     }
 
@@ -1834,18 +1848,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             }
         }
 
-        if (me.isPopupTrigger()) {
+        // don't show the popup if we are drag-scrolling
+        if (me.isPopupTrigger() && !dragging) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP, me.getModifiers());
             return;
         }
 
-        // Unless the user has auto-scroll on and is using the left
-        // mouse button, no click action should be triggered if the map
-        // is being scrolled.
-        /*
-         * if (scrolled && (me.getModifiers() & InputEvent.BUTTON1_MASK) == 0 ||
-         * !GUIPreferences.getInstance().getAutoEdgeScroll()) return;
-         */
+        // if we released the right mouse button, there's no more
+        // scrolling
+        if (me.getButton() == MouseEvent.BUTTON3) {
+            scrollXDifference = 0;
+            scrollYDifference = 0;
+            dragging = false;
+            shouldScroll = false;
+        }
+
         if (me.getClickCount() == 1) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_CLICK, me.getModifiers());
         } else {
@@ -1860,10 +1877,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     }
 
     public void mouseClicked(MouseEvent me) {
-        if (me.isPopupTrigger()) {
-            mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP, me.getModifiers());
-            return;
-        }
     }
 
     private class MovingUnit {

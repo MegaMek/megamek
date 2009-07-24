@@ -63,13 +63,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_BUILDING_TEXT_COLOR = "AdvancedBuildingTextColor";
     /* --End advanced settings-- */
 
-    public static final String ALWAYS_RIGHT_CLICK_SCROLL = "AlwaysRightClickScroll";
-    public static final String AUTO_EDGE_SCROLL = "AutoEdgeScroll";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CHAT_LOUNGE_TABS = "ChatLoungeTabs";
-    public static final String CLICK_EDGE_SCROLL = "ClickEdgeScroll";
-    public static final String CTL_SCROLL = "CtlScroll";
     public static final String DISPLAY_POS_X = "DisplayPosX";
     public static final String DISPLAY_POS_Y = "DisplayPosY";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
@@ -108,7 +104,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_PSR = "NagForPSR";
     public static final String NAG_FOR_README = "NagForReadme";
     public static final String NAG_FOR_SPRINT = "NagForSprint";
-    public static final String RIGHT_DRAG_SCROLL = "RightDragScroll";
     public static final String RULER_COLOR_1 = "RulerColor1";
     public static final String RULER_COLOR_2 = "RulerColor2";
     public static final String RULER_POS_X = "RulerPosX";
@@ -194,7 +189,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_PSR, true);
         store.setDefault(NAG_FOR_README, true);
         store.setDefault(NAG_FOR_SPRINT, true);
-        store.setDefault(RIGHT_DRAG_SCROLL, true);
         setDefault(RULER_COLOR_1, Color.cyan);
         setDefault(RULER_COLOR_2, Color.magenta);
         store.setDefault(RULER_POS_X, 0);
@@ -220,14 +214,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getAdvancedProperties();
     }
 
-    public boolean getAlwaysRightClickScroll() {
-        return store.getBoolean(ALWAYS_RIGHT_CLICK_SCROLL);
-    }
-
-    public boolean getAutoEdgeScroll() {
-        return store.getBoolean(AUTO_EDGE_SCROLL);
-    }
-
     public boolean getAutoEndFiring() {
         return store.getBoolean(AUTO_END_FIRING);
     }
@@ -238,14 +224,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getChatLoungeTabs() {
         return store.getBoolean(CHAT_LOUNGE_TABS);
-    }
-
-    public boolean getClickEdgeScroll() {
-        return store.getBoolean(CLICK_EDGE_SCROLL);
-    }
-
-    public boolean getCtlScroll() {
-        return store.getBoolean(CTL_SCROLL);
     }
 
     public int getDisplayPosX() {
@@ -385,13 +363,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getNagForReadme() {
         return store.getBoolean(NAG_FOR_README);
     }
-    
+
     public boolean getNagForSprint() {
         return store.getBoolean(NAG_FOR_SPRINT);
-    }
-
-    public boolean getRightDragScroll() {
-        return store.getBoolean(RIGHT_DRAG_SCROLL);
     }
 
     public Color getRulerColor1() {
@@ -474,14 +448,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SHOW_MAPSHEETS);
     }
 
-    public void setAlwaysRightClickScroll(boolean state) {
-        store.setValue(ALWAYS_RIGHT_CLICK_SCROLL, state);
-    }
-
-    public void setAutoEdgeScroll(boolean state) {
-        store.setValue(AUTO_EDGE_SCROLL, state);
-    }
-
     public void setAutoEndFiring(boolean state) {
         store.setValue(AUTO_END_FIRING, state);
     }
@@ -492,14 +458,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setChatloungeTabs(boolean state) {
         store.setValue(CHAT_LOUNGE_TABS, state);
-    }
-
-    public void setClickEdgeScroll(boolean state) {
-        store.setValue(CLICK_EDGE_SCROLL, state);
-    }
-
-    public void setCtlScroll(boolean state) {
-        store.setValue(CTL_SCROLL, state);
     }
 
     public void setDisplayPosX(int i) {
@@ -623,13 +581,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setNagForReadme(boolean b) {
         store.setValue(NAG_FOR_README, b);
     }
-    
+
     public void setNagForSprint(boolean b) {
         store.setValue(NAG_FOR_SPRINT, b);
-    }
-
-    public void setRightDragScroll(boolean state) {
-        store.setValue(RIGHT_DRAG_SCROLL, state);
     }
 
     public void setRulerPosX(int i) {

@@ -4597,6 +4597,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Checks if an entity is landing (from a jump) in heavy woods.
+     */
+    public PilotingRollData checkLandingInHeavyWoods(int overallMoveType,
+            IHex curHex) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        if (curHex.containsTerrain(Terrains.WOODS, 2)) {
+            roll.append(new PilotingRollData(getId(), 0,
+                    "landing in heavy woods"));
+            addPilotingModifierForTerrain(roll);
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "hex does not contain heavy woods");
+        }
+        return roll;
+    }
+
+    /**
      * Checks if the entity is landing (from a jump) on ice-covered water.
      */
     public PilotingRollData checkLandingOnIce(int overallMoveType, IHex curHex) {
@@ -8625,17 +8642,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getAltitude() {
-    	if(isAirborneVTOL()) {
-    		return 1;
-    	}
-    	return altitude;
+        if(isAirborneVTOL()) {
+            return 1;
+        }
+        return altitude;
     }
 
     public void setAltitude(int a) {
-    	altitude = a;
+        altitude = a;
     }
 
-    //produce an int array of the number of bombs of each type based on the current bomblist
+    /**
+     * produce an int array of the number of bombs of each type based on the current bomblist
+     * @return
+     */
     public int[] getBombLoadout() {
         int[] loadout = new int[BombType.B_NUM];
         for(Mounted bomb : getBombs()) {

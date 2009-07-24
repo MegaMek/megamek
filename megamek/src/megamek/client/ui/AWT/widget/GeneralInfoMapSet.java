@@ -25,7 +25,6 @@ import java.util.Vector;
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.GUIPreferences;
 import megamek.common.Aero;
-import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IEntityMovementType;
@@ -319,11 +318,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         for (PMSimpleLabel element : advantagesR) {
             element.setString(""); //$NON-NLS-1$
         }
-        
+
         int i = 0;
         for (Enumeration<IOptionGroup> advGroups = en.crew.getOptions().getGroups(); advGroups.hasMoreElements();) {
             IOptionGroup advGroup = advGroups.nextElement();
-            if(en.crew.countOptions(advGroup.getKey()) > 0) {  
+            if(en.crew.countOptions(advGroup.getKey()) > 0) {
                 advantagesR[i++].setString(advGroup.getDisplayableName());
                 for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
                     IOption adv = advs.nextElement();

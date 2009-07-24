@@ -18,7 +18,6 @@ import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
-import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -64,7 +63,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
             }
         }
 
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
             if ( nRange <= nRanges[RangeType.RANGE_SHORT] ){
                 toReturn +=3;
@@ -77,7 +76,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
         }
 
-        if ( game.getOptions().booleanOption("tacops_range") && nRange > nRanges[RangeType.RANGE_LONG] ) {
+        if ( game.getOptions().booleanOption("tacops_range") && (nRange > nRanges[RangeType.RANGE_LONG]) ) {
             toReturn = (int) Math.floor(toReturn / 2.0);
             toReturn -= 1;
         }

@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -19,14 +19,13 @@ import java.util.Enumeration;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
-import megamek.common.Infantry;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 
 /**
  * Abstract superclass for any action where an entity is attacking another
@@ -35,7 +34,7 @@ import megamek.common.WeaponType;
 public abstract class AbstractAttackAction extends AbstractEntityAction
         implements AttackAction {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -897197664652217134L;
     private int targetType;
@@ -44,7 +43,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
     // default to attacking an entity, since this is what most of them are
     public AbstractAttackAction(int entityId, int targetId) {
         super(entityId);
-        this.targetType = Targetable.TYPE_ENTITY;
+        targetType = Targetable.TYPE_ENTITY;
         this.targetId = targetId;
     }
 
@@ -91,7 +90,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
     public static ToHitData nightModifiers(IGame game, Targetable target,
             AmmoType atype, Entity attacker, boolean isWeapon) {
         ToHitData toHit = null;
-        
+
             Entity te = null;
             if (target.getTargetType() == Targetable.TYPE_ENTITY) {
                 te = (Entity) target;
@@ -103,9 +102,9 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
                 //not nighttime so just return
                 return toHit;
             }
-            
+
             // The base night penalty
-            int night_modifier = 0;   
+            int night_modifier = 0;
             night_modifier = game.getPlanetaryConditions().getLightHitPenalty(isWeapon);
             toHit.addModifier(night_modifier, game.getPlanetaryConditions().getLightCurrentName());
 
@@ -129,7 +128,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
             }
             // Searchlights reduce the penalty to zero (or 1 for pitch-black) (except for dusk/dawn)
             int searchlightMod = Math.min(3, night_modifier);
-            if(te != null && lightCond > PlanetaryConditions.L_DUSK) {
+            if((te != null) && (lightCond > PlanetaryConditions.L_DUSK)) {
                 if (te.isUsingSpotlight()) {
                     toHit.addModifier(-searchlightMod, "target using searchlight");
                     night_modifier = night_modifier - searchlightMod;
@@ -153,16 +152,16 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
             }
             // Certain ammunitions reduce the penalty
             else if (atype != null) {
-                if ((atype.getAmmoType() == AmmoType.T_AC || atype
-                        .getAmmoType() == AmmoType.T_LAC)
-                        && (atype.getMunitionType() == AmmoType.M_INCENDIARY_AC || atype
-                                .getMunitionType() == AmmoType.M_TRACER)) {
+                if (((atype.getAmmoType() == AmmoType.T_AC) || (atype
+                        .getAmmoType() == AmmoType.T_LAC))
+                        && ((atype.getMunitionType() == AmmoType.M_INCENDIARY_AC) || (atype
+                                .getMunitionType() == AmmoType.M_TRACER))) {
                     toHit.addModifier(-1, "incendiary/tracer ammo");
                     night_modifier--;
                 }
             }
             // Laser heatsinks
-            if (night_modifier > 0 && te != null && te instanceof Mech
+            if ((night_modifier > 0) && (te != null) && (te instanceof Mech)
                     && ((Mech) te).hasLaserHeatSinks()) {
                 boolean lhsused = false;
                 if (te.heat > 0) {
@@ -171,7 +170,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
                     night_modifier = 0;
                 }
                 // actions that generate heat give a -1 modifier
-                else if (te.heatBuildup > 0 || te.isStealthActive()) {
+                else if ((te.heatBuildup > 0) || te.isStealthActive()) {
                     lhsused = true;
                 } else {
                     // Unfortunately, we can't just check weapons fired by the
@@ -187,7 +186,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
                             if (waa.getEntityId() == te.getId()) {
                                 Mounted weapon = te.getEquipment(waa
                                         .getWeaponId());
-                                if (weapon.getCurrentHeat() != 0
+                                if ((weapon.getCurrentHeat() != 0)
                                         || weapon.isRapidfire()) {
                                     // target fired a weapon that generates heat
                                     lhsused = true;
@@ -202,16 +201,16 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
                     toHit.addModifier(-1, "target uses laser heatsinks");
                 }
             }
-            
-            
+
+
             //now check for general hit bonuses for heat
-            if(te != null && !(attacker instanceof Infantry && !(attacker instanceof BattleArmor))) {                 
+            if((te != null) && !((attacker instanceof Infantry) && !(attacker instanceof BattleArmor))) {
                 int heatBonus = game.getPlanetaryConditions().getLightHeatBonus(te.heat);
                 if(heatBonus < 0) {
                     toHit.addModifier(heatBonus, "target excess heat at night");
                 }
             }
-            
+
         return toHit;
     }
 

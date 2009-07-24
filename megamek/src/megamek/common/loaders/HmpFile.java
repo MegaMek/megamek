@@ -37,7 +37,6 @@ import megamek.common.EquipmentType;
 import megamek.common.IEntityMovementMode;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
-import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
@@ -138,7 +137,6 @@ implements IMechLoader
 
     private int gyroType = Mech.GYRO_STANDARD;
     private int cockpitType = Mech.COCKPIT_STANDARD;
-    private int targSys = 0;
     private int jjType;
 
     private int atmCounter = 0;
@@ -385,7 +383,7 @@ implements IMechLoader
                 gyroType = readUnsignedShort(dis);
                 cockpitType = readUnsignedShort(dis);
                 dis.skipBytes(16);
-                targSys = readUnsignedShort(dis);
+                readUnsignedShort(dis);
             } else {
                 gyroType = Mech.GYRO_STANDARD;
                 cockpitType = Mech.COCKPIT_STANDARD;

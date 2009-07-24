@@ -34,7 +34,6 @@ import megamek.common.Mounted;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.VTOL;
 
 /**
  * The attacker makes a club attack on the target. This also covers mech melee
@@ -125,7 +124,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // TSM doesn't apply to some weapons, including Saws.
-        if (entity.heat >= 9
+        if ((entity.heat >= 9)
                 && !(mType.hasSubType(MiscType.S_DUAL_SAW)
                         || mType.hasSubType(MiscType.S_CHAINSAW)
                         || mType.hasSubType(MiscType.S_PILE_DRIVER)
@@ -167,7 +166,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         final Entity ae = game.getEntity(attackerId);
 
         // arguments legal?
-        if (ae == null || target == null) {
+        if ((ae == null) || (target == null)) {
             throw new IllegalArgumentException("Attacker or target not valid");
         }
         if (club == null) {
@@ -198,15 +197,15 @@ public class ClubAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Blade is Retracted.");
         }
 
-        if ( ae.getGrappled() != Entity.NONE &&
-                ae.getGrappleSide() == Entity.GRAPPLE_LEFT
-                && club.getLocation() == Mech.LOC_LARM ) {
+        if ( (ae.getGrappled() != Entity.NONE) &&
+                (ae.getGrappleSide() == Entity.GRAPPLE_LEFT)
+                && (club.getLocation() == Mech.LOC_LARM) ) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        if ( ae.getGrappled() != Entity.NONE &&
-                ae.getGrappleSide() == Entity.GRAPPLE_RIGHT
-                && club.getLocation() == Mech.LOC_RARM ) {
+        if ( (ae.getGrappled() != Entity.NONE) &&
+                (ae.getGrappleSide() == Entity.GRAPPLE_RIGHT)
+                && (club.getLocation() == Mech.LOC_RARM) ) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
@@ -305,21 +304,21 @@ public class ClubAttackAction extends PhysicalAttackAction {
         if(ae.getQuirks().booleanOption("no_arms")) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
         }
-        
+
         // club must not be damaged
         if (!shield
-                && ae.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, ae
-                        .getEquipmentNum(club), club.getLocation()) > 0) {
+                && (ae.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, ae
+                        .getEquipmentNum(club), club.getLocation()) > 0)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Club is damaged");
         }
 
         // check elevation (target must be within one level, except for VTOL)
         if (target.isAirborneVTOL()) {
-            if (targetElevation - attackerElevation > 3 || targetElevation - attackerElevation < 0) {
+            if ((targetElevation - attackerElevation > 3) || (targetElevation - attackerElevation < 0)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
             }
-        } else if (targetHeight < attackerElevation
-                || targetElevation > attackerHeight) {
+        } else if ((targetHeight < attackerElevation)
+                || (targetElevation > attackerHeight)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target elevation not in range");
         }
@@ -339,9 +338,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if (target.getTargetType() == Targetable.TYPE_BUILDING
-                || target.getTargetType() == Targetable.TYPE_FUEL_TANK
-                || target instanceof GunEmplacement) {
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+                || (target instanceof GunEmplacement)) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                     "Targeting adjacent building.");
         }

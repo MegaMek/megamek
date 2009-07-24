@@ -38,7 +38,6 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
-import megamek.common.Player;
 import megamek.common.Terrains;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -257,7 +256,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.setDisplayVisible(true);
         selectEntity(clientgui.getClient().getFirstDeployableEntityNum());
         setNextEnabled(true);
-        Player p = clientgui.getClient().getLocalPlayer();
         // mark deployment hexes
         clientgui.bv.markDeploymentHexesFor(ce());
     }

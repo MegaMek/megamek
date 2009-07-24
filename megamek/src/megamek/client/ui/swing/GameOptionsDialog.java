@@ -22,7 +22,6 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -40,7 +39,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
@@ -76,7 +74,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     private JTabbedPane panOptions = new JTabbedPane();
     private JScrollPane scrOptions;
     private JPanel groupPanel;
-    
+
     private JPanel panPassword = new JPanel();
     private JLabel labPass = new JLabel(Messages
             .getString("GameOptionsDialog.Password")); //$NON-NLS-1$

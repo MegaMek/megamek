@@ -38,7 +38,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -71,13 +70,6 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JComboBox unitStartChar;
     private JTextField maxPathfinderTime;
     private JCheckBox getFocus;
-
-    private JCheckBox rightDragScroll;
-    private JCheckBox ctlScroll;
-    private JCheckBox clickEdgeScroll;
-    private JCheckBox alwaysRightClickScroll;
-    private JCheckBox autoEdgeScroll;
-    private JTextField scrollSensitivity;
 
     private JCheckBox keepGameLog;
     private JTextField gameLogFilename;
@@ -298,40 +290,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         panSetting.add(stampFormat);
         tempPanel.add(panSetting);
 
-        // scrolling options
-        JTextArea ta = new JTextArea(Messages
-                .getString("CommonSettingsDialog.mapScrollText"));
-        ta.setEditable(false);
-        ta.setOpaque(false);
-        tempPanel.add(ta); 
-
-        rightDragScroll = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.rightDragScroll")); //$NON-NLS-1$
-        tempPanel.add(rightDragScroll);
-
-        ctlScroll = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.ctlScroll")); //$NON-NLS-1$
-        tempPanel.add(ctlScroll);
-
-        clickEdgeScroll = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.clickEdgeScroll")); //$NON-NLS-1$
-        tempPanel.add(clickEdgeScroll);
-
-        alwaysRightClickScroll = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.alwaysRightClickScroll")); //$NON-NLS-1$
-        tempPanel.add(alwaysRightClickScroll);
-
-        autoEdgeScroll = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.autoEdgeScroll")); //$NON-NLS-1$
-        tempPanel.add(autoEdgeScroll);
-
-        panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages
-                .getString("CommonSettingsDialog.scrollSesitivity"))); //$NON-NLS-1$
-        scrollSensitivity = new JTextField(4);
-        panSetting.add(scrollSensitivity);
-        tempPanel.add(panSetting);
-
         // displayLocale settings
         panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panSetting.add(new JLabel(Messages
@@ -391,13 +349,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         maxPathfinderTime.setText(Integer.toString(cs.getMaxPathfinderTime()));
-
-        rightDragScroll.setSelected(gs.getRightDragScroll());
-        ctlScroll.setSelected(gs.getCtlScroll());
-        clickEdgeScroll.setSelected(gs.getClickEdgeScroll());
-        alwaysRightClickScroll.setSelected(gs.getAlwaysRightClickScroll());
-        autoEdgeScroll.setSelected(gs.getAutoEdgeScroll());
-        scrollSensitivity.setText(Integer.toString(gs.getScrollSensitivity()));
 
         keepGameLog.setSelected(cs.keepGameLog());
         gameLogFilename.setEnabled(keepGameLog.isSelected());
@@ -476,12 +427,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         cs.setUnitStartChar(((String) unitStartChar.getSelectedItem())
                 .charAt(0));
 
-        gs.setRightDragScroll(rightDragScroll.isSelected());
-        gs.setCtlScroll(ctlScroll.isSelected());
-        gs.setClickEdgeScroll(clickEdgeScroll.isSelected());
-        gs.setAlwaysRightClickScroll(alwaysRightClickScroll.isSelected());
-        gs.setAutoEdgeScroll(autoEdgeScroll.isSelected());
-        gs.setScrollSensitivity(Integer.parseInt(scrollSensitivity.getText()));
         gs.setMouseWheelZoom(mouseWheelZoom.isSelected());
 
         cs.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));

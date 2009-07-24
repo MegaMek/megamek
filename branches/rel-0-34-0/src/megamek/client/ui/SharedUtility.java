@@ -160,6 +160,7 @@ public class SharedUtility {
                 nagReport.append(Messages.getString("MovementDisplay.MagmaLiquidMoving"));
             }
 
+            // check for sideslip
             if ((entity instanceof VTOL) || (entity.getMovementMode() == IEntityMovementMode.HOVER) || (entity.getMovementMode() == IEntityMovementMode.WIGE)) {
                 rollTarget = entity.checkSideSlip(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing, lastPos, curPos, distance);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -190,6 +191,11 @@ public class SharedUtility {
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(SharedUtility.addNag(rollTarget));
                             }
+                        } else if (client.game.getPlanetaryConditions().getGravity() > 1) {
+                            rollTarget = entity.getBasePilotingRoll(step.getParent().getLastStepMovementType());
+                            entity.addPilotingModifierForTerrain(rollTarget, step);
+                            rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
+                            nagReport.append(SharedUtility.addNag(rollTarget));
                         }
                     }
                 } else if (entity instanceof Tank) {

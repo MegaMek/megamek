@@ -115,8 +115,8 @@ public class SharedUtility {
             final IHex curHex = client.game.getBoard().getHex(curPos);
 
             //check for leap
-            if(!lastPos.equals(curPos) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) 
-                    && entity instanceof Mech && client.game.getOptions().booleanOption("tacops_leaping")) {
+            if(!lastPos.equals(curPos) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)
+                    && (entity instanceof Mech) && client.game.getOptions().booleanOption("tacops_leaping")) {
                 int leapDistance = (lastElevation + client.game.getBoard().getHex(lastPos).getElevation()) - (curElevation + curHex.getElevation());
                 if(leapDistance > 2) {
                     rollTarget = entity.getBasePilotingRoll(step.getMovementType());
@@ -129,7 +129,7 @@ public class SharedUtility {
                     nagReport.append(SharedUtility.addNag(rollTarget));
                 }
             }
-            
+
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing, lastPos, curPos, isInfantry, distance-1);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -178,6 +178,7 @@ public class SharedUtility {
                 nagReport.append(Messages.getString("MovementDisplay.MagmaLiquidMoving"));
             }
 
+            // check for sideslip
             if ((entity instanceof VTOL) || (entity.getMovementMode() == IEntityMovementMode.HOVER) || (entity.getMovementMode() == IEntityMovementMode.WIGE)) {
                 rollTarget = entity.checkSideSlip(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing, lastPos, curPos, distance);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -209,6 +210,11 @@ public class SharedUtility {
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(SharedUtility.addNag(rollTarget));
                             }
+                        } else if (client.game.getPlanetaryConditions().getGravity() > 1) {
+                            rollTarget = entity.getBasePilotingRoll(step.getParent().getLastStepMovementType());
+                            entity.addPilotingModifierForTerrain(rollTarget, step);
+                            rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
+                            nagReport.append(SharedUtility.addNag(rollTarget));
                         }
                     } else if (step.getMovementType() == IEntityMovementType.MOVE_SPRINT) {
                         if (step.getMpUsed() > entity.getSprintMP(false, false)) {
@@ -291,13 +297,13 @@ public class SharedUtility {
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             nagReport.append(SharedUtility.addNag(rollTarget));
         }
-        
+
         //if we sprinted with MASC or a supercharger, then we need a PSR
         rollTarget = entity.checkSprintingWithMASC(overallMoveType, md.getMpUsed());
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             nagReport.append(SharedUtility.addNag(rollTarget));
         }
-        
+
         rollTarget = entity.checkSprintingWithSupercharger(overallMoveType, md.getMpUsed());
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             nagReport.append(SharedUtility.addNag(rollTarget));

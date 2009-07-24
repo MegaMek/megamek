@@ -4613,6 +4613,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return roll;
     }
 
+    /**
+     * return a <code>PilotingRollData</code> checking for
+     * wether this Entity moved too fast due to low gravity
+     * @param step
+     * @return
+     */
     public PilotingRollData checkMovedTooFast(MoveStep step) {
         PilotingRollData roll = getBasePilotingRoll(step.getParent().getLastStepMovementType());
         addPilotingModifierForTerrain(roll, step);
@@ -4780,7 +4786,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *         stepping on roof
      */
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep, Coords curPos, Coords prevPos) {
-        if (prevPos == null || prevPos.equals(curPos)) {
+        if ((prevPos == null) || prevPos.equals(curPos)) {
             return 0;
         }
         IHex curHex = game.getBoard().getHex(curPos);

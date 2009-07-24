@@ -1204,7 +1204,7 @@ public class MoveStep implements Serializable {
         isEndPos = isEnd;
 
         // If this step isn't the end step anymore, we might not be in danger after all
-        if (parent.game.getOptions().booleanOption("psr_jump_woods")) {
+        if (parent.game.getOptions().booleanOption("psr_jump_heavy_woods")) {
             if (!isEnd
                     && parent.isJumping()
                     && parent.game.getBoard().getHex(position).containsTerrain(

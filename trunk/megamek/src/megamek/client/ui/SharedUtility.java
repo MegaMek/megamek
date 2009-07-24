@@ -318,6 +318,14 @@ public class SharedUtility {
             }
             // jumped into water?
             IHex hex = client.game.getBoard().getHex(curPos);
+            // check for jumping into heavy woods
+            if (client.game.getOptions().booleanOption("psr_jump_heavy_woods")) {
+                rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,
+                        hex);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    nagReport.append(SharedUtility.addNag(rollTarget));
+                }
+            }
             int waterLevel = hex.terrainLevel(Terrains.WATER);
             if (hex.containsTerrain(Terrains.ICE) && (waterLevel > 0)) {
                 if(!(entity instanceof Infantry)) {

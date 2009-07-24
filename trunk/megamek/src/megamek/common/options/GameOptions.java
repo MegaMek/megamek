@@ -190,6 +190,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, "no_hover_charge", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "no_premove_vibra", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "falls_end_movement", false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, "psr_jump_heavy_woods", false);
 
         IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); //$NON-NLS-1$
         addOption(advAeroRules,"aero_ground_move", false); //$NON-NLS-1$
@@ -229,6 +230,8 @@ public class GameOptions extends AbstractOptions {
         //addOption(initiative, "simultaneous_movement", false); //$NON-NLS-1$
         addOption(initiative, "simultaneous_firing", false); //$NON-NLS-1$
         addOption(initiative, "simultaneous_physical", false); //$NON-NLS-1$
+        addOption(initiative, "front_load_initiative", false);
+        addOption(initiative, "initiative_streak_compensation", false);
 
         IBasicOptionGroup rpg = addGroup("rpg"); //$NON-NLS-1$
         addOption(rpg, "rpg_gunnery", false); //$NON-NLS-1$

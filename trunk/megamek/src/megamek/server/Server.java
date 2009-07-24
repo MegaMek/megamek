@@ -1997,7 +1997,7 @@ public class Server implements Runnable {
             players.nextElement().setInitialBV();
         }
     }
-    
+
     /**
      * loop through entitis in the exchange phase (i.e. after leaving chatlounge) and
      * do any actions that need to be done
@@ -2498,10 +2498,10 @@ public class Server implements Runnable {
      */
     private void rollInitiative() {
         if (game.getOptions().booleanOption("individual_initiative")) {
-            TurnOrdered.rollInitiative(game.getEntitiesVector());
+            TurnOrdered.rollInitiative(game.getEntitiesVector(), false);
         } else {
             // Roll for initative on the teams.
-            TurnOrdered.rollInitiative(game.getTeamsVector());
+	    TurnOrdered.rollInitiative(game.getTeamsVector(), game.getOptions().booleanOption("initiative_streak_compensation") && !game.shouldDeployThisRound());
         }
 
         transmitAllPlayerUpdates();
@@ -4303,7 +4303,7 @@ public class Server implements Runnable {
         	} else {
         		((Aero)entity).land();
         	}
-        	
+
         }
 
         //TODO: check for watery death
@@ -6028,10 +6028,18 @@ public class Server implements Runnable {
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckInPlace(entity, rollTarget);
             }
+            // check for jumping into heavy woods
+            if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
+                rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,
+                        curHex);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    doSkillCheckInPlace(entity, rollTarget);
+                }
+            }
             // jumped into water?
             int waterLevel = curHex.terrainLevel(Terrains.WATER);
             if (curHex.containsTerrain(Terrains.ICE) && (waterLevel > 0)) {
-                if(!(entity instanceof Infantry)) {
+                if (!(entity instanceof Infantry)) {
                     waterLevel = 0;
                     // check for breaking ice
                     int roll = Compute.d6(1);
@@ -8385,11 +8393,11 @@ public class Server implements Runnable {
                     a.setNextVelocity(0);
                 }
                 //make sure that entity is above the level of the hex if in atmosphere
-                if(game.getBoard().inAtmosphere() && a.getAltitude() <= hex.ceiling()) {
+                if(game.getBoard().inAtmosphere() && (a.getAltitude() <= hex.ceiling())) {
                 	//you can't be grounded on low atmosphere map
                 	a.setAltitude(hex.ceiling() + 1);
                 }
-            } 
+            }
         } else if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
             // TODO: Submarines should have a selectable height.
             // For now, pretend they're regular naval.
@@ -19841,7 +19849,7 @@ public class Server implements Runnable {
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(a.getAltLoss());
-                    addReport(r);             
+                    addReport(r);
                     a.setAltitude(a.getAltitude() - a.getAltLoss());
                     a.resetAltLoss();
                     entityUpdate(entity.getId());

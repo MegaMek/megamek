@@ -1202,6 +1202,15 @@ public class MoveStep implements Serializable {
         // position of a path, then there are more updates to do.
         boolean moreUpdates = (isEndPos != isEnd);
         isEndPos = isEnd;
+
+	// If this step isn't the end step anymore, we might not be in danger after all
+	if(parent.game.getOptions().booleanOption("fraction_jackson_rule"))
+		if(!isEnd && parent.isJumping() && parent.game.getBoard().getHex(position).containsTerrain(Terrains.WOODS, 2))
+		{
+			danger = false;
+			pastDanger = false;
+		}
+
         return moreUpdates;
     }
 
@@ -1971,6 +1980,11 @@ public class MoveStep implements Serializable {
         danger |= Compute.isPilotingSkillNeeded(game, entity.getId(), lastPos,
                 curPos, movementType, isTurning, prevStepOnPavement, prevEl,
                 getElevation(), getParentUpToThisStep());
+
+	//jumping into heavy woods is danger
+	if (game.getOptions().booleanOption("fraction_jackson_rule"))
+		if (parent.isJumping() && isEndPos && game.getBoard().getHex(curPos).containsTerrain(Terrains.WOODS, 2))
+			danger = true;
 
         // getting up is also danger
         if (stepType == MovePath.STEP_GET_UP) {

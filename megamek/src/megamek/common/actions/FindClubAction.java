@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -26,20 +26,18 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Mech;
-import megamek.common.TargetRoll;
 import megamek.common.Terrains;
-import megamek.common.ToHitData;
 
 /**
  * The entity tries to find a club.
- * 
+ *
  * @author Ben
  * @version
  */
 public class FindClubAction extends AbstractEntityAction {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -8948591442556777640L;
 
@@ -77,11 +75,11 @@ public class FindClubAction extends AbstractEntityAction {
         // The hex must contain woods or rubble from
         // a medium, heavy, or hardened building,
         // or a blown off limb
-        if (hex.terrainLevel(Terrains.WOODS) < 1
-                && hex.terrainLevel(Terrains.JUNGLE) < 1
-                && hex.terrainLevel(Terrains.RUBBLE) < Building.MEDIUM
-                && hex.terrainLevel(Terrains.ARMS) < 1
-                && hex.terrainLevel(Terrains.LEGS) < 1) {
+        if ((hex.terrainLevel(Terrains.WOODS) < 1)
+                && (hex.terrainLevel(Terrains.JUNGLE) < 1)
+                && (hex.terrainLevel(Terrains.RUBBLE) < Building.MEDIUM)
+                && (hex.terrainLevel(Terrains.ARMS) < 1)
+                && (hex.terrainLevel(Terrains.LEGS) < 1)) {
             return false;
         }
 
@@ -96,7 +94,7 @@ public class FindClubAction extends AbstractEntityAction {
                         .hasClaw(Mech.LOC_LARM))) {
             return false;
         }
-        
+
         //check for no/minimal arms quirk
         if(entity.getQuirks().booleanOption("no_arms")) {
             return false;

@@ -30,7 +30,6 @@ public class GunEmplacement extends Entity implements Serializable {
      *
      */
     private static final long serialVersionUID = 8561738092216598248L;
-    private String name = null;
     private boolean turret = false;
     private boolean turretLocked = false;
     private int turretOffset = 0;

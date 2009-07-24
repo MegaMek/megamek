@@ -21,21 +21,16 @@ import java.awt.Image;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Aero;
-import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IEntityMovementType;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
-import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
@@ -210,28 +205,28 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         elevationR = createLabel(STAR3, fm, elevationL.getSize().width + 10,
                 getYCoord());
         content.addArea(elevationR);
-        
+
         curSensorsL = createLabel(
                 Messages.getString("GeneralInfoMapSet.currentSensorsL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(curSensorsL);
         curSensorsR = createLabel(STAR3, fm, curSensorsL.getSize().width + 10,
                 getYCoord());
         content.addArea(curSensorsR);
-        
+
         visualRangeL = createLabel(
                 Messages.getString("GeneralInfoMapSet.visualRangeL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(visualRangeL);
         visualRangeR = createLabel(STAR3, fm, visualRangeL.getSize().width + 10,
                 getYCoord());
         content.addArea(visualRangeR);
-     
+
         quirksR = new PMSimpleLabel[40];
         for (int i = 0; i < quirksR.length; i++) {
             quirksR[i] = createLabel(new Integer(i).toString(), fm, 0, getNewYCoord());
             content.addArea(quirksR[i]);
         }
-        
-        
+
+
     }
 
     /**
@@ -300,11 +295,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         for(PMSimpleLabel element: quirksR) {
             element.setString(""); //$NON-NLS-1$
         }
-        
+
         int i = 0;
         for (Enumeration<IOptionGroup> qGroups = en.getQuirks().getGroups(); qGroups.hasMoreElements();) {
             IOptionGroup qGroup = qGroups.nextElement();
-            if(en.countQuirks(qGroup.getKey()) > 0) {          
+            if(en.countQuirks(qGroup.getKey()) > 0) {
                 quirksR[i++].setString(qGroup.getDisplayableName());
                 for (Enumeration<IOption> quirks = qGroup.getOptions(); quirks.hasMoreElements();) {
                     IOption quirk = quirks.nextElement();
@@ -314,7 +309,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 }
             }
         }
-        
+
         if (en.mpUsed > 0) {
             mpR0.setString("(" + en.mpUsed + " used)"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
@@ -383,7 +378,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             curSensorsR.setVisible(false);
             visualRangeR.setVisible(false);
         }
-        
+
         if (en instanceof GunEmplacement) {
             weightL.setVisible(false);
             weightR.setVisible(false);

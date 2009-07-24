@@ -331,7 +331,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         butFlee.setEnabled(false);
         butFlee.setActionCommand(MOVE_FLEE);
         butFlee.addKeyListener(this);
-        
+
         butFlyOff = new Button(Messages.getString("MovementDisplay.butFlyOff")); //$NON-NLS-1$
         butFlyOff.addActionListener(this);
         butFlyOff.setEnabled(false);
@@ -881,7 +881,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         updateLoadButtons();
         updateElevationButtons();
         updateEvadeButton();
-        
+
         updateRecoveryButton();
         updateJoinButton();
         updateDumpButton();
@@ -1130,9 +1130,9 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
             // first check for stalling
             //TODO: this should really be in the server
-            if ((client.game.getBoard().inAtmosphere() || client.game.getBoard().onGround()) && md.getFinalElevation() > 0
+            if ((client.game.getBoard().inAtmosphere() || client.game.getBoard().onGround()) && (md.getFinalElevation() > 0)
                     && !a.isVSTOL() && !a.isSpheroid()  && !client.game.getPlanetaryConditions().isVacuum()
-                    && (((md == null) && (a.getCurrentVelocity() == 0)) 
+                    && (((md == null) && (a.getCurrentVelocity() == 0))
                             || ((md != null) && (md.getFinalVelocity() == 0)))) {
 
                 // add a stall to the movement path
@@ -1174,7 +1174,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
                     int vel = a.getCurrentVelocity();
 
                     // need to check for stall here as well
-                    if ((vel == 0) && md.getFinalElevation() > 0 && !(a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) && (client.game.getBoard().inAtmosphere() || client.game.getBoard().onGround()) && !a.isVSTOL()) {
+                    if ((vel == 0) && (md.getFinalElevation() > 0) && !(a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) && (client.game.getBoard().inAtmosphere() || client.game.getBoard().onGround()) && !a.isVSTOL()) {
                         // add a stall to the movement path
                         md.addStep(MovePath.STEP_STALL);
                     }
@@ -1640,7 +1640,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             setLowerEnabled(false);
             return;
         }
-        
+
         if(ce.isAirborne()) {
         	//then use altitude not elevation
         	setRaiseEnabled(ce.canGoUp(cmd.getFinalAltitude(), cmd
@@ -1875,7 +1875,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         setLaunchEnabled((ce.getLaunchableFighters().size() > 0) || (ce.getLaunchableSmallCraft().size() > 0));
 
     }
-    
+
     private void updateEvadeButton() {
 
         final Entity ce = ce();
@@ -1883,17 +1883,17 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         if (null == ce) {
             return;
         }
-        
+
         if(clientgui.getClient().game.getOptions().booleanOption("tacops_evade")) {
             return;
         }
-        
-        if(!(ce instanceof Mech || ce instanceof Tank)) {
+
+        if(!((ce instanceof Mech) || (ce instanceof Tank))) {
             return;
         }
-        
-        setEvadeEnabled(cmd.getLastStepMovementType() != IEntityMovementType.MOVE_JUMP 
-                          && cmd.getLastStepMovementType() != IEntityMovementType.MOVE_SPRINT);
+
+        setEvadeEnabled((cmd.getLastStepMovementType() != IEntityMovementType.MOVE_JUMP)
+                          && (cmd.getLastStepMovementType() != IEntityMovementType.MOVE_SPRINT));
     }
 
     private void updateRecklessButton() {
@@ -2868,7 +2868,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         } else if (ev.getActionCommand().equals(MOVE_FLY_OFF) && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.FlyOffDialog.title"), Messages.getString("MovementDisplay.FlyOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
             cmd.addStep(MovePath.STEP_OFF);
             moveTo(cmd);
-        } 
+        }
         else if (ev.getActionCommand().equals(MOVE_EJECT)) {
             if (ce instanceof Tank) {
                 if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.AbandonDialog.title"), Messages.getString("MovementDisplay.AbandonDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -3331,7 +3331,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
         butFlee.setEnabled(enabled);
         clientgui.getMenuBar().setMoveFleeEnabled(enabled);
     }
-    
+
     private void setFlyOffEnabled(boolean enabled) {
         butFlyOff.setEnabled(enabled);
         clientgui.getMenuBar().setMoveFlyOffEnabled(enabled);

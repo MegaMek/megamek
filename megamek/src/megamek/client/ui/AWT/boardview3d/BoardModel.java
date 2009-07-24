@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This file (C) 2008 Jörg Walter <j.walter@syntax-k.de>
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -17,9 +17,6 @@
 
 package megamek.client.ui.AWT.boardview3d;
 
-import com.sun.j3d.utils.geometry.Primitive;
-import com.sun.j3d.utils.geometry.Sphere;
-import com.sun.j3d.utils.universe.SimpleUniverse;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.Background;
@@ -32,7 +29,11 @@ import javax.media.j3d.Material;
 import javax.media.j3d.SharedGroup;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
-import javax.vecmath.*;
+import javax.vecmath.Color3f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
+
 import megamek.client.ui.AWT.GUIPreferences;
 import megamek.common.Coords;
 import megamek.common.IBoard;
@@ -40,6 +41,10 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
+
+import com.sun.j3d.utils.geometry.Primitive;
+import com.sun.j3d.utils.geometry.Sphere;
+import com.sun.j3d.utils.universe.SimpleUniverse;
 
 class BoardModel extends BranchGroup {
     // 3D projection uses metric coordinates according to rulebook
@@ -63,7 +68,7 @@ class BoardModel extends BranchGroup {
     Material highlight = new Material(C.white, C.black, C.white, C.black, 1.0f);
     ColorInterpolator highlightEffect = new ColorInterpolator(C.dblAlpha, highlight, C.grey75, C.white);
     SharedGroup shared[];
-    
+
     static final int KEEP = 2;
     public BoardModel(TileTextureManager t, SimpleUniverse u, IGame g) {
         tileManager = t;
@@ -87,7 +92,7 @@ class BoardModel extends BranchGroup {
         bg.setApplicationBounds(bounds);
         addChild(bg);
     }
-    
+
     static final Point3d getHexLocation(Coords c, int level) {
         return new Point3d((c.x*BoardModel.HEX_SIDE_LENGTH*1.5), -(c.y*(BoardModel.HEX_DIAMETER) + ((c.x & 1) != 0? BoardModel.HEX_DIAMETER/2 : 0)), level*BoardModel.HEX_HEIGHT);
     }
@@ -97,14 +102,16 @@ class BoardModel extends BranchGroup {
     private final BoardHexModel hexAt(int x, int y) {
         return ((BoardHexModel)getChild(y*w+x+KEEP));
     }
-    
+
     void update(Player player) {
         IBoard gboard = game.getBoard();
         detach();
 
-        if (gboard.getWidth() != w || gboard.getHeight() != h) {
+        if ((gboard.getWidth() != w) || (gboard.getHeight() != h)) {
             System.out.println("BoardModel: full rebuild");
-            for (int i = this.numChildren()-1; i >= KEEP; i--) removeChild(i);
+            for (int i = numChildren()-1; i >= KEEP; i--) {
+                removeChild(i);
+            }
 
             w = gboard.getWidth();
             h = gboard.getHeight();
@@ -144,17 +151,19 @@ class BoardModel extends BranchGroup {
                 hexAt(x, y).update(gboard.getHex(x, y), tileManager, player);
             }
         }
-        if (!isDeploying) resetBoard();
+        if (!isDeploying) {
+            resetBoard();
+        }
 
         universe.addBranchGraph(this);
     }
-    
+
     void update(Coords c, IHex hex, Player player) {
         detach();
         hexAt(c.x, c.y).update(hex, tileManager, player);
         universe.addBranchGraph(this);
     }
-    
+
     public void showDeployment(Player deployer) {
         if (deployer == null) {
             isDeploying = false;
@@ -162,31 +171,20 @@ class BoardModel extends BranchGroup {
             return;
         }
         isDeploying = true;
-        IBoard gboard = game.getBoard();
 
         detach();
-        Coords c = new Coords(0,0);
-        for (c.y = 0; c.y < h; c.y++) {
-            for (c.x = 0; c.x < w; c.x++) {
-               // if (!gboard.isLegalDeployment(c, deployer)) {
-                //    hexAt(c.x, c.y).darken();
-               // } else {
-               //     hexAt(c.x, c.y).setEffect(highlight);
-               // }
-            }
-        }
         universe.addBranchGraph(this);
     }
 
     public void resetBoard() {
-        boolean night = GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) && 
-            game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY;
+        boolean night = GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) &&
+            (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY);
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 BoardHexModel bhm = hexAt(x, y);
-                
+
                 if (night && !game.isPositionIlluminated((Coords)bhm.getUserData())) {
-                   bhm.night(); 
+                   bhm.night();
                 } else {
                     bhm.reset();
                 }

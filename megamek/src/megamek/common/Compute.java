@@ -200,7 +200,7 @@ public class Compute {
         if(!game.getBoard().onGround()) {
             return null;
         }
-        
+
         //no stacking violations for flying aeros
         if(entering.isAirborne()) {
             return null;
@@ -220,7 +220,7 @@ public class Compute {
         // Walk through the entities in the given hex.
         for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = i.nextElement();
-            
+
             if(inHex.isAirborne()) {
                 continue;
             }
@@ -250,9 +250,9 @@ public class Compute {
                 // then any other mech in the hex is a violation.
                 // Unless grappled
                 //grounded small craft are also treated as mechs for purposes of stacking
-                if (isMech 
+                if (isMech
                 		&& (((inHex instanceof Mech) && (((Mech) inHex).getGrappled() != entering.getId()))
-                				|| inHex instanceof SmallCraft)) {
+                				|| (inHex instanceof SmallCraft))) {
                     return inHex;
                 }
 
@@ -396,7 +396,7 @@ public class Compute {
         if ((destElevation < destHex.terrainLevel(Terrains.BLDG_ELEV))
                 && !(entity instanceof Infantry)) {
             Building bldg = game.getBoard().getBuildingAt(dest);
-            boolean insideHangar = (null != src) && (null != bldg) && bldg.isIn(src)
+            boolean insideHangar = (null != bldg) && bldg.isIn(src)
                     && (bldg.getBldgClass() == Building.HANGAR)
                     && (destHex.terrainLevel(Terrains.BLDG_ELEV) > entity.height());
             if(!insideHangar) {
@@ -673,14 +673,14 @@ public class Compute {
         if(ae instanceof Aero) {
             useExtremeRange = true;
         }
-        
+
         ToHitData mods = new ToHitData();
-      
+
         Entity te = null;
         if (target instanceof Entity) {
             te = (Entity) target;
         }
-        
+
         //
         // modifiy the ranges for PPCs when field inhibitors are turned off
         // TODO: See above, it should be coded elsewhere...
@@ -714,11 +714,11 @@ public class Compute {
             }
         }
 
-        // allow naval units on surface to be attacked from above or below     
-        if (null != te && (targBottom == 0) && (UnitType.determineUnitTypeCode(te) == UnitType.NAVAL)) {
+        // allow naval units on surface to be attacked from above or below
+        if ((null != te) && (targBottom == 0) && (UnitType.determineUnitTypeCode(te) == UnitType.NAVAL)) {
             targetInPartialWater = true;
         }
-             
+
         // allow naval units to target underwater units,
         // torpedo tubes are mounted underwater
         if ((targetUnderwater || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
@@ -775,7 +775,7 @@ public class Compute {
         if(ae instanceof Aero) {
             weaponRanges = wtype.getATRanges();
         }
-        
+
         // determine base distance & range bracket
         int distance = Compute.effectiveDistance(game, ae, target);
         int range = RangeType.rangeBracket(distance, weaponRanges, useExtremeRange);
@@ -913,12 +913,12 @@ public class Compute {
      * @return the effective distance
      */
     public static int effectiveDistance(IGame game, Entity attacker, Targetable target) {
-        
+
         if(Compute.isAirToGround(attacker, target)) {
             //always a distance of zero
             return 0;
         }
-        
+
         int distance = attacker.getPosition().distance(target.getPosition());
 
         //ground units that are the target of air to ground attacks always have a distance of zero
@@ -930,19 +930,19 @@ public class Compute {
                     continue;
                 }
                 WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                if (target instanceof Entity 
-                        && prevAttack.getEntityId() == ((Entity)target).getId() 
-                        && prevAttack.getTargetId() == attacker.getId()) {
+                if ((target instanceof Entity)
+                        && (prevAttack.getEntityId() == ((Entity)target).getId())
+                        && (prevAttack.getTargetId() == attacker.getId())) {
                     distance = 0;
                 }
             }
         }
-        
+
         //if this is an air-to-air attack on the ground map, then divide distance by 16
         if(Compute.isAirToAir(attacker, target) && game.getBoard().onGround()) {
             distance = (int) Math.ceil(distance / 16.0);
         }
-        
+
         // If the attack is completely inside a building, add the difference
         // in elevations between the attacker and target to the range.
         // TODO: should the player be explcitly notified?
@@ -951,14 +951,14 @@ public class Compute {
             int tElev = target.getElevation();
             distance += Math.abs(aElev - tElev);
         }
-        
+
         //air-to-air attacks add one for altitude differences
         if (Compute.isAirToAir(attacker, target)) {
             int aAlt = attacker.getAltitude();
             int tAlt = target.getAltitude();
             distance += Math.abs(aAlt - tAlt);
         }
-        
+
         if(Compute.isGroundToAir(attacker, target)) {
             distance += (2 * target.getAltitude());
         }
@@ -1574,7 +1574,7 @@ public class Compute {
             //no terrain mods for aero bombing
             return toHit;
         }
-        
+
         // if we have in-building combat, it's a +1
         if (attackerInSameBuilding) {
             toHit.addModifier(1, "target in a building hex");
@@ -1596,11 +1596,11 @@ public class Compute {
             woodsText = "target in ultra heavy " + woodsText;
         }
 
-        if (!game.getOptions().booleanOption("tacops_woods_cover") && !isAboveWoods 
-                && !((t.getTargetType() == Targetable.TYPE_HEX_CLEAR) 
-                        || (t.getTargetType() == Targetable.TYPE_HEX_IGNITE) 
-                        || (t.getTargetType() == Targetable.TYPE_HEX_BOMB) 
-                        || (t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) 
+        if (!game.getOptions().booleanOption("tacops_woods_cover") && !isAboveWoods
+                && !((t.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                        || (t.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                        || (t.getTargetType() == Targetable.TYPE_HEX_BOMB)
+                        || (t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
                         || (t.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER))) {
             if ((woodsLevel == 1) && (eistatus != 2)) {
                 toHit.addModifier(1, woodsText);
@@ -2626,7 +2626,7 @@ public class Compute {
         if(target instanceof Entity) {
             te = (Entity)target;
         }
-        
+
         boolean usePrior = false;
         //aeros in the same hex in space need to adjust position to get side table
         if(attacker.game.getBoard().inSpace() && attacker.getPosition().equals(target.getPosition())
@@ -2636,16 +2636,16 @@ public class Compute {
             }
             usePrior = ((Aero)target).shouldMoveBackHex((Aero)attacker);
         }
-        
+
         //if this is a air to ground attack, then attacker position is given by the direction
         //from which they entered the target hex
-        if(attacker.isAirborne() && null != te && !te.isAirborne()) {
+        if(attacker.isAirborne() && (null != te) && !te.isAirborne()) {
             attackPos = attacker.passedThroughPrevious(target.getPosition());
         }
 
-        if(null != te && (called == CalledShot.CALLED_LEFT)) {
+        if((null != te) && (called == CalledShot.CALLED_LEFT)) {
             return te.sideTable(attackPos, usePrior, (te.getFacing() + 5) % 6);
-        } else if (null != te && (called == CalledShot.CALLED_RIGHT)) {
+        } else if ((null != te) && (called == CalledShot.CALLED_RIGHT)) {
             return te.sideTable(attackPos, usePrior, (te.getFacing() + 1) % 6);
         }
 
@@ -4555,27 +4555,27 @@ public class Compute {
         }
         return entities;
     }
-    
+
     public static boolean isAirToGround(Entity attacker, Targetable target) {
         return attacker.isAirborne() && !target.isAirborne() && !target.isAirborneVTOL() ;
     }
-    
+
     public static boolean isAirToAir(Entity attacker, Targetable target) {
-        return (attacker.isAirborne() && target.isAirborne()) 
-        	|| (attacker.isAirborne() && target.isAirborneVTOL()) 
+        return (attacker.isAirborne() && target.isAirborne())
+        	|| (attacker.isAirborne() && target.isAirborneVTOL())
         	|| (attacker.isAirborneVTOL() && target.isAirborne());
     }
-    
+
     public static boolean isGroundToAir(Entity attacker, Targetable target) {
         return !attacker.isAirborne() && target.isAirborne();
     }
-    
+
     public static boolean isGroundToGround(Entity attacker, Targetable target) {
         return !attacker.isAirborne() && !target.isAirborne();
     }
-    
+
     /**
-     * This is a homebrew function partially drawn from pg. 40-1 of AT2R that allows 
+     * This is a homebrew function partially drawn from pg. 40-1 of AT2R that allows
      * units that flee the field for any reason to return after a certain number of rounds
      * It can potentially be expanded to include other conditions
      * @param en
@@ -4583,41 +4583,41 @@ public class Compute {
      * @return number of rounds until return (-1 if never)
      */
     public static int roundsUntilReturn(IGame game, Entity en) {
-        
+
         if(!(en instanceof Aero)) {
             return -1;
         }
-        
+
         if(!game.getOptions().booleanOption("return_flyover")) {
             return -1;
         }
-        
+
         Aero a = (Aero)en;
-        
+
         //the table in AT2R is backwards, it should take longer to return if your velocity is higher
         int turns = 1 + (int) Math.ceil(a.getCurrentVelocity() / 4.0);
-        
+
         //OOC units should take longer, how about two extra turns?
         if(a.isOutControlTotal()) {
             turns += 2;
         }
-        return turns;       
+        return turns;
     }
-    
+
     public static boolean inDeadZone(IGame game, Entity ae, Targetable target) {
         if(game.getBoard().inSpace()) {
             return false;
         }
-    	//Account for "dead zones" between Aeros at different altitudes  	
+    	//Account for "dead zones" between Aeros at different altitudes
         if(Compute.isAirToAir(ae, target)) {
         	int distance = Compute.effectiveDistance(game, ae, target);
-            int altDiff = Math.abs(ae.getAltitude() - target.getAltitude());           
+            int altDiff = Math.abs(ae.getAltitude() - target.getAltitude());
             if(altDiff >= (distance - altDiff)) {
                 return true;
             }
         }
         return false;
     }
-    
+
 } // End public class Compute
 

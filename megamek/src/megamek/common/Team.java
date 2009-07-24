@@ -24,7 +24,7 @@ import java.util.Vector;
  */
 public final class Team extends TurnOrdered {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 2270215552964191597L;
     private Vector<Player> players = new Vector<Player>();
@@ -55,7 +55,7 @@ public final class Team extends TurnOrdered {
      */
     @Override
     public void clearInitiative(boolean bUseInitComp) {
-        this.getInitiative().clear();
+        getInitiative().clear();
         TurnOrdered.rollInitiative(players, bUseInitComp);
     }
 
@@ -72,15 +72,16 @@ public final class Team extends TurnOrdered {
      * normally the sum of multi-unit turns and the other turns. A team without
      * any "normal" turns must return it's number of even turns to produce a
      * fair distribution of moves.
-     * 
+     *
      * @return the <code>int</code> number of "normal" turns this item should
      *         take in a phase.
      */
     @Override
     public int getNormalTurns(IGame game) {
-        int normal = this.getMultiTurns(game) + this.getOtherTurns();
-        if (0 == normal)
-            normal = this.getEvenTurns();
+        int normal = getMultiTurns(game) + getOtherTurns();
+        if (0 == normal) {
+            normal = getEvenTurns();
+        }
         return normal;
     }
 
@@ -116,7 +117,7 @@ public final class Team extends TurnOrdered {
         }
         return sum;
     }
-    
+
     @Override
     public int getSpaceStationTurns() {
 //      Sum the other turns of all Players in this Team.
@@ -127,7 +128,7 @@ public final class Team extends TurnOrdered {
         }
         return sum;
     }
-    
+
     @Override
     public int getJumpshipTurns() {
 //      Sum the other turns of all Players in this Team.
@@ -138,7 +139,7 @@ public final class Team extends TurnOrdered {
         }
         return sum;
     }
-    
+
     @Override
     public int getWarshipTurns() {
 //      Sum the other turns of all Players in this Team.
@@ -149,7 +150,7 @@ public final class Team extends TurnOrdered {
         }
         return sum;
     }
-    
+
     @Override
     public int getDropshipTurns() {
 //      Sum the other turns of all Players in this Team.
@@ -160,7 +161,7 @@ public final class Team extends TurnOrdered {
         }
         return sum;
     }
-    
+
     @Override
     public int getSmallCraftTurns() {
 //      Sum the other turns of all Players in this Team.
@@ -171,7 +172,7 @@ public final class Team extends TurnOrdered {
         }
         return sum;
     }
-    
+
     @Override
     public int getAeroTurns() {
 //      Sum the other turns of all Players in this Team.
@@ -191,14 +192,14 @@ public final class Team extends TurnOrdered {
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if (object == null || getClass() != object.getClass()) {
+        } else if ((object == null) || (getClass() != object.getClass())) {
             return false;
         }
         Team other = (Team) object;
-        if (other.getId() != this.getId() || other.getSize() != this.getSize()) {
+        if ((other.getId() != getId()) || (other.getSize() != getSize())) {
             return false;
         }
-        Enumeration<Player> thisPlayers = this.getPlayers();
+        Enumeration<Player> thisPlayers = getPlayers();
         Enumeration<Player> otherPlayers = other.getPlayers();
         while (thisPlayers.hasMoreElements()) {
             if (!thisPlayers.nextElement().equals(otherPlayers.nextElement())) {
@@ -229,64 +230,64 @@ public final class Team extends TurnOrdered {
         int constantb = 0;
         int turnb = 0;
         int commandb = 0;
-	int compensationBonus = 0;
+        int compensationBonus = 0;
 
         for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
             Player player = p.nextElement();
-            if (player.getConstantInitBonus() > constantb
-                    && player.getConstantInitBonus() != 0) {
+            if ((player.getConstantInitBonus() > constantb)
+                    && (player.getConstantInitBonus() != 0)) {
                 constantb = player.getConstantInitBonus();
             }
             // also accept it if it is negative and current bonus is zero
-            if (player.getConstantInitBonus() < 0 && constantb == 0) {
+            if ((player.getConstantInitBonus() < 0) && (constantb == 0)) {
                 constantb = player.getConstantInitBonus();
             }
         }
-        
+
         for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
             Player player = p.nextElement();
             turnb += player.getTurnInitBonus();
-	    if(player.getCompensationInitBonus() > compensationBonus)
-		    compensationBonus = player.getCompensationInitBonus();
-            if(player.getCommandBonus() > commandb)
+            if (player.getCompensationInitBonus() > compensationBonus) {
+                compensationBonus = player.getCompensationInitBonus();
+            }
+            if (player.getCommandBonus() > commandb) {
                 commandb = player.getCommandBonus();
+            }
         }
 
         return constantb + turnb + commandb + getInitCompensationBonus(bInitiativeCompensationBonus);
     }
 
-    public int getInitCompensationBonus(boolean bUseInitCompensation)
-    {
-	    int nInitCompensationBonus = 0;
+    public int getInitCompensationBonus(boolean bUseInitCompensation) {
+        int nInitCompensationBonus = 0;
 
-	    if(bUseInitCompensation)
-	    	for(Enumeration<Player> p = getPlayers(); p.hasMoreElements();)
-		{
-			Player player = p.nextElement();
-			if (player.getCompensationInitBonus() > nInitCompensationBonus)
-				nInitCompensationBonus = player.getCompensationInitBonus();
-		}
+        if (bUseInitCompensation) {
+            for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
+                Player player = p.nextElement();
+                if (player.getCompensationInitBonus() > nInitCompensationBonus) {
+                    nInitCompensationBonus = player.getCompensationInitBonus();
+                }
+            }
+        }
 
-	    return nInitCompensationBonus;
+        return nInitCompensationBonus;
     }
 
-    public void setInitCompensationBonus(int nNewValue)
-    {
-	    for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();)
-	    {
-		    Player player = p.nextElement();
-		    player.setCompensationInitBonus(nNewValue);
-	    }
+    public void setInitCompensationBonus(int nNewValue) {
+        for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
+            Player player = p.nextElement();
+            player.setCompensationInitBonus(nNewValue);
+        }
     }
-    
+
     /**
      * cycle through entities on team and collect all the airborne VTOL/WIGE
      * @return a vector of relevant entity ids
      */
     public Vector<Integer> getAirborneVTOL() {
-    
+
         //a vector of unit ids
-        Vector<Integer> units = new Vector<Integer>();       
+        Vector<Integer> units = new Vector<Integer>();
         for (Enumeration<Player> loop = players.elements(); loop.hasMoreElements();) {
             Player player = loop.nextElement();
             units.addAll(player.getAirborneVTOL());

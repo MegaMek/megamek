@@ -386,20 +386,20 @@ public class MoveStep implements Serializable {
         //this is handled differently by aerospace units operating on the ground map and by spheroids in atmosphere
         if(entity.isAirborne() && game.getBoard().onGround()) {
             setNMoved(getNMoved() + 1);
-            if(entity.getMovementMode() != IEntityMovementMode.SPHEROID && getNMoved() >= 16) {
+            if((entity.getMovementMode() != IEntityMovementMode.SPHEROID) && (getNMoved() >= 16)) {
                     setVelocityLeft(getVelocityLeft() - 1);
                     setNMoved(0);
             }
         } else if(entity.isAirborne() && !game.useVectorMove() && !useSpheroidAtmosphere(game, entity)) {
             setVelocityLeft(getVelocityLeft() - 1);
             setNTurns(0);
-        }   
+        }
 
         //if in atmosphere, then I need to know if this move qualifies the unit
         //for a free turn
         if(useAeroAtmosphere(game, entity)) {
             setNStraight(getNStraight() + 1);
-            if(game.getBoard().onGround() && getNStraight() > 7) {
+            if(game.getBoard().onGround() && (getNStraight() > 7)) {
                 //if flying on ground map, then you have to fly at least 8 straight hexes between turns (free or not)
                 //http://www.classicbattletech.com/forums/index.php/topic,37171.new.html#new
                 setNTurns(0);
@@ -411,7 +411,7 @@ public class MoveStep implements Serializable {
                 }
             }
         }
-        
+
         if (getType() == MovePath.STEP_DFA) {
             IHex hex = game.getBoard().getHex(getPosition());
             setElevation(Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV)));
@@ -665,7 +665,7 @@ public class MoveStep implements Serializable {
             	if(entity.isAirborne()) {
             		setAltitude(altitude + 1);
             		setMp(2);
-                } else { 
+                } else {
                     setElevation(elevation + 1);
                     if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
                         setMp(5);
@@ -680,7 +680,7 @@ public class MoveStep implements Serializable {
             		//it costs nothing (and may increase velocity)
                     setMp(0);
                     setNDown(getNDown() + 1);
-            	} else { 
+            	} else {
             	    setElevation(elevation - 1);
             	    if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
             	        setMp(0);
@@ -848,7 +848,7 @@ public class MoveStep implements Serializable {
     public void setElevation(int el) {
         elevation = el;
     }
-    
+
     public void setAltitude(int alt) {
         altitude = alt;
     }
@@ -942,7 +942,7 @@ public class MoveStep implements Serializable {
             velocityLeft = a.getCurrentVelocity() - a.delta_distance;
             if(game.getBoard().onGround()) {
                 velocityLeft = a.getCurrentVelocity() - a.delta_distance / 16;
-            }          
+            }
             isRolled = false;//a.isRolled();
             nStraight = a.getStraightMoves();
         }
@@ -1203,13 +1203,16 @@ public class MoveStep implements Serializable {
         boolean moreUpdates = (isEndPos != isEnd);
         isEndPos = isEnd;
 
-	// If this step isn't the end step anymore, we might not be in danger after all
-	if(parent.game.getOptions().booleanOption("fraction_jackson_rule"))
-		if(!isEnd && parent.isJumping() && parent.game.getBoard().getHex(position).containsTerrain(Terrains.WOODS, 2))
-		{
-			danger = false;
-			pastDanger = false;
-		}
+        // If this step isn't the end step anymore, we might not be in danger after all
+        if (parent.game.getOptions().booleanOption("psr_jump_woods")) {
+            if (!isEnd
+                    && parent.isJumping()
+                    && parent.game.getBoard().getHex(position).containsTerrain(
+                            Terrains.WOODS, 2)) {
+                danger = false;
+                pastDanger = false;
+            }
+        }
 
         return moreUpdates;
     }
@@ -1483,26 +1486,26 @@ public class MoveStep implements Serializable {
                         && (prev.getParent().contains(MovePath.STEP_TURN_LEFT) || prev.getParent().contains(MovePath.STEP_TURN_RIGHT))) {
                     return;
                 }
-    
+
                 //space stations can only turn
                 if((entity instanceof SpaceStation) && !((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))) {
                     return;
                 }
-    
+
                 //unless velocity is zero ASFs must move forward one hex before making turns in space
                 if (!game.useVectorMove() &&
                         (distance == 0) && (velocity != 0) &&
                         ((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))) {
                     return;
                 }
-                
+
                 //no more than two turns in one hex unless velocity is zero for anything except ASF in space
                 if (!game.useVectorMove()
                         && (a instanceof SmallCraft) && (velocity != 0)
                         && (getNTurns() > 2)) {
                     return;
                 }
-                
+
                 //for warships the limit is one
                 if(!game.useVectorMove() &&
                         (a instanceof Jumpship) && (velocity != 0) && (getNTurns() > 1) ) {
@@ -1512,12 +1515,12 @@ public class MoveStep implements Serializable {
 
 
             //atmosphere has its own rules about turning
-            if(useAeroAtmosphere(game, entity) 
+            if(useAeroAtmosphere(game, entity)
                     && ((type == MovePath.STEP_TURN_LEFT) || (type == MovePath.STEP_TURN_RIGHT))
                             && !prev.canAeroTurn(game)) {
                 return;
             }
-            
+
             if ((type == MovePath.STEP_FORWARDS) && game.getBoard().inAtmosphere()
                     && !a.isOutControl()) {
                 IHex desth = game.getBoard().getHex(getPosition());
@@ -1577,13 +1580,13 @@ public class MoveStep implements Serializable {
                 return;
             }
 
-            
+
             //check to make sure there is velocity left to spend
             if ((getVelocityLeft() >= 0) || useSpheroidAtmosphere(game, entity)) {
                 //when aeros are flying on the ground mapsheet we need an additional check
                 //because velocityLeft is only decremented at intervals of 16 hexes
-                if(useAeroAtmosphere(game, entity) && game.getBoard().onGround() && getVelocityLeft() == 0 
-                        && getNMoved() > 0) {
+                if(useAeroAtmosphere(game, entity) && game.getBoard().onGround() && (getVelocityLeft() == 0)
+                        && (getNMoved() > 0)) {
                     return;
                 }
                 if (getMpUsed() <= tmpSafeTh) {
@@ -1981,10 +1984,12 @@ public class MoveStep implements Serializable {
                 curPos, movementType, isTurning, prevStepOnPavement, prevEl,
                 getElevation(), getParentUpToThisStep());
 
-	//jumping into heavy woods is danger
-	if (game.getOptions().booleanOption("fraction_jackson_rule"))
-		if (parent.isJumping() && isEndPos && game.getBoard().getHex(curPos).containsTerrain(Terrains.WOODS, 2))
-			danger = true;
+        //jumping into heavy woods is danger
+        if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
+            if (parent.isJumping() && isEndPos && game.getBoard().getHex(curPos).containsTerrain(Terrains.WOODS, 2)) {
+                danger = true;
+            }
+        }
 
         // getting up is also danger
         if (stepType == MovePath.STEP_GET_UP) {
@@ -2573,7 +2578,7 @@ public class MoveStep implements Serializable {
     public int getElevation() {
         return elevation;
     }
-    
+
     public int getAltitude() {
         return altitude;
     }
@@ -2617,7 +2622,7 @@ public class MoveStep implements Serializable {
             return 0;
         }
 
-        
+
         //if in atmosphere, the rules are different
         if(useAeroAtmosphere(game, entity)) {
             //if they have a free turn, then this move is free
@@ -2672,7 +2677,7 @@ public class MoveStep implements Serializable {
     public int getNTurns() {
         return nTurns;
     }
-    
+
     public void setNMoved(int moved) {
         nMoved = moved;
     }
@@ -2733,21 +2738,21 @@ public class MoveStep implements Serializable {
         if(!(en instanceof Aero)) {
             return false;
         }
-        
+
         if(dueFreeTurn()) {
             return true;
         }
-        
+
         //if its parf of a maneuver then you can turn
         if(isManeuver()) {
             return true;
         }
-        
+
         if(en instanceof ConvFighter) {
             //conventional fighters can only turn on free turns or maneuvers
             return false;
         }
-        
+
         //cant use thrust turns in the first hex of movement (or first 8 if ground)
         if(game.getBoard().onGround()) {
             //if flying on the ground map then they need to move 8 hexes first
@@ -2757,13 +2762,13 @@ public class MoveStep implements Serializable {
         } else if(distance == 0) {
             return false;
         }
-        
+
         //must have been no prior turns in this hex (or 8 hexes if on ground)
         return getNTurns() == 0;
-     
-        
+
+
     }
-    
+
     public boolean dueFreeTurn() {
 
         Entity en = parent.getEntity();
@@ -2809,16 +2814,16 @@ public class MoveStep implements Serializable {
                 thresh = 1;
             }
         }
-        
+
         //different rules if flying on the ground map
-        if(en.game.getBoard().onGround() && getElevation() > 0) {
+        if(en.game.getBoard().onGround() && (getElevation() > 0)) {
             if(en instanceof Dropship) {
                 thresh = vel * 8;
             } else if (en instanceof SmallCraft) {
                 thresh = 8 + (vel - 1) * 6;
             } else {
                 thresh = 8 + (vel - 1) * 4;
-            }    
+            }
         }
 
         if(straight >= thresh) {
@@ -2860,7 +2865,7 @@ public class MoveStep implements Serializable {
     public Minefield getMinefield() {
         return mf;
     }
-    
+
     /**
      * Should we treat this movement as if it is occuring for an aerodyne unit flying in atmosphere?
      */
@@ -2888,7 +2893,7 @@ public class MoveStep implements Serializable {
     private boolean useSpheroidAtmosphere(IGame game, Entity en) {
         if(!(en instanceof Aero)) {
             return false;
-        } 
+        }
         //are we in space?
         if(game.getBoard().inSpace()) {
         	return false;
@@ -2899,7 +2904,7 @@ public class MoveStep implements Serializable {
         }
         //are we in atmosphere?
         return en.isAirborne();
-        
+
     }
-    
+
 }

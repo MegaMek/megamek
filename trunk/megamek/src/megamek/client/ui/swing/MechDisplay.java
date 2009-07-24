@@ -830,15 +830,15 @@ public class MechDisplay extends JPanel {
 
             add(wTargetL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(9).gridx(0));
 
-            add(wTargetR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(9).gridx(1));
+            add(wTargetR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(9).gridx(1));
 
             add(wRangeL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(10).gridx(0));
 
-            add(wRangeR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(10).gridx(1));
+            add(wRangeR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(10).gridx(1));
 
             add(wToHitL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(11).gridx(0));
 
-            add(wToHitR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(11).gridx(1));
+            add(wToHitR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(11).gridx(1));
 
             // to-hit text
             toHitText = new JTextArea("", 2, 20); //$NON-NLS-1$

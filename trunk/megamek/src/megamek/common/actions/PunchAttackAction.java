@@ -26,7 +26,6 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.VTOL;
 
 /**
  * The attacker punches the target.
@@ -104,12 +103,12 @@ public class PunchAttackAction extends PhysicalAttackAction {
         final int targetHeight = targetElevation + target.getHeight();
         final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
                 : Mech.LOC_LARM;
-        if (ae.getGrappled() != Entity.NONE
-                && ((ae.getGrappleSide() == Entity.GRAPPLE_LEFT && arm == Mech.LOC_LARM))
-                || (ae.getGrappleSide() == Entity.GRAPPLE_RIGHT && arm == Mech.LOC_RARM)) {
+        if (((ae.getGrappled() != Entity.NONE)
+                && (((ae.getGrappleSide() == Entity.GRAPPLE_LEFT) && (arm == Mech.LOC_LARM))))
+                || ((ae.getGrappleSide() == Entity.GRAPPLE_RIGHT) && (arm == Mech.LOC_RARM))) {
             return "grappled with punching arm";
         }
-        if (ae instanceof Mech && ((Mech) ae).hasExtendedRetractableBlade()) {
+        if ((ae instanceof Mech) && ((Mech) ae).hasExtendedRetractableBlade()) {
             return "Extended retractable blade";
         }
         // non-mechs can't punch
@@ -131,7 +130,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (ae.isLocationBad(armLoc)) {
             return "Arm missing";
         }
-        
+
         //check for no/minimal arms quirk
         if(ae.getQuirks().booleanOption("no_arms")) {
             return "No/minimal arms";
@@ -149,10 +148,10 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         // check elevation
         if (target.isAirborneVTOL()) {
-            if (targetElevation - attackerHeight > 2 || targetElevation - attackerHeight < 1) {
+            if ((targetElevation - attackerHeight > 2) || (targetElevation - attackerHeight < 1)) {
                 return "Target elevation not in range";
             }
-        } else if (attackerHeight < targetElevation || attackerHeight > targetHeight) {
+        } else if ((attackerHeight < targetElevation) || (attackerHeight > targetHeight)) {
             return "Target elevation not in range";
         }
 
@@ -170,7 +169,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
             Targetable target, int arm) {
         final Entity ae = game.getEntity(attackerId);
 
-        if (ae == null || target == null) {
+        if ((ae == null) || (target == null)) {
             throw new IllegalArgumentException("Attacker or target not valid");
         }
         String impossible = PunchAttackAction.toHitIsImpossible(game, ae, target, arm);
@@ -189,7 +188,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         ToHitData toHit;
 
         // arguments legal?
-        if (arm != PunchAttackAction.RIGHT && arm != PunchAttackAction.LEFT) {
+        if ((arm != PunchAttackAction.RIGHT) && (arm != PunchAttackAction.LEFT)) {
             throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
         }
 
@@ -208,8 +207,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
             // be a tank, and both must be in the same hex.
             if (!ae.isLocationBad(Mech.LOC_RARM)
                     && !ae.isLocationBad(Mech.LOC_LARM)
-                    && target instanceof Tank
-                    && ae.getPosition().distance(target.getPosition()) == 0) {
+                    && (target instanceof Tank)
+                    && (ae.getPosition().distance(target.getPosition()) == 0)) {
                 toHit.addModifier(2, "attacker is prone");
             } else {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
@@ -223,9 +222,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if (target.getTargetType() == Targetable.TYPE_BUILDING
-                || target.getTargetType() == Targetable.TYPE_FUEL_TANK
-                || target instanceof GunEmplacement) {
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+                || (target instanceof GunEmplacement)) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                     "Targeting adjacent building.");
         }
@@ -259,7 +258,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         // elevation
-        if (attackerHeight == targetElevation && !ae.isHullDown()) {
+        if ((attackerHeight == targetElevation) && !ae.isHullDown()) {
             if (target.getHeight() == 0) {
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
@@ -305,7 +304,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
             damage = 0;
         }
-        if (entity.heat >= 9 && ((Mech) entity).hasTSM()) {
+        if ((entity.heat >= 9) && ((Mech) entity).hasTSM()) {
             multiplier *= 2.0f;
         }
         int toReturn = (int) Math.floor(damage * multiplier)

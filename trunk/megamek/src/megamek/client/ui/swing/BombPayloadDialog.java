@@ -24,7 +24,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -38,7 +37,7 @@ import megamek.common.BombType;
 
 /**
  * A dialog to determine bomb payload Right now it is just for space bombing
- * 
+ *
  * @author suvarov454@sourceforge.net
  * @version $version: $
  */
@@ -61,7 +60,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
 
     /**
      * Create and initialize the dialog.
-     * 
+     *
      * @param parent
      *            - the <code>Frame</code> that is locked by this dialog.
      * @param title
@@ -80,9 +79,9 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             boolean spaceBomb, boolean bombDump, int lim) {
         super.setResizable(false);
 
-        this.bombs = b;
-        this.limit = lim;
-        
+        bombs = b;
+        limit = lim;
+
         GridBagLayout gridbag = new GridBagLayout();
         setLayout(gridbag);
 
@@ -98,11 +97,11 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             b_choices[i] = new JComboBox();
             b_labels[i] = new JLabel(BombType.getBombName(i));
             int max = bombs[i];
-            if(limit > -1 && max > limit) {
+            if((limit > -1) && (max > limit)) {
                 max = limit;
             }
             for (int x = 0; x <= max; x++) {
-                b_choices[i].addItem(Integer.toString(x)); 
+                b_choices[i].addItem(Integer.toString(x));
             }
             b_choices[i].setSelectedIndex(0);
             b_choices[i].addItemListener(this);
@@ -190,7 +189,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
      * Create a choice dialog. The player can choose any or all of the choices.
      * If no choices are passed in, this will be a very boring dialog, but it
      * will not suffer an exception.
-     * 
+     *
      * @param parent
      *            - the <code>Frame</code> that is locked by this dialog.
      * @param title
@@ -225,7 +224,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         if(limit < 0) {
             return;
         }
-        
+
         int[] current = new int[b_choices.length];
         for(int i = 0; i < b_choices.length; i++) {
             current[i] = b_choices[i].getSelectedIndex();
@@ -256,10 +255,10 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             b_choices[i].addItemListener(this);
         }
     }
-    
+
     /**
      * See if the player confirmed a choice.
-     * 
+     *
      * @return <code>true</code> if the player has confirmed a choice.
      *         <code>false</code> if the player canceled, if the player did not
      *         select a choice, or if no choices were available.
@@ -270,7 +269,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
 
     /**
      * Which choices did the player select?
-     * 
+     *
      * @return If no choices were available, if the player canceled, if the
      *         player did not select a choice, or if the player canceled the
      *         choice, a <code>null</code> value is returned, otherwise an array

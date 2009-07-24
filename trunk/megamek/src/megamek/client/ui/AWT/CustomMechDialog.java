@@ -55,7 +55,6 @@ import megamek.common.EntitySelector;
 import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
-import megamek.common.IEntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.IOffBoardDirections;
 import megamek.common.Infantry;
@@ -1289,21 +1288,21 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption option = j.nextElement();
-                
+
                 if(entity instanceof GunEmplacement) {
                     continue;
                 }
-                
+
                 // a bunch of stuf should get disabled for conv infantry
-                if (((entity instanceof Infantry && !(entity instanceof BattleArmor)))
-                        && (option.getName().equals("vdni") 
+                if ((((entity instanceof Infantry) && !(entity instanceof BattleArmor)))
+                        && (option.getName().equals("vdni")
                                 || option.getName().equals("bvdni"))) {
                     continue;
                 }
-                
+
                 //a bunch of stuff should get disabled for all but conventional infantry
-                if(!(entity instanceof Infantry && !(entity instanceof BattleArmor)) 
-                        && (option.getName().equals("grappler") 
+                if(!((entity instanceof Infantry) && !(entity instanceof BattleArmor))
+                        && (option.getName().equals("grappler")
                                 || option.getName().equals("pl_masc")
                                 || option.getName().equals("cyber_eye_im")
                                 || option.getName().equals("cyber_eye_tele"))) {
@@ -1683,7 +1682,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 a.setAltitude(altitude);
                 //we need to determine whether this aero is airborne or not in order for
                 //prohibited terrain and stacking to work right in the deployment phase
-                //this is very tricky because in atmosphere, zero altitude does not 
+                //this is very tricky because in atmosphere, zero altitude does not
                 //necessarily mean grounded
                 if(altitude <= 0) {
                 	a.land();
@@ -1736,7 +1735,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             entity.setCommander(chCommander.getState());
 
             setOptions();
-            
+
             if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
                 Entity chosen = client.getEntity(entityCorrespondance[choC3
                         .getSelectedIndex()]);
@@ -1764,7 +1763,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 entity.setC3NetId(client.getEntity(entityCorrespondance[choC3
                         .getSelectedIndex()]));
             }
-            
+
             if(entity instanceof BattleArmor) {
                 //have to reset internals because of dermal armor option
                 if(entity.crew.getOptions().booleanOption("dermal_armor")) {

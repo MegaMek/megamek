@@ -4568,12 +4568,10 @@ public class Server implements Runnable {
         Coords curPos = entity.getPosition();
         int curFacing = entity.getFacing();
         int curVTOLElevation = entity.getElevation();
-        int startElevation = entity.getElevation();
         int curElevation = entity.getElevation();
         int lastElevation = entity.getElevation();
         int startAltitude = entity.getAltitude();
         int curAltitude = entity.getAltitude();
-        int lastAltitude = entity.getAltitude();
         // if the entity already used some MPs,
         // it previously tried to get up and fell,
         // and then got another turn. set moveType
@@ -5814,12 +5812,7 @@ public class Server implements Runnable {
             // update lastPos, prevStep, prevFacing & prevHex
             lastPos = new Coords(curPos);
             lastElevation = curElevation;
-            lastAltitude = curAltitude;
             prevStep = step;
-            /*
-             * Bug 754610: Revert fix for bug 702735. if (prevHex != null &&
-             * !curHex.equals(prevHex)) {
-             */
             if (!curHex.equals(prevHex)) {
                 prevFacing = curFacing;
             }

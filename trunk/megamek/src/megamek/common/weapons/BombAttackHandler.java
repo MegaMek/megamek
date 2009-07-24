@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -17,25 +17,18 @@
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.Aero;
-import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.HitData;
 import megamek.common.IGame;
-import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.Report;
-import megamek.common.SpecialHexDisplay;
 import megamek.common.TargetRoll;
-import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.VTOL;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -43,10 +36,10 @@ import megamek.server.Server;
  * @author Jay Lawson
  */
 public class BombAttackHandler extends WeaponHandler {
-   
+
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2997052348538688888L;
     /**
@@ -59,7 +52,7 @@ public class BombAttackHandler extends WeaponHandler {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_NONE;
     }
-    
+
     /**
      * Does this attack use the cluster hit table?
      * necessary to determine how Aero damage should be applied
@@ -68,19 +61,19 @@ public class BombAttackHandler extends WeaponHandler {
     protected boolean usesClusterTable() {
         return true;
     }
-    
+
     @Override
     protected void useAmmo() {
         int[] payload = waa.getBombPayload();
-        if(!(ae instanceof Aero) || null == payload) {
+        if(!(ae instanceof Aero) || (null == payload)) {
             return;
         }
         for(int type = 0; type < payload.length; type++) {
             for(int i = 0; i < payload[type]; i++) {
                 //find the first mounted bomb of this type and drop it
                 for(Mounted bomb : ae.getBombs()) {
-                    if(!bomb.isDestroyed() && bomb.getShotsLeft() > 0
-                           && ((BombType)bomb.getType()).getBombType() == type) {
+                    if(!bomb.isDestroyed() && (bomb.getShotsLeft() > 0)
+                           && (((BombType)bomb.getType()).getBombType() == type)) {
                         bomb.setShotsLeft(0);
                         break;
                     }
@@ -89,7 +82,7 @@ public class BombAttackHandler extends WeaponHandler {
         }
         super.useAmmo();
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -107,7 +100,7 @@ public class BombAttackHandler extends WeaponHandler {
         } else {
             r.add("Error: From Nowhwere");
         }
-    
+
         r.add(target.getDisplayName(), true);
         vPhaseReport.addElement(r);
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
@@ -136,36 +129,36 @@ public class BombAttackHandler extends WeaponHandler {
             r.add(toHit.getValue());
             vPhaseReport.addElement(r);
         }
-    
+
         // dice have been rolled, thanks
         r = new Report(3155);
         r.newlines = 0;
         r.subject = subjectId;
         r.add(roll);
         vPhaseReport.addElement(r);
-    
+
         // do we hit?
         bMissed = roll < toHit.getValue();
         // Set Margin of Success/Failure.
         toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-    
+
         Coords coords = target.getPosition();
         if (!bMissed) {
             r = new Report(3190);
             r.subject = subjectId;
             r.add(coords.getBoardNum());
-            vPhaseReport.addElement(r);   
+            vPhaseReport.addElement(r);
         } else {
             r = new Report(3196);
             r.subject = subjectId;
             r.add(coords.getBoardNum());
-            vPhaseReport.addElement(r);   
+            vPhaseReport.addElement(r);
         }
-        
+
         //now go through the payload and drop the bombs one at a time
         int[] payload = waa.getBombPayload();
         Coords drop = coords;
-        for(int type = 0; type < payload.length; type++) {   
+        for(int type = 0; type < payload.length; type++) {
             for(int i = 0; i < payload[type]; i++) {
                 drop = coords;
                 //each bomb can scatter a different direction
@@ -196,19 +189,19 @@ public class BombAttackHandler extends WeaponHandler {
                         r.add(BombType.getBombName(type));
                         vPhaseReport.addElement(r);
                         continue;
-                    } 
+                    }
                 }
                 if(type == BombType.B_INFERNO) {
                     server.deliverBombInferno(drop, ae, subjectId, vPhaseReport);
                 } else if (type == BombType.B_THUNDER) {
                     server.deliverThunderMinefield(drop, subjectId, 20, ae.getId());
                 } else {
-                    
+
                     server.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
                 }
             }
         }
-        
+
         return false;
     }
 }

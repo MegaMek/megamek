@@ -104,13 +104,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JPanel panEquip;
     private JPanel panDeploy;
     private JPanel panQuirks;
-    private JPanel panFluff;
 
     private JScrollPane scrPilot;
     private JScrollPane scrEquip;
     private JScrollPane scrDeploy;
     private JScrollPane scrQuirks;
-    private JScrollPane scrFluff;
 
     private JPanel panOptions;
     //private JScrollPane scrOptions;
@@ -296,13 +294,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panEquip = new JPanel(new GridBagLayout());
         panDeploy = new JPanel(new GridBagLayout());
         panQuirks = new JPanel(new GridBagLayout());
-        panFluff = new JPanel(new GridBagLayout());
 
         scrPilot = new JScrollPane(panPilot);
         scrEquip = new JScrollPane(panEquip);
         scrDeploy = new JScrollPane(panDeploy);
         scrQuirks = new JScrollPane(panQuirks);
-        scrFluff = new JScrollPane(panFluff);
 
         panOptions = new JPanel(new GridBagLayout());
 
@@ -493,7 +489,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
 
         //set up infantry armor
-        if(entity instanceof Infantry && !(entity instanceof BattleArmor)) {
+        if((entity instanceof Infantry) && !(entity instanceof BattleArmor)) {
             panInfArmor.initialize();
             panEquip.add(panInfArmor, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
@@ -1933,7 +1929,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // 0?0:choDeployment.getSelectedIndex()+1));
             entity.setDeployRound(choDeployment.getSelectedIndex());
 
-            if(entity instanceof Infantry && !(entity instanceof BattleArmor)) {
+            if((entity instanceof Infantry) && !(entity instanceof BattleArmor)) {
                 panInfArmor.applyChoice();
             }
 

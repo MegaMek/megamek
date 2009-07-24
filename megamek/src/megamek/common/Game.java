@@ -1960,9 +1960,9 @@ public class Game implements Serializable, IGame {
                     vRerolls.add(e);
                 }
             }
-            TurnOrdered.rollInitAndResolveTies(entities, vRerolls);
+            TurnOrdered.rollInitAndResolveTies(entities, vRerolls, false);
         } else {
-            TurnOrdered.rollInitAndResolveTies(teams, initiativeRerollRequests);
+            TurnOrdered.rollInitAndResolveTies(teams, initiativeRerollRequests, getOptions().booleanOption("initiative_streak_compensation"));
         }
         initiativeRerollRequests.removeAllElements();
 

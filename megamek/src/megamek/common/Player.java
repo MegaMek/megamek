@@ -76,6 +76,7 @@ public final class Player extends TurnOrdered {
     // initiative collectively
     // if they are then we pick the best non-zero bonuses
     private int constantInitBonus = 0;
+    private int streakCompensationBonus = 0;
 
     /**
      * The "no camo" category.
@@ -446,6 +447,14 @@ public final class Player extends TurnOrdered {
 
         return (enemyUnitCount / ourUnitCount)
                 + (ourUnitCount / enemyUnitCount) - 1;
+    }
+
+    public void setCompensationInitBonus(int newBonus) {
+        streakCompensationBonus = newBonus;
+    }
+
+    public int getCompensationInitBonus() {
+        return streakCompensationBonus;
     }
 
     public void setConstantInitBonus(int b) {

@@ -54,9 +54,9 @@ public final class Team extends TurnOrdered {
      * Clear the initiative of this object.
      */
     @Override
-    public void clearInitiative() {
+    public void clearInitiative(boolean bUseInitComp) {
         this.getInitiative().clear();
-        TurnOrdered.rollInitiative(players);
+        TurnOrdered.rollInitiative(players, bUseInitComp);
     }
 
     public TurnVectors determineTeamOrder(IGame game) {
@@ -225,11 +225,11 @@ public final class Team extends TurnOrdered {
      *  cycle through players team and select the best initiative
      *  take negatives only if the current bonus is zero
      */
-    public int getTotalInitBonus() {
-
+    public int getTotalInitBonus(boolean bInitiativeCompensationBonus) {
         int constantb = 0;
         int turnb = 0;
         int commandb = 0;
+	int compensationBonus = 0;
 
         for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
             Player player = p.nextElement();
@@ -246,11 +246,37 @@ public final class Team extends TurnOrdered {
         for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
             Player player = p.nextElement();
             turnb += player.getTurnInitBonus();
+	    if(player.getCompensationInitBonus() > compensationBonus)
+		    compensationBonus = player.getCompensationInitBonus();
             if(player.getCommandBonus() > commandb)
                 commandb = player.getCommandBonus();
         }
-        
-        return constantb + turnb + commandb;
+
+        return constantb + turnb + commandb + getInitCompensationBonus(bInitiativeCompensationBonus);
+    }
+
+    public int getInitCompensationBonus(boolean bUseInitCompensation)
+    {
+	    int nInitCompensationBonus = 0;
+
+	    if(bUseInitCompensation)
+	    	for(Enumeration<Player> p = getPlayers(); p.hasMoreElements();)
+		{
+			Player player = p.nextElement();
+			if (player.getCompensationInitBonus() > nInitCompensationBonus)
+				nInitCompensationBonus = player.getCompensationInitBonus();
+		}
+
+	    return nInitCompensationBonus;
+    }
+
+    public void setInitCompensationBonus(int nNewValue)
+    {
+	    for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();)
+	    {
+		    Player player = p.nextElement();
+		    player.setCompensationInitBonus(nNewValue);
+	    }
     }
     
     /**

@@ -2,6 +2,7 @@
 ----------------
 v0.35.6-dev (SVN)
 + ultra rubble image (thanks sirrob01!)
++ Bug: Mechdisplay not remembering which ammo was selected
 
 v0.35.5 (2009-07-24, 23:16 GMT+2)
 + Bug 2819713: Can't change Camo

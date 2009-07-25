@@ -1368,7 +1368,9 @@ public class MechDisplay extends JPanel {
                             && (atype.getRackSize() == wtype.getRackSize())) {
 
                         vAmmo.add(mountedAmmo);
+                        m_chAmmo.removeActionListener(this);
                         m_chAmmo.addItem(formatAmmo(mountedAmmo));
+                        m_chAmmo.addActionListener(this);
                         if (mounted.getLinked().equals(mountedAmmo)) {
                             nCur = i;
                         }

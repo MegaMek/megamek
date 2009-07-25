@@ -1700,6 +1700,7 @@ super * "rubble:3" "" "boring/rubble_heavy.gif"
 super * "rubble:4" "" "boring/rubble_hardened.gif"
 #level 5 is wall rubble
 super * "rubble:5" "" "boring/rubble_light.gif"
+super * "rubble:6" "" "boring/rubble_ultra.gif"
 
 
 super * "fluff:6:00" "" "fluff/skylight1.gif"

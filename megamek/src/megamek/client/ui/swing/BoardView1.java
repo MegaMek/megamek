@@ -1816,7 +1816,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         // we clicked the right mouse button,
         // remember the position if we start to scroll
         // if we drag, we should scroll
-        if (me.getButton() == MouseEvent.BUTTON3) {
+        if (SwingUtilities.isRightMouseButton(me)) {
             scrollXDifference = me.getX();
             scrollYDifference = me.getY();
             shouldScroll = true;
@@ -1858,7 +1858,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         // if we released the right mouse button, there's no more
         // scrolling
-        if (me.getButton() == MouseEvent.BUTTON3) {
+        if (SwingUtilities.isRightMouseButton(me)) {
             scrollXDifference = 0;
             scrollYDifference = 0;
             dragging = false;

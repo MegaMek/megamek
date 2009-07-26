@@ -251,8 +251,8 @@ public class Compute {
                 // Unless grappled
                 //grounded small craft are also treated as mechs for purposes of stacking
                 if (isMech
-                		&& (((inHex instanceof Mech) && (((Mech) inHex).getGrappled() != entering.getId()))
-                				|| (inHex instanceof SmallCraft))) {
+                        && (((inHex instanceof Mech) && (((Mech) inHex).getGrappled() != entering.getId()))
+                                || (inHex instanceof SmallCraft))) {
                     return inHex;
                 }
 

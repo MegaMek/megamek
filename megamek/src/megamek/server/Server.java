@@ -3481,8 +3481,8 @@ public class Server implements Runnable {
                     Entity swarmer = game.getEntity(entity.getSwarmAttackerId());
                     if (swarmer != null) {
                         if (!swarmer.isDone()) {
-                            swarmer.setDone(true);
                             game.removeTurnFor(swarmer);
+                            swarmer.setDone(true);
                             send(createTurnVectorPacket());
                         }
                         game.removeEntity(swarmer.getId(), IEntityRemovalConditions.REMOVE_PUSHED);
@@ -7872,8 +7872,8 @@ public class Server implements Runnable {
         int swarmerId = entity.getSwarmAttackerId();
         final Entity swarmer = game.getEntity(swarmerId);
         if (!swarmer.isDone()) {
-            swarmer.setDone(true);
             game.removeTurnFor(swarmer);
+            swarmer.setDone(true);
             send(createTurnVectorPacket());
         }
 
@@ -19796,8 +19796,8 @@ public class Server implements Runnable {
             swarmer.setPosition(fallPos);
             entityUpdate(swarmerId);
             if (!swarmer.isDone()) {
-                swarmer.setDone(true);
                 game.removeTurnFor(swarmer);
+                swarmer.setDone(true);
                 send(createTurnVectorPacket());
             }
         } // End dislodge-infantry

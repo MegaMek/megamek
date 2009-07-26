@@ -1722,9 +1722,10 @@ public class Game implements Serializable, IGame {
         // A turn only needs to be removed when going from 4 inf (2 turns) to
         // 3 inf (1 turn)
         if (getOptions().booleanOption("inf_move_multi")
-                && (entity instanceof Infantry) && (phase == Phase.PHASE_MOVEMENT)) {
+                && (entity instanceof Infantry)
+                && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getInfantryLeft(entity.getOwnerId()) % getOptions().intOption(
-            "inf_proto_move_multi")) != 1) {
+                    "inf_proto_move_multi")) != 1) {
                 // exception, if the _next_ turn is an infantry turn, remove
                 // that
                 // contrived, but may come up e.g. one inf accidently kills
@@ -1744,7 +1745,8 @@ public class Game implements Serializable, IGame {
         }
         // Same thing but for protos
         if (getOptions().booleanOption("protos_move_multi")
-                && (entity instanceof Protomech) && (phase == Phase.PHASE_MOVEMENT)) {
+                && (entity instanceof Protomech)
+                && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getProtomechsLeft(entity.getOwnerId()) % getOptions()
                     .intOption("inf_proto_move_multi")) != 1) {
                 // exception, if the _next_ turn is an protomek turn, remove

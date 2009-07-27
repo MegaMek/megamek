@@ -2,6 +2,8 @@
 ----------------
 v0.34.8-dev (SVN)
 + Bug: Mechdisplay not remembering which ammo was selected
++ Bug 2827537: edge and center deployment should be allowed even with exclusive
+    DB deployment
 
 v0.34.7 (2009-07-24, 23:16 GMT+2)
 + Bug: Clan Laser AMS has wrong crits/tonnage

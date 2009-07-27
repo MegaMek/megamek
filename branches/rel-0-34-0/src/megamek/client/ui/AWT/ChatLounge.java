@@ -1707,6 +1707,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     if (player.getStartingPos() == 0) {
                         continue;
                     }
+                    // CTR and EDG don't overlap
+                    if (((player.getStartingPos() == 9) && (i == 10))
+                        || ((player.getStartingPos() == 10) && (i == 9))) {
+                        continue;
+                    }
                     // check for overlapping starting directions
                     if (((player.getStartingPos() == i)
                             || (player.getStartingPos() + 1 == i) || (player

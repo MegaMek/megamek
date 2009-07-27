@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2002, 2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -47,13 +47,13 @@ import megamek.common.Player;
 
 /**
  * The starting position dialog allows the player to select a starting position.
- * 
+ *
  * @author Ben
  */
 public class StartingPositionDialog extends JDialog implements ActionListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7255701351824139329L;
     Client client;
@@ -198,12 +198,18 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                         if (player.getStartingPos() == 0) {
                             continue;
                         }
+                        // CTR and EDG don't overlap
+                        if (((player.getStartingPos() == 9) && (i == 10))
+                            || ((player.getStartingPos() == 10) && (i == 9))) {
+                            continue;
+                        }
+
                         // check for overlapping starting directions
-                        if ((player.getStartingPos() == i
-                                || player.getStartingPos() + 1 == i || player
-                                .getStartingPos() - 1 == i)
-                                && player.getId() != client.getLocalPlayer()
-                                        .getId()) {
+                        if (((player.getStartingPos() == i)
+                                || (player.getStartingPos() + 1 == i) || (player
+                                .getStartingPos() - 1 == i))
+                                && (player.getId() != client.getLocalPlayer()
+                                        .getId())) {
                             clientgui
                                     .doAlertDialog(
                                             "Must choose exclusive deployment zone",
@@ -213,8 +219,9 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                     }
                 }
                 if (client.game.getOptions().booleanOption("deep_deployment")
-                        && i > 0 && i <= 9)
+                        && (i > 0) && (i <= 9)) {
                     i += 10;
+                }
                 client.getLocalPlayer().setStartingPos(i);
                 client.sendPlayerInfo();
                 // If the gameoption set_arty_player_homeedge is set,
@@ -265,8 +272,9 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                             .getSelectedEntities(new EntitySelector() {
                                 public boolean accept(Entity entity) {
                                     if (entity.getOwnerId() == client
-                                            .getLocalPlayer().getId())
+                                            .getLocalPlayer().getId()) {
                                         return true;
+                                    }
                                     return false;
                                 }
                             });

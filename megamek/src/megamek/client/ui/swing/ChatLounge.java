@@ -1036,7 +1036,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     "pilot_advantages")) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.LVL3_ADVANTAGES);
             }
-            
+
             if (!clientgui.getClient().game.getOptions().booleanOption(
             "manei_domini")) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.MD_ADVANTAGES);
@@ -1862,6 +1862,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if (player.getStartingPos() == 0) {
                     continue;
                 }
+                // CTR and EDG don't overlap
+                if (((player.getStartingPos() == 9) && (i == 10))
+                    || ((player.getStartingPos() == 10) && (i == 9))) {
+                    continue;
+                }
+
                 // check for overlapping starting directions
                 if (((player.getStartingPos() == i)
                         || (player.getStartingPos() + 1 == i) || (player
@@ -1886,7 +1892,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     Client getPlayerListSelected(JList l) {
-        if (l == null || l.getSelectedIndex() == -1) {
+        if ((l == null) || (l.getSelectedIndex() == -1)) {
             return clientgui.getClient();
         }
         String name = ((String) l.getSelectedValue()).substring(0, Math.max(0,
@@ -1908,7 +1914,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     /**
      * Get the secondary display section of this phase.
-     * 
+     *
      * @return the <code>Component</code> which is displayed in the secondary
      *         section during this phase.
      */

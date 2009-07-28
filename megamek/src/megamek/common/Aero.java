@@ -2668,16 +2668,16 @@ public class Aero extends Entity
 
     @Override
     public int getElevation() {
-    	if(game.getBoard().inSpace()) {
-    		return 0;
-    	}
-    	//Altitude is not the same as elevation. If an aero is at 0 altitude, then it is
-    	//grounded and uses elevation normally. Otherwise, just set elevation to a very
-    	//large number so that a flying aero won't interact with the ground maps in any way
-    	if(isAirborne()) {
-    		return 999;
-    	}
-    	return super.getElevation();
+        if(game.getBoard().inSpace()) {
+            return 0;
+        }
+        //Altitude is not the same as elevation. If an aero is at 0 altitude, then it is
+        //grounded and uses elevation normally. Otherwise, just set elevation to a very
+        //large number so that a flying aero won't interact with the ground maps in any way
+        if(isAirborne()) {
+            return 999;
+        }
+        return super.getElevation();
     }
 
     @Override
@@ -2686,19 +2686,19 @@ public class Aero extends Entity
     }
 
     public void liftOff(int altitude) {
-    	if(isSpheroid()) {
-    		setMovementMode(IEntityMovementMode.SPHEROID);
-    	} else {
-    		setMovementMode(IEntityMovementMode.AERODYNE);
-    	}
-    	setAltitude(altitude);
+        if(isSpheroid()) {
+            setMovementMode(IEntityMovementMode.SPHEROID);
+        } else {
+            setMovementMode(IEntityMovementMode.AERODYNE);
+        }
+        setAltitude(altitude);
     }
 
     public void land() {
-    	setMovementMode(IEntityMovementMode.WHEELED);
-    	setAltitude(0);
-    	setElevation(0);
-    	setCurrentVelocity(0);
-    	setNextVelocity(0);
+        setMovementMode(IEntityMovementMode.WHEELED);
+        setAltitude(0);
+        setElevation(0);
+        setCurrentVelocity(0);
+        setNextVelocity(0);
     }
 }

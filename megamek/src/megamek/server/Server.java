@@ -6699,7 +6699,7 @@ public class Server implements Runnable {
         sendChangedHex(coords);
     }
 
-    /*
+    /**
      * deploys a new tele-missile entity onto the map
      */
     public void deployTeleMissile(Entity ae, AmmoType atype, int wId, int capMisMod, Vector<Report> vPhaseReport) {

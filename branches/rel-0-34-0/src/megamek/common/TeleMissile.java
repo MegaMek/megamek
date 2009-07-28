@@ -1,13 +1,13 @@
 /*
 * MegaAero - Copyright (C) 2007 Jay Lawson
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -25,7 +25,7 @@ import java.io.Serializable;
 public class TeleMissile extends Aero implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5932720323745597199L;
 
@@ -66,7 +66,7 @@ public class TeleMissile extends Aero implements Serializable {
         case(AmmoType.T_BARRACUDA):
             fuel = 30;
         name = "Barracuda-T Missile";
-        break;    
+        break;
         default:
             fuel = 30;
         }
@@ -82,14 +82,16 @@ public class TeleMissile extends Aero implements Serializable {
         initializeArmor(damageValue*10, LOC_BODY);
         autoSetInternal();
         initializeSI(0);
+        setMovementMode(IEntityMovementMode.AERODYNE);
 
         // Finish initializing this unit.
         setOwner(originalRide.getOwner());
-        initializeInternal(1, Infantry.LOC_INFANTRY);
+        initializeInternal(1, LOC_BODY);
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalId());
     }
 
+    @Override
     public HitData rollHitLocation(int table, int side) {
         return new HitData(LOC_BODY, false, HitData.EFFECT_NONE);
     }
@@ -97,7 +99,7 @@ public class TeleMissile extends Aero implements Serializable {
     int damageValue = 0;
 
     public void setDamageValue(int dv) {
-        this.damageValue = dv;
+        damageValue = dv;
     }
 
     public int getDamageValue() {
@@ -117,40 +119,48 @@ public class TeleMissile extends Aero implements Serializable {
         this.originalRideExternalId = originalRideExternalId;
     }
 
+    @Override
     public void setThresh(int val, int loc) {
         damThresh[loc] = val;
     }
 
+    @Override
     public int getThresh(int loc) {
         return damThresh[loc];
     }
 
+    @Override
     public void autoSetThresh()
     {
         for(int x = 0; x < locations(); x++)
         {
             initializeThresh(x);
-        }    
+        }
     }
 
+    @Override
     public void initializeThresh(int loc)
     {
         int nThresh = (int)Math.ceil(getArmor(loc) / 10.0);
         setThresh(nThresh,loc);
     }
 
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
 
-    public String[] getLocationNames() { 
-        return LOCATION_NAMES; 
+    @Override
+    public String[] getLocationNames() {
+        return LOCATION_NAMES;
     }
 
+    @Override
     public int calculateBattleValue() {
         return 0;
     }
 
+    @Override
     public PilotingRollData checkThrustSI(int thrust, int overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
@@ -158,6 +168,7 @@ public class TeleMissile extends Aero implements Serializable {
         return roll;
     }
 
+    @Override
     public PilotingRollData checkThrustSITotal(int thrust, int overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
@@ -170,22 +181,24 @@ public class TeleMissile extends Aero implements Serializable {
     }
 
     public void setOutContact(boolean b) {
-        this.outContact = b;
+        outContact = b;
     }
 
+    @Override
     public boolean isOutControlTotal() {
         //due to control roll, heat, shut down, or crew unconscious
         return (isOutControl() || outContact || shutDown || crew.isUnconscious());
     }
 
     public void setCritMod(int m) {
-        this.critMod = m;
+        critMod = m;
     }
 
     public int getCritMod() {
         return critMod;
     }
-    
+
+    @Override
     public int locations() {
         return 1;
     }

@@ -44,13 +44,14 @@ import megamek.common.Protomech;
 import megamek.common.SmallCraft;
 import megamek.common.SpaceStation;
 import megamek.common.Tank;
+import megamek.common.TeleMissile;
 import megamek.common.Warship;
 
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs
  * with the appropriate image. It requires data/images/units/mechset.txt, the
  * format of which is explained in that file.
- * 
+ *
  * @author Ben
  */
 public class MechTileset {
@@ -83,6 +84,7 @@ public class MechTileset {
     private String WARSHIP_STRING = "default_warship"; //$NON-NLS-1$
     private String SPACE_STATION_STRING = "default_space_station"; //$NON-NLS-1$
     private String FIGHTER_SQUADRON_STRING = "default_fighter_squadron"; //$NON-NLS-1$
+    private String TELE_MISSILE_STRING = "default_tele_missile"; //$NON-NLS-1$
 
     private MechEntry default_light;
     private MechEntry default_medium;
@@ -113,7 +115,8 @@ public class MechTileset {
     private MechEntry default_warship;
     private MechEntry default_space_station;
     private MechEntry default_fighter_squadron;
-    
+    private MechEntry default_tele_missile;
+
     private HashMap<String, MechEntry> exact = new HashMap<String, MechEntry>();
     private HashMap<String, MechEntry> chassis = new HashMap<String, MechEntry>();
 
@@ -193,7 +196,7 @@ public class MechTileset {
         }
         if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
             return default_submarine;
-        }        
+        }
         if (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL) {
             return default_hydrofoil;
         }
@@ -203,8 +206,9 @@ public class MechTileset {
                     return default_tracked_heavy;
                 } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
                     return default_tracked_assault;
-                } else
+                } else {
                     return default_tracked;
+                }
             }
             if (entity.getMovementMode() == IEntityMovementMode.WHEELED) {
                 if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
@@ -225,37 +229,46 @@ public class MechTileset {
         if (entity instanceof GunEmplacement) {
             return default_gun_emplacement;
         }
-        
-if (entity instanceof Aero) {
-            
-            if(entity instanceof SpaceStation)
+
+        if (entity instanceof Aero) {
+
+            if (entity instanceof SpaceStation) {
                 return default_space_station;
-            
-            if(entity instanceof Warship)
+            }
+
+            if (entity instanceof Warship) {
                 return default_warship;
-                
-            if(entity instanceof Jumpship)
+            }
+
+            if (entity instanceof Jumpship) {
                 return default_jumpship;
-            
-            if(entity instanceof Dropship) {
-                Dropship ds = (Dropship)entity;
-                if(ds.isSpheroid()) 
+            }
+
+            if (entity instanceof Dropship) {
+                Dropship ds = (Dropship) entity;
+                if (ds.isSpheroid()) {
                     return default_dropship_sphere;
-                else
+                } else {
                     return default_dropship_aero;
+                }
             }
-            
-            if(entity instanceof FighterSquadron)
+
+            if (entity instanceof FighterSquadron) {
                 return default_fighter_squadron;
-            
-            if(entity instanceof SmallCraft) {
-                SmallCraft sc = (SmallCraft)entity;
-                if(sc.isSpheroid())
-                    return default_small_craft_sphere;
-                else
-                    return default_small_craft_aero;
             }
-            
+
+            if (entity instanceof SmallCraft) {
+                SmallCraft sc = (SmallCraft) entity;
+                if (sc.isSpheroid()) {
+                    return default_small_craft_sphere;
+                } else {
+                    return default_small_craft_aero;
+                }
+            }
+            if (entity instanceof TeleMissile) {
+                return default_tele_missile;
+            }
+
             return default_aero;
         }
 
@@ -275,7 +288,7 @@ if (entity instanceof Aero) {
         while (st.nextToken() != StreamTokenizer.TT_EOF) {
             String name = null;
             String imageName = null;
-            if (st.ttype == StreamTokenizer.TT_WORD
+            if ((st.ttype == StreamTokenizer.TT_WORD)
                     && st.sval.equalsIgnoreCase("include")) { //$NON-NLS-1$
                 st.nextToken();
                 name = st.sval;
@@ -292,7 +305,7 @@ if (entity instanceof Aero) {
                     System.out.print(ioerr.getMessage());
                     System.out.println("."); //$NON-NLS-1$
                 }
-            } else if (st.ttype == StreamTokenizer.TT_WORD
+            } else if ((st.ttype == StreamTokenizer.TT_WORD)
                     && st.sval.equalsIgnoreCase("chassis")) { //$NON-NLS-1$
                 st.nextToken();
                 name = st.sval;
@@ -300,7 +313,7 @@ if (entity instanceof Aero) {
                 imageName = st.sval;
                 // add to list
                 chassis.put(name.toUpperCase(), new MechEntry(name, imageName));
-            } else if (st.ttype == StreamTokenizer.TT_WORD
+            } else if ((st.ttype == StreamTokenizer.TT_WORD)
                     && st.sval.equalsIgnoreCase("exact")) { //$NON-NLS-1$
                 st.nextToken();
                 name = st.sval;
@@ -343,6 +356,7 @@ if (entity instanceof Aero) {
         default_warship = exact.get(WARSHIP_STRING.toUpperCase());
         default_space_station = exact.get(SPACE_STATION_STRING.toUpperCase());
         default_fighter_squadron = exact.get(FIGHTER_SQUADRON_STRING.toUpperCase());
+        default_tele_missile = exact.get(TELE_MISSILE_STRING.toUpperCase());
     }
 
     /**

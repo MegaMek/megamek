@@ -1,13 +1,13 @@
 /*
 * MegaAero - Copyright (C) 2007 Jay Lawson
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -24,7 +24,7 @@ package megamek.common;
 public class TeleMissile extends Aero {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5932720323745597199L;
 
@@ -65,7 +65,7 @@ public class TeleMissile extends Aero {
         case(AmmoType.T_BARRACUDA):
             fuel = 30;
         name = "Barracuda-T Missile";
-        break;    
+        break;
         default:
             fuel = 30;
         }
@@ -81,10 +81,11 @@ public class TeleMissile extends Aero {
         initializeArmor(damageValue*10, LOC_BODY);
         autoSetInternal();
         initializeSI(0);
+        setMovementMode(IEntityMovementMode.AERODYNE);
 
         // Finish initializing this unit.
         setOwner(originalRide.getOwner());
-        initializeInternal(1, Infantry.LOC_INFANTRY);
+        initializeInternal(1, LOC_BODY);
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalId());
     }
@@ -97,7 +98,7 @@ public class TeleMissile extends Aero {
     int damageValue = 0;
 
     public void setDamageValue(int dv) {
-        this.damageValue = dv;
+        damageValue = dv;
     }
 
     public int getDamageValue() {
@@ -133,7 +134,7 @@ public class TeleMissile extends Aero {
         for(int x = 0; x < locations(); x++)
         {
             initializeThresh(x);
-        }    
+        }
     }
 
     @Override
@@ -149,8 +150,8 @@ public class TeleMissile extends Aero {
     }
 
     @Override
-    public String[] getLocationNames() { 
-        return LOCATION_NAMES; 
+    public String[] getLocationNames() {
+        return LOCATION_NAMES;
     }
 
     @Override
@@ -179,7 +180,7 @@ public class TeleMissile extends Aero {
     }
 
     public void setOutContact(boolean b) {
-        this.outContact = b;
+        outContact = b;
     }
 
     @Override
@@ -189,13 +190,13 @@ public class TeleMissile extends Aero {
     }
 
     public void setCritMod(int m) {
-        this.critMod = m;
+        critMod = m;
     }
 
     public int getCritMod() {
         return critMod;
     }
-    
+
     @Override
     public int locations() {
         return 1;

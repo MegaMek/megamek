@@ -4562,8 +4562,8 @@ public class Compute {
 
     public static boolean isAirToAir(Entity attacker, Targetable target) {
         return (attacker.isAirborne() && target.isAirborne())
-        	|| (attacker.isAirborne() && target.isAirborneVTOL())
-        	|| (attacker.isAirborneVTOL() && target.isAirborne());
+                || (attacker.isAirborne() && target.isAirborneVTOL())
+                || (attacker.isAirborneVTOL() && target.isAirborne());
     }
 
     public static boolean isGroundToAir(Entity attacker, Targetable target) {

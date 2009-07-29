@@ -9,6 +9,9 @@ v0.35.6-dev (SVN)
 + Bug: Telemissiles had wrong movementtype
 + Bug: Telemissiles image in swing wrong
 + Bug: chatarea row count setting not working 
++ Tank#unlockTurret
++ Tank#resetMovementDamage
++ Tank#hasMovementDamage
 
 v0.35.5 (2009-07-24, 23:16 GMT+2)
 + Bug 2819713: Can't change Camo

@@ -1749,4 +1749,18 @@ public class Tank extends Entity {
         return super.getRearArc();
     }
     
+    public boolean hasMovementDamage() {
+        return movementDamage > 0;
+    }
+    
+    public void resetMovementDamage() {
+        movementDamage = 0;
+        minorMovementDamage = false;
+        moderateMovementDamage = false;
+        heavyMovementDamage = false;
+    }
+    
+    public void unlockTurret() {
+        m_bTurretLocked = false;
+    }
 }

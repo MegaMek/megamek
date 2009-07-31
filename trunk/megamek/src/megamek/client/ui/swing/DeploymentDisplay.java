@@ -476,11 +476,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                             ce().setElevation(deployhex.floor() - deployhex.surface());
                         }
                     } else {
-                        ce().setElevation(0);
+                        IHex deployhex = clientgui.getClient().game.getBoard().getHex(moveto);
+                        ce().setElevation(deployhex.floor() - deployhex.surface());
                     }
                 }
             } else if (!(ce() instanceof Aero)) {
-                ce().setElevation(0);
+                IHex deployhex = clientgui.getClient().game.getBoard().getHex(moveto);
+                ce().setElevation(deployhex.floor() - deployhex.surface());
             }
 
             ce().setPosition(moveto);

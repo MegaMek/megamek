@@ -380,6 +380,10 @@ public class EntityListFile {
             output.write(entity.getMovementModeAsString());
             output.write("\" commander=\"");
             output.write(String.valueOf(entity.isCommander()));
+            if(entity.getExternalId() != Entity.NONE) {
+                output.write("\" externalId=\"");
+                output.write(String.valueOf(entity.getExternalId()));
+            }
             if (entity.countQuirks() > 0) {
                 output.write("\" quirks=\"");
                 output.write(String.valueOf(entity.getQuirkList("::")));

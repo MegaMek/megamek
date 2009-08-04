@@ -48,6 +48,7 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean fired = false; // Only true for used OS stuff.
     private boolean rapidfire = false; // MGs in rapid-fire mode
     private boolean hotloaded = false; // Hotloading for ammoType
+    private boolean repairable = true; //can the equipment mounted here be repaired
 
     private int mode; // Equipment's current state. On or Off. Sixshot or
     // Fourshot, etc
@@ -1167,5 +1168,13 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public CalledShot getCalledShot() {
         return called;
+    }
+    
+    public void setRepairable(boolean repair) {
+        this.repairable = repair;
+    }
+    
+    public boolean isRepairable() {
+        return repairable;
     }
 }

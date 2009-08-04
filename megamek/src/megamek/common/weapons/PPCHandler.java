@@ -137,7 +137,7 @@ public class PPCHandler extends EnergyWeaponHandler {
             if (dieRoll < rollTarget) {
                 // Oops, we ruined our day...
                 int wlocation = weapon.getLocation();
-                weapon.setDestroyed(true);
+                weapon.setHit(true);
                 for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
                     CriticalSlot slot1 = ae.getCritical(wlocation, i);
                     if ((slot1 == null)
@@ -172,7 +172,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 vPhaseReport.add(r);
                 // Oops, we ruined our day...
                 int wlocation = weapon.getLocation();
-                weapon.setDestroyed (true);
+                weapon.setHit(true);
                 for (int i=0; i<ae.getNumberOfCriticals(wlocation); i++) {
                     CriticalSlot slot = ae.getCritical (wlocation, i);
                     if ((slot == null) || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {

@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -34,7 +34,7 @@ import megamek.server.Server.DamageType;
  */
 public class RapidfireACWeaponHandler extends UltraWeaponHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1770392652874842106L;
 
@@ -50,12 +50,12 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if (roll <= 4 && howManyShots == 2) {
+        if ((roll <= 4) && (howManyShots == 2)) {
             if (roll > 2) {
                 Report r = new Report(3161);
                 r.subject = subjectId;
@@ -69,11 +69,10 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
                 weapon.setJammed(true);
                 weapon.setHit(true);
                 int wlocation = weapon.getLocation();
-                weapon.setDestroyed(true);
                 for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
                     CriticalSlot slot1 = ae.getCritical(wlocation, i);
-                    if (slot1 == null
-                            || slot1.getType() != CriticalSlot.TYPE_SYSTEM) {
+                    if ((slot1 == null)
+                            || (slot1.getType() != CriticalSlot.TYPE_SYSTEM)) {
                         continue;
                     }
                     Mounted mounted = ae.getEquipment(slot1.getIndex());
@@ -92,12 +91,12 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
         }
         return false;
     }
-    
+
     @Override
     protected boolean usesClusterTable() {
         return true;
     }
-    
+
     @Override
     protected boolean canDoDirectBlowDamage(){
         return false;

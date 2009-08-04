@@ -17,6 +17,7 @@ v0.35.6-dev (SVN)
 + Bug: correctly use setHit and setDestroyed
 + repairable boolean in CriticalSlot and Mounted
 + write out and read in repairable status in MUL file
++ Added Paramedic Equipment construction data
 
 v0.35.5 (2009-07-24, 23:16 GMT+2)
 + Bug 2819713: Can't change Camo

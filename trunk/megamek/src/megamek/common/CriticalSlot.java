@@ -84,6 +84,13 @@ public class CriticalSlot implements Serializable {
         return hit;
     }
 
+    /**
+     * set that this CriticalSlot was or was not hit with a crit this phase
+     * Note: stuff that was hit in a phase can still be used in that phase,
+     * if that's not desired, use setDestroyed instead
+     * @param hit
+     * @see #setDestroyed(boolean)
+     */
     public void setHit(boolean hit) {
         this.hit = hit;
     }
@@ -92,6 +99,14 @@ public class CriticalSlot implements Serializable {
         return destroyed;
     }
 
+    /**
+     * Set this Mounted's destroyed status
+     * NOTE: only set this if this Mounted cannot be used in the current phase
+     * anymore.
+     * If it still can, use setHit instead
+     * @param destroyed
+     * @see #setHit(boolean)
+     */
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
     }

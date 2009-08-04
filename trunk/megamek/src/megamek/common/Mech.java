@@ -467,7 +467,7 @@ public abstract class Mech extends Entity implements Serializable {
 
                 if (((MiscType) (masc.getType())).hasSubType(MiscType.S_SUPERCHARGER)) {
                     if (masc.getType().hasFlag(MiscType.F_MASC)) {
-                        masc.setDestroyed(true);
+                        masc.setHit(true);
                         masc.setMode("Off");
                     }
                     // do the damage - engine crits

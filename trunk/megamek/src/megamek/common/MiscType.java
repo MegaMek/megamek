@@ -661,6 +661,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createRightDumper());
         EquipmentType.addType(MiscType.createMASH());
         EquipmentType.addType(MiscType.createMASHExtraTheater());
+        EquipmentType.addType(MiscType.createParamedicEquipment());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBABoardingClaw());
@@ -3533,6 +3534,20 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 10000;
         misc.flags1 |= F_TANK_EQUIPMENT | F_AERO_EQUIPMENT;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createParamedicEquipment() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Paramedic Equipment";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.25f;
+        misc.criticals = 1;
+        misc.cost = 7500;
+        misc.flags1 |= F_TANK_EQUIPMENT | F_AERO_EQUIPMENT | F_MECH_EQUIPMENT;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
 
         return misc;

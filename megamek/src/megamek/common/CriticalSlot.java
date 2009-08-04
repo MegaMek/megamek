@@ -34,6 +34,7 @@ public class CriticalSlot implements Serializable {
     private boolean hittable; // false = hits rerolled
     private boolean breached; // true = breached
     private boolean repairing = false; // true = currently being repaired
+    private boolean repairable = true; //true = can be repaired 
 
     private boolean armored = false; // Armored Component Rule
 
@@ -193,5 +194,13 @@ public class CriticalSlot implements Serializable {
 
     public boolean isArmored() {
         return armored;
+    }
+    
+    public void setRepairable(boolean repair) {
+        this.repairable = repair;
+    }
+    
+    public boolean isRepairable() {
+        return repairable;
     }
 }

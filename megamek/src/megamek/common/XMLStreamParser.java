@@ -161,6 +161,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String AUTOEJECT = "autoeject";
     public static final String INDEX = "index";
     public static final String IS_DESTROYED = "isDestroyed";
+    public static final String IS_REPAIRABLE = "isRepairable";
     public static final String POINTS = "points";
     public static final String TYPE = "type";
     public static final String IS_REAR = "isRear";
@@ -1025,6 +1026,7 @@ public class XMLStreamParser implements XMLResponder {
                 String shots = (String) attr.get(SHOTS);
                 String hit = (String) attr.get(IS_HIT);
                 String destroyed = (String) attr.get(IS_DESTROYED);
+                String repairable = (String) attr.get(IS_REPAIRABLE);
                 String munition = (String) attr.get(MUNITION);
                 String quirks = (String) attr.get(QUIRKS);
 
@@ -1176,6 +1178,18 @@ public class XMLStreamParser implements XMLResponder {
                                 .append("Found invalid isDestroyed value: ")
                                 .append(destroyed).append(".\n");
                     }
+                    
+                    // Is the location repairable?
+                    boolean repairFlag = true;
+                    try {
+                        if (repairable != null) {
+                            repairFlag = repairable.equals("true");
+                        }
+                    } catch (Throwable excep) {
+                        warning
+                                .append("Found invalid isRepairable value: ")
+                                .append(destroyed).append(".\n");
+                    }
 
                     // Try to get the critical slot.
                     CriticalSlot slot = entity.getCritical(loc,
@@ -1239,6 +1253,8 @@ public class XMLStreamParser implements XMLResponder {
                         // Hit and destroy the mounted, according to the flags.
                         mounted.setDestroyed(hitFlag || destFlag);
 
+                        mounted.setRepairable(repairFlag);
+                        
                         // Is the mounted a type of ammo?
                         if (mounted.getType() instanceof AmmoType) {
 
@@ -1332,6 +1348,7 @@ public class XMLStreamParser implements XMLResponder {
                     // Hit and destroy the slot, according to the flags.
                     slot.setHit(hitFlag);
                     slot.setDestroyed(destFlag);
+                    slot.setRepairable(repairFlag);
 
                 } // End have-required-fields
             } // End ready-for-slot

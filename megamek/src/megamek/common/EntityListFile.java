@@ -78,7 +78,7 @@ public class EntityListFile {
      * @return a <code>String</code> describing the slot.
      */
     private static String formatSlot(String index, Mounted mount,
-            boolean isHit, boolean isDestroyed) {
+            boolean isHit, boolean isDestroyed, boolean isRepairable) {
         StringBuffer output = new StringBuffer();
 
         output.append("         <slot index=\"");
@@ -108,6 +108,10 @@ public class EntityListFile {
         if (isHit) {
             output.append("\" isHit=\"");
             output.append(String.valueOf(isHit));
+        }
+        if (isHit) {
+            output.append("\" isRepairable=\"");
+            output.append(String.valueOf(isRepairable));
         }
         output.append("\" isDestroyed=\"");
         output.append(String.valueOf(isDestroyed));
@@ -201,7 +205,7 @@ public class EntityListFile {
                     if (isDestroyed && isMech && slot.isMissing()
                             && !slot.isHit() && !slot.isDestroyed()) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
-                                mount, slot.isHit(), slot.isDestroyed()));
+                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable()));
                         haveSlot = true;
                         blownOff = true;
                     }
@@ -209,14 +213,14 @@ public class EntityListFile {
                     // Record damaged slots in undestroyed locations.
                     else if (!isDestroyed && slot.isDamaged()) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
-                                mount, slot.isHit(), slot.isDestroyed()));
+                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable()));
                         haveSlot = true;
                     }
 
                     //record any quirks
                     else if (null != mount && mount.countQuirks() > 0) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
-                                mount, slot.isHit(), slot.isDestroyed()));
+                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable()));
                         haveSlot = true;
                     }
 
@@ -240,7 +244,7 @@ public class EntityListFile {
                             && mount.getType() instanceof WeaponType
                             && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
-                                mount, slot.isHit(), slot.isDestroyed()));
+                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable()));
                         haveSlot = true;
                     }
 
@@ -255,7 +259,7 @@ public class EntityListFile {
 
                     // Is this ammo in the current location?
                     if (mount.getLocation() == loc) {
-                        thisLoc.append(EntityListFile.formatSlot("N/A", mount, false, false));
+                        thisLoc.append(EntityListFile.formatSlot("N/A", mount, false, false, false));
                         haveSlot = true;
                     }
 

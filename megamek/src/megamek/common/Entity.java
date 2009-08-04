@@ -2815,7 +2815,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Number of slots doomed, missing or destroyed
+     * Number of slots doomed, missing or destroyed in a location
      */
     public int getHitCriticals(int type, int index, int loc) {
         int hits = 0;
@@ -2831,7 +2831,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return hits;
     }
-
+    
     protected abstract int[] getNoOfSlots();
 
     /**
@@ -2940,6 +2940,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         return false;
+    }
+    
+    /**
+     * Returns false if there is at least one non-repairable critical slot for this system
+     * in the given location
+     */
+    public boolean isSystemRepairable(int system, int loc) {
+        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+            CriticalSlot ccs = getCritical(loc, i);
+            if ((ccs != null) && (ccs.getType() == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == system) && !ccs.isRepairable()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

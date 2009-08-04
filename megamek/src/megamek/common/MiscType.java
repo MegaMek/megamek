@@ -659,6 +659,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createRearDumper());
         EquipmentType.addType(MiscType.createLeftDumper());
         EquipmentType.addType(MiscType.createRightDumper());
+        EquipmentType.addType(MiscType.createMASH());
+        EquipmentType.addType(MiscType.createMASHExtraTheater());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBABoardingClaw());
@@ -3503,6 +3505,34 @@ public class MiscType extends EquipmentType {
         misc.cost = 5000;
         misc.flags |= F_DUMPER;
         misc.flags1 |= F_TANK_EQUIPMENT | F_MECH_EQUIPMENT;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createMASH() {
+        MiscType misc = new MiscType();
+
+        misc.name = "MASH core component";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 3.5f;
+        misc.criticals = 1;
+        misc.cost = 35000;
+        misc.flags1 |= F_TANK_EQUIPMENT | F_AERO_EQUIPMENT;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createMASHExtraTheater() {
+        MiscType misc = new MiscType();
+
+        misc.name = "MASH Operation Theater";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 1f;
+        misc.criticals = 1;
+        misc.cost = 10000;
+        misc.flags1 |= F_TANK_EQUIPMENT | F_AERO_EQUIPMENT;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
 
         return misc;

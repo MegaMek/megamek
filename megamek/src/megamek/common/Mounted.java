@@ -62,7 +62,7 @@ public class Mounted implements Serializable, RoundUpdated {
     private Entity entity; // what I'm mounted on
 
     private WeaponQuirks quirks = new WeaponQuirks();
-    
+
     private transient EquipmentType type;
     private String typeName;
 
@@ -125,7 +125,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     //called shots status, sort of like another mode
     private CalledShot called = new CalledShot();
-    
+
     /** Creates new Mounted */
     public Mounted(Entity entity, EquipmentType type) {
         this.entity = entity;
@@ -398,6 +398,14 @@ public class Mounted implements Serializable, RoundUpdated {
         return destroyed;
     }
 
+    /**
+     * Set this Mounted's destroyed status
+     * NOTE: only set this if this Mounted cannot be used in the current phase
+     * anymore.
+     * If it still can, use setHit instead
+     * @param destroyed
+     * @see #setHit(boolean)
+     */
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
     }
@@ -410,6 +418,13 @@ public class Mounted implements Serializable, RoundUpdated {
         return hit;
     }
 
+    /**
+     * set that this mounted was or was not hit with a crit this phase
+     * Note: stuff that was hit in a phase can still be used in that phase,
+     * if that's not desired, use setDestroyed instead
+     * @param hit
+     * @see #setDestroyed(boolean)
+     */
     public void setHit(boolean hit) {
         this.hit = hit;
     }
@@ -1066,7 +1081,7 @@ public class Mounted implements Serializable, RoundUpdated {
         // Ammobins cannot be armored.
         if (getType() instanceof AmmoType) {
             armoredComponent = false;
-        } else if (getType() instanceof MiscType && (getType().hasFlag(MiscType.F_HARJEL) || getType().hasFlag(MiscType.F_SPIKES) || getType().hasFlag(MiscType.F_REACTIVE) || getType().hasFlag(MiscType.F_MODULAR_ARMOR) || ((MiscType) getType()).isShield())) {
+        } else if ((getType() instanceof MiscType) && (getType().hasFlag(MiscType.F_HARJEL) || getType().hasFlag(MiscType.F_SPIKES) || getType().hasFlag(MiscType.F_REACTIVE) || getType().hasFlag(MiscType.F_MODULAR_ARMOR) || ((MiscType) getType()).isShield())) {
                 armoredComponent = false;
         } else {
             armoredComponent = armored;
@@ -1076,7 +1091,7 @@ public class Mounted implements Serializable, RoundUpdated {
     public boolean isArmored() {
         return armoredComponent;
     }
-    
+
     public void setQuirks(WeaponQuirks quirks) {
         this.quirks = quirks;
     }
@@ -1118,7 +1133,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
         return count;
     }
-    
+
     /**
      * Returns a string of all the quirk "codes" for this entity,
      * using sep as the separator
@@ -1149,7 +1164,7 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         return qrk.toString();
     }
-    
+
     public CalledShot getCalledShot() {
         return called;
     }

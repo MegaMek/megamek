@@ -6857,9 +6857,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return structureType;
     }
 
-    public void setWeaponDestroyed(Mounted which) {
+    public void setWeaponHit(Mounted which) {
         if (weaponList.contains(which)) {
-            which.setDestroyed(true);
+            which.setHit(true);
         }
     }
 
@@ -7766,10 +7766,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * destroys the first retractable blade critical slot found
      */
-    /**
-     * Checks whether a weapon has been fired from the specified location this
-     * turn
-     */
     public void destroyRetractableBlade(int loc) {
         // check critical slots
         for (int i = 0; i < this.getNumberOfCriticals(loc); i++) {
@@ -7779,9 +7775,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 continue;
             }
             Mounted m = getEquipment(slot.getIndex());
-            if ((m.getLocation() == loc) && !m.isDestroyed() && !m.isBreached() && (m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
-                slot.setDestroyed(true);
-                m.setDestroyed(true);
+            if ((m.getLocation() == loc) && !m.isHit() && !m.isBreached() && (m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+                slot.setHit(true);
+                m.setHit(true);
                 return;
             }
         }
@@ -7983,11 +7979,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getDamageReductionFromModularArmor(int loc, int damage, Vector<Report> vDesc) {
-
         if (!hasModularArmor(loc)) {
             return damage;
         }
-
         for (Mounted mount : this.getEquipment()) {
             if ((mount.getLocation() == loc) && !mount.isDestroyed() && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
 
@@ -8019,7 +8013,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     vDesc.addElement(r);
 
                     mount.damageTaken += damage;
-                    mount.setDestroyed(true);
                     mount.setHit(true);
                     return 0;
                 }

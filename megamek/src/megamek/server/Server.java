@@ -10980,7 +10980,7 @@ public class Server implements Runnable {
 
                 for (Mounted eq : ae.getWeaponList()) {
                     if ((eq.getLocation() == club.getLocation()) && (eq.getType() instanceof MiscType) && ((MiscType) eq.getType()).hasFlag(MiscType.F_CLUB) && ((MiscType) eq.getType()).hasSubType(MiscType.S_BUZZSAW)) {
-                        eq.setDestroyed(true);
+                        eq.setHit(true);
                         break;
                     }
                 }
@@ -15978,12 +15978,11 @@ public class Server implements Runnable {
                         vDesc.addElement(r);
 
                         // If there are split weapons in this location, mark it
-                        // as
-                        // destroyed, even if it took no criticals.
+                        // as hit, even if it took no criticals.
                         for (Mounted m : te.getWeaponList()) {
                             if (m.isSplit()) {
                                 if ((m.getLocation() == hit.getLocation()) || (m.getLocation() == nextHit.getLocation())) {
-                                    te.setWeaponDestroyed(m);
+                                    te.setWeaponHit(m);
                                 }
                             }
                         }
@@ -16016,7 +16015,7 @@ public class Server implements Runnable {
                 r.indent(3);
                 vDesc.addElement(r);
                 for (Mounted mounted : te.getWeaponList()) {
-                    mounted.setDestroyed(true);
+                    mounted.setHit(true);
                 }
             } else if ((hit.getEffect() & HitData.EFFECT_GUN_EMPLACEMENT_TURRET) == HitData.EFFECT_GUN_EMPLACEMENT_TURRET) {
                 r = new Report(6145);
@@ -16123,7 +16122,7 @@ public class Server implements Runnable {
                 if (!wtype.hasFlag(WeaponType.F_INFANTRY)) {
                     tons += wtype.getTonnage(te);
                     if (tons > te.getInternal(Infantry.LOC_INFANTRY)) {
-                        weap.setDestroyed(true);
+                        weap.setHit(true);
                     }
                 }
             }
@@ -17322,7 +17321,6 @@ public class Server implements Runnable {
                 vDesc.add(r);
                 // explosive weapons e.g. gauss now explode
                 vDesc.addAll(explodeEquipment(t, loc, weapon));
-                weapon.setDestroyed(true);
                 break;
             }
             case Tank.CRIT_WEAPON_JAM: {
@@ -17584,7 +17582,6 @@ public class Server implements Runnable {
                         if (weap.getLocation() == loc) {
                             if(destroyAll) {
                                 weap.setHit(true);
-                                weap.setDestroyed(true);
                             } else {
                                 weap.setNWeapons(weap.getNWeapons() / 2);
                             }
@@ -17595,7 +17592,6 @@ public class Server implements Runnable {
                         if(misc.getType().hasFlag(MiscType.F_ECM) || misc.getType().hasFlag(MiscType.F_ANGEL_ECM)
                                 || misc.getType().hasFlag(MiscType.F_BAP)) {
                             misc.setHit(true);
-                            misc.setDestroyed(true);
                         }
                     }
                     r = new Report(9152);
@@ -17646,7 +17642,6 @@ public class Server implements Runnable {
                     vDesc.add(r);
                     // explosive weapons e.g. gauss now explode
                     vDesc.addAll(explodeEquipment(a, loc, weapon));
-                    weapon.setDestroyed(true);
                 } else {
                     r = new Report(9155);
                     r.subject = a.getId();

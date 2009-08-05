@@ -6,6 +6,7 @@ v0.34.8-dev (SVN)
     DB deployment
 + Bug: Telemissiles had wrong movementtype
 + Bug: Telemissiles image in swing wrong
++ Bug 2832645: Forest absorbing swarmed infantry attack
 
 v0.34.7 (2009-07-24, 23:16 GMT+2)
 + Bug: Clan Laser AMS has wrong crits/tonnage

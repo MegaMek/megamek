@@ -600,7 +600,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if(null != bldg) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
-        
+
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             Report r = new Report(3415);
@@ -791,7 +791,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         boolean isAboveWoods = ((entityTarget != null) && (entityTarget.absHeight() >= 2));
         if ( game.getOptions().booleanOption("tacops_woods_cover") && !isAboveWoods
                 && (game.getBoard().getHex(entityTarget.getPosition()).containsTerrain(Terrains.WOODS)
-                || game.getBoard().getHex(entityTarget.getPosition()).containsTerrain(Terrains.JUNGLE)) ) {
+                || game.getBoard().getHex(entityTarget.getPosition()).containsTerrain(Terrains.JUNGLE))
+                && !(entityTarget.getSwarmAttackerId() == ae.getId())) {
             ITerrain woodHex = game.getBoard().getHex(entityTarget.getPosition()).getTerrain(Terrains.WOODS);
             ITerrain jungleHex = game.getBoard().getHex(entityTarget.getPosition()).getTerrain(Terrains.JUNGLE);
             int treeAbsorbs = 0;

@@ -20,6 +20,7 @@ v0.35.6-dev (SVN)
 + Added Paramedic Equipment construction data
 + Bug 2832645: Forest absorbing swarmed infantry attack
 + Lots of new BA and ASF images (Thanks adgar76)
++ fluff fields for Equipment (tech rating, availability, and introduction/extinction dates)
 
 v0.35.5 (2009-07-24, 23:16 GMT+2)
 + Bug 2819713: Can't change Camo

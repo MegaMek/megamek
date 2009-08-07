@@ -63,7 +63,7 @@ public class EquipmentType {
     public static final int T_STRUCTURE_REINFORCED = 3;
     public static final int T_STRUCTURE_COMPOSITE = 4;
     public static final int T_STRUCTURE_INDUSTRIAL = 5;
-
+    
     public static final String[] armorNames = { "Standard", "Ferro-Fibrous", "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous", "Heavy Ferro-Fibrous", "Patchwork", "Stealth", "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide", "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum", "Industrial", "Heavy Industrial", "Ferro-Lamellor" };
 
     public static final String[] structureNames = { "Standard", "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite", "Industrial" };
@@ -82,6 +82,22 @@ public class EquipmentType {
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
 
+    public static final int RATING_A = 0;
+    public static final int RATING_B = 1;
+    public static final int RATING_C = 2;
+    public static final int RATING_D = 3;
+    public static final int RATING_E = 4;
+    public static final int RATING_F = 5;
+    public static final int RATING_X = 6;
+    
+    public static final int ERA_SL = 0;
+    public static final int ERA_SW = 1;
+    public static final int ERA_CLAN = 2;
+    
+    public static final int DATE_NONE = -1;
+    
+    public static final String[] ratingNames = {"A","B","C","D","E","F","X"};
+    
     protected String name = null;
 
     protected String internalName = null;
@@ -107,6 +123,13 @@ public class EquipmentType {
     protected double bv = 0; // battle value point system
     protected double cost = 0; // The C-Bill cost of the item.
 
+    //fluffy stuff
+    protected int techRating = RATING_C;
+    protected int[] availRating = {RATING_E, RATING_E, RATING_E};
+    protected int introDate = DATE_NONE;
+    protected int extinctDate = DATE_NONE;
+    protected int reintroDate = DATE_NONE;
+    
     /**
      * what modes can this equipment be in?
      */
@@ -437,7 +460,60 @@ public class EquipmentType {
     public double getCost(Entity entity, boolean isArmored) {
         return cost;
     }
-
+    
+    public static String getRatingName(int rating) {
+        if(rating < 0 || rating > ratingNames.length) {
+            return "U";
+        }
+        return ratingNames[rating];
+    }
+    
+    public int getTechRating() {
+        return techRating;
+    }
+    
+    public String getTechRatingName() {
+        return getRatingName(getTechRating());
+    }
+    
+    public int getAvailability(int era) {
+        if(era < 0 || era > ERA_CLAN) {
+            return RATING_X;
+        }
+        return availRating[era];
+    }
+    
+    public String getAvailabilityName(int era) {
+        int avail = getAvailability(era);
+        return getRatingName(avail);
+    }
+    
+    public int getIntroductionDate() {
+        return introDate;
+    }
+    
+    public int getExtinctionDate() {
+        return extinctDate;
+    }
+    
+    public int getReintruductionDate() {
+        return reintroDate;
+    }
+    
+    public boolean isAvailableIn(int year) {
+        if(year < introDate) {
+            return false;
+        }
+        if(extinctDate == DATE_NONE || year < extinctDate) {
+            return true;
+        }
+        if(reintroDate == DATE_NONE || year < reintroDate) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
     public static double getArmorCost(int inArmor) {
         if ((inArmor < 0) || (inArmor >= armorCosts.length)) {
             return -1;

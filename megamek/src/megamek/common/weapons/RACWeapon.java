@@ -44,7 +44,7 @@ public abstract class RACWeapon extends UACWeapon {
         // explosive when jammed
         this.explosive = true;
         this.explosionDamage = damage;
-        
+        this.techRating = RATING_E;
         this.atClass = CLASS_AC;
     }
 

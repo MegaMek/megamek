@@ -49,5 +49,6 @@ public class CLRAC5 extends RACWeapon {
         criticals = 8;
         bv = 360;
         cost = 400000;
+        techRating = RATING_F;
     }
 }

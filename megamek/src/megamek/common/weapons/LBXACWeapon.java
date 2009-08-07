@@ -58,7 +58,7 @@ public abstract class LBXACWeapon extends AmmoWeapon {
         flags1 |= F_MECH_WEAPON | F_AERO_WEAPON | F_TANK_WEAPON;
 
         ammoType = AmmoType.T_AC_LBX;
-
+        techRating = RATING_E;
         atClass = CLASS_LBX_AC;
     }
 }

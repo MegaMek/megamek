@@ -144,6 +144,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String CHASSIS = "chassis";
     public static final String MODEL = "model";
     public static final String NAME = "name";
+    public static final String EXT_ID = "externalId";
     public static final String GUNNERY = "gunnery";
     public static final String GUNNERYL = "gunneryL";
     public static final String GUNNERYM = "gunneryM";
@@ -402,7 +403,21 @@ public class XMLStreamParser implements XMLResponder {
                     } // End found-MechSummary
 
                 } // End have-chassis
-
+              
+                //external id
+                String extId = (String) attr.get(EXT_ID);
+                int id = Entity.NONE;
+                if (null != extId && extId.length() > 0) {
+                    try {
+                        id = Integer.parseInt(extId);
+                    } catch (NumberFormatException excep) {
+                        // Handled by the next if test.
+                    }
+                }
+                if(null != entity) {
+                    entity.setExternalId(id);
+                }
+                
             } // End ready-for-new-Entity
 
         } else if (name.equals(FLUFF)) {

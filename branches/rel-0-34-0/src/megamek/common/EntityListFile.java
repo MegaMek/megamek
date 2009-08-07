@@ -365,6 +365,10 @@ public class EntityListFile {
             output.write(entity.getModel().replaceAll("\"", "&quot;"));
             output.write("\" type=\"");
             output.write(entity.getMovementModeAsString());
+            if(entity.getExternalId() != Entity.NONE) {
+                output.write("\" externalId=\"");
+                output.write(String.valueOf(entity.getExternalId()));
+            }
             output.write("\">");
             output.write(CommonConstants.NL);
 

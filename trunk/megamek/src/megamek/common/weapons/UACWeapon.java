@@ -44,7 +44,7 @@ public abstract class UACWeapon extends AmmoWeapon {
         ammoType = AmmoType.T_AC_ULTRA;
         String[] modeStrings = { "Single", "Ultra" };
         setModes(modeStrings);
-
+        techRating = RATING_E;
         atClass = CLASS_AC;
     }
 

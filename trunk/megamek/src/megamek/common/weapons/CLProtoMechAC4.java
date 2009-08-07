@@ -54,5 +54,6 @@ public class CLProtoMechAC4 extends ACWeapon {
         longAV = 7;
         maxRange = RANGE_MED;
         explosionDamage = damage;
+        techRating = RATING_F;
     }
 }

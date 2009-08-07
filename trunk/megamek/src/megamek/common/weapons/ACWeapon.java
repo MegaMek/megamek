@@ -44,7 +44,7 @@ public abstract class ACWeapon extends AmmoWeapon {
         flags1 |= F_MECH_WEAPON | F_AERO_WEAPON | F_TANK_WEAPON;
         ammoType = AmmoType.T_AC;
         explosive = true; // when firing incendiary ammo
-
+        techRating = RATING_C;
         atClass = CLASS_AC;
     }
 

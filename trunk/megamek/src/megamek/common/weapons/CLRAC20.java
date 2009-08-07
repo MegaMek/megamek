@@ -49,5 +49,6 @@ public class CLRAC20 extends RACWeapon {
         this.criticals = 10;
         this.bv = 823;
         this.cost = 960000;
+        this.techRating = RATING_F;
     }
 }

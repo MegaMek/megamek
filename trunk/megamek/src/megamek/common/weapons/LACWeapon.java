@@ -29,6 +29,7 @@ public abstract class LACWeapon extends ACWeapon {
     public LACWeapon() {
         super();
         this.ammoType = AmmoType.T_LAC;
+        this.techRating = RATING_D;
     }
 
 

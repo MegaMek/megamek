@@ -53,5 +53,6 @@ public class CLLB5XAC extends LBXACWeapon {
         this.medAV = 5;
         this.longAV = 5;
         this.maxRange = RANGE_LONG;
+        this.techRating = RATING_F;
     }
 }

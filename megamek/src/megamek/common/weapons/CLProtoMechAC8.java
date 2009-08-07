@@ -54,5 +54,6 @@ public class CLProtoMechAC8 extends ACWeapon {
         longAV = 7;
         maxRange = RANGE_SHORT;
         explosionDamage = damage;
+        techRating = RATING_F;
     }
 }

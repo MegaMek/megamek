@@ -75,6 +75,7 @@ import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
@@ -1473,6 +1474,36 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
                 saveListFile(living);
 
             } // End user-wants-a-MUL
+            
+          //save all destroyed units in a separate "salvage MUL"
+            ArrayList<Entity> destroyed = new ArrayList<Entity>();
+            Enumeration<Entity> graveyard = getClient().game.getGraveyardEntities();
+            while (graveyard.hasMoreElements()) {
+                Entity entity = graveyard.nextElement();
+                if(entity.isSalvage()) {
+                    destroyed.add(entity);
+                }
+            }
+            if(destroyed.size() > 0) {
+                String sLogDir = PreferenceManager.getClientPreferences()
+                .getLogDirectory();
+                File logDir = new File(sLogDir);
+                if (!logDir.exists()) {
+                    logDir.mkdir();
+                }
+                String fileName = "salvage.mul";
+                if (PreferenceManager.getClientPreferences().stampFilenames()) {
+                    fileName = StringUtil.addDateTimeStamp(fileName);
+                }
+                File unitFile = new File(sLogDir + File.separator + fileName);
+                try {
+                    // Save the destroyed entities to the file.
+                    EntityListFile.saveTo(unitFile, destroyed);
+                } catch (IOException excep) {
+                    excep.printStackTrace(System.err);
+                    doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+                }
+            }
         }
 
         @Override

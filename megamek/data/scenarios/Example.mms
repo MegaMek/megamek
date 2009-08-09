@@ -32,7 +32,7 @@ Factions=PlayerA,PlayerB,PlayerC
 
 # Faction location
 # Determines deployment area
-# Valid values are Any,N,NE,E,SE,S,SW,W,NW, and R (random)
+# Valid values are Any,N,NE,E,SE,S,SW,W,NW,CTR,EDG and R (random)
 Location_PlayerA=W
 Location_PlayerB=E
 Location_PlayerC=S

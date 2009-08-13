@@ -23,6 +23,7 @@ v0.35.6-dev (SVN)
 + fluff fields for Equipment (tech rating, availability, and introduction/extinction dates)
 + tech ratings for all autocannons
 + salvage.mul printed to log directory at game end
++ Bug 2836883: To-hit modifier for units on top of the same multi-hex build
 
 v0.35.5 (2009-07-24, 23:16 GMT+2)
 + Bug 2819713: Can't change Camo

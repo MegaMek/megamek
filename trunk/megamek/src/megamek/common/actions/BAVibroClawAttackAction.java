@@ -86,8 +86,8 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         if ((attHex == null) || (targHex == null)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "off board");
         }
-        boolean inSameBuilding = (te != null) && (game.getBoard().getBuildingAt(ae.getPosition()) != null)
-            && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
+
+        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
         ToHitData toHit;
 

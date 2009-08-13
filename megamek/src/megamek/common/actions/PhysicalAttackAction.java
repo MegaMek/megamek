@@ -94,7 +94,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             if (ae.equals(te)) {
                 return "You can't target yourself";
             }
-            
+
             //can't target airborne aeros
             if(te.isAirborne()) {
                 return "can't target airborne aero units";
@@ -145,8 +145,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
     protected static void setCommonModifiers(ToHitData toHit, IGame game,
             Entity ae, Targetable target) {
-        boolean inSameBuilding = (target instanceof Entity) && (game.getBoard().getBuildingAt(ae.getPosition()) != null)
-                && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(target.getPosition()));
+
+        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, target);
         int attackerId = ae.getId();
         int targetId = target.getTargetId();
         // Battle Armor targets are hard for Meks and Tanks to hit.

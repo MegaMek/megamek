@@ -306,9 +306,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && !isECMAffected
                 && !bMekStealthActive
                 && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE ));
-        boolean inSameBuilding = (te != null) && (game.getBoard().getBuildingAt(ae.getPosition()) != null)
-                && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
-
+        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
         if (te != null) {
             if (!isTargetECMAffected

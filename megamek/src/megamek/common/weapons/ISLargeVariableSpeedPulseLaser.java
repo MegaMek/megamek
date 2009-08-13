@@ -57,8 +57,8 @@ public class ISLargeVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeapo
         criticals = 4;
         bv = 123;
         cost = 465000;
-        shortAV = 7;
-        medAV = 10;
+        shortAV = 10;
+        medAV = 7;
         maxRange = RANGE_MED;
     }
 

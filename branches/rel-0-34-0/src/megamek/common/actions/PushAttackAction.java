@@ -122,8 +122,8 @@ public class PushAttackAction extends DisplacementAttackAction {
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int targetElevation = target.getElevation()
                 + targHex.getElevation();
-        boolean inSameBuilding = (game.getBoard().getBuildingAt(ae.getPosition()) != null)
-        && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
+
+        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         Building bldg = null;
         if (targetInBuilding) {

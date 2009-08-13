@@ -262,8 +262,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_APOLLO))
                 && (atype.getAmmoType() == AmmoType.T_MRM);
-        boolean inSameBuilding = (te != null) && (game.getBoard().getBuildingAt(ae.getPosition()) != null)
-                && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
+        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
         if (te != null) {
             if (!isTargetECMAffected

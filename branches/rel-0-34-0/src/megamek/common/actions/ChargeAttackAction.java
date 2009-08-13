@@ -121,8 +121,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         Building bldg = game.getBoard().getBuildingAt(getTargetPos());
         ToHitData toHit = null;
         boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK) || (getTargetType() == Targetable.TYPE_BUILDING));
-        boolean inSameBuilding = (te != null) && (game.getBoard().getBuildingAt(ae.getPosition()) != null)
-                && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
+
+        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
         // can't target yourself
         if (ae.equals(te)) {

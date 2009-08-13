@@ -12767,7 +12767,7 @@ public class Server implements Runnable {
             entity.heatBuildup += entity.getEngineCritHeat();
 
             // If a Mek had an active Stealth suite, add 10 heat.
-            if ((entity instanceof Mech) && entity.isStealthActive()) {
+            if ((entity instanceof Mech) && entity.isStealthOn()) {
                 entity.heatBuildup += 10;
                 r = new Report(5015);
                 r.subject = entity.getId();

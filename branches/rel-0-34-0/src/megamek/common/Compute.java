@@ -2676,6 +2676,19 @@ public class Compute {
     }
 
     /**
+     * This method checks to see if a line from a to b is affected by an ECCM
+     * field of the enemy of ae
+     *
+     * @param ae
+     * @param a
+     * @param b
+     * @return
+     */
+    public static boolean isAffectedByECCM(Entity ae, Coords a, Coords b) {
+        return Compute.getECCMFieldSize(ae, a, b) > 0;
+    }
+
+    /**
      * This method returns the highest number of enemy ECM fields of ae between points a and b
      *
      * @param ae
@@ -2776,6 +2789,109 @@ public class Compute {
             }
         }
         return worstECM;
+    }
+
+    /**
+     * This method returns the highest number of enemy ECCM fields of ae between points a and b
+     *
+     * @param ae
+     * @param a
+     * @param b
+     * @return
+     */
+    public static double getECCMFieldSize(Entity ae, Coords a, Coords b) {
+        if(ae.getGame().getBoard().inSpace()) {
+            //normal ECM effects don't apply in space
+            return 0;
+        }
+        if ((a == null) || (b == null)) {
+            return 0;
+        }
+
+        // Only grab enemies with active ECM
+        Vector<Coords> vEnemyECCMCoords = new Vector<Coords>(16);
+        Vector<Integer> vEnemyECCMRanges = new Vector<Integer>(16);
+        Vector<Double> vEnemyECCMStrengths = new Vector<Double>(16);
+        Vector<Coords> vFriendlyECMCoords = new Vector<Coords>(16);
+        Vector<Integer> vFriendlyECMRanges = new Vector<Integer>(16);
+        Vector<Double> vFriendlyECMStrengths = new Vector<Double>(16);
+        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
+            Entity ent = e.nextElement();
+            Coords entPos = ent.getPosition();
+            if (ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
+                vEnemyECCMCoords.addElement(entPos);
+                vEnemyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                vEnemyECCMStrengths.addElement(new Double(ent.getECMStrength()));
+            }
+            if (!ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)) {
+                vFriendlyECMCoords.addElement(entPos);
+                vFriendlyECMRanges.addElement(new Integer(ent.getECMRange()));
+                vFriendlyECMStrengths.addElement(new Double(ent.getECCMStrength()));
+            }
+
+            // Check the ECM effects of the entity's passengers.
+            for (Entity other : ent.getLoadedUnits()) {
+                if (other.isEnemyOf(ae) && other.hasActiveECCM() && (entPos != null)) {
+                    vEnemyECCMCoords.addElement(entPos);
+                    vEnemyECCMRanges.addElement(new Integer(other.getECMRange()));
+                    vEnemyECCMStrengths.addElement(new Double(other.getECMStrength()));
+                }
+                if (!other.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)) {
+                    vFriendlyECMCoords.addElement(entPos);
+                    vFriendlyECMRanges.addElement(new Integer(ent.getECMRange()));
+                    vFriendlyECMStrengths.addElement(new Double(ent.getECCMStrength()));
+                }
+            }
+        }
+
+        // none? get out of here
+        if (vEnemyECCMCoords.size() == 0) {
+            return 0;
+        }
+
+        // get intervening Coords.
+        ArrayList<Coords> coords = Coords.intervening(a, b);
+        // loop through all intervening coords, check each if they are ECCM
+        // affected
+        double worstECCM = 0;
+        for (Coords c : coords) {
+            // > 0: in friendly ECM
+            // 0: unaffected by enemy ECCM
+            // <0: affected by enemy ECCM
+            double eccmStatus = 0;
+            // if we're at ae's Position, figure in a possible
+            // iNarc ECM pod
+            if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
+                eccmStatus--;
+            }
+            // first, subtract 1 for each enemy ECCM that affects us
+            Enumeration<Integer> ranges = vEnemyECCMRanges.elements();
+            Enumeration<Double> strengths = vEnemyECCMStrengths.elements();
+            for (Coords enemyECCMCoords : vEnemyECCMCoords) {
+                int range = ranges.nextElement().intValue();
+                int nDist = c.distance(enemyECCMCoords);
+                double strength = strengths.nextElement().doubleValue();
+                if (nDist <= range) {
+                    eccmStatus += strength;
+                }
+            }
+            // now, add one for each friendly ECCM
+            ranges = vFriendlyECMRanges.elements();
+            strengths = vFriendlyECMStrengths.elements();
+            for (Coords friendlyECMCoords : vFriendlyECMCoords) {
+                int range = ranges.nextElement().intValue();
+                int nDist = c.distance(friendlyECMCoords);
+                double strength = strengths.nextElement().doubleValue();
+                if (nDist <= range) {
+                    eccmStatus -= strength;
+                }
+            }
+            // if any coords in the line are affected, the whole line is
+            if (eccmStatus > worstECCM) {
+                worstECCM = eccmStatus;
+            }
+        }
+        return worstECCM;
     }
 
     /**

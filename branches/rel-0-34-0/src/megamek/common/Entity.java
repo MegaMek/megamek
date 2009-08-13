@@ -5493,15 +5493,30 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Determine if this unit has an active stealth system.
+     * Determine if this unit has an active and working stealth system.
      * <p/>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
-     *         currently active, <code>false</code> if there is no stealth
+     *         currently active and it's actually working,
+     *         <code>false</code> if there is no stealth
      *         system or if it is inactive.
      */
     public boolean isStealthActive() {
+        return false;
+    }
+
+    /**
+     * Determine if this unit has an active and working stealth system.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @return <code>true</code> if this unit has a stealth system that is
+     *         currently active and it's actually working,
+     *         <code>false</code> if there is no stealth
+     *         system or if it is inactive.
+     */
+    public boolean isStealthOn() {
         return false;
     }
 

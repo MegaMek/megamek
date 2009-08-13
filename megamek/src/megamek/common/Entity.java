@@ -2831,7 +2831,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return hits;
     }
-    
+
     protected abstract int[] getNoOfSlots();
 
     /**
@@ -2941,7 +2941,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return false;
     }
-    
+
     /**
      * Returns false if there is at least one non-repairable critical slot for this system
      * in the given location
@@ -5107,9 +5107,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *            - One of this new entity's <code>Transporter</code>s.
      */
     public void addTransporter(Transporter component) {
-        // Add later transporters to the *head* of the list
-        // to make Fa Shih's use their magnetic clamps by default.
-        transports.insertElementAt(component, 0);
+        transports.add(component);
     }
 
     /**

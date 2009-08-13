@@ -24,6 +24,8 @@ v0.35.6-dev (SVN)
 + tech ratings for all autocannons
 + salvage.mul printed to log directory at game end
 + Bug 2836883: To-hit modifier for units on top of the same multi-hex build
++ Bug 2835900: BA w/ Magnetic Clamps should default to mount inside on a Vehicle
+ w/ transporter
 
 v0.35.5 (2009-07-24, 23:16 GMT+2)
 + Bug 2819713: Can't change Camo

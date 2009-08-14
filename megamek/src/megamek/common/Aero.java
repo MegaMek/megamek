@@ -1949,10 +1949,10 @@ public class Aero extends Entity
         return roll;
     }
 
-    public PilotingRollData checkStall(int velocity, int overallMoveType) {
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+    public PilotingRollData checkStall(MovePath md) {
+        PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
 
-        if( velocity == 0 ) {
+        if( md.getFinalVelocity() == 0  && !md.contains(MovePath.STEP_HOVER) && isAirborne() && !game.getBoard().inSpace()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "stalled out"));
         } else {

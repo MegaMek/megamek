@@ -112,6 +112,10 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
 			a.setSpheroid(true);
 		}
 		a.setMovementMode(nMotion);
+		if(a.isSpheroid()) {
+            a.setVSTOL(true);
+        }
+
 
 		// figure out structural integrity
 		if (!dataFile.exists("structural_integrity")) {

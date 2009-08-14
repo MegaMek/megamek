@@ -1153,7 +1153,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             if(!clientgui.getClient().game.useVectorMove() && !((Aero)ce()).isOutControlTotal()) {
                 //check for underuse of velocity
                 boolean unusedVelocity = false;
-                if(null != cmd) {
+                if(null != cmd.getLastStep()) {
                     unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
                 } else {
                     unusedVelocity = ((Aero)ce()).getCurrentVelocity() > 0;

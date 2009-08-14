@@ -171,6 +171,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     // line width of the c3 network lines
     private static final int C3_LINE_WIDTH = 1;
+    
+    //line width of the fly over lines
+    private static final int FLY_OVER_LINE_WIDTH = 3;
 
 
     private static Font FONT_7 = new Font("SansSerif", Font.PLAIN, 7); //$NON-NLS-1$
@@ -224,6 +227,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     // vector of sprites for C3 network lines
     private ArrayList<C3Sprite> c3Sprites = new ArrayList<C3Sprite>();
+    
+    //vector of sprites for aero flyover lines
+    private ArrayList<FlyOverSprite> flyOverSprites = new ArrayList<FlyOverSprite>();
 
     TilesetManager tileManager = null;
 
@@ -589,6 +595,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         // draw C3 links
         drawSprites(g, c3Sprites);
+        
+        //draw flyover routes
+        if(game.getBoard().onGround()) {
+            drawSprites(g, flyOverSprites);
+        }
 
         // draw onscreen entities
         drawSprites(g, entitySprites);
@@ -1224,6 +1235,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         if (entity.hasC3() || entity.hasC3i()) {
             addC3Link(entity);
         }
+        
+        if(entity.isAirborne()) {
+            addFlyOverPath(entity);
+        }
 
         scheduleRedraw();
     }
@@ -1247,6 +1262,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         }
 
         clearC3Networks();
+        clearFlyOverPaths();
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = i.nextElement();
             if (entity.getPosition() == null) {
@@ -1399,6 +1415,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         repaint(100);
     }
 
+    /**
+     * add a fly over path to the sprite list
+     */
+    public void addFlyOverPath(Entity e) {
+        if (e.getPosition() == null) {
+            return;
+        }
+        
+        flyOverSprites.add(new FlyOverSprite(e));
+    }
+    
     /**
      * Adds a c3 line to the sprite list.
      */
@@ -1564,6 +1591,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     public void clearC3Networks() {
         c3Sprites.clear();
+    }
+    
+    public void clearFlyOverPaths() {
+        flyOverSprites.clear();
     }
 
     /**
@@ -3405,6 +3436,151 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     }
 
     /**
+     * Sprite and info for an aero flyover route. Does not actually use the image buffer as this can be
+     * horribly inefficient for long diagonal lines.
+     */
+    private class FlyOverSprite extends Sprite {
+        private Polygon flyOverPoly;
+
+        protected Entity en;
+
+        Color spriteColor;
+
+        public FlyOverSprite(final Entity e) {
+            en = e;
+            spriteColor = PlayerColors.getColor(e.getOwner().getColorIndex());
+
+            if ((e.getPosition() == null) || e.getPassedThrough().size() < 2) {
+                flyOverPoly = new Polygon();
+                flyOverPoly.addPoint(0, 0);
+                flyOverPoly.addPoint(1, 0);
+                flyOverPoly.addPoint(0, 1);
+                bounds = new Rectangle(flyOverPoly.getBounds());
+                bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
+                image = null;
+                return;
+            }
+
+            makePoly();
+
+            // set bounds
+            bounds = new Rectangle(flyOverPoly.getBounds());
+            bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
+
+            // move poly to upper right of image
+            flyOverPoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
+
+            // set names & stuff
+
+            // nullify image
+            image = null;
+        }
+
+        @Override
+        public void prepare() {
+        }
+
+        private void makePoly() {
+            // make a polygon
+            flyOverPoly = new Polygon();
+            for(Coords c : en.getPassedThrough()) {
+                Coords prev = en.passedThroughPrevious(c);
+                if(prev.equals(c)) {
+                    continue;
+                }
+                Point a = getHexLocation(prev);
+                Point t = getHexLocation(c);
+    
+                final double an = (prev.radian(c) + (Math.PI * 1.5))
+                        % (Math.PI * 2); // angle
+                final double lw = scale * FLY_OVER_LINE_WIDTH; // line width
+    
+                
+                flyOverPoly.addPoint(
+                        a.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), a.y
+                                + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+                //flyOverPoly.addPoint(
+                  //      a.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), a.y
+                    //            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
+                //flyOverPoly.addPoint(
+                  //      t.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), t.y
+                    //            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
+                flyOverPoly.addPoint(
+                        t.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), t.y
+                                + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+                
+            }
+            
+            //now loop through backwards
+            for(int i = (en.getPassedThrough().size()-1); i > 0; i--) {
+                Coords c = en.getPassedThrough().elementAt(i);
+                Coords next = en.getPassedThrough().elementAt(i-1);
+                Point a = getHexLocation(c);
+                Point t = getHexLocation(next);
+    
+                final double an = (c.radian(next) + (Math.PI * 1.5))
+                        % (Math.PI * 2); // angle
+                final double lw = scale * FLY_OVER_LINE_WIDTH; // line width
+              //flyOverPoly.addPoint(
+                //      a.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), a.y
+                  //            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
+              //flyOverPoly.addPoint(
+                //      t.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), t.y
+                  //            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
+              
+              flyOverPoly.addPoint(
+                      a.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), a.y
+                              + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+              flyOverPoly.addPoint(
+                      t.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), t.y
+                              + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+                
+            }
+            
+        }
+
+        @Override
+        public Rectangle getBounds() {
+            makePoly();
+            // set bounds
+            bounds = new Rectangle(flyOverPoly.getBounds());
+            bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
+
+            // move poly to upper right of image
+            flyOverPoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
+            image = null;
+
+            return bounds;
+        }
+
+        @Override
+        public boolean isReady() {
+            return true;
+        }
+
+        @Override
+        public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
+
+            Polygon drawPoly = new Polygon(flyOverPoly.xpoints, flyOverPoly.ypoints, flyOverPoly.npoints);
+            drawPoly.translate(x, y);
+
+            g.setColor(spriteColor);
+            g.fillPolygon(drawPoly);
+            g.setColor(Color.black);
+            g.drawPolygon(drawPoly);
+        }
+
+        /**
+         * Return true if the point is inside our polygon
+         */
+        @Override
+        public boolean isInside(Point point) {
+            return flyOverPoly.contains(point.x - bounds.x, point.y - bounds.y);
+        }
+
+    }   
+
+    /**
      * Sprite and info for an attack. Does not actually use the image buffer as this can be horribly
      * inefficient for long diagonal lines. Appears as an arrow. Arrow becoming cut in half when two
      * Meks attacking each other.
@@ -4236,6 +4412,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         pathSprites.clear();
         attackSprites.clear();
         c3Sprites.clear();
+        flyOverSprites.clear();
         movementSprites.clear();
 
     }

@@ -38,6 +38,7 @@ v0.35.6-dev (SVN)
 + RFE 2837814: Show heading of aero units using advanced movement
 + changed color of hex numbers in space to light grey
 + updated spheroid dropship atmospheric hit locations (http://www.classicbattletech.com/forums/index.php/topic,54077.0.html)
++ Bug: spheroids only make control rolls for hovering above safe thrust, per the errata
 
 v0.35.5 (2009-07-24, 23:16 GMT+2)
 + Bug 2819713: Can't change Camo

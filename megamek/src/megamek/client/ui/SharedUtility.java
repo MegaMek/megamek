@@ -553,6 +553,7 @@ public class SharedUtility {
         int facing = md.getFinalFacing();
         for (int i = 1; i < in.size(); i++) {
 
+            Coords c = in.get(i);
             // check for split hexes
             // check for some number after a multiple of 3 (1,4,7,etc)
             if (((i % 3) == 1) && split) {
@@ -582,15 +583,12 @@ public class SharedUtility {
                 client.sendUpdateEntity(en);
 
                 // if the left is preferred, increment i so next one is skipped
-                if (leftTonnage < rightTonnage) {
+                if (leftTonnage < rightTonnage || !client.game.getBoard().contains(right)) {
                     i++;
                 } else {
                     continue;
                 }
-
             }
-
-            Coords c = in.get(i);
 
             if(!client.game.getBoard().contains(c)) {
                 md.addStep(MovePath.STEP_OFF);

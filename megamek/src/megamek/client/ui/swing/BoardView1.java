@@ -975,6 +975,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             boardGraph.drawImage(scaledImage, drawX, drawY, this);
         }
         boardGraph.setColor(GUIPreferences.getInstance().getMapTextColor());
+        if(game.getBoard().inSpace()) {
+            boardGraph.setColor(Color.LIGHT_GRAY);
+        }
 
         // draw special stuff for the hex
         final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(c);

@@ -14,11 +14,13 @@
  */
 package megamek.client.ui;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 import megamek.client.Client;
 import megamek.common.Aero;
 import megamek.common.Building;
+import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IEntityMovementMode;
@@ -384,11 +386,18 @@ public class SharedUtility {
      * Checks to see if piloting skill rolls are needed for excessive use of
      * thrust.
      */
-    public static String doThrustCheck(MovePath md) {
+    public static String doThrustCheck(MovePath md, Client client) {
 
         StringBuffer nagReport = new StringBuffer();
 
-        final Entity entity = md.getEntity();
+        if(client.game.useVectorMove()) {
+            return nagReport.toString();
+        }
+        
+        final Entity entity = md.getEntity();      
+        if(!(entity instanceof Aero)) {
+            return nagReport.toString();
+        }     
         int overallMoveType = IEntityMovementType.MOVE_NONE;
 
         Aero a = (Aero) entity;
@@ -402,7 +411,6 @@ public class SharedUtility {
         int j = 0;
         for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
-
             j++;
             // how do I figure out last step?
             if ((step.getDistance() == 0) && (md.length() != j)) {
@@ -436,6 +444,191 @@ public class SharedUtility {
 
         return nagReport.toString();
 
+    }
+    
+    public static MovePath moveAero(MovePath md, Client client) {
+        final Entity entity = md.getEntity();      
+        if(!(entity instanceof Aero)) {
+            return md;
+        }
+        Aero a = (Aero) entity;
+        
+        // should check to see if md is null. If so I need to check and see
+        // if the units
+        // current velocity is zero
+        if (md != null) {    
+            boolean isRamming = false;
+            if ((md.getLastStep() != null)
+                    && (md.getLastStep().getType() == MovePath.STEP_RAM)) {
+                isRamming = true;
+            }
+    
+            // if using advanced movement then I need to add on movement
+            // steps to get the vessel from point a to point b        
+            if (client.game.useVectorMove()) {
+                // if the unit is ramming then this is already done
+                if(!isRamming) {
+                    md = addSteps(md, entity, client);
+                }
+            }
+            else if (a.isOutControlTotal()) { 
+                // OOC units need a new movement path
+                MovePath oldmd = md;  
+                md = new MovePath(client.game, entity);
+                int vel = a.getCurrentVelocity();
+    
+                while (vel > 0) {
+                    md.addStep(MovePath.STEP_FORWARDS);
+                    if(!client.game.getBoard().contains(md.getLastStep().getPosition())) {
+                        md.removeLastStep();
+                        md.addStep(MovePath.STEP_OFF);
+                        break;
+                    }
+                    if (a.isRandomMove()) {
+                        int roll = Compute.d6(1);
+                        switch (roll) {
+                        case 1:
+                            md.addStep(MovePath.STEP_TURN_LEFT);
+                            md.addStep(MovePath.STEP_TURN_LEFT);
+                            break;
+                        case 2:
+                            md.addStep(MovePath.STEP_TURN_LEFT);
+                            break;
+                        case 5:
+                            md.addStep(MovePath.STEP_TURN_RIGHT);
+                            break;
+                        case 6:
+                            md.addStep(MovePath.STEP_TURN_RIGHT);
+                            md.addStep(MovePath.STEP_TURN_RIGHT);
+                            break;
+                        }
+                    }
+                    vel--;
+                }
+                //check to see if old movement path contained a launch
+                if (oldmd.contains(MovePath.STEP_LAUNCH)) {
+                    // since launches have to be the last step
+                    MoveStep lastStep = oldmd.getLastStep();
+                    if (lastStep.getType() == MovePath.STEP_LAUNCH) {
+                        md.addStep(lastStep.getType(), lastStep.getLaunched());
+                    }
+                }             
+            }          
+        }  
+        return md;
+    }
+    
+    /*
+     * Add steps for advanced vector movement based on the given vectors when
+     * splitting hexes, choose the hex with less tonnage in case OOC
+     */
+    private static MovePath addSteps(MovePath md, Entity en, Client client) {
+
+        // if the last step is a launch or recovery, then I want to keep that at
+        // the end
+        MoveStep lastStep = md.getLastStep();
+        if ((lastStep != null)
+                && ((lastStep.getType() == MovePath.STEP_LAUNCH) || (lastStep
+                        .getType() == MovePath.STEP_RECOVER))) {
+            md.removeLastStep();
+        }
+
+        // get the start and end
+        Coords start = en.getPosition();
+        Coords end = Compute.getFinalPosition(start, md.getFinalVectors());
+
+        boolean leftMap = false;
+        
+        // (see LosEffects.java)
+        ArrayList<Coords> in = Coords.intervening(start, end);
+        // first check whether we are splitting hexes
+        boolean split = false;
+        double degree = start.degree(end);
+        if (degree % 60 == 30) {
+            split = true;
+            in = Coords.intervening(start, end, true);
+        }
+
+        Coords current = start;
+        int facing = md.getFinalFacing();
+        for (int i = 1; i < in.size(); i++) {
+
+            // check for split hexes
+            // check for some number after a multiple of 3 (1,4,7,etc)
+            if (((i % 3) == 1) && split) {
+
+                Coords left = in.get(i);
+                Coords right = in.get(i + 1);
+
+                // get the total tonnage in each hex
+                Enumeration<Entity> leftTargets = client.game.getEntities(left);
+                double leftTonnage = 0;
+                while (leftTargets.hasMoreElements()) {
+                    leftTonnage += leftTargets.nextElement().getWeight();
+                }
+                Enumeration<Entity> rightTargets = client.game
+                        .getEntities(right);
+                double rightTonnage = 0;
+                while (rightTargets.hasMoreElements()) {
+                    rightTonnage += rightTargets.nextElement().getWeight();
+                }
+
+                // TODO: I will need to update this to account for asteroids
+
+                // I need to consider both of these passed through
+                // for purposes of bombing
+                en.addPassedThrough(right);
+                en.addPassedThrough(left);
+                client.sendUpdateEntity(en);
+
+                // if the left is preferred, increment i so next one is skipped
+                if (leftTonnage < rightTonnage) {
+                    i++;
+                } else {
+                    continue;
+                }
+
+            }
+
+            Coords c = in.get(i);
+
+            if(!client.game.getBoard().contains(c)) {
+                md.addStep(MovePath.STEP_OFF);
+                leftMap = true;
+                break;
+            }
+            
+            // which direction is this from the current hex?
+            int dir = current.direction(c);
+            // what kind of step do I need to get there?
+            int diff = dir - facing;
+            if (diff == 0) {
+                md.addStep(MovePath.STEP_FORWARDS);
+            } else if ((diff == 1) || (diff == -5)) {
+                md.addStep(MovePath.STEP_LATERAL_RIGHT);
+            } else if ((diff == -2) || (diff == 4)) {
+                md.addStep(MovePath.STEP_LATERAL_RIGHT_BACKWARDS);
+            } else if ((diff == -1) || (diff == 5)) {
+                md.addStep(MovePath.STEP_LATERAL_LEFT);
+            } else if ((diff == 2) || (diff == -4)) {
+                md.addStep(MovePath.STEP_LATERAL_LEFT_BACKWARDS);
+            } else if ((diff == 3) || (diff == -3)) {
+                md.addStep(MovePath.STEP_BACKWARDS);
+            }
+            current = c;
+
+        }
+
+        // do I now need to add on the last step again?
+        if (!leftMap && (lastStep != null) && (lastStep.getType() == MovePath.STEP_LAUNCH)) {
+            md.addStep(MovePath.STEP_LAUNCH, lastStep.getLaunched());
+        }
+
+        if (!leftMap && (lastStep != null) && (lastStep.getType() == MovePath.STEP_RECOVER)) {
+            md.addStep(MovePath.STEP_RECOVER, lastStep.getRecoveryUnit());
+        }
+
+        return md;
     }
 
     private static String addNag(PilotingRollData rollTarget) {

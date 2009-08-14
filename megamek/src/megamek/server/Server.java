@@ -4723,6 +4723,12 @@ public class Server implements Runnable {
 
                     thrustUsed = 0;
                 }
+                
+                if (step.getType() == MovePath.STEP_OFF) {
+                    a.setCurrentVelocity(md.getFinalVelocity());
+                    processLeaveMap(entity, curPos, true, Compute.roundsUntilReturn(game, entity));
+                    return;
+                }
 
                 rollTarget = a.checkRolls(step, overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -4933,12 +4939,6 @@ public class Server implements Runnable {
                     // now apply any damage to bay doors
                     entity.resetBayDoors();
                 }
-
-                if (step.getType() == MovePath.STEP_OFF) {
-                    a.setCurrentVelocity(md.getFinalVelocity());
-                    processLeaveMap(entity, curPos, true, Compute.roundsUntilReturn(game, entity));
-                    return;
-                }
             }
 
             // check piloting skill for getting up
@@ -5084,23 +5084,6 @@ public class Server implements Runnable {
             if (step.getType() == MovePath.STEP_EVADE) {
                 entity.setEvading(true);
 
-            }
-
-            if (step.getType() == MovePath.STEP_STALL) {
-                // TODO: check VSTOL status
-                r = new Report(9391);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.newlines = 0;
-                addReport(r);
-                game.addControlRoll(new PilotingRollData(entity.getId(), 0, "stalled out"));
-                // check for crash
-                if(checkCrash(entity, step.getPosition(), step.getAltitude())) {
-                    addReport(processCrash(entity, 0, curPos));
-                    crashedDuringMovement = true;
-                    // don't do the rest
-                    break;
-                }
             }
 
             if (step.getType() == MovePath.STEP_ROLL) {
@@ -5862,6 +5845,23 @@ public class Server implements Runnable {
             Aero a = (Aero) entity;
             int thrust = md.getMpUsed();
 
+            //check for aero stall
+            if(!game.getBoard().inSpace() && distance == 0
+                    && !a.isVSTOL() && !a.isSpheroid()  
+                    && !game.getPlanetaryConditions().isVacuum()) {
+                r = new Report(9391);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.newlines = 0;
+                addReport(r);
+                game.addControlRoll(new PilotingRollData(entity.getId(), 0, "stalled out"));
+                a.setAltitude(a.getAltitude() - 1);
+                // check for crash
+                if(checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
+                    addReport(processCrash(entity, 0, entity.getPosition()));
+                }
+            }
+            
             // consume fuel
             if (((entity instanceof Aero) && game.getOptions().booleanOption("fuel_consumption")) || (entity instanceof TeleMissile)) {
                 int fuelUsed = ((Aero) entity).getFuelUsed(thrust);

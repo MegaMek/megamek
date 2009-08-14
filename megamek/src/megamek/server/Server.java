@@ -5844,23 +5844,6 @@ public class Server implements Runnable {
 
             Aero a = (Aero) entity;
             int thrust = md.getMpUsed();
-
-            //check for aero stall
-            if(!game.getBoard().inSpace() && distance == 0
-                    && !a.isVSTOL() && !a.isSpheroid()  
-                    && !game.getPlanetaryConditions().isVacuum()) {
-                r = new Report(9391);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.newlines = 0;
-                addReport(r);
-                game.addControlRoll(new PilotingRollData(entity.getId(), 0, "stalled out"));
-                a.setAltitude(a.getAltitude() - 1);
-                // check for crash
-                if(checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
-                    addReport(processCrash(entity, 0, entity.getPosition()));
-                }
-            }
             
             // consume fuel
             if (((entity instanceof Aero) && game.getOptions().booleanOption("fuel_consumption")) || (entity instanceof TeleMissile)) {
@@ -5909,24 +5892,22 @@ public class Server implements Runnable {
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     game.addControlRoll(new PilotingRollData(a.getId(), 0, "hovering"));
                 }
-
-                // if this is a spheroid then check to see if it loses elevation
-                // TODO: I am currently awaiting a rules decision on the forums
-                // regarding
-                // exactly when this elevation loss occurs. For the moment lets
-                // assume it occurs
-                // if there was no elevation change during the turn and no hover
-                // step
-                if ((a.isSpheroid() || game.getPlanetaryConditions().isVacuum()) && a.isAirborne()
-                		&& (startAltitude == curAltitude) && !md.contains(MovePath.STEP_HOVER)) {
+                
+                //check for aero stall
+                rollTarget = a.checkStall(md);
+                if(rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    r = new Report(9391);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.newlines = 0;
+                    addReport(r);
+                    game.addControlRoll(new PilotingRollData(entity.getId(), 0, "stalled out"));
                     a.setAltitude(a.getAltitude() - 1);
                     // check for crash
                     if(checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
-                        addReport(processCrash(entity, md.getFinalVelocity(), curPos));
-                        crashedDuringMovement = true;
+                        addReport(processCrash(entity, 0, entity.getPosition()));
                     }
                 }
-
             }
         }
 

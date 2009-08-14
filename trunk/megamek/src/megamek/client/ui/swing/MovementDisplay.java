@@ -620,21 +620,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butWalk);
             buttonsAero.add(butAcc);
             buttonsAero.add(butDec);
-            buttonsAero.add(butTurn);
-            buttonsAero.add(butAccN);
-            buttonsAero.add(butDecN);
-            buttonsAero.add(butRoll);
-            buttonsAero.add(butEvadeAero);
-            buttonsAero.add(butRam);
+            buttonsAero.add(butTurn);     
             buttonsAero.add(butLower);
             buttonsAero.add(butRaise);
+            buttonsAero.add(butHover);
+            buttonsAero.add(butRoll);
+            buttonsAero.add(butEvadeAero);
+            buttonsAero.add(butRam);       
             buttonsAero.add(butManeuver);
+            buttonsAero.add(butAccN);
+            buttonsAero.add(butDecN);
             buttonsAero.add(butFlyOff);
             buttonsAero.add(butEject);
             buttonsAero.add(butLaunch);
             buttonsAero.add(butRecover);
             buttonsAero.add(butJoin);
-            buttonsAero.add(butHover);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
             // not used
@@ -1620,7 +1620,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         Aero a = (Aero) ce;
 
-        if (!(a.isSpheroid() || clientgui.getClient().game.getPlanetaryConditions().isVacuum())) {
+        if (!a.isVSTOL()) {
             return;
         }
 

@@ -4482,7 +4482,7 @@ public class Compute {
 
             newface = facing - 1;
             if(newface < 0) {
-                newface = 0;
+                newface = 5;
             }
             if(v[oblv2] > 0) {
                 v[oblv2]--;

@@ -11,6 +11,7 @@ v0.34.8-dev (SVN)
 + externalId saved to and loaded from MUL files
 + Bug 2836883: To-hit modifier for units on top of the same multi-hex building
 + Bug 2830760: Large VSP Laser and Aero damage
++ Bug 2792205: LRM Thunder minefiled delivery should get -4 mod for immobile
 
 v0.34.7 (2009-07-24, 23:16 GMT+2)
 + Bug: Clan Laser AMS has wrong crits/tonnage

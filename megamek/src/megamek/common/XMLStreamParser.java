@@ -408,40 +408,43 @@ public class XMLStreamParser implements XMLResponder {
 
                 } // End have-chassis
 
-                //commander
-                boolean commander = Boolean.parseBoolean((String)attr.get(COMMANDER));
-                entity.setCommander(commander);
-                
-                //external id
-                String extId = (String) attr.get(EXT_ID);
-                int id = Entity.NONE;
-                if (null != extId && extId.length() > 0) {
-                    try {
-                        id = Integer.parseInt(extId);
-                    } catch (NumberFormatException excep) {
-                        // Handled by the next if test.
-                    }
-                }
-                entity.setExternalId(id);
-
-                //quirks
-                String quirks = (String) attr.get(QUIRKS);
-                if ((null != quirks)
-                        && (quirks.trim().length() > 0)) {
-                    StringTokenizer st = new StringTokenizer(quirks,
-                            "::");
-                    while (st.hasMoreTokens()) {
-                        String quirk = st.nextToken();
-                        String quirkName = Pilot.parseAdvantageName(quirk);
-                        Object value = Pilot.parseAdvantageValue(quirk);
-
+                if(null != entity) {
+                    
+                    //commander
+                    boolean commander = Boolean.parseBoolean((String)attr.get(COMMANDER));
+                    entity.setCommander(commander);
+                    
+                    //external id
+                    String extId = (String) attr.get(EXT_ID);
+                    int id = Entity.NONE;
+                    if (null != extId && extId.length() > 0) {
                         try {
-                            entity.getQuirks().getOption(quirkName).setValue(
-                                    value);
-                        } catch (Exception e) {
-                            warning.append(
-                                    "Error restoring quirk: ").append(
-                                    quirk).append(".\n");
+                            id = Integer.parseInt(extId);
+                        } catch (NumberFormatException excep) {
+                            // Handled by the next if test.
+                        }
+                    }
+                    entity.setExternalId(id);
+    
+                    //quirks
+                    String quirks = (String) attr.get(QUIRKS);
+                    if ((null != quirks)
+                            && (quirks.trim().length() > 0)) {
+                        StringTokenizer st = new StringTokenizer(quirks,
+                                "::");
+                        while (st.hasMoreTokens()) {
+                            String quirk = st.nextToken();
+                            String quirkName = Pilot.parseAdvantageName(quirk);
+                            Object value = Pilot.parseAdvantageValue(quirk);
+    
+                            try {
+                                entity.getQuirks().getOption(quirkName).setValue(
+                                        value);
+                            } catch (Exception e) {
+                                warning.append(
+                                        "Error restoring quirk: ").append(
+                                        quirk).append(".\n");
+                            }
                         }
                     }
                 }

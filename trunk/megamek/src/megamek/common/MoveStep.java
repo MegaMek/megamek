@@ -795,10 +795,6 @@ public class MoveStep implements Serializable {
                 reverseFacing();
                 setMp(2);
                 break;
-            case MovePath.STEP_STALL:
-                setAltitude(getAltitude() - 1);
-                setMp(0);
-                break;
             case MovePath.STEP_HOVER:
                 setMp(2);
                 break;

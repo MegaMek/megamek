@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<unit>
+
+   <entity chassis="Dart" model="DRT-4S" type="Biped" commander="false">
+      <pilot name="Unnamed" nick="" gunnery="4" piloting="5" initB="0" commandB="0" hits="1" autoeject="true"/>
+      <location index="0"> Head
+         <armor points="3"/>
+      </location>
+   </entity>
+
+   <entity chassis="MechWarrior" model="Unnamed" type="Leg" commander="false">
+      <pilot name="Unnamed" nick="" gunnery="4" piloting="5" initB="0" commandB="0"/>
+   </entity>
+
+</unit>

@@ -73,6 +73,8 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         int nMotion = 16;
         a.setMovementMode(nMotion);
 
+        a.setVSTOL(true);
+        
         // figure out heat
         if (!dataFile.exists("heatsinks")) {
             throw new EntityLoadingException("Could not find weight block.");

@@ -1564,7 +1564,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
 
         Aero a = (Aero) ce;
 
-        if (!(a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum())) {
+        if (!a.isVSTOL()) {
             return;
         }
 

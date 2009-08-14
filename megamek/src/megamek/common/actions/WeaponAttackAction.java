@@ -854,7 +854,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             Aero a = (Aero) target;
 
             // is the target at zero velocity
-            if (a.getCurrentVelocity() == 0) {
+            if (a.getCurrentVelocity() == 0 && !(a.isSpheroid() && !game.getBoard().inSpace())) {
                 toHit.addModifier(-2, "target is not moving");
             }
 

@@ -1940,9 +1940,9 @@ public class Aero extends Entity
     public PilotingRollData checkHover(MovePath md) {
         PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
 
-        if( md.contains(MovePath.STEP_HOVER) ) {
+        if( md.contains(MovePath.STEP_HOVER) && md.getLastStepMovementType() == IEntityMovementType.MOVE_OVER_THRUST) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "hovering"));
+            roll.append(new PilotingRollData(getId(), 0, "hovering above safe thrust"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: entity did not hover");
         }

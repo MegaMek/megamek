@@ -3433,6 +3433,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 graph.setColor(Color.red);
                 graph.drawPolygon(facingPolys[secFacing]);
             }
+            if(entity instanceof Aero && game.useVectorMove()) {
+                for(int head : entity.getHeading()) {
+                    graph.setColor(Color.red);
+                    graph.drawPolygon(facingPolys[head]);
+                }
+            }
 
             // Determine if the entity has a locked turret,
             // and if it is a gun emplacement

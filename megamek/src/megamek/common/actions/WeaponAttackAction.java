@@ -1732,7 +1732,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (Compute.isAirToAir(ae, target)) {
             if ((aAlt - tAlt) > 2) {
                 toHit.setHitTable(ToHitData.HIT_ABOVE);
-            } else if ((tAlt - aAlt) > 2) {
+            } 
+            else if ((tAlt - aAlt) > 2) {
+                toHit.setHitTable(ToHitData.HIT_BELOW);
+            }
+            else if((aAlt - tAlt) > 0 && ((Aero)te).isSpheroid()) {
+                toHit.setHitTable(ToHitData.HIT_ABOVE);
+            }
+            else if((aAlt - tAlt) < 0 && ((Aero)te).isSpheroid()) {
                 toHit.setHitTable(ToHitData.HIT_BELOW);
             }
         }
@@ -1741,22 +1748,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         if (target.isAirborne()) {
-        	//TODO: We are not following the rules for spheroid hit locations in atmosphere per the
-        	//Errata 2.1, but those rules are completely unusable anyway, because there is no way to
-        	//determine critical hit location
-        	//http://www.classicbattletech.com/forums/index.php/topic,54077.new.html#new
-        	//we just assume that hits from above/below (more than two altitudes different per
-        	//the rules in TW (pg. 241) actually strike FRONT/AFT respectively
-            if (((Aero) target).isSpheroid() && !game.getBoard().inSpace()) {
-                if (toHit.getHitTable() == ToHitData.HIT_ABOVE) {
-                    toHit.setSideTable(ToHitData.SIDE_FRONT);
-                    toHit.setHitTable(ToHitData.HIT_NORMAL);
-                }
-                if (toHit.getHitTable() == ToHitData.HIT_BELOW) {
-                    toHit.setSideTable(ToHitData.SIDE_REAR);
-                    toHit.setHitTable(ToHitData.HIT_NORMAL);
-                }
-            } else {
+            if (!(((Aero) target).isSpheroid() && !game.getBoard().inSpace())) {
                 // get mods for direction of attack
                 int side = toHit.getSideTable();
                 // if this is an aero attack using advanced movement rules then

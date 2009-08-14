@@ -366,8 +366,8 @@ public class SharedUtility {
                 }
 
                 // stalling out
-                if ((md.getFinalVelocity() == 0) && !(a.isSpheroid() || client.game.getPlanetaryConditions().isVacuum()) && !client.game.getBoard().inSpace() && !a.isVSTOL()) {
-                    rollTarget = a.checkStall(md.getFinalVelocity(), overallMoveType);
+                rollTarget = a.checkStall(md);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     nagReport.append(SharedUtility.addNag(rollTarget));
                 }
 

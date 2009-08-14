@@ -1061,201 +1061,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      */
     public synchronized void ready() {
 
-        final Entity ce = ce();
-        if (ce instanceof Aero) {
-
-            Aero a = (Aero) ce;
-
-            // first check for stalling
-            if (!clientgui.getClient().game.getBoard().inSpace() && cmd.getFinalElevation() > 0
-                    && !a.isVSTOL()
-                    && !a.isSpheroid()
-                    && !clientgui.getClient().game.getPlanetaryConditions().isVacuum()
-                    && (((cmd == null) && (a.getCurrentVelocity() == 0)) || ((cmd != null) && (cmd
-                            .getFinalVelocity() == 0)))) {
-
-                // add a stall to the movement path
-                cmd.addStep(MovePath.STEP_STALL);
-            }
-
-            // should check to see if md is null. If so I need to check and see
-            // if the units
-            // current velocity is zero
-            if (cmd != null) {
-
-                boolean isRamming = false;
-                if ((cmd.getLastStep() != null)
-                        && (cmd.getLastStep().getType() == MovePath.STEP_RAM)) {
-                    isRamming = true;
-                }
-
-                // if using advanced movement then I need to add on movement
-                // steps
-                // to get the vessel from point a to point b
-                // if the unit is ramming then this is already done
-                if (clientgui.getClient().game.useVectorMove() && !isRamming) {
-                    // get rid of any illegal moves or the rest won't be added
-                    cmd.clipToPossible();
-                    cmd = addSteps(cmd, ce);
-
-                }
-
-                // check to see if the unit is out of control. If so, then set
-                // up a new
-                // move path for them.
-                // the same should be true if the unit is shutdown or the pilot
-                // is unconscious
-                if (!clientgui.getClient().game.useVectorMove()
-                        && (a.isOutControlTotal() || a.isShutDown() || a
-                                .getCrew().isUnconscious())) {
-
-                    MovePath oldmd = cmd;
-
-                    cmd = new MovePath(clientgui.getClient().game, ce);
-                    int vel = a.getCurrentVelocity();
-
-                    // need to check for stall here as well
-                    if ((vel == 0) && cmd.getFinalElevation() > 0
-                            && !(a.isSpheroid() || clientgui.getClient().game
-                                    .getPlanetaryConditions().isVacuum())
-                            && clientgui.getClient().game.getBoard().inSpace()
-                            && !a.isVSTOL()) {
-                        // add a stall to the movement path
-                        cmd.addStep(MovePath.STEP_STALL);
-                    }
-
-                    while (vel > 0) {
-                        // check to see if the unit is currently on a border
-                        // and facing a direction that would indicate leaving
-                        // the map
-                        Coords position = a.getPosition();
-                        int facing = a.getFacing();
-                        MoveStep step = cmd.getLastStep();
-                        if (step != null) {
-                            position = step.getPosition();
-                            facing = step.getFacing();
-                        }
-                        boolean evenx = (position.x % 2) == 0;
-                        if ((((position.x == 0) && ((facing == 5) || (facing == 4)))
-                                || ((position.x == clientgui.getClient().game.getBoard()
-                                        .getWidth() - 1) && ((facing == 1) || (facing == 2)))
-                                || ((position.y == 0)
-                                        && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx)
-                                || ((position.y == 0) && (facing == 0))
-                                || ((position.y == clientgui.getClient().game.getBoard()
-                                        .getHeight() - 1)
-                                        && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.y == clientgui.getClient().game
-                                .getBoard().getHeight() - 1) && (facing == 3)))) {
-                            // then this birdie go bye-bye
-                            // set the conditions for removal
-                            cmd.addStep(MovePath.STEP_OFF);
-                            vel = 0;
-
-                        } else {
-
-                            if (a.isRandomMove()) {
-                                int roll = Compute.d6(1);
-                                switch (roll) {
-                                case 1:
-                                    cmd.addStep(MovePath.STEP_FORWARDS);
-                                    cmd.addStep(MovePath.STEP_TURN_LEFT);
-                                    cmd.addStep(MovePath.STEP_TURN_LEFT);
-                                case 2:
-                                    cmd.addStep(MovePath.STEP_FORWARDS);
-                                    cmd.addStep(MovePath.STEP_TURN_LEFT);
-                                case 3:
-                                case 4:
-                                    cmd.addStep(MovePath.STEP_FORWARDS);
-                                case 5:
-                                    cmd.addStep(MovePath.STEP_FORWARDS);
-                                    cmd.addStep(MovePath.STEP_TURN_RIGHT);
-                                case 6:
-                                    cmd.addStep(MovePath.STEP_FORWARDS);
-                                    cmd.addStep(MovePath.STEP_TURN_RIGHT);
-                                    cmd.addStep(MovePath.STEP_TURN_RIGHT);
-                                }
-                            } else {
-                                cmd.addStep(MovePath.STEP_FORWARDS);
-                            }
-
-                            vel--;
-                        }
-
-                    }
-
-                    // check to see if old movement path contained a launch and
-                    // we are still on the board
-                    if (oldmd.contains(MovePath.STEP_LAUNCH)
-                            && !cmd.contains(MovePath.STEP_OFF)) {
-                        // since launches have to be the last step
-                        MoveStep lastStep = oldmd.getLastStep();
-                        if (lastStep.getType() == MovePath.STEP_LAUNCH) {
-                            cmd.addStep(lastStep.getType(), lastStep
-                                    .getLaunched());
-                        }
-                    }
-
-                } else {
-
-                    // I think this should be ok now
-                    cmd.clipToPossible();
-                    // check to see if velocity left is zero
-                    MoveStep step = cmd.getLastStep();
-                    if (step != null) {
-                        if ((step.getVelocityLeft() > 0)
-                                && !clientgui.getClient().game.useVectorMove()
-                                && (step.getType() != MovePath.STEP_OFF)) {
-                            // pop up some dialog telling the unit that it did
-                            // not spend enough
-                            String title = Messages
-                                    .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
-                            String body = Messages
-                                    .getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
-                            clientgui.doAlertDialog(title, body);
-                            return;
-                        }
-                    } else {
-                        // if the step is null then the unit didn't move. Make
-                        // sure velocity is zero
-                        if ((a.getCurrentVelocity() > 0)
-                                && !clientgui.getClient().game.useVectorMove()) {
-                            // pop up some dialog telling the unit that it did
-                            // not spend enough
-                            String title = Messages
-                                    .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
-                            String body = Messages
-                                    .getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
-                            clientgui.doAlertDialog(title, body);
-                            return;
-                        }
-                    }
-                }
-
-                // check for G-forces (not for vectored movement)
-                String check = SharedUtility.doThrustCheck(cmd);
-                if (!clientgui.getClient().game.useVectorMove() && (check.length() > 0)
-                        && GUIPreferences.getInstance().getNagForPSR()) {
-                    ConfirmDialog nag = new ConfirmDialog(
-                            clientgui.frame,
-                            Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                            Messages
-                                    .getString("MovementDisplay.ConfirmPilotingRoll") + //$NON-NLS-1$
-                                    check, true);
-                    nag.setVisible(true);
-                    if (nag.getAnswer()) {
-                        // do they want to be bothered again?
-                        if (!nag.getShowAgain()) {
-                            GUIPreferences.getInstance().setNagForPSR(false);
-                        }
-                    } else {
-                        return;
-                    }
-                }
-            }
-        }
-
         cmd.clipToPossible();
-        if ((cmd.length() == 0)
+        if ((cmd.length() == 0) && !ce().isAirborne()
                 && GUIPreferences.getInstance().getNagForNoAction()) {
             // Hmm....no movement steps, comfirm this action
             String title = Messages
@@ -1290,6 +1097,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 return;
             }
         }
+        
         if(cmd.getLastStepMovementType() == IEntityMovementType.MOVE_SPRINT && GUIPreferences.getInstance().getNagForSprint()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages
                     .getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
@@ -1319,6 +1127,49 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             } else {
                 return;
             }
+        }
+        
+        //check for G-forces
+        check = SharedUtility.doThrustCheck(cmd, clientgui.getClient());
+        if ((check.length() > 0) && GUIPreferences.getInstance().getNagForPSR()) {
+            ConfirmDialog nag = new ConfirmDialog(
+                    clientgui.frame,
+                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages
+                            .getString("MovementDisplay.ConfirmPilotingRoll") + //$NON-NLS-1$
+                            check, true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForPSR(false);
+                }
+            } else {
+                return;
+            }
+        }
+        
+        if(ce().isAirborne()) {
+            if(!clientgui.getClient().game.useVectorMove() && !((Aero)ce()).isOutControlTotal()) {
+                //check for underuse of velocity
+                boolean unusedVelocity = false;
+                if(null != cmd) {
+                    unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
+                } else {
+                    unusedVelocity = ((Aero)ce()).getCurrentVelocity() > 0;
+                }
+                if(unusedVelocity) {
+                    String title = Messages.getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
+                    String body = Messages.getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
+                    clientgui.doAlertDialog(title, body);
+                    return;
+                }   
+            }
+            //depending on the rules and location (i.e. space v. atmosphere), 
+            //Aeros might need to have additional move steps tacked on
+            //This must be done after all prompts, otherwise a user who cancels
+            //will still have steps added to the movepath.
+            cmd = SharedUtility.moveAero(cmd, clientgui.getClient());
         }
         
         disableButtons();
@@ -1444,7 +1295,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 // First I need to add moves to the path if advanced
                 if ((ce instanceof Aero) && clientgui.getClient().game.useVectorMove()) {
                     cmd.clipToPossible();
-                    cmd = addSteps(cmd, ce);
+                    //cmd = addSteps(cmd, ce, clientgui.getClient());
                 }
 
                 cmd.addStep(MovePath.STEP_RAM);
@@ -3647,119 +3498,5 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public void removeAllListeners() {
         clientgui.getClient().game.removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
-    }
-
-    /*
-     * Add steps for advanced vector movement based on the given vectors when
-     * splitting hexes, choose the hex with less tonnage in case OOC
-     */
-    private MovePath addSteps(MovePath md, Entity en) {
-
-        // if the last step is a launch or recovery, then I want to keep that at
-        // the end
-        MoveStep lastStep = md.getLastStep();
-        if ((lastStep != null)
-                && ((lastStep.getType() == MovePath.STEP_LAUNCH) || (lastStep
-                        .getType() == MovePath.STEP_RECOVER))) {
-            md.removeLastStep();
-        }
-
-        // get the start and end
-        Coords start = en.getPosition();
-        Coords end = Compute.getFinalPosition(start, md.getFinalVectors());
-        // Coords end = md.getFinalVectors().getFinalPosition(start);
-
-        // TODO: deal with lines that hit boundaries exactly
-        // (see LosEffects.java)
-        ArrayList<Coords> in = Coords.intervening(start, end);
-        // first check whether we are splitting hexes
-        boolean split = false;
-        double degree = start.degree(end);
-        if (degree % 60 == 30) {
-            split = true;
-            in = Coords.intervening(start, end, true);
-        }
-
-        Coords current = start;
-        int facing = md.getFinalFacing();
-        for (int i = 1; i < in.size(); i++) {
-
-            // check for split hexes
-            // check for some number after a multiple of 3 (1,4,7,etc)
-            if (((i % 3) == 1) && split) {
-
-                Coords left = in.get(i);
-                Coords right = in.get(i + 1);
-
-                // get the total tonnage in each hex
-                Enumeration<Entity> leftTargets = clientgui.getClient().game.getEntities(left);
-                double leftTonnage = 0;
-                while (leftTargets.hasMoreElements()) {
-                    leftTonnage += leftTargets.nextElement().getWeight();
-                }
-                Enumeration<Entity> rightTargets = clientgui.getClient().game
-                        .getEntities(right);
-                double rightTonnage = 0;
-                while (rightTargets.hasMoreElements()) {
-                    rightTonnage += rightTargets.nextElement().getWeight();
-                }
-
-                // TODO: I will need to update this to account for asteroids
-
-                // I need to consider both of these passed through
-                // for purposes of bombing
-                en.addPassedThrough(right);
-                en.addPassedThrough(left);
-                clientgui.getClient().sendUpdateEntity(en);
-
-                // if the left is preferred, increment i so next one is skipped
-                if (leftTonnage < rightTonnage) {
-                    i++;
-                } else {
-                    continue;
-                }
-
-            }
-
-            Coords c = in.get(i);
-
-            // check if the next move would put vessel off the map
-            if (!clientgui.getClient().game.getBoard().contains(c)) {
-                md.addStep(MovePath.STEP_OFF);
-                break;
-            }
-
-            // which direction is this from the current hex?
-            int dir = current.direction(c);
-            // what kind of step do I need to get there?
-            int diff = dir - facing;
-            if (diff == 0) {
-                md.addStep(MovePath.STEP_FORWARDS);
-            } else if ((diff == 1) || (diff == -5)) {
-                md.addStep(MovePath.STEP_LATERAL_RIGHT);
-            } else if ((diff == -2) || (diff == 4)) {
-                md.addStep(MovePath.STEP_LATERAL_RIGHT_BACKWARDS);
-            } else if ((diff == -1) || (diff == 5)) {
-                md.addStep(MovePath.STEP_LATERAL_LEFT);
-            } else if ((diff == 2) || (diff == -4)) {
-                md.addStep(MovePath.STEP_LATERAL_LEFT_BACKWARDS);
-            } else if ((diff == 3) || (diff == -3)) {
-                md.addStep(MovePath.STEP_BACKWARDS);
-            }
-
-            current = c;
-
-        }
-
-        // do I now need to add on the last step again?
-        if ((lastStep != null) && (lastStep.getType() == MovePath.STEP_LAUNCH)) {
-            md.addStep(MovePath.STEP_LAUNCH, lastStep.getLaunched());
-        }
-
-        if ((lastStep != null) && (lastStep.getType() == MovePath.STEP_RECOVER)) {
-            md.addStep(MovePath.STEP_RECOVER, lastStep.getRecoveryUnit());
-        }
-
-        return md;
     }
 }

@@ -56,7 +56,7 @@ public class HexTarget implements Targetable {
     }
 
     public boolean isImmobile() {
-        return (m_type != Targetable.TYPE_MINEFIELD_DELIVER && m_type != Targetable.TYPE_HEX_BOMB && m_type != Targetable.TYPE_HEX_AERO_BOMB);
+        return ((m_type != Targetable.TYPE_HEX_BOMB) && (m_type != Targetable.TYPE_HEX_AERO_BOMB));
     }
 
     public String getDisplayName() {

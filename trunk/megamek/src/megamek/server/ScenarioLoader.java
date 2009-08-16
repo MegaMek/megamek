@@ -89,11 +89,11 @@ public class ScenarioLoader {
                 // Get the SpecDam
                 SpecDam sd = dp.specificDammage.elementAt(dpspot);
 
-                if (dp.entity.locations() <= sd.loc) // Make sure the the
-                                                        // location is valid
+                if (dp.entity.locations() <= sd.loc) {
+                    // location is valid
                     System.out
                             .println("\tInvalid Location Specified " + sd.loc);
-                else {
+                } else {
                     // Infantry only take dammage to "internal"
                     if (sd.internal
                             || ((dp.entity instanceof Infantry) && !(dp.entity instanceof BattleArmor))) {
@@ -167,26 +167,26 @@ public class ScenarioLoader {
                 CritHit ch = chp.critHits.elementAt(chpspot);
 
                 // Apply a critical hit to the indicated slot.
-                if (chp.entity.locations() <= ch.loc)
+                if (chp.entity.locations() <= ch.loc) {
                     System.out.println("\n\tInvalid Location Specified "
                             + ch.loc);
-                else {
+                } else {
                     // Make sure that we have crit spot to hit
-                    if (chp.entity instanceof Mech
-                            || chp.entity instanceof Protomech) {
+                    if ((chp.entity instanceof Mech)
+                            || (chp.entity instanceof Protomech)) {
 
                         // Is this a torso weapon slot?
                         CriticalSlot cs = null;
-                        if (chp.entity instanceof Protomech
-                                && Protomech.LOC_TORSO == ch.loc
-                                && (Protomech.SYSTEM_TORSO_WEAPON_A == ch.slot || Protomech.SYSTEM_TORSO_WEAPON_B == ch.slot)) {
+                        if ((chp.entity instanceof Protomech)
+                                && (Protomech.LOC_TORSO == ch.loc)
+                                && ((Protomech.SYSTEM_TORSO_WEAPON_A == ch.slot) || (Protomech.SYSTEM_TORSO_WEAPON_B == ch.slot))) {
                             cs = new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                                     ch.slot);
                         }
                         // Is this a valid slot number?
-                        else if (ch.slot < 0
-                                || ch.slot > chp.entity
-                                        .getNumberOfCriticals(ch.loc)) {
+                        else if ((ch.slot < 0)
+                                || (ch.slot > chp.entity
+                                        .getNumberOfCriticals(ch.loc))) {
                             System.out.println("\n\tInvalid Slot Specified "
                                     + ch.loc + ":" + (ch.slot + 1));
                         }
@@ -196,7 +196,7 @@ public class ScenarioLoader {
                         }
 
                         // Ignore invalid, unhittable, and damaged slots.
-                        if (null == cs || !cs.isHittable()) {
+                        if ((null == cs) || !cs.isHittable()) {
                             System.out.println("\n\tSlot not hittable "
                                     + ch.loc + ":" + (ch.slot + 1));
                         } else {
@@ -207,7 +207,7 @@ public class ScenarioLoader {
                     }
                     // Handle Tanks differently.
                     else if (chp.entity instanceof Tank) {
-                        if (ch.slot < 0 || ch.slot >= 6) {
+                        if ((ch.slot < 0) || (ch.slot >= 6)) {
                             System.out.println("\n\tInvalid Slot Specified "
                                     + ch.loc + ":" + (ch.slot + 1));
                         } else {
@@ -315,7 +315,7 @@ public class ScenarioLoader {
 
         // Read the external game id from the scenario file
         g.setExternalGameId(parseExternalGameId(p));
-        
+
         g.setVictoryContext(new HashMap<String, Object>());
         g.createVictoryConditions();
 
@@ -380,12 +380,15 @@ public class ScenarioLoader {
                 sapCreated = true;
             }
 
-            if (chpCreated)
+            if (chpCreated) {
                 m_vCritHitPlans.addElement(chp);
-            if (dpCreated)
+            }
+            if (dpCreated) {
                 m_vDamagePlans.addElement(dp);
-            if (sapCreated)
+            }
+            if (sapCreated) {
                 m_vSetAmmoTo.addElement(sap);
+            }
 
             // Check for pilot hits
             s = p.getProperty("Unit_" + sFaction + "_" + i + "_PilotHits");
@@ -708,8 +711,9 @@ public class ScenarioLoader {
         }
 
         // if only one board just return it.
-        if (ba.length == 1)
+        if (ba.length == 1) {
             return ba[0];
+        }
         // construct the big board
         return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, MapSettings.MEDIUM_GROUND);
     }
@@ -730,8 +734,9 @@ public class ScenarioLoader {
             key = keyIt.nextElement().toString();
             value = new StringBuffer(props.getProperty(key));
             for (loop = value.length() - 1; loop >= 0; loop--) {
-                if (!Character.isWhitespace(value.charAt(loop)))
+                if (!Character.isWhitespace(value.charAt(loop))) {
                     break;
+                }
             }
 
             value.setLength(loop + 1);
@@ -743,11 +748,12 @@ public class ScenarioLoader {
     public static void main(String[] saArgs) throws Exception {
         ScenarioLoader sl = new ScenarioLoader(new File(saArgs[0]));
         IGame g = sl.createGame();
-        if (g != null)
+        if (g != null) {
             System.out.println("Successfully loaded.");
+        }
     }
 
-    /*
+    /**
      * This is used specify the critical hit location
      */
     public class CritHit {
@@ -760,7 +766,7 @@ public class ScenarioLoader {
         }
     }
 
-    /*
+    /**
      * This class is used to store the critical hit plan for a entity it is
      * loaded from the scenario file. It contains a vector of CritHit.
      */
@@ -785,7 +791,7 @@ public class ScenarioLoader {
         }
     }
 
-    /*
+    /**
      * This is used to store the ammour to change ammo at a given location
      */
     public class SetAmmoTo {
@@ -800,7 +806,7 @@ public class ScenarioLoader {
         }
     }
 
-    /*
+    /**
      * This class is used to store the ammo Adjustments it is loaded from the
      * scenario file. It contains a vector of SetAmmoTo.
      */
@@ -812,7 +818,7 @@ public class ScenarioLoader {
             entity = e;
         }
 
-        /*
+        /**
          * Converts 2:1-34 to Location 2 Slot 1 set Ammo to 34
          */
         public void AddSetAmmoTo(String s) {
@@ -828,12 +834,12 @@ public class ScenarioLoader {
             slot = Integer.parseInt(s.substring(ewSpot + 1, amSpot));
             setTo = Integer.parseInt(s.substring(amSpot + 1));
 
-            ammoSetTo.addElement(new SetAmmoTo(loc, slot, setTo));
+            ammoSetTo.addElement(new SetAmmoTo(loc, slot-1, setTo));
 
         }
     }
 
-    /*
+    /**
      * This is used specify the one damage location
      */
     public class SpecDam {
@@ -851,7 +857,7 @@ public class ScenarioLoader {
         }
     }
 
-    /*
+    /**
      * This class is used to store the damage plan for a entity it is loaded
      * from the scenario file. It contains a vector of SpecDam.
      */
@@ -871,7 +877,7 @@ public class ScenarioLoader {
             nBlocks = 0;
         }
 
-        /*
+        /**
          * Converts N2:1 to Nornam hit to location 2 set armor to 1!
          */
         public void AddSpecificDammage(String s) {
@@ -881,11 +887,13 @@ public class ScenarioLoader {
             boolean internal = false;
 
             // Get the type of set to make
-            if (s.substring(0, 1).equals("R"))
+            if (s.substring(0, 1).equals("R")) {
                 rear = true;
+            }
 
-            if (s.substring(0, 1).equals("I"))
+            if (s.substring(0, 1).equals("I")) {
                 internal = true;
+            }
 
             // Get the pos of the ":"
             int ewSpot = s.indexOf(":");

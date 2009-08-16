@@ -47,6 +47,7 @@ v0.35.6-dev (SVN)
 + Bug: stall check not working
 + RFE 2827549: show Movement Trails from Aeros on the Ground Map (option)
 + Bug: NPE on loading of mechwarrior from MUL
++ Bug: scenario ammo setting not working as documented
 
 v0.35.5 (2009-07-24, 23:16 GMT+2)
 + Bug 2819713: Can't change Camo

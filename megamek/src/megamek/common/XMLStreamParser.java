@@ -51,6 +51,12 @@ public class XMLStreamParser implements XMLResponder {
     private Vector<Entity> entities = new Vector<Entity>();
 
     /**
+     * Keep a separate list of pilot/crews parsed becasue dismounted
+     * pilots may need to be read separately
+     */
+    private Vector<Pilot> pilots = new Vector<Pilot>();
+    
+    /**
      * The parser for this object.
      */
     private XMLParser parser = new XMLParser();
@@ -219,6 +225,7 @@ public class XMLStreamParser implements XMLResponder {
 
         // Clear the entities.
         entities.removeAllElements();
+        pilots.removeAllElements();
 
         // Parse the input stream.
         inStream = input;
@@ -275,6 +282,12 @@ public class XMLStreamParser implements XMLResponder {
         // ASSUMPTION : it is safe to return a modifiable reference to the
         // vector. If assumption is wrong, clone the vector.
         return entities;
+    }
+    
+    public Vector<Pilot> getPilots() {
+        // ASSUMPTION : it is safe to return a modifiable reference to the
+        // vector. If assumption is wrong, clone the vector.
+        return pilots;
     }
 
     // Implementation of the XMLResponder interface:
@@ -334,6 +347,7 @@ public class XMLStreamParser implements XMLResponder {
 
                 // Restart the unit list.
                 entities.removeAllElements();
+                pilots.removeAllElements();
             }
 
         } else if (name.equals(TEMPLATE)) {
@@ -457,12 +471,15 @@ public class XMLStreamParser implements XMLResponder {
         } else if (name.equals(PILOT)) {
 
             // Are we in the outside of an Entity?
+            //pilots outside of entities will still be added to a pilot vector now
+            /*
             if (entity == null) {
                 warning.append("Found a pilot outside of an Entity.\n");
             }
+            */
 
             // Are we in the middle of parsing an Entity's location?
-            else if (loc != Entity.LOC_NONE) {
+            if (loc != Entity.LOC_NONE) {
                 warning
                         .append("Found a pilot while parsing a location.\n");
             }
@@ -581,13 +598,11 @@ public class XMLStreamParser implements XMLResponder {
                         }
                     }
 
-                    // Update the entity's crew.
-                    Pilot crew = entity.getCrew();
                     if (null == pilotName || pilotName.length() == 0) {
-                        pilotName = crew.getName();
+                            pilotName = "Unnamed";
                     }
-
-                    crew = new Pilot(pilotName, gunneryLVal, gunneryMVal,
+                    
+                    Pilot crew = new Pilot(pilotName, gunneryLVal, gunneryMVal,
                             gunneryBVal, pilotVal);
 
                     if (null != pilotNickname && pilotNickname.length() > 0) {
@@ -671,15 +686,18 @@ public class XMLStreamParser implements XMLResponder {
                         }
                     }
                     crew.setExternalId(id);
-                   
-                    // Set the crew for this entity.
-                    entity.setCrew(crew);
-
-                    if (autoeject != null) {
-                        if (autoeject.equals("true")) {
-                            ((Mech) entity).setAutoEject(true);
-                        } else {
-                            ((Mech) entity).setAutoEject(false);
+                    
+                    pilots.add(crew);
+                    if(null != entity) {
+                        // Set the crew for this entity.
+                        entity.setCrew(crew);
+    
+                        if (autoeject != null) {
+                            if (autoeject.equals("true")) {
+                                ((Mech) entity).setAutoEject(true);
+                            } else {
+                                ((Mech) entity).setAutoEject(false);
+                            }
                         }
                     }
 

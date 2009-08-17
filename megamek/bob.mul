@@ -3,11 +3,11 @@
 <unit>
 
    <entity chassis="Black Knight" model="BL-9-KNT" type="Biped" commander="false" externalId="1">
-      <pilot name="Bob Smith" nick="Meathead" gunnery="2" piloting="3" initB="0" commandB="0" ejected="false" autoeject="true"/>
+      <pilot name="Bob Smith" nick="Meathead" gunnery="2" piloting="3" initB="0" commandB="0" ejected="false" autoeject="true" externalId="1"/>
    </entity>
 
    <entity chassis="MechWarrior" model="Davie Jones" type="Leg" commander="false">
-      <pilot name="Davie Jones" nick="Psycho" gunnery="2" piloting="3" initB="0" commandB="0" hits="1" ejected="true" externalId="-1"/>
+      <pilot name="Davie Jones" nick="Psycho" gunnery="2" piloting="3" initB="0" commandB="0" hits="1" ejected="true" externalId="2"/>
    </entity>
 
 </unit>

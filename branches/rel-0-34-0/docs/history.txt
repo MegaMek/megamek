@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.34.8-dev (SVN)
+v0.34.8 (2009-08-17, 15:23 UTC+2)
 + Bug: Mechdisplay not remembering which ammo was selected
 + Bug 2827537: edge and center deployment should be allowed even with exclusive
     DB deployment

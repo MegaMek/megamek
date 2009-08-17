@@ -442,7 +442,7 @@ public class EntityListFile {
             }
             if(crew.getExternalId() != Entity.NONE) {
                 output.write("\" externalId=\"");
-                output.write(String.valueOf(entity.getExternalId()));
+                output.write(String.valueOf(crew.getExternalId()));
             }
             output.write("\"/>");
             output.write(CommonConstants.NL);

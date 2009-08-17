@@ -33,6 +33,8 @@ public class Pilot implements Serializable {
     private int hits; // hits taken
     
     private String nickname;
+    
+    private int externalId = Entity.NONE;
 
     private boolean unconscious;
     private boolean doomed; // scheduled to die at end of phase
@@ -604,6 +606,14 @@ public class Pilot implements Serializable {
             }
         }
         return s;
+    }
+    
+    public void setExternalId(int i) {
+        this.externalId = i;
+    }
+    
+    public int getExternalId() {
+        return externalId;
     }
 
     

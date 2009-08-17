@@ -485,6 +485,7 @@ public class XMLStreamParser implements XMLResponder {
                 String implants = (String) attr.get(IMPLANTS);
                 String autoeject = (String) attr.get(AUTOEJECT);
                 String ejected = (String) attr.get(EJECTED);
+                String extId = (String) attr.get(EXT_ID);
 
                 // Did we find required attributes?
                 if (gunnery == null || gunnery.length() == 0) {
@@ -661,6 +662,16 @@ public class XMLStreamParser implements XMLResponder {
                         crew.setEjected(Boolean.parseBoolean(ejected));
                     }
                     
+                    int id = Entity.NONE;
+                    if (null != extId && extId.length() > 0) {
+                        try {
+                            id = Integer.parseInt(extId);
+                        } catch (NumberFormatException excep) {
+                            // Handled by the next if test.
+                        }
+                    }
+                    crew.setExternalId(id);
+                   
                     // Set the crew for this entity.
                     entity.setCrew(crew);
 

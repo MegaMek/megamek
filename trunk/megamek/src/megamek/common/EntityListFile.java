@@ -440,6 +440,10 @@ public class EntityListFile {
                     output.write("\" autoeject=\"false");
                 }
             }
+            if(crew.getExternalId() != Entity.NONE) {
+                output.write("\" externalId=\"");
+                output.write(String.valueOf(entity.getExternalId()));
+            }
             output.write("\"/>");
             output.write(CommonConstants.NL);
 

@@ -2,28 +2,12 @@
 
 <unit>
 
-   <entity chassis="Dart" model="DRT-4S" type="Biped" commander="false">
-      <pilot name="Unnamed" nick="" gunnery="4" piloting="5" initB="0" commandB="0" autoeject="true"/>
-      <location index="1"> Center Torso
-         <armor points="2"/>
-         <armor points="6" type="Internal"/>
-         <armor points="Destroyed" type="Rear"/>
-      </location>
-      <location index="2"> Right Torso
-         <armor points="Destroyed"/>
-         <armor points="5" type="Internal"/>
-      </location>
-      <location index="6"> Right Leg
-         <armor points="Destroyed"/>
-         <armor points="3" type="Internal"/>
-      </location>
-      <location index="7"> Left Leg
-         <armor points="0"/>
-      </location>
+   <entity chassis="Black Knight" model="BL-9-KNT" type="Biped" commander="false" externalId="1">
+      <pilot name="Bob Smith" nick="Meathead" gunnery="2" piloting="3" initB="0" commandB="0" ejected="false" autoeject="true"/>
    </entity>
 
-   <entity chassis="MechWarrior" model="Unnamed" type="Leg" commander="false">
-      <pilot name="Unnamed" nick="" gunnery="4" piloting="5" initB="0" commandB="0" hits="3"/>
+   <entity chassis="MechWarrior" model="Davie Jones" type="Leg" commander="false">
+      <pilot name="Davie Jones" nick="Psycho" gunnery="2" piloting="3" initB="0" commandB="0" hits="1" ejected="true" externalId="-1"/>
    </entity>
 
 </unit>

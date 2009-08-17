@@ -159,6 +159,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String QUIRKS = "quirks";
     public static final String COMMANDER = "commander";
     public static final String AUTOEJECT = "autoeject";
+    public static final String EJECTED = "ejected";
     public static final String INDEX = "index";
     public static final String IS_DESTROYED = "isDestroyed";
     public static final String IS_REPAIRABLE = "isRepairable";
@@ -483,6 +484,7 @@ public class XMLStreamParser implements XMLResponder {
                 String advantages = (String) attr.get(ADVS);
                 String implants = (String) attr.get(IMPLANTS);
                 String autoeject = (String) attr.get(AUTOEJECT);
+                String ejected = (String) attr.get(EJECTED);
 
                 // Did we find required attributes?
                 if (gunnery == null || gunnery.length() == 0) {
@@ -655,6 +657,10 @@ public class XMLStreamParser implements XMLResponder {
 
                     } // End have-hits
 
+                    if (ejected != null) {
+                        crew.setEjected(Boolean.parseBoolean(ejected));
+                    }
+                    
                     // Set the crew for this entity.
                     entity.setCrew(crew);
 

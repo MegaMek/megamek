@@ -1158,7 +1158,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 } else {
                     unusedVelocity = ((Aero)ce()).getCurrentVelocity() > 0;
                 }
-                if(unusedVelocity) {
+                boolean flyoff = false;
+                if(null != cmd && cmd.contains(MovePath.STEP_OFF)) {
+                    flyoff = true;
+                }
+                if(unusedVelocity && !flyoff) {
                     String title = Messages.getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
                     String body = Messages.getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
                     clientgui.doAlertDialog(title, body);

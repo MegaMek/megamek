@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.35.7-dev (SVN)
++ ejected status read to and loaded from MUL
 
 v0.35.6 (2009-08-17, 15:23 UTC+2)
 + ultra rubble image (thanks sirrob01!)

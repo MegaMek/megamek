@@ -423,6 +423,8 @@ public class EntityListFile {
                 output.write("\" hits=\"");
                 output.write(String.valueOf(crew.getHits()));
             }
+            output.write("\" ejected=\"");
+            output.write(String.valueOf(crew.isEjected()));
             if (crew.countOptions(PilotOptions.LVL3_ADVANTAGES) > 0) {
                 output.write("\" advantages=\"");
                 output.write(String.valueOf(crew.getOptionList("::", PilotOptions.LVL3_ADVANTAGES)));

@@ -460,20 +460,6 @@ public class MegaMekGUI implements IMegaMekGUI {
                 .getString("MegaMek.SelectScenarioDialog.title"));
         
        FileFilter filter = new FileNameExtensionFilter("MegaMek Scenario Files", "mms");
-       /* fc.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File dir) {
-            	if (dir.isDirectory()) {
-            		return true;
-            	}
-                return ((dir.getName() != null) && dir.getName().endsWith(".mms")); //$NON-NLS-1$
-            }
-
-            @Override
-            public String getDescription() {
-                return ".mms";
-            }
-        });*/
        fc.setFileFilter(filter);
         
         int returnVal = fc.showOpenDialog(frame);

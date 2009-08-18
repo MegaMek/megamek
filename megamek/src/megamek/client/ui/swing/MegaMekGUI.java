@@ -43,6 +43,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.MegaMek;
 import megamek.client.Client;
@@ -453,14 +454,18 @@ public class MegaMekGUI implements IMegaMekGUI {
     void scenario() {
         JFileChooser fc = new JFileChooser("data" + File.separatorChar
                 + "scenarios");
-        fc
-                .setLocation(frame.getLocation().x + 150,
+        fc.setLocation(frame.getLocation().x + 150,
                         frame.getLocation().y + 100);
         fc.setDialogTitle(Messages
                 .getString("MegaMek.SelectScenarioDialog.title"));
-        fc.setFileFilter(new FileFilter() {
+        
+       FileFilter filter = new FileNameExtensionFilter("MegaMek Scenario Files", "mms");
+       /* fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
+            	if (dir.isDirectory()) {
+            		return true;
+            	}
                 return ((dir.getName() != null) && dir.getName().endsWith(".mms")); //$NON-NLS-1$
             }
 
@@ -468,7 +473,9 @@ public class MegaMekGUI implements IMegaMekGUI {
             public String getDescription() {
                 return ".mms";
             }
-        });
+        });*/
+       fc.setFileFilter(filter);
+        
         int returnVal = fc.showOpenDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION)
                 || (fc.getSelectedFile() == null)) {

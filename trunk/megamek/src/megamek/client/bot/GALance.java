@@ -127,7 +127,6 @@ public class GALance extends GA {
             int target_distance = 4;
             for (int m = 0; m < move_array.length; m++) {
                 MoveOption next = (MoveOption) move_array[m];
-                next.getUtility();
                 for (int j = 0; j < move_array.length; j++) {
                     MoveOption other = (MoveOption) move_array[j];
                     if (m != j) {
@@ -215,24 +214,20 @@ public class GALance extends GA {
                 if (next.doomed) {
                     if (next.getCEntity().last != null
                             && next.getCEntity().last.doomed) {
-                        result -= next.damage - .5 * next.getUtility(); // should
-                        // be
-                        // dead
+                        //should be dead
+                        result -= next.damage - .5 * next.getUtility();
                     } else if (next.getCEntity().last != null
                             && !next.getCEntity().last.doomed) {
-                        result += next.getUtility() + 2 * next.damage; // don't
-                        // like
-                        // this
-                        // case
+                        // don't like this case
+                        result += next.getUtility() + 2 * next.damage;
                     } else {
                         result += next.getUtility();
                     }
                 } else {
                     if (next.getCEntity().last != null
                             && !next.getCEntity().last.inDanger) {
-                        result += next.getUtility() + next.damage; // not so
-                        // good
-                        // either
+                        //not so good either
+                        result += next.getUtility() + next.damage;
                     } else {
                         result += next.getUtility();
                     }

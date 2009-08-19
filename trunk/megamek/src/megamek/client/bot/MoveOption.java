@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
+import megamek.client.ui.SharedUtility;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
@@ -32,7 +34,6 @@ import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
-import megamek.common.PilotingRollData;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -106,10 +107,12 @@ public class MoveOption extends MovePath {
     public static final int ATTACK_PC = 2;
     public static final int DEFENCE_PC = 3;
 
+    boolean utilityCalculated = false;
     boolean inDanger = false;
     boolean doomed = false;
     boolean isPhysical = false;
 
+    double utility = 0;
     double self_threat = 0;
     double movement_threat = 0;
     double self_damage = 0;
@@ -405,6 +408,9 @@ public class MoveOption extends MovePath {
      * TODO: the result of this calculation should be cached...
      */
     public double getUtility() {
+        if (utilityCalculated) {
+            return utility;
+        }
         // self threat and self damage are considered transient
         double temp_threat = (threat + movement_threat + self_threat + (double) getMovementheatBuildup() / 20)
                 / getCEntity().strategy.attack;
@@ -427,32 +433,14 @@ public class MoveOption extends MovePath {
             temp_threat += centity.entity.getWeight();
         }
         double retVal = temp_threat - temp_damage;
-        // If the move has a chance of making MASC fail...
-        if (hasActiveMASC()) {
-            int mascTN = 0;
-            for (final Enumeration<MoveStep> i = getSteps(); i
-                    .hasMoreElements();) {
-                MoveStep step = i.nextElement();
-                if (step.isUsingMASC() && step.getTargetNumberMASC() > mascTN) {
-                    mascTN = step.getTargetNumberMASC();
-                }
-            }
-            double mascMult = Compute.oddsAbove(mascTN) / 100;
-            if (mascMult < 1.0) {
-                inDanger = true;
-            }
-            retVal *= (mascMult > 0) ? mascMult : 0.01;
+        
+        List<TargetRoll> psrList = SharedUtility.getPSRList(this);
+        for (TargetRoll roll : psrList) {
+            double multiple = Compute.oddsAbove(roll.getValue())/100;
+            retVal *= (multiple > 0) ? multiple : 0.01;
         }
-        // If getting up is difficult...
-        if (prone) {
-            PilotingRollData tmpPRD = centity.getEntity()
-                    .checkGetUp(getStep(0));
-            if ((tmpPRD != null)
-                    && ((tmpPRD.getValue() == TargetRoll.IMPOSSIBLE) || (tmpPRD
-                            .getValue() == TargetRoll.AUTOMATIC_FAIL))) {
-                retVal *= 0.01;
-            }
-        }
+        utility = retVal;
+        utilityCalculated = true;
         return retVal;
     }
 

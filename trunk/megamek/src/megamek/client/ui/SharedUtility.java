@@ -16,6 +16,7 @@ package megamek.client.ui;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import megamek.client.Client;
 import megamek.common.Aero;
@@ -25,6 +26,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IEntityMovementMode;
 import megamek.common.IEntityMovementType;
+import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -38,6 +40,15 @@ import megamek.common.Terrains;
 import megamek.common.VTOL;
 
 public class SharedUtility {
+    
+    public static String doPSRCheck(MovePath md) {
+        return (String) doPSRCheck(md, true);
+    }
+    
+    public static List<TargetRoll> getPSRList(MovePath md) {
+        return (List<TargetRoll>) doPSRCheck(md, false);
+    }
+    
     /**
      * Checks to see if piloting skill rolls are needed for the currently
      * selected movement. This code is basically a simplified version of
@@ -45,12 +56,13 @@ public class SharedUtility {
      * writing). Note that MovePath.clipToPossible() is called though, which
      * changes the md object.
      */
-    public static String doPSRCheck(MovePath md, Client client) {
+    private static Object doPSRCheck(MovePath md, boolean stringResult) {
 
         StringBuffer nagReport = new StringBuffer();
+        List<TargetRoll> psrList = new ArrayList<TargetRoll>();
 
         final Entity entity = md.getEntity();
-
+        final IGame game = entity.getGame();
         // okay, proceed with movement calculations
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
@@ -89,21 +101,15 @@ public class SharedUtility {
                 // check for more than one roll
                 Aero a = (Aero) entity;
                 rollTarget = a.checkRolls(step, overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(SharedUtility.addNag(rollTarget));
-                }
+                checkNag(rollTarget, nagReport, psrList);
 
                 rollTarget = a.checkManeuver(step, overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(SharedUtility.addNag(rollTarget));
-                }
+                checkNag(rollTarget, nagReport, psrList);
             }
 
             // check piloting skill for getting up
             rollTarget = entity.checkGetUp(step);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(SharedUtility.addNag(rollTarget));
-            }
+            checkNag(rollTarget, nagReport, psrList);
 
             // set most step parameters
             moveType = step.getMovementType();
@@ -114,36 +120,31 @@ public class SharedUtility {
             curFacing = step.getFacing();
             curElevation = step.getElevation();
 
-            final IHex curHex = client.game.getBoard().getHex(curPos);
+            final IHex curHex = game.getBoard().getHex(curPos);
 
             //check for leap
             if(!lastPos.equals(curPos) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)
-                    && (entity instanceof Mech) && client.game.getOptions().booleanOption("tacops_leaping")) {
-                int leapDistance = (lastElevation + client.game.getBoard().getHex(lastPos).getElevation()) - (curElevation + curHex.getElevation());
+                    && (entity instanceof Mech) && game.getOptions().booleanOption("tacops_leaping")) {
+                int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getElevation()) - (curElevation + curHex.getElevation());
                 if(leapDistance > 2) {
                     rollTarget = entity.getBasePilotingRoll(step.getMovementType());
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
                     rollTarget.append(new PilotingRollData(entity.getId(), 2 * leapDistance, "leaping (leg damage)"));
-                    nagReport.append(SharedUtility.addNag(rollTarget));
+                    SharedUtility.checkNag(rollTarget, nagReport, psrList);
                     rollTarget = entity.getBasePilotingRoll(step.getMovementType());
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
                     rollTarget.append(new PilotingRollData(entity.getId(), leapDistance, "leaping (fall)"));
-                    nagReport.append(SharedUtility.addNag(rollTarget));
+                    SharedUtility.checkNag(rollTarget, nagReport, psrList);
                 }
             }
 
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing, lastPos, curPos, isInfantry, distance-1);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                // Have an entity-meaningful PSR message.
-                nagReport.append(SharedUtility.addNag(rollTarget));
-            }
+            checkNag(rollTarget, nagReport, psrList);
 
             // check if we've moved into rubble
             rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(SharedUtility.addNag(rollTarget));
-            }
+            checkNag(rollTarget, nagReport, psrList);
 
             int lightPenalty = entity.getGame().getPlanetaryConditions().getLightPilotPenalty();
             if(lightPenalty > 0) {
@@ -152,9 +153,7 @@ public class SharedUtility {
 
             //check if we are moving recklessly
             rollTarget = entity.checkRecklessMove(step, curHex, lastPos, curPos, prevHex);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(SharedUtility.addNag(rollTarget));
-            }
+            checkNag(rollTarget, nagReport, psrList);
 
             // check for crossing ice
             if (curHex.containsTerrain(Terrains.ICE) && curHex.containsTerrain(Terrains.WATER) && !(curPos.equals(lastPos)) && (step.getElevation() == 0) && (moveType != IEntityMovementType.MOVE_JUMP) && !(entity instanceof Infantry) && !(step.isPavementStep() && curHex.containsTerrain(Terrains.BRIDGE))) {
@@ -163,9 +162,7 @@ public class SharedUtility {
 
             // check if we've moved into water
             rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos, isPavementStep);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(SharedUtility.addNag(rollTarget));
-            }
+            checkNag(rollTarget, nagReport, psrList);
 
             // check for non-mech entering a fire
             if (curHex.containsTerrain(Terrains.FIRE) && !(entity instanceof Mech) && (step.getElevation() <= 1) && (moveType != IEntityMovementType.MOVE_JUMP) && !(curPos.equals(lastPos))) {
@@ -183,16 +180,12 @@ public class SharedUtility {
             // check for sideslip
             if ((entity instanceof VTOL) || (entity.getMovementMode() == IEntityMovementMode.HOVER) || (entity.getMovementMode() == IEntityMovementMode.WIGE)) {
                 rollTarget = entity.checkSideSlip(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing, lastPos, curPos, distance);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(SharedUtility.addNag(rollTarget));
-                }
+                checkNag(rollTarget, nagReport, psrList);
             }
 
             // check if we've moved into swamp
             rollTarget = entity.checkBogDown(step, curHex, lastPos, curPos, lastElevation, isPavementStep);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(SharedUtility.addNag(rollTarget));
-            }
+            checkNag(rollTarget, nagReport, psrList);
 
             // check if we used more MPs than the Mech/Vehicle would have in
             // normal gravity
@@ -202,28 +195,22 @@ public class SharedUtility {
                         //TODO: need to adjust for sprinting, but game options are not passed
                         if (step.getMpUsed() > entity.getRunMP(false, false)) {
                             rollTarget = entity.checkMovedTooFast(step);
-                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                                nagReport.append(SharedUtility.addNag(rollTarget));
-                            }
+                            checkNag(rollTarget, nagReport, psrList);
                         }
                     } else if (step.getMovementType() == IEntityMovementType.MOVE_JUMP) {
                         if (step.getMpUsed() > entity.getJumpMP(false)) {
                             rollTarget = entity.checkMovedTooFast(step);
-                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                                nagReport.append(SharedUtility.addNag(rollTarget));
-                            }
-                        } else if (client.game.getPlanetaryConditions().getGravity() > 1) {
+                            checkNag(rollTarget, nagReport, psrList);
+                        } else if (game.getPlanetaryConditions().getGravity() > 1) {
                             rollTarget = entity.getBasePilotingRoll(step.getParent().getLastStepMovementType());
                             entity.addPilotingModifierForTerrain(rollTarget, step);
                             rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
-                            nagReport.append(SharedUtility.addNag(rollTarget));
+                            SharedUtility.checkNag(rollTarget, nagReport, psrList);
                         }
                     } else if (step.getMovementType() == IEntityMovementType.MOVE_SPRINT) {
                         if (step.getMpUsed() > entity.getSprintMP(false, false)) {
                             rollTarget = entity.checkMovedTooFast(step);
-                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                                nagReport.append(SharedUtility.addNag(rollTarget));
-                            }
+                            checkNag(rollTarget, nagReport, psrList);
                         }
                     }
                 } else if (entity instanceof Tank) {
@@ -233,18 +220,14 @@ public class SharedUtility {
                         // because it was moving along a road
                         if ((step.getMpUsed() > entity.getRunMP(false, false)) && !step.isOnlyPavement()) {
                             rollTarget = entity.checkMovedTooFast(step);
-                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                                nagReport.append(SharedUtility.addNag(rollTarget));
-                            }
+                            checkNag(rollTarget, nagReport, psrList);
                         }
                         // If the tank was moving on a road, he got a +1 bonus.
                         // N.B. The Ask Precentor Martial forum said that a 4/6
                         // tank on a road can move 5/7, **not** 5/8.
                         else if (step.getMpUsed() > entity.getRunMP(false, false) + 1) {
                             rollTarget = entity.checkMovedTooFast(step);
-                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                                nagReport.append(SharedUtility.addNag(rollTarget));
-                            }
+                            checkNag(rollTarget, nagReport, psrList);
                         }
                     }
                 }
@@ -257,25 +240,23 @@ public class SharedUtility {
                 // Get the building being entered.
                 Building bldgEntered = null;
                 if ((buildingMove & 2) == 2) {
-                    bldgEntered = client.game.getBoard().getBuildingAt(curPos);
+                    bldgEntered = game.getBoard().getBuildingAt(curPos);
                 }
 
                 if (bldgEntered != null) {
                     rollTarget = entity.rollMovementInBuilding(bldgEntered, distance, "entering", overallMoveType);
-                    nagReport.append(SharedUtility.addNag(rollTarget));
+                    SharedUtility.checkNag(rollTarget, nagReport, psrList);
                 }
             }
 
             if (step.getType() == MovePath.STEP_GO_PRONE) {
                 rollTarget = entity.checkDislodgeSwarmers(step);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(SharedUtility.addNag(rollTarget));
-                }
+                checkNag(rollTarget, nagReport, psrList);
             }
 
-            if (((step.getType() == MovePath.STEP_BACKWARDS) || (step.getType() == MovePath.STEP_LATERAL_LEFT_BACKWARDS) || (step.getType() == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)) && (client.game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation()) && !(entity instanceof VTOL)) {
+            if (((step.getType() == MovePath.STEP_BACKWARDS) || (step.getType() == MovePath.STEP_LATERAL_LEFT_BACKWARDS) || (step.getType() == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)) && (game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation()) && !(entity instanceof VTOL)) {
                 nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
-                nagReport.append(SharedUtility.addNag(entity.getBasePilotingRoll(overallMoveType)));
+                SharedUtility.checkNag(entity.getBasePilotingRoll(overallMoveType),nagReport, psrList);
             }
 
             // update lastPos, prevStep, prevFacing & prevHex
@@ -296,37 +277,27 @@ public class SharedUtility {
 
         // running with destroyed hip or gyro needs a check
         rollTarget = entity.checkRunningWithDamage(overallMoveType);
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-            nagReport.append(SharedUtility.addNag(rollTarget));
-        }
+        checkNag(rollTarget, nagReport, psrList);
 
         //if we sprinted with MASC or a supercharger, then we need a PSR
         rollTarget = entity.checkSprintingWithMASC(overallMoveType, md.getMpUsed());
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-            nagReport.append(SharedUtility.addNag(rollTarget));
-        }
+        checkNag(rollTarget, nagReport, psrList);
 
         rollTarget = entity.checkSprintingWithSupercharger(overallMoveType, md.getMpUsed());
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-            nagReport.append(SharedUtility.addNag(rollTarget));
-        }
+        checkNag(rollTarget, nagReport, psrList);
 
         // but the danger isn't over yet! landing from a jump can be risky!
         if ((overallMoveType == IEntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
             // check for damaged criticals
             rollTarget = entity.checkLandingWithDamage(overallMoveType);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(SharedUtility.addNag(rollTarget));
-            }
+            checkNag(rollTarget, nagReport, psrList);
             // jumped into water?
-            IHex hex = client.game.getBoard().getHex(curPos);
+            IHex hex = game.getBoard().getHex(curPos);
             // check for jumping into heavy woods
-            if (client.game.getOptions().booleanOption("psr_jump_heavy_woods")) {
+            if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,
                         hex);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(SharedUtility.addNag(rollTarget));
-                }
+                checkNag(rollTarget, nagReport, psrList);
             }
             int waterLevel = hex.terrainLevel(Terrains.WATER);
             if (hex.containsTerrain(Terrains.ICE) && (waterLevel > 0)) {
@@ -335,9 +306,7 @@ public class SharedUtility {
                 }
             } else if (!(prevStep.climbMode() && hex.containsTerrain(Terrains.BRIDGE))) {
                 rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(SharedUtility.addNag(rollTarget));
-                }
+                checkNag(rollTarget, nagReport, psrList);
             }
 
         }
@@ -347,40 +316,40 @@ public class SharedUtility {
             Aero a = (Aero) entity;
             int thrust = md.getMpUsed();
             rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(SharedUtility.addNag(rollTarget));
-            }
+            checkNag(rollTarget, nagReport, psrList);
 
             // Atmospheric checks
-            if (!client.game.getBoard().inSpace()) {
+            if (!game.getBoard().inSpace()) {
                 // check to see if velocity is 2x thrust
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(SharedUtility.addNag(rollTarget));
-                }
+                checkNag(rollTarget, nagReport, psrList);
 
                 // check to see if descended more than two hexes
                 rollTarget = a.checkDown(md.getFinalNDown(), overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(SharedUtility.addNag(rollTarget));
-                }
+                checkNag(rollTarget, nagReport, psrList);
 
                 // stalling out
                 rollTarget = a.checkStall(md);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(SharedUtility.addNag(rollTarget));
-                }
+                checkNag(rollTarget, nagReport, psrList);
 
                 // check for hovering
                 rollTarget = a.checkHover(md);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(SharedUtility.addNag(rollTarget));
-                }
+                checkNag(rollTarget, nagReport, psrList);
 
             }
         }
 
-        return nagReport.toString();
+        if (stringResult) {
+            return nagReport.toString();
+        }
+        return psrList;
+    }
+    private static void checkNag(PilotingRollData rollTarget,
+            StringBuffer nagReport, List<TargetRoll> psrList) {
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+            psrList.add(rollTarget);
+            nagReport.append(Messages.getString("MovementDisplay.addNag", new Object[] { rollTarget.getValueAsString(), rollTarget.getDesc() }));//$NON-NLS-1$
+        }
     }
     /**
      * Checks to see if piloting skill rolls are needed for excessive use of
@@ -389,6 +358,7 @@ public class SharedUtility {
     public static String doThrustCheck(MovePath md, Client client) {
 
         StringBuffer nagReport = new StringBuffer();
+        List<TargetRoll> psrList = new ArrayList<TargetRoll>();
 
         if(client.game.useVectorMove()) {
             return nagReport.toString();
@@ -425,9 +395,7 @@ public class SharedUtility {
                 // conditions
                 // structural damage
                 rollTarget = a.checkThrustSI(thrustUsed, overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(SharedUtility.addNag(rollTarget));
-                }
+                checkNag(rollTarget, nagReport, psrList);
 
                 // check for pilot damage
                 int hits = entity.getCrew().getHits();
@@ -447,15 +415,15 @@ public class SharedUtility {
     }
     
     public static MovePath moveAero(MovePath md, Client client) {
-        final Entity entity = md.getEntity();      
+        final Entity entity = md.getEntity();  
+        final IGame game = entity.getGame();
         if(!(entity instanceof Aero)) {
             return md;
         }
         Aero a = (Aero) entity;
         
         // should check to see if md is null. If so I need to check and see
-        // if the units
-        // current velocity is zero
+        // if the units current velocity is zero
         if (md != null) {    
             boolean isRamming = false;
             if ((md.getLastStep() != null)
@@ -465,21 +433,21 @@ public class SharedUtility {
     
             // if using advanced movement then I need to add on movement
             // steps to get the vessel from point a to point b        
-            if (client.game.useVectorMove()) {
+            if (game.useVectorMove()) {
                 // if the unit is ramming then this is already done
                 if(!isRamming) {
-                    md = addSteps(md, entity, client);
+                    md = addSteps(md, client);
                 }
             }
             else if (a.isOutControlTotal()) { 
                 // OOC units need a new movement path
                 MovePath oldmd = md;  
-                md = new MovePath(client.game, entity);
+                md = new MovePath(game, entity);
                 int vel = a.getCurrentVelocity();
     
                 while (vel > 0) {
                     md.addStep(MovePath.STEP_FORWARDS);
-                    if(!client.game.getBoard().contains(md.getLastStep().getPosition())) {
+                    if(!game.getBoard().contains(md.getLastStep().getPosition())) {
                         md.removeLastStep();
                         md.addStep(MovePath.STEP_OFF);
                         break;
@@ -522,7 +490,9 @@ public class SharedUtility {
      * Add steps for advanced vector movement based on the given vectors when
      * splitting hexes, choose the hex with less tonnage in case OOC
      */
-    private static MovePath addSteps(MovePath md, Entity en, Client client) {
+    private static MovePath addSteps(MovePath md, Client client) {
+        Entity en = md.getEntity();
+        IGame game = en.getGame();
 
         // if the last step is a launch or recovery, then I want to keep that at
         // the end
@@ -562,12 +532,12 @@ public class SharedUtility {
                 Coords right = in.get(i + 1);
 
                 // get the total tonnage in each hex
-                Enumeration<Entity> leftTargets = client.game.getEntities(left);
+                Enumeration<Entity> leftTargets = game.getEntities(left);
                 double leftTonnage = 0;
                 while (leftTargets.hasMoreElements()) {
                     leftTonnage += leftTargets.nextElement().getWeight();
                 }
-                Enumeration<Entity> rightTargets = client.game
+                Enumeration<Entity> rightTargets = game
                         .getEntities(right);
                 double rightTonnage = 0;
                 while (rightTargets.hasMoreElements()) {
@@ -583,14 +553,14 @@ public class SharedUtility {
                 client.sendUpdateEntity(en);
 
                 // if the left is preferred, increment i so next one is skipped
-                if (leftTonnage < rightTonnage || !client.game.getBoard().contains(right)) {
+                if (leftTonnage < rightTonnage || !game.getBoard().contains(right)) {
                     i++;
                 } else {
                     continue;
                 }
             }
 
-            if(!client.game.getBoard().contains(c)) {
+            if(!game.getBoard().contains(c)) {
                 md.addStep(MovePath.STEP_OFF);
                 leftMap = true;
                 break;
@@ -629,7 +599,4 @@ public class SharedUtility {
         return md;
     }
 
-    private static String addNag(PilotingRollData rollTarget) {
-        return Messages.getString("MovementDisplay.addNag", new Object[] { rollTarget.getValueAsString(), rollTarget.getDesc() });//$NON-NLS-1$
-    }
 }

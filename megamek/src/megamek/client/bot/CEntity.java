@@ -850,7 +850,7 @@ public class CEntity {
                             * next.getMovementheatBuildup();
                 }
             }
-            String pilotChecks = SharedUtility.doPSRCheck(next,client);
+            String pilotChecks = SharedUtility.doPSRCheck(next);
             if (pilotChecks.length()>0) {
                 next.inDanger = true;
             }

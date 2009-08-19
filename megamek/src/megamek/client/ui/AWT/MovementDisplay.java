@@ -1155,7 +1155,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             }
         }
 
-        String check = SharedUtility.doPSRCheck(md, client);
+        String check = SharedUtility.doPSRCheck(md);
         if ((check.length() > 0) && GUIPreferences.getInstance().getNagForPSR() && !dontCheckPSR) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                     Messages.getString("MovementDisplay.ConfirmPilotingRoll") + //$NON-NLS-1$

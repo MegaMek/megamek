@@ -1112,7 +1112,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 return;
             }
         }
-        String check = SharedUtility.doPSRCheck(cmd, clientgui.getClient());
+        String check = SharedUtility.doPSRCheck(cmd);
         if ((check.length() > 0) && GUIPreferences.getInstance().getNagForPSR()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages
                     .getString("MovementDisplay.areYouSure"), //$NON-NLS-1$

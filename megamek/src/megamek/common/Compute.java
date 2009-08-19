@@ -4673,20 +4673,32 @@ public class Compute {
     }
 
     public static boolean isAirToGround(Entity attacker, Targetable target) {
+    	if (attacker == null || target == null) {
+    		return false;
+    	}
         return attacker.isAirborne() && !target.isAirborne() && !target.isAirborneVTOL() ;
     }
 
     public static boolean isAirToAir(Entity attacker, Targetable target) {
+    	if (attacker == null || target == null) {
+    		return false;
+    	}
         return (attacker.isAirborne() && target.isAirborne())
                 || (attacker.isAirborne() && target.isAirborneVTOL())
                 || (attacker.isAirborneVTOL() && target.isAirborne());
     }
 
     public static boolean isGroundToAir(Entity attacker, Targetable target) {
+    	if (attacker == null || target == null) {
+    		return false;
+    	}
         return !attacker.isAirborne() && target.isAirborne();
     }
 
     public static boolean isGroundToGround(Entity attacker, Targetable target) {
+    	if (attacker == null || target == null) {
+    		return false;
+    	}
         return !attacker.isAirborne() && !target.isAirborne();
     }
 

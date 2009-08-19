@@ -60,12 +60,11 @@ public class ScenarioDialog extends JDialog implements ActionListener {
             final JButton curButton = m_camoButtons[x];
             curButton.setText(Messages.getString("MegaMek.NoCamoBtn")); //$NON-NLS-1$
             curButton.setPreferredSize(new Dimension(84, 72));
-
+            final CamoChoiceDialog dialog = new CamoChoiceDialog(frame,
+                    curButton);
+            dialog.setPlayer(curPlayer);
             curButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    CamoChoiceDialog dialog = new CamoChoiceDialog(frame,
-                            curButton);
-                    dialog.setPlayer(curPlayer);
                     dialog.setVisible(true);
                 }
             });

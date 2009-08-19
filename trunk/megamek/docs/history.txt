@@ -9,6 +9,7 @@ v0.35.7-dev (SVN)
 + Show directories by default in swing view
 + made scenario camos show up initially
 + Bot caches move option utility calculations, and uses PSR calculations like a human
++ Bug 2831132: checking air to ground needs defensive programming
 
 v0.35.6 (2009-08-17, 15:23 UTC+2)
 + ultra rubble image (thanks sirrob01!)

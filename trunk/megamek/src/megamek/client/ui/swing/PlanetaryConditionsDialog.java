@@ -62,6 +62,12 @@ public class PlanetaryConditionsDialog extends JDialog implements
     private JLabel labWind = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labWind"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox choWind = new JComboBox();
+    private JLabel labMinWind = new JLabel(
+            Messages.getString("PlanetaryConditionsDialog.labMinWind"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JComboBox choMinWind = new JComboBox();
+    private JLabel labMaxWind = new JLabel(
+            Messages.getString("PlanetaryConditionsDialog.labMaxWind"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JComboBox choMaxWind = new JComboBox();
     private JLabel labAtmosphere = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labAtmosphere"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox choFog = new JComboBox();
@@ -196,6 +202,16 @@ public class PlanetaryConditionsDialog extends JDialog implements
 
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(labGrav, c);
+        panOptions.add(labGrav);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(fldGrav, c);
+        panOptions.add(fldGrav);
+        
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labLight, c);
         panOptions.add(labLight);
 
@@ -223,7 +239,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(choWind, c);
         panOptions.add(choWind);
-
+        
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labAtmosphere, c);
@@ -261,13 +277,23 @@ public class PlanetaryConditionsDialog extends JDialog implements
 
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labGrav, c);
-        panOptions.add(labGrav);
+        gridbag.setConstraints(labMinWind, c);
+        panOptions.add(labMinWind);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(fldGrav, c);
-        panOptions.add(fldGrav);
+        gridbag.setConstraints(choMinWind, c);
+        panOptions.add(choMinWind);
+        
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(labMaxWind, c);
+        panOptions.add(labMaxWind);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(choMaxWind, c);
+        panOptions.add(choMaxWind);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
@@ -302,10 +328,16 @@ public class PlanetaryConditionsDialog extends JDialog implements
         choWeather.setSelectedIndex(conditions.getWeather());
 
         choWind.removeAllItems();
+        choMinWind.removeAllItems();
+        choMaxWind.removeAllItems();
         for (int i = 0; i < PlanetaryConditions.WI_SIZE; i++) {
             choWind.addItem(PlanetaryConditions.getWindDisplayableName(i));
+            choMinWind.addItem(PlanetaryConditions.getWindDisplayableName(i));
+            choMaxWind.addItem(PlanetaryConditions.getWindDisplayableName(i));
         }
         choWind.setSelectedIndex(conditions.getWindStrength());
+        choMinWind.setSelectedIndex(conditions.getMinWindStrength());
+        choMaxWind.setSelectedIndex(conditions.getMaxWindStrength());
 
         choAtmosphere.removeAllItems();
         for (int i = 0; i < PlanetaryConditions.ATMO_SIZE; i++) {
@@ -340,6 +372,8 @@ public class PlanetaryConditionsDialog extends JDialog implements
         conditions.setLight(choLight.getSelectedIndex());
         conditions.setWeather(choWeather.getSelectedIndex());
         conditions.setWindStrength(choWind.getSelectedIndex());
+        conditions.setMinWindStrength(choMinWind.getSelectedIndex());
+        conditions.setMaxWindStrength(choMaxWind.getSelectedIndex());
         conditions.setAtmosphere(choAtmosphere.getSelectedIndex());
         conditions.setFog(choFog.getSelectedIndex());
         conditions.setBlowingSand(cBlowingSands.isSelected());
@@ -408,6 +442,14 @@ public class PlanetaryConditionsDialog extends JDialog implements
                                 JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            
+            //make sure that the minimum and maximum wind conditions fall within the actual
+            if(choWind.getSelectedIndex() < choMinWind.getSelectedIndex()) {
+                choMinWind.setSelectedIndex(choWind.getSelectedIndex());
+            }
+            if(choWind.getSelectedIndex() > choMaxWind.getSelectedIndex()) {
+                choMaxWind.setSelectedIndex(choWind.getSelectedIndex());
+            }
 
             // can't combine certain wind conditions with certain atmospheres
             int wind = choWind.getSelectedIndex();
@@ -451,9 +493,10 @@ public class PlanetaryConditionsDialog extends JDialog implements
             if (client != null) {
                 send();
             }
+            setVisible(false);
         } else if (e.getSource() == butCancel) {
             refreshConditions();
+            setVisible(false);
         }
-        setVisible(false);
     }
 }

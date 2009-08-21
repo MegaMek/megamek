@@ -104,6 +104,7 @@ public class PlanetaryConditions implements Serializable {
     private boolean emi = false;
     private boolean terrainAffected = true;
     private int maxWindStrength = PlanetaryConditions.WI_TORNADO_F4;
+    private int minWindStrength = PlanetaryConditions.WI_NONE;
 
     /**
      * Constructor
@@ -120,6 +121,8 @@ public class PlanetaryConditions implements Serializable {
         windDirection = other.windDirection;
         shiftWindDirection = other.shiftWindDirection;
         shiftWindStrength = other.shiftWindStrength;
+        minWindStrength = other.minWindStrength;
+        maxWindStrength = other.maxWindStrength;
         atmosphere = other.atmosphere;
         temperature = other.temperature;
         gravity = other.gravity;
@@ -364,10 +367,11 @@ public class PlanetaryConditions implements Serializable {
             // Wind strength changes on a roll of 1 or 6
             switch (Compute.d6()) {
             case 1: // weaker
-                windStrength = Math.max(0, --windStrength);
+                windStrength = Math.max(minWindStrength, --windStrength);
                 break;
             case 6: // stronger
                 windStrength = Math.min(maxWindStrength, ++windStrength);
+                break;
             }
         }
 
@@ -851,6 +855,14 @@ public class PlanetaryConditions implements Serializable {
 
     public void setMaxWindStrength(int strength){
         maxWindStrength = strength;
+    }
+    
+    public int getMinWindStrength(){
+        return minWindStrength;
+    }
+
+    public void setMinWindStrength(int strength){
+        minWindStrength = strength;
     }
 
     public boolean isSandBlowing() {

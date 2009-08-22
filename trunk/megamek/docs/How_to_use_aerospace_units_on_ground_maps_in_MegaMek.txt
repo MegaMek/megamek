@@ -1,0 +1,25 @@
+Alright, since lots of people are asking, I'll provide some of the basic stuff.  Everything else you must find in TW or AT2R (since the rules really haven't changed much and I don't have TW yet).
+
+-Your fighter must have velocity points to move.  If it doesn't have any starting velocity, you must accelerate first on the map.  Each thrust point you have gives you 16 hexes.
+
+-When you click on a hex, you will see several different numbers.  The number in the very upper right corner of the hex is your turn number.  When this number turns green, you may turn one hexside.  Also, the turn indicator can also turn yellow, which means that you can turn but it will cost you thrust points.  You can only do this once every 8 straight moves and only for non-conventional aeros.  When it turns green you can turn for free.  The big number in the center of the hex that looks like "(#//#)" tells you how many hexes you have traveled out of how many hexes you must move.  The number below that one indicates how many velocity points you have and the altitude level you are flying at.
+
+-If you have no velocity, you will stall out.  If your aircraft is an aerospace fighter, a spheroid, or is a conventional fighter with V/STOL equipment, it will hover automatically.
+
+-To attack targets, you must fly over them during the movement phase.  All units which are under the flight path are valid targets for air-to-ground attacks.
+
+-Strike attacks are straight forward.  Just fly over an enemy unit.  In the attack phase, click on that unit to attack.
+
+-Dive bombing is the same way.  Fly over a hex, then right click on that hex in the attack phase, and dive bomb it (you must be equipped with bombs, duh).  You cannot bomb and strike in the same turn.
+
+-Level (or altitude) bombing is new, and maybe reworked yet.  Just fly over a row of hexes and drop a max of 2 bombs per hex.  The hexes must be consecutive.
+
+-When you're ready to fly off the map and make a go-around for another strike, simply fly the aircraft to the border hex and click on "Fly off" (you will find it when you click "More" a couple times).  If you fly off the same turn you fly onto the map, you will not be able to attack.
+
+-Aerospace units cannot take-off or land yet.  However they can be grounded and move on the ground.  To use grounded aerospace units on a map, set their starting altitude to zero in the MegaMek lobby.
+
+*NOTE:  The bot cannot use aerospace units yet.
+
+Written by BATTLEMASTER IIC
+Created 1:03 AM 8/22/2009
+ 	  	 

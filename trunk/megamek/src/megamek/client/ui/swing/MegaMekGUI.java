@@ -43,7 +43,6 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.MegaMek;
 import megamek.client.Client;
@@ -79,12 +78,15 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Contruct a MegaMek, and display the main menu in the specified frame.
      */
     private void createGUI() {
-        //Set a couple of things to make the Swing GUI look more "Mac-like" on Macs
-        //Taken from: http://www.devdaily.com/apple/mac/java-mac-native-look/Introduction.shtml
+        // Set a couple of things to make the Swing GUI look more "Mac-like" on
+        // Macs
+        // Taken from:
+        // http://www.devdaily.com/apple/mac/java-mac-native-look/Introduction.shtml
         System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MegaMek");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+                "MegaMek");
 
-        //this should also help to make MegaMek look more system-specific
+        // this should also help to make MegaMek look more system-specific
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException e) {
@@ -280,7 +282,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         hd = new HostDialog(frame);
         hd.setVisible(true);
         // verify dialog data
-        if ((hd.playerName == null) || (hd.serverPass == null) || (hd.port == 0)) {
+        if ((hd.playerName == null) || (hd.serverPass == null)
+                || (hd.port == 0)) {
             return;
         }
 
@@ -293,8 +296,8 @@ public class MegaMekGUI implements IMegaMekGUI {
          * ("&version=") .append (MegaMek.VERSION) ; metaserver =
          * buff.toString(); try { URL metaURL = new URL (metaserver);
          * BufferedReader reader = new BufferedReader (new InputStreamReader
-         * (metaURL.openStream())); String line = reader.readLine(); while (null !=
-         * line) { System.out.println (line); line = reader.readLine(); } }
+         * (metaURL.openStream())); String line = reader.readLine(); while (null
+         * != line) { System.out.println (line); line = reader.readLine(); } }
          * catch (Exception except) { except.printStackTrace(); } } /* WORK IN
          * PROGRESS
          **********************************************************************/
@@ -365,7 +368,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return ((dir.getName() != null) && dir.getName().endsWith(".sav")); //$NON-NLS-1$
+                return ((dir.getName() != null) && dir.getName().endsWith(
+                        ".sav")); //$NON-NLS-1$
             }
 
             @Override
@@ -381,7 +385,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
         HostDialog hd = new HostDialog(frame);
         hd.setVisible(true);
-        if ((hd.playerName == null) || (hd.serverPass == null) || (hd.port == 0)) {
+        if ((hd.playerName == null) || (hd.serverPass == null)
+                || (hd.port == 0)) {
             return;
         }
 
@@ -454,14 +459,47 @@ public class MegaMekGUI implements IMegaMekGUI {
     void scenario() {
         JFileChooser fc = new JFileChooser("data" + File.separatorChar
                 + "scenarios");
-        fc.setLocation(frame.getLocation().x + 150,
+        fc
+                .setLocation(frame.getLocation().x + 150,
                         frame.getLocation().y + 100);
         fc.setDialogTitle(Messages
                 .getString("MegaMek.SelectScenarioDialog.title"));
-        
-       FileFilter filter = new FileNameExtensionFilter("MegaMek Scenario Files", "mms");
-       fc.setFileFilter(filter);
-        
+
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+
+                String ext = null;
+                String s = f.getName();
+                int i = s.lastIndexOf('.');
+
+                if (i > 0 && i < s.length() - 1) {
+                    ext = s.substring(i + 1).toLowerCase();
+                }
+
+                if (ext != null) {
+                    if (ext.equalsIgnoreCase("mms")) {
+                        return true;
+                    }
+                    return false;
+                }
+
+                return false;
+            }
+
+            @Override
+            public String getDescription() {
+                // TODO Auto-generated method stub
+                return "MegaMek Scenario Files";
+            }
+
+        };
+        fc.setFileFilter(filter);
+
         int returnVal = fc.showOpenDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION)
                 || (fc.getSelectedFile() == null)) {
@@ -512,7 +550,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         hd.yourNameF.setText(sd.localName);
         hd.setVisible(true);
         // verify dialog data
-        if ((hd.playerName == null) || (hd.serverPass == null) || (hd.port == 0)) {
+        if ((hd.playerName == null) || (hd.serverPass == null)
+                || (hd.port == 0)) {
             return;
         }
         sd.localName = hd.playerName;
@@ -588,7 +627,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                 BotClient c = new TestBot(pa[x].getName(), "localhost", hd.port); //$NON-NLS-1$
                 c.game.addGameListener(new BotGUI(c));
                 if (!c.connect()) {
-                    //bots should never fail on connect
+                    // bots should never fail on connect
                 }
                 c.retrieveServerInfo();
             }
@@ -618,7 +657,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
         // verify dialog data
-        if ((cd.playerName == null) || (cd.serverAddr == null) || (cd.port == 0)) {
+        if ((cd.playerName == null) || (cd.serverAddr == null)
+                || (cd.port == 0)) {
             return;
         }
 
@@ -662,7 +702,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
         // verify dialog data
-        if ((cd.playerName == null) || (cd.serverAddr == null) || (cd.port == 0)) {
+        if ((cd.playerName == null) || (cd.serverAddr == null)
+                || (cd.port == 0)) {
             return;
         }
 

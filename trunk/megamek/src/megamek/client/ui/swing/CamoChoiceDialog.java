@@ -282,7 +282,6 @@ public class CamoChoiceDialog extends JDialog implements
                         player.setCamoFileName(prevItem);
                     } else {
                         player.setCamoFileName(prevItem);
-                        player.setColorIndex(0);
                     }
                     sourceButton.setIcon(generateIcon(prevCat, prevItem));
                     

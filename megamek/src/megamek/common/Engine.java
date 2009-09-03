@@ -186,6 +186,8 @@ public class Engine implements Serializable {
             return FISSION;
         } else if (type.toLowerCase().indexOf("fuel cell") != -1) {
             return FUEL_CELL;
+        } else if (type.toLowerCase().indexOf("fuel-cell") != -1) {
+            return FUEL_CELL;
         } else {
             return NORMAL_ENGINE;
         }

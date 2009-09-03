@@ -9302,7 +9302,7 @@ public class Server implements Runnable {
         }
 
         // is the hex ignitable (how are infernos handled?)
-        if (!hex.isIgnitable() && !bInferno) {
+        if (!hex.isIgnitable()) {
             return false;
         }
 

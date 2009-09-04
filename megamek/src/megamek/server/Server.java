@@ -1882,6 +1882,7 @@ public class Server implements Runnable {
             send(createReportPacket(null));
             send(createEndOfGamePacket());
             break;
+            default:
         }
     }
 
@@ -1986,6 +1987,7 @@ public class Server implements Runnable {
                 autoSave();
             }
             break;
+            default:
         }
     }
 
@@ -2257,6 +2259,7 @@ public class Server implements Runnable {
         case PHASE_VICTORY:
             resetGame();
             break;
+            default:
         }
     }
 
@@ -4243,9 +4246,8 @@ public class Server implements Runnable {
         else if(game.getBoard().onGround()) {
             if(altitude <= 0) {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
         //we must be in atmosphere
         return game.getBoard().getHex(pos).ceiling() >= altitude;
@@ -4465,7 +4467,7 @@ public class Server implements Runnable {
         }
 
         // Is the unit carrying passengers?
-        final Vector<Entity> passengers = entity.getLoadedUnits();
+        final List<Entity> passengers = entity.getLoadedUnits();
         if (!passengers.isEmpty()) {
             for (Entity passenger : passengers) {
                 // Unit has fled the battlefield.
@@ -5297,18 +5299,17 @@ public class Server implements Runnable {
                             mpUsed = step.getMpUsed() + 1;
                             fellDuringMovement = true;
                             break;
-                        } else {
-                            r = new Report(2207);
-                            r.addDesc(entity);
-                            r.subject = entity.getId();
-                            addReport(r);
-                            //until we get a rules clarification assume that the entity is both giver and taker
-                            //for charge damage
-                            HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                            addReport(damageEntity(entity, hit, ChargeAttackAction.getDamageTakenBy(entity, entity)));
-                            turnOver = true;
-                            break;
                         }
+                        r = new Report(2207);
+                        r.addDesc(entity);
+                        r.subject = entity.getId();
+                        addReport(r);
+                        //until we get a rules clarification assume that the entity is both giver and taker
+                        //for charge damage
+                        HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                        addReport(damageEntity(entity, hit, ChargeAttackAction.getDamageTakenBy(entity, entity)));
+                        turnOver = true;
+                        break;
                     }
                 }
             }
@@ -9324,10 +9325,9 @@ public class Server implements Runnable {
                 r.choose(false);
                 vPhaseReport.add(r);
                 return false;
-            } else {
-                r.choose(true);
-                vPhaseReport.add(r);
             }
+            r.choose(true);
+            vPhaseReport.add(r);
         }
 
         int terrainMod = hex.getIgnitionModifier();
@@ -14208,47 +14208,46 @@ public class Server implements Runnable {
                 // failed a PSR, check for ICE engine stalling
                 entity.doCheckEngineStallRoll(vPhaseReport);
                 return vPhaseReport;
-            } else {
-                int diceRoll = Compute.d6(2);
-                r = new Report(2300);
-                r.add(roll.getValueAsString());
-                r.add(diceRoll);
-                r.subject = entity.getId();
-                if (diceRoll < roll.getValue()) {
-                    r.choose(false);
-                    vPhaseReport.add(r);
-                    if (moving) {
-                        vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, roll));
-                    } else {
-                        if ( (entity instanceof Mech)
-                                && game.getOptions().booleanOption("tacops_falling_expanded")
-                                && (entity.getCrew().getPiloting() < 6)
-                                && !entity.isHullDown()
-                                && entity.canGoHullDown()){
-                            if ( (entity.getCrew().getPiloting() > 1) && (roll.getValue() - diceRoll < 2)){
-                                entity.setHullDown(true);
-                            }else if ( (entity.getCrew().getPiloting() <= 1) && (roll.getValue() - diceRoll < 3) ){
-                                entity.setHullDown(true);
-                            }
-                            if ( entity.isHullDown() && entity.canGoHullDown() ){
-                                r = new Report (2317);
-                                r.subject = entity.getId();
-                                r.add(entity.getDisplayName());
-                                vPhaseReport.add(r);
-                            }else{
-                                vPhaseReport.addAll(doEntityFall(entity, roll));
-                            }
-                        }else {
+            }
+            int diceRoll = Compute.d6(2);
+            r = new Report(2300);
+            r.add(roll.getValueAsString());
+            r.add(diceRoll);
+            r.subject = entity.getId();
+            if (diceRoll < roll.getValue()) {
+                r.choose(false);
+                vPhaseReport.add(r);
+                if (moving) {
+                    vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, roll));
+                } else {
+                    if ( (entity instanceof Mech)
+                            && game.getOptions().booleanOption("tacops_falling_expanded")
+                            && (entity.getCrew().getPiloting() < 6)
+                            && !entity.isHullDown()
+                            && entity.canGoHullDown()){
+                        if ( (entity.getCrew().getPiloting() > 1) && (roll.getValue() - diceRoll < 2)){
+                            entity.setHullDown(true);
+                        }else if ( (entity.getCrew().getPiloting() <= 1) && (roll.getValue() - diceRoll < 3) ){
+                            entity.setHullDown(true);
+                        }
+                        if ( entity.isHullDown() && entity.canGoHullDown() ){
+                            r = new Report (2317);
+                            r.subject = entity.getId();
+                            r.add(entity.getDisplayName());
+                            vPhaseReport.add(r);
+                        }else{
                             vPhaseReport.addAll(doEntityFall(entity, roll));
                         }
+                    }else {
+                        vPhaseReport.addAll(doEntityFall(entity, roll));
                     }
-                    // failed a PSR, check for ICE engine stalling
-                    entity.doCheckEngineStallRoll(vPhaseReport);
-                    return vPhaseReport;
                 }
-                r.choose(true);
-                vPhaseReport.add(r);
+                // failed a PSR, check for ICE engine stalling
+                entity.doCheckEngineStallRoll(vPhaseReport);
+                return vPhaseReport;
             }
+            r.choose(true);
+            vPhaseReport.add(r);
         }
         return vPhaseReport;
     }
@@ -17097,7 +17096,7 @@ public class Server implements Runnable {
                 r = new Report(6615);
                 r.subject = t.getId();
                 vDesc.add(r);
-                Vector<Entity> passengers = t.getLoadedUnits();
+                List<Entity> passengers = t.getLoadedUnits();
                 Entity target = passengers.get(Compute.randomInt(passengers.size()));
                 hit = target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                 // FIXME should be original weapon damage
@@ -17700,7 +17699,7 @@ public class Server implements Runnable {
                     while (unitsDestroyed > 0) {
                         // redraw loaded units to make sure I don't get ones
                         // already destroyed
-                        Vector<Entity> units = en.getLoadedUnits();
+                        List<Entity> units = en.getLoadedUnits();
                         if (units.size() > 0) {
                             Entity target = units.get(Compute.randomInt(units.size()));
                             vDesc.addAll(destroyEntity(target, "cargo damage", false, false));
@@ -19134,14 +19133,11 @@ public class Server implements Runnable {
             ArrayList<Entity> externalUnits = entity.getExternalUnits();
 
             // Handle escape of transported units.
-            Enumeration<Entity> transporter = entity.getLoadedUnits().elements();
-            if (transporter.hasMoreElements()) {
-                Entity other = null;
+            if (entity.getLoadedUnits().size() > 0) {
                 Coords curPos = entity.getPosition();
                 IHex entityHex = game.getBoard().getHex(curPos);
                 int curFacing = entity.getFacing();
-                while (transporter.hasMoreElements()) {
-                    other = transporter.nextElement();
+                for (Entity other : entity.getLoadedUnits()) {
                     // Can the other unit survive?
                     boolean survived = false;
                     if (entity instanceof Tank) {
@@ -20053,7 +20049,7 @@ public class Server implements Runnable {
                     addReport(r);
                     smokeLevel = 2;
                 } else {
-                    smokeLevel = Math.max(smokeLevel, 2);;
+                    smokeLevel = Math.max(smokeLevel, 2);
                     r = new Report(5185, Report.PUBLIC);
                     r.add(smokeCoords.getBoardNum());
                     addReport(r);
@@ -20073,7 +20069,7 @@ public class Server implements Runnable {
                     addReport(r);
                     smokeLevel = Math.max(smokeLevel, 1);
                 } else {
-                    smokeLevel = Math.max(smokeLevel, 1);;
+                    smokeLevel = Math.max(smokeLevel, 1);
                     // light smoke fills hex
                     r = new Report(5200, Report.PUBLIC);
                     r.add(smokeCoords.getBoardNum());

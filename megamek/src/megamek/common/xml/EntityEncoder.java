@@ -63,7 +63,6 @@ public class EntityEncoder {
      * @throws IOException if there's any error on write.
      */
     public static void encode(Entity entity, Writer out) throws IOException {
-        Enumeration<Entity> iter; // used when marching through a list of sub-elements
         Coords coords;
         int turns;
         String substr;
@@ -77,9 +76,8 @@ public class EntityEncoder {
         }
 
         // Make sure any transported entities are written first.
-        iter = entity.getLoadedUnits().elements();
-        while (iter.hasMoreElements()) {
-            EntityEncoder.encode(iter.nextElement(), out);
+        for (Entity other : entity.getLoadedUnits()) {
+            EntityEncoder.encode(other, out);
         }
 
         // Start writing this entity to the file.
@@ -255,11 +253,9 @@ public class EntityEncoder {
         }
 
         // Record the IDs of all transported units (if any).
-        iter = entity.getLoadedUnits().elements();
-        if (iter.hasMoreElements()) {
+        if (entity.getLoadedUnits().size()>0) {
             out.write("<loadedUnits>");
-            while (iter.hasMoreElements()) {
-                Entity loaded = iter.nextElement();
+            for (Entity loaded : entity.getLoadedUnits()) {
                 out.write("<entityRef gameId=\"");
                 out.write(String.valueOf(loaded.getId()));
                 out.write("\" />");

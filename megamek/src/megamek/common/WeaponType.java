@@ -92,7 +92,7 @@ public class WeaponType extends EquipmentType {
     public static final long F_TASER = 1l << 37;
     public static final long F_ANTI_SHIP = 1l << 38; // for anti-ship missiles
     public static final long F_SPACE_BOMB = 1l << 39;
-    public static final long F_ARTILLERY_CANNON = 11 << 40;
+    //public static final long F_ARTILLERY_CANNON = 1l << 40; Not needed
     public static final long F_DIVE_BOMB = 1l << 41;
     public static final long F_ALT_BOMB = 1l << 42;
 
@@ -336,10 +336,8 @@ public class WeaponType extends EquipmentType {
     public int[] getATRanges() {
         if (capital) {
             return new int[] { Integer.MIN_VALUE, 12, 24, 40, 50 };
-        } else {
-            return new int[] { Integer.MIN_VALUE, 6, 12, 20, 25 };
-        }
-
+        } 
+       return new int[] { Integer.MIN_VALUE, 6, 12, 20, 25 };
     }
 
     public double getShortAV() {

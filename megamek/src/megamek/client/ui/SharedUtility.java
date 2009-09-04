@@ -36,6 +36,7 @@ import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
+import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
 
@@ -597,6 +598,28 @@ public class SharedUtility {
         }
 
         return md;
+    }
+    
+    public static String[] getDisplayArray(List<? extends Targetable> entities) {
+        String[] retVal = new String[entities.size()];
+        int i = 0;
+        for (Targetable ent : entities) {
+            retVal[i++] = ent.getDisplayName();
+        }
+        return retVal;
+    }
+
+    public static Targetable getTargetPicked(List<? extends Targetable> targets, String input) {
+        if (input == null) {
+            return null;
+        }
+        for (Targetable ent : targets) {
+            if (input.equals(ent.getDisplayName())) {
+                return ent;
+            }
+        }
+        //Should never get here!
+        return null;
     }
 
 }

@@ -22,16 +22,15 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.Board;
@@ -42,13 +41,11 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Terrains;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay implements
-        BoardViewListener, ActionListener, DoneButtoned, KeyListener,
-        GameListener {
+        DoneButtoned, KeyListener {
     /**
      *
      */
@@ -574,9 +571,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
             ce().setPosition(null);
             clientgui.bv.redrawEntity(ce());
             // Unload any loaded units.
-            Enumeration<Entity> iter = ce().getLoadedUnits().elements();
-            while (iter.hasMoreElements()) {
-                Entity other = iter.nextElement();
+            for (Entity other : ce().getLoadedUnits()) {
                 // Please note, the Server never got this unit's load orders.
                 ce().unload(other);
                 other.setTransportId(Entity.NONE);
@@ -638,12 +633,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         else if (ev.getActionCommand().equals(DEPLOY_UNLOAD)) {
 
             // Do we have anyone to unload?
-            Vector<Entity> choices = ce().getLoadedUnits();
+            List<Entity> choices = ce().getLoadedUnits();
             if (choices.size() > 0) {
                 Entity other = null;
                 String[] names = new String[choices.size()];
                 for (int loop = 0; loop < names.length; loop++) {
-                    names[loop] = (choices.elementAt(loop))
+                    names[loop] = (choices.get(loop))
                             .getShortName();
                 }
                 SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
@@ -656,7 +651,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                         names);
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getAnswer() == true) {
-                    other = choices.elementAt(choiceDialog.getChoice());
+                    other = choices.get(choiceDialog.getChoice());
                     // Please note, the Server never got this load order.
                     if (ce().unload(other)) {
                         other.setTransportId(Entity.NONE);
@@ -792,9 +787,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                     ce().setPosition(null);
                     clientgui.bv.redrawEntity(ce());
                     // Unload any loaded units.
-                    Enumeration<Entity> iter = ce().getLoadedUnits().elements();
-                    while (iter.hasMoreElements()) {
-                        Entity other = iter.nextElement();
+                    for (Entity other : ce().getLoadedUnits()) {
                         // Please note, the Server never got this unit's load
                         // orders.
                         ce().unload(other);

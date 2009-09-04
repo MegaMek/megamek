@@ -15,6 +15,8 @@ v0.35.7-dev (SVN)
 + BUG 2840765: Fuel-Cell and Fuel Cell are now interchangeable with regard to engine types
 + BUG 2792391: Infernos should not be able to ignite non-flammable hexes, per ruling by Herb
 + Artillery Cannons are Ballstic weapons, they probably don't need a separate type
++ BUG 2844033: added scrollpane to single choices by removing SingleChoiceDialog and replacing
+    with JOptionPane
 
 v0.35.6 (2009-08-17, 15:23 UTC+2)
 + ultra rubble image (thanks sirrob01!)

@@ -2794,11 +2794,10 @@ public class MechDisplay extends JPanel {
                 unused = Messages.getString("MechDisplay.None"); //$NON-NLS-1$
             }
             unusedR.setText(unused);
-            Enumeration<Entity> iter = en.getLoadedUnits().elements();
             carrysR.setText(null);
             // boolean hasText = false;
-            while (iter.hasMoreElements()) {
-                carrysR.append(iter.nextElement().getShortName());
+            for (Entity other : en.getLoadedUnits()) {
+                carrysR.append(other.getShortName());
                 carrysR.append("\n"); //$NON-NLS-1$
             }
 

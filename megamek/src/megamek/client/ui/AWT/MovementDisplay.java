@@ -23,18 +23,17 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Aero;
@@ -75,12 +74,11 @@ import megamek.common.Warship;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
-import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
-public class MovementDisplay extends StatusBarPhaseDisplay implements ActionListener,
-DoneButtoned, KeyListener, GameListener, BoardViewListener {
+public class MovementDisplay extends StatusBarPhaseDisplay implements 
+DoneButtoned, KeyListener {
     /**
      *
      */
@@ -236,7 +234,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
     /**
      * A local copy of the current entity's loaded units.
      */
-    private Vector<Entity> loadedUnits = null;
+    private List<Entity> loadedUnits = null;
 
     public static final int GEAR_LAND = 0;
     public static final int GEAR_BACKUP = 1;
@@ -1894,20 +1892,20 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             String question = Messages.getString("MovementDisplay.UnloadUnitDialog.message", new Object[] { //$NON-NLS-1$
                     ce.getShortName(), ce.getUnusedString() });
             for (int loop = 0; loop < names.length; loop++) {
-                names[loop] = loadedUnits.elementAt(loop).getShortName();
+                names[loop] = loadedUnits.get(loop).getShortName();
             }
             SingleChoiceDialog choiceDialog = new SingleChoiceDialog(clientgui.frame, Messages.getString("MovementDisplay.UnloadUnitDialog.title"), //$NON-NLS-1$
                     question, names);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer() == true) {
-                choice = loadedUnits.elementAt(choiceDialog.getChoice());
+                choice = loadedUnits.get(choiceDialog.getChoice());
             }
         } // End have-choices
 
         // Only one choice.
         else {
-            choice = loadedUnits.elementAt(0);
-            loadedUnits.removeElementAt(0);
+            choice = loadedUnits.get(0);
+            loadedUnits.remove(0);
         }
 
         // Return the chosen unit.
@@ -2767,7 +2765,7 @@ DoneButtoned, KeyListener, GameListener, BoardViewListener {
             while (entities.hasMoreElements()) {
                 other = entities.nextElement();
                 if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
-                    loadedUnits.addElement(other);
+                    loadedUnits.add(other);
                     break;
                 }
                 other = null;

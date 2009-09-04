@@ -523,9 +523,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // Also set game for each entity "loaded" in this entity.
-        Enumeration<Entity> iter = getLoadedUnits().elements();
-        while (iter.hasMoreElements()) {
-            iter.nextElement().setGame(game);
+        for (Targetable target : getLoadedUnits()) {
+            ((Entity)target).setGame(game);
         }
     }
 
@@ -5316,14 +5315,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *         returned <code>List</code> is independant from the under- lying
      *         data structure; modifying one does not affect the other.
      */
-    public Vector<Entity> getLoadedUnits() {
-        Vector<Entity> result = new Vector<Entity>();
+    public List<Entity> getLoadedUnits() {
+        List<Entity> result = new ArrayList<Entity>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
         for (Transporter next : transports) {
             for (Entity e : next.getLoadedUnits()) {
-                result.addElement(e);
+                result.add(e);
             }
         }
 

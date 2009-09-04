@@ -2820,11 +2820,9 @@ public class MechDisplay extends BufferedPanel {
                 unused = Messages.getString("MechDisplay.None"); //$NON-NLS-1$
             }
             unusedR.setText(unused);
-            Enumeration<Entity> iter = en.getLoadedUnits().elements();
             carrysR.setText(null);
             // boolean hasText = false;
-            while (iter.hasMoreElements()) {
-                Entity nextUnit = iter.nextElement();
+            for (Entity nextUnit : en.getLoadedUnits()) {
                 // if still being recovered, then let player know how long
                 if (nextUnit.getRecoveryTurn() > 0) {
                     carrysR.append(nextUnit.getShortName() + " (Recovery Turn "

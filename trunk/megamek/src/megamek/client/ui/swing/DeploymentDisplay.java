@@ -20,6 +20,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -29,7 +30,7 @@ import javax.swing.JPanel;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.AWT.AlertDialog;
+import megamek.client.ui.SharedUtility;
 import megamek.common.Aero;
 import megamek.common.Board;
 import megamek.common.Building;
@@ -174,11 +175,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        // FIXME: Hack alert: remove C3 sprites from earlier here, or we might crash when
+        // FIXME: Hack alert: remove C3 sprites from earlier here, or we might
+        // crash when
         // trying to draw a c3 sprite belonging to the previously selected,
         // but not deployed entity. BoardView1 should take care of that itself.
         if (clientgui.bv instanceof BoardView1) {
-            ((BoardView1)clientgui.bv).clearC3Networks();
+            ((BoardView1) clientgui.bv).clearC3Networks();
         }
         cen = en;
         clientgui.setSelectedEntityNum(en);
@@ -193,42 +195,42 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (null != ce()) {
             // set facing according to starting position
             switch (ce().getStartingPos()) {
-                case Board.START_W:
-                    ce().setFacing(1);
-                    ce().setSecondaryFacing(1);
-                    break;
-                case Board.START_SW:
-                    ce().setFacing(1);
-                    ce().setSecondaryFacing(1);
-                    break;
-                case Board.START_S:
-                    ce().setFacing(0);
-                    ce().setSecondaryFacing(0);
-                    break;
-                case Board.START_SE:
-                    ce().setFacing(5);
-                    ce().setSecondaryFacing(5);
-                    break;
-                case Board.START_E:
-                    ce().setFacing(5);
-                    ce().setSecondaryFacing(5);
-                    break;
-                case Board.START_NE:
-                    ce().setFacing(4);
-                    ce().setSecondaryFacing(4);
-                    break;
-                case Board.START_N:
-                    ce().setFacing(3);
-                    ce().setSecondaryFacing(3);
-                    break;
-                case Board.START_NW:
-                    ce().setFacing(2);
-                    ce().setSecondaryFacing(2);
-                    break;
-                case Board.START_ANY:
-                    ce().setFacing(0);
-                    ce().setSecondaryFacing(0);
-                    break;
+            case Board.START_W:
+                ce().setFacing(1);
+                ce().setSecondaryFacing(1);
+                break;
+            case Board.START_SW:
+                ce().setFacing(1);
+                ce().setSecondaryFacing(1);
+                break;
+            case Board.START_S:
+                ce().setFacing(0);
+                ce().setSecondaryFacing(0);
+                break;
+            case Board.START_SE:
+                ce().setFacing(5);
+                ce().setSecondaryFacing(5);
+                break;
+            case Board.START_E:
+                ce().setFacing(5);
+                ce().setSecondaryFacing(5);
+                break;
+            case Board.START_NE:
+                ce().setFacing(4);
+                ce().setSecondaryFacing(4);
+                break;
+            case Board.START_N:
+                ce().setFacing(3);
+                ce().setSecondaryFacing(3);
+                break;
+            case Board.START_NW:
+                ce().setFacing(2);
+                ce().setSecondaryFacing(2);
+                break;
+            case Board.START_ANY:
+                ce().setFacing(0);
+                ce().setSecondaryFacing(0);
+                break;
             }
             setAssaultDropEnabled(ce().canAssaultDrop()
                     && ce().getGame().getOptions()
@@ -266,9 +268,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void endMyTurn() {
         // end my turn, then.
         disableButtons();
-        Entity next = clientgui.getClient().game.getNextEntity(clientgui.getClient().game.getTurnIndex());
-        if ((IGame.Phase.PHASE_DEPLOYMENT == clientgui.getClient().game.getPhase()) && (null != next)
-                && (null != ce()) && (next.getOwnerId() != ce().getOwnerId())) {
+        Entity next = clientgui.getClient().game.getNextEntity(clientgui
+                .getClient().game.getTurnIndex());
+        if ((IGame.Phase.PHASE_DEPLOYMENT == clientgui.getClient().game
+                .getPhase())
+                && (null != next)
+                && (null != ce())
+                && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.setDisplayVisible(false);
         }
         cen = Entity.NONE;
@@ -295,8 +301,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     public void ready() {
         disableButtons();
         Entity en = ce();
-        clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(), en.getElevation(), en
-                .getLoadedUnits(), assaultDropPreference);
+        clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
+                en.getElevation(), en.getLoadedUnits(), assaultDropPreference);
         en.setDeployed(true);
     }
 
@@ -395,12 +401,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             turnMode = false;
         } else if(ce().isBoardProhibited(clientgui.getClient().game.getBoard().getType())) {
             //check if this type of unit can be on the given type of map
-            AlertDialog dlg = new AlertDialog(clientgui.frame,
-                    Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
+            JOptionPane.showMessageDialog(clientgui, Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
                     Messages
-                            .getString(
-                                    "DeploymentDisplay.wrongMapType", new Object[] { ce().getShortName(), Board.getTypeName(clientgui.getClient().game.getBoard().getType()) })); //$NON-NLS-1$
-            dlg.setVisible(true);
+                    .getString(
+                            "DeploymentDisplay.wrongMapType", new Object[] { ce().getShortName(), Board.getTypeName(clientgui.getClient().game.getBoard().getType()) }),JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
             return;
         } else if (!(clientgui.getClient().game.getBoard().isLegalDeployment(moveto,
                 ce().getStartingPos()) || assaultDropPreference)
@@ -439,17 +443,20 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         floors[loop - 1] = Messages.getString("DeploymentDisplay.floor") + Integer.toString(loop);
                     }
                     floors[height] = Messages.getString("DeploymentDisplay.top");
-                    SingleChoiceDialog floorsDialog = new SingleChoiceDialog(
-                            clientgui.frame,
+                    String input = (String)JOptionPane.showInputDialog(clientgui, 
                             Messages
+                            .getString(
+                                    "DeploymentDisplay.floorsDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
+                                    Messages
                                     .getString("DeploymentDisplay.floorsDialog.title"), //$NON-NLS-1$
-                            Messages
-                                    .getString(
-                                            "DeploymentDisplay.floorsDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
-                            floors);
-                    floorsDialog.setVisible(true);
-                    if (floorsDialog.getAnswer()) {
-                        ce().setElevation(floorsDialog.getChoice());
+                            JOptionPane.QUESTION_MESSAGE, null, floors, null);
+                    if (input != null) {
+                        for (int loop = 1; loop <= height; loop++) {
+                            if (input.equals(floors[loop - 1])) {
+                                ce().setElevation(loop-1);
+                                break;
+                            }
+                        }
                     } else {
                         ce().setElevation(0);
                     }
@@ -458,17 +465,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     String[] floors = new String[2];
                     floors[0] = Messages.getString("DeploymentDisplay.belowbridge");
                     floors[1] = Messages.getString("DeploymentDisplay.topbridge");
-                    SingleChoiceDialog floorsDialog = new SingleChoiceDialog(
-                            clientgui.frame,
+                    String input = (String)JOptionPane.showInputDialog(clientgui, 
                             Messages
+                            .getString(
+                                    "DeploymentDisplay.bridgeDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
+                                    Messages
                                     .getString("DeploymentDisplay.bridgeDialog.title"), //$NON-NLS-1$
-                            Messages
-                                    .getString(
-                                            "DeploymentDisplay.bridgeDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
-                            floors);
-                    floorsDialog.setVisible(true);
-                    if (floorsDialog.getAnswer()) {
-                        if (floorsDialog.getChoice() == 1) {
+                            JOptionPane.QUESTION_MESSAGE, null, floors, null);
+                    if (input != null) {
+                        if (input.equals(floors[1])) {
                             ce().setElevation(height);
                         }
                         else {
@@ -511,15 +516,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (ev.getSource().equals(butDone)) {
             ready();
         } else if (ev.getActionCommand().equals(DEPLOY_NEXT)) {
-            //fiX: ce() possible null pointer
-            if( ce() != null) {
+            // fiX: ce() possible null pointer
+            if (ce() != null) {
                 ce().setPosition(null);
                 clientgui.bv.redrawEntity(ce());
                 // Unload any loaded units.
-                Enumeration<Entity> iter = ce().getLoadedUnits().elements();
-                while (iter.hasMoreElements()) {
-                    Entity other = iter.nextElement();
-                    // Please note, the Server never got this unit's load orders.
+                for (Entity other : ce().getLoadedUnits()) {
+                    // Please note, the Server never got this unit's load
+                    // orders.
                     ce().unload(other);
                     other.setTransportId(Entity.NONE);
                     other.newRound(clientgui.getClient().game.getRoundCount());
@@ -531,7 +535,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         } else if (ev.getActionCommand().equals(DEPLOY_LOAD)) {
             // What undeployed units can we load?
             Vector<Entity> choices = new Vector<Entity>();
-            Enumeration<Entity> entities = clientgui.getClient().game.getEntities();
+            Enumeration<Entity> entities = clientgui.getClient().game
+                    .getEntities();
             Entity other;
             while (entities.hasMoreElements()) {
                 other = entities.nextElement();
@@ -542,21 +547,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             // Do we have anyone to load?
             if (choices.size() > 0) {
-                String[] names = new String[choices.size()];
-                for (int loop = 0; loop < names.length; loop++) {
-                    names[loop] = choices.elementAt(loop).getShortName();
-                }
-                SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
-                        clientgui.frame,
-                        Messages
-                                .getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
-                        Messages
-                                .getString(
-                                        "DeploymentDisplay.loadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
-                        names);
-                choiceDialog.setVisible(true);
-                if (choiceDialog.getAnswer()) {
-                    other = choices.elementAt(choiceDialog.getChoice());
+                String input = (String) JOptionPane
+                        .showInputDialog(
+                                clientgui,
+                                Messages
+                                        .getString(
+                                                "DeploymentDisplay.loadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
+                                Messages
+                                        .getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
+                                JOptionPane.QUESTION_MESSAGE, null,
+                                SharedUtility.getDisplayArray(choices), null);
+                other = (Entity) SharedUtility.getTargetPicked(choices, input);
+                if (other != null) {
                     // Please note, the Server may never get this load order.
                     ce().load(other);
                     other.setTransportId(cen);
@@ -575,28 +577,26 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         } // End load-unit
         else if (ev.getActionCommand().equals(DEPLOY_UNLOAD)) {
             // Do we have anyone to unload?
-            Vector<Entity> choices = ce().getLoadedUnits();
+            List<Entity> choices = ce().getLoadedUnits();
             if (choices.size() > 0) {
                 Entity other = null;
-                String[] names = new String[choices.size()];
-                for (int loop = 0; loop < names.length; loop++) {
-                    names[loop] = choices.elementAt(loop).getShortName();
-                }
-                SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
-                        clientgui.frame,
-                        Messages
-                                .getString("DeploymentDisplay.unloadUnitDialog.title"), //$NON-NLS-1$
-                        Messages
-                                .getString(
-                                        "DeploymentDisplay.unloadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
-                        names);
-                choiceDialog.setVisible(true);
-                if (choiceDialog.getAnswer()) {
-                    other = choices.elementAt(choiceDialog.getChoice());
+                String input = (String) JOptionPane
+                        .showInputDialog(
+                                clientgui,
+                                Messages
+                                        .getString(
+                                                "DeploymentDisplay.unloadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
+                                Messages
+                                        .getString("DeploymentDisplay.unloadUnitDialog.title"), //$NON-NLS-1$
+                                JOptionPane.QUESTION_MESSAGE, null,
+                                SharedUtility.getDisplayArray(choices), null);
+                other = (Entity) SharedUtility.getTargetPicked(choices, input);
+                if (other != null) {
                     // Please note, the Server never got this load order.
                     if (ce().unload(other)) {
                         other.setTransportId(Entity.NONE);
-                        other.newRound(clientgui.getClient().game.getRoundCount());
+                        other.newRound(clientgui.getClient().game
+                                .getRoundCount());
                         clientgui.mechD.displayEntity(ce());
                     } else {
                         System.out.println("Could not unload " + //$NON-NLS-1$
@@ -638,7 +638,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     //
     @Override
     public void finishedMovingUnits(BoardViewEvent b) {
-        //ignore
+        // ignore
     }
 
     // Selected a unit in the unit overview.
@@ -653,19 +653,20 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         }
         if (clientgui.getClient().isMyTurn()) {
-            if (clientgui.getClient().game.getTurn().isValidEntity(e, clientgui.getClient().game)) {
+            if (clientgui.getClient().game.getTurn().isValidEntity(e,
+                    clientgui.getClient().game)) {
                 if (ce() != null) {
                     ce().setPosition(null);
                     clientgui.bv.redrawEntity(ce());
                     // Unload any loaded units.
-                    Enumeration<Entity> iter = ce().getLoadedUnits().elements();
-                    while (iter.hasMoreElements()) {
-                        Entity other = iter.nextElement();
+                    for (Entity other : ce().getLoadedUnits()) {
+
                         // Please note, the Server never got this unit's load
                         // orders.
                         ce().unload(other);
                         other.setTransportId(Entity.NONE);
-                        other.newRound(clientgui.getClient().game.getRoundCount());
+                        other.newRound(clientgui.getClient().game
+                                .getRoundCount());
                     }
                 }
                 selectEntity(e.getId());

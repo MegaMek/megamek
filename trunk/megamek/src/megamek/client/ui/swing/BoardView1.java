@@ -73,6 +73,7 @@ import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
+import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
@@ -4616,20 +4617,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         // If we have multiple choices, display a selection dialog.
         else if (entities.size() > 1) {
-            String[] names = new String[entities.size()];
-            for (int loop = 0; loop < names.length; loop++) {
-                names[loop] = entities.elementAt(loop).getDisplayName();
-            }
-            SingleChoiceDialog choiceDialog = new SingleChoiceDialog(null,
-                    Messages.getString("BoardView1.ChooseEntityDialog.title"), //$NON-NLS-1$
+            String input = (String)JOptionPane.showInputDialog(null, 
                     Messages
-                            .getString(
-                                    "BoardView1.ChooseEntityDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$
-                    names);
-            choiceDialog.setVisible(true);
-            if (choiceDialog.getAnswer() == true) {
-                choice = entities.elementAt(choiceDialog.getChoice());
-            }
+                    .getString(
+                            "BoardView1.ChooseEntityDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$
+                    Messages.getString("BoardView1.ChooseEntityDialog.title"), //$NON-NLS-1$
+                            JOptionPane.QUESTION_MESSAGE, null, 
+                    SharedUtility.getDisplayArray(entities),null);
+            choice = (Entity)SharedUtility.getTargetPicked(entities, input);
         } // End have-choices
 
         // Return the chosen unit.

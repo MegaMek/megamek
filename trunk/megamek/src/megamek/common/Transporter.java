@@ -16,7 +16,6 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Classes that implement this interface have the ability to load, carry, and
@@ -52,13 +51,13 @@ public interface Transporter extends Serializable {
      * Get a <code>Vector</code> of the units currently loaded into this
      * payload.
      * 
-     * @return A <code>Vector</code> of loaded <code>Entity</code> units.
+     * @return A <code>List</code> of loaded <code>Entity</code> units.
      *         This list will never be <code>null</code>, but it may be
-     *         empty. The returned <code>Vector</code> is independant from the
+     *         empty. The returned <code>List</code> is independant from the
      *         under- lying data structure; modifying one does not affect the
      *         other.
      */
-    public Vector<Entity> getLoadedUnits();
+    public List<Entity> getLoadedUnits();
 
     /**
      * Unload the given unit.

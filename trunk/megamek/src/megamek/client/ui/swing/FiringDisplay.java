@@ -30,18 +30,21 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.IndexedCheckbox;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -801,18 +804,23 @@ KeyListener, ItemListener, ListSelectionListener {
         for (int loop = 0; loop < names.length; loop++) {
             names[loop] = weapons.get(loop).getDesc();
         }
-        SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
-                clientgui.frame, Messages
-                .getString("FiringDisplay.ClearWeaponJam.title"), //$NON-NLS-1$
+        String input = (String)JOptionPane.showInputDialog(clientgui, 
                 Messages.getString("FiringDisplay.ClearWeaponJam.question"), //$NON-NLS-1$
-                names);
-        choiceDialog.setVisible(true);
-        if (choiceDialog.getAnswer() == true) {
-            RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
-                    ce().getId(), ce().getEquipmentNum(
-                            weapons.get(choiceDialog.getChoice())));
-            attacks.add(rwma);
-            ready();
+                Messages
+                .getString("FiringDisplay.ClearWeaponJam.title"), //$NON-NLS-1$
+                        JOptionPane.QUESTION_MESSAGE, null, 
+                names,null);
+
+        if (input != null) {
+            for (int loop = 0; loop < names.length; loop++) {
+                if (input.equals(names[loop])) {
+                    RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
+                            ce().getId(), ce().getEquipmentNum(
+                                    weapons.get(loop)));
+                    attacks.add(rwma);
+                    ready();
+                }
+            }
         }
     }
 
@@ -2069,18 +2077,18 @@ KeyListener, ItemListener, ListSelectionListener {
         }
 
         // Convert the choices into a List of targets.
-        Vector<Targetable> targets = new Vector<Targetable>();
+        List<Targetable> targets = new ArrayList<Targetable>();
         while (choices.hasMoreElements()) {
             choice = choices.nextElement();
             if (!ce().equals(choice)) {
-                targets.addElement(choice);
+                targets.add(choice);
             }
         }
 
         // Is there a building in the hex?
         Building bldg = clientgui.getClient().game.getBoard().getBuildingAt(pos);
         if (bldg != null) {
-            targets.addElement(new BuildingTarget(pos, clientgui.getClient().game.getBoard(),
+            targets.add(new BuildingTarget(pos, clientgui.getClient().game.getBoard(),
                     false));
         }
 
@@ -2088,28 +2096,20 @@ KeyListener, ItemListener, ListSelectionListener {
         if (targets.size() == 1) {
 
             // Return that choice.
-            choice = targets.elementAt(0);
+            choice = targets.get(0);
 
         }
 
         // If we have multiple choices, display a selection dialog.
         else if (targets.size() > 1) {
-            String[] names = new String[targets.size()];
-            for (int loop = 0; loop < names.length; loop++) {
-                names[loop] = targets.elementAt(loop).getDisplayName();
-            }
-            SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
-                    clientgui.frame,
-                    Messages
-                    .getString("FiringDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
+            String input = (String)JOptionPane.showInputDialog(clientgui, 
                     Messages
                     .getString(
-                            "FiringDisplay.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$
-                            names);
-            choiceDialog.setVisible(true);
-            if (choiceDialog.getAnswer()) {
-                choice = targets.elementAt(choiceDialog.getChoice());
-            }
+                            "FiringDisplay.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$                            JOptionPane.QUESTION_MESSAGE, null, 
+                    Messages
+                    .getString("FiringDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
+                    JOptionPane.QUESTION_MESSAGE, null, SharedUtility.getDisplayArray(targets),null);
+            choice = SharedUtility.getTargetPicked(targets, input);
         } // End have-choices
 
         // Return the chosen unit.

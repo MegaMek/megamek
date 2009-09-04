@@ -30,7 +30,7 @@ public abstract class ArtilleryCannonWeapon extends AmmoWeapon {
 
     public ArtilleryCannonWeapon() {
         super();
-        flags |= F_ARTILLERY_CANNON | F_SPLITABLE;
+        flags |= F_BALLISTIC | F_SPLITABLE;
         flags1 |= F_MECH_WEAPON | F_AERO_WEAPON | F_TANK_WEAPON;
         atClass = CLASS_AC;
     }

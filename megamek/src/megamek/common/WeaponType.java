@@ -336,7 +336,7 @@ public class WeaponType extends EquipmentType {
     public int[] getATRanges() {
         if (capital) {
             return new int[] { Integer.MIN_VALUE, 12, 24, 40, 50 };
-        } 
+        }
        return new int[] { Integer.MIN_VALUE, 6, 12, 20, 25 };
     }
 
@@ -891,6 +891,12 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBAFlamer());
         EquipmentType.addType(new CLBAFlamer());
         EquipmentType.addType(new ISBATaser());
+
+        // Cruise Missiles
+        EquipmentType.addType(new ISCruiseMissile50());
+        EquipmentType.addType(new ISCruiseMissile70());
+        EquipmentType.addType(new ISCruiseMissile90());
+        EquipmentType.addType(new ISCruiseMissile120());
 
         // Naval weapons
         EquipmentType.addType(new NL35Weapon());

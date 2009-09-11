@@ -17,6 +17,7 @@ v0.35.7-dev (SVN)
 + Artillery Cannons are Ballstic weapons, they probably don't need a separate type
 + BUG 2844033: added scrollpane to single choices by removing SingleChoiceDialog and replacing
     with JOptionPane
++ BUG 2857005: Narc LRM modifiers are giving out incorrect +2s
 
 v0.35.6 (2009-08-17, 15:23 UTC+2)
 + ultra rubble image (thanks sirrob01!)

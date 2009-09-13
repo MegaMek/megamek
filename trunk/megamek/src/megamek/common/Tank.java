@@ -351,6 +351,7 @@ public class Tank extends Entity {
     @Override
     public void applyDamage() {
         m_bImmobile |= m_bImmobileHit;
+        super.applyDamage();
     }
 
     @Override
@@ -1727,7 +1728,7 @@ public class Tank extends Entity {
         }
         return false;
     }
-    
+
     /**
      * see {@link Entity#getForwardArc()}
      */
@@ -1738,28 +1739,29 @@ public class Tank extends Entity {
         }
         return super.getForwardArc();
     }
-    
+
     /**
      * see {@link Entity#getRearArc()}
      */
+    @Override
     public int getRearArc() {
         if(game.getOptions().booleanOption("tacops_vehicle_arcs")) {
             return Compute.ARC_AFT;
         }
         return super.getRearArc();
     }
-    
+
     public boolean hasMovementDamage() {
         return movementDamage > 0;
     }
-    
+
     public void resetMovementDamage() {
         movementDamage = 0;
         minorMovementDamage = false;
         moderateMovementDamage = false;
         heavyMovementDamage = false;
     }
-    
+
     public void unlockTurret() {
         m_bTurretLocked = false;
     }

@@ -37,11 +37,6 @@ public class Aero extends Entity
      */
     private static final long serialVersionUID = 7196307097459255187L;
 
-    //these should probably go at some point
-    private boolean m_bImmobile = false;
-    private boolean m_bImmobileHit = false;
-    protected int movementDamage = 0;
-
     // locations
     public static final int        LOC_NOSE               = 0;
     public static final int        LOC_LWING              = 1;
@@ -193,14 +188,14 @@ public class Aero extends Entity
     private int eccmRoll = 0;
 
     public Aero() {
-    	//need to set altitude to something different than entity
-    	altitude = 5;
+        //need to set altitude to something different than entity
+        altitude = 5;
     }
 
     /**
-    * Returns this entity's safe thrust, factored
-    * for heat, extreme temperatures, gravity, and bomb load.
-    */
+     * Returns this entity's safe thrust, factored
+     * for heat, extreme temperatures, gravity, and bomb load.
+     */
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int j = getOriginalWalkMP();
@@ -220,10 +215,10 @@ public class Aero extends Entity
 
         //if they are not airborne, then they get MP halved (aerodyne) or no MP
         if(!isAirborne()) {
-        	j = j / 2;
-        	if(isSpheroid()) {
-        		j = 0;
-        	}
+            j = j / 2;
+            if(isSpheroid()) {
+                j = 0;
+            }
         }
 
         return j;
@@ -234,7 +229,7 @@ public class Aero extends Entity
      */
     @Override
     public int locations() {
-         return 5;
+        return 5;
     }
 
     @Override
@@ -548,22 +543,10 @@ public class Aero extends Entity
         critThresh = b;
     }
 
-    public void immobilize()
-    {
-        m_bImmobileHit = true;
-        setOriginalWalkMP(0);
-    }
-
     @Override
-    public boolean isImmobile()
-    {
-        //aeros never go "immobile"
+    public boolean isImmobile() {
+        // aeros never go "immobile"
         return false;
-    }
-
-    @Override
-    public void applyDamage() {
-        m_bImmobile |= m_bImmobileHit;
     }
 
     @Override
@@ -675,31 +658,31 @@ public class Aero extends Entity
         }
         int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
-            case LOC_NOSE:
-                 arc = Compute.ARC_NOSE;
-                 break;
-            case LOC_RWING:
-                if(mounted.isRearMounted()) {
-                    arc = Compute.ARC_RWINGA;
-                } else {
-                    arc = Compute.ARC_RWING;
-                }
-                break;
-            case LOC_LWING:
-                if(mounted.isRearMounted()) {
-                    arc = Compute.ARC_LWINGA;
-                } else {
-                    arc = Compute.ARC_LWING;
-                }
-                break;
-            case LOC_AFT:
-                arc = Compute.ARC_AFT;
-                break;
-            case LOC_WINGS:
-                arc = Compute.ARC_NOSE;
-                break;
-            default:
-                arc = Compute.ARC_360;
+        case LOC_NOSE:
+            arc = Compute.ARC_NOSE;
+            break;
+        case LOC_RWING:
+            if(mounted.isRearMounted()) {
+                arc = Compute.ARC_RWINGA;
+            } else {
+                arc = Compute.ARC_RWING;
+            }
+            break;
+        case LOC_LWING:
+            if(mounted.isRearMounted()) {
+                arc = Compute.ARC_LWINGA;
+            } else {
+                arc = Compute.ARC_LWING;
+            }
+            break;
+        case LOC_AFT:
+            arc = Compute.ARC_AFT;
+            break;
+        case LOC_WINGS:
+            arc = Compute.ARC_NOSE;
+            break;
+        default:
+            arc = Compute.ARC_360;
         }
 
         return rollArcs(arc);
@@ -756,211 +739,211 @@ public class Aero extends Entity
     @Override
     public HitData rollHitLocation(int table, int side) {
 
-    /*
-     * Unlike other units, ASFs determine potential crits based on the to-hit roll
-     * so I need to set this potential value as well as return the to hit data
-     */
+        /*
+         * Unlike other units, ASFs determine potential crits based on the to-hit roll
+         * so I need to set this potential value as well as return the to hit data
+         */
 
-    int roll = Compute.d6(2);
+        int roll = Compute.d6(2);
 
-    //first check for above/below
-    if((table == ToHitData.HIT_ABOVE) || (table == ToHitData.HIT_BELOW)) {
+        //first check for above/below
+        if((table == ToHitData.HIT_ABOVE) || (table == ToHitData.HIT_BELOW)) {
 
-        //have to decide which wing
-        int wingloc = LOC_RWING;
-        int wingroll = Compute.d6(1);
-        if(wingroll > 3) {
-            wingloc = LOC_LWING;
+            //have to decide which wing
+            int wingloc = LOC_RWING;
+            int wingroll = Compute.d6(1);
+            if(wingroll > 3) {
+                wingloc = LOC_LWING;
+            }
+            switch( roll ) {
+            case 2:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 3:
+                setPotCrit(CRIT_GEAR);
+                return new HitData(wingloc, false, HitData.EFFECT_NONE);
+            case 4:
+                setPotCrit(CRIT_SENSOR);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 5:
+                setPotCrit(CRIT_CREW);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 6:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(wingloc, false, HitData.EFFECT_NONE);
+            case 7:
+                setPotCrit(CRIT_AVIONICS);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 8:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(wingloc, false, HitData.EFFECT_NONE);
+            case 9:
+                setPotCrit(CRIT_CONTROL);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 10:
+                setPotCrit(CRIT_ENGINE);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 11:
+                setPotCrit(CRIT_GEAR);
+                return new HitData(wingloc, false, HitData.EFFECT_NONE);
+            case 12:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            }
         }
-        switch( roll ) {
-        case 2:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 3:
-            setPotCrit(CRIT_GEAR);
-            return new HitData(wingloc, false, HitData.EFFECT_NONE);
-        case 4:
-            setPotCrit(CRIT_SENSOR);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 5:
-            setPotCrit(CRIT_CREW);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 6:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(wingloc, false, HitData.EFFECT_NONE);
-        case 7:
-            setPotCrit(CRIT_AVIONICS);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 8:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(wingloc, false, HitData.EFFECT_NONE);
-        case 9:
-            setPotCrit(CRIT_CONTROL);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        case 10:
-            setPotCrit(CRIT_ENGINE);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        case 11:
-            setPotCrit(CRIT_GEAR);
-            return new HitData(wingloc, false, HitData.EFFECT_NONE);
-        case 12:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        }
-    }
 
-    if(side == ToHitData.SIDE_FRONT) {
-        // normal front hits
-        switch( roll ) {
-        case 2:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 3:
-            setPotCrit(CRIT_SENSOR);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 4:
-            setPotCrit(CRIT_HEATSINK);
-            return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-        case 5:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-        case 6:
-            setPotCrit(CRIT_AVIONICS);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 7:
-            setPotCrit(CRIT_CONTROL);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 8:
-            setPotCrit(CRIT_FCS);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 9:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-        case 10:
-            setPotCrit(CRIT_HEATSINK);
-            return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-        case 11:
-            setPotCrit(CRIT_GEAR);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 12:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+        if(side == ToHitData.SIDE_FRONT) {
+            // normal front hits
+            switch( roll ) {
+            case 2:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 3:
+                setPotCrit(CRIT_SENSOR);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 4:
+                setPotCrit(CRIT_HEATSINK);
+                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+            case 5:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+            case 6:
+                setPotCrit(CRIT_AVIONICS);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 7:
+                setPotCrit(CRIT_CONTROL);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 8:
+                setPotCrit(CRIT_FCS);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 9:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+            case 10:
+                setPotCrit(CRIT_HEATSINK);
+                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+            case 11:
+                setPotCrit(CRIT_GEAR);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 12:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            }
         }
-    }
-    else if(side == ToHitData.SIDE_LEFT) {
-        // normal left-side hits
-        switch( roll ) {
-        case 2:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 3:
-            setPotCrit(CRIT_GEAR);
-            return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-        case 4:
-            setPotCrit(CRIT_SENSOR);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 5:
-            setPotCrit(CRIT_CREW);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 6:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-        case 7:
-            setPotCrit(CRIT_AVIONICS);
-            return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-        case 8:
-            setPotCrit(CRIT_BOMB);
-            return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-        case 9:
-            setPotCrit(CRIT_CONTROL);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        case 10:
-            setPotCrit(CRIT_ENGINE);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        case 11:
-            setPotCrit(CRIT_GEAR);
-            return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-        case 12:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+        else if(side == ToHitData.SIDE_LEFT) {
+            // normal left-side hits
+            switch( roll ) {
+            case 2:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 3:
+                setPotCrit(CRIT_GEAR);
+                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+            case 4:
+                setPotCrit(CRIT_SENSOR);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 5:
+                setPotCrit(CRIT_CREW);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 6:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+            case 7:
+                setPotCrit(CRIT_AVIONICS);
+                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+            case 8:
+                setPotCrit(CRIT_BOMB);
+                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+            case 9:
+                setPotCrit(CRIT_CONTROL);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 10:
+                setPotCrit(CRIT_ENGINE);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 11:
+                setPotCrit(CRIT_GEAR);
+                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+            case 12:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            }
         }
-    }
-    else if(side == ToHitData.SIDE_RIGHT) {
-        // normal right-side hits
-        switch( roll ) {
-        case 2:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 3:
-            setPotCrit(CRIT_GEAR);
-            return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-        case 4:
-            setPotCrit(CRIT_SENSOR);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 5:
-            setPotCrit(CRIT_CREW);
-            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-        case 6:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-        case 7:
-            setPotCrit(CRIT_AVIONICS);
-            return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-        case 8:
-            setPotCrit(CRIT_BOMB);
-            return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-        case 9:
-            setPotCrit(CRIT_CONTROL);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        case 10:
-            setPotCrit(CRIT_ENGINE);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        case 11:
-            setPotCrit(CRIT_GEAR);
-            return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-        case 12:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+        else if(side == ToHitData.SIDE_RIGHT) {
+            // normal right-side hits
+            switch( roll ) {
+            case 2:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 3:
+                setPotCrit(CRIT_GEAR);
+                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+            case 4:
+                setPotCrit(CRIT_SENSOR);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 5:
+                setPotCrit(CRIT_CREW);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 6:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+            case 7:
+                setPotCrit(CRIT_AVIONICS);
+                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+            case 8:
+                setPotCrit(CRIT_BOMB);
+                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+            case 9:
+                setPotCrit(CRIT_CONTROL);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 10:
+                setPotCrit(CRIT_ENGINE);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 11:
+                setPotCrit(CRIT_GEAR);
+                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+            case 12:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            }
         }
-    }
-    else if(side == ToHitData.SIDE_REAR) {
-        // normal aft hits
-        switch( roll ) {
-        case 2:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        case 3:
-            setPotCrit(CRIT_HEATSINK);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        case 4:
-            setPotCrit(CRIT_FUEL_TANK);
-            return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-        case 5:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-        case 6:
-            setPotCrit(CRIT_ENGINE);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        case 7:
-            setPotCrit(CRIT_CONTROL);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        case 8:
-            setPotCrit(CRIT_ENGINE);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        case 9:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-        case 10:
-            setPotCrit(CRIT_FUEL_TANK);
-            return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-        case 11:
-            setPotCrit(CRIT_HEATSINK);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-        case 12:
-            setPotCrit(CRIT_WEAPON);
-            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+        else if(side == ToHitData.SIDE_REAR) {
+            // normal aft hits
+            switch( roll ) {
+            case 2:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 3:
+                setPotCrit(CRIT_HEATSINK);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 4:
+                setPotCrit(CRIT_FUEL_TANK);
+                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+            case 5:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+            case 6:
+                setPotCrit(CRIT_ENGINE);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 7:
+                setPotCrit(CRIT_CONTROL);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 8:
+                setPotCrit(CRIT_ENGINE);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 9:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+            case 10:
+                setPotCrit(CRIT_FUEL_TANK);
+                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+            case 11:
+                setPotCrit(CRIT_HEATSINK);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 12:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            }
         }
-    }
         return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
     }
 
@@ -1709,7 +1692,7 @@ public class Aero extends Entity
      */
     @Override
     public boolean isRepairable() {
-    return true; //deal with this later
+        return true; //deal with this later
     }
 
     /**
@@ -1718,7 +1701,7 @@ public class Aero extends Entity
     @Override
     public void restore() {
         super.restore();
-    //not sure what to put here
+        //not sure what to put here
 
     }
 
@@ -1832,11 +1815,11 @@ public class Aero extends Entity
         return false;
     }
 
-  /*
+    /*
     public void addMovementDamage(int level) {
         movementDamage += level;
     }
-*/
+     */
 
     public void setEngine(Engine e) {
         engine = e;
@@ -1869,8 +1852,8 @@ public class Aero extends Entity
         super.addEquipment(mounted,loc, rearMounted);
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                                           getEquipmentNum(mounted),
-                                           true, mounted));
+                getEquipmentNum(mounted),
+                true, mounted));
     }
 
     /** get the type of critical caused by a critical roll,
@@ -1940,7 +1923,7 @@ public class Aero extends Entity
     public PilotingRollData checkHover(MovePath md) {
         PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
 
-        if( md.contains(MovePath.STEP_HOVER) && md.getLastStepMovementType() == IEntityMovementType.MOVE_OVER_THRUST) {
+        if( md.contains(MovePath.STEP_HOVER) && (md.getLastStepMovementType() == IEntityMovementType.MOVE_OVER_THRUST)) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "hovering above safe thrust"));
         } else {
@@ -1952,7 +1935,7 @@ public class Aero extends Entity
     public PilotingRollData checkStall(MovePath md) {
         PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
 
-        if( md.getFinalVelocity() == 0  && !md.contains(MovePath.STEP_HOVER) && isAirborne() && !game.getBoard().inSpace()) {
+        if( (md.getFinalVelocity() == 0)  && !md.contains(MovePath.STEP_HOVER) && isAirborne() && !game.getBoard().inSpace()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "stalled out"));
         } else {
@@ -1982,13 +1965,13 @@ public class Aero extends Entity
 
         if ((step == null) || (step.getType() != MovePath.STEP_MANEUVER)) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: Entity is not attempting to get up.");
+            "Check false: Entity is not attempting to get up.");
             return roll;
         }
 
         roll.append(new PilotingRollData(getId(),
-                    ManeuverType.getMod(step.getManeuverType(), isVSTOL()),
-                    ManeuverType.getTypeName(step.getManeuverType()) + " maneuver"));
+                ManeuverType.getMod(step.getManeuverType(), isVSTOL()),
+                ManeuverType.getTypeName(step.getManeuverType()) + " maneuver"));
 
         return roll;
 
@@ -2022,11 +2005,11 @@ public class Aero extends Entity
             if(explosiveFound) {
                 try {
                     addEquipment(new Mounted(this, clCase), i, false);
-                    } catch (LocationFullException ex) {
-                        // um, that's impossible.
-                        }
-                    }
-         }
+                } catch (LocationFullException ex) {
+                    // um, that's impossible.
+                }
+            }
+        }
 
     }
 
@@ -2133,31 +2116,31 @@ public class Aero extends Entity
 
     @Override
     public int getMaxElevationChange() {
-    	if(isAirborne()) {
-    		return 999;
-    	}
-    	return 1;
+        if(isAirborne()) {
+            return 999;
+        }
+        return 1;
     }
 
     @Override
     public boolean isHexProhibited(IHex hex) {
-    	if(isAirborne()) {
-	        if(hex.containsTerrain(Terrains.IMPASSABLE)) {
-	            return true;
-	        }
-	        return false;
-    	} else {
-    		//grounded aeros have the same prohibitions as wheeled tanks
-    		return hex.containsTerrain(Terrains.WOODS)
+        if(isAirborne()) {
+            if(hex.containsTerrain(Terrains.IMPASSABLE)) {
+                return true;
+            }
+            return false;
+        } else {
+            //grounded aeros have the same prohibitions as wheeled tanks
+            return hex.containsTerrain(Terrains.WOODS)
             || hex.containsTerrain(Terrains.ROUGH)
             || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex
                     .containsTerrain(Terrains.ICE))
-            || hex.containsTerrain(Terrains.RUBBLE)
-            || hex.containsTerrain(Terrains.MAGMA)
-            || hex.containsTerrain(Terrains.JUNGLE)
-            || (hex.terrainLevel(Terrains.SNOW) > 1)
-            || (hex.terrainLevel(Terrains.GEYSER) == 2);
-    	}
+                    || hex.containsTerrain(Terrains.RUBBLE)
+                    || hex.containsTerrain(Terrains.MAGMA)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.SNOW) > 1)
+                    || (hex.terrainLevel(Terrains.GEYSER) == 2);
+        }
     }
 
     public boolean isSpheroid() {
@@ -2554,7 +2537,7 @@ public class Aero extends Entity
             if(null == groups.get(key)) {
                 groups.put(key, mounted.getNWeapons());
             } else {
-                    groups.put(key, groups.get(key) + mounted.getNWeapons());
+                groups.put(key, groups.get(key) + mounted.getNWeapons());
             }
         }
         //now we just need to traverse the hash and either update our existing equipment or add new ones if there is none

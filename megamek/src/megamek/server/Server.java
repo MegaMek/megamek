@@ -4725,7 +4725,7 @@ public class Server implements Runnable {
 
                     thrustUsed = 0;
                 }
-                
+
                 if (step.getType() == MovePath.STEP_OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     processLeaveMap(entity, curPos, true, Compute.roundsUntilReturn(game, entity));
@@ -5845,7 +5845,7 @@ public class Server implements Runnable {
 
             Aero a = (Aero) entity;
             int thrust = md.getMpUsed();
-            
+
             // consume fuel
             if (((entity instanceof Aero) && game.getOptions().booleanOption("fuel_consumption")) || (entity instanceof TeleMissile)) {
                 int fuelUsed = ((Aero) entity).getFuelUsed(thrust);
@@ -5893,7 +5893,7 @@ public class Server implements Runnable {
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     game.addControlRoll(new PilotingRollData(a.getId(), 0, "hovering"));
                 }
-                
+
                 //check for aero stall
                 rollTarget = a.checkStall(md);
                 if(rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -19432,6 +19432,10 @@ public class Server implements Runnable {
         }
         if (en.getCrew().getOptions().booleanOption("iron_man")) {
             pilotDamage = 1;
+        }
+        // tanks only take pilot damage when using BVDNI or VDNI
+        if ((en instanceof Tank) && !(en.crew.getOptions().booleanOption("vdni") || en.crew.getOptions().booleanOption("bvdni"))) {
+            pilotDamage = 0;
         }
         if (!en.crew.getOptions().booleanOption("pain_shunt")) {
             vDesc.addAll(damageCrew(en, pilotDamage));

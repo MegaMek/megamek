@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.34.9-dev (SVN)
++ Bug 2585799: Pilot damage assigned to vehicle crew
 
 v0.34.8 (2009-08-17, 15:23 UTC+2)
 + Bug: Mechdisplay not remembering which ammo was selected

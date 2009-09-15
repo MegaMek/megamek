@@ -19039,6 +19039,10 @@ public class Server implements Runnable {
         if (en.getCrew().getOptions().booleanOption("iron_man")) {
             pilotDamage = 1;
         }
+        // tanks only take pilot damage when using BVDNI or VDNI
+        if ((en instanceof Tank) && !(en.crew.getOptions().booleanOption("vdni") || en.crew.getOptions().booleanOption("bvdni"))) {
+            pilotDamage = 0;
+        }
         if (!en.crew.getOptions().booleanOption("pain_shunt")) {
             vDesc.addAll(damageCrew(en, pilotDamage));
         }

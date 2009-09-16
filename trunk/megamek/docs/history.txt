@@ -20,6 +20,7 @@ v0.35.7-dev (SVN)
 + Bug 2857005: Narc LRM modifiers are giving out incorrect +2s
 + Bug 2854291: Tank "weapon destroyed" critical hit has no effect
 + Bug 2585799: Pilot damage assigned to vehicle crew
++ Add Walk/Run/Jump MP to exported unit list.
 
 v0.35.6 (2009-08-17, 15:23 UTC+2)
 + ultra rubble image (thanks sirrob01!)

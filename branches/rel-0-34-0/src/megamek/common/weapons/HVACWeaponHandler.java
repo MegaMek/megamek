@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -36,7 +36,7 @@ import megamek.server.Server.DamageType;
 public class HVACWeaponHandler extends RapidfireACWeaponHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7326881584091651519L;
 
@@ -52,13 +52,14 @@ public class HVACWeaponHandler extends RapidfireACWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handle(megamek.common.IGame.Phase,
      *      java.util.Vector)
      */
+    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
 
-        if (game.getOptions().booleanOption("tacops_start_fire") && game.getPlanetaryConditions().getAtmosphere() >= PlanetaryConditions.ATMO_TRACE) {
+        if (game.getOptions().booleanOption("tacops_start_fire") && (game.getPlanetaryConditions().getAtmosphere() >= PlanetaryConditions.ATMO_TRACE)) {
             int rear = (ae.getFacing() + 3) % 6;
             Coords src = ae.getPosition();
             Coords rearCoords = src.translated(rear);
@@ -69,7 +70,7 @@ public class HVACWeaponHandler extends RapidfireACWeaponHandler {
                 rearCoords = src;
             } else if (board.getHex(rearCoords).getElevation() > currentHex.getElevation() + 4) {
                 rearCoords = src;
-            } else if (board.getBuildingAt(rearCoords) != null && board.getHex(rearCoords).terrainLevel(Terrains.BLDG_ELEV) + board.getHex(rearCoords).getElevation() > currentHex.getElevation() + 4) {
+            } else if ((board.getBuildingAt(rearCoords) != null) && (board.getHex(rearCoords).terrainLevel(Terrains.BLDG_ELEV) + board.getHex(rearCoords).getElevation() > currentHex.getElevation() + 4)) {
                 rearCoords = src;
             }
 
@@ -80,9 +81,10 @@ public class HVACWeaponHandler extends RapidfireACWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
+    @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll == 2) {
             r = new Report(3162);
@@ -93,7 +95,7 @@ public class HVACWeaponHandler extends RapidfireACWeaponHandler {
             weapon.setDestroyed(true);
             for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
                 CriticalSlot slot1 = ae.getCritical(wlocation, i);
-                if (slot1 == null || slot1.getType() != CriticalSlot.TYPE_SYSTEM) {
+                if ((slot1 == null) || (slot1.getType() != CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
                 Mounted mounted = ae.getEquipment(slot1.getIndex());
@@ -102,7 +104,7 @@ public class HVACWeaponHandler extends RapidfireACWeaponHandler {
                     break;
                 }
             }
-            vPhaseReport.addAll(server.damageEntity(ae, new HitData(wlocation), wtype.getDamage(), false, DamageType.NONE, true));
+            vPhaseReport.addAll(server.damageEntity(ae, new HitData(wlocation), wtype.getDamage(), true, DamageType.NONE, true));
             r.choose(false);
             vPhaseReport.addElement(r);
         }else {

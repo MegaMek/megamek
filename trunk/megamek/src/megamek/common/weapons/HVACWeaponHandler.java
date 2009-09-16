@@ -103,7 +103,7 @@ public class HVACWeaponHandler extends RapidfireACWeaponHandler {
                     break;
                 }
             }
-            vPhaseReport.addAll(server.damageEntity(ae, new HitData(wlocation), wtype.getDamage(), false, DamageType.NONE, true));
+            vPhaseReport.addAll(server.damageEntity(ae, new HitData(wlocation), wtype.getDamage(), true, DamageType.NONE, true));
             r.choose(false);
             vPhaseReport.addElement(r);
         }else {

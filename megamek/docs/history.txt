@@ -21,6 +21,7 @@ v0.35.7-dev (SVN)
 + Bug 2854291: Tank "weapon destroyed" critical hit has no effect
 + Bug 2585799: Pilot damage assigned to vehicle crew
 + Add Walk/Run/Jump MP to exported unit list.
++ Bug: HVAC explosion should be treated like an ammo explosion
 
 v0.35.6 (2009-08-17, 15:23 UTC+2)
 + ultra rubble image (thanks sirrob01!)

@@ -224,8 +224,19 @@ public class MechSummaryCache {
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setCost(Integer.parseInt(s.substring(nIndex1 + 1,
                             nIndex2)));
-                    ms.setCanon(s.substring(nIndex2 + 1).equals("T") ? true
+                    nIndex1 = nIndex2;
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+                    ms.setCanon(s.substring(nIndex1 + 1).equals("T") ? true
                             : false);
+                    nIndex1 = nIndex2;
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+                    ms.setWalkMp(Integer.parseInt(s.substring(nIndex1 +1, nIndex2)));
+                    nIndex1 = nIndex2;
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+                    ms.setRunMp(Integer.parseInt(s.substring(nIndex1 +1, nIndex2)));
+                    nIndex1 = nIndex2;
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+                    ms.setJumpMp(Integer.parseInt(s.substring(nIndex1 +1, nIndex2)));
 
                     // Verify that this file still exists and is older than
                     // the cache.
@@ -328,7 +339,10 @@ public class MechSummaryCache {
                     + SEPARATOR + m_data[x].getTons() + SEPARATOR
                     + m_data[x].getBV() + SEPARATOR + m_data[x].getLevel()
                     + SEPARATOR + m_data[x].getCost() + SEPARATOR
-                    + (m_data[x].isCanon() ? 'T' : 'F') + "\r\n");
+                    + (m_data[x].isCanon() ? 'T' : 'F') + SEPARATOR
+                    + m_data[x].getWalkMp() + SEPARATOR
+                    + m_data[x].getRunMp() + SEPARATOR
+                    + m_data[x].getJumpMp() + "\r\n");
         }
         wr.flush();
         wr.close();
@@ -349,6 +363,9 @@ public class MechSummaryCache {
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setCost((int) e.getCost(false));
         ms.setCanon(e.isCanon());
+        ms.setWalkMp(e.getWalkMP(false, false));
+        ms.setRunMp(e.getRunMP(false, false));
+        ms.setJumpMp(e.getJumpMP(false));
         // we can only test meks and vehicles right now
         if ((e instanceof Mech) || (e instanceof Tank)) {
             TestEntity testEntity = null;

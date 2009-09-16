@@ -40,6 +40,9 @@ public class MechSummary implements Serializable {
     private long m_lModified; // for comparison when loading
     private String m_sLevel;
     private boolean canon;
+    private int walkMp;
+    private int runMp;
+    private int jumpMp;
 
     public String getName() {
         return (m_sName);
@@ -195,5 +198,29 @@ public class MechSummary implements Serializable {
 
     public int getWeightClass() {
         return EntityWeightClass.getWeightClass(m_nTons);
+    }
+
+    public int getWalkMp() {
+        return walkMp;
+    }
+
+    public void setWalkMp(int walkMp) {
+        this.walkMp = walkMp;
+    }
+
+    public int getRunMp() {
+        return runMp;
+    }
+
+    public void setRunMp(int runMp) {
+        this.runMp = runMp;
+    }
+
+    public int getJumpMp() {
+        return jumpMp;
+    }
+
+    public void setJumpMp(int jumpMp) {
+        this.jumpMp = jumpMp;
     }
 }

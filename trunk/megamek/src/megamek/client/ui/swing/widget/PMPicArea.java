@@ -74,6 +74,10 @@ public class PMPicArea implements PMHotArea {
 
     }
 
+    public void setIdleImage(Image idle) {
+        this.idleImage = idle;
+    }
+    
     public void setVisible(boolean v) {
         visible = v;
     }

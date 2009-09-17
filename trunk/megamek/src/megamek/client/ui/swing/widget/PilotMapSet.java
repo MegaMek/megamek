@@ -18,16 +18,24 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Entity;
+import megamek.common.Pilot;
+import megamek.common.Player;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.util.DirectoryItems;
 
 /**
 * Set of elements to reperesent pilot information in MechDisplay
@@ -40,6 +48,7 @@ public class PilotMapSet implements DisplayMapSet {
     private static String STAR3 = "***"; //$NON-NLS-1$
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
+    private PMPicArea portraitArea;
     private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, initBL, commandBL;
     private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR, initBR, commandBR, hitsR;
     private PMSimpleLabel[] advantagesR;
@@ -49,12 +58,21 @@ public class PilotMapSet implements DisplayMapSet {
     private static final Font FONT_TITLE = new Font(
            "SansSerif", Font.ITALIC, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
     private int yCoord = 1;
+    
+    // keep track of portrait images
+    private DirectoryItems portraits;
 
     /**
     * This constructor have to be called anly from addNotify() method
     */
     public PilotMapSet(JComponent c) {
         comp = c;
+        try {
+            portraits = new DirectoryItems(new File("data/images/portraits"), "", //$NON-NLS-1$ //$NON-NLS-2$
+                    ImageFileFactory.getInstance());
+        } catch (Exception e) {
+            portraits = null;
+        }
         setAreas();
         setBackGround();
     }
@@ -71,6 +89,9 @@ public class PilotMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
+        portraitArea = new PMPicArea(new BufferedImage(72,72,BufferedImage.TYPE_BYTE_INDEXED));
+        content.addArea(portraitArea);
+        yCoord = 6;
         FontMetrics fm = comp.getFontMetrics(FONT_TITLE);
         nameL = createLabel(Messages
                 .getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord()); //$NON-NLS-1$
@@ -157,6 +178,10 @@ public class PilotMapSet implements DisplayMapSet {
         pilotR.setString(Integer.toString(en.crew.getPiloting()));
         gunneryR.setString(Integer.toString(en.crew.getGunnery()));
 
+        if(null != getPortrait(en.crew)) {
+            portraitArea.setIdleImage(getPortrait(en.crew));
+        }
+        
         if ((en.getGame() != null)
                 && en.getGame().getOptions().booleanOption("rpg_gunnery")) {
             gunneryLR.setString(Integer.toString(en.crew.getGunneryL()));
@@ -278,5 +303,35 @@ public class PilotMapSet implements DisplayMapSet {
         l.moveTo(x, y);
         return l;
     }
+    
+    /**
+     * Get the portrait for the given pilot.
+     * 
+     * @return The <code>Image</code> of the pilot's portrait. This value
+     *         will be <code>null</code> if no portrait was selected
+     *          or if there was an error loading it.
+     */
+    public Image getPortrait(Pilot pilot) {
+
+        String category = pilot.getPortraitCategory();
+        String file = pilot.getPortraitFileName();
+        
+        // Return a null if the player has selected no portrait file.
+        if (null == category) {
+            return null;
+        }
+
+        // Try to get the player's portrait file.
+        Image portrait = null;
+        try {
+            portrait = (Image) portraits.getItem(category, file);
+            //make sure no images are longer than 72 pixels
+            portrait = portrait.getScaledInstance(-1, 72, Image.SCALE_DEFAULT);
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        return portrait;
+    }
+
 
 }

@@ -25,15 +25,14 @@ import java.util.Vector;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Compute;
 import megamek.common.Coords;
-import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.IEntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.LosEffects;
-import megamek.common.Mech;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.PilotingRollData;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -186,10 +185,8 @@ public class MoveOption extends MovePath {
         super.addStep(step_type);
         MoveStep current = getLastStep();
         // running with gyro or hip hit is dangerous!
-        if (current.getMovementType() == IEntityMovementType.MOVE_RUN
-                && (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0 || entity
-                        .hasHipCrit())) {
+        PilotingRollData rollTarget = entity.checkRunningWithDamage(current.getMovementType());
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             getStep(0).setDanger(true);
             current.setDanger(true);
         }

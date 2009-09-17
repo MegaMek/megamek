@@ -1942,6 +1942,18 @@ public class MoveStep implements Serializable {
                             .containsTerrain(Terrains.FORTIFIED))) {
                 movementType = IEntityMovementType.MOVE_ILLEGAL;
             }
+            if (entity instanceof Mech) {
+            	//Mechs need to check for valid Gyros
+				int gyroHits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+						Mech.SYSTEM_GYRO, Mech.LOC_CT);
+				if (entity.getGyroType() != Mech.GYRO_HEAVY_DUTY) {
+					gyroHits++;
+				}
+				//destrotyed Gyros means that the unit can not go HD
+				if (gyroHits >2) {
+	                movementType = IEntityMovementType.MOVE_ILLEGAL;
+				}
+            }
         }
 
         // initially prone mechs can't charge

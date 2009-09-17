@@ -24,6 +24,7 @@ v0.35.7-dev (SVN)
 + Bug: HVAC explosion should be treated like an ammo explosion
 + Bug 2860627: Unit cache doesn't load
 + Pilot portrait image in pilot tab of MechDisplay
++ Bug 2825594: Destroyed gyro now loses hull down and is prevented from going hull down
 
 v0.35.6 (2009-08-17, 15:23 UTC+2)
 + ultra rubble image (thanks sirrob01!)

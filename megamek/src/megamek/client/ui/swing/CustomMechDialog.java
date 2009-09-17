@@ -20,6 +20,7 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -277,6 +278,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private int direction = -1;
 
     private int distance = 17;
+    
+    private JButton butPortrait;
+    private PortraitChoiceDialog portraitDialog;
 
     /**
      * Creates new CustomMechDialog
@@ -335,7 +339,19 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             labPiloting.setText(Messages
                     .getString("CustomMechDialog.labPiloting"));
         }
+        
+        butPortrait = new JButton();
+        butPortrait.setPreferredSize(new Dimension(72, 72));
+        butPortrait.setActionCommand("portrait"); //$NON-NLS-1$
+        butPortrait.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                portraitDialog.setVisible(true);
+            }
+        });
+        portraitDialog = new PortraitChoiceDialog(clientgui.getFrame(), butPortrait);
+        portraitDialog.setPilot(entity.crew);
 
+        panPilot.add(butPortrait, GBC.eol());
         panPilot.add(labName, GBC.std());
         panPilot.add(fldName, GBC.eol());
 
@@ -631,7 +647,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         butCancel.addActionListener(this);
         butNext.addActionListener(this);
         butPrev.addActionListener(this);
-
+        
         // layout
         panButtons.setLayout(new GridLayout(1, 4, 10, 0));
         panButtons.add(butPrev);
@@ -1895,6 +1911,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             entity.getCrew().setInitBonus(init);
             entity.getCrew().setCommandBonus(command);
             entity.getCrew().setNickname(nick);
+            entity.getCrew().setPortraitCategory(portraitDialog.getCategory());
+            entity.getCrew().setPortraitFileName(portraitDialog.getItem());
             if (entity instanceof Mech) {
                 Mech mech = (Mech) entity;
                 mech.setAutoEject(!autoEject);

@@ -234,9 +234,7 @@ public class MechSummaryCache {
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setRunMp(Integer.parseInt(s.substring(nIndex1 +1, nIndex2)));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setJumpMp(Integer.parseInt(s.substring(nIndex1 +1, nIndex2)));
+                    ms.setJumpMp(Integer.parseInt(s.substring(nIndex2 +1)));
 
                     // Verify that this file still exists and is older than
                     // the cache.

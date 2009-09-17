@@ -57,6 +57,10 @@ public class Pilot implements Serializable {
 
     private PilotOptions options = new PilotOptions();
     
+    //pathway to pilot portrait
+    private String portraitCategory = null;
+    private String portraitFileName = null;
+    
     private static double[][] bvMod = new double[][] {
             {2.8,  2.63, 2.45, 2.28, 2.01, 1.82, 1.75, 1.67, 1.59},
             {2.56, 2.4,  2.24, 2.08, 1.84, 1.60, 1.58, 1.51, 1.44},
@@ -616,6 +620,21 @@ public class Pilot implements Serializable {
         return externalId;
     }
 
+    public void setPortraitCategory(String name) {
+        portraitCategory = name;
+    }
+
+    public String getPortraitCategory() {
+        return portraitCategory;
+    }
+
+    public void setPortraitFileName(String name) {
+        portraitFileName = name;
+    }
+
+    public String getPortraitFileName() {
+        return portraitFileName;
+    }
     
 
 }

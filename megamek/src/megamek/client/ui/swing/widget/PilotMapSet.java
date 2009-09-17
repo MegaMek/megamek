@@ -330,7 +330,9 @@ public class PilotMapSet implements DisplayMapSet {
         try {
             portrait = (Image) portraits.getItem(category, file);
             //make sure no images are longer than 72 pixels
-            portrait = portrait.getScaledInstance(-1, 72, Image.SCALE_DEFAULT);
+            if(null != portrait) {
+                portrait = portrait.getScaledInstance(-1, 72, Image.SCALE_DEFAULT);
+            }
         } catch (Exception err) {
             err.printStackTrace();
         }

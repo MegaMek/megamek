@@ -155,10 +155,8 @@ public class PortraitChoiceDialog extends JDialog implements
         categories = new JComboBox();
         panel.add(categories, layout);
 
+        categories.addItem(Pilot.ROOT_PORTRAIT);
         if (portraits != null) {
-            if (portraits.getItemNames("").hasNext()) { //$NON-NLS-1$
-                categories.addItem(Pilot.ROOT_PORTRAIT);
-            }
             names = portraits.getCategoryNames();
             while (names.hasNext()) {
                 name = names.next();
@@ -168,6 +166,8 @@ public class PortraitChoiceDialog extends JDialog implements
             }
         }
 
+        categories.setSelectedIndex(0);
+        
         // Refill the item list when a new category is selected.
         // Make sure that the "select new portrait" button is updated.
         categories.addItemListener(new ItemListener() {

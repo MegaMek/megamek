@@ -485,7 +485,7 @@ public class SharedUtility {
         return md;
     }
 
-    /*
+    /**
      * Add steps for advanced vector movement based on the given vectors when
      * splitting hexes, choose the hex with less tonnage in case OOC
      */

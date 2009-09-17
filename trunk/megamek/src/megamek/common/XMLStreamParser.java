@@ -152,6 +152,8 @@ public class XMLStreamParser implements XMLResponder {
     public static final String NAME = "name";
     public static final String EXT_ID = "externalId";
     public static final String NICK = "nick";
+    public static final String CAT_PORTRAIT = "portraitCat";
+    public static final String FILE_PORTRAIT = "portraitFile";
     public static final String GUNNERY = "gunnery";
     public static final String GUNNERYL = "gunneryL";
     public static final String GUNNERYM = "gunneryM";
@@ -503,6 +505,8 @@ public class XMLStreamParser implements XMLResponder {
                 String autoeject = (String) attr.get(AUTOEJECT);
                 String ejected = (String) attr.get(EJECTED);
                 String extId = (String) attr.get(EXT_ID);
+                String portraitCategory = (String) attr.get(CAT_PORTRAIT);
+                String portraitFile = (String) attr.get(FILE_PORTRAIT);
 
                 // Did we find required attributes?
                 if (gunnery == null || gunnery.length() == 0) {
@@ -608,6 +612,12 @@ public class XMLStreamParser implements XMLResponder {
                     if (null != pilotNickname && pilotNickname.length() > 0) {
                        crew.setNickname(pilotNickname);
                     }
+                    if (null != portraitCategory && portraitCategory.length() > 0) {
+                        crew.setPortraitCategory(portraitCategory);
+                     }
+                    if (null != portraitFile && portraitFile.length() > 0) {
+                        crew.setPortraitFileName(portraitFile);
+                     }
                     crew.setInitBonus(initBVal);
                     crew.setCommandBonus(commandBVal);
                     if ((null != advantages)

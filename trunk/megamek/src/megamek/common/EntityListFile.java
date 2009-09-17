@@ -440,6 +440,14 @@ public class EntityListFile {
                     output.write("\" autoeject=\"false");
                 }
             }
+            if(!Pilot.ROOT_PORTRAIT.equals(crew.getPortraitCategory())) {
+                output.write("\" portraitCat=\"");
+                output.write(crew.getPortraitCategory());
+            }
+            if(!Pilot.PORTRAIT_NONE.equals(crew.getPortraitFileName())) {
+                output.write("\" portraitFile=\"");
+                output.write(crew.getPortraitFileName());
+            }
             if(crew.getExternalId() != Entity.NONE) {
                 output.write("\" externalId=\"");
                 output.write(String.valueOf(crew.getExternalId()));

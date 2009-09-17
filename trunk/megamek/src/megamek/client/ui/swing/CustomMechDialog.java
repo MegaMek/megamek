@@ -342,6 +342,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         
         butPortrait = new JButton();
         butPortrait.setPreferredSize(new Dimension(72, 72));
+        butPortrait.setText(Messages.getString("CustomMechDialog.labPortrait"));
         butPortrait.setActionCommand("portrait"); //$NON-NLS-1$
         butPortrait.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

@@ -26,6 +26,8 @@ v0.35.7-dev (SVN)
 + Pilot portrait image in pilot tab of MechDisplay
 + Bug 2825594: Destroyed gyro now loses hull down and is prevented from going hull down
 + PortraitChoiceDialog and button in CustomMechDisplay
++ portrait location reads to and writes from MUL
++ Bug: NPE on CustomMechDialog
 
 v0.35.6 (2009-08-17, 15:23 UTC+2)
 + ultra rubble image (thanks sirrob01!)

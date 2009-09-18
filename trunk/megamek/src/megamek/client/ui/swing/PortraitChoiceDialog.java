@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -24,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Iterator;
 
@@ -62,11 +60,11 @@ import megamek.common.util.DirectoryItems;
  * "data/iamges/portraits" directory tree.
  * <p/>
  * Created on September 17, 2009
- * 
+ *
  * @author Jay Lawson
  * @version 1
  */
-public class PortraitChoiceDialog extends JDialog implements 
+public class PortraitChoiceDialog extends JDialog implements
         ListSelectionListener {
 
     private static final long serialVersionUID = 9220162367683378065L;
@@ -119,7 +117,7 @@ public class PortraitChoiceDialog extends JDialog implements
 
     /**
      * Create a dialog that allows players to choose a portrait
-     * 
+     *
      * @param parent
      *            - the <code>Frame</code> that displays this dialog.
      */
@@ -167,7 +165,7 @@ public class PortraitChoiceDialog extends JDialog implements
         }
 
         categories.setSelectedIndex(0);
-        
+
         // Refill the item list when a new category is selected.
         // Make sure that the "select new portrait" button is updated.
         categories.addItemListener(new ItemListener() {
@@ -266,7 +264,7 @@ public class PortraitChoiceDialog extends JDialog implements
 
                     // Update the portrait button
                     sourceButton.setIcon(generateIcon(prevCat, prevItem));
-                    
+
                 } // End selection-changed
 
                 // Now exit.
@@ -283,10 +281,10 @@ public class PortraitChoiceDialog extends JDialog implements
         // Perform the initial layout.
         pack();
     }
-    
+
     /**
      * A helper function to fill the list with items in the selected category.
-     * 
+     *
      * @param category
      *            - the <code>String</code> name of the category whose items
      *            should be displayed.
@@ -304,7 +302,7 @@ public class PortraitChoiceDialog extends JDialog implements
         } else {
             portraitNames = portraits.getItemNames(category);
         }
-    
+
         // Get the portrait names for this category.
         while (portraitNames.hasNext()) {
             ((DefaultListModel) items.getModel()).addElement(portraitNames
@@ -316,7 +314,7 @@ public class PortraitChoiceDialog extends JDialog implements
     /**
      * A helper function to assign values for the previously selected portrait. This
      * function will also set the "keep old portrait" button's image.
-     * 
+     *
      * @param category
      *            - the <code>String</code> category name. This value must be
      *            one of the categories from the <code>DirectoryItems</code>.
@@ -332,7 +330,7 @@ public class PortraitChoiceDialog extends JDialog implements
     }
 
     Icon generateIcon(String cat, String item) {
-        if(null == cat || null == item || Pilot.PORTRAIT_NONE.equals(item)) {
+        if((null == cat) || (null == item) || Pilot.PORTRAIT_NONE.equals(item)) {
             return null;
         }
         String actualCat = cat;
@@ -340,7 +338,7 @@ public class PortraitChoiceDialog extends JDialog implements
         if (Pilot.ROOT_PORTRAIT.equals(actualCat)) {
             actualCat = ""; //$NON-NLS-1$
         }
-      
+
         //an actual portrait
         try {
             // We need to copy the image to make it appear.
@@ -378,7 +376,7 @@ public class PortraitChoiceDialog extends JDialog implements
 
     /**
      * Set the selected category.
-     * 
+     *
      * @param category
      *            - the <code>String</code> name of the desired category. This
      *            value may be <code>null</code>. If no match is found, the
@@ -417,7 +415,7 @@ public class PortraitChoiceDialog extends JDialog implements
 
     /**
      * Set the selected item in the currently-selected category.
-     * 
+     *
      * @param item
      *            - the <code>String</code> name of the desired item. This value
      *            may be <code>null</code>. If no match is found, the item
@@ -461,15 +459,15 @@ public class PortraitChoiceDialog extends JDialog implements
     public void valueChanged(ListSelectionEvent event) {
         updateButton();
     }
-    
+
     public String getCategory() {
         return prevCat;
     }
-    
+
     public String getItem() {
         return prevItem;
     }
-    
+
     public void setPilot(Pilot pilot) {
         setCategory(pilot.getPortraitCategory());
         setItemName(pilot.getPortraitFileName());

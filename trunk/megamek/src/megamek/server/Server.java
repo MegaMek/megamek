@@ -309,7 +309,7 @@ public class Server implements Runnable {
 
     /**
      * Construct a new GameHost and begin listening for incoming clients.
-     * 
+     *
      * @param password
      *            the <code>String</code> that is set as a password
      * @param port
@@ -570,7 +570,7 @@ public class Server implements Runnable {
 
     /**
      * Correct a duplicate playername
-     * 
+     *
      * @param oldName
      *            the <code>String</code> old playername, that is a duplicate
      * @return the <code>String</code> new playername
@@ -926,7 +926,7 @@ public class Server implements Runnable {
 
     /**
      * save the game and send it to the sepecified connection
-     * 
+     *
      * @param connId
      *            The <code>int</code> connection id to send to
      * @param sFile
@@ -953,7 +953,7 @@ public class Server implements Runnable {
 
     /**
      * save the game
-     * 
+     *
      * @param sFile
      *            The <code>String</code> filename to use
      * @param sendChat
@@ -1008,7 +1008,7 @@ public class Server implements Runnable {
 
     /**
      * save the game
-     * 
+     *
      * @param sFile
      *            The <code>String</code> filename to use
      */
@@ -1018,7 +1018,7 @@ public class Server implements Runnable {
 
     /**
      * send a packet to the connection tells it load a locally saved game
-     * 
+     *
      * @param connId
      *            The <code>int</code> connection id to send to
      * @param sFile
@@ -1034,7 +1034,7 @@ public class Server implements Runnable {
 
     /**
      * load the game
-     * 
+     *
      * @param f
      *            The <code>File</code> to load
      * @return A <code>boolean</code> value wether or not the loading was
@@ -1068,7 +1068,7 @@ public class Server implements Runnable {
     /**
      * Removes all entities owned by a player. Should only be called when it
      * won't cause trouble (the lounge, for instance, or between phases.)
-     * 
+     *
      * @param player
      *            whose entites are to be removed
      */
@@ -1229,7 +1229,7 @@ public class Server implements Runnable {
 
     /**
      * are we currently in a reporting phase
-     * 
+     *
      * @return <code>true</code> if we are or <code>false</code> if not.
      */
     private boolean isReportingPhase() {
@@ -1662,7 +1662,7 @@ public class Server implements Runnable {
     /**
      * Changes the current phase, does some bookkeeping and then tells the
      * players.
-     * 
+     *
      * @param phase
      *            the <code>int</code> id of the phase to change to
      */
@@ -1688,7 +1688,7 @@ public class Server implements Runnable {
      * Prepares for, presumably, the next phase. This typically involves
      * resetting the states of entities in the game and making sure the client
      * has the information it needs for the new phase.
-     * 
+     *
      * @param phase
      *            the <code>int</code> id of the phase to prepare for
      */
@@ -2331,7 +2331,7 @@ public class Server implements Runnable {
     /**
      * Sends out a notification message indicating that a ghost player may be
      * skipped.
-     * 
+     *
      * @param ghost
      *            - the <code>Player</code> who is ghosted. This value must not
      *            be <code>null</code>.
@@ -2346,7 +2346,7 @@ public class Server implements Runnable {
     /**
      * Sends out a notification message indicating that the current turn is an
      * error and should be skipped.
-     * 
+     *
      * @param skip
      *            - the <code>Player</code> who is to be skipped. This value
      *            must not be <code>null</code>.
@@ -2533,7 +2533,7 @@ public class Server implements Runnable {
 
     /**
      * Determines the turn oder for a given phase (with individual init)
-     * 
+     *
      * @param phase
      *            the <code>int</code> id of the phase
      */
@@ -2589,7 +2589,7 @@ public class Server implements Runnable {
 
     /**
      * Determines the turn oder for a given phase
-     * 
+     *
      * @param phase
      *            the <code>int</code> id of the phase
      */
@@ -3075,7 +3075,7 @@ public class Server implements Runnable {
     /**
      * Have the loader load the indicated unit. The unit being loaded loses its
      * turn.
-     * 
+     *
      * @param loader
      *            - the <code>Entity</code> that is loading the unit.
      * @param unit
@@ -3106,7 +3106,7 @@ public class Server implements Runnable {
     /**
      * Have the unloader unload the indicated unit. The unit being unloaded does
      * *not* gain a turn.
-     * 
+     *
      * @param unloader
      *            - the <code>Entity</code> that is unloading the unit.
      * @param unloaded
@@ -3329,7 +3329,7 @@ public class Server implements Runnable {
      * Record that the given building has been affected by the current entity's
      * movement. At the end of the entity's movement, notify the clients about
      * the updates.
-     * 
+     *
      * @param bldg
      *            - the <code>Building</code> that has been affected.
      * @param collapse
@@ -3485,7 +3485,7 @@ public class Server implements Runnable {
 
     /**
      * makes a unit skid or sideslip on the board
-     * 
+     *
      * @param entity
      *            the unit which should skid
      * @param start
@@ -4196,7 +4196,7 @@ public class Server implements Runnable {
 
     /**
      * processes a potential collision
-     * 
+     *
      * @param entity
      * @param target
      * @param src
@@ -4487,7 +4487,7 @@ public class Server implements Runnable {
 
     /**
      * Process any flee movement actions, including flying off the map
-     * 
+     *
      * @param entity
      *            the entity fleeing
      * @param flewOff
@@ -4650,7 +4650,6 @@ public class Server implements Runnable {
         int curVTOLElevation = entity.getElevation();
         int curElevation = entity.getElevation();
         int lastElevation = entity.getElevation();
-        int startAltitude = entity.getAltitude();
         int curAltitude = entity.getAltitude();
         // if the entity already used some MPs,
         // it previously tried to get up and fell,
@@ -6545,7 +6544,7 @@ public class Server implements Runnable {
 
     /**
      * Adds a Thunder minefield to the hex.
-     * 
+     *
      * @param coords
      * @param playerId
      * @param damage
@@ -6581,7 +6580,7 @@ public class Server implements Runnable {
 
     /**
      * Adds a Thunder Inferno minefield to the hex.
-     * 
+     *
      * @param coords
      * @param playerId
      * @param damage
@@ -6717,7 +6716,7 @@ public class Server implements Runnable {
 
     /**
      * deliver artillery smoke
-     * 
+     *
      * @param coords
      *            the <code>Coords</code> where to deliver
      */
@@ -6736,7 +6735,7 @@ public class Server implements Runnable {
 
     /**
      * deliver artillery inferno
-     * 
+     *
      * @param coords
      *            the <code>Coords</code> where to deliver
      * @param ae
@@ -6873,7 +6872,7 @@ public class Server implements Runnable {
 
     /**
      * deliver inferno missiles
-     * 
+     *
      * @param ae
      *            the <code>Entity</code> that fired the missiles
      * @param t
@@ -6887,7 +6886,7 @@ public class Server implements Runnable {
 
     /**
      * deliver inferno missiles
-     * 
+     *
      * @param ae
      *            the <code>Entity</code> that fired the missiles
      * @param t
@@ -7086,7 +7085,7 @@ public class Server implements Runnable {
     /**
      * Check for any detonations when an entity enters a minefield, except a
      * vibrabomb.
-     * 
+     *
      * @param entity
      *            - the <code>entity</code> who entered the minefield
      * @param c
@@ -7108,7 +7107,7 @@ public class Server implements Runnable {
     /**
      * Check for any detonations when an entity enters a minefield, except a
      * vibrabomb.
-     * 
+     *
      * @param entity
      *            - the <code>entity</code> who entered the minefield
      * @param c
@@ -7268,7 +7267,7 @@ public class Server implements Runnable {
 
     /**
      * attempt to clear a minefield
-     * 
+     *
      * @param mf
      *            - a <code>Minefield</code> to clear
      * @param en
@@ -7284,7 +7283,7 @@ public class Server implements Runnable {
     /**
      * attempt to clear a minefield We don't actually remove the minefield here,
      * because if this is called up from within a loop, that will cause problems
-     * 
+     *
      * @param mf
      *            - a <code>Minefield</code> to clear
      * @param en
@@ -7456,7 +7455,7 @@ public class Server implements Runnable {
 
     /**
      * Remove all minefields in the specified coords from the game
-     * 
+     *
      * @param coords
      *            The <code>Coords</code> from which to remove minefields
      */
@@ -7464,13 +7463,13 @@ public class Server implements Runnable {
      * public void removeMinefieldsFrom(Coords coords) { Vector<Minefield> v =
      * game.getMinefields(coords); while (v.elements().hasMoreElements()) {
      * Minefield mf = v.elements().nextElement(); removeMinefield(mf); }
-     * 
+     *
      * }
      */
 
     /**
      * Removes the minefield from the game.
-     * 
+     *
      * @param mf
      *            The <code>Minefield</code> to remove
      */
@@ -7489,7 +7488,7 @@ public class Server implements Runnable {
 
     /**
      * Removes the minfield from a player.
-     * 
+     *
      * @param player
      *            The <code>Player</code> who's minefield should be removed
      * @param mf
@@ -7504,7 +7503,7 @@ public class Server implements Runnable {
 
     /**
      * Reveals a minefield for all players.
-     * 
+     *
      * @param mf
      *            The <code>Minefield</code> to be revealed
      */
@@ -7518,7 +7517,7 @@ public class Server implements Runnable {
 
     /**
      * Reveals a minefield for all players on a team.
-     * 
+     *
      * @param team
      *            The <code>team</code> who's minefiled should be revealed
      * @param mf
@@ -7593,7 +7592,7 @@ public class Server implements Runnable {
 
     /**
      * Explodes a vibrabomb.
-     * 
+     *
      * @param mf
      *            The <code>Minefield</code> to explode
      */
@@ -7651,7 +7650,7 @@ public class Server implements Runnable {
 
     /**
      * drowns any units swarming the entity
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> that is being swarmed
      * @param pos
@@ -7681,7 +7680,7 @@ public class Server implements Runnable {
     /**
      * Checks to see if we may have just washed off infernos. Call after a step
      * which may have done this.
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> that is being checked
      * @param coords
@@ -7702,7 +7701,7 @@ public class Server implements Runnable {
 
     /**
      * Washes off an inferno from a mech and adds it to the (water) hex.
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> that is taking a bath
      * @param coords
@@ -7759,7 +7758,7 @@ public class Server implements Runnable {
 
     /**
      * Set the locationsexposure of an entity
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> who's exposure is being set
      * @param hex
@@ -7810,14 +7809,14 @@ public class Server implements Runnable {
 
     /**
      * Do a roll to avoid pilot damage from g-forces
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> that should make the PSR
      * @param roll
      *            The <code>PilotingRollData</code> to be used for this PSR.
-     * 
+     *
      * @return true if check succeeds, false otherwise.
-     * 
+     *
      */
     private void resistGForce(Entity entity, int targetroll) {
 
@@ -7845,14 +7844,14 @@ public class Server implements Runnable {
 
     /**
      * Do a piloting skill check in space to avoid structural damage
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> that should make the PSR
      * @param roll
      *            The <code>PilotingRollData</code> to be used for this PSR.
-     * 
+     *
      * @return true if check succeeds, false otherwise.
-     * 
+     *
      */
     private boolean doSkillCheckInSpace(Entity entity, PilotingRollData roll) {
 
@@ -7891,14 +7890,14 @@ public class Server implements Runnable {
     /**
      * Do a piloting skill check in space to do a successful maneuver Failure
      * means moving forward half velocity
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> that should make the PSR
      * @param roll
      *            The <code>PilotingRollData</code> to be used for this PSR.
-     * 
+     *
      * @return true if check succeeds, false otherwise.
-     * 
+     *
      */
     private boolean doSkillCheckManeuver(Entity entity, PilotingRollData roll) {
 
@@ -7937,7 +7936,7 @@ public class Server implements Runnable {
     /**
      * Do a piloting skill check while standing still (during the movement
      * phase).
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> that should make the PSR
      * @param roll
@@ -8002,7 +8001,7 @@ public class Server implements Runnable {
 
     /**
      * Do a Piloting Skill check to dislogde swarming infantry.
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> that is doing the dislodging.
      * @param roll
@@ -8052,7 +8051,7 @@ public class Server implements Runnable {
 
     /**
      * Do a piloting skill check while moving.
-     * 
+     *
      * @param entity
      *            - the <code>Entity</code> that must roll.
      * @param src
@@ -8125,7 +8124,7 @@ public class Server implements Runnable {
     /**
      * The entity falls into the hex specified. Check for any conflicts and
      * resolve them. Deal damage to faller.
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> that is falling.
      * @param src
@@ -8143,7 +8142,7 @@ public class Server implements Runnable {
     /**
      * The entity falls into the hex specified. Check for any conflicts and
      * resolve them. Deal damage to faller.
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> that is falling.
      * @param src
@@ -8604,7 +8603,7 @@ public class Server implements Runnable {
     /**
      * receive a packet that contains hexes that are automatically hit by
      * artillery
-     * 
+     *
      * @param packet
      * @param connId
      */
@@ -8632,7 +8631,7 @@ public class Server implements Runnable {
 
     /**
      * receive a packet that contains minefields
-     * 
+     *
      * @param packet
      * @param connId
      */
@@ -8653,7 +8652,7 @@ public class Server implements Runnable {
 
     /**
      * process deployment of minefields
-     * 
+     *
      * @param minefields
      */
     private void processDeployMinefields(Vector<Minefield> minefields) {
@@ -9143,7 +9142,7 @@ public class Server implements Runnable {
 
     /**
      * Trigger the indicated AP Pod of the entity.
-     * 
+     *
      * @param entity
      *            the <code>Entity</code> triggering the AP Pod.
      * @param podId
@@ -9234,7 +9233,7 @@ public class Server implements Runnable {
 
     /**
      * Trigger the indicated B Pod of the entity.
-     * 
+     *
      * @param entity
      *            the <code>Entity</code> triggering the B Pod.
      * @param podId
@@ -9475,7 +9474,7 @@ public class Server implements Runnable {
     /**
      * Try to ignite the hex, taking into account exisiting fires and the
      * effects of Inferno rounds.
-     * 
+     *
      * @param c
      *            - the <code>Coords</code> of the hex being lit.
      * @param entityId
@@ -9609,7 +9608,7 @@ public class Server implements Runnable {
      * Try to ignite the hex, taking into account exisiting fires and the
      * effects of Inferno rounds. This version of the method will not report the
      * attempt roll.
-     * 
+     *
      * @param c
      *            - the <code>Coords</code> of the hex being lit.
      * @param entityId
@@ -12945,7 +12944,7 @@ public class Server implements Runnable {
 
     /**
      * Get the Kick or Push PSR, modified by weight class
-     * 
+     *
      * @param psrEntity
      *            The <code>Entity</code> that should make a PSR
      * @param attacker
@@ -13845,7 +13844,7 @@ public class Server implements Runnable {
      * Resolve Flaming Damage for the given Entity Taharqa: This is now updated
      * to TacOps rules which is much more lenient So I have change the name to
      * Flaming Damage rather than flaming death
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> that may experience flaming damage.
      */
@@ -14697,7 +14696,7 @@ public class Server implements Runnable {
 
     /**
      * Inflict damage on a pilot
-     * 
+     *
      * @param en
      *            The <code>Entity</code> who's pilot gets damaged.
      * @param damage
@@ -14856,7 +14855,7 @@ public class Server implements Runnable {
 
     /**
      * damage an Entity
-     * 
+     *
      * @param te
      *            the <code>Entity</code> to be damaged
      * @param hit
@@ -14874,7 +14873,7 @@ public class Server implements Runnable {
     /**
      * Deals the listed damage to an entity. Returns a vector of Reports for the
      * phase report
-     * 
+     *
      * @param te
      *            the target entity
      * @param hit
@@ -14890,7 +14889,7 @@ public class Server implements Runnable {
     /**
      * Deals the listed damage to an entity. Returns a vector of Reports for the
      * phase report
-     * 
+     *
      * @param te
      *            the target entity
      * @param hit
@@ -14916,7 +14915,7 @@ public class Server implements Runnable {
     /**
      * Deals the listed damage to an entity. Returns a vector of Reports for the
      * phase report
-     * 
+     *
      * @param te
      *            the target entity
      * @param hit
@@ -14944,7 +14943,7 @@ public class Server implements Runnable {
     /**
      * Deals the listed damage to an entity. Returns a vector of Reports for the
      * phase report
-     * 
+     *
      * @param te
      *            the target entity
      * @param hit
@@ -14974,7 +14973,7 @@ public class Server implements Runnable {
     /**
      * Deals the listed damage to an entity. Returns a vector of Reports for the
      * phase report
-     * 
+     *
      * @param te
      *            the target entity
      * @param hit
@@ -15007,7 +15006,7 @@ public class Server implements Runnable {
     /**
      * Deals the listed damage to an entity. Returns a vector of Reports for the
      * phase report
-     * 
+     *
      * @param te
      *            the target entity
      * @param hit
@@ -16459,7 +16458,7 @@ public class Server implements Runnable {
     /**
      * Check to see if the entity's engine explodes. Rules for ICE explosions
      * are different to fusion engines.
-     * 
+     *
      * @param en
      *            - the <code>Entity</code> in question. This value must not be
      *            <code>null</code>.
@@ -16811,7 +16810,7 @@ public class Server implements Runnable {
 
     /**
      * Check if an Entity of the passed height can find shelter from a nukeblast
-     * 
+     *
      * @param entityPosition
      *            the <code>Coords</code> the Entity is at
      * @param position
@@ -16865,7 +16864,7 @@ public class Server implements Runnable {
 
     /**
      * add a nuke to be exploded in the next weapons attack phase
-     * 
+     *
      * @param nuke
      *            the nuke paramater either 3 or 6 ints 0 and 1 being X and Y
      *            when 3 ints: third is nuketype (from HS:3070) if 6 ints: third
@@ -16894,7 +16893,7 @@ public class Server implements Runnable {
 
     /**
      * do a nuclear explosion
-     * 
+     *
      * @param position
      * @param nukeType
      * @param vDesc
@@ -16924,7 +16923,7 @@ public class Server implements Runnable {
 
     /**
      * explode a nuke
-     * 
+     *
      * @param position
      * @param baseDamage
      * @param degredation
@@ -17159,7 +17158,7 @@ public class Server implements Runnable {
 
     /**
      * Handles secondary effects from nuclear blasts against all units in range.
-     * 
+     *
      * @param entity
      *            The entity to affect.
      * @param position
@@ -17310,7 +17309,7 @@ public class Server implements Runnable {
      * accessed from this function, preventing it from being factored out of the
      * Server class: destroyEntity() destroyLocation() checkEngineExplosion()
      * damageCrew() explodeEquipment() game
-     * 
+     *
      * @param en
      *            the <code>Entity</code> that is being damaged. This value may
      *            not be <code>null</code>.
@@ -17340,7 +17339,7 @@ public class Server implements Runnable {
      * accessed from this function, preventing it from being factored out of the
      * Server class: destroyEntity() destroyLocation() checkEngineExplosion()
      * damageCrew() explodeEquipment() game
-     * 
+     *
      * @param en
      *            the <code>Entity</code> that is being damaged. This value may
      *            not be <code>null</code>.
@@ -18428,7 +18427,7 @@ public class Server implements Runnable {
 
     /**
      * Crash a VTOL
-     * 
+     *
      * @param en
      *            the <code>VTOL</code> to be crashed
      * @return the <code>Vector<Report></code> containg phasereports
@@ -18439,7 +18438,7 @@ public class Server implements Runnable {
 
     /**
      * Crash a VTOL
-     * 
+     *
      * @param en
      *            The <code>VTOL</code> to crash
      * @param sideSlipCrash
@@ -18647,7 +18646,7 @@ public class Server implements Runnable {
 
     /**
      * Explode a VTOL
-     * 
+     *
      * @param en
      *            The <code>VTOL</code> to explode.
      * @return a <code>Vector</code> of reports
@@ -18677,7 +18676,7 @@ public class Server implements Runnable {
 
     /**
      * rolls and resolves one tank critical hit
-     * 
+     *
      * @param t
      *            the <code>Tank</code> to be critted
      * @param loc
@@ -18727,7 +18726,7 @@ public class Server implements Runnable {
 
     /**
      * Checks for aero criticals
-     * 
+     *
      * @param a
      *            - the entity being critted
      * @param hit
@@ -19131,7 +19130,7 @@ public class Server implements Runnable {
      * Checks for location breach and returns phase logging.
      * <p/>
      * Please note that dependent locations ARE NOT considered breached!
-     * 
+     *
      * @param entity
      *            the <code>Entity</code> that needs to be checked.
      * @param loc
@@ -19152,7 +19151,7 @@ public class Server implements Runnable {
      * Checks for location breach and returns phase logging.
      * <p/>
      * Please note that dependent locations ARE NOT considered breached!
-     * 
+     *
      * @param entity
      *            the <code>Entity</code> that needs to be checked.
      * @param loc
@@ -19255,7 +19254,7 @@ public class Server implements Runnable {
 
     /**
      * Marks all equipment in a location on an entity as useless.
-     * 
+     *
      * @param entity
      *            the <code>Entity</code> that needs to be checked.
      * @param loc
@@ -19376,7 +19375,7 @@ public class Server implements Runnable {
     /**
      * Mark the unit as destroyed! Units transported in the destroyed unit will
      * get a chance to escape.
-     * 
+     *
      * @param entity
      *            - the <code>Entity</code> that has been destroyed.
      * @param reason
@@ -19392,7 +19391,7 @@ public class Server implements Runnable {
     /**
      * Marks a unit as destroyed! Units transported inside the destroyed unit
      * will get a chance to escape unless the destruction was not survivable.
-     * 
+     *
      * @param entity
      *            - the <code>Entity</code> that has been destroyed.
      * @param reason
@@ -19412,7 +19411,7 @@ public class Server implements Runnable {
     /**
      * Marks a unit as destroyed! Units transported inside the destroyed unit
      * will get a chance to escape unless the destruction was not survivable.
-     * 
+     *
      * @param entity
      *            - the <code>Entity</code> that has been destroyed.
      * @param reason
@@ -20239,7 +20238,7 @@ public class Server implements Runnable {
      * Checks for fire ignition based on a given target roll. If successful,
      * lights a fire also checks to see that fire is possible in the specified
      * hex.
-     * 
+     *
      * @param hex
      *            - the <code>IHex</code> to be lit.
      * @param roll
@@ -20294,7 +20293,7 @@ public class Server implements Runnable {
      * Returns true if the hex is set on fire with the specified roll. Of
      * course, also checks to see that fire is possible in the specified hex.
      * This version of the method will not report the attempt roll.
-     * 
+     *
      * @param hex
      *            - the <code>IHex</code> to be lit.
      * @param roll
@@ -20312,7 +20311,7 @@ public class Server implements Runnable {
      * Returns true if the hex is set on fire with the specified roll. Of
      * course, also checks to see that fire is possible in the specified hex.
      * This version of the method will not report the attempt roll.
-     * 
+     *
      * @param hex
      *            - the <code>IHex</code> to be lit.
      * @param roll
@@ -20325,7 +20324,7 @@ public class Server implements Runnable {
 
     /**
      * add fire to a hex
-     * 
+     *
      * @param c
      *            - the <code>Coords</code> of the hex to be set on fire
      * @param bInferno
@@ -20378,7 +20377,7 @@ public class Server implements Runnable {
 
     /**
      * remove fire from a hex
-     * 
+     *
      * @param x
      * @param y
      * @param hex
@@ -20400,7 +20399,7 @@ public class Server implements Runnable {
 
     /**
      * Called when a fire is burning. Called 3 times per fire hex.
-     * 
+     *
      * @param x
      *            The <code>int</code> x-coordinate of the hex
      * @param y
@@ -20636,7 +20635,7 @@ public class Server implements Runnable {
 
     /**
      * can the passed <code>Player</code> see the passed <code>Entity</code>?
-     * 
+     *
      * @param p
      *            <code>Player</code>
      * @param e
@@ -20779,7 +20778,7 @@ public class Server implements Runnable {
 
     /**
      * filter a reportvector for double blind
-     * 
+     *
      * @param originalReportVector
      *            the original <code>Vector<Report></code>
      * @param p
@@ -20814,7 +20813,7 @@ public class Server implements Runnable {
      * to the player" set r.player to that player's id and set
      * r.type=Report.PLAYER to mark a message as visible to all , set r.type to
      * Report.PUBLIC
-     * 
+     *
      * @param r
      *            the Report to filter
      * @param p
@@ -20877,7 +20876,7 @@ public class Server implements Runnable {
      * elements vectors that contain all the reports for the specified player
      * that round. The reports returned this way are properly filtered for
      * double blind.
-     * 
+     *
      * @param pastReports
      * @param p
      * @return
@@ -21079,7 +21078,7 @@ public class Server implements Runnable {
 
     /**
      * receive and process an entity mode change packet
-     * 
+     *
      * @param c
      * @param connIndex
      */
@@ -21126,7 +21125,7 @@ public class Server implements Runnable {
 
     /**
      * receive and process an entity mode change packet
-     * 
+     *
      * @param c
      * @param connIndex
      */
@@ -21147,7 +21146,7 @@ public class Server implements Runnable {
 
     /**
      * receive and process an entity sytem mode change packet
-     * 
+     *
      * @param c
      * @param connIndex
      */
@@ -21166,7 +21165,7 @@ public class Server implements Runnable {
 
     /**
      * Receive a packet that contains an Entity ammo change
-     * 
+     *
      * @param c
      * @param connIndex
      */
@@ -21353,7 +21352,7 @@ public class Server implements Runnable {
     /**
      * Sets game options, providing that the player has specified the password
      * correctly.
-     * 
+     *
      * @return true if any options have been successfully changed.
      */
     private boolean receiveGameOptions(Packet packet, int connId) {
@@ -21413,7 +21412,7 @@ public class Server implements Runnable {
      * <code>receiveGameOptions<code> done its job; should be called after
      * <code>receiveGameOptions<code> only if the <code>receiveGameOptions<code>
      * returned <code>true</code>
-     * 
+     *
      * @param packet
      * @param connId
      */
@@ -21643,7 +21642,7 @@ public class Server implements Runnable {
     /**
      * Creates a packet detailing the removal of an entity. Maintained for
      * backwards compatability.
-     * 
+     *
      * @param entityId
      *            - the <code>int</code> ID of the entity being removed.
      * @return A <code>Packet</code> to be sent to clients.
@@ -21654,7 +21653,7 @@ public class Server implements Runnable {
 
     /**
      * Creates a packet detailing the removal of an entity.
-     * 
+     *
      * @param entityId
      *            - the <code>int</code> ID of the entity being removed.
      * @param condition
@@ -21929,7 +21928,7 @@ public class Server implements Runnable {
 
     /**
      * Process a packet from a connection.
-     * 
+     *
      * @param connId
      *            - the <code>int</code> ID the connection that received the
      *            packet.
@@ -22155,7 +22154,7 @@ public class Server implements Runnable {
     /**
      * Makes one slot of inferno ammo, determined by certain rules, explode on a
      * mech.
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> that should suffer an inferno ammo
      *            explosion.
@@ -22334,7 +22333,7 @@ public class Server implements Runnable {
      * after having moved a certain distance. This gets called when a Mech or a
      * Tank enters a building, leaves a building, or travels from one hex to
      * another inside a multi-hex building.
-     * 
+     *
      * @param entity
      *            - the <code>Entity</code> that passed through a wall. Don't
      *            pass <code>Infantry</code> units to this method.
@@ -22423,7 +22422,7 @@ public class Server implements Runnable {
 
     /**
      * check if a building collapes because of a moving entity
-     * 
+     *
      * @param bldg
      *            the <code>Building</code>
      * @param entity
@@ -22457,7 +22456,7 @@ public class Server implements Runnable {
      * Apply the correct amount of damage that passes on to any infantry unit in
      * the given building, based upon the amount of damage the building just
      * sustained. This amount is a percentage dictated by pg. 52 of BMRr.
-     * 
+     *
      * @param bldg
      *            - the <code>Building</code> that sustained the damage.
      * @param damage
@@ -22553,7 +22552,7 @@ public class Server implements Runnable {
      * the clients. If the building does not collapse, determine if any entities
      * crash through its floor into its basement. Again, apply appropriate
      * damage.
-     * 
+     *
      * @param bldg
      *            - the <code>Building</code> being checked. This value should
      *            not be <code>null</code>.
@@ -22699,7 +22698,7 @@ public class Server implements Runnable {
     /**
      * Collapse a building hex. Inflict the appropriate amount of damage on all
      * entities in the building. Update all clients.
-     * 
+     *
      * @param bldg
      *            - the <code>Building</code> that has collapsed.
      * @param positionMap
@@ -22861,7 +22860,7 @@ public class Server implements Runnable {
 
     /**
      * Tell the clients to replace the given building with rubble hexes.
-     * 
+     *
      * @param bldg
      *            - the <code>Building</code> that has collapsed.
      * @return a <code>Packet</code> for the command.
@@ -22874,7 +22873,7 @@ public class Server implements Runnable {
 
     /**
      * Tell the clients to replace the given building hexes with rubble hexes.
-     * 
+     *
      * @param buildings
      *            - a <code>Vector</code> of <code>Building</code>s that has
      *            collapsed.
@@ -22886,7 +22885,7 @@ public class Server implements Runnable {
 
     /**
      * Tell the clients to update the CFs of the given buildings.
-     * 
+     *
      * @param buildings
      *            - a <code>Vector</code> of <code>Building</code>s that need to
      *            be updated.
@@ -22978,7 +22977,7 @@ public class Server implements Runnable {
      * <p/>
      * A default message will be used to describe why the building took the
      * damage.
-     * 
+     *
      * @param bldg
      *            - the <code>Building</code> that has been damaged. This value
      *            should not be <code>null</code>, but no exception will occur.
@@ -22997,7 +22996,7 @@ public class Server implements Runnable {
      * Apply the given amount of damage to the building. Please note, this
      * method does <b>not</b> apply any damage to units inside the building,
      * update the clients, or check for the building's collapse.
-     * 
+     *
      * @param bldg
      *            - the <code>Building</code> that has been damaged. This value
      *            should not be <code>null</code>, but no exception will occur.
@@ -23244,7 +23243,7 @@ public class Server implements Runnable {
      * For all current artillery attacks in the air from this entity with this
      * weapon, clear the list of spotters. Needed because firing another round
      * before first lands voids spotting.
-     * 
+     *
      * @param entityID
      *            the <code>int</code> id of the entity
      * @param weaponID
@@ -23263,7 +23262,7 @@ public class Server implements Runnable {
 
     /**
      * Credits a Kill for an entity, if the target got killed.
-     * 
+     *
      * @param target
      *            The <code>Entity</code> that got killed.
      * @param attacker
@@ -23277,7 +23276,7 @@ public class Server implements Runnable {
 
     /**
      * pre-treats a physical attack
-     * 
+     *
      * @param aaa
      *            The <code>AbstractAttackAction</code> of the physical attack
      *            to pre-treat
@@ -23411,7 +23410,7 @@ public class Server implements Runnable {
 
     /**
      * Resolve a Physical Attack
-     * 
+     *
      * @param pr
      *            The <code>PhysicalResult</code> of the physical attack
      * @param cen
@@ -23505,7 +23504,7 @@ public class Server implements Runnable {
 
     /**
      * Add any extreme gravity PSRs the entity gets due to its movement
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> to check.
      * @param step
@@ -23569,7 +23568,7 @@ public class Server implements Runnable {
     /**
      * Damage the inner structure of a mech's leg / a tank's front. This only
      * happens when the Entity fails an extreme Gravity PSR.
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> to damage.
      * @param damage
@@ -23599,7 +23598,7 @@ public class Server implements Runnable {
 
     /**
      * Eject an Entity.
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> to eject.
      * @param autoEject
@@ -23844,7 +23843,7 @@ public class Server implements Runnable {
 
     /**
      * Abandon an Entity.
-     * 
+     *
      * @param entity
      *            The <code>Entity</code> to abandon.
      * @return a <code>Vector</code> of report objects for the gamelog.
@@ -24143,7 +24142,7 @@ public class Server implements Runnable {
     /**
      * remove Ice in the hex that's at the passed coords, and let entities fall
      * into water below it, if there is water
-     * 
+     *
      * @param c
      *            the <code>Coords</code> of the hex where ice should be removed
      * @return a <code>Vector<Report></code> for the phase report
@@ -24222,7 +24221,7 @@ public class Server implements Runnable {
 
     /**
      * check for vehicle fire, according to the MaxTech rules
-     * 
+     *
      * @param tank
      *            the <code>Tank</code> to be checked
      * @param inferno
@@ -24475,7 +24474,7 @@ public class Server implements Runnable {
 
     /**
      * resolve an assault drop
-     * 
+     *
      * @param entity
      *            the <code>Entity</code> for which to resolve it
      */
@@ -24562,7 +24561,7 @@ public class Server implements Runnable {
 
     /**
      * do damage from magma
-     * 
+     *
      * @param en
      *            the affected <code>Entity</code>
      * @param eruption
@@ -24618,7 +24617,7 @@ public class Server implements Runnable {
 
     /**
      * deal area saturation damage to an individual hex
-     * 
+     *
      * @param coords
      *            The hex being hit
      * @param attackSource
@@ -24852,7 +24851,7 @@ public class Server implements Runnable {
 
     /**
      * deal area saturation damage to the map, used for artillery
-     * 
+     *
      * @param centre
      *            The hex on which damage is centred
      * @param attackSource
@@ -24919,7 +24918,7 @@ public class Server implements Runnable {
     /**
      * Deals area-saturation damage to an area of the board. Used for artillery,
      * bombs, or anything else with linear decreas in damage
-     * 
+     *
      * @param centre
      *            The hex on which damage is centred
      * @param attackSource
@@ -24975,7 +24974,7 @@ public class Server implements Runnable {
 
     /**
      * deliver inferno bomb
-     * 
+     *
      * @param coords
      *            the <code>Coords</code> where to deliver
      * @param ae
@@ -25055,7 +25054,7 @@ public class Server implements Runnable {
 
     /**
      * check if spikes get breaken in the given location
-     * 
+     *
      * @param e
      *            the <code>Entity</code> to check
      * @param loc
@@ -25234,7 +25233,7 @@ public class Server implements Runnable {
 
     /**
      * create a <code>SmokeCloud object and add it to the server list</code>
-     * 
+     *
      * @param coords
      */
     public void createSmoke(Coords coords) {
@@ -25243,7 +25242,7 @@ public class Server implements Runnable {
 
     /**
      * create a <code>SmokeCloud object and add it to the server list</code>
-     * 
+     *
      * @param coords
      * @param level
      *            1=Light 2=Heavy Smoke
@@ -25254,7 +25253,7 @@ public class Server implements Runnable {
 
     /**
      * create a <code>SmokeCloud object and add it to the server list</code>
-     * 
+     *
      * @param coords
      * @param level
      *            1=Light 2=Heavy Smoke
@@ -25268,7 +25267,7 @@ public class Server implements Runnable {
 
     /**
      * create a <code>SmokeCloud object and add it to the server list</code>
-     * 
+     *
      * @param coords
      * @param level
      *            1=Light 2=Heavy Smoke
@@ -25282,7 +25281,7 @@ public class Server implements Runnable {
 
     /**
      * Update the map with a new set of coords.
-     * 
+     *
      * @param newCoords
      */
     public void updateSmoke(SmokeCloud cloud, ArrayList<Coords> newCoords) {
@@ -25293,7 +25292,7 @@ public class Server implements Runnable {
 
     /**
      * remove a cloud from the map
-     * 
+     *
      * @param cloud
      */
     public void removeSmokeTerrain(SmokeCloud cloud) {
@@ -25345,7 +25344,7 @@ public class Server implements Runnable {
 
     /**
      * let an entity lay a mine
-     * 
+     *
      * @param entity
      *            the <code>Entity</code> that should lay a mine
      * @param mineId

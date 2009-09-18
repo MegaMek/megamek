@@ -34,7 +34,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -1319,7 +1318,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 // Allow the player to save the units to a file.
                 saveListFile(living);
             } // End user-wants-a-MUL
-            
+
             //save all destroyed units in a separate "salvage MUL"
             ArrayList<Entity> destroyed = new ArrayList<Entity>();
             Enumeration<Entity> graveyard = getClient().game.getGraveyardEntities();
@@ -1349,7 +1348,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
                 }
             }
-            
+
         }
 
         @Override

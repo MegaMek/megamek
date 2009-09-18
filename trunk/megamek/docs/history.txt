@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.35.7-dev (SVN)
+v0.35.7 (2009-09-19, 01:36 UTC+2)
 + ejected status read to and loaded from MUL
 + externalId for pilots
 + XMLStreamParser produces both an Entities and a Pilots vector (for reading in ejected pilots)

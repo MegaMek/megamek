@@ -23,16 +23,13 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 
 import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Entity;
 import megamek.common.Pilot;
-import megamek.common.Player;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.util.DirectoryItems;
@@ -58,7 +55,7 @@ public class PilotMapSet implements DisplayMapSet {
     private static final Font FONT_TITLE = new Font(
            "SansSerif", Font.ITALIC, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
     private int yCoord = 1;
-    
+
     // keep track of portrait images
     private DirectoryItems portraits;
 
@@ -181,7 +178,7 @@ public class PilotMapSet implements DisplayMapSet {
         if(null != getPortrait(en.crew)) {
             portraitArea.setIdleImage(getPortrait(en.crew));
         }
-        
+
         if ((en.getGame() != null)
                 && en.getGame().getOptions().booleanOption("rpg_gunnery")) {
             gunneryLR.setString(Integer.toString(en.crew.getGunneryL()));
@@ -303,10 +300,10 @@ public class PilotMapSet implements DisplayMapSet {
         l.moveTo(x, y);
         return l;
     }
-    
+
     /**
      * Get the portrait for the given pilot.
-     * 
+     *
      * @return The <code>Image</code> of the pilot's portrait. This value
      *         will be <code>null</code> if no portrait was selected
      *          or if there was an error loading it.
@@ -315,13 +312,13 @@ public class PilotMapSet implements DisplayMapSet {
 
         String category = pilot.getPortraitCategory();
         String file = pilot.getPortraitFileName();
-        
+
         if(Pilot.ROOT_PORTRAIT.equals(category)) {
             category = "";
         }
-        
+
         // Return a null if the player has selected no portrait file.
-        if (null == category || null == file || Pilot.PORTRAIT_NONE.equals(file)) {
+        if ((null == category) || (null == file) || Pilot.PORTRAIT_NONE.equals(file)) {
             return null;
         }
 

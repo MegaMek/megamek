@@ -757,11 +757,25 @@ public class BipedMech extends Mech {
 
     @Override
     public boolean canGoHullDown() {
-        return game.getOptions().booleanOption("tacops_hull_down")
-            && !isLocationBad(Mech.LOC_LLEG)
+        // check the option
+        boolean retVal = game.getOptions().booleanOption("tacops_hull_down");
+        if (!retVal) {
+            return false;
+        }
+        //check the locations
+        retVal = ( !isLocationBad(Mech.LOC_LLEG)
             && !isLocationBad(Mech.LOC_RLEG)
             && !isLocationDoomed(Mech.LOC_LLEG)
-            && !isLocationDoomed(Mech.LOC_RLEG);
+            && !isLocationDoomed(Mech.LOC_RLEG));
+        if (!retVal) {
+            return false;
+        }
+        //check the Gyro
+        int gyroHits = getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
+        if (getGyroType() != Mech.GYRO_HEAVY_DUTY) {
+            gyroHits++;
+        }
+        return (gyroHits >= 3);
     }
 
     @Override

@@ -817,19 +817,28 @@ public class QuadMech extends Mech {
 
     @Override
     public boolean canGoHullDown() {
-
-        if ( game.getOptions().booleanOption("tacops_hull_down")  ) {
-            int locations[] = {Mech.LOC_RARM, Mech.LOC_LARM, Mech.LOC_LLEG, Mech.LOC_RLEG};
-            int badLocs = 0;
-            for ( int loc = locations.length -1; loc >= 0; loc-- ) {
-                if ( isLocationBad(locations[loc]) || isLocationDoomed(locations[loc])) {
-                    badLocs++;
-                }
-            }
-
-            return badLocs < 2;
+        // check the option
+        boolean retVal = game.getOptions().booleanOption("tacops_hull_down");
+        if (!retVal) {
+            return false;
         }
-        return false;
+        //check the locations
+        int locations[] = {Mech.LOC_RARM, Mech.LOC_LARM, Mech.LOC_LLEG, Mech.LOC_RLEG};
+        int badLocs = 0;
+        for ( int loc = locations.length -1; loc >= 0; loc-- ) {
+            if ( isLocationBad(locations[loc]) || isLocationDoomed(locations[loc])) {
+                badLocs++;
+            }
+        }
+        if (!(badLocs <2)) {
+            return false;
+        }
+        //check the Gyro
+        int gyroHits = getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
+        if (getGyroType() != Mech.GYRO_HEAVY_DUTY) {
+            gyroHits++;
+        }
+        return (gyroHits >= 3);
     }
 
     /**

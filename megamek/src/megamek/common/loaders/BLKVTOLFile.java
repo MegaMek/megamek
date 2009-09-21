@@ -29,121 +29,121 @@ import megamek.common.util.BuildingBlock;
  */
 public class BLKVTOLFile extends BLKFile implements IMechLoader {
 
-	private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover", "VTOL" };
+    private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover", "VTOL" };
 
-	public BLKVTOLFile(BuildingBlock bb) {
-		dataFile = bb;
-	}
+    public BLKVTOLFile(BuildingBlock bb) {
+        dataFile = bb;
+    }
 
-	public Entity getEntity() throws EntityLoadingException {
-		VTOL t = new VTOL();
+    public Entity getEntity() throws EntityLoadingException {
+        VTOL t = new VTOL();
 
-		if (!dataFile.exists("Name")) {
-			throw new EntityLoadingException("Could not find name block.");
-		}
-		t.setChassis(dataFile.getDataAsString("Name")[0]);
-		if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
-			t.setModel(dataFile.getDataAsString("Model")[0]);
-		} else {
-			t.setModel("");
-		}
+        if (!dataFile.exists("Name")) {
+            throw new EntityLoadingException("Could not find name block.");
+        }
+        t.setChassis(dataFile.getDataAsString("Name")[0]);
+        if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
+            t.setModel(dataFile.getDataAsString("Model")[0]);
+        } else {
+            t.setModel("");
+        }
 
-		setTechLevel(t);
+        setTechLevel(t);
 
-		if (dataFile.exists("source")) {
-			t.setSource(dataFile.getDataAsString("source")[0]);
-		}
+        if (dataFile.exists("source")) {
+            t.setSource(dataFile.getDataAsString("source")[0]);
+        }
 
-		if (!dataFile.exists("tonnage")) {
-			throw new EntityLoadingException("Could not find weight block.");
-		}
-		t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
+        if (!dataFile.exists("tonnage")) {
+            throw new EntityLoadingException("Could not find weight block.");
+        }
+        t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
 
-		if (!dataFile.exists("motion_type")) {
-			throw new EntityLoadingException("Could not find movement block.");
-		}
-		String sMotion = dataFile.getDataAsString("motion_type")[0];
-		int nMotion = -1;
-		for (int x = 0; x < MOVES.length; x++) {
-			if (sMotion.equals(MOVES[x])) {
-				nMotion = x;
-				break;
-			}
-		}
-		if (nMotion == -1) {
-			throw new EntityLoadingException("Invalid movment type: " + sMotion);
-		}
-		t.setMovementMode(nMotion);
+        if (!dataFile.exists("motion_type")) {
+            throw new EntityLoadingException("Could not find movement block.");
+        }
+        String sMotion = dataFile.getDataAsString("motion_type")[0];
+        int nMotion = -1;
+        for (int x = 0; x < MOVES.length; x++) {
+            if (sMotion.equals(MOVES[x])) {
+                nMotion = x;
+                break;
+            }
+        }
+        if (nMotion == -1) {
+            throw new EntityLoadingException("Invalid movment type: " + sMotion);
+        }
+        t.setMovementMode(nMotion);
 
-		if (dataFile.exists("transporters")) {
-			String[] transporters = dataFile.getDataAsString("transporters");
-			// Walk the array of transporters.
-			for (String transporter : transporters) {
-				// TroopSpace:
-				if (transporter.startsWith("TroopSpace:", 0)) {
-					// Everything after the ':' should be the space's size.
-					Double fsize = new Double(transporter.substring(11));
-					t.addTransporter(new TroopSpace(fsize.doubleValue()));
-				}
+        if (dataFile.exists("transporters")) {
+            String[] transporters = dataFile.getDataAsString("transporters");
+            // Walk the array of transporters.
+            for (String transporter : transporters) {
+                // TroopSpace:
+                if (transporter.startsWith("TroopSpace:", 0)) {
+                    // Everything after the ':' should be the space's size.
+                    Double fsize = new Double(transporter.substring(11));
+                    t.addTransporter(new TroopSpace(fsize.doubleValue()));
+                }
 
-			} // Handle the next transportation component.
+            } // Handle the next transportation component.
 
-		} // End has-transporters
+        } // End has-transporters
 
-		int engineCode = BLKFile.FUSION;
-		if (dataFile.exists("engine_type")) {
-			engineCode = dataFile.getDataAsInt("engine_type")[0];
-		}
-		int engineFlags = Engine.TANK_ENGINE;
-		if (t.isClan()) {
-			engineFlags |= Engine.CLAN_ENGINE;
-		}
-		if (!dataFile.exists("cruiseMP")) {
-			throw new EntityLoadingException("Could not find cruiseMP block.");
-		}
-		int engineRating = dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight() - t.getSuspensionFactor();
-		t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
+        int engineCode = BLKFile.FUSION;
+        if (dataFile.exists("engine_type")) {
+            engineCode = dataFile.getDataAsInt("engine_type")[0];
+        }
+        int engineFlags = Engine.TANK_ENGINE;
+        if (t.isClan()) {
+            engineFlags |= Engine.CLAN_ENGINE;
+        }
+        if (!dataFile.exists("cruiseMP")) {
+            throw new EntityLoadingException("Could not find cruiseMP block.");
+        }
+        int engineRating = dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight() - t.getSuspensionFactor();
+        t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
-		if (dataFile.exists("armor_type")) {
-			t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
-		}
-		if (dataFile.exists("armor_tech")) {
-			t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-		}
-		if (dataFile.exists("internal_type")) {
-			t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
-		}
+        if (dataFile.exists("armor_type")) {
+            t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+        }
+        if (dataFile.exists("armor_tech")) {
+            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        }
+        if (dataFile.exists("internal_type")) {
+            t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
+        }
 
-		if (!dataFile.exists("armor")) {
-			throw new EntityLoadingException("Could not find armor block.");
-		}
+        if (!dataFile.exists("armor")) {
+            throw new EntityLoadingException("Could not find armor block.");
+        }
 
-		int[] armor = dataFile.getDataAsInt("armor");
+        int[] armor = dataFile.getDataAsInt("armor");
 
-		if (armor.length != 5) {
-			throw new EntityLoadingException("Incorrect armor array length");
-		}
-		// add the body to the armor array
-		int[] fullArmor = new int[armor.length + 1];
-		fullArmor[0] = 0;
-		System.arraycopy(armor, 0, fullArmor, 1, armor.length);
-		for (int x = 0; x < fullArmor.length; x++) {
-			t.initializeArmor(fullArmor[x], x);
-		}
+        if (armor.length != 5) {
+            throw new EntityLoadingException("Incorrect armor array length");
+        }
+        // add the body to the armor array
+        int[] fullArmor = new int[armor.length + 1];
+        fullArmor[0] = 0;
+        System.arraycopy(armor, 0, fullArmor, 1, armor.length);
+        for (int x = 0; x < fullArmor.length; x++) {
+            t.initializeArmor(fullArmor[x], x);
+        }
 
-		t.autoSetInternal();
+        t.autoSetInternal();
 
-		loadEquipment(t, "Front", Tank.LOC_FRONT);
-		loadEquipment(t, "Right", Tank.LOC_RIGHT);
-		loadEquipment(t, "Left", Tank.LOC_LEFT);
-		loadEquipment(t, "Rear", Tank.LOC_REAR);
-		loadEquipment(t, "Body", Tank.LOC_BODY);
+        loadEquipment(t, "Front", Tank.LOC_FRONT);
+        loadEquipment(t, "Right", Tank.LOC_RIGHT);
+        loadEquipment(t, "Left", Tank.LOC_LEFT);
+        loadEquipment(t, "Rear", Tank.LOC_REAR);
+        loadEquipment(t, "Body", Tank.LOC_BODY);
 
-		if (dataFile.exists("omni")) {
-			t.setOmni(true);
-		}
+        if (dataFile.exists("omni")) {
+            t.setOmni(true);
+        }
 
-		return t;
-	}
+        return t;
+    }
 
 }

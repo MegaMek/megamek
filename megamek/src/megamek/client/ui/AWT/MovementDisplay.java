@@ -1518,8 +1518,8 @@ DoneButtoned, KeyListener {
         }
 
         if(ce.isAirborne()) {
-        	//then use altitude not elevation
-        	setRaiseEnabled(ce.canGoUp(cmd.getFinalAltitude(), cmd
+            //then use altitude not elevation
+            setRaiseEnabled(ce.canGoUp(cmd.getFinalAltitude(), cmd
                     .getFinalCoords()));
             setLowerEnabled(ce.canGoDown(cmd.getFinalAltitude(), cmd
                     .getFinalCoords()));

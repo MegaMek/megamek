@@ -362,11 +362,11 @@ public interface IBoard {
      * Returns the lowest elevation hex on the board.
      * @return
      */
-	public abstract int getMinElevation();
+    public abstract int getMinElevation();
 
-	/**
-	 * Returns the highest elevation hex on the board.
-	 * @return
-	 */
-	public abstract int getMaxElevation();
+    /**
+     * Returns the highest elevation hex on the board.
+     * @return
+     */
+    public abstract int getMaxElevation();
 }

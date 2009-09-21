@@ -110,6 +110,6 @@ public class MinefieldTarget implements Targetable {
     }
     
     public int getAltitude() {
-    	return 0;
+        return 0;
     }
 }

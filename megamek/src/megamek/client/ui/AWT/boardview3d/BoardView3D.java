@@ -835,9 +835,9 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
         }
     }
 
-	public void toggleIsometric() {
-		// Only implemented in swing GUI.
-		
-	}
+    public void toggleIsometric() {
+        // Only implemented in swing GUI.
+        
+    }
 
 }

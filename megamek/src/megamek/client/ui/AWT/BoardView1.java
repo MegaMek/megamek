@@ -3458,12 +3458,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 ge = true;
             }
             if(entity.isAirborne()) {
-            	if(!game.getBoard().inSpace()) {
-            		graph.setColor(Color.darkGray);
+                if(!game.getBoard().inSpace()) {
+                    graph.setColor(Color.darkGray);
                     graph.drawString(Integer.toString(entity.getAltitude()) + "A", 26, 15);
                     graph.setColor(Color.PINK);
                     graph.drawString(Integer.toString(entity.getAltitude()) + "A", 25, 14);
-            	}
+                }
             } else if(entity.getElevation() > 0) {
                 graph.setColor(Color.darkGray);
                 graph.drawString(Integer.toString(entity.getElevation()), 26, 15);
@@ -4313,7 +4313,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
             
             if(step.getParent().getEntity().isAirborne()) {
-            	costStringBuf.append("{").append(step.getAltitude()).append("}");
+                costStringBuf.append("{").append(step.getAltitude()).append("}");
             }
 
             // Convert the buffer to a String and draw it.
@@ -5596,7 +5596,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         repaint();
     }
 
-	public void toggleIsometric() {
-		// Only Implemented on SWING gui
-	}
+    public void toggleIsometric() {
+        // Only Implemented on SWING gui
+    }
 }

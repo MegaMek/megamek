@@ -191,8 +191,10 @@ public class Dropship extends SmallCraft implements Serializable {
         dbv += getSI() * 2.0;
 
         // add defensive equipment
-        double dEquipmentBV = 0;
-
+        double amsBV = 0;
+        double amsAmmoBV = 0;
+        double screenBV = 0;
+        double screenAmmoBV = 0;
         for (Mounted mounted : getEquipment()) {
             EquipmentType etype = mounted.getType();
 
@@ -200,15 +202,20 @@ public class Dropship extends SmallCraft implements Serializable {
             if (mounted.isDestroyed()) {
                 continue;
             }
-
-            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))
-                    || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS))
-                    || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER))
-                    || ((etype instanceof WeaponType) && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN))) {
-                dEquipmentBV += etype.getBV(this);
+            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))) {
+                amsBV += etype.getBV(this);
+            } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
+                amsAmmoBV += etype.getBV(this);
+            } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)) {
+                screenAmmoBV += etype.getBV(this);
+            } else if ((etype instanceof WeaponType) && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
+                screenBV += etype.getBV(this);
             }
         }
-        dbv += dEquipmentBV;
+        dbv += amsBV;
+        dbv += screenBV;
+        dbv += Math.min(amsBV, amsAmmoBV);
+        dbv += Math.min(screenBV, screenAmmoBV);
 
         //unit type multiplier
         dbv *= getBVTypeModifier();
@@ -651,7 +658,7 @@ public class Dropship extends SmallCraft implements Serializable {
         range = range - getFCSHits() - getSensorHits();
         return range;
     }
-    
+
     /**
      * Return the height of this dropship above the terrain.
      */

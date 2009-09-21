@@ -311,8 +311,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         elevationR.setString(Messages.getString("GeneralInfoMapSet.NA")); //$NON-NLS-1$
         elevationR.setString(Integer.toString(en.getElevation()));
         if(en.isAirborne()) {
-        	elevationL.setString(Messages.getString("GeneralInfoMapSet.altitudeL"));
-        	elevationR.setString(Integer.toString(en.getAltitude()));
+            elevationL.setString(Messages.getString("GeneralInfoMapSet.altitudeL"));
+            elevationR.setString(Integer.toString(en.getAltitude()));
         }
 
         for (PMSimpleLabel element : advantagesR) {
@@ -443,8 +443,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             fuelR.setVisible(false);
         }
         if(en.getGame().getBoard().inSpace()) {
-        	elevationL.setVisible(false);
-        	elevationR.setVisible(false);
+            elevationL.setVisible(false);
+            elevationR.setVisible(false);
         }
 
         bvR.setString(new Integer(en.calculateBattleValue()).toString());

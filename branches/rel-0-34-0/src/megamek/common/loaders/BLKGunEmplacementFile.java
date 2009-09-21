@@ -32,52 +32,52 @@ import megamek.common.util.BuildingBlock;
 
 public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
 
-	public BLKGunEmplacementFile(BuildingBlock bb) {
-		dataFile = bb;
-	}
+    public BLKGunEmplacementFile(BuildingBlock bb) {
+        dataFile = bb;
+    }
 
-	public Entity getEntity() throws EntityLoadingException {
+    public Entity getEntity() throws EntityLoadingException {
 
-		GunEmplacement e = new GunEmplacement();
+        GunEmplacement e = new GunEmplacement();
 
-		if (!dataFile.exists("Name")) {
-			throw new EntityLoadingException("Could not find name block.");
-		}
-		e.setChassis(dataFile.getDataAsString("Name")[0]);
+        if (!dataFile.exists("Name")) {
+            throw new EntityLoadingException("Could not find name block.");
+        }
+        e.setChassis(dataFile.getDataAsString("Name")[0]);
 
-		if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
-			e.setModel(dataFile.getDataAsString("Model")[0]);
-		} else {
-			e.setModel("");
-		}
+        if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
+            e.setModel(dataFile.getDataAsString("Model")[0]);
+        } else {
+            e.setModel("");
+        }
 
-		setTechLevel(e);
+        setTechLevel(e);
 
-		if (dataFile.exists("source")) {
-			e.setSource(dataFile.getDataAsString("source")[0]);
-		}
+        if (dataFile.exists("source")) {
+            e.setSource(dataFile.getDataAsString("source")[0]);
+        }
 
-		if (!dataFile.exists("ConstructionFactor")) {
-			throw new EntityLoadingException("Could not find block.");
-		}
-		e.initConstructionFactor(dataFile.getDataAsInt("ConstructionFactor")[0]);
+        if (!dataFile.exists("ConstructionFactor")) {
+            throw new EntityLoadingException("Could not find block.");
+        }
+        e.initConstructionFactor(dataFile.getDataAsInt("ConstructionFactor")[0]);
 
-		if (dataFile.exists("Height")) {
-			e.setHeight(dataFile.getDataAsInt("Height")[0]);
-		}
+        if (dataFile.exists("Height")) {
+            e.setHeight(dataFile.getDataAsInt("Height")[0]);
+        }
 
-		if (dataFile.exists("Turret")) {
-			e.setTurret(true);
-			e.initTurretArmor(dataFile.getDataAsInt("Turret")[0]);
-		}
+        if (dataFile.exists("Turret")) {
+            e.setTurret(true);
+            e.initTurretArmor(dataFile.getDataAsInt("Turret")[0]);
+        }
 
-		loadEquipment(e, "North", GunEmplacement.LOC_NORTH);
-		loadEquipment(e, "East", GunEmplacement.LOC_EAST);
-		loadEquipment(e, "West", GunEmplacement.LOC_WEST);
-		if (e.hasTurret()) {
-			loadEquipment(e, "Turret", GunEmplacement.LOC_TURRET);
-		}
-		loadEquipment(e, "Building", GunEmplacement.LOC_BUILDING);
-		return e;
-	}
+        loadEquipment(e, "North", GunEmplacement.LOC_NORTH);
+        loadEquipment(e, "East", GunEmplacement.LOC_EAST);
+        loadEquipment(e, "West", GunEmplacement.LOC_WEST);
+        if (e.hasTurret()) {
+            loadEquipment(e, "Turret", GunEmplacement.LOC_TURRET);
+        }
+        loadEquipment(e, "Building", GunEmplacement.LOC_BUILDING);
+        return e;
+    }
 }

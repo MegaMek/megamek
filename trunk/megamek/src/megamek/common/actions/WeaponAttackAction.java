@@ -743,16 +743,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
             // check for NOE
             if (Compute.isAirToAir(ae, target)) {
-            	if(target.isAirborneVTOL()) {
-            		toHit.addModifier(+5, "targeting non-aerospace airborne unit");
-            	}
-            	if(ae.isNOE()) {
-	                if (ae.isOmni()) {
-	                    toHit.addModifier(+1, "attacker is flying at NOE (omni)");
-	                } else {
-	                    toHit.addModifier(+2, "attacker is flying at NOE");
-	                }
-            	}
+                if(target.isAirborneVTOL()) {
+                    toHit.addModifier(+5, "targeting non-aerospace airborne unit");
+                }
+                if(ae.isNOE()) {
+                    if (ae.isOmni()) {
+                        toHit.addModifier(+1, "attacker is flying at NOE (omni)");
+                    } else {
+                        toHit.addModifier(+2, "attacker is flying at NOE");
+                    }
+                }
             }
             if(Compute.isGroundToAir(ae, target) && (null != te) && te.isNOE()) {
                 if(te.passedWithin(ae.getPosition(), 1)) {
@@ -765,7 +765,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
 
             if((ae instanceof Aero) && !((Aero)ae).isSpheroid() && !ae.isAirborne()) {
-            	toHit.addModifier(+2, "grounded aero");
+                toHit.addModifier(+2, "grounded aero");
             }
 
             // check for particular kinds of weapons in weapon bays
@@ -1062,7 +1062,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         int aElev = ae.getElevation();
         int tElev = target.getElevation();
         int aAlt = ae.getAltitude();
-    	int tAlt = target.getAltitude();
+        int tAlt = target.getAltitude();
         int distance = Compute.effectiveDistance(game, ae, target);
 
         toHit.append(AbstractAttackAction.nightModifiers(game, target, atype, ae, true));
@@ -2463,8 +2463,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Foot platoons with 0 MP can move or shoot, not both";
             }
             if(game.getOptions().booleanOption("tacops_fast_infantry_move")
-            		&& (ae.moved == IEntityMovementType.MOVE_RUN)) {
-            	return "Infantry fast moved this turn and so can not shoot.";
+                    && (ae.moved == IEntityMovementType.MOVE_RUN)) {
+                return "Infantry fast moved this turn and so can not shoot.";
             }
             // check for trying to fire field gun after moving
             if (!wtype.hasFlag(WeaponType.F_INFANTRY)
@@ -2761,7 +2761,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         if((ae instanceof Infantry) && Compute.isGroundToAir(ae, target)) {
-        	return "Infantry cannot engage in ground-to-air attacks";
+            return "Infantry cannot engage in ground-to-air attacks";
         }
 
         // Protomech can fire MGA only into front arc, TW page 137
@@ -2787,12 +2787,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Target is too high for aft-side weapons";
             }
             if(Compute.inDeadZone(game, ae, target)) {
-            	if((altDif > 0) && (weapon.getLocation() != Aero.LOC_NOSE)) {
-            		return "only nose weapons can target higher units in the dead zone";
-            	}
-            	if((altDif < 0) && (weapon.getLocation() != Aero.LOC_AFT)) {
-            		return "only aft weapons can target lower units in the dead zone";
-            	}
+                if((altDif > 0) && (weapon.getLocation() != Aero.LOC_NOSE)) {
+                    return "only nose weapons can target higher units in the dead zone";
+                }
+                if((altDif < 0) && (weapon.getLocation() != Aero.LOC_AFT)) {
+                    return "only aft weapons can target lower units in the dead zone";
+                }
             }
 
         }

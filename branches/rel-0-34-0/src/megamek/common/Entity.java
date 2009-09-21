@@ -4428,8 +4428,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // TODO: how do you tell if it is clear?
         // FIXME: no perfect solution in the current code. I will use movement costs
         else if ((isFoggy || isDark) && !lastPos.equals(curPos)
-        		&& ((curHex.movementCost(step.getParent().getLastStepMovementType()) > 0)
-        				|| ((null != prevHex) && (prevHex.getElevation() != curHex.getElevation())))) {
+                && ((curHex.movementCost(step.getParent().getLastStepMovementType()) > 0)
+                        || ((null != prevHex) && (prevHex.getElevation() != curHex.getElevation())))) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
             // ice conditions
         } else if (curHex.containsTerrain(Terrains.ICE)) {

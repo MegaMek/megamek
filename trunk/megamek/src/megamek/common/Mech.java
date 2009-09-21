@@ -1310,12 +1310,12 @@ public abstract class Mech extends Entity implements Serializable {
         int bonus = 0;
         if ( game != null ) {
             switch( game.getPlanetaryConditions().getAtmosphere() ) {
-            case PlanetaryConditions.ATMO_VACUUM: 	bonus = 0; break;
-            case PlanetaryConditions.ATMO_TRACE: 	bonus = 1; break;
-            case PlanetaryConditions.ATMO_THIN: 	bonus = 2; break;
+            case PlanetaryConditions.ATMO_VACUUM:     bonus = 0; break;
+            case PlanetaryConditions.ATMO_TRACE:     bonus = 1; break;
+            case PlanetaryConditions.ATMO_THIN:     bonus = 2; break;
             case PlanetaryConditions.ATMO_STANDARD: bonus = 3; break;
-            case PlanetaryConditions.ATMO_HIGH: 	bonus = 3; break;
-            case PlanetaryConditions.ATMO_VHIGH: 	bonus = 3; break;
+            case PlanetaryConditions.ATMO_HIGH:     bonus = 3; break;
+            case PlanetaryConditions.ATMO_VHIGH:     bonus = 3; break;
             default: bonus = 3;
             }
         } else {
@@ -1376,7 +1376,7 @@ public abstract class Mech extends Entity implements Serializable {
         default:
             return engine.getJumpHeat(movedMP);
         }
-	}
+    }
 
 
     /**
@@ -1569,13 +1569,13 @@ public abstract class Mech extends Entity implements Serializable {
         }
 
         for (Mounted mount : getMisc()) {
-    		if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) && //unless all crits are destroyed, we get the bonus
-    		   ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_RT) > 0) ||
-    			(getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_LT) > 0))) {
-            	capacity += getPartialWingHeatBonus();
-            	break;
+            if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) && //unless all crits are destroyed, we get the bonus
+               ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_RT) > 0) ||
+                (getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_LT) > 0))) {
+                capacity += getPartialWingHeatBonus();
+                break;
             }
-    	}
+        }
 
         return capacity;
     }

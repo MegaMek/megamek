@@ -823,6 +823,8 @@ public class BoardEditor extends JComponent implements ItemListener,
             showHelp();
         } else if ("viewClientSettings".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             showSettings();
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_ISOMETRIC)) {
+            bv.toggleIsometric();
         }
     }
 

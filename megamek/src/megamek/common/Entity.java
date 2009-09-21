@@ -1112,7 +1112,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (game.getBoard().inAtmosphere()) {
                 minAlt = hex.ceiling() + 1;
             } else if (game.getBoard().onGround() && isAirborne()) {
-            	minAlt = 1;
+                minAlt = 1;
             }
             //if sensors are damaged then, one higher
             if (((Aero) this).getSensorHits() > 0) {
@@ -4823,7 +4823,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         IHex prevHex = game.getBoard().getHex(prevPos);
         // ineligable because of movement type or unit type
         if(isAirborne()) {
-        	return 0;
+            return 0;
         }
 
         if ((this instanceof Infantry) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)) {

@@ -190,6 +190,6 @@ public class INarcPod implements Serializable, Targetable {
     }
     
     public int getAltitude() {
-    	return 0;
+        return 0;
     }
 }

@@ -1685,9 +1685,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 //this is very tricky because in atmosphere, zero altitude does not
                 //necessarily mean grounded
                 if(altitude <= 0) {
-                	a.land();
+                    a.land();
                 } else {
-                	a.liftOff(altitude);
+                    a.liftOff(altitude);
                 }
             }
 

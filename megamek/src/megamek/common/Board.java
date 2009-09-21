@@ -1315,32 +1315,32 @@ public class Board implements Serializable, IBoard {
         return (mapType == T_SPACE);
     }
 
-	public int getMaxElevation() {
-		//TODO It would be much more efficient if we would store these values upon
-		//retrieval so it will not need to be recovered again.
-		int maxElevation = -100000;
-		for (int y = 0; y < height; y++) {
+    public int getMaxElevation() {
+        //TODO It would be much more efficient if we would store these values upon
+        //retrieval so it will not need to be recovered again.
+        int maxElevation = -100000;
+        for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-            	int elevation = data[y * width + x].getElevation();
-            	if(maxElevation < elevation) 
-            		maxElevation = elevation;
+                int elevation = data[y * width + x].getElevation();
+                if(maxElevation < elevation) 
+                    maxElevation = elevation;
             }
-		}
-		return maxElevation;
-	}
+        }
+        return maxElevation;
+    }
 
-	public int getMinElevation() {
-		//TODO It would be much more efficient if we would store these values upon
-		//retrieval so it will not need to be recovered again.
-		int minElevation = 100000;
-		for (int y = 0; y < height; y++) {
+    public int getMinElevation() {
+        //TODO It would be much more efficient if we would store these values upon
+        //retrieval so it will not need to be recovered again.
+        int minElevation = 100000;
+        for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-            	int elevation = data[y * width + x].getElevation();
-            	if(minElevation > elevation) 
-            		minElevation = elevation;
+                int elevation = data[y * width + x].getElevation();
+                if(minElevation > elevation) 
+                    minElevation = elevation;
             }
-		}
-		return minElevation;
-	}
+        }
+        return minElevation;
+    }
 
 }

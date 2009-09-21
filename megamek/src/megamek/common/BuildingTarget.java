@@ -228,6 +228,6 @@ public class BuildingTarget implements Targetable {
     }
     
     public int getAltitude() {
-    	return 0;
+        return 0;
     }
 }

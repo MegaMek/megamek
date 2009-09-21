@@ -12,7 +12,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -26,7 +25,6 @@ import javax.swing.KeyStroke;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.AWT.ClientGUI;
 import megamek.common.Entity;
 import megamek.common.IGame;
 
@@ -951,7 +949,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     public synchronized void setMoveFleeEnabled(boolean enabled) {
         moveFlee.setEnabled(enabled);
     }
-    
+
     public synchronized void setMoveFlyOffEnabled(boolean enabled) {
         moveFlyOff.setEnabled(enabled);
     }
@@ -1175,7 +1173,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     public synchronized void setFireModeEnabled(boolean enabled) {
         fireMode.setEnabled(enabled);
     }
-    
+
     public synchronized void setFireCalledEnabled(boolean enabled) {
         fireCalled.setEnabled(enabled);
     }

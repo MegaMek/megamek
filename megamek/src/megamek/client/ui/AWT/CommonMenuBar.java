@@ -331,7 +331,6 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         viewZoomOut.setActionCommand(ClientGUI.VIEW_ZOOM_OUT);
         menu.add(viewZoomOut);
         menu.addSeparator();
-
         viewRoundReport = new MenuItem(Messages
                 .getString("CommonMenuBar.viewRoundReport")); //$NON-NLS-1$
         viewRoundReport.addActionListener(this);

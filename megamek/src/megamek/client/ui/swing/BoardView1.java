@@ -156,7 +156,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private static final int HEX_W = 84;
     private static final int HEX_H = 72;
     private static final int HEX_WC = HEX_W - HEX_W / 4;
-
+    private static final int HEX_ELEV = 12;
+    
     private static final float[] ZOOM_FACTORS = {
         0.30f, 0.41f,
         0.50f, 0.60f,
@@ -166,6 +167,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     // Initial zoom index
     public int zoomIndex = 7;
+    
+    //Set to TRUE to draw hexes with isometric elevation.
+    private boolean drawIsometric = false;
 
     // the index of zoom factor 1.00f
     private static final int BASE_ZOOM_INDEX = 7;
@@ -707,8 +711,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                             p.x + (int) (83 * scale), p.x + (int) (83 * scale),
                             p.x + (int) (62 * scale), p.x + (int) (21 * scale), p.x, p.x };
                     int[] ycoords = { p.y, p.y, p.y + (int) (35 * scale), p.y + (int) (36 * scale),
-                            p.y + (int) (71 * scale), p.y + (int) (71 * scale),
-                            p.y + (int) (36 * scale), p.y + (int) (35 * scale) };
+							p.y + (int) (71 * scale), p.y + (int) (71 * scale),
+							p.y + (int) (36 * scale), p.y + (int) (35 * scale) };
                     g.drawPolygon(xcoords, ycoords, 8);
                 }
             }
@@ -927,13 +931,31 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         int drawHeight = view.height / (int) (HEX_H * scale) + 3;
 
         g.clearRect(view.x, view.y, view.width, view.height);
-
-        // draw some hexes
-        for (int i = 0; i < drawHeight; i++) {
-            for (int j = 0; j < drawWidth; j++) {
-                drawHex(new Coords(j + drawX, i + drawY), g);
-            }
-        }
+        // draw some hexes.
+		if (useIsometric()) {
+			//When using isometric rendering, all hexes must be drawn from
+			//lowest to highest elevation.
+			final int minElev = game.getBoard().getMinElevation();
+			for (int x = minElev; x <= game.getBoard().getMaxElevation(); x++) {
+				for (int i = 0; i < drawHeight; i++) {
+					for (int j = 0; j < drawWidth; j++) {
+						Coords c = new Coords(j + drawX, i + drawY);
+						IHex hex = game.getBoard().getHex(c);
+						if (hex != null && hex.getElevation() == x)
+							drawHex(c, g);
+					}
+				}
+			}
+		} else {
+			//Draw hexes without regard to elevation when 
+			//not using Isometric, since it does not matter.
+			for (int i = 0; i < drawHeight; i++) {
+				for (int j = 0; j < drawWidth; j++) {
+					Coords c = new Coords(j + drawX, i + drawY);
+					drawHex(c, g);
+				}
+			}
+		}
     }
 
     /**
@@ -961,7 +983,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         // draw picture
         Image baseImage = tileManager.baseFor(hex);
         Image scaledImage = getScaledImage(baseImage);
-
+        
         boardGraph.drawImage(scaledImage, drawX, drawY, this);
 
         if (tileManager.supersFor(hex) != null) {
@@ -1040,28 +1062,75 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         // draw elevation borders
         boardGraph.setColor(Color.black);
         if (drawElevationLine(c, 0)) {
-            boardGraph.drawLine(drawX + (int) (21 * scale), drawY, drawX + (int) (62 * scale),
-                    drawY);
+        	final int x1 = drawX + (int) (21 * scale);
+        	final int x2 = drawX + (int) (62 * scale);
+        	final int y1 = drawY;
+        	final int y2 = drawY;
+        	if(useIsometric()) {
+            	drawIsometricElevation(c, Color.GRAY, new Point(x2, y2), new Point(x1, y1), 0, boardGraph);
+            }
+            boardGraph.drawLine(x1, y1, x2, y2); 
         }
         if (drawElevationLine(c, 1)) {
-            boardGraph.drawLine(drawX + (int) (62 * scale), drawY, drawX + (int) (83 * scale),
-                    drawY + (int) (35 * scale));
+        	final int x1 = drawX + (int) (62 * scale);
+        	final int x2 = drawX + (int) (83 * scale);
+        	final int y1 = drawY;
+        	final int y2 = drawY + (int) (35 * scale);
+        	
+        	if(useIsometric()) {
+            	drawIsometricElevation(c, Color.DARK_GRAY, new Point(x2, y2), new Point(x1, y1), 1, boardGraph);
+            }
+            boardGraph.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 2)) {
-            boardGraph.drawLine(drawX + (int) (83 * scale), drawY + (int) (36 * scale), drawX
-                    + (int) (62 * scale), drawY + (int) (71 * scale));
+        	final int x1 = drawX + (int) (83 * scale);
+        	final int x2 = drawX + (int) (62 * scale);
+        	final int y1 = drawY + (int) (36 * scale);
+        	final int y2 = drawY + (int) (71 * scale);
+            
+        	
+            if(useIsometric()) {
+            	drawIsometricElevation(c, Color.LIGHT_GRAY, new Point(x1, y1), new Point(x2, y2), 2, boardGraph);
+            } 
+            
+            boardGraph.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 3)) {
-            boardGraph.drawLine(drawX + (int) (62 * scale), drawY + (int) (71 * scale), drawX
-                    + (int) (21 * scale), drawY + (int) (71 * scale));
+        	final int x1 = drawX + (int) (62 * scale);
+        	final int x2 = drawX + (int) (21 * scale);
+        	final int y1 = drawY + (int) (71 * scale);
+        	final int y2 = drawY + (int) (71 * scale);
+           
+        	
+            if(useIsometric()) {
+            	drawIsometricElevation(c, Color.GRAY, new Point(x2, y2), new Point(x1, y1), 3, boardGraph);
+            } 
+            
+            boardGraph.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 4)) {
-            boardGraph.drawLine(drawX + (int) (21 * scale), drawY + (int) (71 * scale), drawX,
-                    drawY + (int) (36 * scale));
+        	final int x1 = drawX + (int) (21 * scale);
+        	final int x2 = drawX;
+        	final int y1 = drawY + (int) (71 * scale);
+        	final int y2 = drawY + (int) (36 * scale);
+            
+        	
+            if(useIsometric()) {
+            	drawIsometricElevation(c, Color.DARK_GRAY, new Point(x2, y2), new Point(x1, y1), 4, boardGraph);
+            } 
+            
+            boardGraph.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 5)) {
-            boardGraph.drawLine(drawX, drawY + (int) (35 * scale), drawX + (int) (21 * scale),
-                    drawY);
+        	final int x1 = drawX;
+        	final int x2 = drawX + (int) (21 * scale);
+        	final int y1 = drawY + (int) (35 * scale);
+        	final int y2 = drawY;
+        	
+        	if(useIsometric()) {
+            	drawIsometricElevation(c, Color.LIGHT_GRAY, new Point(x1, y1), new Point(x2, y2), 5, boardGraph);
+            }
+            boardGraph.drawLine(x1, y1, x2, y2);
         }
 
         // draw mapsheet borders
@@ -1106,6 +1175,89 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         }
     }
 
+    private final boolean useIsometric() {
+    	//Do not render isometric hexes during deployment phase.
+    	return drawIsometric && en_Deployer == null;
+    }
+
+	/**
+	 * Draws the Isometric elevation for the hex at the given coordinates (c) on
+	 * the side indicated by the direction (dir). This method only draws a
+	 * triangle for the elevation, the companion triangle representing the
+	 * adjacent hex is also needed. The two triangles when drawn together make a
+	 * complete rectangle representing the complete elevated hex side.
+	 * 
+	 * By drawing the elevated hex as two separate triangles we avoid clipping
+	 * problems with other hexes because the lower elevation is rendered before
+	 * the higher elevation. Thus any hexes that have a higher elevation than
+	 * the lower hex will overwrite the lower hex.
+	 * 
+	 * The Triangle for each hex side is formed by points p1, p2, and p3. Where
+	 * p1 and p2 are the original hex edges, and p3 has the same X value as p1,
+	 * but the y value has been increased (or decreased) based on the difference
+	 * in elevation between the given hex and the adjacent hex.
+	 * 
+	 * @param c
+	 *            Coordinates of the source hex.
+	 * @param color
+	 *            Color to use for the elevation polygons.
+	 * @param p1
+	 *            The First point on the edge of the hex.
+	 * @param p2
+	 *            The second point on the edge of the hex.
+	 * @param dir
+	 *            The side of the hex to have the elevation drawn on.
+	 * @param boardGraph
+	 */
+	private final void drawIsometricElevation(Coords c, Color color, Point p1,
+			Point p2, int dir, Graphics boardGraph) {
+		final IHex dest = game.getBoard().getHexInDir(c, dir);
+		final IHex src = game.getBoard().getHex(c);
+
+		if (dest == null)
+			return;
+
+		int delta = src.getElevation() - dest.getElevation();
+		// Don't draw the elevation if there is no exposed edge for the player
+		// to see.
+		if (delta == 0 || ((dir == 0 || dir == 1 || dir == 5) && delta > 0)
+				|| ((dir == 2 || dir == 3 || dir == 4) && delta < 0)) {
+			return;
+		}
+
+		// Pad the polygon size slightly to avoid rounding errors from the scale
+		// float.
+		int fudge = -1;
+		if (dir == 2 || dir == 4 || dir == 3) {
+			fudge = 1;
+		}
+
+		if (dir == 1) {
+			// Draw a little bit of shadow to improve the 3d isometric effect.
+			Polygon shadow1 = new Polygon(new int[] { p1.x, p2.x,
+					p2.x - (int) (HEX_ELEV * scale) }, new int[] { p1.y, p2.y,
+					p2.y }, 3);
+			boardGraph.setColor(new Color(0, 0, 0, 0.4f));
+			boardGraph.fillPolygon(shadow1);
+		}
+
+		Point p3 = new Point(p1.x, p1.y + (int) (HEX_ELEV * scale * delta)
+				+ fudge);
+		Polygon p = new Polygon(new int[] { p1.x, p2.x, p3.x }, new int[] {
+				p1.y, p2.y, p3.y }, 3);
+
+		boardGraph.setColor(color);
+		boardGraph.drawPolygon(p);
+		boardGraph.fillPolygon(p);
+
+		boardGraph.setColor(Color.BLACK);
+		if (dir == 1 || dir == 2 || dir == 5 || dir == 4) {
+			boardGraph.drawLine(p1.x, p1.y, p3.x, p3.y);
+		}
+
+	}
+    
+    
     /**
      * Returns true if an elevation line should be drawn between the starting hex and the hex in the
      * direction specified. Results should be transitive, that is, if a line is drawn in one
@@ -1121,8 +1273,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      * Returns the absolute position of the upper-left hand corner of the hex graphic
      */
     private Point getHexLocation(int x, int y) {
-        return new Point(x * (int) (HEX_WC * scale), y * (int) (HEX_H * scale)
-                + ((x & 1) == 1 ? (int) (HEX_H / 2 * scale) : 0));
+    	float elevationAdjust = 0.0f;
+
+		IHex hex = game.getBoard().getHex(x, y);
+		if (hex != null) {
+			int level = hex.getElevation();
+			if (useIsometric() && level != 0) {
+				elevationAdjust = level * HEX_ELEV * scale * -1.0f;
+			}
+		}
+    	int ypos = y * (int) (HEX_H * scale) + ((x & 1) == 1 ? (int) (HEX_H / 2 * scale) : 0);
+        return new Point(x * (int) (HEX_WC * scale), ypos + (int) elevationAdjust);
     }
 
     Point getHexLocation(Coords c) {
@@ -2371,10 +2532,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                             GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS)) {
                 // create final image with translucency
                 drawOnto(g, x, y, observer, true);
-            } else {
-                drawOnto(g, x, y, observer, false);
-            }
-        }
+			} else {
+				drawOnto(g, x, y, observer, false);
+			}
+		}
 
         /**
          * Creates the sprite for this entity. It is an extra pain to create transparent images in
@@ -2408,18 +2569,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 return;
             }
 
-            // fill with key color
-            graph.setColor(new Color(TRANSPARENT));
-            graph.fillRect(0, 0, bounds.width, bounds.height);
+			// fill with key color
+			graph.setColor(new Color(TRANSPARENT));
+			graph.fillRect(0, 0, bounds.width, bounds.height);
 
-            // draw entity image
-            graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
+			// draw entity image
+			graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
 
-            // draw box with shortName
-            Color text, bkgd, bord;
-            if (entity.isDone()) {
-                text = Color.lightGray;
-                bkgd = Color.darkGray;
+			// draw box with shortName
+			Color text, bkgd, bord;
+			if (entity.isDone()) {
+				text = Color.lightGray;
+				bkgd = Color.darkGray;
                 bord = Color.black;
             } else if (entity.isImmobile()) {
                 text = Color.darkGray;
@@ -5058,5 +5219,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         prod = new FilteredImageSource(img.getSource(), filter);
         return Toolkit.getDefaultToolkit().createImage(prod);
     }
+
+	public void toggleIsometric() {
+		drawIsometric = !drawIsometric;
+		repaint();
+	}
 
 }

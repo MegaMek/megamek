@@ -12,6 +12,7 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -25,6 +26,7 @@ import javax.swing.KeyStroke;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.AWT.ClientGUI;
 import megamek.common.Entity;
 import megamek.common.IGame;
 
@@ -79,6 +81,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem viewMekDisplay;
     private JMenuItem viewZoomIn;
     private JMenuItem viewZoomOut;
+    private JMenuItem toggleIsometric;
     private JMenuItem viewLOSSetting;
     private JMenuItem viewUnitOverview;
     private JMenuItem viewRoundReport;
@@ -320,6 +323,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         viewZoomOut.addActionListener(this);
         viewZoomOut.setActionCommand(ClientGUI.VIEW_ZOOM_OUT);
         menu.add(viewZoomOut);
+        menu.addSeparator();
+        toggleIsometric = new JMenuItem(Messages
+                .getString("CommonMenuBar.viewToggleIsometric")); //$NON-NLS-1$
+        toggleIsometric.addActionListener(this);
+        toggleIsometric.setActionCommand(ClientGUI.VIEW_TOGGLE_ISOMETRIC);
+        menu.add(toggleIsometric);
         menu.addSeparator();
         viewRoundReport = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewRoundReport")); //$NON-NLS-1$

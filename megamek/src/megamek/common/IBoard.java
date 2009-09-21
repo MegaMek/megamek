@@ -357,4 +357,16 @@ public interface IBoard {
      * @param os output stream
      */
     public abstract void save(OutputStream os);
+
+    /**
+     * Returns the lowest elevation hex on the board.
+     * @return
+     */
+	public abstract int getMinElevation();
+
+	/**
+	 * Returns the highest elevation hex on the board.
+	 * @return
+	 */
+	public abstract int getMaxElevation();
 }

@@ -5595,4 +5595,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     public void refreshMinefields() {
         repaint();
     }
+
+	public void toggleIsometric() {
+		// Only Implemented on SWING gui
+	}
 }

@@ -64,6 +64,7 @@ public class Board implements Serializable, IBoard {
     
     protected int width;
     protected int height;
+    
 
     //MapType
     public static final int T_GROUND = 0;
@@ -1313,5 +1314,33 @@ public class Board implements Serializable, IBoard {
     public boolean inSpace() {
         return (mapType == T_SPACE);
     }
+
+	public int getMaxElevation() {
+		//TODO It would be much more efficient if we would store these values upon
+		//retrieval so it will not need to be recovered again.
+		int maxElevation = -100000;
+		for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+            	int elevation = data[y * width + x].getElevation();
+            	if(maxElevation < elevation) 
+            		maxElevation = elevation;
+            }
+		}
+		return maxElevation;
+	}
+
+	public int getMinElevation() {
+		//TODO It would be much more efficient if we would store these values upon
+		//retrieval so it will not need to be recovered again.
+		int minElevation = 100000;
+		for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+            	int elevation = data[y * width + x].getElevation();
+            	if(minElevation > elevation) 
+            		minElevation = elevation;
+            }
+		}
+		return minElevation;
+	}
 
 }

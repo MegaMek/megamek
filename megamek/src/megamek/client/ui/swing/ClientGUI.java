@@ -96,6 +96,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_OUT = "viewZoomOut"; //$NON-NLS-1$
+    public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric"; //$NON-NLS-1$
 
     // a frame, to show stuff in
     public JFrame frame;
@@ -548,6 +549,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bv.zoomIn();
         } else if (event.getActionCommand().equals(VIEW_ZOOM_OUT)) {
             bv.zoomOut();
+        } else if (event.getActionCommand().equals(VIEW_TOGGLE_ISOMETRIC)) {
+            bv.toggleIsometric();
         }
     }
 

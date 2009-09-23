@@ -36,6 +36,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
@@ -170,6 +171,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     
     //Set to TRUE to draw hexes with isometric elevation.
     private boolean drawIsometric = false;
+    
+    private int DROPSHDW_DIST = 20;
 
     // the index of zoom factor 1.00f
     private static final int BASE_ZOOM_INDEX = 7;
@@ -2327,13 +2330,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(shortName) + 1,
                     getFontMetrics(font).getAscent());
-            Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
+            
+            int AltAdjust = 0;
+            if(useIsometric() && entity.getMovementMode() == IEntityMovementMode.VTOL) {
+            	AltAdjust = (int) (DROPSHDW_DIST * scale);
+            } 
+            Dimension dim = new Dimension(hex_size.width, hex_size.height + AltAdjust);
+            Rectangle tempBounds = new Rectangle(dim).union(modelRect);
+            
             tempBounds.setLocation(getHexLocation(position));
-
+            tempBounds.y = tempBounds.y - AltAdjust;
             bounds = tempBounds;
             image = null;
         }
-
+        
         /**
          * Creates the sprite for this entity. It is an extra pain to create transparent images in
          * AWT.
@@ -2344,8 +2354,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             Image tempImage;
             Graphics graph;
             try {
-                tempImage = createImage(bounds.width, bounds.height);
-                graph = tempImage.getGraphics();
+            tempImage = createImage(bounds.width, bounds.height);
+            graph = tempImage.getGraphics();
             } catch (NullPointerException ex) {
                 // argh! but I want it!
                 return;
@@ -2356,8 +2366,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             graph.fillRect(0, 0, bounds.width, bounds.height);
 
             // draw entity image
-            graph.drawImage(tileManager.imageFor(entity, facing), 0, 0, this);
-
+            if(useIsometric() && entity.getMovementMode() == IEntityMovementMode.VTOL) {
+        		Image entImage = tileManager.imageFor(entity);
+				Image shadow = createShadowMask(entImage);
+				graph.drawImage(shadow, 0, (int) (DROPSHDW_DIST * scale), this);
+				graph.drawImage(entImage, 0, 0, this);
+        	} else {
+        		graph.drawImage(tileManager.imageFor(entity, facing), 0, 0, this);
+        	}
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
@@ -2503,9 +2519,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(shortName) + 1,
                     getFontMetrics(font).getAscent());
-            Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
+            
+            int AltAdjust = 0;
+            if(useIsometric() && entity.getMovementMode() == IEntityMovementMode.VTOL) {
+            	AltAdjust = (int) (DROPSHDW_DIST * scale);
+            }
+            
+            Dimension dim = new Dimension(hex_size.width, hex_size.height + AltAdjust);
+            Rectangle tempBounds = new Rectangle(dim).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
+            tempBounds.y = tempBounds.y - AltAdjust;
             bounds = tempBounds;
             entityRect = new Rectangle(bounds.x + (int) (20 * scale), bounds.y
                     + (int) (14 * scale), (int) (44 * scale), (int) (44 * scale));
@@ -2514,10 +2538,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         @Override
         public Rectangle getBounds() {
-            Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
+        	
+            int AltAdjust = 0;
+            if(useIsometric() && entity.getMovementMode() == IEntityMovementMode.VTOL) {
+            	AltAdjust = (int) (DROPSHDW_DIST * scale);
+            }
+        	
+        	Dimension dim = new Dimension(hex_size.width, hex_size.height + AltAdjust);
+            Rectangle tempBounds = new Rectangle(dim).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            tempBounds.y = tempBounds.y - AltAdjust;
             bounds = tempBounds;
-
             entityRect = new Rectangle(bounds.x + (int) (20 * scale), bounds.y
                     + (int) (14 * scale), (int) (44 * scale), (int) (44 * scale));
 
@@ -2563,19 +2594,29 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             Graphics graph;
             try {
                 tempImage = createImage(bounds.width, bounds.height);
+                // fill with key color
                 graph = tempImage.getGraphics();
             } catch (NullPointerException ex) {
                 // argh! but I want it!
                 return;
             }
 
-            // fill with key color
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
 
-            // draw entity image
-            graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
+            if (useIsometric()
+                    && entity.getMovementMode() == IEntityMovementMode.VTOL) {
+                // If this entity is in the air, then draw it at elevation.
+                // Recreate tempImage with an updated size.
+                Image entImage = tileManager.imageFor(entity);
+                Image shadow = createShadowMask(entImage);
+                graph.drawImage(shadow, 0, (int) (DROPSHDW_DIST * scale), this);
+                graph.drawImage(entImage, 0, 0, this);
 
+            } else {
+                // draw entity image
+                graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
+            }
             // draw box with shortName
             Color text, bkgd, bord;
             if (entity.isDone()) {
@@ -2857,6 +2898,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(getStatusBarColor(percentRemaining));
                 graph.fillRect(55, 10, barLength, 3);
             }
+            
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
@@ -5222,7 +5264,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     public void toggleIsometric() {
         drawIsometric = !drawIsometric;
+        updateBoard();
         repaint();
+    }
+
+    private BufferedImage createShadowMask(Image image) {
+        BufferedImage mask = new BufferedImage(image.getWidth(null), image
+                .getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        float opacity = 1.0f;
+        Graphics2D g2d = mask.createGraphics();
+        g2d.drawImage(image, 0, 0, null);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_IN,
+                opacity));
+        g2d.setColor(Color.BLACK);
+        g2d.fillRect(0, 0, image.getWidth(null), image.getHeight(null));
+        g2d.dispose();
+        return mask;
     }
 
 }

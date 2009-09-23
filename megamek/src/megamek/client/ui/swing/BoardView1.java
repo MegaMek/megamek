@@ -158,7 +158,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private static final int HEX_H = 72;
     private static final int HEX_WC = HEX_W - HEX_W / 4;
     private static final int HEX_ELEV = 12;
-    
+
     private static final float[] ZOOM_FACTORS = {
         0.30f, 0.41f,
         0.50f, 0.60f,
@@ -168,10 +168,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     // Initial zoom index
     public int zoomIndex = 7;
-    
+
     //Set to TRUE to draw hexes with isometric elevation.
     private boolean drawIsometric = false;
-    
+
     private int DROPSHDW_DIST = 20;
 
     // the index of zoom factor 1.00f
@@ -179,7 +179,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     // line width of the c3 network lines
     private static final int C3_LINE_WIDTH = 1;
-    
+
     //line width of the fly over lines
     private static final int FLY_OVER_LINE_WIDTH = 3;
 
@@ -235,7 +235,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     // vector of sprites for C3 network lines
     private ArrayList<C3Sprite> c3Sprites = new ArrayList<C3Sprite>();
-    
+
     //vector of sprites for aero flyover lines
     private ArrayList<FlyOverSprite> flyOverSprites = new ArrayList<FlyOverSprite>();
 
@@ -603,7 +603,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         // draw C3 links
         drawSprites(g, c3Sprites);
-        
+
         //draw flyover routes
         if(game.getBoard().onGround()) {
             drawSprites(g, flyOverSprites);
@@ -944,13 +944,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     for (int j = 0; j < drawWidth; j++) {
                         Coords c = new Coords(j + drawX, i + drawY);
                         IHex hex = game.getBoard().getHex(c);
-                        if (hex != null && hex.getElevation() == x)
+                        if ((hex != null) && (hex.getElevation() == x)) {
                             drawHex(c, g);
+                        }
                     }
                 }
             }
         } else {
-            //Draw hexes without regard to elevation when 
+            //Draw hexes without regard to elevation when
             //not using Isometric, since it does not matter.
             for (int i = 0; i < drawHeight; i++) {
                 for (int j = 0; j < drawWidth; j++) {
@@ -986,7 +987,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         // draw picture
         Image baseImage = tileManager.baseFor(hex);
         Image scaledImage = getScaledImage(baseImage);
-        
+
         boardGraph.drawImage(scaledImage, drawX, drawY, this);
 
         if (tileManager.supersFor(hex) != null) {
@@ -1072,14 +1073,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             if(useIsometric()) {
                 drawIsometricElevation(c, Color.GRAY, new Point(x2, y2), new Point(x1, y1), 0, boardGraph);
             }
-            boardGraph.drawLine(x1, y1, x2, y2); 
+            boardGraph.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 1)) {
             final int x1 = drawX + (int) (62 * scale);
             final int x2 = drawX + (int) (83 * scale);
             final int y1 = drawY;
             final int y2 = drawY + (int) (35 * scale);
-            
+
             if(useIsometric()) {
                 drawIsometricElevation(c, Color.DARK_GRAY, new Point(x2, y2), new Point(x1, y1), 1, boardGraph);
             }
@@ -1090,12 +1091,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             final int x2 = drawX + (int) (62 * scale);
             final int y1 = drawY + (int) (36 * scale);
             final int y2 = drawY + (int) (71 * scale);
-            
-            
+
+
             if(useIsometric()) {
                 drawIsometricElevation(c, Color.LIGHT_GRAY, new Point(x1, y1), new Point(x2, y2), 2, boardGraph);
-            } 
-            
+            }
+
             boardGraph.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 3)) {
@@ -1103,12 +1104,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             final int x2 = drawX + (int) (21 * scale);
             final int y1 = drawY + (int) (71 * scale);
             final int y2 = drawY + (int) (71 * scale);
-           
-            
+
+
             if(useIsometric()) {
                 drawIsometricElevation(c, Color.GRAY, new Point(x2, y2), new Point(x1, y1), 3, boardGraph);
-            } 
-            
+            }
+
             boardGraph.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 4)) {
@@ -1116,12 +1117,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             final int x2 = drawX;
             final int y1 = drawY + (int) (71 * scale);
             final int y2 = drawY + (int) (36 * scale);
-            
-            
+
+
             if(useIsometric()) {
                 drawIsometricElevation(c, Color.DARK_GRAY, new Point(x2, y2), new Point(x1, y1), 4, boardGraph);
-            } 
-            
+            }
+
             boardGraph.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 5)) {
@@ -1129,7 +1130,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             final int x2 = drawX + (int) (21 * scale);
             final int y1 = drawY + (int) (35 * scale);
             final int y2 = drawY;
-            
+
             if(useIsometric()) {
                 drawIsometricElevation(c, Color.LIGHT_GRAY, new Point(x1, y1), new Point(x2, y2), 5, boardGraph);
             }
@@ -1180,7 +1181,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     private final boolean useIsometric() {
         //Do not render isometric hexes during deployment phase.
-        return drawIsometric && en_Deployer == null;
+        return drawIsometric && (en_Deployer == null);
     }
 
     /**
@@ -1189,17 +1190,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      * triangle for the elevation, the companion triangle representing the
      * adjacent hex is also needed. The two triangles when drawn together make a
      * complete rectangle representing the complete elevated hex side.
-     * 
+     *
      * By drawing the elevated hex as two separate triangles we avoid clipping
      * problems with other hexes because the lower elevation is rendered before
      * the higher elevation. Thus any hexes that have a higher elevation than
      * the lower hex will overwrite the lower hex.
-     * 
+     *
      * The Triangle for each hex side is formed by points p1, p2, and p3. Where
      * p1 and p2 are the original hex edges, and p3 has the same X value as p1,
      * but the y value has been increased (or decreased) based on the difference
      * in elevation between the given hex and the adjacent hex.
-     * 
+     *
      * @param c
      *            Coordinates of the source hex.
      * @param color
@@ -1217,21 +1218,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         final IHex dest = game.getBoard().getHexInDir(c, dir);
         final IHex src = game.getBoard().getHex(c);
 
-        if (dest == null)
+        if (dest == null) {
             return;
+        }
 
         int delta = src.getElevation() - dest.getElevation();
         // Don't draw the elevation if there is no exposed edge for the player
         // to see.
-        if (delta == 0 || ((dir == 0 || dir == 1 || dir == 5) && delta > 0)
-                || ((dir == 2 || dir == 3 || dir == 4) && delta < 0)) {
+        if ((delta == 0) || (((dir == 0) || (dir == 1) || (dir == 5)) && (delta > 0))
+                || (((dir == 2) || (dir == 3) || (dir == 4)) && (delta < 0))) {
             return;
         }
 
         // Pad the polygon size slightly to avoid rounding errors from the scale
         // float.
         int fudge = -1;
-        if (dir == 2 || dir == 4 || dir == 3) {
+        if ((dir == 2) || (dir == 4) || (dir == 3)) {
             fudge = 1;
         }
 
@@ -1254,13 +1256,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         boardGraph.fillPolygon(p);
 
         boardGraph.setColor(Color.BLACK);
-        if (dir == 1 || dir == 2 || dir == 5 || dir == 4) {
+        if ((dir == 1) || (dir == 2) || (dir == 5) || (dir == 4)) {
             boardGraph.drawLine(p1.x, p1.y, p3.x, p3.y);
         }
 
     }
-    
-    
+
+
     /**
      * Returns true if an elevation line should be drawn between the starting hex and the hex in the
      * direction specified. Results should be transitive, that is, if a line is drawn in one
@@ -1281,7 +1283,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         IHex hex = game.getBoard().getHex(x, y);
         if (hex != null) {
             int level = hex.getElevation();
-            if (useIsometric() && level != 0) {
+            if (useIsometric() && (level != 0)) {
                 elevationAdjust = level * HEX_ELEV * scale * -1.0f;
             }
         }
@@ -1400,7 +1402,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         if (entity.hasC3() || entity.hasC3i()) {
             addC3Link(entity);
         }
-        
+
         if(entity.isAirborne()) {
             addFlyOverPath(entity);
         }
@@ -1587,10 +1589,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         if (e.getPosition() == null) {
             return;
         }
-        
+
         flyOverSprites.add(new FlyOverSprite(e));
     }
-    
+
     /**
      * Adds a c3 line to the sprite list.
      */
@@ -1757,7 +1759,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     public void clearC3Networks() {
         c3Sprites.clear();
     }
-    
+
     public void clearFlyOverPaths() {
         flyOverSprites.clear();
     }
@@ -2330,20 +2332,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(shortName) + 1,
                     getFontMetrics(font).getAscent());
-            
+
             int AltAdjust = 0;
-            if(useIsometric() && entity.getMovementMode() == IEntityMovementMode.VTOL) {
-            	AltAdjust = (int) (DROPSHDW_DIST * scale);
-            } 
+            if(useIsometric() && (entity.getMovementMode() == IEntityMovementMode.VTOL)) {
+                AltAdjust = (int) (DROPSHDW_DIST * scale);
+            }
             Dimension dim = new Dimension(hex_size.width, hex_size.height + AltAdjust);
             Rectangle tempBounds = new Rectangle(dim).union(modelRect);
-            
+
             tempBounds.setLocation(getHexLocation(position));
             tempBounds.y = tempBounds.y - AltAdjust;
             bounds = tempBounds;
             image = null;
         }
-        
+
         /**
          * Creates the sprite for this entity. It is an extra pain to create transparent images in
          * AWT.
@@ -2366,14 +2368,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             graph.fillRect(0, 0, bounds.width, bounds.height);
 
             // draw entity image
-            if(useIsometric() && entity.getMovementMode() == IEntityMovementMode.VTOL) {
-        		Image entImage = tileManager.imageFor(entity);
-				Image shadow = createShadowMask(entImage);
-				graph.drawImage(shadow, 0, (int) (DROPSHDW_DIST * scale), this);
-				graph.drawImage(entImage, 0, 0, this);
-        	} else {
-        		graph.drawImage(tileManager.imageFor(entity, facing), 0, 0, this);
-        	}
+            if(useIsometric() && (entity.getMovementMode() == IEntityMovementMode.VTOL)) {
+                Image entImage = tileManager.imageFor(entity);
+                Image shadow = createShadowMask(entImage);
+                graph.drawImage(shadow, 0, (int) (DROPSHDW_DIST * scale), this);
+                graph.drawImage(entImage, 0, 0, this);
+            } else {
+                graph.drawImage(tileManager.imageFor(entity, facing), 0, 0, this);
+            }
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
@@ -2519,17 +2521,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(shortName) + 1,
                     getFontMetrics(font).getAscent());
-            
-            int AltAdjust = 0;
-            if(useIsometric() && entity.getMovementMode() == IEntityMovementMode.VTOL) {
-            	AltAdjust = (int) (DROPSHDW_DIST * scale);
+
+            int altAdjust = 0;
+            if(useIsometric() && (entity.getMovementMode() == IEntityMovementMode.VTOL)) {
+                altAdjust = (int) (DROPSHDW_DIST * scale);
             }
-            
-            Dimension dim = new Dimension(hex_size.width, hex_size.height + AltAdjust);
+
+            Dimension dim = new Dimension(hex_size.width, hex_size.height + altAdjust);
             Rectangle tempBounds = new Rectangle(dim).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
-            tempBounds.y = tempBounds.y - AltAdjust;
+            tempBounds.y = tempBounds.y - altAdjust;
             bounds = tempBounds;
             entityRect = new Rectangle(bounds.x + (int) (20 * scale), bounds.y
                     + (int) (14 * scale), (int) (44 * scale), (int) (44 * scale));
@@ -2538,16 +2540,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         @Override
         public Rectangle getBounds() {
-        	
-            int AltAdjust = 0;
-            if(useIsometric() && entity.getMovementMode() == IEntityMovementMode.VTOL) {
-            	AltAdjust = (int) (DROPSHDW_DIST * scale);
+
+            int altAdjust = 0;
+            if(useIsometric() && (entity.getMovementMode() == IEntityMovementMode.VTOL)) {
+                altAdjust = (int) (DROPSHDW_DIST * scale);
             }
-        	
-        	Dimension dim = new Dimension(hex_size.width, hex_size.height + AltAdjust);
+
+            Dimension dim = new Dimension(hex_size.width, hex_size.height + altAdjust);
             Rectangle tempBounds = new Rectangle(dim).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
-            tempBounds.y = tempBounds.y - AltAdjust;
+            tempBounds.y = tempBounds.y - altAdjust;
             bounds = tempBounds;
             entityRect = new Rectangle(bounds.x + (int) (20 * scale), bounds.y
                     + (int) (14 * scale), (int) (44 * scale), (int) (44 * scale));
@@ -2605,7 +2607,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             graph.fillRect(0, 0, bounds.width, bounds.height);
 
             if (useIsometric()
-                    && entity.getMovementMode() == IEntityMovementMode.VTOL) {
+                    && (entity.getMovementMode() == IEntityMovementMode.VTOL)) {
                 // If this entity is in the air, then draw it at elevation.
                 // Recreate tempImage with an updated size.
                 Image entImage = tileManager.imageFor(entity);
@@ -2662,13 +2664,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(Color.red);
                 graph.drawPolygon(facingPolys[secFacing]);
             }
-            if(entity instanceof Aero && game.useVectorMove()) {
+            if((entity instanceof Aero) && game.useVectorMove()) {
                 for(int head : entity.getHeading()) {
                     graph.setColor(Color.red);
                     graph.drawPolygon(facingPolys[head]);
                 }
             }
-            
+
 
             // Determine if the entity has a locked turret,
             // and if it is a gun emplacement
@@ -2898,7 +2900,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(getStatusBarColor(percentRemaining));
                 graph.fillRect(55, 10, barLength, 3);
             }
-            
+
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
@@ -3654,7 +3656,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             en = e;
             spriteColor = PlayerColors.getColor(e.getOwner().getColorIndex());
 
-            if ((e.getPosition() == null) || e.getPassedThrough().size() < 2) {
+            if ((e.getPosition() == null) || (e.getPassedThrough().size() < 2)) {
                 flyOverPoly = new Polygon();
                 flyOverPoly.addPoint(0, 0);
                 flyOverPoly.addPoint(1, 0);
@@ -3694,12 +3696,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 }
                 Point a = getHexLocation(prev);
                 Point t = getHexLocation(c);
-    
+
                 final double an = (prev.radian(c) + (Math.PI * 1.5))
                         % (Math.PI * 2); // angle
                 final double lw = scale * FLY_OVER_LINE_WIDTH; // line width
-    
-                
+
+
                 flyOverPoly.addPoint(
                         a.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), a.y
                                 + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
@@ -3712,16 +3714,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 flyOverPoly.addPoint(
                         t.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), t.y
                                 + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
-                
+
             }
-            
+
             //now loop through backwards
             for(int i = (en.getPassedThrough().size()-1); i > 0; i--) {
                 Coords c = en.getPassedThrough().elementAt(i);
                 Coords next = en.getPassedThrough().elementAt(i-1);
                 Point a = getHexLocation(c);
                 Point t = getHexLocation(next);
-    
+
                 final double an = (c.radian(next) + (Math.PI * 1.5))
                         % (Math.PI * 2); // angle
                 final double lw = scale * FLY_OVER_LINE_WIDTH; // line width
@@ -3731,16 +3733,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
               //flyOverPoly.addPoint(
                 //      t.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), t.y
                   //            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
-              
+
               flyOverPoly.addPoint(
                       a.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), a.y
                               + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
               flyOverPoly.addPoint(
                       t.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), t.y
                               + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
-                
+
             }
-            
+
         }
 
         @Override
@@ -3782,7 +3784,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             return flyOverPoly.contains(point.x - bounds.x, point.y - bounds.y);
         }
 
-    }   
+    }
 
     /**
      * Sprite and info for an attack. Does not actually use the image buffer as this can be horribly
@@ -4820,12 +4822,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         // If we have multiple choices, display a selection dialog.
         else if (entities.size() > 1) {
-            String input = (String)JOptionPane.showInputDialog(null, 
+            String input = (String)JOptionPane.showInputDialog(null,
                     Messages
                     .getString(
                             "BoardView1.ChooseEntityDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$
                     Messages.getString("BoardView1.ChooseEntityDialog.title"), //$NON-NLS-1$
-                            JOptionPane.QUESTION_MESSAGE, null, 
+                            JOptionPane.QUESTION_MESSAGE, null,
                     SharedUtility.getDisplayArray(entities),null);
             choice = (Entity)SharedUtility.getTargetPicked(entities, input);
         } // End have-choices

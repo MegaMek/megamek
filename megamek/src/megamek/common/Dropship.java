@@ -396,10 +396,12 @@ public class Dropship extends SmallCraft implements Serializable {
             }
 
             String key = atype.getAmmoType() + ":" + atype.getRackSize() + ";" + arc;
-            double weight = mounted.getShotsLeft() / atype.getShots();
-            if(atype.isCapital()) {
+            double weight = mounted.getType().getTonnage(this);
+            if (atype.isCapital()) {
                 weight = mounted.getShotsLeft() * atype.getAmmoRatio();
             }
+            // new errata: only full tons of ammo
+            weight = Math.ceil(weight);
             if (!keys.contains(key)) {
                 keys.add(key);
             }

@@ -256,7 +256,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * When comparing <code>AmmoType</code>s, look at the ammoType and rackSize.
-     * 
+     *
      * @param other
      *            the <code>Object</code> to compare to this one.
      * @return <code>true</code> if the other is an <code>AmmoType</code> object
@@ -306,7 +306,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * Returns the first usable ammo type for the given oneshot launcher
-     * 
+     *
      * @param mounted
      * @return
      */
@@ -1070,6 +1070,7 @@ public class AmmoType extends EquipmentType {
 
     private static void createMunitions(List<AmmoType> bases, List<MunitionMutator> munitions) {
         for (AmmoType base : bases) {
+            // WTF?
             base.ammoRatio = base.ammoRatio;
             for (MunitionMutator mutator : munitions) {
                 EquipmentType.addType(mutator.createMunitionType(base));
@@ -7742,7 +7743,7 @@ public class AmmoType extends EquipmentType {
         /**
          * Create a mutator that will transform the <code>AmmoType</code> of a
          * base round into one of its muntions.
-         * 
+         *
          * @param munitionName
          *            - the <code>String</code> name of this munition type.
          * @param weightRatio
@@ -7764,7 +7765,7 @@ public class AmmoType extends EquipmentType {
         /**
          * Create a mutator that will transform the <code>AmmoType</code> of a
          * base round into one of its muntions.
-         * 
+         *
          * @param munitionName
          *            - the <code>String</code> name of this munition type.
          * @param weightRatio
@@ -7782,7 +7783,7 @@ public class AmmoType extends EquipmentType {
         /**
          * Create the <code>AmmoType</code> for this munition type for the given
          * rack size.
-         * 
+         *
          * @param base
          *            - the <code>AmmoType</code> of the base round.
          * @return this munition's <code>AmmotType</code>.
@@ -7875,7 +7876,7 @@ public class AmmoType extends EquipmentType {
              * // Add the munition name to the beginning of the display name.
              * nameBuf = new StringBuffer( name ); nameBuf.append( " " );
              * nameBuf.append( base.name ); munition.name = nameBuf.toString();
-             * 
+             *
              * // Add the munition name to the end of some of the ammo names.
              * nameBuf = new StringBuffer( " " ); nameBuf.append( name );
              * munition.setInternalName(base.internalName + nameBuf.toString());
@@ -8050,7 +8051,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * get BV for BA loads
-     * 
+     *
      * @return
      */
     public double getBABV() {

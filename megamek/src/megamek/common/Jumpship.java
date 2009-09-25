@@ -674,11 +674,12 @@ public class Jumpship extends Aero {
                 continue;
             }
             String key = atype.getAmmoType() + ":" + atype.getRackSize() + ";" + arc;
-            //ammo mounts on large craft is not necessarily in single ton increments so I need to figure out tonnage first
-            double ammoWeight = mounted.getShotsLeft() / atype.getShots();
+            double ammoWeight = mounted.getType().getTonnage(this);
             if(atype.isCapital()) {
                 ammoWeight = mounted.getShotsLeft() * atype.getAmmoRatio();
             }
+            // new errata: round partial tons of ammo up to the full ton
+            ammoWeight = Math.ceil(weight);
             if(atype.hasFlag(AmmoType.F_CAP_MISSILE)) {
                 ammoWeight = mounted.getShotsLeft();
             }

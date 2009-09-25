@@ -1324,8 +1324,31 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     Coords getCoordsAt(Point p) {
         final int x = (p.x ) / (int) (HEX_WC * scale);
         final int y = ((p.y ) - ((x & 1) == 1 ? (int) (HEX_H / 2 * scale) : 0))
-                / (int) (HEX_H * scale);
-        return new Coords(x, y);
+            / (int) (HEX_H * scale);
+        if(useIsometric()) {
+            //When using isometric rendering, a lower hex can obscure the normal hex.
+            //Iterate over all hexes from highest to lowest, looking for a hex that
+            //falls within the selected mouse click point.
+            Coords cOriginal = new Coords(x, y);
+
+            final int minElev = game.getBoard().getMinElevation();
+            final int maxElev = game.getBoard().getMaxElevation();
+            for (int elev = maxElev; elev >= minElev; elev--) {
+                for (int i = 0; i < game.getBoard().getHeight(); i++) {
+                    Coords c1 = new Coords(x, i);
+                    Point pAlt = getHexLocation(c1);
+                    IHex hexAlt = game.getBoard().getHex(c1);
+                    if(p.y > pAlt.y && p.y < (pAlt.y + HEX_H) && hexAlt.getElevation() == elev) {
+                        //This hex's location falls under the point the user selected.
+                        return c1;
+                    }
+                }
+            }
+            return cOriginal;
+        } else {
+            return new Coords(x, y);
+        }
+        
     }
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing) {
@@ -2346,6 +2369,27 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             image = null;
         }
 
+        @Override
+        public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
+            // If this is an airborne unit, render the shadow.
+            if (useIsometric()
+                    && (entity.isAirborne() || entity.isAirborneVTOL())) {
+                Image shadow = createShadowMask(tileManager.imageFor(entity,  facing));
+                
+                if (zoomIndex == BASE_ZOOM_INDEX) {
+                    shadow = createImage(new FilteredImageSource(shadow
+                            .getSource(), new KeyAlphaFilter(TRANSPARENT)));
+                } else {
+                    shadow = getScaledImage(createImage(new FilteredImageSource(
+                            shadow.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                }
+                
+                g.drawImage(shadow, x, y + (int) (DROPSHDW_DIST * scale), observer);
+            }
+            //create final image
+            drawOnto(g, x, y, observer, false);
+        }
+        
         /**
          * Creates the sprite for this entity. It is an extra pain to create transparent images in
          * AWT.
@@ -2366,16 +2410,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             // fill with key color
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
-
-            // draw entity image
-            if(useIsometric() && (entity.getMovementMode() == IEntityMovementMode.VTOL)) {
-                Image entImage = tileManager.imageFor(entity);
-                Image shadow = createShadowMask(entImage);
-                graph.drawImage(shadow, 0, (int) (DROPSHDW_DIST * scale), this);
-                graph.drawImage(entImage, 0, 0, this);
-            } else {
-                graph.drawImage(tileManager.imageFor(entity, facing), 0, 0, this);
-            }
+            graph.drawImage(tileManager.imageFor(entity, facing), 0, 0, this);
+           
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
@@ -2523,7 +2559,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     getFontMetrics(font).getAscent());
 
             int altAdjust = 0;
-            if(useIsometric() && (entity.getMovementMode() == IEntityMovementMode.VTOL)) {
+            if(useIsometric() && (entity.isAirborne() || entity.isAirborneVTOL())) {
                 altAdjust = (int) (DROPSHDW_DIST * scale);
             }
 
@@ -2542,7 +2578,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         public Rectangle getBounds() {
 
             int altAdjust = 0;
-            if(useIsometric() && (entity.getMovementMode() == IEntityMovementMode.VTOL)) {
+            if(useIsometric() && (entity.isAirborne() || entity.isAirborneVTOL())) {
                 altAdjust = (int) (DROPSHDW_DIST * scale);
             }
 
@@ -2566,6 +2602,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 // create final image with translucency
                 drawOnto(g, x, y, observer, true);
             } else {
+                
+                //If this is an airborne unit, render the shadow.
+                if (useIsometric()
+                        && (entity.isAirborne() || entity.isAirborneVTOL())) {
+                    Image shadow = createShadowMask(tileManager.imageFor(entity));
+                    
+                    if (zoomIndex == BASE_ZOOM_INDEX) {
+                        shadow = createImage(new FilteredImageSource(shadow
+                                .getSource(), new KeyAlphaFilter(TRANSPARENT)));
+                    } else {
+                        shadow = getScaledImage(createImage(new FilteredImageSource(
+                                shadow.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                    }
+                    
+                    g.drawImage(shadow, x, y + (int) (DROPSHDW_DIST * scale), observer);
+                }
                 drawOnto(g, x, y, observer, false);
             }
         }
@@ -2605,20 +2657,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
-
-            if (useIsometric()
-                    && (entity.getMovementMode() == IEntityMovementMode.VTOL)) {
-                // If this entity is in the air, then draw it at elevation.
-                // Recreate tempImage with an updated size.
-                Image entImage = tileManager.imageFor(entity);
-                Image shadow = createShadowMask(entImage);
-                graph.drawImage(shadow, 0, (int) (DROPSHDW_DIST * scale), this);
-                graph.drawImage(entImage, 0, 0, this);
-
-            } else {
-                // draw entity image
-                graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
-            }
+            graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
+            
             // draw box with shortName
             Color text, bkgd, bord;
             if (entity.isDone()) {
@@ -5273,7 +5313,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private BufferedImage createShadowMask(Image image) {
         BufferedImage mask = new BufferedImage(image.getWidth(null), image
                 .getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        float opacity = 1.0f;
+        float opacity = 0.4f;
         Graphics2D g2d = mask.createGraphics();
         g2d.drawImage(image, 0, 0, null);
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_IN,

@@ -73,6 +73,15 @@ public class Board implements Serializable, IBoard {
 
     private static final String[] typeNames = { "Ground", "Low Atmosphere", "Space" };
 
+    //Min and Max elevation values for when they are undefined (since you cant set an int to null).
+    private static final int UNDEFINED_MIN_ELEV = 10000;
+    private static final int UNDEFINED_MAX_ELEV = -10000;
+
+    //The min and max elevation values for this board. 
+    //set when getMinElevation/getMax is called for the first time.
+    private int minElevation = UNDEFINED_MIN_ELEV;
+    private int maxElevation = UNDEFINED_MAX_ELEV;
+    
     private int mapType = T_GROUND;
 
     private IHex[] data;
@@ -1316,9 +1325,9 @@ public class Board implements Serializable, IBoard {
     }
 
     public int getMaxElevation() {
-        //TODO It would be much more efficient if we would store these values upon
-        //retrieval so it will not need to be recovered again.
-        int maxElevation = -100000;
+        if(maxElevation != UNDEFINED_MAX_ELEV)
+            return maxElevation;
+        
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int elevation = data[y * width + x].getElevation();
@@ -1330,9 +1339,9 @@ public class Board implements Serializable, IBoard {
     }
 
     public int getMinElevation() {
-        //TODO It would be much more efficient if we would store these values upon
-        //retrieval so it will not need to be recovered again.
-        int minElevation = 100000;
+        if(minElevation != UNDEFINED_MIN_ELEV)
+            return minElevation;
+        
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int elevation = data[y * width + x].getElevation();

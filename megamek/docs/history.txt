@@ -7,6 +7,7 @@ v0.35.8-dev (SVN)
 + Added drop shadow effect for VTOL units when using Isometric BoardView.
 + WarShip/DropShip ammo should always round its weight up to the full ton
     (new errata)
++ RFE: Changes to the -export command line argument
 
 v0.35.7 (2009-09-19, 01:36 UTC+2)
 + ejected status read to and loaded from MUL

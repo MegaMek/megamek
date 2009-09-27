@@ -17757,6 +17757,11 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
+        // we might be off the board after a DFA, so return then
+        if (!game.getBoard().contains(crashPos)) {
+            return vDesc;
+        }
+
         if (!sideSlipCrash) {
             // report lost movement and crashing
             r = new Report(6260);

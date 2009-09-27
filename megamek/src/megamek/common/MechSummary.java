@@ -30,6 +30,7 @@ public class MechSummary implements Serializable {
     private String m_sChassis;
     private String m_sModel;
     private String m_sUnitType;
+    private String m_sUnitSubType;
     private File m_sSourceFile;
     private String m_sEntryName; // for files in zips
     private int m_nYear;
@@ -40,6 +41,7 @@ public class MechSummary implements Serializable {
     private long m_lModified; // for comparison when loading
     private String m_sLevel;
     private boolean canon;
+    private boolean clan;
     private int walkMp;
     private int runMp;
     private int jumpMp;
@@ -64,6 +66,14 @@ public class MechSummary implements Serializable {
         return canon;
     }
 
+    public boolean isClan() {
+        return clan;
+    }
+
+    public String getUnitSubType() {
+        return m_sUnitSubType;
+    }
+
     public static String determineUnitType(Entity e) {
         int mm = e.getMovementMode();
         if (e instanceof BattleArmor) {
@@ -72,9 +82,7 @@ public class MechSummary implements Serializable {
             return "Infantry";
         } else if (e instanceof VTOL) { // for now
             return "VTOL";
-        } else if ((mm == IEntityMovementMode.NAVAL)
-                || (mm == IEntityMovementMode.HYDROFOIL)
-                || (mm == IEntityMovementMode.SUBMARINE)) {
+        } else if ((mm == IEntityMovementMode.NAVAL) || (mm == IEntityMovementMode.HYDROFOIL) || (mm == IEntityMovementMode.SUBMARINE)) {
             return "Naval";
         } else if (e instanceof Tank) {
             return "Tank";
@@ -86,7 +94,7 @@ public class MechSummary implements Serializable {
             return "Gun Emplacement";
         } else if (e instanceof SpaceStation) {
             return "Space Station";
-        }else if (e instanceof Warship) {
+        } else if (e instanceof Warship) {
             return "Warship";
         } else if (e instanceof Jumpship) {
             return "Jumpship";
@@ -194,6 +202,14 @@ public class MechSummary implements Serializable {
 
     public void setCanon(boolean canon) {
         this.canon = canon;
+    }
+
+    public void setClan(boolean clan) {
+        this.clan = clan;
+    }
+
+    public void setUnitSubType(String subType) {
+        m_sUnitSubType = subType;
     }
 
     public int getWeightClass() {

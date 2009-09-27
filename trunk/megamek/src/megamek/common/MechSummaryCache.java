@@ -217,7 +217,7 @@ public class MechSummaryCache {
                     ms.setCost(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setCanon(s.substring(nIndex1 + 1).equals("T") ? true : false);
+                    ms.setCanon(s.charAt(nIndex1 + 1) == 'T' ? true : false);
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setWalkMp(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));

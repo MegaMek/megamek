@@ -1271,7 +1271,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private final boolean drawElevationLine(Coords src, int direction) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHexInDir(src, direction);
-        return (destHex != null) && (srcHex.floor() != destHex.floor());
+        if((destHex != null) && srcHex.getElevation() != destHex.getElevation()) {
+            return true;
+        } else return (destHex != null) && (srcHex.floor() != destHex.floor());
     }
 
     /**

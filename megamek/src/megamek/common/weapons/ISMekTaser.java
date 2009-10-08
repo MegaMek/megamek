@@ -36,7 +36,7 @@ public class ISMekTaser extends AmmoWeapon {
     public ISMekTaser() {
         super();
         techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        name = "Taser";
+        name = "Mech Taser";
         setInternalName("Mek Taser");
         addLookupName("ISMekTaser");
         heat = 6;
@@ -55,18 +55,19 @@ public class ISMekTaser extends AmmoWeapon {
         explosionDamage = 6;
         explosive = true;
         flags |= F_TASER | F_DIRECT_FIRE | F_BALLISTIC;
+        flags1 |= F_MECH_WEAPON;
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return new BATaserHandler(toHit, waa, game, server);
     }
 }

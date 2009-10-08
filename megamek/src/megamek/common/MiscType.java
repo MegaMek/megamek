@@ -239,17 +239,21 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
             return 0.5f + (float) Math.ceil(entity.getWeight() / 10.0)/2;
         } else if (hasFlag(F_MASC)) {
-            if (hasSubType(S_SUPERCHARGER)) {
-                Engine e = entity.getEngine();
-                if (e == null) {
-                    return 0.0f;
+            if (entity instanceof Protomech) {
+                return entity.getWeight() * 0.025f;
+            } else {
+                if (hasSubType(S_SUPERCHARGER)) {
+                    Engine e = entity.getEngine();
+                    if (e == null) {
+                        return 0.0f;
+                    }
+                    return (float) (Math.ceil(e.getWeightEngine() / 10.0 * 2.0) / 2.0);
                 }
-                return (float) (Math.ceil(e.getWeightEngine() / 10.0 * 2.0) / 2.0);
+                if (entity.isClan()) {
+                    return Math.round(entity.getWeight() / 25.0f);
+                }
+                return Math.round(entity.getWeight() / 20.0f);
             }
-            if (entity.isClan()) {
-                return Math.round(entity.getWeight() / 25.0f);
-            }
-            return Math.round(entity.getWeight() / 20.0f);
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
@@ -662,6 +666,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createMASH());
         EquipmentType.addType(MiscType.createMASHExtraTheater());
         EquipmentType.addType(MiscType.createParamedicEquipment());
+        EquipmentType.addType(MiscType.createCLProtoMyomerBooster());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBABoardingClaw());
@@ -973,6 +978,22 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_MASC;
         String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
+
+        return misc;
+    }
+
+    public static MiscType createCLProtoMyomerBooster() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_TW;
+        misc.name = "Protomech Myomer Booster";
+        misc.setInternalName("CLMyomerBooster");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = COST_VARIABLE;
+        misc.bv = 0;
+        misc.flags1 |= F_PROTOMECH_EQUIPMENT;
+        misc.flags |= F_MASC;
 
         return misc;
     }

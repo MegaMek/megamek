@@ -445,9 +445,37 @@ public class Protomech extends Entity {
         return false;
     }
 
+    /**
+     * get this ProtoMech's run MP without factoring in a possible myomer booster
+     * @param gravity
+     * @param ignoreheat
+     * @return
+     */
+    public int getRunMPwithoutMyomerBooster(boolean gravity, boolean ignoreheat) {
+        return super.getRunMP(gravity, ignoreheat);
+    }
+
     @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
-        return getRunMP(gravity, ignoreheat);
+    public int getRunMP(boolean gravity, boolean ignoreheat) {
+        if (hasMyomerBooster()) {
+            return (getWalkMP(gravity, ignoreheat) * 2);
+        }
+        return super.getRunMP(gravity, ignoreheat);
+    }
+
+    /**
+     * does this protomech mount a myomer booster?
+     *
+     * @return
+     */
+    public boolean hasMyomerBooster() {
+        for (Mounted mEquip : getMisc()) {
+            MiscType mtype = (MiscType) mEquip.getType();
+            if (mtype.hasFlag(MiscType.F_MASC) && !mEquip.isInoperable()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1245,5 +1273,10 @@ public class Protomech extends Entity {
     @Override
     public PilotingRollData checkSkid(int moveType, IHex prevHex, int overallMoveType, MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
         return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE, "ProtoMechs can't skid");
+    }
+
+    @Override
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
+        return getRunMP(gravity, ignoreheat);
     }
 }

@@ -11,6 +11,8 @@ v0.35.8-dev (SVN)
 + Bug: NPE when DFAing a VTOL off the board
 + Bug: Mek Taser not showing up as a Mek Weapon
 + Added a few Gun Emplacements, thanks Ladob
++ Added Protomech myomer booster
++ Added Siren 4 Protomech
 
 v0.35.7 (2009-09-19, 01:36 UTC+2)
 + ejected status read to and loaded from MUL

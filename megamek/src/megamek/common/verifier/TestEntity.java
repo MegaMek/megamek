@@ -29,6 +29,7 @@ import megamek.common.EquipmentType;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.Protomech;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
@@ -314,7 +315,7 @@ public abstract class TestEntity implements TestEntityOption {
         } else if (mt.hasFlag(MiscType.F_CLUB)
                 && mt.hasSubType(MiscType.S_BACKHOE)) {
             return ceilMaxHalf(5, getWeightCeilingWeapons());
-        } else if (mt.hasFlag(MiscType.F_MASC)) {
+        } else if (mt.hasFlag(MiscType.F_MASC) && !(getEntity() instanceof Protomech)) {
             if (mt.hasSubType(MiscType.S_SUPERCHARGER)) {
                 return ceilMaxHalf(getWeightEngine() / 10.0f, TestEntity.CEIL_HALFTON);
             }
@@ -791,7 +792,7 @@ public abstract class TestEntity implements TestEntityOption {
                         illegal = true;
                     }
                     for (Mounted mounted : mech.getMisc()) {
-                        if (mounted.getType().hasFlag(MiscType.F_ARTEMIS) || 
+                        if (mounted.getType().hasFlag(MiscType.F_ARTEMIS) ||
                             mounted.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                             buff.append("industrial mech without advanced fire control can't use artemis");
                             illegal = true;

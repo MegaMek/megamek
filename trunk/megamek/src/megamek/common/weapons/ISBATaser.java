@@ -35,33 +35,34 @@ public class ISBATaser extends AmmoWeapon {
      */
     public ISBATaser() {
         super();
-        this.techLevel = TechConstants.T_IS_ADVANCED;
-        this.name = "Battle Armor Taser";
-        this.setInternalName(this.name);
-        this.addLookupName("ISBATaser");
-        this.heat = 0;
-        this.rackSize = 1;
-        this.damage = 1;
-        this.ammoType = AmmoType.T_TASER;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 4;
-        this.bv = 15;
-        this.toHitModifier = 1;
-        this.flags |= F_ONESHOT | F_TASER ; flags1 |= F_BA_WEAPON;
+        techLevel = TechConstants.T_IS_ADVANCED;
+        name = "Battle Armor Taser";
+        setInternalName(name);
+        addLookupName("ISBATaser");
+        heat = 0;
+        rackSize = 1;
+        damage = 1;
+        ammoType = AmmoType.T_TASER;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 3;
+        extremeRange = 4;
+        bv = 15;
+        toHitModifier = 1;
+        flags |= F_ONESHOT | F_TASER;
+        flags1 |= F_BA_WEAPON;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return new BATaserHandler(toHit, waa, game, server);
     }
 }

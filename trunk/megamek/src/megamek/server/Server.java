@@ -5963,6 +5963,25 @@ public class Server implements Runnable {
             doSkillCheckInPlace(entity, rollTarget);
         }
 
+        // if we used protmech myomer booster, roll 2d6
+        // pilot damage on a 2
+        if ((entity instanceof Protomech) && ((Protomech)entity).hasMyomerBooster()
+                && (md.getMpUsed() > ((Protomech)entity).getRunMPwithoutMyomerBooster(true, false))) {
+            r = new Report(2373);
+            r.addDesc(entity);
+            r.subject = entity.getId();
+            int roll = Compute.d6(2);
+            r.add(roll);
+            if (roll > 2) {
+                r.choose(true);
+                addReport(r);
+            } else {
+                r.choose(false);
+                addReport(r);
+                addReport(damageCrew(entity, 1));
+            }
+        }
+
         rollTarget = entity.checkSprintingWithSupercharger(overallMoveType, entity.mpUsed);
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             doSkillCheckInPlace(entity, rollTarget);

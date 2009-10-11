@@ -55,7 +55,7 @@ public class Protomech extends Entity {
 
     // Pilot damage caused so far by crits to this location.
     // Needed for location destruction pilot damage.
-    private int PilotDamageTaken[] = { 0, 0, 0, 0, 0, 0 };
+    private int pilotDamageTaken[] = { 0, 0, 0, 0, 0, 0 };
 
     /**
      * Not every Protomech has a main gun.
@@ -148,7 +148,7 @@ public class Protomech extends Entity {
      * far.
      */
     public int getPilotDamageTaken(int loc) {
-        return PilotDamageTaken[loc];
+        return pilotDamageTaken[loc];
     }
 
     /**
@@ -176,7 +176,7 @@ public class Protomech extends Entity {
      * location
      */
     public void setPilotDamageTaken(int loc, int damage) {
-        PilotDamageTaken[loc] = damage;
+        pilotDamageTaken[loc] = damage;
     }
 
     /**

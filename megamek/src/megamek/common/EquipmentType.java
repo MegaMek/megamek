@@ -553,8 +553,10 @@ public class EquipmentType {
     public int resolveVariableCost(Entity entity, boolean isArmored) {
         int cost = 0;
         if (this instanceof MiscType) {
-            if (hasFlag(MiscType.F_MASC) && !(entity instanceof Protomech)) {
-                if (hasSubType(MiscType.S_SUPERCHARGER)) {
+            if (hasFlag(MiscType.F_MASC)) {
+                if (entity instanceof Protomech) {
+                    cost = Math.round(entity.getEngine().getRating() * 1000 * entity.getWeight() * 0.025f);
+                } else if (hasSubType(MiscType.S_SUPERCHARGER)) {
                     Engine e = entity.getEngine();
                     if (e == null) {
                         cost = 0;

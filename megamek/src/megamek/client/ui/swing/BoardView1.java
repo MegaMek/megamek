@@ -609,7 +609,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             drawSprites(g, flyOverSprites);
         }
 
-        // draw onscreen entities
+         
+        if(useIsometric()) {
+          //If we are using Isometric rendering, redraw the entity
+          //sprites at 50% transparent so sprites hidden behind hills can
+          //still be seen by the user.
+            drawTranslucentEntitySprites(g, entitySprites);
+        } 
+        
+        //draw onscreen entities
         drawSprites(g, entitySprites);
 
         // draw moving onscreen entities
@@ -675,6 +683,116 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private synchronized void drawSprites(Graphics g, ArrayList<? extends Sprite> spriteArrayList) {
         for (Sprite sprite : spriteArrayList) {
             drawSprite(g, sprite);
+        }
+    }
+    
+    /**
+     * Draws the sprite (and none of the additional details) onto the given graphics parameter g.
+     * This function is used when doing isometric rendering to render units behind a hill. For
+     * each unit, this function is called twice. Once with translucent is set to FALSE, for the section
+     * of the unit visible behind the hill, and once when translucent is set to TRUE to render the hidden portion
+     * of the unit as partially opaque.
+     * @param g
+     * @param sprite
+     * @param translucent
+     */
+    private final void drawIsometricSprite(Graphics g, EntitySprite sprite, boolean translucent) {
+        Point p = getHexLocation(sprite.getEntity().getPosition());
+        Rectangle bounds = sprite.getBounds();    // create image for buffer
+        Image tempImage;
+        Graphics graph;
+        try {
+            tempImage = createImage(bounds.width, bounds.height);
+            // fill with key color
+            graph = tempImage.getGraphics();
+        } catch (NullPointerException ex) {
+            // argh! but I want it!
+            return;
+        }
+
+        
+        graph.setColor(new Color(TRANSPARENT));
+        graph.fillRect(0, 0, bounds.width, bounds.height);
+        graph.drawImage(tileManager.imageFor(sprite.getEntity()), 0, 0, this);
+        Image image;
+        if (zoomIndex == BASE_ZOOM_INDEX) {
+            image = createImage(new FilteredImageSource(tempImage
+                    .getSource(), new KeyAlphaFilter(TRANSPARENT)));
+        } else {
+            image = getScaledImage(createImage(new FilteredImageSource(
+                    tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+        }
+        graph.dispose();
+        tempImage.flush();
+        
+        Graphics2D g2 = (Graphics2D) g;
+        
+        if (sprite.getEntity().isAirborne() || sprite.getEntity().isAirborneVTOL()) {
+            Image shadow = createShadowMask(tileManager.imageFor(sprite.getEntity(),  sprite.getEntity().getFacing()));
+            
+            if (zoomIndex == BASE_ZOOM_INDEX) {
+                shadow = createImage(new FilteredImageSource(shadow
+                        .getSource(), new KeyAlphaFilter(TRANSPARENT)));
+            } else {
+                shadow = getScaledImage(createImage(new FilteredImageSource(
+                        shadow.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+            }
+            //Draw airborne units in 2 passes. Shadow is rendered during the opaque pass, and the
+            //Actual unit is rendered during the transparent pass. However the unit is always drawn
+            //opaque.
+            if(translucent) {
+                g.drawImage(image, p.x, p.y - (int) (DROPSHDW_DIST * scale), this);
+            } else {
+                g.drawImage(shadow, p.x, p.y, this);
+            }
+            
+        } else if (translucent) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                    0.5f));
+            g2.drawImage(image, p.x, p.y, this);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                    1.0f));
+        } else {
+            g2.drawImage(image, p.x, p.y, this);
+        }
+
+    }
+
+    /**
+     * Draws the Draws the Entity for the given hex. This function is used by the isometric rendering process so
+     * that sprites are drawn in the order that hills are rendered to create the appearance that the 
+     * sprite is behind the hill.
+     * @param c The Coordinates of the hex that the sprites should be drawn for.
+     * @param g The Graphics object for this board.
+     * @param spriteArrayList The complete list of all EntitySprites on the board.
+     */
+    private synchronized void drawEntitySpritesForHex(Coords c, Graphics g, ArrayList<EntitySprite> spriteArrayList) {
+        Rectangle view = g.getClipBounds();
+        for (EntitySprite sprite : spriteArrayList) {
+            Coords cp = sprite.getEntity().getPosition();
+            if(cp.equals(c) && view.intersects(sprite.getBounds()) && !sprite.hidden) {
+                drawIsometricSprite(g, sprite, false);
+            }
+        }
+    }
+    
+    /**
+     * Draws a translucent sprite without any of the companion graphics, if it is in the current view. 
+     * This is used only when performing isometric rending. This function is used to show units (with 50% transparency)
+     * that are hidden behind a hill.
+     * 
+     * TODO: Optimize this function so that it is only applied to sprites that are actually hidden. This implementation
+     * performs the second rendering for all sprites.
+     */
+    private final void drawTranslucentEntitySprites(Graphics g, ArrayList<EntitySprite> spriteArrayList) {
+        Rectangle view = g.getClipBounds();
+        for (EntitySprite sprite : spriteArrayList) {
+            if (view.intersects(sprite.getBounds()) && !sprite.hidden) {
+                if (!sprite.isReady()) {
+                    sprite.prepare();
+                }
+                drawIsometricSprite(g, sprite, true);
+            }
         }
     }
 
@@ -946,6 +1064,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                         IHex hex = game.getBoard().getHex(c);
                         if ((hex != null) && (hex.getElevation() == x)) {
                             drawHex(c, g);
+                            drawEntitySpritesForHex(c, g, entitySprites);
                         }
                     }
                 }
@@ -2537,11 +2656,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      */
     private class EntitySprite extends Sprite {
         private Entity entity;
-
+        
         private Rectangle entityRect;
 
         private Rectangle modelRect;
 
+        public Entity getEntity() {
+            return entity;
+        }
         public EntitySprite(final Entity entity) {
             this.entity = entity;
 
@@ -2604,22 +2726,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 // create final image with translucency
                 drawOnto(g, x, y, observer, true);
             } else {
-                
-                //If this is an airborne unit, render the shadow.
-                if (useIsometric()
-                        && (entity.isAirborne() || entity.isAirborneVTOL())) {
-                    Image shadow = createShadowMask(tileManager.imageFor(entity));
-                    
-                    if (zoomIndex == BASE_ZOOM_INDEX) {
-                        shadow = createImage(new FilteredImageSource(shadow
-                                .getSource(), new KeyAlphaFilter(TRANSPARENT)));
-                    } else {
-                        shadow = getScaledImage(createImage(new FilteredImageSource(
-                                shadow.getSource(), new KeyAlphaFilter(TRANSPARENT))));
-                    }
-                    
-                    g.drawImage(shadow, x, y + (int) (DROPSHDW_DIST * scale), observer);
-                }
                 drawOnto(g, x, y, observer, false);
             }
         }
@@ -2659,8 +2765,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
-            graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
-            
+            if (!useIsometric()) {
+                //The entity sprite is drawn when the hexes are rendered. 
+                //So do no include the sprite info here.
+                graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
+            }
             // draw box with shortName
             Color text, bkgd, bord;
             if (entity.isDone()) {

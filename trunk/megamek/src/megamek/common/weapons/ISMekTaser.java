@@ -45,7 +45,7 @@ public class ISMekTaser extends AmmoWeapon {
         ammoType = AmmoType.T_TASER;
         shortRange = 1;
         mediumRange = 2;
-        longRange = 3;
+        longRange = 4;
         extremeRange = 4;
         bv = 40;
         toHitModifier = 1;
@@ -60,7 +60,7 @@ public class ISMekTaser extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

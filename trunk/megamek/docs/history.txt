@@ -13,6 +13,8 @@ v0.35.8-dev (SVN)
 + Added a few Gun Emplacements, thanks Ladob
 + Added Protomech myomer booster
 + Added Siren 4 Protomech
++ Bug: Mek Taser has wrong range
++ Added Protomech myomer booster cost
 
 v0.35.7 (2009-09-19, 01:36 UTC+2)
 + ejected status read to and loaded from MUL

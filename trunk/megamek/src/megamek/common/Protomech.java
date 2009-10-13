@@ -1279,4 +1279,8 @@ public class Protomech extends Entity {
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
         return getRunMP(gravity, ignoreheat);
     }
+
+    public void setEngine(Engine engine) {
+        this.engine = engine;
+    }
 }

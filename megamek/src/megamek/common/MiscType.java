@@ -1432,7 +1432,6 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Lift Hoist";
-        misc.setInternalName(misc.name);
         misc.tonnage = 3;
         misc.criticals = 3;
         misc.cost = 50000;

@@ -1452,10 +1452,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             //falls within the selected mouse click point.
             Coords cOriginal = new Coords(x, y);
 
-            final int minElev = game.getBoard().getMinElevation();
+            final int minElev = game.getBoard().getHex(cOriginal).getElevation();
             final int maxElev = game.getBoard().getMaxElevation();
             for (int elev = maxElev; elev >= minElev; elev--) {
-                for (int i = 0; i < game.getBoard().getHeight(); i++) {
+                for (int i = y; i < game.getBoard().getHeight(); i++) {
                     Coords c1 = new Coords(x, i);
                     Point pAlt = getHexLocation(c1);
                     IHex hexAlt = game.getBoard().getHex(c1);

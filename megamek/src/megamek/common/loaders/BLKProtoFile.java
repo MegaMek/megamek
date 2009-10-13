@@ -26,6 +26,7 @@
  */
 package megamek.common.loaders;
 
+import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IEntityMovementMode;
@@ -89,6 +90,13 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
+
+        int engineCode = BLKFile.FUSION;
+        int engineFlags = Engine.NORMAL_ENGINE;
+        engineFlags |= Engine.CLAN_ENGINE;
+
+        int engineRating = (int) Math.round(dataFile.getDataAsInt("cruiseMP")[0] * 1.5) * (int) t.getWeight();
+        t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         if (dataFile.exists("jumpingMP")) {
             t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);

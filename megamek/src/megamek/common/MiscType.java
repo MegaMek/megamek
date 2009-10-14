@@ -102,7 +102,7 @@ public class MiscType extends EquipmentType {
     // TODO: Implement me, so far only construction data
     public static final long F_DUMPER = 1L << 63;
     // TODO: Implement me, so far only construction data
-    //public static final long F_MASH = 1L << 64;
+    // public static final long F_MASH = 1L << 64;
 
     // Flags2
     public static final long F_BA_EQUIPMENT = 1L << 0;
@@ -237,7 +237,7 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {
             return (float) (Math.ceil(entity.getWeight() / 10.0));
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
-            return 0.5f + (float) Math.ceil(entity.getWeight() / 10.0)/2;
+            return 0.5f + (float) Math.ceil(entity.getWeight() / 10.0) / 2;
         } else if (hasFlag(F_MASC)) {
             if (entity instanceof Protomech) {
                 return entity.getWeight() * 0.025f;
@@ -346,7 +346,7 @@ public class MiscType extends EquipmentType {
             }
             // round to half ton TODO: round to kilograms for small support
             // vees, but we don't support them yet
-            return (float)(Math.ceil(entity.getWeight() / 40) * 2.0);
+            return (float) (Math.ceil(entity.getWeight() / 40) * 2.0);
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -506,9 +506,10 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
             returnBV = (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
         } else if (hasFlag(F_TALON)) {
-            // according to an email from TPTB, Talon BV is the extra damage they
+            // according to an email from TPTB, Talon BV is the extra damage
+            // they
             // do for kicks, so 50% of normal kick damage
-            returnBV = entity.getWeight()/5 * 0.5;
+            returnBV = entity.getWeight() / 5 * 0.5;
         }
 
         return returnBV;
@@ -1432,6 +1433,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Lift Hoist";
+        misc.setInternalName(misc.name);
         misc.tonnage = 3;
         misc.criticals = 3;
         misc.cost = 50000;
@@ -2817,7 +2819,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     *
+     * 
      * @return MiscType
      */
     public static MiscType createISClaw() {

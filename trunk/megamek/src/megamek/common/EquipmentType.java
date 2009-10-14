@@ -27,7 +27,7 @@ import java.util.Vector;
 /**
  * Represents any type of equipment mounted on a mechs, excluding systems and
  * actuators.
- *
+ * 
  * @author Ben
  * @version
  */
@@ -96,7 +96,7 @@ public class EquipmentType {
 
     public static final int DATE_NONE = -1;
 
-    public static final String[] ratingNames = {"A","B","C","D","E","F","X"};
+    public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F", "X" };
 
     protected String name = null;
 
@@ -123,9 +123,9 @@ public class EquipmentType {
     protected double bv = 0; // battle value point system
     protected double cost = 0; // The C-Bill cost of the item.
 
-    //fluffy stuff
+    // fluffy stuff
     protected int techRating = RATING_C;
-    protected int[] availRating = {RATING_E, RATING_E, RATING_E};
+    protected int[] availRating = { RATING_E, RATING_E, RATING_E };
     protected int introDate = DATE_NONE;
     protected int extinctDate = DATE_NONE;
     protected int reintroDate = DATE_NONE;
@@ -225,11 +225,11 @@ public class EquipmentType {
     }
 
     public long getFlags(int flagField) {
-        switch(flagField){
+        switch (flagField) {
         case FLAG_FIELD_1:
             return flags1;
-            default:
-        return flags;
+        default:
+            return flags;
         }
     }
 
@@ -300,7 +300,7 @@ public class EquipmentType {
      * Sets the modes that this type of equipment can be in. By default the
      * EquipmentType doesn't have the modes, so don't try to call this method
      * with null or empty argument.
-     *
+     * 
      * @param modes
      *            non null, non empty list of available mode names.
      */
@@ -326,7 +326,7 @@ public class EquipmentType {
      * switching. This method checks for end of turn modes that are kept in a
      * vector of names. It is used by the {@link Mounted#setMode(int)} method to
      * distinguish instant and end of turn switching.
-     *
+     * 
      * @param mode
      *            - the <code>String</code> of the mode name involved in the
      *            switch
@@ -350,7 +350,7 @@ public class EquipmentType {
      * <p>
      * Fails if this type of the equipment doesn't have modes, or given mode is
      * out of the valid range.
-     *
+     * 
      * @param modeNum
      * @return mode number <code>modeNum</code> from the list of modes available
      *         for this type of equipment.
@@ -462,7 +462,7 @@ public class EquipmentType {
     }
 
     public static String getRatingName(int rating) {
-        if((rating < 0) || (rating > ratingNames.length)) {
+        if ((rating < 0) || (rating > ratingNames.length)) {
             return "U";
         }
         return ratingNames[rating];
@@ -473,11 +473,11 @@ public class EquipmentType {
     }
 
     public String getTechRatingName() {
-        return getRatingName(getTechRating());
+        return EquipmentType.getRatingName(getTechRating());
     }
 
     public int getAvailability(int era) {
-        if((era < 0) || (era > ERA_CLAN)) {
+        if ((era < 0) || (era > ERA_CLAN)) {
             return RATING_X;
         }
         return availRating[era];
@@ -485,7 +485,7 @@ public class EquipmentType {
 
     public String getAvailabilityName(int era) {
         int avail = getAvailability(era);
-        return getRatingName(avail);
+        return EquipmentType.getRatingName(avail);
     }
 
     public int getIntroductionDate() {
@@ -501,13 +501,13 @@ public class EquipmentType {
     }
 
     public boolean isAvailableIn(int year) {
-        if(year < introDate) {
+        if (year < introDate) {
             return false;
         }
-        if((extinctDate == DATE_NONE) || (year < extinctDate)) {
+        if ((extinctDate == DATE_NONE) || (year < extinctDate)) {
             return true;
         }
-        if((reintroDate == DATE_NONE) || (year < reintroDate)) {
+        if ((reintroDate == DATE_NONE) || (year < reintroDate)) {
             return false;
         } else {
             return true;
@@ -616,10 +616,15 @@ public class EquipmentType {
     }
 
     public boolean equals(EquipmentType e) {
-        if ((e != null) && internalName.equals(e.internalName)) {
-            return true;
+        try {
+            if ((e != null) && internalName.equals(e.internalName)) {
+                return true;
+            }
+        } catch (Exception ex) {
+            System.err.println(name + "  does not have an internal name set!");
         }
         return false;
+
     }
 
     public static void writeEquipmentDatabase(File f) {

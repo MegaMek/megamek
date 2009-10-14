@@ -443,7 +443,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         floors[loop - 1] = Messages.getString("DeploymentDisplay.floor") + Integer.toString(loop);
                     }
                     floors[height] = Messages.getString("DeploymentDisplay.top");
-                    String input = (String)JOptionPane.showInputDialog(clientgui, 
+                    String input = (String)JOptionPane.showInputDialog(clientgui,
                             Messages
                             .getString(
                                     "DeploymentDisplay.floorsDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
@@ -465,7 +465,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     String[] floors = new String[2];
                     floors[0] = Messages.getString("DeploymentDisplay.belowbridge");
                     floors[1] = Messages.getString("DeploymentDisplay.topbridge");
-                    String input = (String)JOptionPane.showInputDialog(clientgui, 
+                    String input = (String)JOptionPane.showInputDialog(clientgui,
                             Messages
                             .getString(
                                     "DeploymentDisplay.bridgeDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
@@ -540,7 +540,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             Entity other;
             while (entities.hasMoreElements()) {
                 other = entities.nextElement();
-                if (other.isSelectableThisTurn() && ce().canLoad(other)) {
+                if (other.isSelectableThisTurn() && (ce() != null) && ce().canLoad(other)) {
                     choices.addElement(other);
                 }
             }

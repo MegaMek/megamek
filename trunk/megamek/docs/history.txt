@@ -21,6 +21,8 @@ v0.35.8-dev (SVN)
    Null-Sig.
 + Bug 2874785: ATMs doing only 1 damage against infantry
 + Bug 2879004: NPE in deploymentdisplay
++ RFE: Changed to Mech#addCostDetail to print out in HTML
++ RFE: Added new Entity#getWeaponsAndEquipmentCost to return StringBuffer with HTML formatted table of equipment costs
 
 v0.35.7 (2009-09-19, 01:36 UTC+2)
 + ejected status read to and loaded from MUL

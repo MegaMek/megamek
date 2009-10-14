@@ -28,7 +28,6 @@ import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISMekTaser;
@@ -196,8 +195,6 @@ public abstract class Mech extends Entity implements Serializable {
 
     private boolean isGrappleAttacker = false;
 
-    private static final NumberFormat commafy = NumberFormat.getInstance();
-
     private int grappledSide = Entity.GRAPPLE_BOTH;
 
     private boolean shouldDieAtEndOfTurnBecauseOfWater = false;
@@ -268,7 +265,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Damage the cowl. Returns amount of excess damage
-     *
+     * 
      * @param amount
      * @return
      */
@@ -320,7 +317,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * find the least restrictive location of the two locations passed in
-     *
+     * 
      * @param location1
      * @param location2
      * @return
@@ -358,7 +355,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Get the number of turns MASC has been used continuously.
      * <p/>
      * This method should <strong>only</strong> be used during serialization.
-     *
+     * 
      * @return the <code>int</code> number of turns MASC has been used.
      */
     public int getMASCTurns() {
@@ -369,7 +366,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Set the number of turns MASC has been used continuously.
      * <p/>
      * This method should <strong>only</strong> be used during deserialization.
-     *
+     * 
      * @param turns
      *            The <code>int</code> number of turns MASC has been used.
      */
@@ -381,7 +378,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Determine if MASC has been used this turn.
      * <p/>
      * This method should <strong>only</strong> be used during serialization.
-     *
+     * 
      * @return <code>true</code> if MASC has been used.
      */
     public boolean isMASCUsed() {
@@ -392,7 +389,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Set whether MASC has been used.
      * <p/>
      * This method should <strong>only</strong> be used during deserialization.
-     *
+     * 
      * @param used
      *            The <code>boolean</code> whether MASC has been used.
      */
@@ -406,7 +403,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * This function cheks for masc failure.
-     *
+     * 
      * @param md
      *            the movement path.
      * @param vDesc
@@ -436,7 +433,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * check one masc system for failure
-     *
+     * 
      * @param masc
      * @param vDesc
      * @param vCriticals
@@ -563,7 +560,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#newRound(int)
      */
     @Override
@@ -675,7 +672,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * This function returns true iff the system is in perfect condition.
-     *
+     * 
      * @param system
      *            the system to check
      * @return false if the system is damaged.
@@ -724,7 +721,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have composite internal structure?
-     *
+     * 
      * @return
      */
     public boolean hasCompositeStructure() {
@@ -733,7 +730,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have reinforced internal structure?
-     *
+     * 
      * @return
      */
     public boolean hasReinforcedStructure() {
@@ -742,7 +739,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech mount MASC?
-     *
+     * 
      * @return
      */
     public boolean hasMASC() {
@@ -775,7 +772,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have working jump boosters?
-     *
+     * 
      * @return
      */
     public boolean hasJumpBoosters() {
@@ -797,7 +794,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * get non-supercharger MASC mounted on this mech
-     *
+     * 
      * @return
      */
     public Mounted getMASC() {
@@ -812,7 +809,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * get a supercharger mounted on this mech
-     *
+     * 
      * @return
      */
     public Mounted getSuperCharger() {
@@ -890,7 +887,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have industrial TSM=
-     *
+     * 
      * @return
      */
     public boolean hasIndustrialTSM() {
@@ -904,7 +901,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have stealth armor?
-     *
+     * 
      * @return
      */
     public boolean hasStealth() {
@@ -920,7 +917,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have a null-sig-system?
-     *
+     * 
      * @return
      */
     public boolean hasNullSig() {
@@ -936,7 +933,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have a void-sig-system?
-     *
+     * 
      * @return
      */
     public boolean hasVoidSig() {
@@ -952,7 +949,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have tracks?
-     *
+     * 
      * @return
      */
     public boolean hasTracks() {
@@ -968,7 +965,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have a chameleon light polarization shield?
-     *
+     * 
      * @return
      */
     public boolean hasChameleonShield() {
@@ -984,7 +981,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getStandingHeat()
      */
     @Override
@@ -994,7 +991,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * set this mech's <code>Engine</code>
-     *
+     * 
      * @param e
      *            the <code>Engine</code> to set
      */
@@ -1007,7 +1004,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Used to set this Mech's original walk mp
-     *
+     * 
      * @return this units calculated walking speed, dependent on engine rating
      *         and weight
      */
@@ -1026,7 +1023,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getWalkHeat()
      */
     @Override
@@ -1036,7 +1033,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getRunMP(boolean, boolean)
      */
     @Override
@@ -1052,7 +1049,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getRunMPwithoutMASC(boolean, boolean)
      */
     @Override
@@ -1085,12 +1082,12 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getSprintMP()
      */
     @Override
     public int getSprintMP() {
-        if(hasHipCrit()) {
+        if (hasHipCrit()) {
             return getRunMP();
         }
         return getSprintMP(false, false);
@@ -1098,12 +1095,12 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getSprintMP(boolean, boolean)
      */
     @Override
     public int getSprintMP(boolean gravity, boolean ignoreheat) {
-        if(hasHipCrit()) {
+        if (hasHipCrit()) {
             return getRunMP(gravity, ignoreheat);
         }
         if (hasArmedMASCAndSuperCharger()) {
@@ -1117,7 +1114,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean)
      */
     @Override
@@ -1127,19 +1124,19 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean)
      */
     @Override
     public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat) {
-        if(hasHipCrit()) {
+        if (hasHipCrit()) {
             return getRunMPwithoutMASC(gravity, ignoreheat);
         }
         return ((int) Math.ceil(getWalkMP(gravity, ignoreheat) * 2.0)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
     }
 
     public int getOriginalSprintMPwithoutMASC() {
-        if(hasHipCrit()) {
+        if (hasHipCrit()) {
             return getOriginalSprintMPwithoutMASC();
         }
         return ((int) Math.ceil(getWalkMP(false, false) * 2.0)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
@@ -1158,17 +1155,16 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getRunningGravityLimit()
      */
     @Override
     public int getRunningGravityLimit() {
-        if(game.getOptions().booleanOption("tacops_sprint")) {
+        if (game.getOptions().booleanOption("tacops_sprint")) {
             return getSprintMP(false, false);
         }
         return getRunMP(false, false);
     }
-
 
     /**
      * Depends on engine type
@@ -1211,10 +1207,10 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
 
-        //apply Partial Wing bonus if we have the ability to jump
-        if ( jump > 0 ) {
+        // apply Partial Wing bonus if we have the ability to jump
+        if (jump > 0) {
             for (Mounted mount : getMisc()) {
-                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) ) {
+                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
                     jump += getPartialWingJumpBonus(mount);
                     break;
                 }
@@ -1229,16 +1225,16 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Gives the bonus to Jump MP conferred by a mech partial wing.
-     *
-     * @param mount The mounted location of the Wing
+     * 
+     * @param mount
+     *            The mounted location of the Wing
      * @return The Jump MP bonus conferred by the wing
      */
     public int getPartialWingJumpBonus(Mounted mount) {
         int bonus = 0;
-        if ( game != null ) {
-            if( (getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) ||
-                    (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) ) {
-                switch( game.getPlanetaryConditions().getAtmosphere() ) {
+        if (game != null) {
+            if ((getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) || (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM)) {
+                switch (game.getPlanetaryConditions().getAtmosphere()) {
                 case PlanetaryConditions.ATMO_VACUUM:
                     bonus = 0;
                     break;
@@ -1252,7 +1248,8 @@ public abstract class Mech extends Entity implements Serializable {
                     bonus = 2;
                     break;
                 case PlanetaryConditions.ATMO_HIGH:
-                    bonus = 2;break;
+                    bonus = 2;
+                    break;
 
                 case PlanetaryConditions.ATMO_VHIGH:
                     bonus = 3;
@@ -1261,9 +1258,8 @@ public abstract class Mech extends Entity implements Serializable {
                     bonus = 2;
                 }
             }
-            if( (getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) ||
-                    (getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) ) {
-                switch( game.getPlanetaryConditions().getAtmosphere() ) {
+            if ((getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) || (getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT)) {
+                switch (game.getPlanetaryConditions().getAtmosphere()) {
                 case PlanetaryConditions.ATMO_VACUUM:
                     bonus = 0;
                     break;
@@ -1287,14 +1283,14 @@ public abstract class Mech extends Entity implements Serializable {
                 }
             }
         } else {
-            if( (getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) || (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) ) {
+            if ((getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) || (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM)) {
                 bonus = 2;
             } else {
                 bonus = 1;
             }
         }
 
-        //subtract jumping bonus for damaged criticals
+        // subtract jumping bonus for damaged criticals
         bonus -= getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_RT);
         bonus -= getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_LT);
 
@@ -1303,20 +1299,33 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Gives the heat capacity bonus conferred by a mech partial wing.
-     *
+     * 
      * @return the heat capacity bonus provided by the wing
      */
     private int getPartialWingHeatBonus() {
         int bonus = 0;
-        if ( game != null ) {
-            switch( game.getPlanetaryConditions().getAtmosphere() ) {
-            case PlanetaryConditions.ATMO_VACUUM:     bonus = 0; break;
-            case PlanetaryConditions.ATMO_TRACE:     bonus = 1; break;
-            case PlanetaryConditions.ATMO_THIN:     bonus = 2; break;
-            case PlanetaryConditions.ATMO_STANDARD: bonus = 3; break;
-            case PlanetaryConditions.ATMO_HIGH:     bonus = 3; break;
-            case PlanetaryConditions.ATMO_VHIGH:     bonus = 3; break;
-            default: bonus = 3;
+        if (game != null) {
+            switch (game.getPlanetaryConditions().getAtmosphere()) {
+            case PlanetaryConditions.ATMO_VACUUM:
+                bonus = 0;
+                break;
+            case PlanetaryConditions.ATMO_TRACE:
+                bonus = 1;
+                break;
+            case PlanetaryConditions.ATMO_THIN:
+                bonus = 2;
+                break;
+            case PlanetaryConditions.ATMO_STANDARD:
+                bonus = 3;
+                break;
+            case PlanetaryConditions.ATMO_HIGH:
+                bonus = 3;
+                break;
+            case PlanetaryConditions.ATMO_VHIGH:
+                bonus = 3;
+                break;
+            default:
+                bonus = 3;
             }
         } else {
             bonus = 3;
@@ -1351,16 +1360,15 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getJumpHeat(int)
-     *
      */
     @Override
     public int getJumpHeat(int movedMP) {
 
-        //don't count movement granted by Partial Wing
+        // don't count movement granted by Partial Wing
         for (Mounted mount : getMisc()) {
-            if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) ) {
+            if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
                 movedMP -= getPartialWingJumpBonus(mount);
                 break;
             }
@@ -1377,7 +1385,6 @@ public abstract class Mech extends Entity implements Serializable {
             return engine.getJumpHeat(movedMP);
         }
     }
-
 
     /**
      * Returns this mech's jumping MP, modified for missing & underwater jets
@@ -1414,9 +1421,9 @@ public abstract class Mech extends Entity implements Serializable {
         }
 
         // apply Partial Wing bonus if we have the ability to jump
-        if ( jump > 0 ) {
+        if (jump > 0) {
             for (Mounted mount : getMisc()) {
-                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) ) {
+                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
                     jump += getPartialWingJumpBonus(mount);
                     break;
                 }
@@ -1474,7 +1481,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * base for adding engine sinks. Newer method allows externals to say how
      * much are engine HS.
-     *
+     * 
      * @param totalSinks
      *            the amount of heatsinks to add to the engine
      * @param sinkName
@@ -1488,7 +1495,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * add heat sinks into the engine
-     *
+     * 
      * @param sinkName
      *            the <code>String</code> determining the type of heatsink to
      *            add. must be a lookupname of a heatsinktype
@@ -1569,9 +1576,13 @@ public abstract class Mech extends Entity implements Serializable {
         }
 
         for (Mounted mount : getMisc()) {
-            if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) && //unless all crits are destroyed, we get the bonus
-               ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_RT) > 0) ||
-                (getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_LT) > 0))) {
+            if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) && // unless
+                    // all crits
+                    // are
+                    // destroyed,
+                    // we get
+                    // the bonus
+                    ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_RT) > 0) || (getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_LT) > 0))) {
                 capacity += getPartialWingHeatBonus();
                 break;
             }
@@ -1675,12 +1686,12 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#canChangeSecondaryFacing()
      */
     @Override
     public boolean canChangeSecondaryFacing() {
-        if(getQuirks().booleanOption("no_twist")) {
+        if (getQuirks().booleanOption("no_twist")) {
             return false;
         }
         return !isProne();
@@ -1693,9 +1704,8 @@ public abstract class Mech extends Entity implements Serializable {
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
-            if(getQuirks().booleanOption("ext_twist")) {
-                return (rotate == 0) || (rotate == 1) || (rotate == 2) || (rotate == -1) || (rotate == -2)
-                    || (rotate == -5) || (rotate == -4) || (rotate == 5) || (rotate == 4);
+            if (getQuirks().booleanOption("ext_twist")) {
+                return (rotate == 0) || (rotate == 1) || (rotate == 2) || (rotate == -1) || (rotate == -2) || (rotate == -5) || (rotate == -4) || (rotate == 5) || (rotate == 4);
             }
             return (rotate == 0) || (rotate == 1) || (rotate == -1) || (rotate == -5) || (rotate == 5);
         }
@@ -1716,9 +1726,9 @@ public abstract class Mech extends Entity implements Serializable {
         }
         // otherwise, twist once in the appropriate direction
         final int rotate = (dir + (6 - getFacing())) % 6;
-        if((rotate == 3) && getQuirks().booleanOption("ext_twist")) {
-            //if the unit can do an extended torso twist and the area chosen
-            //was directly behind them, then just rotate one way
+        if ((rotate == 3) && getQuirks().booleanOption("ext_twist")) {
+            // if the unit can do an extended torso twist and the area chosen
+            // was directly behind them, then just rotate one way
             return (getFacing() + 2) % 6;
         }
         return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
@@ -1726,7 +1736,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#hasRearArmor(int)
      */
     @Override
@@ -1829,7 +1839,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#rollHitLocation(int, int)
      */
     @Override
@@ -1839,15 +1849,14 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#rollHitLocation(int, int, int, int)
      */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
 
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+        if ((aimedLocation != LOC_NONE) && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
 
             roll = Compute.d6(2);
 
@@ -2398,7 +2407,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Sets the internal structure for the mech.
-     *
+     * 
      * @param head
      *            head
      * @param ct
@@ -2661,7 +2670,7 @@ public abstract class Mech extends Entity implements Serializable {
             break;
         default:
             armorMultiplier = 1.0;
-        break;
+            break;
 
         }
 
@@ -2773,7 +2782,7 @@ public abstract class Mech extends Entity implements Serializable {
             }
 
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD))) || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) || ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
-                    // not yet coded: ||
+            // not yet coded: ||
                     // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
                     || etype.hasFlag(MiscType.F_BAP)))) {
                 double bv = etype.getBV(this);
@@ -3686,7 +3695,7 @@ public abstract class Mech extends Entity implements Serializable {
             }
 
             if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_AP_POD)
-                    // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
+            // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)) {
                 // weapons
                 continue;
@@ -4082,7 +4091,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Calculate the C-bill cost of the mech. Passing null as the argument will
      * skip the detailed report processing.
-     *
+     * 
      * @param detail
      *            buffer to append the detailed cost report to
      * @return The cost in C-Bills of the 'Mech in question.
@@ -4171,32 +4180,88 @@ public abstract class Mech extends Entity implements Serializable {
 
     private void addCostDetails(double cost, StringBuffer detail, double[] costs) {
         String[] left = { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators", "Engine", "Gyro", "Jump Jets", "Heatsinks", "Armor", "Equipment", "Omni Multiplier", "Weight Multiplier" };
-        int maxLeft = 0;
-        int maxRight = 0;
-        int totalLineLength = 0;
+
+        NumberFormat commafy = NumberFormat.getInstance();
+
+        String startTable = "<TABLE>";
+        String endTable = "</TABLE>";
+
+        String startRow = "<TR>";
+        String endRow = "</TR>";
+
+        String startColumn = "<TD>";
+        String endColumn = "</TD>";
+
+        String nl = "<BR>";
+
+        detail.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
+        detail.append(getChassis());
+        detail.append(" ");
+        detail.append(getModel());
+        detail.append("</b></CENTER>");
+        detail.append(nl);
+
+        detail.append(startTable);
         // find the maximum length of the columns.
         for (int l = 0; l < left.length; l++) {
-            maxLeft = Math.max(maxLeft, left[l].length());
-            maxRight = Math.max(maxRight, commafy.format(costs[l]).length());
-        }
-        maxLeft += 5; // leave some padding in the middle
-        maxRight = Math.max(maxRight, commafy.format(cost).length());
-        for (int i = 0; i < left.length; i++) {
-            String both;
-            if (costs[i] < 0) { // negative marks it as a multiplier
-                both = StringUtil.makeLength(left[i], maxLeft) + StringUtil.makeLength("x" + commafy.format(costs[i] * -1), maxRight, true);
-            } else if (costs[i] == 0) {
-                both = StringUtil.makeLength(left[i], maxLeft) + StringUtil.makeLength("N/A", maxRight, true);
+
+            if (l == 11) {
+                getWeaponsAndEquipmentCost(detail, true);
             } else {
-                both = StringUtil.makeLength(left[i], maxLeft) + StringUtil.makeLength(commafy.format(costs[i]), maxRight, true);
+                detail.append(startRow);
+                detail.append(startColumn);
+                detail.append(left[l]);
+                detail.append(endColumn);
+                detail.append(startColumn);
+
+                if (costs[l] == 0) {
+                    detail.append("N/A");
+                } else if (costs[l] < 0) {
+                    detail.append("x ");
+                    detail.append(commafy.format(-costs[l]));
+                } else {
+                    detail.append(commafy.format(costs[l]));
+
+                }
+                detail.append(endColumn);
+                detail.append(endRow);
             }
-            detail.append(both + "\n");
-            totalLineLength = both.length();
         }
-        for (int x = 0; x < totalLineLength; x++) {
-            detail.append("-");
-        }
-        detail.append("\n" + StringUtil.makeLength("Total Cost:", maxLeft) + StringUtil.makeLength(commafy.format(cost), maxRight, true));
+        detail.append(startRow);
+        detail.append(startColumn);
+        detail.append(endColumn);
+        detail.append(startColumn);
+        detail.append("-------------");
+        detail.append(endColumn);
+        detail.append(endRow);
+
+        detail.append(startRow);
+        detail.append(startColumn);
+        detail.append("Total Cost:");
+        detail.append(endColumn);
+        detail.append(startColumn);
+        detail.append(commafy.format(cost));
+        detail.append(endColumn);
+        detail.append(endRow);
+
+        detail.append(endTable);
+        detail.append("</BODY></HTML>");
+        /*
+         * maxLeft += 5; // leave some padding in the middle maxRight =
+         * Math.max(maxRight, commafy.format(cost).length()); for (int i = 0; i
+         * < left.length; i++) { String both; if (costs[i] < 0) { // negative
+         * marks it as a multiplier both = StringUtil.makeLength(left[i],
+         * maxLeft) + StringUtil.makeLength("x" + commafy.format(costs[i] -1),
+         * maxRight, true); } else if (costs[i] == 0) { both =
+         * StringUtil.makeLength(left[i], maxLeft) +
+         * StringUtil.makeLength("N/A", maxRight, true); } else { both =
+         * StringUtil.makeLength(left[i], maxLeft) +
+         * StringUtil.makeLength(commafy.format(costs[i]), maxRight, true); }
+         * detail.append(both + "\n"); totalLineLength = both.length(); } for
+         * (int x = 0; x < totalLineLength; x++) { detail.append("-"); }
+         * detail.append("\n" + StringUtil.makeLength("Total Cost:", maxLeft) +
+         * StringUtil.makeLength(commafy.format(cost), maxRight, true));
+         */
     }
 
     protected double getActuatorCost() {
@@ -4286,7 +4351,7 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
 
-        if(getQuirks().booleanOption("cramped_cockpit")) {
+        if (getQuirks().booleanOption("cramped_cockpit")) {
             roll.addModifier(1, "cramped cockpit");
         }
 
@@ -4311,7 +4376,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     @Override
     public int getMaxElevationDown() {
-        if(game.getOptions().booleanOption("tacops_leaping")) {
+        if (game.getOptions().booleanOption("tacops_leaping")) {
             return 999;
         } else {
             return getMaxElevationChange();
@@ -4319,11 +4384,11 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     /**
-     * Determine if this unit has an active and working stealth system.
-     * (stealth can be active and not working when under ECCM)
+     * Determine if this unit has an active and working stealth system. (stealth
+     * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -4335,8 +4400,7 @@ public abstract class Mech extends Entity implements Serializable {
             MiscType mtype = (MiscType) mEquip.getType();
             if (mtype.hasFlag(MiscType.F_STEALTH)) {
 
-                if (mEquip.curMode().equals("On") && hasActiveECM()
-                        && !Compute.isAffectedByECCM(this, getPosition(), getPosition())) {
+                if (mEquip.curMode().equals("On") && hasActiveECM() && !Compute.isAffectedByECCM(this, getPosition(), getPosition())) {
                     // Return true if the mode is "On" and ECM is working
                     // and we're not in ECCM
                     return true;
@@ -4348,11 +4412,11 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     /**
-     * Determine if this unit has an active and working stealth system.
-     * (stealth can be active and not working when under ECCM)
+     * Determine if this unit has an active and working stealth system. (stealth
+     * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -4428,7 +4492,7 @@ public abstract class Mech extends Entity implements Serializable {
      * <code>IllegalArgumentException</code> will be thrown.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @param range
      *            - an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
@@ -4535,7 +4599,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     *
+     * 
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -5074,7 +5138,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a standard cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addCockpit() {
@@ -5094,7 +5158,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for an industrial cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addIndustrialCockpit() {
@@ -5114,7 +5178,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for an industrial cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addPrimitiveCockpit() {
@@ -5134,7 +5198,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for an industrial primitive cockpit.
      * Note: This is part of the mek creation public API, and might not be
      * referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addIndustrialPrimitiveCockpit() {
@@ -5154,7 +5218,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a small cockpit. Note: This is part
      * of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addSmallCockpit() {
@@ -5199,7 +5263,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a torso-mounted cockpit. Note: This
      * is part of the mek creation public API, and might not be referenced by
      * any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addTorsoMountedCockpit() {
@@ -5235,7 +5299,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a standard gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addGyro() {
@@ -5253,7 +5317,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a compact gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addCompactGyro() {
@@ -5270,7 +5334,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for an extra-light gyro. Also set the
      * gyro type variable. Note: This is part of the mek creation public API,
      * and might not be referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addXLGyro() {
@@ -5291,7 +5355,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a heavy-duty gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addHeavyDutyGyro() {
@@ -5307,7 +5371,7 @@ public abstract class Mech extends Entity implements Serializable {
      * method before setting a mek's engine object will result in a NPE. Note:
      * This is part of the mek creation public API, and might not be referenced
      * by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addEngineCrits() {
@@ -5391,7 +5455,7 @@ public abstract class Mech extends Entity implements Serializable {
                 if (this.hasActiveShield(Mech.LOC_RARM)) {
                     damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
                 }
-            break;
+                break;
             }
         }
 
@@ -5474,7 +5538,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Does this mech have an undamaged HarJel system in this location?
-     *
+     * 
      * @param loc
      *            the <code>int</code> location to check
      * @return a <code>boolean</code> value indicating a present HarJel system
@@ -5627,7 +5691,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
     @Override
@@ -5637,7 +5701,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getHQIniBonus()
      */
     @Override
@@ -5651,7 +5715,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getBARRating()
      */
     @Override
@@ -5667,7 +5731,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Is this an Industrial Mech?
-     *
+     * 
      * @return if this mech has an industrial inner structure
      */
     public boolean isIndustrial() {
@@ -5677,7 +5741,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * set if this mech just moved into water that would kill it because of the
      * lack of environmental sealing
-     *
+     * 
      * @param moved
      */
     public void setJustMovedIntoIndustrialKillingWater(boolean moved) {
@@ -5687,7 +5751,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * did this mech just moved into water that would kill it because we lack
      * environmental sealing?
-     *
+     * 
      * @return
      */
     public boolean isJustMovedIntoIndustrialKillingWater() {
@@ -5698,7 +5762,7 @@ public abstract class Mech extends Entity implements Serializable {
      * should this mech die at the end of turn because it's an IndustrialMech
      * without environmental sealing that moved into water last round and stayed
      * there?
-     *
+     * 
      * @return
      */
     public boolean shouldDieAtEndOfTurnBecauseOfWater() {
@@ -5708,7 +5772,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Set if this Mech's ICE Engine is stalled or not should only be used for
      * industrial mechs carrying an ICE engine
-     *
+     * 
      * @param stalled
      */
     public void setStalled(boolean stalled) {
@@ -5718,7 +5782,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#isStalled()
      */
     @Override
@@ -5728,7 +5792,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#isShutDown()
      */
     @Override
@@ -5738,7 +5802,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#doCheckEngineStallRoll(java.util.Vector)
      */
     @Override
@@ -5786,7 +5850,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#checkUnstall(java.util.Vector)
      */
     @Override
@@ -5833,7 +5897,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Is this a primitive Mech?
-     *
+     * 
      * @return
      */
     public boolean isPrimitive() {
@@ -5896,7 +5960,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * how many levels did this mech fall this turn?
-     *
+     * 
      * @return
      */
     public int getLevelsFallen() {
@@ -5913,7 +5977,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Is the passed in location an arm?
-     *
+     * 
      * @param loc
      * @return
      */

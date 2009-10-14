@@ -284,41 +284,6 @@ chassis "Void" "void.gif"
 chassis "Ying Long" "yinglong.gif"
 
 
-#Gun Emplacements
-exact "AC Turret AC2" "light_ac_turret.gif"
-exact "AC Turret AC5" "light_ac_turret.gif"
-exact "AC Turret AC10" "heavy_ac_turret.gif"
-exact "AC Turret RAC5" "rac_turret.gif"
-exact "AC Turret UAC5" "heavy_ac_turret.gif"
-exact "AC Turret (Dual) UAC5" "dual_heavy_ac_turret.gif"
-exact "AC Turret (Dual) RAC5" "dual_rac_turret.gif"
-exact "AC Turret (Dual) AC2" "dual_light_ac_turret.gif"
-exact "AC Turret (Dual) AC5" "dual_ac_turret.gif"
-exact "AC Turret (Dual) AC10" "dual_heavy_ac_turret.gif"
-
-exact "Laser Turret SL" "light_laser_turret.gif"
-exact "Laser Turret ML" "laser_turret.gif"
-exact "Laser Turret LL" "heavy_laser_turret.gif"
-exact "Laser Turret (Dual) SL" "dual_light_laser_turret.gif"
-exact "Laser Turret (Dual) ML" "dual_laser_turret.gif"
-exact "Laser Turret (Dual) LL" "dual_heavy_laser_turret.gif"
-
-exact "LRM Turret LRM5" "heavy_missile_turret.gif"
-exact "LRM Turret LRM10" "heavy_missile_turret.gif"
-exact "LRM Turret LRM15" "heavy_missile_turret.gif"
-exact "LRM Turret LRM20" "heavy_missile_turret.gif"
-exact "LRM Turret (Dual) LRM5" "dual_light_missile_turret.gif"
-exact "LRM Turret (Dual) LRM10" "dual_missile_turret.gif"
-exact "LRM Turret (Dual) LRM15" "dual_heavy_missile_turret.gif"
-exact "LRM Turret (Dual) LRM20" "dual_heavy_missile_turret.gif"
-
-exact "SRM Turret SRM2" "light_missile_turret.gif"
-exact "SRM Turret SRM4" "light_missile_turret.gif"
-exact "SRM Turret SRM6" "light_missile_turret.gif"
-exact "SRM Turret (Dual) SRM2" "dual_light_missile_turret.gif"
-exact "SRM Turret (Dual) SRM4" "dual_light_missile_turret.gif"
-exact "SRM Turret (Dual) SRM6" "dual_light_missile_turret.gif"
-
 # Vehicles
 chassis "AC-2 Carrier" "ac2carrier.gif"
 #chassis "Aikuchi" " .gif"

@@ -17,6 +17,8 @@ v0.35.8-dev (SVN)
 + Added Protomech myomer booster cost
 + Bug: AC AP ammo still doing crits against partial cover
 + Fix potential report filtering issue
++ Bug 2871000: Chameleon LPS gives wrong mod at medium range when used with
+   Null-Sig.
 
 v0.35.7 (2009-09-19, 01:36 UTC+2)
 + ejected status read to and loaded from MUL

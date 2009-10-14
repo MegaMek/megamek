@@ -20860,6 +20860,9 @@ public class Server implements Runnable {
             return r;
         }
         Entity entity = game.getEntity(r.subject);
+        if (entity == null) {
+            entity = game.getOutOfGameEntity(r.subject);
+        }
         Player owner = null;
         if (entity != null) {
             owner = entity.getOwner();

@@ -24,6 +24,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Mech;
 import megamek.common.Player;
+import megamek.common.RangeType;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -229,6 +230,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             //evading bonuses (
             if(te.isEvading()) {
                 toHit.addModifier(te.getEvasionBonus(), "target is evading");
+            }
+            
+            if (te.isStealthActive()) {
+                toHit.append(te.getStealthModifier(RangeType.RANGE_MINIMUM, ae));
             }
         }
         if ((ae instanceof Mech) && ((Mech)ae).hasIndustrialTSM()) {

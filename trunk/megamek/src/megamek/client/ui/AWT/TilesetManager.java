@@ -479,6 +479,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         started = false;
 
         tracker = new MediaTracker(comp);
+        mechImageList.clear();
         hexTileset.reset();
     }
 

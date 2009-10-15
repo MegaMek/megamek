@@ -25,6 +25,7 @@ v0.35.8-dev (SVN)
 + RFE: Added new Entity#getWeaponsAndEquipmentCost to return StringBuffer with HTML formatted table of equipment costs
 + Bug: Lift Hoist did not have an internal name set.
 + Bug 2839378: added proper reset to TileSetManager
++ Bug 2857824: Some options descriptions are so long that they run off the screen.
 
 v0.35.7 (2009-09-19, 01:36 UTC+2)
 + ejected status read to and loaded from MUL

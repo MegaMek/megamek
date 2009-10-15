@@ -23,9 +23,8 @@ package megamek.client.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.Serializable;
+import java.util.StringTokenizer;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -36,7 +35,7 @@ import javax.swing.JTextField;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 
-public class DialogOptionComponent extends JPanel implements MouseListener,
+public class DialogOptionComponent extends JPanel implements 
         ItemListener {
     /**
      * 
@@ -60,17 +59,14 @@ public class DialogOptionComponent extends JPanel implements MouseListener,
         dialogOptionListener = parent;
         this.option = option;
 
-        addMouseListener(this);
-
         setLayout(new BorderLayout());
         switch (option.getType()) {
             case IOption.BOOLEAN:
                 checkbox = new JCheckBox(option.getDisplayableName(), option
                         .booleanValue());
-                checkbox.addMouseListener(this);
                 checkbox.addItemListener(this);
                 add(checkbox, BorderLayout.CENTER);
-                checkbox.setToolTipText(option.getDescription());
+                checkbox.setToolTipText(convertToHtml(option.getDescription()));
                 if (!editable)
                     checkbox.setEnabled(false);
 
@@ -78,10 +74,8 @@ public class DialogOptionComponent extends JPanel implements MouseListener,
             case IOption.CHOICE:
                 choice = new JComboBox();
 
-                choice.addMouseListener(this);
                 label = new JLabel(option.getDisplayableName());
-                label.addMouseListener(this);
-                label.setToolTipText(option.getDescription());
+                label.setToolTipText(convertToHtml(option.getDescription()));
                 add(label, BorderLayout.WEST);
                 add(choice, BorderLayout.CENTER);
 
@@ -92,10 +86,8 @@ public class DialogOptionComponent extends JPanel implements MouseListener,
             default:
                 textField = new JTextField(option.stringValue(), option
                         .getTextFieldLength());
-                textField.addMouseListener(this);
                 label = new JLabel(option.getDisplayableName());
-                label.addMouseListener(this);
-                label.setToolTipText(option.getDescription());
+                label.setToolTipText(convertToHtml(option.getDescription()));
                 if (option.isLabelBeforeTextField()) {
                     add(label, BorderLayout.CENTER);
                     add(textField, BorderLayout.WEST);
@@ -111,6 +103,17 @@ public class DialogOptionComponent extends JPanel implements MouseListener,
         }
     }
 
+    public static String convertToHtml(String source) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<html>");
+        StringTokenizer tok =new StringTokenizer(source,"\n"); 
+        while ( tok.hasMoreTokens() ) {
+            sb.append(tok.nextToken());
+            sb.append("<br>");
+        }
+        sb.append("</html>");
+        return sb.toString();
+    }
     public boolean hasChanged() {
         return !option.getValue().equals(getValue());
     }
@@ -202,21 +205,6 @@ public class DialogOptionComponent extends JPanel implements MouseListener,
      */
     public IBasicOption changedOption() {
         return new BasicOption(option.getName(), getValue());
-    }
-
-    public void mousePressed(MouseEvent mouseEvent) {
-    }
-
-    public void mouseEntered(MouseEvent mouseEvent) {
-    }
-
-    public void mouseReleased(MouseEvent mouseEvent) {
-    }
-
-    public void mouseClicked(MouseEvent mouseEvent) {
-    }
-
-    public void mouseExited(MouseEvent mouseEvent) {
     }
 
     public void itemStateChanged(ItemEvent itemEvent) {

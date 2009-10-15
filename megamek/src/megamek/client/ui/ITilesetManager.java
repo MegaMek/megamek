@@ -34,4 +34,6 @@ public interface ITilesetManager {
 
     public Image loadPreviewImage(Entity entity, Image camo, int tint, Component bp);
 
+    public void reset();
+
 }

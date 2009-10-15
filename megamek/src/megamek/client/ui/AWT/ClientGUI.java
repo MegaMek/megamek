@@ -1362,12 +1362,13 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
             // Handle phase-specific items.
             switch (e.getNewPhase()) {
             case PHASE_LOUNGE:
-                // this will get rid of old report tabs
+                // reset old report tabs and images, if any
                 ReportDisplay rD = (ReportDisplay) phaseComponents.get(String
                         .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
                 if (rD != null) {
                     rD.resetTabs();
                 }
+                getBoardView().getTilesetManager().reset();
                 break;
             case PHASE_DEPLOY_MINEFIELDS:
             case PHASE_DEPLOYMENT:

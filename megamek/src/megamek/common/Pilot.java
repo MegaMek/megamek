@@ -475,13 +475,26 @@ public class Pilot implements Serializable {
     }
 
     /**
-     * Returns the BV multiplyer for this pilot's gunnery/piloting
+     * Returns the BV multiplier for this pilot's gunnery/piloting
      */
     public double getBVSkillMultiplier() {
-        return getBVImplantMultiplier()
-                * getBVSkillMultiplier(gunnery, piloting);
+        return getBVSkillMultiplier(true);
     }
-
+    
+    /**
+     * Returns the BV multiplier for this pilot's gunnery/piloting
+     * 
+     * @param usePiloting whether or not to use the default value
+     *      non-anti-mech infantry/BA should not use the anti-mech skill
+     */
+    public double getBVSkillMultiplier(boolean usePiloting) {
+        int pilotVal = piloting;
+        if (!usePiloting) {
+            pilotVal = 5;
+        }
+        return getBVImplantMultiplier()
+                * getBVSkillMultiplier(gunnery, pilotVal);
+    }
     public double getBVImplantMultiplier() {
 
         // get highest level
@@ -565,9 +578,8 @@ public class Pilot implements Serializable {
     public int getSensorOps() {
         if(piloting > -1) {
             return piloting;
-        } else {
-            return gunnery;
         }
+        return gunnery;
     }
     
     public boolean isPilotingFatigued(int turn) {

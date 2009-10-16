@@ -858,22 +858,19 @@ public class Game implements Serializable, IGame {
      * @throws IllegalArgumentException if the new list is <code>null</code>.
      */
     public void setOutOfGameEntitiesVector(Vector<Entity> vOutOfGame) {
-        megamek.debug.Assert.assertTrue(vOutOfGame != null,
-        "New out-of-game list should not be null.");
-        if (vOutOfGame != null) {
-            Vector<Entity> newOutOfGame = new Vector<Entity>();
+        assert (vOutOfGame != null) : "New out-of-game list should not be null.";
+        Vector<Entity> newOutOfGame = new Vector<Entity>();
 
-            // Add entities for the existing players to the game.
-            for (Entity entity : vOutOfGame) {
-                int ownerId = entity.getOwnerId();
-                if ((ownerId != Entity.NONE) && (getPlayer(ownerId) != null)) {
-                    entity.setGame(this);
-                    newOutOfGame.addElement(entity);
-                }
+        // Add entities for the existing players to the game.
+        for (Entity entity : vOutOfGame) {
+            int ownerId = entity.getOwnerId();
+            if ((ownerId != Entity.NONE) && (getPlayer(ownerId) != null)) {
+                entity.setGame(this);
+                newOutOfGame.addElement(entity);
             }
-            this.vOutOfGame = newOutOfGame;
-            processGameEvent(new GameEntityNewOffboardEvent(this));
         }
+        this.vOutOfGame = newOutOfGame;
+        processGameEvent(new GameEntityNewOffboardEvent(this));
     }
 
     /**
@@ -1140,14 +1137,14 @@ public class Game implements Serializable, IGame {
             lastEntityId = id;
         }
 
-        megamek.debug.Assert.assertTrue(entities.size() == entityIds.size());
+        assert (entities.size() == entityIds.size()) : "Add Entity failed";
 
         processGameEvent(new GameEntityNewEvent(this, entity));
     }
 
     public void setEntity(int id, Entity entity) {
         setEntity(id, entity, null);
-        megamek.debug.Assert.assertTrue(entities.size() == entityIds.size());
+        assert (entities.size() == entityIds.size()) : "setEntity failed";
     }
 
     public void setEntity(int id, Entity entity, Vector<UnitLocation> movePath) {
@@ -1166,7 +1163,7 @@ public class Game implements Serializable, IGame {
 
             processGameEvent(new GameEntityChangeEvent(this, entity, movePath));
         }
-        megamek.debug.Assert.assertTrue(entities.size() == entityIds.size());
+        assert (entities.size() == entityIds.size()) : "Set Entity Failed";
     }
 
     /**

@@ -156,7 +156,7 @@ public class EquipmentType {
 
     /** Creates new EquipmentType */
     public EquipmentType() {
-
+        //default constructor
     }
 
     public void setFlags(long inF) {
@@ -305,16 +305,12 @@ public class EquipmentType {
      *            non null, non empty list of available mode names.
      */
     protected void setModes(String[] modes) {
-        megamek.debug.Assert.assertTrue((modes != null) && (modes.length >= 0), "List of modes must not be null or empty");
-        if (modes != null) {
-            Vector<EquipmentMode> newModes = new Vector<EquipmentMode>(modes.length);
-            for (String mode : modes) {
-                newModes.addElement(EquipmentMode.getMode(mode));
-            }
-            this.modes = newModes;
-        } else {
-            this.modes = new Vector<EquipmentMode>(0);
+        assert ((modes != null) && (modes.length >= 0)) : "List of modes must not be null or empty";
+        Vector<EquipmentMode> newModes = new Vector<EquipmentMode>(modes.length);
+        for (String mode : modes) {
+            newModes.addElement(EquipmentMode.getMode(mode));
         }
+        this.modes = newModes;
     }
 
     public void addEndTurnMode(String mode) {
@@ -333,8 +329,8 @@ public class EquipmentType {
      * @return true if the mode name is found in the next turn mode vector
      */
     public boolean isNextTurnModeSwitch(String mode) {
-        for (String name : endTurnModes) {
-            if (name.equals(mode)) {
+        for (String modeName : endTurnModes) {
+            if (modeName.equals(mode)) {
                 return true;
             }
         }
@@ -357,7 +353,7 @@ public class EquipmentType {
      * @see #hasModes()
      */
     public EquipmentMode getMode(int modeNum) {
-        megamek.debug.Assert.assertTrue((modes != null) && (modeNum >= 0) && (modeNum < modes.size()));
+        assert ((modes != null) && (modeNum >= 0) && (modeNum < modes.size())) : "Invalid Mode";
         return modes.elementAt(modeNum);
     }
 
@@ -509,9 +505,8 @@ public class EquipmentType {
         }
         if ((reintroDate == DATE_NONE) || (year < reintroDate)) {
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
     public static double getArmorCost(int inArmor) {
@@ -551,17 +546,17 @@ public class EquipmentType {
      * of the unit.) entity is whatever has this item
      */
     public int resolveVariableCost(Entity entity, boolean isArmored) {
-        int cost = 0;
+        int varCost = 0;
         if (this instanceof MiscType) {
             if (hasFlag(MiscType.F_MASC)) {
                 if (entity instanceof Protomech) {
-                    cost = Math.round(entity.getEngine().getRating() * 1000 * entity.getWeight() * 0.025f);
+                    varCost = Math.round(entity.getEngine().getRating() * 1000 * entity.getWeight() * 0.025f);
                 } else if (hasSubType(MiscType.S_SUPERCHARGER)) {
                     Engine e = entity.getEngine();
                     if (e == null) {
-                        cost = 0;
+                        varCost = 0;
                     } else {
-                        cost = e.getRating() * 10000;
+                        varCost = e.getRating() * 10000;
                     }
                 } else {
                     int mascTonnage = 0;
@@ -570,7 +565,7 @@ public class EquipmentType {
                     } else if (getInternalName().equals("CLMASC")) {
                         mascTonnage = Math.round(entity.getWeight() / 25.0f);
                     }
-                    cost = entity.getEngine().getRating() * mascTonnage * 1000;
+                    varCost = entity.getEngine().getRating() * mascTonnage * 1000;
                 }
             } else if (hasFlag(MiscType.F_TARGCOMP)) {
                 int tCompTons = 0;
@@ -586,33 +581,33 @@ public class EquipmentType {
                 } else if (getInternalName().equals("CLTargeting Computer")) {
                     tCompTons = (int) Math.ceil(fTons / 5.0f);
                 }
-                cost = tCompTons * 10000;
+                varCost = tCompTons * 10000;
             } else if (hasFlag(MiscType.F_CLUB) && (hasSubType(MiscType.S_HATCHET) || hasSubType(MiscType.S_MACE_THB))) {
                 int hatchetTons = (int) Math.ceil(entity.getWeight() / 15.0);
-                cost = hatchetTons * 5000;
+                varCost = hatchetTons * 5000;
             } else if (hasFlag(MiscType.F_CLUB) && hasSubType(MiscType.S_SWORD)) {
                 int swordTons = (int) Math.ceil(entity.getWeight() / 15.0);
-                cost = swordTons * 10000;
+                varCost = swordTons * 10000;
             } else if (hasFlag(MiscType.F_CLUB) && hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
                 int bladeTons = (int) Math.ceil(0.5f + Math.ceil(entity.getWeight() / 20.0));
-                cost = (1 + bladeTons) * 10000;
+                varCost = (1 + bladeTons) * 10000;
             } else if (hasFlag(MiscType.F_TRACKS)) {
-                cost = (int) Math.ceil(500 * entity.getEngine().getRating() * entity.getWeight() / 75);
+                varCost = (int) Math.ceil(500 * entity.getEngine().getRating() * entity.getWeight() / 75);
             } else if (hasFlag(MiscType.F_TALON)) {
-                cost = (int) Math.ceil(getTonnage(entity) * 300);
+                varCost = (int) Math.ceil(getTonnage(entity) * 300);
             }
 
         } else {
-            if (cost == 0) {
+            if (varCost == 0) {
                 // if we don't know what it is...
                 System.out.println("I don't know how much " + name + " costs.");
             }
         }
 
         if (isArmored) {
-            cost += 150000 * getCriticals(entity);
+            varCost += 150000 * getCriticals(entity);
         }
-        return cost;
+        return varCost;
     }
 
     public boolean equals(EquipmentType e) {

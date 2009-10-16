@@ -1741,8 +1741,8 @@ public class TestBot extends BotClient {
         }
 
         Entity ce = game.getEntity(entNum);
-        megamek.debug.Assert.assertTrue(!ce.isHexProhibited(game.getBoard()
-                .getHex(cDeploy)));
+        assert (!ce.isHexProhibited(game.getBoard()
+                .getHex(cDeploy))) : "Bot tried to deploy to an invalid hex";
         deploy(entNum, cDeploy, nDir, 0);
     }
 

@@ -33,12 +33,12 @@ public abstract class AbstractCommandLineParser {
         ParseException(String message) {
             super(message);
         }
-    };
+    }
 
     /**
      * Prefix of the option. Subclasses may overwrite.
      */
-    protected String OPTION_PREFIX = "-";
+    protected String OPTION_PREFIX = "-"; //$NON-NLS-1$
 
     /**
      * End of input token
@@ -91,7 +91,7 @@ public abstract class AbstractCommandLineParser {
      * @param args <code>array</code> of arguments to parse
      */
     public AbstractCommandLineParser(String[] args) {
-        megamek.debug.Assert.assertTrue(args != null, "args must be non null");
+        assert (args != null) : "args must be non null"; //$NON-NLS-1$
         this.args = args;
         argsLen = args.length;
     }
@@ -145,7 +145,7 @@ public abstract class AbstractCommandLineParser {
     /**
      * Sets the current token
      * 
-     * @param token
+     * @param tokenValue
      */
     protected void setTokenValue(String tokenValue) {
         this.tokenValue = tokenValue;

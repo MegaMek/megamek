@@ -55,7 +55,7 @@ public class EquipmentMode {
      * @param name unique mode identifier
      */
     protected EquipmentMode(String name) {
-        megamek.debug.Assert.assertTrue(name != null, "Name must not be null");
+        assert (name != null) : "Name must not be null";
         this.name = name;
     }
 

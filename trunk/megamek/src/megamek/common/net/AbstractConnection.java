@@ -170,7 +170,7 @@ public abstract class AbstractConnection implements IConnection {
      */
     protected void setMarshallingType(int marshallingType) {
         PacketMarshaller pm = marshallerFactory.getMarshaller(marshallingType);
-        megamek.debug.Assert.assertTrue(pm != null, "Unknown marshalling type");
+        assert (pm != null) : "Unknown marshalling type";
         this.marshallingType = marshallingType;
         marshaller = pm;
     }
@@ -484,7 +484,7 @@ public abstract class AbstractConnection implements IConnection {
     protected void processPacket(INetworkPacket np) throws Exception {
         PacketMarshaller pm = marshallerFactory.getMarshaller(np
                 .getMarshallingType());
-        megamek.debug.Assert.assertTrue(pm != null, "Unknown marshalling type");
+        assert (pm != null) : "Unknown marshalling type";
         Packet packet = null;
         byte[] data = np.getData();
         bytesReceived += data.length;
@@ -495,16 +495,12 @@ public abstract class AbstractConnection implements IConnection {
         } else {
             in = bis;
         }
-        // TBD this is stupid. pm should be always non null right?
-        if (pm != null) {
-            packet = pm.unmarshall(in);
-            if (packet != null) {
-                debugLastFewCommandsReceived.push(packet.getCommand());
-                processConnectionEvent(new PacketReceivedEvent(
-                        AbstractConnection.this, packet));
-            }
+        packet = pm.unmarshall(in);
+        if (packet != null) {
+            debugLastFewCommandsReceived.push(packet.getCommand());
+            processConnectionEvent(new PacketReceivedEvent(
+                    AbstractConnection.this, packet));
         }
-
     }
 
     /**

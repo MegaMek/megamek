@@ -486,14 +486,62 @@ public class MovePath implements Cloneable, Serializable {
      * Removes impossible steps.
      */
     public void clipToPossible() {
-        // hopefully there's no impossible steps in the middle of possible ones
+        if (steps.size() == 0) {
+            //nothing to clip
+            return;
+        }
+        // Do a final check for bad moves, and clip movement after the first bad one
         final Vector<MoveStep> goodSteps = new Vector<MoveStep>();
-        for (final Enumeration<MoveStep> i = steps.elements(); i
-                .hasMoreElements();) {
-            final MoveStep step = i.nextElement();
+        Enumeration<MoveStep> i = steps.elements();
+        MoveStep step = i.nextElement();
+        
+        // Can't move out of a hex with an enemy unit unless we started
+        // there, BUT we're allowed to turn, unload, or go prone.
+        if (Compute.isEnemyIn(game, entity, entity.getPosition(), false,
+                entity instanceof Mech, entity.getElevation())) {            
+            //This is an enemy, we can't go out and back in, and go out again
+            boolean left = false;
+            boolean returned = false;
+            while (i.hasMoreElements()) {
+                step = i.nextElement();
+                if (!left) {
+                    if (!step.getPosition().equals(entity.getPosition()) ||
+                            !(step.getElevation() == entity.getElevation())) {
+                        //we left the location
+                        left = true;
+                        continue;
+                    }
+                    continue;
+                }
+                if (!returned) {
+                    if (step.getPosition().equals(entity.getPosition()) ||
+                            (step.getElevation() == entity.getElevation())) {
+                        //we returned to the location
+                        returned = true;
+                        continue;
+                    }
+                    continue;
+                }
+                //we've returned, anything other than the following 4 types are illegal
+                if ((step.getType() != MovePath.STEP_TURN_LEFT)
+                && (step.getType() != MovePath.STEP_TURN_RIGHT)
+                && (step.getType() != MovePath.STEP_UNLOAD)
+                && (step.getType() != MovePath.STEP_GO_PRONE)) {
+                    //we only need to identify the first illegal move
+                    step.setMovementType(IEntityMovementType.MOVE_ILLEGAL);
+                    break;
+                }
+            }
+        }
+        i = steps.elements();
+        while (i.hasMoreElements()) {
+            step = i.nextElement();
             if (step.getMovementType() != IEntityMovementType.MOVE_ILLEGAL) {
                 goodSteps.addElement(step);
+            } else {
+                break;
             }
+            
         }
         steps = goodSteps;
     }

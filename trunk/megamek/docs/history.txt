@@ -29,7 +29,8 @@ v0.35.8-dev (SVN)
 + Bug 2797425: Hull Down units can not kick and are treated at -1 height for punch purposes
 + Bug 2581473: Assault Droppers have a +3 TMM according to StratOps
 + Bug 2843126: Melee attacks should take into account stealth modifiers
-+ Bug 2880003: BA Magshot Gauss rifles should have the same flags as non-BA ones, plus the BA flag 
++ Bug 2880003: BA Magshot Gauss rifles should have the same flags as non-BA ones, plus the BA flag
++ Bug 2805862: Added check for coming back in contact with the enemy, also, movement clipping stops at first illegal move
 
 v0.35.7 (2009-09-19, 01:36 UTC+2)
 + ejected status read to and loaded from MUL

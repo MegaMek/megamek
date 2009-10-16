@@ -214,9 +214,8 @@ public class Infantry extends Entity implements Serializable {
                 && game.getOptions().booleanOption("tacops_fast_infantry_move") ) {
             if(getWalkMP(gravity, ignoreheat) > 0) {
                 return getWalkMP(gravity, ignoreheat) + 1;
-            } else {
-                return getWalkMP(gravity, ignoreheat) + 2;
             }
+            return getWalkMP(gravity, ignoreheat) + 2;
         }
         return getWalkMP(gravity, ignoreheat);
     }
@@ -670,7 +669,7 @@ public class Infantry extends Entity implements Serializable {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = crew.getBVSkillMultiplier();
+            pilotFactor = crew.getBVSkillMultiplier(isAntiMek());
         }
         return (int) Math.round((bv) * pilotFactor);
 
@@ -852,6 +851,7 @@ public class Infantry extends Entity implements Serializable {
         return super.isEligibleFor(phase);
     }
     
+    @Override
     public boolean isEligibleForFiring() {
         if(game.getOptions().booleanOption("tacops_fast_infantry_move")
                 && super.isEligibleForFiring()) {

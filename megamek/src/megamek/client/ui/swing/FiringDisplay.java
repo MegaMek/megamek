@@ -345,7 +345,7 @@ KeyListener, ItemListener, ListSelectionListener {
             panButtons.add(butNext);
             panButtons.add(butFire);
             panButtons.add(butSkip);
-            panButtons.add(butFlipArms);           
+            panButtons.add(butFlipArms);
             panButtons.add(butFindClub);
             panButtons.add(butSpot);
             panButtons.add(butSearchlight);
@@ -804,11 +804,11 @@ KeyListener, ItemListener, ListSelectionListener {
         for (int loop = 0; loop < names.length; loop++) {
             names[loop] = weapons.get(loop).getDesc();
         }
-        String input = (String)JOptionPane.showInputDialog(clientgui, 
+        String input = (String)JOptionPane.showInputDialog(clientgui,
                 Messages.getString("FiringDisplay.ClearWeaponJam.question"), //$NON-NLS-1$
                 Messages
                 .getString("FiringDisplay.ClearWeaponJam.title"), //$NON-NLS-1$
-                        JOptionPane.QUESTION_MESSAGE, null, 
+                        JOptionPane.QUESTION_MESSAGE, null,
                 names,null);
 
         if (input != null) {
@@ -1257,7 +1257,7 @@ KeyListener, ItemListener, ListSelectionListener {
 
     /**
      * Torso twist to the left or right
-     * 
+     *
      * @param twistDir
      *            An <code>int</code> specifying wether we're twisting left or
      *            right, 0 if we're twisting to the left, 1 if to the right.
@@ -1463,7 +1463,7 @@ KeyListener, ItemListener, ListSelectionListener {
 
     /**
      * update for change of arms-flipping status
-     * 
+     *
      * @param armsFlipped
      */
     void updateFlipArms(boolean armsFlipped) {
@@ -1491,7 +1491,7 @@ KeyListener, ItemListener, ListSelectionListener {
                 && ce().isUsingSpotlight()
                 && ce().getCrew().isActive()
                 && SearchlightAttackAction.isPossible(clientgui.getClient().game, cen, target,
-                        null) && !(((Tank) ce()).getStunnedTurns() > 0));
+                        null) && !((ce() instanceof Tank) && (((Tank) ce()).getStunnedTurns() > 0)));
     }
 
     private void updateClearTurret() {
@@ -1953,7 +1953,7 @@ KeyListener, ItemListener, ListSelectionListener {
 
         /**
          * should aimned shoots be allowed with the passed weapon
-         * 
+         *
          * @param weapon
          * @return
          */
@@ -2057,7 +2057,7 @@ KeyListener, ItemListener, ListSelectionListener {
 
     /**
      * Have the player select a target from the entities at the given coords.
-     * 
+     *
      * @param pos
      *            - the <code>Coords</code> containing targets.
      */
@@ -2102,10 +2102,10 @@ KeyListener, ItemListener, ListSelectionListener {
 
         // If we have multiple choices, display a selection dialog.
         else if (targets.size() > 1) {
-            String input = (String)JOptionPane.showInputDialog(clientgui, 
+            String input = (String)JOptionPane.showInputDialog(clientgui,
                     Messages
                     .getString(
-                            "FiringDisplay.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$                            JOptionPane.QUESTION_MESSAGE, null, 
+                            "FiringDisplay.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$                            JOptionPane.QUESTION_MESSAGE, null,
                     Messages
                     .getString("FiringDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
                     JOptionPane.QUESTION_MESSAGE, null, SharedUtility.getDisplayArray(targets),null);

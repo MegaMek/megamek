@@ -124,7 +124,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String LOS_MECH_IN_FIRST = "LOSMechInFirst";
     public static final String LOS_MECH_IN_SECOND = "LOSMechInSecond";
     public static final String SHOW_MAPSHEETS = "ShowMapsheets";
-
+    public static final String USE_ISOMETRIC = "UseIsometric";
+    
     protected static GUIPreferences instance = new GUIPreferences();
 
     public static GUIPreferences getInstance() {
@@ -204,6 +205,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(WINDOW_SIZE_HEIGHT, 600);
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
         store.setDefault(SHOW_MAPSHEETS, false);
+        store.setDefault(USE_ISOMETRIC, false);
     }
 
     public void setDefault(String name, Color color) {
@@ -298,6 +300,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getMinimapEnabled() {
         return store.getBoolean(MINIMAP_ENABLED);
+    }
+    
+    public boolean getIsometricEnabled() {
+        return store.getBoolean(USE_ISOMETRIC);
     }
 
     public int getMinimapPosX() {
@@ -657,6 +663,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setShowMapsheets(boolean b) {
         store.setValue(SHOW_MAPSHEETS, b);
+    }
+    
+    public void setIsometricEnabled(boolean b) {
+        store.setValue(USE_ISOMETRIC, b);
     }
 
     protected ColorParser p = new ColorParser();

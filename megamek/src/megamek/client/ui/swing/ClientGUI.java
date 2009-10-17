@@ -550,7 +550,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } else if (event.getActionCommand().equals(VIEW_ZOOM_OUT)) {
             bv.zoomOut();
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_ISOMETRIC)) {
-            bv.toggleIsometric();
+            GUIPreferences.getInstance().setIsometricEnabled(bv.toggleIsometric());
         }
     }
 

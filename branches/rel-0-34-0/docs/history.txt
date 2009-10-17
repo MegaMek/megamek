@@ -9,6 +9,7 @@ v0.34.9-dev (SVN)
    Null-Sig.
 + Bug 2874785: ATMs doing only 1 damage against infantry
 + Bug 2879004: NPE in deploymentdisplay
++ Bug 2881020: NPE when using searchlights
 
 v0.34.8 (2009-08-17, 15:23 UTC+2)
 + Bug: Mechdisplay not remembering which ammo was selected

@@ -232,7 +232,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         butFireMode.addKeyListener(this);
         butFireMode.setActionCommand(FIRE_MODE);
         butFireMode.setEnabled(false);
-        
+
         butFireCalled = new Button(Messages.getString("FiringDisplay.Called")); //$NON-NLS-1$
         butFireCalled.addActionListener(this);
         butFireCalled.addKeyListener(this);
@@ -567,7 +567,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.wPan.displayMech(ce());
         clientgui.mechD.wPan.selectWeapon(wn);
     }
-    
+
     /**
      * Called Shots - switches called shot mode
      */
@@ -584,15 +584,15 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if ((m == null)) {
             return;
         }
-        
+
         //send change to the server
         m.getCalledShot().switchCalledShot();
         clientgui.getClient().sendCalledShotChange(cen, wn);
-        
+
         updateTarget();
         clientgui.mechD.wPan.displayMech(ce());
         clientgui.mechD.wPan.selectWeapon(wn);
-        
+
     }
 
     /**
@@ -1455,7 +1455,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 && ce().isUsingSpotlight()
                 && ce().getCrew().isActive()
                 && SearchlightAttackAction.isPossible(client.game, cen, target,
-                        null) && !((ce() instanceof Tank) && (((Tank) ce()).getStunnedTurns() > 0)) );
+                        null) && !((ce() instanceof Tank) && (ce() instanceof Tank) && (((Tank) ce()).getStunnedTurns() > 0)) );
     }
 
     private void updateClearTurret() {
@@ -1515,7 +1515,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         butFireMode.setEnabled(enabled);
         clientgui.getMenuBar().setFireModeEnabled(enabled);
     }
-    
+
     private void setFireCalledEnabled(boolean enabled) {
         butFireCalled.setEnabled(enabled);
         clientgui.getMenuBar().setFireCalledEnabled(enabled);
@@ -1657,7 +1657,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         private int partialCover = LosEffects.COVER_NONE;
 
         private AimedShotDialog asd;
-        
+
         public void showDialog() {
             if (asd != null) {
                 int oldAimingMode = aimingMode;
@@ -1671,7 +1671,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
                 if(target instanceof GunEmplacement) {
                     return;
-                }             
+                }
                 if (target instanceof Entity) {
                     options = ((Entity)target).getLocationNames();
                     enabled = createEnabledMask(options.length);
@@ -1862,7 +1862,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     return GunEmplacement.HIT_LOCATION_NAMES[aimingAt];
                 } else if (target instanceof Entity) {
                     return ((Entity)target).getLocationAbbrs()[aimingAt];
-                } 
+                }
             }
             return null;
         }

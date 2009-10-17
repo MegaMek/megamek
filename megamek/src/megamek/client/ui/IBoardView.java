@@ -53,7 +53,7 @@ public interface IBoardView extends MechDisplayListener {
 
     public void zoomIn();
     public void zoomOut();
-    public void toggleIsometric();
+    public boolean toggleIsometric();
     public void centerOnHex(Coords position);
 
     // it's a hack that the popup is Object, but we use this interface

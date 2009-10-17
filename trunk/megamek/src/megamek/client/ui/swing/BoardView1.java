@@ -1375,14 +1375,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             //When using isometric rendering, a lower hex can obscure the normal hex.
             //Iterate over all hexes from highest to lowest, looking for a hex that
             //falls within the selected mouse click point.
-            final IHex hex = game.getBoard().getHex(cOriginal);
-            if(hex == null)
-                return null;
-            final int minElev = hex.getElevation();
+            final int minElev = game.getBoard().getMinElevation();
             final int maxElev = game.getBoard().getMaxElevation();
-            final int maxHexSpan = Math.min(y + (maxElev - minElev), game.getBoard().getHeight());
+            final int delta = (int) Math.ceil(((double) maxElev - minElev)/3.0f);
+            final int minHexSpan = Math.max(y - delta, 0);
+            final int maxHexSpan = Math.min(y + delta, game.getBoard().getHeight());
             for (int elev = maxElev; elev >= minElev; elev--) {
-                for (int i = y; i < maxHexSpan; i++) {
+                for (int i = minHexSpan; i < maxHexSpan; i++) {
                     Coords c1 = new Coords(x, i);
                     Point pAlt = getHexLocation(c1);
                     IHex hexAlt = game.getBoard().getHex(c1);

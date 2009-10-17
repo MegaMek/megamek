@@ -32,6 +32,7 @@ v0.35.8-dev (SVN)
 + Bug 2880003: BA Magshot Gauss rifles should have the same flags as non-BA ones, plus the BA flag
 + Bug 2805862: Added check for coming back in contact with the enemy, also, movement clipping stops at first illegal move
 + Bug 2838198: BA and Infantry BVs no longer affected by Anti-Mech skill if anti-mech flag is not set
++ Bug 2881020: NPE when using searchlights
 
 v0.35.7 (2009-09-19, 01:36 UTC+2)
 + ejected status read to and loaded from MUL

@@ -64,11 +64,11 @@ public class ACAPHandler extends AmmoWeaponHandler {
         double toReturn = wtype.getDamage();
         // during a swarm, all damage gets applied as one block to one
         // location
-        if (ae instanceof BattleArmor && weapon.getLocation() == BattleArmor.LOC_SQUAD && (ae.getSwarmTargetId() == target.getTargetId())) {
+        if ((ae instanceof BattleArmor) && (weapon.getLocation() == BattleArmor.LOC_SQUAD) && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // we default to direct fire weapons for anti-infantry damage
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
         } else if (bDirect){
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
@@ -78,7 +78,7 @@ public class ACAPHandler extends AmmoWeaponHandler {
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
-        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
@@ -100,6 +100,20 @@ public class ACAPHandler extends AmmoWeaponHandler {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
         hit.setGeneralDamageType(generalDamageType);
+        if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
+                .getCover(), Compute.targetSideTable(ae, entityTarget))) {
+            // Weapon strikes Partial Cover.
+            Report r = new Report(3460);
+            r.subject = subjectId;
+            r.add(entityTarget.getShortName());
+            r.add(entityTarget.getLocationAbbr(hit));
+            r.newlines = 0;
+            r.indent(2);
+            vPhaseReport.addElement(r);
+            nDamage = 0;
+            missed = true;
+            return;
+        }
 
         // Each hit in the salvo get's its own hit location.
         r = new Report(3405);
@@ -116,7 +130,7 @@ public class ACAPHandler extends AmmoWeaponHandler {
         }
         // Resolve damage normally.
         nDamage = nDamPerHit * Math.min(nCluster, hits);
-        if ( bDirect && (!(target instanceof Infantry) || target instanceof BattleArmor) ){
+        if ( bDirect && (!(target instanceof Infantry) || (target instanceof BattleArmor)) ){
             hit.makeDirectBlow(toHit.getMoS()/3);
         }
 

@@ -4229,7 +4229,7 @@ public abstract class Mech extends Entity implements Serializable {
                 } else if (isNullSigActive() && !isInfantry) {
                     result = new TargetRoll(1, "null-sig");
                     if (isChameleonShieldActive()) {
-                        result.addModifier(0, "chameleon");
+                        result.addModifier(1, "chameleon");
                     }
                 } else if (isChameleonShieldActive()) {
                     result = new TargetRoll(1, "chameleon");

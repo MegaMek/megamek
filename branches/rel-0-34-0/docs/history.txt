@@ -3,6 +3,12 @@
 v0.34.9-dev (SVN)
 + Bug 2585799: Pilot damage assigned to vehicle crew
 + Bug: NPE when DFAing a VTOL off the board
++ Bug: AC AP ammo still doing crits against partial cover
++ Fix potential report filtering issue
++ Bug 2871000: Chameleon LPS gives wrong mod at medium range when used with
+   Null-Sig.
++ Bug 2874785: ATMs doing only 1 damage against infantry
++ Bug 2879004: NPE in deploymentdisplay
 
 v0.34.8 (2009-08-17, 15:23 UTC+2)
 + Bug: Mechdisplay not remembering which ammo was selected

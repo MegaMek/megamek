@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.client.ui.swing;
@@ -46,7 +46,7 @@ import megamek.common.event.GameTurnChangeEvent;
 public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         DoneButtoned, KeyListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -430925219438520710L;
 
@@ -186,7 +186,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         // FIXME: Hack alert: remove C3 sprites from earlier here, or we might crash when
         // trying to draw a c3 sprite belonging to the previously selected,
         // but not deployed entity. BoardView1 should take care of that itself.
-        if (clientgui.bv instanceof BoardView1) ((BoardView1)clientgui.bv).clearC3Networks();
+        if (clientgui.bv instanceof BoardView1) {
+            ((BoardView1)clientgui.bv).clearC3Networks();
+        }
         cen = en;
         clientgui.setSelectedEntityNum(en);
         setTurnEnabled(true);
@@ -274,8 +276,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         // end my turn, then.
         disableButtons();
         Entity next = client.game.getNextEntity(client.game.getTurnIndex());
-        if (IGame.Phase.PHASE_DEPLOYMENT == client.game.getPhase() && null != next
-                && null != ce() && next.getOwnerId() != ce().getOwnerId()) {
+        if ((IGame.Phase.PHASE_DEPLOYMENT == client.game.getPhase()) && (null != next)
+                && (null != ce()) && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.setDisplayVisible(false);
         }
         cen = Entity.NONE;
@@ -353,7 +355,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
 
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-        DeploymentDisplay.this.clientgui.bv.markDeploymentHexesFor(null);
+        clientgui.bv.markDeploymentHexesFor(null);
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -378,15 +380,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         }
 
         // ignore buttons other than 1
-        if (!client.isMyTurn() || ce() == null
-                || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || (ce() == null)
+                || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
             return;
         }
 
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0
-                || (b.getModifiers() & InputEvent.ALT_MASK) != 0) {
+        if (((b.getModifiers() & InputEvent.CTRL_MASK) != 0)
+                || ((b.getModifiers() & InputEvent.ALT_MASK) != 0)) {
             return;
         }
 
@@ -395,7 +397,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
 
         // check for a deployment
         Coords moveto = b.getCoords();
-        if (ce().getPosition() != null && (shiftheld || turnMode)) { // turn
+        if ((ce().getPosition() != null) && (shiftheld || turnMode)) { // turn
             ce().setFacing(ce().getPosition().direction(moveto));
             ce().setSecondaryFacing(ce().getFacing());
             clientgui.bv.redrawEntity(ce());
@@ -420,8 +422,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                                             "DeploymentDisplay.cantDeployInto", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
                             , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             return;
-        } else if(ce() instanceof Aero && client.game.getBoard().inAtmosphere() && 
-                ce().getElevation() <= client.game.getBoard().getHex(moveto).ceiling()) {
+        } else if((ce() instanceof Aero) && client.game.getBoard().inAtmosphere() &&
+                (ce().getElevation() <= client.game.getBoard().getHex(moveto).ceiling())) {
             //make sure aeros don't end up at a lower elevation than the current hex
             JOptionPane
             .showMessageDialog(
@@ -450,8 +452,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         if (isIgnoringEvents()) {
             return;
         }
-        if (statusBarActionPerformed(ev, client))
+        if (statusBarActionPerformed(ev, client)) {
             return;
+        }
         if (!client.isMyTurn()) {
             // odd...
             return;
@@ -480,7 +483,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
             Entity other;
             while (entities.hasMoreElements()) {
                 other = entities.nextElement();
-                if (other.isSelectableThisTurn() && ce().canLoad(other)) {
+                if (other.isSelectableThisTurn() && (ce() != null) && ce().canLoad(other)) {
                     choices.addElement(other);
                 }
             }
@@ -669,7 +672,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Retrieve the "Done" button of this object.
-     * 
+     *
      * @return the <code>javax.swing.JButton</code> that activates this
      *         object's "Done" action.
      */

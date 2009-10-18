@@ -48,7 +48,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.35.8-dev"; //$NON-NLS-1$
+    public static String VERSION = "0.35.8"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory() + File.separator
             + "timestamp").lastModified(); //$NON-NLS-1$
 
@@ -105,7 +105,7 @@ public class MegaMek {
     /**
      * This function returns the memory used in the heap (heap memory - free
      * memory).
-     * 
+     *
      * @return memory used in kB
      */
     public static String getMemoryUsed() {
@@ -118,7 +118,7 @@ public class MegaMek {
     /**
      * This function redirects the standard error and output streams to the
      * given File name.
-     * 
+     *
      * @param logFileName
      *            The file name to redirect to.
      */
@@ -144,7 +144,7 @@ public class MegaMek {
      * Starts a dedicated server with the arguments in args. See
      * {@link megamek.server.DedicatedServer#start(String[])} for more
      * information.
-     * 
+     *
      * @param args
      *            the arguments to the dedicated server.
      */
@@ -158,7 +158,7 @@ public class MegaMek {
     /**
      * Attempts to start the GUI with the given name. If the GUI is unknown the
      * program will exit.
-     * 
+     *
      * @param guiName
      *            The name of the GUI, usually AWT or swing
      * @param args
@@ -181,7 +181,7 @@ public class MegaMek {
 
     /**
      * Return the Interface to the GUI specified by the name in guiName.
-     * 
+     *
      * @param guiName
      *            the name of the GUI, will be passed on to
      *            {@link #getGUIClassName(String)}.
@@ -225,7 +225,7 @@ public class MegaMek {
     /**
      * This function appends 'agrs: []', to the buffer, with a space separated
      * list of args[] elements between the brackets.
-     * 
+     *
      * @param buffer
      *            the buffer to append the list to.
      * @param args
@@ -246,7 +246,7 @@ public class MegaMek {
 
     /**
      * Prints the message to stdout and then exits with errorcode 1.
-     * 
+     *
      * @param message
      *            the message to be displayed.
      */
@@ -257,7 +257,7 @@ public class MegaMek {
 
     /**
      * Prints the message and flushes the output stream.
-     * 
+     *
      * @param message
      */
     private static void displayMessage(String message) {
@@ -290,7 +290,7 @@ public class MegaMek {
 
     /**
      * Returns the version of Megamek
-     * 
+     *
      * @return the version of Megamek as a string.
      */
     public static String getVersion() {
@@ -323,7 +323,7 @@ public class MegaMek {
 
         /**
          * Returns <code>true</code> if the dedicated server option was found
-         * 
+         *
          * @return true iff this is a dedicated server.
          */
         public boolean dedicatedServer() {
@@ -333,7 +333,7 @@ public class MegaMek {
         /**
          * Returns the GUI Name option value or <code>null</code> if it wasn't
          * set
-         * 
+         *
          * @return GUI Name option value or <code>null</code> if it wasn't set
          */
         public String getGuiName() {
@@ -343,7 +343,7 @@ public class MegaMek {
         /**
          * Returns the log file name option value or <code>null</code> if it
          * wasn't set
-         * 
+         *
          * @return the log file name option value or <code>null</code> if it
          *         wasn't set
          */
@@ -353,7 +353,7 @@ public class MegaMek {
 
         /**
          * Returns the the <code>array</code> of the unprocessed arguments
-         * 
+         *
          * @return the the <code>array</code> of the unprocessed arguments
          */
         public String[] getRestArgs() {

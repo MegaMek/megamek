@@ -294,12 +294,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (!bMissed) {
             if (!isFlak) {
                 r = new Report(3190);
-                game.getBoard().addSpecialHexDisplay(
-                        targetPos,
-                        new SpecialHexDisplay(
-                                SpecialHexDisplay.Type.ARTILLERY_HIT,
-                                game.getRoundCount(),
-                                "Artilery Hit. Better text later."));
             } else {
                 r = new Report(3191);
             }

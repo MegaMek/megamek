@@ -34,6 +34,7 @@ v0.35.8-dev (SVN)
 + Bug 2838198: BA and Infantry BVs no longer affected by Anti-Mech skill if anti-mech flag is not set
 + Bug 2881020: NPE when using searchlights
 + RFE: Combine weapon added.
++ Bug: Artillery special graphic shown on location of firing unit, not on target hex
 
 v0.35.7 (2009-09-19, 01:36 UTC+2)
 + ejected status read to and loaded from MUL

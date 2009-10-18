@@ -35,6 +35,7 @@ v0.35.8-dev (SVN)
 + Bug 2881020: NPE when using searchlights
 + RFE: Combine weapon added.
 + Bug: Artillery special graphic shown on location of firing unit, not on target hex
++ Bug 2881408: Bot trying DFA attacks with infantry units
 
 v0.35.7 (2009-09-19, 01:36 UTC+2)
 + ejected status read to and loaded from MUL

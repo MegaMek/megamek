@@ -2,14 +2,14 @@
  * MegaMek -
  * Copyright (C) 2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -241,20 +241,23 @@ public class MoveOption extends MovePath {
             if (getEntity().canCharge()) {
                 return false;
             }
+            if (!getEntity().canDFA()) {
+                return false;
+            }
         } else {
             if (getEntity().canDFA()) {
                 return false;
             }
         }
         boolean isClan = getEntity().isClan();
-        if (last == null
-                || last.getMovementType() == IEntityMovementType.MOVE_ILLEGAL) {
+        if ((last == null)
+                || (last.getMovementType() == IEntityMovementType.MOVE_ILLEGAL)) {
             return false;
         }
-        if (last.getType() != STEP_FORWARDS
+        if ((last.getType() != STEP_FORWARDS)
                 || (isClan
-                        && game.getOptions().booleanOption("no_clan_physical") && getEntity()
-                        .getSwarmAttackerId() == Entity.NONE)) {
+                        && game.getOptions().booleanOption("no_clan_physical") && (getEntity()
+                        .getSwarmAttackerId() == Entity.NONE))) {
             return false;
         }
         Enumeration<Entity> e = game.getEntities(last.getPosition());
@@ -329,17 +332,17 @@ public class MoveOption extends MovePath {
         toHitd.append(Compute.getAttackerTerrainModifier(game, te.getId()));
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
-        if (attHex.containsTerrain(Terrains.WATER) && attHex.surface() > attEl) {
+        if (attHex.containsTerrain(Terrains.WATER) && (attHex.surface() > attEl)) {
             toHita.addModifier(TargetRoll.IMPOSSIBLE,
                     "Attacker in depth 2+ water");
             toHitd.addModifier(TargetRoll.IMPOSSIBLE,
                     "Defender in depth 2+ water");
-        } else if (attHex.surface() == attEl && ae.height() > 0) {
+        } else if ((attHex.surface() == attEl) && (ae.height() > 0)) {
             apc = true;
         }
         IHex targHex = game.getBoard().getHex(te.getPosition());
         if (targHex.containsTerrain(Terrains.WATER)) {
-            if (targHex.surface() == targEl && te.height() > 0) {
+            if ((targHex.surface() == targEl) && (te.height() > 0)) {
                 pc = true;
             } else if (targHex.surface() > targEl) {
                 toHita.addModifier(TargetRoll.IMPOSSIBLE,
@@ -430,7 +433,7 @@ public class MoveOption extends MovePath {
             temp_threat += centity.entity.getWeight();
         }
         double retVal = temp_threat - temp_damage;
-        
+
         List<TargetRoll> psrList = SharedUtility.getPSRList(this);
         for (TargetRoll roll : psrList) {
             double multiple = Compute.oddsAbove(roll.getValue())/100;
@@ -488,12 +491,12 @@ public class MoveOption extends MovePath {
         // TODO this is not quite right, but good enough for now...
         // ideally the pa charaterization should be in centity
         max *= mod;
-        if (!enemy.getFinalProne() && distance == 1
-                && enemy_firing_arcs[0] != ToHitData.SIDE_REAR) {
+        if (!enemy.getFinalProne() && (distance == 1)
+                && (enemy_firing_arcs[0] != ToHitData.SIDE_REAR)) {
             IHex h = game.getBoard().getHex(getFinalCoords());
             IHex h1 = game.getBoard().getHex(enemy.getFinalCoords());
             if (Math.abs(h.getElevation() - h1.getElevation()) < 2) {
-                max += ((h1.getElevation() - h.getElevation() == 1 || getFinalProne()) ? 5
+                max += (((h1.getElevation() - h.getElevation() == 1) || getFinalProne()) ? 5
                         : 1)
                         * ((enemy_firing_arcs[0] == ToHitData.SIDE_FRONT) ? .2
                                 : .05)
@@ -509,7 +512,7 @@ public class MoveOption extends MovePath {
 
     public DamageInfo getDamageInfo(CEntity cen, boolean create) {
         DamageInfo result = damageInfos.get(cen);
-        if (create && result == null) {
+        if (create && (result == null)) {
             result = new DamageInfo();
             damageInfos.put(cen, result);
         }

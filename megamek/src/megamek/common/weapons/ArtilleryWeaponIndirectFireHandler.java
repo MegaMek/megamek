@@ -131,7 +131,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return true;
         }
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();
-        final Coords targetPos = target.getPosition();
+        Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
         boolean isFlak = (target instanceof VTOL) || (target instanceof Aero);
         boolean asfFlak = target instanceof Aero;
@@ -291,12 +291,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (!handledAmmoAndReport) {
             addHeat();
         }
-        Coords coords = target.getPosition();
         if (!bMissed) {
             if (!isFlak) {
                 r = new Report(3190);
                 game.getBoard().addSpecialHexDisplay(
-                        aaa.getCoords(),
+                        targetPos,
                         new SpecialHexDisplay(
                                 SpecialHexDisplay.Type.ARTILLERY_HIT,
                                 game.getRoundCount(),
@@ -305,7 +304,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 r = new Report(3191);
             }
             r.subject = subjectId;
-            r.add(coords.getBoardNum());
+            r.add(targetPos.getBoardNum());
             vPhaseReport.addElement(r);
 
             game.getBoard().addSpecialHexDisplay(targetPos,
@@ -318,16 +317,16 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // we do this here to avoid duplicating handle()
             // in the ArtilleryWeaponDirectFireHandler
             if (phase == IGame.Phase.PHASE_FIRING) {
-                coords = Compute.scatterDirectArty(coords);
+                targetPos = Compute.scatterDirectArty(targetPos);
             } else {
-                coords = Compute.scatter(coords, Math.abs(toHit.getMoS()));
+                targetPos = Compute.scatter(targetPos, Math.abs(toHit.getMoS()));
             }
-            if (game.getBoard().contains(coords)) {
+            if (game.getBoard().contains(targetPos)) {
                 // misses and scatters to another hex
                 if (!isFlak) {
                     r = new Report(3195);
                     game.getBoard().addSpecialHexDisplay(
-                        coords,
+                        targetPos,
                         new SpecialHexDisplay(
                                 SpecialHexDisplay.Type.ARTILLERY_HIT,
                                 game.getRoundCount(),
@@ -338,7 +337,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     r = new Report(3192);
                 }
                 r.subject = subjectId;
-                r.add(coords.getBoardNum());
+                r.add(targetPos.getBoardNum());
                 vPhaseReport.addElement(r);
             } else {
                 // misses and scatters off-board
@@ -364,29 +363,29 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             } else {
                 radius = 1;
             }
-            server.deliverArtilleryFlare(coords, radius);
+            server.deliverArtilleryFlare(targetPos, radius);
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
             // The appropriate term here is "Bwahahahahaha..."
-            server.doNuclearExplosion(coords, 1, vPhaseReport);
+            server.doNuclearExplosion(targetPos, 1, vPhaseReport);
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_FASCAM) {
-            server.deliverFASCAMMinefield(coords, ae.getOwner().getId(), atype.getRackSize(), ae.getId());
+            server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(), atype.getRackSize(), ae.getId());
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
-            server.deliverArtilleryInferno(coords, ae, subjectId, vPhaseReport);
+            server.deliverArtilleryInferno(targetPos, ae, subjectId, vPhaseReport);
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
-            server.deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
+            server.deliverThunderVibraMinefield(targetPos, ae.getOwner().getId(),
                     atype.getRackSize(), waa.getOtherAttackInfo(), ae.getId());
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_SMOKE) {
-            server.deliverArtillerySmoke(coords, vPhaseReport);
+            server.deliverArtillerySmoke(targetPos, vPhaseReport);
             return false;
         }
         int altitude = 0;
@@ -397,14 +396,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         //check to see if this is a mine clearing attack
         //According to the RAW you have to hit the right hex to hit even if the scatter hex has minefields
         boolean mineClear = target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR;
-        if (mineClear && game.containsMinefield(coords)
+        if (mineClear && game.containsMinefield(targetPos)
                 && !isFlak && !bMissed) {
             r = new Report(3255);
             r.indent(1);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
 
-            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
+            Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
             ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
@@ -418,12 +417,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             }
         }
 
-        server.artilleryDamageArea(coords, ae.getPosition(), atype,
+        server.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
                 subjectId, ae, isFlak, altitude, mineClear, vPhaseReport, asfFlak);
 
         //artillery may unintentially clear minefields, but only if it wasn't trying to
-        if(!mineClear && game.containsMinefield(coords)) {
-            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
+        if(!mineClear && game.containsMinefield(targetPos)) {
+            Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
             ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();

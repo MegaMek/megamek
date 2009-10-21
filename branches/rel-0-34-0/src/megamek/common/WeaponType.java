@@ -633,6 +633,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLStreakLRM10OS());
         EquipmentType.addType(new CLStreakLRM15OS());
         EquipmentType.addType(new CLStreakLRM20OS());
+        EquipmentType.addType(new ISExtendedLRM5());
+        EquipmentType.addType(new ISExtendedLRM10());
+        EquipmentType.addType(new ISExtendedLRM15());
+        EquipmentType.addType(new ISExtendedLRM20());
         // LRTs
         EquipmentType.addType(new ISLRT5());
         EquipmentType.addType(new ISLRT10());

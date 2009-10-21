@@ -40,6 +40,7 @@ public class ISPPC extends PPCWeapon {
         techLevel = TechConstants.T_INTRO_BOXSET;
         name = "PPC";
         setInternalName(name);
+        addLookupName("Particle Cannon");
         addLookupName("IS PPC");
         addLookupName("ISPPC");
         heat = 10;

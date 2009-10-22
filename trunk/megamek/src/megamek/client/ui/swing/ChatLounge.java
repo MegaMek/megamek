@@ -28,6 +28,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -60,6 +62,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -759,6 +762,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         tableEntities.setModel(mekModel);   
         tableEntities.setRowHeight(80);
         tableEntities.setIntercellSpacing(new Dimension(0,0));
+        tableEntities.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         TableColumn column = null;
         for (int i = 0; i < MekTableModel.N_COL; i++) {
             tableEntities.getColumnModel().getColumn(i).setCellRenderer(mekModel.getRenderer());
@@ -774,6 +778,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
         }
         tableEntities.addMouseListener(new MekTableMouseAdapter());
+        tableEntities.addKeyListener(new MekTableKeyAdapter());
         tableEntities.getSelectionModel().addListSelectionListener(this);
         scrEntities = new JScrollPane(tableEntities);
         scrEntities
@@ -2309,6 +2314,51 @@ public static String formatUnitTooltip(Entity entity) {
                 }
             }
 
+        }
+    }
+    
+    public class MekTableKeyAdapter extends KeyAdapter {
+        
+        public void keyPressed(KeyEvent e) { 
+            int row = tableEntities.getSelectedRow(); 
+            if(row == -1) {
+                return;
+            }
+            Entity entity = mekModel.getEntityAt(row);
+            int code = e.getKeyCode();      
+            if (code == KeyEvent.VK_DELETE || code == KeyEvent.VK_BACK_SPACE) {                
+                e.consume();
+                Client c = clientgui.getBots().get(entity.getOwner().getName());
+                if (c == null) {
+                    c = clientgui.getClient();
+                }
+                c.sendDeleteEntity(entity.getId());
+            }
+            else if(code == KeyEvent.VK_SPACE) {
+                e.consume();
+                mechReadout(entity);
+            }
+            else if(code == KeyEvent.VK_ENTER) {
+                e.consume();
+                customizeMech(entity);
+            }
+        }
+        
+        public void keyTyped(KeyEvent e) {
+            int row = tableEntities.getSelectedRow(); 
+            if(row == -1) {
+                return;
+            }
+            Entity entity = mekModel.getEntityAt(row);
+            char typed = e.getKeyChar();
+            if(String.valueOf(typed).equals("v") || String.valueOf(typed).equals("V")) {
+                e.consume();
+                mechReadout(entity);
+            }
+            else if(String.valueOf(typed).equals("c") || String.valueOf(typed).equals("C")) {
+                e.consume();
+                customizeMech(entity);
+            }
         }
     }
     

@@ -330,9 +330,15 @@ public class PortraitChoiceDialog extends JDialog implements
     }
 
     Icon generateIcon(String cat, String item) {
-        if((null == cat) || (null == item) || Pilot.PORTRAIT_NONE.equals(item)) {
+        if((null == cat) || (null == item)) {
             return null;
         }
+        
+        String actualItem = item;
+        if (Pilot.PORTRAIT_NONE.equals(actualItem)) {
+            actualItem = "default.gif"; //$NON-NLS-1$
+        }
+        
         String actualCat = cat;
         // Replace the ROOT_PORTRAIT string with "".
         if (Pilot.ROOT_PORTRAIT.equals(actualCat)) {
@@ -342,7 +348,7 @@ public class PortraitChoiceDialog extends JDialog implements
         //an actual portrait
         try {
             // We need to copy the image to make it appear.
-            Image image = (Image) portraits.getItem(actualCat, item);
+            Image image = (Image) portraits.getItem(actualCat, actualItem);
             image = image.getScaledInstance(-1, 72, Image.SCALE_DEFAULT);
             return new ImageIcon(image);
         } catch (Exception err) {

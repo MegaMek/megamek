@@ -1773,6 +1773,7 @@ public static String formatUnitTooltip(Entity entity) {
         refreshStarts();
         refreshCamos();
         refreshMinefield();
+        refreshEntities();
     }
 
     @Override
@@ -2259,7 +2260,7 @@ public static String formatUnitTooltip(Entity entity) {
                     }
                 } else {
                     if(column == COL_UNIT) {
-                        clientgui.loadPreviewImage(this.getLabel(), entity, entity.getOwner());
+                        clientgui.loadPreviewImage(this.getLabel(), entity);
                         setToolTipText(formatUnitTooltip(entity));
                     }
                     else if(column == COL_PILOT) {

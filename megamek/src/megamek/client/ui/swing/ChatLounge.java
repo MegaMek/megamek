@@ -1013,6 +1013,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         
         Collections.sort(allEntities, new Comparator<Entity>() {
             public int compare(final Entity a, final Entity b) {
+                //FIXME: this is not working right because the team is not always correctly updated
+                //for the player retrieved from getOwner()
                 final Player p_a = a.getOwner();
                 final Player p_b = b.getOwner();
                 final int t_a = p_a.getTeam();
@@ -2218,7 +2220,8 @@ public static String formatUnitTooltip(Entity entity) {
                 value += entity.calculateBattleValue();
             }
             else if(col == COL_PLAYER) {
-                value += entity.getOwner().getName() + "<br>Team " + getEntityAt(row).getOwner().getTeam();
+                //FIXME: I don't know why the commented-out method is not working, but it does not update properly
+                value += entity.getOwner().getName() + "<br>Team " +  clientgui.getClient().game.getPlayer(entity.getOwnerId()).getTeam();//getEntityAt(row).getOwner().getTeam();
             } 
             else if(col == COL_PILOT) {
                 return formatPilotHTML(entity.crew, blindDrop);

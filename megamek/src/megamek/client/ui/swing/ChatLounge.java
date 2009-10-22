@@ -1013,10 +1013,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         
         Collections.sort(allEntities, new Comparator<Entity>() {
             public int compare(final Entity a, final Entity b) {
-                //FIXME: this is not working right because the team is not always correctly updated
-                //for the player retrieved from getOwner()
-                final Player p_a = a.getOwner();
-                final Player p_b = b.getOwner();
+                //entity.getOwner() does not work properly because teams are not updated for 
+                //entities when the user switches teams
+                final Player p_a = clientgui.getClient().game.getPlayer(a.getOwnerId());//a.getOwner();
+                final Player p_b = clientgui.getClient().game.getPlayer(b.getOwnerId());//b.getOwner();
                 final int t_a = p_a.getTeam();
                 final int t_b = p_b.getTeam();
                 if (p_a.equals(clientgui.getClient().getLocalPlayer())

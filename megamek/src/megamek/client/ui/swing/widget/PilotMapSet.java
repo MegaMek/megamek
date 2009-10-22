@@ -313,13 +313,17 @@ public class PilotMapSet implements DisplayMapSet {
         String category = pilot.getPortraitCategory();
         String file = pilot.getPortraitFileName();
 
+        // Return a null if the player has selected no portrait file.
+        if ((null == category) || (null == file)) {
+            return null;
+        }
+        
+        if (Pilot.PORTRAIT_NONE.equals(file)) {
+            file = "default.gif"; //$NON-NLS-1$
+        }
+        
         if(Pilot.ROOT_PORTRAIT.equals(category)) {
             category = "";
-        }
-
-        // Return a null if the player has selected no portrait file.
-        if ((null == category) || (null == file) || Pilot.PORTRAIT_NONE.equals(file)) {
-            return null;
         }
 
         // Try to get the player's portrait file.

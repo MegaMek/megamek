@@ -14,42 +14,37 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.DefaultListModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.JTable;
+import javax.swing.event.MouseInputAdapter;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
@@ -68,62 +63,26 @@ import megamek.common.util.DirectoryItems;
  * @author James Damour
  * @version 1
  */
-public class CamoChoiceDialog extends JDialog implements 
-        ListSelectionListener {
+public class CamoChoiceDialog extends JDialog {
 
     private static final long serialVersionUID = 9220162367683378065L;
 
-    /**
-     * The parent <code>Frame</code> of this dialog.
-     */
     private JFrame frame;
-
-    /**
-     * The categorized camo patterns.
-     */
     private DirectoryItems camos;
-
-    /**
-     * The menu containing the category names.
-     */
-    JComboBox categories;
-
-    /**
-     * The list containing the item names.
-     */
-    JList items;
-    private JScrollPane scrItems;
-
-    /**
-     * The "keep old camo" button.
-     */
-    private JButton keep;
-
-    /**
-     * The "select new camo" button.
-     */
-    JButton select;
-
-    /**
-     * The button that launched this dialog
-     */
+    private JScrollPane scrCamo;
     JButton sourceButton;
-
-    /**
-     * The previously selected category.
-     */
-    String prevCat;
-
-    /**
-     * The previously selected item.
-     */
-    String prevItem;
-
-    /**
-     * Player that is changing his pants
-     */
-    Player player;
-
+    private JButton btnCancel;
+    private JButton btnSelect;
+    private JComboBox comboCategories;
+    private CamoTableModel camoModel;
+    private CamoTableMouseAdapter camoMouseAdapter;
+    private JTable tableCamo;
+  
+    String category;
+    String filename;
+    private int colorIndex;
+    private Player player;
+    
     /**
      * Create a dialog that allows players to choose a camo pattern.
      * 
@@ -133,14 +92,9 @@ public class CamoChoiceDialog extends JDialog implements
     public CamoChoiceDialog(JFrame parent, JButton button) {
 
         // Initialize our superclass and record our parent frame.
-        super(parent, Messages
-                .getString("CamoChoiceDialog.select_camo_pattern"), true); //$NON-NLS-1$
+        super(parent, Messages.getString("CamoChoiceDialog.select_camo_pattern"), true); //$NON-NLS-1$
         frame = parent;
         sourceButton = button;
-
-        // Declare local variables.
-        Iterator<String> names;
-        String name;
 
         // Parse the camo directory.
         try {
@@ -149,217 +103,180 @@ public class CamoChoiceDialog extends JDialog implements
         } catch (Exception e) {
             camos = null;
         }
-
-        // Use a border layout.
-        getContentPane().setLayout(new BorderLayout());
-
-        // Create a pulldown menu for the categories.
-        JPanel panel = new JPanel();
-        getContentPane().add(panel, BorderLayout.NORTH);
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints layout = new GridBagConstraints();
-        layout.anchor = GridBagConstraints.CENTER;
-        categories = new JComboBox();
-        panel.add(categories, layout);
-
-        // Fill the pulldown. Include the "no camo" category.
-        // Make sure the "no camo" and "root camo" are at top.
-        // Only add the "root camo" category if it contains items.
-        categories.addItem(Player.NO_CAMO);
+        
+        category = Player.ROOT_CAMO;
+        filename = Player.NO_CAMO;
+        colorIndex = -1;
+        
+        scrCamo = new JScrollPane();
+        tableCamo = new JTable();
+        camoModel = new CamoTableModel();
+        camoMouseAdapter = new CamoTableMouseAdapter();
+        tableCamo.setModel(camoModel);
+        tableCamo.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tableCamo.setRowHeight(76);
+        tableCamo.getColumnModel().getColumn(0).setCellRenderer(camoModel.getRenderer());
+        tableCamo.addMouseListener(camoMouseAdapter);
+        scrCamo.setViewportView(tableCamo);
+        
+        comboCategories = new JComboBox();
+        DefaultComboBoxModel categoryModel = new DefaultComboBoxModel();
+        categoryModel.addElement(Player.NO_CAMO);
         if (camos != null) {
             if (camos.getItemNames("").hasNext()) { //$NON-NLS-1$
-                categories.addItem(Player.ROOT_CAMO);
+                categoryModel.addElement(Player.ROOT_CAMO);
             }
-            names = camos.getCategoryNames();
+            Iterator<String> names = camos.getCategoryNames();
             while (names.hasNext()) {
-                name = names.next();
+                String name = names.next();
                 if (!"".equals(name)) { //$NON-NLS-1$
-                    categories.addItem(name);
+                    categoryModel.addElement(name);
                 }
             }
         }
-
-        // Refill the item list when a new category is selected.
-        // Make sure that the "select new camo" button is updated.
-        categories.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == ItemEvent.SELECTED) {
-                    fillList((String) event.getItem());
-                    updateButton();
-                }
+        comboCategories.setModel(categoryModel);
+        comboCategories.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent evt) {
+                comboCategoriesItemStateChanged(evt);
             }
         });
-
-        // Create a list to hold the items in the category.
-        items = new JList(new DefaultListModel());
-        scrItems = new JScrollPane(items);
-        scrItems
-                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        getContentPane().add(scrItems);
-
-        // Update the "select new camo" when an item is selected.
-        items.addListSelectionListener(this);
-        items.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        // Create a panel to hold our buttons.
-        // Use a grid bag layout.
-        panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        getContentPane().add(panel, BorderLayout.EAST);
-        layout = new GridBagConstraints();
-        layout.anchor = GridBagConstraints.EAST;
-        layout.gridx = 0;
-        layout.gridy = 0;
-        layout.gridwidth = 1;
-        layout.gridheight = 1;
-        layout.fill = GridBagConstraints.NONE;
-        layout.ipadx = 4;
-        layout.ipady = 4;
-        layout.weightx = 0.0;
-        layout.weighty = 0.0;
-
-        // Add a "spacer" label to push everything else to the bottom.
-        layout.weighty = 1.0;
-        panel.add(new JLabel(), layout);
-        layout.weighty = 0.0;
-        layout.gridy++;
-
-        // Add a label for the "keep old camo" button.
-        panel.add(new JLabel(Messages
-                .getString("CamoChoiceDialog.keep_old_camo")), layout); //$NON-NLS-1$
-        layout.gridy++;
-
-        // Create the "keep old camo" button.
-        keep = new JButton();
-        keep.setPreferredSize(new Dimension(84, 72));
-        InputMap inputMap = getRootPane().getInputMap(
-                JComponent.WHEN_IN_FOCUSED_WINDOW);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
-                "Keep");
-
-        ActionMap actionMap = getRootPane().getActionMap();
-        Action keepAction = new AbstractAction() {
-            private static final long serialVersionUID = 2096792571263188573L;
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
+        
+        btnSelect = new JButton();
+        btnSelect.setText(Messages.getString("CamoChoiceDialog.Select"));
+        btnSelect.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                select();
             }
-        };
-        actionMap.put("Keep", keepAction);
-        keep.setAction(keepAction);
-
-        panel.add(keep, layout);
-        layout.gridy++;
-
-        // Add a label for the "select new camo" button.
-        panel.add(new JLabel(Messages
-                .getString("CamoChoiceDialog.select_new_camo")), layout); //$NON-NLS-1$
-        layout.gridy++;
-
-        // Create the "select new camo" button.
-        select = new JButton();
-        select.setPreferredSize(new Dimension(84, 72));
-        panel.add(select, layout);
-
-        // Fire the "select new camo" action when the enter key is pressed
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false),
-                "Accept");
-
-        Action acceptAction = new AbstractAction() {
-            private static final long serialVersionUID = 402810917672002505L;
-            public void actionPerformed(ActionEvent e) {
-                // Did the worker change their selection?
-                String curCat = (String) categories.getSelectedItem();
-                String curItem = (String) items.getSelectedValue();
-                if (!curCat.equals(prevCat) || !curItem.equals(prevItem)) {
-
-                    // Save the new values.
-                    setPrevSelection(curCat, curItem);
-
-                    // Update the local player's camo info.
-                    player.setCamoCategory(prevCat);
-                    if (Player.NO_CAMO.equals(prevCat)) {
-                        player.setColorIndex(items.getSelectedIndex());
-                        player.setCamoFileName(prevItem);
-                    } else {
-                        player.setCamoFileName(prevItem);
-                    }
-                    sourceButton.setIcon(generateIcon(prevCat, prevItem));
-                    
-                } // End selection-changed
-
-                // Now exit.
-                setVisible(false);
+        });
+        
+        btnCancel = new JButton();
+        btnCancel.setText(Messages.getString("CamoChoiceDialog.Cancel"));
+        btnCancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                cancel();
             }
-        };
+        });
+   
+        //set layout
+        setLayout(new GridBagLayout());
+        GridBagConstraints c;
 
-        actionMap.put("Accept", acceptAction);
-        select.setAction(acceptAction);
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 2;
+        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        add(scrCamo, c);
 
-        // Fill the item list with the colors.
-        fillList(Player.NO_CAMO);
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 2;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weightx = 1.0;
+        getContentPane().add(comboCategories, c);
 
-        // Perform the initial layout.
+        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 2;
+        c.weightx = 0.5;
+        getContentPane().add(btnSelect, c);
+
+        
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 2;
+        c.weightx = 0.5;
+        getContentPane().add(btnCancel, c);
+
         pack();
     }
     
-    /**
-     * A helper function to fill the list with items in the selected category.
-     * 
-     * @param category
-     *            - the <code>String</code> name of the category whose items
-     *            should be displayed.
-     */
-    void fillList(String category) {
+    private void cancel() {                                          
+        setVisible(false);
+    }                                         
 
-        // Clear the list of items.
-        ((DefaultListModel) items.getModel()).removeAllElements();
-
-        // If this is the "no camos" category, then
-        // fill the item list with the colors.
-        if (Player.NO_CAMO.equals(category)) {
-            for (String color : Player.colorNames) {
-                ((DefaultListModel) items.getModel()).addElement(color);
-            }
+    private void select() {                                          
+        category = camoModel.getCategory();
+        if(category.equals(Player.NO_CAMO)) {
+            colorIndex = tableCamo.getSelectedRow();
         }
-
-        // Otherwise, fill the list with the camo names.
-        else {
-
-            // Translate the "root camo" category name.
-            Iterator<String> camoNames;
-            if (Player.ROOT_CAMO.equals(category)) {
-                camoNames = camos.getItemNames(""); //$NON-NLS-1$
-            } else {
-                camoNames = camos.getItemNames(category);
-            }
-
-            // Get the camo names for this category.
-            while (camoNames.hasNext()) {
-                ((DefaultListModel) items.getModel()).addElement(camoNames
-                        .next());
-            }
+        if(tableCamo.getSelectedRow() != -1) {
+            filename = (String) camoModel.getValueAt(tableCamo.getSelectedRow(), 0);
         }
-        items.setSelectedIndex(0);
+        player.setColorIndex(colorIndex);
+        player.setCamoCategory(category);
+        player.setCamoFileName(filename);
+        sourceButton.setIcon(generateIcon(category, filename));
+        setVisible(false);
+    }                                         
+
+    private void comboCategoriesItemStateChanged(ItemEvent evt) {                                                 
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            fillTable((String) evt.getItem());
+        }
+    }                                                
+
+    public String getCategory() {
+    	return category;
     }
 
-    /**
-     * A helper function to assign values for the previously selected camo. This
-     * function will also set the "keep old camo" button's image.
-     * 
-     * @param category
-     *            - the <code>String</code> category name. This value must be
-     *            one of the categories from the <code>DirectoryItems</code>.
-     * @param item
-     *            - the <code>String</code> name of the item. This value must be
-     *            one of the items in the named category from
-     *            <code>DirectoryItems</code>.
-     */
-    void setPrevSelection(String category, String item) {
-        prevCat = category;
-        prevItem = item;
-        keep.setIcon(generateIcon(prevCat, prevItem));
+    public String getFileName() {
+    	return filename;
     }
 
+    public int getColorIndex() {
+    	return colorIndex;
+    }
+
+    private void fillTable(String category) {
+    	camoModel.reset();
+    	camoModel.setCategory(category);
+    	if(Player.NO_CAMO.equals(category)) {
+    		for (String color : Player.colorNames) {
+    			camoModel.addCamo(color);
+    		}
+    	} else {
+    		// Translate the "root camo" category name.
+    		Iterator<String> camoNames;
+    		if (Player.ROOT_CAMO.equals(category)) {
+    			camoNames = camos.getItemNames(""); //$NON-NLS-1$
+    		} else {
+    			camoNames = camos.getItemNames(category);
+    		}
+
+    		// Get the camo names for this category.
+    		while (camoNames.hasNext()) {
+    			camoModel.addCamo(camoNames.next());
+    		}
+    	}
+    	if(camoModel.getRowCount() > 0) {
+    		tableCamo.setRowSelectionInterval(0, 0);
+    	}
+    }
+    
+    public void setPlayer(Player p) {
+    	player = p;
+    	colorIndex = player.getColorIndex();
+    	category = player.getCamoCategory();
+    	filename = player.getCamoFileName();
+    	sourceButton.setIcon(generateIcon(category, filename));
+    	comboCategories.getModel().setSelectedItem(category);
+    	fillTable(category);
+    	int rowIndex = 0;
+    	for(int i = 0; i < camoModel.getRowCount(); i++) {
+            if(((String) camoModel.getValueAt(i, 0)).equals(filename)) {
+                rowIndex = i;
+                break;
+            }
+        }
+        tableCamo.setRowSelectionInterval(rowIndex, rowIndex); 	
+    }
+    
     Icon generateIcon(String cat, String item) {
         String actualCat = cat;
         // Replace the ROOT_CAMO string with "".
@@ -405,123 +322,172 @@ public class CamoChoiceDialog extends JDialog implements
             return null;
         }
     }
-
-    /**
-     * Update the "select new camo" button whenever a list item is selected.
-     * <p/>
-     */
-    void updateButton() {
-        // Get the category and the item.
-        String curCat = (String) categories.getSelectedItem();
-        String curItem = (String) items.getSelectedValue();
-        if (curItem == null) {
-            //nothing selected yet
-            select.setIcon(null);
-            return;
-        }
-        select.setIcon(generateIcon(curCat, curItem));
-    }
-
-    /**
-     * Set the selected category.
-     * 
-     * @param category
-     *            - the <code>String</code> name of the desired category. This
-     *            value may be <code>null</code>. If no match is found, the
-     *            category will not change.
-     */
-    private void setCategory(String category) {
-
-        // Get the current selection.
-        String cur = (String) categories.getSelectedItem();
-
-        // Do nothing, if the request is for the selected item.
-        if (!cur.equals(category)) {
-
-            // Try to find the requested item.
-            for (int loop = 0; loop < categories.getItemCount(); loop++) {
-
-                // Did we find it?
-                if (categories.getItemAt(loop).equals(category)) {
-
-                    // Select this position.
-                    categories.setSelectedIndex(loop);
-
-                    // Fill the list.
-                    fillList(category);
-
-                    // Stop looking for the category.
-                    break;
-
-                } // End found-requested-category
-
-            } // Check the next category
-
-        } // End new-selection
-
-    }
-
-    /**
-     * Set the selected item in the currently-selected category.
-     * 
-     * @param item
-     *            - the <code>String</code> name of the desired item. This value
-     *            may be <code>null</code>. If no match is found, the item
-     *            selection will not change.
-     */
-    private void setItemName(String item) {
-
-        // Do nothing is we're passed a null.
-        if (item != null) {
-
-            // Get the current selection.
-            String cur = (String) items.getSelectedValue();
-
-            // Do nothing, if the request is for the selected item.
-            if (!item.equals(cur)) {
-                items.setSelectedValue(item, true);
-            } // End new-selection
-
-        } // End not-passed-null
-    }
-
-    /**
-     * Show the dialog. Make sure that all selections have been applied.
-     * <p/>
-     * Overrides <code>Dialog#setVisible(boolean)</code>.
-     */
-    @Override
-    public void setVisible(boolean visible) {
-
-        // Make sure the "keep" button is set correctly.
-        setPrevSelection((String) categories.getSelectedItem(), (String) items
-                .getSelectedValue());
-
-        // Make sure the "select" button is set correctly.
-        updateButton();
-
-        // Now show the dialog.
-        super.setVisible(visible);
-    }
-
-    public void valueChanged(ListSelectionEvent event) {
-        updateButton();
-    }
     
-    public void setPlayer(Player player) {
-        this.player = player;
-        if (Player.NO_CAMO.equals(player.getCamoCategory())) {
-            setCategory(Player.NO_CAMO);
-            setItemName(Player.colorNames[player.getColorIndex()]);
-            setPrevSelection(Player.NO_CAMO, Player.colorNames[player
-                    .getColorIndex()]);
-        } else {
-            setCategory(player.getCamoCategory());
-            setItemName(player.getCamoFileName());
-            setPrevSelection(player.getCamoCategory(), player.getCamoFileName());
-        }
-        if (sourceButton.isVisible()) {
-            sourceButton.setIcon(generateIcon(prevCat, prevItem));
-        }
-    }
+
+    /**
+       * A table model for displaying camos
+    */
+   public class CamoTableModel extends AbstractTableModel {
+
+	   private static final long serialVersionUID = 7298823592090412589L;
+		
+	   private String[] columnNames;
+       private String category;
+       private ArrayList<String> names;
+       private ArrayList<Image> images;
+
+       public CamoTableModel() {
+           columnNames = new String[] {"Camos"};
+           category = Player.NO_CAMO;
+           names = new ArrayList<String>();
+           images = new ArrayList<Image>();
+       }
+
+       public int getRowCount() {
+           return names.size();
+       }
+
+       public int getColumnCount() {
+           return 1;
+       }
+
+       public void reset() {
+           category = Player.NO_CAMO;
+           names = new ArrayList<String>();
+           images = new ArrayList<Image>();
+       }
+
+       @Override
+       public String getColumnName(int column) {
+           return columnNames[column];
+       }
+
+       public Object getValueAt(int row, int col) {
+           return names.get(row);
+       }
+
+       public Object getImageAt(int row) {
+           return images.get(row);
+       }
+
+       public void setCategory(String c) {
+           category = c;
+       }
+
+       public String getCategory() {
+           return category;
+       }
+
+       public void addCamo(String name) {
+           names.add(name);
+           fireTableDataChanged();
+       }
+
+       @Override
+       public Class<?> getColumnClass(int c) {
+           return getValueAt(0, c).getClass();
+       }
+
+       @Override
+       public boolean isCellEditable(int row, int col) {
+           return false;
+       }
+
+       public CamoTableModel.Renderer getRenderer() {
+           return new CamoTableModel.Renderer();
+       }
+
+
+       public class Renderer extends CamoPanel implements TableCellRenderer {
+
+	   private static final long serialVersionUID = 7483367362943393067L;
+
+	   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+               Component c = this;
+               setOpaque(true);
+               String name = getValueAt(row, column).toString();
+               setText(getValueAt(row, column).toString());
+               setImage(category, name, row);
+               if(isSelected) {
+                   setBackground(new Color(220,220,220));
+               } else {
+                   setBackground(Color.WHITE);
+               }
+
+               return c;
+           }
+      }
+   }
+   
+   public class CamoPanel extends JPanel {
+	   
+	   private static final long serialVersionUID = 6850715473654649719L;
+	   
+	   private JLabel lblImage;
+	    
+	   /** Creates new form CamoPanel */
+	   public CamoPanel() {
+		   GridBagConstraints c = new GridBagConstraints();
+		   lblImage = new JLabel();
+
+		   setLayout(new GridBagLayout());
+
+		   lblImage.setText(""); // NOI18N
+        
+		   c.gridx = 0;
+		   c.gridy = 0;
+		   c.fill = java.awt.GridBagConstraints.BOTH;
+		   c.weightx = 1.0;
+		   c.weighty = 1.0;
+		   add(lblImage, c);
+	    }
+	   
+	    public void setText(String text) {
+	        lblImage.setText(text);
+	    }
+	    
+	    public void setImage(String category, String name, int colorInd) {
+
+	        if (null == category) {
+	            return;
+	        }
+	        
+	        if(Player.NO_CAMO.equals(category)) {
+	            if (colorInd == -1) {
+	                colorInd = 0;
+	            }
+	            BufferedImage tempImage = new BufferedImage(84, 72,
+	                    BufferedImage.TYPE_INT_RGB);
+	            Graphics2D graphics = tempImage.createGraphics();
+	            graphics.setColor(PlayerColors.getColor(colorInd));
+	            graphics.fillRect(0, 0, 84, 72);
+	            lblImage.setIcon(new ImageIcon(tempImage));
+	            return;
+	        }
+
+	        // Try to get the camo file.
+	        try {
+
+	            // Translate the root camo directory name.
+	            if (Player.ROOT_CAMO.equals(category))
+	                category = ""; //$NON-NLS-1$
+	            Image camo = (Image) camos.getItem(category, name);
+	            lblImage.setIcon(new ImageIcon(camo));
+	        } catch (Exception err) {
+	            err.printStackTrace();
+	        }
+	    }              
+	}
+
+   public class CamoTableMouseAdapter extends MouseInputAdapter {
+
+       @Override
+       public void mouseClicked(MouseEvent e) {
+
+           if (e.getClickCount() == 2) {
+               select();
+           }
+       }
+   }
+
 }

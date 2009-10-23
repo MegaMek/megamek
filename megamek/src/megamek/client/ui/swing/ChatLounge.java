@@ -316,6 +316,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         scrPlayers.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         
         panPlayerInfo = new JPanel();
+        panPlayerInfo.setBorder(BorderFactory.createTitledBorder("Player Setup"));
 
         butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot")); //$NON-NLS-1$
         butAddBot.setActionCommand("add_bot"); //$NON-NLS-1$

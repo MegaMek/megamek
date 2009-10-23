@@ -14,40 +14,33 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.DefaultListModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
@@ -62,273 +55,194 @@ import megamek.common.util.DirectoryItems;
  * Created on September 17, 2009
  *
  * @author Jay Lawson
- * @version 1
+ * @version 2
  */
-public class PortraitChoiceDialog extends JDialog implements
-        ListSelectionListener {
 
-    private static final long serialVersionUID = 9220162367683378065L;
+public class PortraitChoiceDialog extends JDialog {
 
-    /**
-     * The parent <code>Frame</code> of this dialog.
-     */
-    private JFrame frame;
+	private static final long serialVersionUID = -4495461837182817406L;
+	
+	private JFrame frame;
+	private JButton sourceButton;
+	private JButton btnCancel;
+	private JButton btnSelect;
+	private JComboBox comboCategories;
+	private JScrollPane scrPortraits;
+	private JTable tablePortrait;
+	private DirectoryItems portraits;
+	private PortraitTableModel portraitModel;
+	private String category;
+	private String filename;
+	private PortraitTableMouseAdapter portraitMouseAdapter;
 
-    /**
-     * The categorized portraits.
-     */
-    private DirectoryItems portraits;
 
-    /**
-     * The menu containing the category names.
-     */
-    JComboBox categories;
+   /** Creates new form CamoChoiceDialog */
+   public PortraitChoiceDialog(JFrame parent, JButton button) {
+	   
+	// Initialize our superclass and record our parent frame.
+       super(parent, Messages
+               .getString("PortraitChoiceDialog.select_portrait"), true); //$NON-NLS-1$
+       frame = parent;
+       sourceButton = button;
+     
+       // Parse the camo directory.
+       try {
+           portraits = new DirectoryItems(new File("data/images/portraits"), "", //$NON-NLS-1$ //$NON-NLS-2$
+                   ImageFileFactory.getInstance());
+       } catch (Exception e) {
+           portraits = null;
+       }
+       
+       portraitMouseAdapter = new PortraitTableMouseAdapter();
+       portraitModel = new PortraitTableModel();
+       
+       scrPortraits = new JScrollPane();
+       tablePortrait = new JTable();
+       tablePortrait.setModel(portraitModel);
+       tablePortrait.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+       tablePortrait.setRowHeight(76);
+       tablePortrait.getColumnModel().getColumn(0).setCellRenderer(portraitModel.getRenderer());
+       tablePortrait.addMouseListener(portraitMouseAdapter);
+       scrPortraits.setViewportView(tablePortrait);
+       comboCategories = new JComboBox();
+       DefaultComboBoxModel categoryModel = new DefaultComboBoxModel();
+       categoryModel.addElement(Pilot.ROOT_PORTRAIT);
+       if (portraits != null) {
+           Iterator<String> names = portraits.getCategoryNames();
+           while (names.hasNext()) {
+               String name = names.next();
+               if (!"".equals(name)) { //$NON-NLS-1$
+                   categoryModel.addElement(name);
+               }
+           }
+       }
+       comboCategories.setModel(categoryModel);
+       comboCategories.setName("comboCategories"); // NOI18N
+       comboCategories.addItemListener(new java.awt.event.ItemListener() {
+           public void itemStateChanged(java.awt.event.ItemEvent evt) {
+               comboCategoriesItemStateChanged(evt);
+           }
+       });
+       btnSelect = new JButton();
+       btnSelect.setText(Messages.getString("PortraitChoiceDialog.Select"));
+       btnSelect.addActionListener(new java.awt.event.ActionListener() {
+           public void actionPerformed(java.awt.event.ActionEvent evt) {
+               select();
+           }
+       });
+       btnCancel = new JButton();
+       btnCancel.setText(Messages.getString("PortraitChoiceDialog.Cancel"));
+       btnCancel.addActionListener(new java.awt.event.ActionListener() {
+           public void actionPerformed(java.awt.event.ActionEvent evt) {
+               cancel();
+           }
+       });
+       
+       setLayout(new GridBagLayout());
+       GridBagConstraints c;
 
-    /**
-     * The list containing the item names.
-     */
-    JList items;
-    private JScrollPane scrItems;
+       c = new GridBagConstraints();
+       c.gridx = 0;
+       c.gridy = 1;
+       c.gridwidth = 2;
+       c.fill = GridBagConstraints.BOTH;
+       c.anchor = GridBagConstraints.NORTHWEST;
+       c.weightx = 1.0;
+       c.weighty = 1.0;
+       add(scrPortraits, c);
 
-    /**
-     * The "keep old portrait" button.
-     */
-    private JButton keep;
+       c = new GridBagConstraints();
+       c.gridx = 0;
+       c.gridy = 0;
+       c.gridwidth = 2;
+       c.anchor = GridBagConstraints.NORTHWEST;
+       c.weightx = 1.0;
+       add(comboCategories, c);
 
-    /**
-     * The "select new portrait" button.
-     */
-    JButton select;
+       c = new GridBagConstraints();
+       c.gridx = 0;
+       c.gridy = 2;
+       c.weightx = 0.5;
+       getContentPane().add(btnSelect, c);
+       
+       c = new GridBagConstraints();
+       c.gridx = 1;
+       c.gridy = 2;
+       c.weightx = 0.5;
+       add(btnCancel, c);
 
-    /**
-     * The button that launched this dialog
-     */
-    JButton sourceButton;
+       pack();
+   }                
 
-    /**
-     * The previously selected category.
-     */
-    String prevCat;
+	private void cancel() {                                          
+	   setVisible(false);
+	}                                         
 
-    /**
-     * The previously selected item.
-     */
-    String prevItem;
+	private void select() {                                          
+	   category = portraitModel.getCategory();
+	   if(tablePortrait.getSelectedRow() != -1) {
+	       filename = (String) portraitModel.getValueAt(tablePortrait.getSelectedRow(), 0);
+	   } else {
+	       filename = Pilot.PORTRAIT_NONE;
+	   }
+	   sourceButton.setIcon(generateIcon(category, filename));
+	   setVisible(false);
+	}                                         
+	
+	private void comboCategoriesItemStateChanged(java.awt.event.ItemEvent evt) {                                                 
+	   if (evt.getStateChange() == ItemEvent.SELECTED) {
+	       fillTable((String) evt.getItem());
+	   }
+	}                                                
 
-    /**
-     * Create a dialog that allows players to choose a portrait
-     *
-     * @param parent
-     *            - the <code>Frame</code> that displays this dialog.
-     */
-    public PortraitChoiceDialog(JFrame parent, JButton button) {
+   public String getCategory() {
+       return category;
+   }
 
-        // Initialize our superclass and record our parent frame.
-        super(parent, Messages
-                .getString("PortraitChoiceDialog.select_portrait"), true); //$NON-NLS-1$
-        frame = parent;
-        sourceButton = button;
+   public String getFileName() {
+       return filename;
+   }
+   
+   public void setPilot(Pilot pilot) {
+       category = pilot.getPortraitCategory();
+       filename = pilot.getPortraitFileName();
+       sourceButton.setIcon(generateIcon(category, filename));
+       comboCategories.getModel().setSelectedItem(category);
+   		fillTable(category);
+   		int rowIndex = 0;
+   		for(int i = 0; i < portraitModel.getRowCount(); i++) {
+           if(((String) portraitModel.getValueAt(i, 0)).equals(filename)) {
+               rowIndex = i;
+               break;
+           }
+       }
+       tablePortrait.setRowSelectionInterval(rowIndex, rowIndex); 	
+   }
 
-        // Declare local variables.
-        Iterator<String> names;
-        String name;
+    private void fillTable(String category) {
+       portraitModel.reset();
+       portraitModel.setCategory(category);
+       // Translate the "root camo" category name.
+       Iterator<String> portraitNames;
+       if (Pilot.ROOT_PORTRAIT.equals(category)) {
+           portraitModel.addPortrait(Pilot.PORTRAIT_NONE);
+           portraitNames = portraits.getItemNames(""); //$NON-NLS-1$
+       } else {
+           portraitNames = portraits.getItemNames(category);
+       }
 
-        // Parse the portrait directory.
-        try {
-            portraits = new DirectoryItems(new File("data/images/portraits"), "", //$NON-NLS-1$ //$NON-NLS-2$
-                    ImageFileFactory.getInstance());
-        } catch (Exception e) {
-            portraits = null;
-        }
-
-        // Use a border layout.
-        getContentPane().setLayout(new BorderLayout());
-
-        // Create a pulldown menu for the categories.
-        JPanel panel = new JPanel();
-        getContentPane().add(panel, BorderLayout.NORTH);
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints layout = new GridBagConstraints();
-        layout.anchor = GridBagConstraints.CENTER;
-        categories = new JComboBox();
-        panel.add(categories, layout);
-
-        categories.addItem(Pilot.ROOT_PORTRAIT);
-        if (portraits != null) {
-            names = portraits.getCategoryNames();
-            while (names.hasNext()) {
-                name = names.next();
-                if (!"".equals(name)) { //$NON-NLS-1$
-                    categories.addItem(name);
-                }
-            }
-        }
-
-        categories.setSelectedIndex(0);
-
-        // Refill the item list when a new category is selected.
-        // Make sure that the "select new portrait" button is updated.
-        categories.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == ItemEvent.SELECTED) {
-                    fillList((String) event.getItem());
-                    updateButton();
-                }
-            }
-        });
-
-        // Create a list to hold the items in the category.
-        items = new JList(new DefaultListModel());
-        scrItems = new JScrollPane(items);
-        scrItems
-                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        getContentPane().add(scrItems);
-
-        // Update the "select new portrait" when an item is selected.
-        items.addListSelectionListener(this);
-        items.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        // Create a panel to hold our buttons.
-        // Use a grid bag layout.
-        panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        getContentPane().add(panel, BorderLayout.EAST);
-        layout = new GridBagConstraints();
-        layout.anchor = GridBagConstraints.EAST;
-        layout.gridx = 0;
-        layout.gridy = 0;
-        layout.gridwidth = 1;
-        layout.gridheight = 1;
-        layout.fill = GridBagConstraints.NONE;
-        layout.ipadx = 4;
-        layout.ipady = 4;
-        layout.weightx = 0.0;
-        layout.weighty = 0.0;
-
-        // Add a "spacer" label to push everything else to the bottom.
-        layout.weighty = 1.0;
-        panel.add(new JLabel(), layout);
-        layout.weighty = 0.0;
-        layout.gridy++;
-
-        // Add a label for the "keep old portrait" button.
-        panel.add(new JLabel(Messages
-                .getString("PortraitChoiceDialog.keep_old_portrait")), layout); //$NON-NLS-1$
-        layout.gridy++;
-
-        // Create the "keep old portrait" button.
-        keep = new JButton();
-        keep.setPreferredSize(new Dimension(72, 72));
-        InputMap inputMap = getRootPane().getInputMap(
-                JComponent.WHEN_IN_FOCUSED_WINDOW);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
-                "Keep");
-
-        ActionMap actionMap = getRootPane().getActionMap();
-        Action keepAction = new AbstractAction() {
-            private static final long serialVersionUID = 2096792571263188573L;
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        };
-        actionMap.put("Keep", keepAction);
-        keep.setAction(keepAction);
-
-        panel.add(keep, layout);
-        layout.gridy++;
-
-        // Add a label for the "select new portrait" button.
-        panel.add(new JLabel(Messages
-                .getString("PortraitChoiceDialog.select_new_portrait")), layout); //$NON-NLS-1$
-        layout.gridy++;
-
-        // Create the "select new portrait" button.
-        select = new JButton();
-        select.setPreferredSize(new Dimension(72, 72));
-        panel.add(select, layout);
-
-        // Fire the "select new portrait" action when the enter key is pressed
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false),
-                "Accept");
-
-        Action acceptAction = new AbstractAction() {
-            private static final long serialVersionUID = 402810917672002505L;
-            public void actionPerformed(ActionEvent e) {
-                // Did the worker change their selection?
-                String curCat = (String) categories.getSelectedItem();
-                String curItem = (String) items.getSelectedValue();
-                if (!curCat.equals(prevCat) || !curItem.equals(prevItem)) {
-
-                    // Save the new values.
-                    setPrevSelection(curCat, curItem);
-
-                    // Update the portrait button
-                    sourceButton.setIcon(generateIcon(prevCat, prevItem));
-
-                } // End selection-changed
-
-                // Now exit.
-                setVisible(false);
-            }
-        };
-
-        actionMap.put("Accept", acceptAction);
-        select.setAction(acceptAction);
-
-        // Fill the item list with the roo directory.
-        fillList(Pilot.ROOT_PORTRAIT);
-
-        // Perform the initial layout.
-        pack();
-    }
-
-    /**
-     * A helper function to fill the list with items in the selected category.
-     *
-     * @param category
-     *            - the <code>String</code> name of the category whose items
-     *            should be displayed.
-     */
-    void fillList(String category) {
-
-        // Clear the list of items.
-        ((DefaultListModel) items.getModel()).removeAllElements();
-
-        // Translate the "root portrait" category name.
-        Iterator<String> portraitNames;
-        if (Pilot.ROOT_PORTRAIT.equals(category)) {
-            ((DefaultListModel) items.getModel()).addElement(Pilot.PORTRAIT_NONE);
-            portraitNames = portraits.getItemNames(""); //$NON-NLS-1$
-        } else {
-            portraitNames = portraits.getItemNames(category);
-        }
-
-        // Get the portrait names for this category.
-        while (portraitNames.hasNext()) {
-            ((DefaultListModel) items.getModel()).addElement(portraitNames
-                    .next());
-        }
-        items.setSelectedIndex(0);
-    }
-
-    /**
-     * A helper function to assign values for the previously selected portrait. This
-     * function will also set the "keep old portrait" button's image.
-     *
-     * @param category
-     *            - the <code>String</code> category name. This value must be
-     *            one of the categories from the <code>DirectoryItems</code>.
-     * @param item
-     *            - the <code>String</code> name of the item. This value must be
-     *            one of the items in the named category from
-     *            <code>DirectoryItems</code>.
-     */
-    void setPrevSelection(String category, String item) {
-        prevCat = category;
-        prevItem = item;
-        keep.setIcon(generateIcon(prevCat, prevItem));
-    }
-
+       // Get the camo names for this category.
+       while (portraitNames.hasNext()) {
+    	   String name = portraitNames.next();
+    	   if(!"default.gif".equals(name)) {
+               portraitModel.addPortrait(name);
+    	   }
+       }
+       if(portraitModel.getRowCount() > 0) {
+           tablePortrait.setRowSelectionInterval(0, 0);
+       }
+   }
+    
     Icon generateIcon(String cat, String item) {
         if((null == cat) || (null == item)) {
             return null;
@@ -365,121 +279,156 @@ public class PortraitChoiceDialog extends JDialog implements
     }
 
     /**
-     * Update the "select new portrait" button whenever a list item is selected.
-     * <p/>
-     */
-    void updateButton() {
-        // Get the category and the item.
-        String curCat = (String) categories.getSelectedItem();
-        String curItem = (String) items.getSelectedValue();
-        if (curItem == null) {
-            //nothing selected yet
-            select.setIcon(null);
-            return;
-        }
-        select.setIcon(generateIcon(curCat, curItem));
-    }
+       * A table model for displaying camos
+    */
+   public class PortraitTableModel extends AbstractTableModel {
 
-    /**
-     * Set the selected category.
-     *
-     * @param category
-     *            - the <code>String</code> name of the desired category. This
-     *            value may be <code>null</code>. If no match is found, the
-     *            category will not change.
-     */
-    private void setCategory(String category) {
+	   private static final long serialVersionUID = -992524169822797473L;
+	   private String[] columnNames;
+       private String category;
+       private ArrayList<String> names;
+       private ArrayList<Image> images;
 
-        // Get the current selection.
-        String cur = (String) categories.getSelectedItem();
+       public PortraitTableModel() {
+           columnNames = new String[] {"Portraits"};
+           category = Pilot.ROOT_PORTRAIT;
+           names = new ArrayList<String>();
+           images = new ArrayList<Image>();
+       }
 
-        // Do nothing, if the request is for the selected item.
-        if (!cur.equals(category)) {
+       public int getRowCount() {
+           return names.size();
+       }
 
-            // Try to find the requested item.
-            for (int loop = 0; loop < categories.getItemCount(); loop++) {
+       public int getColumnCount() {
+           return 1;
+       }
 
-                // Did we find it?
-                if (categories.getItemAt(loop).equals(category)) {
+       public void reset() {
+           category = Pilot.ROOT_PORTRAIT;
+           names = new ArrayList<String>();
+           images = new ArrayList<Image>();
+       }
 
-                    // Select this position.
-                    categories.setSelectedIndex(loop);
+       @Override
+       public String getColumnName(int column) {
+           return columnNames[column];
+       }
 
-                    // Fill the list.
-                    fillList(category);
+       public Object getValueAt(int row, int col) {
+           return names.get(row);
+       }
 
-                    // Stop looking for the category.
-                    break;
+       public Object getImageAt(int row) {
+           return images.get(row);
+       }
 
-                } // End found-requested-category
+       public void setCategory(String c) {
+           category = c;
+       }
 
-            } // Check the next category
+       public String getCategory() {
+           return category;
+       }
 
-        } // End new-selection
+       public void addPortrait(String name) {
+           names.add(name);
+           fireTableDataChanged();
+       }
 
-    }
+       @Override
+       public Class<?> getColumnClass(int c) {
+           return getValueAt(0, c).getClass();
+       }
 
-    /**
-     * Set the selected item in the currently-selected category.
-     *
-     * @param item
-     *            - the <code>String</code> name of the desired item. This value
-     *            may be <code>null</code>. If no match is found, the item
-     *            selection will not change.
-     */
-    private void setItemName(String item) {
+       @Override
+       public boolean isCellEditable(int row, int col) {
+           return false;
+       }
 
-        // Do nothing is we're passed a null.
-        if (item != null) {
+       public PortraitTableModel.Renderer getRenderer() {
+           return new PortraitTableModel.Renderer();
+       }
 
-            // Get the current selection.
-            String cur = (String) items.getSelectedValue();
 
-            // Do nothing, if the request is for the selected item.
-            if (!item.equals(cur)) {
-                items.setSelectedValue(item, true);
-            } // End new-selection
+       public class Renderer extends PortraitPanel implements TableCellRenderer {
 
-        } // End not-passed-null
-    }
+    	   	private static final long serialVersionUID = 7916914665407121264L;
 
-    /**
-     * Show the dialog. Make sure that all selections have been applied.
-     * <p/>
-     * Overrides <code>Dialog#setVisible(boolean)</code>.
-     */
-    @Override
-    public void setVisible(boolean visible) {
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+	               Component c = this;
+	               setOpaque(true);
+	               String name = getValueAt(row, column).toString();
+	               setText(getValueAt(row, column).toString());
+	               setImage(category, name);
+	               if(isSelected) {
+	                   setBackground(new Color(220,220,220));
+	               } else {
+	                   setBackground(Color.WHITE);
+	               }
+	
+	               return c;
+			}      
+       }
+   }
+   
+   public class PortraitPanel extends JPanel {
 
-        // Make sure the "keep" button is set correctly.
-        setPrevSelection((String) categories.getSelectedItem(), (String) items
-                .getSelectedValue());
+	   private static final long serialVersionUID = -6497926619314613457L;
+	   private JLabel lblImage;
+	    
+	    public PortraitPanel() {
+	    	GridBagConstraints c = new GridBagConstraints();
 
-        // Make sure the "select" button is set correctly.
-        updateButton();
+	        lblImage = new JLabel();
 
-        // Now show the dialog.
-        super.setVisible(visible);
-    }
+	        setLayout(new GridBagLayout());
+	        
+	        c = new GridBagConstraints();
+	        c.gridx = 0;
+	        c.gridy = 0;
+	        c.fill = GridBagConstraints.BOTH;
+	        c.weightx = 1.0;
+	        c.weighty = 1.0;
+	        add(lblImage, c);
+	    }
 
-    public void valueChanged(ListSelectionEvent event) {
-        updateButton();
-    }
+	    public void setText(String text) {
+	        lblImage.setText(text);
+	    }
+	    
+	    public void setImage(String category, String name) {
 
-    public String getCategory() {
-        return prevCat;
-    }
+	        if (null == category || null == name) {
+	            return;
+	        }
+	        
+	        if(name.equals(Pilot.PORTRAIT_NONE)) {
+	        	name = "default.gif";
+	        }
 
-    public String getItem() {
-        return prevItem;
-    }
+	        // Try to get the portrait file.
+	        try {
 
-    public void setPilot(Pilot pilot) {
-        setCategory(pilot.getPortraitCategory());
-        setItemName(pilot.getPortraitFileName());
-        setPrevSelection(pilot.getPortraitCategory(), pilot.getPortraitFileName());
-        if (sourceButton.isVisible()) {
-            sourceButton.setIcon(generateIcon(prevCat, prevItem));
-        }
-    }
+	            // Translate the root portrait directory name.
+	            if (Pilot.ROOT_PORTRAIT.equals(category))
+	                category = ""; //$NON-NLS-1$
+	            Image portrait = (Image) portraits.getItem(category, name);
+	            lblImage.setIcon(new ImageIcon(portrait));
+	        } catch (Exception err) {
+	            err.printStackTrace();
+	        }
+	    }
+	}
+
+   public class PortraitTableMouseAdapter extends MouseInputAdapter {
+
+       public void mouseClicked(MouseEvent e) {
+
+           if (e.getClickCount() == 2) {
+               select();
+           }
+       }
+   }
+
 }

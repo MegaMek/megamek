@@ -1913,7 +1913,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             entity.getCrew().setCommandBonus(command);
             entity.getCrew().setNickname(nick);
             entity.getCrew().setPortraitCategory(portraitDialog.getCategory());
-            entity.getCrew().setPortraitFileName(portraitDialog.getItem());
+            entity.getCrew().setPortraitFileName(portraitDialog.getFileName());
             if (entity instanceof Mech) {
                 Mech mech = (Mech) entity;
                 mech.setAutoEject(!autoEject);

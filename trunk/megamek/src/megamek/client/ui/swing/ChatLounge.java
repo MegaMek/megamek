@@ -42,7 +42,6 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -69,7 +68,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -113,14 +111,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     // buttons & such
     private JPanel panPlayerInfo;
-    private JLabel labPlayerInfo;
-    JList lisPlayerInfo;
-    private JScrollPane scrPlayerInfo;
-
-    private JLabel labTeam;
+  
     private JComboBox choTeam;
 
-    private JLabel labCamo;
     private JButton butCamo;
 
     private JButton butInit;
@@ -176,12 +169,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JPanel panStarts;
     private JButton butChangeStart;
 
-    private JLabel labBVs;
-    private JTable tableBVs;
-    private JScrollPane scrBVs;
-    private JRadioButton chkBV;
-    private JRadioButton chkTons;
-    private JRadioButton chkCost;
+    private JTable tablePlayers;
+    private JScrollPane scrPlayers;
 
     private JTabbedPane panTabs;
     private JPanel panMain;
@@ -195,7 +184,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JButton butRemoveBot;
     
     private MekTableModel mekModel;
-    private DefaultTableModel bvModel;
+    private PlayerTableModel playerModel;
     
     // keep track of portrait images
     private DirectoryItems portraits;
@@ -262,10 +251,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         setupEntities();
         setupButtons();
-        setupBVs();
         
         refreshEntities();
-        refreshBVs();
 
         setupStarts();
         refreshStarts();
@@ -303,16 +290,32 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Sets up the player info (team, camo) panel
      */
     private void setupPlayerInfo() {
+        
+        tablePlayers = new JTable();
+        tablePlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tablePlayers.getSelectionModel().addListSelectionListener(this);
+        playerModel = new PlayerTableModel();
+        tablePlayers.setModel(playerModel);
+        TableColumn column = null;
+        for (int i = 0; i < PlayerTableModel.N_COL; i++) {
+            column = tablePlayers.getColumnModel().getColumn(i);
+            if (i == PlayerTableModel.COL_PLAYER) {
+                column.setPreferredWidth(100);
+            }
+            else if(i == PlayerTableModel.COL_TEAM) {
+                column.setPreferredWidth(5);
+            }
+            else if(i == PlayerTableModel.COL_COST) {
+                column.setPreferredWidth(50);
+            }
+            else {
+                column.setPreferredWidth(25);
+            }
+        }
+        scrPlayers = new JScrollPane(tablePlayers);
+        scrPlayers.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        
         panPlayerInfo = new JPanel();
-
-        labPlayerInfo = new JLabel(Messages
-                .getString("ChatLounge.labPlayerInfo")); //$NON-NLS-1$
-
-        lisPlayerInfo = new JList(new DefaultListModel());
-        lisPlayerInfo.addListSelectionListener(this);
-        scrPlayerInfo = new JScrollPane(lisPlayerInfo);
-        scrPlayerInfo
-                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot")); //$NON-NLS-1$
         butAddBot.setActionCommand("add_bot"); //$NON-NLS-1$
@@ -324,11 +327,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butRemoveBot.setActionCommand("remove_bot"); //$NON-NLS-1$
         butRemoveBot.addActionListener(this);
 
-        labTeam = new JLabel(
-                Messages.getString("ChatLounge.labTeam"), SwingConstants.RIGHT); //$NON-NLS-1$
-        labCamo = new JLabel(
-                Messages.getString("ChatLounge.labCamo"), SwingConstants.RIGHT); //$NON-NLS-1$
-
         choTeam = new JComboBox();
         setupTeams();
         choTeam.addItemListener(this);
@@ -338,10 +336,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butCamo.setActionCommand("camo"); //$NON-NLS-1$
         butCamo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                camoDialog.setPlayer(getPlayerListSelected(lisPlayerInfo)
+                camoDialog.setPlayer(getPlayerSelected()
                         .getLocalPlayer());
                 camoDialog.setVisible(true);
-                getPlayerListSelected(lisPlayerInfo).sendPlayerInfo();
+                getPlayerSelected().sendPlayerInfo();
             }
         });
         camoDialog = new CamoChoiceDialog(clientgui.getFrame(), butCamo);
@@ -357,62 +355,54 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         GridBagConstraints c = new GridBagConstraints();
         panPlayerInfo.setLayout(gridbag);
 
-        c.fill = GridBagConstraints.VERTICAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(labPlayerInfo, c);
-        panPlayerInfo.add(labPlayerInfo);
-
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        gridbag.setConstraints(scrPlayerInfo, c);
-        panPlayerInfo.add(scrPlayerInfo);
+        c.insets = new Insets(1, 1, 1, 1);
 
-        c.gridwidth = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(labTeam, c);
-        panPlayerInfo.add(labTeam);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 2;
+        c.gridheight = 1;
         c.weightx = 1.0;
         c.weighty = 0.0;
         gridbag.setConstraints(choTeam, c);
         panPlayerInfo.add(choTeam);
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.weightx = 1.0;
         c.weighty = 0.0;
         gridbag.setConstraints(butInit, c);
         panPlayerInfo.add(butInit);
 
+        c.gridx = 0;
+        c.gridy = 2;
         c.gridwidth = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(labCamo, c);
-        panPlayerInfo.add(labCamo);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridheight = 1;
         c.weightx = 1.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(butCamo, c);
-        panPlayerInfo.add(butCamo);
-
-        c.gridwidth = 1;
-        c.weightx = 0.0;
         c.weighty = 0.0;
         gridbag.setConstraints(butAddBot, c);
         panPlayerInfo.add(butAddBot);
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = 1;
+        c.gridheight = 1;
         c.weightx = 1.0;
         c.weighty = 0.0;
         gridbag.setConstraints(butRemoveBot, c);
         panPlayerInfo.add(butRemoveBot);
 
+        c.gridx = 1;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.gridheight = 3;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        gridbag.setConstraints(butCamo, c);
+        panPlayerInfo.add(butCamo);
+        
         refreshPlayerInfo();
     }
 
@@ -686,7 +676,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 1;
-        c.gridheight = 2;
+        c.gridheight = 3;
         gridbag.setConstraints(scrEntities, c);
         panMain.add(scrEntities);
         
@@ -701,15 +691,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         gridbag.setConstraints(panButtons, c);
         panMain.add(panButtons);
         
-        c.fill = GridBagConstraints.BOTH;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 1;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        gridbag.setConstraints(panPlayerInfo, c);
+        panMain.add(panPlayerInfo);
+        
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 2;
         c.weightx = 0.0;
         c.weighty = 1.0;
         c.gridwidth = 1;
         c.gridheight = 1;
-        gridbag.setConstraints(scrBVs, c);
-        panMain.add(scrBVs);
+        gridbag.setConstraints(scrPlayers, c);
+        panMain.add(scrPlayers);
 
         // Should we display the panels in tabs?
         if (GUIPreferences.getInstance().getChatLoungeTabs()) {
@@ -745,8 +745,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         gridbag.setConstraints(panStarts, c);
         panTop.add(panStarts);
 
-        gridbag.setConstraints(panPlayerInfo, c);
-        panTop.add(panPlayerInfo);
+        //gridbag.setConstraints(panPlayerInfo, c);
+        //panTop.add(panPlayerInfo);
 
         gridbag.setConstraints(panMinefield, c);
         panTop.add(panMinefield);
@@ -918,25 +918,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.gridy = 3;
         gridbag.setConstraints(butDeleteAll, c);
         panButtons.add(butDeleteAll);
-    }
-
-    /**
-     * Sets up the battle values table
-     */
-    private void setupBVs() {
-        labBVs = new JLabel(
-                Messages.getString("ChatLounge.labBVs.BV"), SwingConstants.CENTER); //$NON-NLS-1$
-
-        tableBVs = new JTable();
-        bvModel = new DefaultTableModel();
-        bvModel.setColumnIdentifiers(new String[] {Messages.getString("ChatLounge.colPlayer"),
-                Messages.getString("ChatLounge.colBV"), 
-                Messages.getString("ChatLounge.colTon"),
-                Messages.getString("ChatLounge.colCost")});
-        tableBVs.setModel(bvModel);
-        scrBVs = new JScrollPane(tableBVs);
-        scrBVs
-                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     }
 
     /**
@@ -1376,35 +1357,14 @@ public static String formatUnitTooltip(Entity entity) {
      * Refreshes the player info
      */
     private void refreshPlayerInfo() {
-        ((DefaultListModel) lisPlayerInfo.getModel()).removeAllElements();
+        playerModel.clearData();    
         for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i
                 .hasMoreElements();) {
             final Player player = i.nextElement();
-            if (player != null) {
-                StringBuffer pi = new StringBuffer();
-                pi.append(player.getName()).append(" : "); //$NON-NLS-1$
-                pi.append(Player.teamNames[player.getTeam()]);
-
-                String plyrCamo = player.getCamoFileName();
-
-                if ((plyrCamo == null) || Player.NO_CAMO.equals(plyrCamo)) {
-                    pi.append(", ").append(Player.colorNames[player.getColorIndex()]); //$NON-NLS-1$
-                } else {
-                    pi.append(", ").append(player.getCamoFileName()); //$NON-NLS-1$
-                }
-
-                pi.append(", INIT: ");
-                if (player.getConstantInitBonus() >= 0) {
-                    pi.append(" +").append(
-                            Integer.toString(player.getConstantInitBonus()));
-                } else {
-                    pi.append(" ").append(
-                            Integer.toString(player.getConstantInitBonus()));
-                }
-
-                ((DefaultListModel) lisPlayerInfo.getModel()).addElement(pi
-                        .toString());
+            if (player == null) {
+                continue;
             }
+            playerModel.addPlayer(player);
         }
     }
 
@@ -1445,53 +1405,8 @@ public static String formatUnitTooltip(Entity entity) {
         fldInferno.setText(Integer.toString(nbr));
     }
 
-    /**
-     * Refreshes the battle values/tons from the client
-     */
-    private void refreshBVs() {
-        int bv = 0;
-        float ton = 0;
-        float cost = 0;
-        
-        bvModel = new DefaultTableModel();
-        bvModel.setColumnIdentifiers(new String[] {Messages.getString("ChatLounge.colPlayer"),
-                Messages.getString("ChatLounge.colBV"), 
-                Messages.getString("ChatLounge.colTon"),
-                Messages.getString("ChatLounge.colCost")});
-        tableBVs.setModel(bvModel);
-        
-        for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i
-                .hasMoreElements();) {
-            final Player player = i.nextElement();
-            if (player == null) {
-                continue;
-            }
-            bv = 0;
-            cost = 0;
-            ton = 0;
-            for (Enumeration<Entity> j = clientgui.getClient().getEntities(); j
-                    .hasMoreElements();) {
-                Entity entity = j.nextElement();
-                if (entity.getOwner().equals(player)) {
-                    bv += entity.calculateBattleValue();       
-                    cost += entity.getCost(false);
-                    ton += entity.getWeight();
-                }
-            }
-            if (clientgui.getClient().game.getOptions().booleanOption(
-                    "real_blind_drop")
-                    && (player.getId() != clientgui.getClient()
-                            .getLocalPlayer().getId())) {
-                bv = bv > 0 ? 9999 : 0;
-                ton = ton > 0 ? 9999 : 0;
-                cost = cost > 0 ? 9999 : 0;
-            }
-            bvModel.addRow(new Object[] {player.getName(), bv, ton, (int) cost});
-        }
-    }
-
     private void refreshCamos() {
-        Client c = getPlayerListSelected(lisPlayerInfo);
+        Client c = getPlayerSelected();
         camoDialog.setPlayer(c.getLocalPlayer());
     }
 
@@ -1557,7 +1472,7 @@ public static String formatUnitTooltip(Entity entity) {
      * Change local player team.
      */
     private void changeTeam(int team) {
-        Client c = getPlayerListSelected(lisPlayerInfo);
+        Client c = getPlayerSelected();
         if ((c != null) && (c.getLocalPlayer().getTeam() != team)) {
             c.getLocalPlayer().setTeam(team);
             c.sendPlayerInfo();
@@ -1770,7 +1685,6 @@ public static String formatUnitTooltip(Entity entity) {
         }
         refreshDoneButton();
         clientgui.getClient().game.setupTeams();
-        refreshBVs();
         refreshPlayerInfo();
         refreshStarts();
         refreshCamos();
@@ -1792,7 +1706,6 @@ public static String formatUnitTooltip(Entity entity) {
             refreshCamos();
             refreshMinefield();
             refreshEntities();
-            refreshBVs();
             refreshStarts();
             refreshBoardSettings();
         }
@@ -1805,7 +1718,7 @@ public static String formatUnitTooltip(Entity entity) {
             return;
         }
         refreshEntities();
-        refreshBVs();
+        refreshPlayerInfo();
     }
 
     @Override
@@ -1815,7 +1728,7 @@ public static String formatUnitTooltip(Entity entity) {
             return;
         }
         refreshEntities();
-        refreshBVs();
+        refreshPlayerInfo();
     }
 
     @Override
@@ -1827,7 +1740,7 @@ public static String formatUnitTooltip(Entity entity) {
         refreshGameSettings();
         refreshBoardSettings();
         refreshEntities();
-        refreshBVs();
+        refreshPlayerInfo();
     }
 
     /*
@@ -1845,19 +1758,7 @@ public static String formatUnitTooltip(Entity entity) {
 
         if (ev.getSource().equals(choTeam)) {
             changeTeam(choTeam.getSelectedIndex());
-        } else if (ev.getSource().equals(chkBV)
-                || ev.getSource().equals(chkTons)
-                || ev.getSource().equals(chkCost)) {
-            refreshBVs();
-            if (ev.getSource().equals(chkBV)) {
-                labBVs.setText(Messages.getString("ChatLounge.labBVs.BV"));
-            } else if (ev.getSource().equals(chkTons)) {
-                labBVs.setText(Messages.getString("ChatLounge.labBVs.Tons"));
-            } else {
-                labBVs.setText(Messages.getString("ChatLounge.labBVs.Cost"));
-            }
-        }
-
+        } 
     }
 
     //
@@ -1965,7 +1866,7 @@ public static String formatUnitTooltip(Entity entity) {
                                 Messages
                                         .getString("ChatLounge.InitiativeAlert.title"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
             }
-            Client c = getPlayerListSelected(lisPlayerInfo);
+            Client c = getPlayerSelected();
             if (c == null) {
                 clientgui
                         .doAlertDialog(
@@ -1977,7 +1878,7 @@ public static String formatUnitTooltip(Entity entity) {
             clientgui.getCustomInitiativeDialog().updateValues();
             clientgui.getCustomInitiativeDialog().setVisible(true);
         } else if (ev.getSource().equals(butAddBot)) {
-            String name = "Bot" + lisPlayerInfo.getModel().getSize(); //$NON-NLS-1$
+            String name = "Bot" + tablePlayers.getModel().getRowCount(); //$NON-NLS-1$
             name = (String) JOptionPane.showInputDialog(clientgui.frame,
                     Messages.getString("ChatLounge.Name"), Messages
                             .getString("ChatLounge.ChooseBotName"),
@@ -1986,7 +1887,7 @@ public static String formatUnitTooltip(Entity entity) {
                 return;
             }
             if ("".equals(name.trim())) {
-                name = "Bot" + lisPlayerInfo.getModel().getSize(); //$NON-NLS-1$
+                name = "Bot" + tablePlayers.getModel().getRowCount(); //$NON-NLS-1$
             }
 
             BotClient c = new TestBot(name, clientgui.getClient().getHost(),
@@ -2002,7 +1903,7 @@ public static String formatUnitTooltip(Entity entity) {
             c.retrieveServerInfo();
             clientgui.getBots().put(name, c);
         } else if (ev.getSource().equals(butRemoveBot)) {
-            Client c = getPlayerListSelected(lisPlayerInfo);
+            Client c = getPlayerSelected();
             if ((c == null) || c.equals(clientgui.getClient())) {
                 clientgui
                         .doAlertDialog(
@@ -2080,6 +1981,18 @@ public static String formatUnitTooltip(Entity entity) {
         }
         return c;
     }
+    
+    Client getPlayerSelected() {
+        if ((tablePlayers == null) || (tablePlayers.getSelectedRow() == -1)) {
+            return clientgui.getClient();
+        }
+        String name = (String) tablePlayers.getValueAt(tablePlayers.getSelectedRow(), 0);
+        BotClient c = (BotClient) clientgui.getBots().get(name);
+        if ((c == null) && clientgui.getClient().getName().equals(name)) {
+            return clientgui.getClient();
+        }
+        return c;
+    }
 
     /**
      * Stop just ignoring events and actually stop listening to them.
@@ -2109,9 +2022,10 @@ public static String formatUnitTooltip(Entity entity) {
     public void valueChanged(ListSelectionEvent event) {
         if (event.getSource().equals(butRemoveBot)) {
             butRemoveBot.setEnabled(false);
-            Client c = getPlayerListSelected(lisPlayerInfo);
+            Client c = getPlayerSelected();
             if (c == null) {
-                lisPlayerInfo.setSelectedIndex(-1);
+                
+                tablePlayers.removeRowSelectionInterval(tablePlayers.getSelectedRow(), tablePlayers.getSelectedRow());
                 return;
             }
             if (c instanceof BotClient) {
@@ -2135,11 +2049,11 @@ public static String formatUnitTooltip(Entity entity) {
                 butMechReadout.setEnabled(selected);
             }
             butDelete.setEnabled(selected);
-        } else if (event.getSource().equals(lisPlayerInfo)) {
+        } else if (event.getSource().equals(tablePlayers.getSelectionModel())) {
             butRemoveBot.setEnabled(false);
-            Client c = getPlayerListSelected(lisPlayerInfo);
+            Client c = getPlayerSelected();
             if (c == null) {
-                lisPlayerInfo.setSelectedIndex(-1);
+                tablePlayers.removeRowSelectionInterval(tablePlayers.getSelectedRow(), tablePlayers.getSelectedRow());
                 return;
             }
             if (c instanceof BotClient) {
@@ -2147,6 +2061,133 @@ public static String formatUnitTooltip(Entity entity) {
             }
             refreshCamos();
             choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());
+        }
+    }
+    
+
+    /**
+     * A table model for displaying players
+     */
+    public class PlayerTableModel extends AbstractTableModel {
+
+        private static final long serialVersionUID = -1372393680232901923L;
+        
+        private static final int COL_PLAYER = 0;
+        private static final int COL_TEAM = 1;
+        private static final int COL_BV = 2; 
+        private static final int COL_TON = 3;
+        private static final int COL_COST = 4;
+        private static final int N_COL = 5;
+        
+        private ArrayList<Player> players;
+        private ArrayList<Integer> bvs;
+        private ArrayList<Integer> costs;
+        private ArrayList<Float> tons;
+        
+        
+        public PlayerTableModel() {
+            players = new ArrayList<Player>();
+            bvs = new ArrayList<Integer>();
+            costs = new ArrayList<Integer>();
+            tons = new ArrayList<Float>();
+        }
+        
+        public int getRowCount() {
+            return players.size();
+        }
+        
+        public void clearData() {
+            players = new ArrayList<Player>();
+            bvs = new ArrayList<Integer>();
+            costs = new ArrayList<Integer>();
+            tons = new ArrayList<Float>();
+        }
+
+        public int getColumnCount() {
+            return N_COL;
+        }
+
+        public void addPlayer(Player player) {
+            players.add(player);
+            int bv = 0;
+            int cost = 0;
+            float ton = 0;
+            for (Enumeration<Entity> j = clientgui.getClient().getEntities(); j.hasMoreElements();) {
+                Entity entity = j.nextElement();
+                if (entity.getOwner().equals(player)) {
+                    bv += entity.calculateBattleValue();       
+                    cost += entity.getCost(false);
+                    ton += entity.getWeight();
+                }
+            }
+            bvs.add(bv);
+            costs.add(cost);
+            tons.add(ton);
+            fireTableDataChanged();
+        }
+        
+        @Override
+        public String getColumnName(int column) {
+            switch(column) {
+                case(COL_PLAYER): 
+                    return Messages.getString("ChatLounge.colPlayer");
+                case(COL_TEAM): 
+                    return "Team";
+                case(COL_TON): 
+                    return Messages.getString("ChatLounge.colTon");
+                case(COL_BV): 
+                    return Messages.getString("ChatLounge.colBV");
+                case(COL_COST): 
+                    return Messages.getString("ChatLounge.colCost");
+            }
+            return "??";
+        }
+        
+        @Override
+        public Class<?> getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+        
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            return false;
+        }
+      
+        public Object getValueAt(int row, int col) {
+            Player player = getPlayerAt(row);
+            boolean blindDrop = !player.equals(clientgui.getClient().getLocalPlayer()) && clientgui.getClient().game.getOptions().booleanOption("real_blind_drop");
+            if(col == COL_BV) {
+                int bv = bvs.get(row);
+                if(blindDrop) {
+                    bv = bv > 0 ? 9999 : 0;
+                }
+                return bv;
+            }
+            else if(col == COL_PLAYER) {
+                return player.getName();
+            } 
+            else if(col == COL_TON) {
+                float ton = tons.get(row);
+                if(blindDrop) {
+                    ton = ton > 0 ? 9999 : 0;
+                }
+                return ton;
+            } 
+            else if(col == COL_COST) {
+                int cost = costs.get(row);
+                if(blindDrop) {
+                    cost = cost > 0 ? 9999 : 0;
+                }
+                return cost;
+            } 
+            else {
+                return player.getTeam();
+            }
+        }
+
+        public Player getPlayerAt(int row) {
+            return (Player)players.get(row);
         }
     }
     
@@ -2178,7 +2219,7 @@ public static String formatUnitTooltip(Entity entity) {
         }
 
         public int getColumnCount() {
-            return 4;
+            return N_COL;
         }
 
         public void addUnit(Entity en) {

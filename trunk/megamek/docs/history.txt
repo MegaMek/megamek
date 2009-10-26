@@ -13,6 +13,7 @@ v0.35.9-dev (SVN)
 + added title border to player setup
 + changed look of CamoChoiceDialog so players can more easily see camos
 + changed look of PortraitChoiceDialog so players can more easily see portraits
++ Bug 2884273: Adjusted Force Size BV not shown in chatlounge makeover 35.9
 
 v0.35.8 (2009-10-18, 22:34 UTC+2)
 + Bug: infantry flamer not causing heat correctly

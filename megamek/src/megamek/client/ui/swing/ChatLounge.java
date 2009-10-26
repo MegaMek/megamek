@@ -68,6 +68,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -290,11 +291,37 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Sets up the player info (team, camo) panel
      */
     private void setupPlayerInfo() {
-        
-        tablePlayers = new JTable();
+    	
+    	playerModel = new PlayerTableModel();
+        tablePlayers = new JTable(playerModel) {
+			private static final long serialVersionUID = 6252953920509362407L;
+			public String getToolTipText(MouseEvent e) {
+                java.awt.Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = columnAtPoint(p);
+                int realColIndex = convertColumnIndexToModel(colIndex);
+                if (realColIndex == PlayerTableModel.COL_PLAYER) {
+                	return (String) getValueAt(rowIndex, colIndex);
+                }
+                else if (realColIndex == PlayerTableModel.COL_BV) {
+                	int bv = (Integer) getValueAt(rowIndex, colIndex);
+                	float ratio = playerModel.getPlayerAt(rowIndex).getForceSizeBVMod();
+                	return Messages.getString("ChatLounge.tipBV", new Object[] {bv, ratio});
+                } 
+                else if (realColIndex == PlayerTableModel.COL_TON) {
+                	return Float.toString((Float) getValueAt(rowIndex, colIndex));
+                }
+                else if (realColIndex == PlayerTableModel.COL_COST) {
+                	return Messages.getString("ChatLounge.tipCost", new Object[] {(Integer) getValueAt(rowIndex, colIndex)});
+                }
+                else {
+                	return Integer.toString((Integer) getValueAt(rowIndex, colIndex));
+                }
+        	}
+        };
         tablePlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tablePlayers.getSelectionModel().addListSelectionListener(this);
-        playerModel = new PlayerTableModel();
+        
         tablePlayers.setModel(playerModel);
         TableColumn column = null;
         for (int i = 0; i < PlayerTableModel.N_COL; i++) {
@@ -312,7 +339,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 column.setPreferredWidth(25);
             }
         }
-        scrPlayers = new JScrollPane(tablePlayers);
+        scrPlayers = new JScrollPane(tablePlayers);    
         scrPlayers.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         
         panPlayerInfo = new JPanel();
@@ -2159,7 +2186,7 @@ public static String formatUnitTooltip(Entity entity) {
             Player player = getPlayerAt(row);
             boolean blindDrop = !player.equals(clientgui.getClient().getLocalPlayer()) && clientgui.getClient().game.getOptions().booleanOption("real_blind_drop");
             if(col == COL_BV) {
-                int bv = bvs.get(row);
+                int bv = (int) Math.round(bvs.get(row) * player.getForceSizeBVMod());
                 if(blindDrop) {
                     bv = bv > 0 ? 9999 : 0;
                 }

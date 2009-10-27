@@ -129,8 +129,8 @@ public class MechTileset {
         this.dir = dir;
     }
 
-    public Image imageFor(Entity entity, Component comp) {
-        MechEntry entry = entryFor(entity);
+    public Image imageFor(Entity entity, Component comp, int secondaryPos) {
+        MechEntry entry = entryFor(entity, secondaryPos);
 
         if (entry == null) {
             System.err
@@ -151,22 +151,22 @@ public class MechTileset {
     /**
      * Returns the MechEntry corresponding to the entity
      */
-    private MechEntry entryFor(Entity entity) {
+    private MechEntry entryFor(Entity entity, int secondaryPos) {
         // first, check for exact matches
-        if (exact.containsKey(entity.getShortNameRaw().toUpperCase())) {
-            return exact.get(entity.getShortNameRaw().toUpperCase());
+        if (exact.containsKey(entity.getShortNameRaw().toUpperCase()+secondaryPos)) {
+            return exact.get(entity.getShortNameRaw().toUpperCase()+secondaryPos);
         }
 
         // next, chassis matches
-        if (chassis.containsKey(entity.getChassis().toUpperCase())) {
-            return chassis.get(entity.getChassis().toUpperCase());
+        if (chassis.containsKey(entity.getChassis().toUpperCase()+secondaryPos)) {
+            return chassis.get(entity.getChassis().toUpperCase()+secondaryPos);
         }
 
         // last, the generic model
-        return genericFor(entity);
+        return genericFor(entity, secondaryPos);
     }
 
-    public MechEntry genericFor(Entity entity) {
+    public MechEntry genericFor(Entity entity, int secondaryPos) {
         if (entity instanceof BattleArmor) {
             return default_ba;
         }

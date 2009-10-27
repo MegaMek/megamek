@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This file (C) 2008 Jörg Walter <j.walter@syntax-k.de>
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -19,6 +19,7 @@ package megamek.client.ui;
 
 import java.awt.Component;
 import java.awt.Image;
+
 import megamek.common.Entity;
 import megamek.common.Player;
 

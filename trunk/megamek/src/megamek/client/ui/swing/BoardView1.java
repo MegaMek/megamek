@@ -216,9 +216,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private ArrayList<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
     private ArrayList<IsometricSprite> isometricSprites = new ArrayList<IsometricSprite>();
 
-    private HashMap<Integer, EntitySprite> entitySpriteIds = new HashMap<Integer, EntitySprite>();
-    private HashMap<Integer, IsometricSprite> isometricSpriteIds = new HashMap<Integer, IsometricSprite>();
-    
+    private HashMap<ArrayList<Integer>, EntitySprite> entitySpriteIds = new HashMap<ArrayList<Integer>, EntitySprite>();
+    private HashMap<ArrayList<Integer>, IsometricSprite> isometricSpriteIds = new HashMap<ArrayList<Integer>, IsometricSprite>();
+
     // sprites for the three selection cursors
     private CursorSprite cursorSprite;
     private CursorSprite highlightSprite;
@@ -598,9 +598,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         drawSprite(g, firstLOSSprite);
         drawSprite(g, secondLOSSprite);
 
-        // draw deployment indicators. 
+        // draw deployment indicators.
         //For Isometric rendering, this is done during drawHexes
-        if (en_Deployer != null && !useIsometric()) {
+        if ((en_Deployer != null) && !useIsometric()) {
             drawDeployment(g);
         }
 
@@ -612,14 +612,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             drawSprites(g, flyOverSprites);
         }
 
-         
+
         if(useIsometric()) {
           //If we are using Isometric rendering, redraw the entity
           //sprites at 50% transparent so sprites hidden behind hills can
           //still be seen by the user.
             drawIsometricSprites(g, isometricSprites);
-        } 
-        
+        }
+
         //draw onscreen entities
         drawSprites(g, entitySprites);
 
@@ -688,11 +688,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             drawSprite(g, sprite);
         }
     }
-    
+
 
     /**
      * Draws the Entity for the given hex. This function is used by the isometric rendering process so
-     * that sprites are drawn in the order that hills are rendered to create the appearance that the 
+     * that sprites are drawn in the order that hills are rendered to create the appearance that the
      * sprite is behind the hill.
      * @param c The Coordinates of the hex that the sprites should be drawn for.
      * @param g The Graphics object for this board.
@@ -710,12 +710,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             }
         }
     }
-    
+
     /**
-     * Draws a translucent sprite without any of the companion graphics, if it is in the current view. 
+     * Draws a translucent sprite without any of the companion graphics, if it is in the current view.
      * This is used only when performing isometric rending. This function is used to show units (with 50% transparency)
      * that are hidden behind a hill.
-     * 
+     *
      * TODO: Optimize this function so that it is only applied to sprites that are actually hidden. This implementation
      * performs the second rendering for all sprites.
      */
@@ -755,7 +755,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         int drawWidth = view.width / (int) (HEX_WC * scale) + 3;
         int drawHeight = view.height / (int) (HEX_H * scale) + 3;
-        
+
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
@@ -1005,8 +1005,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                         if ((hex != null) && (hex.getElevation() == x)) {
                             drawHex(c, g);
                             drawIsometricSpritesForHex(c, g, isometricSprites);
-                            if(en_Deployer != null)
+                            if(en_Deployer != null) {
                                 drawDeploymentForHex(c, g);
+                            }
                         }
                     }
                 }
@@ -1131,7 +1132,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             final int x2 = drawX + (int) (62 * scale);
             final int y1 = drawY;
             final int y2 = drawY;
-            
+
             drawIsometricElevation(c, Color.GRAY, new Point(x2, y2), new Point(x1, y1), 0, boardGraph);
             boardGraph.drawLine(x1, y1, x2, y2);
         }
@@ -1260,8 +1261,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             Point p2, int dir, Graphics boardGraph) {
         final IHex dest = game.getBoard().getHexInDir(c, dir);
         final IHex src = game.getBoard().getHex(c);
-        
-        if (dest == null || !useIsometric()) {
+
+        if ((dest == null) || !useIsometric()) {
             return;
         }
 
@@ -1314,9 +1315,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private final boolean drawElevationLine(Coords src, int direction) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHexInDir(src, direction);
-        if((destHex != null) && srcHex.getElevation() != destHex.getElevation()) {
+        if((destHex != null) && (srcHex.getElevation() != destHex.getElevation())) {
             return true;
-        } else return (destHex != null) && (srcHex.floor() != destHex.floor());
+        } else {
+            return (destHex != null) && (srcHex.floor() != destHex.floor());
+        }
     }
 
     /**
@@ -1326,7 +1329,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         float elevationAdjust = 0.0f;
 
         IHex hex = game.getBoard().getHex(x, y);
-        if (hex != null && useIsometric()) {
+        if ((hex != null) && useIsometric()) {
             int level = hex.getElevation();
             if (level != 0) {
                 elevationAdjust = level * HEX_ELEV * scale * -1.0f;
@@ -1385,43 +1388,43 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     Coords c1 = new Coords(x, i);
                     Point pAlt = getHexLocation(c1);
                     IHex hexAlt = game.getBoard().getHex(c1);
-                    if(p.y > pAlt.y && p.y < (pAlt.y + HEX_H) && hexAlt.getElevation() == elev) {
+                    if((p.y > pAlt.y) && (p.y < (pAlt.y + HEX_H)) && (hexAlt.getElevation() == elev)) {
                         //This hex's location falls under the point the user selected.
                         return c1;
                     }
                 }
             }
-        } 
+        }
         return cOriginal;
-        
+
     }
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing) {
         Integer entityId = new Integer(entity.getId());
         EntitySprite sprite = entitySpriteIds.get(entityId);
         IsometricSprite isoSprite = isometricSpriteIds.get(entityId);
-        
+
         ArrayList<EntitySprite> newSprites;
         ArrayList<IsometricSprite> isoSprites;
-        HashMap<Integer, EntitySprite> newSpriteIds;
-        HashMap<Integer, IsometricSprite> newIsoSpriteIds;
+        HashMap<ArrayList<Integer>, EntitySprite> newSpriteIds;
+        HashMap<ArrayList<Integer>, IsometricSprite> newIsoSpriteIds;
 
         if (sprite != null) {
             newSprites = new ArrayList<EntitySprite>(entitySprites);
-            newSpriteIds = new HashMap<Integer, EntitySprite>(entitySpriteIds);
-            
+            newSpriteIds = new HashMap<ArrayList<Integer>, EntitySprite>(entitySpriteIds);
+
             newSprites.remove(sprite);
-            
+
             entitySprites = newSprites;
             entitySpriteIds = newSpriteIds;
         }
-        
+
         if(isoSprite != null) {
             isoSprites = new ArrayList<IsometricSprite>(isometricSprites);
-            newIsoSpriteIds = new HashMap<Integer, IsometricSprite>(isometricSpriteIds);
-            
+            newIsoSpriteIds = new HashMap<ArrayList<Integer>, IsometricSprite>(isometricSpriteIds);
+
             isoSprites.remove(isoSprite);
-            
+
             isometricSprites = isoSprites;
             isometricSpriteIds = newIsoSpriteIds;
         }
@@ -1456,40 +1459,78 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      */
     public void redrawEntity(Entity entity) {
         Integer entityId = new Integer(entity.getId());
-        EntitySprite sprite = entitySpriteIds.get(entityId);
-        IsometricSprite isoSprite = isometricSpriteIds.get(entityId);
-        
+
         ArrayList<EntitySprite> newSprites = new ArrayList<EntitySprite>(entitySprites);
-        HashMap<Integer, EntitySprite> newSpriteIds = new HashMap<Integer, EntitySprite>(
+        HashMap<ArrayList<Integer>, EntitySprite> newSpriteIds = new HashMap<ArrayList<Integer>, EntitySprite>(
                 entitySpriteIds);
         ArrayList<IsometricSprite> isoSprites = new ArrayList<IsometricSprite>(isometricSprites);
-        HashMap<Integer, IsometricSprite> newIsoSpriteIds = new HashMap<Integer, IsometricSprite>(
+        HashMap<ArrayList<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<ArrayList<Integer>, IsometricSprite>(
                 isometricSpriteIds);
-        
+
+        ArrayList<Integer> temp = new ArrayList<Integer>();
+        temp.add(entityId);
+        temp.add(-1);
+        EntitySprite sprite = entitySpriteIds.get(temp);
+        IsometricSprite isoSprite = isometricSpriteIds.get(temp);
         if (sprite != null) {
             newSprites.remove(sprite);
         }
-        
         if (isoSprite != null) {
             isoSprites.remove(isoSprite);
         }
-        
+        for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
+            temp = new ArrayList<Integer>();
+            temp.add(entityId);
+            temp.add(secondaryPos);
+            sprite = entitySpriteIds.get(temp);
+            if (sprite != null) {
+                newSprites.remove(sprite);
+            }
+            isoSprite = isometricSpriteIds.get(temp);
+            if (isoSprite != null) {
+                isoSprites.remove(isoSprite);
+            }
+
+        }
+
         Coords position = entity.getPosition();
         if (position != null) {
-            sprite = new EntitySprite(entity);
+            sprite = new EntitySprite(entity, -1);
             newSprites.add(sprite);
-            newSpriteIds.put(entityId, sprite);
-            
-            isoSprite = new IsometricSprite(entity);
+            temp = new ArrayList<Integer>();
+            temp.add(entityId);
+            temp.add(-1);
+            newSpriteIds.put(temp, sprite);
+            for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
+                sprite = new EntitySprite(entity, secondaryPos);
+                newSprites.add(sprite);
+                temp = new ArrayList<Integer>();
+                temp.add(entityId);
+                temp.add(secondaryPos);
+                newSpriteIds.put(temp, sprite);
+            }
+
+            isoSprite = new IsometricSprite(entity, -1);
             isoSprites.add(isoSprite);
-            newIsoSpriteIds.put(entityId, isoSprite);
+            temp = new ArrayList<Integer>();
+            temp.add(entityId);
+            temp.add(-1);
+            newIsoSpriteIds.put(temp, isoSprite);
+            for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
+                isoSprite = new IsometricSprite(entity, secondaryPos);
+                isoSprites.add(isoSprite);
+                temp = new ArrayList<Integer>();
+                temp.add(entityId);
+                temp.add(secondaryPos);
+                newIsoSpriteIds.put(temp, isoSprite);
+            }
         }
 
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
         isometricSprites = isoSprites;
         isometricSpriteIds = newIsoSpriteIds;
-        
+
         for (Iterator<C3Sprite> i = c3Sprites.iterator(); i.hasNext();) {
             final C3Sprite c3sprite = i.next();
             if ((c3sprite.entityId == entity.getId()) || (c3sprite.masterId == entity.getId())) {
@@ -1514,19 +1555,23 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     void redrawAllEntities() {
         ArrayList<EntitySprite> newSprites = new ArrayList<EntitySprite>(game.getNoOfEntities());
         ArrayList<IsometricSprite> newIsometricSprites = new ArrayList<IsometricSprite>(game.getNoOfEntities());
-        HashMap<Integer, EntitySprite> newSpriteIds = new HashMap<Integer, EntitySprite>(game
+        HashMap<ArrayList<Integer>, EntitySprite> newSpriteIds = new HashMap<ArrayList<Integer>, EntitySprite>(game
                 .getNoOfEntities());
-        HashMap<Integer, IsometricSprite> newIsoSpriteIds = new HashMap<Integer, IsometricSprite>(game
+        HashMap<ArrayList<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<ArrayList<Integer>, IsometricSprite>(game
                 .getNoOfEntities());
-        
+
         ArrayList<WreckSprite> newWrecks = new ArrayList<WreckSprite>();
 
         Enumeration<Entity> e = game.getWreckedEntities();
         while (e.hasMoreElements()) {
             Entity entity = e.nextElement();
             if (!(entity instanceof Infantry) && (entity.getPosition() != null)) {
-                WreckSprite ws = new WreckSprite(entity);
+                WreckSprite ws = new WreckSprite(entity, -1);
                 newWrecks.add(ws);
+                for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
+                    ws = new WreckSprite(entity, secondaryPos);
+                    newWrecks.add(ws);
+                }
             }
         }
 
@@ -1538,14 +1583,37 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 continue;
             }
 
-            EntitySprite sprite = new EntitySprite(entity);
+            EntitySprite sprite = new EntitySprite(entity, -1);
             newSprites.add(sprite);
-            newSpriteIds.put(new Integer(entity.getId()), sprite);
+            ArrayList<Integer> temp = new ArrayList<Integer>();
+            temp.add(entity.getId());
+            temp.add(-1);
+            newSpriteIds.put(temp, sprite);
+            for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
+                sprite = new EntitySprite(entity, secondaryPos);
+                newSprites.add(sprite);
+                temp = new ArrayList<Integer>();
+                temp.add(entity.getId());
+                temp.add(secondaryPos);
+                newSpriteIds.put(temp, sprite);
+            }
 
-            IsometricSprite isosprite = new IsometricSprite(entity);
+            IsometricSprite isosprite = new IsometricSprite(entity, -1);
             newIsometricSprites.add(isosprite);
-            newIsoSpriteIds.put(new Integer(entity.getId()), isosprite);
-            
+            temp = new ArrayList<Integer>();
+            temp.add(entity.getId());
+            temp.add(-1);
+            newIsoSpriteIds.put(temp, isosprite);
+            for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
+                isosprite = new IsometricSprite(entity, secondaryPos);
+                newIsometricSprites.add(isosprite);
+                temp = new ArrayList<Integer>();
+                temp.add(entity.getId());
+                temp.add(secondaryPos);
+                newIsoSpriteIds.put(temp, isosprite);
+            }
+
+
             if (entity.hasC3() || entity.hasC3i()) {
                 addC3Link(entity);
             }
@@ -1553,10 +1621,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
-        
+
         isometricSprites = newIsometricSprites;
         isometricSpriteIds = newIsoSpriteIds;
-        
+
         wreckSprites = newWrecks;
 
         scheduleRedraw();
@@ -2300,42 +2368,53 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private class IsometricSprite extends Sprite {
         private Entity entity;
         private Rectangle modelRect;
-        
-        public IsometricSprite(Entity entity) {
+        private int secondaryPos;
+
+        public IsometricSprite(Entity entity, int secondaryPos) {
             this.entity = entity;
+            this.secondaryPos = secondaryPos;
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(shortName) + 1,
                     getFontMetrics(font).getAscent());
 
-            int AltAdjust = 0;
+            int altAdjust = 0;
             if(useIsometric() && (entity.isAirborne() || entity.isAirborneVTOL())) {
-                AltAdjust = (int) (DROPSHDW_DIST * scale);
+                altAdjust = (int) (DROPSHDW_DIST * scale);
             }
-            Dimension dim = new Dimension(hex_size.width, hex_size.height + AltAdjust);
+            Dimension dim = new Dimension(hex_size.width, hex_size.height + altAdjust);
             Rectangle tempBounds = new Rectangle(dim).union(modelRect);
 
-            tempBounds.setLocation(getHexLocation(entity.getPosition()));
-            tempBounds.y = tempBounds.y - AltAdjust;
+            if (secondaryPos == -1) {
+                tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            } else {
+                tempBounds.setLocation(getHexLocation(entity.getSecondaryPositions().get(secondaryPos)));
+            }
+            tempBounds.y = tempBounds.y - altAdjust;
             bounds = tempBounds;
             image = null;
         }
-        
+
         public Entity getEntity() {
             return entity;
         }
-        
+
         /**
-         * 
+         *
          */
         @Override
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer, boolean makeTranslucent) {
-            if(isReady()) {     
-                Point p = getHexLocation(entity.getPosition());
+            if(isReady()) {
+                Point p;
+                if (secondaryPos == -1) {
+                    p = getHexLocation(entity.getPosition());
+                } else {
+                    p = getHexLocation(entity.getSecondaryPositions().get(secondaryPos));
+                }
                 Graphics2D g2 = (Graphics2D) g;
                 if (entity.isAirborne() || entity.isAirborneVTOL()) {
-                    Image shadow = createShadowMask(tileManager.imageFor(entity,  entity.getFacing()));
-                
+                    Image shadow = createShadowMask(tileManager.imageFor(entity,  entity.getFacing(), secondaryPos));
+
                     if (zoomIndex == BASE_ZOOM_INDEX) {
                         shadow = createImage(new FilteredImageSource(shadow
                             .getSource(), new KeyAlphaFilter(TRANSPARENT)));
@@ -2351,7 +2430,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     } else {
                         g.drawImage(shadow, p.x, p.y, this);
                     }
-                
+
                 } else if (makeTranslucent) {
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f));
                     g2.drawImage(image, x, y, observer);
@@ -2363,7 +2442,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 prepare();
             }
         }
-        
+
         @Override
         public void prepare() {
             Image tempImage;
@@ -2394,7 +2473,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             graph.dispose();
             tempImage.flush();
         }
-        
+
     }
     /**
      * Sprite for a cursor. Just a hexagon outline in a specified color.
@@ -2564,8 +2643,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             // If this is an airborne unit, render the shadow.
             if (useIsometric()
                     && (entity.isAirborne() || entity.isAirborneVTOL())) {
-                Image shadow = createShadowMask(tileManager.imageFor(entity,  facing));
-                
+                Image shadow = createShadowMask(tileManager.imageFor(entity,  facing, -1));
+
                 if (zoomIndex == BASE_ZOOM_INDEX) {
                     shadow = createImage(new FilteredImageSource(shadow
                             .getSource(), new KeyAlphaFilter(TRANSPARENT)));
@@ -2573,13 +2652,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     shadow = getScaledImage(createImage(new FilteredImageSource(
                             shadow.getSource(), new KeyAlphaFilter(TRANSPARENT))));
                 }
-                
+
                 g.drawImage(shadow, x, y + (int) (DROPSHDW_DIST * scale), observer);
             }
             //create final image
             drawOnto(g, x, y, observer, false);
         }
-        
+
         /**
          * Creates the sprite for this entity. It is an extra pain to create transparent images in
          * AWT.
@@ -2600,8 +2679,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             // fill with key color
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
-            graph.drawImage(tileManager.imageFor(entity, facing), 0, 0, this);
-           
+            graph.drawImage(tileManager.imageFor(entity, facing, -1), 0, 0, this);
+
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
@@ -2624,8 +2703,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         private Rectangle modelRect;
 
-        public WreckSprite(final Entity entity) {
+        private int secondaryPos;
+
+        public WreckSprite(final Entity entity, int secondaryPos) {
             this.entity = entity;
+            this.secondaryPos = secondaryPos;
 
             String shortName = entity.getShortName();
 
@@ -2633,7 +2715,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(shortName) + 1,
                     getFontMetrics(font).getAscent());
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
-            tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            if (secondaryPos == -1) {
+                tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            } else {
+                tempBounds.setLocation(getHexLocation(entity.getSecondaryPositions().get(secondaryPos)));
+            }
+
 
             bounds = tempBounds;
             image = null;
@@ -2677,24 +2764,26 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             graph.fillRect(0, 0, bounds.width, bounds.height);
 
             // Draw wreck image,if we've got one.
-            Image wreck = tileManager.wreckMarkerFor(entity);
+            Image wreck = tileManager.wreckMarkerFor(entity, -1);
             if (null != wreck) {
                 graph.drawImage(wreck, 0, 0, this);
             }
 
-            // draw box with shortName
-            Color text = Color.lightGray;
-            Color bkgd = Color.darkGray;
-            Color bord = Color.black;
+            if (secondaryPos == -1) {
+                // draw box with shortName
+                Color text = Color.lightGray;
+                Color bkgd = Color.darkGray;
+                Color bord = Color.black;
 
-            graph.setFont(font);
-            graph.setColor(bord);
-            graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
-            tempRect.translate(-1, -1);
-            graph.setColor(bkgd);
-            graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
-            graph.setColor(text);
-            graph.drawString(shortName, tempRect.x + 1, tempRect.y + tempRect.height - 1);
+                graph.setFont(font);
+                graph.setColor(bord);
+                graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
+                tempRect.translate(-1, -1);
+                graph.setColor(bkgd);
+                graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
+                graph.setColor(text);
+                graph.drawString(shortName, tempRect.x + 1, tempRect.y + tempRect.height - 1);
+            }
 
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
@@ -2725,13 +2814,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      */
     private class EntitySprite extends Sprite {
         private Entity entity;
-        
+
         private Rectangle entityRect;
 
         private Rectangle modelRect;
 
-        public EntitySprite(final Entity entity) {
+        private int secondaryPos;
+
+        public EntitySprite(final Entity entity, int secondaryPos) {
             this.entity = entity;
+            this.secondaryPos = secondaryPos;
 
             String shortName = entity.getShortName();
 
@@ -2755,7 +2847,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
             Dimension dim = new Dimension(hex_size.width, hex_size.height + altAdjust);
             Rectangle tempBounds = new Rectangle(dim).union(modelRect);
-            tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            if (secondaryPos == -1) {
+                tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            } else {
+                tempBounds.setLocation(getHexLocation(entity.getSecondaryPositions().get(secondaryPos)));
+            }
 
             tempBounds.y = tempBounds.y - altAdjust;
             bounds = tempBounds;
@@ -2774,7 +2870,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
             Dimension dim = new Dimension(hex_size.width, hex_size.height + altAdjust);
             Rectangle tempBounds = new Rectangle(dim).union(modelRect);
-            tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            if (secondaryPos == -1) {
+                tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            } else {
+                tempBounds.setLocation(getHexLocation(entity.getSecondaryPositions().get(secondaryPos)));
+            }
             tempBounds.y = tempBounds.y - altAdjust;
             bounds = tempBounds;
             entityRect = new Rectangle(bounds.x + (int) (20 * scale), bounds.y
@@ -2832,290 +2932,292 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
             if (!useIsometric()) {
-                //The entity sprite is drawn when the hexes are rendered. 
+                //The entity sprite is drawn when the hexes are rendered.
                 //So do no include the sprite info here.
                 graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
             }
-            // draw box with shortName
-            Color text, bkgd, bord;
-            if (entity.isDone()) {
-                text = Color.lightGray;
-                bkgd = Color.darkGray;
-                bord = Color.black;
-            } else if (entity.isImmobile()) {
-                text = Color.darkGray;
-                bkgd = Color.black;
-                bord = Color.lightGray;
-            } else {
-                text = Color.black;
-                bkgd = Color.lightGray;
-                bord = Color.darkGray;
-            }
-            graph.setFont(font);
-            graph.setColor(bord);
-            graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
-            tempRect.translate(-1, -1);
-            graph.setColor(bkgd);
-            graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
-            graph.setColor(text);
-            graph.drawString(shortName, tempRect.x + 1, tempRect.y + tempRect.height - 1);
-
-            // draw facing
-            graph.setColor(Color.white);
-            if ((entity.getFacing() != -1)
-                    && !((entity instanceof Infantry) && (((Infantry) entity).getDugIn() == Infantry.DUG_IN_NONE))
-                    && !((entity instanceof Aero) && ((Aero) entity).isSpheroid()
-                            && !game.getBoard().inSpace())) {
-                graph.drawPolygon(facingPolys[entity.getFacing()]);
-            }
-
-            // determine secondary facing for non-mechs & flipped arms
-            int secFacing = entity.getFacing();
-            if (!((entity instanceof Mech) || (entity instanceof Protomech))) {
-                secFacing = entity.getSecondaryFacing();
-            } else if (entity.getArmsFlipped()) {
-                secFacing = (entity.getFacing() + 3) % 6;
-            }
-            // draw red secondary facing arrow if necessary
-            if ((secFacing != -1) && (secFacing != entity.getFacing())) {
-                graph.setColor(Color.red);
-                graph.drawPolygon(facingPolys[secFacing]);
-            }
-            if((entity instanceof Aero) && game.useVectorMove()) {
-                for(int head : entity.getHeading()) {
-                    graph.setColor(Color.red);
-                    graph.drawPolygon(facingPolys[head]);
+            if (secondaryPos == -1) {
+                // draw box with shortName
+                Color text, bkgd, bord;
+                if (entity.isDone()) {
+                    text = Color.lightGray;
+                    bkgd = Color.darkGray;
+                    bord = Color.black;
+                } else if (entity.isImmobile()) {
+                    text = Color.darkGray;
+                    bkgd = Color.black;
+                    bord = Color.lightGray;
+                } else {
+                    text = Color.black;
+                    bkgd = Color.lightGray;
+                    bord = Color.darkGray;
                 }
-            }
+                graph.setFont(font);
+                graph.setColor(bord);
+                graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
+                tempRect.translate(-1, -1);
+                graph.setColor(bkgd);
+                graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
+                graph.setColor(text);
+                graph.drawString(shortName, tempRect.x + 1, tempRect.y + tempRect.height - 1);
+
+                // draw facing
+                graph.setColor(Color.white);
+                if ((entity.getFacing() != -1)
+                        && !((entity instanceof Infantry) && (((Infantry) entity).getDugIn() == Infantry.DUG_IN_NONE))
+                        && !((entity instanceof Aero) && ((Aero) entity).isSpheroid()
+                                && !game.getBoard().inSpace())) {
+                    graph.drawPolygon(facingPolys[entity.getFacing()]);
+                }
+
+                // determine secondary facing for non-mechs & flipped arms
+                int secFacing = entity.getFacing();
+                if (!((entity instanceof Mech) || (entity instanceof Protomech))) {
+                    secFacing = entity.getSecondaryFacing();
+                } else if (entity.getArmsFlipped()) {
+                    secFacing = (entity.getFacing() + 3) % 6;
+                }
+                // draw red secondary facing arrow if necessary
+                if ((secFacing != -1) && (secFacing != entity.getFacing())) {
+                    graph.setColor(Color.red);
+                    graph.drawPolygon(facingPolys[secFacing]);
+                }
+                if((entity instanceof Aero) && game.useVectorMove()) {
+                    for(int head : entity.getHeading()) {
+                        graph.setColor(Color.red);
+                        graph.drawPolygon(facingPolys[head]);
+                    }
+                }
 
 
-            // Determine if the entity has a locked turret,
-            // and if it is a gun emplacement
-            boolean turretLocked = false;
-            int crewStunned = 0;
-            boolean ge = false;
-            if (entity instanceof Tank) {
-                turretLocked = !((Tank) entity).hasNoTurret() && !entity.canChangeSecondaryFacing();
-                crewStunned = ((Tank) entity).getStunnedTurns();
-            } else if (entity instanceof GunEmplacement) {
-                turretLocked = ((GunEmplacement) entity).isTurret()
-                        && !entity.canChangeSecondaryFacing();
-                ge = true;
-            }
+                // Determine if the entity has a locked turret,
+                // and if it is a gun emplacement
+                boolean turretLocked = false;
+                int crewStunned = 0;
+                boolean ge = false;
+                if (entity instanceof Tank) {
+                    turretLocked = !((Tank) entity).hasNoTurret() && !entity.canChangeSecondaryFacing();
+                    crewStunned = ((Tank) entity).getStunnedTurns();
+                } else if (entity instanceof GunEmplacement) {
+                    turretLocked = ((GunEmplacement) entity).isTurret()
+                            && !entity.canChangeSecondaryFacing();
+                    ge = true;
+                }
 
-            // draw condition strings
+                // draw condition strings
 
-            //draw elevation/altitude if non-zero
-            if(entity.isAirborne()) {
-                if(!game.getBoard().inSpace()) {
+                //draw elevation/altitude if non-zero
+                if(entity.isAirborne()) {
+                    if(!game.getBoard().inSpace()) {
+                        graph.setColor(Color.darkGray);
+                        graph.drawString(Integer.toString(entity.getAltitude()) + "A", 26, 15);
+                        graph.setColor(Color.PINK);
+                        graph.drawString(Integer.toString(entity.getAltitude()) + "A", 25, 14);
+                    }
+                } else if(entity.getElevation() != 0) {
                     graph.setColor(Color.darkGray);
-                    graph.drawString(Integer.toString(entity.getAltitude()) + "A", 26, 15);
+                    graph.drawString(Integer.toString(entity.getElevation()), 26, 15);
                     graph.setColor(Color.PINK);
-                    graph.drawString(Integer.toString(entity.getAltitude()) + "A", 25, 14);
-                }
-            } else if(entity.getElevation() != 0) {
-                graph.setColor(Color.darkGray);
-                graph.drawString(Integer.toString(entity.getElevation()), 26, 15);
-                graph.setColor(Color.PINK);
-                graph.drawString(Integer.toString(entity.getElevation()), 25, 14);
-            }
-
-            if(entity instanceof Aero) {
-                Aero a = (Aero)entity;
-
-                if(a.isRolled()) {
-                    // draw "rolled"
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(Messages.getString("BoardView1.ROLLED"), 18, 15); //$NON-NLS-1$
-                    graph.setColor(Color.red);
-                    graph.drawString(Messages.getString("BoardView1.ROLLED"), 17, 14); //$NON-NLS-1$
+                    graph.drawString(Integer.toString(entity.getElevation()), 25, 14);
                 }
 
-                if(a.isOutControlTotal() & a.isRandomMove()) {
-                    // draw "RANDOM"
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(Messages.getString("BoardView1.RANDOM"), 18, 35); //$NON-NLS-1$
-                    graph.setColor(Color.red);
-                    graph.drawString(Messages.getString("BoardView1.RANDOM"), 17, 34); //$NON-NLS-1$
-                } else if (a.isOutControlTotal()) {
-                    //draw "CONTROL"
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(Messages.getString("BoardView1.CONTROL"), 18, 39); //$NON-NLS-1$
-                    graph.setColor(Color.red);
-                    graph.drawString(Messages.getString("BoardView1.CONTROL"), 17, 38); //$NON-NLS-1$
+                if(entity instanceof Aero) {
+                    Aero a = (Aero)entity;
+
+                    if(a.isRolled()) {
+                        // draw "rolled"
+                        graph.setColor(Color.darkGray);
+                        graph.drawString(Messages.getString("BoardView1.ROLLED"), 18, 15); //$NON-NLS-1$
+                        graph.setColor(Color.red);
+                        graph.drawString(Messages.getString("BoardView1.ROLLED"), 17, 14); //$NON-NLS-1$
+                    }
+
+                    if(a.isOutControlTotal() & a.isRandomMove()) {
+                        // draw "RANDOM"
+                        graph.setColor(Color.darkGray);
+                        graph.drawString(Messages.getString("BoardView1.RANDOM"), 18, 35); //$NON-NLS-1$
+                        graph.setColor(Color.red);
+                        graph.drawString(Messages.getString("BoardView1.RANDOM"), 17, 34); //$NON-NLS-1$
+                    } else if (a.isOutControlTotal()) {
+                        //draw "CONTROL"
+                        graph.setColor(Color.darkGray);
+                        graph.drawString(Messages.getString("BoardView1.CONTROL"), 18, 39); //$NON-NLS-1$
+                        graph.setColor(Color.red);
+                        graph.drawString(Messages.getString("BoardView1.CONTROL"), 17, 38); //$NON-NLS-1$
+                    }
+
+                    if(a.isEvading()) {
+                        //draw "EVADE" - can't overlap with out of control
+                        graph.setColor(Color.darkGray);
+                        graph.drawString(Messages.getString("BoardView1.EVADE"), 18, 39); //$NON-NLS-1$
+                        graph.setColor(Color.red);
+                        graph.drawString(Messages.getString("BoardView1.EVADE"), 17, 38); //$NON-NLS-1$
+                    }
                 }
 
-                if(a.isEvading()) {
-                    //draw "EVADE" - can't overlap with out of control
+                if (entity.crew.isDead()) {
+                    // draw "CREW DEAD"
                     graph.setColor(Color.darkGray);
-                    graph.drawString(Messages.getString("BoardView1.EVADE"), 18, 39); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.CrewDead"), 18, 39); //$NON-NLS-1$
                     graph.setColor(Color.red);
-                    graph.drawString(Messages.getString("BoardView1.EVADE"), 17, 38); //$NON-NLS-1$
-                }
-            }
-
-            if (entity.crew.isDead()) {
-                // draw "CREW DEAD"
-                graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("BoardView1.CrewDead"), 18, 39); //$NON-NLS-1$
-                graph.setColor(Color.red);
-                graph.drawString(Messages.getString("BoardView1.CrewDead"), 17, 38); //$NON-NLS-1$
-            } else if (!ge && entity.isImmobile()) {
-                if (entity.isProne()) {
-                    // draw "IMMOBILE" and "PRONE"
+                    graph.drawString(Messages.getString("BoardView1.CrewDead"), 17, 38); //$NON-NLS-1$
+                } else if (!ge && entity.isImmobile()) {
+                    if (entity.isProne()) {
+                        // draw "IMMOBILE" and "PRONE"
+                        graph.setColor(Color.darkGray);
+                        graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
+                        graph.drawString(Messages.getString("BoardView1.PRONE"), 26, 48); //$NON-NLS-1$
+                        graph.setColor(Color.red);
+                        graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
+                        graph.setColor(Color.yellow);
+                        graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 47); //$NON-NLS-1$
+                    } else if (crewStunned > 0) {
+                        // draw IMMOBILE and STUNNED
+                        graph.setColor(Color.darkGray);
+                        graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
+                        graph.drawString(Messages.getString(
+                                "BoardView1.STUNNED", new Object[] { crewStunned }), 22, 48); //$NON-NLS-1$
+                        graph.setColor(Color.red);
+                        graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
+                        graph.setColor(Color.yellow);
+                        graph.drawString(Messages.getString(
+                                "BoardView1.STUNNED", new Object[] { crewStunned }), 21, 47); //$NON-NLS-1$
+                    } else if (turretLocked) {
+                        // draw "IMMOBILE" and "LOCKED"
+                        graph.setColor(Color.darkGray);
+                        graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
+                        graph.drawString(Messages.getString("BoardView1.LOCKED"), 22, 48); //$NON-NLS-1$
+                        graph.setColor(Color.red);
+                        graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
+                        graph.setColor(Color.yellow);
+                        graph.drawString(Messages.getString("BoardView1.LOCKED"), 21, 47); //$NON-NLS-1$
+                    } else {
+                        // draw "IMMOBILE"
+                        graph.setColor(Color.darkGray);
+                        graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 39); //$NON-NLS-1$
+                        graph.setColor(Color.red);
+                        graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 38); //$NON-NLS-1$
+                    }
+                } else if (entity.isProne()) {
+                    // draw "PRONE"
                     graph.setColor(Color.darkGray);
-                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
-                    graph.drawString(Messages.getString("BoardView1.PRONE"), 26, 48); //$NON-NLS-1$
-                    graph.setColor(Color.red);
-                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.PRONE"), 26, 39); //$NON-NLS-1$
                     graph.setColor(Color.yellow);
-                    graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 47); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 38); //$NON-NLS-1$
                 } else if (crewStunned > 0) {
-                    // draw IMMOBILE and STUNNED
+                    // draw STUNNED
                     graph.setColor(Color.darkGray);
-                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
                     graph.drawString(Messages.getString(
                             "BoardView1.STUNNED", new Object[] { crewStunned }), 22, 48); //$NON-NLS-1$
-                    graph.setColor(Color.red);
-                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
                     graph.setColor(Color.yellow);
                     graph.drawString(Messages.getString(
                             "BoardView1.STUNNED", new Object[] { crewStunned }), 21, 47); //$NON-NLS-1$
                 } else if (turretLocked) {
-                    // draw "IMMOBILE" and "LOCKED"
+                    // draw "LOCKED"
                     graph.setColor(Color.darkGray);
-                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
-                    graph.drawString(Messages.getString("BoardView1.LOCKED"), 22, 48); //$NON-NLS-1$
-                    graph.setColor(Color.red);
-                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.LOCKED"), 22, 39); //$NON-NLS-1$
                     graph.setColor(Color.yellow);
-                    graph.drawString(Messages.getString("BoardView1.LOCKED"), 21, 47); //$NON-NLS-1$
-                } else {
-                    // draw "IMMOBILE"
+                    graph.drawString(Messages.getString("BoardView1.LOCKED"), 21, 38); //$NON-NLS-1$
+                }
+
+                // If this unit is being swarmed or is swarming another, say so.
+                if (Entity.NONE != entity.getSwarmAttackerId()) {
+                    // draw "SWARMED"
                     graph.setColor(Color.darkGray);
-                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 39); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.SWARMED"), 17, 22); //$NON-NLS-1$
                     graph.setColor(Color.red);
-                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 38); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.SWARMED"), 16, 21); //$NON-NLS-1$
                 }
-            } else if (entity.isProne()) {
-                // draw "PRONE"
-                graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("BoardView1.PRONE"), 26, 39); //$NON-NLS-1$
-                graph.setColor(Color.yellow);
-                graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 38); //$NON-NLS-1$
-            } else if (crewStunned > 0) {
-                // draw STUNNED
-                graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString(
-                        "BoardView1.STUNNED", new Object[] { crewStunned }), 22, 48); //$NON-NLS-1$
-                graph.setColor(Color.yellow);
-                graph.drawString(Messages.getString(
-                        "BoardView1.STUNNED", new Object[] { crewStunned }), 21, 47); //$NON-NLS-1$
-            } else if (turretLocked) {
-                // draw "LOCKED"
-                graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("BoardView1.LOCKED"), 22, 39); //$NON-NLS-1$
-                graph.setColor(Color.yellow);
-                graph.drawString(Messages.getString("BoardView1.LOCKED"), 21, 38); //$NON-NLS-1$
-            }
 
-            // If this unit is being swarmed or is swarming another, say so.
-            if (Entity.NONE != entity.getSwarmAttackerId()) {
-                // draw "SWARMED"
-                graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("BoardView1.SWARMED"), 17, 22); //$NON-NLS-1$
-                graph.setColor(Color.red);
-                graph.drawString(Messages.getString("BoardView1.SWARMED"), 16, 21); //$NON-NLS-1$
-            }
-
-            // If this unit is transporting another, say so.
-            if ((entity.getLoadedUnits()).size() > 0) {
-                // draw "T"
-                graph.setColor(Color.darkGray);
-                graph.drawString("T", 20, 71); //$NON-NLS-1$
-                graph.setColor(Color.black);
-                graph.drawString("T", 19, 70); //$NON-NLS-1$
-            }
-
-            // If this unit is stuck, say so.
-            if ((entity.isStuck())) {
-                graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("BoardView1.STUCK"), 26, 61); //$NON-NLS-1$
-                graph.setColor(Color.orange);
-                graph.drawString(Messages.getString("BoardView1.STUCK"), 25, 60); //$NON-NLS-1$
-
-            }
-
-            // If this unit is currently unknown to the enemy, say so.
-            if (trackThisEntitiesVisibilityInfo(entity)) {
-                if (!entity.isSeenByEnemy()) {
-                    // draw "U"
+                // If this unit is transporting another, say so.
+                if ((entity.getLoadedUnits()).size() > 0) {
+                    // draw "T"
                     graph.setColor(Color.darkGray);
-                    graph.drawString("U", 30, 71); //$NON-NLS-1$
+                    graph.drawString("T", 20, 71); //$NON-NLS-1$
                     graph.setColor(Color.black);
-                    graph.drawString("U", 29, 70); //$NON-NLS-1$
-                } else if (!entity.isVisibleToEnemy()
-                        && !GUIPreferences.getInstance().getBoolean(
-                                GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS)) {
-                    // If this unit is currently hidden from the enemy, say so.
-                    // draw "H"
-                    graph.setColor(Color.darkGray);
-                    graph.drawString("H", 30, 71); //$NON-NLS-1$
-                    graph.setColor(Color.black);
-                    graph.drawString("H", 29, 70); //$NON-NLS-1$
+                    graph.drawString("T", 19, 70); //$NON-NLS-1$
                 }
-            }
 
-            // If hull down, show
-            if (entity.isHullDown()) {
-                // draw "D"
-                graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), 15, 39); //$NON-NLS-1$
-                graph.setColor(Color.yellow);
-                graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), 14, 38); //$NON-NLS-1$
-            } else if (entity instanceof Infantry) {
-                int dig = ((Infantry) entity).getDugIn();
-                if (dig == Infantry.DUG_IN_COMPLETE) {
+                // If this unit is stuck, say so.
+                if ((entity.isStuck())) {
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.STUCK"), 26, 61); //$NON-NLS-1$
+                    graph.setColor(Color.orange);
+                    graph.drawString(Messages.getString("BoardView1.STUCK"), 25, 60); //$NON-NLS-1$
+
+                }
+
+                // If this unit is currently unknown to the enemy, say so.
+                if (trackThisEntitiesVisibilityInfo(entity)) {
+                    if (!entity.isSeenByEnemy()) {
+                        // draw "U"
+                        graph.setColor(Color.darkGray);
+                        graph.drawString("U", 30, 71); //$NON-NLS-1$
+                        graph.setColor(Color.black);
+                        graph.drawString("U", 29, 70); //$NON-NLS-1$
+                    } else if (!entity.isVisibleToEnemy()
+                            && !GUIPreferences.getInstance().getBoolean(
+                                    GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS)) {
+                        // If this unit is currently hidden from the enemy, say so.
+                        // draw "H"
+                        graph.setColor(Color.darkGray);
+                        graph.drawString("H", 30, 71); //$NON-NLS-1$
+                        graph.setColor(Color.black);
+                        graph.drawString("H", 29, 70); //$NON-NLS-1$
+                    }
+                }
+
+                // If hull down, show
+                if (entity.isHullDown()) {
                     // draw "D"
                     graph.setColor(Color.darkGray);
-                    graph.drawString("D", 40, 71); //$NON-NLS-1$
-                    graph.setColor(Color.black);
-                    graph.drawString("D", 39, 70); //$NON-NLS-1$
-                } else if (dig != Infantry.DUG_IN_NONE) {
-                    // draw "W"
-                    graph.setColor(Color.darkGray);
-                    graph.drawString("W", 40, 71); //$NON-NLS-1$
-                    graph.setColor(Color.black);
-                    graph.drawString("W", 39, 70); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), 15, 39); //$NON-NLS-1$
+                    graph.setColor(Color.yellow);
+                    graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), 14, 38); //$NON-NLS-1$
+                } else if (entity instanceof Infantry) {
+                    int dig = ((Infantry) entity).getDugIn();
+                    if (dig == Infantry.DUG_IN_COMPLETE) {
+                        // draw "D"
+                        graph.setColor(Color.darkGray);
+                        graph.drawString("D", 40, 71); //$NON-NLS-1$
+                        graph.setColor(Color.black);
+                        graph.drawString("D", 39, 70); //$NON-NLS-1$
+                    } else if (dig != Infantry.DUG_IN_NONE) {
+                        // draw "W"
+                        graph.setColor(Color.darkGray);
+                        graph.drawString("W", 40, 71); //$NON-NLS-1$
+                        graph.setColor(Color.black);
+                        graph.drawString("W", 39, 70); //$NON-NLS-1$
+                    }
                 }
-            }
 
-            // Lets draw our armor and internal status bars
-            int baseBarLength = 23;
-            int barLength = 0;
-            double percentRemaining = 0.00;
+                // Lets draw our armor and internal status bars
+                int baseBarLength = 23;
+                int barLength = 0;
+                double percentRemaining = 0.00;
 
-            percentRemaining = entity.getArmorRemainingPercent();
-            barLength = (int) (baseBarLength * percentRemaining);
-
-            graph.setColor(Color.darkGray);
-            graph.fillRect(56, 7, 23, 3);
-            graph.setColor(Color.lightGray);
-            graph.fillRect(55, 6, 23, 3);
-            graph.setColor(getStatusBarColor(percentRemaining));
-            graph.fillRect(55, 6, barLength, 3);
-
-            if (!ge) {
-                // Gun emplacements don't have internal structure
-                percentRemaining = entity.getInternalRemainingPercent();
+                percentRemaining = entity.getArmorRemainingPercent();
                 barLength = (int) (baseBarLength * percentRemaining);
 
                 graph.setColor(Color.darkGray);
-                graph.fillRect(56, 11, 23, 3);
+                graph.fillRect(56, 7, 23, 3);
                 graph.setColor(Color.lightGray);
-                graph.fillRect(55, 10, 23, 3);
+                graph.fillRect(55, 6, 23, 3);
                 graph.setColor(getStatusBarColor(percentRemaining));
-                graph.fillRect(55, 10, barLength, 3);
+                graph.fillRect(55, 6, barLength, 3);
+
+                if (!ge) {
+                    // Gun emplacements don't have internal structure
+                    percentRemaining = entity.getInternalRemainingPercent();
+                    barLength = (int) (baseBarLength * percentRemaining);
+
+                    graph.setColor(Color.darkGray);
+                    graph.fillRect(56, 11, 23, 3);
+                    graph.setColor(Color.lightGray);
+                    graph.fillRect(55, 10, 23, 3);
+                    graph.setColor(getStatusBarColor(percentRemaining));
+                    graph.fillRect(55, 10, barLength, 3);
+                }
             }
 
             // create final image

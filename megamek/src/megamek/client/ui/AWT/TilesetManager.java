@@ -179,7 +179,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      */
     public Image imageFor(Entity entity) {
         // mechs look like they're facing their secondary facing
-        if (entity instanceof Mech || entity instanceof Protomech) {
+        if ((entity instanceof Mech) || (entity instanceof Protomech)) {
             return imageFor(entity, entity.getSecondaryFacing());
         }
         return imageFor(entity, entity.getFacing());
@@ -413,7 +413,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image getPlayerCamo(Player player) {
 
         // Return a null if the player has selected no camo file.
-        if (null == player.getCamoCategory()
+        if ((null == player.getCamoCategory())
                 || Player.NO_CAMO.equals(player.getCamoCategory())) {
             return null;
         }
@@ -451,7 +451,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         // check if we have a duplicate image already loaded
         for (Iterator<EntityImage> j = mechImageList.iterator(); j.hasNext();) {
             EntityImage onList = j.next();
-            if (onList.getBase() == base && onList.tint == tint) {
+            if ((onList.getBase() == base) && (onList.tint == tint)) {
                 entityImage = onList;
                 break;
             }

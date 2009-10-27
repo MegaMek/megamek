@@ -1203,7 +1203,7 @@ public interface IGame {
      * add the results of one tag attack
      */
     public abstract void addTagInfo(TagInfo info);
-    
+
     /**
      * clears the "shots" attribute of all TagInfos where attacker is on same
      * team as ae and target is on same mapsheet as tc

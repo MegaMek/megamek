@@ -674,4 +674,18 @@ public class Dropship extends SmallCraft implements Serializable {
         }
         return 5;
     }
+
+
+    @Override
+    public void setPosition(Coords position) {
+        super.setPosition(position);
+        if (getAltitude() == 0) {
+            secondaryPositions.put(0, position.translated(0));
+            secondaryPositions.put(1, position.translated(1));
+            secondaryPositions.put(2, position.translated(2));
+            secondaryPositions.put(3, position.translated(3));
+            secondaryPositions.put(4, position.translated(4));
+            secondaryPositions.put(5, position.translated(5));
+        }
+    }
 }

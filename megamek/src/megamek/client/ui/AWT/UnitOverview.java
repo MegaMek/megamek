@@ -125,8 +125,8 @@ public class UnitOverview implements IDisplayable {
                     + BUTTON_PADDING;
         }
 
-        for (int i = scrollOffset; i < v.size()
-                && i < actUnitsPerPage + scrollOffset; i++) {
+        for (int i = scrollOffset; (i < v.size())
+                && (i < actUnitsPerPage + scrollOffset); i++) {
             Entity e = v.get(i);
             unitIds[i] = e.getId();
             String name = getIconName(e, fm);
@@ -174,27 +174,27 @@ public class UnitOverview implements IDisplayable {
         int xOffset = size.width - DIST_SIDE - ICON_WIDTH;
         int yOffset = DIST_TOP;
 
-        if (x < xOffset || x > xOffset + ICON_WIDTH || y < yOffset
-                || y > yOffset + (unitsPerPage * (ICON_HEIGHT + PADDING))) {
+        if ((x < xOffset) || (x > xOffset + ICON_WIDTH) || (y < yOffset)
+                || (y > yOffset + (unitsPerPage * (ICON_HEIGHT + PADDING)))) {
             return false;
         }
 
         if (scroll) {
-            if (y > yOffset && y < yOffset + BUTTON_HEIGHT) {
+            if ((y > yOffset) && (y < yOffset + BUTTON_HEIGHT)) {
                 pageUp();
                 return true;
             }
             yOffset += BUTTON_HEIGHT + BUTTON_PADDING;
-            if (y > yOffset && y < yOffset + BUTTON_HEIGHT) {
+            if ((y > yOffset) && (y < yOffset + BUTTON_HEIGHT)) {
                 scrollUp();
                 return true;
             }
             yOffset += BUTTON_HEIGHT + BUTTON_PADDING;
         }
 
-        for (int i = scrollOffset; i < unitIds.length
-                && i < actUnits + scrollOffset; i++) {
-            if (y > yOffset && y < yOffset + ICON_HEIGHT) {
+        for (int i = scrollOffset; (i < unitIds.length)
+                && (i < actUnits + scrollOffset); i++) {
+            if ((y > yOffset) && (y < yOffset + ICON_HEIGHT)) {
                 clientgui.bv.processBoardViewEvent(new BoardViewEvent(
                         clientgui.bv, BoardViewEvent.SELECT_UNIT, unitIds[i]));
                 isHit = true;
@@ -206,12 +206,12 @@ public class UnitOverview implements IDisplayable {
         if (scroll) {
             yOffset -= PADDING;
             yOffset += BUTTON_PADDING;
-            if (y > yOffset && y < yOffset + BUTTON_HEIGHT) {
+            if ((y > yOffset) && (y < yOffset + BUTTON_HEIGHT)) {
                 scrollDown();
                 return true;
             }
             yOffset += BUTTON_HEIGHT + BUTTON_PADDING;
-            if (y > yOffset && y < yOffset + BUTTON_HEIGHT) {
+            if ((y > yOffset) && (y < yOffset + BUTTON_HEIGHT)) {
                 pageDown();
                 return true;
             }
@@ -261,12 +261,12 @@ public class UnitOverview implements IDisplayable {
     }
 
     private void drawHeat(Graphics graph, Entity entity, int x, int y) {
-        if (!(entity instanceof Mech || entity instanceof Aero)) {
+        if (!((entity instanceof Mech) || (entity instanceof Aero))) {
             return;
         }
         boolean mtHeat = false;
         int mHeat = 30;
-        if (entity.getGame() != null
+        if ((entity.getGame() != null)
                 && entity.getGame().getOptions().booleanOption("tacops_heat")) {
             mHeat = 50;
             mtHeat = true;
@@ -332,7 +332,7 @@ public class UnitOverview implements IDisplayable {
     }
 
     private void printLine(Graphics g, int x, int y, String s) {
-        if (s == null || s.trim().length() < 0) {
+        if ((s == null) || (s.trim().length() < 0)) {
             return; // some Graphics objects don't like empty strings
         }
         g.setColor(Color.black);
@@ -504,9 +504,9 @@ public class UnitOverview implements IDisplayable {
                 iconName = v.elementAt(0);
             }
             return adjustString(iconName, metrics);
-        } else if (e instanceof Infantry || e instanceof Mech
-                || e instanceof GunEmplacement ||
-                e instanceof Aero) {
+        } else if ((e instanceof Infantry) || (e instanceof Mech)
+                || (e instanceof GunEmplacement) ||
+                (e instanceof Aero)) {
             String iconName = e.getModel();
             return adjustString(iconName, metrics);
         }

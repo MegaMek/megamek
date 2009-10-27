@@ -119,6 +119,13 @@ chassis "Zero" "zero.gif"
 
 #Dropships
 chassis "Leopard" "leopard.gif"
+chassis "Leopard0" "leopard.gif"
+chassis "Leopard1" "leopard.gif"
+chassis "Leopard2" "leopard.gif"
+chassis "Leopard3" "leopard.gif"
+chassis "Leopard4" "leopard.gif"
+chassis "Leopard5" "leopard.gif"
+
 chassis "Union" "union.gif"
 exact "Fury (Obs)" "leopard.gif"
 exact "Fury (Upgrade)" "leopard.gif"

@@ -1153,7 +1153,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         if(game.getBoard().inSpace()) {
             boardGraph.setColor(Color.LIGHT_GRAY);
         }
-        
+
         //draw special stuff for the hex
         final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(c);
         try {
@@ -3436,7 +3436,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 graph.setColor(Color.red);
                 graph.drawPolygon(facingPolys[secFacing]);
             }
-            if(entity instanceof Aero && game.useVectorMove()) {
+            if((entity instanceof Aero) && game.useVectorMove()) {
                 for(int head : entity.getHeading()) {
                     graph.setColor(Color.red);
                     graph.drawPolygon(facingPolys[head]);
@@ -3470,7 +3470,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 graph.setColor(Color.PINK);
                 graph.drawString(Integer.toString(entity.getElevation()), 25, 14);
             }
-            
+
             // draw condition strings
             if(entity instanceof Aero) {
                 Aero a = (Aero)entity;
@@ -3848,7 +3848,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 .append(entity.getTotalArmor()).append(
                         Messages.getString("BoardView1.internal")) //$NON-NLS-1$
                         .append(entity.getTotalInternal());
-            } 
+            }
             tipStrings[2] = buffer.toString();
 
             return tipStrings;
@@ -4240,15 +4240,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if(game.useVectorMove()) {
                 return;
             }
-            
+
             if(!step.getParent().getEntity().isAirborne()) {
                 return;
             }
-            
+
             if(((Aero)step.getParent().getEntity()).isSpheroid()) {
                 return;
-            }   
-            
+            }
+
             velStringBuf.append("(")
             .append(step.getVelocityLeft())
             .append("/")
@@ -4311,7 +4311,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 costStringBuf.append("{").append(step.getElevation()).append(
                 "}");
             }
-            
+
             if(step.getParent().getEntity().isAirborne()) {
                 costStringBuf.append("{").append(step.getAltitude()).append("}");
             }

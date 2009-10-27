@@ -47,6 +47,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.MegaMek;
+import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -1306,7 +1307,7 @@ public class Server implements Runnable {
                 r.messageId = 7005;
             } else {
                 r.messageId = 7010;
-                r.add(player.getName());
+                r.add(getColorForPlayer(player));
             }
         } else {
             // Team victory
@@ -1322,7 +1323,7 @@ public class Server implements Runnable {
             r = new Report();
             r.type = Report.PUBLIC;
             r.messageId = 7016;
-            r.add(player.getName());
+            r.add(getColorForPlayer(player));
             r.add(player.getBV());
             r.add(player.getInitialBV());
             r.add(player.getFledBV());
@@ -1860,7 +1861,7 @@ public class Server implements Runnable {
                     r.player = player.getId();
                 }
                 r.messageId = 7016;
-                r.add(player.getName());
+                r.add(getColorForPlayer(player));
                 r.add(player.getBV());
                 r.add(player.getInitialBV());
                 r.add(player.getFledBV());
@@ -2425,7 +2426,7 @@ public class Server implements Runnable {
 
             if (wonPlayer != Player.PLAYER_NONE) {
                 Report r = new Report(7200, Report.PUBLIC);
-                r.add(game.getPlayer(wonPlayer).getName());
+                r.add(getColorForPlayer(game.getPlayer(wonPlayer)));
                 addReport(r);
             }
             if (wonTeam != Player.TEAM_NONE) {
@@ -2907,6 +2908,11 @@ public class Server implements Runnable {
 
     }
 
+    private static String getColorForPlayer(Player p) {
+        String colorcode = Integer.toHexString(PlayerColors.getColor(p.getColorIndex()).getRGB() & 0x00f0f0f0);
+        return "<B><font color='" + colorcode + "'>" +p.getName()+"</font></B>";
+         
+    }
     /**
      * Write the initiative results to the report
      */
@@ -2954,7 +2960,7 @@ public class Server implements Runnable {
                     Player player = getPlayer(t.getPlayerNum());
                     if (null != player) {
                         r = new Report(1050, Report.PUBLIC);
-                        r.add(player.getName());
+                        r.add(getColorForPlayer(player));
                         addReport(r);
                     }
                 }
@@ -2968,7 +2974,7 @@ public class Server implements Runnable {
                 if (team.getSize() == 1) {
                     final Player player = team.getPlayers().nextElement();
                     r = new Report(1015, Report.PUBLIC);
-                    r.add(player.getName());
+                    r.add(getColorForPlayer(player));
                     r.add(team.getInitiative().toString());
                     addReport(r);
                 } else {

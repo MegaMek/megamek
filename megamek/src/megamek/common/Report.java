@@ -20,6 +20,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import megamek.client.ui.AWT.util.PlayerColors;
+
 /**
  * This class defines a single server report. It holds information such as the
  * report ID, who the report is about, who should see the report, and some
@@ -281,7 +283,8 @@ public class Report implements Serializable {
     public void addDesc(Entity entity) {
         if (entity != null) {
             add(entity.getShortName(), true);
-            add(entity.getOwner().getName());
+            String colorcode = Integer.toHexString(PlayerColors.getColor(entity.getOwner().getColorIndex()).getRGB() & 0x00f0f0f0);
+            add("<B><font color='" + colorcode + "'>" +entity.getOwner().getName()+"</font></B>");
         }
     }
 
@@ -422,7 +425,7 @@ public class Report implements Serializable {
                         }
                     } else if (raw.substring(i + 1, endTagIdx)
                             .equals("newline")) {
-                        text.append("\n");
+                        text.append("<br>");
                     } else {
                         // not a special tag, so treat as literal text
                         text.append(raw.substring(i, endTagIdx + 1));
@@ -469,7 +472,7 @@ public class Report implements Serializable {
     private String getNewlines() {
         StringBuffer sbNewlines = new StringBuffer();
         for (int i = 0; i < newlines; i++) {
-            sbNewlines.append("\n");
+            sbNewlines.append("<br>");
         }
         return sbNewlines.toString();
     }

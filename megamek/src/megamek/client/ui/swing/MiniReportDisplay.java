@@ -24,6 +24,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 
 import megamek.client.ui.Messages;
 
@@ -36,14 +37,16 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
      */
     private static final long serialVersionUID = -703103629596703945L;
     private JButton butOkay;
-    private JTextArea taData;
+    private JTextPane taData;
 
     public MiniReportDisplay(JFrame parent, String sReport) {
         super(parent, Messages.getString("MiniReportDisplay.title"), true); //$NON-NLS-1$
 
         butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
         butOkay.addActionListener(this);
-        taData = new JTextArea(sReport, 20, 48);
+        taData = new JTextPane();
+        taData.setContentType("text/html");
+        taData.setText(sReport);
         taData.setEditable(false);
         taData.setOpaque(false);
 

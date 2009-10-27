@@ -23,7 +23,7 @@ public class PlayerColors {
 
     public static final String colorNames[] = Player.colorNames;
 
-    protected static final int colorRGBs[] = { 0x8686BF, 0xF2F261, 0xCC6666,
+    protected static final int colorRGBs[] = { 0x8686BF, 0xDAB508, 0xCC6666,
             0x87BF86, 0xFFFFFF, 0x8FCCCC, 0xF29DC8, 0xF2AA61, 0xBEBEBE,
             0x98816B, 0x800080 };
 

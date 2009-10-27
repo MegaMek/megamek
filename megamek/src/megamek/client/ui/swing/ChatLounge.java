@@ -50,12 +50,10 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -68,7 +66,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -112,7 +109,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     // buttons & such
     private JPanel panPlayerInfo;
-  
+
     private JComboBox choTeam;
 
     private JButton butCamo;
@@ -183,10 +180,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     private JButton butAddBot;
     private JButton butRemoveBot;
-    
+
     private MekTableModel mekModel;
     private PlayerTableModel playerModel;
-    
+
     // keep track of portrait images
     private DirectoryItems portraits;
 
@@ -220,7 +217,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         } catch (Exception e) {
             portraits = null;
         }
-        
+
         clientgui.getClient().game.addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
 
@@ -252,12 +249,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         setupEntities();
         setupButtons();
-        
+
         refreshEntities();
 
         setupStarts();
         refreshStarts();
-   
+
         setupMainPanel();
 
         labStatus = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
@@ -291,11 +288,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Sets up the player info (team, camo) panel
      */
     private void setupPlayerInfo() {
-    	
+
     	playerModel = new PlayerTableModel();
         tablePlayers = new JTable(playerModel) {
 			private static final long serialVersionUID = 6252953920509362407L;
-			public String getToolTipText(MouseEvent e) {
+			@Override
+            public String getToolTipText(MouseEvent e) {
                 java.awt.Point p = e.getPoint();
                 int rowIndex = rowAtPoint(p);
                 int colIndex = columnAtPoint(p);
@@ -307,7 +305,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 	int bv = (Integer) getValueAt(rowIndex, colIndex);
                 	float ratio = playerModel.getPlayerAt(rowIndex).getForceSizeBVMod();
                 	return Messages.getString("ChatLounge.tipBV", new Object[] {bv, ratio});
-                } 
+                }
                 else if (realColIndex == PlayerTableModel.COL_TON) {
                 	return Float.toString((Float) getValueAt(rowIndex, colIndex));
                 }
@@ -321,7 +319,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         };
         tablePlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tablePlayers.getSelectionModel().addListSelectionListener(this);
-        
+
         tablePlayers.setModel(playerModel);
         TableColumn column = null;
         for (int i = 0; i < PlayerTableModel.N_COL; i++) {
@@ -339,9 +337,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 column.setPreferredWidth(25);
             }
         }
-        scrPlayers = new JScrollPane(tablePlayers);    
+        scrPlayers = new JScrollPane(tablePlayers);
         scrPlayers.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        
+
         panPlayerInfo = new JPanel();
         panPlayerInfo.setBorder(BorderFactory.createTitledBorder("Player Setup"));
 
@@ -430,7 +428,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.weighty = 1.0;
         gridbag.setConstraints(butCamo, c);
         panPlayerInfo.add(butCamo);
-        
+
         refreshPlayerInfo();
     }
 
@@ -707,7 +705,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.gridheight = 3;
         gridbag.setConstraints(scrEntities, c);
         panMain.add(scrEntities);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
@@ -718,7 +716,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(panButtons, c);
         panMain.add(panButtons);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 1;
@@ -728,7 +726,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.gridheight = 1;
         gridbag.setConstraints(panPlayerInfo, c);
         panMain.add(panPlayerInfo);
-        
+
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
         c.gridy = 2;
@@ -784,10 +782,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Sets up the entities table
      */
     private void setupEntities() {
-        
+
         mekModel = new MekTableModel();
         tableEntities = new JTable();
-        tableEntities.setModel(mekModel);   
+        tableEntities.setModel(mekModel);
         tableEntities.setRowHeight(80);
         tableEntities.setIntercellSpacing(new Dimension(0,0));
         tableEntities.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -795,7 +793,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         for (int i = 0; i < MekTableModel.N_COL; i++) {
             tableEntities.getColumnModel().getColumn(i).setCellRenderer(mekModel.getRenderer());
             column = tableEntities.getColumnModel().getColumn(i);
-            if (i == MekTableModel.COL_UNIT || i == MekTableModel.COL_PILOT) {
+            if ((i == MekTableModel.COL_UNIT) || (i == MekTableModel.COL_PILOT)) {
                 column.setPreferredWidth(175);
             }
             else if(i == MekTableModel.COL_PLAYER) {
@@ -812,14 +810,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         scrEntities
                 .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        
+
     }
-    
+
     /**
      * Sets up the buttons on the main tab
      */
     private void setupButtons() {
-        
+
         butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList")); //$NON-NLS-1$
         butLoadList.setActionCommand("load_list"); //$NON-NLS-1$
         butLoadList.addActionListener(this);
@@ -872,7 +870,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 .getString("ChatLounge.butViewGroup")); //$NON-NLS-1$
         butViewGroup.setActionCommand("view_group"); //$NON-NLS-1$
         butViewGroup.addActionListener(this);
-        butViewGroup.setEnabled(false);     
+        butViewGroup.setEnabled(false);
 
         butDelete = new JButton(Messages.getString("ChatLounge.butDelete")); //$NON-NLS-1$
         butDelete.setActionCommand("delete_mech"); //$NON-NLS-1$
@@ -1019,10 +1017,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             //sortedEntities.add(entity);
             allEntities.add(entity);
         }
-        
+
         Collections.sort(allEntities, new Comparator<Entity>() {
             public int compare(final Entity a, final Entity b) {
-                //entity.getOwner() does not work properly because teams are not updated for 
+                //entity.getOwner() does not work properly because teams are not updated for
                 //entities when the user switches teams
                 final Player p_a = clientgui.getClient().game.getPlayer(a.getOwnerId());//a.getOwner();
                 final Player p_b = clientgui.getClient().game.getPlayer(b.getOwnerId());//b.getOwner();
@@ -1122,7 +1120,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         int crewAdvCount = pilot.countOptions(PilotOptions.LVL3_ADVANTAGES);
         int implants = pilot.countOptions( PilotOptions.MD_ADVANTAGES);
-        
+
         String value = "";
         if(blindDrop) {
             value += "<b>" + Messages.getString("ChatLounge.Unknown") + "</b><br>";
@@ -1137,13 +1135,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if(implants > 0) {
             value += "<i>" + Messages.getString("ChatLounge.md") + "</i>, " + implants + Messages.getString("ChatLounge.implants") + "<br>";
         }
-        
+
         return value;
-        
+
     }
-    
+
     public static String formatPilotTooltip(Pilot pilot, boolean command, boolean init) {
-        
+
         String value = "<html>";
         value += "<b>" + pilot.getDesc() + "</b><br>";
         value += "<i>" + pilot.getNickname() + "</i><br>";
@@ -1172,14 +1170,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
         value += "</html>";
         return value;
-        
+
     }
-    
+
 public static String formatUnitTooltip(Entity entity) {
-        
+
         String value = "<html>";
         value += "<b>" + entity.getChassis() + "  " + entity.getModel() + "</b><br>";
-        value += "" + (int) Math.round(entity.getWeight()) + Messages.getString("ChatLounge.Tons") + "<br>";
+        value += "" + Math.round(entity.getWeight()) + Messages.getString("ChatLounge.Tons") + "<br>";
         value += "" + entity.getTotalArmor() + "/" + entity.getTotalOArmor() + Messages.getString("ChatLounge.armor") + "<br>";
         value += "" + entity.getTotalInternal() + "/" + entity.getTotalOInternal() + Messages.getString("ChatLounge.internal") + "<br>";
         value += "<br>";
@@ -1211,13 +1209,13 @@ public static String formatUnitTooltip(Entity entity) {
         }
         value += "</html>";
         return value;
-        
+
     }
-    
+
     public static String formatUnitHTML(Entity entity, boolean blindDrop) {
-        
+
         String value = "";
-        
+
         if(blindDrop) {
             if (entity instanceof Infantry) {
                  value += Messages.getString("ChatLounge.0"); //$NON-NLS-1$
@@ -1255,19 +1253,19 @@ public static String formatUnitTooltip(Entity entity) {
                     c3network += Messages.getString("ChatLounge.C3Slave") + entity.getC3Master().getDisplayName(); //$NON-NLS-1$
                 }
             }
-            
+
             int posQuirkCount = entity.countQuirks(Quirks.POS_QUIRKS);
             int negQuirkCount = entity.countQuirks(Quirks.NEG_QUIRKS);
-            
+
             value += "<b>" + entity.getChassis() + "  " + entity.getModel() + "</b><br>";
             value += "" + Math.round(entity.getWeight()) + Messages.getString("ChatLounge.Tons") + "<br>";
             if(c3network.length() > 0) {
                 value += c3network + "<br>";
             }
-            if(posQuirkCount > 0 | negQuirkCount > 0) {
+            if((posQuirkCount > 0) | (negQuirkCount > 0)) {
                 value += Messages.getString("ChatLounge.Quirks") + "+" + posQuirkCount + "/" + "-" + negQuirkCount + "<br>";
             }
-        }       
+        }
         if(entity.isOffBoard()) {
             value += Messages.getString("ChatLounge.deploysOffBoard"); //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -1275,8 +1273,8 @@ public static String formatUnitTooltip(Entity entity) {
             value += Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound(); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return value;
-    }   
-    
+    }
+
     /**
      * This function is now deprecated and has been replaced by formatUnitHTML, formatPilotHTML,
      * formatUnitTooltip, and formatPilotTooltip. It is however used by other programs so it remains.
@@ -1385,7 +1383,7 @@ public static String formatUnitTooltip(Entity entity) {
      * Refreshes the player info
      */
     private void refreshPlayerInfo() {
-        playerModel.clearData();    
+        playerModel.clearData();
         for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i
                 .hasMoreElements();) {
             final Player player = i.nextElement();
@@ -1786,7 +1784,7 @@ public static String formatUnitTooltip(Entity entity) {
 
         if (ev.getSource().equals(choTeam)) {
             changeTeam(choTeam.getSelectedIndex());
-        } 
+        }
     }
 
     //
@@ -2009,7 +2007,7 @@ public static String formatUnitTooltip(Entity entity) {
         }
         return c;
     }
-    
+
     Client getPlayerSelected() {
         if ((tablePlayers == null) || (tablePlayers.getSelectedRow() == -1)) {
             return clientgui.getClient();
@@ -2052,7 +2050,7 @@ public static String formatUnitTooltip(Entity entity) {
             butRemoveBot.setEnabled(false);
             Client c = getPlayerSelected();
             if (c == null) {
-                
+
                 tablePlayers.removeRowSelectionInterval(tablePlayers.getSelectedRow(), tablePlayers.getSelectedRow());
                 return;
             }
@@ -2091,7 +2089,7 @@ public static String formatUnitTooltip(Entity entity) {
             choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());
         }
     }
-    
+
 
     /**
      * A table model for displaying players
@@ -2099,31 +2097,31 @@ public static String formatUnitTooltip(Entity entity) {
     public class PlayerTableModel extends AbstractTableModel {
 
         private static final long serialVersionUID = -1372393680232901923L;
-        
+
         private static final int COL_PLAYER = 0;
         private static final int COL_TEAM = 1;
-        private static final int COL_BV = 2; 
+        private static final int COL_BV = 2;
         private static final int COL_TON = 3;
         private static final int COL_COST = 4;
         private static final int N_COL = 5;
-        
+
         private ArrayList<Player> players;
         private ArrayList<Integer> bvs;
         private ArrayList<Integer> costs;
         private ArrayList<Float> tons;
-        
-        
+
+
         public PlayerTableModel() {
             players = new ArrayList<Player>();
             bvs = new ArrayList<Integer>();
             costs = new ArrayList<Integer>();
             tons = new ArrayList<Float>();
         }
-        
+
         public int getRowCount() {
             return players.size();
         }
-        
+
         public void clearData() {
             players = new ArrayList<Player>();
             bvs = new ArrayList<Integer>();
@@ -2143,7 +2141,7 @@ public static String formatUnitTooltip(Entity entity) {
             for (Enumeration<Entity> j = clientgui.getClient().getEntities(); j.hasMoreElements();) {
                 Entity entity = j.nextElement();
                 if (entity.getOwner().equals(player)) {
-                    bv += entity.calculateBattleValue();       
+                    bv += entity.calculateBattleValue();
                     cost += entity.getCost(false);
                     ton += entity.getWeight();
                 }
@@ -2153,40 +2151,40 @@ public static String formatUnitTooltip(Entity entity) {
             tons.add(ton);
             fireTableDataChanged();
         }
-        
+
         @Override
         public String getColumnName(int column) {
             switch(column) {
-                case(COL_PLAYER): 
+                case(COL_PLAYER):
                     return Messages.getString("ChatLounge.colPlayer");
-                case(COL_TEAM): 
+                case(COL_TEAM):
                     return "Team";
-                case(COL_TON): 
+                case(COL_TON):
                     return Messages.getString("ChatLounge.colTon");
-                case(COL_BV): 
+                case(COL_BV):
                     return Messages.getString("ChatLounge.colBV");
-                case(COL_COST): 
+                case(COL_COST):
                     return Messages.getString("ChatLounge.colCost");
             }
             return "??";
         }
-        
+
         @Override
         public Class<?> getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
-        
+
 
         @Override
         public boolean isCellEditable(int row, int col) {
             return false;
         }
-      
+
         public Object getValueAt(int row, int col) {
             Player player = getPlayerAt(row);
             boolean blindDrop = !player.equals(clientgui.getClient().getLocalPlayer()) && clientgui.getClient().game.getOptions().booleanOption("real_blind_drop");
             if(col == COL_BV) {
-                int bv = (int) Math.round(bvs.get(row) * player.getForceSizeBVMod());
+                int bv = Math.round(bvs.get(row) * player.getForceSizeBVMod());
                 if(blindDrop) {
                     bv = bv > 0 ? 9999 : 0;
                 }
@@ -2194,54 +2192,54 @@ public static String formatUnitTooltip(Entity entity) {
             }
             else if(col == COL_PLAYER) {
                 return player.getName();
-            } 
+            }
             else if(col == COL_TON) {
                 float ton = tons.get(row);
                 if(blindDrop) {
                     ton = ton > 0 ? 9999 : 0;
                 }
                 return ton;
-            } 
+            }
             else if(col == COL_COST) {
                 int cost = costs.get(row);
                 if(blindDrop) {
                     cost = cost > 0 ? 9999 : 0;
                 }
                 return cost;
-            } 
+            }
             else {
                 return player.getTeam();
             }
         }
 
         public Player getPlayerAt(int row) {
-            return (Player)players.get(row);
+            return players.get(row);
         }
     }
-    
+
     /**
      * A table model for displaying units
      */
     public class MekTableModel extends AbstractTableModel {
 
         private static final long serialVersionUID = 4819661751806908535L;
-        
+
         private static final int COL_UNIT = 0;
         private static final int COL_PILOT = 1;
-        private static final int COL_PLAYER = 2; 
+        private static final int COL_PLAYER = 2;
         private static final int COL_BV = 3;
         private static final int N_COL = 4;
-        
+
         private ArrayList<Entity> data;
-        
+
         public MekTableModel() {
             data = new ArrayList<Entity>();
         }
-        
+
         public int getRowCount() {
             return data.size();
         }
-        
+
         public void clearData() {
             data = new ArrayList<Entity>();
         }
@@ -2254,27 +2252,27 @@ public static String formatUnitTooltip(Entity entity) {
             data.add(en);
             fireTableDataChanged();
         }
-        
+
         @Override
         public String getColumnName(int column) {
             switch(column) {
-                case(COL_PILOT): 
+                case(COL_PILOT):
                     return Messages.getString("ChatLounge.colPilot");
-                case(COL_UNIT): 
+                case(COL_UNIT):
                     return Messages.getString("ChatLounge.colUnit");
-                case(COL_PLAYER): 
+                case(COL_PLAYER):
                     return Messages.getString("ChatLounge.colPlayer");
-                case(COL_BV): 
+                case(COL_BV):
                     return Messages.getString("ChatLounge.colBV");
             }
             return "??";
         }
-        
+
         @Override
         public Class<?> getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
-        
+
 
         @Override
         public boolean isCellEditable(int row, int col) {
@@ -2291,10 +2289,10 @@ public static String formatUnitTooltip(Entity entity) {
             else if(col == COL_PLAYER) {
                 //FIXME: I don't know why the commented-out method is not working, but it does not update properly
                 value += entity.getOwner().getName() + "<br>Team " +  clientgui.getClient().game.getPlayer(entity.getOwnerId()).getTeam();//getEntityAt(row).getOwner().getTeam();
-            } 
+            }
             else if(col == COL_PILOT) {
                 return formatPilotHTML(entity.crew, blindDrop);
-            } 
+            }
             else {
                 return formatUnitHTML(entity, blindDrop);
             }
@@ -2302,9 +2300,9 @@ public static String formatUnitTooltip(Entity entity) {
         }
 
         public Entity getEntityAt(int row) {
-            return (Entity)data.get(row);
+            return data.get(row);
         }
- 
+
         public MekTableModel.Renderer getRenderer() {
             return new MekTableModel.Renderer();
         }
@@ -2332,12 +2330,12 @@ public static String formatUnitTooltip(Entity entity) {
                     }
                 } else {
                     if(column == COL_UNIT) {
-                        clientgui.loadPreviewImage(this.getLabel(), entity);
+                        clientgui.loadPreviewImage(getLabel(), entity);
                         setToolTipText(formatUnitTooltip(entity));
                     }
                     else if(column == COL_PILOT) {
                         setPortrait(entity.crew);
-                        setToolTipText(formatPilotTooltip(entity.crew, 
+                        setToolTipText(formatPilotTooltip(entity.crew,
                                 clientgui.getClient().game.getOptions().booleanOption("command_init"),
                                 clientgui.getClient().game.getOptions().booleanOption("individual_initiative")));
                     }
@@ -2354,7 +2352,7 @@ public static String formatUnitTooltip(Entity entity) {
                 }
                 return c;
             }
-            
+
             public void setPortrait(Pilot pilot) {
 
                 String category = pilot.getPortraitCategory();
@@ -2364,11 +2362,11 @@ public static String formatUnitTooltip(Entity entity) {
                 if ((null == category) || (null == file)) {
                     return;
                 }
-                
+
                 if(Pilot.ROOT_PORTRAIT.equals(category)) {
                     category = "";
                 }
-                
+
                 if(Pilot.PORTRAIT_NONE.equals(file)) {
                     file = "default.gif";
                 }
@@ -2389,17 +2387,18 @@ public static String formatUnitTooltip(Entity entity) {
 
         }
     }
-    
+
     public class MekTableKeyAdapter extends KeyAdapter {
-        
-        public void keyPressed(KeyEvent e) { 
-            int row = tableEntities.getSelectedRow(); 
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            int row = tableEntities.getSelectedRow();
             if(row == -1) {
                 return;
             }
             Entity entity = mekModel.getEntityAt(row);
-            int code = e.getKeyCode();      
-            if (code == KeyEvent.VK_DELETE || code == KeyEvent.VK_BACK_SPACE) {                
+            int code = e.getKeyCode();
+            if ((code == KeyEvent.VK_DELETE) || (code == KeyEvent.VK_BACK_SPACE)) {
                 e.consume();
                 Client c = clientgui.getBots().get(entity.getOwner().getName());
                 if (c == null) {
@@ -2416,9 +2415,10 @@ public static String formatUnitTooltip(Entity entity) {
                 customizeMech(entity);
             }
         }
-        
+
+        @Override
         public void keyTyped(KeyEvent e) {
-            int row = tableEntities.getSelectedRow(); 
+            int row = tableEntities.getSelectedRow();
             if(row == -1) {
                 return;
             }
@@ -2434,7 +2434,7 @@ public static String formatUnitTooltip(Entity entity) {
             }
         }
     }
-    
+
     public class MekTableMouseAdapter extends MouseInputAdapter implements ActionListener {
 
         public void actionPerformed(ActionEvent action) {
@@ -2457,7 +2457,7 @@ public static String formatUnitTooltip(Entity entity) {
                 c.sendDeleteEntity(entity.getId());
             }
         }
-        
+
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) {
@@ -2465,7 +2465,7 @@ public static String formatUnitTooltip(Entity entity) {
                 Entity entity = mekModel.getEntityAt(row);
                 boolean isOwner = entity.getOwner().equals(clientgui.getClient().getLocalPlayer());
                 boolean isBot = clientgui.getBots().get(entity.getOwner().getName()) != null;
-                if(null != entity && (isOwner || isBot)) {
+                if((null != entity) && (isOwner || isBot)) {
                     customizeMech(entity);
                 }
             }
@@ -2480,7 +2480,7 @@ public static String formatUnitTooltip(Entity entity) {
         public void mouseReleased(MouseEvent e) {
             maybeShowPopup(e);
         }
-        
+
         private void maybeShowPopup(MouseEvent e) {
             JPopupMenu popup = new JPopupMenu();
             int row = tableEntities.rowAtPoint(e.getPoint());
@@ -2488,7 +2488,7 @@ public static String formatUnitTooltip(Entity entity) {
             boolean isOwner = entity.getOwner().equals(clientgui.getClient().getLocalPlayer());
             boolean isBot = clientgui.getBots().get(entity.getOwner().getName()) != null;
             boolean blindDrop = clientgui.getClient().game.getOptions().booleanOption("blind_drop");
-            if (e.isPopupTrigger()) {               
+            if (e.isPopupTrigger()) {
                 JMenuItem menuItem = null;
                 //JMenu menu = null;
                 menuItem = new JMenuItem("View unit...");
@@ -2509,27 +2509,27 @@ public static String formatUnitTooltip(Entity entity) {
                 popup.show(e.getComponent(), e.getX(), e.getY());
             }
         }
-                
+
     }
-    
+
     public class MekInfo extends JPanel {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -7337823041775639463L;
-        
+
         private JLabel lblImage;
-       
+
         public MekInfo() {
-            
+
             lblImage = new JLabel();
-            
+
             setLayout(new java.awt.GridLayout(1, 0));
             add(lblImage);
             lblImage.setBorder(BorderFactory.createEmptyBorder());
         }
-      
+
         public void setText(String s, boolean isSelected) {
             String color = "black";
             if(isSelected) {
@@ -2537,13 +2537,13 @@ public static String formatUnitTooltip(Entity entity) {
             }
             lblImage.setText("<html><font size='2' color='" + color + "'>"+s+"</font></html>");
         }
-        
+
         public void setImage(Image img) {
             lblImage.setIcon(new ImageIcon(img));
         }
-        
+
         public JLabel getLabel() {
             return lblImage;
-        }     
-    }    
+        }
+    }
 }

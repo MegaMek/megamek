@@ -1342,7 +1342,6 @@ public class Game implements Serializable, IGame {
                 }
             }
         }
-
         return vector.elements();
     }
 

@@ -59,7 +59,7 @@ import megamek.common.util.DirectoryItems;
 /**
  * Handles loading and manipulating images from both the mech tileset and the
  * terrain tileset.
- * 
+ *
  * @author Ben
  */
 public class TilesetManager implements IPreferenceChangeListener, ITilesetManager {
@@ -79,7 +79,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private MechTileset wreckTileset = new MechTileset(
             "data/images/units/wrecks/"); //$NON-NLS-1$
     private ArrayList<EntityImage> mechImageList = new ArrayList<EntityImage>();
-    private HashMap<Integer, EntityImage> mechImages = new HashMap<Integer, EntityImage>();
+    private HashMap<ArrayList<Integer>, EntityImage> mechImages = new HashMap<ArrayList<Integer>, EntityImage>();
 
     // hex images
     private HexTileset hexTileset = new HexTileset();
@@ -138,13 +138,16 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     }
 
     public Image iconFor(Entity entity) {
-        EntityImage entityImage = mechImages.get(new Integer(entity.getId()));
+        ArrayList<Integer> temp = new ArrayList<Integer>();
+        temp.add(entity.getId());
+        temp.add(-1);
+        EntityImage entityImage = mechImages.get(temp);
         if (entityImage == null) {
             // probably double_blind. Try to load on the fly
             System.out
                     .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
-            loadImage(entity);
-            entityImage = mechImages.get(new Integer(entity.getId()));
+            loadImage(entity, -1);
+            entityImage = mechImages.get(temp);
             if (entityImage == null) {
                 // now it's a real problem
                 System.out
@@ -155,14 +158,17 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         return entityImage.getIcon();
     }
 
-    public Image wreckMarkerFor(Entity entity) {
-        EntityImage entityImage = mechImages.get(new Integer(entity.getId()));
+    public Image wreckMarkerFor(Entity entity, int secondaryPos) {
+        ArrayList<Integer> temp = new ArrayList<Integer>();
+        temp.add(entity.getId());
+        temp.add(secondaryPos);
+        EntityImage entityImage = mechImages.get(temp);
         if (entityImage == null) {
             // probably double_blind. Try to load on the fly
             System.out
                     .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
-            loadImage(entity);
-            entityImage = mechImages.get(new Integer(entity.getId()));
+            loadImage(entity, secondaryPos);
+            entityImage = mechImages.get(temp);
             if (entityImage == null) {
                 // now it's a real problem
                 System.out
@@ -177,21 +183,28 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      * Return the image for the entity
      */
     public Image imageFor(Entity entity) {
-        // mechs look like they're facing their secondary facing
-        if (entity instanceof Mech || entity instanceof Protomech) {
-            return imageFor(entity, entity.getSecondaryFacing());
-        }
-        return imageFor(entity, entity.getFacing());
+        return imageFor(entity, -1);
     }
 
-    public Image imageFor(Entity entity, int facing) {
-        EntityImage entityImage = mechImages.get(new Integer(entity.getId()));
+    public Image imageFor(Entity entity, int secondaryPos) {
+        // mechs look like they're facing their secondary facing
+        if ((entity instanceof Mech) || (entity instanceof Protomech)) {
+            return imageFor(entity, entity.getSecondaryFacing(), secondaryPos);
+        }
+        return imageFor(entity, entity.getFacing(), secondaryPos);
+    }
+
+    public Image imageFor(Entity entity, int facing, int secondaryPos) {
+        ArrayList<Integer> temp = new ArrayList<Integer>();
+        temp.add(entity.getId());
+        temp.add(secondaryPos);
+        EntityImage entityImage = mechImages.get(temp);
         if (entityImage == null) {
             // probably double_blind. Try to load on the fly
             System.out
                     .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
-            loadImage(entity);
-            entityImage = mechImages.get(new Integer(entity.getId()));
+            loadImage(entity, secondaryPos);
+            entityImage = mechImages.get(temp);
             if (entityImage == null) {
                 // now it's a real problem
                 System.out
@@ -313,7 +326,11 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         // load all mech images
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
-            loadImage(i.nextElement());
+            Entity e = i.nextElement();
+            loadImage(e, -1);
+            for (Integer secPos : e.getSecondaryPositions().keySet()) {
+                loadImage(e, secPos);
+            }
         }
 
         // load minefield sign
@@ -335,7 +352,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     /**
      * Loads the image(s) for this hex into the tracker.
-     * 
+     *
      * @param hex the hex to load
      */
     private synchronized void loadHexImage(IHex hex) {
@@ -345,7 +362,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     /**
      * Removes the hex images from the cache.
-     * 
+     *
      * @param hex
      */
     public void clearHex(IHex hex) {
@@ -354,7 +371,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     /**
      * Waits until a certain hex's images are done loading.
-     * 
+     *
      * @param hex the hex to wait for
      */
     public synchronized void waitForHex(IHex hex) {
@@ -377,7 +394,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      *  Loads a preview image of the unit into the BufferedPanel.
      */
     public Image loadPreviewImage(Entity entity, Image camo, int tint, Component bp) {
-        Image base = mechTileset.imageFor(entity, comp);
+        Image base = mechTileset.imageFor(entity, comp, -1);
         EntityImage entityImage = new EntityImage(base, tint, camo, bp);
         Image preview = entityImage.loadPreviewImage();
 
@@ -389,13 +406,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             // should never come here
 
         }
-        
+
         return preview;
     }
 
     /**
      * Get the camo pattern for the given player.
-     * 
+     *
      * @param player - the <code>Player</code> whose camo pattern is needed.
      * @return The <code>Image</code> of the player's camo pattern. This value
      *         will be <code>null</code> if the player has selected no camo
@@ -404,7 +421,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image getPlayerCamo(Player player) {
 
         // Return a null if the player has selected no camo file.
-        if (null == player.getCamoCategory()
+        if ((null == player.getCamoCategory())
                 || Player.NO_CAMO.equals(player.getCamoCategory())) {
             return null;
         }
@@ -415,8 +432,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
             // Translate the root camo directory name.
             String category = player.getCamoCategory();
-            if (Player.ROOT_CAMO.equals(category))
+            if (Player.ROOT_CAMO.equals(category)) {
                 category = ""; //$NON-NLS-1$
+            }
             camo = (Image) camos.getItem(category, player.getCamoFileName());
 
         } catch (Exception err) {
@@ -428,9 +446,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     /**
      * Load a single entity image
      */
-    public synchronized void loadImage(Entity entity) {
-        Image base = mechTileset.imageFor(entity, comp);
-        Image wreck = wreckTileset.imageFor(entity, comp);
+    public synchronized void loadImage(Entity entity, int secondaryPos) {
+        Image base = mechTileset.imageFor(entity, comp, secondaryPos);
+        Image wreck = wreckTileset.imageFor(entity, comp, secondaryPos);
 
         Player player = entity.getOwner();
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
@@ -441,7 +459,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         // check if we have a duplicate image already loaded
         for (Iterator<EntityImage> j = mechImageList.iterator(); j.hasNext();) {
             EntityImage onList = j.next();
-            if (onList.getBase().equals(base) && onList.tint == tint) {
+            if (onList.getBase().equals(base) && (onList.tint == tint)) {
                 entityImage = onList;
                 break;
             }
@@ -458,7 +476,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         // relate this id to this image set
-        mechImages.put(new Integer(entity.getId()), entityImage);
+        ArrayList<Integer> temp = new ArrayList<Integer>();
+        temp.add(entity.getId());
+        temp.add(secondaryPos);
+        mechImages.put(temp, entityImage);
     }
 
     /**
@@ -499,7 +520,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             this.base = base;
             this.tint = tint;
             this.camo = camo;
-            this.parent = comp;
+            parent = comp;
             this.wreck = wreck;
         }
 

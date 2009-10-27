@@ -27,7 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 
 import megamek.client.ui.Messages;
 import megamek.common.IGame;
@@ -182,11 +182,11 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             }
 
             // add as many round tabs as necessary to catch us up
-            JTextArea ta;
+            JTextPane ta;
             // TODO: we should remove the use of client
             for (int catchup = phaseTab + 1; catchup <= round; catchup++) {
                 if (tabs.indexOfTab("Round " + catchup) != -1) {
-                    ((JTextArea) ((JScrollPane) tabs.getComponentAt(tabs
+                    ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs
                             .indexOfTab("Round " + catchup))).getViewport()
                             .getView()).setText(clientgui.getClient()
                             .receiveReport(clientgui.getClient().game.getReports(catchup)));
@@ -197,14 +197,19 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
                     text = clientgui.getClient()
                             .receiveReport(clientgui.getClient().game.getReports(catchup));
                 }
-                ta = new JTextArea(text, 40, 25);
+                ta = new JTextPane();
+                ta.setContentType("text/html");
+                ta.setText(text);
                 ta.setEditable(false);
+                ta.setOpaque(false);
                 ta.setFont(new Font("Sans Serif", Font.PLAIN, 12));
                 tabs.add("Round " + catchup, new JScrollPane(ta));
             }
 
             // add the new current phase tab
-            ta = new JTextArea(phaseText, 40, 25);
+            ta = new JTextPane();
+            ta.setContentType("text/html");
+            ta.setText(phaseText);
             ta.setEditable(false);
             ta.setOpaque(false);
             ta.setFont(new Font("Sans Serif", Font.PLAIN, 12));
@@ -213,10 +218,10 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             tabs.setSelectedComponent(sp);
         } else {
             // Update the existing round tab and the phase tab.
-            ((JTextArea) ((JScrollPane) tabs.getComponentAt(tabs
+            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs
                     .indexOfTab("Round " + round))).getViewport().getView())
                     .setText(roundText);
-            ((JTextArea) ((JScrollPane) tabs.getComponentAt(tabs
+            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs
                     .indexOfTab("Phase"))).getViewport().getView())
                     .setText(phaseText);
         }
@@ -225,11 +230,13 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     public void appendReportTab(String additionalText) {
         int phaseTab = tabs.indexOfTab("Phase");
         if (phaseTab > 0) {
-            ((JTextArea) ((JScrollPane) tabs.getComponentAt(phaseTab - 1))
-                    .getViewport().getView()).append(additionalText);
+            JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab - 1))
+                    .getViewport().getView());
+            pane.setText(pane.getText() + additionalText);
         }
-        ((JTextArea) ((JScrollPane) tabs.getComponentAt(phaseTab))
-                .getViewport().getView()).append(additionalText);
+        JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab))
+                .getViewport().getView());
+        pane.setText(pane.getText() + additionalText);
     }
 
     public void resetTabs() {

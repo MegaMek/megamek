@@ -79,7 +79,21 @@ public class MechTileset {
     private String SMALL_CRAFT_AERO_STRING = "default_small_craft_aero"; //$NON-NLS-1$
     private String SMALL_CRAFT_SPHERE_STRING = "default_small_craft_sphere"; //$NON-NLS-1$
     private String DROPSHIP_AERO_STRING = "default_dropship_aero"; //$NON-NLS-1$
+    private String DROPSHIP_AERO_STRING_0 = "default_dropship_aero_0"; //$NON-NLS-1$
+    private String DROPSHIP_AERO_STRING_1 = "default_dropship_aero_1"; //$NON-NLS-1$
+    private String DROPSHIP_AERO_STRING_2 = "default_dropship_aero_2"; //$NON-NLS-1$
+    private String DROPSHIP_AERO_STRING_3 = "default_dropship_aero_3"; //$NON-NLS-1$
+    private String DROPSHIP_AERO_STRING_4 = "default_dropship_aero_4"; //$NON-NLS-1$
+    private String DROPSHIP_AERO_STRING_5 = "default_dropship_aero_5"; //$NON-NLS-1$
+    private String DROPSHIP_AERO_STRING_6 = "default_dropship_aero_6"; //$NON-NLS-1$
     private String DROPSHIP_SPHERE_STRING = "default_dropship_sphere"; //$NON-NLS-1$
+    private String DROPSHIP_SPHERE_STRING_0 = "default_dropship_sphere_0"; //$NON-NLS-1$
+    private String DROPSHIP_SPHERE_STRING_1 = "default_dropship_sphere_1"; //$NON-NLS-1$
+    private String DROPSHIP_SPHERE_STRING_2 = "default_dropship_sphere_2"; //$NON-NLS-1$
+    private String DROPSHIP_SPHERE_STRING_3 = "default_dropship_sphere_3"; //$NON-NLS-1$
+    private String DROPSHIP_SPHERE_STRING_4 = "default_dropship_sphere_4"; //$NON-NLS-1$
+    private String DROPSHIP_SPHERE_STRING_5 = "default_dropship_sphere_5"; //$NON-NLS-1$
+    private String DROPSHIP_SPHERE_STRING_6 = "default_dropship_sphere_6"; //$NON-NLS-1$
     private String JUMPSHIP_STRING = "default_jumpship"; //$NON-NLS-1$
     private String WARSHIP_STRING = "default_warship"; //$NON-NLS-1$
     private String SPACE_STATION_STRING = "default_space_station"; //$NON-NLS-1$
@@ -110,7 +124,21 @@ public class MechTileset {
     private MechEntry default_small_craft_aero;
     private MechEntry default_small_craft_sphere;
     private MechEntry default_dropship_aero;
+    private MechEntry default_dropship_aero_0;
+    private MechEntry default_dropship_aero_1;
+    private MechEntry default_dropship_aero_2;
+    private MechEntry default_dropship_aero_3;
+    private MechEntry default_dropship_aero_4;
+    private MechEntry default_dropship_aero_5;
+    private MechEntry default_dropship_aero_6;
     private MechEntry default_dropship_sphere;
+    private MechEntry default_dropship_sphere_0;
+    private MechEntry default_dropship_sphere_1;
+    private MechEntry default_dropship_sphere_2;
+    private MechEntry default_dropship_sphere_3;
+    private MechEntry default_dropship_sphere_4;
+    private MechEntry default_dropship_sphere_5;
+    private MechEntry default_dropship_sphere_6;
     private MechEntry default_jumpship;
     private MechEntry default_warship;
     private MechEntry default_space_station;
@@ -153,17 +181,30 @@ public class MechTileset {
      */
     private MechEntry entryFor(Entity entity, int secondaryPos) {
         // first, check for exact matches
-        if (exact.containsKey(entity.getShortNameRaw().toUpperCase()+secondaryPos)) {
-            return exact.get(entity.getShortNameRaw().toUpperCase()+secondaryPos);
-        }
+        if (secondaryPos != -1) {
+            if (exact.containsKey(entity.getShortNameRaw().toUpperCase()+"_"+secondaryPos)) {
+                return exact.get(entity.getShortNameRaw().toUpperCase()+"_"+secondaryPos);
+            }
 
-        // next, chassis matches
-        if (chassis.containsKey(entity.getChassis().toUpperCase()+secondaryPos)) {
-            return chassis.get(entity.getChassis().toUpperCase()+secondaryPos);
-        }
+            // next, chassis matches
+            if (chassis.containsKey(entity.getChassis().toUpperCase()+"_"+secondaryPos)) {
+                return chassis.get(entity.getChassis().toUpperCase()+"_"+secondaryPos);
+            }
 
-        // last, the generic model
-        return genericFor(entity, secondaryPos);
+            // last, the generic model
+            return genericFor(entity, secondaryPos);
+        } else {
+            if (exact.containsKey(entity.getShortNameRaw().toUpperCase())) {
+                return exact.get(entity.getShortNameRaw().toUpperCase());
+            }
+
+            // next, chassis matches
+            if (chassis.containsKey(entity.getChassis().toUpperCase())) {
+                return chassis.get(entity.getChassis().toUpperCase());
+            }
+            // last, the generic model
+            return genericFor(entity, secondaryPos);
+        }
     }
 
     public MechEntry genericFor(Entity entity, int secondaryPos) {
@@ -247,9 +288,43 @@ public class MechTileset {
             if (entity instanceof Dropship) {
                 Dropship ds = (Dropship) entity;
                 if (ds.isSpheroid()) {
-                    return default_dropship_sphere;
+                    switch (secondaryPos) {
+                        case -1:
+                            return default_dropship_sphere;
+                        case 0:
+                            return default_dropship_sphere_0;
+                        case 1:
+                            return default_dropship_sphere_1;
+                        case 2:
+                            return default_dropship_sphere_2;
+                        case 3:
+                            return default_dropship_sphere_3;
+                        case 4:
+                            return default_dropship_sphere_4;
+                        case 5:
+                            return default_dropship_sphere_5;
+                        case 6:
+                            return default_dropship_sphere_6;
+                    }
                 } else {
-                    return default_dropship_aero;
+                    switch (secondaryPos) {
+                    case -1:
+                        return default_dropship_aero;
+                    case 0:
+                        return default_dropship_aero_0;
+                    case 1:
+                        return default_dropship_aero_1;
+                    case 2:
+                        return default_dropship_aero_2;
+                    case 3:
+                        return default_dropship_aero_3;
+                    case 4:
+                        return default_dropship_aero_4;
+                    case 5:
+                        return default_dropship_aero_5;
+                    case 6:
+                        return default_dropship_aero_6;
+                }
                 }
             }
 
@@ -350,8 +425,22 @@ public class MechTileset {
         default_aero = exact.get(AERO_STRING.toUpperCase());
         default_small_craft_aero = exact.get(SMALL_CRAFT_AERO_STRING.toUpperCase());
         default_dropship_aero = exact.get(DROPSHIP_AERO_STRING.toUpperCase());
+        default_dropship_aero_0 = exact.get(DROPSHIP_AERO_STRING_0.toUpperCase());
+        default_dropship_aero_1 = exact.get(DROPSHIP_AERO_STRING_1.toUpperCase());
+        default_dropship_aero_2 = exact.get(DROPSHIP_AERO_STRING_2.toUpperCase());
+        default_dropship_aero_3 = exact.get(DROPSHIP_AERO_STRING_3.toUpperCase());
+        default_dropship_aero_4 = exact.get(DROPSHIP_AERO_STRING_4.toUpperCase());
+        default_dropship_aero_5 = exact.get(DROPSHIP_AERO_STRING_5.toUpperCase());
+        default_dropship_aero_6 = exact.get(DROPSHIP_AERO_STRING_6.toUpperCase());
         default_small_craft_sphere = exact.get(SMALL_CRAFT_SPHERE_STRING.toUpperCase());
         default_dropship_sphere = exact.get(DROPSHIP_SPHERE_STRING.toUpperCase());
+        default_dropship_sphere_0 = exact.get(DROPSHIP_SPHERE_STRING_0.toUpperCase());
+        default_dropship_sphere_1 = exact.get(DROPSHIP_SPHERE_STRING_1.toUpperCase());
+        default_dropship_sphere_2 = exact.get(DROPSHIP_SPHERE_STRING_2.toUpperCase());
+        default_dropship_sphere_3 = exact.get(DROPSHIP_SPHERE_STRING_3.toUpperCase());
+        default_dropship_sphere_4 = exact.get(DROPSHIP_SPHERE_STRING_4.toUpperCase());
+        default_dropship_sphere_5 = exact.get(DROPSHIP_SPHERE_STRING_5.toUpperCase());
+        default_dropship_sphere_6 = exact.get(DROPSHIP_SPHERE_STRING_6.toUpperCase());
         default_jumpship = exact.get(JUMPSHIP_STRING.toUpperCase());
         default_warship = exact.get(WARSHIP_STRING.toUpperCase());
         default_space_station = exact.get(SPACE_STATION_STRING.toUpperCase());

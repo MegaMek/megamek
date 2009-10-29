@@ -2603,7 +2603,7 @@ DoneButtoned, KeyListener {
                 }
             } else {
                 if ((gear != MovementDisplay.GEAR_JUMP) &&
-                        !(cmd.getLastStep().isFirstStep() && (cmd.getLastStep().getType() == MovePath.STEP_LAY_MINE))) {
+                        !((cmd.getLastStep() != null) && cmd.getLastStep().isFirstStep() && (cmd.getLastStep().getType() == MovePath.STEP_LAY_MINE))) {
                     clearAllMoves();
                 }
                 if (!cmd.isJumping()) {

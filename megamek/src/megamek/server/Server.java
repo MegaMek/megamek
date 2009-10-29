@@ -2911,7 +2911,7 @@ public class Server implements Runnable {
     private static String getColorForPlayer(Player p) {
         String colorcode = Integer.toHexString(PlayerColors.getColor(p.getColorIndex()).getRGB() & 0x00f0f0f0);
         return "<B><font color='" + colorcode + "'>" +p.getName()+"</font></B>";
-         
+
     }
     /**
      * Write the initiative results to the report
@@ -5071,7 +5071,7 @@ public class Server implements Runnable {
 
             if (step.getType() == MovePath.STEP_LAY_MINE) {
                 layMine(entity, step.getMineToLay(), step.getPosition());
-                break;
+                continue;
             }
 
             if (step.getType() == MovePath.STEP_CLEAR_MINEFIELD) {

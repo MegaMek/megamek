@@ -1104,7 +1104,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
         }
 
-        if (cmd.getLastStepMovementType() == IEntityMovementType.MOVE_SPRINT
+        if ((cmd.getLastStepMovementType() == IEntityMovementType.MOVE_SPRINT)
                 && GUIPreferences.getInstance().getNagForSprint()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages
                     .getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
@@ -1165,7 +1165,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     unusedVelocity = ((Aero) ce()).getCurrentVelocity() > 0;
                 }
                 boolean flyoff = false;
-                if (null != cmd && cmd.contains(MovePath.STEP_OFF)) {
+                if ((null != cmd) && cmd.contains(MovePath.STEP_OFF)) {
                     flyoff = true;
                 }
                 if (unusedVelocity && !flyoff) {
@@ -1848,12 +1848,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (!(ce instanceof Mech || ce instanceof Tank)) {
+        if (!((ce instanceof Mech) || (ce instanceof Tank))) {
             return;
         }
 
-        setEvadeEnabled(cmd.getLastStepMovementType() != IEntityMovementType.MOVE_JUMP
-                && cmd.getLastStepMovementType() != IEntityMovementType.MOVE_SPRINT);
+        setEvadeEnabled((cmd.getLastStepMovementType() != IEntityMovementType.MOVE_JUMP)
+                && (cmd.getLastStepMovementType() != IEntityMovementType.MOVE_SPRINT));
     }
 
     private void updateRecklessButton() {
@@ -1969,7 +1969,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     /**
      * Get the unit that the player wants to unload. This method will remove the
      * unit from our local copy of loaded units.
-     * 
+     *
      * @return The <code>Entity</code> that the player wants to unload. This
      *         value will not be <code>null</code>.
      */
@@ -2142,7 +2142,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     /**
      * Get the unit that the player wants to unload. This method will remove the
      * unit from our local copy of loaded units.
-     * 
+     *
      * @return The <code>Entity</code> that the player wants to unload. This
      *         value will not be <code>null</code>.
      */
@@ -2460,7 +2460,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Have the player select a target from the entities at the given coords.
-     * 
+     *
      * @param pos
      *            - the <code>Coords</code> containing targets.
      */

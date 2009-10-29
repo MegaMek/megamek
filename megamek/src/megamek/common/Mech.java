@@ -72,7 +72,8 @@ public abstract class Mech extends Entity implements Serializable {
 
     public static final int ACTUATOR_FOOT = 14;
 
-    public static final String systemNames[] = { "Life Support", "Sensors", "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm", "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot" };
+    public static final String systemNames[] =
+        { "Life Support", "Sensors", "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm", "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot" };
 
     // locations
     public static final int LOC_HEAD = 0;
@@ -109,9 +110,11 @@ public abstract class Mech extends Entity implements Serializable {
 
     public static final int GYRO_HEAVY_DUTY = 3;
 
-    public static final String[] GYRO_STRING = { "Standard Gyro", "XL Gyro", "Compact Gyro", "Heavy Duty Gyro" };
+    public static final String[] GYRO_STRING =
+        { "Standard Gyro", "XL Gyro", "Compact Gyro", "Heavy Duty Gyro" };
 
-    public static final String[] GYRO_SHORT_STRING = { "Standard", "XL", "Compact", "Heavy Duty" };
+    public static final String[] GYRO_SHORT_STRING =
+        { "Standard", "XL", "Compact", "Heavy Duty" };
 
     // cockpit types
     public static final int COCKPIT_UNKNOWN = -1;
@@ -132,9 +135,11 @@ public abstract class Mech extends Entity implements Serializable {
 
     public static final int COCKPIT_PRIMITIVE_INDUSTRIAL = 7;
 
-    public static final String[] COCKPIT_STRING = { "Standard Cockpit", "Torso-Mounted Cockpit", "Small Cockpit", "Command Console", "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit", "Primitive Industrial Cockpit" };
+    public static final String[] COCKPIT_STRING =
+        { "Standard Cockpit", "Torso-Mounted Cockpit", "Small Cockpit", "Command Console", "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit", "Primitive Industrial Cockpit" };
 
-    public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Torso Mounted", "Small", "Command Console", "Dual", "Industrial", "Primitive", "Primitive Industrial" };
+    public static final String[] COCKPIT_SHORT_STRING =
+        { "Standard", "Torso Mounted", "Small", "Command Console", "Dual", "Industrial", "Primitive", "Primitive Industrial" };
 
     // jump types
     public static final int JUMP_UNKNOWN = -1;
@@ -161,7 +166,8 @@ public abstract class Mech extends Entity implements Serializable {
 
     private int[] orig_rearArmor;
 
-    private static int[] MASC_FAILURE = { 2, 4, 6, 10, 12, 12, 12 };
+    private static int[] MASC_FAILURE =
+        { 2, 4, 6, 10, 12, 12, 12 };
 
     // MASCLevel is the # of turns MASC has been used previously
     private int nMASCLevel = 0;
@@ -265,7 +271,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Damage the cowl. Returns amount of excess damage
-     *
+     * 
      * @param amount
      * @return
      */
@@ -288,17 +294,17 @@ public abstract class Mech extends Entity implements Serializable {
      */
     public static int getInnerLocation(int location) {
         switch (location) {
-        case Mech.LOC_RT:
-        case Mech.LOC_LT:
-            return Mech.LOC_CT;
-        case Mech.LOC_LLEG:
-        case Mech.LOC_LARM:
-            return Mech.LOC_LT;
-        case Mech.LOC_RLEG:
-        case Mech.LOC_RARM:
-            return Mech.LOC_RT;
-        default:
-            return location;
+            case Mech.LOC_RT:
+            case Mech.LOC_LT:
+                return Mech.LOC_CT;
+            case Mech.LOC_LLEG:
+            case Mech.LOC_LARM:
+                return Mech.LOC_LT;
+            case Mech.LOC_RLEG:
+            case Mech.LOC_RARM:
+                return Mech.LOC_RT;
+            default:
+                return location;
         }
     }
 
@@ -317,7 +323,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * find the least restrictive location of the two locations passed in
-     *
+     * 
      * @param location1
      * @param location2
      * @return
@@ -338,16 +344,16 @@ public abstract class Mech extends Entity implements Serializable {
      */
     public static int restrictScore(int location) {
         switch (location) {
-        case Mech.LOC_RARM:
-        case Mech.LOC_LARM:
-            return 0;
-        case Mech.LOC_RT:
-        case Mech.LOC_LT:
-            return 1;
-        case Mech.LOC_CT:
-            return 2;
-        default:
-            return 3;
+            case Mech.LOC_RARM:
+            case Mech.LOC_LARM:
+                return 0;
+            case Mech.LOC_RT:
+            case Mech.LOC_LT:
+                return 1;
+            case Mech.LOC_CT:
+                return 2;
+            default:
+                return 3;
         }
     }
 
@@ -355,7 +361,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Get the number of turns MASC has been used continuously.
      * <p/>
      * This method should <strong>only</strong> be used during serialization.
-     *
+     * 
      * @return the <code>int</code> number of turns MASC has been used.
      */
     public int getMASCTurns() {
@@ -366,7 +372,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Set the number of turns MASC has been used continuously.
      * <p/>
      * This method should <strong>only</strong> be used during deserialization.
-     *
+     * 
      * @param turns
      *            The <code>int</code> number of turns MASC has been used.
      */
@@ -378,7 +384,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Determine if MASC has been used this turn.
      * <p/>
      * This method should <strong>only</strong> be used during serialization.
-     *
+     * 
      * @return <code>true</code> if MASC has been used.
      */
     public boolean isMASCUsed() {
@@ -389,7 +395,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Set whether MASC has been used.
      * <p/>
      * This method should <strong>only</strong> be used during deserialization.
-     *
+     * 
      * @param used
      *            The <code>boolean</code> whether MASC has been used.
      */
@@ -403,7 +409,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * This function cheks for masc failure.
-     *
+     * 
      * @param md
      *            the movement path.
      * @param vDesc
@@ -433,7 +439,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * check one masc system for failure
-     *
+     * 
      * @param masc
      * @param vDesc
      * @param vCriticals
@@ -560,7 +566,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#newRound(int)
      */
     @Override
@@ -672,7 +678,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * This function returns true iff the system is in perfect condition.
-     *
+     * 
      * @param system
      *            the system to check
      * @return false if the system is damaged.
@@ -721,7 +727,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have composite internal structure?
-     *
+     * 
      * @return
      */
     public boolean hasCompositeStructure() {
@@ -730,7 +736,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have reinforced internal structure?
-     *
+     * 
      * @return
      */
     public boolean hasReinforcedStructure() {
@@ -739,7 +745,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech mount MASC?
-     *
+     * 
      * @return
      */
     public boolean hasMASC() {
@@ -772,7 +778,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have working jump boosters?
-     *
+     * 
      * @return
      */
     public boolean hasJumpBoosters() {
@@ -794,7 +800,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * get non-supercharger MASC mounted on this mech
-     *
+     * 
      * @return
      */
     public Mounted getMASC() {
@@ -809,7 +815,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * get a supercharger mounted on this mech
-     *
+     * 
      * @return
      */
     public Mounted getSuperCharger() {
@@ -887,7 +893,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have industrial TSM=
-     *
+     * 
      * @return
      */
     public boolean hasIndustrialTSM() {
@@ -901,7 +907,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have stealth armor?
-     *
+     * 
      * @return
      */
     public boolean hasStealth() {
@@ -917,7 +923,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have a null-sig-system?
-     *
+     * 
      * @return
      */
     public boolean hasNullSig() {
@@ -933,7 +939,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have a void-sig-system?
-     *
+     * 
      * @return
      */
     public boolean hasVoidSig() {
@@ -949,7 +955,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have tracks?
-     *
+     * 
      * @return
      */
     public boolean hasTracks() {
@@ -965,7 +971,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * does this mech have a chameleon light polarization shield?
-     *
+     * 
      * @return
      */
     public boolean hasChameleonShield() {
@@ -981,7 +987,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getStandingHeat()
      */
     @Override
@@ -991,7 +997,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * set this mech's <code>Engine</code>
-     *
+     * 
      * @param e
      *            the <code>Engine</code> to set
      */
@@ -1004,7 +1010,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Used to set this Mech's original walk mp
-     *
+     * 
      * @return this units calculated walking speed, dependent on engine rating
      *         and weight
      */
@@ -1023,7 +1029,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getWalkHeat()
      */
     @Override
@@ -1033,7 +1039,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getRunMP(boolean, boolean)
      */
     @Override
@@ -1049,7 +1055,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getRunMPwithoutMASC(boolean, boolean)
      */
     @Override
@@ -1082,7 +1088,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getSprintMP()
      */
     @Override
@@ -1095,7 +1101,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getSprintMP(boolean, boolean)
      */
     @Override
@@ -1114,7 +1120,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean)
      */
     @Override
@@ -1124,7 +1130,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean)
      */
     @Override
@@ -1155,7 +1161,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getRunningGravityLimit()
      */
     @Override
@@ -1225,7 +1231,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Gives the bonus to Jump MP conferred by a mech partial wing.
-     *
+     * 
      * @param mount
      *            The mounted location of the Wing
      * @return The Jump MP bonus conferred by the wing
@@ -1235,51 +1241,51 @@ public abstract class Mech extends Entity implements Serializable {
         if (game != null) {
             if ((getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) || (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM)) {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
-                case PlanetaryConditions.ATMO_VACUUM:
-                    bonus = 0;
-                    break;
-                case PlanetaryConditions.ATMO_TRACE:
-                    bonus = 0;
-                    break;
-                case PlanetaryConditions.ATMO_THIN:
-                    bonus = 1;
-                    break;
-                case PlanetaryConditions.ATMO_STANDARD:
-                    bonus = 2;
-                    break;
-                case PlanetaryConditions.ATMO_HIGH:
-                    bonus = 2;
-                    break;
+                    case PlanetaryConditions.ATMO_VACUUM:
+                        bonus = 0;
+                        break;
+                    case PlanetaryConditions.ATMO_TRACE:
+                        bonus = 0;
+                        break;
+                    case PlanetaryConditions.ATMO_THIN:
+                        bonus = 1;
+                        break;
+                    case PlanetaryConditions.ATMO_STANDARD:
+                        bonus = 2;
+                        break;
+                    case PlanetaryConditions.ATMO_HIGH:
+                        bonus = 2;
+                        break;
 
-                case PlanetaryConditions.ATMO_VHIGH:
-                    bonus = 3;
-                    break;
-                default:
-                    bonus = 2;
+                    case PlanetaryConditions.ATMO_VHIGH:
+                        bonus = 3;
+                        break;
+                    default:
+                        bonus = 2;
                 }
             }
             if ((getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) || (getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT)) {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
-                case PlanetaryConditions.ATMO_VACUUM:
-                    bonus = 0;
-                    break;
-                case PlanetaryConditions.ATMO_TRACE:
-                    bonus = 0;
-                    break;
-                case PlanetaryConditions.ATMO_THIN:
-                    bonus = 0;
-                    break;
-                case PlanetaryConditions.ATMO_STANDARD:
-                    bonus = 1;
-                    break;
-                case PlanetaryConditions.ATMO_HIGH:
-                    bonus = 2;
-                    break;
-                case PlanetaryConditions.ATMO_VHIGH:
-                    bonus = 2;
-                    break;
-                default:
-                    bonus = 1;
+                    case PlanetaryConditions.ATMO_VACUUM:
+                        bonus = 0;
+                        break;
+                    case PlanetaryConditions.ATMO_TRACE:
+                        bonus = 0;
+                        break;
+                    case PlanetaryConditions.ATMO_THIN:
+                        bonus = 0;
+                        break;
+                    case PlanetaryConditions.ATMO_STANDARD:
+                        bonus = 1;
+                        break;
+                    case PlanetaryConditions.ATMO_HIGH:
+                        bonus = 2;
+                        break;
+                    case PlanetaryConditions.ATMO_VHIGH:
+                        bonus = 2;
+                        break;
+                    default:
+                        bonus = 1;
                 }
             }
         } else {
@@ -1299,33 +1305,33 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Gives the heat capacity bonus conferred by a mech partial wing.
-     *
+     * 
      * @return the heat capacity bonus provided by the wing
      */
     private int getPartialWingHeatBonus() {
         int bonus = 0;
         if (game != null) {
             switch (game.getPlanetaryConditions().getAtmosphere()) {
-            case PlanetaryConditions.ATMO_VACUUM:
-                bonus = 0;
-                break;
-            case PlanetaryConditions.ATMO_TRACE:
-                bonus = 1;
-                break;
-            case PlanetaryConditions.ATMO_THIN:
-                bonus = 2;
-                break;
-            case PlanetaryConditions.ATMO_STANDARD:
-                bonus = 3;
-                break;
-            case PlanetaryConditions.ATMO_HIGH:
-                bonus = 3;
-                break;
-            case PlanetaryConditions.ATMO_VHIGH:
-                bonus = 3;
-                break;
-            default:
-                bonus = 3;
+                case PlanetaryConditions.ATMO_VACUUM:
+                    bonus = 0;
+                    break;
+                case PlanetaryConditions.ATMO_TRACE:
+                    bonus = 1;
+                    break;
+                case PlanetaryConditions.ATMO_THIN:
+                    bonus = 2;
+                    break;
+                case PlanetaryConditions.ATMO_STANDARD:
+                    bonus = 3;
+                    break;
+                case PlanetaryConditions.ATMO_HIGH:
+                    bonus = 3;
+                    break;
+                case PlanetaryConditions.ATMO_VHIGH:
+                    bonus = 3;
+                    break;
+                default:
+                    bonus = 3;
             }
         } else {
             bonus = 3;
@@ -1360,7 +1366,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getJumpHeat(int)
      */
     @Override
@@ -1375,14 +1381,14 @@ public abstract class Mech extends Entity implements Serializable {
         }
 
         switch (getJumpType()) {
-        case JUMP_IMPROVED:
-            return engine.getJumpHeat(movedMP / 2 + movedMP % 2);
-        case JUMP_BOOSTER:
-        case JUMP_DISPOSABLE:
-        case JUMP_NONE:
-            return 0;
-        default:
-            return engine.getJumpHeat(movedMP);
+            case JUMP_IMPROVED:
+                return engine.getJumpHeat(movedMP / 2 + movedMP % 2);
+            case JUMP_BOOSTER:
+            case JUMP_DISPOSABLE:
+            case JUMP_NONE:
+                return 0;
+            default:
+                return engine.getJumpHeat(movedMP);
         }
     }
 
@@ -1481,7 +1487,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * base for adding engine sinks. Newer method allows externals to say how
      * much are engine HS.
-     *
+     * 
      * @param totalSinks
      *            the amount of heatsinks to add to the engine
      * @param sinkName
@@ -1495,7 +1501,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * add heat sinks into the engine
-     *
+     * 
      * @param sinkName
      *            the <code>String</code> determining the type of heatsink to
      *            add. must be a lookupname of a heatsinktype
@@ -1643,21 +1649,21 @@ public abstract class Mech extends Entity implements Serializable {
     @Override
     public String getMovementString(int mtype) {
         switch (mtype) {
-        case IEntityMovementType.MOVE_SKID:
-            return "Skidded";
-        case IEntityMovementType.MOVE_NONE:
-        case IEntityMovementType.MOVE_CAREFUL_STAND:
-            return "None";
-        case IEntityMovementType.MOVE_WALK:
-            return "Walked";
-        case IEntityMovementType.MOVE_RUN:
-            return "Ran";
-        case IEntityMovementType.MOVE_JUMP:
-            return "Jumped";
-        case IEntityMovementType.MOVE_SPRINT:
-            return "Sprinted";
-        default:
-            return "Unknown!";
+            case IEntityMovementType.MOVE_SKID:
+                return "Skidded";
+            case IEntityMovementType.MOVE_NONE:
+            case IEntityMovementType.MOVE_CAREFUL_STAND:
+                return "None";
+            case IEntityMovementType.MOVE_WALK:
+                return "Walked";
+            case IEntityMovementType.MOVE_RUN:
+                return "Ran";
+            case IEntityMovementType.MOVE_JUMP:
+                return "Jumped";
+            case IEntityMovementType.MOVE_SPRINT:
+                return "Sprinted";
+            default:
+                return "Unknown!";
         }
     }
 
@@ -1667,26 +1673,26 @@ public abstract class Mech extends Entity implements Serializable {
     @Override
     public String getMovementAbbr(int mtype) {
         switch (mtype) {
-        case IEntityMovementType.MOVE_SKID:
-            return "S";
-        case IEntityMovementType.MOVE_NONE:
-            return "N";
-        case IEntityMovementType.MOVE_WALK:
-            return "W";
-        case IEntityMovementType.MOVE_RUN:
-            return "R";
-        case IEntityMovementType.MOVE_JUMP:
-            return "J";
-        case IEntityMovementType.MOVE_SPRINT:
-            return "Sp";
-        default:
-            return "?";
+            case IEntityMovementType.MOVE_SKID:
+                return "S";
+            case IEntityMovementType.MOVE_NONE:
+                return "N";
+            case IEntityMovementType.MOVE_WALK:
+                return "W";
+            case IEntityMovementType.MOVE_RUN:
+                return "R";
+            case IEntityMovementType.MOVE_JUMP:
+                return "J";
+            case IEntityMovementType.MOVE_SPRINT:
+                return "Sp";
+            default:
+                return "?";
         }
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#canChangeSecondaryFacing()
      */
     @Override
@@ -1736,7 +1742,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#hasRearArmor(int)
      */
     @Override
@@ -1807,19 +1813,19 @@ public abstract class Mech extends Entity implements Serializable {
         }
         // front mounted
         switch (mounted.getLocation()) {
-        case LOC_HEAD:
-        case LOC_CT:
-        case LOC_RT:
-        case LOC_LT:
-        case LOC_RLEG:
-        case LOC_LLEG:
-            return Compute.ARC_FORWARD;
-        case LOC_RARM:
-            return getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_RIGHTARM;
-        case LOC_LARM:
-            return getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_LEFTARM;
-        default:
-            return Compute.ARC_360;
+            case LOC_HEAD:
+            case LOC_CT:
+            case LOC_RT:
+            case LOC_LT:
+            case LOC_RLEG:
+            case LOC_LLEG:
+                return Compute.ARC_FORWARD;
+            case LOC_RARM:
+                return getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_RIGHTARM;
+            case LOC_LARM:
+                return getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_LEFTARM;
+            default:
+                return Compute.ARC_360;
         }
     }
 
@@ -1839,7 +1845,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#rollHitLocation(int, int)
      */
     @Override
@@ -1849,7 +1855,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#rollHitLocation(int, int, int, int)
      */
     @Override
@@ -1882,196 +1888,196 @@ public abstract class Mech extends Entity implements Serializable {
             if (side == ToHitData.SIDE_FRONT) {
                 // normal front hits
                 switch (roll) {
-                case 2:
-                    if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
-                        crew.decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(tac(table, side, Mech.LOC_CT, false));
-                        return result;
-                    } // if
-                    return tac(table, side, Mech.LOC_CT, false);
-                case 3:
-                case 4:
-                    return new HitData(Mech.LOC_RARM);
-                case 5:
-                    return new HitData(Mech.LOC_RLEG);
-                case 6:
-                    return new HitData(Mech.LOC_RT);
-                case 7:
-                    return new HitData(Mech.LOC_CT);
-                case 8:
-                    return new HitData(Mech.LOC_LT);
-                case 9:
-                    return new HitData(Mech.LOC_LLEG);
-                case 10:
-                case 11:
-                    return new HitData(Mech.LOC_LARM);
-                case 12:
-                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD);
+                    case 2:
+                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, false));
+                            return result;
+                        } // if
+                        return tac(table, side, Mech.LOC_CT, false);
+                    case 3:
+                    case 4:
+                        return new HitData(Mech.LOC_RARM);
+                    case 5:
+                        return new HitData(Mech.LOC_RLEG);
+                    case 6:
+                        return new HitData(Mech.LOC_RT);
+                    case 7:
+                        return new HitData(Mech.LOC_CT);
+                    case 8:
+                        return new HitData(Mech.LOC_LT);
+                    case 9:
+                        return new HitData(Mech.LOC_LLEG);
+                    case 10:
+                    case 11:
+                        return new HitData(Mech.LOC_LARM);
+                    case 12:
+                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                            return result;
+                        } // if
+                        return new HitData(Mech.LOC_HEAD);
                 }
             } else if (side == ToHitData.SIDE_LEFT) {
                 // normal left side hits
                 switch (roll) {
-                case 2:
-                    if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
-                        crew.decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(tac(table, side, Mech.LOC_LT, false));
-                        return result;
-                    } // if
-                    return tac(table, side, Mech.LOC_LT, false);
-                case 3:
-                    return new HitData(Mech.LOC_LLEG);
-                case 4:
-                case 5:
-                    return new HitData(Mech.LOC_LARM);
-                case 6:
-                    return new HitData(Mech.LOC_LLEG);
-                case 7:
-                    return new HitData(Mech.LOC_LT);
-                case 8:
-                    if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
-                        return new HitData(Mech.LOC_CT, true);
-                    }
-                    return new HitData(Mech.LOC_CT);
-                case 9:
-                    if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
-                        return new HitData(Mech.LOC_RT, true);
-                    }
-                    return new HitData(Mech.LOC_RT);
-                case 10:
-                    return new HitData(Mech.LOC_RARM);
-                case 11:
-                    return new HitData(Mech.LOC_RLEG);
-                case 12:
-                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD);
+                    case 2:
+                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side, Mech.LOC_LT, false));
+                            return result;
+                        } // if
+                        return tac(table, side, Mech.LOC_LT, false);
+                    case 3:
+                        return new HitData(Mech.LOC_LLEG);
+                    case 4:
+                    case 5:
+                        return new HitData(Mech.LOC_LARM);
+                    case 6:
+                        return new HitData(Mech.LOC_LLEG);
+                    case 7:
+                        return new HitData(Mech.LOC_LT);
+                    case 8:
+                        if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
+                            return new HitData(Mech.LOC_CT, true);
+                        }
+                        return new HitData(Mech.LOC_CT);
+                    case 9:
+                        if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
+                            return new HitData(Mech.LOC_RT, true);
+                        }
+                        return new HitData(Mech.LOC_RT);
+                    case 10:
+                        return new HitData(Mech.LOC_RARM);
+                    case 11:
+                        return new HitData(Mech.LOC_RLEG);
+                    case 12:
+                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                            return result;
+                        } // if
+                        return new HitData(Mech.LOC_HEAD);
                 }
             } else if (side == ToHitData.SIDE_RIGHT) {
                 // normal right side hits
                 switch (roll) {
-                case 2:
-                    if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
-                        crew.decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(tac(table, side, Mech.LOC_RT, false));
-                        return result;
-                    } // if
-                    return tac(table, side, Mech.LOC_RT, false);
-                case 3:
-                    return new HitData(Mech.LOC_RLEG);
-                case 4:
-                case 5:
-                    return new HitData(Mech.LOC_RARM);
-                case 6:
-                    return new HitData(Mech.LOC_RLEG);
-                case 7:
-                    return new HitData(Mech.LOC_RT);
-                case 8:
-                    if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
-                        return new HitData(Mech.LOC_CT, true);
-                    }
-                    return new HitData(Mech.LOC_CT);
-                case 9:
-                    if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
-                        return new HitData(Mech.LOC_LT, true);
-                    }
-                    return new HitData(Mech.LOC_LT);
-                case 10:
-                    return new HitData(Mech.LOC_LARM);
-                case 11:
-                    return new HitData(Mech.LOC_LLEG);
-                case 12:
-                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD);
+                    case 2:
+                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side, Mech.LOC_RT, false));
+                            return result;
+                        } // if
+                        return tac(table, side, Mech.LOC_RT, false);
+                    case 3:
+                        return new HitData(Mech.LOC_RLEG);
+                    case 4:
+                    case 5:
+                        return new HitData(Mech.LOC_RARM);
+                    case 6:
+                        return new HitData(Mech.LOC_RLEG);
+                    case 7:
+                        return new HitData(Mech.LOC_RT);
+                    case 8:
+                        if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
+                            return new HitData(Mech.LOC_CT, true);
+                        }
+                        return new HitData(Mech.LOC_CT);
+                    case 9:
+                        if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
+                            return new HitData(Mech.LOC_LT, true);
+                        }
+                        return new HitData(Mech.LOC_LT);
+                    case 10:
+                        return new HitData(Mech.LOC_LARM);
+                    case 11:
+                        return new HitData(Mech.LOC_LLEG);
+                    case 12:
+                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                            return result;
+                        } // if
+                        return new HitData(Mech.LOC_HEAD);
                 }
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
                 if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations") && isProne()) {
                     switch (roll) {
-                    case 2:
-                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
-                            crew.decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, true));
-                            return result;
-                        } // if
-                        return tac(table, side, Mech.LOC_CT, true);
-                    case 3:
-                        return new HitData(Mech.LOC_RARM, true);
-                    case 4:
-                    case 5:
-                        return new HitData(Mech.LOC_RLEG, true);
-                    case 6:
-                        return new HitData(Mech.LOC_RT, true);
-                    case 7:
-                        return new HitData(Mech.LOC_CT, true);
-                    case 8:
-                        return new HitData(Mech.LOC_LT, true);
-                    case 9:
-                    case 10:
-                        return new HitData(Mech.LOC_LLEG, true);
-                    case 11:
-                        return new HitData(Mech.LOC_LARM, true);
-                    case 12:
-                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
-                            return result;
-                        } // if
-                        return new HitData(Mech.LOC_HEAD, true);
+                        case 2:
+                            if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                                crew.decreaseEdge();
+                                HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                                result.setUndoneLocation(tac(table, side, Mech.LOC_CT, true));
+                                return result;
+                            } // if
+                            return tac(table, side, Mech.LOC_CT, true);
+                        case 3:
+                            return new HitData(Mech.LOC_RARM, true);
+                        case 4:
+                        case 5:
+                            return new HitData(Mech.LOC_RLEG, true);
+                        case 6:
+                            return new HitData(Mech.LOC_RT, true);
+                        case 7:
+                            return new HitData(Mech.LOC_CT, true);
+                        case 8:
+                            return new HitData(Mech.LOC_LT, true);
+                        case 9:
+                        case 10:
+                            return new HitData(Mech.LOC_LLEG, true);
+                        case 11:
+                            return new HitData(Mech.LOC_LARM, true);
+                        case 12:
+                            if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                                crew.decreaseEdge();
+                                HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                                result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                                return result;
+                            } // if
+                            return new HitData(Mech.LOC_HEAD, true);
                     }
                 } else {
                     switch (roll) {
-                    case 2:
-                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
-                            crew.decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, true));
-                            return result;
-                        } // if
-                        return tac(table, side, Mech.LOC_CT, true);
-                    case 3:
-                    case 4:
-                        return new HitData(Mech.LOC_RARM, true);
-                    case 5:
-                        return new HitData(Mech.LOC_RLEG, true);
-                    case 6:
-                        return new HitData(Mech.LOC_RT, true);
-                    case 7:
-                        return new HitData(Mech.LOC_CT, true);
-                    case 8:
-                        return new HitData(Mech.LOC_LT, true);
-                    case 9:
-                        return new HitData(Mech.LOC_LLEG, true);
-                    case 10:
-                    case 11:
-                        return new HitData(Mech.LOC_LARM, true);
-                    case 12:
-                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
-                            return result;
-                        } // if
-                        return new HitData(Mech.LOC_HEAD, true);
+                        case 2:
+                            if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                                crew.decreaseEdge();
+                                HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                                result.setUndoneLocation(tac(table, side, Mech.LOC_CT, true));
+                                return result;
+                            } // if
+                            return tac(table, side, Mech.LOC_CT, true);
+                        case 3:
+                        case 4:
+                            return new HitData(Mech.LOC_RARM, true);
+                        case 5:
+                            return new HitData(Mech.LOC_RLEG, true);
+                        case 6:
+                            return new HitData(Mech.LOC_RT, true);
+                        case 7:
+                            return new HitData(Mech.LOC_CT, true);
+                        case 8:
+                            return new HitData(Mech.LOC_LT, true);
+                        case 9:
+                            return new HitData(Mech.LOC_LLEG, true);
+                        case 10:
+                        case 11:
+                            return new HitData(Mech.LOC_LARM, true);
+                        case 12:
+                            if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                                crew.decreaseEdge();
+                                HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                                result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                                return result;
+                            } // if
+                            return new HitData(Mech.LOC_HEAD, true);
                     }
                 }
             }
@@ -2093,89 +2099,89 @@ public abstract class Mech extends Entity implements Serializable {
             if (side == ToHitData.SIDE_FRONT) {
                 // front punch hits
                 switch (roll) {
-                case 1:
-                    return new HitData(Mech.LOC_LARM);
-                case 2:
-                    return new HitData(Mech.LOC_LT);
-                case 3:
-                    return new HitData(Mech.LOC_CT);
-                case 4:
-                    return new HitData(Mech.LOC_RT);
-                case 5:
-                    return new HitData(Mech.LOC_RARM);
-                case 6:
-                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD);
+                    case 1:
+                        return new HitData(Mech.LOC_LARM);
+                    case 2:
+                        return new HitData(Mech.LOC_LT);
+                    case 3:
+                        return new HitData(Mech.LOC_CT);
+                    case 4:
+                        return new HitData(Mech.LOC_RT);
+                    case 5:
+                        return new HitData(Mech.LOC_RARM);
+                    case 6:
+                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                            return result;
+                        } // if
+                        return new HitData(Mech.LOC_HEAD);
                 }
             }
             if (side == ToHitData.SIDE_LEFT) {
                 // left side punch hits
                 switch (roll) {
-                case 1:
-                case 2:
-                    return new HitData(Mech.LOC_LT);
-                case 3:
-                    return new HitData(Mech.LOC_CT);
-                case 4:
-                case 5:
-                    return new HitData(Mech.LOC_LARM);
-                case 6:
-                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD);
+                    case 1:
+                    case 2:
+                        return new HitData(Mech.LOC_LT);
+                    case 3:
+                        return new HitData(Mech.LOC_CT);
+                    case 4:
+                    case 5:
+                        return new HitData(Mech.LOC_LARM);
+                    case 6:
+                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                            return result;
+                        } // if
+                        return new HitData(Mech.LOC_HEAD);
                 }
             }
             if (side == ToHitData.SIDE_RIGHT) {
                 // right side punch hits
                 switch (roll) {
-                case 1:
-                case 2:
-                    return new HitData(Mech.LOC_RT);
-                case 3:
-                    return new HitData(Mech.LOC_CT);
-                case 4:
-                case 5:
-                    return new HitData(Mech.LOC_RARM);
-                case 6:
-                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD);
+                    case 1:
+                    case 2:
+                        return new HitData(Mech.LOC_RT);
+                    case 3:
+                        return new HitData(Mech.LOC_CT);
+                    case 4:
+                    case 5:
+                        return new HitData(Mech.LOC_RARM);
+                    case 6:
+                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                            return result;
+                        } // if
+                        return new HitData(Mech.LOC_HEAD);
                 }
             }
             if (side == ToHitData.SIDE_REAR) {
                 // rear punch hits
                 switch (roll) {
-                case 1:
-                    return new HitData(Mech.LOC_LARM, true);
-                case 2:
-                    return new HitData(Mech.LOC_LT, true);
-                case 3:
-                    return new HitData(Mech.LOC_CT, true);
-                case 4:
-                    return new HitData(Mech.LOC_RT, true);
-                case 5:
-                    return new HitData(Mech.LOC_RARM, true);
-                case 6:
-                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD, true);
+                    case 1:
+                        return new HitData(Mech.LOC_LARM, true);
+                    case 2:
+                        return new HitData(Mech.LOC_LT, true);
+                    case 3:
+                        return new HitData(Mech.LOC_CT, true);
+                    case 4:
+                        return new HitData(Mech.LOC_RT, true);
+                    case 5:
+                        return new HitData(Mech.LOC_RARM, true);
+                    case 6:
+                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                            return result;
+                        } // if
+                        return new HitData(Mech.LOC_HEAD, true);
                 }
             }
         }
@@ -2196,14 +2202,14 @@ public abstract class Mech extends Entity implements Serializable {
             if ((side == ToHitData.SIDE_FRONT) || (side == ToHitData.SIDE_REAR)) {
                 // front/rear kick hits
                 switch (roll) {
-                case 1:
-                case 2:
-                case 3:
-                    return new HitData(Mech.LOC_RLEG, (side == ToHitData.SIDE_REAR));
-                case 4:
-                case 5:
-                case 6:
-                    return new HitData(Mech.LOC_LLEG, (side == ToHitData.SIDE_REAR));
+                    case 1:
+                    case 2:
+                    case 3:
+                        return new HitData(Mech.LOC_RLEG, (side == ToHitData.SIDE_REAR));
+                    case 4:
+                    case 5:
+                    case 6:
+                        return new HitData(Mech.LOC_LLEG, (side == ToHitData.SIDE_REAR));
                 }
             }
             if (side == ToHitData.SIDE_LEFT) {
@@ -2237,40 +2243,40 @@ public abstract class Mech extends Entity implements Serializable {
             }
             // Swarm attack locations.
             switch (roll) {
-            case 2:
-                if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                    crew.decreaseEdge();
-                    HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                    result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, effects));
-                    return result;
-                } // if
-                return new HitData(Mech.LOC_HEAD, false, effects);
-            case 3:
-                return new HitData(Mech.LOC_CT, true, effects);
-            case 4:
-                return new HitData(Mech.LOC_RT, true, effects);
-            case 5:
-                return new HitData(Mech.LOC_RT, false, effects);
-            case 6:
-                return new HitData(Mech.LOC_RARM, false, effects);
-            case 7:
-                return new HitData(Mech.LOC_CT, false, effects);
-            case 8:
-                return new HitData(Mech.LOC_LARM, false, effects);
-            case 9:
-                return new HitData(Mech.LOC_LT, false, effects);
-            case 10:
-                return new HitData(Mech.LOC_LT, true, effects);
-            case 11:
-                return new HitData(Mech.LOC_CT, true, effects);
-            case 12:
-                if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                    crew.decreaseEdge();
-                    HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                    result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, effects));
-                    return result;
-                } // if
-                return new HitData(Mech.LOC_HEAD, false, effects);
+                case 2:
+                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, effects));
+                        return result;
+                    } // if
+                    return new HitData(Mech.LOC_HEAD, false, effects);
+                case 3:
+                    return new HitData(Mech.LOC_CT, true, effects);
+                case 4:
+                    return new HitData(Mech.LOC_RT, true, effects);
+                case 5:
+                    return new HitData(Mech.LOC_RT, false, effects);
+                case 6:
+                    return new HitData(Mech.LOC_RARM, false, effects);
+                case 7:
+                    return new HitData(Mech.LOC_CT, false, effects);
+                case 8:
+                    return new HitData(Mech.LOC_LARM, false, effects);
+                case 9:
+                    return new HitData(Mech.LOC_LT, false, effects);
+                case 10:
+                    return new HitData(Mech.LOC_LT, true, effects);
+                case 11:
+                    return new HitData(Mech.LOC_CT, true, effects);
+                case 12:
+                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, effects));
+                        return result;
+                    } // if
+                    return new HitData(Mech.LOC_HEAD, false, effects);
             }
         }
         if (table == ToHitData.HIT_ABOVE) {
@@ -2289,24 +2295,24 @@ public abstract class Mech extends Entity implements Serializable {
             }
             // Hits from above.
             switch (roll) {
-            case 1:
-                return new HitData(Mech.LOC_LARM, (side == ToHitData.SIDE_REAR));
-            case 2:
-                return new HitData(Mech.LOC_LT, (side == ToHitData.SIDE_REAR));
-            case 3:
-                return new HitData(Mech.LOC_CT, (side == ToHitData.SIDE_REAR));
-            case 4:
-                return new HitData(Mech.LOC_RT, (side == ToHitData.SIDE_REAR));
-            case 5:
-                return new HitData(Mech.LOC_RARM, (side == ToHitData.SIDE_REAR));
-            case 6:
-                if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                    crew.decreaseEdge();
-                    HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                    result.setUndoneLocation(new HitData(Mech.LOC_HEAD, (side == ToHitData.SIDE_REAR)));
-                    return result;
-                } // if
-                return new HitData(Mech.LOC_HEAD, (side == ToHitData.SIDE_REAR));
+                case 1:
+                    return new HitData(Mech.LOC_LARM, (side == ToHitData.SIDE_REAR));
+                case 2:
+                    return new HitData(Mech.LOC_LT, (side == ToHitData.SIDE_REAR));
+                case 3:
+                    return new HitData(Mech.LOC_CT, (side == ToHitData.SIDE_REAR));
+                case 4:
+                    return new HitData(Mech.LOC_RT, (side == ToHitData.SIDE_REAR));
+                case 5:
+                    return new HitData(Mech.LOC_RARM, (side == ToHitData.SIDE_REAR));
+                case 6:
+                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, (side == ToHitData.SIDE_REAR)));
+                        return result;
+                    } // if
+                    return new HitData(Mech.LOC_HEAD, (side == ToHitData.SIDE_REAR));
             }
         }
         if (table == ToHitData.HIT_BELOW) {
@@ -2325,18 +2331,18 @@ public abstract class Mech extends Entity implements Serializable {
             }
             // Hits from below.
             switch (roll) {
-            case 1:
-                return new HitData(Mech.LOC_LLEG, (side == ToHitData.SIDE_REAR));
-            case 2:
-                return new HitData(Mech.LOC_LLEG, (side == ToHitData.SIDE_REAR));
-            case 3:
-                return new HitData(Mech.LOC_LT, (side == ToHitData.SIDE_REAR));
-            case 4:
-                return new HitData(Mech.LOC_RT, (side == ToHitData.SIDE_REAR));
-            case 5:
-                return new HitData(Mech.LOC_RLEG, (side == ToHitData.SIDE_REAR));
-            case 6:
-                return new HitData(Mech.LOC_RLEG, (side == ToHitData.SIDE_REAR));
+                case 1:
+                    return new HitData(Mech.LOC_LLEG, (side == ToHitData.SIDE_REAR));
+                case 2:
+                    return new HitData(Mech.LOC_LLEG, (side == ToHitData.SIDE_REAR));
+                case 3:
+                    return new HitData(Mech.LOC_LT, (side == ToHitData.SIDE_REAR));
+                case 4:
+                    return new HitData(Mech.LOC_RT, (side == ToHitData.SIDE_REAR));
+                case 5:
+                    return new HitData(Mech.LOC_RLEG, (side == ToHitData.SIDE_REAR));
+                case 6:
+                    return new HitData(Mech.LOC_RLEG, (side == ToHitData.SIDE_REAR));
             }
         }
         return null;
@@ -2364,23 +2370,23 @@ public abstract class Mech extends Entity implements Serializable {
     @Override
     public HitData getTransferLocation(HitData hit) {
         switch (hit.getLocation()) {
-        case LOC_RT:
-        case LOC_LT:
-            return new HitData(LOC_CT, hit.isRear(), hit.getEffect(), hit.hitAimedLocation(), hit.getSpecCritMod(), hit.isFromFront(), hit.getGeneralDamageType(), hit.glancingMod());
-        case LOC_LLEG:
-        case LOC_LARM:
-            return new HitData(LOC_LT, hit.isRear(), hit.getEffect(), hit.hitAimedLocation(), hit.getSpecCritMod(), hit.isFromFront(), hit.getGeneralDamageType(), hit.glancingMod());
-        case LOC_RLEG:
-        case LOC_RARM:
-            return new HitData(LOC_RT, hit.isRear(), hit.getEffect(), hit.hitAimedLocation(), hit.getSpecCritMod(), hit.isFromFront(), hit.getGeneralDamageType(), hit.glancingMod());
-        case LOC_HEAD:
-            if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
-                return new HitData(LOC_NONE); // not destroyed by head loss
-            }
-            return new HitData(LOC_DESTROYED);
-        case LOC_CT:
-        default:
-            return new HitData(LOC_DESTROYED);
+            case LOC_RT:
+            case LOC_LT:
+                return new HitData(LOC_CT, hit.isRear(), hit.getEffect(), hit.hitAimedLocation(), hit.getSpecCritMod(), hit.isFromFront(), hit.getGeneralDamageType(), hit.glancingMod());
+            case LOC_LLEG:
+            case LOC_LARM:
+                return new HitData(LOC_LT, hit.isRear(), hit.getEffect(), hit.hitAimedLocation(), hit.getSpecCritMod(), hit.isFromFront(), hit.getGeneralDamageType(), hit.glancingMod());
+            case LOC_RLEG:
+            case LOC_RARM:
+                return new HitData(LOC_RT, hit.isRear(), hit.getEffect(), hit.hitAimedLocation(), hit.getSpecCritMod(), hit.isFromFront(), hit.getGeneralDamageType(), hit.glancingMod());
+            case LOC_HEAD:
+                if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
+                    return new HitData(LOC_NONE); // not destroyed by head loss
+                }
+                return new HitData(LOC_DESTROYED);
+            case LOC_CT:
+            default:
+                return new HitData(LOC_DESTROYED);
         }
     }
 
@@ -2390,24 +2396,24 @@ public abstract class Mech extends Entity implements Serializable {
     @Override
     public int getDependentLocation(int loc) {
         switch (loc) {
-        case LOC_RT:
-            return LOC_RARM;
-        case LOC_LT:
-            return LOC_LARM;
-        case LOC_LLEG:
-        case LOC_LARM:
-        case LOC_RLEG:
-        case LOC_RARM:
-        case LOC_HEAD:
-        case LOC_CT:
-        default:
-            return LOC_NONE;
+            case LOC_RT:
+                return LOC_RARM;
+            case LOC_LT:
+                return LOC_LARM;
+            case LOC_LLEG:
+            case LOC_LARM:
+            case LOC_RLEG:
+            case LOC_RARM:
+            case LOC_HEAD:
+            case LOC_CT:
+            default:
+                return LOC_NONE;
         }
     }
 
     /**
      * Sets the internal structure for the mech.
-     *
+     * 
      * @param head
      *            head
      * @param ct
@@ -2429,124 +2435,124 @@ public abstract class Mech extends Entity implements Serializable {
     public void autoSetInternal() {
         // stupid irregular table... grr.
         switch ((int) weight) {
-        // H, CT,TSO,ARM,LEG
-        case 10:
-            setInternal(3, 4, 3, 1, 2);
-            break;
-        case 15:
-            setInternal(3, 5, 4, 2, 3);
-            break;
-        case 20:
-            setInternal(3, 6, 5, 3, 4);
-            break;
-        case 25:
-            setInternal(3, 8, 6, 4, 6);
-            break;
-        case 30:
-            setInternal(3, 10, 7, 5, 7);
-            break;
-        case 35:
-            setInternal(3, 11, 8, 6, 8);
-            break;
-        case 40:
-            setInternal(3, 12, 10, 6, 10);
-            break;
-        case 45:
-            setInternal(3, 14, 11, 7, 11);
-            break;
-        case 50:
-            setInternal(3, 16, 12, 8, 12);
-            break;
-        case 55:
-            setInternal(3, 18, 13, 9, 13);
-            break;
-        case 60:
-            setInternal(3, 20, 14, 10, 14);
-            break;
-        case 65:
-            setInternal(3, 21, 15, 10, 15);
-            break;
-        case 70:
-            setInternal(3, 22, 15, 11, 15);
-            break;
-        case 75:
-            setInternal(3, 23, 16, 12, 16);
-            break;
-        case 80:
-            setInternal(3, 25, 17, 13, 17);
-            break;
-        case 85:
-            setInternal(3, 27, 18, 14, 18);
-            break;
-        case 90:
-            setInternal(3, 29, 19, 15, 19);
-            break;
-        case 95:
-            setInternal(3, 30, 20, 16, 20);
-            break;
-        case 100:
-            setInternal(3, 31, 21, 17, 21);
-            break;
-        case 105:
-            setInternal(4, 32, 22, 17, 22);
-            break;
-        case 110:
-            setInternal(4, 33, 23, 18, 23);
-            break;
-        case 115:
-            setInternal(4, 35, 24, 19, 24);
-            break;
-        case 120:
-            setInternal(4, 36, 25, 20, 25);
-            break;
-        case 125:
-            setInternal(4, 38, 26, 21, 26);
-            break;
-        case 130:
-            setInternal(4, 39, 27, 21, 27);
-            break;
-        case 135:
-            setInternal(4, 41, 28, 22, 28);
-            break;
-        case 140:
-            setInternal(4, 42, 29, 23, 29);
-            break;
-        case 145:
-            setInternal(4, 44, 31, 24, 31);
-            break;
-        case 150:
-            setInternal(4, 45, 32, 25, 32);
-            break;
-        case 155:
-            setInternal(4, 47, 33, 26, 33);
-            break;
-        case 160:
-            setInternal(4, 48, 34, 26, 34);
-            break;
-        case 165:
-            setInternal(4, 50, 35, 27, 35);
-            break;
-        case 170:
-            setInternal(4, 51, 36, 28, 36);
-            break;
-        case 175:
-            setInternal(4, 53, 37, 29, 37);
-            break;
-        case 180:
-            setInternal(4, 54, 38, 30, 38);
-            break;
-        case 185:
-            setInternal(4, 56, 39, 31, 39);
-            break;
-        case 190:
-            setInternal(4, 57, 40, 31, 40);
-            break;
-        case 195:
-            setInternal(4, 59, 41, 32, 41);
-            break;
-        case 200:
-            setInternal(4, 60, 42, 33, 42);
-            break;
+            // H, CT,TSO,ARM,LEG
+            case 10:
+                setInternal(3, 4, 3, 1, 2);
+                break;
+            case 15:
+                setInternal(3, 5, 4, 2, 3);
+                break;
+            case 20:
+                setInternal(3, 6, 5, 3, 4);
+                break;
+            case 25:
+                setInternal(3, 8, 6, 4, 6);
+                break;
+            case 30:
+                setInternal(3, 10, 7, 5, 7);
+                break;
+            case 35:
+                setInternal(3, 11, 8, 6, 8);
+                break;
+            case 40:
+                setInternal(3, 12, 10, 6, 10);
+                break;
+            case 45:
+                setInternal(3, 14, 11, 7, 11);
+                break;
+            case 50:
+                setInternal(3, 16, 12, 8, 12);
+                break;
+            case 55:
+                setInternal(3, 18, 13, 9, 13);
+                break;
+            case 60:
+                setInternal(3, 20, 14, 10, 14);
+                break;
+            case 65:
+                setInternal(3, 21, 15, 10, 15);
+                break;
+            case 70:
+                setInternal(3, 22, 15, 11, 15);
+                break;
+            case 75:
+                setInternal(3, 23, 16, 12, 16);
+                break;
+            case 80:
+                setInternal(3, 25, 17, 13, 17);
+                break;
+            case 85:
+                setInternal(3, 27, 18, 14, 18);
+                break;
+            case 90:
+                setInternal(3, 29, 19, 15, 19);
+                break;
+            case 95:
+                setInternal(3, 30, 20, 16, 20);
+                break;
+            case 100:
+                setInternal(3, 31, 21, 17, 21);
+                break;
+            case 105:
+                setInternal(4, 32, 22, 17, 22);
+                break;
+            case 110:
+                setInternal(4, 33, 23, 18, 23);
+                break;
+            case 115:
+                setInternal(4, 35, 24, 19, 24);
+                break;
+            case 120:
+                setInternal(4, 36, 25, 20, 25);
+                break;
+            case 125:
+                setInternal(4, 38, 26, 21, 26);
+                break;
+            case 130:
+                setInternal(4, 39, 27, 21, 27);
+                break;
+            case 135:
+                setInternal(4, 41, 28, 22, 28);
+                break;
+            case 140:
+                setInternal(4, 42, 29, 23, 29);
+                break;
+            case 145:
+                setInternal(4, 44, 31, 24, 31);
+                break;
+            case 150:
+                setInternal(4, 45, 32, 25, 32);
+                break;
+            case 155:
+                setInternal(4, 47, 33, 26, 33);
+                break;
+            case 160:
+                setInternal(4, 48, 34, 26, 34);
+                break;
+            case 165:
+                setInternal(4, 50, 35, 27, 35);
+                break;
+            case 170:
+                setInternal(4, 51, 36, 28, 36);
+                break;
+            case 175:
+                setInternal(4, 53, 37, 29, 37);
+                break;
+            case 180:
+                setInternal(4, 54, 38, 30, 38);
+                break;
+            case 185:
+                setInternal(4, 56, 39, 31, 39);
+                break;
+            case 190:
+                setInternal(4, 57, 40, 31, 40);
+                break;
+            case 195:
+                setInternal(4, 59, 41, 32, 41);
+                break;
+            case 200:
+                setInternal(4, 60, 42, 33, 42);
+                break;
         }
     }
 
@@ -2626,17 +2632,6 @@ public abstract class Mech extends Entity implements Serializable {
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
 
-        String startTable = "<TABLE>";
-        String endTable = "</TABLE>";
-
-        String startRow = "<TR>";
-        String endRow = "</TR>";
-
-        String startColumn = "<TD>";
-        String endColumn = "</TD>";
-
-        String nl = "<BR>";
-
         bvText = new StringBuffer("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
 
         bvText.append(getChassis());
@@ -2655,22 +2650,22 @@ public abstract class Mech extends Entity implements Serializable {
         double armorMultiplier = 1.0;
 
         switch (getArmorType()) {
-        case EquipmentType.T_ARMOR_COMMERCIAL:
-            armorMultiplier = 0.5;
-            break;
-        case EquipmentType.T_ARMOR_HARDENED:
-            armorMultiplier = 2.0;
-            break;
-        case EquipmentType.T_ARMOR_REACTIVE:
-        case EquipmentType.T_ARMOR_REFLECTIVE:
-            armorMultiplier = 1.5;
-            break;
-        case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
-            armorMultiplier = 1.2;
-            break;
-        default:
-            armorMultiplier = 1.0;
-            break;
+            case EquipmentType.T_ARMOR_COMMERCIAL:
+                armorMultiplier = 0.5;
+                break;
+            case EquipmentType.T_ARMOR_HARDENED:
+                armorMultiplier = 2.0;
+                break;
+            case EquipmentType.T_ARMOR_REACTIVE:
+            case EquipmentType.T_ARMOR_REFLECTIVE:
+                armorMultiplier = 1.5;
+                break;
+            case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
+                armorMultiplier = 1.2;
+                break;
+            default:
+                armorMultiplier = 1.0;
+                break;
 
         }
 
@@ -4091,7 +4086,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Calculate the C-bill cost of the mech. Passing null as the argument will
      * skip the detailed report processing.
-     *
+     * 
      * @param detail
      *            buffer to append the detailed cost report to
      * @return The cost in C-Bills of the 'Mech in question.
@@ -4179,7 +4174,8 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     private void addCostDetails(double cost, StringBuffer detail, double[] costs) {
-        String[] left = { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators", "Engine", "Gyro", "Jump Jets", "Heatsinks", "Armor", "Equipment", "Omni Multiplier", "Weight Multiplier" };
+        String[] left =
+            { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators", "Engine", "Gyro", "Jump Jets", "Heatsinks", "Armor", "Equipment", "Omni Multiplier", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 
@@ -4388,7 +4384,7 @@ public abstract class Mech extends Entity implements Serializable {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -4416,7 +4412,7 @@ public abstract class Mech extends Entity implements Serializable {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -4492,7 +4488,7 @@ public abstract class Mech extends Entity implements Serializable {
      * <code>IllegalArgumentException</code> will be thrown.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @param range
      *            - an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
@@ -4526,69 +4522,69 @@ public abstract class Mech extends Entity implements Serializable {
         // Determine the modifier based upon the range.
         else {
             switch (range) {
-            case RangeType.RANGE_MINIMUM:
-            case RangeType.RANGE_SHORT:
-                if (isStealthActive() && !isInfantry) {
-                    result = new TargetRoll(0, "stealth");
-                } else if (isNullSigActive() && !isInfantry) {
-                    result = new TargetRoll(0, "null-sig");
-                    if (isChameleonShieldActive()) {
-                        result.addModifier(0, "chameleon");
+                case RangeType.RANGE_MINIMUM:
+                case RangeType.RANGE_SHORT:
+                    if (isStealthActive() && !isInfantry) {
+                        result = new TargetRoll(0, "stealth");
+                    } else if (isNullSigActive() && !isInfantry) {
+                        result = new TargetRoll(0, "null-sig");
+                        if (isChameleonShieldActive()) {
+                            result.addModifier(0, "chameleon");
+                        }
+                    } else if (isChameleonShieldActive()) {
+                        result = new TargetRoll(0, "chameleon");
+                    } else {
+                        // must be infantry
+                        result = new TargetRoll(0, "infantry ignore stealth");
                     }
-                } else if (isChameleonShieldActive()) {
-                    result = new TargetRoll(0, "chameleon");
-                } else {
-                    // must be infantry
-                    result = new TargetRoll(0, "infantry ignore stealth");
-                }
-                break;
-            case RangeType.RANGE_MEDIUM:
-                if (isStealthActive() && !isInfantry) {
-                    result = new TargetRoll(1, "stealth");
-                } else if (isNullSigActive() && !isInfantry) {
-                    result = new TargetRoll(1, "null-sig");
-                    if (isChameleonShieldActive()) {
-                        result.addModifier(1, "chameleon");
+                    break;
+                case RangeType.RANGE_MEDIUM:
+                    if (isStealthActive() && !isInfantry) {
+                        result = new TargetRoll(1, "stealth");
+                    } else if (isNullSigActive() && !isInfantry) {
+                        result = new TargetRoll(1, "null-sig");
+                        if (isChameleonShieldActive()) {
+                            result.addModifier(1, "chameleon");
+                        }
+                    } else if (isChameleonShieldActive()) {
+                        result = new TargetRoll(1, "chameleon");
+                    } else {
+                        // must be infantry
+                        result = new TargetRoll(0, "infantry ignore stealth");
                     }
-                } else if (isChameleonShieldActive()) {
-                    result = new TargetRoll(1, "chameleon");
-                } else {
-                    // must be infantry
-                    result = new TargetRoll(0, "infantry ignore stealth");
-                }
-                break;
-            case RangeType.RANGE_LONG:
-                if (isStealthActive() && !isInfantry) {
-                    result = new TargetRoll(2, "stealth");
-                } else if (isNullSigActive() && !isInfantry) {
-                    result = new TargetRoll(2, "null-sig");
-                    if (isChameleonShieldActive()) {
-                        result.addModifier(2, "chameleon");
+                    break;
+                case RangeType.RANGE_LONG:
+                    if (isStealthActive() && !isInfantry) {
+                        result = new TargetRoll(2, "stealth");
+                    } else if (isNullSigActive() && !isInfantry) {
+                        result = new TargetRoll(2, "null-sig");
+                        if (isChameleonShieldActive()) {
+                            result.addModifier(2, "chameleon");
+                        }
+                    } else if (isChameleonShieldActive()) {
+                        result = new TargetRoll(2, "chameleon");
+                    } else {
+                        // must be infantry
+                        result = new TargetRoll(0, "infantry ignore stealth");
                     }
-                } else if (isChameleonShieldActive()) {
-                    result = new TargetRoll(2, "chameleon");
-                } else {
-                    // must be infantry
-                    result = new TargetRoll(0, "infantry ignore stealth");
-                }
-                break;
-            case RangeType.RANGE_EXTREME:
-                if (isStealthActive()) {
-                    result = new TargetRoll(2, "stealth");
-                } else if (isNullSigActive()) {
-                    result = new TargetRoll(2, "null-sig");
-                    if (isChameleonShieldActive()) {
-                        result.addModifier(2, "chameleon");
+                    break;
+                case RangeType.RANGE_EXTREME:
+                    if (isStealthActive()) {
+                        result = new TargetRoll(2, "stealth");
+                    } else if (isNullSigActive()) {
+                        result = new TargetRoll(2, "null-sig");
+                        if (isChameleonShieldActive()) {
+                            result.addModifier(2, "chameleon");
+                        }
+                    } else if (isChameleonShieldActive()) {
+                        result = new TargetRoll(2, "chameleon");
+                    } else {
+                        // must be infantry
+                        result = new TargetRoll(0, "infantry ignore stealth");
                     }
-                } else if (isChameleonShieldActive()) {
-                    result = new TargetRoll(2, "chameleon");
-                } else {
-                    // must be infantry
-                    result = new TargetRoll(0, "infantry ignore stealth");
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown range constant: " + range);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown range constant: " + range);
             }
         }
 
@@ -4599,7 +4595,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     *
+     * 
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -4890,20 +4886,20 @@ public abstract class Mech extends Entity implements Serializable {
     public static String getGyroDisplayString(int inType) {
         String inName = "";
         switch (inType) {
-        case GYRO_XL:
-            inName = "GYRO_XL";
-            break;
-        case GYRO_COMPACT:
-            inName = "GYRO_COMPACT";
-            break;
-        case GYRO_HEAVY_DUTY:
-            inName = "GYRO_HEAVY_DUTY";
-            break;
-        case GYRO_STANDARD:
-            inName = "GYRO_STANDARD";
-            break;
-        default:
-            inName = "GYRO_UNKNOWN";
+            case GYRO_XL:
+                inName = "GYRO_XL";
+                break;
+            case GYRO_COMPACT:
+                inName = "GYRO_COMPACT";
+                break;
+            case GYRO_HEAVY_DUTY:
+                inName = "GYRO_HEAVY_DUTY";
+                break;
+            case GYRO_STANDARD:
+                inName = "GYRO_STANDARD";
+                break;
+            default:
+                inName = "GYRO_UNKNOWN";
         }
         String result = EquipmentMessages.getString("SystemType.Gyro." + inName);
         if (result != null) {
@@ -4915,32 +4911,32 @@ public abstract class Mech extends Entity implements Serializable {
     public static String getCockpitDisplayString(int inType) {
         String inName = "";
         switch (inType) {
-        case COCKPIT_COMMAND_CONSOLE:
-            inName = "COCKPIT_COMMAND_CONSOLE";
-            break;
-        case COCKPIT_SMALL:
-            inName = "COCKPIT_SMALL";
-            break;
-        case COCKPIT_TORSO_MOUNTED:
-            inName = "COCKPIT_TORSO_MOUNTED";
-            break;
-        case COCKPIT_DUAL:
-            inName = "COCKPIT_DUAL";
-            break;
-        case COCKPIT_STANDARD:
-            inName = "COCKPIT_STANDARD";
-            break;
-        case COCKPIT_INDUSTRIAL:
-            inName = "COCKPIT_INDUSTRIAL";
-            break;
-        case COCKPIT_PRIMITIVE:
-            inName = "COCKPIT_PRIMITIVE";
-            break;
-        case COCKPIT_PRIMITIVE_INDUSTRIAL:
-            inName = "COCKPIT_PRIMITIVE_INDUSTRIAL";
-            break;
-        default:
-            inName = "COCKPIT_UNKNOWN";
+            case COCKPIT_COMMAND_CONSOLE:
+                inName = "COCKPIT_COMMAND_CONSOLE";
+                break;
+            case COCKPIT_SMALL:
+                inName = "COCKPIT_SMALL";
+                break;
+            case COCKPIT_TORSO_MOUNTED:
+                inName = "COCKPIT_TORSO_MOUNTED";
+                break;
+            case COCKPIT_DUAL:
+                inName = "COCKPIT_DUAL";
+                break;
+            case COCKPIT_STANDARD:
+                inName = "COCKPIT_STANDARD";
+                break;
+            case COCKPIT_INDUSTRIAL:
+                inName = "COCKPIT_INDUSTRIAL";
+                break;
+            case COCKPIT_PRIMITIVE:
+                inName = "COCKPIT_PRIMITIVE";
+                break;
+            case COCKPIT_PRIMITIVE_INDUSTRIAL:
+                inName = "COCKPIT_PRIMITIVE_INDUSTRIAL";
+                break;
+            default:
+                inName = "COCKPIT_UNKNOWN";
         }
         String result = EquipmentMessages.getString("SystemType.Cockpit." + inName);
         if (result != null) {
@@ -5138,7 +5134,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a standard cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addCockpit() {
@@ -5158,7 +5154,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for an industrial cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addIndustrialCockpit() {
@@ -5178,7 +5174,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for an industrial cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addPrimitiveCockpit() {
@@ -5198,7 +5194,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for an industrial primitive cockpit.
      * Note: This is part of the mek creation public API, and might not be
      * referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addIndustrialPrimitiveCockpit() {
@@ -5218,7 +5214,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a small cockpit. Note: This is part
      * of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addSmallCockpit() {
@@ -5265,7 +5261,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a torso-mounted cockpit. Note: This
      * is part of the mek creation public API, and might not be referenced by
      * any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addTorsoMountedCockpit() {
@@ -5301,7 +5297,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a standard gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addGyro() {
@@ -5319,7 +5315,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a compact gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addCompactGyro() {
@@ -5336,7 +5332,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for an extra-light gyro. Also set the
      * gyro type variable. Note: This is part of the mek creation public API,
      * and might not be referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addXLGyro() {
@@ -5357,7 +5353,7 @@ public abstract class Mech extends Entity implements Serializable {
      * Add the critical slots necessary for a heavy-duty gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addHeavyDutyGyro() {
@@ -5373,7 +5369,7 @@ public abstract class Mech extends Entity implements Serializable {
      * method before setting a mek's engine object will result in a NPE. Note:
      * This is part of the mek creation public API, and might not be referenced
      * by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addEngineCrits() {
@@ -5437,62 +5433,62 @@ public abstract class Mech extends Entity implements Serializable {
         int damageAbsorption = damage;
         if (this.hasActiveShield(location, rear)) {
             switch (location) {
-            case Mech.LOC_CT:
-            case Mech.LOC_HEAD:
-                if (this.hasActiveShield(Mech.LOC_RARM)) {
-                    damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
-                }
-                if (this.hasActiveShield(Mech.LOC_LARM)) {
-                    damageAbsorption = getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
-                }
-                break;
-            case Mech.LOC_LARM:
-            case Mech.LOC_LT:
-            case Mech.LOC_LLEG:
-                if (this.hasActiveShield(Mech.LOC_LARM)) {
-                    damageAbsorption = getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
-                }
-                break;
-            default:
-                if (this.hasActiveShield(Mech.LOC_RARM)) {
-                    damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
-                }
-                break;
+                case Mech.LOC_CT:
+                case Mech.LOC_HEAD:
+                    if (this.hasActiveShield(Mech.LOC_RARM)) {
+                        damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
+                    }
+                    if (this.hasActiveShield(Mech.LOC_LARM)) {
+                        damageAbsorption = getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
+                    }
+                    break;
+                case Mech.LOC_LARM:
+                case Mech.LOC_LT:
+                case Mech.LOC_LLEG:
+                    if (this.hasActiveShield(Mech.LOC_LARM)) {
+                        damageAbsorption = getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
+                    }
+                    break;
+                default:
+                    if (this.hasActiveShield(Mech.LOC_RARM)) {
+                        damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
+                    }
+                    break;
             }
         }
 
         if (this.hasPassiveShield(location, rear)) {
             switch (location) {
-            case Mech.LOC_LARM:
-            case Mech.LOC_LT:
-                if (this.hasPassiveShield(Mech.LOC_LARM)) {
-                    damageAbsorption = getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
-                }
-                break;
-            case Mech.LOC_RARM:
-            case Mech.LOC_RT:
-                if (this.hasPassiveShield(Mech.LOC_RARM)) {
-                    damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
-                }
-                break;
-            default:
-                break;
+                case Mech.LOC_LARM:
+                case Mech.LOC_LT:
+                    if (this.hasPassiveShield(Mech.LOC_LARM)) {
+                        damageAbsorption = getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
+                    }
+                    break;
+                case Mech.LOC_RARM:
+                case Mech.LOC_RT:
+                    if (this.hasPassiveShield(Mech.LOC_RARM)) {
+                        damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
         if (hasNoDefenseShield(location)) {
             switch (location) {
-            case Mech.LOC_LARM:
-                if (hasNoDefenseShield(Mech.LOC_LARM)) {
-                    damageAbsorption = getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
-                }
-                break;
-            case Mech.LOC_RARM:
-                if (hasNoDefenseShield(Mech.LOC_RARM)) {
-                    damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
-                }
-                break;
-            default:
-                break;
+                case Mech.LOC_LARM:
+                    if (hasNoDefenseShield(Mech.LOC_LARM)) {
+                        damageAbsorption = getAbsorptionRate(Mech.LOC_LARM, damageAbsorption);
+                    }
+                    break;
+                case Mech.LOC_RARM:
+                    if (hasNoDefenseShield(Mech.LOC_RARM)) {
+                        damageAbsorption = getAbsorptionRate(Mech.LOC_RARM, damageAbsorption);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -5540,7 +5536,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Does this mech have an undamaged HarJel system in this location?
-     *
+     * 
      * @param loc
      *            the <code>int</code> location to check
      * @return a <code>boolean</code> value indicating a present HarJel system
@@ -5693,7 +5689,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
     @Override
@@ -5703,7 +5699,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getHQIniBonus()
      */
     @Override
@@ -5717,7 +5713,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getBARRating()
      */
     @Override
@@ -5733,7 +5729,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Is this an Industrial Mech?
-     *
+     * 
      * @return if this mech has an industrial inner structure
      */
     public boolean isIndustrial() {
@@ -5743,7 +5739,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * set if this mech just moved into water that would kill it because of the
      * lack of environmental sealing
-     *
+     * 
      * @param moved
      */
     public void setJustMovedIntoIndustrialKillingWater(boolean moved) {
@@ -5753,7 +5749,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * did this mech just moved into water that would kill it because we lack
      * environmental sealing?
-     *
+     * 
      * @return
      */
     public boolean isJustMovedIntoIndustrialKillingWater() {
@@ -5764,7 +5760,7 @@ public abstract class Mech extends Entity implements Serializable {
      * should this mech die at the end of turn because it's an IndustrialMech
      * without environmental sealing that moved into water last round and stayed
      * there?
-     *
+     * 
      * @return
      */
     public boolean shouldDieAtEndOfTurnBecauseOfWater() {
@@ -5774,7 +5770,7 @@ public abstract class Mech extends Entity implements Serializable {
     /**
      * Set if this Mech's ICE Engine is stalled or not should only be used for
      * industrial mechs carrying an ICE engine
-     *
+     * 
      * @param stalled
      */
     public void setStalled(boolean stalled) {
@@ -5784,7 +5780,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#isStalled()
      */
     @Override
@@ -5794,7 +5790,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#isShutDown()
      */
     @Override
@@ -5804,7 +5800,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#doCheckEngineStallRoll(java.util.Vector)
      */
     @Override
@@ -5852,7 +5848,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#checkUnstall(java.util.Vector)
      */
     @Override
@@ -5899,7 +5895,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Is this a primitive Mech?
-     *
+     * 
      * @return
      */
     public boolean isPrimitive() {
@@ -5962,7 +5958,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * how many levels did this mech fall this turn?
-     *
+     * 
      * @return
      */
     public int getLevelsFallen() {
@@ -5979,7 +5975,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Is the passed in location an arm?
-     *
+     * 
      * @param loc
      * @return
      */
@@ -6000,5 +5996,512 @@ public abstract class Mech extends Entity implements Serializable {
         }
         return bv;
     }
+
+    /**
+     * Start of Battle Force Conversion Methods
+     */
+
+    @Override
+    public int getBattleForcePoints() {
+        int points = Math.round(this.calculateBattleValue(true, true) / 100);
+        return Math.max(1, points);
+    }
+
+    @Override
+    public long getBattleForceMovementPoints() {
+        int baseBFMove = getWalkMP();
+        long ModBFMove = getWalkMP();
+
+        if (hasMASCAndSuperCharger()) {
+            ModBFMove = Math.round(baseBFMove * 1.5);
+        } else if (hasMASC()) {
+            ModBFMove = Math.round(baseBFMove * 1.25);
+        }
+
+        if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
+            ModBFMove--;
+        }
+
+        return ModBFMove;
+    }
+
+    @Override
+    public long getBattleForceJumpPoints() {
+        int baseBFMove = getWalkMP();
+        int baseBFJump = getJumpMP();
+        long finalBFJump = 0;
+
+        if (baseBFJump >= baseBFMove) {
+            finalBFJump = baseBFJump;
+        } else {
+            finalBFJump = Math.round(baseBFJump * .66);
+        }
+
+        return finalBFJump;
+    }
+
+    @Override
+    public int getBattleForceArmorPoints() {
+        double armorMod = 1;
+        double armorPoints = 0;
+
+        switch (getArmorType()) {
+            case EquipmentType.T_ARMOR_COMMERCIAL:
+                armorMod = .5;
+                break;
+            case EquipmentType.T_ARMOR_INDUSTRIAL:
+            case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
+                armorMod = getBARRating() / 10;
+                break;
+            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                armorMod = 1.2;
+                break;
+            case EquipmentType.T_ARMOR_HARDENED:
+                armorMod = 1.5;
+                break;
+            case EquipmentType.T_ARMOR_REFLECTIVE:
+            case EquipmentType.T_ARMOR_REACTIVE:
+                armorMod = .75;
+                break;
+        }
+
+        armorPoints = Math.ceil(getTotalArmor() * armorMod);
+
+        if (this.hasModularArmor()) {
+
+            for (Mounted mount : this.getEquipment()) {
+                if (!mount.isDestroyed() && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                    armorPoints += 10;
+                }
+            }
+
+        }
+
+        if (debugBattleForce) {
+            battleForceDebugString.append("Armor Points: ");
+            battleForceDebugString.append(getTotalArmor());
+            battleForceDebugString.append('\n');
+            battleForceDebugString.append("Armor Modifier: ");
+            battleForceDebugString.append(armorMod);
+            battleForceDebugString.append('\n');
+        }
+        return (int) Math.round(armorPoints / 30);
+    }
+
+    @Override
+    /*
+     * returns the battle force structure points for a mech
+     */
+    public int getBattleForceStructurePoints() {
+        int battleForceStructure = 0;
+        int battleForceEngineType = 0;
+
+        int[][] battleForceStructureTable = new int[][]
+            {
+                { 1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 8, 8 },
+                { 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 7, 7, 7, 8, 8, 9, 10, 10, 10 },
+                { 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6 },
+                { 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5 },
+                { 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4 },
+                { 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3 },
+                { 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3 } };
+
+        if (isClan()) {
+            if (getEngine().hasFlag(Engine.LARGE_ENGINE)) {
+                switch (getEngine().getEngineType()) {
+                    case Engine.XL_ENGINE:
+                        battleForceEngineType = 5;
+                        break;
+                    case Engine.XXL_ENGINE:
+                        battleForceEngineType = 8;
+                        break;
+                }
+            } else {
+                switch (getEngine().getEngineType()) {
+                    case Engine.XL_ENGINE:
+                        battleForceEngineType = 4;
+                        break;
+                    case Engine.XXL_ENGINE:
+                        battleForceEngineType = 6;
+                        break;
+                    default:
+                        battleForceEngineType = 1;
+                        break;
+                }
+            }
+        } else {
+            if (getEngine().hasFlag(Engine.LARGE_ENGINE)) {
+                switch (getEngine().getEngineType()) {
+                    case Engine.XL_ENGINE:
+                        battleForceEngineType = 5;
+                        break;
+                    case Engine.XXL_ENGINE:
+                        battleForceEngineType = 9;
+                        break;
+                    case Engine.LIGHT_ENGINE:
+                        battleForceEngineType = 5;
+                        break;
+                    default:
+                        battleForceEngineType = 3;
+                        break;
+                }
+            } else {
+                switch (getEngine().getEngineType()) {
+                    case Engine.XL_ENGINE:
+                        battleForceEngineType = 5;
+                        break;
+                    case Engine.COMPACT_ENGINE:
+                        battleForceEngineType = 2;
+                        break;
+                    case Engine.LIGHT_ENGINE:
+                        battleForceEngineType = 4;
+                        break;
+                    case Engine.XXL_ENGINE:
+                        battleForceEngineType = 7;
+                        break;
+                    default:
+                        battleForceEngineType = 1;
+                        break;
+                }
+            }
+
+        }
+
+        battleForceStructure = battleForceStructureTable[battleForceEngineType - 1][((int) getWeight() / 5) - 2];
+
+        if (debugBattleForce) {
+            battleForceDebugString.append("Engine Type: ");
+            battleForceDebugString.append(battleForceEngineType);
+            battleForceDebugString.append('\n');
+            battleForceDebugString.append("Strucutre: ");
+            battleForceDebugString.append(battleForceStructure);
+            battleForceDebugString.append('\n');
+        }
+
+        if (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE) {
+            battleForceStructure = (int) Math.ceil(battleForceStructure * .5);
+            if (debugBattleForce) {
+                battleForceDebugString.append("Composite Structure: ");
+                battleForceDebugString.append(battleForceStructure);
+                battleForceDebugString.append('\n');
+            }
+        } else if (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED) {
+            battleForceStructure *= 2;
+            if (debugBattleForce) {
+                battleForceDebugString.append("Reinforced Structure: ");
+                battleForceDebugString.append(battleForceStructure);
+                battleForceDebugString.append('\n');
+            }
+        }
+        return battleForceStructure;
+
+    }
+
+    @Override
+    public int getBattleForceStandardWeaponsDamage(int range, boolean ignoreHeat, boolean ignoreSpecialAbility) {
+        double totalDamage = 0;
+        double frontArcWeaponsTotalDamage = 0;
+        double rearArcWeaponsTotalDamage = 0;
+        double totalHeat = 2;
+        double currentHeat = 0;
+        boolean hasTC = hasTargComp();
+        double baseDamage = 0;
+
+        ArrayList<Mounted> weaponsList = (ArrayList<Mounted>) getWeaponList().clone();
+
+        for (int pos = 0; pos < weaponList.size(); pos++) {
+            double damageModifier = 1;
+            double weaponCount = 1;
+            Mounted mount = weaponsList.get(pos);
+            if ((mount == null) || mount.isRearMounted()) {
+                continue;
+            }
+
+            WeaponType weapon = (WeaponType) mount.getType();
+
+            if (weapon.getLongRange() < range) {
+                continue;
+            }
+            // Check ammo weapons first since they had a hidden modifier
+            if (weapon.getAmmoType() != AmmoType.T_NA) {
+                for (int nextPos = pos + 1; nextPos < weaponList.size();) {
+                    Mounted nextWeapon = weaponList.get(nextPos);
+
+                    if ((nextWeapon == null) || nextWeapon.isRearMounted()) {
+                        nextPos++;
+                        continue;
+                    }
+
+                    if (nextWeapon.getType().equals(weapon)) {
+                        weaponCount++;
+                        weaponList.remove(nextPos);
+                    } else {
+                        nextPos++;
+                    }
+                }
+                int ammoCount = 0;
+                // Check if they have enough ammo for all the guns to last at
+                // least 10 rounds
+                for (Mounted ammo : getAmmo()) {
+
+                    AmmoType at = (AmmoType) ammo.getType();
+                    if ((at.getAmmoType() == weapon.getAmmoType()) && (at.getRackSize() == weapon.getRackSize())) {
+                        // RACs are always fired on 6 shot so that means you
+                        // need 6 times the ammo to avoid the ammo damage
+                        // modifier
+                        if (at.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                            ammoCount += at.getShots() / 6;
+                        } else {
+                            ammoCount += at.getShots();
+                        }
+                    }
+                }
+
+                if (debugBattleForce) {
+                    battleForceDebugString.append("Ammo Weapon ");
+                    battleForceDebugString.append(weapon.getName());
+                    battleForceDebugString.append(" ammo count: ");
+                    battleForceDebugString.append(ammoCount);
+                    battleForceDebugString.append('\n');
+                    battleForceDebugString.append("Weapon Count: ");
+                    battleForceDebugString.append(weaponCount);
+                    battleForceDebugString.append('\n');
+                }
+
+                if (ammoCount / weaponCount < 10) {
+                    damageModifier *= .75;
+                    if (debugBattleForce) {
+                        battleForceDebugString.append("Damage Modifier *.75: ");
+                        battleForceDebugString.append(damageModifier);
+                        battleForceDebugString.append('\n');
+                    }
+                }
+            }
+
+            currentHeat = weapon.getHeat() * weaponCount;
+            if (weapon.hasFlag(WeaponType.F_MISSILE)) {
+                baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * weaponCount;
+            } else {
+                baseDamage = weapon.getDamage() * weaponCount;
+            }
+
+            if (debugBattleForce) {
+                battleForceDebugString.append("Base Damage: ");
+                battleForceDebugString.append(baseDamage);
+                battleForceDebugString.append('\n');
+            }
+
+            if (range == Entity.battleForceShortRange) {
+                int minRange = Math.min(6, Math.max(0, weapon.getMinimumRange()));
+                damageModifier *= battleForceMinRangeModifier[minRange];
+                if (debugBattleForce) {
+                    battleForceDebugString.append("Min range damage modifier: ");
+                    battleForceDebugString.append(damageModifier);
+                    battleForceDebugString.append('\n');
+                }
+            }
+            int toHitMod = weapon.getToHitModifier() + 4;
+
+            switch (weapon.getAmmoType()) {
+                case AmmoType.T_AC_LBX:
+                case AmmoType.T_AC_LBX_THB:
+                    baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * weaponCount;
+                    toHitMod--;
+                    break;
+                case AmmoType.T_MRM:
+                    Mounted mLinker = mount.getLinkedBy();
+                    if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))) {
+                        toHitMod--;
+                        baseDamage = Compute.calculateClusterHitTableAmount(6, weapon.getRackSize()) * weaponCount;
+                    }
+                    break;
+                case AmmoType.T_LRM:
+                    mLinker = mount.getLinkedBy();
+                    if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS))) {
+                        baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
+                    } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V))) {
+                        baseDamage = Compute.calculateClusterHitTableAmount(10, weapon.getRackSize()) * weaponCount;
+                    }
+                    break;
+                case AmmoType.T_SRM:
+                    mLinker = mount.getLinkedBy();
+                    if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS))) {
+                        baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * 2 * weaponCount;
+                    } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V))) {
+                        baseDamage = Compute.calculateClusterHitTableAmount(10, weapon.getRackSize()) * 2 * weaponCount;
+                    } else {
+                        baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * 2 * weaponCount;
+                    }
+                    break;
+                case AmmoType.T_ATM:
+                    switch (range) {
+                        case Entity.battleForceShortRange:
+                            baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount * 3;
+                            break;
+                        case Entity.battleForceMediumRange:
+                            baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount * 2;
+                            break;
+                        case Entity.battleForceLongRange:
+                            baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
+                            break;
+                    }
+                    break;
+                case AmmoType.T_AC_ULTRA:
+                case AmmoType.T_AC_ULTRA_THB:
+                    damageModifier *= 1.5;
+                    break;
+                case AmmoType.T_HAG:
+                    switch (range) {
+                        case Entity.battleForceShortRange:
+                            baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
+                            break;
+                        case Entity.battleForceLongRange:
+                            baseDamage = Compute.calculateClusterHitTableAmount(5, weapon.getRackSize()) * weaponCount;
+                            break;
+                    }
+                    break;
+                case AmmoType.T_SRM_STREAK:
+                    baseDamage = weapon.getRackSize() * 2 * weaponCount;
+                    break;
+                case AmmoType.T_AC_ROTARY:
+                    currentHeat *= 6;
+                    baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * weaponCount * 5;
+                    break;
+
+            }
+            damageModifier *= battleForceToHitModifier[toHitMod];
+
+            if (debugBattleForce) {
+                battleForceDebugString.append("Base Damage: ");
+                battleForceDebugString.append(baseDamage);
+                battleForceDebugString.append('\n');
+                battleForceDebugString.append("To Hit Modifier Damage Modifier: ");
+                battleForceDebugString.append(damageModifier);
+                battleForceDebugString.append('\n');
+            }
+
+            if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
+                damageModifier *= .1;
+                currentHeat = 0;
+                if (debugBattleForce) {
+                    battleForceDebugString.append("One Shot Modifier Damage Modifier: ");
+                    battleForceDebugString.append(damageModifier);
+                    battleForceDebugString.append('\n');
+                }
+            }
+
+            if (hasTC && weapon.hasFlag(WeaponType.F_DIRECT_FIRE) && (weapon.getAmmoType() != AmmoType.T_AC_LBX) && (weapon.getAmmoType() != AmmoType.T_AC_LBX_THB)) {
+                damageModifier *= 1.10;
+                if (debugBattleForce) {
+                    battleForceDebugString.append("TC Modifier Damage Modifier: ");
+                    battleForceDebugString.append(damageModifier);
+                    battleForceDebugString.append('\n');
+                }
+            }
+
+            if ((weapon.getAmmoType() == AmmoType.T_LRM) || (weapon.getAmmoType() == AmmoType.T_AC) || (weapon.getAmmoType() == AmmoType.T_SRM)) {
+                double damage = baseDamage * damageModifier;
+
+                // if damage is greater then 10 then we do not add it to the
+                // standard damage it will be used in special weapons
+                if ((damage < 10) && !ignoreSpecialAbility) {
+                    frontArcWeaponsTotalDamage += damage;
+                    totalHeat += currentHeat;
+                    if (debugBattleForce) {
+                        battleForceDebugString.append("LRM/SRM/AC Damage No Special Ability: ");
+                        battleForceDebugString.append(damage);
+                        battleForceDebugString.append('\n');
+                    }
+                }
+            } else if (weapon.hasFlag(WeaponType.F_PPC)) {
+                Mounted mLinker = mount.getLinkedBy();
+                if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_PPC_CAPACITOR))) {
+                    frontArcWeaponsTotalDamage += ((baseDamage + 5) * .5) * damageModifier;
+                    if (debugBattleForce) {
+                        battleForceDebugString.append("PPC with Cap Damage: ");
+                        battleForceDebugString.append(((baseDamage + 5) * .5) * damageModifier);
+                        battleForceDebugString.append('\n');
+                    }
+                } else {
+                    frontArcWeaponsTotalDamage += baseDamage * damageModifier;
+                    if (debugBattleForce) {
+                        battleForceDebugString.append("PPC Damage: ");
+                        battleForceDebugString.append(baseDamage * damageModifier);
+                        battleForceDebugString.append('\n');
+                    }
+                }
+                totalHeat += currentHeat;
+            } else if (weapon.getAmmoType() == AmmoType.T_MML) {
+                double ammoDamage = 1;
+
+                switch (range) {
+                    case Entity.battleForceShortRange:
+                        ammoDamage = 2;
+                        break;
+                    case Entity.battleForceLongRange:
+                        ammoDamage = 1;
+                        break;
+                    case Entity.battleForceMediumRange:
+                        ammoDamage = 1;
+                        baseDamage = Math.round((baseDamage * 3) / 2);
+                        break;
+                }
+                frontArcWeaponsTotalDamage += baseDamage * ammoDamage * damageModifier;
+                totalHeat += currentHeat;
+                if (debugBattleForce) {
+                    battleForceDebugString.append("MML Damage: ");
+                    battleForceDebugString.append(baseDamage * ammoDamage * damageModifier);
+                    battleForceDebugString.append('\n');
+                }
+            } else {
+                frontArcWeaponsTotalDamage += baseDamage * damageModifier;
+                totalHeat += currentHeat;
+                if (debugBattleForce) {
+                    battleForceDebugString.append(weapon.getName());
+                    battleForceDebugString.append(" Damage: ");
+                    battleForceDebugString.append(baseDamage * damageModifier);
+                    battleForceDebugString.append('\n');
+                }
+            }
+        }
+
+        // finish the max heat calculations
+        if (this.getJumpMP() > 0) {
+            totalHeat += getJumpHeat(getJumpMP());
+        } else {
+            // Industrials do not get 2 heat for run/walk
+            if (!isIndustrial()) {
+                totalHeat += getEngine().getRunHeat();
+            }
+        }
+
+        totalDamage = Math.max(frontArcWeaponsTotalDamage, rearArcWeaponsTotalDamage);
+        if (debugBattleForce) {
+            battleForceDebugString.append("Total Damage: ");
+            battleForceDebugString.append(totalDamage);
+            battleForceDebugString.append('\n');
+        }
+
+        totalHeat -= 4;
+        if ((totalHeat > getHeatCapacity()) && !ignoreHeat) {
+            totalDamage = Math.ceil((totalDamage * getHeatCapacity()) / totalHeat);
+            if (debugBattleForce) {
+                battleForceDebugString.append("Total Heat -4: ");
+                battleForceDebugString.append(totalHeat);
+                battleForceDebugString.append('\n');
+                battleForceDebugString.append("Total Damage: ");
+                battleForceDebugString.append(totalDamage);
+                battleForceDebugString.append('\n');
+            }
+        }
+        totalDamage = Math.ceil(totalDamage / 10);
+        return (int) totalDamage;
+    }
+
+    /**
+     * End of Battle Force Conversion Methods
+     */
 
 }

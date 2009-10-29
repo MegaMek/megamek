@@ -441,10 +441,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     // When getting the to hit mod add 4 got it and make sure the max is 8 since
     // the range is -4 to 8
     protected double[] battleForceToHitModifier = new double[] { 1.20, 1.15, 1.10, 1.05, 1, .95, .9, .85, .8 };
-    public static final int battleForceShortRange = 0;
-    public static final int battleForceMediumRange = 3;
-    public static final int battleForceLongRange = 16;
-    public static final int battleForceExtremeRange = 24;
+    public static final int BATTLEFORCESHORTRANGE = 0;
+    public static final int BATTLEFORCEMEDIUMRANGE = 3;
+    public static final int BATTLEFORCELONGRANGE = 16;
+    public static final int BATTLEFORCEEXTREMERANGE = 24;
 
     /**
      * Generates a new, blank, entity.
@@ -8864,13 +8864,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int standardDamageValue = 0;
         int damageValueNoHeat = 0;
 
-        standardDamageValue = getBattleForceStandardWeaponsDamage(Entity.battleForceMediumRange);
+        standardDamageValue = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE);
 
         if (standardDamageValue <= 0) {
-            standardDamageValue = getBattleForceStandardWeaponsDamage(Entity.battleForceShortRange);
-            damageValueNoHeat = getBattleForceStandardWeaponsDamage(Entity.battleForceShortRange, true, true);
+            standardDamageValue = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE);
+            damageValueNoHeat = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, true, true);
         } else {
-            damageValueNoHeat = getBattleForceStandardWeaponsDamage(Entity.battleForceMediumRange, true, true);
+            damageValueNoHeat = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, true, true);
         }
 
         if (debugBattleForce) {

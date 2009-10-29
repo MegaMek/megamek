@@ -541,11 +541,11 @@ public class MegaMek {
                         w.write(",");
                         w.write(Integer.toString(entity.getBattleForceStructurePoints()));
                         w.write(",");
-                        w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.battleForceShortRange)));
+                        w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE)));
                         w.write(",");
-                        w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.battleForceMediumRange)));
+                        w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE)));
                         w.write(",");
-                        w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.battleForceLongRange)));
+                        w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE)));
                         w.write(",");
                         w.write(entity.getBattleForceOverHeatValue());
                         w.write(",");

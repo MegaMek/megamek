@@ -77,7 +77,7 @@ import megamek.common.actions.RamAttackAction;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
-public class MovementDisplay extends StatusBarPhaseDisplay implements 
+public class MovementDisplay extends StatusBarPhaseDisplay implements
 DoneButtoned, KeyListener {
     /**
      *
@@ -1168,7 +1168,7 @@ DoneButtoned, KeyListener {
                 return;
             }
         }
-        
+
         check = SharedUtility.doThrustCheck(md, client);
         if ((check.length() > 0) && GUIPreferences.getInstance().getNagForPSR() && !dontCheckPSR) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
@@ -1184,7 +1184,7 @@ DoneButtoned, KeyListener {
                 return;
             }
         }
-        
+
         if(ce().isAirborne()) {
             if(!clientgui.getClient().game.useVectorMove() && !((Aero)ce()).isOutControlTotal()) {
                 //check for underuse of velocity
@@ -1195,7 +1195,7 @@ DoneButtoned, KeyListener {
                     unusedVelocity = ((Aero)ce()).getCurrentVelocity() > 0;
                 }
                 boolean flyoff = false;
-                if(null != cmd && cmd.contains(MovePath.STEP_OFF)) {
+                if((null != cmd) && cmd.contains(MovePath.STEP_OFF)) {
                     flyoff = true;
                 }
                 if(unusedVelocity && !flyoff) {
@@ -1203,9 +1203,9 @@ DoneButtoned, KeyListener {
                     String body = Messages.getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
                     clientgui.doAlertDialog(title, body);
                     return;
-                }   
+                }
             }
-            //depending on the rules and location (i.e. space v. atmosphere), 
+            //depending on the rules and location (i.e. space v. atmosphere),
             //Aeros might need to have additional move steps tacked on
             cmd = SharedUtility.moveAero(cmd, clientgui.getClient());
         }
@@ -2602,7 +2602,8 @@ DoneButtoned, KeyListener {
                     gear = MovementDisplay.GEAR_JUMP;
                 }
             } else {
-                if (gear != MovementDisplay.GEAR_JUMP) {
+                if ((gear != MovementDisplay.GEAR_JUMP) &&
+                        !(cmd.getLastStep().isFirstStep() && (cmd.getLastStep().getType() == MovePath.STEP_LAY_MINE))) {
                     clearAllMoves();
                 }
                 if (!cmd.isJumping()) {

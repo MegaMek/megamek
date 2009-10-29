@@ -2746,7 +2746,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
             gear = MovementDisplay.GEAR_LAND;
         } else if (ev.getActionCommand().equals(MOVE_JUMP)) {
-            if (gear != MovementDisplay.GEAR_JUMP) {
+            if ((gear != MovementDisplay.GEAR_JUMP) &&
+                    !(cmd.getLastStep().isFirstStep() && (cmd.getLastStep().getType() == MovePath.STEP_LAY_MINE))) {
                 clear();
             }
             if (!cmd.isJumping()) {

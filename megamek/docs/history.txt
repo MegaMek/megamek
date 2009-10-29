@@ -19,6 +19,9 @@ v0.35.9-dev (SVN)
 + Fix MechTileset
 + Bug: command console cockpit missing second life support slot in head
 + Inital Checkin for Battle Force Conversion for Mechs
++ Bug 2889087: Fa-Shih mines deployment
+   To deploy mines at start of movement, first click "jump", then "lay mine", and
+   then plot the jumping movement.
 
 v0.35.8 (2009-10-18, 22:34 UTC+2)
 + Bug: infantry flamer not causing heat correctly

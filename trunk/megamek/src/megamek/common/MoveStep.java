@@ -1643,15 +1643,9 @@ public class MoveStep implements Serializable {
             movementType = IEntityMovementType.MOVE_LEGAL;
         }
 
-        // anyone who can and does lay mines is legal
-        // TODO: for BA, only allow mine laying at start or end of jumping movement
-        if ((type == MovePath.STEP_LAY_MINE) && entity.canLayMine()) {
-            movementType = prev.movementType;
-        }
-
         if ((type == MovePath.STEP_CLIMB_MODE_ON)
-                || (type == MovePath.STEP_CLIMB_MODE_OFF)) {
-            movementType = prev.movementType;
+                    || (type == MovePath.STEP_CLIMB_MODE_OFF)) {
+                movementType = prev.movementType;
         }
         // check for ejection (always legal?)
         if (type == MovePath.STEP_EJECT) {
@@ -1969,6 +1963,22 @@ public class MoveStep implements Serializable {
                 !game.getBoard().getHex(curPos).containsTerrainExit(
                         Terrains.BRIDGE, curPos.direction(lastPos))) {
             movementType = IEntityMovementType.MOVE_ILLEGAL;
+        }
+
+        // anyone who can and does lay mines is legal
+        if ((type == MovePath.STEP_LAY_MINE) && entity.canLayMine()) {
+            if (entity instanceof BattleArmor) {
+                if (isEndPos && ((prev.movementType == IEntityMovementType.MOVE_JUMP) || (prev.movementType == IEntityMovementType.MOVE_VTOL_RUN) || (prev.movementType == IEntityMovementType.MOVE_VTOL_WALK))) {
+                    movementType = prev.movementType;
+                } else if (isFirstStep()){
+                    movementType = IEntityMovementType.MOVE_LEGAL;
+                }
+            }
+            movementType = prev.movementType;
+        } else if (parent.contains(MovePath.STEP_LAY_MINE) && (entity instanceof BattleArmor)) {
+            if (!((movementType == IEntityMovementType.MOVE_VTOL_WALK) || (movementType == IEntityMovementType.MOVE_VTOL_RUN) || (movementType == IEntityMovementType.MOVE_JUMP))) {
+                movementType = IEntityMovementType.MOVE_ILLEGAL;
+            }
         }
 
         // check if this movement is illegal for reasons other than points

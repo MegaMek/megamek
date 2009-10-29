@@ -6293,7 +6293,7 @@ public abstract class Mech extends Entity implements Serializable {
                 battleForceDebugString.append('\n');
             }
 
-            if (range == Entity.battleForceShortRange) {
+            if (range == Entity.BATTLEFORCESHORTRANGE) {
                 int minRange = Math.min(6, Math.max(0, weapon.getMinimumRange()));
                 damageModifier *= battleForceMinRangeModifier[minRange];
                 if (debugBattleForce) {
@@ -6337,13 +6337,13 @@ public abstract class Mech extends Entity implements Serializable {
                     break;
                 case AmmoType.T_ATM:
                     switch (range) {
-                        case Entity.battleForceShortRange:
+                        case Entity.BATTLEFORCESHORTRANGE:
                             baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount * 3;
                             break;
-                        case Entity.battleForceMediumRange:
+                        case Entity.BATTLEFORCEMEDIUMRANGE:
                             baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount * 2;
                             break;
-                        case Entity.battleForceLongRange:
+                        case Entity.BATTLEFORCELONGRANGE:
                             baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
                             break;
                     }
@@ -6354,10 +6354,10 @@ public abstract class Mech extends Entity implements Serializable {
                     break;
                 case AmmoType.T_HAG:
                     switch (range) {
-                        case Entity.battleForceShortRange:
+                        case Entity.BATTLEFORCESHORTRANGE:
                             baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
                             break;
-                        case Entity.battleForceLongRange:
+                        case Entity.BATTLEFORCELONGRANGE:
                             baseDamage = Compute.calculateClusterHitTableAmount(5, weapon.getRackSize()) * weaponCount;
                             break;
                     }
@@ -6437,13 +6437,13 @@ public abstract class Mech extends Entity implements Serializable {
                 double ammoDamage = 1;
 
                 switch (range) {
-                    case Entity.battleForceShortRange:
+                    case Entity.BATTLEFORCESHORTRANGE:
                         ammoDamage = 2;
                         break;
-                    case Entity.battleForceLongRange:
+                    case Entity.BATTLEFORCELONGRANGE:
                         ammoDamage = 1;
                         break;
-                    case Entity.battleForceMediumRange:
+                    case Entity.BATTLEFORCEMEDIUMRANGE:
                         ammoDamage = 1;
                         baseDamage = Math.round((baseDamage * 3) / 2);
                         break;

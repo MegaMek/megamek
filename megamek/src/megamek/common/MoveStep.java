@@ -1973,12 +1973,12 @@ public class MoveStep implements Serializable {
                 } else if (isFirstStep()){
                     movementType = IEntityMovementType.MOVE_LEGAL;
                 }
+            } else {
+                movementType = prev.movementType;
             }
-            movementType = prev.movementType;
-        } else if (parent.contains(MovePath.STEP_LAY_MINE) && (entity instanceof BattleArmor)) {
-            if (!((movementType == IEntityMovementType.MOVE_VTOL_WALK) || (movementType == IEntityMovementType.MOVE_VTOL_RUN) || (movementType == IEntityMovementType.MOVE_JUMP))) {
-                movementType = IEntityMovementType.MOVE_ILLEGAL;
-            }
+        } else if (parent.contains(MovePath.STEP_LAY_MINE) && (entity instanceof BattleArmor) && (parent.getStep(0).getType() != MovePath.STEP_LAY_MINE)) {
+            movementType = IEntityMovementType.MOVE_ILLEGAL;
+
         }
 
         // check if this movement is illegal for reasons other than points

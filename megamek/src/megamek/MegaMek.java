@@ -49,8 +49,7 @@ import megamek.server.DedicatedServer;
 public class MegaMek {
 
     public static String VERSION = "0.35.9-svn"; //$NON-NLS-1$
-    public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory() + File.separator
-            + "timestamp").lastModified(); //$NON-NLS-1$
+    public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory() + File.separator + "timestamp").lastModified(); //$NON-NLS-1$
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:"; //$NON-NLS-1$
@@ -105,7 +104,7 @@ public class MegaMek {
     /**
      * This function returns the memory used in the heap (heap memory - free
      * memory).
-     *
+     * 
      * @return memory used in kB
      */
     public static String getMemoryUsed() {
@@ -118,7 +117,7 @@ public class MegaMek {
     /**
      * This function redirects the standard error and output streams to the
      * given File name.
-     *
+     * 
      * @param logFileName
      *            The file name to redirect to.
      */
@@ -130,8 +129,7 @@ public class MegaMek {
             if (!logDir.exists()) {
                 logDir.mkdir();
             }
-            PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(sLogDir + File.separator
-                    + logFileName), 64));
+            PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(sLogDir + File.separator + logFileName), 64));
             System.setOut(ps);
             System.setErr(ps);
         } catch (Exception e) {
@@ -144,7 +142,7 @@ public class MegaMek {
      * Starts a dedicated server with the arguments in args. See
      * {@link megamek.server.DedicatedServer#start(String[])} for more
      * information.
-     *
+     * 
      * @param args
      *            the arguments to the dedicated server.
      */
@@ -158,7 +156,7 @@ public class MegaMek {
     /**
      * Attempts to start the GUI with the given name. If the GUI is unknown the
      * program will exit.
-     *
+     * 
      * @param guiName
      *            The name of the GUI, usually AWT or swing
      * @param args
@@ -181,7 +179,7 @@ public class MegaMek {
 
     /**
      * Return the Interface to the GUI specified by the name in guiName.
-     *
+     * 
      * @param guiName
      *            the name of the GUI, will be passed on to
      *            {@link #getGUIClassName(String)}.
@@ -225,7 +223,7 @@ public class MegaMek {
     /**
      * This function appends 'agrs: []', to the buffer, with a space separated
      * list of args[] elements between the brackets.
-     *
+     * 
      * @param buffer
      *            the buffer to append the list to.
      * @param args
@@ -246,7 +244,7 @@ public class MegaMek {
 
     /**
      * Prints the message to stdout and then exits with errorcode 1.
-     *
+     * 
      * @param message
      *            the message to be displayed.
      */
@@ -257,7 +255,7 @@ public class MegaMek {
 
     /**
      * Prints the message and flushes the output stream.
-     *
+     * 
      * @param message
      */
     private static void displayMessage(String message) {
@@ -290,7 +288,7 @@ public class MegaMek {
 
     /**
      * Returns the version of Megamek
-     *
+     * 
      * @return the version of Megamek as a string.
      */
     public static String getVersion() {
@@ -316,6 +314,7 @@ public class MegaMek {
         private static final String OPTION_EQUIPMENT_EXTENDED_DB = "eqedb"; //$NON-NLS-1$
         private static final String OPTION_UNIT_VALIDATOR = "validate"; //$NON-NLS-1$
         private static final String OPTION_UNIT_EXPORT = "export"; //$NON-NLS-1$
+        private static final String OPTION_UNIT_BATTLEFORCE_CONVERSION = "bfc"; //$NON-NLS-1$
 
         public CommandLineParser(String[] args) {
             super(args);
@@ -323,7 +322,7 @@ public class MegaMek {
 
         /**
          * Returns <code>true</code> if the dedicated server option was found
-         *
+         * 
          * @return true iff this is a dedicated server.
          */
         public boolean dedicatedServer() {
@@ -333,7 +332,7 @@ public class MegaMek {
         /**
          * Returns the GUI Name option value or <code>null</code> if it wasn't
          * set
-         *
+         * 
          * @return GUI Name option value or <code>null</code> if it wasn't set
          */
         public String getGuiName() {
@@ -343,7 +342,7 @@ public class MegaMek {
         /**
          * Returns the log file name option value or <code>null</code> if it
          * wasn't set
-         *
+         * 
          * @return the log file name option value or <code>null</code> if it
          *         wasn't set
          */
@@ -353,7 +352,7 @@ public class MegaMek {
 
         /**
          * Returns the the <code>array</code> of the unprocessed arguments
-         *
+         * 
          * @return the the <code>array</code> of the unprocessed arguments
          */
         public String[] getRestArgs() {
@@ -385,6 +384,11 @@ public class MegaMek {
             if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_UNIT_EXPORT)) {
                 nextToken();
                 processUnitExporter();
+            }
+
+            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_UNIT_BATTLEFORCE_CONVERSION)) {
+                nextToken();
+                processUnitBattleForceConverter();
             }
 
             if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_DEDICATED)) {
@@ -466,8 +470,7 @@ public class MegaMek {
                     try {
                         Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                         System.err.println("Validating Entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
-                        EntityVerifier entityVerifier = new EntityVerifier(new File(
-                                "data/mechfiles/UnitVerifierOptions.xml")); //$NON-NLS-1$
+                        EntityVerifier entityVerifier = new EntityVerifier(new File("data/mechfiles/UnitVerifierOptions.xml")); //$NON-NLS-1$
                         MechView mechView = new MechView(entity, false);
                         StringBuffer sb = new StringBuffer(mechView.getMechReadout());
                         if ((entity instanceof Mech) || (entity instanceof Tank)) {
@@ -498,6 +501,67 @@ public class MegaMek {
                 error("\"chassie model\" expected as input"); //$NON-NLS-1$
             }
             System.exit(0);
+        }
+
+        private void processUnitBattleForceConverter() {
+
+            String filename;
+            if (getToken() == TOK_LITERAL) {
+                filename = getTokenValue();
+                nextToken();
+
+                if (!new File("./docs").exists()) {
+                    new File("./docs").mkdir();
+                }
+
+                try {
+                    File file = new File("./docs/" + filename);
+                    BufferedWriter w = new BufferedWriter(new FileWriter(file));
+                    w.write("Megamek Unit BattleForce Converter");
+                    w.newLine();
+                    w.write("This file can be regenerated with java -jar MegaMek.jar -bfc filename");
+                    w.newLine();
+                    w.write("Element,Size,MP,Armor,Structure,S,M,L,OV,Point Cost,Abilites");
+                    w.newLine();
+
+                    MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
+                    for (MechSummary unit : units) {
+                        if (!unit.getUnitType().equalsIgnoreCase("mek")) {
+                            continue;
+                        }
+                        Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
+
+                        w.write(unit.getName());
+                        w.write(",");
+                        w.write(Integer.toString(entity.getWeightClass() + 1));
+                        w.write(",");
+                        w.write(entity.getBattleForceMovement());
+                        w.write(",");
+                        w.write(Integer.toString(entity.getBattleForceArmorPoints()));
+                        w.write(",");
+                        w.write(Integer.toString(entity.getBattleForceStructurePoints()));
+                        w.write(",");
+                        w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.battleForceShortRange)));
+                        w.write(",");
+                        w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.battleForceMediumRange)));
+                        w.write(",");
+                        w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.battleForceLongRange)));
+                        w.write(",");
+                        w.write(entity.getBattleForceOverHeatValue());
+                        w.write(",");
+                        w.write(Integer.toString(entity.getBattleForcePoints()));
+                        w.write(",");
+                        w.write("Abilites");
+                        w.newLine();
+                    }
+                    w.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            System.exit(0);
+
         }
 
         @SuppressWarnings("nls")

@@ -14,6 +14,715 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.ArrayList;
+import java.util.Map;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultRowSorter;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
+import javax.swing.SwingConstants;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
+
+import megamek.client.Client;
+import megamek.client.ui.MechView;
+import megamek.client.ui.Messages;
+import megamek.common.BattleArmor;
+import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
+import megamek.common.IEntityMovementMode;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.MechFileParser;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.common.Tank;
+import megamek.common.TechConstants;
+import megamek.common.UnitType;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.PreferenceManager;
+
+/**
+ *
+ * @author  Jay Lawson <jaylawson39 at yahoo.com>
+ * This is a heavily reworked version of the original MechSelectorDialog which
+ * brings up a list of units for the player to select to add to their forces.
+ * The original list has been changed to a sortable table and a text filter 
+ * is used for advanced searching.
+ */
+public class MechSelectorDialog extends JDialog implements Runnable {
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8144354264100884817L;
+
+    private JButton btnSelectClose;
+    private JButton btnSelect;
+    private JButton btnClose;
+    private JComboBox comboType;
+    private JComboBox comboUnitType;
+    private JComboBox comboWeight;
+    private JLabel lblFilter;
+    private JLabel lblImage;
+    private JLabel lblType;
+    private JLabel lblUnitType;
+    private JLabel lblWeight;
+    private JPanel panelFilterBtns;
+    private JPanel panelOKBtns;
+    private JScrollPane scrTableUnits;
+    private JScrollPane scrTxtUnitView;
+    private JTable tableUnits;
+    private JTextField txtFilter;
+    private JTextPane txtUnitView;
+    private JLabel lblPlayer;
+    private JComboBox comboPlayer;
+        
+    private MechSummary[] mechs;
+
+    private MechTableModel unitModel;
+    
+    Entity selectedUnit = null;
+    
+    private Client client;
+    private ClientGUI clientgui;
+    private UnitLoadingDialog unitLoadingDialog;
+
+    private TableRowSorter<MechTableModel> sorter;
+
+    /** Creates new form UnitSelectorDialog */
+    public MechSelectorDialog(ClientGUI cl, UnitLoadingDialog uld) {
+        super(cl.frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
+        client = cl.getClient();
+        clientgui = cl;
+        unitLoadingDialog = uld;
+        
+        unitModel = new MechTableModel();
+        initComponents();
+        mechs = MechSummaryCache.getInstance().getAllMechs();
+
+        // break out if there are no units to filter
+        if (mechs == null) {
+            System.err.println("No units to filter!");
+        } else {
+            unitModel.setData(mechs);
+        }
+        filterUnits();
+        
+        //initialize with the units sorted alphabetically by chassis
+        ArrayList<SortKey> sortlist = new ArrayList<SortKey>();
+        sortlist.add(new SortKey(MechTableModel.COL_CHASSIS,SortOrder.ASCENDING));
+        //sortlist.add(new RowSorter.SortKey(MechTableModel.COL_MODEL,SortOrder.ASCENDING));
+        ((DefaultRowSorter)tableUnits.getRowSorter()).setSortKeys(sortlist);
+        ((DefaultRowSorter)tableUnits.getRowSorter()).sort();
+    }
+                
+    private void initComponents() {
+        GridBagConstraints c;
+
+        panelFilterBtns = new JPanel();
+        panelOKBtns = new JPanel();
+        
+        scrTableUnits = new JScrollPane();
+        tableUnits = new JTable();
+        scrTxtUnitView = new JScrollPane();
+        txtUnitView = new JTextPane();
+        
+        comboType = new JComboBox();
+        comboWeight = new JComboBox();        
+        comboUnitType = new JComboBox();
+        txtFilter = new JTextField();
+           
+        btnSelect = new JButton();
+        btnSelectClose = new JButton();
+        btnClose = new JButton();
+        
+        lblType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"));
+        lblWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass"));
+        lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType"));
+        lblFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter"));
+        lblImage = new JLabel();
+        lblPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
+        comboPlayer = new JComboBox();
+
+        getContentPane().setLayout(new GridBagLayout());
+
+        scrTableUnits.setMinimumSize(new java.awt.Dimension(500, 400));
+        scrTableUnits.setPreferredSize(new java.awt.Dimension(500, 400));
+
+        tableUnits.setModel(unitModel);
+        tableUnits.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        sorter = new TableRowSorter<MechTableModel>(unitModel);
+        tableUnits.setRowSorter(sorter);
+        tableUnits.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                UnitChanged(evt);
+            }
+        });
+        TableColumn column = null;
+        for (int i = 0; i < MechTableModel.N_COL; i++) {
+            column = tableUnits.getColumnModel().getColumn(i);
+            if (i == MechTableModel.COL_CHASSIS) {
+                column.setPreferredWidth(125);
+            }
+            else if((i == MechTableModel.COL_MODEL)
+                || (i == MechTableModel.COL_COST)) {
+                column.setPreferredWidth(75);
+            }
+            else if((i == MechTableModel.COL_WEIGHT)
+                || (i == MechTableModel.COL_BV)) {
+                column.setPreferredWidth(50);
+            }
+            else {
+                column.setPreferredWidth(25);
+            }
+        }
+        scrTableUnits.setViewportView(tableUnits);
+
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.VERTICAL;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weightx = 0.0;
+        c.weighty = 1.0;
+        getContentPane().add(scrTableUnits, c);
+
+        txtUnitView.setBorder(null);
+        txtUnitView.setEditable(false);
+        txtUnitView.setContentType("text/html");
+        txtUnitView.setMinimumSize(new java.awt.Dimension(300, 500));
+        txtUnitView.setPreferredSize(new java.awt.Dimension(300, 500));
+        scrTxtUnitView.setViewportView(txtUnitView);
+
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 0;
+        c.gridheight = 2;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        getContentPane().add(scrTxtUnitView, c);
+
+        panelFilterBtns.setMinimumSize(new java.awt.Dimension(300, 120));
+        panelFilterBtns.setPreferredSize(new java.awt.Dimension(300, 120));
+        panelFilterBtns.setLayout(new GridBagLayout());
+
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 2;
+        c.anchor = GridBagConstraints.WEST;
+        panelFilterBtns.add(lblType, c);
+
+        DefaultComboBoxModel techModel = new DefaultComboBoxModel();
+        for (int i = 0; i < TechConstants.SIZE; i++) {
+            techModel.addElement(TechConstants.getLevelDisplayableName(i));
+        }
+        techModel.setSelectedItem(TechConstants.getLevelDisplayableName(0));
+        comboType.setModel(techModel);
+        comboType.setMinimumSize(new java.awt.Dimension(200, 27));
+        comboType.setPreferredSize(new java.awt.Dimension(200, 27));
+        comboType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filterUnits();
+            }
+        });
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 2;
+        c.anchor = GridBagConstraints.WEST;
+        panelFilterBtns.add(comboType, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.WEST;
+        panelFilterBtns.add(lblWeight, c);
+
+        DefaultComboBoxModel weightModel = new DefaultComboBoxModel();
+        for (int i = 0; i < EntityWeightClass.SIZE; i++) {
+            weightModel.addElement(EntityWeightClass.getClassName(i));
+        }
+        weightModel.setSelectedItem(EntityWeightClass.getClassName(0));
+        comboWeight.setModel(weightModel);
+        comboWeight.setMinimumSize(new java.awt.Dimension(200, 27));
+        comboWeight.setPreferredSize(new java.awt.Dimension(200, 27));
+        comboWeight.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filterUnits();
+            }
+        });
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.WEST;
+        panelFilterBtns.add(comboWeight, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.WEST;
+        panelFilterBtns.add(lblUnitType, c);
+
+        DefaultComboBoxModel unitTypeModel = new DefaultComboBoxModel();
+        for (int i = 0; i < UnitType.SIZE; i++) {
+            unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
+        }
+        unitTypeModel.setSelectedItem(UnitType.getTypeDisplayableName(0));
+        comboUnitType.setModel(unitTypeModel);
+        comboUnitType.setMinimumSize(new java.awt.Dimension(200, 27));
+        comboUnitType.setPreferredSize(new java.awt.Dimension(200, 27));
+        comboUnitType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filterUnits();
+            }
+        });
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.WEST;
+        panelFilterBtns.add(comboUnitType, c);
+
+        txtFilter.setText("");
+        txtFilter.setMinimumSize(new java.awt.Dimension(200, 28));
+        txtFilter.setPreferredSize(new java.awt.Dimension(200, 28));
+        txtFilter.getDocument().addDocumentListener(
+                new DocumentListener() {
+                    public void changedUpdate(DocumentEvent e) {
+                    filterUnits();
+                }
+                public void insertUpdate(DocumentEvent e) {
+                    filterUnits();
+                }
+                public void removeUpdate(DocumentEvent e) {
+                    filterUnits();
+                }
+            });
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 3;
+        c.anchor = GridBagConstraints.WEST;
+        panelFilterBtns.add(txtFilter, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 3;
+        c.anchor = GridBagConstraints.WEST;
+        panelFilterBtns.add(lblFilter, c);
+        
+        lblImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblImage.setText(""); // NOI18N
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 0;
+        c.gridheight = 4;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        panelFilterBtns.add(lblImage, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weightx = 0.0;
+        c.insets = new java.awt.Insets(10, 10, 10, 0);
+        getContentPane().add(panelFilterBtns, c);
+
+        panelOKBtns.setLayout(new GridBagLayout());
+
+
+        btnSelect.setText(Messages.getString("MechSelectorDialog.m_bPick"));
+        btnSelect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                select(false);
+            }
+        });
+        panelOKBtns.add(btnSelect, new GridBagConstraints());
+            
+        btnSelectClose.setText(Messages.getString("MechSelectorDialog.m_bPickClose"));
+        btnSelectClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                select(true);
+            }
+        });
+        panelOKBtns.add(btnSelectClose, new GridBagConstraints());
+        
+        btnClose.setText(Messages.getString("Close"));
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectedUnit = null;
+                setVisible(false);
+            }
+        });
+        panelOKBtns.add(btnClose, new GridBagConstraints());
+        
+        updatePlayerChoice();
+        panelOKBtns.add(lblPlayer, new GridBagConstraints());
+        panelOKBtns.add(comboPlayer, new GridBagConstraints());
+            
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 2;
+        c.fill = GridBagConstraints.BOTH;
+        getContentPane().add(panelOKBtns, c);
+
+        pack();
+    }                                                
+    
+    private void select(boolean close) { 
+        Entity e = getSelectedEntity();
+        if(null != e) {
+            Client c = null;
+            if (comboPlayer.getSelectedIndex() > 0) {
+                String name = (String) comboPlayer.getSelectedItem();
+                c = clientgui.getBots().get(name);
+            }
+            if (c == null) {
+                c = client;
+            }
+            autoSetSkills(e);
+            e.setOwner(c.getLocalPlayer());
+            c.sendAddEntity(e);
+        } 
+        if(close) {
+            setVisible(false);
+        }
+    }                                
+
+    private void filterUnits() {
+        RowFilter<MechTableModel, Integer> unitTypeFilter = null;
+        final int nType = comboType.getSelectedIndex();
+        final int nClass = comboWeight.getSelectedIndex();
+        final int nUnit = comboUnitType.getSelectedIndex();
+        //If current expression doesn't parse, don't update.
+        try {
+            unitTypeFilter = new RowFilter<MechTableModel,Integer>() {
+                @Override
+                public boolean include(Entry<? extends MechTableModel, ? extends Integer> entry) {
+                    MechTableModel mechModel = entry.getModel();
+                    MechSummary mech = mechModel.getMechSummary(entry.getIdentifier());
+                    if (/* Weight */
+                            (mech.getWeightClass() == nClass) &&
+                            /*Canon*/
+                            (!client.game.getOptions().booleanOption("canon_only") || mech.isCanon()) && 
+                            /*Technology Level*/
+                            ((nType == TechConstants.T_ALL)
+                                    || (nType == mech.getType())
+                                    || ((nType == TechConstants.T_IS_TW_ALL)
+                                            && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX) || (mech.getType() == TechConstants.T_INTRO_BOXSET)))
+                                            || ((nType == TechConstants.T_TW_ALL) && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
+                                                    || (mech.getType() <= TechConstants.T_INTRO_BOXSET) || (mech.getType() <= TechConstants.T_CLAN_TW))))
+                                                    && ((nUnit == UnitType.SIZE) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))) {
+                        //yuck, I have to pull up a full Entity to get MechView to search in
+                        //TODO: why not put mechview into the mech summary itself?
+                        if(txtFilter.getText().length() > 0) {
+                            //TODO: this search routine is too slow
+                            //I think putting a copy of the mechreadout in
+                            //the mechsummary would speed things up enormously
+                            //NOTE: now getting weirdness on txtFilter when I do this
+                            String text = txtFilter.getText();
+                            //String [] ind_words = text.split(" "); //split with regex as space
+                            /*
+                            MechView mv = null;
+                            try {
+                                Entity entity = new MechFileParser(mech.getSourceFile(), mech.getEntryName()).getEntity();
+                                mv = new MechView(entity, true);
+                            } catch (EntityLoadingException ex) {
+                                // do nothing, I guess
+                            }
+                            if(null == mv) {
+                                return false;
+                            }
+                             * */
+                            /*
+                            boolean match = true;
+                            for(int i = 0; i < ind_words.length; i++) {
+                            if(!mv.getMechReadout().contains(ind_words[i])) {
+                                match = false;
+                                break;
+                            }
+                        }
+                        return match;
+                        */
+                        return mech.getName().contains(text);
+                    }
+                    return true;
+                }
+                return false;
+                }
+            };
+        } catch (java.util.regex.PatternSyntaxException e) {
+            return;
+        }
+        sorter.setRowFilter(unitTypeFilter);
+    }
+    
+    private void updatePlayerChoice() {
+        String lastChoice = (String) comboPlayer.getSelectedItem();
+        String clientName = clientgui.getClient().getName();
+        comboPlayer.removeAllItems();
+        comboPlayer.setEnabled(true);
+        comboPlayer.addItem(clientName);
+        for (Client client : clientgui.getBots().values()) {
+         comboPlayer.addItem(client.getName());
+      }
+        if (comboPlayer.getItemCount() == 1) {
+            comboPlayer.setEnabled(false);
+        }
+        comboPlayer.setSelectedItem(lastChoice);
+        if (comboPlayer.getSelectedIndex() < 0) {
+            comboPlayer.setSelectedIndex(0);
+        }
+    }
+
+    private void UnitChanged(javax.swing.event.ListSelectionEvent evt) {
+        int view = tableUnits.getSelectedRow();
+        if(view < 0) {
+            //selection got filtered away
+            selectedUnit = null;
+            refreshUnitView();
+            return;
+        }
+        int selected = tableUnits.convertRowIndexToModel(view);
+        // else
+        MechSummary ms = mechs[selected];
+        try {
+             // For some unknown reason the base path gets screwed up after you
+             // print so this sets the source file to the full path.
+             Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+             selectedUnit = entity;
+             refreshUnitView();
+        } catch (EntityLoadingException ex) {
+            selectedUnit = null;
+            System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage());
+            ex.printStackTrace();
+            refreshUnitView();
+            return;
+       }
+    }
+
+    private void refreshUnitView() {
+        boolean populateTextFields = true;
+
+        // null entity, so load a default unit.
+        if (selectedUnit == null) {
+            txtUnitView.setText("");
+            lblImage.setIcon(null);
+            return;
+        }
+
+        MechView mechView = null;
+        try {
+            mechView = new MechView(selectedUnit, true);
+        } catch (Exception e) {
+            // error unit didn't load right. this is bad news.
+            populateTextFields = false;
+        }
+        txtUnitView.setEditable(false);
+        if (populateTextFields && (mechView != null)) {
+            txtUnitView.setText(mechView.getMechReadout());
+        } else {
+            txtUnitView.setText("No Unit Selected");
+        }
+        txtUnitView.setCaretPosition(0);
+
+        clientgui.loadPreviewImage(lblImage, selectedUnit, client.getLocalPlayer());
+    }
+
+    public Entity getSelectedEntity() {
+        return selectedUnit;
+    }
+    
+    private void autoSetSkills(Entity e) {
+        IClientPreferences cs = PreferenceManager.getClientPreferences();
+        if (!cs.useAverageSkills()) {
+            return;
+        }
+        int piloting = 5;
+        int gunnery = 4;
+        if (e.isClan()) {
+            if (e instanceof Mech || e instanceof BattleArmor) {
+                gunnery = 3;
+                piloting = 4;
+            } else if (e instanceof Tank) {
+                gunnery = 5;
+                piloting = 6;
+            } else if (e instanceof Infantry) {
+                if (e.getMovementMode() == IEntityMovementMode.INF_LEG) {
+                    gunnery = 5;
+                    piloting = 5;
+                } else {
+                    gunnery = 5;
+                    piloting = 6;
+                }
+            }
+        } else if (e instanceof Infantry) {
+            // IS crews are 4/5 except infantry
+            if (e.getMovementMode() == IEntityMovementMode.INF_LEG
+                    || e instanceof BattleArmor) {
+                gunnery = 4;
+                piloting = 5;
+            } else {
+                gunnery = 4;
+                piloting = 6;
+            }
+        }
+        e.getCrew().setGunnery(gunnery);
+        e.getCrew().setPiloting(piloting);
+    }
+     
+     public void run() {
+         // Loading mechs can take a while, so it will have its own thread.
+         // This prevents the UI from freezing, and allows the
+         // "Please wait..." dialog to behave properly on various Java VMs.
+         filterUnits();
+         tableUnits.invalidate(); // force re-layout of window
+         pack();
+         //setLocation(computeDesiredLocation());
+
+         unitLoadingDialog.setVisible(false);
+
+         final Map<String, String> hFailedFiles = MechSummaryCache.getInstance()
+                 .getFailedFiles();
+         if (hFailedFiles != null && hFailedFiles.size() > 0) {
+             new UnitFailureDialog(clientgui.frame, hFailedFiles); // self-showing
+                                                                     // dialog
+         }
+     }
+     
+     @Override
+     public void setVisible(boolean visible) {
+         updatePlayerChoice();
+         //FIXME: this is not updating the table when canonicity is selected/deselected until user clicks it
+         filterUnits();
+         super.setVisible(visible);
+     }
+
+
+    /**
+     * A table model for displaying work items
+     */
+    public class MechTableModel extends AbstractTableModel {
+    
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -5457068129532709857L;
+            private final static int COL_MODEL = 0;
+            private final static int COL_CHASSIS = 1;
+            private final static int COL_WEIGHT = 2;
+            private final static int COL_BV = 3;
+            private final static int COL_YEAR = 4;
+            private final static int COL_COST = 5;
+            private final static int N_COL = 6;
+    
+            private MechSummary[] data = new MechSummary[0];
+
+            public int getRowCount() {
+                return data.length;
+            }
+    
+            public int getColumnCount() {
+                return N_COL;
+            }
+    
+            @Override
+            public String getColumnName(int column) {
+                switch(column) {
+                    case COL_MODEL:
+                        return "Model";
+                    case COL_CHASSIS:
+                        return "Chassis";
+                    case COL_WEIGHT:
+                        return "Weight";
+                    case COL_BV:
+                        return "BV";
+                    case COL_YEAR:
+                        return "Year";
+                    case COL_COST:
+                        return "Price";
+                    default:
+                        return "?";
+                }
+            }
+    
+            @Override
+            public Class<?> getColumnClass(int c) {
+                return getValueAt(0, c).getClass();
+            }
+    
+            @Override
+            public boolean isCellEditable(int row, int col) {
+                return false;
+            }
+    
+            public MechSummary getMechSummary(int i) {
+                return data[i];
+            }
+    
+            //fill table with values
+            public void setData(MechSummary[] ms) {
+                data = ms;
+                fireTableDataChanged();
+            }
+    
+            public Object getValueAt(int row, int col) {
+                MechSummary ms = data[row];
+                if(col == COL_MODEL) {
+                    return ms.getModel();
+                }
+                if(col == COL_CHASSIS) {
+                    return ms.getChassis();
+                }
+                if(col == COL_WEIGHT) {
+                    return ms.getTons();
+                }
+                if(col == COL_BV) {
+                    return ms.getBV();
+                }
+                if(col == COL_YEAR) {
+                    return ms.getYear();
+                }
+                if(col == COL_COST) {
+                    //return NumberFormat.getInstance().format(ms.getCost());
+                    return ms.getCost();
+                }
+                return "?";
+            }
+    
+    }               
+}
+
+
+
+
+
+/*
+package megamek.client.ui.swing;
+
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -49,6 +758,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -84,14 +794,14 @@ import megamek.common.verifier.TestTank;
 /*
  * Allows a user to sort through a list of MechSummaries and select one
  */
-
+/*
 public class MechSelectorDialog extends JDialog implements ActionListener,
         ItemListener, KeyListener, Runnable, WindowListener,
         ListSelectionListener {
     /**
      *
      */
-    private static final long serialVersionUID = 8428224408984372674L;
+ /*   private static final long serialVersionUID = 8428224408984372674L;
 
     // how long after a key is typed does a new search begin
     private final static int KEY_TIMEOUT = 1000;
@@ -160,7 +870,7 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
     private JButton m_bShowBV = new JButton(Messages.getString("MechSelectorDialog.BV")); //$NON-NLS-1$
     private JPanel m_pButtons = new JPanel();
 
-    private JTextArea m_mechView = new JTextArea("", 36, 35);
+    private JTextPane m_mechView = new JTextPane();
     private JPanel m_pLeft = new JPanel();
 
     private JComboBox m_cWalk = new JComboBox();
@@ -268,6 +978,8 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(m_pLeft, BorderLayout.CENTER);
         m_mechView.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
+        m_mechView.setContentType("text/html");
+        m_mechView.setText("");
         m_mechView.setEditable(false);
         m_mechView.setOpaque(false);
         getContentPane().add(new JScrollPane(m_mechView), BorderLayout.EAST);
@@ -584,9 +1296,9 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         }
         for (MechSummary mech : mechs) {
             if (/* Weight */
-            (nClass == EntityWeightClass.SIZE || mech.getWeightClass() == nClass)
+            /*(nClass == EntityWeightClass.SIZE || mech.getWeightClass() == nClass)
                     && /* Technology Level */
-                    ((nType == TechConstants.T_ALL)
+                /*    ((nType == TechConstants.T_ALL)
                             || (nType == mech.getType())
                             || ((nType == TechConstants.T_TW_ALL) && ((mech
                                     .getType() == TechConstants.T_INTRO_BOXSET)
@@ -595,9 +1307,9 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
                             .getType() == TechConstants.T_INTRO_BOXSET) || (mech
                             .getType() == TechConstants.T_IS_TW_NON_BOX))))
                     && /* Unit Type (Mek, Infantry, etc.) */
-                    (nUnitType == UnitType.SIZE || mech.getUnitType()
+                /*    (nUnitType == UnitType.SIZE || mech.getUnitType()
                             .equals(UnitType.getTypeName(nUnitType)))
-                    && /* canon required */(!m_client.game.getOptions()
+                    && /* canon required *//*(!m_client.game.getOptions()
                             .booleanOption("canon_only") || mech.isCanon())) {
                 vMechs.add(mech);
             }
@@ -813,7 +1525,9 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
             return false;
         }
         if (weaponLine1Active && weaponLine2Active) {
-            if (m_cOrAnd.getSelectedIndex() == 0 /* 0 is "or" choice */) {
+            if (m_cOrAnd.getSelectedIndex() == 0 /* 0 is "or" choice */
+/**/
+/*) {
                 if (!foundWeapon1 && !foundWeapon2) {
                     return false;
                 }
@@ -1176,3 +1890,4 @@ public class MechSelectorDialog extends JDialog implements ActionListener,
         }
     }
 }
+*/

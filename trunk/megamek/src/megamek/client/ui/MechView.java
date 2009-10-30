@@ -20,6 +20,7 @@
 
 package megamek.client.ui;
 
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 
@@ -84,29 +85,29 @@ public class MechView {
         isSpaceStation = entity instanceof SpaceStation;
 
         sLoadout.append( getWeapons(showDetail) )
-        .append("\r\n"); //$NON-NLS-1$
+        .append("<br>"); //$NON-NLS-1$
         if(!entity.usesWeaponBays() || !showDetail) {
             sLoadout.append(getAmmo())
-                .append("\r\n"); //$NON-NLS-1$
+                .append("<br>"); //$NON-NLS-1$
         }
         if(entity instanceof Aero) {
             sLoadout.append(getBombs())
-            .append("\r\n"); //$NON-NLS-1$
+            .append("<br>"); //$NON-NLS-1$
         }
         sLoadout.append(getMisc()) //has to occur before basic is processed
-        .append("\r\n") //$NON-NLS-1$
-        .append(getFailed()).append("\r\n");
+        .append("<br>") //$NON-NLS-1$
+        .append(getFailed()).append("<br>");
 
         DecimalFormat dFormatter = new DecimalFormat("#,###.##");
-        sLoadout.append("BV: ");
+        sLoadout.append("<b>BV:</b> ");
         sLoadout.append(dFormatter.format(entity.calculateBattleValue()));
 
-        sLoadout.append(" Cost: ");
+        sLoadout.append("<b> Cost:</b> ");
         sLoadout.append(dFormatter.format(entity.getCost(false)));
         sLoadout.append(" Cbills");
 
-        sBasic.append(entity.getShortNameRaw());
-        sBasic.append("\r\n"); //$NON-NLS-1$
+        sBasic.append("<font size=+1><b>" + entity.getShortNameRaw() + "</b></font>");
+        sBasic.append("<br>"); //$NON-NLS-1$
         if (!isInf) {
             sBasic.append(Math.round(entity.getWeight())).append(
                     Messages.getString("MechView.tons")); //$NON-NLS-1$
@@ -114,6 +115,7 @@ public class MechView {
         if (isBA && ((BattleArmor)entity).isBurdened()) {
             sBasic.append(Messages.getString("MechView.Burdened")); //$NON-NLS-1$
         }
+        sBasic.append("<br>"); //$NON-NLS-1$
         if (entity.isMixedTech()) {
             if (entity.isClan()) {
                 sBasic.append(Messages.getString("MechView.MixedClan"));
@@ -124,10 +126,10 @@ public class MechView {
             sBasic.append(TechConstants.getLevelDisplayableName(entity
                     .getTechLevel()));
         }
-        sBasic.append("\n"); //$NON-NLS-1$
+        sBasic.append("<br>"); //$NON-NLS-1$
 
         if (!isGunEmplacement) {
-            sBasic.append("\n"); //$NON-NLS-1$
+            sBasic.append("<br>"); //$NON-NLS-1$
             sBasic.append(Messages.getString("MechView.Movement")) //$NON-NLS-1$
                     .append(entity.getWalkMP()).append("/") //$NON-NLS-1$
                     .append(entity.getRunMPasString());
@@ -140,16 +142,16 @@ public class MechView {
             sBasic.append(" (") //$NON-NLS-1$
                     .append(Messages.getString("MovementType."+entity.getMovementModeAsString())).append(")"); //$NON-NLS-1$
         }
-        sBasic.append("\n"); //$NON-NLS-1$
+        sBasic.append("<br>"); //$NON-NLS-1$
         if (isMech || isVehicle|| (isAero && !isSmallCraft && !isJumpship && !isSquadron)) {
             sBasic.append(Messages.getString("MechView.Engine")); //$NON-NLS-1$
             sBasic.append(entity.getEngine().getShortEngineName());
-            sBasic.append("\n"); //$NON-NLS-1$
+            sBasic.append("<br>"); //$NON-NLS-1$
         }
         if (entity.hasBARArmor()) {
             sBasic.append(Messages.getString("MechView.BARRating")); //$NON-NLS-1$
             sBasic.append(entity.getBARRating());
-            sBasic.append("\n"); //$NON-NLS-1$
+            sBasic.append("<br>"); //$NON-NLS-1$
         }
 
         if (isAero ) {
@@ -162,7 +164,7 @@ public class MechView {
                 .append( "]" ); //$NON-NLS-1$
             }
             if (a.getCockpitType() != Mech.COCKPIT_STANDARD) {
-                sBasic.append("\n"); //$NON-NLS-1$
+                sBasic.append("<br>"); //$NON-NLS-1$
                 sBasic.append(Messages.getString("MechView.Cockpit"));
                 sBasic.append(a.getCockpitTypeString());
             }
@@ -177,18 +179,18 @@ public class MechView {
                         .append(aMech.getHeatCapacity()).append("]"); //$NON-NLS-1$
             }
             if (aMech.getCockpitType() != Mech.COCKPIT_STANDARD) {
-                sBasic.append("\n"); //$NON-NLS-1$
+                sBasic.append("<br>"); //$NON-NLS-1$
                 sBasic.append(Messages.getString("MechView.Cockpit"));
                 sBasic.append(aMech.getCockpitTypeString());
             }
             if (aMech.getGyroType() != Mech.GYRO_STANDARD) {
-                sBasic.append("\n");
+                sBasic.append("<br>");
                 sBasic.append(Messages.getString("MechView.Gyro"));
                 sBasic.append(aMech.getGyroTypeString());
             }
-            sBasic.append("\n");
+            sBasic.append("<br>");
         }
-        sBasic.append("\n"); //$NON-NLS-1$
+        sBasic.append("<br>"); //$NON-NLS-1$
         if (!isGunEmplacement) {
             if( isSquadron ) {
                 sBasic.append(getArmor());
@@ -201,7 +203,7 @@ public class MechView {
         if (entity.getFluff() != null) {
             sFluff.append(entity.getFluff());
         }
-            sFluff.append('\n');
+            sFluff.append("<br>");
     }
 
     public String getMechReadoutBasic() {
@@ -218,7 +220,7 @@ public class MechView {
 
     public String getMechReadout() {
         return getMechReadoutBasic()
-                + "\n" + getMechReadoutLoadout() + "\n" + getMechReadoutFluff(); //$NON-NLS-1$
+                + "<br>" + getMechReadoutLoadout() + "<br>" + getMechReadoutFluff(); //$NON-NLS-1$
     }
 
     private String getInternalAndArmor() {
@@ -232,7 +234,7 @@ public class MechView {
                     + EquipmentType.getStructureTypeName(entity
                             .getStructureType())));
         }
-        sIntArm.append("\n"); //$NON-NLS-1$
+        sIntArm.append("<br>"); //$NON-NLS-1$
 
         sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
                 .append(entity.getTotalArmor());
@@ -244,8 +246,11 @@ public class MechView {
             sIntArm.append(Messages.getString("MechView."
                     + EquipmentType.getArmorTypeName(entity.getArmorType())));
         }
-        sIntArm.append("\n"); //$NON-NLS-1$
+        sIntArm.append("<br>"); //$NON-NLS-1$
         // Walk through the entity's locations.
+        
+        sIntArm.append("<table cellspacing=0 cellpadding=1 border=0>");
+        sIntArm.append("<tr><th></th><th>Internal</th><th>Armor</th></tr>");
         for (int loc = 0; loc < entity.locations(); loc++) {
 
             // Skip empty sections.
@@ -255,21 +260,21 @@ public class MechView {
                 continue;
             }
 
-            if (entity.getLocationAbbr(loc).length() < 2) {
-                sIntArm.append(" "); //$NON-NLS-1$
-            }
-            sIntArm.append(entity.getLocationAbbr(loc)).append(": "); //$NON-NLS-1$
-            sIntArm.append(renderArmor(entity.getInternal(loc))).append("   "); //$NON-NLS-1$
+            sIntArm.append("<tr>");
+            sIntArm.append("<td>").append(entity.getLocationName(loc)).append("</td>"); //$NON-NLS-1$
+            sIntArm.append(renderArmor(entity.getInternal(loc), entity.getOInternal(loc))); //$NON-NLS-1$
             if (IArmorState.ARMOR_NA != entity.getArmor(loc)) {
-                sIntArm.append(renderArmor(entity.getArmor(loc)));
+                sIntArm.append(renderArmor(entity.getArmor(loc), entity.getOArmor(loc)));
             }
+            sIntArm.append("</tr>"); //$NON-NLS-1$
             if (entity.hasRearArmor(loc)) {
-                sIntArm.append(" (") //$NON-NLS-1$
-                        .append(renderArmor(entity.getArmor(loc, true))).append(
-                                ")"); //$NON-NLS-1$
+                sIntArm.append("<tr>"); //$NON-NLS-1$
+                sIntArm.append("<td>").append(entity.getLocationName(loc)).append(" (rear)").append("</td>").append("<td></td>");
+                sIntArm.append(renderArmor(entity.getArmor(loc, true), entity.getOArmor(loc, true))); //$NON-NLS-1$
+                sIntArm.append("</tr>"); //$NON-NLS-1$
             }
-            sIntArm.append("\n"); //$NON-NLS-1$
         }
+        sIntArm.append("</table>");
         return sIntArm.toString();
     }
 
@@ -279,13 +284,13 @@ public class MechView {
 
         StringBuffer sIntArm = new StringBuffer();
 
-        sIntArm.append( "\n" ); //$NON-NLS-1$
+        sIntArm.append( "<br>" ); //$NON-NLS-1$
 
         //int maxArmor = (int) mech.getWeight() * 8;
         sIntArm.append( Messages.getString("MechView.SI") ) //$NON-NLS-1$
             .append( a.getSI() );
 
-        sIntArm.append( "\n" ); //$NON-NLS-1$
+        sIntArm.append( "<br>" ); //$NON-NLS-1$
 
         //if it is a jumpship get sail and KF integrity
         if(isJumpship & !isSpaceStation) {
@@ -294,12 +299,12 @@ public class MechView {
             sIntArm.append( Messages.getString("MechView.SailIntegrity") ) //$NON-NLS-1$
             .append( js.getSailIntegrity() );
 
-            sIntArm.append( "\n" ); //$NON-NLS-1$
+            sIntArm.append( "<br>" ); //$NON-NLS-1$
 
             sIntArm.append( Messages.getString("MechView.KFIntegrity") ) //$NON-NLS-1$
             .append( js.getKFIntegrity() );
 
-            sIntArm.append( "\n" ); //$NON-NLS-1$
+            sIntArm.append( "<br>" ); //$NON-NLS-1$
         }
 
         if(entity.isCapitalFighter()) {
@@ -317,7 +322,7 @@ public class MechView {
         sIntArm.append(Messages.getString("MechView."
                + EquipmentType.getArmorTypeName(entity.getArmorType())));
 
-        sIntArm.append( "\n" ); //$NON-NLS-1$
+        sIntArm.append( "<br>" ); //$NON-NLS-1$
         // Walk through the entity's locations.
         for ( int loc = 0; loc < entity.locations(); loc++ ) {
 
@@ -346,14 +351,14 @@ public class MechView {
             sIntArm.append( entity.getLocationAbbr(loc) )
                 .append( ": " ); //$NON-NLS-1$
             if ( IArmorState.ARMOR_NA != entity.getArmor(loc) ) {
-                sIntArm.append( renderArmor(entity.getArmor(loc)) );
+                sIntArm.append( renderArmor(entity.getArmor(loc), entity.getOArmor(loc)) );
             }
             if ( entity.hasRearArmor(loc) ) {
                 sIntArm.append( " (" ) //$NON-NLS-1$
-                    .append( renderArmor(entity.getArmor(loc, true)) )
+                    .append( renderArmor(entity.getArmor(loc, true), entity.getOArmor(loc, true)) )
                     .append( ")" ); //$NON-NLS-1$
             }
-            sIntArm.append( "\n" ); //$NON-NLS-1$
+            sIntArm.append( "<br>" ); //$NON-NLS-1$
         }
 
 
@@ -367,17 +372,17 @@ public class MechView {
 
         StringBuffer sIntArm = new StringBuffer();
 
-        sIntArm.append( "\n" ); //$NON-NLS-1$
+        sIntArm.append( "<br>" ); //$NON-NLS-1$
 
         sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
             .append( fs.getTotalArmor() );
 
-        sIntArm.append( "\n" ); //$NON-NLS-1$
+        sIntArm.append( "<br>" ); //$NON-NLS-1$
 
         sIntArm.append(Messages.getString("MechView.ActiveFighters")) //$NON-NLS-1$
         .append( fs.getNFighters() );
 
-        sIntArm.append( "\n" ); //$NON-NLS-1$
+        sIntArm.append( "<br>" ); //$NON-NLS-1$
 
         return sIntArm.toString();
     }
@@ -426,7 +431,7 @@ public class MechView {
                 sWeapons.append(" ").append(wtype.getHeat()).append(Messages.getString("MechView.Heat")); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
-            sWeapons.append("\n"); //$NON-NLS-1$
+            sWeapons.append("<br>"); //$NON-NLS-1$
 
 //          if this is a weapon bay, then cycle through weapons and ammo
             if((wtype instanceof BayWeapon) && showDetail) {
@@ -455,7 +460,7 @@ public class MechView {
                             .append(">"); //$NON-NLS-1$
                     }
 
-                    sWeapons.append("\n"); //$NON-NLS-1$
+                    sWeapons.append("<br>"); //$NON-NLS-1$
                 }
             }
         }
@@ -468,7 +473,7 @@ public class MechView {
             if (mounted.getLocation() != Entity.LOC_NONE) {
                 sAmmo.append(mounted.getDesc()).append("  [") //$NON-NLS-1$
                         .append(entity.getLocationAbbr(mounted.getLocation()))
-                        .append("]\n"); //$NON-NLS-1$
+                        .append("]<br>"); //$NON-NLS-1$
             }
         }
         return sAmmo.toString();
@@ -480,7 +485,7 @@ public class MechView {
         int[] choices = a.getBombChoices();
         for(int type = 0; type < BombType.B_NUM; type++) {
             if(choices[type] > 0) {
-                sBombs.append(BombType.getBombName(type)).append(" (").append(Integer.toString(choices[type])).append(")\n");
+                sBombs.append(BombType.getBombName(type)).append(" (").append(Integer.toString(choices[type])).append(")<br>");
             }
         }
         return sBombs.toString();
@@ -518,13 +523,13 @@ public class MechView {
                             .equals("CL")) { //$NON-NLS-1$
                 sMisc.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
             }
-            sMisc.append("\n"); //$NON-NLS-1$
+            sMisc.append("<br>"); //$NON-NLS-1$
         }
 
         String capacity = entity.getUnusedString();
         if ((capacity != null) && (capacity.length() > 0)) {
             sMisc.append(Messages.getString("MechView.CarringCapacity")) //$NON-NLS-1$
-                    .append(capacity).append("\n"); //$NON-NLS-1$
+                    .append(capacity).append("<br>"); //$NON-NLS-1$
         }
         return sMisc.toString();
     }
@@ -533,19 +538,28 @@ public class MechView {
         StringBuffer sFailed = new StringBuffer();
         Iterator<String> eFailed = entity.getFailedEquipment();
         if (eFailed.hasNext()) {
-            sFailed.append("The following equipment\n slots failed to load:\n"); //$NON-NLS-1$
+            sFailed.append("The following equipment<br> slots failed to load:<br>"); //$NON-NLS-1$
             while (eFailed.hasNext()) {
-                sFailed.append(eFailed.next()).append("\n"); //$NON-NLS-1$
+                sFailed.append(eFailed.next()).append("<br>"); //$NON-NLS-1$
             }
         }
         return sFailed.toString();
     }
 
-    private static String renderArmor(int nArmor) {
-        if (nArmor <= 0) {
-            return "xx"; //$NON-NLS-1$
+    private static String renderArmor(int nArmor, int origArmor) {
+        double percentRemaining = ((double)nArmor)/((double)origArmor);
+        String armor = Integer.toString(nArmor);
+        if (percentRemaining <= 0) {
+            return "<td align='center' bgcolor='black'><font color='white'>" + "X" + "</font>";
+        } else if (percentRemaining <= .25) {
+            return "<td align='right' bgcolor='red'><font color='white'>" + armor + "</font>";
+        } else if (percentRemaining <= .75) {
+            return "<td align='right' bgcolor='yellow'><font color='black'>" + armor + "</font>";
+        } else if (percentRemaining < 1.00) {
+            return "<td align='right' bgcolor='green'><font color='white'>" + armor + "</font>";
+        } else {
+            return "<td align='right' bgcolor='white'><font color='black'>" + armor + "</font>";
         }
-        return makeLength(String.valueOf(nArmor), 3, true);
     }
 
     private static final String SPACES = "                                   "; //$NON-NLS-1$

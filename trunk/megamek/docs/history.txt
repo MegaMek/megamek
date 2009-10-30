@@ -20,6 +20,8 @@ v0.35.9-dev (SVN)
 + Bug: command console cockpit missing second life support slot in head
 + Inital Checkin for Battle Force Conversion for Mechs
 + Bug 2889087: Fa-Shih mines deployment
++ MechSelectorDialog facelift, JList to sortable JTable, built-in filters used
++ MechView in HTML (start)
 
 v0.35.8 (2009-10-18, 22:34 UTC+2)
 + Bug: infantry flamer not causing heat correctly

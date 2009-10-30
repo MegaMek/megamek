@@ -59,6 +59,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -1624,8 +1625,9 @@ public static String formatUnitTooltip(Entity entity) {
     private void mechReadout(Entity entity) {
         MechView mechView = new MechView(entity, clientgui.getClient().game
                 .getOptions().booleanOption("show_bay_detail"));
-        JTextArea ta = new JTextArea();
+        JTextPane ta = new JTextPane();
         ta.setEditable(false);
+        ta.setContentType("text/html");
         ta.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         ta.setText(mechView.getMechReadout());
         final JDialog dialog = new JDialog(clientgui.frame, Messages
@@ -1637,6 +1639,22 @@ public static String formatUnitTooltip(Entity entity) {
                 dialog.setVisible(false);
             }
         });
+        dialog.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int code = e.getKeyCode();
+                if(code == KeyEvent.VK_SPACE) {
+                    e.consume();
+                    dialog.setVisible(false);
+                }
+                else if(code == KeyEvent.VK_ENTER) {
+                    e.consume();
+                    dialog.setVisible(false);
+                }
+            }
+        });
+        //FIXME: this isn't working right, but is necessary for the key listener to work right
+        //dialog.setFocusable(true);
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -1646,17 +1664,17 @@ public static String formatUnitTooltip(Entity entity) {
         dialog.add("Center", new JScrollPane(ta)); //$NON-NLS-1$
 
         // Preview image of the Mech...
-        JLabel panPreview = new JLabel();
-        panPreview.setPreferredSize(new Dimension(84, 72));
-        clientgui.loadPreviewImage(panPreview, entity);
-        dialog.add("North", panPreview); //$NON-NLS-1$
+        //JLabel panPreview = new JLabel();
+        //panPreview.setPreferredSize(new Dimension(84, 72));
+        //clientgui.loadPreviewImage(panPreview, entity);
+        //dialog.add("North", panPreview); //$NON-NLS-1$
 
         dialog.setLocation(clientgui.frame.getLocation().x
                 + clientgui.frame.getSize().width / 2 - dialog.getSize().width
                 / 2, clientgui.frame.getLocation().y
                 + clientgui.frame.getSize().height / 5
                 - dialog.getSize().height / 2);
-        dialog.setSize(300, 450);
+        dialog.setSize(350, 600);
 
         dialog.validate();
         dialog.setVisible(true);

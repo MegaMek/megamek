@@ -81,7 +81,7 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
             }
         }
         if (nMotion == -1) {
-            throw new EntityLoadingException("Invalid movment type: " + sMotion);
+            throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
         t.setMovementMode(nMotion);
 

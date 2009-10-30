@@ -5626,7 +5626,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             result.append(next.getUnusedString());
             // Add a newline character between strings.
             if (iter.hasMoreElements()) {
-                result.append('\n');
+                result.append("<br>");
             }
         }
 

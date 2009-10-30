@@ -100,8 +100,6 @@ public class MechSelectorDialog extends JDialog implements Runnable {
 
     private MechTableModel unitModel;
     
-    Entity selectedUnit = null;
-    
     private Client client;
     private ClientGUI clientgui;
     private UnitLoadingDialog unitLoadingDialog;
@@ -174,7 +172,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         tableUnits.setRowSorter(sorter);
         tableUnits.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                UnitChanged(evt);
+                refreshUnitView();
             }
         });
         TableColumn column = null;
@@ -373,7 +371,6 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         btnClose.setText(Messages.getString("Close"));
         btnClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectedUnit = null;
                 setVisible(false);
             }
         });
@@ -499,35 +496,10 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         }
     }
 
-    private void UnitChanged(javax.swing.event.ListSelectionEvent evt) {
-        int view = tableUnits.getSelectedRow();
-        if(view < 0) {
-            //selection got filtered away
-            selectedUnit = null;
-            refreshUnitView();
-            return;
-        }
-        int selected = tableUnits.convertRowIndexToModel(view);
-        // else
-        MechSummary ms = mechs[selected];
-        try {
-             // For some unknown reason the base path gets screwed up after you
-             // print so this sets the source file to the full path.
-             Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-             selectedUnit = entity;
-             refreshUnitView();
-        } catch (EntityLoadingException ex) {
-            selectedUnit = null;
-            System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage());
-            ex.printStackTrace();
-            refreshUnitView();
-            return;
-       }
-    }
-
     private void refreshUnitView() {
         boolean populateTextFields = true;
 
+        Entity selectedUnit = getSelectedEntity();
         // null entity, so load a default unit.
         if (selectedUnit == null) {
             txtUnitView.setText("");
@@ -554,7 +526,24 @@ public class MechSelectorDialog extends JDialog implements Runnable {
     }
 
     public Entity getSelectedEntity() {
-        return selectedUnit;
+        int view = tableUnits.getSelectedRow();
+        if(view < 0) {
+            //selection got filtered away
+            return null;
+        }
+        int selected = tableUnits.convertRowIndexToModel(view);
+        // else
+        MechSummary ms = mechs[selected];
+        try {
+             // For some unknown reason the base path gets screwed up after you
+             // print so this sets the source file to the full path.
+             Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+             return entity;
+        } catch (EntityLoadingException ex) {
+            System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage());
+            ex.printStackTrace();
+            return null;
+       }
     }
     
     private void autoSetSkills(Entity e) {

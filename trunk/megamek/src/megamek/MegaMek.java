@@ -28,7 +28,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import megamek.client.ui.IMegaMekGUI;
-import megamek.client.ui.MechView;
+import megamek.client.ui.swing.MechView;
 import megamek.common.Entity;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;

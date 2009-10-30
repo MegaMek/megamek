@@ -686,19 +686,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         GridBagConstraints c = new GridBagConstraints();
         panMain.setLayout(gridbag);
 
-        /*
         c.fill = GridBagConstraints.VERTICAL;
         c.insets = new Insets(1, 1, 1, 1);
+        c.gridx = 0;
+        c.gridy = 0;
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(butOptions, c);
         panMain.add(butOptions);
-        */
 
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 1;
-        c.gridy = 0;
+        c.gridy = 1;
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 1;
@@ -708,7 +708,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 0;
+        c.gridy = 1;
         c.weightx = 0.0;
         c.weighty = 0.0;
         c.gridwidth = 1;
@@ -719,7 +719,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 2;
         c.weightx = 0.0;
         c.weighty = 0.0;
         c.gridwidth = 1;
@@ -729,7 +729,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 3;
         c.weightx = 0.0;
         c.weighty = 1.0;
         c.gridwidth = 1;

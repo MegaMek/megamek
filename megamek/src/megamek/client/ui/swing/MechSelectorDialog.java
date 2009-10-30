@@ -14,6 +14,7 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
@@ -193,6 +194,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
                 column.setPreferredWidth(25);
             }
         }
+        tableUnits.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         scrTableUnits.setViewportView(tableUnits);
 
         c = new GridBagConstraints();
@@ -509,7 +511,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
 
         MechView mechView = null;
         try {
-            mechView = new MechView(selectedUnit, true);
+            mechView = new MechView(selectedUnit, false);
         } catch (Exception e) {
             // error unit didn't load right. this is bad news.
             populateTextFields = false;

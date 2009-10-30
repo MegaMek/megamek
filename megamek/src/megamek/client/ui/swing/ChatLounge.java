@@ -73,7 +73,6 @@ import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.swing.BotGUI;
-import megamek.client.ui.MechView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Entity;

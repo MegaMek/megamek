@@ -43,7 +43,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
 import megamek.client.Client;
-import megamek.client.ui.MechView;
 import megamek.client.ui.Messages;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;

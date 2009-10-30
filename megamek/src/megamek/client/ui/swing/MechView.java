@@ -18,12 +18,12 @@
  * Created on January 20, 2003 by Ryan McConnell
  */
 
-package megamek.client.ui;
+package megamek.client.ui.swing;
 
-import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 
+import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BombType;

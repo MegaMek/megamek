@@ -33,6 +33,7 @@ v0.35.9-dev (SVN)
 + re-added game options button
 + Bug: HMV loader not setting internal structure type correctly
 + MechView improvements (font, ammo table, equipment table)
++ separate MechView.java for AWT (plain text) and swing (HTML)
 
 v0.35.8 (2009-10-18, 22:34 UTC+2)
 + Bug: infantry flamer not causing heat correctly

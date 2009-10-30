@@ -30,7 +30,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import megamek.client.Client;
-import megamek.client.ui.MechView;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 

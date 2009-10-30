@@ -32,7 +32,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.Client;
-import megamek.client.ui.MechView;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 

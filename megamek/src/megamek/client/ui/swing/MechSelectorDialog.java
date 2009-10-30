@@ -32,7 +32,6 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
-import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.RowSorter.SortKey;
@@ -262,6 +261,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         for (int i = 0; i < EntityWeightClass.SIZE; i++) {
             weightModel.addElement(EntityWeightClass.getClassName(i));
         }
+        weightModel.addElement(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         weightModel.setSelectedItem(EntityWeightClass.getClassName(0));
         comboWeight.setModel(weightModel);
         comboWeight.setMinimumSize(new java.awt.Dimension(200, 27));
@@ -288,6 +288,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         for (int i = 0; i < UnitType.SIZE; i++) {
             unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
         }
+        unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
         unitTypeModel.setSelectedItem(UnitType.getTypeDisplayableName(0));
         comboUnitType.setModel(unitTypeModel);
         comboUnitType.setMinimumSize(new java.awt.Dimension(200, 27));
@@ -425,7 +426,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
                     MechTableModel mechModel = entry.getModel();
                     MechSummary mech = mechModel.getMechSummary(entry.getIdentifier());
                     if (/* Weight */
-                            (mech.getWeightClass() == nClass) &&
+                            ((nClass == EntityWeightClass.SIZE) || (mech.getWeightClass() == nClass)) &&
                             /*Canon*/
                             (!client.game.getOptions().booleanOption("canon_only") || mech.isCanon()) && 
                             /*Technology Level*/

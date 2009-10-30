@@ -47,6 +47,7 @@ public class HmvFile implements IMechLoader {
     private HMVMovementType movementType;
     private int rulesLevel;
     private int year;
+    private HMVStructureType structureType;
     private boolean isOmni = false;
     private HMVTechType techType;
 
@@ -120,7 +121,11 @@ public class HmvFile implements IMechLoader {
             year = readUnsignedShort(dis);
 
             // ??
-            dis.skipBytes(32);
+            dis.skipBytes(8);
+            type = readUnsignedByte(dis);
+            structureType = HMVStructureType.getType(type);
+            // ??
+            dis.skipBytes(23);
 
             // The "bf2" buffer contains the word "omni" for OmniVehicles.
             int bf2Length = readUnsignedShort(dis);
@@ -522,6 +527,7 @@ public class HmvFile implements IMechLoader {
                                                         : movementType == HMVMovementType.SUBMARINE ? IEntityMovementMode.SUBMARINE
                                                         : IEntityMovementMode.TRACKED);
             }
+            vehicle.setStructureType(EquipmentType.getStructureType(structureType.toString()));
 
             // This next line sets the weight to a rounded value
             // so that the suspension factor can be retrieved. The
@@ -1450,6 +1456,24 @@ class HMVWeaponLocation extends HMVType {
     }
 
     public static HMVWeaponLocation getType(int i) {
+        return types.get(new Integer(i));
+    }
+}
+
+class HMVStructureType extends HMVType {
+    public static final Hashtable<Integer, HMVStructureType> types = new Hashtable<Integer, HMVStructureType>();
+
+    public static final HMVStructureType STANDARD = new HMVStructureType(
+            "Standard", 176);
+    public static final HMVStructureType REINFORCED = new HMVStructureType(
+            "Reinforced", 193);
+
+    private HMVStructureType(String name, int id) {
+        super(name, id);
+        types.put(new Integer(id), this);
+    }
+
+    public static HMVStructureType getType(int i) {
         return types.get(new Integer(i));
     }
 }

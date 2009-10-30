@@ -250,7 +250,7 @@ public class MechView {
         // Walk through the entity's locations.
         
         sIntArm.append("<table cellspacing=0 cellpadding=1 border=0>");
-        sIntArm.append("<tr><th></th><th>Internal</th><th>Armor</th></tr>");
+        sIntArm.append("<tr><th></th><th>&nbsp;&nbsp;Internal</th><th>&nbsp;&nbsp;Armor</th></tr>");
         for (int loc = 0; loc < entity.locations(); loc++) {
 
             // Skip empty sections.
@@ -389,18 +389,13 @@ public class MechView {
 
     private String getWeapons(boolean showDetail) {
         StringBuffer sWeapons = new StringBuffer();
+        
+        sWeapons.append("<table cellspacing=0 cellpadding=1 border=0>");
+        sWeapons.append("<tr><th></th><th>&nbsp;&nbsp;Location</th><th>&nbsp;&nbsp;Heat</th></tr>");
         for (Mounted mounted : entity.getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
 
-            sWeapons.append(mounted.getDesc()).append("  [") //$NON-NLS-1$
-                    .append(entity.getLocationAbbr(mounted.getLocation()));
-            if (mounted.isSplit()) {
-                sWeapons.append("/") // $NON-NLS-1$
-                        .append(
-                                entity.getLocationAbbr(mounted
-                                        .getSecondLocation()));
-            }
-            sWeapons.append("]"); //$NON-NLS-1$
+            sWeapons.append("<tr><td>").append(mounted.getDesc()); //$NON-NLS-1$
             if (entity.isClan()
                     && mounted.getType().getInternalName().substring(0, 2)
                             .equals("IS")) { //$NON-NLS-1$
@@ -412,13 +407,24 @@ public class MechView {
                 sWeapons.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
             }
             if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
-                sWeapons.append(" <") //$NON-NLS-1$
-                        .append(mounted.getLinked().getDesc()).append(">"); //$NON-NLS-1$
+                sWeapons.append(" [") //$NON-NLS-1$
+                        .append(mounted.getLinked().getDesc()).append("]"); //$NON-NLS-1$
             }
+            sWeapons.append("</td>");
+            
+            sWeapons.append("<td align='center'>").append(entity.getLocationAbbr(mounted.getLocation()));
+            if (mounted.isSplit()) {
+                sWeapons.append("/") // $NON-NLS-1$
+                        .append(
+                                entity.getLocationAbbr(mounted
+                                        .getSecondLocation()));
+            }
+            sWeapons.append("</td>"); //$NON-NLS-1$
 
+            int heat = wtype.getHeat();
             if(wtype instanceof BayWeapon) {
                 //loop through weapons in bay and add up heat
-                int heat = 0;
+                heat = 0;
                 for(int wId : mounted.getBayWeapons()) {
                     Mounted m = entity.getEquipment(wId);
                     if(null == m) {
@@ -426,12 +432,8 @@ public class MechView {
                     }
                     heat = heat + ((WeaponType)m.getType()).getHeat();
                 }
-                sWeapons.append(" ").append(heat).append(Messages.getString("MechView.Heat")); //$NON-NLS-1$ //$NON-NLS-2$
-            } else {
-                sWeapons.append(" ").append(wtype.getHeat()).append(Messages.getString("MechView.Heat")); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-
-            sWeapons.append("<br>"); //$NON-NLS-1$
+            } 
+            sWeapons.append("<td align='right'>").append(heat).append("</td>"); //$NON-NLS-1$ //$NON-NLS-2$
 
 //          if this is a weapon bay, then cycle through weapons and ammo
             if((wtype instanceof BayWeapon) && showDetail) {
@@ -464,18 +466,22 @@ public class MechView {
                 }
             }
         }
+        sWeapons.append("</table>"); //$NON-NLS-1$
         return sWeapons.toString();
     }
 
     private String getAmmo() {
         StringBuffer sAmmo = new StringBuffer();
+        sAmmo.append("<table cellspacing=0 cellpadding=1 border=0>");
+        sAmmo.append("<tr><th></th><th>&nbsp;&nbsp;Location</th><th>&nbsp;&nbsp;Amount</th></tr>");
         for (Mounted mounted : entity.getAmmo()) {
             if (mounted.getLocation() != Entity.LOC_NONE) {
-                sAmmo.append(mounted.getDesc()).append("  [") //$NON-NLS-1$
-                        .append(entity.getLocationAbbr(mounted.getLocation()))
-                        .append("]<br>"); //$NON-NLS-1$
+                sAmmo.append("<tr><td>").append(mounted.getName()).append("</td>");
+                sAmmo.append("<td align='center'>").append(entity.getLocationAbbr(mounted.getLocation())).append("</td>");
+                sAmmo.append("<td align='right'>").append(mounted.getShotsLeft()).append("</td>");
             }
         }
+        sAmmo.append("</table>");
         return sAmmo.toString();
     }
 

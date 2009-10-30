@@ -57,7 +57,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
@@ -1234,31 +1233,43 @@ public static String formatUnitTooltip(Entity entity) {
         } else {
             String c3network = "";
             if (entity.hasC3i()) {
-                c3network = Messages.getString("ChatLounge.c3i") + entity.getC3NetId() + " (" + entity.calculateFreeC3Nodes() + " nodes remaining)";
-            } else if (entity.hasC3()) {
-                c3network = Messages.getString("ChatLounge.C3");
-                if (entity.getC3Master() == null) {
-                    if (entity.hasC3S()) {
-                        //strTreeSet = "***"; //$NON-NLS-1$
-                    } else {
-                        c3network += Messages.getString("ChatLounge.C3Master");
+                if(entity.calculateFreeC3Nodes() >= 5) {
+                    c3network += Messages.getString("ChatLounge.C3iNone");
+                } else {
+                    c3network += c3network += Messages.getString("ChatLounge.C3iNetwork") + entity.getC3NetId();
+                    if(entity.calculateFreeC3Nodes() > 0) {
+                        c3network += Messages.getString("ChatLounge.C3Nodes", new Object[] {entity.calculateFreeC3Nodes()});
                     }
-                } else if (!entity.C3MasterIs(entity)) {
-                    /*
-                    strTreeSet = ">"; //$NON-NLS-1$
-                    if ((entity.getC3Master().getC3Master() != null)
-                            && !entity.getC3Master().C3MasterIs(
-                                    entity.getC3Master())) {
-                        strTreeSet = ">>"; //$NON-NLS-1$
-                    }*/
+                }
+            } else if (entity.hasC3()) {
+                if(entity.C3MasterIs(entity)) {
+                    c3network += Messages.getString("ChatLounge.C3MM");
+                    if(entity.calculateFreeC3MNodes() > 0) {
+                        c3network += Messages.getString("ChatLounge.C3Nodes", new Object[] {entity.calculateFreeC3Nodes()});
+                    }
+                }
+                else if(!entity.hasC3S()) {
+                    c3network += Messages.getString("ChatLounge.C3Master");
+                    if(entity.calculateFreeC3Nodes() > 0) {
+                        c3network += Messages.getString("ChatLounge.C3Nodes", new Object[] {entity.calculateFreeC3Nodes()});
+                    }
+                    //an independent master might also be a slave to a company master
+                    if (entity.getC3Master() != null) {
+                        c3network += "<br>" + Messages.getString("ChatLounge.C3Slave") + entity.getC3Master().getDisplayName(); //$NON-NLS-1$
+                    }
+                }
+                else if (entity.getC3Master() != null) {
                     c3network += Messages.getString("ChatLounge.C3Slave") + entity.getC3Master().getDisplayName(); //$NON-NLS-1$
+                }
+                else {
+                    c3network += " not networked";
                 }
             }
 
             int posQuirkCount = entity.countQuirks(Quirks.POS_QUIRKS);
             int negQuirkCount = entity.countQuirks(Quirks.NEG_QUIRKS);
 
-            value += "<b>" + entity.getChassis() + "  " + entity.getModel() + "</b><br>";
+            value += "<b>" + entity.getShortName() + "</b><br>";
             value += "" + Math.round(entity.getWeight()) + Messages.getString("ChatLounge.Tons") + "<br>";
             if(c3network.length() > 0) {
                 value += c3network + "<br>";

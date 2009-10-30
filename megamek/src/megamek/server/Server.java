@@ -12801,6 +12801,11 @@ public class Server implements Runnable {
         }
 
         // we hit...
+
+        r = new Report(4040);
+        r.subject = ae.getId();
+        addReport(r);
+
         // Target entities are pushed away or destroyed.
         Coords dest = te.getPosition();
         Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
@@ -12816,10 +12821,6 @@ public class Server implements Runnable {
 
         // Can't DFA a target inside of a building.
         int damageTaken = DfaAttackAction.getDamageTakenBy(ae);
-
-        r = new Report(4040);
-        r.subject = ae.getId();
-        addReport(r);
 
         // Targeting a building.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)

@@ -25,6 +25,7 @@ v0.35.9-dev (SVN)
 + All option in MechSelectorDialog for Unit Type
 + All option in MechSelectorDialog for Weight Class
 + Updated datafiles from RS: 3055U
++ Reports in wrong order when DFA hits
 
 v0.35.8 (2009-10-18, 22:34 UTC+2)
 + Bug: infantry flamer not causing heat correctly

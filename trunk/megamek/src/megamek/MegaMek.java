@@ -521,7 +521,7 @@ public class MegaMek {
                     w.newLine();
                     w.write("This file can be regenerated with java -jar MegaMek.jar -bfc filename");
                     w.newLine();
-                    w.write("Element,Size,MP,Armor,Structure,S,M,L,OV,Point Cost,Abilites");
+                    w.write("Element\tSize\tMP\tArmor\tStructure\tS\tM\tL\tOV\tPoint Cost\tAbilites");
                     w.newLine();
 
                     MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
@@ -532,26 +532,26 @@ public class MegaMek {
                         Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
 
                         w.write(unit.getName());
-                        w.write(",");
+                        w.write("\t");
                         w.write(Integer.toString(entity.getWeightClass() + 1));
-                        w.write(",");
+                        w.write("\t");
                         w.write(entity.getBattleForceMovement());
-                        w.write(",");
+                        w.write("\t");
                         w.write(Integer.toString(entity.getBattleForceArmorPoints()));
-                        w.write(",");
+                        w.write("\t");
                         w.write(Integer.toString(entity.getBattleForceStructurePoints()));
-                        w.write(",");
+                        w.write("\t");
                         w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE)));
-                        w.write(",");
+                        w.write("\t");
                         w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE)));
-                        w.write(",");
+                        w.write("\t");
                         w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE)));
-                        w.write(",");
+                        w.write("\t");
                         w.write(entity.getBattleForceOverHeatValue());
-                        w.write(",");
+                        w.write("\t");
                         w.write(Integer.toString(entity.getBattleForcePoints()));
-                        w.write(",");
-                        w.write("Abilites");
+                        w.write("\t");
+                        w.write(entity.getBattleForceSpecialAbilites());
                         w.newLine();
                     }
                     w.close();

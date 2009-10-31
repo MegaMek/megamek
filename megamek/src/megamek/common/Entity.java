@@ -165,7 +165,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private int offBoardDirection = IOffBoardDirections.NONE;
     private int retreatedDirection = IOffBoardDirections.NONE;
 
-    protected int[] vectors = { 0, 0, 0, 0, 0, 0 };
+    protected int[] vectors =
+        { 0, 0, 0, 0, 0, 0 };
     private int recoveryTurn = 0;
     // need to keep a list of areas that this entity has passed through on the
     // current turn
@@ -433,16 +434,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected String nl = "<BR>";
 
     // Battle Force Global Variables
-    protected boolean debugBattleForce = true;
+    protected boolean DEBUGBATTLEFORCE = false;
     protected StringBuffer battleForceDebugString;
 
     // Max range modifer is 6
-    protected double[] battleForceMinRangeModifier = new double[] { 1, .92, .83, .75, .66, .58, .50 };
+    protected double[] battleForceMinRangeModifier = new double[]
+        { 1, .92, .83, .75, .66, .58, .50 };
     // When getting the to hit mod add 4 got it and make sure the max is 8 since
     // the range is -4 to 8
-    protected double[] battleForceToHitModifier = new double[] { 1.20, 1.15, 1.10, 1.05, 1, .95, .9, .85, .8 };
+    protected double[] battleForceToHitModifier = new double[]
+        { 1.20, 1.15, 1.10, 1.05, 1, .95, .9, .85, .8 };
     public static final int BATTLEFORCESHORTRANGE = 0;
-    public static final int BATTLEFORCEMEDIUMRANGE = 3;
+    public static final int BATTLEFORCEMEDIUMRANGE = 4;
     public static final int BATTLEFORCELONGRANGE = 16;
     public static final int BATTLEFORCEEXTREMERANGE = 24;
 
@@ -2645,6 +2648,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Check if the entity has an arbitrary type of misc equipment
      * 
+     * @param name
+     *            MiscType internal name
+     * @return true if at least one ready item.
+     */
+    public boolean hasWorkingMisc(String name) {
+        for (Mounted m : miscList) {
+            if ((m.getType() instanceof MiscType) && m.isReady()) {
+                MiscType type = (MiscType) m.getType();
+                if (type.internalName.equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if the entity has an arbitrary type of misc equipment
+     * 
      * @param flag
      *            A MiscType.F_XXX
      * @param secondary
@@ -2665,6 +2687,88 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
                 if ((mount.getType() instanceof MiscType) && mount.isReady()) {
                     MiscType type = (MiscType) mount.getType();
+                    if (type.hasFlag(flag) && ((secondary == -1) || type.hasSubType(secondary))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if the entity has an arbitrary type of weapon
+     * 
+     * @param flag
+     *            A WeaponType.F_XXX
+     */
+    public boolean hasWorkingWeapon(long flag) {
+        return hasWorkingWeapon(flag, -1);
+    }
+
+    /**
+     * Check if the entity has an arbitrary type of weapon
+     * 
+     * @param flag
+     *            A WeaponType.F_XXX
+     * @param secondary
+     *            A WeaponType.S_XXX or -1 for don't care
+     * @return true if at least one ready item.
+     */
+    public boolean hasWorkingWeapon(long flag, long secondary) {
+        for (Mounted m : weaponList) {
+            if ((m.getType() instanceof WeaponType) && m.isReady()) {
+                WeaponType type = (WeaponType) m.getType();
+                if (type.hasFlag(flag) && ((secondary == -1) || type.hasSubType(secondary))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if the entity has an arbitrary type of weapon
+     * 
+     * @param string
+     *            internal name of the weapon.
+     * @return true if at least one ready item.
+     */
+    public boolean hasWorkingWeapon(String name) {
+        for (Mounted m : weaponList) {
+            if ((m.getType() instanceof WeaponType) && m.isReady()) {
+                WeaponType type = (WeaponType) m.getType();
+                if (type.getInternalName().equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if the entity has an arbitrary type of weapon
+     * 
+     * @param flag
+     *            A WeaponType.F_XXX
+     * @param secondary
+     *            A WeaponType.S_XXX or -1 for don't care
+     * @param location
+     *            The location to check e.g. Mech.LOC_LARM
+     * @return true if at least one ready item.
+     */
+    public boolean hasWorkingWeapon(long flag, int secondary, int location) {
+        // go through the location slot by slot, because of misc equipment that
+        // is spreadable
+        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+            CriticalSlot crit = getCritical(location, slot);
+            if ((null != crit) && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
+                Mounted mount = crit.getMount();
+                if (mount == null) {
+                    continue;
+                }
+                if ((mount.getType() instanceof WeaponType) && mount.isReady()) {
+                    WeaponType type = (WeaponType) mount.getType();
                     if (type.hasFlag(flag) && ((secondary == -1) || type.hasSubType(secondary))) {
                         return true;
                     }
@@ -7889,11 +7993,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         for (Mounted mounted : getWeaponList()) {
             if ((mounted.getType() instanceof GaussWeapon) && game.getOptions().booleanOption("tacops_gauss_weapons")) {
-                String[] modes = { "Powered Up", "Powered Down" };
+                String[] modes =
+                    { "Powered Up", "Powered Down" };
                 ((WeaponType) mounted.getType()).setModes(modes);
                 ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
             } else if ((mounted.getType() instanceof ACWeapon) && game.getOptions().booleanOption("tacops_rapid_ac")) {
-                String[] modes = { "", "Rapid" };
+                String[] modes =
+                    { "", "Rapid" };
                 ((WeaponType) mounted.getType()).setModes(modes);
             } else if (mounted.getType() instanceof ISBombastLaser) {
                 int damage = 12;
@@ -8809,7 +8915,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             result.append("j");
         }
 
-        if (debugBattleForce) {
+        if (DEBUGBATTLEFORCE) {
             battleForceDebugString = new StringBuffer("Battle Force Debug For ");
             battleForceDebugString.append(getChassis());
             battleForceDebugString.append(" ");
@@ -8852,10 +8958,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getBattleForceStandardWeaponsDamage(int range) {
-        return getBattleForceStandardWeaponsDamage(range, false, false);
+        return getBattleForceStandardWeaponsDamage(range, AmmoType.T_NA, false, false);
+    }
+
+    public int getBattleForceStandardWeaponsDamage(int range, int ammoType) {
+        return getBattleForceStandardWeaponsDamage(range, ammoType, false, false);
     }
 
     public int getBattleForceStandardWeaponsDamage(int range, boolean ignoreHeat, boolean ignoreSpecialAbilities) {
+        return getBattleForceStandardWeaponsDamage(range, AmmoType.T_NA, ignoreHeat, ignoreSpecialAbilities);
+    }
+
+    public int getBattleForceStandardWeaponsDamage(int range, int ammoType, boolean ignoreHeat, boolean ignoreSpecialAbilities) {
         return 0;
     }
 
@@ -8863,7 +8977,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         int standardDamageValue = 0;
         int damageValueNoHeat = 0;
+        boolean debugStatus = DEBUGBATTLEFORCE;
 
+        DEBUGBATTLEFORCE = false;
         standardDamageValue = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE);
 
         if (standardDamageValue <= 0) {
@@ -8873,7 +8989,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             damageValueNoHeat = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, true, true);
         }
 
-        if (debugBattleForce) {
+        DEBUGBATTLEFORCE = debugStatus;
+
+        if (DEBUGBATTLEFORCE) {
             battleForceDebugString.append("Standard Damage Value With Heat Modifier: ");
             battleForceDebugString.append(standardDamageValue);
             battleForceDebugString.append('\n');
@@ -8886,6 +9004,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (damageValueNoHeat > standardDamageValue) {
             return Integer.toString(Math.min(4, damageValueNoHeat - standardDamageValue));
         }
+        return "None";
+    }
+
+    public String getBattleForceSpecialAbilites() {
         return "None";
     }
 

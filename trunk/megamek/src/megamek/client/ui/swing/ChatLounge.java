@@ -58,7 +58,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -74,6 +73,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
@@ -1633,22 +1633,7 @@ public static String formatUnitTooltip(Entity entity) {
      * Pop up the view mech dialog
      */
     private void mechReadout(Entity entity) {
-        MechView mechView = new MechView(entity, clientgui.getClient().game
-                .getOptions().booleanOption("show_bay_detail"));
-        JTextPane ta = new JTextPane();
-        ta.setEditable(false);
-        ta.setContentType("text/html");
-        ta.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
-        ta.setText(mechView.getMechReadout());
-        final JDialog dialog = new JDialog(clientgui.frame, Messages
-                .getString("ChatLounge.quickView"), false); //$NON-NLS-1$
-        JButton btn = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-        dialog.add("South", btn); //$NON-NLS-1$
-        btn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dialog.setVisible(false);
-            }
-        });
+        final JDialog dialog = new JDialog(clientgui.frame, Messages.getString("ChatLounge.quickView"), false); //$NON-NLS-1$
         dialog.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -1671,21 +1656,48 @@ public static String formatUnitTooltip(Entity entity) {
                 dialog.setVisible(false);
             }
         });
-        dialog.add("Center", new JScrollPane(ta)); //$NON-NLS-1$
-
-        // Preview image of the Mech...
-        //JLabel panPreview = new JLabel();
-        //panPreview.setPreferredSize(new Dimension(84, 72));
-        //clientgui.loadPreviewImage(panPreview, entity);
-        //dialog.add("North", panPreview); //$NON-NLS-1$
-
+        
+        MechView mechView = new MechView(entity, clientgui.getClient().game
+                .getOptions().booleanOption("show_bay_detail"));
+        JLabel lblMek = new JLabel();
+        lblMek.setText("<html>" + mechView.getMechReadout() + "</html>");
+        Image image = FluffImageHelper.getFluffImage(entity);
+        ImageIcon icon = null;
+        if(null != image) {
+            icon = new ImageIcon(image);
+            lblMek.setIcon(icon);
+        }
+        lblMek.setVerticalAlignment(SwingConstants.TOP);
+        lblMek.setHorizontalTextPosition(SwingConstants.LEFT);
+        lblMek.setVerticalTextPosition(SwingConstants.TOP);
+        
+        JButton btn = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
+        btn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dialog.setVisible(false);
+            }
+        });
+        
+        dialog.add(BorderLayout.CENTER, new JScrollPane(lblMek)); //$NON-NLS-1$
+        dialog.add(BorderLayout.PAGE_END, btn); //$NON-NLS-1$
+/* 
         dialog.setLocation(clientgui.frame.getLocation().x
                 + clientgui.frame.getSize().width / 2 - dialog.getSize().width
                 / 2, clientgui.frame.getLocation().y
                 + clientgui.frame.getSize().height / 5
                 - dialog.getSize().height / 2);
-        dialog.setSize(350, 600);
-
+                */
+        //TODO: this seems hacky but it does more or less get the window dimension right
+        //there must be a better way?
+        int width = 350;
+        if(null != icon) {
+           width += icon.getIconWidth();
+        }
+        int height = 600;
+        if(null != icon) {
+            height = Math.max(height, icon.getIconHeight());
+        }
+        dialog.setSize(width, height + 75);
         dialog.validate();
         dialog.setVisible(true);
     }

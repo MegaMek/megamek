@@ -17,11 +17,13 @@ package megamek.client.ui.swing;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultRowSorter;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -30,7 +32,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SortOrder;
@@ -44,6 +45,7 @@ import javax.swing.table.TableRowSorter;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
@@ -92,7 +94,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
     private JScrollPane scrTxtUnitView;
     private JTable tableUnits;
     private JTextField txtFilter;
-    private JTextPane txtUnitView;
+    private JLabel lblMek;
     private JLabel lblPlayer;
     private JComboBox comboPlayer;
         
@@ -142,7 +144,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         scrTableUnits = new JScrollPane();
         tableUnits = new JTable();
         scrTxtUnitView = new JScrollPane();
-        txtUnitView = new JTextPane();
+        lblMek = new JLabel();
         
         comboType = new JComboBox();
         comboWeight = new JComboBox();        
@@ -205,13 +207,14 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         c.weighty = 1.0;
         getContentPane().add(scrTableUnits, c);
 
-        txtUnitView.setBorder(null);
-        txtUnitView.setEditable(false);
-        txtUnitView.setContentType("text/html");
-        txtUnitView.setMinimumSize(new java.awt.Dimension(300, 500));
-        txtUnitView.setPreferredSize(new java.awt.Dimension(300, 500));
-        scrTxtUnitView.setViewportView(txtUnitView);
+        lblMek.setVerticalAlignment(SwingConstants.TOP);
+        lblMek.setHorizontalTextPosition(SwingConstants.LEFT);
+        lblMek.setVerticalTextPosition(SwingConstants.TOP);
+        scrTxtUnitView.setMinimumSize(new java.awt.Dimension(300, 500));
+        scrTxtUnitView.setPreferredSize(new java.awt.Dimension(300, 500));
+        scrTxtUnitView.setViewportView(lblMek);
 
+        
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;
@@ -499,11 +502,12 @@ public class MechSelectorDialog extends JDialog implements Runnable {
 
     private void refreshUnitView() {
         boolean populateTextFields = true;
-
+        
         Entity selectedUnit = getSelectedEntity();
         // null entity, so load a default unit.
         if (selectedUnit == null) {
-            txtUnitView.setText("");
+            lblMek.setText("");
+            lblMek.setIcon(null);
             lblImage.setIcon(null);
             return;
         }
@@ -515,13 +519,19 @@ public class MechSelectorDialog extends JDialog implements Runnable {
             // error unit didn't load right. this is bad news.
             populateTextFields = false;
         }
-        txtUnitView.setEditable(false);
         if (populateTextFields && (mechView != null)) {
-            txtUnitView.setText(mechView.getMechReadout());
+            lblMek.setText("<html>" + mechView.getMechReadout() + "</html>");
+            Image image = FluffImageHelper.getFluffImage(selectedUnit);
+            ImageIcon icon = null;
+            if(null != image) {
+                icon = new ImageIcon(image);
+                lblMek.setIcon(icon);
+            } else {
+                lblMek.setIcon(null);
+            }
         } else {
-            txtUnitView.setText("No Unit Selected");
+            lblMek.setText("No Unit Selected");
         }
-        txtUnitView.setCaretPosition(0);
 
         clientgui.loadPreviewImage(lblImage, selectedUnit, client.getLocalPlayer());
     }

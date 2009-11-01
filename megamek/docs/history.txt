@@ -35,6 +35,7 @@ v0.35.9-dev (SVN)
 + MechView improvements (font, ammo table, equipment table)
 + separate MechView.java for AWT (plain text) and swing (HTML)
 + More Additions to Battleforce Conversions.
++ Unit fluff images (not included) will appear in MechSelectorDialog and Unit Quick View
 
 v0.35.8 (2009-10-18, 22:34 UTC+2)
 + Bug: infantry flamer not causing heat correctly

@@ -17,13 +17,11 @@ package megamek.client.ui.swing;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultRowSorter;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -45,7 +43,6 @@ import javax.swing.table.TableRowSorter;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
@@ -91,10 +88,9 @@ public class MechSelectorDialog extends JDialog implements Runnable {
     private JPanel panelFilterBtns;
     private JPanel panelOKBtns;
     private JScrollPane scrTableUnits;
-    private JScrollPane scrTxtUnitView;
     private JTable tableUnits;
     private JTextField txtFilter;
-    private JLabel lblMek;
+    private MechViewPanel panelMekView;
     private JLabel lblPlayer;
     private JComboBox comboPlayer;
         
@@ -143,8 +139,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         
         scrTableUnits = new JScrollPane();
         tableUnits = new JTable();
-        scrTxtUnitView = new JScrollPane();
-        lblMek = new JLabel();
+        panelMekView = new MechViewPanel();
         
         comboType = new JComboBox();
         comboWeight = new JComboBox();        
@@ -206,14 +201,6 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         c.weightx = 0.0;
         c.weighty = 1.0;
         getContentPane().add(scrTableUnits, c);
-
-        lblMek.setVerticalAlignment(SwingConstants.TOP);
-        lblMek.setHorizontalTextPosition(SwingConstants.LEFT);
-        lblMek.setVerticalTextPosition(SwingConstants.TOP);
-        scrTxtUnitView.setMinimumSize(new java.awt.Dimension(300, 500));
-        scrTxtUnitView.setPreferredSize(new java.awt.Dimension(300, 500));
-        scrTxtUnitView.setViewportView(lblMek);
-
         
         c = new GridBagConstraints();
         c.gridx = 1;
@@ -222,7 +209,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 1.0;
-        getContentPane().add(scrTxtUnitView, c);
+        getContentPane().add(panelMekView, c);
 
         panelFilterBtns.setMinimumSize(new java.awt.Dimension(300, 120));
         panelFilterBtns.setPreferredSize(new java.awt.Dimension(300, 120));
@@ -506,8 +493,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         Entity selectedUnit = getSelectedEntity();
         // null entity, so load a default unit.
         if (selectedUnit == null) {
-            lblMek.setText("");
-            lblMek.setIcon(null);
+            panelMekView.reset();
             lblImage.setIcon(null);
             return;
         }
@@ -520,17 +506,9 @@ public class MechSelectorDialog extends JDialog implements Runnable {
             populateTextFields = false;
         }
         if (populateTextFields && (mechView != null)) {
-            lblMek.setText("<html>" + mechView.getMechReadout() + "</html>");
-            Image image = FluffImageHelper.getFluffImage(selectedUnit);
-            ImageIcon icon = null;
-            if(null != image) {
-                icon = new ImageIcon(image);
-                lblMek.setIcon(icon);
-            } else {
-                lblMek.setIcon(null);
-            }
+            panelMekView.setMech(selectedUnit);
         } else {
-            lblMek.setText("No Unit Selected");
+            panelMekView.reset();
         }
 
         clientgui.loadPreviewImage(lblImage, selectedUnit, client.getLocalPlayer());

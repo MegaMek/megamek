@@ -14,6 +14,7 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -25,13 +26,16 @@ import javax.swing.DefaultRowSorter;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.RowSorter.SortKey;
@@ -77,6 +81,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
     private JButton btnSelectClose;
     private JButton btnSelect;
     private JButton btnClose;
+    private JButton btnShowBV;
     private JComboBox comboType;
     private JComboBox comboUnitType;
     private JComboBox comboWeight;
@@ -149,6 +154,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         btnSelect = new JButton();
         btnSelectClose = new JButton();
         btnClose = new JButton();
+        btnShowBV = new JButton();
         
         lblType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"));
         lblWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass"));
@@ -370,6 +376,30 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         updatePlayerChoice();
         panelOKBtns.add(lblPlayer, new GridBagConstraints());
         panelOKBtns.add(comboPlayer, new GridBagConstraints());
+        
+        btnShowBV.setText(Messages.getString("MechSelectorDialog.BV")); //$NON-NLS-1$
+        btnShowBV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JEditorPane tEditorPane = new JEditorPane();
+                tEditorPane.setContentType("text/html");
+                tEditorPane.setEditable(false);
+                Entity e = getSelectedEntity();
+                if(null == e) {
+                    return;
+                } else {
+                    e.calculateBattleValue();
+                    tEditorPane.setText(e.getBVText());
+                }
+                tEditorPane.setCaretPosition(0);
+                JScrollPane tScroll = new JScrollPane(tEditorPane,
+                        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                Dimension size = new Dimension(550, 300);
+                tScroll.setPreferredSize(size);
+                JOptionPane.showMessageDialog(null, tScroll, "BV", JOptionPane.INFORMATION_MESSAGE, null);
+            }
+        });
+        panelOKBtns.add(btnShowBV, new GridBagConstraints());
             
         c = new GridBagConstraints();
         c.gridx = 0;

@@ -1634,6 +1634,7 @@ public static String formatUnitTooltip(Entity entity) {
      */
     private void mechReadout(Entity entity) {
         final JDialog dialog = new JDialog(clientgui.frame, Messages.getString("ChatLounge.quickView"), false); //$NON-NLS-1$
+        //dialog.setBackground(Color.WHITE);
         dialog.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -1656,48 +1657,45 @@ public static String formatUnitTooltip(Entity entity) {
                 dialog.setVisible(false);
             }
         });
-        
-        MechView mechView = new MechView(entity, clientgui.getClient().game
-                .getOptions().booleanOption("show_bay_detail"));
-        JLabel lblMek = new JLabel();
-        lblMek.setText("<html>" + mechView.getMechReadout() + "</html>");
-        Image image = FluffImageHelper.getFluffImage(entity);
-        ImageIcon icon = null;
-        if(null != image) {
-            icon = new ImageIcon(image);
-            lblMek.setIcon(icon);
-        }
-        lblMek.setVerticalAlignment(SwingConstants.TOP);
-        lblMek.setHorizontalTextPosition(SwingConstants.LEFT);
-        lblMek.setVerticalTextPosition(SwingConstants.TOP);
-        
+        MechViewPanel mvp = new MechViewPanel();
+        mvp.setMech(entity);    
         JButton btn = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
         btn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dialog.setVisible(false);
             }
-        });
+        });       
         
-        dialog.add(BorderLayout.CENTER, new JScrollPane(lblMek)); //$NON-NLS-1$
-        dialog.add(BorderLayout.PAGE_END, btn); //$NON-NLS-1$
-/* 
+        dialog.getContentPane().setLayout(new GridBagLayout());
+        GridBagConstraints c;
+        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        dialog.getContentPane().add(mvp, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.CENTER;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        dialog.getContentPane().add(btn, c);
+        /* I don't want to set this anymore because this dialog can get quite large
         dialog.setLocation(clientgui.frame.getLocation().x
                 + clientgui.frame.getSize().width / 2 - dialog.getSize().width
                 / 2, clientgui.frame.getLocation().y
                 + clientgui.frame.getSize().height / 5
                 - dialog.getSize().height / 2);
-                */
+        */
         //TODO: this seems hacky but it does more or less get the window dimension right
         //there must be a better way?
-        int width = 350;
-        if(null != icon) {
-           width += icon.getIconWidth();
-        }
-        int height = 600;
-        if(null != icon) {
-            height = Math.max(height, icon.getIconHeight());
-        }
-        dialog.setSize(width, height + 75);
+        dialog.setSize(mvp.getBestWidth(), mvp.getBestHeight() + 75);
         dialog.validate();
         dialog.setVisible(true);
     }

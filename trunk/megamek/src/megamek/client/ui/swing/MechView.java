@@ -20,7 +20,6 @@
 
 package megamek.client.ui.swing;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 
@@ -220,11 +219,9 @@ public class MechView {
     }
 
     public String getMechReadout() {
-        return /*"<table><tr><td valign=\"top\">" + */"<div style='font: 12pt monospaced'>" + getMechReadoutBasic()
+        return "<div style='font: 12pt monospaced'>" + getMechReadoutBasic()
         + "<br>" + getMechReadoutLoadout() + "<br>" + getMechReadoutFluff()
-        + "</div>";//</td><td valign=\"top\">" + getFluffImage(entity) + "</td><td></tr></table>";
-        //return "<div style='font: 12pt monospaced; top:0; width:10.2em; position:absolute'>" + getMechReadoutBasic()
-          //      + "<br>" + getMechReadoutLoadout() + "<br>" + getMechReadoutFluff() + "</div><div style='top:0; position: absolute; margin-left:10.2em'>" + getFluffImage(entity) + "</div>"; //$NON-NLS-1$
+        + "</div>";
     }
 
     private String getInternalAndArmor() {
@@ -604,35 +601,5 @@ public class MechView {
         } else {
             return "<td align='right' bgcolor='white'><font color='black'>" + armor + "</font>";
         }
-    }
-    
-    private String getFluffImage(Entity entity) {
-    
-        String path = new File("./data/images/fluff/").getAbsolutePath() + File.separatorChar;
-        if(null != getFluffJPG(entity, path)) {
-            path = getFluffJPG(entity, path);
-            return "<img style=\"float: right; padding: 0px 0px 0px 3px;\" src=\"file://" + path + "\"/>";
-        }
-        return "";
-    
-    }
-    
-    public String getFluffJPG(Entity unit, String path) {
-   
-        String fluffFile = path + unit.getChassis() + " " + unit.getModel() + ".jpg";
-        if (new File(fluffFile.toLowerCase()).exists()) {
-            return new File(fluffFile.toLowerCase()).getAbsolutePath();
-        }
-        fluffFile = path + unit.getChassis() + ".jpg";
-        if (new File(fluffFile.toLowerCase()).exists()) {
-            return new File(fluffFile.toLowerCase()).getAbsolutePath();
-        }
-        fluffFile = path + unit.getModel() + ".jpg";
-        if (new File(fluffFile.toLowerCase()).exists()) {
-            return new File(fluffFile.toLowerCase()).getAbsolutePath();
-        }   
-        
-        
-        return null;
     }
 }

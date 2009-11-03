@@ -6092,8 +6092,8 @@ public class Server implements Runnable {
             // We can stop looking when we find our first match.
             for (Mounted mount : swarmer.getMisc()) {
                 EquipmentType equip = mount.getType();
-                if (BattleArmor.ASSAULT_CLAW.equals(equip.getInternalName())) {
-                    roll.addModifier(1, "swarmer has assault claws");
+                if (equip.hasFlag(MiscType.F_MAGNET_CLAW)) {
+                    roll.addModifier(1, "swarmer has magnetic claws");
                     break;
                 }
             }
@@ -6291,12 +6291,8 @@ public class Server implements Runnable {
 
                 // If the swarmer has Assault claws, give a 1 modifier.
                 // We can stop looking when we find our first match.
-                for (Mounted mount : swarmer.getMisc()) {
-                    EquipmentType equip = mount.getType();
-                    if (BattleArmor.ASSAULT_CLAW.equals(equip.getInternalName())) {
-                        roll.addModifier(1, "swarmer has assault claws");
-                        break;
-                    }
+                if (swarmer.hasWorkingMisc(MiscType.F_MAGNET_CLAW, -1)) {
+                    roll.addModifier(1, "swarmer has magnetic claws");
                 }
 
                 // okay, print the info

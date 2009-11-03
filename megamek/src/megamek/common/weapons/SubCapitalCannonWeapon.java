@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -24,16 +24,16 @@ import megamek.common.AmmoType;
  */
 public abstract class SubCapitalCannonWeapon extends AmmoWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4293264735637352953L;
 
     public SubCapitalCannonWeapon() {
         super();
-        this.ammoType = AmmoType.T_SCC;
-        this.atClass = CLASS_CAPITAL_AC;
-        this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
-        this.capital = true;
-        this.subCapital = true;
+        ammoType = AmmoType.T_SCC;
+        atClass = CLASS_CAPITAL_AC;
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        capital = true;
+        subCapital = true;
     }
 }

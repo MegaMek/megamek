@@ -58,28 +58,28 @@ public class BombType extends AmmoType {
     private int bombType;
 
     public static String getBombName(int type) {
-        if(type >= B_NUM || type < 0) {
+        if((type >= B_NUM) || (type < 0)) {
             return "Unknown bomb type";
         }
         return bombNames[type];
     }
 
     public static String getBombWeaponName(int type) {
-        if(type >= B_NUM || type < 0) {
+        if((type >= B_NUM) || (type < 0)) {
             return "Unknown bomb weapon";
         }
         return bombWeaponNames[type];
     }
 
     public static String getBombInternalName(int type) {
-        if(type >= B_NUM || type < 0) {
+        if((type >= B_NUM) || (type < 0)) {
             return "Unknown bomb type";
         }
         return bombInternalNames[type];
     }
 
     public static int getBombCost(int type) {
-        if(type >= B_NUM || type < 0) {
+        if((type >= B_NUM) || (type < 0)) {
             return 0;
         }
         return bombCosts[type];
@@ -98,7 +98,7 @@ public class BombType extends AmmoType {
             return false;
         }
     }
-    
+
     public static boolean canSpaceBomb(int type) {
         switch(type) {
         case B_HE:
@@ -111,7 +111,7 @@ public class BombType extends AmmoType {
             return false;
         }
     }
-    
+
     public int getBombType() {
         return bombType;
     }
@@ -145,7 +145,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_HE;
-        bomb.flags |= AmmoType.F_SPACE_BOMB | AmmoType.F_GROUND_BOMB;
+        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -164,7 +164,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_CLUSTER;
-        bomb.flags |= AmmoType.F_SPACE_BOMB | AmmoType.F_GROUND_BOMB;
+        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -183,7 +183,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_LG;
-        bomb.flags |= AmmoType.F_SPACE_BOMB | AmmoType.F_GROUND_BOMB;
+        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -288,7 +288,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 20;
         bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
         bomb.bombType = BombType.B_ARROW;
-        bomb.flags |= AmmoType.F_SPACE_BOMB;
+        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -308,7 +308,7 @@ public class BombType extends AmmoType {
         bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
         bomb.bombType = BombType.B_HOMING;
         bomb.munitionType = AmmoType.M_HOMING;
-        bomb.flags |= AmmoType.F_SPACE_BOMB;
+        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -327,7 +327,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_INFERNO;
-        bomb.flags |= AmmoType.F_GROUND_BOMB;
+        bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -363,7 +363,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_THUNDER;
-        bomb.flags |= AmmoType.F_GROUND_BOMB;
+        bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
@@ -402,7 +402,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
-        bomb.flags |= F_NUCLEAR;
+        bomb.flags = bomb.flags.or(F_NUCLEAR);
         bomb.capital = true;
 
         return bomb;

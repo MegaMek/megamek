@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -29,37 +29,37 @@ import megamek.server.Server;
 public class ISERLargeLaserPrototype extends LaserWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4745756742469577788L;
 
     public ISERLargeLaserPrototype() {
         super();
-        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        this.name = "ER Large Laser Prototype";
-        this.setInternalName("ISERLargeLaserPrototype");
-        this.addLookupName("IS ER Large Laser Prototype");
-        this.toHitModifier = 1;
-        this.flags |= F_PROTOTYPE;
-        this.heat = 12;
-        this.damage = 8;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 19;
-        this.extremeRange = 28;
-        this.waterShortRange = 3;
-        this.waterMediumRange = 9;
-        this.waterLongRange = 12;
-        this.waterExtremeRange = 18;
-        this.tonnage = 5.0f;
-        this.criticals = 2;
-        this.bv = 163;
-        this.cost = 200000;
+        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        name = "ER Large Laser Prototype";
+        setInternalName("ISERLargeLaserPrototype");
+        addLookupName("IS ER Large Laser Prototype");
+        toHitModifier = 1;
+        flags = flags.or(F_PROTOTYPE);
+        heat = 12;
+        damage = 8;
+        shortRange = 7;
+        mediumRange = 14;
+        longRange = 19;
+        extremeRange = 28;
+        waterShortRange = 3;
+        waterMediumRange = 9;
+        waterLongRange = 12;
+        waterExtremeRange = 18;
+        tonnage = 5.0f;
+        criticals = 2;
+        bv = 163;
+        cost = 200000;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)

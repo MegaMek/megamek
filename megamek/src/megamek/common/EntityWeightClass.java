@@ -29,30 +29,36 @@ public class EntityWeightClass {
     public static final int WEIGHT_LARGE_DROP = 7;
     public static final int WEIGHT_SMALL_WAR = 8;
     public static final int WEIGHT_LARGE_WAR = 9;
-    
+    public static final int WEIGHT_BA_PAL = 10;
+    public static final int WEIGHT_BA_LIGHT = 11;
+    public static final int WEIGHT_BA_MEDIUM = 12;
+    public static final int WEIGHT_BA_HEAVY = 13;
+    public static final int WEIGHT_BA_ASSAULT = 14;
 
-    private static int[] weightLimits = { 35, 55, 75, 100, 200, 2499, 9999, 100000, 749999, 2500000 };
+
+    private static int[] weightLimits = { 35, 55, 75, 100, 200, 2499, 9999, 100000, 749999, 2500000, 400, 750, 1000, 1500, 2000 };
 
     public static final int SIZE = weightLimits.length;
 
     public static int getWeightClass(int tonnage) {
         int i;
         for (i = 0; i < SIZE - 1; i++) {
-            if (tonnage <= weightLimits[i])
+            if (tonnage <= weightLimits[i]) {
                 break;
+            }
         }
         return i;
     }
 
     public static int getClassLimit(int wClass) {
-        if (wClass >= 0 && wClass < SIZE) {
+        if ((wClass >= 0) && (wClass < SIZE)) {
             return weightLimits[wClass];
         }
         throw new IllegalArgumentException("Unknown Weight Class");
     }
 
     public static String getClassName(int wClass) {
-        if (wClass >= 0 && wClass < SIZE) {
+        if ((wClass >= 0) && (wClass < SIZE)) {
             return Messages.getString("EntityWeightClass." + wClass);
         }
         throw new IllegalArgumentException("Unknown Weight Class");

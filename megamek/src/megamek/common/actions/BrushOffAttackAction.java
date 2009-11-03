@@ -1,20 +1,19 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
 package megamek.common.actions;
 
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
@@ -22,6 +21,7 @@ import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -32,7 +32,7 @@ import megamek.common.ToHitData;
  */
 public class BrushOffAttackAction extends AbstractAttackAction {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7455082808488032572L;
     public static final int BOTH = 0;
@@ -58,7 +58,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
     /**
      * Damage that the specified mech does with a brush off attack. This equals
      * the damage done by a punch from the same arm.
-     * 
+     *
      * @param entity - the <code>Entity</code> brushing off the swarm.
      * @param arm - the <code>int</code> of the arm making the attack; this
      *            value must be <code>BrushOffAttackAction.RIGHT</code> or
@@ -75,7 +75,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      * To-hit number for the specified arm to brush off swarming infantry. If
      * this attack misses, the Mek will suffer punch damage. This same action is
      * used to remove iNARC pods.
-     * 
+     *
      * @param game - the <code>IGame</code> object containing all entities.
      * @return the <code>ToHitData</code> containing the target roll.
      */
@@ -88,7 +88,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      * To-hit number for the specified arm to brush off swarming infantry. If
      * this attack misses, the Mek will suffer punch damage. This same action is
      * used to remove iNARC pods.
-     * 
+     *
      * @param game - the <code>IGame</code> object containing all entities.
      * @param attackerId - the <code>int</code> ID of the attacking unit.
      * @param target - the <code>Targetable</code> object being targeted.
@@ -102,7 +102,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
         Entity te = null;
-        if (ae == null || target == null) {
+        if ((ae == null) || (target == null)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Attacker or target not valid");
         }
@@ -121,12 +121,12 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         }
 
         // arguments legal?
-        if (arm != BrushOffAttackAction.RIGHT
-                && arm != BrushOffAttackAction.LEFT) {
+        if ((arm != BrushOffAttackAction.RIGHT)
+                && (arm != BrushOffAttackAction.LEFT)) {
             throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
         }
-        if ((targetId != ae.getSwarmAttackerId() || te == null || !(te instanceof Infantry))
-                && target.getTargetType() != Targetable.TYPE_INARC_POD) {
+        if (((targetId != ae.getSwarmAttackerId()) || (te == null) || !(te instanceof Infantry))
+                && (target.getTargetType() != Targetable.TYPE_INARC_POD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Can only brush off swarming infantry or iNarc Pods");
         }
@@ -146,7 +146,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         if (ae.isLocationBad(armLoc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
-        
+
         //check for no/minimal arms quirk
         if(ae.getQuirks().booleanOption("no_arms")) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
@@ -164,7 +164,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         }
 
         // can't physically attack mechs making dfa attacks
-        if (te != null && te.isMakingDfa()) {
+        if ((te != null) && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is making a DFA attack");
         }
@@ -175,12 +175,12 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         }
 
         // Can't target woods or a building with a brush off attack.
-        if (target.getTargetType() == Targetable.TYPE_BUILDING
-                || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
-                || target.getTargetType() == Targetable.TYPE_FUEL_TANK
-                || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
-                || target.getTargetType() == Targetable.TYPE_HEX_CLEAR
-                || target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
+                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
@@ -223,8 +223,8 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         if (te != null) {
             for (Mounted mount : te.getMisc()) {
                 EquipmentType equip = mount.getType();
-                if (BattleArmor.ASSAULT_CLAW.equals(equip.getInternalName())) {
-                    toHit.addModifier(1, "defender has assault claws");
+                if (equip.hasFlag(MiscType.F_MAGNET_CLAW)) {
+                    toHit.addModifier(1, "defender has magnetic claws");
                     break;
                 }
             }

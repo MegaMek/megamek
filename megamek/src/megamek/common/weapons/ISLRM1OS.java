@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -21,26 +21,26 @@ import megamek.common.TechConstants;
 public class ISLRM1OS extends LRMWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5976936994611000430L;
 
     /**
-     * 
+     *
      */
     public ISLRM1OS() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        this.name = "LRM 1 (OS)";
-        this.setInternalName(this.name);
-        this.addLookupName("ISLRM1OS");
-        this.rackSize = 1;
-        this.minimumRange = 6;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 21;
-        this.extremeRange = 28;
-        this.bv = 3;
-        this.flags |= F_ONESHOT;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        name = "LRM 1 (OS)";
+        setInternalName(name);
+        addLookupName("ISLRM1OS");
+        rackSize = 1;
+        minimumRange = 6;
+        shortRange = 7;
+        mediumRange = 14;
+        longRange = 21;
+        extremeRange = 28;
+        bv = 3;
+        flags = flags.or(F_ONESHOT);
     }
 }

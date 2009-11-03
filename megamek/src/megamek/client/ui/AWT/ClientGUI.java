@@ -122,7 +122,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
     BoardSelectionDialog boardSelectionDialog;
     GameOptionsDialog gameOptionsDialog;
     private MechSelectorDialog mechSelectorDialog;
-    private CustomBattleArmorDialog customBADialog;
+    //private CustomBattleArmorDialog customBADialog;
     private CustomFighterSquadronDialog customFSDialog;
     private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
@@ -233,7 +233,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
 
     /**
      * Display a system message in the chat box.
-     * 
+     *
      * @param message
      *            the <code>String</code> message to be shown.
      */
@@ -432,16 +432,16 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
-        customBADialog = new CustomBattleArmorDialog(this);
+        //customBADialog = new CustomBattleArmorDialog(this);
         customFSDialog = new CustomFighterSquadronDialog(this,
                 unitLoadingDialog);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
-        new Thread(customBADialog, "Custom Battle Armor Dialog").start();
+        //new Thread(customBADialog, "Custom Battle Armor Dialog").start();
     }
 
     /**
      * Get the menu bar for this client.
-     * 
+     *
      * @return the <code>CommonMenuBar</code> of this client.
      */
     public CommonMenuBar getMenuBar() {
@@ -465,7 +465,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
      * Change the default help file name for this client.
      * <p/>
      * This method should only be called by the constructor of subclasses.
-     * 
+     *
      * @param fileName
      *            the <code>String</code> name of the help file for this
      *            <code>Client</code> subclass. This value should not be
@@ -693,9 +693,11 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
         return mechSelectorDialog;
     }
 
+    /*
     public CustomBattleArmorDialog getCustomBADialog() {
         return customBADialog;
     }
+    */
 
     public CustomFighterSquadronDialog getCustomFSDialog() {
         return customFSDialog;
@@ -934,7 +936,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
      * private boolean canTargetEntities() { return client.isMyTurn() &&
      * (curPanel instanceof FiringDisplay || curPanel instanceof PhysicalDisplay
      * || curPanel instanceof TargetingPhaseDisplay); }
-     * 
+     *
      * private boolean canSelectEntities() { return client.isMyTurn() &&
      * (curPanel instanceof FiringDisplay || curPanel instanceof PhysicalDisplay
      * || curPanel instanceof MovementDisplay || curPanel instanceof
@@ -997,7 +999,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
     /**
      * Pops up a dialog box giving the player a series of choices that are not
      * mutually exclusive.
-     * 
+     *
      * @param title
      *            the <code>String</code> title of the dialog box.
      * @param question
@@ -1029,7 +1031,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
 
     /**
      * Pops up a dialog box asking a yes/no question
-     * 
+     *
      * @param title
      *            the <code>String</code> title of the dialog box.
      * @param question
@@ -1048,7 +1050,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
      * Pops up a dialog box asking a yes/no question
      * <p/>
      * The player will be given a chance to not show the dialog again.
-     * 
+     *
      * @param title
      *            the <code>String</code> title of the dialog box.
      * @param question
@@ -1133,7 +1135,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
      * select the units for a new game. The file will record damage sustained,
      * non-standard munitions selected, and ammunition expended during the
      * course of the current engagement.
-     * 
+     *
      * @param unitList
      *            - the <code>Vector</code> of <code>Entity</code>s to be saved
      *            to a file. If this value is <code>null</code> or empty, the
@@ -1231,13 +1233,13 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
      * private class ViewMenuItem extends MenuItem implements ActionListener {
      * private static final long serialVersionUID = 3756822619315859847L; Entity
      * entity;
-     * 
+     *
      * public ViewMenuItem(Entity entity) { super(
      * Messages.getString("ClientGUI.viewMenuItem") + entity.getDisplayName() +
      * (entity.isDone() ? " (" +
      * Messages.getString("ClientGUI.doneMenuItem").trim() + ")" : ""));
      * //$NON-NLS-1$ this.entity = entity; addActionListener(this); }
-     * 
+     *
      * public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
      * setDisplayVisible(true); mechD.displayEntity(entity); } }
      */
@@ -1250,12 +1252,12 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
      * private class SelectMenuItem extends MenuItem implements ActionListener {
      * private static final long serialVersionUID = -2472642242836893482L;
      * Entity entity;
-     * 
+     *
      * public SelectMenuItem(Entity entity) { super(
      * Messages.getString("ClientGUI.selectMenuItem") +
      * entity.getDisplayName()); //$NON-NLS-1$ this.entity = entity;
      * addActionListener(this); }
-     * 
+     *
      * public void actionPerformed(java.awt.event.ActionEvent actionEvent) { if
      * (curPanel instanceof MovementDisplay) { ((MovementDisplay)
      * curPanel).selectEntity(entity.getId()); } else if (curPanel instanceof
@@ -1271,11 +1273,11 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
      * private class TargetMenuItem extends MenuItem implements ActionListener {
      * private static final long serialVersionUID = -3854766135227390453L;
      * Targetable target;
-     * 
+     *
      * public TargetMenuItem(Targetable t) { super(
      * Messages.getString("ClientGUI.targetMenuItem") + t.getDisplayName());
      * //$NON-NLS-1$ target = t; addActionListener(this); }
-     * 
+     *
      * public void actionPerformed(java.awt.event.ActionEvent actionEvent) { if
      * (curPanel instanceof FiringDisplay) { ((FiringDisplay)
      * curPanel).target(target); } else if (curPanel instanceof PhysicalDisplay)
@@ -1475,7 +1477,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener,
                 saveListFile(living);
 
             } // End user-wants-a-MUL
-            
+
           //save all destroyed units in a separate "salvage MUL"
             ArrayList<Entity> destroyed = new ArrayList<Entity>();
             Enumeration<Entity> graveyard = getClient().game.getGraveyardEntities();

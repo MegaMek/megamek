@@ -51,7 +51,7 @@ public class CLMicroBomb extends Weapon {
         longRange = 0;
         extremeRange = 0;
         bv = 11;
-        flags |= F_NO_FIRES;
+        flags = flags.or(F_NO_FIRES);
     }
 
     @Override

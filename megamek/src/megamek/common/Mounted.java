@@ -139,7 +139,7 @@ public class Mounted implements Serializable, RoundUpdated {
         if ((type instanceof MiscType) && type.hasFlag(MiscType.F_MINE)) {
             mineType = MINE_CONVENTIONAL;
         }
-        if (((type instanceof MiscType) && ((MiscType) type).isShield()) || type.hasFlag(MiscType.F_MODULAR_ARMOR) ) {
+        if ((type instanceof MiscType) && ((((MiscType) type).isShield() || type.hasFlag(MiscType.F_MODULAR_ARMOR)))) {
             MiscType shield = (MiscType) type;
             baseDamageAbsorptionRate = shield.baseDamageAbsorptionRate;
             baseDamageCapacity = shield.baseDamageCapacity;
@@ -1169,11 +1169,11 @@ public class Mounted implements Serializable, RoundUpdated {
     public CalledShot getCalledShot() {
         return called;
     }
-    
+
     public void setRepairable(boolean repair) {
-        this.repairable = repair;
+        repairable = repair;
     }
-    
+
     public boolean isRepairable() {
         return repairable;
     }

@@ -234,16 +234,16 @@ public class MechFileParser {
 
             // Link Artemis IV fire-control systems to their missle racks.
             if ((m.getType().hasFlag(MiscType.F_ARTEMIS) || (m.getType().hasFlag(MiscType.F_ARTEMIS_V)))
-                    && m.getLinked() == null) {
+                    && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     // only srm, lrm and mml are valid for artemis
-                    if (wtype.getAmmoType() != AmmoType.T_LRM
-                            && wtype.getAmmoType() != AmmoType.T_MML
-                            && wtype.getAmmoType() != AmmoType.T_SRM) {
+                    if ((wtype.getAmmoType() != AmmoType.T_LRM)
+                            && (wtype.getAmmoType() != AmmoType.T_MML)
+                            && (wtype.getAmmoType() != AmmoType.T_SRM)) {
                         continue;
                     }
 
@@ -258,9 +258,9 @@ public class MechFileParser {
                         break;
                     }
                     // also, mechs have a special location rule
-                    else if (ent instanceof Mech
-                            && m.getLocation() == Mech.LOC_HEAD
-                            && mWeapon.getLocation() == Mech.LOC_CT) {
+                    else if ((ent instanceof Mech)
+                            && (m.getLocation() == Mech.LOC_HEAD)
+                            && (mWeapon.getLocation() == Mech.LOC_CT)) {
                         m.setLinked(mWeapon);
                         break;
                     }
@@ -274,8 +274,8 @@ public class MechFileParser {
             } // End link-Artemis
             else if ((m.getType().hasFlag(MiscType.F_STEALTH)
                     || m.getType().hasFlag(MiscType.F_VOIDSIG))
-                    && m.getLinked() == null
-                    && ent instanceof Mech) {
+                    && (m.getLinked() == null)
+                    && (ent instanceof Mech)) {
                 // Find an ECM suite to link to the stealth system.
                 // Stop looking after we find the first ECM suite.
                 for (Mounted mEquip : ent.getMisc()) {
@@ -295,7 +295,7 @@ public class MechFileParser {
             } // End link-Stealth
             // Link PPC Capacitor to PPC it its location.
             else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
-                    && m.getLinked() == null) {
+                    && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getWeaponList()) {
@@ -315,11 +315,11 @@ public class MechFileParser {
                     if (mWeapon.getLocation() == m.getLocation()) {
 
                         //Only Legal IS PPC's are allowed.
-                        if ( mWeapon.getType() instanceof ISPPC
-                                ||  mWeapon.getType() instanceof ISLightPPC
-                                ||  mWeapon.getType() instanceof ISHeavyPPC
-                                ||  mWeapon.getType() instanceof ISERPPC
-                                ||  mWeapon.getType() instanceof ISSnubNosePPC ) {
+                        if ( (mWeapon.getType() instanceof ISPPC)
+                                ||  (mWeapon.getType() instanceof ISLightPPC)
+                                ||  (mWeapon.getType() instanceof ISHeavyPPC)
+                                ||  (mWeapon.getType() instanceof ISERPPC)
+                                ||  (mWeapon.getType() instanceof ISSnubNosePPC) ) {
                             m.setLinked(mWeapon);
                             break;
                         }
@@ -334,7 +334,7 @@ public class MechFileParser {
             } // End link-PPC Capacitor
             // Link MRM Apollo fire-control systems to their missle racks.
             else if (m.getType().hasFlag(MiscType.F_APOLLO)
-                    && m.getLinked() == null) {
+                    && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
@@ -391,13 +391,13 @@ public class MechFileParser {
                 }
             }
 
-            if (ent instanceof Mech
+            if ((ent instanceof Mech)
                     && (m.getType().hasFlag(MiscType.F_CASE) || m.getType()
                             .hasFlag(MiscType.F_CASEII))) {
                 ((Mech) ent).setAutoEject(false);
             }
 
-            if ( ent instanceof Mech && m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+            if ( (ent instanceof Mech) && m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
 
                 if ( ent.hasTargComp()
                         || ((Mech)ent).hasTSM()
@@ -405,29 +405,29 @@ public class MechFileParser {
                     throw new EntityLoadingException("Unable to load AES due to incompatible systems");
                 }
 
-                if ( m.getLocation() != Mech.LOC_LARM && m.getLocation() != Mech.LOC_LLEG
-                        && m.getLocation() != Mech.LOC_RARM && m.getLocation() != Mech.LOC_RLEG) {
+                if ( (m.getLocation() != Mech.LOC_LARM) && (m.getLocation() != Mech.LOC_LLEG)
+                        && (m.getLocation() != Mech.LOC_RARM) && (m.getLocation() != Mech.LOC_RLEG)) {
                     throw new EntityLoadingException("Unable to load AES due to incompatible location");
                 }
 
             }
 
-            if ( m.getType().hasFlag(MiscType.F_HARJEL) && m.getLocation() == Mech.LOC_HEAD ) {
+            if ( m.getType().hasFlag(MiscType.F_HARJEL) && (m.getLocation() == Mech.LOC_HEAD) ) {
                 throw new EntityLoadingException("Unable to load harjel in head.");
             }
 
-            if (m.getType().hasFlag(MiscType.F_MASS) && (m.getLocation() != Mech.LOC_HEAD || ((Mech) ent).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED && m.getLocation() != Mech.LOC_CT)) {
+            if (m.getType().hasFlag(MiscType.F_MASS) && ((m.getLocation() != Mech.LOC_HEAD) || ((((Mech) ent).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && (m.getLocation() != Mech.LOC_CT)))) {
                 throw new EntityLoadingException("Unable to load MASS!  Must be located in the same location as the cockpit.");
             }
 
             if ( m.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
-                    && ( (ent instanceof Mech && m.getLocation() == Mech.LOC_HEAD) || (ent instanceof VTOL && m.getLocation() == VTOL.LOC_ROTOR) )) {
+                    && ( ((ent instanceof Mech) && (m.getLocation() == Mech.LOC_HEAD)) || ((ent instanceof VTOL) && (m.getLocation() == VTOL.LOC_ROTOR)) )) {
                 throw new EntityLoadingException("Unable to load Modular Armor in Rotor/Head location");
             }
 
             if ( m.getType().hasFlag(MiscType.F_TALON) ){
                if ( ent instanceof BipedMech ){
-                   if ( m.getLocation() != Mech.LOC_LLEG && m.getLocation() != Mech.LOC_RLEG ){
+                   if ( (m.getLocation() != Mech.LOC_LLEG) && (m.getLocation() != Mech.LOC_RLEG) ){
                        throw new EntityLoadingException("Talons are only legal in the Legs");
                    }
 
@@ -435,8 +435,8 @@ public class MechFileParser {
                        throw new EntityLoadingException("Talons must be in all legs");
                    }
                }else if ( ent instanceof QuadMech ){
-                   if ( m.getLocation() != Mech.LOC_LLEG && m.getLocation() != Mech.LOC_RLEG  &&
-                           m.getLocation() != Mech.LOC_LARM && m.getLocation() != Mech.LOC_RARM){
+                   if ( (m.getLocation() != Mech.LOC_LLEG) && (m.getLocation() != Mech.LOC_RLEG)  &&
+                           (m.getLocation() != Mech.LOC_LARM) && (m.getLocation() != Mech.LOC_RARM)){
                        throw new EntityLoadingException("Talons are only legal in the Legs");
                    }
 
@@ -460,6 +460,52 @@ public class MechFileParser {
         if(ent instanceof Aero) {
             //set RACs and UACs at maximum firing rate if aero
             ent.setRapidFire();
+        }
+        if (ent instanceof BattleArmor) {
+            // now, depending on equipment and chassis, BA might be able to do leg
+            // and swarm attacks
+            if (((BattleArmor)ent).getChassisType() != BattleArmor.CHASSIS_TYPE_QUAD) {
+                int tBasicManipulatorCount = ent.countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
+                int tArmoredGloveCount = ent.countWorkingMisc(MiscType.F_ARMORED_GLOVE);
+                int tBattleClawCount = ent.countWorkingMisc(MiscType.F_BATTLE_CLAW);
+                switch (ent.getWeightClass()) {
+                case EntityWeightClass.WEIGHT_BA_PAL:
+                case EntityWeightClass.WEIGHT_BA_LIGHT:
+                    if ((tArmoredGloveCount > 1) || (tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
+                        try {
+                            ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false);
+                            ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), BattleArmor.LOC_SQUAD, false, false);
+                            ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD, false, false);
+                        } catch (LocationFullException ex) {
+                            throw new EntityLoadingException(ex.getMessage());
+                        }
+                    }
+                    break;
+                case EntityWeightClass.WEIGHT_BA_MEDIUM:
+                    if ((tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
+                        try {
+                            ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false);
+                            ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), BattleArmor.LOC_SQUAD, false, false);
+                            ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD, false, false);
+                        } catch (LocationFullException ex) {
+                            throw new EntityLoadingException(ex.getMessage());
+                        }
+                    }
+                    break;
+                case EntityWeightClass.WEIGHT_BA_HEAVY:
+                case EntityWeightClass.WEIGHT_BA_ASSAULT:
+                default:
+                    break;
+                }
+                // if it has AP mount, also add an infantry rifle
+                if (ent.countWorkingMisc(MiscType.F_AP_MOUNT) > 0) {
+                    try {
+                        ent.addEquipment(EquipmentType.get("InfantryRifle"), BattleArmor.LOC_SQUAD, false, false);
+                    } catch (LocationFullException ex) {
+                        throw new EntityLoadingException(ex.getMessage());
+                    }
+                }
+            }
         }
 
         // Check if it's canon; if it is, mark it as such.
@@ -567,7 +613,7 @@ public class MechFileParser {
             response = in.readLine();
         } catch (IOException ioe) {
         }
-        if (response != null && response.toLowerCase().indexOf("y") == 0) {
+        if ((response != null) && (response.toLowerCase().indexOf("y") == 0)) {
             return true;
         }
         return false;

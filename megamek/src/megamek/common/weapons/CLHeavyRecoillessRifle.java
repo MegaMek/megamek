@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -29,32 +29,32 @@ import megamek.server.Server;
  */
 public class CLHeavyRecoillessRifle extends Weapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4900393422594499114L;
 
     /**
-     * 
+     *
      */
     public CLHeavyRecoillessRifle() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
-        this.name = "Heavy Recoilless Rifle";
-        this.setInternalName(this.name);
-        this.addLookupName("CLHeavy Recoilless Rifle");
-        this.damage = 3;
-        this.ammoType = AmmoType.T_NA;
-        this.shortRange = 3;
-        this.mediumRange = 5;
-        this.longRange = 7;
-        this.extremeRange = 10;
-        this.bv = 22;
-        this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        techLevel = TechConstants.T_CLAN_TW;
+        name = "Heavy Recoilless Rifle";
+        setInternalName(name);
+        addLookupName("CLHeavy Recoilless Rifle");
+        damage = 3;
+        ammoType = AmmoType.T_NA;
+        shortRange = 3;
+        mediumRange = 5;
+        longRange = 7;
+        extremeRange = 10;
+        bv = 22;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)

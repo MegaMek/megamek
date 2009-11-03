@@ -478,16 +478,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if((null != te) && te.getQuirks().booleanOption("exp_actuator")) {
                 toHit.addModifier(-1, "exposed actuators");
             }
-
-            // If the attacker has Assault claws, give a -1 modifier.
-            // We can stop looking when we find our first match.
-            for (Mounted mount : ae.getMisc()) {
-                EquipmentType equip = mount.getType();
-                if (BattleArmor.ASSAULT_CLAW.equals(equip.getInternalName())) {
-                    toHit.addModifier(-1, "attacker has assault claws");
-                    break;
-                }
-            }
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
             toHit = Compute.getSwarmMekBaseToHit(ae, te);
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
@@ -510,8 +500,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // We can stop looking when we find our first match.
             for (Mounted mount : ae.getMisc()) {
                 EquipmentType equip = mount.getType();
-                if (BattleArmor.ASSAULT_CLAW.equals(equip.getInternalName())) {
-                    toHit.addModifier(-1, "attacker has assault claws");
+                if (equip.hasFlag(MiscType.F_MAGNET_CLAW)) {
+                    toHit.addModifier(-1, "attacker has magnetic claws");
                     break;
                 }
             }
@@ -854,7 +844,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             Aero a = (Aero) target;
 
             // is the target at zero velocity
-            if (a.getCurrentVelocity() == 0 && !(a.isSpheroid() && !game.getBoard().inSpace())) {
+            if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !game.getBoard().inSpace())) {
                 toHit.addModifier(-2, "target is not moving");
             }
 
@@ -1732,14 +1722,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (Compute.isAirToAir(ae, target)) {
             if ((aAlt - tAlt) > 2) {
                 toHit.setHitTable(ToHitData.HIT_ABOVE);
-            } 
+            }
             else if ((tAlt - aAlt) > 2) {
                 toHit.setHitTable(ToHitData.HIT_BELOW);
             }
-            else if((aAlt - tAlt) > 0 && ((Aero)te).isSpheroid()) {
+            else if(((aAlt - tAlt) > 0) && ((Aero)te).isSpheroid()) {
                 toHit.setHitTable(ToHitData.HIT_ABOVE);
             }
-            else if((aAlt - tAlt) < 0 && ((Aero)te).isSpheroid()) {
+            else if(((aAlt - tAlt) < 0) && ((Aero)te).isSpheroid()) {
                 toHit.setHitTable(ToHitData.HIT_BELOW);
             }
         }

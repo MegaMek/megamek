@@ -17,6 +17,7 @@ package megamek.client.ui.swing;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigInteger;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -983,7 +984,7 @@ public class MapMenu extends JPopupMenu {
         return false;
     }
 
-    private boolean hasWeaponFlag(long weaponFlag) {
+    private boolean hasWeaponFlag(BigInteger weaponFlag) {
 
         if (myEntity.getWeaponList().size() < 1) {
             return false;

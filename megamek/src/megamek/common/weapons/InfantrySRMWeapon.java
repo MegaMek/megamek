@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -30,31 +30,31 @@ import megamek.server.Server;
 public class InfantrySRMWeapon extends InfantryWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5311681183178942222L;
 
     public InfantrySRMWeapon() {
         super();
-        this.techLevel = TechConstants.T_ALLOWED_ALL;
-        this.name = "Infantry SRM";
-        this.setInternalName(this.name);
-        this.addLookupName("InfantrySRM");
-        this.ammoType = AmmoType.T_SRM;
-        this.shortRange = 2;
-        this.mediumRange = 4;
-        this.longRange = 6;
-        this.extremeRange = 8;
-        // SRM Launcher (Standard, two-shot), TM p. 300 
-        this.cost = 1500;
+        techLevel = TechConstants.T_ALLOWED_ALL;
+        name = "Infantry SRM";
+        setInternalName(name);
+        addLookupName("InfantrySRM");
+        ammoType = AmmoType.T_SRM;
+        shortRange = 2;
+        mediumRange = 4;
+        longRange = 6;
+        extremeRange = 8;
+        // SRM Launcher (Standard, two-shot), TM p. 300
+        cost = 1500;
         // SRM Launcher (Standard, two-shot) TM p. 319
-        this.bv = 2.63;
-        this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_MISSILE;
+        bv = 2.63;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */

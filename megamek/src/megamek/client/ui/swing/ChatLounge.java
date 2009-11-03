@@ -73,7 +73,6 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
@@ -149,7 +148,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     JButton butLoad;
     JButton butArmy;
     JButton butSkills;
-    JButton butLoadCustomBA;
+    //JButton butLoadCustomBA;
     JButton butLoadCustomFS;
     private JButton butDelete;
     private JButton butCustom;
@@ -190,7 +189,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         public void doneLoading() {
             butLoad.setEnabled(true);
             butArmy.setEnabled(true);
-            butLoadCustomBA.setEnabled(true);
+            //butLoadCustomBA.setEnabled(true);
             butLoadCustomFS.setEnabled(true);
         }
     };
@@ -829,8 +828,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butLoad = new JButton(Messages.getString("ChatLounge.butLoad")); //$NON-NLS-1$
         butArmy = new JButton(Messages.getString("ChatLounge.butArmy")); //$NON-NLS-1$
         butSkills = new JButton(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
-        butLoadCustomBA = new JButton(Messages
-                .getString("ChatLounge.butLoadCustomBA"));
+        /*butLoadCustomBA = new JButton(Messages
+                .getString("ChatLounge.butLoadCustomBA"));*/
         butLoadCustomFS = new JButton(Messages
                 .getString("ChatLounge.butLoadCustomFS"));
 
@@ -838,7 +837,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         mechSummaryCache.addListener(mechSummaryCacheListener);
         butLoad.setEnabled(mechSummaryCache.isInitialized());
         butArmy.setEnabled(mechSummaryCache.isInitialized());
-        butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
+        //butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
         butLoadCustomFS.setEnabled(mechSummaryCache.isInitialized());
 
         butSkills.setEnabled(true);
@@ -849,8 +848,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butLoad.addActionListener(this);
         butArmy.addActionListener(this);
         butSkills.addActionListener(this);
-        butLoadCustomBA.setActionCommand("load_custom_ba"); //$NON-NLS-1$
-        butLoadCustomBA.addActionListener(this);
+        //butLoadCustomBA.setActionCommand("load_custom_ba"); //$NON-NLS-1$
+        //butLoadCustomBA.addActionListener(this);
         butLoadCustomFS.setActionCommand("load_custom_fs"); //$NON-NLS-1$
         butLoadCustomFS.addActionListener(this);
 
@@ -914,11 +913,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         c.gridx = 0;
         c.gridy = 3;
-        gridbag.setConstraints(butLoadCustomBA, c);
+        /*gridbag.setConstraints(butLoadCustomBA, c);
         panButtons.add(butLoadCustomBA);
 
         c.gridx = 0;
-        c.gridy = 4;
+        c.gridy = 4;*/
         gridbag.setConstraints(butLoadCustomFS, c);
         panButtons.add(butLoadCustomFS);
 
@@ -1658,17 +1657,17 @@ public static String formatUnitTooltip(Entity entity) {
             }
         });
         MechViewPanel mvp = new MechViewPanel();
-        mvp.setMech(entity);    
+        mvp.setMech(entity);
         JButton btn = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
         btn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dialog.setVisible(false);
             }
-        });       
-        
+        });
+
         dialog.getContentPane().setLayout(new GridBagLayout());
         GridBagConstraints c;
-        
+
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -1677,7 +1676,7 @@ public static String formatUnitTooltip(Entity entity) {
         c.weightx = 1.0;
         c.weighty = 1.0;
         dialog.getContentPane().add(mvp, c);
-        
+
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
@@ -1707,9 +1706,9 @@ public static String formatUnitTooltip(Entity entity) {
         clientgui.getMechSelectorDialog().setVisible(true);
     }
 
-    private void loadCustomBA() {
+    /*private void loadCustomBA() {
         clientgui.getCustomBADialog().setVisible(true);
-    }
+    }*/
 
     public void loadCustomFS() {
         String name = JOptionPane.showInputDialog(clientgui.frame,
@@ -1843,8 +1842,8 @@ public static String formatUnitTooltip(Entity entity) {
             loadArmy();
         } else if (ev.getSource().equals(butSkills)) {
             loadRandomSkills();
-        } else if (ev.getSource().equals(butLoadCustomBA)) {
-            loadCustomBA();
+        /*} else if (ev.getSource().equals(butLoadCustomBA)) {
+            loadCustomBA();*/
         } else if (ev.getSource() == butLoadCustomFS) {
             loadCustomFS();
         } else if (ev.getSource().equals(butCustom)

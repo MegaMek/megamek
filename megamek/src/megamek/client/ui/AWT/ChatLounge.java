@@ -132,7 +132,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     Button butLoad;
     Button butArmy;
     Button butSkills;
-    Button butLoadCustomBA;
+    //Button butLoadCustomBA;
     Button butLoadCustomFS;
     private Button butDelete;
     private Button butCustom;
@@ -173,7 +173,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             butLoad.setEnabled(true);
             butArmy.setEnabled(true);
             butSkills.setEnabled(true);
-            butLoadCustomBA.setEnabled(true);
+            //butLoadCustomBA.setEnabled(true);
             butLoadCustomFS.setEnabled(true);
         }
     };
@@ -726,15 +726,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butLoad = new Button(Messages.getString("ChatLounge.butLoad")); //$NON-NLS-1$
         butArmy = new Button(Messages.getString("ChatLounge.butArmy")); //$NON-NLS-1$
         butSkills = new Button(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
-        butLoadCustomBA = new Button(Messages
-                .getString("ChatLounge.butLoadCustomBA"));
+        //butLoadCustomBA = new Button(Messages
+        //        .getString("ChatLounge.butLoadCustomBA"));
         butLoadCustomFS = new Button(Messages.getString("ChatLounge.butLoadCustomFS"));
 
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
         butLoad.setEnabled(mechSummaryCache.isInitialized());
         butArmy.setEnabled(mechSummaryCache.isInitialized());
-        butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
+        //butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
         butLoadCustomFS.setEnabled(mechSummaryCache.isInitialized());
 
         Font font = new Font("sanserif", Font.BOLD, 18); //$NON-NLS-1$
@@ -744,8 +744,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butLoad.addActionListener(this);
         butArmy.addActionListener(this);
         butSkills.addActionListener(this);
-        butLoadCustomBA.setActionCommand("load_custom_ba"); //$NON-NLS-1$
-        butLoadCustomBA.addActionListener(this);
+        //butLoadCustomBA.setActionCommand("load_custom_ba"); //$NON-NLS-1$
+        //butLoadCustomBA.addActionListener(this);
         butLoadCustomFS.setActionCommand("load_custom_fs"); //$NON-NLS-1$
         butLoadCustomFS.addActionListener(this);
 
@@ -819,9 +819,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         gridbag.setConstraints(butSkills, c);
         panEntities.add(butSkills);
 
-        c.gridwidth = 1;
-        gridbag.setConstraints(butLoadCustomBA, c);
-        panEntities.add(butLoadCustomBA);
+        //c.gridwidth = 1;
+        //gridbag.setConstraints(butLoadCustomBA, c);
+        //panEntities.add(butLoadCustomBA);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(butLoadCustomFS, c);
@@ -1548,9 +1548,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         clientgui.getRandomSkillDialog().setVisible(true);
     }
 
-    public void loadCustomBA() {
+    /*public void loadCustomBA() {
         clientgui.getCustomBADialog().setVisible(true);
-    }
+    }*/
     /**
      * This button will now just load an empty fighter squadron which must be loaded with
      * fighters during the deployment phase
@@ -1749,8 +1749,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             loadArmy();
         } else if (ev.getSource() == butSkills) {
             loadRandomSkills();
-        } else if (ev.getSource() == butLoadCustomBA) {
-            loadCustomBA();
+        /*} else if (ev.getSource() == butLoadCustomBA) {
+            loadCustomBA();*/
         } else if (ev.getSource() == butLoadCustomFS) {
             loadCustomFS();
         } else if ((ev.getSource() == butCustom) || (ev.getSource() == lisEntities)) {

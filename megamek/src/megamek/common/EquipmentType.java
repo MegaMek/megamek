@@ -20,6 +20,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -27,7 +28,7 @@ import java.util.Vector;
 /**
  * Represents any type of equipment mounted on a mechs, excluding systems and
  * actuators.
- * 
+ *
  * @author Ben
  * @version
  */
@@ -115,8 +116,7 @@ public class EquipmentType {
     protected int toHitModifier = 0;
     protected int techLevel = TechConstants.T_TECH_UNKNOWN;
 
-    protected long flags = 0;
-    protected long flags1 = 0;
+    protected BigInteger flags = BigInteger.valueOf(0);
 
     protected long subType = 0;
 
@@ -150,16 +150,12 @@ public class EquipmentType {
     protected static Vector<EquipmentType> allTypes;
     protected static Hashtable<String, EquipmentType> lookupHash;
 
-    // Constants for Flag Fields
-    public static final int FLAG_FIELD_0 = 0;
-    public static final int FLAG_FIELD_1 = 1;
-
     /** Creates new EquipmentType */
     public EquipmentType() {
         //default constructor
     }
 
-    public void setFlags(long inF) {
+    public void setFlags(BigInteger inF) {
         flags = inF;
     }
 
@@ -224,32 +220,12 @@ public class EquipmentType {
         return toHitModifier;
     }
 
-    public long getFlags(int flagField) {
-        switch (flagField) {
-        case FLAG_FIELD_1:
-            return flags1;
-        default:
-            return flags;
-        }
-    }
-
-    public long getFlags() {
+    public BigInteger getFlags() {
         return flags;
     }
 
-    public boolean hasFlag(long flag, int flagField) {
-
-        switch (flagField) {
-        case FLAG_FIELD_1:
-            return (flags1 & flag) != 0;
-        default:
-            return (flags & flag) != 0;
-        }
-
-    }
-
-    public boolean hasFlag(long flag) {
-        return (flags & flag) != 0;
+    public boolean hasFlag(BigInteger flag) {
+        return !(flags.and(flag)).equals(BigInteger.valueOf(0));
     }
 
     public double getBV(Entity entity) {
@@ -300,7 +276,7 @@ public class EquipmentType {
      * Sets the modes that this type of equipment can be in. By default the
      * EquipmentType doesn't have the modes, so don't try to call this method
      * with null or empty argument.
-     * 
+     *
      * @param modes
      *            non null, non empty list of available mode names.
      */
@@ -322,7 +298,7 @@ public class EquipmentType {
      * switching. This method checks for end of turn modes that are kept in a
      * vector of names. It is used by the {@link Mounted#setMode(int)} method to
      * distinguish instant and end of turn switching.
-     * 
+     *
      * @param mode
      *            - the <code>String</code> of the mode name involved in the
      *            switch
@@ -346,7 +322,7 @@ public class EquipmentType {
      * <p>
      * Fails if this type of the equipment doesn't have modes, or given mode is
      * out of the valid range.
-     * 
+     *
      * @param modeNum
      * @return mode number <code>modeNum</code> from the list of modes available
      *         for this type of equipment.

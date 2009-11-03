@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -28,32 +28,32 @@ import megamek.server.Server;
  */
 public class CLFireExtinguisher extends Weapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5190894967392738394L;
 
     /**
-     * 
+     *
      */
     public CLFireExtinguisher() {
         super();
-        this.techLevel = TechConstants.T_CLAN_ADVANCED;
-        this.name = "Fire Extinguisher";
-        this.setInternalName(this.name);
-        this.heat = 0;
-        this.damage = 0;
-        this.shortRange = 1;
-        this.mediumRange = 1;
-        this.longRange = 1;
-        this.extremeRange = 1;
-        this.tonnage = 0.0f;
-        this.criticals = 0;
-        this.flags |= F_SOLO_ATTACK | F_NO_FIRES;
+        techLevel = TechConstants.T_CLAN_ADVANCED;
+        name = "Fire Extinguisher";
+        setInternalName(name);
+        heat = 0;
+        damage = 0;
+        shortRange = 1;
+        mediumRange = 1;
+        longRange = 1;
+        extremeRange = 1;
+        tonnage = 0.0f;
+        criticals = 0;
+        flags = flags.or(F_SOLO_ATTACK).or(F_ONESHOT);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */

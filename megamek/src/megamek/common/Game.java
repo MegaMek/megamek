@@ -1813,7 +1813,6 @@ public class Game implements Serializable, IGame {
         Entity unit = null;
         boolean result;
         Hashtable<Player, Boolean> playerFlags = null;
-        String name = null;
 
         // Assume that we don't need new transporters.
         result = false;
@@ -1828,17 +1827,11 @@ public class Game implements Serializable, IGame {
             unit = i.nextElement();
             if (unit instanceof BattleArmor) {
 
-                // Does the unit have a Magnetic Clamp?
-                for (Mounted equip : unit.getMisc()) {
-                    name = equip.getType().getInternalName();
-                    if (BattleArmor.MAGNETIC_CLAMP.equals(name)) {
-                        // The unit's player needs new transporters.
-                        result = true;
-                        playerFlags.put(unit.getOwner(), Boolean.TRUE);
+                if (unit.countWorkingMisc(MiscType.F_MAGNETIC_CLAMP) > 0) {
+                    // The unit's player needs new transporters.
+                    result = true;
+                    playerFlags.put(unit.getOwner(), Boolean.TRUE);
 
-                        // Stop looking.
-                        break;
-                    }
                 }
 
             } // End unit-is-BattleArmor

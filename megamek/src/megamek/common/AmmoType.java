@@ -15,6 +15,7 @@
 
 package megamek.common;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -115,21 +116,21 @@ public class AmmoType extends EquipmentType {
     public static final int NUM_TYPES = 88;
 
     // ammo flags
-    public static final long F_MG = 1l << 0;
-    public static final long F_BATTLEARMOR = 1l << 1; // only used by BA squads
-    public static final long F_PROTOMECH = 1l << 2; // only used by Protomechs
-    public static final long F_HOTLOAD = 1l << 3; // Ammo Can be hotloaded
-    public static final long F_ENCUMBERING = 1l << 4; // BA can't jump or make
+    public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
+    public static final BigInteger F_BATTLEARMOR = BigInteger.valueOf(1).shiftLeft(1); // only used by BA squads
+    public static final BigInteger F_PROTOMECH = BigInteger.valueOf(1).shiftLeft(2); // only used by Protomechs
+    public static final BigInteger F_HOTLOAD = BigInteger.valueOf(1).shiftLeft(3); // Ammo Can be hotloaded
+    public static final BigInteger F_ENCUMBERING = BigInteger.valueOf(1).shiftLeft(4); // BA can't jump or make
                                                       // antimech until dumped
-    public static final long F_MML_LRM = 1l << 5; // LRM type
-    public static final long F_AR10_WHITE_SHARK = 1l << 6; // White shark type
-    public static final long F_AR10_KILLER_WHALE = 1l << 7; // Killer Whale type
-    public static final long F_AR10_BARRACUDA = 1l << 8; // barracuda type
-    public static final long F_NUCLEAR = 1l << 9; // Nuclear missile
-    public static final long F_TELE_MISSILE = 1l << 10; // Tele-Missile
-    public static final long F_CAP_MISSILE = 1l << 11; // Tele-Missile
-    public static final long F_SPACE_BOMB = 1l << 12; //can be used to space bomb
-    public static final long F_GROUND_BOMB = 1l << 13; //can be used to ground bomb
+    public static final BigInteger F_MML_LRM = BigInteger.valueOf(1).shiftLeft(5); // LRM type
+    public static final BigInteger F_AR10_WHITE_SHARK = BigInteger.valueOf(1).shiftLeft(6); // White shark type
+    public static final BigInteger F_AR10_KILLER_WHALE = BigInteger.valueOf(1).shiftLeft(7); // Killer Whale type
+    public static final BigInteger F_AR10_BARRACUDA = BigInteger.valueOf(1).shiftLeft(8); // barracuda type
+    public static final BigInteger F_NUCLEAR = BigInteger.valueOf(1).shiftLeft(9); // Nuclear missile
+    public static final BigInteger F_TELE_MISSILE = BigInteger.valueOf(1).shiftLeft(10); // Tele-Missile
+    public static final BigInteger F_CAP_MISSILE = BigInteger.valueOf(1).shiftLeft(11); // Tele-Missile
+    public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(12); //can be used to space bomb
+    public static final BigInteger F_GROUND_BOMB = BigInteger.valueOf(1).shiftLeft(13); //can be used to ground bomb
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -1185,7 +1186,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags |= F_MG;
+        ammo.flags = ammo.flags.or(F_MG);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 1000;
@@ -1206,7 +1207,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags |= F_MG;
+        ammo.flags = ammo.flags.or(F_MG);
         ammo.shots = 100;
         ammo.bv = 0.5f;
         ammo.tonnage = 0.5f;
@@ -1227,7 +1228,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags |= F_MG;
+        ammo.flags = ammo.flags.or(F_MG);
         ammo.shots = 100;
         ammo.bv = 1;
         ammo.cost = 1000;
@@ -1247,7 +1248,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags |= F_MG;
+        ammo.flags = ammo.flags.or(F_MG);
         ammo.shots = 50;
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
@@ -1268,7 +1269,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags |= F_MG;
+        ammo.flags = ammo.flags.or(F_MG);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 500;
@@ -1288,7 +1289,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags |= F_MG;
+        ammo.flags = ammo.flags.or(F_MG);
         ammo.shots = 100;
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
@@ -1310,7 +1311,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 24;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.bv = 6;
         ammo.cost = 30000;
@@ -1332,7 +1333,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 12;
         ammo.bv = 11;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         ammo.cost = 30000;
@@ -1355,7 +1356,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 17;
         ammo.cost = 30000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -1376,7 +1377,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 23;
         ammo.cost = 30000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -1455,7 +1456,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 6;
         ammo.cost = 30000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -1477,7 +1478,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 11;
         ammo.cost = 30000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -1499,7 +1500,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 17;
         ammo.cost = 30000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -1521,7 +1522,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 23;
         ammo.cost = 30000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -2938,7 +2939,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags |= F_MG;
+        ammo.flags = ammo.flags.or(F_MG);
         ammo.shots = 100;
         ammo.bv = 1;
         ammo.cost = 1000;
@@ -2959,7 +2960,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags |= F_MG;
+        ammo.flags = ammo.flags.or(F_MG);
         ammo.shots = 50;
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
@@ -2982,7 +2983,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags |= F_MG;
+        ammo.flags = ammo.flags.or(F_MG);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 1000;
@@ -3004,7 +3005,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags |= F_MG;
+        ammo.flags = ammo.flags.or(F_MG);
         ammo.shots = 100;
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
@@ -3026,7 +3027,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags |= F_MG;
+        ammo.flags = ammo.flags.or(F_MG);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 500;
@@ -3047,7 +3048,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags |= F_MG;
+        ammo.flags = ammo.flags.or(F_MG);
         ammo.shots = 100;
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
@@ -4446,7 +4447,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 40;
         ammo.bv = 4;
         ammo.cost = 75000;
-        ammo.flags |= F_HOTLOAD | F_MML_LRM;
+        ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -4486,7 +4487,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 6;
         ammo.cost = 75000;
-        ammo.flags |= F_HOTLOAD | F_MML_LRM;
+        ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -4526,7 +4527,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 17;
         ammo.bv = 8;
         ammo.cost = 75000;
-        ammo.flags |= F_HOTLOAD | F_MML_LRM;
+        ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -4566,7 +4567,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 13;
         ammo.bv = 11;
         ammo.cost = 75000;
-        ammo.flags |= F_HOTLOAD | F_MML_LRM;
+        ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -4606,7 +4607,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 75000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -4628,7 +4629,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 75000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -4669,7 +4670,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 75000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -4691,7 +4692,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 75000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -4732,7 +4733,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.cost = 75000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -4754,7 +4755,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.cost = 75000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -4795,7 +4796,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.cost = 75000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -4817,7 +4818,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.cost = 75000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -4932,7 +4933,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.kgPerShot = 20;
@@ -4951,7 +4952,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_BA_MICRO_BOMB;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -4969,7 +4970,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM_TORPEDO_COMBO;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 7;
         ammo.cost = 30000;
@@ -4988,7 +4989,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2; // only used for ammo crits
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_NARC;
-        ammo.flags |= F_BATTLEARMOR | F_ENCUMBERING;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR).or(F_ENCUMBERING);
         ammo.shots = 2;
         ammo.explosive = false;
         ammo.bv = 0;
@@ -5008,7 +5009,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 4;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MINE;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -5029,7 +5030,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags |= F_MG | F_PROTOMECH;
+        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
         ammo.shots = 100;
         ammo.bv = 1;
 
@@ -5048,7 +5049,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags |= F_MG | F_PROTOMECH;
+        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
         ammo.shots = 200;
         ammo.bv = 1;
 
@@ -5067,7 +5068,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags |= F_MG | F_PROTOMECH;
+        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
         ammo.shots = 200;
         ammo.bv = 1;
 
@@ -5086,7 +5087,6 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC;
-        ammo.flags |= F_PROTOMECH;
         ammo.shots = 40;
         ammo.bv = 4;
         ammo.cost = 1200;
@@ -5106,7 +5106,6 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 4;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_AC;
-        ammo.flags |= F_PROTOMECH;
         ammo.shots = 20;
         ammo.bv = 6;
         ammo.cost = 4800;
@@ -5126,7 +5125,6 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 8;
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_AC;
-        ammo.flags |= F_PROTOMECH;
         ammo.shots = 10;
         ammo.bv = 8;
         ammo.cost = 6300;
@@ -5249,10 +5247,10 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 2;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.kgPerShot = 8.3;
 
@@ -5271,10 +5269,10 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 3;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.kgPerShot = 16.6;
 
@@ -5293,10 +5291,10 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 4;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.kgPerShot = 25;
 
@@ -5315,10 +5313,10 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 5;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.kgPerShot = 33.3;
 
@@ -5336,10 +5334,10 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 6;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.kgPerShot = 41.5;
 
@@ -5358,7 +5356,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 8.3;
@@ -5378,7 +5376,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.kgPerShot = 16.6;
@@ -5398,7 +5396,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 5;
         ammo.kgPerShot = 25;
@@ -5418,7 +5416,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 6;
         ammo.kgPerShot = 33.3;
@@ -5438,7 +5436,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 7;
         ammo.kgPerShot = 41.5;
@@ -5458,7 +5456,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 7;
         ammo.kgPerShot = 60;
@@ -5478,7 +5476,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 6;
         ammo.kgPerShot = 50;
@@ -5498,7 +5496,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 5;
         ammo.kgPerShot = 40;
@@ -5518,7 +5516,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 4;
         ammo.kgPerShot = 30;
@@ -5538,7 +5536,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
@@ -5557,7 +5555,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 1;
         ammo.kgPerShot = 5;
@@ -5576,7 +5574,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
@@ -5595,7 +5593,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 15;
@@ -5614,7 +5612,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_MRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.kgPerShot = 20;
@@ -5633,7 +5631,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_MRM;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 4;
         ammo.kgPerShot = 25;
@@ -5652,7 +5650,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -5668,7 +5666,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_TASER;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -5704,7 +5702,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -5722,7 +5720,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -5740,7 +5738,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -5758,7 +5756,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -5777,7 +5775,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
@@ -5798,7 +5796,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 4;
         ammo.kgPerShot = 20;
@@ -5818,7 +5816,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 6;
         ammo.kgPerShot = 30;
@@ -5838,7 +5836,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 8;
         ammo.kgPerShot = 40;
@@ -5858,7 +5856,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 10;
         ammo.kgPerShot = 50;
@@ -5878,7 +5876,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags |= F_BATTLEARMOR;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 12;
         ammo.kgPerShot = 60;
@@ -6106,7 +6104,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 18;
         ammo.bv = 7;
         ammo.cost = 90000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -6129,7 +6127,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 9;
         ammo.bv = 15;
         ammo.cost = 90000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -6152,7 +6150,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 22;
         ammo.cost = 90000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -6175,7 +6173,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 30;
         ammo.cost = 90000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -6197,7 +6195,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 8;
         ammo.cost = 50000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -6219,7 +6217,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 16;
         ammo.cost = 50000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -6241,7 +6239,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 26;
         ammo.cost = 50000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -6263,7 +6261,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 3;
         ammo.bv = 35;
         ammo.cost = 50000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -6337,7 +6335,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 7;
         ammo.cost = 60000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -6357,7 +6355,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 14;
         ammo.cost = 60000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -6377,7 +6375,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 21;
         ammo.cost = 60000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -6397,7 +6395,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 3;
         ammo.bv = 28;
         ammo.cost = 60000;
-        ammo.flags |= F_HOTLOAD;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });
 
         return ammo;
@@ -6879,7 +6877,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 288;
         ammo.cost = 55000;
         ammo.capital = true;
-        ammo.flags |= F_TELE_MISSILE | F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_TELE_MISSILE).or(F_CAP_MISSILE);
 
         return ammo;
     }
@@ -6897,7 +6895,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 96;
         ammo.cost = 20000;
         ammo.capital = true;
-        ammo.flags |= F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_CAP_MISSILE);
 
         return ammo;
     }
@@ -6916,7 +6914,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 20000;
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
-        ammo.flags |= F_TELE_MISSILE | F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_TELE_MISSILE).or(F_CAP_MISSILE);
 
         return ammo;
     }
@@ -6934,7 +6932,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
-        ammo.flags |= F_NUCLEAR | F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE);
         ammo.capital = true;
 
         return ammo;
@@ -6954,7 +6952,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 14000;
         ammo.capital = true;
         ammo.ammoRatio = 40;
-        ammo.flags |= F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_CAP_MISSILE);
 
         return ammo;
     }
@@ -6973,7 +6971,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 14000;
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
-        ammo.flags |= F_TELE_MISSILE | F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_TELE_MISSILE).or(F_CAP_MISSILE);
 
         return ammo;
     }
@@ -6992,7 +6990,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 8000;
         ammo.toHitModifier = -2;
         ammo.capital = true;
-        ammo.flags |= F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_CAP_MISSILE);
 
         return ammo;
     }
@@ -7012,7 +7010,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -2;
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
-        ammo.flags |= F_TELE_MISSILE | F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_TELE_MISSILE).or(F_CAP_MISSILE);
 
         return ammo;
     }
@@ -7029,7 +7027,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 65;
         ammo.cost = 8000;
-        ammo.flags |= F_AR10_BARRACUDA | F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_AR10_BARRACUDA).or(F_CAP_MISSILE);
         ammo.toHitModifier = -2;
         ammo.capital = true;
 
@@ -7048,7 +7046,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
-        ammo.flags |= F_AR10_KILLER_WHALE | F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_CAP_MISSILE);
         ammo.capital = true;
 
         return ammo;
@@ -7067,7 +7065,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
-        ammo.flags |= F_AR10_KILLER_WHALE | F_NUCLEAR | F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_NUCLEAR).or(F_CAP_MISSILE);
         ammo.capital = true;
 
         return ammo;
@@ -7085,7 +7083,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 72;
         ammo.cost = 14000;
-        ammo.flags |= F_AR10_WHITE_SHARK | F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_AR10_WHITE_SHARK).or(F_CAP_MISSILE);
         ammo.capital = true;
 
         return ammo;
@@ -7103,7 +7101,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 65;
         ammo.cost = 8000;
-        ammo.flags |= F_AR10_BARRACUDA | F_TELE_MISSILE | F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_AR10_BARRACUDA).or(F_TELE_MISSILE).or(F_CAP_MISSILE);
         ammo.toHitModifier = -2;
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
@@ -7123,7 +7121,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
-        ammo.flags |= F_AR10_KILLER_WHALE | F_TELE_MISSILE | F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_TELE_MISSILE).or(F_CAP_MISSILE);
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
 
@@ -7142,7 +7140,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 72;
         ammo.cost = 14000;
-        ammo.flags |= F_AR10_WHITE_SHARK | F_TELE_MISSILE | F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_AR10_WHITE_SHARK).or(F_TELE_MISSILE).or(F_CAP_MISSILE);
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
 
@@ -7178,7 +7176,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 0;
-        ammo.flags |= F_NUCLEAR;
+        ammo.flags = ammo.flags.or(F_NUCLEAR);
         ammo.capital = true;
 
         return ammo;
@@ -7254,7 +7252,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 50;
         ammo.cost = 30000;
         ammo.capital = true;
-        ammo.flags |= F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_CAP_MISSILE);
 
         return ammo;
     }
@@ -7272,7 +7270,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 40;
         ammo.cost = 25000;
         ammo.capital = true;
-        ammo.flags |= F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_CAP_MISSILE);
 
         return ammo;
     }
@@ -7290,7 +7288,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 62;
         ammo.cost = 19000;
         ammo.capital = true;
-        ammo.flags |= F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_CAP_MISSILE);
 
         return ammo;
     }
@@ -7308,7 +7306,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 84;
         ammo.cost = 15000;
         ammo.capital = true;
-        ammo.flags |= F_CAP_MISSILE;
+        ammo.flags = ammo.flags.or(F_CAP_MISSILE);
 
         return ammo;
     }

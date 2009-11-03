@@ -74,17 +74,6 @@ package megamek.common;
         super();
     }
 
-    /**
-     * Get the internal name of the equipment needed to board this transporter.
-     * <p/> Sub-classes are encouraged to override this method.
-     *
-     * @return a <code>String</code> containing the internal name of the
-     *         <code>EquipmentType</code> needed to board this transporter.
-     */
-    @Override
-    protected String getBoardingEquipment() {
-        return BattleArmor.MAGNETIC_CLAMP;
-    }
 
     /**
      * Get the <code>String</code> to report the presence (or lack thereof) of
@@ -108,6 +97,39 @@ package megamek.common;
     @Override
     public int getCargoMpReduction() {
         return getLoadedUnits().size();
+    }
+
+    /**
+     * Determines if this object can accept the given unit. The unit may not be
+     * of the appropriate type or there may be no room for the unit.
+     * <p>
+     *
+     * @param unit - the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code>
+     *         otherwise.
+     */
+    @Override
+    public boolean canLoad(Entity unit) {
+        // Assume that we can carry the unit.
+        boolean result = true;
+
+        // Only BattleArmor can be carried in BattleArmorHandles.
+        if (!(unit instanceof BattleArmor)) {
+            result = false;
+        }
+
+        // We must have enough space for the new troopers.
+        else if (null != troopers) {
+            result = false;
+        }
+
+        // The unit must be capable of doing mechanized BA
+        else {
+            result = ((BattleArmor)unit).countWorkingMisc(MiscType.F_MAGNETIC_CLAMP) > 0;
+        }
+
+        // Return our result.
+        return result;
     }
 
 } // End package class ClampMountTank extends BattleArmorHandlesTank

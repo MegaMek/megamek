@@ -126,7 +126,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     BoardSelectionDialog boardSelectionDialog;
     GameOptionsDialog gameOptionsDialog;
     private MechSelectorDialog mechSelectorDialog;
-    private CustomBattleArmorDialog customBADialog;
+    //private CustomBattleArmorDialog customBADialog;
     private CustomFighterSquadronDialog customFSDialog;
     private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
@@ -411,12 +411,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         add(cb.getComponent(), BorderLayout.SOUTH);
         client.changePhase(IGame.Phase.PHASE_UNKNOWN);
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
-        customBADialog = new CustomBattleArmorDialog(this);
+        //customBADialog = new CustomBattleArmorDialog(this);
         customFSDialog = new CustomFighterSquadronDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
-        new Thread(customBADialog, "Custom Battle Armor Dialog").start(); //$NON-NLS-1$
+        //new Thread(customBADialog, "Custom Battle Armor Dialog").start(); //$NON-NLS-1$
     }
 
     /**
@@ -647,9 +647,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         return mechSelectorDialog;
     }
 
-    public CustomBattleArmorDialog getCustomBADialog() {
+    /*public CustomBattleArmorDialog getCustomBADialog() {
         return customBADialog;
-    }
+    }*/
 
     public CustomFighterSquadronDialog getCustomFSDialog() {
         return customFSDialog;

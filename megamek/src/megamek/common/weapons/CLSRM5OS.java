@@ -39,6 +39,6 @@ public class CLSRM5OS extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         bv = 9;
-        flags |= F_NO_FIRES | F_ONESHOT;
+        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
     }
 }

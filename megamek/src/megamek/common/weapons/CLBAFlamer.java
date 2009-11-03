@@ -49,6 +49,6 @@ public class CLBAFlamer extends FlamerWeapon {
         cost = 7500;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        flags |= F_BA_WEAPON;
+        flags = flags.or(F_BA_WEAPON);
     }
 }

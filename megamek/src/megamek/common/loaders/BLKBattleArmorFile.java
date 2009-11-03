@@ -50,7 +50,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         t.setChassis(dataFile.getDataAsString("Name")[0]);
 
         // Model is not strictly necessary.
-        if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
+        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
             t.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             t.setModel("");
@@ -62,10 +62,26 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             t.setSource(dataFile.getDataAsString("source")[0]);
         }
 
-        if (!dataFile.exists("tonnage")) {
-            throw new EntityLoadingException("Could not find weight block.");
+        if (!dataFile.exists("trooper count")) {
+            throw new EntityLoadingException("Could not find trooper count block.");
         }
-        t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
+        t.setWeight(dataFile.getDataAsFloat("trooper count")[0]);
+
+        if (!dataFile.exists("weightclass")) {
+            throw new EntityLoadingException("Could not find weightclass block.");
+        }
+        t.setWeightClass(dataFile.getDataAsInt("weightclass")[0]);
+        if (!dataFile.exists("chassis_type")) {
+            throw new EntityLoadingException("Could not find chassis_type block.");
+        }
+        String chassis = dataFile.getDataAsString("chassis_type")[0];
+        if (chassis.toLowerCase().equals("biped")) {
+            t.setChassisType(BattleArmor.CHASSIS_TYPE_BIPED);
+        } else if (chassis.toLowerCase().equals("quad")) {
+            t.setChassisType(BattleArmor.CHASSIS_TYPE_QUAD);
+        } else {
+            throw new EntityLoadingException("Unsupported chassis type: "+chassis);
+        }
 
         if (!dataFile.exists("motion_type")) {
             throw new EntityLoadingException("Could not find movement block.");

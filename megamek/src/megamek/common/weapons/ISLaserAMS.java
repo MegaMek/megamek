@@ -42,7 +42,7 @@ public class ISLaserAMS extends LaserWeapon {
         tonnage = 1.5f;
         criticals = 2;
         bv = 45;
-        flags |= F_AUTO_TARGET | F_AMS;
+        flags = flags.or(F_AUTO_TARGET).or(F_AMS);
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 225000;

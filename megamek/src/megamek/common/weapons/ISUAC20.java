@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -24,34 +24,34 @@ import megamek.common.TechConstants;
  */
 public class ISUAC20 extends UACWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -8297688910484314546L;
 
     /**
-     * 
+     *
      */
     public ISUAC20() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        this.name = "Ultra AC/20";
-        this.setInternalName("ISUltraAC20");
-        this.addLookupName("IS Ultra AC/20");
-        this.heat = 8;
-        this.damage = 20;
-        this.rackSize = 20;
-        this.shortRange = 3;
-        this.mediumRange = 7;
-        this.longRange = 10;
-        this.extremeRange = 14;
-        this.tonnage = 15.0f;
-        this.criticals = 10;
-        this.bv = 281;
-        this.cost = 480000;
-        this.flags |= F_SPLITABLE;
-        this.shortAV = 30;
-        this.medAV = 30;
-        this.maxRange = RANGE_MED;
-        this.explosionDamage = damage;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        name = "Ultra AC/20";
+        setInternalName("ISUltraAC20");
+        addLookupName("IS Ultra AC/20");
+        heat = 8;
+        damage = 20;
+        rackSize = 20;
+        shortRange = 3;
+        mediumRange = 7;
+        longRange = 10;
+        extremeRange = 14;
+        tonnage = 15.0f;
+        criticals = 10;
+        bv = 281;
+        cost = 480000;
+        flags = flags.or(F_SPLITABLE);
+        shortAV = 30;
+        medAV = 30;
+        maxRange = RANGE_MED;
+        explosionDamage = damage;
     }
 }

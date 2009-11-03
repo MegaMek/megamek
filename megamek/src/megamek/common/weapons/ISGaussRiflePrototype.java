@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -29,38 +29,38 @@ import megamek.server.Server;
  */
 public class ISGaussRiflePrototype extends GaussWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 317770140657000258L;
 
     /**
-     * 
+     *
      */
     public ISGaussRiflePrototype() {
         super();
-        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        this.name = "Gauss Rifle Prototype";
-        this.setInternalName("ISGaussRiflePrototype");
-        this.addLookupName("IS Gauss Rifle Prototype");
-        this.heat = 1;
-        this.damage = 15;
-        this.ammoType = AmmoType.T_GAUSS;
-        this.minimumRange = 2;
-        this.shortRange = 7;
-        this.mediumRange = 15;
-        this.longRange = 22;
-        this.extremeRange = 30;
-        this.tonnage = 15.0f;
-        this.bv = 320;
-        this.cost = 300000;
-        this.criticals = 8;
-        this.flags |= F_PROTOTYPE;
-        this.explosionDamage = 20;
+        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        name = "Gauss Rifle Prototype";
+        setInternalName("ISGaussRiflePrototype");
+        addLookupName("IS Gauss Rifle Prototype");
+        heat = 1;
+        damage = 15;
+        ammoType = AmmoType.T_GAUSS;
+        minimumRange = 2;
+        shortRange = 7;
+        mediumRange = 15;
+        longRange = 22;
+        extremeRange = 30;
+        tonnage = 15.0f;
+        bv = 320;
+        cost = 300000;
+        criticals = 8;
+        flags = flags.or(F_PROTOTYPE);
+        explosionDamage = 20;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)

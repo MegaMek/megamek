@@ -40,7 +40,7 @@ public class CLSniper extends ArtilleryWeapon {
         setInternalName("CLSniper");
         addLookupName("CLSniperArtillery");
         addLookupName("Clan Sniper");
-        flags1 |= F_AERO_WEAPON;
+        flags = flags.or(F_AERO_WEAPON);
         heat = 10;
         rackSize = 20;
         ammoType = AmmoType.T_SNIPER;

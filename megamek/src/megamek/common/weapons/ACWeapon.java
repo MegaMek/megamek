@@ -40,8 +40,7 @@ public abstract class ACWeapon extends AmmoWeapon {
     public ACWeapon() {
         super();
 
-        flags |= F_DIRECT_FIRE | F_BALLISTIC;
-        flags1 |= F_MECH_WEAPON | F_AERO_WEAPON | F_TANK_WEAPON;
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON);
         ammoType = AmmoType.T_AC;
         explosive = true; // when firing incendiary ammo
         techRating = RATING_C;
@@ -50,7 +49,7 @@ public abstract class ACWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,

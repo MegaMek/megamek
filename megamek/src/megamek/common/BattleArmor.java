@@ -50,6 +50,7 @@ public class BattleArmor extends Infantry {
     private static final String[] CLAN_LOCATION_NAMES = { "Point", "Trooper 1",
             "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
 
+    // these only used by custom ba dialog
     public static final int MANIPULATOR_NONE = 0;
     public static final int MANIPULATOR_ARMORED_GLOVE = 1;
     public static final int MANIPULATOR_BASIC = 2;
@@ -63,12 +64,16 @@ public class BattleArmor extends Infantry {
     public static final int MANIPULATOR_CARGO_LIFTER = 10;
     public static final int MANIPULATOR_INDUSTRIAL_DRILL = 11;
 
+    // these only used by custom ba dialog
     public static final String[] MANIPULATOR_TYPE_STRINGS = { "None",
             "Armored Glove", "Basic Manipulator",
             "Basic Manipulator (Mine Clearance)", "Battle Claw",
             "Battle Claw (Magnets)", "Battle Claw (Vibro-Claws)",
             "Heavy Battle Claw", "Heavy Battle Claw (Vibro-Claws)",
             "Salvage Arm", "Cargo Lifter", "Industrial Drill" };
+
+    public static final int CHASSIS_TYPE_BIPED = 0;
+    public static final int CHASSIS_TYPE_QUAD = 1;
 
     /**
      * The number of men alive in this unit at the beginning of the phase,
@@ -77,11 +82,18 @@ public class BattleArmor extends Infantry {
     private int troopersShooting = 0;
 
     /**
-     * The battle value of this unit. This value should be set when the unit's
+     * The cost of this unit. This value should be set when the unit's
      * file is read.
      */
     private int myCost = -1;
+    /**
+     * This unit's weight class
+     */
     private int weightClass = -1;
+    /**
+     * this unit's chassis type, should be BattleArmor.CHASSIS_TYPE_BIPED or
+     * BattleArmor.CHASSIS_TYPE_QUAD
+     */
     private int chassisType = -1;
 
     /**
@@ -126,23 +138,6 @@ public class BattleArmor extends Infantry {
      * Internal name of the disposable NARC ammo pack.
      */
     public static final String DISPOSABLE_NARC_AMMO = "BA-Compact Narc Ammo";
-
-    /**
-     * The internal name for Boarding Claw equipment.
-     * battle claw/heavy battle claw
-     */
-    public static final String BOARDING_CLAW = "BA-Boarding Claw";
-
-    /**
-     * The internal name for Assault Claw equipment.
-     * (heavy battle claw (magnetic)
-     */
-    public static final String ASSAULT_CLAW = "BA-Assault Claws";
-
-    /**
-     * The internal name for Magnetic Clamp equipment.
-     */
-    public static final String MAGNETIC_CLAMP = "BA-Magnetic Clamp";
 
     /**
      * The internal name for the Mine Launcher weapon.
@@ -800,7 +795,7 @@ public class BattleArmor extends Infantry {
                 // magnetic claws and vibro claws counted again
                 for (Mounted misc : getMisc()) {
                     if ((misc.getLocation() == LOC_SQUAD) || (misc.getLocation() == i)) {
-                        if (misc.getType().hasFlag(MiscType.F_ASSAULT_CLAW)
+                        if (misc.getType().hasFlag(MiscType.F_MAGNET_CLAW)
                                 || misc.getType().hasFlag(MiscType.F_VIBROCLAW)) {
                             oBV += misc.getType().getBV(this);
                         }
@@ -1240,7 +1235,23 @@ public class BattleArmor extends Infantry {
     }
 
     public void setWeightClass(int inWC) {
-        weightClass = inWC;
+        switch (inWC) {
+            case 0:
+                weightClass = EntityWeightClass.WEIGHT_BA_PAL;
+                break;
+            case 1:
+                weightClass = EntityWeightClass.WEIGHT_BA_LIGHT;
+                break;
+            case 2:
+                weightClass = EntityWeightClass.WEIGHT_BA_MEDIUM;
+                break;
+            case 3:
+                weightClass = EntityWeightClass.WEIGHT_BA_HEAVY;
+                break;
+            case 4:
+                weightClass = EntityWeightClass.WEIGHT_BA_ASSAULT;
+                break;
+        }
     }
 
     @Override
@@ -1553,6 +1564,42 @@ public class BattleArmor extends Infantry {
      */
     public void setAttacksDuringSwarmResolved(boolean resolved) {
         attacksDuringSwarmResolved = resolved;
+    }
+
+    /**
+     * can this BattleArmor ride as Mechanized BA?
+     * @return
+     */
+    public boolean canDoMechanizedBA() {
+        if (getChassisType() != CHASSIS_TYPE_QUAD) {
+            int tBasicManipulatorCount = countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
+            int tArmoredGloveCount = countWorkingMisc(MiscType.F_ARMORED_GLOVE);
+            int tBattleClawCount = countWorkingMisc(MiscType.F_BATTLE_CLAW);
+            switch (getWeightClass()) {
+            case EntityWeightClass.WEIGHT_BA_PAL:
+            case EntityWeightClass.WEIGHT_BA_LIGHT:
+                if ((tArmoredGloveCount > 1) || (tBasicManipulatorCount > 0) || (tBattleClawCount > 0)) {
+                    return true;
+                }
+                break;
+            case EntityWeightClass.WEIGHT_BA_MEDIUM:
+                if ((tBasicManipulatorCount > 0) || (tBattleClawCount > 0)) {
+                    return true;
+                }
+                break;
+            case EntityWeightClass.WEIGHT_BA_HEAVY:
+                if ((tBasicManipulatorCount > 0) || (tBattleClawCount > 0)) {
+                    return true;
+                }
+                break;
+            case EntityWeightClass.WEIGHT_BA_ASSAULT:
+            default:
+                break;
+            }
+            return false;
+        } else {
+            return false;
+        }
     }
 
 

@@ -38,6 +38,7 @@ v0.35.9-dev (SVN)
 + Unit fluff images (not included) will appear in MechSelectorDialog and Unit Quick View
 + MechViewPanel: contains MechView and fluff image
 + BV Calculation Button re-added to MechSelectorDialog
++ Bug 2889626: Pushed off units sometimes still get los checks, and their position is not null
 
 v0.35.8 (2009-10-18, 22:34 UTC+2)
 + Bug: infantry flamer not causing heat correctly

@@ -6242,6 +6242,11 @@ public abstract class Mech extends Entity implements Serializable {
             if ((ammoType != AmmoType.T_NA) && (weapon.getAmmoType() != ammoType)) {
                 continue;
             }
+
+            if ((weapon.getAmmoType() == AmmoType.T_INARC) || (weapon.getAmmoType() == AmmoType.T_NARC)) {
+                continue;
+            }
+
             // Check ammo weapons first since they had a hidden modifier
             if ((weapon.getAmmoType() != AmmoType.T_NA) && !weapon.hasFlag(WeaponType.F_ONESHOT)) {
                 weaponsUsed.add(weapon.getName());
@@ -6379,6 +6384,9 @@ public abstract class Mech extends Entity implements Serializable {
                             break;
                         case Entity.BATTLEFORCELONGRANGE:
                             baseDamage = Compute.calculateClusterHitTableAmount(5, weapon.getRackSize()) * weaponCount;
+                            break;
+                        case Entity.BATTLEFORCEMEDIUMRANGE:
+                            baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * weaponCount;
                             break;
                     }
                     break;
@@ -6538,7 +6546,12 @@ public abstract class Mech extends Entity implements Serializable {
                 battleForceDebugString.append('\n');
             }
         }
-        totalDamage = Math.ceil(totalDamage / 10);
+
+        if (ammoType != AmmoType.T_NA) {
+            totalDamage = Math.round(totalDamage / 10);
+        } else {
+            totalDamage = Math.ceil(totalDamage / 10);
+        }
         return (int) totalDamage;
     }
 
@@ -6648,6 +6661,84 @@ public abstract class Mech extends Entity implements Serializable {
             results.append("SEAL, ");
         }
 
+        int narcBeacons = 0;
+
+        for (Mounted mount : getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+
+            if (weapon.getAmmoType() == AmmoType.T_INARC) {
+                narcBeacons++;
+            }
+        }
+
+        int flakDamage = 0;
+
+        flakDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC_LBX);
+        flakDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_HAG);
+
+        if ((flakDamage > 0) && (flakDamage >= getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE) / 2)) {
+            results.append("FLK, ");
+        }
+
+        if (narcBeacons > 0) {
+            results.append("INARC");
+            results.append(narcBeacons);
+            results.append(", ");
+        }
+
+        int ifDamage = 0;
+
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_SRM, false, true);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LRM, false, true);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_EXLRM, false, true);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_10, false, true);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_15, false, true);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_20, false, true);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_5, false, true);
+
+        if (ifDamage > 0) {
+
+            int ifShortDamage = 0;
+            int ifMediumDamage = 0;
+            int ifLongDamage = 0;
+
+            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_SRM, false, true);
+            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_LRM, false, true);
+            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_EXLRM, false, true);
+            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_MML, false, true);
+            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_TBOLT_10, false, true);
+            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_TBOLT_15, false, true);
+            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_TBOLT_20, false, true);
+            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_TBOLT_5, false, true);
+
+            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_SRM, false, true);
+            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LRM, false, true);
+            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_EXLRM, false, true);
+            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true);
+            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_10, false, true);
+            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_15, false, true);
+            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_20, false, true);
+            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_5, false, true);
+
+            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_SRM, false, true);
+            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_LRM, false, true);
+            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_EXLRM, false, true);
+            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_MML, false, true);
+            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_10, false, true);
+            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_15, false, true);
+            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_20, false, true);
+            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_5, false, true);
+
+            results.append("IF ");
+            results.append(ifShortDamage);
+            results.append("/");
+            results.append(ifMediumDamage);
+            results.append("/");
+            results.append(ifLongDamage);
+            results.append(", ");
+        }
+
         if (hasIndustrialTSM()) {
             results.append("ITSM, ");
         }
@@ -6666,6 +6757,22 @@ public abstract class Mech extends Entity implements Serializable {
 
         if (hasWorkingMisc(MiscType.F_CLUB, -1) || hasWorkingMisc(MiscType.F_HAND_WEAPON, -1)) {
             results.append("MEL, ");
+        }
+
+        narcBeacons = 0;
+
+        for (Mounted mount : getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+
+            if (weapon.getAmmoType() == AmmoType.T_NARC) {
+                narcBeacons++;
+            }
+        }
+
+        if (narcBeacons > 0) {
+            results.append("SNARC");
+            results.append(narcBeacons);
+            results.append(", ");
         }
 
         if (isOmni()) {

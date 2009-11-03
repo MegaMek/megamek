@@ -49,8 +49,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
         extremeRange = 24;
         tonnage = 3.0f;
         criticals = 1;
-        flags |= F_PLASMA | F_DIRECT_FIRE;
-        flags1 |= F_MECH_WEAPON | F_TANK_WEAPON | F_AERO_WEAPON;
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PLASMA).or(F_DIRECT_FIRE);
         bv = 170;
         cost = 480000;
         shortAV = 10;

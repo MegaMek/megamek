@@ -45,7 +45,7 @@ public class CLHAG40 extends HAGWeapon {
         tonnage = 16.0f;
         criticals = 10;
         bv = 535;
-        flags |= F_SPLITABLE;
+        flags = flags.or(F_SPLITABLE);
         cost = 600000;
         shortAV = 32;
         medAV = 24;

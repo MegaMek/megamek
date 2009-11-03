@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -24,33 +24,32 @@ import megamek.common.TechConstants;
  */
 public class CLSmallLaser extends LaserWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6475366872597851742L;
 
     public CLSmallLaser() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
-        this.name = "Small Laser";
-        this.setInternalName("ClSmall Laser");
-        this.addLookupName("CL Small Laser");
-        this.addLookupName("CLSmallLaser");
-        this.heat = 1;
-        this.damage = 3;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 4;
-        this.waterShortRange = 1;
-        this.waterMediumRange = 2;
-        this.waterLongRange = 2;
-        this.waterExtremeRange = 4;
-        this.tonnage = 0.5f;
-        this.criticals = 1;
-        this.flags |= F_NO_FIRES;
-        this.bv = 9;
-        this.cost = 11250;
-
-        this.atClass = CLASS_POINT_DEFENSE;
+        techLevel = TechConstants.T_CLAN_TW;
+        name = "Small Laser";
+        setInternalName("ClSmall Laser");
+        addLookupName("CL Small Laser");
+        addLookupName("CLSmallLaser");
+        heat = 1;
+        damage = 3;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 3;
+        extremeRange = 4;
+        waterShortRange = 1;
+        waterMediumRange = 2;
+        waterLongRange = 2;
+        waterExtremeRange = 4;
+        tonnage = 0.5f;
+        criticals = 1;
+        flags = flags.or(F_NO_FIRES);
+        bv = 9;
+        cost = 11250;
+        atClass = CLASS_POINT_DEFENSE;
     }
 }

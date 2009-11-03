@@ -36,13 +36,12 @@ public abstract class BAMGWeapon extends Weapon {
     public BAMGWeapon() {
         super();
         ammoType = AmmoType.T_NA;
-        flags |= F_MG | F_BALLISTIC;
-        flags1 |= F_BA_WEAPON;
+        flags = flags.or(F_MG).or(F_BALLISTIC).or(F_BA_WEAPON);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -30,31 +30,31 @@ import megamek.server.Server;
 public class InfantryRifleWeapon extends InfantryWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
     public InfantryRifleWeapon() {
         super();
-        this.techLevel = TechConstants.T_ALLOWED_ALL;
-        this.name = "Infantry Rifle";
-        this.setInternalName(this.name);
-        this.addLookupName("InfantryRifle");
-        this.ammoType = AmmoType.T_AC;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 3;
-        // Auto-Rifle, TM p. 299 
-        this.cost = 80;
+        techLevel = TechConstants.T_ALLOWED_ALL;
+        name = "Infantry Rifle";
+        setInternalName(name);
+        addLookupName("InfantryRifle");
+        ammoType = AmmoType.T_AC;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 3;
+        extremeRange = 3;
+        // Auto-Rifle, TM p. 299
+        cost = 80;
         // auto-rifle from TM p. 319
-        this.bv = 1.28;
-        this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        bv = 1.28;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */

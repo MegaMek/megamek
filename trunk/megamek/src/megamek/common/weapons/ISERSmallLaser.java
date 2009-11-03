@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -24,35 +24,35 @@ import megamek.common.TechConstants;
  */
 public class ISERSmallLaser extends LaserWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4997798107691083605L;
 
     /**
-     * 
+     *
      */
     public ISERSmallLaser() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        this.name = "ER Small Laser";
-        this.setInternalName("ISERSmallLaser");
-        this.addLookupName("IS ER Small Laser");
-        this.heat = 2;
-        this.damage = 3;
-        this.shortRange = 2;
-        this.mediumRange = 4;
-        this.longRange = 5;
-        this.extremeRange = 8;
-        this.waterShortRange = 1;
-        this.waterMediumRange = 2;
-        this.waterLongRange = 3;
-        this.waterExtremeRange = 4;
-        this.tonnage = 0.5f;
-        this.criticals = 1;
-        this.flags |= F_NO_FIRES;
-        this.bv = 17;
-        this.cost = 11250;
-        this.shortAV = 3;
-        this.maxRange = RANGE_SHORT;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        name = "ER Small Laser";
+        setInternalName("ISERSmallLaser");
+        addLookupName("IS ER Small Laser");
+        heat = 2;
+        damage = 3;
+        shortRange = 2;
+        mediumRange = 4;
+        longRange = 5;
+        extremeRange = 8;
+        waterShortRange = 1;
+        waterMediumRange = 2;
+        waterLongRange = 3;
+        waterExtremeRange = 4;
+        tonnage = 0.5f;
+        criticals = 1;
+        flags = flags.or(F_NO_FIRES);
+        bv = 17;
+        cost = 11250;
+        shortAV = 3;
+        maxRange = RANGE_SHORT;
     }
 }

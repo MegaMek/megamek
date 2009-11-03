@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -29,30 +29,30 @@ import megamek.server.Server;
 public class InfantryLaserWeapon extends InfantryWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -9065123199493897216L;
 
     public InfantryLaserWeapon() {
         super();
-        this.techLevel = TechConstants.T_ALLOWED_ALL;
-        this.name = "Infantry Laser";
-        this.setInternalName(this.name);
-        this.addLookupName("InfantryLaser");
-        this.shortRange = 2;
-        this.mediumRange = 4;
-        this.longRange = 6;
-        this.extremeRange = 8;
+        techLevel = TechConstants.T_ALLOWED_ALL;
+        name = "Infantry Laser";
+        setInternalName(name);
+        addLookupName("InfantryLaser");
+        shortRange = 2;
+        mediumRange = 4;
+        longRange = 6;
+        extremeRange = 8;
         // laser rifle, TM p. 299
-        this.cost = 1250;
+        cost = 1250;
         // laser rifle, TM p. 319
-        this.bv = 0.88;
-        this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_LASER | F_ENERGY;
+        bv = 0.88;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */

@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -12,44 +12,47 @@
  *  for more details.
  */
 /*
- * Created on Oct 19, 2004
+ * Created on May 29, 2004
  *
  */
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
+import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Sebastian Brocks
+ * @author Jason Tighe
  */
-public abstract class HAGWeapon extends GaussWeapon {
+public class CLChemicalLaserWeapon extends AmmoWeapon {
+
     /**
      *
      */
-    private static final long serialVersionUID = -2890339452762009216L;
+    private static final long serialVersionUID = -854810886500324094L;
 
-    public HAGWeapon() {
-        super();
+    public CLChemicalLaserWeapon() {
+        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         damage = DAMAGE_VARIABLE;
-        ammoType = AmmoType.T_HAG;
-        flags = flags.or(F_NO_AIM);
-        atClass = CLASS_AC;
+        ammoType = AmmoType.T_CHEMICAL_LASER;
+        minimumRange = WEAPON_NA;
+        flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY);
+        atClass = CLASS_LASER;
     }
 
     /*
      * (non-Javadoc)
      *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     *      megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new HAGWeaponHandler(toHit, waa, game, server);
+        return new ChemicalLaserHandler(toHit, waa, game, server);
     }
-
 }

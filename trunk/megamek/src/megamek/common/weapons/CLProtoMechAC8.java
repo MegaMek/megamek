@@ -37,6 +37,7 @@ public class CLProtoMechAC8 extends ACWeapon {
         name = "ProtoMech AC/8";
         setInternalName("CLProtoMechAC8");
         addLookupName("Clan ProtoMech AC/8");
+        flags = flags.or(F_PROTO_WEAPON);
         heat = 2;
         damage = 8;
         rackSize = 8;

@@ -203,9 +203,6 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
     private static final int TECH_BASE_CLAN = 1;
     private static final int TECH_BASE_BOTH = 2;
 
-    private static final int CHASSIS_TYPE_BIPED = 0;
-    private static final int CHASSIS_TYPE_QUAD = 1;
-
     private static final int WEIGHT_CLASS_PAL = 0;
     private static final int WEIGHT_CLASS_LIGHT = 1;
     private static final int WEIGHT_CLASS_MEDIUM = 2;
@@ -598,7 +595,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
 
         value = m_chRightArmEquipment.getSelectedItem();
         m_chRightArmEquipment.removeAll();
-        if (stateChassisType != CHASSIS_TYPE_QUAD) {
+        if (stateChassisType != BattleArmor.CHASSIS_TYPE_QUAD) {
             tmpE = equipmentTypes.toArray();
             for (int x = 0; x < tmpE.length; x++) {
                 BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE[x]);
@@ -613,7 +610,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
 
         value = m_chLeftArmEquipment.getSelectedItem();
         m_chLeftArmEquipment.removeAll();
-        if (stateChassisType != CHASSIS_TYPE_QUAD) {
+        if (stateChassisType != BattleArmor.CHASSIS_TYPE_QUAD) {
             tmpE = equipmentTypes.toArray();
             for (int x = 0; x < tmpE.length; x++) {
                 BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE[x]);
@@ -660,7 +657,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
 
     private void updateGroundMPChoices() {
         m_chGroundMP.removeAll();
-        if (stateChassisType == CHASSIS_TYPE_BIPED) {
+        if (stateChassisType == BattleArmor.CHASSIS_TYPE_BIPED) {
             // Biped BA
             m_chGroundMP.add("1");
             m_chGroundMP.add("2");
@@ -1008,7 +1005,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
                 // The chassis type is actually changing!
                 // The state of other settings might change.
                 stateChassisType = m_chChassisType.getSelectedIndex();
-                if (stateChassisType == CHASSIS_TYPE_QUAD) {
+                if (stateChassisType == BattleArmor.CHASSIS_TYPE_QUAD) {
                     // FIXME
                     // We have to remove everything from the arms correctly!
                     // That way we won't mess anything up!
@@ -1192,7 +1189,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
 
         retVal.append(Messages
                 .getString("CustomBattleArmorDialog.m_labelChassisType"));
-        if (stateChassisType == CHASSIS_TYPE_BIPED) {
+        if (stateChassisType == BattleArmor.CHASSIS_TYPE_BIPED) {
             retVal.append(Messages
                     .getString("CustomBattleArmorDialog.chassis_type_biped"));
         } else {
@@ -1418,7 +1415,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         }*/
 
         // Quad chassis can't be PA(L)
-        if ((stateChassisType == CHASSIS_TYPE_QUAD)
+        if ((stateChassisType == BattleArmor.CHASSIS_TYPE_QUAD)
                 && (stateWeightClass == WEIGHT_CLASS_PAL)) {
             invalidReason = "PA(L) suits cannot have a quad chassis.";
             return false;
@@ -1463,7 +1460,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         }
 
         // Check to make sure none of the locations have gone over on slots.
-        if (stateChassisType == CHASSIS_TYPE_QUAD) {
+        if (stateChassisType == BattleArmor.CHASSIS_TYPE_QUAD) {
             // We're only going to be using torso stuff here.
             // Quads only have one location!
             if (torsoEquipment != null) {
@@ -1537,7 +1534,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         // On bipeds, it's one anti-'Mech + one anti-personnel or two
         // anti-personnel per arm, plus two anti-'Mech and two anti-personnel
         // in the torso.
-        if (stateChassisType == CHASSIS_TYPE_QUAD) {
+        if (stateChassisType == BattleArmor.CHASSIS_TYPE_QUAD) {
             // We're only going to be using torso stuff here.
             // Quads only have one location!
             if (torsoEquipment != null) {
@@ -1682,7 +1679,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
 
     public static int getGroundMPWeight(int chassisType, int weightClass,
             int groundMP) {
-        return (groundMP - (chassisType == CHASSIS_TYPE_BIPED ? 1 : 2))
+        return (groundMP - (chassisType == BattleArmor.CHASSIS_TYPE_BIPED ? 1 : 2))
                 * GROUND_MP_WEIGHT[weightClass];
     }
 
@@ -1854,7 +1851,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
 
         // Motice Systems Cost
         // First, ground MP: currently all 25,000 per MP
-        retVal += (stateGroundMP - (stateChassisType == CHASSIS_TYPE_BIPED ? 1
+        retVal += (stateGroundMP - (stateChassisType == BattleArmor.CHASSIS_TYPE_BIPED ? 1
                 : 2)) * 25000;
         // Second, Jump/VTOL/UMU movement.
         // Varies by weight.
@@ -1960,7 +1957,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
                     // We only check one, because they can only be added in
                     // pairs...
                     retVal.addEquipment(EquipmentType
-                            .get(BattleArmor.ASSAULT_CLAW),
+                            .get("BABattleClawMagnets"),
                             BattleArmor.LOC_SQUAD);
                 }
             }
@@ -1978,11 +1975,16 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
                         BattleArmor.LOC_SQUAD);
             }
 
+            /*
+             * superceded by newer code
+             */
+            /*
             if (canMountMech()) {
                 // Needs to be able to ride 'Mechs.
                 retVal.addEquipment(EquipmentType
                         .get(BattleArmor.BOARDING_CLAW), BattleArmor.LOC_SQUAD);
             }
+            */
 
             // Equipment and stuff needs to be set!
             // Now all other equipment.
@@ -2064,7 +2066,7 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
     }
 
     public boolean canDoAntiMech() {
-        if (stateChassisType == CHASSIS_TYPE_QUAD) {
+        if (stateChassisType == BattleArmor.CHASSIS_TYPE_QUAD) {
             // Quads can never do anti-'Mech attacks.
             return false;
         }

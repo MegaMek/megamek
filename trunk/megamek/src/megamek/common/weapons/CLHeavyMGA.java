@@ -49,8 +49,7 @@ public class CLHeavyMGA extends AmmoWeapon {
         bv = 0; // we'll have to calculate this in calculateBV(),
         // because it depends on the number of MGs linked to
         // the MGA
-        flags |= F_BALLISTIC | F_BURST_FIRE | F_MGA;
-        flags1 = F_MECH_WEAPON | F_TANK_WEAPON | F_AERO_WEAPON | F_PROTO_WEAPON;
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_MGA);
         cost = 5000;
         String[] modeStrings = { "Linked", "Off" };
         setModes(modeStrings);

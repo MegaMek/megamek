@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -29,33 +29,33 @@ import megamek.server.Server;
  */
 public class ISHeavyMortar extends Weapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7081695747408312441L;
 
     /**
-     * 
+     *
      */
     public ISHeavyMortar() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        this.name = "Heavy Mortar";
-        this.setInternalName(this.name);
-        this.addLookupName("ISHeavyMortar");
-        this.damage = 3;
-        this.ammoType = AmmoType.T_NA;
-        this.minimumRange = 2;
-        this.shortRange = 2;
-        this.mediumRange = 4;
-        this.longRange = 6;
-        this.extremeRange = 8;
-        this.bv = 17;
-        this.flags |= F_BALLISTIC;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        name = "Heavy Mortar";
+        setInternalName(name);
+        addLookupName("ISHeavyMortar");
+        damage = 3;
+        ammoType = AmmoType.T_NA;
+        minimumRange = 2;
+        shortRange = 2;
+        mediumRange = 4;
+        longRange = 6;
+        extremeRange = 8;
+        bv = 17;
+        flags = flags.or(F_BALLISTIC);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)

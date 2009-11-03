@@ -68,13 +68,13 @@ import megamek.common.preference.PreferenceManager;
  * @author  Jay Lawson <jaylawson39 at yahoo.com>
  * This is a heavily reworked version of the original MechSelectorDialog which
  * brings up a list of units for the player to select to add to their forces.
- * The original list has been changed to a sortable table and a text filter 
+ * The original list has been changed to a sortable table and a text filter
  * is used for advanced searching.
  */
 public class MechSelectorDialog extends JDialog implements Runnable {
-    
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8144354264100884817L;
 
@@ -98,11 +98,11 @@ public class MechSelectorDialog extends JDialog implements Runnable {
     private MechViewPanel panelMekView;
     private JLabel lblPlayer;
     private JComboBox comboPlayer;
-        
+
     private MechSummary[] mechs;
 
     private MechTableModel unitModel;
-    
+
     private Client client;
     private ClientGUI clientgui;
     private UnitLoadingDialog unitLoadingDialog;
@@ -115,7 +115,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         client = cl.getClient();
         clientgui = cl;
         unitLoadingDialog = uld;
-        
+
         unitModel = new MechTableModel();
         initComponents();
         mechs = MechSummaryCache.getInstance().getAllMechs();
@@ -127,7 +127,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
             unitModel.setData(mechs);
         }
         filterUnits();
-        
+
         //initialize with the units sorted alphabetically by chassis
         ArrayList<SortKey> sortlist = new ArrayList<SortKey>();
         sortlist.add(new SortKey(MechTableModel.COL_CHASSIS,SortOrder.ASCENDING));
@@ -135,27 +135,27 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         ((DefaultRowSorter)tableUnits.getRowSorter()).setSortKeys(sortlist);
         ((DefaultRowSorter)tableUnits.getRowSorter()).sort();
     }
-                
+
     private void initComponents() {
         GridBagConstraints c;
 
         panelFilterBtns = new JPanel();
         panelOKBtns = new JPanel();
-        
+
         scrTableUnits = new JScrollPane();
         tableUnits = new JTable();
         panelMekView = new MechViewPanel();
-        
+
         comboType = new JComboBox();
-        comboWeight = new JComboBox();        
+        comboWeight = new JComboBox();
         comboUnitType = new JComboBox();
         txtFilter = new JTextField();
-           
+
         btnSelect = new JButton();
         btnSelectClose = new JButton();
         btnClose = new JButton();
         btnShowBV = new JButton();
-        
+
         lblType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"));
         lblWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass"));
         lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType"));
@@ -207,7 +207,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         c.weightx = 0.0;
         c.weighty = 1.0;
         getContentPane().add(scrTableUnits, c);
-        
+
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;
@@ -325,7 +325,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         c.gridy = 3;
         c.anchor = GridBagConstraints.WEST;
         panelFilterBtns.add(lblFilter, c);
-        
+
         lblImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblImage.setText(""); // NOI18N
         c = new GridBagConstraints();
@@ -356,7 +356,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
             }
         });
         panelOKBtns.add(btnSelect, new GridBagConstraints());
-            
+
         btnSelectClose.setText(Messages.getString("MechSelectorDialog.m_bPickClose"));
         btnSelectClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -364,7 +364,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
             }
         });
         panelOKBtns.add(btnSelectClose, new GridBagConstraints());
-        
+
         btnClose.setText(Messages.getString("Close"));
         btnClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -372,11 +372,11 @@ public class MechSelectorDialog extends JDialog implements Runnable {
             }
         });
         panelOKBtns.add(btnClose, new GridBagConstraints());
-        
+
         updatePlayerChoice();
         panelOKBtns.add(lblPlayer, new GridBagConstraints());
         panelOKBtns.add(comboPlayer, new GridBagConstraints());
-        
+
         btnShowBV.setText(Messages.getString("MechSelectorDialog.BV")); //$NON-NLS-1$
         btnShowBV.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -400,7 +400,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
             }
         });
         panelOKBtns.add(btnShowBV, new GridBagConstraints());
-            
+
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 2;
@@ -409,9 +409,9 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         getContentPane().add(panelOKBtns, c);
 
         pack();
-    }                                                
-    
-    private void select(boolean close) { 
+    }
+
+    private void select(boolean close) {
         Entity e = getSelectedEntity();
         if(null != e) {
             Client c = null;
@@ -425,11 +425,11 @@ public class MechSelectorDialog extends JDialog implements Runnable {
             autoSetSkills(e);
             e.setOwner(c.getLocalPlayer());
             c.sendAddEntity(e);
-        } 
+        }
         if(close) {
             setVisible(false);
         }
-    }                                
+    }
 
     private void filterUnits() {
         RowFilter<MechTableModel, Integer> unitTypeFilter = null;
@@ -446,7 +446,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
                     if (/* Weight */
                             ((nClass == EntityWeightClass.SIZE) || (mech.getWeightClass() == nClass)) &&
                             /*Canon*/
-                            (!client.game.getOptions().booleanOption("canon_only") || mech.isCanon()) && 
+                            (!client.game.getOptions().booleanOption("canon_only") || mech.isCanon()) &&
                             /*Technology Level*/
                             ((nType == TechConstants.T_ALL)
                                     || (nType == mech.getType())
@@ -498,7 +498,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         }
         sorter.setRowFilter(unitTypeFilter);
     }
-    
+
     private void updatePlayerChoice() {
         String lastChoice = (String) comboPlayer.getSelectedItem();
         String clientName = clientgui.getClient().getName();
@@ -519,7 +519,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
 
     private void refreshUnitView() {
         boolean populateTextFields = true;
-        
+
         Entity selectedUnit = getSelectedEntity();
         // null entity, so load a default unit.
         if (selectedUnit == null) {
@@ -564,7 +564,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
             return null;
        }
     }
-    
+
     private void autoSetSkills(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         if (!cs.useAverageSkills()) {
@@ -573,7 +573,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         int piloting = 5;
         int gunnery = 4;
         if (e.isClan()) {
-            if (e instanceof Mech || e instanceof BattleArmor) {
+            if ((e instanceof Mech) || (e instanceof BattleArmor)) {
                 gunnery = 3;
                 piloting = 4;
             } else if (e instanceof Tank) {
@@ -590,8 +590,8 @@ public class MechSelectorDialog extends JDialog implements Runnable {
             }
         } else if (e instanceof Infantry) {
             // IS crews are 4/5 except infantry
-            if (e.getMovementMode() == IEntityMovementMode.INF_LEG
-                    || e instanceof BattleArmor) {
+            if ((e.getMovementMode() == IEntityMovementMode.INF_LEG)
+                    || (e instanceof BattleArmor)) {
                 gunnery = 4;
                 piloting = 5;
             } else {
@@ -602,7 +602,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         e.getCrew().setGunnery(gunnery);
         e.getCrew().setPiloting(piloting);
     }
-     
+
      public void run() {
          // Loading mechs can take a while, so it will have its own thread.
          // This prevents the UI from freezing, and allows the
@@ -616,12 +616,12 @@ public class MechSelectorDialog extends JDialog implements Runnable {
 
          final Map<String, String> hFailedFiles = MechSummaryCache.getInstance()
                  .getFailedFiles();
-         if (hFailedFiles != null && hFailedFiles.size() > 0) {
+         if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
              new UnitFailureDialog(clientgui.frame, hFailedFiles); // self-showing
                                                                      // dialog
          }
      }
-     
+
      @Override
      public void setVisible(boolean visible) {
          updatePlayerChoice();
@@ -635,9 +635,9 @@ public class MechSelectorDialog extends JDialog implements Runnable {
      * A table model for displaying work items
      */
     public class MechTableModel extends AbstractTableModel {
-    
+
             /**
-             * 
+             *
              */
             private static final long serialVersionUID = -5457068129532709857L;
             private final static int COL_MODEL = 0;
@@ -647,17 +647,17 @@ public class MechSelectorDialog extends JDialog implements Runnable {
             private final static int COL_YEAR = 4;
             private final static int COL_COST = 5;
             private final static int N_COL = 6;
-    
+
             private MechSummary[] data = new MechSummary[0];
 
             public int getRowCount() {
                 return data.length;
             }
-    
+
             public int getColumnCount() {
                 return N_COL;
             }
-    
+
             @Override
             public String getColumnName(int column) {
                 switch(column) {
@@ -677,27 +677,27 @@ public class MechSelectorDialog extends JDialog implements Runnable {
                         return "?";
                 }
             }
-    
+
             @Override
             public Class<?> getColumnClass(int c) {
                 return getValueAt(0, c).getClass();
             }
-    
+
             @Override
             public boolean isCellEditable(int row, int col) {
                 return false;
             }
-    
+
             public MechSummary getMechSummary(int i) {
                 return data[i];
             }
-    
+
             //fill table with values
             public void setData(MechSummary[] ms) {
                 data = ms;
                 fireTableDataChanged();
             }
-    
+
             public Object getValueAt(int row, int col) {
                 MechSummary ms = data[row];
                 if(col == COL_MODEL) {
@@ -721,8 +721,8 @@ public class MechSelectorDialog extends JDialog implements Runnable {
                 }
                 return "?";
             }
-    
-    }               
+
+    }
 }
 
 

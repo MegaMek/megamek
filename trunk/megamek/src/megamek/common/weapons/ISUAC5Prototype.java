@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -29,38 +29,38 @@ import megamek.server.Server;
  */
 public class ISUAC5Prototype extends UACWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2740269177146528640L;
 
     /**
-     * 
+     *
      */
     public ISUAC5Prototype() {
         super();
-        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        this.name = "Ultra AC/5 Prototype";
-        this.setInternalName("ISUltraAC5Prototype");
-        this.addLookupName("IS Ultra AC/5 Prototype");
-        this.flags |= F_PROTOTYPE;
-        this.heat = 1;
-        this.damage = 5;
-        this.rackSize = 5;
-        this.minimumRange = 2;
-        this.shortRange = 6;
-        this.mediumRange = 13;
-        this.longRange = 20;
-        this.extremeRange = 26;
-        this.tonnage = 9.0f;
-        this.criticals = 6;
-        this.bv = 112;
-        this.cost = 200000;
-        this.explosionDamage = damage;
+        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        name = "Ultra AC/5 Prototype";
+        setInternalName("ISUltraAC5Prototype");
+        addLookupName("IS Ultra AC/5 Prototype");
+        flags = flags.or(F_PROTOTYPE);
+        heat = 1;
+        damage = 5;
+        rackSize = 5;
+        minimumRange = 2;
+        shortRange = 6;
+        mediumRange = 13;
+        longRange = 20;
+        extremeRange = 26;
+        tonnage = 9.0f;
+        criticals = 6;
+        bv = 112;
+        cost = 200000;
+        explosionDamage = damage;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */

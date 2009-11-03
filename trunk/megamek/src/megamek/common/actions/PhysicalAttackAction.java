@@ -222,7 +222,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             if ( game.getOptions().booleanOption("tacops_attack_physical_psr") ) {
                 if ( ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT ) {
                     toHit.addModifier(-2, "Weight Class Attack Modifier");
-                }else if ( ae.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM ) {
+                } else if ( ae.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM ) {
                     toHit.addModifier(-1, "Weight Class Attack Modifier");
                 }
             }
@@ -231,7 +231,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             if(te.isEvading()) {
                 toHit.addModifier(te.getEvasionBonus(), "target is evading");
             }
-            
+
             if (te.isStealthActive()) {
                 toHit.append(te.getStealthModifier(RangeType.RANGE_MINIMUM, ae));
             }

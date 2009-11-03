@@ -1777,7 +1777,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
                     // We only check one, because they can only be added in
                     // pairs...
                     retVal.addEquipment(EquipmentType
-                            .get(BattleArmor.ASSAULT_CLAW),
+                            .get("BABattleClawMagnets"),
                             BattleArmor.LOC_SQUAD);
                 }
             }
@@ -1795,11 +1795,16 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
                         BattleArmor.LOC_SQUAD);
             }
 
+            /*
+             * superceded by newer code
+             */
+            /*
             if (canMountMech()) {
                 // Needs to be able to ride 'Mechs.
                 retVal.addEquipment(EquipmentType
                         .get(BattleArmor.BOARDING_CLAW), BattleArmor.LOC_SQUAD);
             }
+            */
 
             // Equipment and stuff needs to be set!
             // Now all other equipment.

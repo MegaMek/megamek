@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -31,7 +31,7 @@ public abstract class MPodWeapon extends AmmoWeapon {
     private static final long serialVersionUID = 3343394645568467135L;
 
     /**
-     * 
+     *
      */
     public MPodWeapon() {
         super();
@@ -46,17 +46,16 @@ public abstract class MPodWeapon extends AmmoWeapon {
         extremeRange = 4;
         tonnage = 1.0f;
         criticals = 1;
-        flags |= F_DIRECT_FIRE | F_BALLISTIC | F_ONESHOT;
+        flags = flags.or(F_MECH_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE).or(F_ONESHOT);
         explosive = true;
         bv = 5;
         cost = 6000;
         explosionDamage = 5;
-        flags1 |= F_MECH_WEAPON;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)

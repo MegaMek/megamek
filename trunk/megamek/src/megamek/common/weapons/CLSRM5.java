@@ -41,7 +41,7 @@ public class CLSRM5 extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         bv = 47;
-        flags |= F_NO_FIRES;
+        flags = flags.or(F_NO_FIRES);
         cost = 80000;
     }
 }

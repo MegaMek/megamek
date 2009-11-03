@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -29,57 +29,59 @@ import megamek.server.Server;
  */
 public class ISHGaussRifle extends GaussWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2379383217525139478L;
 
     /**
-     * 
+     *
      */
     public ISHGaussRifle() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        this.name = "Heavy Gauss Rifle";
-        this.setInternalName("ISHeavyGaussRifle");
-        this.addLookupName("IS Heavy Gauss Rifle");
-        this.heat = 2;
-        this.damage = DAMAGE_VARIABLE;
-        this.ammoType = AmmoType.T_GAUSS_HEAVY;
-        this.minimumRange = 4;
-        this.shortRange = 6;
-        this.mediumRange = 13;
-        this.longRange = 20;
-        this.extremeRange = 26;
-        this.damageShort = 25;
-        this.damageMedium = 20;
-        this.damageLong = 10;
-        this.flags |= F_SPLITABLE;
-        this.tonnage = 18.0f;
-        this.criticals = 11;
-        this.bv = 346;
-        this.cost = 500000;
-        this.shortAV = 25;
-        this.medAV = 20;
-        this.longAV = 10;
-        this.maxRange = RANGE_LONG;
-        this.explosionDamage = 25;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        name = "Heavy Gauss Rifle";
+        setInternalName("ISHeavyGaussRifle");
+        addLookupName("IS Heavy Gauss Rifle");
+        heat = 2;
+        damage = DAMAGE_VARIABLE;
+        ammoType = AmmoType.T_GAUSS_HEAVY;
+        minimumRange = 4;
+        shortRange = 6;
+        mediumRange = 13;
+        longRange = 20;
+        extremeRange = 26;
+        damageShort = 25;
+        damageMedium = 20;
+        damageLong = 10;
+        flags = flags.or(F_SPLITABLE);
+        tonnage = 18.0f;
+        criticals = 11;
+        bv = 346;
+        cost = 500000;
+        shortAV = 25;
+        medAV = 20;
+        longAV = 10;
+        maxRange = RANGE_LONG;
+        explosionDamage = 25;
     }
 
     @Override
     public int getDamage(int range) {
-        if ( range <= shortRange )
+        if ( range <= shortRange ) {
             return damageShort;
-        
-        if ( range <= mediumRange )
+        }
+
+        if ( range <= mediumRange ) {
             return damageMedium;
-        
+        }
+
             return damageLong;
     }
 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)

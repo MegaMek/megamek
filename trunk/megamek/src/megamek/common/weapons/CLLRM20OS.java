@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -21,35 +21,35 @@ import megamek.common.TechConstants;
 public class CLLRM20OS extends LRMWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1725628953852049901L;
 
     /**
-     * 
+     *
      */
     public CLLRM20OS() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
-        this.name = "LRM 20 (OS)";
-        this.setInternalName("CLLRM20 (OS)");
-        this.addLookupName("Clan OS LRM-20");
-        this.addLookupName("Clan LRM 20 (OS)");
-        this.heat = 6;
-        this.rackSize = 20;
-        this.minimumRange = WEAPON_NA;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 21;
-        this.extremeRange = 28;
-        this.tonnage = 5.5f;
-        this.criticals = 4;
-        this.bv = 44;
-        this.flags |= F_ONESHOT;
-        this.cost = 250000;
-        this.shortAV = 12;
-        this.medAV = 12;
-        this.longAV = 12;
-        this.maxRange = RANGE_LONG;
+        techLevel = TechConstants.T_CLAN_TW;
+        name = "LRM 20 (OS)";
+        setInternalName("CLLRM20 (OS)");
+        addLookupName("Clan OS LRM-20");
+        addLookupName("Clan LRM 20 (OS)");
+        heat = 6;
+        rackSize = 20;
+        minimumRange = WEAPON_NA;
+        shortRange = 7;
+        mediumRange = 14;
+        longRange = 21;
+        extremeRange = 28;
+        tonnage = 5.5f;
+        criticals = 4;
+        bv = 44;
+        flags = flags.or(F_ONESHOT);
+        cost = 250000;
+        shortAV = 12;
+        medAV = 12;
+        longAV = 12;
+        maxRange = RANGE_LONG;
     }
 }

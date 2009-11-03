@@ -85,12 +85,7 @@ public class LosEffects {
     Building thruBldg = null;
     int minimumWaterDepth = -1;
     boolean arcedShot = false;
-
-    /** Creates a new instance of LosEffects */
-    public LosEffects() {
-
-    }
-
+    
     public int getMinimumWaterDepth() {
         return minimumWaterDepth;
     }
@@ -263,6 +258,15 @@ public class LosEffects {
             return los;
         }
 
+        IHex attHex = game.getBoard().getHex(ae.getPosition());
+        IHex targetHex = game.getBoard().getHex(target.getPosition());
+        if (attHex == null || targetHex == null) {
+            LosEffects los = new LosEffects();
+            los.blocked = true; // TODO: come up with a better "impossible"
+            los.hasLoS = false;
+            return los;
+        }
+
         final AttackInfo ai = new AttackInfo();
         ai.attackPos = ae.getPosition();
         ai.targetPos = target.getPosition();
@@ -270,9 +274,6 @@ public class LosEffects {
         ai.targetInfantry = target instanceof Infantry;
         ai.attackHeight = ae.getHeight();
         ai.targetHeight = target.getHeight();
-
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targetHex = game.getBoard().getHex(target.getPosition());
 
         int attEl = ae.absHeight() + attHex.getElevation();
         int targEl;

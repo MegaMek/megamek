@@ -4206,6 +4206,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if (!weapon.isReady() || weapon.isMissing() || weapon.curMode().equals("Off")) {
                     continue;
                 }
+                
+                //AMS blocked by transported units can not fire
+                if (isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted())) {
+                    continue;
+                }
 
                 // make sure ammo is loaded
                 Mounted ammo = weapon.getLinked();

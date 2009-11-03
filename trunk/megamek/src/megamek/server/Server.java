@@ -8956,7 +8956,7 @@ public class Server implements Runnable {
             }
 
             // Can only use AMS versus missles.
-            if (((WeaponType) weapon.getType()).getDamage() == WeaponType.DAMAGE_MISSILE) {
+            if (weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
                 Entity target = game.getEntity(waa.getTargetId());
                 Vector<WeaponHandler> v = htAttacks.get(target);
                 if (v == null) {

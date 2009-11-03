@@ -71,10 +71,10 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find weightclass block.");
         }
         t.setWeightClass(dataFile.getDataAsInt("weightclass")[0]);
-        if (!dataFile.exists("chassis_type")) {
-            throw new EntityLoadingException("Could not find chassis_type block.");
+        if (!dataFile.exists("chassis")) {
+            throw new EntityLoadingException("Could not find chassis block.");
         }
-        String chassis = dataFile.getDataAsString("chassis_type")[0];
+        String chassis = dataFile.getDataAsString("chassis")[0];
         if (chassis.toLowerCase().equals("biped")) {
             t.setChassisType(BattleArmor.CHASSIS_TYPE_BIPED);
         } else if (chassis.toLowerCase().equals("quad")) {

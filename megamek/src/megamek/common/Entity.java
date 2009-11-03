@@ -446,7 +446,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         { 1.20, 1.15, 1.10, 1.05, 1, .95, .9, .85, .8 };
     public static final int BATTLEFORCESHORTRANGE = 0;
     public static final int BATTLEFORCEMEDIUMRANGE = 4;
-    public static final int BATTLEFORCELONGRANGE = 16;
+    public static final int BATTLEFORCELONGRANGE = 15;
     public static final int BATTLEFORCEEXTREMERANGE = 24;
 
     /**
@@ -8978,6 +8978,29 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int standardDamageValue = 0;
         int damageValueNoHeat = 0;
         boolean debugStatus = DEBUGBATTLEFORCE;
+
+        int totalHeat = 0;
+
+        // finish the max heat calculations
+        if (this.getJumpMP() > 0) {
+            totalHeat += getJumpHeat(getJumpMP());
+        } else {
+            totalHeat += getEngine().getRunHeat();
+        }
+
+        for (Mounted mount : getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+            totalHeat += weapon.getHeat();
+        }
+
+        totalHeat -= 4;
+
+        if (getHeatCapacity() >= totalHeat) {
+            if (DEBUGBATTLEFORCE) {
+                System.err.println(battleForceDebugString.toString());
+            }
+            return "None";
+        }
 
         DEBUGBATTLEFORCE = false;
         standardDamageValue = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE);

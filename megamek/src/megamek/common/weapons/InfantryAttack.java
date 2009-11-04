@@ -27,7 +27,7 @@ public abstract class InfantryAttack extends Weapon {
 
     public InfantryAttack() {
         super();
-        flags = flags.or(F_NO_FIRES).or(F_SOLO_ATTACK);
+        flags = flags.or(F_NO_FIRES).or(F_SOLO_ATTACK).or(F_INFANTRY_ATTACK);
         heat = 0;
         damage = DAMAGE_SPECIAL;
         ammoType = AmmoType.T_NA;

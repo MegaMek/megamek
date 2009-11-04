@@ -37,8 +37,8 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
      */
     public VehicleFlamerWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_FLAMER);
-                ammoType = AmmoType.T_VEHICLE_FLAMER;
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_FLAMER).or(F_ENERGY);
+        ammoType = AmmoType.T_VEHICLE_FLAMER;
         // TODO: cool should be an ammotype, not a mode
         String[] modeStrings = { "Damage", "Heat", "Cool" };
         setModes(modeStrings);

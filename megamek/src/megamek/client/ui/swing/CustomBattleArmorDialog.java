@@ -1722,7 +1722,7 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
         retVal.setChassisType(stateChassisType);
 
         // Set the weight (number of troops), and then initialize the armor.
-        retVal.setWeight(stateMenPerSquad);
+        retVal.setTroopers(stateMenPerSquad);
         retVal.refreshLocations();
         retVal.autoSetInternal();
         retVal.setArmorType(stateArmorType);

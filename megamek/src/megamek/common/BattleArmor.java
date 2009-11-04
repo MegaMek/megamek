@@ -82,6 +82,11 @@ public class BattleArmor extends Infantry {
     private int troopersShooting = 0;
 
     /**
+     * the number of troopers of this squad, dead or alive
+     */
+    private int troopers = -1;
+
+    /**
      * The cost of this unit. This value should be set when the unit's
      * file is read.
      */
@@ -219,7 +224,7 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public int locations() {
-        int retVal = Math.round(getWeight());
+        int retVal = Math.round(getTroopers());
         if (retVal == 0) {
             // Return one more than the maximum number of men in the unit.
             if (!isInitialized) {
@@ -1257,6 +1262,14 @@ public class BattleArmor extends Infantry {
     @Override
     public int getWeightClass() {
         return weightClass;
+    }
+
+    public int getTroopers() {
+        return troopers;
+    }
+
+    public void setTroopers(int troopers) {
+        this.troopers = troopers;
     }
 
     public void setChassisType(int inCT) {

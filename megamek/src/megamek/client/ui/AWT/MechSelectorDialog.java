@@ -1,14 +1,14 @@
 /*
  * MechSelectorDialog.java - Copyright (C) 2002,2004 Josh Yockey
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -80,7 +80,7 @@ import megamek.common.verifier.TestTank;
 public class MechSelectorDialog extends Dialog implements ActionListener,
         ItemListener, KeyListener, Runnable, WindowListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4382585886146902257L;
 
@@ -146,7 +146,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
     private Button m_bPick = new Button(Messages
             .getString("MechSelectorDialog.m_bPick")); //$NON-NLS-1$
     private Button m_bPickClose = new Button(Messages
-            .getString("MechSelectorDialog.m_bPickClose")); //$NON-NLS-1$    
+            .getString("MechSelectorDialog.m_bPickClose")); //$NON-NLS-1$
     private Button m_bCancel = new Button(Messages.getString("Close")); //$NON-NLS-1$
     private Panel m_pButtons = new Panel();
 
@@ -377,8 +377,8 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
             GUIPreferences.getInstance().setMechSelectorShowAdvanced(true);
         }
         m_pUpper.add(m_pSouthParams, BorderLayout.SOUTH);
-        this.invalidate();
-        this.pack();
+        invalidate();
+        pack();
     }
 
     private void updateTechChoice() {
@@ -425,7 +425,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
 
         final Map<String, String> hFailedFiles = MechSummaryCache.getInstance()
                 .getFailedFiles();
-        if (hFailedFiles != null && hFailedFiles.size() > 0) {
+        if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
             new UnitFailureDialog(m_clientgui.frame, hFailedFiles); // self-showing
                                                                     // dialog
         }
@@ -437,7 +437,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
             m_chWeightClass.addItem(EntityWeightClass.getClassName(i));
         }
         m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
-        m_chWeightClass.select(0);
+        m_chWeightClass.select(5);
 
         includeMaxTech = m_client.game.getOptions().booleanOption(
                 "allow_advanced_units");
@@ -508,12 +508,12 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
                 .hasMoreElements();) {
             EquipmentType et = e.nextElement();
-            if (et instanceof WeaponType
-                    && (et.getTechLevel() == nType
+            if ((et instanceof WeaponType)
+                    && ((et.getTechLevel() == nType)
                             || ((nType == TechConstants.T_TW_ALL) && ((et
                                     .getTechLevel() == TechConstants.T_INTRO_BOXSET)
                                     || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (et
-                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL || nType == TechConstants.T_IS_TW_NON_BOX) && ((et
+                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || (((nType == TechConstants.T_IS_TW_ALL) || (nType == TechConstants.T_IS_TW_NON_BOX)) && ((et
                             .getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et
                             .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
                 if (!(nUnitType == UnitType.SIZE)
@@ -524,17 +524,17 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
                 }
                 weapons.add(et.getName());
                 if (et.hasFlag(WeaponType.F_C3M)
-                        && (nType == TechConstants.T_TW_ALL
-                                || nType == TechConstants.T_IS_TW_NON_BOX || nType == TechConstants.T_IS_TW_ALL)) {
+                        && ((nType == TechConstants.T_TW_ALL)
+                                || (nType == TechConstants.T_IS_TW_NON_BOX) || (nType == TechConstants.T_IS_TW_ALL))) {
                     equipment.add(et.getName());
                 }
             }
-            if (et instanceof MiscType
-                    && (et.getTechLevel() == nType
+            if ((et instanceof MiscType)
+                    && ((et.getTechLevel() == nType)
                             || ((nType == TechConstants.T_TW_ALL) && ((et
                                     .getTechLevel() == TechConstants.T_INTRO_BOXSET)
                                     || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (et
-                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || ((nType == TechConstants.T_IS_TW_ALL || nType == TechConstants.T_IS_TW_NON_BOX) && ((et
+                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || (((nType == TechConstants.T_IS_TW_ALL) || (nType == TechConstants.T_IS_TW_NON_BOX)) && ((et
                             .getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et
                             .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
                 equipment.add(et.getName());
@@ -550,7 +550,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         m_cWeapons1.invalidate();
         m_cWeapons2.invalidate();
         m_cEquipment.invalidate();
-        this.pack();
+        pack();
     }
 
     private void filterMechs(boolean calledByAdvancedSearch) {
@@ -565,7 +565,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         }
         for (int x = 0; x < mechs.length; x++) {
             if ( /* Weight */
-            (nClass == EntityWeightClass.SIZE || mechs[x].getWeightClass() == nClass)
+            ((nClass == EntityWeightClass.SIZE) || (mechs[x].getWeightClass() == nClass))
                     && /* Technology Level */
                     ((nType == TechConstants.T_ALL)
                             || (nType == mechs[x].getType())
@@ -576,7 +576,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
                             .getType() == TechConstants.T_INTRO_BOXSET) || (mechs[x]
                             .getType() == TechConstants.T_IS_TW_NON_BOX))))
                     && /* Unit Type (Mek, Infantry, etc.) */
-                    (nUnitType == UnitType.SIZE || mechs[x].getUnitType()
+                    ((nUnitType == UnitType.SIZE) || mechs[x].getUnitType()
                             .equals(UnitType.getTypeName(nUnitType)))
                     && /* canon required */(!m_client.game.getOptions()
                             .booleanOption("canon_only") || mechs[x].isCanon())) {
@@ -587,7 +587,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         vMechs.copyInto(m_mechsCurrent);
         m_count = vMechs.size();
         if (!calledByAdvancedSearch
-                && (m_old_nType != nType || m_old_nUnitType != nUnitType)) {
+                && ((m_old_nType != nType) || (m_old_nUnitType != nUnitType))) {
             populateWeaponsAndEquipmentChoices();
         }
         m_old_nType = nType;
@@ -601,13 +601,13 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         m_mechList.removeAll();
         try {
             m_mechList.setEnabled(false);
-            this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
             for (int x = 0; x < m_mechsCurrent.length; x++) {
                 m_mechList.add(formatMech(m_mechsCurrent[x]));
             }
         } finally {
-            this.setCursor(Cursor.getDefaultCursor());
+            setCursor(Cursor.getDefaultCursor());
             m_mechList.setEnabled(true);
             // workaround for bug 1263380
             m_mechList.setFont(m_mechList.getFont());
@@ -667,14 +667,17 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         }
         if (walk > -1) {
             if (m_cWalk.getSelectedIndex() == 0) { // at least
-                if (entity.getWalkMP() < walk)
+                if (entity.getWalkMP() < walk) {
                     return false;
+                }
             } else if (m_cWalk.getSelectedIndex() == 1) { // equal to
-                if (walk != entity.getWalkMP())
+                if (walk != entity.getWalkMP()) {
                     return false;
+                }
             } else if (m_cWalk.getSelectedIndex() == 2) { // not more than
-                if (entity.getWalkMP() > walk)
+                if (entity.getWalkMP() > walk) {
                     return false;
+                }
             }
         }
 
@@ -686,14 +689,17 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         }
         if (jump > -1) {
             if (m_cJump.getSelectedIndex() == 0) { // at least
-                if (entity.getJumpMP() < jump)
+                if (entity.getJumpMP() < jump) {
                     return false;
+                }
             } else if (m_cJump.getSelectedIndex() == 1) { // equal to
-                if (jump != entity.getJumpMP())
+                if (jump != entity.getJumpMP()) {
                     return false;
+                }
             } else if (m_cJump.getSelectedIndex() == 2) { // not more than
-                if (entity.getJumpMP() > jump)
+                if (entity.getJumpMP() > jump) {
                     return false;
+                }
             }
         }
 
@@ -702,17 +708,21 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
             int armor = entity.getTotalArmor();
             int maxArmor = entity.getTotalInternal() * 2 + 3;
             if (sel == 1) {
-                if (armor < (maxArmor * .25))
+                if (armor < (maxArmor * .25)) {
                     return false;
+                }
             } else if (sel == 2) {
-                if (armor < (maxArmor * .5))
+                if (armor < (maxArmor * .5)) {
                     return false;
+                }
             } else if (sel == 3) {
-                if (armor < (maxArmor * .75))
+                if (armor < (maxArmor * .75)) {
                     return false;
+                }
             } else if (sel == 4) {
-                if (armor < (maxArmor * .9))
+                if (armor < (maxArmor * .9)) {
                     return false;
+                }
             }
         }
 
@@ -737,8 +747,9 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
                     count++;
                 }
             }
-            if (count >= weapon1)
+            if (count >= weapon1) {
                 foundWeapon1 = true;
+            }
         }
 
         count = 0;
@@ -757,8 +768,9 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
                     count++;
                 }
             }
-            if (count >= weapon2)
+            if (count >= weapon2) {
                 foundWeapon2 = true;
+            }
         }
 
         int startYear = Integer.MIN_VALUE;
@@ -773,21 +785,25 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         } catch (NumberFormatException ne) {
             //ignore
         }
-        if (entity.getYear() < startYear || entity.getYear() > endYear) {
+        if ((entity.getYear() < startYear) || (entity.getYear() > endYear)) {
             return false;
         }
 
-        if (weaponLine1Active && !weaponLine2Active && !foundWeapon1)
+        if (weaponLine1Active && !weaponLine2Active && !foundWeapon1) {
             return false;
-        if (weaponLine2Active && !weaponLine1Active && !foundWeapon2)
+        }
+        if (weaponLine2Active && !weaponLine1Active && !foundWeapon2) {
             return false;
+        }
         if (weaponLine1Active && weaponLine2Active) {
             if (m_cOrAnd.getSelectedIndex() == 0 /* 0 is "or" choice */) {
-                if (!foundWeapon1 && !foundWeapon2)
+                if (!foundWeapon1 && !foundWeapon2) {
                     return false;
+                }
             } else { // "and" choice in effect
-                if (!foundWeapon1 || !foundWeapon2)
+                if (!foundWeapon1 || !foundWeapon2) {
                     return false;
+                }
             }
         }
 
@@ -799,8 +815,9 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
                     count++;
                 }
             }
-            if (count < 1)
+            if (count < 1) {
                 return false;
+            }
         }
 
         return true;
@@ -826,12 +843,14 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
     private Point computeDesiredLocation() {
         int desiredX = m_clientgui.frame.getLocation().x
                 + m_clientgui.frame.getSize().width / 2 - getSize().width / 2;
-        if (desiredX < 0)
+        if (desiredX < 0) {
             desiredX = 0;
+        }
         int desiredY = m_clientgui.frame.getLocation().y
                 + m_clientgui.frame.getSize().height / 2 - getSize().height / 2;
-        if (desiredY < 0)
+        if (desiredY < 0) {
             desiredY = 0;
+        }
         return new Point(desiredX, desiredY);
     }
 
@@ -854,27 +873,34 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         } else {
             levelOrValid = "F";
         }
-        if (GUIPreferences.getInstance().getMechSelectorIncludeModel())
-            val += makeLength(ms.getModel(), 10) + " "; //$NON-NLS-1$ 
-        if (GUIPreferences.getInstance().getMechSelectorIncludeName())
-            val += makeLength(ms.getChassis(), 20) + " "; //$NON-NLS-1$ 
-        if (GUIPreferences.getInstance().getMechSelectorIncludeTons())
+        if (GUIPreferences.getInstance().getMechSelectorIncludeModel()) {
+            val += makeLength(ms.getModel(), 10) + " "; //$NON-NLS-1$
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeName()) {
+            val += makeLength(ms.getChassis(), 20) + " "; //$NON-NLS-1$
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeTons()) {
             val += makeLength("" + ms.getTons(), 7) + " "; //$NON-NLS-1$ //$NON-NLS-2$
-        if (GUIPreferences.getInstance().getMechSelectorIncludeBV())
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeBV()) {
             val += makeLength("" + ms.getBV(), 6) + " "; //$NON-NLS-1$ //$NON-NLS-2$
-        if (GUIPreferences.getInstance().getMechSelectorIncludeYear())
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeYear()) {
             val += ms.getYear() + " ";
-        if (GUIPreferences.getInstance().getMechSelectorIncludeLevel())
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeLevel()) {
             val += levelOrValid + " ";
-        if (GUIPreferences.getInstance().getMechSelectorIncludeCost())
+        }
+        if (GUIPreferences.getInstance().getMechSelectorIncludeCost()) {
             val += ms.getCost() + " ";
+        }
         return val;
     }
 
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == m_bCancel) {
-            this.setVisible(false);
-        } else if (ae.getSource() == m_bPick || ae.getSource() == m_bPickClose) {
+            setVisible(false);
+        } else if ((ae.getSource() == m_bPick) || (ae.getSource() == m_bPickClose)) {
             int x = m_mechList.getSelectedIndex();
             if (x == -1) {
                 return;
@@ -901,7 +927,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
                 return;
             }
             if (ae.getSource() == m_bPickClose) {
-                this.setVisible(false);
+                setVisible(false);
             }
         } else if (ae.getSource() == m_bSearch) {
             advancedSearch();
@@ -916,8 +942,8 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         if (ie.getSource() == m_chSort) {
             clearMechPreview();
             sortMechs();
-        } else if (ie.getSource() == m_chWeightClass
-                || ie.getSource() == m_chType || ie.getSource() == m_chUnitType) {
+        } else if ((ie.getSource() == m_chWeightClass)
+                || (ie.getSource() == m_chType) || (ie.getSource() == m_chUnitType)) {
             clearMechPreview();
             filterMechs(false);
         } else if (ie.getSource() == m_mechList) {
@@ -939,10 +965,10 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
                 clearMechPreview();
                 return;
             }
-        } else if (ie.getSource() == m_cModel || ie.getSource() == m_cName
-                || ie.getSource() == m_cTons || ie.getSource() == m_cBV
-                || ie.getSource() == m_cYear || ie.getSource() == m_cLevel
-                || ie.getSource() == m_cCost) {
+        } else if ((ie.getSource() == m_cModel) || (ie.getSource() == m_cName)
+                || (ie.getSource() == m_cTons) || (ie.getSource() == m_cBV)
+                || (ie.getSource() == m_cYear) || (ie.getSource() == m_cLevel)
+                || (ie.getSource() == m_cCost)) {
             GUIPreferences.getInstance().setMechSelectorIncludeModel(
                     m_cModel.getState());
             GUIPreferences.getInstance().setMechSelectorIncludeName(
@@ -982,15 +1008,16 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         String readout = mechView.getMechReadout();
         StringBuffer sb = new StringBuffer(readout);
         m_mechView.setText(readout);
-        if (entity instanceof Mech || entity instanceof Tank) {
+        if ((entity instanceof Mech) || (entity instanceof Tank)) {
             TestEntity testEntity = null;
-            if (entity instanceof Mech)
+            if (entity instanceof Mech) {
                 testEntity = new TestMech((Mech) entity,
                         entityVerifier.mechOption, null);
-            else
+            } else {
                 // entity instanceof Tank
                 testEntity = new TestTank((Tank) entity,
                         entityVerifier.tankOption, null);
+            }
             if (!testEntity.correctEntity(sb, !m_clientgui.getClient().game
                     .getOptions().booleanOption("is_eq_limits"))) {
                 m_mechView.setText(sb.toString());
@@ -1051,7 +1078,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
     }
 
     public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-        this.setVisible(false);
+        setVisible(false);
     }
 
     public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
@@ -1076,15 +1103,16 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         m_bPickClose.setEnabled(enable);
     }
 
-   
+
     private void autoSetSkills(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        if (!cs.useAverageSkills())
+        if (!cs.useAverageSkills()) {
             return;
+        }
         int piloting = 5;
         int gunnery = 4;
         if (e.isClan()) {
-            if (e instanceof Mech || e instanceof BattleArmor) {
+            if ((e instanceof Mech) || (e instanceof BattleArmor)) {
                 gunnery = 3;
                 piloting = 4;
                 if (m_client.game.getOptions()
@@ -1106,8 +1134,8 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
             }
         } else if (e instanceof Infantry) {
             // IS crews are 4/5 except infantry
-            if (e.getMovementMode() == IEntityMovementMode.INF_LEG
-                    || e instanceof BattleArmor) {
+            if ((e.getMovementMode() == IEntityMovementMode.INF_LEG)
+                    || (e instanceof BattleArmor)) {
                 gunnery = 4;
                 piloting = 5;
             } else {

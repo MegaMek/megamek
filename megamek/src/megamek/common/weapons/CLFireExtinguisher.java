@@ -48,7 +48,7 @@ public class CLFireExtinguisher extends Weapon {
         extremeRange = 1;
         tonnage = 0.0f;
         criticals = 0;
-        flags = flags.or(F_SOLO_ATTACK).or(F_ONESHOT);
+        flags = flags.or(F_SOLO_ATTACK).or(F_NO_FIRES);
     }
 
     /*

@@ -328,7 +328,7 @@ public class MechSummaryCache {
         ms.setEntryName(entry);
         ms.setYear(e.getYear());
         ms.setType(e.getTechLevel());
-        ms.setTons((int) e.getWeight());
+        ms.setTons(e.getWeight());
         ms.setBV(e.calculateBattleValue());
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setCost((int) e.getCost(false));

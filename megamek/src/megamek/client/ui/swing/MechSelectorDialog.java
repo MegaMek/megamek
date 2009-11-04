@@ -259,6 +259,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         weightModel.addElement(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         weightModel.setSelectedItem(EntityWeightClass.getClassName(0));
         comboWeight.setModel(weightModel);
+        comboWeight.setSelectedIndex(5);
         comboWeight.setMinimumSize(new java.awt.Dimension(200, 27));
         comboWeight.setPreferredSize(new java.awt.Dimension(200, 27));
         comboWeight.addActionListener(new java.awt.event.ActionListener() {

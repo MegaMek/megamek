@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import megamek.common.EntityWeightClass;
 import megamek.common.IGame;
+import megamek.common.Mech;
 import megamek.common.PilotingRollData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -54,14 +55,14 @@ public class HGRHandler extends GRHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if (ae.mpUsed > 0) {
+        if ((ae.mpUsed > 0) && (ae instanceof Mech)) {
             // the mod is weight-based
             int nMod;
-            if (ae.getWeight() <= EntityWeightClass.WEIGHT_LIGHT) {
+            if (ae.getWeightClass() <= EntityWeightClass.WEIGHT_LIGHT) {
                 nMod = 2;
-            } else if (ae.getWeight() <= EntityWeightClass.WEIGHT_MEDIUM) {
+            } else if (ae.getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM) {
                 nMod = 1;
-            } else if (ae.getWeight() <= EntityWeightClass.WEIGHT_HEAVY) {
+            } else if (ae.getWeightClass() <= EntityWeightClass.WEIGHT_HEAVY) {
                 nMod = 0;
             } else {
                 nMod = -1;

@@ -35,7 +35,7 @@ public class MechSummary implements Serializable {
     private String m_sEntryName; // for files in zips
     private int m_nYear;
     private int m_nType;
-    private int m_nTons;
+    private float m_nTons;
     private int m_nBV;
     private int m_nCost;
     private long m_lModified; // for comparison when loading
@@ -128,7 +128,7 @@ public class MechSummary implements Serializable {
         return (m_nType);
     }
 
-    public int getTons() {
+    public float getTons() {
         return (m_nTons);
     }
 
@@ -180,7 +180,7 @@ public class MechSummary implements Serializable {
         this.m_nType = m_nType;
     }
 
-    public void setTons(int m_nTons) {
+    public void setTons(float m_nTons) {
         this.m_nTons = m_nTons;
     }
 

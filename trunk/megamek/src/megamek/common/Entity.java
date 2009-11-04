@@ -685,7 +685,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getWeightClass() {
-        return EntityWeightClass.getWeightClass((int) getWeight());
+        return EntityWeightClass.getWeightClass(getWeight());
     }
 
     public String getWeightClassName() {
@@ -4222,7 +4222,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if (!weapon.isReady() || weapon.isMissing() || weapon.curMode().equals("Off")) {
                     continue;
                 }
-                
+
                 //AMS blocked by transported units can not fire
                 if (isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted())) {
                     continue;

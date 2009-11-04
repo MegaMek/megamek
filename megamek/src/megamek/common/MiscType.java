@@ -423,6 +423,16 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
             return (int) Math.ceil(entity.getWeight() / 15);
         } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+            switch (entity.getWeightClass()) {
+                case EntityWeightClass.WEIGHT_LIGHT:
+                    return 2;
+                case EntityWeightClass.WEIGHT_MEDIUM:
+                    return 3;
+                case EntityWeightClass.WEIGHT_HEAVY:
+                    return 4;
+                case EntityWeightClass.WEIGHT_ASSAULT:
+                    return 5;
+            }
             return entity.getWeightClass() + 1;
         } else if (hasFlag(F_TRACKS)) {
             if (entity instanceof QuadMech) {

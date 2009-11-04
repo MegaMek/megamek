@@ -1381,29 +1381,57 @@ public class BattleArmor extends Infantry {
             case TechConstants.T_IS_ADVANCED:
                 buff.append("IS Level 3");
                 break;
+            case TechConstants.T_IS_EXPERIMENTAL:
+                buff.append("IS Level 4");
+                break;
+            case TechConstants.T_IS_UNOFFICIAL:
+                buff.append("IS Level 5");
+                break;
             case TechConstants.T_CLAN_TW:
                 buff.append("Clan Level 2");
                 break;
             case TechConstants.T_CLAN_ADVANCED:
                 buff.append("Clan Level 3");
                 break;
+            case TechConstants.T_CLAN_EXPERIMENTAL:
+                buff.append("Clan Level 4");
+                break;
+            case TechConstants.T_CLAN_UNOFFICIAL:
+                buff.append("Clan Level 5");
+                break;
         }
         buff.append(newline);
         buff.append("</type>");
         buff.append(newline);
 
-        buff.append("<tonnage>");
+        buff.append("<trooper count>");
         buff.append(newline);
         buff.append(getWeight());
         buff.append(newline);
-        buff.append("</tonnage>");
+        buff.append("</trooper count>");
         buff.append(newline);
 
-        buff.append("<bv>");
+        buff.append("<weightclass>");
         buff.append(newline);
-        buff.append(calculateBattleValue());
+        switch (getWeightClass()) {
+            case EntityWeightClass.WEIGHT_BA_PAL:
+                buff.append("0");
+                break;
+            case EntityWeightClass.WEIGHT_BA_LIGHT:
+                buff.append("1");
+                break;
+            case EntityWeightClass.WEIGHT_BA_MEDIUM:
+                buff.append("2");
+                break;
+            case EntityWeightClass.WEIGHT_BA_HEAVY:
+                buff.append("3");
+                break;
+            case EntityWeightClass.WEIGHT_BA_ASSAULT:
+                buff.append("4");
+                break;
+        }
         buff.append(newline);
-        buff.append("</bv>");
+        buff.append("</weightclass>");
         buff.append(newline);
 
         buff.append("<motion_type>");
@@ -1424,6 +1452,19 @@ public class BattleArmor extends Infantry {
         }
         buff.append(newline);
         buff.append("</motion_type>");
+        buff.append(newline);
+
+        buff.append("<chassis>");
+        buff.append(newline);
+        switch (getChassisType()) {
+            case BattleArmor.CHASSIS_TYPE_BIPED:
+                buff.append("biped");
+                break;
+            case BattleArmor.CHASSIS_TYPE_QUAD:
+                buff.append("quad");
+                break;
+        }
+        buff.append("</chassis>");
         buff.append(newline);
 
         buff.append("<cruiseMP>");
@@ -1450,6 +1491,10 @@ public class BattleArmor extends Infantry {
         for (int i = 0; i < locations(); i++) {
             boolean found = false;
             for (Mounted m : getEquipment()) {
+                // don't write out swarm and leg attack, those get added dynamically
+                if ((m.getType() instanceof WeaponType) && m.getType().hasFlag(WeaponType.F_INFANTRY_ATTACK)) {
+                    continue;
+                }
                 if (m.getLocation() == i) {
                     if (!found) {
                         found = true;

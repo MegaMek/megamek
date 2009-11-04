@@ -104,6 +104,8 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_PROTO_WEAPON = BigInteger.valueOf(1).shiftLeft(46);
     public static final BigInteger F_TANK_WEAPON = BigInteger.valueOf(1).shiftLeft(47);
 
+    public static final BigInteger F_INFANTRY_ATTACK = BigInteger.valueOf(1).shiftLeft(48);
+
     // add maximum range for AT2
     public static final int RANGE_SHORT = 1;
     public static final int RANGE_MED = 2;

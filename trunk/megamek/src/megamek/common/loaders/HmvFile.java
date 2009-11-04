@@ -123,7 +123,8 @@ public class HmvFile implements IMechLoader {
             // ??
             dis.skipBytes(8);
             type = readUnsignedByte(dis);
-            structureType = HMVStructureType.getType(type);
+            // FIXME: this is not correct
+            //structureType = HMVStructureType.getType(type);
             // ??
             dis.skipBytes(23);
 
@@ -527,7 +528,10 @@ public class HmvFile implements IMechLoader {
                                                         : movementType == HMVMovementType.SUBMARINE ? IEntityMovementMode.SUBMARINE
                                                         : IEntityMovementMode.TRACKED);
             }
-            vehicle.setStructureType(EquipmentType.getStructureType(structureType.toString()));
+            vehicle.setStructureType(EquipmentType.getStructureType("Standard"));
+            //FIXME: structureType is being read wrong
+            // stupid not-consistent file format
+            //vehicle.setStructureType(EquipmentType.getStructureType(structureType.toString()));
 
             // This next line sets the weight to a rounded value
             // so that the suspension factor can be retrieved. The
@@ -613,6 +617,7 @@ public class HmvFile implements IMechLoader {
 
             return vehicle;
         } catch (Exception e) {
+            System.out.println(structureType.toString());
             e.printStackTrace();
             throw new EntityLoadingException(e.getMessage());
         }
@@ -1464,7 +1469,7 @@ class HMVStructureType extends HMVType {
     public static final Hashtable<Integer, HMVStructureType> types = new Hashtable<Integer, HMVStructureType>();
 
     public static final HMVStructureType STANDARD = new HMVStructureType(
-            "Standard", 176);
+            "Standard", 179);
     public static final HMVStructureType REINFORCED = new HMVStructureType(
             "Reinforced", 193);
 

@@ -132,8 +132,8 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         ArrayList<SortKey> sortlist = new ArrayList<SortKey>();
         sortlist.add(new SortKey(MechTableModel.COL_CHASSIS,SortOrder.ASCENDING));
         //sortlist.add(new RowSorter.SortKey(MechTableModel.COL_MODEL,SortOrder.ASCENDING));
-        ((DefaultRowSorter)tableUnits.getRowSorter()).setSortKeys(sortlist);
-        ((DefaultRowSorter)tableUnits.getRowSorter()).sort();
+        tableUnits.getRowSorter().setSortKeys(sortlist);
+        ((DefaultRowSorter<?, ?>)tableUnits.getRowSorter()).sort();
     }
 
     private void initComponents() {

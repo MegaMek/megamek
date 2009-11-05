@@ -118,22 +118,6 @@ public class MechSelectorDialog extends JDialog implements Runnable {
 
         unitModel = new MechTableModel();
         initComponents();
-        mechs = MechSummaryCache.getInstance().getAllMechs();
-
-        // break out if there are no units to filter
-        if (mechs == null) {
-            System.err.println("No units to filter!");
-        } else {
-            unitModel.setData(mechs);
-        }
-        filterUnits();
-
-        //initialize with the units sorted alphabetically by chassis
-        ArrayList<SortKey> sortlist = new ArrayList<SortKey>();
-        sortlist.add(new SortKey(MechTableModel.COL_CHASSIS,SortOrder.ASCENDING));
-        //sortlist.add(new RowSorter.SortKey(MechTableModel.COL_MODEL,SortOrder.ASCENDING));
-        tableUnits.getRowSorter().setSortKeys(sortlist);
-        ((DefaultRowSorter<?, ?>)tableUnits.getRowSorter()).sort();
     }
 
     private void initComponents() {
@@ -607,7 +591,23 @@ public class MechSelectorDialog extends JDialog implements Runnable {
          // Loading mechs can take a while, so it will have its own thread.
          // This prevents the UI from freezing, and allows the
          // "Please wait..." dialog to behave properly on various Java VMs.
+    	 mechs = MechSummaryCache.getInstance().getAllMechs();
+
+         // break out if there are no units to filter
+         if (mechs == null) {
+             System.err.println("No units to filter!");
+         } else {
+             unitModel.setData(mechs);
+         }
          filterUnits();
+
+         //initialize with the units sorted alphabetically by chassis
+         ArrayList<SortKey> sortlist = new ArrayList<SortKey>();
+         sortlist.add(new SortKey(MechTableModel.COL_CHASSIS,SortOrder.ASCENDING));
+         //sortlist.add(new RowSorter.SortKey(MechTableModel.COL_MODEL,SortOrder.ASCENDING));
+         tableUnits.getRowSorter().setSortKeys(sortlist);
+         ((DefaultRowSorter<?, ?>)tableUnits.getRowSorter()).sort();
+
          tableUnits.invalidate(); // force re-layout of window
          pack();
          //setLocation(computeDesiredLocation());

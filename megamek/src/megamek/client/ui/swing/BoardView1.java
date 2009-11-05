@@ -85,10 +85,10 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.IBoard;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
+import megamek.common.GunEmplacement;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -382,8 +382,47 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         MouseMotionListener rightClickDragScroll = new MouseMotionAdapter() {
             @Override
+            public void mouseMoved(MouseEvent e) {
+                Point point = e.getPoint();
+                if (null == point) {
+                    return;
+                }
 
+                for (int i = 0; i < displayables.size(); i++) {
+                    IDisplayable disp = displayables.get(i);
+                    if (disp.isBeingDragged()) {
+                        return;
+                    }
+                    double width = Math.min(boardSize.getWidth(), scrollpane.getViewport().getSize().getWidth());
+                    double height = Math.min(boardSize.getHeight(), scrollpane.getViewport().getSize().getHeight());
+                    Dimension drawDimension = new Dimension();
+                    drawDimension.setSize(width, height);
+                    disp.isMouseOver(point, drawDimension);
+                }
+            }
+
+            @Override
             public void mouseDragged(MouseEvent e) {
+                Point point = e.getPoint();
+                if (null == point) {
+                    return;
+                }
+                for (int i = 0; i < displayables.size(); i++) {
+                    IDisplayable disp = displayables.get(i);
+                    Point adjustPoint = new Point((int)Math.min(boardSize.getWidth(), -getBounds().getX()),
+                            (int)Math.min(boardSize.getHeight(),-getBounds().getY()));
+                    Point dispPoint = new Point();
+                    dispPoint.x = point.x - adjustPoint.x;
+                    dispPoint.y = point.y - adjustPoint.y;
+                    double width = Math.min(boardSize.getWidth(), scrollpane.getViewport().getSize().getWidth());
+                    double height = Math.min(boardSize.getHeight(), scrollpane.getViewport().getSize().getHeight());
+                    Dimension drawDimension = new Dimension();
+                    drawDimension.setSize(width, height);
+                    if (disp.isDragged(dispPoint, drawDimension)) {
+                        repaint();
+                        return;
+                    }
+                }
                 // only scroll when we should
                 if (!shouldScroll) {
                     return;
@@ -411,12 +450,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 if (newY > maxY) {
                     newY = maxY;
                 }
+                // don't scroll horizontally if the board fits into the window
+                if (scrollpane.getViewport().getWidth() >= getWidth()) {
+                    newX = scrollpane.getViewport().getViewPosition().x;
+                }
                 scrollpane.getViewport().setViewPosition(new Point(newX, newY));
             }
         };
         addMouseMotionListener(rightClickDragScroll);
 
-        setAutoscrolls(true);
+        //setAutoscrolls(true);
 
         updateBoardSize();
 
@@ -2187,7 +2230,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     // MouseListener
     //
     public void mousePressed(MouseEvent me) {
-
+        requestFocusInWindow();
         Point point = me.getPoint();
         if (null == point) {
             return;

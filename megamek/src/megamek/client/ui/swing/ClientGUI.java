@@ -340,6 +340,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (!MechSummaryCache.getInstance().isInitialized()) {
             unitLoadingDialog.setVisible(true);
         }
+        ChatterBox2 cb2 = new ChatterBox2(this, bv);
+        bv.addDisplayable(cb2);
+        bv.addKeyListener(cb2);
         uo = new UnitOverview(this);
         bv.addDisplayable(uo);
         Dimension screenSize = frame.getToolkit().getScreenSize();

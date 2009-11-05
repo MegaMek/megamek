@@ -3478,7 +3478,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createHalfCargo() {
         MiscType misc = new MiscType();
 
-        misc.name = "Cargo (1 ton)";
+        misc.name = "Cargo (0.5 tons)";
         misc.setInternalName(misc.name);
         misc.tonnage = 0.5f;
         misc.criticals = 1;

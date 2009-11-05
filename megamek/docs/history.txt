@@ -52,6 +52,7 @@ v0.35.9-dev (SVN)
 + removed MegaMek.app
 + MegaMek.app second attempt
 + removed MegaMek.app (symlinks not working)
++ Bug: unit loading dialog not working
 
 
 v0.35.8 (2009-10-18, 22:34 UTC+2)

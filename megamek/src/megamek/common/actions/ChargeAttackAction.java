@@ -29,7 +29,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.GunEmplacement;
-import megamek.common.IEntityMovementType;
+import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -81,7 +81,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public ToHitData toHit(IGame game, Targetable target, Coords src, int elevation, int movement, boolean skid, boolean gotUp) {
+    public ToHitData toHit(IGame game, Targetable target, Coords src, int elevation, EntityMovementType movement, boolean skid, boolean gotUp) {
         final Entity ae = getEntity(game);
 
         // arguments legal?
@@ -330,7 +330,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         md.compile(game, ae);
         for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
-            if (step.getMovementType() == IEntityMovementType.MOVE_ILLEGAL) {
+            if (step.getMovementType() == EntityMovementType.MOVE_ILLEGAL) {
                 break;
             }
             if (step.getType() == MovePath.STEP_CHARGE) {
@@ -397,9 +397,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     public static int getDamageTakenBy(Entity entity, Entity target, boolean tacops, int distance) {
         if (!tacops) {
             return (int) Math.ceil(target.getWeight() / 10.0 * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
-        } else {
-            return (int) Math.floor((((target.getWeight() * entity.getWeight()) * distance) / (target.getWeight() + entity.getWeight())) / 10);
         }
+        return (int) Math.floor((((target.getWeight() * entity.getWeight()) * distance) / (target.getWeight() + entity.getWeight())) / 10);
     }
 
 }

@@ -1649,20 +1649,20 @@ public abstract class Mech extends Entity implements Serializable {
      * Returns the name of the type of movement used. This is mech-specific.
      */
     @Override
-    public String getMovementString(int mtype) {
+    public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_SKID:
+            case MOVE_SKID:
                 return "Skidded";
-            case IEntityMovementType.MOVE_NONE:
-            case IEntityMovementType.MOVE_CAREFUL_STAND:
+            case MOVE_NONE:
+            case MOVE_CAREFUL_STAND:
                 return "None";
-            case IEntityMovementType.MOVE_WALK:
+            case MOVE_WALK:
                 return "Walked";
-            case IEntityMovementType.MOVE_RUN:
+            case MOVE_RUN:
                 return "Ran";
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 return "Jumped";
-            case IEntityMovementType.MOVE_SPRINT:
+            case MOVE_SPRINT:
                 return "Sprinted";
             default:
                 return "Unknown!";
@@ -1673,19 +1673,19 @@ public abstract class Mech extends Entity implements Serializable {
      * Returns the name of the type of movement used. This is mech-specific.
      */
     @Override
-    public String getMovementAbbr(int mtype) {
+    public String getMovementAbbr(EntityMovementType mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_SKID:
+            case MOVE_SKID:
                 return "S";
-            case IEntityMovementType.MOVE_NONE:
+            case MOVE_NONE:
                 return "N";
-            case IEntityMovementType.MOVE_WALK:
+            case MOVE_WALK:
                 return "W";
-            case IEntityMovementType.MOVE_RUN:
+            case MOVE_RUN:
                 return "R";
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 return "J";
-            case IEntityMovementType.MOVE_SPRINT:
+            case MOVE_SPRINT:
                 return "Sp";
             default:
                 return "?";
@@ -4376,9 +4376,8 @@ public abstract class Mech extends Entity implements Serializable {
     public int getMaxElevationDown() {
         if (game.getOptions().booleanOption("tacops_leaping")) {
             return 999;
-        } else {
-            return getMaxElevationChange();
         }
+        return getMaxElevationChange();
     }
 
     /**

@@ -26,7 +26,7 @@ import megamek.client.ui.SharedUtility;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IEntityMovementType;
+import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.LosEffects;
@@ -193,7 +193,7 @@ public class MoveOption extends MovePath {
 
         if (current.isDanger()) {
             if (getCEntity().base_psr_odds < .1) {
-                current.setMovementType(IEntityMovementType.MOVE_ILLEGAL);
+                current.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             } else {
                 double cur_threat = getCEntity().getThreatUtility(
                         .2 * entity.getWeight(), ToHitData.SIDE_REAR)
@@ -215,18 +215,18 @@ public class MoveOption extends MovePath {
         int heat = last.getTotalHeat();
         int move = 0;
         switch (last.getMovementType()) {
-        case IEntityMovementType.MOVE_WALK:
-        case IEntityMovementType.MOVE_VTOL_WALK:
+        case MOVE_WALK:
+        case MOVE_VTOL_WALK:
             move = 1;
             break;
-        case IEntityMovementType.MOVE_RUN:
-        case IEntityMovementType.MOVE_VTOL_RUN:
+        case MOVE_RUN:
+        case MOVE_VTOL_RUN:
             move = 2;
             break;
-        case IEntityMovementType.MOVE_SPRINT:
+        case MOVE_SPRINT:
             move = 3;
             break;
-        case IEntityMovementType.MOVE_JUMP:
+        case MOVE_JUMP:
             move = getEntity().getJumpHeat(last.getMpUsed());
             break;
         default:
@@ -251,7 +251,7 @@ public class MoveOption extends MovePath {
         }
         boolean isClan = getEntity().isClan();
         if ((last == null)
-                || (last.getMovementType() == IEntityMovementType.MOVE_ILLEGAL)) {
+                || (last.getMovementType() == EntityMovementType.MOVE_ILLEGAL)) {
             return false;
         }
         if ((last.getType() != STEP_FORWARDS)

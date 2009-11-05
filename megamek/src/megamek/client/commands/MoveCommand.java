@@ -18,7 +18,7 @@ import megamek.client.Client;
 import megamek.client.ui.swing.MovementDisplay;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IEntityMovementMode;
+import megamek.common.EntityMovementMode;
 import megamek.common.MovePath;
 
 /**
@@ -202,10 +202,10 @@ public class MoveCommand extends ClientCommand {
     private void clearAllMoves() {
         // switch back from swimming to normal mode.
         if (ce() != null) {
-            if (ce().getMovementMode() == IEntityMovementMode.BIPED_SWIM)
-                ce().setMovementMode(IEntityMovementMode.BIPED);
-            else if (ce().getMovementMode() == IEntityMovementMode.QUAD_SWIM)
-                ce().setMovementMode(IEntityMovementMode.QUAD);
+            if (ce().getMovementMode() == EntityMovementMode.BIPED_SWIM)
+                ce().setMovementMode(EntityMovementMode.BIPED);
+            else if (ce().getMovementMode() == EntityMovementMode.QUAD_SWIM)
+                ce().setMovementMode(EntityMovementMode.QUAD);
 
             cmd = new MovePath(client.game, ce());
         } else {

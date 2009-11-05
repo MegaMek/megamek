@@ -30,6 +30,7 @@ import megamek.common.BattleArmorBay;
 import megamek.common.CargoBay;
 import megamek.common.Engine;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.InfantryBay;
 import megamek.common.LocationFullException;
@@ -88,9 +89,9 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find movement block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
-        int nMotion = 16;
+        EntityMovementMode nMotion = EntityMovementMode.AERODYNE;
         if (sMotion.equals("spheroid")) {
-            nMotion = 17;
+            nMotion = EntityMovementMode.SPHEROID;
             a.setSpheroid(true);
         }
         a.setMovementMode(nMotion);

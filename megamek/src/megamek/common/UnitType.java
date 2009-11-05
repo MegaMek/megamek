@@ -47,14 +47,14 @@ public class UnitType {
     }
 
     public static int determineUnitTypeCode(Entity e) {
-        int mm = e.getMovementMode();
+        EntityMovementMode mm = e.getMovementMode();
         if (e instanceof Infantry) {
             return INFANTRY;
         } else if (e instanceof VTOL) {
             return VTOL;
-        } else if ((mm == IEntityMovementMode.NAVAL)
-                || (mm == IEntityMovementMode.HYDROFOIL)
-                || (mm == IEntityMovementMode.SUBMARINE)) {
+        } else if ((mm == EntityMovementMode.NAVAL)
+                || (mm == EntityMovementMode.HYDROFOIL)
+                || (mm == EntityMovementMode.SUBMARINE)) {
             return NAVAL;
         } else if (e instanceof Tank) {
             return TANK;

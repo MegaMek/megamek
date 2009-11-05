@@ -279,14 +279,14 @@ public class Tank extends Entity {
         }
 
         switch (movementMode) {
-            case IEntityMovementMode.TRACKED:
+            case TRACKED:
                 return (hex.terrainLevel(Terrains.WOODS) > 1)
                         || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex
                                 .containsTerrain(Terrains.ICE))
                         || hex.containsTerrain(Terrains.JUNGLE)
                         || (hex.terrainLevel(Terrains.MAGMA) > 1)
                         || (hex.terrainLevel(Terrains.ROUGH) > 1);
-            case IEntityMovementMode.WHEELED:
+            case WHEELED:
                 return hex.containsTerrain(Terrains.WOODS)
                         || hex.containsTerrain(Terrains.ROUGH)
                         || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex
@@ -296,18 +296,18 @@ public class Tank extends Entity {
                         || hex.containsTerrain(Terrains.JUNGLE)
                         || (hex.terrainLevel(Terrains.SNOW) > 1)
                         || (hex.terrainLevel(Terrains.GEYSER) == 2);
-            case IEntityMovementMode.HOVER:
+            case HOVER:
                 return hex.containsTerrain(Terrains.WOODS)
                         || hex.containsTerrain(Terrains.JUNGLE)
                         || (hex.terrainLevel(Terrains.MAGMA) > 1)
                         || (hex.terrainLevel(Terrains.ROUGH) > 1);
-            case IEntityMovementMode.NAVAL:
-            case IEntityMovementMode.HYDROFOIL:
+            case NAVAL:
+            case HYDROFOIL:
                 return (hex.terrainLevel(Terrains.WATER) <= 0)
                         || hex.containsTerrain(Terrains.ICE);
-            case IEntityMovementMode.SUBMARINE:
+            case SUBMARINE:
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
-            case IEntityMovementMode.WIGE:
+            case WIGE:
                 return (hex.containsTerrain(Terrains.WOODS)
                         || hex.containsTerrain(Terrains.BUILDING));
             default:
@@ -373,17 +373,17 @@ public class Tank extends Entity {
      * Returns the name of the type of movement used. This is tank-specific.
      */
     @Override
-    public String getMovementString(int mtype) {
+    public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_SKID:
+            case MOVE_SKID:
                 return "Skidded";
-            case IEntityMovementType.MOVE_NONE:
+            case MOVE_NONE:
                 return "None";
-            case IEntityMovementType.MOVE_WALK:
+            case MOVE_WALK:
                 return "Cruised";
-            case IEntityMovementType.MOVE_RUN:
+            case MOVE_RUN:
                 return "Flanked";
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 return "Jumped";
             default:
                 return "Unknown!";
@@ -394,17 +394,17 @@ public class Tank extends Entity {
      * Returns the name of the type of movement used. This is tank-specific.
      */
     @Override
-    public String getMovementAbbr(int mtype) {
+    public String getMovementAbbr(EntityMovementType mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_SKID:
+            case MOVE_SKID:
                 return "S";
-            case IEntityMovementType.MOVE_NONE:
+            case MOVE_NONE:
                 return "N";
-            case IEntityMovementType.MOVE_WALK:
+            case MOVE_WALK:
                 return "C";
-            case IEntityMovementType.MOVE_RUN:
+            case MOVE_RUN:
                 return "F";
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 return "J";
             default:
                 return "?";
@@ -676,18 +676,18 @@ public class Tank extends Entity {
 
         double typeModifier;
         switch (getMovementMode()) {
-            case IEntityMovementMode.TRACKED:
+            case TRACKED:
                 typeModifier = 0.9;
                 break;
-            case IEntityMovementMode.WHEELED:
+            case WHEELED:
                 typeModifier = 0.8;
                 break;
-            case IEntityMovementMode.HOVER:
-            case IEntityMovementMode.VTOL:
-            case IEntityMovementMode.WIGE:
+            case HOVER:
+            case VTOL:
+            case WIGE:
                 typeModifier = 0.7;
                 break;
-            case IEntityMovementMode.NAVAL:
+            case NAVAL:
                 typeModifier = 0.6;
                 break;
             default:
@@ -949,7 +949,7 @@ public class Tank extends Entity {
 
         //are we wheeled and in light snow?
         IHex hex = game.getBoard().getHex(getPosition());
-        if((null != hex) && (getMovementMode() == IEntityMovementMode.WHEELED) && (hex.terrainLevel(Terrains.SNOW) == 1)) {
+        if((null != hex) && (getMovementMode() == EntityMovementMode.WHEELED) && (hex.terrainLevel(Terrains.SNOW) == 1)) {
             prd.addModifier(1, "thin snow");
         }
 
@@ -1052,7 +1052,7 @@ public class Tank extends Entity {
         // WIGEs can go down as far as they want
         // 50 is a pretty arbitrary max amount, but that's also the
         // highest elevation for VTOLs, so I'll just use that
-        if ((getElevation() > 0) && (getMovementMode() == IEntityMovementMode.WIGE)) {
+        if ((getElevation() > 0) && (getMovementMode() == EntityMovementMode.WIGE)) {
             return 50;
         }
         return super.getMaxElevationDown();
@@ -1093,8 +1093,8 @@ public class Tank extends Entity {
     public boolean canCharge() {
         // Tanks can charge, except Hovers when the option is set, and WIGEs
         return super.canCharge()
-                && !(game.getOptions().booleanOption("no_hover_charge") && (IEntityMovementMode.HOVER == getMovementMode()))
-                && !(IEntityMovementMode.WIGE == getMovementMode())
+                && !(game.getOptions().booleanOption("no_hover_charge") && (EntityMovementMode.HOVER == getMovementMode()))
+                && !(EntityMovementMode.WIGE == getMovementMode())
                 && !(getStunnedTurns() > 0);
     }
 
@@ -1129,7 +1129,7 @@ public class Tank extends Entity {
      */
     public int getSuspensionFactor() {
         switch (movementMode) {
-            case IEntityMovementMode.HOVER:
+            case HOVER:
                 if (weight <= 10) {
                     return 40;
                 }
@@ -1143,7 +1143,7 @@ public class Tank extends Entity {
                     return 175;
                 }
                 return 235;
-            case IEntityMovementMode.HYDROFOIL:
+            case HYDROFOIL:
                 if (weight <= 10) {
                     return 60;
                 }
@@ -1172,14 +1172,14 @@ public class Tank extends Entity {
                     return 435;
                 }
                 return 480;
-            case IEntityMovementMode.NAVAL:
-            case IEntityMovementMode.SUBMARINE:
+            case NAVAL:
+            case SUBMARINE:
                 return 30;
-            case IEntityMovementMode.TRACKED:
+            case TRACKED:
                 return 0;
-            case IEntityMovementMode.WHEELED:
+            case WHEELED:
                 return 20;
-            case IEntityMovementMode.VTOL:
+            case VTOL:
                 if (weight <= 10) {
                     return 50;
                 }
@@ -1187,7 +1187,7 @@ public class Tank extends Entity {
                     return 95;
                 }
                 return 140;
-            case IEntityMovementMode.WIGE:
+            case WIGE:
                 if (weight <= 15) {
                     return 45;
                 }
@@ -1242,17 +1242,17 @@ public class Tank extends Entity {
         cost += getArmorWeight() * EquipmentType.getArmorCost(armorType);// armor
         double diveTonnage;
         switch (movementMode) {
-            case IEntityMovementMode.HOVER:
-            case IEntityMovementMode.HYDROFOIL:
-            case IEntityMovementMode.VTOL:
-            case IEntityMovementMode.SUBMARINE:
+            case HOVER:
+            case HYDROFOIL:
+            case VTOL:
+            case SUBMARINE:
                 diveTonnage = weight / 10.0;
                 break;
             default:
                 diveTonnage = 0.0;
                 break;
         }
-        if (movementMode != IEntityMovementMode.VTOL) {
+        if (movementMode != EntityMovementMode.VTOL) {
             cost += diveTonnage * 20000;
         } else {
             cost += diveTonnage * 40000;
@@ -1260,21 +1260,21 @@ public class Tank extends Entity {
         cost += getWeaponsAndEquipmentCost(ignoreAmmo);
         double multiplier = 1.0;
         switch (movementMode) {
-            case IEntityMovementMode.HOVER:
-            case IEntityMovementMode.SUBMARINE:
+            case HOVER:
+            case SUBMARINE:
                 multiplier += weight / 50.0;
                 break;
-            case IEntityMovementMode.HYDROFOIL:
+            case HYDROFOIL:
                 multiplier += weight / 75.0;
                 break;
-            case IEntityMovementMode.NAVAL:
-            case IEntityMovementMode.WHEELED:
+            case NAVAL:
+            case WHEELED:
                 multiplier += weight / 200.0;
                 break;
-            case IEntityMovementMode.TRACKED:
+            case TRACKED:
                 multiplier += weight / 100.0;
                 break;
-            case IEntityMovementMode.VTOL:
+            case VTOL:
                 multiplier += weight / 30.0;
                 break;
         }

@@ -253,7 +253,7 @@ public class Terrain implements ITerrain, Serializable {
                 + (exitsSpecified ? ":" + exits : "");
     }
 
-    public int pilotingModifier(int moveType) {
+    public int pilotingModifier(EntityMovementMode moveMode) {
         switch (type) {
         case Terrains.JUNGLE:
             return level;
@@ -265,20 +265,20 @@ public class Terrain implements ITerrain, Serializable {
         case Terrains.SNOW:
             return (level == 2) ? 1 : 0;
         case Terrains.SWAMP:
-            if ((moveType == IEntityMovementMode.HOVER)
-                    || (moveType == IEntityMovementMode.WIGE)) {
+            if ((moveMode == EntityMovementMode.HOVER)
+                    || (moveMode == EntityMovementMode.WIGE)) {
                 return 0;
-            } else if ((moveType == IEntityMovementMode.BIPED)
-                    || (moveType == IEntityMovementMode.QUAD)) {
+            } else if ((moveMode == EntityMovementMode.BIPED)
+                    || (moveMode == EntityMovementMode.QUAD)) {
                 return 1;
             } else {
                 return 2;
             }
         case Terrains.MUD:
-            if ((moveType == IEntityMovementMode.BIPED)
-                    || (moveType == IEntityMovementMode.QUAD)
-                    || (moveType == IEntityMovementMode.HOVER)
-                    || (moveType == IEntityMovementMode.WIGE)) {
+            if ((moveMode == EntityMovementMode.BIPED)
+                    || (moveMode == EntityMovementMode.QUAD)
+                    || (moveMode == EntityMovementMode.HOVER)
+                    || (moveMode == EntityMovementMode.WIGE)) {
                 return 0;
             }
             return 1;
@@ -294,8 +294,8 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 2;
         case Terrains.ICE:
-            if ((moveType == IEntityMovementMode.HOVER)
-                    || (moveType == IEntityMovementMode.WIGE)) {
+            if ((moveMode == EntityMovementMode.HOVER)
+                    || (moveMode == EntityMovementMode.WIGE)) {
                 return 0;
             }
             return 4;
@@ -306,7 +306,7 @@ public class Terrain implements ITerrain, Serializable {
         }
     }
 
-    public int movementCost(int moveType) {
+    public int movementCost(EntityMovementMode moveMode) {
         switch (type) {
         case Terrains.MAGMA:
             return level - 1;
@@ -323,40 +323,40 @@ public class Terrain implements ITerrain, Serializable {
             return level + 1;
         case Terrains.SNOW:
             if (level == 2) {
-                if ((moveType == IEntityMovementMode.HOVER)
-                        || (moveType == IEntityMovementMode.WIGE)) {
+                if ((moveMode == EntityMovementMode.HOVER)
+                        || (moveMode == EntityMovementMode.WIGE)) {
                     return 0;
                 }
                 return 1;
             }
-            if ((moveType == IEntityMovementMode.WHEELED)
-                    || (moveType == IEntityMovementMode.INF_JUMP)
-                    || (moveType == IEntityMovementMode.INF_LEG)
-                    || (moveType == IEntityMovementMode.INF_MOTORIZED)) {
+            if ((moveMode == EntityMovementMode.WHEELED)
+                    || (moveMode == EntityMovementMode.INF_JUMP)
+                    || (moveMode == EntityMovementMode.INF_LEG)
+                    || (moveMode == EntityMovementMode.INF_MOTORIZED)) {
                 return 1;
             }
             return 0;
         case Terrains.MUD:
-            if ((moveType == IEntityMovementMode.BIPED)
-                    || (moveType == IEntityMovementMode.QUAD)
-                    || (moveType == IEntityMovementMode.HOVER)
-                    || (moveType == IEntityMovementMode.WIGE)) {
+            if ((moveMode == EntityMovementMode.BIPED)
+                    || (moveMode == EntityMovementMode.QUAD)
+                    || (moveMode == EntityMovementMode.HOVER)
+                    || (moveMode == EntityMovementMode.WIGE)) {
                 return 0;
             }
             return 1;
         case Terrains.SWAMP:
-            if ((moveType == IEntityMovementMode.HOVER)
-                    || (moveType == IEntityMovementMode.WIGE)) {
+            if ((moveMode == EntityMovementMode.HOVER)
+                    || (moveMode == EntityMovementMode.WIGE)) {
                 return 0;
-            } else if ((moveType == IEntityMovementMode.BIPED)
-                    || (moveType == IEntityMovementMode.QUAD)) {
+            } else if ((moveMode == EntityMovementMode.BIPED)
+                    || (moveMode == EntityMovementMode.QUAD)) {
                 return 1;
             } else {
                 return 2;
             }
         case Terrains.ICE:
-            if ((moveType == IEntityMovementMode.HOVER)
-                    || (moveType == IEntityMovementMode.WIGE)) {
+            if ((moveMode == EntityMovementMode.HOVER)
+                    || (moveMode == EntityMovementMode.WIGE)) {
                 return 0;
             }
             return 1;
@@ -367,16 +367,16 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 1;
         case Terrains.SAND:
-            if ((moveType == IEntityMovementMode.WHEELED)
-                    || (moveType == IEntityMovementMode.INF_JUMP)
-                    || (moveType == IEntityMovementMode.INF_LEG)
-                    || (moveType == IEntityMovementMode.INF_MOTORIZED)) {
+            if ((moveMode == EntityMovementMode.WHEELED)
+                    || (moveMode == EntityMovementMode.INF_JUMP)
+                    || (moveMode == EntityMovementMode.INF_LEG)
+                    || (moveMode == EntityMovementMode.INF_MOTORIZED)) {
                 return 1;
             }
             return 0;
         case Terrains.INDUSTRIAL:
-            if ((moveType == IEntityMovementMode.BIPED)
-                    || (moveType == IEntityMovementMode.QUAD)) {
+            if ((moveMode == EntityMovementMode.BIPED)
+                    || (moveMode == EntityMovementMode.QUAD)) {
                 return 1;
             }
             return 0;
@@ -401,9 +401,9 @@ public class Terrain implements ITerrain, Serializable {
         }
     }
 
-    public int getBogDownModifier(int moveType, boolean largeVee) {
-        if ((moveType == IEntityMovementMode.HOVER)
-                || (moveType == IEntityMovementMode.WIGE)) {
+    public int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee) {
+        if ((moveMode == EntityMovementMode.HOVER)
+                || (moveMode == EntityMovementMode.WIGE)) {
             return TargetRoll.AUTOMATIC_SUCCESS;
         }
         switch (type) {
@@ -412,7 +412,7 @@ public class Terrain implements ITerrain, Serializable {
             if (level > 1) {
                 return TargetRoll.AUTOMATIC_FAIL;
             }
-            if (moveType == IEntityMovementMode.VTOL) {
+            if (moveMode == EntityMovementMode.VTOL) {
                 return TargetRoll.AUTOMATIC_FAIL;
             }
             return 0;
@@ -422,8 +422,8 @@ public class Terrain implements ITerrain, Serializable {
             }
             return TargetRoll.AUTOMATIC_SUCCESS;
         case (Terrains.MUD):
-            if ((moveType == IEntityMovementMode.BIPED)
-                    || (moveType == IEntityMovementMode.QUAD)) {
+            if ((moveMode == EntityMovementMode.BIPED)
+                    || (moveMode == EntityMovementMode.QUAD)) {
                 return TargetRoll.AUTOMATIC_SUCCESS;
             }
         case (Terrains.TUNDRA):

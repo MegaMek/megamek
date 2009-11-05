@@ -78,8 +78,8 @@ import megamek.common.HexTarget;
 import megamek.common.HitData;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
-import megamek.common.IEntityMovementMode;
-import megamek.common.IEntityMovementType;
+import megamek.common.EntityMovementMode;
+import megamek.common.EntityMovementType;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -3160,8 +3160,8 @@ public class Server implements Runnable {
         IHex hex = game.getBoard().getHex(pos);
         boolean isBridge = hex.containsTerrain(Terrains.PAVEMENT);
 
-        if (unloader.getMovementMode() == IEntityMovementMode.VTOL) {
-            if (unit.getMovementMode() == IEntityMovementMode.VTOL) {
+        if (unloader.getMovementMode() == EntityMovementMode.VTOL) {
+            if (unit.getMovementMode() == EntityMovementMode.VTOL) {
                 // Flying units onload to the same elevation as the flying
                 // transport
                 unit.setElevation(elevation);
@@ -3176,7 +3176,7 @@ public class Server implements Runnable {
                         break;
                     }
                     elevation--;
-                    unit.moved = IEntityMovementType.MOVE_JUMP;
+                    unit.moved = EntityMovementType.MOVE_JUMP;
                 }
                 if (!unit.isElevationValid(elevation, hex)) {
                     return false;
@@ -3187,12 +3187,12 @@ public class Server implements Runnable {
             // -> sit in the building at the same elevation
             unit.setElevation(elevation);
         } else if (hex.terrainLevel(Terrains.WATER) > 0) {
-            if ((unit.getMovementMode() == IEntityMovementMode.HOVER)
-                    || (unit.getMovementMode() == IEntityMovementMode.WIGE)
-                    || (unit.getMovementMode() == IEntityMovementMode.HYDROFOIL)
-                    || (unit.getMovementMode() == IEntityMovementMode.NAVAL)
-                    || (unit.getMovementMode() == IEntityMovementMode.SUBMARINE)
-                    || (unit.getMovementMode() == IEntityMovementMode.INF_UMU) || hex.containsTerrain(Terrains.ICE)
+            if ((unit.getMovementMode() == EntityMovementMode.HOVER)
+                    || (unit.getMovementMode() == EntityMovementMode.WIGE)
+                    || (unit.getMovementMode() == EntityMovementMode.HYDROFOIL)
+                    || (unit.getMovementMode() == EntityMovementMode.NAVAL)
+                    || (unit.getMovementMode() == EntityMovementMode.SUBMARINE)
+                    || (unit.getMovementMode() == EntityMovementMode.INF_UMU) || hex.containsTerrain(Terrains.ICE)
                     || isBridge) {
                 // units that can float stay on the surface, or we go on the
                 // bridge
@@ -3562,7 +3562,7 @@ public class Server implements Runnable {
             int nextAltitude = nextHex.floor();
 
             // but VTOL keep altitude
-            if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
+            if (entity.getMovementMode() == EntityMovementMode.VTOL) {
                 nextAltitude = Math.max(nextAltitude, curAltitude);
             } else {
                 // Is there a building to "catch" the unit?
@@ -3589,7 +3589,7 @@ public class Server implements Runnable {
                     // Hovercraft can "skid" over water.
                     // all units can skid over ice.
                     if ((entity instanceof Tank)
-                            && ((entity.getMovementMode() == IEntityMovementMode.HOVER) || (entity.getMovementMode() == IEntityMovementMode.WIGE))) {
+                            && ((entity.getMovementMode() == EntityMovementMode.HOVER) || (entity.getMovementMode() == EntityMovementMode.WIGE))) {
                         if (nextHex.containsTerrain(Terrains.WATER)) {
                             nextAltitude = nextHex.surface();
                         }
@@ -3605,7 +3605,7 @@ public class Server implements Runnable {
             int nextElevation = nextAltitude - nextHex.surface();
 
             boolean crashedIntoTerrain = curAltitude < nextAltitude;
-            if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
+            if (entity.getMovementMode() == EntityMovementMode.VTOL) {
                 if ((nextElevation == 0)
                         || ((nextElevation == 1) && (nextHex.containsTerrain(Terrains.WOODS) || nextHex
                                 .containsTerrain(Terrains.JUNGLE)))) {
@@ -3626,7 +3626,7 @@ public class Server implements Runnable {
             }
 
             // however WIGE can gain 1 level to avoid crashing into the terrain
-            if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
+            if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                 if ((nextElevation == 0)
                         && !(nextHex.containsTerrain(Terrains.WOODS) || nextHex.containsTerrain(Terrains.JUNGLE))) {
                     nextElevation = 1;
@@ -3663,8 +3663,8 @@ public class Server implements Runnable {
                 r.add(nextPos.getBoardNum(), true);
                 addReport(r);
 
-                if ((entity.getMovementMode() == IEntityMovementMode.WIGE)
-                        || (entity.getMovementMode() == IEntityMovementMode.VTOL)) {
+                if ((entity.getMovementMode() == EntityMovementMode.WIGE)
+                        || (entity.getMovementMode() == EntityMovementMode.VTOL)) {
                     int hitSide = step.getFacing() - direction + 6;
                     hitSide %= 6;
                     int table = 0;
@@ -3731,7 +3731,7 @@ public class Server implements Runnable {
             // Have skidding units suffer falls (off a cliff).
             else if (curAltitude > nextAltitude + entity.getMaxElevationChange()) {
                 // WIGE can avoid this too, if they have 2MP to spend
-                if ((entity.getMovementMode() == IEntityMovementMode.WIGE) && (entity.getRunMP() - 2 >= entity.mpUsed)) {
+                if ((entity.getMovementMode() == EntityMovementMode.WIGE) && (entity.getRunMP() - 2 >= entity.mpUsed)) {
                     entity.mpUsed += 2;
                     nextAltitude = curAltitude;
                 } else {
@@ -4035,8 +4035,8 @@ public class Server implements Runnable {
 
                 // If the prohibited terrain is water, entity is destroyed
                 if ((nextHex.terrainLevel(Terrains.WATER) > 0) && (entity instanceof Tank)
-                        && (entity.getMovementMode() != IEntityMovementMode.HOVER)
-                        && (entity.getMovementMode() != IEntityMovementMode.WIGE)) {
+                        && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                        && (entity.getMovementMode() != EntityMovementMode.WIGE)) {
                     addReport(destroyEntity(entity, "skidded into a watery grave", false, true));
                 }
 
@@ -4056,8 +4056,8 @@ public class Server implements Runnable {
                 break;
             }
 
-            if ((nextHex.terrainLevel(Terrains.WATER) > 0) && (entity.getMovementMode() != IEntityMovementMode.HOVER)
-                    && (entity.getMovementMode() != IEntityMovementMode.WIGE)) {
+            if ((nextHex.terrainLevel(Terrains.WATER) > 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                    && (entity.getMovementMode() != EntityMovementMode.WIGE)) {
                 // water ends the skid
                 break;
             }
@@ -4257,7 +4257,7 @@ public class Server implements Runnable {
                 } else {
                     // what needs to get checked?
                     // this move puts them at over-thrust
-                    target.moved = IEntityMovementType.MOVE_OVER_THRUST;
+                    target.moved = EntityMovementType.MOVE_OVER_THRUST;
                     // they may have exceeded SI, only add if they hadn't
                     // exceeded it before
                     if (target.mpUsed <= ta.getSI()) {
@@ -4356,7 +4356,7 @@ public class Server implements Runnable {
         vReport.add(r);
         while (crash_damage > 0) {
             HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            if (entity.getMovementMode() == IEntityMovementMode.SPHEROID) {
+            if (entity.getMovementMode() == EntityMovementMode.SPHEROID) {
                 hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_REAR);
             }
 
@@ -4664,8 +4664,8 @@ public class Server implements Runnable {
         // (these are all cleared by Entity.newRound)
         int distance = entity.delta_distance;
         int mpUsed = entity.mpUsed;
-        int moveType = entity.moved;
-        int overallMoveType = entity.moved;
+        EntityMovementType moveType = entity.moved;
+        EntityMovementType overallMoveType = entity.moved;
         boolean firstStep;
         boolean wasProne;
         boolean fellDuringMovement = false;
@@ -4730,7 +4730,7 @@ public class Server implements Runnable {
             boolean entityFellWhileAttemptingToStand = false;
 
             // stop for illegal movement
-            if (step.getMovementType() == IEntityMovementType.MOVE_ILLEGAL) {
+            if (step.getMovementType() == EntityMovementType.MOVE_ILLEGAL) {
                 break;
             }
 
@@ -4739,7 +4739,7 @@ public class Server implements Runnable {
                 break;
             }
 
-            if (firstStep && (entity.getMovementMode() == IEntityMovementMode.WIGE) && (entity.getElevation() == 0)) {
+            if (firstStep && (entity.getMovementMode() == EntityMovementMode.WIGE) && (entity.getElevation() == 0)) {
                 wigeStartedLanded = true;
             }
 
@@ -5093,7 +5093,7 @@ public class Server implements Runnable {
             mpUsed = step.getMpUsed();
 
             if (cachedGravityLimit < 0) {
-                cachedGravityLimit = IEntityMovementType.MOVE_JUMP == moveType ? entity.getJumpMP(false) : entity
+                cachedGravityLimit = EntityMovementType.MOVE_JUMP == moveType ? entity.getJumpMP(false) : entity
                         .getRunningGravityLimit();
             }
             // check for charge
@@ -5227,7 +5227,7 @@ public class Server implements Runnable {
 
             // set last step parameters
             curPos = step.getPosition();
-            if ((moveType != IEntityMovementType.MOVE_JUMP) || (entity.getJumpType() != Mech.JUMP_BOOSTER)) {
+            if ((moveType != EntityMovementType.MOVE_JUMP) || (entity.getJumpType() != Mech.JUMP_BOOSTER)) {
                 curFacing = step.getFacing();
             }
             // check if a building PSR will be needed later, before setting the
@@ -5242,13 +5242,13 @@ public class Server implements Runnable {
             IHex curHex = game.getBoard().getHex(curPos);
 
             // check for automatic unstick
-            if (entity.canUnstickByJumping() && entity.isStuck() && (moveType == IEntityMovementType.MOVE_JUMP)) {
+            if (entity.canUnstickByJumping() && entity.isStuck() && (moveType == EntityMovementType.MOVE_JUMP)) {
                 entity.setStuck(false);
                 entity.setCanUnstickByJumping(false);
             }
 
             // check for leap
-            if (!lastPos.equals(curPos) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)
+            if (!lastPos.equals(curPos) && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
                     && (entity instanceof Mech) && game.getOptions().booleanOption("tacops_leaping")) {
                 int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getElevation())
                         - (curElevation + curHex.getElevation());
@@ -5313,7 +5313,7 @@ public class Server implements Runnable {
                     entity.delta_distance = distance - 1;
 
                     // Attacks against a skidding target have additional +2.
-                    moveType = IEntityMovementType.MOVE_SKID;
+                    moveType = EntityMovementType.MOVE_SKID;
 
                     // What is the first hex in the skid?
                     if (step.isThisStepBackwards()) {
@@ -5347,8 +5347,8 @@ public class Server implements Runnable {
             } // End need-skid-psr
 
             // check sideslip
-            if ((entity instanceof VTOL) || (entity.getMovementMode() == IEntityMovementMode.HOVER)
-                    || (entity.getMovementMode() == IEntityMovementMode.WIGE)) {
+            if ((entity instanceof VTOL) || (entity.getMovementMode() == EntityMovementMode.HOVER)
+                    || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
                 rollTarget = entity.checkSideSlip(moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing,
                         lastPos, curPos, distance);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -5377,8 +5377,8 @@ public class Server implements Runnable {
                             }
 
                             if ((entity.getElevation() == 0)
-                                    && ((entity.getMovementMode() == IEntityMovementMode.VTOL) || (entity
-                                            .getMovementMode() == IEntityMovementMode.WIGE))) {
+                                    && ((entity.getMovementMode() == EntityMovementMode.VTOL) || (entity
+                                            .getMovementMode() == EntityMovementMode.WIGE))) {
                                 turnOver = true;
                             }
                             // set entity parameters
@@ -5431,7 +5431,7 @@ public class Server implements Runnable {
 
             // check for breaking magma crust
             if ((curHex.terrainLevel(Terrains.MAGMA) == 1) && (step.getElevation() == 0)
-                    && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)) {
+                    && (step.getMovementType() != EntityMovementType.MOVE_JUMP)) {
                 int roll = Compute.d6(1);
                 r = new Report(2395);
                 r.addDesc(entity);
@@ -5453,7 +5453,7 @@ public class Server implements Runnable {
 
             // check for entering liquid magma
             if ((curHex.terrainLevel(Terrains.MAGMA) == 2) && (step.getElevation() == 0)
-                    && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)) {
+                    && (step.getMovementType() != EntityMovementType.MOVE_JUMP)) {
                 doMagmaDamage(entity, false);
             }
 
@@ -5491,7 +5491,7 @@ public class Server implements Runnable {
                         && (prevStep != null)
                         && ((lastHex.containsTerrain(Terrains.FIRE) && (prevStep.getElevation() <= 1)) || (lastHex
                                 .containsTerrain(Terrains.MAGMA) && (prevStep.getElevation() == 0)))
-                        && ((step.getMovementType() != IEntityMovementType.MOVE_JUMP)
+                        && ((step.getMovementType() != EntityMovementType.MOVE_JUMP)
                         // Bug #828741 -- jumping bypasses fire, but not on the
                         // first step
                         // getMpUsed -- total MP used to this step
@@ -5521,7 +5521,7 @@ public class Server implements Runnable {
             // check to see if we are not a mech and we've moved INTO fire
             if (!(entity instanceof Mech)) {
                 if (game.getBoard().getHex(curPos).containsTerrain(Terrains.FIRE) && !lastPos.equals(curPos)
-                        && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) && (step.getElevation() <= 1)) {
+                        && (step.getMovementType() != EntityMovementType.MOVE_JUMP) && (step.getElevation() <= 1)) {
                     doFlamingDamage(entity);
                 }
             }
@@ -5535,7 +5535,7 @@ public class Server implements Runnable {
             if (!lastPos.equals(curPos) || (lastElevation != curElevation)) {
                 boolean boom = false;
                 boolean isOnGround = !i.hasMoreElements();
-                isOnGround |= step.getMovementType() != IEntityMovementType.MOVE_JUMP;
+                isOnGround |= step.getMovementType() != EntityMovementType.MOVE_JUMP;
                 isOnGround &= step.getElevation() < 1;
                 if (isOnGround) {
                     boom = checkVibrabombs(entity, curPos, false, lastPos, curPos, vPhaseReport);
@@ -5548,7 +5548,7 @@ public class Server implements Runnable {
                     if (enterMinefield(entity, curPos, step.getElevation(), isOnGround, vPhaseReport)) {
                         // resolve any piloting rolls from damage unless unit
                         // was jumping
-                        if (step.getMovementType() != IEntityMovementType.MOVE_JUMP) {
+                        if (step.getMovementType() != EntityMovementType.MOVE_JUMP) {
                             addReport(resolvePilotingRolls(entity));
                             game.resetPSRs(entity);
                         }
@@ -5565,7 +5565,7 @@ public class Server implements Runnable {
                     // taken account of (functions the same as MASC failure)
                     // only do this if they had more steps (and they were not
                     // jumping
-                    if (i.hasMoreElements() && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)) {
+                    if (i.hasMoreElements() && (step.getMovementType() != EntityMovementType.MOVE_JUMP)) {
                         md.clear();
                         fellDuringMovement = true;
                     }
@@ -5635,13 +5635,13 @@ public class Server implements Runnable {
             // check during movement, for breach damage, and always
             // set dry if appropriate
             // TODO: possibly make the locations local and set later
-            addReport(doSetLocationsExposure(entity, curHex, step.getMovementType() == IEntityMovementType.MOVE_JUMP,
+            addReport(doSetLocationsExposure(entity, curHex, step.getMovementType() == EntityMovementType.MOVE_JUMP,
                     step.getElevation()));
 
             // check for breaking ice by breaking through from below
             if ((lastElevation < 0) && (step.getElevation() == 0) && lastHex.containsTerrain(Terrains.ICE)
                     && lastHex.containsTerrain(Terrains.WATER)
-                    && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) && !lastPos.equals(curPos)) {
+                    && (step.getMovementType() != EntityMovementType.MOVE_JUMP) && !lastPos.equals(curPos)) {
                 // need to temporarily reset entity's position so it doesn't
                 // fall in the ice
                 entity.setPosition(curPos);
@@ -5654,7 +5654,7 @@ public class Server implements Runnable {
             }
             // check for breaking ice by stepping on it
             if (curHex.containsTerrain(Terrains.ICE) && curHex.containsTerrain(Terrains.WATER)
-                    && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) && !lastPos.equals(curPos)
+                    && (step.getMovementType() != EntityMovementType.MOVE_JUMP) && !lastPos.equals(curPos)
                     && !(entity instanceof Infantry)
                     && !(step.isPavementStep() && curHex.containsTerrain(Terrains.BRIDGE))) {
                 if (step.getElevation() == 0) {
@@ -5992,8 +5992,8 @@ public class Server implements Runnable {
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             doSkillCheckInPlace(entity, rollTarget);
         }
-        if ((md.getLastStepMovementType() == IEntityMovementType.MOVE_SPRINT) && md.hasActiveMASC()) {
-            doSkillCheckInPlace(entity, entity.getBasePilotingRoll(IEntityMovementType.MOVE_SPRINT));
+        if ((md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT) && md.hasActiveMASC()) {
+            doSkillCheckInPlace(entity, entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
         }
 
         if (entity.isAirborne()) {
@@ -6082,7 +6082,7 @@ public class Server implements Runnable {
             entity.addPilotingModifierForTerrain(roll);
 
             // Add a +4 modifier.
-            if (md.getLastStepMovementType() == IEntityMovementType.MOVE_VTOL_RUN) {
+            if (md.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_RUN) {
                 roll.addModifier(2, "dislodge swarming infantry with VTOL movement");
             } else {
                 roll.addModifier(4, "dislodge swarming infantry");
@@ -6157,7 +6157,7 @@ public class Server implements Runnable {
         } // End try-to-dislodge-swarmers
 
         // but the danger isn't over yet! landing from a jump can be risky!
-        if ((overallMoveType == IEntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
+        if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
             final IHex curHex = game.getBoard().getHex(curPos);
             // check for damaged criticals
             rollTarget = entity.checkLandingWithDamage(overallMoveType);
@@ -6372,7 +6372,7 @@ public class Server implements Runnable {
             // let everyone know about what just happened
             send(entity.getOwner().getId(), createSpecialReportPacket());
         } else {
-            if ((entity.getMovementMode() == IEntityMovementMode.WIGE) && (entity.getElevation() > 0)) {
+            if ((entity.getMovementMode() == EntityMovementMode.WIGE) && (entity.getElevation() > 0)) {
                 if (!wigeStartedLanded && (entity.delta_distance < 5)) {
                     // try to land safely
                     r = new Report(2123);
@@ -7187,8 +7187,8 @@ public class Server implements Runnable {
                 if (entity instanceof Infantry) {
                     target += 1;
                 }
-                if ((entity.getMovementMode() == IEntityMovementMode.HOVER)
-                        || (entity.getMovementMode() == IEntityMovementMode.WIGE)) {
+                if ((entity.getMovementMode() == EntityMovementMode.HOVER)
+                        || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
                     target = 12;
                 }
             }
@@ -7751,27 +7751,27 @@ public class Server implements Runnable {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = i.nextElement();
 
-            if ((entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM)
-                    || (entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM)) {
+            if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
+                    || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
                 return;
             }
 
             // build up heat from movement
             if (entity.isEvading() && !(entity instanceof Aero)) {
                 entity.heatBuildup += entity.getRunHeat() + 2;
-            } else if (entity.moved == IEntityMovementType.MOVE_NONE) {
+            } else if (entity.moved == EntityMovementType.MOVE_NONE) {
                 entity.heatBuildup += entity.getStandingHeat();
-            } else if ((entity.moved == IEntityMovementType.MOVE_WALK)
-                    || (entity.moved == IEntityMovementType.MOVE_VTOL_WALK)
-                    || (entity.moved == IEntityMovementType.MOVE_CAREFUL_STAND)) {
+            } else if ((entity.moved == EntityMovementType.MOVE_WALK)
+                    || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
+                    || (entity.moved == EntityMovementType.MOVE_CAREFUL_STAND)) {
                 entity.heatBuildup += entity.getWalkHeat();
-            } else if ((entity.moved == IEntityMovementType.MOVE_RUN)
-                    || (entity.moved == IEntityMovementType.MOVE_VTOL_RUN)
-                    || (entity.moved == IEntityMovementType.MOVE_SKID)) {
+            } else if ((entity.moved == EntityMovementType.MOVE_RUN)
+                    || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+                    || (entity.moved == EntityMovementType.MOVE_SKID)) {
                 entity.heatBuildup += entity.getRunHeat();
-            } else if (entity.moved == IEntityMovementType.MOVE_JUMP) {
+            } else if (entity.moved == EntityMovementType.MOVE_JUMP) {
                 entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
-            } else if (entity.moved == IEntityMovementType.MOVE_SPRINT) {
+            } else if (entity.moved == EntityMovementType.MOVE_SPRINT) {
                 entity.heatBuildup += entity.getSprintHeat();
             }
         }
@@ -8452,8 +8452,8 @@ public class Server implements Runnable {
         Report r;
         IHex destHex = game.getBoard().getHex(c);
         int bgMod = destHex.getBogDownModifier(entity.getMovementMode(), entity instanceof LargeSupportTank);
-        if ((bgMod != TargetRoll.AUTOMATIC_SUCCESS) && (entity.getMovementMode() != IEntityMovementMode.HOVER)
-                && (entity.getMovementMode() != IEntityMovementMode.WIGE) && (elev == 0)) {
+        if ((bgMod != TargetRoll.AUTOMATIC_SUCCESS) && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE) && (elev == 0)) {
             PilotingRollData roll = entity.getBasePilotingRoll();
             roll.append(new PilotingRollData(entity.getId(), bgMod, "avoid bogging down"));
             int stuckroll = Compute.d6(2);
@@ -8590,14 +8590,14 @@ public class Server implements Runnable {
                     a.setAltitude(hex.ceiling() + 1);
                 }
             }
-        } else if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
+        } else if (entity.getMovementMode() == EntityMovementMode.SUBMARINE) {
             // TODO: Submarines should have a selectable height.
             // For now, pretend they're regular naval.
             entity.setElevation(0);
-        } else if ((entity.getMovementMode() == IEntityMovementMode.HOVER)
-                || (entity.getMovementMode() == IEntityMovementMode.WIGE)
-                || (entity.getMovementMode() == IEntityMovementMode.NAVAL)
-                || (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL)) {
+        } else if ((entity.getMovementMode() == EntityMovementMode.HOVER)
+                || (entity.getMovementMode() == EntityMovementMode.WIGE)
+                || (entity.getMovementMode() == EntityMovementMode.NAVAL)
+                || (entity.getMovementMode() == EntityMovementMode.HYDROFOIL)) {
             // For now, assume they're on the surface.
             // entity elevation is relative to hex surface
             entity.setElevation(0);
@@ -10339,7 +10339,7 @@ public class Server implements Runnable {
             }
         }
 
-        if ((te.getMovementMode() == IEntityMovementMode.BIPED) || (te.getMovementMode() == IEntityMovementMode.QUAD)) {
+        if ((te.getMovementMode() == EntityMovementMode.BIPED) || (te.getMovementMode() == EntityMovementMode.QUAD)) {
             PilotingRollData kickPRD = getKickPushPSR(te, ae, te, "was kicked");
             game.addPSR(kickPRD);
         }
@@ -13877,7 +13877,7 @@ public class Server implements Runnable {
         if (Entity.NONE != entity.getSwarmTargetId()) {
             return;
         }
-        if ((entity.getMovementMode() == IEntityMovementMode.VTOL) && !entity.infernos.isStillBurning()) {
+        if ((entity.getMovementMode() == EntityMovementMode.VTOL) && !entity.infernos.isStillBurning()) {
             // VTOLs don't check as long as they are flying higher than
             // the burning terrain. TODO: Check for rules conformity (ATPM?)
             // according to maxtech, elevation 0 or 1 should be affected,
@@ -14311,11 +14311,11 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
                 // walking and running, 1 damage per MP used more than we would
                 // have normally
-                if ((entity.moved == IEntityMovementType.MOVE_WALK)
-                        || (entity.moved == IEntityMovementType.MOVE_VTOL_WALK)
-                        || (entity.moved == IEntityMovementType.MOVE_RUN)
-                        || (entity.moved == IEntityMovementType.MOVE_SPRINT)
-                        || (entity.moved == IEntityMovementType.MOVE_VTOL_RUN)) {
+                if ((entity.moved == EntityMovementType.MOVE_WALK)
+                        || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
+                        || (entity.moved == EntityMovementType.MOVE_RUN)
+                        || (entity.moved == EntityMovementType.MOVE_SPRINT)
+                        || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)) {
                     if (entity instanceof Mech) {
                         int j = entity.mpUsed;
                         int damage = 0;
@@ -14340,7 +14340,7 @@ public class Server implements Runnable {
                     }
                 }
                 // jumping
-                if ((entity.moved == IEntityMovementType.MOVE_JUMP) && (entity instanceof Mech)) {
+                if ((entity.moved == EntityMovementType.MOVE_JUMP) && (entity instanceof Mech)) {
                     // low g, 1 damage for each hex jumped further than
                     // possible normally
                     if (game.getPlanetaryConditions().getGravity() < 1) {
@@ -19520,17 +19520,17 @@ public class Server implements Runnable {
                     // Can the other unit survive?
                     boolean survived = false;
                     if (entity instanceof Tank) {
-                        if ((entity.getMovementMode() == IEntityMovementMode.NAVAL)
-                                || (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL)) {
-                            if (other.getMovementMode() == IEntityMovementMode.INF_UMU) {
+                        if ((entity.getMovementMode() == EntityMovementMode.NAVAL)
+                                || (entity.getMovementMode() == EntityMovementMode.HYDROFOIL)) {
+                            if (other.getMovementMode() == EntityMovementMode.INF_UMU) {
                                 survived = Compute.d6() <= 3;
-                            } else if (other.getMovementMode() == IEntityMovementMode.INF_JUMP) {
+                            } else if (other.getMovementMode() == EntityMovementMode.INF_JUMP) {
                                 survived = Compute.d6() == 1;
-                            } else if (other.getMovementMode() == IEntityMovementMode.VTOL) {
+                            } else if (other.getMovementMode() == EntityMovementMode.VTOL) {
                                 survived = Compute.d6() <= 2;
                             }
-                        } else if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
-                            if (other.getMovementMode() == IEntityMovementMode.INF_UMU) {
+                        } else if (entity.getMovementMode() == EntityMovementMode.SUBMARINE) {
+                            if (other.getMovementMode() == EntityMovementMode.INF_UMU) {
                                 survived = Compute.d6() == 1;
                             }
                         } else {
@@ -19984,11 +19984,11 @@ public class Server implements Runnable {
 
         // Falling into water instantly destroys most non-mechs
         if ((waterDepth > 0) && !(entity instanceof Mech) && !(entity instanceof Protomech)
-                && !((entity.getRunMP() > 0) && (entity.getMovementMode() == IEntityMovementMode.HOVER))
-                && (entity.getMovementMode() != IEntityMovementMode.HYDROFOIL)
-                && (entity.getMovementMode() != IEntityMovementMode.NAVAL)
-                && (entity.getMovementMode() != IEntityMovementMode.SUBMARINE)
-                && (entity.getMovementMode() != IEntityMovementMode.INF_UMU)) {
+                && !((entity.getRunMP() > 0) && (entity.getMovementMode() == EntityMovementMode.HOVER))
+                && (entity.getMovementMode() != EntityMovementMode.HYDROFOIL)
+                && (entity.getMovementMode() != EntityMovementMode.NAVAL)
+                && (entity.getMovementMode() != EntityMovementMode.SUBMARINE)
+                && (entity.getMovementMode() != EntityMovementMode.INF_UMU)) {
             vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
             return vPhaseReport;
         }
@@ -20145,7 +20145,7 @@ public class Server implements Runnable {
             entity.setSwarmAttackerId(Entity.NONE);
             swarmer.setSwarmTargetId(Entity.NONE);
             // Did the infantry fall into water?
-            if ((waterDepth > 0) && (swarmer.getMovementMode() != IEntityMovementMode.INF_UMU)) {
+            if ((waterDepth > 0) && (swarmer.getMovementMode() != EntityMovementMode.INF_UMU)) {
                 // Swarming infantry die.
                 swarmer.setPosition(fallPos);
                 r = new Report(2330);
@@ -22387,7 +22387,7 @@ public class Server implements Runnable {
      * @return <code>true</code> if the building collapses due to overloading.
      */
     private boolean passBuildingWall(Entity entity, Building bldg, Coords lastPos, Coords curPos, int distance,
-            String why, boolean backwards, int overallMoveType) {
+            String why, boolean backwards, EntityMovementType overallMoveType) {
 
         Report r;
 
@@ -22661,10 +22661,10 @@ public class Server implements Runnable {
                     }
                 }
 
-                if ((entity.getMovementMode() == IEntityMovementMode.HYDROFOIL)
-                        || (entity.getMovementMode() == IEntityMovementMode.NAVAL)
-                        || (entity.getMovementMode() == IEntityMovementMode.SUBMARINE)
-                        || (entity.getMovementMode() == IEntityMovementMode.INF_UMU)) {
+                if ((entity.getMovementMode() == EntityMovementMode.HYDROFOIL)
+                        || (entity.getMovementMode() == EntityMovementMode.NAVAL)
+                        || (entity.getMovementMode() == EntityMovementMode.SUBMARINE)
+                        || (entity.getMovementMode() == EntityMovementMode.INF_UMU)) {
                     continue; // under the bridge even at same level
                 }
 
@@ -23550,17 +23550,17 @@ public class Server implements Runnable {
         PilotingRollData rollTarget;
         if (game.getPlanetaryConditions().getGravity() != 1) {
             if (entity instanceof Mech) {
-                if ((step.getMovementType() == IEntityMovementType.MOVE_WALK)
-                        || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
-                        || (step.getMovementType() == IEntityMovementType.MOVE_RUN)
-                        || (step.getMovementType() == IEntityMovementType.MOVE_SPRINT)
-                        || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)) {
+                if ((step.getMovementType() == EntityMovementType.MOVE_WALK)
+                        || (step.getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
+                        || (step.getMovementType() == EntityMovementType.MOVE_RUN)
+                        || (step.getMovementType() == EntityMovementType.MOVE_SPRINT)
+                        || (step.getMovementType() == EntityMovementType.MOVE_VTOL_RUN)) {
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We moved too fast, let's make PSR to see if we get
                         // damage
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
                     }
-                } else if (step.getMovementType() == IEntityMovementType.MOVE_JUMP) {
+                } else if (step.getMovementType() == EntityMovementType.MOVE_JUMP) {
                     System.err.println("gravity move check jump: " + step.getMpUsed() + "/" + cachedMaxMPExpenditure);
                     System.err.flush();
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
@@ -23576,10 +23576,10 @@ public class Server implements Runnable {
                     }
                 }
             } else if (entity instanceof Tank) {
-                if ((step.getMovementType() == IEntityMovementType.MOVE_WALK)
-                        || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
-                        || (step.getMovementType() == IEntityMovementType.MOVE_RUN)
-                        || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)) {
+                if ((step.getMovementType() == EntityMovementType.MOVE_WALK)
+                        || (step.getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
+                        || (step.getMovementType() == EntityMovementType.MOVE_RUN)
+                        || (step.getMovementType() == EntityMovementType.MOVE_VTOL_RUN)) {
                     // For Tanks, we need to check if the tank had
                     // more MPs because it was moving along a road.
                     if ((step.getMpUsed() > cachedMaxMPExpenditure) && !step.isOnlyPavement()) {
@@ -24059,9 +24059,9 @@ public class Server implements Runnable {
 
                 if ((entity instanceof Tank)
                         && (entity.getPosition() != null)
-                        && ((entity.getMovementMode() == IEntityMovementMode.TRACKED)
-                                || (entity.getMovementMode() == IEntityMovementMode.WHEELED) || ((entity
-                                .getMovementMode() == IEntityMovementMode.HOVER) && entity.isImmobile()))
+                        && ((entity.getMovementMode() == EntityMovementMode.TRACKED)
+                                || (entity.getMovementMode() == EntityMovementMode.WHEELED) || ((entity
+                                .getMovementMode() == EntityMovementMode.HOVER) && entity.isImmobile()))
                         && (game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0)
                         && (entity.getElevation() < 0)) {
                     return true;
@@ -24189,11 +24189,11 @@ public class Server implements Runnable {
                 Entity e = entities.nextElement();
                 // If the unit is on the surface, and is no longer allowed in
                 // the hex
-                boolean isHoverOrWiGE = (e.getMovementMode() == IEntityMovementMode.HOVER)
-                        || (e.getMovementMode() == IEntityMovementMode.WIGE);
+                boolean isHoverOrWiGE = (e.getMovementMode() == EntityMovementMode.HOVER)
+                        || (e.getMovementMode() == EntityMovementMode.WIGE);
                 if ((e.getElevation() == 0) && !(hex.containsTerrain(Terrains.BLDG_ELEV, 0))
                         && !(isHoverOrWiGE && (e.getRunMP() >= 0))
-                        && (e.getMovementMode() != IEntityMovementMode.INF_UMU) && !e.hasUMU()) {
+                        && (e.getMovementMode() != EntityMovementMode.INF_UMU) && !e.hasUMU()) {
                     vPhaseReport.addAll(doEntityFallsInto(e, c, c, new PilotingRollData(TargetRoll.AUTOMATIC_FAIL)));
                 }
             }
@@ -24263,11 +24263,11 @@ public class Server implements Runnable {
         int boomroll = Compute.d6(2);
         int penalty = 0;
         switch (tank.getMovementMode()) {
-        case IEntityMovementMode.HOVER:
+        case HOVER:
             penalty = 4;
             break;
-        case IEntityMovementMode.VTOL:
-        case IEntityMovementMode.WHEELED:
+        case VTOL:
+        case WHEELED:
             penalty = 2;
             break;
         }
@@ -24333,17 +24333,17 @@ public class Server implements Runnable {
         r = new Report(1210, Report.PUBLIC);
         vDesc.add(r);
         switch (te.getMovementMode()) {
-        case IEntityMovementMode.HOVER:
-        case IEntityMovementMode.HYDROFOIL:
+        case HOVER:
+        case HYDROFOIL:
             modifier += 3;
             break;
-        case IEntityMovementMode.WHEELED:
+        case WHEELED:
             modifier += 2;
             break;
-        case IEntityMovementMode.WIGE:
+        case WIGE:
             modifier += 4;
             break;
-        case IEntityMovementMode.VTOL:
+        case VTOL:
             // VTOL don't roll, auto -1 MP
             int nMP = te.getOriginalWalkMP();
             if (nMP > 0) {
@@ -24425,13 +24425,13 @@ public class Server implements Runnable {
         }
         if ((te.getOriginalWalkMP() == 0) || te.isImmobile()) {
             // Hovercraft reduced to 0MP over water sink
-            if (((te.getMovementMode() == IEntityMovementMode.HOVER) || ((te.getMovementMode() == IEntityMovementMode.WIGE) && (te
+            if (((te.getMovementMode() == EntityMovementMode.HOVER) || ((te.getMovementMode() == EntityMovementMode.WIGE) && (te
                     .getElevation() == 0)))
                     && (game.getBoard().getHex(te.getPosition()).terrainLevel(Terrains.WATER) > 0)
                     && !game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ICE)) {
                 vDesc.addAll(destroyEntity(te, "a watery grave", false));
             }
-            if ((te instanceof VTOL) || ((te.getMovementMode() == IEntityMovementMode.WIGE) && (te.getElevation() > 0))) {
+            if ((te instanceof VTOL) || ((te.getMovementMode() == EntityMovementMode.WIGE) && (te.getElevation() > 0))) {
                 // report problem: add tab
                 vDesc.addAll(crashVTOLorWiGE(te));
             }
@@ -24599,8 +24599,8 @@ public class Server implements Runnable {
      *            of an eruption
      */
     void doMagmaDamage(Entity en, boolean eruption) {
-        if ((((en.getMovementMode() == IEntityMovementMode.VTOL) && (en.getElevation() > 0))
-                || (en.getMovementMode() == IEntityMovementMode.HOVER) || ((en.getMovementMode() == IEntityMovementMode.WIGE)
+        if ((((en.getMovementMode() == EntityMovementMode.VTOL) && (en.getElevation() > 0))
+                || (en.getMovementMode() == EntityMovementMode.HOVER) || ((en.getMovementMode() == EntityMovementMode.WIGE)
                 && (en.getOriginalWalkMP() > 0) && !eruption))
                 && !en.isImmobile()) {
             return;
@@ -24751,7 +24751,7 @@ public class Server implements Runnable {
 
             if (flak) {
                 // Check: is entity not a VTOL in flight or an ASF
-                if (!((entity instanceof VTOL) || (entity.getMovementMode() == IEntityMovementMode.VTOL) || (entity instanceof Aero))) {
+                if (!((entity instanceof VTOL) || (entity.getMovementMode() == EntityMovementMode.VTOL) || (entity instanceof Aero))) {
                     continue;
                 }
                 // Check: is entity at correct elevation?
@@ -24760,7 +24760,7 @@ public class Server implements Runnable {
                 }
             } else {
                 // Check: is entity a VTOL or Aero in flight?
-                if ((entity instanceof VTOL) || (entity.getMovementMode() == IEntityMovementMode.VTOL)
+                if ((entity instanceof VTOL) || (entity.getMovementMode() == EntityMovementMode.VTOL)
                         || (entity instanceof Aero)) {
                     // VTOLs take no damage from normal artillery unless landed
                     if ((entity.getElevation() != 0) && (entity.getElevation() != hex.terrainLevel(Terrains.BLDG_ELEV))
@@ -24798,7 +24798,7 @@ public class Server implements Runnable {
                 } else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
                     // wheeled and hover tanks take movement critical
                     if ((entity instanceof Tank)
-                            && ((entity.getMovementMode() == IEntityMovementMode.WHEELED) || (entity.getMovementMode() == IEntityMovementMode.HOVER))) {
+                            && ((entity.getMovementMode() == EntityMovementMode.WHEELED) || (entity.getMovementMode() == EntityMovementMode.HOVER))) {
                         r = new Report(6480);
                         r.subject = entity.getId();
                         r.addDesc(entity);

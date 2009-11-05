@@ -32,8 +32,8 @@ import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
-import megamek.common.IEntityMovementMode;
-import megamek.common.IEntityMovementType;
+import megamek.common.EntityMovementMode;
+import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -251,7 +251,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && ((game.getPhase() == IGame.Phase.PHASE_TARGETING) || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD));
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (target.getTargetType() == Targetable.TYPE_ENTITY)
-                && (te.getMovementMode() == IEntityMovementMode.VTOL) && (te.getElevation() > 0)
+                && (te.getMovementMode() == EntityMovementMode.VTOL) && (te.getElevation() > 0)
                 && (usesAmmo && (atype.getMunitionType() == AmmoType.M_STANDARD));
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
@@ -893,7 +893,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // check for pl-masc
-        if (ae.crew.getOptions().booleanOption("pl_masc") && (ae.getMovementMode() == IEntityMovementMode.INF_LEG)) {
+        if (ae.crew.getOptions().booleanOption("pl_masc") && (ae.getMovementMode() == EntityMovementMode.INF_LEG)) {
             toHit.addModifier(+1, "PL-MASC");
         }
 
@@ -2209,16 +2209,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         } else if (isAttackerInfantry && !(ae instanceof BattleArmor)) {
             // 0 MP infantry units: move or shoot, except for anti-mech attacks,
             // those are handled above
-            if ((ae.getMovementMode() == IEntityMovementMode.INF_LEG) && (ae.getWalkMP() == 0)
-                    && (ae.moved != IEntityMovementType.MOVE_NONE)) {
+            if ((ae.getMovementMode() == EntityMovementMode.INF_LEG) && (ae.getWalkMP() == 0)
+                    && (ae.moved != EntityMovementType.MOVE_NONE)) {
                 return "Foot platoons with 0 MP can move or shoot, not both";
             }
             if (game.getOptions().booleanOption("tacops_fast_infantry_move")
-                    && (ae.moved == IEntityMovementType.MOVE_RUN)) {
+                    && (ae.moved == EntityMovementType.MOVE_RUN)) {
                 return "Infantry fast moved this turn and so can not shoot.";
             }
             // check for trying to fire field gun after moving
-            if (!wtype.hasFlag(WeaponType.F_INFANTRY) && (ae.moved != IEntityMovementType.MOVE_NONE)) {
+            if (!wtype.hasFlag(WeaponType.F_INFANTRY) && (ae.moved != EntityMovementType.MOVE_NONE)) {
                 return "Can't fire field guns in same turn as moving";
             }
             // check for mixing infantry and field gun attacks
@@ -2681,7 +2681,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return "Cannot Fire Weapon, Snared by Chain Whip";
             }
         }
-        if ((ae.getMovementMode() == IEntityMovementMode.WIGE) && (ae.getPosition() == target.getPosition())) {
+        if ((ae.getMovementMode() == EntityMovementMode.WIGE) && (ae.getPosition() == target.getPosition())) {
             return "WiGE may not attack target in same hex";
         }
 

@@ -285,7 +285,7 @@ public class Compute {
     /**
      * @return true if a piloting skill roll is needed to traverse the terrain
      */
-    public static boolean isPilotingSkillNeeded(IGame game, int entityId, Coords src, Coords dest, int movementType,
+    public static boolean isPilotingSkillNeeded(IGame game, int entityId, Coords src, Coords dest, EntityMovementType movementType,
             boolean isTurning, boolean prevStepIsOnPavement, int srcElevation, int destElevation, MovePath path) {
         final Entity entity = game.getEntity(entityId);
         final IHex srcHex = game.getBoard().getHex(src);
@@ -308,38 +308,38 @@ public class Compute {
         }
 
         // check for rubble
-        if ((movementType != IEntityMovementType.MOVE_JUMP) && (destHex.terrainLevel(Terrains.RUBBLE) > 0)
-                && (entity.getMovementMode() != IEntityMovementMode.VTOL) && !isInfantry) {
+        if ((movementType != EntityMovementType.MOVE_JUMP) && (destHex.terrainLevel(Terrains.RUBBLE) > 0)
+                && (entity.getMovementMode() != EntityMovementMode.VTOL) && !isInfantry) {
             return true;
         }
 
         // check for swamp
         if (destHex.containsTerrain(Terrains.SWAMP) && !(entity.getElevation() > destHex.getElevation())
-                && (entity.getMovementMode() != IEntityMovementMode.HOVER)
-                && (entity.getMovementMode() != IEntityMovementMode.VTOL)
-                && (movementType != IEntityMovementType.MOVE_JUMP)
-                && (entity.getMovementMode() != IEntityMovementMode.WIGE)) {
+                && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                && (entity.getMovementMode() != EntityMovementMode.VTOL)
+                && (movementType != EntityMovementType.MOVE_JUMP)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)) {
             return true;
         }
 
         // check for thin ice
         if (destHex.containsTerrain(Terrains.ICE) && destHex.containsTerrain(Terrains.WATER)
                 && !(entity.getElevation() > destHex.getElevation()) && !isPavementStep
-                && (movementType != IEntityMovementType.MOVE_JUMP)) {
+                && (movementType != EntityMovementType.MOVE_JUMP)) {
             return true;
         }
 
         // Check for water unless we're a hovercraft or naval or using a bridge
         // or flying.
-        if ((movementType != IEntityMovementType.MOVE_JUMP)
+        if ((movementType != EntityMovementType.MOVE_JUMP)
                 && !(entity.getElevation() > destHex.surface())
-                && !((entity.getMovementMode() == IEntityMovementMode.HOVER)
-                        || (entity.getMovementMode() == IEntityMovementMode.NAVAL)
-                        || (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL)
-                        || (entity.getMovementMode() == IEntityMovementMode.SUBMARINE)
-                        || (entity.getMovementMode() == IEntityMovementMode.INF_UMU)
-                        || (entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM)
-                        || (entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM) || (entity.getMovementMode() == IEntityMovementMode.WIGE))
+                && !((entity.getMovementMode() == EntityMovementMode.HOVER)
+                        || (entity.getMovementMode() == EntityMovementMode.NAVAL)
+                        || (entity.getMovementMode() == EntityMovementMode.HYDROFOIL)
+                        || (entity.getMovementMode() == EntityMovementMode.SUBMARINE)
+                        || (entity.getMovementMode() == EntityMovementMode.INF_UMU)
+                        || (entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
+                        || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM) || (entity.getMovementMode() == EntityMovementMode.WIGE))
                 && (destHex.terrainLevel(Terrains.WATER) > 0) && !isPavementStep) {
             return true;
         }
@@ -353,10 +353,10 @@ public class Compute {
          * srcHex.contains(Terrain.PAVEMENT) || srcHex.contains(Terrain.ROAD) ||
          * srcHex.contains(Terrain.BRIDGE) )
          */
-        if (((prevStepIsOnPavement && ((movementType == IEntityMovementType.MOVE_RUN) || (movementType == IEntityMovementType.MOVE_SPRINT))) || ((srcHex
-                .containsTerrain(Terrains.ICE)) && (movementType != IEntityMovementType.MOVE_JUMP)))
-                && (entity.getMovementMode() != IEntityMovementMode.HOVER)
-                && (entity.getMovementMode() != IEntityMovementMode.WIGE) && isTurning && !isInfantry) {
+        if (((prevStepIsOnPavement && ((movementType == EntityMovementType.MOVE_RUN) || (movementType == EntityMovementType.MOVE_SPRINT))) || ((srcHex
+                .containsTerrain(Terrains.ICE)) && (movementType != EntityMovementType.MOVE_JUMP)))
+                && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE) && isTurning && !isInfantry) {
             return true;
         }
 
@@ -372,16 +372,16 @@ public class Compute {
         }
 
         // check sideslips
-        if ((entity instanceof VTOL) || (entity.getMovementMode() == IEntityMovementMode.HOVER)
-                || (entity.getMovementMode() == IEntityMovementMode.WIGE)) {
+        if ((entity instanceof VTOL) || (entity.getMovementMode() == EntityMovementMode.HOVER)
+                || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
             if (isTurning
-                    && ((movementType == IEntityMovementType.MOVE_RUN) || (movementType == IEntityMovementType.MOVE_VTOL_RUN))) {
+                    && ((movementType == EntityMovementType.MOVE_RUN) || (movementType == EntityMovementType.MOVE_VTOL_RUN))) {
                 return true;
             }
         }
 
         // check leaps
-        if ((entity instanceof Mech) && (delta_alt < -2) && (movementType != IEntityMovementType.MOVE_JUMP)) {
+        if ((entity instanceof Mech) && (delta_alt < -2) && (movementType != EntityMovementType.MOVE_JUMP)) {
             return true;
         }
 
@@ -421,7 +421,7 @@ public class Compute {
         // can't be displaced into prohibited terrain
         // unless we're displacing a tracked or wheeled vee into water
         if (entity.isHexProhibited(destHex)
-                && !((entity instanceof Tank) && destHex.containsTerrain(Terrains.WATER) && ((entity.movementMode == IEntityMovementMode.TRACKED) || (entity.movementMode == IEntityMovementMode.WHEELED)))) {
+                && !((entity instanceof Tank) && destHex.containsTerrain(Terrains.WATER) && ((entity.movementMode == EntityMovementMode.TRACKED) || (entity.movementMode == EntityMovementMode.WHEELED)))) {
             return false;
         }
 
@@ -1347,7 +1347,7 @@ public class Compute {
     /**
      * Modifier to attacks due to attacker movement
      */
-    public static ToHitData getAttackerMovementModifier(IGame game, int entityId, int movement) {
+    public static ToHitData getAttackerMovementModifier(IGame game, int entityId, EntityMovementType movement) {
         final Entity entity = game.getEntity(entityId);
         ToHitData toHit = new ToHitData();
 
@@ -1356,23 +1356,23 @@ public class Compute {
             return toHit;
         }
 
-        if ((entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM)
-                || (entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM)) {
+        if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
+                || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
             return toHit;
         }
 
-        if ((movement == IEntityMovementType.MOVE_WALK) || (movement == IEntityMovementType.MOVE_VTOL_WALK)
-                || (movement == IEntityMovementType.MOVE_CAREFUL_STAND)) {
+        if ((movement == EntityMovementType.MOVE_WALK) || (movement == EntityMovementType.MOVE_VTOL_WALK)
+                || (movement == EntityMovementType.MOVE_CAREFUL_STAND)) {
             toHit.addModifier(1, "attacker walked");
-        } else if ((movement == IEntityMovementType.MOVE_RUN) || (movement == IEntityMovementType.MOVE_VTOL_RUN)) {
+        } else if ((movement == EntityMovementType.MOVE_RUN) || (movement == EntityMovementType.MOVE_VTOL_RUN)) {
             toHit.addModifier(2, "attacker ran");
-        } else if (movement == IEntityMovementType.MOVE_SKID) {
+        } else if (movement == EntityMovementType.MOVE_SKID) {
             toHit.addModifier(3, "attacker ran and skidded");
-        } else if (movement == IEntityMovementType.MOVE_JUMP) {
+        } else if (movement == EntityMovementType.MOVE_JUMP) {
             toHit.addModifier(3, "attacker jumped");
-        } else if (movement == IEntityMovementType.MOVE_OVER_THRUST) {
+        } else if (movement == EntityMovementType.MOVE_OVER_THRUST) {
             toHit.addModifier(2, "over thrust used");
-        } else if (movement == IEntityMovementType.MOVE_SPRINT) {
+        } else if (movement == EntityMovementType.MOVE_SPRINT) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "attacker sprinted");
         }
 
@@ -1389,7 +1389,7 @@ public class Compute {
     /**
      * Modifier to attacks due to spotter movement
      */
-    public static ToHitData getSpotterMovementModifier(IGame game, int entityId, int movement) {
+    public static ToHitData getSpotterMovementModifier(IGame game, int entityId, EntityMovementType movement) {
         ToHitData toHit = new ToHitData();
 
         Entity e = game.getEntity(entityId);
@@ -1397,14 +1397,14 @@ public class Compute {
             return toHit;
         }
 
-        if ((movement == IEntityMovementType.MOVE_WALK) || (movement == IEntityMovementType.MOVE_VTOL_WALK)) {
+        if ((movement == EntityMovementType.MOVE_WALK) || (movement == EntityMovementType.MOVE_VTOL_WALK)) {
             toHit.addModifier(1, "spotter walked");
-        } else if ((movement == IEntityMovementType.MOVE_RUN) || (movement == IEntityMovementType.MOVE_VTOL_RUN)
-                || (movement == IEntityMovementType.MOVE_SKID)) {
+        } else if ((movement == EntityMovementType.MOVE_RUN) || (movement == EntityMovementType.MOVE_VTOL_RUN)
+                || (movement == EntityMovementType.MOVE_SKID)) {
             toHit.addModifier(2, "spotter ran");
-        } else if (movement == IEntityMovementType.MOVE_JUMP) {
+        } else if (movement == EntityMovementType.MOVE_JUMP) {
             toHit.addModifier(3, "spotter jumped");
-        } else if (movement == IEntityMovementType.MOVE_SPRINT) {
+        } else if (movement == EntityMovementType.MOVE_SPRINT) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "spotter sprinted");
         }
 
@@ -1443,7 +1443,7 @@ public class Compute {
             return new ToHitData();
         }
 
-        if (game.getOptions().booleanOption("tacops_standing_still") && (entity.moved == IEntityMovementType.MOVE_NONE)
+        if (game.getOptions().booleanOption("tacops_standing_still") && (entity.moved == EntityMovementType.MOVE_NONE)
                 && !entity.isImmobile()
                 && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
             ToHitData toHit = new ToHitData();
@@ -1460,22 +1460,22 @@ public class Compute {
         ToHitData toHit = Compute
                 .getTargetMovementModifier(
                         entity.delta_distance,
-                        ((entity.moved == IEntityMovementType.MOVE_JUMP)
-                                || (entity.moved == IEntityMovementType.MOVE_VTOL_RUN) || (entity.moved == IEntityMovementType.MOVE_VTOL_WALK)),
-                        (entity.moved == IEntityMovementType.MOVE_VTOL_RUN)
-                                || (entity.moved == IEntityMovementType.MOVE_VTOL_WALK)
-                                || (entity.getMovementMode() == IEntityMovementMode.VTOL));
+                        ((entity.moved == EntityMovementType.MOVE_JUMP)
+                                || (entity.moved == EntityMovementType.MOVE_VTOL_RUN) || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)),
+                        (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+                                || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
+                                || (entity.getMovementMode() == EntityMovementMode.VTOL));
 
         // Did the target skid this turn?
-        if (entity.moved == IEntityMovementType.MOVE_SKID) {
+        if (entity.moved == EntityMovementType.MOVE_SKID) {
             toHit.addModifier(2, "target skidded");
         }
-        if ((entity.getElevation() > 0) && (entity.getMovementMode() == IEntityMovementMode.WIGE)) {
+        if ((entity.getElevation() > 0) && (entity.getMovementMode() == EntityMovementMode.WIGE)) {
             toHit.addModifier(1, "target is a flying WiGE");
         }
 
         // did the target sprint?
-        if (entity.moved == IEntityMovementType.MOVE_SPRINT) {
+        if (entity.moved == EntityMovementType.MOVE_SPRINT) {
             toHit.addModifier(-1, "target sprinted");
         }
 
@@ -2636,8 +2636,8 @@ public class Compute {
         // naval vessel
         if (LosEffects.calculateLos(game, ae.getId(), target).isBlockedByWater()
                 && (sensor.getType() != Sensor.TYPE_MEK_MAGSCAN) && (sensor.getType() != Sensor.TYPE_VEE_MAGSCAN)
-                && (ae.getMovementMode() != IEntityMovementMode.HYDROFOIL)
-                && (ae.getMovementMode() != IEntityMovementMode.NAVAL)) {
+                && (ae.getMovementMode() != EntityMovementMode.HYDROFOIL)
+                && (ae.getMovementMode() != EntityMovementMode.NAVAL)) {
             return 0;
         }
 

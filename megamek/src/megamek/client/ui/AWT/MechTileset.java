@@ -36,7 +36,7 @@ import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
-import megamek.common.IEntityMovementMode;
+import megamek.common.EntityMovementMode;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
@@ -121,7 +121,7 @@ public class MechTileset {
     private HashMap<String, MechEntry> exact = new HashMap<String, MechEntry>();
     private HashMap<String, MechEntry> chassis = new HashMap<String, MechEntry>();
 
-    private String dir;
+    String dir;
 
     /** Creates new MechTileset */
     public MechTileset(String dir) {
@@ -177,7 +177,7 @@ public class MechTileset {
         }
         // mech, by weight
         if (entity instanceof Mech) {
-            if (entity.getMovementMode() == IEntityMovementMode.QUAD) {
+            if (entity.getMovementMode() == EntityMovementMode.QUAD) {
                 return default_quad;
             }
             if (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
@@ -190,16 +190,16 @@ public class MechTileset {
                 return default_assault;
             }
         }
-        if (entity.getMovementMode() == IEntityMovementMode.NAVAL) {
+        if (entity.getMovementMode() == EntityMovementMode.NAVAL) {
             return default_naval;
         }
-        if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE)
+        if (entity.getMovementMode() == EntityMovementMode.SUBMARINE)
             return default_submarine;
-        if (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL) {
+        if (entity.getMovementMode() == EntityMovementMode.HYDROFOIL) {
             return default_hydrofoil;
         }
         if (entity instanceof Tank) {
-            if (entity.getMovementMode() == IEntityMovementMode.TRACKED) {
+            if (entity.getMovementMode() == EntityMovementMode.TRACKED) {
                 if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
                     return default_tracked_heavy;
                 } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
@@ -207,19 +207,19 @@ public class MechTileset {
                 } else
                     return default_tracked;
             }
-            if (entity.getMovementMode() == IEntityMovementMode.WHEELED) {
+            if (entity.getMovementMode() == EntityMovementMode.WHEELED) {
                 if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
                     return default_wheeled_heavy;
                 }
                 return default_wheeled;
             }
-            if (entity.getMovementMode() == IEntityMovementMode.HOVER) {
+            if (entity.getMovementMode() == EntityMovementMode.HOVER) {
                 return default_hover;
             }
-            if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
+            if (entity.getMovementMode() == EntityMovementMode.VTOL) {
                 return default_vtol;
             }
-            if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
+            if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                 return default_wige;
             }
         }
@@ -242,8 +242,7 @@ public class MechTileset {
                 Dropship ds = (Dropship)entity;
                 if(ds.isSpheroid()) 
                     return default_dropship_sphere;
-                else
-                    return default_dropship_aero;
+                return default_dropship_aero;
             }
             
             if(entity instanceof FighterSquadron)
@@ -253,8 +252,7 @@ public class MechTileset {
                 SmallCraft sc = (SmallCraft)entity;
                 if(sc.isSpheroid())
                     return default_small_craft_sphere;
-                else
-                    return default_small_craft_aero;
+                return default_small_craft_aero;
             }
             
             if(entity instanceof TeleMissile) {
@@ -356,18 +354,12 @@ public class MechTileset {
      * other entity
      */
     private class MechEntry {
-        private String name;
         private String imageFile;
         private Image image;
 
         public MechEntry(String name, String imageFile) {
-            this.name = name;
             this.imageFile = imageFile;
             this.image = null;
-        }
-
-        public String getName() {
-            return name;
         }
 
         public Image getImage() {

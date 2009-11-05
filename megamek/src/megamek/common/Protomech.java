@@ -371,15 +371,15 @@ public class Protomech extends Entity {
      * Returns the name of the type of movement used. This is pmech-specific.
      */
     @Override
-    public String getMovementString(int mtype) {
+    public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_NONE:
+            case MOVE_NONE:
                 return "None";
-            case IEntityMovementType.MOVE_WALK:
+            case MOVE_WALK:
                 return "Walked";
-            case IEntityMovementType.MOVE_RUN:
+            case MOVE_RUN:
                 return "Ran";
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 return "Jumped";
             default:
                 return "Unknown!";
@@ -390,15 +390,15 @@ public class Protomech extends Entity {
      * Returns the name of the type of movement used. This is pmech-specific.
      */
     @Override
-    public String getMovementAbbr(int mtype) {
+    public String getMovementAbbr(EntityMovementType mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_NONE:
+            case MOVE_NONE:
                 return "N";
-            case IEntityMovementType.MOVE_WALK:
+            case MOVE_WALK:
                 return "W";
-            case IEntityMovementType.MOVE_RUN:
+            case MOVE_RUN:
                 return "R";
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 return "J";
             default:
                 return "?";
@@ -1271,7 +1271,7 @@ public class Protomech extends Entity {
      * @see megamek.common.Entity#checkSkid(int, megamek.common.IHex, int, megamek.common.MoveStep, int, int, megamek.common.Coords, megamek.common.Coords, boolean, int)
      */
     @Override
-    public PilotingRollData checkSkid(int moveType, IHex prevHex, int overallMoveType, MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
+    public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex, EntityMovementType overallMoveType, MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
         return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE, "ProtoMechs can't skid");
     }
 

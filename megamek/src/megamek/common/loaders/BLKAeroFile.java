@@ -28,6 +28,7 @@ package megamek.common.loaders;
 import megamek.common.Aero;
 import megamek.common.Engine;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.TechConstants;
@@ -70,7 +71,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         a.autoSetMaxBombPoints();
 
         // get a movement mode - lets try Aerodyne
-        int nMotion = 16;
+        EntityMovementMode nMotion = EntityMovementMode.AERODYNE;
         a.setMovementMode(nMotion);
 
         a.setVSTOL(true);

@@ -19,7 +19,7 @@ import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Dropship;
 import megamek.common.Entity;
-import megamek.common.IEntityMovementMode;
+import megamek.common.EntityMovementMode;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.Tank;
@@ -174,7 +174,7 @@ public class Quirks extends AbstractOptions {
                 return false;
             }
             if(quirk.getName().equals("trailer_hitch") 
-                    && en.getMovementMode() == IEntityMovementMode.HOVER) {
+                    && en.getMovementMode() == EntityMovementMode.HOVER) {
                 return false;
             }
             return true;

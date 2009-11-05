@@ -65,8 +65,8 @@ public class VTOL extends Tank {
      *      megamek.common.Coords, boolean, int)
      */
     @Override
-    public PilotingRollData checkSkid(int moveType, IHex prevHex,
-            int overallMoveType, MoveStep prevStep, int prevFacing,
+    public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex,
+            EntityMovementType overallMoveType, MoveStep prevStep, int prevFacing,
             int curFacing, Coords lastPos, Coords curPos, boolean isInfantry,
             int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
@@ -89,13 +89,13 @@ public class VTOL extends Tank {
      * Returns the name of the type of movement used. This is VTOL-specific.
      */
     @Override
-    public String getMovementString(int mtype) {
+    public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_VTOL_WALK:
+            case MOVE_VTOL_WALK:
                 return "Cruised";
-            case IEntityMovementType.MOVE_VTOL_RUN:
+            case MOVE_VTOL_RUN:
                 return "Flanked";
-            case IEntityMovementType.MOVE_NONE:
+            case MOVE_NONE:
                 return "None";
             default:
                 return "Unknown!";
@@ -106,13 +106,13 @@ public class VTOL extends Tank {
      * Returns the name of the type of movement used. This is tank-specific.
      */
     @Override
-    public String getMovementAbbr(int mtype) {
+    public String getMovementAbbr(EntityMovementType mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_VTOL_WALK:
+            case MOVE_VTOL_WALK:
                 return "C";
-            case IEntityMovementType.MOVE_VTOL_RUN:
+            case MOVE_VTOL_RUN:
                 return "F";
-            case IEntityMovementType.MOVE_NONE:
+            case MOVE_NONE:
                 return "N";
             default:
                 return "?";

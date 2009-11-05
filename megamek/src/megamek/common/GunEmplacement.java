@@ -74,12 +74,12 @@ public class GunEmplacement extends Entity implements Serializable {
     }
 
     @Override
-    public String getMovementString(int mtype) {
+    public String getMovementString(EntityMovementType mtype) {
         return "Not possible!";
     }
 
     @Override
-    public String getMovementAbbr(int mtype) {
+    public String getMovementAbbr(EntityMovementType mtype) {
         return "!";
     }
 

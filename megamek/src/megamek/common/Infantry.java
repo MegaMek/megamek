@@ -154,7 +154,7 @@ public class Infantry extends Entity implements Serializable {
         menStarting = 0;
         menShooting = 0;
         men = 0;
-        setMovementMode(IEntityMovementMode.INF_LEG);
+        setMovementMode(EntityMovementMode.INF_LEG);
         // Determine the number of MPs.
         setOriginalWalkMP(1);
     }
@@ -271,19 +271,19 @@ public class Infantry extends Entity implements Serializable {
         }
 
         if (hex.terrainLevel(Terrains.WOODS) > 0) {
-            if ((hex.terrainLevel(Terrains.WOODS) > 1) && (getMovementMode() == IEntityMovementMode.TRACKED)) {
+            if ((hex.terrainLevel(Terrains.WOODS) > 1) && (getMovementMode() == EntityMovementMode.TRACKED)) {
                 return true;
             }
-            if ((getMovementMode() == IEntityMovementMode.HOVER)
-                    || (getMovementMode() == IEntityMovementMode.WHEELED)) {
+            if ((getMovementMode() == EntityMovementMode.HOVER)
+                    || (getMovementMode() == EntityMovementMode.WHEELED)) {
                 return true;
             }
         }
         if ((hex.terrainLevel(Terrains.WATER) > 0)
                 && !hex.containsTerrain(Terrains.ICE)) {
-            if ((getMovementMode() == IEntityMovementMode.HOVER)
-                    || (getMovementMode() == IEntityMovementMode.INF_UMU)
-                    || (getMovementMode() == IEntityMovementMode.VTOL)) {
+            if ((getMovementMode() == EntityMovementMode.HOVER)
+                    || (getMovementMode() == EntityMovementMode.INF_UMU)
+                    || (getMovementMode() == EntityMovementMode.VTOL)) {
                 return false;
             }
             return true;
@@ -295,29 +295,29 @@ public class Infantry extends Entity implements Serializable {
      * Returns the name of the type of movement used. This is Infantry-specific.
      */
     @Override
-    public String getMovementString(int mtype) {
+    public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_NONE:
+            case MOVE_NONE:
                 return "None";
-            case IEntityMovementType.MOVE_WALK:
-            case IEntityMovementType.MOVE_RUN:
+            case MOVE_WALK:
+            case MOVE_RUN:
                 switch (getMovementMode()) {
-                    case IEntityMovementMode.INF_LEG:
+                    case INF_LEG:
                         return "Walked";
-                    case IEntityMovementMode.INF_MOTORIZED:
+                    case INF_MOTORIZED:
                         return "Biked";
-                    case IEntityMovementMode.HOVER:
-                    case IEntityMovementMode.TRACKED:
-                    case IEntityMovementMode.WHEELED:
+                    case HOVER:
+                    case TRACKED:
+                    case WHEELED:
                         return "Drove";
-                    case IEntityMovementMode.INF_JUMP:
+                    case INF_JUMP:
                     default:
                         return "Unknown!";
                 }
-            case IEntityMovementType.MOVE_VTOL_WALK:
-            case IEntityMovementType.MOVE_VTOL_RUN:
+            case MOVE_VTOL_WALK:
+            case MOVE_VTOL_RUN:
                 return "Flew";
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 return "Jumped";
             default:
                 return "Unknown!";
@@ -329,26 +329,26 @@ public class Infantry extends Entity implements Serializable {
      * Infantry-specific.
      */
     @Override
-    public String getMovementAbbr(int mtype) {
+    public String getMovementAbbr(EntityMovementType mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_NONE:
+            case MOVE_NONE:
                 return "N";
-            case IEntityMovementType.MOVE_WALK:
+            case MOVE_WALK:
                 return "W";
-            case IEntityMovementType.MOVE_RUN:
+            case MOVE_RUN:
                 switch (getMovementMode()) {
-                    case IEntityMovementMode.INF_LEG:
+                    case INF_LEG:
                         return "R";
-                    case IEntityMovementMode.INF_MOTORIZED:
+                    case INF_MOTORIZED:
                         return "B";
-                    case IEntityMovementMode.HOVER:
-                    case IEntityMovementMode.TRACKED:
-                    case IEntityMovementMode.WHEELED:
+                    case HOVER:
+                    case TRACKED:
+                    case WHEELED:
                         return "D";
                     default:
                         return "?";
                 }
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 return "J";
             default:
                 return "?";
@@ -473,11 +473,11 @@ public class Infantry extends Entity implements Serializable {
 
         // IS platoon strength is based upon movement type.
         switch (getMovementMode()) {
-            case IEntityMovementMode.INF_LEG:
-            case IEntityMovementMode.INF_MOTORIZED:
+            case INF_LEG:
+            case INF_MOTORIZED:
                 initializeInternal(INF_PLT_FOOT_MAX_MEN, LOC_INFANTRY);
                 break;
-            case IEntityMovementMode.INF_JUMP:
+            case INF_JUMP:
                 initializeInternal(INF_PLT_JUMP_MAX_MEN, LOC_INFANTRY);
                 break;
             default:
@@ -767,7 +767,7 @@ public class Infantry extends Entity implements Serializable {
         PilotingRollData roll = new PilotingRollData(getId(), 5,
                 "entering boggy terrain");
         int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
-        if (!lastPos.equals(curPos) && (bgMod != TargetRoll.AUTOMATIC_SUCCESS) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) && (getMovementMode() != IEntityMovementMode.HOVER) && (getMovementMode() != IEntityMovementMode.VTOL) && (getMovementMode() != IEntityMovementMode.WIGE) && (step.getElevation() == 0) && !isPavementStep) {
+        if (!lastPos.equals(curPos) && (bgMod != TargetRoll.AUTOMATIC_SUCCESS) && (step.getMovementType() != EntityMovementType.MOVE_JUMP) && (getMovementMode() != EntityMovementMode.HOVER) && (getMovementMode() != EntityMovementMode.VTOL) && (getMovementMode() != EntityMovementMode.WIGE) && (step.getElevation() == 0) && !isPavementStep) {
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Not entering bog-down terrain, or jumping/hovering over such terrain");
@@ -789,24 +789,24 @@ public class Infantry extends Entity implements Serializable {
         }
 
         switch (getMovementMode()){
-        case IEntityMovementMode.INF_UMU:
+        case INF_UMU:
             multiplier *= 2.0;
-        case IEntityMovementMode.INF_LEG:
+        case INF_LEG:
             multiplier *= 1.0;
             break;
-        case IEntityMovementMode.INF_MOTORIZED:
+        case INF_MOTORIZED:
             multiplier *= 1.6;
             break;
-        case IEntityMovementMode.INF_JUMP:
+        case INF_JUMP:
             multiplier *= 2.6;
             break;
-        case IEntityMovementMode.HOVER:
+        case HOVER:
             multiplier *= 3.2;
             break;
-        case IEntityMovementMode.WHEELED:
+        case WHEELED:
             multiplier *= 3.2;
             break;
-        case IEntityMovementMode.TRACKED:
+        case TRACKED:
             multiplier *= 3.2;
             break;
         default:
@@ -853,9 +853,8 @@ public class Infantry extends Entity implements Serializable {
     
     @Override
     public boolean isEligibleForFiring() {
-        if(game.getOptions().booleanOption("tacops_fast_infantry_move")
-                && super.isEligibleForFiring()) {
-            if(getMovementMode() == IEntityMovementType.MOVE_RUN) {
+        if(game.getOptions().booleanOption("tacops_fast_infantry_move")) {
+            if(moved == EntityMovementType.MOVE_RUN) {
                 return false;
             }
         }
@@ -935,9 +934,9 @@ public class Infantry extends Entity implements Serializable {
     }
 
     public boolean isMechanized() {
-        if ((getMovementMode() == IEntityMovementMode.WHEELED) ||
-                (getMovementMode() == IEntityMovementMode.HOVER) ||
-                (getMovementMode() == IEntityMovementMode.TRACKED)) {
+        if ((getMovementMode() == EntityMovementMode.WHEELED) ||
+                (getMovementMode() == EntityMovementMode.HOVER) ||
+                (getMovementMode() == EntityMovementMode.TRACKED)) {
             return true;
         }
         return false;

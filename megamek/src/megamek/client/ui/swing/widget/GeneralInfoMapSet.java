@@ -28,7 +28,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Aero;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.IEntityMovementType;
+import megamek.common.EntityMovementType;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.Tank;
@@ -333,7 +333,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             curMoveR.setString(Integer.toString(a.getCurrentVelocity()));
             fuelR.setString(Integer.toString(a.getFuel()));
         } else {
-            curMoveR.setString(en.getMovementString(en.moved) + (en.moved == IEntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance)); //$NON-NLS-1$ //$NON-NLS-2$
+            curMoveR.setString(en.getMovementString(en.moved) + (en.moved == EntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance)); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         int heatCap = en.getHeatCapacity();

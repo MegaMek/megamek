@@ -81,7 +81,7 @@ public class TeleMissile extends Aero {
         initializeArmor(damageValue*10, LOC_BODY);
         autoSetInternal();
         initializeSI(0);
-        setMovementMode(IEntityMovementMode.AERODYNE);
+        setMovementMode(EntityMovementMode.AERODYNE);
 
         // Finish initializing this unit.
         setOwner(originalRide.getOwner());
@@ -160,7 +160,7 @@ public class TeleMissile extends Aero {
     }
 
     @Override
-    public PilotingRollData checkThrustSI(int thrust, int overallMoveType) {
+    public PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
@@ -168,7 +168,7 @@ public class TeleMissile extends Aero {
     }
 
     @Override
-    public PilotingRollData checkThrustSITotal(int thrust, int overallMoveType) {
+    public PilotingRollData checkThrustSITotal(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");

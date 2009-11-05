@@ -28,7 +28,7 @@ import megamek.common.Coords;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
-import megamek.common.IEntityMovementType;
+import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Jumpship;
@@ -79,7 +79,7 @@ public class RamAttackAction extends AbstractAttackAction {
      * To-hit number for a ram, assuming that movement has been handled
      */
     public ToHitData toHit(IGame game, Targetable target, Coords src,
-            int elevation, Coords priorSrc, int movement) {
+            int elevation, Coords priorSrc, EntityMovementType movement) {
         final Entity ae = getEntity(game);
 
         // arguments legal?
@@ -245,7 +245,7 @@ public class RamAttackAction extends AbstractAttackAction {
         md.compile(game, ae);
         for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
-            if (step.getMovementType() == IEntityMovementType.MOVE_ILLEGAL) {
+            if (step.getMovementType() == EntityMovementType.MOVE_ILLEGAL) {
                 break;
             }
             if (step.getType() == MovePath.STEP_RAM) {

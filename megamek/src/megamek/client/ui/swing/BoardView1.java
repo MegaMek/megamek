@@ -87,8 +87,8 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
-import megamek.common.IEntityMovementMode;
-import megamek.common.IEntityMovementType;
+import megamek.common.EntityMovementMode;
+import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -1676,18 +1676,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         Color col = Color.blue;
         if (md.getLastStep() != null) {
             switch (md.getLastStep().getMovementType()) {
-            case IEntityMovementType.MOVE_RUN:
-            case IEntityMovementType.MOVE_VTOL_RUN:
-            case IEntityMovementType.MOVE_OVER_THRUST:
+            case MOVE_RUN:
+            case MOVE_VTOL_RUN:
+            case MOVE_OVER_THRUST:
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveRunColor");
                 break;
-            case IEntityMovementType.MOVE_SPRINT:
+            case MOVE_SPRINT:
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveSprintColor");
                 break;
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveJumpColor");
                 break;
-            case IEntityMovementType.MOVE_ILLEGAL:
+            case MOVE_ILLEGAL:
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
                 break;
             default:
@@ -2827,11 +2827,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
             String shortName = entity.getShortName();
 
-            if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
+            if (entity.getMovementMode() == EntityMovementMode.VTOL) {
                 shortName = shortName.concat(" (FL: ").concat(
                         Integer.toString(entity.getElevation())).concat(")");
             }
-            if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
+            if (entity.getMovementMode() == EntityMovementMode.SUBMARINE) {
                 shortName = shortName.concat(" (Depth: ").concat(
                         Integer.toString(entity.getElevation())).concat(")");
             }
@@ -2904,7 +2904,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         public void prepare() {
             // figure out size
             String shortName = entity.getShortName();
-            if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
+            if (entity.getMovementMode() == EntityMovementMode.VTOL) {
                 shortName = shortName.concat(" (FL: ").concat(
                         Integer.toString(entity.getElevation())).concat(")");
             }
@@ -3395,22 +3395,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             Color col;
             // set color
             switch (step.getMovementType()) {
-            case IEntityMovementType.MOVE_RUN:
-            case IEntityMovementType.MOVE_VTOL_RUN:
-            case IEntityMovementType.MOVE_OVER_THRUST:
+            case MOVE_RUN:
+            case MOVE_VTOL_RUN:
+            case MOVE_OVER_THRUST:
                 if (step.isUsingMASC()) {
                     col = GUIPreferences.getInstance().getColor("AdvancedMoveMASCColor");
                 } else {
                     col = GUIPreferences.getInstance().getColor("AdvancedMoveRunColor");
                 }
                 break;
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveJumpColor");
                 break;
-            case IEntityMovementType.MOVE_SPRINT:
+            case MOVE_SPRINT:
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveSprintColor");
                 break;
-            case IEntityMovementType.MOVE_ILLEGAL:
+            case MOVE_ILLEGAL:
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
                 break;
             default:
@@ -3495,7 +3495,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             case MovePath.STEP_CLIMB_MODE_ON:
                 // draw climb mode indicator
                 String climb;
-                if (step.getParent().getEntity().getMovementMode() == IEntityMovementMode.WIGE) {
+                if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
                     climb = Messages.getString("BoardView1.WIGEClimb"); //$NON-NLS-1$
                 } else {
                     climb = Messages.getString("BoardView1.Climb"); //$NON-NLS-1$
@@ -3514,7 +3514,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             case MovePath.STEP_CLIMB_MODE_OFF:
                 // cancel climb mode indicator
                 String climboff;
-                if (step.getParent().getEntity().getMovementMode() == IEntityMovementMode.WIGE) {
+                if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
                     climboff = Messages.getString("BoardView1.WIGEClimbOff"); //$NON-NLS-1$
                 } else {
                     climboff = Messages.getString("BoardView1.ClimbOff"); //$NON-NLS-1$
@@ -3815,10 +3815,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 costStringBuf.append("+]"); //$NON-NLS-1$
             }
 
-            if ((step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
-                    || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)
-                    || (step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_WALK)
-                    || (step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN)) {
+            if ((step.getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
+                    || (step.getMovementType() == EntityMovementType.MOVE_VTOL_RUN)
+                    || (step.getMovementType() == EntityMovementType.MOVE_SUBMARINE_WALK)
+                    || (step.getMovementType() == EntityMovementType.MOVE_SUBMARINE_RUN)) {
                 costStringBuf.append("{").append(step.getElevation()).append("}");
             }
 

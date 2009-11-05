@@ -331,17 +331,17 @@ public class BattleArmor extends Infantry {
      * Returns the name of the type of movement used. This is Infantry-specific.
      */
     @Override
-    public String getMovementString(int mtype) {
+    public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_NONE:
+            case MOVE_NONE:
                 return "None";
-            case IEntityMovementType.MOVE_WALK:
-            case IEntityMovementType.MOVE_RUN:
+            case MOVE_WALK:
+            case MOVE_RUN:
                 return "Walked";
-            case IEntityMovementType.MOVE_VTOL_WALK:
-            case IEntityMovementType.MOVE_VTOL_RUN:
+            case MOVE_VTOL_WALK:
+            case MOVE_VTOL_RUN:
                 return "Flew";
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 return "Jumped";
             default:
                 return "Unknown!";
@@ -353,18 +353,18 @@ public class BattleArmor extends Infantry {
      * Infantry-specific.
      */
     @Override
-    public String getMovementAbbr(int mtype) {
+    public String getMovementAbbr(EntityMovementType mtype) {
         switch (mtype) {
-            case IEntityMovementType.MOVE_NONE:
+            case MOVE_NONE:
                 return "N";
-            case IEntityMovementType.MOVE_WALK:
+            case MOVE_WALK:
                 return "W";
-            case IEntityMovementType.MOVE_RUN:
+            case MOVE_RUN:
                 return "R";
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 return "J";
-            case IEntityMovementType.MOVE_VTOL_WALK:
-            case IEntityMovementType.MOVE_VTOL_RUN:
+            case MOVE_VTOL_WALK:
+            case MOVE_VTOL_RUN:
                 return "F";
             default:
                 return "?";
@@ -1450,16 +1450,16 @@ public class BattleArmor extends Infantry {
         buff.append("<motion_type>");
         buff.append(newline);
         switch (getMovementMode()) {
-            case IEntityMovementMode.INF_JUMP:
+            case INF_JUMP:
                 buff.append("jump");
                 break;
-            case IEntityMovementMode.INF_LEG:
+            case INF_LEG:
                 buff.append("leg");
                 break;
-            case IEntityMovementMode.VTOL:
+            case VTOL:
                 buff.append("vtol");
                 break;
-            case IEntityMovementMode.INF_UMU:
+            case INF_UMU:
                 buff.append("submarine");
                 break;
         }
@@ -1652,12 +1652,10 @@ public class BattleArmor extends Infantry {
                 break;
             case EntityWeightClass.WEIGHT_BA_ASSAULT:
             default:
-                break;
+                return false;
             }
-            return false;
-        } else {
-            return false;
         }
+        return false;
     }
 
 

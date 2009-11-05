@@ -26,7 +26,7 @@ import megamek.common.AmmoType;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.IEntityMovementMode;
+import megamek.common.EntityMovementMode;
 import megamek.common.Mounted;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
@@ -518,15 +518,15 @@ public class HmvFile implements IMechLoader {
             vehicle.setTechLevel(techLevel);
 
             if (vehicle instanceof VTOL) {
-                vehicle.setMovementMode(IEntityMovementMode.VTOL);
+                vehicle.setMovementMode(EntityMovementMode.VTOL);
             } else {
                 vehicle
-                        .setMovementMode(movementType == HMVMovementType.DISPLACEMENT_HULL ? IEntityMovementMode.NAVAL
-                                : movementType == HMVMovementType.HYDROFOIL ? IEntityMovementMode.HYDROFOIL
-                                        : movementType == HMVMovementType.HOVER ? IEntityMovementMode.HOVER
-                                                : movementType == HMVMovementType.WHEELED ? IEntityMovementMode.WHEELED
-                                                        : movementType == HMVMovementType.SUBMARINE ? IEntityMovementMode.SUBMARINE
-                                                        : IEntityMovementMode.TRACKED);
+                        .setMovementMode(movementType == HMVMovementType.DISPLACEMENT_HULL ? EntityMovementMode.NAVAL
+                                : movementType == HMVMovementType.HYDROFOIL ? EntityMovementMode.HYDROFOIL
+                                        : movementType == HMVMovementType.HOVER ? EntityMovementMode.HOVER
+                                                : movementType == HMVMovementType.WHEELED ? EntityMovementMode.WHEELED
+                                                        : movementType == HMVMovementType.SUBMARINE ? EntityMovementMode.SUBMARINE
+                                                        : EntityMovementMode.TRACKED);
             }
             vehicle.setStructureType(EquipmentType.getStructureType("Standard"));
             //FIXME: structureType is being read wrong

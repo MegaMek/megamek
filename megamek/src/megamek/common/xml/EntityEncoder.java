@@ -28,6 +28,7 @@ import megamek.common.BipedMech;
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.GunEmplacement;
 import megamek.common.IArmorState;
 import megamek.common.IGame;
@@ -964,14 +965,11 @@ public class EntityEncoder {
                     "Couldn't decode the typeVal from an Entity node.");
         }
 
-        // Try to pull the value from the string
-        try {
-            attrVal = Integer.parseInt(attrStr);
-        } catch (NumberFormatException exp) {
-            throw new IllegalStateException("Couldn't get an integer from "
-                    + attrStr);
+        EntityMovementMode nMotion = EntityMovementMode.getMode(attrStr);
+        if (nMotion == EntityMovementMode.NONE) {
+            throw new IllegalStateException("Invalid movement type: " + attrStr);
         }
-        entity.setMovementMode(attrVal);
+        entity.setMovementMode(nMotion);
 
         // Decode the entity node's year.
         attrStr = node.getAttribute("year");

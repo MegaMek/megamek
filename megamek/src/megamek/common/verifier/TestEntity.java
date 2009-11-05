@@ -40,7 +40,6 @@ public abstract class TestEntity implements TestEntityOption {
     public final static float CEIL_HALFTON = 2.0f;
     public final static float CEIL_QUARTERTON = 4.0f;
     public final static float CEIL_TENTHTON = 10.0f;
-    public final static String[] MOVEMENT_CHASSIS_NAMES = { "Building", "Biped Mech", "Quad Mech", "Tracked Vehicle", "Wheeled Vehicle", "Hovercraft", "VTOL", "Naval Vehicle", "Hydrofoil Vehicle", "Submarine", "Leg Infantry", "Motorized Infantry", "Jump Infantry", "Biped Mech", "Quad Mech", "WIGE Vehicle", "Aerodyne Dropship", "Spheroid Dropship", "UMU Infantry", "Airmech", "Aerospace" };
 
     protected Engine engine = null;
     protected Armor armor = null;
@@ -790,7 +789,7 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public String printTechLevel() {
-        return "Chassis: " + MOVEMENT_CHASSIS_NAMES[getEntity().getMovementMode()] + " - " + TechConstants.getLevelName(getEntity().getTechLevel()) + " (" + Integer.toString(getEntity().getYear()) + ")\n";
+        return "Chassis: " + getEntity().getMovementMode().toString() + " - " + TechConstants.getLevelName(getEntity().getTechLevel()) + " (" + Integer.toString(getEntity().getYear()) + ")\n";
     }
 
     public float getArmoredComponentWeight() {

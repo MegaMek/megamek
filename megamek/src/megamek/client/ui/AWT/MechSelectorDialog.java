@@ -51,7 +51,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
-import megamek.common.IEntityMovementMode;
+import megamek.common.EntityMovementMode;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
@@ -1124,7 +1124,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
                 gunnery = 5;
                 piloting = 6;
             } else if (e instanceof Infantry) {
-                if (e.getMovementMode() == IEntityMovementMode.INF_LEG) {
+                if (e.getMovementMode() == EntityMovementMode.INF_LEG) {
                     gunnery = 5;
                     piloting = 5;
                 } else {
@@ -1134,7 +1134,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
             }
         } else if (e instanceof Infantry) {
             // IS crews are 4/5 except infantry
-            if ((e.getMovementMode() == IEntityMovementMode.INF_LEG)
+            if ((e.getMovementMode() == EntityMovementMode.INF_LEG)
                     || (e instanceof BattleArmor)) {
                 gunnery = 4;
                 piloting = 5;

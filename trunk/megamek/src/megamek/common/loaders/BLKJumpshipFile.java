@@ -32,6 +32,7 @@ import megamek.common.CargoBay;
 import megamek.common.DockingCollar;
 import megamek.common.Engine;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.HeavyVehicleBay;
 import megamek.common.InfantryBay;
@@ -105,7 +106,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         a.setEscapePods(dataFile.getDataAsInt("escape_pod")[0]);
 
         // get a movement mode - lets try Aerodyne
-        int nMotion = 16;
+        EntityMovementMode nMotion = EntityMovementMode.AERODYNE;
         a.setMovementMode(nMotion);
 
         // figure out structural integrity

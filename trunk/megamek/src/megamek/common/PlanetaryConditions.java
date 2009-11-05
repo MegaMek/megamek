@@ -314,13 +314,13 @@ public class PlanetaryConditions implements Serializable {
 
         switch(windStrength) {
         case (WI_MOD_GALE):
-            if((en instanceof VTOL) || (en.getMovementMode() == IEntityMovementMode.WIGE)) {
+            if((en instanceof VTOL) || (en.getMovementMode() == EntityMovementMode.WIGE)) {
                 penalty = 1;
             }
             break;
         case (WI_STRONG_GALE):
-            if((en instanceof VTOL) || (en.getMovementMode() == IEntityMovementMode.WIGE)
-                    || (en.getMovementMode() == IEntityMovementMode.HOVER)) {
+            if((en instanceof VTOL) || (en.getMovementMode() == EntityMovementMode.WIGE)
+                    || (en.getMovementMode() == EntityMovementMode.HOVER)) {
                 penalty = 2;
             }
             else if((en instanceof Mech) || (en.isAirborne())) {
@@ -328,8 +328,8 @@ public class PlanetaryConditions implements Serializable {
             }
             break;
         case (WI_STORM):
-            if((en instanceof VTOL) || (en instanceof Mech) || (en.getMovementMode() == IEntityMovementMode.WIGE)
-                    || (en.getMovementMode() == IEntityMovementMode.HOVER)) {
+            if((en instanceof VTOL) || (en instanceof Mech) || (en.getMovementMode() == EntityMovementMode.WIGE)
+                    || (en.getMovementMode() == EntityMovementMode.HOVER)) {
                 penalty = 3;
             }
             else if(en.isAirborne()) {
@@ -504,8 +504,8 @@ public class PlanetaryConditions implements Serializable {
         switch(windStrength) {
         case(WI_LIGHT_GALE):
             if(!(en instanceof BattleArmor) 
-                    && (en.getMovementMode() == IEntityMovementMode.INF_LEG 
-                            || en.getMovementMode() == IEntityMovementMode.INF_JUMP)) {
+                    && (en.getMovementMode() == EntityMovementMode.INF_LEG 
+                            || en.getMovementMode() == EntityMovementMode.INF_JUMP)) {
                 mod -= 1;
             }
             break;
@@ -555,17 +555,17 @@ public class PlanetaryConditions implements Serializable {
         //atmospheric pressure mods
         switch(atmosphere) {
         case(ATMO_THIN):
-            if((en.getMovementMode() == IEntityMovementMode.HOVER)
-                    || (en.getMovementMode() == IEntityMovementMode.WIGE)
-                    || (en.getMovementMode() == IEntityMovementMode.VTOL)) {
+            if((en.getMovementMode() == EntityMovementMode.HOVER)
+                    || (en.getMovementMode() == EntityMovementMode.WIGE)
+                    || (en.getMovementMode() == EntityMovementMode.VTOL)) {
                 mod -= 2;
             }
             break;
         case(ATMO_HIGH):
         case(ATMO_VHIGH):
-            if((en.getMovementMode() == IEntityMovementMode.HOVER)
-                    || (en.getMovementMode() == IEntityMovementMode.WIGE)
-                    || (en.getMovementMode() == IEntityMovementMode.VTOL)) {
+            if((en.getMovementMode() == EntityMovementMode.HOVER)
+                    || (en.getMovementMode() == EntityMovementMode.WIGE)
+                    || (en.getMovementMode() == EntityMovementMode.VTOL)) {
                 mod += 1;
             }
             break;
@@ -594,9 +594,9 @@ public class PlanetaryConditions implements Serializable {
         }
         if((windStrength == WI_TORNADO_F13)
                 && (((en instanceof Infantry) && !(en instanceof BattleArmor))
-                        || ((en.getMovementMode() == IEntityMovementMode.HOVER)
-                    || (en.getMovementMode() == IEntityMovementMode.WIGE)
-                    || (en.getMovementMode() == IEntityMovementMode.VTOL)))) {
+                        || ((en.getMovementMode() == EntityMovementMode.HOVER)
+                    || (en.getMovementMode() == EntityMovementMode.WIGE)
+                    || (en.getMovementMode() == EntityMovementMode.VTOL)))) {
             return "tornado";
         }
         if((windStrength == WI_STORM) && ((en instanceof Infantry) && !(en instanceof BattleArmor))) {

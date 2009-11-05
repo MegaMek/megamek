@@ -50,7 +50,7 @@ import megamek.client.ui.Messages;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.IEntityMovementMode;
+import megamek.common.EntityMovementMode;
 import megamek.common.Infantry;
 import megamek.common.LocationFullException;
 import megamek.common.TechConstants;
@@ -1745,11 +1745,11 @@ public class CustomBattleArmorDialog extends JDialog implements ActionListener,
 
         // Set the movement mode.
         if (stateJumpType == JUMP_TYPE_VTOL) {
-            retVal.setMovementMode(IEntityMovementMode.VTOL);
+            retVal.setMovementMode(EntityMovementMode.VTOL);
         } else if (stateJumpType == JUMP_TYPE_UMU) {
-            retVal.setMovementMode(IEntityMovementMode.INF_UMU);
+            retVal.setMovementMode(EntityMovementMode.INF_UMU);
         } else {
-            retVal.setMovementMode(IEntityMovementMode.INF_LEG);
+            retVal.setMovementMode(EntityMovementMode.INF_LEG);
         }
 
         // And set its cost.

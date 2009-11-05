@@ -601,19 +601,19 @@ public class Aero extends Entity
      * This is tank-specific.
      */
     @Override
-    public String getMovementString(int mtype) {
+    public String getMovementString(EntityMovementType mtype) {
         switch(mtype) {
-        case IEntityMovementType.MOVE_SKID :
+        case MOVE_SKID :
             return "Skidded";
-        case IEntityMovementType.MOVE_NONE :
+        case MOVE_NONE :
             return "None";
-        case IEntityMovementType.MOVE_WALK :
+        case MOVE_WALK :
             return "Cruised";
-        case IEntityMovementType.MOVE_RUN :
+        case MOVE_RUN :
             return "Flanked";
-        case IEntityMovementType.MOVE_SAFE_THRUST :
+        case MOVE_SAFE_THRUST :
             return "Safe Thrust";
-        case IEntityMovementType.MOVE_OVER_THRUST :
+        case MOVE_OVER_THRUST :
             return "Over Thrust";
         default :
             return "Unknown!";
@@ -625,13 +625,13 @@ public class Aero extends Entity
      * This is tank-specific.
      */
     @Override
-    public String getMovementAbbr(int mtype) {
+    public String getMovementAbbr(EntityMovementType mtype) {
         switch(mtype) {
-        case IEntityMovementType.MOVE_NONE :
+        case MOVE_NONE :
             return "N";
-        case IEntityMovementType.MOVE_SAFE_THRUST :
+        case MOVE_SAFE_THRUST :
             return "S";
-        case IEntityMovementType.MOVE_OVER_THRUST :
+        case MOVE_OVER_THRUST :
             return "O";
         default :
             return "?";
@@ -1529,7 +1529,7 @@ public class Aero extends Entity
         //movement effects
         //some question as to whether "above safe thrust" applies to thrust or velocity
         //I will treat it as thrust until it is resolved
-        if(moved == IEntityMovementType.MOVE_OVER_THRUST) {
+        if(moved == EntityMovementType.MOVE_OVER_THRUST) {
             prd.addModifier(+1, "Used more than safe thrust");
         }
         int vel = getCurrentVelocity();
@@ -1880,7 +1880,7 @@ public class Aero extends Entity
         return critical;
     }
 
-    public PilotingRollData checkThrustSI(int thrust, int overallMoveType) {
+    public PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if(thrust > getSI()) {
@@ -1892,7 +1892,7 @@ public class Aero extends Entity
         return roll;
     }
 
-    public PilotingRollData checkThrustSITotal(int thrust, int overallMoveType) {
+    public PilotingRollData checkThrustSITotal(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if(thrust > getSI()) {
@@ -1904,7 +1904,7 @@ public class Aero extends Entity
         return roll;
     }
 
-    public PilotingRollData checkVelocityDouble(int velocity, int overallMoveType) {
+    public PilotingRollData checkVelocityDouble(int velocity, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if((velocity > (2 * getWalkMP())) && !game.getBoard().inSpace()) {
@@ -1916,7 +1916,7 @@ public class Aero extends Entity
         return roll;
     }
 
-    public PilotingRollData checkDown(int drop, int overallMoveType) {
+    public PilotingRollData checkDown(int drop, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if( drop > 2 ) {
@@ -1931,7 +1931,7 @@ public class Aero extends Entity
     public PilotingRollData checkHover(MovePath md) {
         PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
 
-        if( md.contains(MovePath.STEP_HOVER) && (md.getLastStepMovementType() == IEntityMovementType.MOVE_OVER_THRUST)) {
+        if( md.contains(MovePath.STEP_HOVER) && (md.getLastStepMovementType() == EntityMovementType.MOVE_OVER_THRUST)) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "hovering above safe thrust"));
         } else {
@@ -1952,7 +1952,7 @@ public class Aero extends Entity
         return roll;
     }
 
-    public PilotingRollData checkRolls(MoveStep step, int overallMoveType) {
+    public PilotingRollData checkRolls(MoveStep step, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if(((step.getType() == MovePath.STEP_ROLL) || (step.getType() == MovePath.STEP_YAW))
@@ -1968,7 +1968,7 @@ public class Aero extends Entity
     /**
      * Checks if a maneuver requires a control roll
      */
-    public PilotingRollData checkManeuver(MoveStep step, int overallMoveType) {
+    public PilotingRollData checkManeuver(MoveStep step, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if ((step == null) || (step.getType() != MovePath.STEP_MANEUVER)) {
@@ -2137,18 +2137,17 @@ public class Aero extends Entity
                 return true;
             }
             return false;
-        } else {
-            //grounded aeros have the same prohibitions as wheeled tanks
-            return hex.containsTerrain(Terrains.WOODS)
-            || hex.containsTerrain(Terrains.ROUGH)
-            || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex
-                    .containsTerrain(Terrains.ICE))
-                    || hex.containsTerrain(Terrains.RUBBLE)
-                    || hex.containsTerrain(Terrains.MAGMA)
-                    || hex.containsTerrain(Terrains.JUNGLE)
-                    || (hex.terrainLevel(Terrains.SNOW) > 1)
-                    || (hex.terrainLevel(Terrains.GEYSER) == 2);
         }
+        //grounded aeros have the same prohibitions as wheeled tanks
+        return hex.containsTerrain(Terrains.WOODS)
+        || hex.containsTerrain(Terrains.ROUGH)
+        || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex
+                .containsTerrain(Terrains.ICE))
+                || hex.containsTerrain(Terrains.RUBBLE)
+                || hex.containsTerrain(Terrains.MAGMA)
+                || hex.containsTerrain(Terrains.JUNGLE)
+                || (hex.terrainLevel(Terrains.SNOW) > 1)
+                || (hex.terrainLevel(Terrains.GEYSER) == 2);
     }
 
     public boolean isSpheroid() {
@@ -2678,15 +2677,15 @@ public class Aero extends Entity
 
     public void liftOff(int altitude) {
         if(isSpheroid()) {
-            setMovementMode(IEntityMovementMode.SPHEROID);
+            setMovementMode(EntityMovementMode.SPHEROID);
         } else {
-            setMovementMode(IEntityMovementMode.AERODYNE);
+            setMovementMode(EntityMovementMode.AERODYNE);
         }
         setAltitude(altitude);
     }
 
     public void land() {
-        setMovementMode(IEntityMovementMode.WHEELED);
+        setMovementMode(EntityMovementMode.WHEELED);
         setAltitude(0);
         setElevation(0);
         setCurrentVelocity(0);

@@ -28,8 +28,8 @@ import javax.vecmath.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.GUIPreferences;
-import megamek.common.IEntityMovementMode;
-import megamek.common.IEntityMovementType;
+import megamek.common.EntityMovementMode;
+import megamek.common.EntityMovementType;
 import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
@@ -40,18 +40,18 @@ class MoveStepModel extends ArrowModel {
 
         Color col;
         switch (step.getMovementType()) {
-        case IEntityMovementType.MOVE_RUN:
-        case IEntityMovementType.MOVE_VTOL_RUN:
+        case MOVE_RUN:
+        case MOVE_VTOL_RUN:
             if (step.isUsingMASC()) {
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveMASCColor");
             } else {
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveRunColor");
             }
             break;
-        case IEntityMovementType.MOVE_JUMP:
+        case MOVE_JUMP:
             col = GUIPreferences.getInstance().getColor("AdvancedMoveJumpColor");
             break;
-        case IEntityMovementType.MOVE_ILLEGAL:
+        case MOVE_ILLEGAL:
             col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
             break;
         default:
@@ -84,7 +84,7 @@ class MoveStepModel extends ArrowModel {
 
         switch (step.getType()) {
         case MovePath.STEP_CLIMB_MODE_OFF:
-            if (step.getParent().getEntity().getMovementMode() == IEntityMovementMode.WIGE) {
+            if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
                 label = Messages.getString("BoardView1.WIGEClimbOff"); //$NON-NLS-1$
             } else {
                 label = Messages.getString("BoardView1.ClimbOff"); //$NON-NLS-1$
@@ -101,7 +101,7 @@ class MoveStepModel extends ArrowModel {
             trans.rotX(-Math.PI/2);
             break;
         case MovePath.STEP_CLIMB_MODE_ON:
-            if (step.getParent().getEntity().getMovementMode() == IEntityMovementMode.WIGE) {
+            if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
                 label = Messages.getString("BoardView1.WIGEClimb"); //$NON-NLS-1$
             } else {
                 label = Messages.getString("BoardView1.Climb"); //$NON-NLS-1$
@@ -163,10 +163,10 @@ class MoveStepModel extends ArrowModel {
                 costStringBuf.append("+]"); //$NON-NLS-1$
             }
 
-            if (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK
-                    || step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN
-                    || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_WALK
-                    || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN
+            if (step.getMovementType() == EntityMovementType.MOVE_VTOL_WALK
+                    || step.getMovementType() == EntityMovementType.MOVE_VTOL_RUN
+                    || step.getMovementType() == EntityMovementType.MOVE_SUBMARINE_WALK
+                    || step.getMovementType() == EntityMovementType.MOVE_SUBMARINE_RUN
                     || step.getElevation() != 0) {
                 costStringBuf.append("{").append(step.getElevation()).append("}");
             }

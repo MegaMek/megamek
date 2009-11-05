@@ -50,7 +50,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.BattleArmor;
 import megamek.common.EquipmentType;
-import megamek.common.IEntityMovementMode;
+import megamek.common.EntityMovementMode;
 import megamek.common.Infantry;
 import megamek.common.LocationFullException;
 import megamek.common.TechConstants;
@@ -196,8 +196,8 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
     private Vector<BattleArmorEquipment> rightArmEquipment = null;
     private Vector<BattleArmorEquipment> torsoEquipment = null;
 
-    private static ArrayList<BattleArmorEquipment> equipmentTypes = null;
-    private static ArrayList<String> equipmentNames = null;
+    static ArrayList<BattleArmorEquipment> equipmentTypes = null;
+    static ArrayList<String> equipmentNames = null;
 
     private static final int TECH_BASE_IS = 0;
     private static final int TECH_BASE_CLAN = 1;
@@ -1921,15 +1921,15 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
 
         // Set the movement mode.
         if (stateJumpType == JUMP_TYPE_VTOL) {
-            retVal.setMovementMode(IEntityMovementMode.VTOL);
+            retVal.setMovementMode(EntityMovementMode.VTOL);
         } else if (stateJumpType == JUMP_TYPE_UMU) {
-            retVal.setMovementMode(IEntityMovementMode.INF_UMU);
+            retVal.setMovementMode(EntityMovementMode.INF_UMU);
             retVal.setOriginalWalkMP(getTotalJumpMP());
             retVal.setOriginalJumpMP(0);
         } else if (getTotalJumpMP() > 0) {
-            retVal.setMovementMode(IEntityMovementMode.INF_JUMP);
+            retVal.setMovementMode(EntityMovementMode.INF_JUMP);
         } else {
-            retVal.setMovementMode(IEntityMovementMode.INF_LEG);
+            retVal.setMovementMode(EntityMovementMode.INF_LEG);
         }
 
         // And set its cost.

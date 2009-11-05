@@ -91,18 +91,18 @@ public interface ITerrain {
     /**
      * @return the modifier to PSRs made in this terrain
      */
-    public abstract int pilotingModifier(int moveType);
+    public abstract int pilotingModifier(EntityMovementMode moveMode);
 
     /**
      * @return the additional movement cost for this terrain
      */
-    public abstract int movementCost(int moveType);
+    public abstract int movementCost(EntityMovementMode moveMode);
     
     /**the fire ignition modifier for this terrain
      */
     public abstract int ignitionModifier();
     
-    public abstract int getBogDownModifier(int moveType, boolean largeVee);
+    public abstract int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee);
     
     public abstract int getUnstuckModifier(int elev);
     

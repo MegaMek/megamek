@@ -30,7 +30,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
-import megamek.common.IEntityMovementMode;
+import megamek.common.EntityMovementMode;
 import megamek.common.LocationFullException;
 import megamek.common.TechConstants;
 import megamek.common.util.BuildingBlock;
@@ -72,8 +72,6 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find weightclass block.");
         }
         t.setWeightClass(dataFile.getDataAsInt("weightclass")[0]);
-        float limit = EntityWeightClass.getClassLimit(t.getWeightClass());
-        int classe = EntityWeightClass.getWeightClass(limit);
         t.setWeight(EntityWeightClass.getClassLimit(t.getWeightClass()));
 
         if (!dataFile.exists("chassis")) {
@@ -92,17 +90,17 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find movement block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
-        int nMotion = -1;
+        EntityMovementMode nMotion = EntityMovementMode.NONE;
         if (sMotion.equalsIgnoreCase("leg")) {
-            nMotion = IEntityMovementMode.INF_LEG;
+            nMotion = EntityMovementMode.INF_LEG;
         } else if (sMotion.equalsIgnoreCase("jump")) {
-            nMotion = IEntityMovementMode.INF_JUMP;
+            nMotion = EntityMovementMode.INF_JUMP;
         } else if (sMotion.equalsIgnoreCase("vtol")) {
-            nMotion = IEntityMovementMode.VTOL;
+            nMotion = EntityMovementMode.VTOL;
         } else if (sMotion.equalsIgnoreCase("submarine")) {
-            nMotion = IEntityMovementMode.INF_UMU;
+            nMotion = EntityMovementMode.INF_UMU;
         }
-        if (nMotion == -1) {
+        if (nMotion == EntityMovementMode.NONE) {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
         t.setMovementMode(nMotion);

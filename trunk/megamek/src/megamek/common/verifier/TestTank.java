@@ -22,7 +22,7 @@ package megamek.common.verifier;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.IEntityMovementMode;
+import megamek.common.EntityMovementMode;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.SupportTank;
@@ -92,13 +92,13 @@ public class TestTank extends TestEntity {
     }
 
     public float getTankWeightLifting() {
-        if (tank.getMovementMode() == IEntityMovementMode.HOVER) {
+        if (tank.getMovementMode() == EntityMovementMode.HOVER) {
             return tank.getWeight() / 10.0f;
-        } else if (tank.getMovementMode() == IEntityMovementMode.VTOL) {
+        } else if (tank.getMovementMode() == EntityMovementMode.VTOL) {
             return tank.getWeight() / 10.0f;
-        } else if (tank.getMovementMode() == IEntityMovementMode.HYDROFOIL) {
+        } else if (tank.getMovementMode() == EntityMovementMode.HYDROFOIL) {
             return tank.getWeight() / 10.0f;
-        } else if (tank.getMovementMode() == IEntityMovementMode.SUBMARINE) {
+        } else if (tank.getMovementMode() == EntityMovementMode.SUBMARINE) {
             return tank.getWeight() / 10.0f;
         }
         return 0f;

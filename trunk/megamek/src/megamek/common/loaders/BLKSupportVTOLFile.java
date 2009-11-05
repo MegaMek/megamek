@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import megamek.common.Engine;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.Mounted;
 import megamek.common.SupportVTOL;
 import megamek.common.Tank;
@@ -32,9 +33,6 @@ import megamek.common.util.BuildingBlock;
  * @author Andrew Hunter
  */
 public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
-
-    private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover", "VTOL" };
-
     public BLKSupportVTOLFile(BuildingBlock bb) {
         dataFile = bb;
     }
@@ -72,17 +70,12 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find movement block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
-        int nMotion = -1;
-        for (int x = 0; x < MOVES.length; x++) {
-            if (sMotion.equals(MOVES[x])) {
-                nMotion = x;
-                break;
-            }
-        }
-        if (nMotion == -1) {
-            throw new EntityLoadingException("Invalid movment type: " + sMotion);
+        EntityMovementMode nMotion = EntityMovementMode.getMode(sMotion);
+        if (nMotion == EntityMovementMode.NONE) {
+            throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
         t.setMovementMode(nMotion);
+
 
         if (dataFile.exists("transporters")) {
             String[] transporters = dataFile.getDataAsString("transporters");

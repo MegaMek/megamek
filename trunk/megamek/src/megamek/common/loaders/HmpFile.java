@@ -34,7 +34,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.IEntityMovementMode;
+import megamek.common.EntityMovementMode;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.Mounted;
@@ -567,7 +567,7 @@ implements IMechLoader
 
     private void removeArmActuators(Mech mech, long[] criticals, int location) {
         // Quad have leg and foot actuators, not arm and hand actuators.
-        if (mech.getMovementMode() == IEntityMovementMode.QUAD) {
+        if (mech.getMovementMode() == EntityMovementMode.QUAD) {
             if (!isLowerLegActuator(criticals[2])) {
                 mech.setCritical(location, 2, null);
             }

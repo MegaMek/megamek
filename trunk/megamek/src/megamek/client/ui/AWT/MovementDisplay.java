@@ -47,8 +47,8 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.GameTurn;
-import megamek.common.IEntityMovementMode;
-import megamek.common.IEntityMovementType;
+import megamek.common.EntityMovementMode;
+import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -859,7 +859,7 @@ DoneButtoned, KeyListener {
             setClearEnabled(false);
         }
 
-        if ((ce.getMovementMode() == IEntityMovementMode.HYDROFOIL) || (ce.getMovementMode() == IEntityMovementMode.NAVAL) || (ce.getMovementMode() == IEntityMovementMode.SUBMARINE) || (ce.getMovementMode() == IEntityMovementMode.INF_UMU) || (ce.getMovementMode() == IEntityMovementMode.VTOL) || (ce.getMovementMode() == IEntityMovementMode.AIRMECH) || (ce.getMovementMode() == IEntityMovementMode.AEROSPACE) || (ce.getMovementMode() == IEntityMovementMode.BIPED_SWIM) || (ce.getMovementMode() == IEntityMovementMode.QUAD_SWIM)) {
+        if ((ce.getMovementMode() == EntityMovementMode.HYDROFOIL) || (ce.getMovementMode() == EntityMovementMode.NAVAL) || (ce.getMovementMode() == EntityMovementMode.SUBMARINE) || (ce.getMovementMode() == EntityMovementMode.INF_UMU) || (ce.getMovementMode() == EntityMovementMode.VTOL) || (ce.getMovementMode() == EntityMovementMode.AIRMECH) || (ce.getMovementMode() == EntityMovementMode.AEROSPACE) || (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM) || (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
             butClimbMode.setEnabled(false);
         } else {
             butClimbMode.setEnabled(true);
@@ -1053,10 +1053,10 @@ DoneButtoned, KeyListener {
         final Entity ce = ce();
 
         // switch back from swimming to normal mode.
-        if (ce.getMovementMode() == IEntityMovementMode.BIPED_SWIM) {
-            ce.setMovementMode(IEntityMovementMode.BIPED);
-        } else if (ce.getMovementMode() == IEntityMovementMode.QUAD_SWIM) {
-            ce.setMovementMode(IEntityMovementMode.QUAD);
+        if (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM) {
+            ce.setMovementMode(EntityMovementMode.BIPED);
+        } else if (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM) {
+            ce.setMovementMode(EntityMovementMode.QUAD);
         }
 
         // clear board cursors
@@ -1768,8 +1768,8 @@ DoneButtoned, KeyListener {
             return;
         }
 
-        setEvadeEnabled((cmd.getLastStepMovementType() != IEntityMovementType.MOVE_JUMP)
-                          && (cmd.getLastStepMovementType() != IEntityMovementType.MOVE_SPRINT));
+        setEvadeEnabled((cmd.getLastStepMovementType() != EntityMovementType.MOVE_JUMP)
+                          && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_SPRINT));
     }
 
     private void updateRecklessButton() {
@@ -2375,7 +2375,7 @@ DoneButtoned, KeyListener {
             return;
         }
         Aero a = (Aero) ce();
-        int overallMoveType = IEntityMovementType.MOVE_NONE;
+        EntityMovementType overallMoveType = EntityMovementType.MOVE_NONE;
         if(null != cmd) {
             overallMoveType = cmd.getLastStepMovementType();
         }
@@ -2617,7 +2617,7 @@ DoneButtoned, KeyListener {
             }
             // dcmd.addStep(MovePath.STEP_SWIM);
             gear = MovementDisplay.GEAR_SWIM;
-            ce.setMovementMode((ce instanceof BipedMech) ? IEntityMovementMode.BIPED_SWIM : IEntityMovementMode.QUAD_SWIM);
+            ce.setMovementMode((ce instanceof BipedMech) ? EntityMovementMode.BIPED_SWIM : EntityMovementMode.QUAD_SWIM);
         } else if (ev.getActionCommand().equals(MOVE_TURN)) {
             gear = MovementDisplay.GEAR_TURN;
         } else if (ev.getActionCommand().equals(MOVE_BACK_UP)) {

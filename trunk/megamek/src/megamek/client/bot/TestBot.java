@@ -31,7 +31,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IAimingModes;
-import megamek.common.IEntityMovementType;
+import megamek.common.EntityMovementType;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -213,9 +213,9 @@ public class TestBot extends BotClient {
         // add an unjam action
         if (min.getLastStep() != null) {
             if (min.getCEntity().entity.canUnjamRAC()) {
-                if ((min.getLastStep().getMovementType() == IEntityMovementType.MOVE_WALK)
-                        || (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
-                        || (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
+                if ((min.getLastStep().getMovementType() == EntityMovementType.MOVE_WALK)
+                        || (min.getLastStep().getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
+                        || (min.getLastStep().getMovementType() == EntityMovementType.MOVE_NONE)) {
                     // Cycle through all available weapons, only unjam if the
                     // jam(med)
                     // RACs count for a significant portion of possible damage
@@ -1815,9 +1815,9 @@ public class TestBot extends BotClient {
         // add an unjam action
         if (min.getLastStep() != null) {
             if (min.getCEntity().entity.canUnjamRAC()) {
-                if ((min.getLastStep().getMovementType() == IEntityMovementType.MOVE_WALK)
-                        || (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
-                        || (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
+                if ((min.getLastStep().getMovementType() == EntityMovementType.MOVE_WALK)
+                        || (min.getLastStep().getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
+                        || (min.getLastStep().getMovementType() == EntityMovementType.MOVE_NONE)) {
                     // Cycle through all available weapons, only unjam if the
                     // jam(med)
                     // RACs count for a significant portion of possible damage

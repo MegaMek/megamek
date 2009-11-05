@@ -397,20 +397,20 @@ public class Hex implements IHex, Serializable {
         return new Hex(elevation, tcopy, theme);
     }
 
-    public int terrainPilotingModifier(int moveType) {
+    public int terrainPilotingModifier(EntityMovementMode moveMode) {
         int rv = 0;
         for (int i = 0; i < terrains.length; i++) {
             if (terrains[i] != null)
-                rv += terrains[i].pilotingModifier(moveType);
+                rv += terrains[i].pilotingModifier(moveMode);
         }
         return rv;
     }
 
-    public int movementCost(int moveType) {
+    public int movementCost(EntityMovementMode moveMode) {
         int rv = 0;
         for (int i = 0; i < terrains.length; i++) {
             if (terrains[i] != null)
-                rv += terrains[i].movementCost(moveType);
+                rv += terrains[i].movementCost(moveMode);
         }
         return rv;
     }
@@ -505,11 +505,11 @@ public class Hex implements IHex, Serializable {
      * get any modifiers to a bog-down roll in this hex. Takes the worst modifier
      * If there is no bog-down chance in this hex, then it returns TargetRoll.AUTOMATIC_SUCCESS
      */
-    public int getBogDownModifier(int moveType, boolean largeVee) {
+    public int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee) {
         int mod = TargetRoll.AUTOMATIC_SUCCESS;
         for (int i = 0; i < terrains.length; i++) {
-            if (terrains[i] != null && mod < terrains[i].getBogDownModifier(moveType, largeVee))
-                mod = terrains[i].getBogDownModifier(moveType, largeVee);
+            if (terrains[i] != null && mod < terrains[i].getBogDownModifier(moveMode, largeVee))
+                mod = terrains[i].getBogDownModifier(moveMode, largeVee);
         }
         return mod;
     }

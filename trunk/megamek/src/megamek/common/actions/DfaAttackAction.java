@@ -30,7 +30,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.GunEmplacement;
-import megamek.common.IEntityMovementType;
+import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -320,7 +320,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
         // attacker movement
         toHit.append(Compute.getAttackerMovementModifier(game, attackerId,
-                IEntityMovementType.MOVE_JUMP));
+                EntityMovementType.MOVE_JUMP));
 
         // target movement
         toHit.append(Compute.getTargetMovementModifier(game, targetId));
@@ -408,10 +408,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
             if ( entity instanceof BipedMech ){
 
                 return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RLEG)) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LLEG));
-            }else{
-                return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RLEG)) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LLEG)) || ((entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RARM)) && (entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RARM) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LARM) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LARM))));
-
             }
+            return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RLEG)) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LLEG)) || ((entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RARM)) && (entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RARM) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LARM) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LARM))));
         }
 
         return false;

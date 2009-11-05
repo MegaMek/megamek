@@ -31,7 +31,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.GameTurn;
-import megamek.common.IEntityMovementMode;
+import megamek.common.EntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -662,7 +662,7 @@ public abstract class BotClient extends Client {
 
                 // Tracked vehicle
                 // -> Trees increase fitness
-                if (deployed_ent.getMovementMode() == IEntityMovementMode.TRACKED) {
+                if (deployed_ent.getMovementMode() == EntityMovementMode.TRACKED) {
                     if (game.getBoard().getHex(valid_array[valid_arr_index].x,
                             valid_array[valid_arr_index].y).containsTerrain(
                             Terrains.WOODS)) {
@@ -676,7 +676,7 @@ public abstract class BotClient extends Client {
                 // Hover vehicle
                 // -> Water in hex increases fitness, hover vehicles have an
                 // advantage in water areas
-                if (deployed_ent.getMovementMode() == IEntityMovementMode.HOVER) {
+                if (deployed_ent.getMovementMode() == EntityMovementMode.HOVER) {
                     if (game.getBoard().getHex(valid_array[valid_arr_index].x,
                             valid_array[valid_arr_index].y).containsTerrain(
                             Terrains.WATER)) {

@@ -139,7 +139,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int heatFromExternal = 0;
     public int delta_distance = 0;
     public int mpUsed = 0;
-    public int moved = IEntityMovementType.MOVE_NONE;
+    public EntityMovementType moved = EntityMovementType.MOVE_NONE;
     protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
     public boolean hitThisRoundByAntiTSM = false;
@@ -257,7 +257,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Stores the current movement mode.
      */
-    protected int movementMode = IEntityMovementMode.NONE;
+    protected EntityMovementMode movementMode = EntityMovementMode.NONE;
 
     protected boolean isHidden = false;
 
@@ -1032,14 +1032,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (this instanceof Aero) {
             return retVal;
         }
-        if ((getMovementMode() == IEntityMovementMode.SUBMARINE) || ((getMovementMode() == IEntityMovementMode.INF_UMU) && (current.containsTerrain(Terrains.WATER) || next.containsTerrain(Terrains.WATER))) || (getMovementMode() == IEntityMovementMode.VTOL)
+        if ((getMovementMode() == EntityMovementMode.SUBMARINE) || ((getMovementMode() == EntityMovementMode.INF_UMU) && (current.containsTerrain(Terrains.WATER) || next.containsTerrain(Terrains.WATER))) || (getMovementMode() == EntityMovementMode.VTOL)
         // a WIGE in climb mode or that ended climb mode in the previous
                 // hex stays at the same flight level, like a VTOL
-                || ((getMovementMode() == IEntityMovementMode.WIGE) && (climb || wigeEndClimbPrevious) && (assumedElevation > 0)) || ((getMovementMode() == IEntityMovementMode.QUAD_SWIM) && hasUMU()) || ((getMovementMode() == IEntityMovementMode.BIPED_SWIM) && hasUMU())) {
+                || ((getMovementMode() == EntityMovementMode.WIGE) && (climb || wigeEndClimbPrevious) && (assumedElevation > 0)) || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU()) || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
             retVal += current.surface();
             retVal -= next.surface();
         } else {
-            if ((getMovementMode() != IEntityMovementMode.HOVER) && (getMovementMode() != IEntityMovementMode.NAVAL) && (getMovementMode() != IEntityMovementMode.HYDROFOIL) && (getMovementMode() != IEntityMovementMode.WIGE)) {
+            if ((getMovementMode() != EntityMovementMode.HOVER) && (getMovementMode() != EntityMovementMode.NAVAL) && (getMovementMode() != EntityMovementMode.HYDROFOIL) && (getMovementMode() != EntityMovementMode.WIGE)) {
                 int prevWaterLevel = 0;
                 if (current.containsTerrain(Terrains.WATER)) {
                     prevWaterLevel = current.terrainLevel(Terrains.WATER);
@@ -1073,7 +1073,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     retVal -= next.surface();
                 }
             }
-            if ((getMovementMode() != IEntityMovementMode.NAVAL) && (getMovementMode() != IEntityMovementMode.HYDROFOIL) && (next.containsTerrain(Terrains.BRIDGE) || current.containsTerrain(Terrains.BRIDGE))) {
+            if ((getMovementMode() != EntityMovementMode.NAVAL) && (getMovementMode() != EntityMovementMode.HYDROFOIL) && (next.containsTerrain(Terrains.BRIDGE) || current.containsTerrain(Terrains.BRIDGE))) {
                 int brdnex = Math.max(-(next.depth()), next.terrainLevel(Terrains.BRIDGE_ELEV));
                 if (Math.abs((next.surface() + brdnex) - (current.surface() + assumedElevation)) <= getMaxElevationChange()) {
                     // bridge is reachable at least
@@ -1128,20 +1128,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             inWaterOrWoods = true;
         }
         switch (getMovementMode()) {
-            case IEntityMovementMode.INF_JUMP:
-            case IEntityMovementMode.INF_LEG:
-            case IEntityMovementMode.INF_MOTORIZED:
+            case INF_JUMP:
+            case INF_LEG:
+            case INF_MOTORIZED:
                 minAlt -= Math.max(0, hex.terrainLevel(Terrains.BLDG_BASEMENT));
                 break;
-            case IEntityMovementMode.VTOL:
-            case IEntityMovementMode.WIGE:
+            case VTOL:
+            case WIGE:
                 minAlt = hex.ceiling();
                 if (inWaterOrWoods) {
                     minAlt++; // can't land here
                 }
                 break;
-            case IEntityMovementMode.AERODYNE:
-            case IEntityMovementMode.SPHEROID:
+            case AERODYNE:
+            case SPHEROID:
                 assumedAlt = assumedElevation;
                 if (game.getBoard().inAtmosphere()) {
                     minAlt = hex.ceiling() + 1;
@@ -1153,10 +1153,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     minAlt++;
                 }
                 break;
-            case IEntityMovementMode.SUBMARINE:
-            case IEntityMovementMode.INF_UMU:
-            case IEntityMovementMode.BIPED_SWIM:
-            case IEntityMovementMode.QUAD_SWIM:
+            case SUBMARINE:
+            case INF_UMU:
+            case BIPED_SWIM:
+            case QUAD_SWIM:
                 minAlt = hex.floor();
                 break;
             default:
@@ -1174,28 +1174,28 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int assumedAlt = assumedElevation + hex.surface();
         int maxAlt = hex.surface();
         switch (getMovementMode()) {
-            case IEntityMovementMode.INF_JUMP:
-            case IEntityMovementMode.INF_LEG:
-            case IEntityMovementMode.INF_MOTORIZED:
+            case INF_JUMP:
+            case INF_LEG:
+            case INF_MOTORIZED:
                 maxAlt += Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
                 break;
-            case IEntityMovementMode.VTOL:
+            case VTOL:
                 maxAlt = hex.surface() + 50;
                 break;
-            case IEntityMovementMode.AERODYNE:
-            case IEntityMovementMode.SPHEROID:
+            case AERODYNE:
+            case SPHEROID:
                 if (!game.getBoard().inSpace()) {
                     assumedAlt = assumedElevation;
                     maxAlt = 10;
                 }
                 break;
-            case IEntityMovementMode.SUBMARINE:
-            case IEntityMovementMode.INF_UMU:
-            case IEntityMovementMode.BIPED_SWIM:
-            case IEntityMovementMode.QUAD_SWIM:
+            case SUBMARINE:
+            case INF_UMU:
+            case BIPED_SWIM:
+            case QUAD_SWIM:
                 maxAlt = hex.surface();
                 break;
-            case IEntityMovementMode.WIGE:
+            case WIGE:
                 maxAlt = hex.surface() + 1;
                 break;
             default:
@@ -1210,7 +1210,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean isElevationValid(int assumedElevation, IHex hex) {
         int assumedAlt = assumedElevation + hex.surface();
-        if (getMovementMode() == IEntityMovementMode.VTOL) {
+        if (getMovementMode() == EntityMovementMode.VTOL) {
             if ((this instanceof Infantry) && (hex.containsTerrain(Terrains.BUILDING) || hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE))) {
                 // VTOL BA (sylph) can move as ground unit as well
                 return ((assumedElevation <= 50) && (assumedAlt >= hex.floor()));
@@ -1218,16 +1218,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 return ((assumedElevation <= 50) && (assumedAlt > hex.ceiling()));
             }
             return ((assumedElevation <= 50) && (assumedAlt >= hex.ceiling()));
-        } else if ((getMovementMode() == IEntityMovementMode.SUBMARINE) || ((getMovementMode() == IEntityMovementMode.INF_UMU) && hex.containsTerrain(Terrains.WATER)) || ((getMovementMode() == IEntityMovementMode.QUAD_SWIM) && hasUMU()) || ((getMovementMode() == IEntityMovementMode.BIPED_SWIM) && hasUMU())) {
+        } else if ((getMovementMode() == EntityMovementMode.SUBMARINE) || ((getMovementMode() == EntityMovementMode.INF_UMU) && hex.containsTerrain(Terrains.WATER)) || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU()) || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
             return ((assumedAlt >= hex.floor()) && (assumedAlt <= hex.surface()));
-        } else if ((getMovementMode() == IEntityMovementMode.HYDROFOIL) || (getMovementMode() == IEntityMovementMode.NAVAL)) {
+        } else if ((getMovementMode() == EntityMovementMode.HYDROFOIL) || (getMovementMode() == EntityMovementMode.NAVAL)) {
             return assumedAlt == hex.surface();
-        } else if (getMovementMode() == IEntityMovementMode.WIGE) {
+        } else if (getMovementMode() == EntityMovementMode.WIGE) {
             // WiGEs can possibly be at any location above or on the surface
             return (assumedAlt >= hex.floor());
         } else {
             // regular ground units
-            if (hex.containsTerrain(Terrains.ICE) || ((getMovementMode() == IEntityMovementMode.HOVER) && hex.containsTerrain(Terrains.WATER))) {
+            if (hex.containsTerrain(Terrains.ICE) || ((getMovementMode() == EntityMovementMode.HOVER) && hex.containsTerrain(Terrains.WATER))) {
                 // surface of ice is OK, surface of water is OK for hovers
                 if (assumedAlt == hex.surface()) {
                     return true;
@@ -1696,9 +1696,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (hex == null) {
             return 0;
         }
-        if ((movementMode == IEntityMovementMode.VTOL) || (movementMode == IEntityMovementMode.WIGE)) {
+        if ((movementMode == EntityMovementMode.VTOL) || (movementMode == EntityMovementMode.WIGE)) {
             return hex.surface() + elevation;
-        } else if (((movementMode == IEntityMovementMode.HOVER) || (movementMode == IEntityMovementMode.NAVAL) || (movementMode == IEntityMovementMode.HYDROFOIL) || hex.containsTerrain(Terrains.ICE)) && hex.containsTerrain(Terrains.WATER)) {
+        } else if (((movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.NAVAL) || (movementMode == EntityMovementMode.HYDROFOIL) || hex.containsTerrain(Terrains.ICE)) && hex.containsTerrain(Terrains.WATER)) {
             return hex.surface();
         } else if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
             return hex.floor() + hex.terrainLevel(Terrains.BLDG_ELEV);
@@ -1747,12 +1747,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns the name of the type of movement used.
      */
-    public abstract String getMovementString(int mtype);
+    public abstract String getMovementString(EntityMovementType mtype);
 
     /**
      * Returns the abbreviation of the name of the type of movement used.
      */
-    public abstract String getMovementAbbr(int mtype);
+    public abstract String getMovementAbbr(EntityMovementType mtype);
 
     /**
      * Returns the name of the location specified.
@@ -4056,7 +4056,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (assaultDropInProgress == 2) {
             assaultDropInProgress = 0;
         }
-        moved = IEntityMovementType.MOVE_NONE;
+        moved = EntityMovementType.MOVE_NONE;
         gotPavementBonus = false;
         hitThisRoundByAntiTSM = false;
         inReverse = false;
@@ -4407,7 +4407,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Get the movement mode of the entity
      */
-    public int getMovementMode() {
+    public EntityMovementMode getMovementMode() {
         return movementMode;
     }
 
@@ -4416,40 +4416,40 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public String getMovementModeAsString() {
         switch (getMovementMode()) {
-            case IEntityMovementMode.NONE:
+            case NONE:
                 return "None";
-            case IEntityMovementMode.BIPED:
-            case IEntityMovementMode.BIPED_SWIM:
+            case BIPED:
+            case BIPED_SWIM:
                 return "Biped";
-            case IEntityMovementMode.QUAD:
-            case IEntityMovementMode.QUAD_SWIM:
+            case QUAD:
+            case QUAD_SWIM:
                 return "Quad";
-            case IEntityMovementMode.TRACKED:
+            case TRACKED:
                 return "Tracked";
-            case IEntityMovementMode.WHEELED:
+            case WHEELED:
                 return "Wheeled";
-            case IEntityMovementMode.HOVER:
+            case HOVER:
                 return "Hover";
-            case IEntityMovementMode.VTOL:
+            case VTOL:
                 return "VTOL";
-            case IEntityMovementMode.NAVAL:
+            case NAVAL:
                 return "Naval";
-            case IEntityMovementMode.HYDROFOIL:
+            case HYDROFOIL:
                 return "Hydrofoil";
-            case IEntityMovementMode.SUBMARINE:
-            case IEntityMovementMode.INF_UMU:
+            case SUBMARINE:
+            case INF_UMU:
                 return "Submarine";
-            case IEntityMovementMode.INF_LEG:
+            case INF_LEG:
                 return "Leg";
-            case IEntityMovementMode.INF_MOTORIZED:
+            case INF_MOTORIZED:
                 return "Motorized";
-            case IEntityMovementMode.INF_JUMP:
+            case INF_JUMP:
                 return "Jump";
-            case IEntityMovementMode.WIGE:
+            case WIGE:
                 return "WiGE";
-            case IEntityMovementMode.AERODYNE:
+            case AERODYNE:
                 return "Aerodyne";
-            case IEntityMovementMode.SPHEROID:
+            case SPHEROID:
                 return "Spheroid";
             default:
                 return "ERROR";
@@ -4459,7 +4459,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Set the movement type of the entity
      */
-    public void setMovementMode(int movementMode) {
+    public void setMovementMode(EntityMovementMode movementMode) {
         this.movementMode = movementMode;
     }
 
@@ -4467,14 +4467,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Helper function to determine if a entity is a biped
      */
     public boolean entityIsBiped() {
-        return (getMovementMode() == IEntityMovementMode.BIPED);
+        return (getMovementMode() == EntityMovementMode.BIPED);
     }
 
     /**
      * Helper function to determine if a entity is a quad
      */
     public boolean entityIsQuad() {
-        return (getMovementMode() == IEntityMovementMode.QUAD);
+        return (getMovementMode() == EntityMovementMode.QUAD);
     }
 
     /**
@@ -4495,7 +4495,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns an entity's base piloting skill roll needed
      */
-    public PilotingRollData getBasePilotingRoll(int moveType) {
+    public PilotingRollData getBasePilotingRoll(EntityMovementType moveType) {
         final int entityId = getId();
 
         PilotingRollData roll;
@@ -4575,15 +4575,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Add in any modifiers due to global conditions like light/weather/etc.
      */
-    public PilotingRollData addConditionBonuses(PilotingRollData roll, int moveType) {
+    public PilotingRollData addConditionBonuses(PilotingRollData roll, EntityMovementType moveType) {
 
-        if (moveType == IEntityMovementType.MOVE_SPRINT) {
+        if (moveType == EntityMovementType.MOVE_SPRINT) {
             roll.addModifier(2, "Sprinting");
         }
 
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // check light conditions for "running" entities
-        if ((moveType == IEntityMovementType.MOVE_RUN) || (moveType == IEntityMovementType.MOVE_SPRINT) || (moveType == IEntityMovementType.MOVE_VTOL_RUN) || (moveType == IEntityMovementType.MOVE_OVER_THRUST)) {
+        if ((moveType == EntityMovementType.MOVE_RUN) || (moveType == EntityMovementType.MOVE_SPRINT) || (moveType == EntityMovementType.MOVE_VTOL_RUN) || (moveType == EntityMovementType.MOVE_OVER_THRUST)) {
             int lightPenalty = conditions.getLightPilotPenalty();
             if (lightPenalty > 0) {
                 roll.addModifier(lightPenalty, conditions.getLightCurrentName());
@@ -4650,14 +4650,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity is attempting to run with damage that would force a
      * PSR. If so, returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkRunningWithDamage(int overallMoveType) {
+    public PilotingRollData checkRunningWithDamage(EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroDamage = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
         if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
         }
-        if (((overallMoveType == IEntityMovementType.MOVE_RUN) || (overallMoveType == IEntityMovementType.MOVE_SPRINT)) && !isProne() && ((gyroDamage > 0) || hasHipCrit())) {
+        if (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT)) && !isProne() && ((gyroDamage > 0) || hasHipCrit())) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "running with damaged hip actuator or gyro"));
         } else {
@@ -4671,10 +4671,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity is attempting to sprint with MASC engaged. If so,
      * returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkSprintingWithMASC(int overallMoveType, int used) {
+    public PilotingRollData checkSprintingWithMASC(EntityMovementType overallMoveType, int used) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if ((overallMoveType == IEntityMovementType.MOVE_SPRINT) && (used > ((int) Math.ceil(2.0 * this.getWalkMP())))) {
+        if ((overallMoveType == EntityMovementType.MOVE_SPRINT) && (used > ((int) Math.ceil(2.0 * this.getWalkMP())))) {
             roll.append(new PilotingRollData(getId(), 0, "sprinting with active MASC/Supercharger"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to sprint with MASC");
@@ -4688,10 +4688,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity is attempting to sprint with supercharger engaged.
      * If so, returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkSprintingWithSupercharger(int overallMoveType, int used) {
+    public PilotingRollData checkSprintingWithSupercharger(EntityMovementType overallMoveType, int used) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if ((overallMoveType == IEntityMovementType.MOVE_SPRINT) && (used > ((int) Math.ceil(2.5 * this.getWalkMP())))) {
+        if ((overallMoveType == EntityMovementType.MOVE_SPRINT) && (used > ((int) Math.ceil(2.5 * this.getWalkMP())))) {
             roll.append(new PilotingRollData(getId(), 0, "sprinting with active MASC/Supercharger"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to sprint with Supercharger");
@@ -4719,7 +4719,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         boolean isDark = game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK;
 
         // if we are jumping, then no worries
-        if (step.getMovementType() == IEntityMovementType.MOVE_JUMP) {
+        if (step.getMovementType() == EntityMovementType.MOVE_JUMP) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "jumping is not reckless?");
             return roll;
         }
@@ -4731,7 +4731,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // FIXME: no perfect solution in the current code to determine if hex is
         // clear. I will use movement costs
-        else if ((isFoggy || isDark) && !lastPos.equals(curPos) && ((curHex.movementCost(step.getParent().getLastStepMovementType()) > 0) || ((null != prevHex) && (prevHex.getElevation() != curHex.getElevation())))) {
+        else if ((isFoggy || isDark) && !lastPos.equals(curPos) && ((curHex.movementCost(getMovementMode()) > 0) || ((null != prevHex) && (prevHex.getElevation() != curHex.getElevation())))) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
             // ice conditions
         } else if (curHex.containsTerrain(Terrains.ICE)) {
@@ -4749,7 +4749,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity is landing (from a jump) with damage that would
      * force a PSR. If so, returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkLandingWithDamage(int overallMoveType) {
+    public PilotingRollData checkLandingWithDamage(EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if (((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0) && (getGyroType() != Mech.GYRO_HEAVY_DUTY)) || ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) && (getGyroType() == Mech.GYRO_HEAVY_DUTY)) || hasLegActuatorCrit()) {
@@ -4766,7 +4766,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Checks if an entity is landing (from a jump) in heavy woods.
      */
-    public PilotingRollData checkLandingInHeavyWoods(int overallMoveType, IHex curHex) {
+    public PilotingRollData checkLandingInHeavyWoods(EntityMovementType overallMoveType, IHex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         if (curHex.containsTerrain(Terrains.WOODS, 2)) {
             roll.append(new PilotingRollData(getId(), 0, "landing in heavy woods"));
@@ -4780,7 +4780,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Checks if the entity is landing (from a jump) on ice-covered water.
      */
-    public PilotingRollData checkLandingOnIce(int overallMoveType, IHex curHex) {
+    public PilotingRollData checkLandingOnIce(EntityMovementType overallMoveType, IHex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if (curHex.containsTerrain(Terrains.ICE) && (curHex.terrainLevel(Terrains.WATER) > 0)) {
@@ -4805,17 +4805,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll = getBasePilotingRoll(step.getParent().getLastStepMovementType());
         addPilotingModifierForTerrain(roll, step);
         switch (step.getMovementType()) {
-            case IEntityMovementType.MOVE_WALK:
-            case IEntityMovementType.MOVE_RUN:
-            case IEntityMovementType.MOVE_VTOL_WALK:
-            case IEntityMovementType.MOVE_VTOL_RUN:
+            case MOVE_WALK:
+            case MOVE_RUN:
+            case MOVE_VTOL_WALK:
+            case MOVE_VTOL_RUN:
                 if (step.getMpUsed() > (int) Math.ceil(getOriginalWalkMP() * 1.5)) {
                     roll.append(new PilotingRollData(getId(), 0, "used more MPs than at 1G possible"));
                 } else {
                     roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity did not use more MPs walking/running than possible at 1G");
                 }
                 break;
-            case IEntityMovementType.MOVE_JUMP:
+            case MOVE_JUMP:
                 if (step.getMpUsed() > getJumpMP(false)) {
                     roll.append(new PilotingRollData(getId(), 0, "used more MPs than at 1G possible"));
                 } else {
@@ -4830,19 +4830,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity might skid on pavement. If so, returns the target
      * roll for the piloting skill check.
      */
-    public PilotingRollData checkSkid(int moveType, IHex prevHex, int overallMoveType, MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
+    public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex, EntityMovementType overallMoveType, MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         addPilotingModifierForTerrain(roll, lastPos);
 
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
-        if ((moveType != IEntityMovementType.MOVE_JUMP) && (prevHex != null)
+        if ((moveType != EntityMovementType.MOVE_JUMP) && (prevHex != null)
         /*
          * Bug 754610: Revert fix for bug 702735. && (
          * prevHex.contains(Terrain.PAVEMENT) || prevHex.contains(Terrain.ROAD)
          * || prevHex.contains(Terrain.BRIDGE) )
          */
-        && ((prevStep.isPavementStep() && ((overallMoveType == IEntityMovementType.MOVE_RUN) || (overallMoveType == IEntityMovementType.MOVE_SPRINT)) && (movementMode != IEntityMovementMode.HOVER) && (movementMode != IEntityMovementMode.WIGE)) || (prevHex.containsTerrain(Terrains.ICE) && (movementMode != IEntityMovementMode.HOVER) && (movementMode != IEntityMovementMode.WIGE)) || (((movementMode == IEntityMovementMode.HOVER) || (movementMode == IEntityMovementMode.WIGE)) && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) || (game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)))) && (prevFacing != curFacing) && !lastPos.equals(curPos) && !isInfantry
+        && ((prevStep.isPavementStep() && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT)) && (movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE)) || (prevHex.containsTerrain(Terrains.ICE) && (movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE)) || (((movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE)) && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) || (game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)))) && (prevFacing != curFacing) && !lastPos.equals(curPos) && !isInfantry
         // Bug 912127, a unit that just got up and changed facing
                 // on pavement in that getting up does not skid.
                 && !prevStep.isHasJustStood()) {
@@ -4872,7 +4872,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll = getBasePilotingRoll(step.getParent().getLastStepMovementType());
         addPilotingModifierForTerrain(roll, curPos);
 
-        if (!lastPos.equals(curPos) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) && (curHex.terrainLevel(Terrains.RUBBLE) > 0) && (this instanceof Mech)) {
+        if (!lastPos.equals(curPos) && (step.getMovementType() != EntityMovementType.MOVE_JUMP) && (curHex.terrainLevel(Terrains.RUBBLE) > 0) && (this instanceof Mech)) {
             int mod = 0;
             if (curHex.terrainLevel(Terrains.RUBBLE) > 5) {
                 mod++;
@@ -4894,7 +4894,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public PilotingRollData checkBogDown(MoveStep step, IHex curHex, Coords lastPos, Coords curPos, int lastElev, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(step.getParent().getLastStepMovementType());
         int bgMod = curHex.getBogDownModifier(getMovementMode(), this instanceof LargeSupportTank);
-        if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev)) && (bgMod != TargetRoll.AUTOMATIC_SUCCESS) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) && (step.getElevation() == 0) && !isPavementStep) {
+        if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev)) && (bgMod != TargetRoll.AUTOMATIC_SUCCESS) && (step.getMovementType() != EntityMovementType.MOVE_JUMP) && (step.getElevation() == 0) && !isPavementStep) {
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
             adjustDifficultTerrainPSRModifier(roll);
         } else {
@@ -4908,7 +4908,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * target roll for the piloting skill check.
      */
     public PilotingRollData checkWaterMove(MoveStep step, IHex curHex, Coords lastPos, Coords curPos, boolean isPavementStep) {
-        if ((curHex.terrainLevel(Terrains.WATER) > 0) && (step.getElevation() < 0) && !lastPos.equals(curPos) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP) && (getMovementMode() != IEntityMovementMode.HOVER) && (getMovementMode() != IEntityMovementMode.VTOL) && (getMovementMode() != IEntityMovementMode.NAVAL) && (getMovementMode() != IEntityMovementMode.HYDROFOIL) && (getMovementMode() != IEntityMovementMode.SUBMARINE) && (getMovementMode() != IEntityMovementMode.INF_UMU) && (getMovementMode() != IEntityMovementMode.BIPED_SWIM) && (getMovementMode() != IEntityMovementMode.QUAD_SWIM) && (getMovementMode() != IEntityMovementMode.WIGE) && !isPavementStep) {
+        if ((curHex.terrainLevel(Terrains.WATER) > 0) && (step.getElevation() < 0) && !lastPos.equals(curPos) && (step.getMovementType() != EntityMovementType.MOVE_JUMP) && (getMovementMode() != EntityMovementMode.HOVER) && (getMovementMode() != EntityMovementMode.VTOL) && (getMovementMode() != EntityMovementMode.NAVAL) && (getMovementMode() != EntityMovementMode.HYDROFOIL) && (getMovementMode() != EntityMovementMode.SUBMARINE) && (getMovementMode() != EntityMovementMode.INF_UMU) && (getMovementMode() != EntityMovementMode.BIPED_SWIM) && (getMovementMode() != EntityMovementMode.QUAD_SWIM) && (getMovementMode() != EntityMovementMode.WIGE) && !isPavementStep) {
             return checkWaterMove(curHex.terrainLevel(Terrains.WATER), step.getParent().getLastStepMovementType());
         }
         return checkWaterMove(0, step.getParent().getLastStepMovementType());
@@ -4918,7 +4918,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity is moving into depth 1+ water. If so, returns the
      * target roll for the piloting skill check.
      */
-    public PilotingRollData checkWaterMove(int waterLevel, int overallMoveType) {
+    public PilotingRollData checkWaterMove(int waterLevel, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int mod;
@@ -4978,11 +4978,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return 0;
         }
 
-        if ((this instanceof Infantry) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)) {
+        if ((this instanceof Infantry) && (step.getMovementType() != EntityMovementType.MOVE_JUMP)) {
             return 0;
         }
 
-        if ((this instanceof Protomech) && (prevStep != null) && (prevStep.getMovementType() == IEntityMovementType.MOVE_JUMP)) {
+        if ((this instanceof Protomech) && (prevStep != null) && (prevStep.getMovementType() == EntityMovementType.MOVE_JUMP)) {
             return 0;
         }
 
@@ -4996,7 +4996,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // check current hex for building
         if (step.getElevation() < curHex.terrainLevel(Terrains.BLDG_ELEV)) {
             rv += 2;
-        } else if (((step.getElevation() == curHex.terrainLevel(Terrains.BLDG_ELEV)) || (step.getElevation() == curHex.terrainLevel(Terrains.BRIDGE_ELEV))) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP)) {
+        } else if (((step.getElevation() == curHex.terrainLevel(Terrains.BLDG_ELEV)) || (step.getElevation() == curHex.terrainLevel(Terrains.BRIDGE_ELEV))) && (step.getMovementType() != EntityMovementType.MOVE_JUMP)) {
             rv += 4;
         }
         // check previous hex for building
@@ -5030,7 +5030,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Calculates and returns the roll for an entity moving in buildings.
      */
-    public PilotingRollData rollMovementInBuilding(Building bldg, int distance, String why, int overallMoveType) {
+    public PilotingRollData rollMovementInBuilding(Building bldg, int distance, String why, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int mod = 0;
@@ -7370,7 +7370,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void setLandedAssaultDrop() {
         assaultDropInProgress = 2;
-        moved = IEntityMovementType.MOVE_JUMP;
+        moved = EntityMovementType.MOVE_JUMP;
     }
 
     public boolean isAssaultDropInProgress() {
@@ -7589,10 +7589,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
     }
 
-    public PilotingRollData checkSideSlip(int moveType, IHex prevHex, int overallMoveType, MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, int distance) {
+    public PilotingRollData checkSideSlip(EntityMovementType moveType, IHex prevHex, EntityMovementType overallMoveType, MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if ((moveType != IEntityMovementType.MOVE_JUMP) && (prevHex != null) && (distance > 1) && ((overallMoveType == IEntityMovementType.MOVE_RUN) || (overallMoveType == IEntityMovementType.MOVE_VTOL_RUN)) && (prevFacing != curFacing) && !lastPos.equals(curPos) && !(this instanceof Infantry)) {
+        if ((moveType != EntityMovementType.MOVE_JUMP) && (prevHex != null) && (distance > 1) && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_VTOL_RUN)) && (prevFacing != curFacing) && !lastPos.equals(curPos) && !(this instanceof Infantry)) {
             roll.append(new PilotingRollData(getId(), 0, "flanking and turning"));
 
         } else {
@@ -7605,7 +7605,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isAirborneVTOL() {
         // stuff that moves like a VTOL is flying unless at elevation 0 or on
         // top of/in a building,
-        if (getMovementMode() == IEntityMovementMode.VTOL) {
+        if (getMovementMode() == EntityMovementMode.VTOL) {
             if ((game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BLDG_ELEV) >= getElevation()) || (game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BRIDGE_ELEV) >= getElevation())) {
                 return false;
             }
@@ -8649,7 +8649,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // TODO: assuming submarines on the surface act like surface naval
         // vessels until rules clarified
         // http://www.classicbattletech.com/forums/index.php/topic,48987.0.html
-        return (getElevation() == 0) && ((getMovementMode() == IEntityMovementMode.NAVAL) || (getMovementMode() == IEntityMovementMode.HYDROFOIL) || (getMovementMode() == IEntityMovementMode.SUBMARINE));
+        return (getElevation() == 0) && ((getMovementMode() == EntityMovementMode.NAVAL) || (getMovementMode() == EntityMovementMode.HYDROFOIL) || (getMovementMode() == EntityMovementMode.SUBMARINE));
     }
 
     /**
@@ -8794,7 +8794,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean isAirborne() {
-        return (getMovementMode() == IEntityMovementMode.AERODYNE) || (getMovementMode() == IEntityMovementMode.SPHEROID);
+        return (getMovementMode() == EntityMovementMode.AERODYNE) || (getMovementMode() == EntityMovementMode.SPHEROID);
     }
 
     /**
@@ -8876,37 +8876,37 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public String getMovementModeAsBattleForceString() {
         switch (getMovementMode()) {
-            case IEntityMovementMode.NONE:
-            case IEntityMovementMode.BIPED:
-            case IEntityMovementMode.BIPED_SWIM:
-            case IEntityMovementMode.QUAD:
-            case IEntityMovementMode.QUAD_SWIM:
+            case NONE:
+            case BIPED:
+            case BIPED_SWIM:
+            case QUAD:
+            case QUAD_SWIM:
                 return "";
-            case IEntityMovementMode.TRACKED:
+            case TRACKED:
                 return "t";
-            case IEntityMovementMode.WHEELED:
+            case WHEELED:
                 return "w";
-            case IEntityMovementMode.HOVER:
+            case HOVER:
                 return "h";
-            case IEntityMovementMode.VTOL:
+            case VTOL:
                 return "v";
-            case IEntityMovementMode.NAVAL:
-            case IEntityMovementMode.HYDROFOIL:
+            case NAVAL:
+            case HYDROFOIL:
                 return "n";
-            case IEntityMovementMode.SUBMARINE:
-            case IEntityMovementMode.INF_UMU:
+            case SUBMARINE:
+            case INF_UMU:
                 return "s";
-            case IEntityMovementMode.INF_LEG:
+            case INF_LEG:
                 return "f";
-            case IEntityMovementMode.INF_MOTORIZED:
+            case INF_MOTORIZED:
                 return "m";
-            case IEntityMovementMode.INF_JUMP:
+            case INF_JUMP:
                 return "j";
-            case IEntityMovementMode.WIGE:
+            case WIGE:
                 return "g";
-            case IEntityMovementMode.AERODYNE:
+            case AERODYNE:
                 return "a";
-            case IEntityMovementMode.SPHEROID:
+            case SPHEROID:
                 return "p";
             default:
                 return "ERROR";

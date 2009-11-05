@@ -39,7 +39,7 @@ public class BipedMech extends Mech {
     public BipedMech(int inGyroType, int inCockpitType) {
         super(inGyroType, inCockpitType);
 
-        movementMode = IEntityMovementMode.BIPED;
+        movementMode = EntityMovementMode.BIPED;
 
         setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER));
         setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM));

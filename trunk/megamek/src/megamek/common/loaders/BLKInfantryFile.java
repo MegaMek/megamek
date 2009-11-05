@@ -27,14 +27,12 @@
 package megamek.common.loaders;
 
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.Infantry;
 import megamek.common.MiscType;
 import megamek.common.util.BuildingBlock;
 
 public class BLKInfantryFile extends BLKFile implements IMechLoader {
-
-    // HACK!!! Infantry movement reuses Mech and Vehicle movement.
-    private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover", "", "", "", "", "Leg", "Motorized", "Jump", "", "", "", "", "", "Submarine" };
 
     public BLKInfantryFile(BuildingBlock bb) {
         dataFile = bb;
@@ -69,14 +67,8 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find movement block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
-        int nMotion = -1;
-        for (int x = 0; x < MOVES.length; x++) {
-            if (sMotion.equals(MOVES[x])) {
-                nMotion = x;
-                break;
-            }
-        }
-        if (nMotion == -1) {
+        EntityMovementMode nMotion = EntityMovementMode.getMode(sMotion);
+        if (nMotion == EntityMovementMode.NONE) {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
         t.setMovementMode(nMotion);

@@ -50,7 +50,7 @@ import megamek.client.ui.Messages;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
-import megamek.common.IEntityMovementMode;
+import megamek.common.EntityMovementMode;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
@@ -94,7 +94,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
     private JPanel panelOKBtns;
     private JScrollPane scrTableUnits;
     private JTable tableUnits;
-    private JTextField txtFilter;
+    JTextField txtFilter;
     private MechViewPanel panelMekView;
     private JLabel lblPlayer;
     private JComboBox comboPlayer;
@@ -103,7 +103,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
 
     private MechTableModel unitModel;
 
-    private Client client;
+    Client client;
     private ClientGUI clientgui;
     private UnitLoadingDialog unitLoadingDialog;
 
@@ -387,10 +387,9 @@ public class MechSelectorDialog extends JDialog implements Runnable {
                 Entity e = getSelectedEntity();
                 if(null == e) {
                     return;
-                } else {
-                    e.calculateBattleValue();
-                    tEditorPane.setText(e.getBVText());
                 }
+                e.calculateBattleValue();
+                tEditorPane.setText(e.getBVText());
                 tEditorPane.setCaretPosition(0);
                 JScrollPane tScroll = new JScrollPane(tEditorPane,
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -412,7 +411,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         pack();
     }
 
-    private void select(boolean close) {
+    void select(boolean close) {
         Entity e = getSelectedEntity();
         if(null != e) {
             Client c = null;
@@ -432,7 +431,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         }
     }
 
-    private void filterUnits() {
+    void filterUnits() {
         RowFilter<MechTableModel, Integer> unitTypeFilter = null;
         final int nType = comboType.getSelectedIndex();
         final int nClass = comboWeight.getSelectedIndex();
@@ -518,7 +517,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
         }
     }
 
-    private void refreshUnitView() {
+    void refreshUnitView() {
         boolean populateTextFields = true;
 
         Entity selectedUnit = getSelectedEntity();
@@ -581,7 +580,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
                 gunnery = 5;
                 piloting = 6;
             } else if (e instanceof Infantry) {
-                if (e.getMovementMode() == IEntityMovementMode.INF_LEG) {
+                if (e.getMovementMode() == EntityMovementMode.INF_LEG) {
                     gunnery = 5;
                     piloting = 5;
                 } else {
@@ -591,7 +590,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
             }
         } else if (e instanceof Infantry) {
             // IS crews are 4/5 except infantry
-            if ((e.getMovementMode() == IEntityMovementMode.INF_LEG)
+            if ((e.getMovementMode() == EntityMovementMode.INF_LEG)
                     || (e instanceof BattleArmor)) {
                 gunnery = 4;
                 piloting = 5;

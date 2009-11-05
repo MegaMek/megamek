@@ -239,7 +239,7 @@ public class FighterSquadron extends Aero {
         //movement effects
         //some question as to whether "above safe thrust" applies to thrust or velocity
         //I will treat it as thrust until it is resolved
-        if(moved == IEntityMovementType.MOVE_OVER_THRUST) {
+        if(moved == EntityMovementType.MOVE_OVER_THRUST) {
             prd.addModifier(+1, "Used more than safe thrust");
         }
         int vel = getCurrentVelocity();

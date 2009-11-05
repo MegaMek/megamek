@@ -230,7 +230,7 @@ public class MovePath implements Cloneable, Serializable {
         } catch (final RuntimeException re) {
             // // N.B. the pathfinding will try steps off the map.
             // re.printStackTrace();
-            step.setMovementType(IEntityMovementType.MOVE_ILLEGAL);
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
 
         // check for illegal jumps
@@ -239,7 +239,7 @@ public class MovePath implements Cloneable, Serializable {
         final int distance = start.distance(land);
         if (isJumping()) {
             if (step.getMpUsed() > distance) {
-                step.setMovementType(IEntityMovementType.MOVE_ILLEGAL);
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             }
         }
 
@@ -455,9 +455,9 @@ public class MovePath implements Cloneable, Serializable {
         return entity.getVectors();
     }
 
-    public int getLastStepMovementType() {
+    public EntityMovementType getLastStepMovementType() {
         if (getLastStep() == null) {
-            return IEntityMovementType.MOVE_NONE;
+            return EntityMovementType.MOVE_NONE;
         }
         return getLastStep().getMovementType();
     }
@@ -528,7 +528,7 @@ public class MovePath implements Cloneable, Serializable {
                 && (step.getType() != MovePath.STEP_UNLOAD)
                 && (step.getType() != MovePath.STEP_GO_PRONE)) {
                     //we only need to identify the first illegal move
-                    step.setMovementType(IEntityMovementType.MOVE_ILLEGAL);
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     break;
                 }
             }
@@ -536,7 +536,7 @@ public class MovePath implements Cloneable, Serializable {
         i = steps.elements();
         while (i.hasMoreElements()) {
             step = i.nextElement();
-            if (step.getMovementType() != IEntityMovementType.MOVE_ILLEGAL) {
+            if (step.getMovementType() != EntityMovementType.MOVE_ILLEGAL) {
                 goodSteps.addElement(step);
             } else {
                 break;
@@ -741,10 +741,10 @@ public class MovePath implements Cloneable, Serializable {
             return true;
         }
 
-        if (getLastStep().getMovementType() == STEP_CHARGE) {
+        if (getLastStep().getType() == STEP_CHARGE) {
             return getSecondLastStep().isLegal();
         }
-        if (getLastStep().getMovementType() == STEP_RAM) {
+        if (getLastStep().getType() == STEP_RAM) {
             return getSecondLastStep().isLegal();
         }
         return getLastStep().isLegal();

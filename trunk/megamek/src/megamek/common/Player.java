@@ -528,7 +528,7 @@ public final class Player extends TurnOrdered {
             if (entity.getOwner().equals(this) ) {
                 if((entity.getElevation() > 0) &&
                         ((entity instanceof VTOL)
-                                || (entity.getMovementMode() == IEntityMovementMode.WIGE))) {
+                                || (entity.getMovementMode() == EntityMovementMode.WIGE))) {
                     units.add(entity.getId());
                 }
             }

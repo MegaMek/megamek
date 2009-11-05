@@ -31,6 +31,7 @@ import megamek.common.BipedMech;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityMovementType;
 import megamek.common.EquipmentMode;
 import megamek.common.HexTarget;
 import megamek.common.IBoard;
@@ -778,7 +779,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
             menu.setLabel("Stand");
             menu.add(createStandMenuItem(false));
 
-            if (game.getOptions().booleanOption("tacops_careful_stand") && myEntity.getWalkMP() > 2 && myEntity.moved < 1) {
+            if (game.getOptions().booleanOption("tacops_careful_stand") && myEntity.getWalkMP() > 2 && myEntity.moved == EntityMovementType.MOVE_NONE) {
                 menu.add(createStandMenuItem(true));
             }
 
@@ -924,7 +925,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
         return menu;
     }
 
-    private void plotCourse(ActionEvent e) {
+    void plotCourse(ActionEvent e) {
         ((MovementDisplay) currentPanel).actionPerformed(e);
 
         // Drag

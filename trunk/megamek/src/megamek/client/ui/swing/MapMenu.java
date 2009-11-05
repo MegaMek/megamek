@@ -33,6 +33,7 @@ import megamek.common.BipedMech;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityMovementType;
 import megamek.common.EquipmentMode;
 import megamek.common.HexTarget;
 import megamek.common.IBoard;
@@ -788,7 +789,7 @@ public class MapMenu extends JPopupMenu {
             menu.setText("Stand");
             menu.add(createStandJMenuItem(false));
 
-            if (game.getOptions().booleanOption("tacops_careful_stand") && (myEntity.getWalkMP() > 2) && (myEntity.moved < 1)) {
+            if (game.getOptions().booleanOption("tacops_careful_stand") && (myEntity.getWalkMP() > 2) && (myEntity.moved == EntityMovementType.MOVE_NONE)) {
                 menu.add(createStandJMenuItem(true));
             }
 

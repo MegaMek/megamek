@@ -205,7 +205,7 @@ public class MechSummaryCache {
                     ms.setType(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setTons(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+                    ms.setTons(Float.parseFloat(s.substring(nIndex1 + 1, nIndex2)));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setBV(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
@@ -238,6 +238,7 @@ public class MechSummaryCache {
             }
         } catch (Exception e) {
             loadReport.append("  Unable to load unit cache: ").append(e.getMessage()).append("\n");
+            e.printStackTrace();
         }
 
         // load any changes since the last check time

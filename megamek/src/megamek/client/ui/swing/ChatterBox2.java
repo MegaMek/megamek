@@ -61,7 +61,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     private static final int MIN_SLIDE_OFFSET = 0;
 
     private static final int HEIGHT = 150;
-    private static final int WIDTH = 300;
+    private static final int WIDTH = 400;
     private static final int DIST_BOTTOM = 5;
     private static final int DIST_SIDE = 5;
 
@@ -435,7 +435,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
      *  necessary
      * @param line
      */
-    private void addChatMessage(String line) {
+    public void addChatMessage(String line) {
         setIdleTime(0, false);
         if (!isUp()) {
             slideUp();

@@ -55,6 +55,8 @@ v0.35.9-dev (SVN)
 + Bug: unit loading dialog not working
 + Scrolling fixes
 + tooltip for player initiative bonuses
++ fix mechsummarycache
++ fix systemmessages for chatterbox2
 
 
 v0.35.8 (2009-10-18, 22:34 UTC+2)

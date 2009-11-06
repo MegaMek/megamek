@@ -110,6 +110,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     // keep me
     ChatterBox cb;
+    ChatterBox2 cb2;
     public IBoardView bv;
     private Component bvc;
     public JDialog mechW;
@@ -242,6 +243,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public void systemMessage(String message) {
         cb.systemMessage(message);
+        cb2.addChatMessage("Megamek: "+message);
     }
 
     /**
@@ -340,7 +342,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (!MechSummaryCache.getInstance().isInitialized()) {
             unitLoadingDialog.setVisible(true);
         }
-        //ChatterBox2 cb2 = new ChatterBox2(this, bv);
+        cb2 = new ChatterBox2(this, bv);
         //bv.addDisplayable(cb2);
         //bv.addKeyListener(cb2);
         uo = new UnitOverview(this);

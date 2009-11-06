@@ -297,7 +297,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 int colIndex = columnAtPoint(p);
                 int realColIndex = convertColumnIndexToModel(colIndex);
                 if (realColIndex == PlayerTableModel.COL_PLAYER) {
-                	return (String) getValueAt(rowIndex, colIndex);
+                    return Messages.getString("ChatLounge.tipPlayer", new Object[] {getValueAt(rowIndex, colIndex), playerModel.getPlayerAt(rowIndex).getConstantInitBonus()});
                 }
                 else if (realColIndex == PlayerTableModel.COL_BV) {
                 	int bv = (Integer) getValueAt(rowIndex, colIndex);

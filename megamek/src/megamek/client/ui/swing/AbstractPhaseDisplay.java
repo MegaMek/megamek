@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -49,10 +49,10 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewListener,
-        GameListener, Distractable, DoneButtoned {
+        GameListener, Distractable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4421205210788230341L;
 
@@ -60,10 +60,24 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
     protected DistractableAdapter distracted = new DistractableAdapter();
 
     protected JButton butDone;
-    
+
     protected ClientGUI clientgui;
-    
-    protected AbstractPhaseDisplay() {        
+
+    protected AbstractPhaseDisplay() {
+        butDone = new JButton();
+        butDone.setActionCommand("doneButton");
+        butDone.addActionListener(new AbstractAction() {
+            private static final long serialVersionUID = -5034474968902280850L;
+
+            public void actionPerformed(ActionEvent e) {
+                if (isIgnoringEvents()) {
+                    return;
+                }
+                if (clientgui.getClient().isMyTurn() || (clientgui.getClient().game.getTurn() == null)) {
+                    ready();
+                }
+            }
+        });
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,InputEvent.CTRL_DOWN_MASK),
         "doneButton");
 
@@ -74,25 +88,25 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.getClient().isMyTurn() || clientgui.getClient().game.getTurn() == null) {
+                if (clientgui.getClient().isMyTurn() || (clientgui.getClient().game.getTurn() == null)) {
                     ready();
                 }
             }
         });
     }
-    
+
     /**
      * Determine if the listener is currently distracted.
-     * 
+     *
      * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
+        return distracted.isIgnoringEvents();
     }
 
     /**
      * Specify if the listener should be distracted.
-     * 
+     *
      * @param distracted
      *            <code>true</code> if the listener should ignore events
      *            <code>false</code> if the listener should pay attention
@@ -209,13 +223,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
         //noaction default
     }
 
-    /**
-     * Retrieve the "Done" button of this object.
-     *
-     * @return the <code>javax.swing.JButton</code> that activates this object's
-     *         "Done" action.
-     */
-    public JButton getDoneButton() {
-        return butDone;
+
+    public void ready() {
     }
 }

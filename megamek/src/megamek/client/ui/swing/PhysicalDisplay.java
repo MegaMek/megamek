@@ -122,6 +122,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
     private JButton butSpace;
     private JButton butSpace2;
+    private JButton butSpace3;
+    private JButton butSpace4;
     private JButton butSearchlight;
 
     private int buttonLayout;
@@ -150,11 +152,18 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         setupStatusBar(Messages
                 .getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
 
-        butSpace = new JButton("."); //$NON-NLS-1$
+        butSpace = new JButton(""); //$NON-NLS-1$
         butSpace.setEnabled(false);
-
-        butSpace2 = new JButton("."); //$NON-NLS-1$
+        butSpace.setVisible(false);
+        butSpace2 = new JButton(""); //$NON-NLS-1$
         butSpace2.setEnabled(false);
+        butSpace2.setVisible(false);
+        butSpace3 = new JButton(""); //$NON-NLS-1$
+        butSpace3.setEnabled(false);
+        butSpace3.setVisible(false);
+        butSpace4 = new JButton(""); //$NON-NLS-1$
+        butSpace4.setEnabled(false);
+        butSpace4.setVisible(false);
 
         butPunch = new JButton(Messages.getString("PhysicalDisplay.Punch")); //$NON-NLS-1$
         butPunch.addActionListener(this);
@@ -223,8 +232,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         butExplosives.setEnabled(false);
         butExplosives.setActionCommand(PHYSICAL_EXPLOSIVES);
 
-        butDone = new JButton(Messages.getString("PhysicalDisplay.Done")); //$NON-NLS-1$
-        butDone.addActionListener(this);
+        butDone.setText(Messages.getString("PhysicalDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
 
         butNext = new JButton(Messages.getString("PhysicalDisplay.NextUnit")); //$NON-NLS-1$
@@ -282,7 +290,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
     private void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridLayout(0, 6));
+        panButtons.setLayout(new GridLayout(2, 6));
 
         switch (buttonLayout) {
         case 0:
@@ -292,22 +300,26 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             panButtons.add(butPush);
             panButtons.add(butClub);
             panButtons.add(butMore);
-            break;
-        case 1:
             panButtons.add(butBrush);
             panButtons.add(butThrash);
             panButtons.add(butVibro);
             panButtons.add(butProto);
             panButtons.add(butJumpJet);
-            panButtons.add(butMore);
+            panButtons.add(butDone);
             break;
-        case 2:
+        case 1:
+            panButtons.add(butNext);
             panButtons.add(butDodge);
             panButtons.add(butTrip);
             panButtons.add(butGrapple);
             panButtons.add(butSearchlight);
-            panButtons.add(butExplosives);
             panButtons.add(butMore);
+            panButtons.add(butExplosives);
+            panButtons.add(butSpace);
+            panButtons.add(butSpace2);
+            panButtons.add(butSpace3);
+            panButtons.add(butSpace4);
+            panButtons.add(butDone);
             break;
         }
         panButtons.validate();
@@ -448,6 +460,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     /**
      * Called when the current entity is done with physical attacks.
      */
+    @Override
     public void ready() {
         if (attacks.isEmpty()
                 && GUIPreferences.getInstance().getNagForNoAction()) {
@@ -1452,7 +1465,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
     /**
      * Have the player select a target from the entities at the given coords.
-     * 
+     *
      * @param pos
      *            - the <code>Coords</code> containing targets.
      */
@@ -1588,9 +1601,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             // odd...
             return;
         }
-        if (ev.getSource() == butDone) {
-            ready();
-        } else if (ev.getActionCommand().equals(PHYSICAL_PUNCH)) {
+        if (ev.getActionCommand().equals(PHYSICAL_PUNCH)) {
             punch();
         } else if (ev.getActionCommand().equals(PHYSICAL_KICK)) {
             kick();

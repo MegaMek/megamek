@@ -224,7 +224,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         butSearchlight.setActionCommand(FIRE_SEARCHLIGHT);
         butSearchlight.setEnabled(false);
 
-        butSpace = new Button("."); //$NON-NLS-1$
+        butSpace = new Button(""); //$NON-NLS-1$
         butSpace.setEnabled(false);
 
         butFireMode = new Button(Messages.getString("FiringDisplay.Mode")); //$NON-NLS-1$

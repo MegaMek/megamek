@@ -49,8 +49,8 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
 import megamek.common.EntityMovementMode;
+import megamek.common.EntityWeightClass;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
@@ -118,6 +118,9 @@ public class MechSelectorDialog extends JDialog implements Runnable {
 
         unitModel = new MechTableModel();
         initComponents();
+        setLocation(cl.frame.getLocation().x + cl.frame.getSize().width / 2
+                - getSize().width / 2, cl.frame.getLocation().y
+                + cl.frame.getSize().height / 2 - getSize().height / 2);
     }
 
     private void initComponents() {

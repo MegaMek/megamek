@@ -45,10 +45,10 @@ import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.EntitySelector;
-import megamek.common.GameTurn;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
+import megamek.common.EntitySelector;
+import megamek.common.GameTurn;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -550,7 +550,7 @@ DoneButtoned, KeyListener {
         butEndOver.setActionCommand(MOVE_END_OVER);
         butEndOver.addKeyListener(this);
 
-        butSpace = new Button(".");
+        butSpace = new Button("");
         butSpace.setEnabled(false);
         butSpace.addKeyListener(this);
 

@@ -174,7 +174,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JPanel panTop;
 
     private JLabel labStatus;
-    private static final String DONEACTION = "ready"; //$NON-NLS-1$
 
     private JButton butAddBot;
     private JButton butRemoveBot;
@@ -222,7 +221,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butOptions = new JButton(Messages.getString("ChatLounge.butOptions")); //$NON-NLS-1$
         butOptions.addActionListener(this);
 
-        butDone = new JButton(Messages.getString("ChatLounge.butDone")); //$NON-NLS-1$
+        butDone.setText(Messages.getString("ChatLounge.butDone")); //$NON-NLS-1$
         Font font = null;
         try {
             font = new Font("sanserif", Font.BOLD, 12); //$NON-NLS-1$
@@ -235,9 +234,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         } else {
             butDone.setFont(font);
         }
-
-        butDone.setActionCommand(DONEACTION);
-        butDone.addActionListener(this);
 
         setupPlayerInfo();
         setupMinefield();
@@ -258,28 +254,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         labStatus = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
 
         // layout main thing
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        setLayout(new BorderLayout());
 
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridwidth = GridBagConstraints.REMAINDER;
         if (GUIPreferences.getInstance().getChatLoungeTabs()) {
-            addBag(panTabs, gridbag, c);
+            add(panTabs, BorderLayout.CENTER);
         } else {
-            addBag(panMain, gridbag, c);
+            add(panMain, BorderLayout.CENTER);
         }
+        clientgui.cb.setDoneButton(butDone);
+        add(clientgui.cb.getComponent(), BorderLayout.SOUTH);
 
         validate();
-    }
-
-    private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
     }
 
     /**
@@ -287,10 +272,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      */
     private void setupPlayerInfo() {
 
-    	playerModel = new PlayerTableModel();
+        playerModel = new PlayerTableModel();
         tablePlayers = new JTable(playerModel) {
-			private static final long serialVersionUID = 6252953920509362407L;
-			@Override
+            private static final long serialVersionUID = 6252953920509362407L;
+            @Override
             public String getToolTipText(MouseEvent e) {
                 java.awt.Point p = e.getPoint();
                 int rowIndex = rowAtPoint(p);
@@ -300,20 +285,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     return Messages.getString("ChatLounge.tipPlayer", new Object[] {getValueAt(rowIndex, colIndex), playerModel.getPlayerAt(rowIndex).getConstantInitBonus()});
                 }
                 else if (realColIndex == PlayerTableModel.COL_BV) {
-                	int bv = (Integer) getValueAt(rowIndex, colIndex);
-                	float ratio = playerModel.getPlayerAt(rowIndex).getForceSizeBVMod();
-                	return Messages.getString("ChatLounge.tipBV", new Object[] {bv, ratio});
+                    int bv = (Integer) getValueAt(rowIndex, colIndex);
+                    float ratio = playerModel.getPlayerAt(rowIndex).getForceSizeBVMod();
+                    return Messages.getString("ChatLounge.tipBV", new Object[] {bv, ratio});
                 }
                 else if (realColIndex == PlayerTableModel.COL_TON) {
-                	return Float.toString((Float) getValueAt(rowIndex, colIndex));
+                    return Float.toString((Float) getValueAt(rowIndex, colIndex));
                 }
                 else if (realColIndex == PlayerTableModel.COL_COST) {
-                	return Messages.getString("ChatLounge.tipCost", new Object[] {(Integer) getValueAt(rowIndex, colIndex)});
+                    return Messages.getString("ChatLounge.tipCost", new Object[] {(Integer) getValueAt(rowIndex, colIndex)});
                 }
                 else {
-                	return Integer.toString((Integer) getValueAt(rowIndex, colIndex));
+                    return Integer.toString((Integer) getValueAt(rowIndex, colIndex));
                 }
-        	}
+            }
         };
         tablePlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tablePlayers.getSelectionModel().addListSelectionListener(this);
@@ -1834,9 +1819,7 @@ public static String formatUnitTooltip(Entity entity) {
             return;
         }
 
-        if (ev.getActionCommand().equals(DONEACTION)) {
-            ready();
-        } else if (ev.getSource().equals(butLoad)) {
+        if (ev.getSource().equals(butLoad)) {
             loadMech();
         } else if (ev.getSource().equals(butArmy)) {
             loadArmy();
@@ -1984,6 +1967,7 @@ public static String formatUnitTooltip(Entity entity) {
         }
     }
 
+    @Override
     public void ready() {
         // enforce exclusive deployment zones in double blind
         if (clientgui.getClient().game.getOptions().booleanOption(
@@ -2500,11 +2484,14 @@ public static String formatUnitTooltip(Entity entity) {
             if (e.getClickCount() == 2) {
                 int row = tableEntities.rowAtPoint(e.getPoint());
                 Entity entity = mekModel.getEntityAt(row);
-                boolean isOwner = entity.getOwner().equals(clientgui.getClient().getLocalPlayer());
-                boolean isBot = clientgui.getBots().get(entity.getOwner().getName()) != null;
-                if((null != entity) && (isOwner || isBot)) {
-                    customizeMech(entity);
+                if (entity != null) {
+                    boolean isOwner = entity.getOwner().equals(clientgui.getClient().getLocalPlayer());
+                    boolean isBot = clientgui.getBots().get(entity.getOwner().getName()) != null;
+                    if((isOwner || isBot)) {
+                        customizeMech(entity);
+                    }
                 }
+
             }
         }
 

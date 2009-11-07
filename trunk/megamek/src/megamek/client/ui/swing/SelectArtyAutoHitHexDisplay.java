@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -72,15 +72,15 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         butA.setActionCommand(SET_HIT_HEX);
         butA.setEnabled(false);
 
-        butDone = new JButton(Messages
+        butDone.setText(Messages
                 .getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
-        butDone.addActionListener(this);
         butDone.setEnabled(false);
 
         // layout button grid
         panButtons = new JPanel();
         panButtons.setLayout(new GridLayout(0, 2));
         panButtons.add(butA);
+        panButtons.add(butDone);
 
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
@@ -145,7 +145,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             return;
         }
         if (!artyAutoHitHexes.contains(coords)
-                && artyAutoHitHexes.size() < 5
+                && (artyAutoHitHexes.size() < 5)
                 && clientgui
                         .doYesNoDialog(
                                 Messages
@@ -182,7 +182,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-                || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
+                || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
             return;
         }
 
@@ -217,7 +217,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     /**
      * called when the game changes phase.
-     * 
+     *
      * @param e
      *            ignored parameter
      */
@@ -229,7 +229,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
+                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)) {
             endMyTurn();
         }
         if (clientgui.getClient().game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
@@ -256,17 +256,14 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             // odd...
             return;
         }
-
-        if (ev.getSource().equals(butDone)) {
-            ready();
-        }
     } // End public void actionPerformed(ActionEvent ev)
 
     @Override
     protected void clear() {
         //TODO no clear action currently defined
     }
-    
+
+    @Override
     public void ready() {
         endMyTurn();
         clientgui.getClient().sendArtyAutoHitHexes(artyAutoHitHexes);

@@ -33,6 +33,7 @@ import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
+import megamek.common.IArmorState;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Protomech;
@@ -293,15 +294,17 @@ public class UnitOverview implements IDisplayable {
         double percentRemaining = 0.00;
 
         percentRemaining = entity.getArmorRemainingPercent();
-        barLength = (int) (baseBarLength * percentRemaining);
+        if (percentRemaining != IArmorState.ARMOR_NA) {
+            barLength = (int) (baseBarLength * percentRemaining);
 
-        graph.setColor(Color.darkGray);
-        graph.fillRect(x + 4, y + 4, 23, 2);
-        graph.setColor(Color.lightGray);
-        graph.fillRect(x + 3, y + 3, 23, 2);
-        graph.setColor(getStatusBarColor(percentRemaining));
-        graph.fillRect(x + 3, y + 3, barLength, 2);
+            graph.setColor(Color.darkGray);
+            graph.fillRect(x + 4, y + 4, 23, 2);
+            graph.setColor(Color.lightGray);
+            graph.fillRect(x + 3, y + 3, 23, 2);
+            graph.setColor(getStatusBarColor(percentRemaining));
+            graph.fillRect(x + 3, y + 3, barLength, 2);
 
+        }
         percentRemaining = entity.getInternalRemainingPercent();
         barLength = (int) (baseBarLength * percentRemaining);
 

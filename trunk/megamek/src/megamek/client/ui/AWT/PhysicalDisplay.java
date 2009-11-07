@@ -155,10 +155,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         setupStatusBar(Messages
                 .getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
 
-        butSpace = new Button("."); //$NON-NLS-1$
+        butSpace = new Button(""); //$NON-NLS-1$
         butSpace.setEnabled(false);
 
-        butSpace2 = new Button("."); //$NON-NLS-1$
+        butSpace2 = new Button(""); //$NON-NLS-1$
         butSpace2.setEnabled(false);
 
         butPunch = new Button(Messages.getString("PhysicalDisplay.Punch")); //$NON-NLS-1$

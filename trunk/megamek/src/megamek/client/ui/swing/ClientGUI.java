@@ -44,7 +44,6 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -343,8 +342,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             unitLoadingDialog.setVisible(true);
         }
         cb2 = new ChatterBox2(this, bv);
-        //bv.addDisplayable(cb2);
-        //bv.addKeyListener(cb2);
+        bv.addDisplayable(cb2);
+        bv.addKeyListener(cb2);
         uo = new UnitOverview(this);
         bv.addDisplayable(uo);
         Dimension screenSize = frame.getToolkit().getScreenSize();
@@ -413,7 +412,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         minimapW.addWindowListener(this);
         minimapW.add(minimap);
         cb = new ChatterBox(this);
-        add(cb.getComponent(), BorderLayout.SOUTH);
         client.changePhase(IGame.Phase.PHASE_UNKNOWN);
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         //customBADialog = new CustomBattleArmorDialog(this);
@@ -711,11 +709,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         if (curPanel instanceof Distractable) {
             ((Distractable) curPanel).setIgnoringEvents(false);
-        }
-        if (curPanel instanceof DoneButtoned) {
-            JButton done = ((DoneButtoned) curPanel).getDoneButton();
-            cb.setDoneButton(done);
-            done.setVisible(true);
         }
 
         // Make the new panel the focus, if the Client option says so

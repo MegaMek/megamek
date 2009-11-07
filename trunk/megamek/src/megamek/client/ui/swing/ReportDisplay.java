@@ -18,7 +18,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
@@ -29,6 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 
+import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -68,9 +68,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
 
         setupStatusBar(""); //$NON-NLS-1$
 
-        butDone = new JButton(Messages.getString("ReportDisplay.Done")); //$NON-NLS-1$
-        butDone.setActionCommand("ready"); //$NON-NLS-1$
-        butDone.addActionListener(this);
+        butDone.setText(Messages.getString("ReportDisplay.Done")); //$NON-NLS-1$
 
         rerollInitiativeB = new JButton(Messages
                 .getString("ReportDisplay.Reroll")); //$NON-NLS-1$
@@ -78,38 +76,22 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         rerollInitiativeB.addActionListener(this);
 
         // layout screen
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
-
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(tabs, gridbag, c);
-
-        c.gridwidth = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
+        setLayout(new GridBagLayout());
+        add(tabs, GBC.eol().fill(GridBagConstraints.BOTH));
         JPanel panButtons = new JPanel();
         panButtons.setLayout(new GridLayout(1, 8));
         panButtons.add(rerollInitiativeB);
         for (int padding = 0; padding < 6; padding++) {
             panButtons.add(new JLabel("")); //$NON-NLS-1$
         }
-        addBag(panButtons, gridbag, c);
-    }
-
-    private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
+        clientgui.cb.setDoneButton(butDone);
+        add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        add(clientgui.cb.getComponent(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
     }
 
     /**
      * Show or hide the "reroll inititiative" button in this report display.
-     * 
+     *
      * @param show
      *            a <code>boolean</code> that indicates that the button should
      *            be shown in this report display.
@@ -121,6 +103,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     /**
      * Sets you as ready and disables the ready button.
      */
+    @Override
     public void ready() {
         rerollInitiativeB.setEnabled(false);
         butDone.setEnabled(false);
@@ -247,9 +230,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getActionCommand().equalsIgnoreCase("ready")) { //$NON-NLS-1$
-            ready();
-        }
         if (ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) { //$NON-NLS-1$
             rerollInitiative();
         }
@@ -268,7 +248,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         resetButtons();
         rerolled = false;
     }
-    
+
     @Override
     protected void clear() {
         //move along, move along, nothing to see here
@@ -283,7 +263,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
 
     /**
      * Get the secondary display section of this phase.
-     * 
+     *
      * @return the <code>Component</code> which is displayed in the secondary
      *         section during this phase.
      */

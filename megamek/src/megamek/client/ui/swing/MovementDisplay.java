@@ -17,7 +17,6 @@ package megamek.client.ui.swing;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -45,10 +44,10 @@ import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.EntitySelector;
-import megamek.common.GameTurn;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
+import megamek.common.EntitySelector;
+import megamek.common.GameTurn;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -155,7 +154,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private JButton butEject;
     private JButton butLoad;
     private JButton butUnload;
-    private JButton butSpace;
     private JButton butClear;
     private JButton butNext;
     private JButton butMore;
@@ -317,10 +315,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butNext.setEnabled(false);
         butNext.setActionCommand(MOVE_NEXT);
         butNext.addKeyListener(this);
-        butDone = new JButton(Messages.getString("MovementDisplay.butDone")); //$NON-NLS-1$
-        butDone.addActionListener(this);
+        butDone.setText(Messages.getString("MovementDisplay.butDone")); //$NON-NLS-1$
         butDone.setEnabled(false);
-        butDone.addKeyListener(this);
         butLoad = new JButton(Messages.getString("MovementDisplay.butLoad")); //$NON-NLS-1$
         butLoad.addActionListener(this);
         butLoad.setEnabled(false);
@@ -504,12 +500,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butEndOver.setActionCommand(MOVE_END_OVER);
         butEndOver.addKeyListener(this);
 
-        butSpace = new JButton(".");
-        butSpace.setEnabled(false);
-        butSpace.addKeyListener(this);
-
         // add buttons to the lists, except space, more & next
-        buttonsMech = new ArrayList<JButton>(22);
+        buttonsMech = new ArrayList<JButton>(19);
         buttonsMech.add(butWalk);
         buttonsMech.add(butJump);
         buttonsMech.add(butBackup);
@@ -529,14 +521,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsMech.add(butEject);
         buttonsMech.add(butFlee);
         buttonsMech.add(butRAC);
-
-        // these are last, they won't be used by mechs
-        buttonsMech.add(butFortify);
-        buttonsMech.add(butLayMine);
-        buttonsMech.add(butLower);
-        buttonsMech.add(butRaise);
-
-        buttonsTank = new ArrayList<JButton>(22);
+        buttonsTank = new ArrayList<JButton>(17);
         buttonsTank.add(butWalk);
         buttonsTank.add(butBackup);
         buttonsTank.add(butTurn);
@@ -554,15 +539,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsTank.add(butRAC);
         buttonsTank.add(butLayMine);
         buttonsTank.add(butShakeOff);
-        // these are last, they won't be used by tanks
-        buttonsTank.add(butUp);
-        buttonsTank.add(butDown);
-        buttonsTank.add(butJump);
-        buttonsTank.add(butDigIn);
-        buttonsTank.add(butFortify);
-        buttonsTank.add(butLower);
-
-        buttonsVtol = new ArrayList<JButton>(22);
+        buttonsVtol = new ArrayList<JButton>(15);
         buttonsVtol.add(butWalk);
         buttonsVtol.add(butBackup);
         buttonsVtol.add(butLower);
@@ -578,18 +555,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsVtol.add(butRAC);
         buttonsVtol.add(butShakeOff);
 
-        // these are last, they won't be used by vtol
-        buttonsVtol.add(butLayMine);
-        buttonsVtol.add(butSwim);
-        buttonsVtol.add(butClimbMode);
-        buttonsVtol.add(butCharge);
-        buttonsVtol.add(butDfa);
-        buttonsVtol.add(butUp);
-        buttonsVtol.add(butDown);
-        buttonsVtol.add(butJump);
-        buttonsVtol.add(butDigIn);
-
-        buttonsInf = new ArrayList<JButton>(22);
+        buttonsInf = new ArrayList<JButton>(15);
         buttonsInf.add(butWalk);
         buttonsInf.add(butJump);
         buttonsInf.add(butLower);
@@ -605,17 +571,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsInf.add(butDigIn);
         buttonsInf.add(butFortify);
         buttonsInf.add(butClear);
-        // these are last, they won't be used by infantry
-        buttonsInf.add(butLoad);
-        buttonsInf.add(butUnload);
-        buttonsInf.add(butBackup);
-        buttonsInf.add(butHullDown);
-        buttonsInf.add(butCharge);
-        buttonsInf.add(butDfa);
-        buttonsInf.add(butUp);
-        buttonsInf.add(butDown);
 
-        buttonsAero = new ArrayList<JButton>(22);
+        buttonsAero = new ArrayList<JButton>(20);
         if (!clientgui.getClient().game.useVectorMove()) {
             buttonsAero.add(butWalk);
             buttonsAero.add(butAcc);
@@ -637,9 +594,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butJoin);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
-            // not used
-            buttonsAero.add(butHullDown);
-            buttonsAero.add(butShakeOff);
         } else {
             buttonsAero.add(butThrust);
             buttonsAero.add(butTurnLeft);
@@ -656,14 +610,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butJoin);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
-            // not used
-            buttonsAero.add(butUp);
-            buttonsAero.add(butDown);
-            buttonsAero.add(butJump);
-            buttonsAero.add(butDigIn);
-            buttonsAero.add(butFortify);
-            buttonsAero.add(butHullDown);
-            buttonsAero.add(butShakeOff);
         }
         // TODO: allow Aeros to taxi if on the ground
 
@@ -677,16 +623,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.insets = new Insets(1, 1, 1, 1);
-        // c.gridwidth = GridBagConstraints.REMAINDER;
-        // addBag(clientgui.bv, gridbag, c);
-
-        // c.weightx = 1.0; c.weighty = 0;
-        // c.gridwidth = 1;
-        // addBag(clientgui.getClient().cb.getComponent(), gridbag, c);
-
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;
         c.weighty = 0.0;
@@ -708,7 +644,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     private void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridLayout(0, 8));
+        panButtons.setLayout(new GridLayout(2, 6));
 
         // choose button order based on entity type
         ArrayList<JButton> buttonList = buttonsMech;
@@ -731,7 +667,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // should this layout be skipped? (if nothing enabled)
         boolean ok = false;
         while (!ok && (buttonLayout != 0)) {
-            for (int i = buttonLayout * 6; (i < (buttonLayout + 1) * 6)
+            for (int i = buttonLayout * 9; (i < (buttonLayout + 1) * 9)
                     && (i < buttonList.size()); i++) {
                 if (buttonList.get(i).isEnabled()) {
                     ok = true;
@@ -741,17 +677,30 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             if (!ok) {
                 // skip as nothing was enabled
                 buttonLayout++;
-                if (buttonLayout * 6 >= buttonList.size()) {
+                if (buttonLayout * 9 >= buttonList.size()) {
                     buttonLayout = 0;
                 }
             }
         }
         panButtons.add(butNext);
-        for (int i = buttonLayout * 6; (i < (buttonLayout + 1) * 6)
+        int added = 1;
+        for (int i = buttonLayout * 9; (i < (buttonLayout + 1) * 9)
                 && (i < buttonList.size()); i++) {
+            if (added == 5) {
+                panButtons.add(butMore);
+                added++;
+            }
             panButtons.add(buttonList.get(i));
+            added++;
         }
-        panButtons.add(butMore);
+        while (added < 11) {
+            JButton space = new JButton("");
+            space.setEnabled(false);
+            space.setVisible(false);
+            panButtons.add(space);
+            added++;
+        }
+        panButtons.add(butDone);
         panButtons.validate();
         panButtons.repaint();
     }
@@ -1065,6 +1014,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     /**
      * Sends a data packet indicating the chosen movement.
      */
+    @Override
     public synchronized void ready() {
 
         cmd.clipToPossible();
@@ -2712,9 +2662,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             // odd...
             return;
         }
-        if (ev.getSource().equals(butDone)) {
-            ready();
-        } else if (ev.getActionCommand().equals(MOVE_NEXT)) {
+        if (ev.getActionCommand().equals(MOVE_NEXT)) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
         } else if (ev.getActionCommand().equals(MOVE_CANCEL)) {
             clear();

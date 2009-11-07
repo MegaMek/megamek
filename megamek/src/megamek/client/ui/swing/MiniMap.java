@@ -88,7 +88,7 @@ public class MiniMap extends Canvas {
     // to any changes there
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6964529682842424060L;
     private final static Color[] m_terrainColors = new Color[Terrains.SIZE];
@@ -151,7 +151,7 @@ public class MiniMap extends Canvas {
         m_board.addBoardListener(boardListener);
         initialize();
     }
-    
+
     public MiniMap(JDialog d, IBoard b) throws IOException {
         m_dialog = d;
         m_board = b;
@@ -166,12 +166,12 @@ public class MiniMap extends Canvas {
         m_client = c.getClient();
         assert (m_client != null);
     }
-    
+
     public void setBoard(IBoard board) {
         m_board = board;
         initializeMap();
     }
-    
+
     private void initialize() throws IOException {
         initializeColors();
         addMouseListener(mouseListener);
@@ -342,9 +342,11 @@ public class MiniMap extends Canvas {
 
     private void clean() {
         dirtyMap = false;
-        for (int i = 0; i < dirty.length; i++)
-            for (int j = 0; j < dirty[i].length; j++)
+        for (int i = 0; i < dirty.length; i++) {
+            for (int j = 0; j < dirty[i].length; j++) {
                 dirty[i][j] = false;
+            }
+        }
     }
 
     void initializeMap() {
@@ -384,8 +386,8 @@ public class MiniMap extends Canvas {
             }
         }
         // zoom out if its too big for the screen
-        while (zoom > 0
-                && (requiredWidth > virtualBounds.width || requiredHeight > virtualBounds.height)) {
+        while ((zoom > 0)
+                && ((requiredWidth > virtualBounds.width) || (requiredHeight > virtualBounds.height))) {
             zoom--;
             currentHexSide = hexSide[zoom];
             currentHexSideByCos30 = hexSideByCos30[zoom];
@@ -421,21 +423,23 @@ public class MiniMap extends Canvas {
         gg.setColor(BACKGROUND);
         gg.fillRect(0, 0, getSize().width, getSize().height);
 
-        if (getSize().width > requiredWidth)
+        if (getSize().width > requiredWidth) {
             leftMargin = ((getSize().width - requiredWidth) / 2) + margin;
-        if (getSize().height > requiredHeight)
+        }
+        if (getSize().height > requiredHeight) {
             topMargin = ((getSize().height - requiredHeight) / 2) + margin;
+        }
         drawMap();
     }
 
     protected long lastDrawMapReq = 0;
     protected long lastDrawStarted = 0;
     protected Runnable drawMapable = new Runnable() {
-        protected final int redrawDelay = 500;
+    protected final int redrawDelay = 0;
 
         public void run() {
             try {
-                if ((System.currentTimeMillis() - MiniMap.this.lastDrawMapReq) > redrawDelay) {
+                if ((System.currentTimeMillis() - lastDrawMapReq) > redrawDelay) {
                     drawMapOrig();
                 } else {
                     try {
@@ -465,16 +469,18 @@ public class MiniMap extends Canvas {
      * i left it there anyways
      */
     protected synchronized void drawMapOrig() {
-        if (lastDrawStarted > lastDrawMapReq)
+        if (lastDrawStarted > lastDrawMapReq) {
             return;
+        }
         lastDrawStarted = System.currentTimeMillis();
         System.out.println("drawing map to backbuffer " + new Date());
         if (m_mapImage == null) {
             return;
         }
 
-        if (!m_dialog.isVisible())
+        if (!m_dialog.isVisible()) {
             return;
+        }
 
         Graphics g = m_mapImage.getGraphics();
         Color oldColor = g.getColor();
@@ -497,13 +503,16 @@ public class MiniMap extends Canvas {
             // draw backbuffer
             g.drawImage(terrainBuffer, 0, 0, this);
 
-            if (firstLOS != null)
+            if (firstLOS != null) {
                 paintSingleCoordBorder(g, firstLOS.x, firstLOS.y, Color.red);
-            if (secondLOS != null)
+            }
+            if (secondLOS != null) {
                 paintSingleCoordBorder(g, secondLOS.x, secondLOS.y, Color.red);
+            }
 
-            if (!roadHexIndexes.isEmpty())
+            if (!roadHexIndexes.isEmpty()) {
                 paintRoads(g);
+            }
 
             if (SHOW_NO_HEIGHT != heightDisplayMode) {
                 for (int j = 0; j < m_board.getWidth(); j++) {
@@ -515,12 +524,12 @@ public class MiniMap extends Canvas {
             }
 
             // draw Drop Zone
-            if (null != m_client && null != m_game) { // sanity check!
+            if ((null != m_client) && (null != m_game)) { // sanity check!
                 if (IGame.Phase.PHASE_DEPLOYMENT == m_game.getPhase()) {
                     GameTurn turn = m_game.getTurn();
-                    if (turn != null
-                            && turn.getPlayerNum() == m_client.getLocalPlayer()
-                                    .getId()) {
+                    if ((turn != null)
+                            && (turn.getPlayerNum() == m_client.getLocalPlayer()
+                                    .getId())) {
                         for (int j = 0; j < m_board.getWidth(); j++) {
                             for (int k = 0; k < m_board.getHeight(); k++) {
                                 if (m_board.isLegalDeployment(
@@ -535,8 +544,8 @@ public class MiniMap extends Canvas {
                 }
 
                 // draw declared fire
-                if (IGame.Phase.PHASE_FIRING == m_game.getPhase()
-                        || IGame.Phase.PHASE_PHYSICAL == m_game.getPhase()) {
+                if ((IGame.Phase.PHASE_FIRING == m_game.getPhase())
+                        || (IGame.Phase.PHASE_PHYSICAL == m_game.getPhase())) {
                     for (Enumeration<EntityAction> iter = m_game.getActions(); iter
                             .hasMoreElements();) {
                         EntityAction action = iter.nextElement();
@@ -549,15 +558,16 @@ public class MiniMap extends Canvas {
                 for (Enumeration<Entity> iter = m_game.getEntities(); iter
                         .hasMoreElements();) {
                     Entity e = iter.nextElement();
-                    if (e.getPosition() == null)
+                    if (e.getPosition() == null) {
                         continue;
+                    }
                     paintUnit(g, e, true);
                 }
             }
             clean();
         }
 
-        if (m_client != null && m_client.getArtilleryAutoHit() != null) {
+        if ((m_client != null) && (m_client.getArtilleryAutoHit() != null)) {
             for (int i = 0; i < m_client.getArtilleryAutoHit().size(); i++) {
                 drawAutoHit(g, m_client.getArtilleryAutoHit().get(i));
             }
@@ -684,15 +694,16 @@ public class MiniMap extends Canvas {
     }
 
     private void paintHeight(Graphics g, IHex h, int x, int y) {
-        if (heightDisplayMode == SHOW_NO_HEIGHT)
+        if (heightDisplayMode == SHOW_NO_HEIGHT) {
             return;
+        }
         if (zoom > 2) {
             int baseX = x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
             int baseY = (2 * y + 1 + x % 2) * hexSideByCos30[zoom] + topMargin;
             g.setColor(Color.white);
             int height = 0;
-            if (h.getTerrain(Terrains.BUILDING) != null
-                    && heightDisplayMode == SHOW_BUILDING_HEIGHT) {
+            if ((h.getTerrain(Terrains.BUILDING) != null)
+                    && (heightDisplayMode == SHOW_BUILDING_HEIGHT)) {
                 height = h.ceiling();
             } else if (heightDisplayMode == SHOW_GROUND_HEIGHT) {
                 height = h.floor();
@@ -762,7 +773,7 @@ public class MiniMap extends Canvas {
         Targetable target = m_game.getTarget(attack.getTargetType(), attack
                 .getTargetId());
         // sanity check...
-        if (null == source || null == target) {
+        if ((null == source) || (null == target)) {
             return;
         }
 
@@ -774,8 +785,8 @@ public class MiniMap extends Canvas {
         if (attack instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction) attack;
             if ((attack.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
-                    && waa.getEntity(m_game).getOwner().getId() != m_client
-                            .getLocalPlayer().getId()) {
+                    && (waa.getEntity(m_game).getOwner().getId() != m_client
+                            .getLocalPlayer().getId())) {
                 return;
             }
         }
@@ -796,10 +807,10 @@ public class MiniMap extends Canvas {
                 * hexSideByCos30[zoom] + topMargin;
         xPoints[2] = xPoints[1] + 2;
         xPoints[3] = xPoints[0] + 2;
-        if ((source.getPosition().x > target.getPosition().x && source
-                .getPosition().y < target.getPosition().y)
-                || (source.getPosition().x < target.getPosition().x && source
-                        .getPosition().y > target.getPosition().y)) {
+        if (((source.getPosition().x > target.getPosition().x) && (source
+                .getPosition().y < target.getPosition().y))
+                || ((source.getPosition().x < target.getPosition().x) && (source
+                        .getPosition().y > target.getPosition().y))) {
             yPoints[3] = yPoints[0] + 2;
             yPoints[2] = yPoints[1] + 2;
         } else {
@@ -817,8 +828,8 @@ public class MiniMap extends Canvas {
             EntityAction action = iter.nextElement();
             if (action instanceof AttackAction) {
                 AttackAction otherAttack = (AttackAction) action;
-                if (attack.getEntityId() == otherAttack.getTargetId()
-                        && otherAttack.getEntityId() == attack.getTargetId()) {
+                if ((attack.getEntityId() == otherAttack.getTargetId())
+                        && (otherAttack.getEntityId() == attack.getTargetId())) {
                     // attackTarget _must_ be an entity since it's shooting back
                     // (?)
                     Entity attackTarget = m_game.getEntity(otherAttack
@@ -832,10 +843,10 @@ public class MiniMap extends Canvas {
                     yPoints[1] = yPoints[2];
                     xPoints[2] = xPoints[1] + 2;
                     xPoints[3] = xPoints[0] + 2;
-                    if ((source.getPosition().x > target.getPosition().x && source
-                            .getPosition().y < target.getPosition().y)
-                            || (source.getPosition().x < target.getPosition().x && source
-                                    .getPosition().y > target.getPosition().y)) {
+                    if (((source.getPosition().x > target.getPosition().x) && (source
+                            .getPosition().y < target.getPosition().y))
+                            || ((source.getPosition().x < target.getPosition().x) && (source
+                                    .getPosition().y > target.getPosition().y))) {
                         yPoints[3] = yPoints[0] + 2;
                         yPoints[2] = yPoints[1] + 2;
                     } else {
@@ -1082,7 +1093,7 @@ public class MiniMap extends Canvas {
     private void addRoadElements(IHex x, int boardX, int boardY) {
         final int[] roadTypes = new int[] { Terrains.ROAD, Terrains.BRIDGE };
         for (int j : roadTypes) {
-            if (x.getTerrain(j) != null && m_terrainColors[j] != null) {
+            if ((x.getTerrain(j) != null) && (m_terrainColors[j] != null)) {
                 int[] roadHex = { boardX, boardY, x.getTerrain(j).getExits() };
                 roadHexIndexes.addElement(roadHex);
             }
@@ -1098,23 +1109,23 @@ public class MiniMap extends Canvas {
 
         int terrain = 0;
         for (int j = m_terrainColors.length - 1; j >= 0; j--) {
-            if (x.getTerrain(j) != null && m_terrainColors[j] != null) {
-                if (j == Terrains.ROAD || j == Terrains.BRIDGE) {
+            if ((x.getTerrain(j) != null) && (m_terrainColors[j] != null)) {
+                if ((j == Terrains.ROAD) || (j == Terrains.BRIDGE)) {
                     continue;
                 }
                 terrColor = m_terrainColors[j];
                 terrain = j;
                 // make heavy woods darker
-                if ((j == Terrains.WOODS || j == Terrains.JUNGLE)
-                        && x.getTerrain(j).getLevel() == 2) {
+                if (((j == Terrains.WOODS) || (j == Terrains.JUNGLE))
+                        && (x.getTerrain(j).getLevel() == 2)) {
                     terrColor = HEAVY_WOODS;
                 }
-                if ((j == Terrains.WOODS || j == Terrains.JUNGLE)
-                        && x.getTerrain(j).getLevel() > 2) {
+                if (((j == Terrains.WOODS) || (j == Terrains.JUNGLE))
+                        && (x.getTerrain(j).getLevel() > 2)) {
                     terrColor = ULTRA_HEAVY_WOODS;
                 }
                 // contains both smoke and fire
-                if (j == Terrains.SMOKE && x.getTerrain(Terrains.FIRE) != null) {
+                if ((j == Terrains.SMOKE) && (x.getTerrain(Terrains.FIRE) != null)) {
                     terrColor = SMOKE_AND_FIRE;
                 }
                 break;
@@ -1136,34 +1147,42 @@ public class MiniMap extends Canvas {
             level = Math.abs(x.floor());
             // By experiment it is possible to make only 6 distinctive color
             // steps
-            if (level > 10)
+            if (level > 10) {
                 level = 10;
+            }
             r = terrColor.getRed() - level * 15;
             g = terrColor.getGreen() - level * 15;
             b = terrColor.getBlue() - level * 15;
-            if (r < 0)
+            if (r < 0) {
                 r = 0;
-            if (g < 0)
+            }
+            if (g < 0) {
                 g = 0;
-            if (b < 0)
+            }
+            if (b < 0) {
                 b = 0;
+            }
             return new Color(r, g, b);
         case Terrains.FUEL_TANK:
         case Terrains.BUILDING:
             level = Math.abs(x.ceiling());
             // By experiment it is possible to make only 6 distinctive color
             // steps
-            if (level > 10)
+            if (level > 10) {
                 level = 10;
+            }
             r = terrColor.getRed() - level * 15;
             g = terrColor.getGreen() - level * 15;
             b = terrColor.getBlue() - level * 15;
-            if (r < 0)
+            if (r < 0) {
                 r = 0;
-            if (g < 0)
+            }
+            if (g < 0) {
                 g = 0;
-            if (b < 0)
+            }
+            if (b < 0) {
                 b = 0;
+            }
             return new Color(r, g, b);
 
         }
@@ -1219,24 +1238,28 @@ public class MiniMap extends Canvas {
          * hexSideByCos30[zoom]restY) gridX ++; if (-hexSideBySin30[zoom]restX >
          * hexSideByCos30[zoom]restY) gridY --;
          */
-        if (gridX < 0)
+        if (gridX < 0) {
             gridX = 0;
-        if (gridY < 0)
+        }
+        if (gridY < 0) {
             gridY = 0;
+        }
 
         return new Coords(gridX, gridY);
     }
 
     protected void zoomIn() {
-        if (zoom == 0)
+        if (zoom == 0) {
             return;
+        }
         zoom--;
         initializeMap();
     }
 
     protected void zoomOut() {
-        if (zoom == (hexSide.length - 1))
+        if (zoom == (hexSide.length - 1)) {
             return;
+        }
         zoom++;
         initializeMap();
     }
@@ -1246,7 +1269,7 @@ public class MiniMap extends Canvas {
 
             if (x < 14) {
                 zoomIn();
-            } else if (x < 28 && zoom > 2) {
+            } else if ((x < 28) && (zoom > 2)) {
                 heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0
                         : heightDisplayMode;
                 initializeMap();
@@ -1304,7 +1327,7 @@ public class MiniMap extends Canvas {
                  */
                 int x = b.getCoords().x;
                 int y = b.getCoords().y;
-                if (x >= dirty.length || y >= dirty[x].length) {
+                if ((x >= dirty.length) || (y >= dirty[x].length)) {
                     dirtyMap = true;
                     return;
                 }
@@ -1328,11 +1351,13 @@ public class MiniMap extends Canvas {
         @Override
         public void gameBoardNew(GameBoardNewEvent e) {
             IBoard b = e.getOldBoard();
-            if (b != null)
+            if (b != null) {
                 b.removeBoardListener(boardListener);
+            }
             b = e.getNewBoard();
-            if (b != null)
+            if (b != null) {
                 b.addBoardListener(boardListener);
+            }
             m_board = b;
             initializeMap();
         }

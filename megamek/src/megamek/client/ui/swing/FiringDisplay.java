@@ -132,6 +132,8 @@ KeyListener, ItemListener, ListSelectionListener {
     private JButton butSearchlight;
 
     private JButton butSpace;
+    private JButton butSpace2;
+    private JButton butSpace3;
 
     private JButton butFireMode;
 
@@ -236,8 +238,15 @@ KeyListener, ItemListener, ListSelectionListener {
         butSearchlight.setActionCommand(FIRE_SEARCHLIGHT);
         butSearchlight.setEnabled(false);
 
-        butSpace = new JButton("."); //$NON-NLS-1$
+        butSpace = new JButton(""); //$NON-NLS-1$
         butSpace.setEnabled(false);
+        butSpace.setVisible(false);
+        butSpace2 = new JButton(""); //$NON-NLS-1$
+        butSpace2.setEnabled(false);
+        butSpace2.setVisible(false);
+        butSpace3 = new JButton(""); //$NON-NLS-1$
+        butSpace3.setEnabled(false);
+        butSpace3.setVisible(false);
 
         butFireMode = new JButton(Messages.getString("FiringDisplay.Mode")); //$NON-NLS-1$
         butFireMode.addActionListener(this);
@@ -265,9 +274,7 @@ KeyListener, ItemListener, ListSelectionListener {
         butFireClearWeaponJam.setActionCommand(FIRE_CLEAR_WEAPON);
         butFireClearWeaponJam.setEnabled(false);
 
-        butDone = new JButton(Messages.getString("FiringDisplay.Done")); //$NON-NLS-1$
-        butDone.addActionListener(this);
-        butDone.addKeyListener(this);
+        butDone.setText(Messages.getString("FiringDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
 
         butNext = new JButton(Messages.getString("FiringDisplay.NextUnit")); //$NON-NLS-1$
@@ -327,7 +334,7 @@ KeyListener, ItemListener, ListSelectionListener {
 
     private void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridLayout(0, 9));
+        panButtons.setLayout(new GridLayout(2, 6));
 
         switch (buttonLayout) {
         case 0:
@@ -336,21 +343,27 @@ KeyListener, ItemListener, ListSelectionListener {
             panButtons.add(butSkip);
             panButtons.add(butNextTarg);
             panButtons.add(butTwist);
+            panButtons.add(butMore);
+            panButtons.add(butFlipArms);
             panButtons.add(butFireMode);
             panButtons.add(butFireCalled);
             panButtons.add(butFireClearWeaponJam);
-            panButtons.add(butMore);
+            panButtons.add(butFireClearTurret);
+            panButtons.add(butDone);
             break;
         case 1:
             panButtons.add(butNext);
             panButtons.add(butFire);
             panButtons.add(butSkip);
-            panButtons.add(butFlipArms);
+            panButtons.add(butNextTarg);
             panButtons.add(butFindClub);
+            panButtons.add(butMore);
             panButtons.add(butSpot);
             panButtons.add(butSearchlight);
-            panButtons.add(butFireClearTurret);
-            panButtons.add(butMore);
+            panButtons.add(butSpace);
+            panButtons.add(butSpace2);
+            panButtons.add(butSpace3);
+            panButtons.add(butDone);
             break;
         }
 
@@ -686,6 +699,7 @@ KeyListener, ItemListener, ListSelectionListener {
      * Called when the current entity is done firing. Send out our attack queue
      * to the server.
      */
+    @Override
     public void ready() {
         if (attacks.isEmpty()
                 && GUIPreferences.getInstance().getNagForNoAction()) {
@@ -1414,9 +1428,7 @@ KeyListener, ItemListener, ListSelectionListener {
             return;
         }
 
-        if (ev.getSource().equals(butDone)) {
-            ready();
-        } else if ("viewGameOptions".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
+        if ("viewGameOptions".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
             // Make sure the game options dialog is not editable.
             if (clientgui.getGameOptionsDialog().isEditable()) {
                 clientgui.getGameOptionsDialog().setEditable(false);

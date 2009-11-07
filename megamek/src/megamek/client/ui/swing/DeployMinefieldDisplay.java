@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -151,8 +151,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         butRemove.setActionCommand(REMOVE_MINES);
         butRemove.setEnabled(false);
 
-        butDone = new JButton(Messages.getString("DeployMinefieldDisplay.Done")); //$NON-NLS-1$
-        butDone.addActionListener(this);
+        butDone.setText(Messages.getString("DeployMinefieldDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
 
         // layout button grid
@@ -287,11 +286,11 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             Enumeration<?> mfs = clientgui.getClient().game.getMinefields(coords).elements();
             while (mfs.hasMoreElements()) {
                 Minefield mf = (Minefield) mfs.nextElement();
-                if ((deployM && mf.getType() == Minefield.TYPE_CONVENTIONAL)
-                        || (deployC && mf.getType() == Minefield.TYPE_COMMAND_DETONATED)
-                        || (deployV && mf.getType() == Minefield.TYPE_VIBRABOMB)
-                        || (deployA && mf.getType() == Minefield.TYPE_ACTIVE)
-                        || (deployI && mf.getType() == Minefield.TYPE_INFERNO)) {
+                if ((deployM && (mf.getType() == Minefield.TYPE_CONVENTIONAL))
+                        || (deployC && (mf.getType() == Minefield.TYPE_COMMAND_DETONATED))
+                        || (deployV && (mf.getType() == Minefield.TYPE_VIBRABOMB))
+                        || (deployA && (mf.getType() == Minefield.TYPE_ACTIVE))
+                        || (deployI && (mf.getType() == Minefield.TYPE_INFERNO))) {
                     clientgui
                             .doAlertDialog(
                                     Messages
@@ -366,9 +365,9 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             clientgui.bv.refreshDisplayables();
         }
 
-        if (p.getNbrMFConventional() == 0 && p.getNbrMFCommand() == 0
-                && p.getNbrMFVibra() == 0 && p.getNbrMFActive() == 0
-                && p.getNbrMFInferno() == 0) {
+        if ((p.getNbrMFConventional() == 0) && (p.getNbrMFCommand() == 0)
+                && (p.getNbrMFVibra() == 0) && (p.getNbrMFActive() == 0)
+                && (p.getNbrMFInferno() == 0)) {
             butDone.setEnabled(true);
         }
 
@@ -395,7 +394,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         }
 
     }
-    
+
     @Override
     protected void clear() {
         //TODO: undefined for now
@@ -418,7 +417,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-                || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
+                || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
             return;
         }
 
@@ -460,7 +459,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
+                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS)) {
             endMyTurn();
         }
         if (clientgui.getClient().game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
@@ -486,10 +485,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         if (!clientgui.getClient().isMyTurn()) {
             // odd...
             return;
-        }
-
-        if (ev.getSource().equals(butDone)) {
-            ready();
         } else if (ev.getActionCommand().equals(DEPLOY_MINE_CONV)) {
             deployM = true;
             deployC = false;
@@ -535,6 +530,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         }
     } // End public void actionPerformed(ActionEvent ev)
 
+    @Override
     public void ready() {
         endMyTurn();
         clientgui.getClient().sendDeployMinefields(deployedMinefields);
@@ -590,7 +586,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         butRemove.setEnabled(enable);
         // clientgui.getMenuBar().setRemoveMineEnabled(enable);
     }
-    
+
     /**
      * Stop just ignoring events and actually stop listening to them.
      */

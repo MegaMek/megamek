@@ -49,7 +49,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     static {
         Color temp;
         try {
-            temp = new Color(255, 255, 255, 50);
+            temp = new Color(0, 0, 0, 75);
         } catch (Throwable err) {
             temp = Color.gray;
         }
@@ -328,7 +328,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             return true;
         }
         // Scroll bar
-        if ((x > 285) && (x < 295)
+        if ((x > WIDTH - 15) && (x < WIDTH -5)
                 && (y > (yOffset + 18 + scrollBarOffset - 1))
                 && (y < (yOffset + 18 + scrollBarOffset + scrollBarHeight))) {
             lastScrollPoint = p;
@@ -336,7 +336,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             return true;
         }
         // Below scrollbar
-        if ((x > 283) && (x < 298)
+        if ((x > WIDTH - 17) && (x < WIDTH - 2)
                 && (y > (yOffset + 18 + scrollBarOffset + scrollBarHeight))
                 && (y < (yOffset + 18 + SCROLLBAR_OUTER_HEIGHT))) {
             pageDown();
@@ -344,14 +344,14 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             return true;
         }
         // Scroll down
-        if ((x > 283) && (x < 299) && (y > ((size.height) - 25))
+        if ((x > WIDTH - 17) && (x < WIDTH - 1) && (y > ((size.height) - 25))
                 && (y < ((size.height) - 11))) {
             scrollDown();
             bv.refreshDisplayables();
             return true;
         }
         // Message box
-        if ((x > 10) && (x < 260) && (y > ((size.height) - 25))
+        if ((x > 10) && (x < WIDTH - 40) && (y > ((size.height) - 25))
                 && (y < ((size.height) - 11))) {
             message = "";
             visibleMessage = "";
@@ -384,19 +384,19 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         printLine(graph, "Incoming messages...", 29 + relativeTo.x, yOffset + 15);
 
         // Scroll up button
-        graph.drawImage(upbutton, 284 + relativeTo.x, yOffset + 3, bv);
+        graph.drawImage(upbutton, WIDTH - 16 + relativeTo.x, yOffset + 3, bv);
 
         // Scroll bar outer
-        graph.drawRect(284 + relativeTo.x, yOffset + 16, 13, SCROLLBAR_OUTER_HEIGHT);
+        graph.drawRect(WIDTH - 16 + relativeTo.x, yOffset + 16, 13, SCROLLBAR_OUTER_HEIGHT);
 
         // Scroll bar inner
-        graph.drawRect(286 + relativeTo.x, yOffset + 18 + scrollBarOffset, 9, scrollBarHeight);
+        graph.drawRect(WIDTH - 14 + relativeTo.x, yOffset + 18 + scrollBarOffset, 9, scrollBarHeight);
 
         // Scroll down button
-        graph.drawImage(downbutton, 284 + relativeTo.x, yOffset + 150 - 20, bv);
+        graph.drawImage(downbutton, WIDTH - 16 + relativeTo.x, yOffset + 150 - 20, bv);
 
         // Message box
-        graph.drawRect(10 + relativeTo.x, yOffset + 150 - 21, 250, 17);
+        graph.drawRect(10 + relativeTo.x, yOffset + 150 - 21, WIDTH - 50, 17);
         if (message != null) {
             printLine(graph, visibleMessage + "_", 13 + relativeTo.x, yOffset + 150 - 7);
         }

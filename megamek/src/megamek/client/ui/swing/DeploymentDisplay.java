@@ -115,23 +115,19 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         butAssaultDrop.addActionListener(this);
         butAssaultDrop.setActionCommand(DEPLOY_ASSAULTDROP);
         butAssaultDrop.setEnabled(false);
-        butDone = new JButton(Messages.getString("DeploymentDisplay.Deploy")); //$NON-NLS-1$
-        butDone.addActionListener(this);
+        butDone.setText(Messages.getString("DeploymentDisplay.Deploy")); //$NON-NLS-1$
         butDone.setEnabled(false);
 
         // layout button grid
         panButtons = new JPanel();
-        panButtons.setLayout(new GridLayout(0, 8));
+        panButtons.setLayout(new GridLayout(0, 7));
         panButtons.add(butNext);
         panButtons.add(butTurn);
         panButtons.add(butLoad);
         panButtons.add(butUnload);
         panButtons.add(butRemove);
         panButtons.add(butAssaultDrop);
-        // panButtons.add(butSpace);
-        // panButtons.add(butSpace2);
-        // panButtons.add(butSpace3);
-        // panButtons.add(butDone);
+        panButtons.add(butDone);
 
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
@@ -298,6 +294,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     /**
      * Sends a deployment to the server
      */
+    @Override
     public void ready() {
         disableButtons();
         Entity en = ce();
@@ -512,9 +509,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (!clientgui.getClient().isMyTurn()) {
             // odd...
             return;
-        }
-        if (ev.getSource().equals(butDone)) {
-            ready();
         } else if (ev.getActionCommand().equals(DEPLOY_NEXT)) {
             // fiX: ce() possible null pointer
             if (ce() != null) {

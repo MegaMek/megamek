@@ -57,6 +57,7 @@ v0.35.9-dev (SVN)
 + tooltip for player initiative bonuses
 + fix mechsummarycache
 + fix systemmessages for chatterbox2
++ Bug: TacOps vehicle effectiveness not working correctly
 
 
 v0.35.8 (2009-10-18, 22:34 UTC+2)

@@ -89,7 +89,7 @@ public class LargeSupportTank extends SupportTank {
             bRear = true;
         }
         if(game.getOptions().booleanOption("tacops_vehicle_effective")) {
-            motiveMod = 0;
+            motiveMod = Math.max(0, motiveMod-1);
         }
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;

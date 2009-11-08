@@ -35,7 +35,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -211,7 +210,7 @@ public class MiniMap extends Canvas {
         }
     }
 
-    /*
+    /**
      * Initialize default colours and override with config file if there is one.
      */
     private void initializeColors() throws IOException {
@@ -473,7 +472,6 @@ public class MiniMap extends Canvas {
             return;
         }
         lastDrawStarted = System.currentTimeMillis();
-        System.out.println("drawing map to backbuffer " + new Date());
         if (m_mapImage == null) {
             return;
         }

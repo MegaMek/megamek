@@ -299,14 +299,12 @@ KeyListener, ItemListener, ListSelectionListener {
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
 
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;
         c.weighty = 0.0;
+        c.fill = GridBagConstraints.BOTH;
         addBag(panButtons, gridbag, c);
 
         c.weightx = 1.0;

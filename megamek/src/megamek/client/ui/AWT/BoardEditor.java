@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -161,8 +161,9 @@ public class BoardEditor extends Container implements ItemListener,
             @Override
             public void hexMoused(final BoardViewEvent b) {
                 final Coords c = b.getCoords();
-                if (c.equals(lastClicked))
+                if (c.equals(lastClicked)) {
                     return;
+                }
                 lastClicked = c;
                 bv.cursor(c);
                 if ((b.getModifiers() & InputEvent.ALT_MASK) != 0) {
@@ -407,7 +408,7 @@ public class BoardEditor extends Container implements ItemListener,
 
     /**
      * Apply the current Hex to the Board at the specified location.
-     * 
+     *
      * @param c the location.
      */
     public void paintHex(final Coords c) {
@@ -416,7 +417,7 @@ public class BoardEditor extends Container implements ItemListener,
 
     /**
      * Apply the current Hex to the Board at the specified location.
-     * 
+     *
      * @param c the location in {@link megamek.common.Coords , Coords }.
      */
     public void resurfaceHex(final Coords c) {
@@ -429,7 +430,7 @@ public class BoardEditor extends Container implements ItemListener,
 
     /**
      * Apply the current Hex to the Board at the specified location.
-     * 
+     *
      * @param c the location in {@link megamek.common.Coords , Coords }.
      */
     public void addToHex(final Coords c) {
@@ -448,7 +449,7 @@ public class BoardEditor extends Container implements ItemListener,
 
     /**
      * Sets the current hex
-     * 
+     *
      * @param hex hex to set.
      */
     public void setCurrentHex(final IHex hex) {
@@ -545,7 +546,7 @@ public class BoardEditor extends Container implements ItemListener,
                 frame.getLocation().y + 100);
         bnd.setVisible(true);
 
-        if (bnd.getX() > 0 || bnd.getY() > 0) {
+        if ((bnd.getX() > 0) || (bnd.getY() > 0)) {
             final IHex[] newHexes = new IHex[bnd.getX() * bnd.getY()];
             for (int i = 0; i < newHexes.length; i++) {
                 newHexes[i] = new Hex();
@@ -573,7 +574,7 @@ public class BoardEditor extends Container implements ItemListener,
 
     /**
      * Updates the map settings.
-     * 
+     *
      * @param newSettings the new settings.
      */
     public void updateMapSettings(final MapSettings newSettings) {
@@ -651,16 +652,13 @@ public class BoardEditor extends Container implements ItemListener,
             boardSaveAsImage();
             return;
         }
-        final Dialog waitD = new Dialog(this.frame, Messages
+        final Dialog waitD = new Dialog(frame, Messages
                 .getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
         waitD.add(new Label(Messages
                 .getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
         waitD.setSize(250, 130);
         // move to middle of screen
-        waitD.setLocation(
-                frame.getSize().width / 2 - waitD.getSize().width / 2, frame
-                        .getSize().height
-                        / 2 - waitD.getSize().height / 2);
+        waitD.setLocationRelativeTo(frame);
         waitD.setVisible(true);
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -732,7 +730,7 @@ public class BoardEditor extends Container implements ItemListener,
         // Add a filter for PNG files
         fd.setFilenameFilter(new FilenameFilter() {
             public boolean accept(final File dir, final String name) {
-                return (null != name && name.endsWith(".png")); //$NON-NLS-1$
+                return ((null != name) && name.endsWith(".png")); //$NON-NLS-1$
             }
         });
 
@@ -741,7 +739,7 @@ public class BoardEditor extends Container implements ItemListener,
 
         // Default to the board's name (if it has one).
         String fileName = null;
-        if (null != curfile && curfile.length() > 0) {
+        if ((null != curfile) && (curfile.length() > 0)) {
             fileName = curfile.toUpperCase();
             if (fileName.endsWith(".BOARD")) { //$NON-NLS-1$
                 final int length = fileName.length();
@@ -819,12 +817,12 @@ public class BoardEditor extends Container implements ItemListener,
      */
     private void showAbout() {
         // Do we need to create the "about" dialog?
-        if (this.about == null) {
-            this.about = new CommonAboutDialog(this.frame);
+        if (about == null) {
+            about = new CommonAboutDialog(frame);
         }
 
         // Show the about dialog.
-        this.about.setVisible(true);
+        about.setVisible(true);
     }
 
     /**
@@ -832,13 +830,13 @@ public class BoardEditor extends Container implements ItemListener,
      */
     private void showHelp() {
         // Do we need to create the "help" dialog?
-        if (this.help == null) {
+        if (help == null) {
             final File helpfile = new File("docs", "editor-readme.txt"); //$NON-NLS-1$
-            this.help = new CommonHelpDialog(this.frame, helpfile);
+            help = new CommonHelpDialog(frame, helpfile);
         }
 
         // Show the help dialog.
-        this.help.setVisible(true);
+        help.setVisible(true);
     }
 
     /**
@@ -846,12 +844,12 @@ public class BoardEditor extends Container implements ItemListener,
      */
     private void showSettings() {
         // Do we need to create the "settings" dialog?
-        if (this.setdlg == null) {
-            this.setdlg = new CommonSettingsDialog(this.frame);
+        if (setdlg == null) {
+            setdlg = new CommonSettingsDialog(frame);
         }
 
         // Show the settings dialog.
-        this.setdlg.setVisible(true);
+        setdlg.setVisible(true);
     }
 
     //
@@ -869,8 +867,8 @@ public class BoardEditor extends Container implements ItemListener,
         } else if (ae.getActionCommand().equalsIgnoreCase(
                 "fileBoardSaveAsImage")) { //$NON-NLS-1$
             boardSaveAsImage();
-        } else if (ae.getSource() == butDelTerrain
-                && lisTerrain.getSelectedItem() != null) {
+        } else if ((ae.getSource() == butDelTerrain)
+                && (lisTerrain.getSelectedItem() != null)) {
             final ITerrain toRemove = Terrains.getTerrainFactory()
                     .createTerrain(lisTerrain.getSelectedItem());
             curHex.removeTerrain(toRemove.getType());
@@ -878,11 +876,11 @@ public class BoardEditor extends Container implements ItemListener,
             repaintWorkingHex();
         } else if (ae.getSource() == butAddTerrain) {
             addSetTerrain();
-        } else if (ae.getSource() == butElevUp && curHex.getElevation() < 9) {
+        } else if ((ae.getSource() == butElevUp) && (curHex.getElevation() < 9)) {
             curHex.setElevation(curHex.getElevation() + 1);
             texElev.setText(Integer.toString(curHex.getElevation()));
             repaintWorkingHex();
-        } else if (ae.getSource() == butElevDown && curHex.getElevation() > -5) {
+        } else if ((ae.getSource() == butElevDown) && (curHex.getElevation() > -5)) {
             curHex.setElevation(curHex.getElevation() - 1);
             texElev.setText(Integer.toString(curHex.getElevation()));
             repaintWorkingHex();
@@ -964,7 +962,7 @@ public class BoardEditor extends Container implements ItemListener,
 
     /**
      * Sets if the map is visible or not.
-     * 
+     *
      * @param visible true if the map should be visible, false if not.
      */
     public void setMapVisible(final boolean visible) {

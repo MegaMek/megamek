@@ -18,7 +18,7 @@ import megamek.client.ui.Messages;
  */
 public class BoardNewDialog extends Dialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6562881140632503653L;
 
@@ -88,9 +88,7 @@ public class BoardNewDialog extends Dialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2
-                - getSize().width / 2, frame.getLocation().y
-                + frame.getSize().height / 2 - getSize().height / 2);
+        setLocationRelativeTo(frame);
     }
 
     public void actionPerformed(ActionEvent e) {

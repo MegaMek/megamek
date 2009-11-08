@@ -63,7 +63,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
 
     private Panel panTypeChooser = new Panel();
     private Choice typeChooser = new Choice();
-    
+
     private Panel panMapSize = new Panel();
 
     private Label labBoardSize = new Label(Messages
@@ -108,7 +108,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
     private Button butPreview = new Button(Messages
             .getString("BoardSelectionDialog.Preview")); //$NON-NLS-1$
-    
+
     Dialog mapPreviewW;
 
     private boolean bDelayedSingleSelect = false;
@@ -118,7 +118,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         super(client.frame, Messages
                 .getString("BoardSelectionDialog.EditBoardLaout"), true); //$NON-NLS-1$
         this.client = client;
-        this.mapSettings = (MapSettings) client.getClient().getMapSettings()
+        mapSettings = (MapSettings) client.getClient().getMapSettings()
                 .clone();
         setResizable(true);
 
@@ -135,7 +135,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        this.setLayout(gridbag);
+        setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(4, 4, 4, 4);
@@ -182,9 +182,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
 
         pack();
         setResizable(false);
-        setLocation(client.frame.getLocation().x + client.frame.getSize().width
-                / 2 - getSize().width / 2, client.frame.getLocation().y
-                + client.frame.getSize().height / 2 - getSize().height / 2);
+        setLocationRelativeTo(client.frame);
     }
 
     /**
@@ -196,7 +194,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         typeChooser.add(MapSettings.getMediumName(MapSettings.MEDIUM_SPACE));
         typeChooser.addItemListener(this);
         refreshMapChoice();
-        
+
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panTypeChooser.setLayout(gridbag);
@@ -208,16 +206,16 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(typeChooser,c);
         panTypeChooser.add(typeChooser);
-        
+
     }
-    
+
     /**
      * Set up the map size panel
      */
     private void setupMapSize() {
         refreshMapSize();
         refreshMapButtons();
-              
+
         scrMapButtons.add(panMapButtons);
 
         // layout
@@ -232,7 +230,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(typeChooser,c);
         panMapSize.add(typeChooser);
-        
+
         c.gridwidth = 1;
         gridbag.setConstraints(labBoardSize, c);
         panMapSize.add(labBoardSize);
@@ -338,7 +336,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
     private void refreshMapChoice() {
         typeChooser.select(mapSettings.getMedium());
     }
-    
+
     private void refreshMapSize() {
         texBoardWidth.setText(new Integer(mapSettings.getBoardWidth())
                 .toString());
@@ -435,10 +433,10 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
                     Messages.getString("BoardSelectionDialog.InvalidMapSize"), Messages.getString("BoardSelectionDialog.InvalidNumberOfmaps")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
-        
+
         // check settings
-        if (boardWidth <= 0 || boardHeight <= 0 || mapWidth <= 0
-                || mapHeight <= 0) {
+        if ((boardWidth <= 0) || (boardHeight <= 0) || (mapWidth <= 0)
+                || (mapHeight <= 0)) {
             new AlertDialog(
                     client.frame,
                     Messages.getString("BoardSelectionDialog.InvalidMapSize"), Messages.getString("BoardSelectionDialog.MapSizeMustBeGreateter0")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
@@ -446,10 +444,10 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         }
 
         butOkay.setEnabled(false);
-        
+
         mapSettings.setBoardSize(boardWidth, boardHeight);
         mapSettings.setMapSize(mapWidth, mapHeight);
-        
+
         randomMapDialog.setMapSettings(mapSettings);
 
         refreshMapSize();
@@ -471,7 +469,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
      * the server.
      */
     public void update(MapSettings newMapSettings, boolean updateSize) {
-        this.mapSettings = (MapSettings) newMapSettings.clone();
+        mapSettings = (MapSettings) newMapSettings.clone();
         if (updateSize) {
             refreshMapSize();
             refreshMapButtons();
@@ -508,7 +506,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
                             .getString("BoardSelectionDialog.NoBoardOfSelectedSize.title"), Messages.getString("BoardSelectionDialog.NoBoardOfSelectedSize.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
-        
+
         //change the type - probably not the right place for this but I can't get it to work elsewhere
         if(typeChooser.getSelectedIndex() == 2) {
             mapSettings.setMedium(MapSettings.MEDIUM_SPACE);
@@ -517,9 +515,9 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         } else if(typeChooser.getSelectedIndex() == 0) {
             mapSettings.setMedium(MapSettings.MEDIUM_GROUND);
         }
-        
+
         client.getClient().sendMapSettings(mapSettings);
-        this.setVisible(false);
+        setVisible(false);
         mapPreviewW.setVisible(false);
     }
 
@@ -548,7 +546,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
 
     public void actionPerformed(ActionEvent e) {
 
-        if (e.getSource() == butChange || e.getSource() == lisBoardsAvailable) {
+        if ((e.getSource() == butChange) || (e.getSource() == lisBoardsAvailable)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
                 change(lisBoardsAvailable.getSelectedItem());
             }
@@ -557,7 +555,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         } else if (e.getSource() == butOkay) {
             send();
         } else if (e.getSource() == butCancel) {
-            this.setVisible(false);
+            setVisible(false);
             mapPreviewW.setVisible(false);
         } else if (e.getSource() == butRandomMap) {
             randomMapDialog.setVisible(true);
@@ -566,7 +564,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         } else {
             try {
                 int board = Integer.parseInt(e.getActionCommand());
-                this.lisBoardsSelected.select(board);
+                lisBoardsSelected.select(board);
             } catch (NumberFormatException n) {
                 //ignore
             } catch (ArrayIndexOutOfBoundsException a) {
@@ -602,7 +600,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
                 //panBoardsSelected.setEnabled(false);
                 //panBoardsAvailable.setEnabled(false);
                 //butChange.setEnabled(false);
-            } else if(typeChooser.getSelectedIndex() == 1) { 
+            } else if(typeChooser.getSelectedIndex() == 1) {
                 //panBoardsSelected.setEnabled(true);
                 //panBoardsAvailable.setEnabled(true);
                 //butChange.setEnabled(true);
@@ -615,7 +613,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
     }
 
     public void updateMapSettings(MapSettings newMapSettings) {
-        this.mapSettings = newMapSettings;
+        mapSettings = newMapSettings;
         refreshMapSize();
         refreshMapButtons();
 

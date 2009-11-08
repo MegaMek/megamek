@@ -118,9 +118,7 @@ public class MechSelectorDialog extends JDialog implements Runnable {
 
         unitModel = new MechTableModel();
         initComponents();
-        setLocation(cl.frame.getLocation().x + cl.frame.getSize().width / 2
-                - getSize().width / 2, cl.frame.getLocation().y
-                + cl.frame.getSize().height / 2 - getSize().height / 2);
+        setLocationRelativeTo(cl.frame);
     }
 
     private void initComponents() {

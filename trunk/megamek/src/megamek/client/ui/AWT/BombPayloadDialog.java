@@ -142,8 +142,7 @@ public class BombPayloadDialog
             setSize( size );
             size = getSize();
         }
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - size.width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - size.height/2);
+        setLocationRelativeTo(parent);
     }
 
     private void setupButtons() {

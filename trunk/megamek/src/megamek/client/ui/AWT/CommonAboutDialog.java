@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -16,7 +16,6 @@ package megamek.client.ui.AWT;
 
 import java.awt.Button;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -39,7 +38,7 @@ import megamek.client.ui.AWT.widget.BufferedPanel;
  */
 public class CommonAboutDialog extends Dialog {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4295988339023189039L;
     /**
@@ -49,7 +48,7 @@ public class CommonAboutDialog extends Dialog {
 
     /**
      * Get the single title image in a threadsafe way.
-     * 
+     *
      * @param frame - a <code>Frame</code> object to instantiate the image.
      * @return the title <code>Image</code> common to all "about" dialogs.
      *         This value should <b>not</b> be <code>null</code>.
@@ -77,7 +76,7 @@ public class CommonAboutDialog extends Dialog {
 
     /**
      * Create an "about" dialog for MegaMek.
-     * 
+     *
      * @param frame - the parent <code>Frame</code> for this dialog.
      */
     public CommonAboutDialog(Frame frame) {
@@ -85,7 +84,7 @@ public class CommonAboutDialog extends Dialog {
         super(frame, Messages.getString("CommonAboutDialog.title")); //$NON-NLS-1$
 
         // Make sure we close at the appropriate times.
-        this.addWindowListener(new WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 quit();
@@ -129,7 +128,7 @@ public class CommonAboutDialog extends Dialog {
         // Layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        this.setLayout(gridbag);
+        setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTH;
@@ -159,20 +158,18 @@ public class CommonAboutDialog extends Dialog {
         this.add(butClose, c);
 
         // Place this dialog on middle of screen.
-        Dimension screenSize = frame.getToolkit().getScreenSize();
-        this.pack();
-        this.setLocation(screenSize.width / 2 - this.getSize().width / 2,
-                screenSize.height / 2 - this.getSize().height / 2);
+        pack();
+        setLocationRelativeTo(frame);
 
         // Stop allowing resizing.
-        this.setResizable(false);
+        setResizable(false);
     }
 
     /**
      * Close this dialog.
      */
     /* package */void quit() {
-        this.setVisible(false);
+        setVisible(false);
     }
 
 }

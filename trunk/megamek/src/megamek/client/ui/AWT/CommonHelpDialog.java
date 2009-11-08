@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -37,7 +37,7 @@ import megamek.client.ui.AWT.widget.AdvancedLabel;
  */
 public class CommonHelpDialog extends Dialog {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6500342607269603829L;
     private AdvancedLabel lblHelp;
@@ -45,7 +45,7 @@ public class CommonHelpDialog extends Dialog {
     /**
      * Create a help dialog for the given parent <code>Frame</code> by reading
      * from the indicated <code>File</code>.
-     * 
+     *
      * @param frame - the parent <code>Frame</code> for this dialog. This
      *            value should <b>not</b> be <code>null</code>.
      * @param helpfile - the <code>File</code> containing the help text. This
@@ -56,7 +56,7 @@ public class CommonHelpDialog extends Dialog {
         super(frame);
 
         // Make sure we close at the appropriate times.
-        this.addWindowListener(new WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 quit();
@@ -64,7 +64,7 @@ public class CommonHelpDialog extends Dialog {
         });
 
         // Create the help dialog.
-        this.setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
         lblHelp = new AdvancedLabel(Messages
                 .getString("CommonHelpDialog.noHelp.Message")); //$NON-NLS-1$
         ScrollPane scroll = new ScrollPane(
@@ -86,12 +86,11 @@ public class CommonHelpDialog extends Dialog {
         Dimension screenSize = frame.getToolkit().getScreenSize();
         Dimension windowSize = new Dimension(screenSize.width / 2,
                 screenSize.height / 2);
-        this.pack();
+        pack();
         this.setSize(windowSize);
 
         // Place this dialog on middle of screen.
-        this.setLocation(screenSize.width / 2 - windowSize.width / 2,
-                screenSize.height / 2 - windowSize.height / 2);
+        setLocationRelativeTo(frame);
 
         setFile(helpfile);
     }
@@ -103,12 +102,11 @@ public class CommonHelpDialog extends Dialog {
         // Were we passed a null helpfile?
         if (helpfile == null) {
             // Big error.
-            this.setTitle(Messages.getString("CommonHelpDialog.noHelp.title")); //$NON-NLS-1$
+            setTitle(Messages.getString("CommonHelpDialog.noHelp.title")); //$NON-NLS-1$
             buff.append(Messages.getString("CommonHelpDialog.noHelp.Message")); //$NON-NLS-1$
         } else {
             // Set our title.
-            this
-                    .setTitle(Messages.getString("CommonHelpDialog.helpFile") + helpfile.getName()); //$NON-NLS-1$
+            setTitle(Messages.getString("CommonHelpDialog.helpFile") + helpfile.getName()); //$NON-NLS-1$
 
             // Try to read in the help file.
             boolean firstLine = true;
@@ -146,7 +144,7 @@ public class CommonHelpDialog extends Dialog {
      * Close this dialog.
      */
     /* package */void quit() {
-        this.setVisible(false);
+        setVisible(false);
     }
 
 }

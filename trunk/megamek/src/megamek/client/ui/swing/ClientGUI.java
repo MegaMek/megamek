@@ -317,6 +317,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                             "megamek.client.ui.swing.BoardView1"));
             bv = (IBoardView) c.getConstructor(IGame.class).newInstance(client.game);
             bvc = bv.getComponent();
+            bvc.setName("BoardView");
             bv.addBoardViewListener(this);
 
         } catch (Exception e) {
@@ -728,104 +729,123 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             component = new ChatLounge(this);
             chatlounge = (ChatLounge) component;
             main = "ChatLounge"; //$NON-NLS-1$
+            component.setName(main);
             secondary = main;
-            panMain.add(main, component);
-            panSecondary.add(secondary, ((ChatLounge) component).getSecondaryDisplay());
+            panMain.add(component, main);
+            ((ChatLounge)component).getSecondaryDisplay().setName(secondary);
+            panSecondary.add(((ChatLounge) component).getSecondaryDisplay(), secondary);
             break;
         case PHASE_STARTING_SCENARIO:
             component = new JLabel(Messages.getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
             main = "JLabel-StartingScenario"; //$NON-NLS-1$
+            component.setName(main);
             secondary = main;
-            panMain.add(main, component);
-            panSecondary.add(secondary, new JLabel("")); //$NON-NLS-1$
+            panMain.add(component, main);
+            JLabel secondaryComp = new JLabel("");
+            secondaryComp.setName(secondary);
+            panSecondary.add(secondaryComp, secondary); //$NON-NLS-1$
             break;
         case PHASE_EXCHANGE:
             component = new JLabel(Messages.getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
             main = "JLabel-Exchange"; //$NON-NLS-1$
+            component.setName(main);
             secondary = main;
-            panMain.add(main, component);
-            panSecondary.add(secondary, new JLabel("")); //$NON-NLS-1$
+            panMain.add(component, main);
+            secondaryComp = new JLabel("");
+            secondaryComp.setName(secondary);
+            panSecondary.add(secondaryComp, secondary); //$NON-NLS-1$
             break;
         case PHASE_SET_ARTYAUTOHITHEXES:
             component = new SelectArtyAutoHitHexDisplay(this);
             main = "BoardView"; //$NON-NLS-1$
             secondary = "SelectArtyAutoHitHexDisplay"; //$NON-NLS-1$
+            component.setName(secondary);
             if (!mainNames.containsValue(main)) {
-                panMain.add(main, bvc);
+                panMain.add(bvc, main);
             }
-            panSecondary.add(secondary, component);
+            panSecondary.add(component, secondary);
             break;
         case PHASE_DEPLOY_MINEFIELDS:
             component = new DeployMinefieldDisplay(this);
             main = "BoardView"; //$NON-NLS-1$
             secondary = "DeployMinefieldDisplay"; //$NON-NLS-1$
+            component.setName(secondary);
             if (!mainNames.containsValue(main)) {
-                panMain.add(main, bvc);
+                panMain.add(bvc, main);
             }
-            panSecondary.add(secondary, component);
+            panSecondary.add(component, secondary);
             break;
         case PHASE_DEPLOYMENT:
             component = new DeploymentDisplay(this);
             main = "BoardView"; //$NON-NLS-1$
             secondary = "DeploymentDisplay"; //$NON-NLS-1$
+            component.setName(secondary);
             if (!mainNames.containsValue(main)) {
-                panMain.add(main, bvc);
+                panMain.add(bvc, main);
             }
-            panSecondary.add(secondary, component);
+            panSecondary.add(component, secondary);
             break;
         case PHASE_TARGETING:
             component = new TargetingPhaseDisplay(this, false);
             ((TargetingPhaseDisplay) component).initializeListeners();
             main = "BoardView"; //$NON-NLS-1$
             secondary = "TargetingPhaseDisplay"; //$NON-NLS-1$
+            component.setName(secondary);
             if (!mainNames.containsValue(main)) {
-                panMain.add(main, bvc);
+                panMain.add(bvc, main);
             }
-            panSecondary.add(secondary, component);
+            panSecondary.add(component, secondary);
             break;
         case PHASE_MOVEMENT:
             component = new MovementDisplay(this);
             main = "BoardView"; //$NON-NLS-1$
             secondary = "MovementDisplay"; //$NON-NLS-1$
+            component.setName(secondary);
             if (!mainNames.containsValue(main)) {
-                panMain.add(main, bvc);
+                panMain.add(bvc, main);
             }
-            panSecondary.add(secondary, component);
+            panSecondary.add(component, secondary);
             break;
         case PHASE_OFFBOARD:
             component = new TargetingPhaseDisplay(this, true);
             ((TargetingPhaseDisplay) component).initializeListeners();
             main = "BoardView"; //$NON-NLS-1$
             secondary = "OffboardDisplay"; //$NON-NLS-1$
+            component.setName(secondary);
             if (!mainNames.containsValue(main)) {
-                panMain.add(main, bvc);
+                panMain.add(bvc, main);
             }
-            panSecondary.add(secondary, component);
+            panSecondary.add(component, secondary);
             break;
         case PHASE_FIRING:
             component = new FiringDisplay(this);
             main = "BoardView"; //$NON-NLS-1$
             secondary = "FiringDisplay"; //$NON-NLS-1$
+            component.setName(secondary);
             if (!mainNames.containsValue(main)) {
-                panMain.add(main, bvc);
+                panMain.add(bvc, main);
             }
-            panSecondary.add(secondary, component);
+            panSecondary.add(component, secondary);
             break;
         case PHASE_PHYSICAL:
             component = new PhysicalDisplay(this);
             main = "BoardView"; //$NON-NLS-1$
             secondary = "PhysicalDisplay"; //$NON-NLS-1$
+            component.setName(secondary);
             if (!mainNames.containsValue(main)) {
-                panMain.add(main, bvc);
+                panMain.add(bvc, main);
             }
-            panSecondary.add(secondary, component);
+            panSecondary.add(component, secondary);
             break;
         case PHASE_INITIATIVE_REPORT:
             component = new ReportDisplay(this);
             main = "ReportDisplay"; //$NON-NLS-1$
+            component.setName(main);
             secondary = main;
             panMain.add(main, component);
-            panSecondary.add(secondary, ((ReportDisplay) component).getSecondaryDisplay());
+            JComponent secondaryComponent = ((ReportDisplay) component).getSecondaryDisplay();
+            secondaryComponent.setName(secondary);
+            panSecondary.add(secondary, secondaryComponent);
             break;
         case PHASE_TARGETING_REPORT:
         case PHASE_MOVEMENT_REPORT:
@@ -840,6 +860,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 // no ReportDisplay to reuse -- get a new one
                 component = initializePanel(IGame.Phase.PHASE_INITIATIVE_REPORT);
             }
+            component.validate();
             main = "ReportDisplay"; //$NON-NLS-1$
             secondary = main;
             break;
@@ -847,8 +868,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
             main = "JLabel-Default"; //$NON-NLS-1$
             secondary = main;
+            component.setName(main);
             panMain.add(main, component);
-            panSecondary.add(secondary, new JLabel("")); //$NON-NLS-1$
+            secondaryComp = new JLabel("");
+            secondaryComp.setName(secondary);
+            panSecondary.add(secondary, secondaryComp); //$NON-NLS-1$
         }
         phaseComponents.put(name, component);
         mainNames.put(name, main);
@@ -1244,7 +1268,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case PHASE_END:
             case PHASE_VICTORY:
                 setMapVisible(false);
-                // nemchenk, 2004-01-01 -- hide MechDisplay at the end
                 mechW.setVisible(false);
                 break;
             default:

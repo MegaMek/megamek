@@ -224,7 +224,13 @@ public class MechSummaryCache {
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setRunMp(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-                    ms.setJumpMp(Integer.parseInt(s.substring(nIndex2 + 1)));
+                    nIndex1 = nIndex2;
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+                    ms.setJumpMp(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+                    nIndex1 = nIndex2;
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+                    ms.setUnitSubType(s.substring(nIndex1 + 1, nIndex2));
+                    ms.setUnloadedCost(Integer.parseInt(s.substring(nIndex2 + 1)));
 
                     // Verify that this file still exists and is older than
                     // the cache.
@@ -313,7 +319,7 @@ public class MechSummaryCache {
         loadReport.append("Saving unit cache.\n");
         FileWriter wr = new FileWriter(CACHE);
         for (MechSummary element : m_data) {
-            wr.write(element.getName() + SEPARATOR + element.getChassis() + SEPARATOR + element.getModel() + SEPARATOR + element.getUnitType() + SEPARATOR + element.getSourceFile().getPath() + SEPARATOR + element.getEntryName() + SEPARATOR + element.getYear() + SEPARATOR + element.getType() + SEPARATOR + element.getTons() + SEPARATOR + element.getBV() + SEPARATOR + element.getLevel() + SEPARATOR + element.getCost() + SEPARATOR + (element.isCanon() ? 'T' : 'F') + SEPARATOR + element.getWalkMp() + SEPARATOR + element.getRunMp() + SEPARATOR + element.getJumpMp() + "\r\n");
+            wr.write(element.getName() + SEPARATOR + element.getChassis() + SEPARATOR + element.getModel() + SEPARATOR + element.getUnitType() + SEPARATOR + element.getSourceFile().getPath() + SEPARATOR + element.getEntryName() + SEPARATOR + element.getYear() + SEPARATOR + element.getType() + SEPARATOR + element.getTons() + SEPARATOR + element.getBV() + SEPARATOR + element.getLevel() + SEPARATOR + element.getCost() + SEPARATOR + (element.isCanon() ? 'T' : 'F') + SEPARATOR + element.getWalkMp() + SEPARATOR + element.getRunMp() + SEPARATOR + element.getJumpMp() + SEPARATOR + element.getUnitSubType() + SEPARATOR + element.getUnloadedCost() + "\r\n");
         }
         wr.flush();
         wr.close();
@@ -333,6 +339,7 @@ public class MechSummaryCache {
         ms.setBV(e.calculateBattleValue());
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setCost((int) e.getCost(false));
+        ms.setUnloadedCost(((int) e.getCost(true)));
         ms.setCanon(e.isCanon());
         ms.setWalkMp(e.getWalkMP(false, false));
         ms.setRunMp(e.getRunMP(false, false));

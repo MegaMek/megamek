@@ -20,6 +20,7 @@ package megamek.client.ui;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 
 /**
  *
@@ -55,5 +56,7 @@ public interface IDisplayable {
     public void setIdleTime(long l, boolean b);
 
     public boolean slide();
+
+    public Rectangle getRectangleOccupied(Dimension drawDimension);
 
 }

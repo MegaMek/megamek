@@ -1522,11 +1522,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         clientgui.loadPreviewImage(panPreview, entity);
         dialog.add("North", panPreview); //$NON-NLS-1$
 
-        dialog.setLocation(clientgui.frame.getLocation().x
-                + clientgui.frame.getSize().width / 2 - dialog.getSize().width
-                / 2, clientgui.frame.getLocation().y
-                + clientgui.frame.getSize().height / 5
-                - dialog.getSize().height / 2);
+        dialog.setLocationRelativeTo(clientgui.frame);
         dialog.setSize(300, 450);
 
         dialog.validate();

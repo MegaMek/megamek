@@ -119,9 +119,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         pack();
         setSize(mainPanel.getSize().width, Math.max(mainPanel.getSize().height, 400));
         setResizable(true);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2
-                - getSize().width / 2, frame.getLocation().y
-                + frame.getSize().height / 2 - getSize().height / 2);
+        setLocationRelativeTo(frame);
         Dimension size = new Dimension(getSize().width*40/100,getSize().height*59/100);
         panOptions.setPreferredSize(size);
         panOptions.setMinimumSize(size);

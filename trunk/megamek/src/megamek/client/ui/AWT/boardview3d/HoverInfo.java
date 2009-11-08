@@ -21,6 +21,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Vector;
@@ -28,8 +29,6 @@ import java.util.Vector;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.GUIPreferences;
-import megamek.common.Player;
-import megamek.common.actions.*;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -41,11 +40,24 @@ import megamek.common.IHex;
 import megamek.common.LosEffects;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
-import megamek.common.Targetable;
+import megamek.common.Player;
 import megamek.common.TargetRoll;
+import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.ChargeAttackAction;
+import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.DfaAttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.KickAttackAction;
+import megamek.common.actions.ProtomechPhysicalAttackAction;
+import megamek.common.actions.PunchAttackAction;
+import megamek.common.actions.PushAttackAction;
+import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.PilotOptions;
 
 class HoverInfo implements IDisplayable {
@@ -93,7 +105,7 @@ class HoverInfo implements IDisplayable {
             }
             if (len != s.length()) {
                 int len2 = len;
-                while (len2 > 0 && " \t\r\n".indexOf(s.charAt(len2)) < 0) {
+                while ((len2 > 0) && (" \t\r\n".indexOf(s.charAt(len2)) < 0)) {
                     len2--;
                 }
                 if (len2 <= 0) {
@@ -101,12 +113,12 @@ class HoverInfo implements IDisplayable {
                 }
                 info.removeElementAt(i);
                 len = len2;
-                while (len > 0 && " \t\r\n".indexOf(s.charAt(len)) >= 0) {
+                while ((len > 0) && (" \t\r\n".indexOf(s.charAt(len)) >= 0)) {
                     len--;
                 }
                 info.insertElementAt(s.substring(0, len+1), i);
                 len = s.length();
-                while (len2 < len && " \t\r\n".indexOf(s.charAt(len2)) >= 0) {
+                while ((len2 < len) && (" \t\r\n".indexOf(s.charAt(len2)) >= 0)) {
                     len2++;
                 }
                 if (len2 < len) {
@@ -162,7 +174,7 @@ class HoverInfo implements IDisplayable {
         // it to get the target into the front arc at the correct elevation
         Coords ocoords = null;
         int ofacing = 0, osfacing = 0, oelevation = 0;
-        if (s != null && los != null) {
+        if ((s != null) && (los != null)) {
             ocoords = s.getPosition();
             ofacing = s.getFacing();
             osfacing = s.getSecondaryFacing();
@@ -189,7 +201,7 @@ class HoverInfo implements IDisplayable {
         boolean mechInSecond = (t != null? t.height() == 1 : GUIPreferences.getInstance().getMechInSecond());
         ai.attackHeight = s != null? s.height() : mechInFirst?  1 : 0;
         ai.targetHeight = t != null? t.height() : mechInSecond? 1 : 0;
-        if (los == null && s != null) {
+        if ((los == null) && (s != null)) {
             // no need to mention the attacker: it's the unit showing in the MechDisplay
             ai.attackAbsHeight = game.getBoard().getHex(src).floor() + s.absHeight();
             ai.targetAbsHeight = game.getBoard().getHex(coords).floor() + (t == null? 0 : t.absHeight());
@@ -211,13 +223,13 @@ class HoverInfo implements IDisplayable {
             }));
         }
 
-        if (t != null && s != null) {
+        if ((t != null) && (s != null)) {
             // If we have a source and a target, use exact calculation...
             int i = 0;
             Mounted eq;
             HashMap<String, Boolean> done = new HashMap<String, Boolean>();
             while ((eq = s.getEquipment(i++)) != null) {
-                if (eq.getType() instanceof WeaponType && !done.containsKey(eq.getName())) {
+                if ((eq.getType() instanceof WeaponType) && !done.containsKey(eq.getName())) {
                     ToHitData toHit = WeaponAttackAction.toHit(game, s.getId(), t, s.getEquipmentNum(eq),
                         Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
                     out.add(eq.getType().getName() + Messages.getString("BoardView1.needs") + toHit.getValueAsString() + " " + toHit.getTableDesc() //$NON-NLS-1$
@@ -277,7 +289,7 @@ class HoverInfo implements IDisplayable {
     }
 
     void setSelected(Entity en, Mounted eq, Player pl) {
-        if (en != null && !game.getBoard().contains(en.getPosition())) {
+        if ((en != null) && !game.getBoard().contains(en.getPosition())) {
             en = null;
         }
         entity = en;
@@ -432,7 +444,7 @@ class HoverInfo implements IDisplayable {
 
         }
 
-        if (equipment != null && entity != null && equipment.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+        if ((equipment != null) && (entity != null) && equipment.getType().hasFlag(WeaponType.F_ARTILLERY)) {
             int amod = 0;
             if (entity.getOwner().getArtyAutoHitHexes().contains(coords)) {
                 amod = TargetRoll.AUTOMATIC_SUCCESS;
@@ -745,5 +757,10 @@ class HoverInfo implements IDisplayable {
 
     public boolean isReleased() {
         return false;
+    }
+
+    public Rectangle getRectangleOccupied(Dimension drawDimension) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

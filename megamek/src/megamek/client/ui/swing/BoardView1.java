@@ -380,7 +380,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             }
         });
 
-        MouseMotionListener rightClickDragScroll = new MouseMotionAdapter() {
+        MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
                 Point point = e.getPoint();
@@ -457,7 +457,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 scrollpane.getViewport().setViewPosition(new Point(newX, newY));
             }
         };
-        addMouseMotionListener(rightClickDragScroll);
+        addMouseMotionListener(mouseMotionListener);
 
         //setAutoscrolls(true);
 

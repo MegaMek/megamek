@@ -39,7 +39,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
      */
     private static final long serialVersionUID = 6185643976857892270L;
 
-
     // displays
     private JTabbedPane tabs;
 
@@ -60,8 +59,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         tabs = new JTabbedPane();
 
         Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
-                GUIPreferences.getInstance().getInt(
-                        "AdvancedChatLoungeTabFontSize"));
+                GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
         tabs.setFont(tabPanelFont);
 
         resetTabs();
@@ -70,8 +68,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
 
         butDone.setText(Messages.getString("ReportDisplay.Done")); //$NON-NLS-1$
 
-        rerollInitiativeB = new JButton(Messages
-                .getString("ReportDisplay.Reroll")); //$NON-NLS-1$
+        rerollInitiativeB = new JButton(Messages.getString("ReportDisplay.Reroll")); //$NON-NLS-1$
         rerollInitiativeB.setActionCommand("reroll_initiative"); //$NON-NLS-1$
         rerollInitiativeB.addActionListener(this);
 
@@ -87,11 +84,13 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         clientgui.cb.setDoneButton(butDone);
         add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         add(clientgui.cb.getComponent(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        clientgui.cb.getComponent().setMinimumSize(clientgui.cb.getComponent().getSize());
+
     }
 
     /**
      * Show or hide the "reroll inititiative" button in this report display.
-     *
+     * 
      * @param show
      *            a <code>boolean</code> that indicates that the button should
      *            be shown in this report display.
@@ -129,8 +128,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
 
     public void resetButtons() {
         resetReadyButton();
-        if ((clientgui.getClient().game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT)
-                && clientgui.getClient().game.hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
+        if ((clientgui.getClient().game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT) && clientgui.getClient().game.hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
             showRerollButton(true);
         } else {
             showRerollButton(false);
@@ -169,16 +167,12 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             // TODO: we should remove the use of client
             for (int catchup = phaseTab + 1; catchup <= round; catchup++) {
                 if (tabs.indexOfTab("Round " + catchup) != -1) {
-                    ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs
-                            .indexOfTab("Round " + catchup))).getViewport()
-                            .getView()).setText(clientgui.getClient()
-                            .receiveReport(clientgui.getClient().game.getReports(catchup)));
+                    ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab("Round " + catchup))).getViewport().getView()).setText(clientgui.getClient().receiveReport(clientgui.getClient().game.getReports(catchup)));
                     continue;
                 }
                 String text = roundText;
                 if (catchup != round) {
-                    text = clientgui.getClient()
-                            .receiveReport(clientgui.getClient().game.getReports(catchup));
+                    text = clientgui.getClient().receiveReport(clientgui.getClient().game.getReports(catchup));
                 }
                 ta = new JTextPane();
                 ta.setContentType("text/html");
@@ -201,24 +195,18 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             tabs.setSelectedComponent(sp);
         } else {
             // Update the existing round tab and the phase tab.
-            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs
-                    .indexOfTab("Round " + round))).getViewport().getView())
-                    .setText(roundText);
-            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs
-                    .indexOfTab("Phase"))).getViewport().getView())
-                    .setText(phaseText);
+            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab("Round " + round))).getViewport().getView()).setText(roundText);
+            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab("Phase"))).getViewport().getView()).setText(phaseText);
         }
     }
 
     public void appendReportTab(String additionalText) {
         int phaseTab = tabs.indexOfTab("Phase");
         if (phaseTab > 0) {
-            JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab - 1))
-                    .getViewport().getView());
+            JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport().getView());
             pane.setText(pane.getText() + additionalText);
         }
-        JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab))
-                .getViewport().getView());
+        JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab)).getViewport().getView());
         pane.setText(pane.getText() + additionalText);
     }
 
@@ -243,15 +231,14 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        setReportTab(clientgui.getClient().game.getRoundCount(), clientgui.getClient().roundReport,
-                clientgui.getClient().phaseReport);
+        setReportTab(clientgui.getClient().game.getRoundCount(), clientgui.getClient().roundReport, clientgui.getClient().phaseReport);
         resetButtons();
         rerolled = false;
     }
 
     @Override
     protected void clear() {
-        //move along, move along, nothing to see here
+        // move along, move along, nothing to see here
     }
 
     /**
@@ -263,7 +250,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
 
     /**
      * Get the secondary display section of this phase.
-     *
+     * 
      * @return the <code>Component</code> which is displayed in the secondary
      *         section during this phase.
      */

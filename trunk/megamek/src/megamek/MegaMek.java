@@ -35,6 +35,7 @@ import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.Tank;
+import megamek.common.TechConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.verifier.EntityVerifier;
@@ -104,7 +105,7 @@ public class MegaMek {
     /**
      * This function returns the memory used in the heap (heap memory - free
      * memory).
-     *
+     * 
      * @return memory used in kB
      */
     public static String getMemoryUsed() {
@@ -117,7 +118,7 @@ public class MegaMek {
     /**
      * This function redirects the standard error and output streams to the
      * given File name.
-     *
+     * 
      * @param logFileName
      *            The file name to redirect to.
      */
@@ -142,7 +143,7 @@ public class MegaMek {
      * Starts a dedicated server with the arguments in args. See
      * {@link megamek.server.DedicatedServer#start(String[])} for more
      * information.
-     *
+     * 
      * @param args
      *            the arguments to the dedicated server.
      */
@@ -156,7 +157,7 @@ public class MegaMek {
     /**
      * Attempts to start the GUI with the given name. If the GUI is unknown the
      * program will exit.
-     *
+     * 
      * @param guiName
      *            The name of the GUI, usually AWT or swing
      * @param args
@@ -179,7 +180,7 @@ public class MegaMek {
 
     /**
      * Return the Interface to the GUI specified by the name in guiName.
-     *
+     * 
      * @param guiName
      *            the name of the GUI, will be passed on to
      *            {@link #getGUIClassName(String)}.
@@ -223,7 +224,7 @@ public class MegaMek {
     /**
      * This function appends 'agrs: []', to the buffer, with a space separated
      * list of args[] elements between the brackets.
-     *
+     * 
      * @param buffer
      *            the buffer to append the list to.
      * @param args
@@ -244,7 +245,7 @@ public class MegaMek {
 
     /**
      * Prints the message to stdout and then exits with errorcode 1.
-     *
+     * 
      * @param message
      *            the message to be displayed.
      */
@@ -255,7 +256,7 @@ public class MegaMek {
 
     /**
      * Prints the message and flushes the output stream.
-     *
+     * 
      * @param message
      */
     private static void displayMessage(String message) {
@@ -288,7 +289,7 @@ public class MegaMek {
 
     /**
      * Returns the version of Megamek
-     *
+     * 
      * @return the version of Megamek as a string.
      */
     public static String getVersion() {
@@ -322,7 +323,7 @@ public class MegaMek {
 
         /**
          * Returns <code>true</code> if the dedicated server option was found
-         *
+         * 
          * @return true iff this is a dedicated server.
          */
         public boolean dedicatedServer() {
@@ -332,7 +333,7 @@ public class MegaMek {
         /**
          * Returns the GUI Name option value or <code>null</code> if it wasn't
          * set
-         *
+         * 
          * @return GUI Name option value or <code>null</code> if it wasn't set
          */
         public String getGuiName() {
@@ -342,7 +343,7 @@ public class MegaMek {
         /**
          * Returns the log file name option value or <code>null</code> if it
          * wasn't set
-         *
+         * 
          * @return the log file name option value or <code>null</code> if it
          *         wasn't set
          */
@@ -352,7 +353,7 @@ public class MegaMek {
 
         /**
          * Returns the the <code>array</code> of the unprocessed arguments
-         *
+         * 
          * @return the the <code>array</code> of the unprocessed arguments
          */
         public String[] getRestArgs() {
@@ -582,12 +583,17 @@ public class MegaMek {
                     w.newLine();
                     w.write("This file can be regenerated with java -jar MegaMek.jar -export filename");
                     w.newLine();
-                    w.write("Type,SubType,Name,Model,BV,Cost,Year,Tonnage,Tech,Canon,Walk,Run,Jump");
+                    w.write("Type,SubType,Name,Model,BV,Cost (Loaded), Cost (Unloaded),Year,Techlevel,Tonnage,Tech,Canon,Walk,Run,Jump");
                     w.newLine();
 
                     MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
                     for (MechSummary unit : units) {
-                        w.write(unit.getUnitType());
+                        String unitType = unit.getUnitType();
+                        if (unitType.equalsIgnoreCase("mek")) {
+                            unitType = "'Mech";
+                        }
+
+                        w.write(unitType);
                         w.write(",");
                         w.write(unit.getUnitSubType());
                         w.write(",");
@@ -599,7 +605,11 @@ public class MegaMek {
                         w.write(",");
                         w.write(Integer.toString(unit.getCost()));
                         w.write(",");
+                        w.write(Integer.toString(unit.getUnloadedCost()));
+                        w.write(",");
                         w.write(Integer.toString(unit.getYear()));
+                        w.write(",");
+                        w.write(TechConstants.getLevelDisplayableName(unit.getType()));
                         w.write(",");
                         w.write(Float.toString(unit.getTons()));
                         w.write(",");

@@ -29,11 +29,15 @@ import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISLAC5;
 import megamek.common.weapons.ISMekTaser;
+import megamek.common.weapons.ISSnubNosePPC;
+import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.PPCWeapon;
+import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 
 /**
  * You know what mechs are, silly.
@@ -6004,7 +6008,8 @@ public abstract class Mech extends Entity implements Serializable {
 
     @Override
     public int getBattleForcePoints() {
-        int points = Math.round(this.calculateBattleValue(true, true) / 100);
+        double bv = this.calculateBattleValue(true, true);
+        int points = (int) Math.round(bv / 100);
         return Math.max(1, points);
     }
 
@@ -6205,8 +6210,7 @@ public abstract class Mech extends Entity implements Serializable {
         double totalDamage = 0;
         double frontArcWeaponsTotalDamage = 0;
         double rearArcWeaponsTotalDamage = 0;
-        double totalHeat = 2;
-        double currentHeat = 0;
+        double totalHeat = 0;
         boolean hasArtemis = false;
         boolean hasTC = hasTargComp();
         double baseDamage = 0;
@@ -6234,7 +6238,7 @@ public abstract class Mech extends Entity implements Serializable {
 
             WeaponType weapon = (WeaponType) mount.getType();
 
-            if ((weapon.getLongRange() < range) && !(weapon instanceof ISLAC5)) {
+            if ((weapon.getLongRange() < range) && !(weapon instanceof ISLAC5) && !(weapon instanceof ATMWeapon) && !(weapon instanceof MMLWeapon)) {
                 continue;
             }
 
@@ -6300,9 +6304,9 @@ public abstract class Mech extends Entity implements Serializable {
                 }
             }
 
-            currentHeat = weapon.getHeat() * weaponCount;
             if (weapon.hasFlag(WeaponType.F_MISSILE)) {
-                baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * weaponCount;
+                baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize());
+                baseDamage *= weaponCount;
             } else {
                 baseDamage = weapon.getDamage() * weaponCount;
             }
@@ -6316,9 +6320,9 @@ public abstract class Mech extends Entity implements Serializable {
             if (range == Entity.BATTLEFORCESHORTRANGE) {
                 int minRange = Math.min(6, Math.max(0, weapon.getMinimumRange()));
                 minRangeDamageModifier *= battleForceMinRangeModifier[minRange];
-                if (DEBUGBATTLEFORCE) {
+                if (DEBUGBATTLEFORCE && (minRange > 0)) {
                     battleForceDebugString.append("Min range damage modifier: ");
-                    battleForceDebugString.append(damageModifier);
+                    battleForceDebugString.append(minRangeDamageModifier);
                     battleForceDebugString.append('\n');
                 }
             }
@@ -6360,6 +6364,7 @@ public abstract class Mech extends Entity implements Serializable {
                     }
                     break;
                 case AmmoType.T_ATM:
+                    minRangeDamageModifier = 1;
                     switch (range) {
                         case Entity.BATTLEFORCESHORTRANGE:
                             baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount * 3;
@@ -6393,11 +6398,39 @@ public abstract class Mech extends Entity implements Serializable {
                     baseDamage = weapon.getRackSize() * 2 * weaponCount;
                     break;
                 case AmmoType.T_AC_ROTARY:
-                    currentHeat *= 6;
                     baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * weaponCount * 5;
                     break;
 
             }
+
+            if (weapon instanceof ISSnubNosePPC) {
+                switch (range) {
+                    case Entity.BATTLEFORCESHORTRANGE:
+                        baseDamage = 10;
+                        break;
+                    case Entity.BATTLEFORCELONGRANGE:
+                        baseDamage = 0;
+                        break;
+                    case Entity.BATTLEFORCEMEDIUMRANGE:
+                        baseDamage = 5;
+                        break;
+                }
+            }
+
+            if (weapon instanceof VariableSpeedPulseLaserWeapon) {
+                switch (range) {
+                    case Entity.BATTLEFORCESHORTRANGE:
+                        toHitMod = 1;
+                        break;
+                    case Entity.BATTLEFORCEMEDIUMRANGE:
+                        toHitMod = 2;
+                        break;
+                    case Entity.BATTLEFORCELONGRANGE:
+                        toHitMod = 3;
+                        break;
+                }
+            }
+
             damageModifier *= battleForceToHitModifier[toHitMod];
 
             if (DEBUGBATTLEFORCE) {
@@ -6411,7 +6444,6 @@ public abstract class Mech extends Entity implements Serializable {
 
             if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
                 damageModifier *= .1;
-                currentHeat = 0;
                 if (DEBUGBATTLEFORCE) {
                     battleForceDebugString.append("One Shot Modifier Damage Modifier: ");
                     battleForceDebugString.append(damageModifier);
@@ -6428,18 +6460,17 @@ public abstract class Mech extends Entity implements Serializable {
                 }
             }
 
-            if ((weapon.getAmmoType() == AmmoType.T_LRM) || (weapon.getAmmoType() == AmmoType.T_AC) || (weapon.getAmmoType() == AmmoType.T_SRM)) {
+            if ((weapon.getAmmoType() == AmmoType.T_LRM) || (weapon.getAmmoType() == AmmoType.T_AC) || (weapon.getAmmoType() == AmmoType.T_LAC) || (weapon.getAmmoType() == AmmoType.T_SRM)) {
                 double damage = baseDamage * damageModifier;
 
                 // if damage is greater then 10 then we do not add it to the
                 // standard damage it will be used in special weapons
-                if (((damage < 10) || ignoreSpecialAbility) || hasArtemis) {
+                if (((damage < 10)) || (ignoreSpecialAbility && !hasArtemis) || (!ignoreSpecialAbility && hasArtemis)) {
 
                     if (range == Entity.BATTLEFORCESHORTRANGE) {
                         damage *= minRangeDamageModifier;
                     }
                     frontArcWeaponsTotalDamage += damage;
-                    totalHeat += currentHeat;
                     if (DEBUGBATTLEFORCE) {
                         battleForceDebugString.append("LRM/SRM/AC/MML Damage No Special Ability: ");
                         battleForceDebugString.append(damage);
@@ -6466,9 +6497,17 @@ public abstract class Mech extends Entity implements Serializable {
                         battleForceDebugString.append('\n');
                     }
                 }
-                totalHeat += currentHeat;
             } else if (weapon.getAmmoType() == AmmoType.T_MML) {
                 double ammoDamage = 1;
+
+                Mounted mLinker = mount.getLinkedBy();
+                if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS))) {
+                    baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
+                    hasArtemis = true;
+                } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V))) {
+                    baseDamage = Compute.calculateClusterHitTableAmount(10, weapon.getRackSize()) * weaponCount;
+                    hasArtemis = true;
+                }
 
                 switch (range) {
                     case Entity.BATTLEFORCESHORTRANGE:
@@ -6482,19 +6521,13 @@ public abstract class Mech extends Entity implements Serializable {
                         baseDamage = Math.round((baseDamage * 3) / 2);
                         break;
                 }
-                if (range == Entity.BATTLEFORCESHORTRANGE) {
-                    baseDamage *= minRangeDamageModifier;
-                }
+
                 double damage = baseDamage * damageModifier;
                 // if damage is greater then 10 then we do not add it to the
                 // standard damage it will be used in special weapons
-                if (((damage < 10) && !ignoreSpecialAbility) || hasArtemis) {
+                if (((damage < 10)) || (ignoreSpecialAbility && !hasArtemis) || (!ignoreSpecialAbility && hasArtemis)) {
 
-                    if (range == Entity.BATTLEFORCESHORTRANGE) {
-                        damage *= minRangeDamageModifier;
-                    }
-                    frontArcWeaponsTotalDamage += damage;
-                    totalHeat += currentHeat;
+                    frontArcWeaponsTotalDamage += damage * ammoDamage;
                     if (DEBUGBATTLEFORCE) {
                         battleForceDebugString.append("MML Damage: ");
                         battleForceDebugString.append(baseDamage * ammoDamage * damageModifier);
@@ -6506,23 +6539,12 @@ public abstract class Mech extends Entity implements Serializable {
                     baseDamage *= minRangeDamageModifier;
                 }
                 frontArcWeaponsTotalDamage += baseDamage * damageModifier;
-                totalHeat += currentHeat;
                 if (DEBUGBATTLEFORCE) {
                     battleForceDebugString.append(weapon.getName());
                     battleForceDebugString.append(" Damage: ");
                     battleForceDebugString.append(baseDamage * damageModifier);
                     battleForceDebugString.append('\n');
                 }
-            }
-        }
-
-        // finish the max heat calculations
-        if (this.getJumpMP() > 0) {
-            totalHeat += getJumpHeat(getJumpMP());
-        } else {
-            // Industrials do not get 2 heat for run/walk
-            if (!isIndustrial()) {
-                totalHeat += getEngine().getRunHeat();
             }
         }
 
@@ -6533,9 +6555,9 @@ public abstract class Mech extends Entity implements Serializable {
             battleForceDebugString.append('\n');
         }
 
-        totalHeat -= 4;
+        totalHeat = getBattleForceTotalHeatGeneration() - 4;
+
         if ((totalHeat > getHeatCapacity()) && !ignoreHeat) {
-            totalDamage = Math.ceil((totalDamage * getHeatCapacity()) / totalHeat);
             if (DEBUGBATTLEFORCE) {
                 battleForceDebugString.append("Total Heat -4: ");
                 battleForceDebugString.append(totalHeat);
@@ -6543,7 +6565,16 @@ public abstract class Mech extends Entity implements Serializable {
                 battleForceDebugString.append("Total Damage: ");
                 battleForceDebugString.append(totalDamage);
                 battleForceDebugString.append('\n');
+                battleForceDebugString.append(totalDamage);
+                battleForceDebugString.append(" * ");
+                battleForceDebugString.append(getHeatCapacity());
+                battleForceDebugString.append(" / ");
+                battleForceDebugString.append(totalHeat);
+                battleForceDebugString.append(" = ");
+                battleForceDebugString.append((totalDamage * getHeatCapacity()) / totalHeat);
+                battleForceDebugString.append('\n');
             }
+            totalDamage = Math.ceil((totalDamage * getHeatCapacity()) / totalHeat);
         }
 
         if (ammoType != AmmoType.T_NA) {
@@ -6557,6 +6588,9 @@ public abstract class Mech extends Entity implements Serializable {
     @Override
     public String getBattleForceSpecialAbilites() {
 
+        boolean debugStatus = DEBUGBATTLEFORCE;
+        DEBUGBATTLEFORCE = false;
+
         StringBuffer results = new StringBuffer("");
 
         if (hasWorkingMisc(Sensor.LIGHT_AP)) {
@@ -6567,8 +6601,20 @@ public abstract class Mech extends Entity implements Serializable {
             results.append("AFC, ");
         }
 
-        if (getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC, false, true) >= 1) {
-            results.append(String.format("AC: %1$s/%2$s/%3$s, ", getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_AC, false, true), getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC, false, true), getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_AC, false, true)));
+        int acDamage = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC, false, true);
+        acDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LAC, false, true);
+        if (acDamage >= 1) {
+
+            int shortACDamage = 0;
+            int longACDamage = 0;
+
+            shortACDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_AC, false, true);
+            shortACDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_LAC, false, true);
+
+            longACDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_AC, false, true);
+            longACDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_LAC, false, true);
+
+            results.append(String.format("AC: %1$s/%2$s/%3$s, ", shortACDamage, acDamage, longACDamage));
         }
 
         if (hasWorkingMisc(MiscType.F_ANGEL_ECM, -1)) {
@@ -6676,7 +6722,27 @@ public abstract class Mech extends Entity implements Serializable {
         flakDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_HAG);
 
         if ((flakDamage > 0) && (flakDamage >= getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE) / 2)) {
-            results.append("FLK, ");
+
+            int flakShortRangeDamage = 0;
+            int flakMediumRangeDamage = 0;
+            int flakLongRangeDamage = 0;
+
+            flakShortRangeDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_AC_LBX);
+            flakShortRangeDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_HAG);
+
+            flakMediumRangeDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC_LBX);
+            flakMediumRangeDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_HAG);
+
+            flakLongRangeDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_AC_LBX);
+            flakLongRangeDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_HAG);
+
+            results.append("FLK ");
+            results.append(flakShortRangeDamage);
+            results.append("/");
+            results.append(flakMediumRangeDamage);
+            results.append("/");
+            results.append(flakLongRangeDamage);
+            results.append(", ");
         }
 
         if (narcBeacons > 0) {
@@ -6687,54 +6753,19 @@ public abstract class Mech extends Entity implements Serializable {
 
         int ifDamage = 0;
 
-        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_SRM, false, true);
-        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LRM, false, true);
-        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_EXLRM, false, true);
-        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true);
-        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_10, false, true);
-        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_15, false, true);
-        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_20, false, true);
-        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_5, false, true);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_LRM);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_EXLRM);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_MML);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_10);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_15);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_20);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_5);
+        ifDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_MEK_MORTAR);
 
         if (ifDamage > 0) {
 
-            int ifShortDamage = 0;
-            int ifMediumDamage = 0;
-            int ifLongDamage = 0;
-
-            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_SRM, false, true);
-            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_LRM, false, true);
-            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_EXLRM, false, true);
-            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_MML, false, true);
-            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_TBOLT_10, false, true);
-            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_TBOLT_15, false, true);
-            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_TBOLT_20, false, true);
-            ifShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_TBOLT_5, false, true);
-
-            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_SRM, false, true);
-            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LRM, false, true);
-            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_EXLRM, false, true);
-            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true);
-            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_10, false, true);
-            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_15, false, true);
-            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_20, false, true);
-            ifMediumDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_TBOLT_5, false, true);
-
-            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_SRM, false, true);
-            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_LRM, false, true);
-            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_EXLRM, false, true);
-            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_MML, false, true);
-            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_10, false, true);
-            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_15, false, true);
-            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_20, false, true);
-            ifLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_5, false, true);
-
             results.append("IF ");
-            results.append(ifShortDamage);
-            results.append("/");
-            results.append(ifMediumDamage);
-            results.append("/");
-            results.append(ifLongDamage);
+            results.append(ifDamage);
             results.append(", ");
         }
 
@@ -6746,12 +6777,17 @@ public abstract class Mech extends Entity implements Serializable {
             results.append("LTAG, ");
         }
 
-        if (getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LRM, false, true) >= 1) {
-            results.append(String.format("LRM: %1$s/%2$s/%3$s, ", getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_LRM, false, true), getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LRM, false, true), getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_LRM, false, true)));
-        }
+        int lrmDamage = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LRM, false, true);
+        lrmDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true) / 2;
 
-        if (getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true) >= 1) {
-            results.append(String.format("MML: %1$s/%2$s/%3$s, ", getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_MML, false, true), getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true), getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_MML, false, true)));
+        if (lrmDamage >= 1) {
+
+            int lrmShortDamage = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_LRM, false, true);
+
+            int lrmLongDamage = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_LRM, false, true);
+            lrmLongDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_MML, false, true);
+
+            results.append(String.format("LRM: %1$s/%2$s/%3$s, ", lrmShortDamage, lrmDamage, lrmLongDamage));
         }
 
         if (hasWorkingMisc(MiscType.F_CLUB, -1) || hasWorkingMisc(MiscType.F_HAND_WEAPON, -1)) {
@@ -6784,8 +6820,14 @@ public abstract class Mech extends Entity implements Serializable {
             results.append("STL, ");
         }
 
-        if (getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_SRM, false, true) >= 1) {
-            results.append(String.format("SRM: %1$s/%2$s/%3$s, ", getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_SRM, false, true), getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_SRM, false, true), getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, AmmoType.T_SRM, false, true)));
+        int srmDamage = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_SRM, false, true);
+        srmDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true) / 2;
+
+        if (srmDamage >= 1) {
+            int srmShortDamage = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_SRM, false, true);
+            srmShortDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, AmmoType.T_MML, false, true);
+
+            results.append(String.format("SRM: %1$s/%2$s/0, ", srmShortDamage, srmDamage));
         }
 
         if (hasTSM()) {
@@ -6803,6 +6845,10 @@ public abstract class Mech extends Entity implements Serializable {
         if (results.length() < 1) {
             return "None";
         }
+
+        DEBUGBATTLEFORCE = debugStatus;
+
+        printDebugToFile();
 
         results.setLength(results.length() - 2);
         return results.toString();

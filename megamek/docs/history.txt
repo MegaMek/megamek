@@ -61,6 +61,7 @@ v0.35.9-dev (SVN)
 + Enabled ChatterBox2
 + Minor patch for squished Chat box in report windows. still needs work.
 + More BF conversion code added.
++ IDisplayable drawing improvement
 
 v0.35.8 (2009-10-18, 22:34 UTC+2)
 + Bug: infantry flamer not causing heat correctly

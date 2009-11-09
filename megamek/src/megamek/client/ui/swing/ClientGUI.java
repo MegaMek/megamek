@@ -23,8 +23,6 @@ import java.awt.Font;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
@@ -583,7 +581,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             GUIPreferences.getInstance().setDisplaySizeHeight(mechW.getSize().height);
         }
 
-        // added by kenn
         // also ruler display
         if ((ruler != null) && (ruler.getSize().width != 0) && (ruler.getSize().height != 0)) {
             GUIPreferences.getInstance().setRulerPosX(ruler.getLocation().x);
@@ -591,7 +588,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             GUIPreferences.getInstance().setRulerSizeWidth(ruler.getSize().width);
             GUIPreferences.getInstance().setRulerSizeHeight(ruler.getSize().height);
         }
-        // end kenn
     }
 
     /**
@@ -698,8 +694,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (curPanel == null) {
             curPanel = initializePanel(phase);
         }
-        cardsMain.show(panMain, mainNames.get(name).toString());
-        cardsSecondary.show(panSecondary, secondaryNames.get(name).toString());
+        cardsMain.show(panMain, mainNames.get(name));
+        String secondaryToShow = secondaryNames.get(name);
+        // only show the secondary component if there is one to show
+        if (secondaryToShow != null) {
+            panSecondary.setVisible(true);
+            cardsSecondary.show(panSecondary, secondaryNames.get(name));
+        } else {
+            // otherwise, hide the panel
+            panSecondary.setVisible(false);
+        }
 
         // Set the new panel's listeners
         if (curPanel instanceof BoardViewListener) {
@@ -722,7 +726,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         // Create the components for this phase.
         String name = String.valueOf(phase);
         JComponent component;
-        String secondary;
+        String secondary = null;
         String main;
         switch (phase) {
         case PHASE_LOUNGE:
@@ -730,30 +734,19 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             chatlounge = (ChatLounge) component;
             main = "ChatLounge"; //$NON-NLS-1$
             component.setName(main);
-            secondary = main;
             panMain.add(component, main);
-            ((ChatLounge)component).getSecondaryDisplay().setName(secondary);
-            panSecondary.add(((ChatLounge) component).getSecondaryDisplay(), secondary);
             break;
         case PHASE_STARTING_SCENARIO:
             component = new JLabel(Messages.getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
             main = "JLabel-StartingScenario"; //$NON-NLS-1$
             component.setName(main);
-            secondary = main;
             panMain.add(component, main);
-            JLabel secondaryComp = new JLabel("");
-            secondaryComp.setName(secondary);
-            panSecondary.add(secondaryComp, secondary); //$NON-NLS-1$
             break;
         case PHASE_EXCHANGE:
             component = new JLabel(Messages.getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
             main = "JLabel-Exchange"; //$NON-NLS-1$
             component.setName(main);
-            secondary = main;
             panMain.add(component, main);
-            secondaryComp = new JLabel("");
-            secondaryComp.setName(secondary);
-            panSecondary.add(secondaryComp, secondary); //$NON-NLS-1$
             break;
         case PHASE_SET_ARTYAUTOHITHEXES:
             component = new SelectArtyAutoHitHexDisplay(this);
@@ -841,11 +834,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             component = new ReportDisplay(this);
             main = "ReportDisplay"; //$NON-NLS-1$
             component.setName(main);
-            secondary = main;
             panMain.add(main, component);
-            JComponent secondaryComponent = ((ReportDisplay) component).getSecondaryDisplay();
-            secondaryComponent.setName(secondary);
-            panSecondary.add(secondary, secondaryComponent);
             break;
         case PHASE_TARGETING_REPORT:
         case PHASE_MOVEMENT_REPORT:
@@ -862,7 +851,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             }
             component.validate();
             main = "ReportDisplay"; //$NON-NLS-1$
-            secondary = main;
             break;
         default:
             component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
@@ -870,19 +858,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             secondary = main;
             component.setName(main);
             panMain.add(main, component);
-            secondaryComp = new JLabel("");
-            secondaryComp.setName(secondary);
-            panSecondary.add(secondary, secondaryComp); //$NON-NLS-1$
         }
         phaseComponents.put(name, component);
         mainNames.put(name, main);
-        secondaryNames.put(name, secondary);
+        if (secondary != null) {
+            secondaryNames.put(name, secondary);
+        }
         return component;
-    }
-
-    protected void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
     }
 
     protected void showBoardPopup(Coords c) {
@@ -1247,6 +1229,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (rD != null) {
                     rD.resetTabs();
                 }
+                cb.getComponent().setVisible(true);
                 getBoardView().getTilesetManager().reset();
                 break;
             case PHASE_DEPLOY_MINEFIELDS:
@@ -1273,9 +1256,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             default:
             }
             menuBar.setPhase(getClient().game.getPhase());
-            cb.getComponent().setVisible(true);
             validate();
-            doLayout();
             cb.moveToEnd();
         }
 

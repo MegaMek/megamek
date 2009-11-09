@@ -133,6 +133,7 @@ public class ChatterBox implements KeyListener {
         subPanel.add(inputField, BorderLayout.SOUTH);
         chatPanel.add(subPanel, BorderLayout.CENTER);
         chatPanel.add(butDone, BorderLayout.EAST);
+        chatPanel.setMinimumSize(chatPanel.getPreferredSize());
     }
 
     /**

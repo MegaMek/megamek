@@ -759,7 +759,7 @@ class HoverInfo implements IDisplayable {
         return false;
     }
 
-    public Rectangle getRectangleOccupied(Dimension drawDimension) {
+    public Rectangle getRectangleOccupied(Point relativeTo, Dimension size) {
         // TODO Auto-generated method stub
         return null;
     }

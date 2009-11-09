@@ -21,7 +21,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -261,15 +260,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
     public boolean isBeingDragged() {
         return scrolling;
-    }
-
-    public Rectangle getRectangleOccupied(Dimension drawDimension) {
-        Rectangle rect = new Rectangle();
-        rect.x = DIST_SIDE;
-        rect.y = (drawDimension.height) + HEIGHT + DIST_BOTTOM + DIST_BOTTOM + slideOffset;
-        rect.width = WIDTH;
-        rect.height = HEIGHT;
-        return rect;
     }
 
     public boolean isMouseOver(Point p, Dimension size) {

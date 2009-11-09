@@ -42,7 +42,7 @@ import megamek.common.util.StringUtil;
 // A graphical chatterbox within the boardview.
 public class ChatterBox2 implements KeyListener, IDisplayable {
 
-    private static final Font FONT_CHAT = new Font("SansSerif", Font.BOLD, 12);
+    private static final Font FONT_CHAT = new Font("SansSerif", Font.BOLD, GUIPreferences.getInstance().getInt("AdvancedChatbox2Fontsize"));
     private static final Color COLOR_TEXT_BACK = Color.black;
     private static final Color COLOR_TEXT_FRONT = Color.white;
     private static final Color COLOR_BACKGROUND;
@@ -50,7 +50,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     static {
         Color temp;
         try {
-            temp = new Color(0, 0, 0, 75);
+            temp = GUIPreferences.getInstance().getColor("AdvancedChatbox2BackColor");
+            temp = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), GUIPreferences.getInstance().getInt("AdvancedChatbox2Transparancy"));
         } catch (Throwable err) {
             temp = Color.gray;
         }

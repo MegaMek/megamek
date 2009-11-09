@@ -849,7 +849,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 // no ReportDisplay to reuse -- get a new one
                 component = initializePanel(IGame.Phase.PHASE_INITIATIVE_REPORT);
             }
-            component.validate();
             main = "ReportDisplay"; //$NON-NLS-1$
             break;
         default:
@@ -1221,7 +1220,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             switchPanel(getClient().game.getPhase());
 
             // Handle phase-specific items.
-            switch (e.getNewPhase()) {
+            switch (getClient().game.getPhase()) {
             case PHASE_LOUNGE:
                 // reset old report tabs and images, if any
                 ReportDisplay rD = (ReportDisplay) phaseComponents.get(String
@@ -1229,7 +1228,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (rD != null) {
                     rD.resetTabs();
                 }
-                cb.getComponent().setVisible(true);
+                ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(IGame.Phase.PHASE_LOUNGE));
+                cb.setDoneButton(cl.butDone);
+                cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
                 break;
             case PHASE_DEPLOY_MINEFIELDS:

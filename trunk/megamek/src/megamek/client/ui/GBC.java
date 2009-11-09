@@ -171,5 +171,27 @@ public class GBC extends GridBagConstraints {
         gridwidth = width;
         return this;
     }
+
+    /**
+     * Set the weightx of this <code>GridBagConstraints</code>
+     * @param weight the <code>double</code> weightx to set
+     * @return <code>this</code>
+     * @see GridBagConstraints#weightx
+     */
+    public GBC weightx(double weight) {
+        weightx = weight;
+        return this;
+    }
+
+    /**
+     * Set the weighty of this <code>GridBagConstraints</code>
+     * @param weight the <code>double</code> weighty to set
+     * @return <code>this</code>
+     * @see GridBagConstraints#weighty
+     */
+    public GBC weighty(double weight) {
+        weighty = weight;
+        return this;
+    }
 }
 

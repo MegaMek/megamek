@@ -21,7 +21,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -84,13 +83,13 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         clientgui.cb.setDoneButton(butDone);
         add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         add(clientgui.cb.getComponent(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-        clientgui.cb.getComponent().setMinimumSize(clientgui.cb.getComponent().getSize());
+        add(panStatus, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
     }
 
     /**
      * Show or hide the "reroll inititiative" button in this report display.
-     * 
+     *
      * @param show
      *            a <code>boolean</code> that indicates that the button should
      *            be shown in this report display.
@@ -246,16 +245,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
      */
     public void removeAllListeners() {
         clientgui.getClient().game.removeGameListener(this);
-    }
-
-    /**
-     * Get the secondary display section of this phase.
-     * 
-     * @return the <code>Component</code> which is displayed in the secondary
-     *         section during this phase.
-     */
-    public JComponent getSecondaryDisplay() {
-        return panStatus;
     }
 
 }

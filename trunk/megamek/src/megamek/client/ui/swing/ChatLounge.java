@@ -46,7 +46,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -259,8 +258,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             add(panMain, BorderLayout.CENTER);
         }
         clientgui.cb.setDoneButton(butDone);
-        add(clientgui.cb.getComponent(), BorderLayout.SOUTH);
-
+        JPanel tempPanel = new JPanel(new BorderLayout());
+        tempPanel.setName("temppanel");
+        tempPanel.add(clientgui.cb.getComponent(), BorderLayout.CENTER);
+        tempPanel.add(labStatus, BorderLayout.SOUTH);
+        add(tempPanel, BorderLayout.SOUTH);
         validate();
     }
 
@@ -860,7 +862,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         /*
          * gridbag.setConstraints(butLoadCustomBA, c);
          * panButtons.add(butLoadCustomBA);
-         * 
+         *
          * c.gridx = 0; c.gridy = 4;
          */
         gridbag.setConstraints(butLoadCustomFS, c);
@@ -1888,16 +1890,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     public void removeAllListeners() {
         clientgui.getClient().game.removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
-    }
-
-    /**
-     * Get the secondary display section of this phase.
-     * 
-     * @return the <code>Component</code> which is displayed in the secondary
-     *         section during this phase.
-     */
-    public JComponent getSecondaryDisplay() {
-        return labStatus;
     }
 
     // TODO Is there a better solution?

@@ -171,8 +171,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     private JPanel panTop;
 
-    private JLabel labStatus;
-
     private JButton butAddBot;
     private JButton butRemoveBot;
 
@@ -247,8 +245,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         setupMainPanel();
 
-        labStatus = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
-
         // layout main thing
         setLayout(new BorderLayout());
 
@@ -257,13 +253,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         } else {
             add(panMain, BorderLayout.CENTER);
         }
-        clientgui.cb.setDoneButton(butDone);
-        JPanel tempPanel = new JPanel(new BorderLayout());
-        tempPanel.setName("temppanel");
-        tempPanel.add(clientgui.cb.getComponent(), BorderLayout.CENTER);
-        tempPanel.add(labStatus, BorderLayout.SOUTH);
-        add(tempPanel, BorderLayout.SOUTH);
-        validate();
     }
 
     /**

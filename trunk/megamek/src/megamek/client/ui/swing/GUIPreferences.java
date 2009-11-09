@@ -161,7 +161,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_TRANSLUCENT_HIDDEN_UNITS, true);
         store.setDefault(ADVANCED_ATTACK_ARROW_TRANSPARENCY, 0x80);
         setDefault(ADVANCED_BUILDING_TEXT_COLOR, "blue");
-        setDefault(ADVANCED_CHATBOX2_BACKCOLOR, new Color(100, 100, 100));
+        setDefault(ADVANCED_CHATBOX2_BACKCOLOR, new Color(255, 255, 255));
         store.setDefault(ADVANCED_CHATBOX2_FONTSIZE, 12);
         store.setDefault(ADVANCED_CHATBOX2_TRANSPARANCY, 50);
 

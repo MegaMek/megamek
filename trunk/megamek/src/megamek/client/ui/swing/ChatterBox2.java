@@ -265,7 +265,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     public Rectangle getRectangleOccupied(Dimension drawDimension) {
         Rectangle rect = new Rectangle();
         rect.x = DIST_SIDE;
-        rect.y = (drawDimension.height) - HEIGHT - DIST_BOTTOM + slideOffset;
+        rect.y = (drawDimension.height) + HEIGHT + DIST_BOTTOM + DIST_BOTTOM + slideOffset;
         rect.width = WIDTH;
         rect.height = HEIGHT;
         return rect;
@@ -669,7 +669,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 }
                 break;
             case KeyEvent.VK_ESCAPE:
-                clearMessageBox();
                 break;
             case KeyEvent.VK_BACK_SPACE:
                 if ((message == null) || message.equals("")) {

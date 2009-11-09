@@ -21,7 +21,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -519,15 +518,6 @@ public class UnitOverview implements IDisplayable {
             s = s.substring(0, s.length() - 1);
         }
         return s;
-    }
-
-    public Rectangle getRectangleOccupied(Dimension drawDimension) {
-        Rectangle rect = new Rectangle();
-        rect.x = drawDimension.width - DIST_SIDE - ICON_WIDTH;
-        rect.y = DIST_TOP;
-        rect.width = ICON_WIDTH;
-        rect.height = unitsPerPage * (ICON_HEIGHT + PADDING);
-        return rect;
     }
 
 }

@@ -5476,15 +5476,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      * refresh the IDisplayables
      */
     public void refreshDisplayables() {
-        for (int i = 0; i < displayables.size(); i++) {
-            IDisplayable disp = displayables.get(i);
-            double width = Math.min(boardSize.getWidth(), scrollpane.getViewport().getSize().getWidth());
-            double height = Math.min(boardSize.getHeight(), scrollpane.getViewport().getSize().getHeight());
-            Dimension drawDimension = new Dimension();
-            drawDimension.setSize(width, height);
-            // only repaint the part that's actually occupied by them
-            repaint(disp.getRectangleOccupied(drawDimension));
-        }
+        repaint();
     }
 
     public void showPopup(Object popup, Coords c) {

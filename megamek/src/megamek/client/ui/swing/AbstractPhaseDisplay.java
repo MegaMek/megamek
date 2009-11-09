@@ -223,7 +223,6 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
         //noaction default
     }
 
-
     public void ready() {
     }
 }

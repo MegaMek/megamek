@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.34.9-dev (SVN)
+v0.34.9 (2009-11-09, 19:32 UTC+1)
 + Bug 2585799: Pilot damage assigned to vehicle crew
 + Bug: NPE when DFAing a VTOL off the board
 + Bug: AC AP ammo still doing crits against partial cover

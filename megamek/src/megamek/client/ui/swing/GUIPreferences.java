@@ -61,6 +61,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_TRANSLUCENT_HIDDEN_UNITS = "AdvancedTranslucentHiddenUnits";
     public static final String ADVANCED_ATTACK_ARROW_TRANSPARENCY = "AdvancedAttackArrowTransparency";
     public static final String ADVANCED_BUILDING_TEXT_COLOR = "AdvancedBuildingTextColor";
+    public static final String ADVANCED_CHATBOX2_FONTSIZE = "AdvancedChatbox2Fontsize";
+    public static final String ADVANCED_CHATBOX2_BACKCOLOR = "AdvancedChatbox2BackColor";
+    public static final String ADVANCED_CHATBOX2_TRANSPARANCY = "AdvancedChatbox2Transparancy";
     /* --End advanced settings-- */
 
     public static final String AUTO_END_FIRING = "AutoEndFiring";
@@ -125,7 +128,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String LOS_MECH_IN_SECOND = "LOSMechInSecond";
     public static final String SHOW_MAPSHEETS = "ShowMapsheets";
     public static final String USE_ISOMETRIC = "UseIsometric";
-    
+
     protected static GUIPreferences instance = new GUIPreferences();
 
     public static GUIPreferences getInstance() {
@@ -158,6 +161,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_TRANSLUCENT_HIDDEN_UNITS, true);
         store.setDefault(ADVANCED_ATTACK_ARROW_TRANSPARENCY, 0x80);
         setDefault(ADVANCED_BUILDING_TEXT_COLOR, "blue");
+        setDefault(ADVANCED_CHATBOX2_BACKCOLOR, new Color(100, 100, 100));
+        store.setDefault(ADVANCED_CHATBOX2_FONTSIZE, 12);
+        store.setDefault(ADVANCED_CHATBOX2_TRANSPARANCY, 50);
 
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
@@ -301,7 +307,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getMinimapEnabled() {
         return store.getBoolean(MINIMAP_ENABLED);
     }
-    
+
     public boolean getIsometricEnabled() {
         return store.getBoolean(USE_ISOMETRIC);
     }
@@ -664,7 +670,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setShowMapsheets(boolean b) {
         store.setValue(SHOW_MAPSHEETS, b);
     }
-    
+
     public void setIsometricEnabled(boolean b) {
         store.setValue(USE_ISOMETRIC, b);
     }

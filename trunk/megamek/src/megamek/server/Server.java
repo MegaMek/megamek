@@ -64,6 +64,8 @@ import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Engine;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EntityMovementType;
 import megamek.common.EntitySelector;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentMode;
@@ -78,8 +80,6 @@ import megamek.common.HexTarget;
 import megamek.common.HitData;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityMovementType;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -21339,7 +21339,7 @@ public class Server implements Runnable {
                 } // End update-unit-numbetr
 
             } // End added-Protomech
-
+            game.removeTurnFor(entity);
             game.removeEntity(entityId, IEntityRemovalConditions.REMOVE_NEVER_JOINED);
             send(createRemoveEntityPacket(entityId, IEntityRemovalConditions.REMOVE_NEVER_JOINED));
         }

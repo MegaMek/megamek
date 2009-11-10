@@ -2532,7 +2532,9 @@ public abstract class Mech extends Entity implements Serializable {
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD))) || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) || ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
                     // not yet coded: ||
                     // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || etype.hasFlag(MiscType.F_BAP)))) {
+                    || etype.hasFlag(MiscType.F_BAP)
+                    || etype.hasFlag(MiscType.F_SPIKES)
+                    || (etype.hasFlag(MiscType.F_CLUB) && (etype.hasSubType(MiscType.S_SHIELD_LARGE) || etype.hasSubType(MiscType.S_SHIELD_MEDIUM) || etype.hasSubType(MiscType.S_SHIELD_SMALL)))))) {
                 double bv = etype.getBV(this);
                 dEquipmentBV += bv;
                 bvText.append(startRow);
@@ -3445,7 +3447,9 @@ public abstract class Mech extends Entity implements Serializable {
 
             if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_AP_POD)
                     // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) {
+                    || mtype.hasFlag(MiscType.F_TARGCOMP)
+                    || mtype.hasFlag(MiscType.F_SPIKES)
+                    || (mtype.hasFlag(MiscType.F_CLUB) && (mtype.hasSubType(MiscType.S_SHIELD_LARGE) || mtype.hasSubType(MiscType.S_SHIELD_MEDIUM) || mtype.hasSubType(MiscType.S_SHIELD_SMALL)))) {
                 // weapons
                 continue;
             }

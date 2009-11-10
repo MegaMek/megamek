@@ -127,25 +127,25 @@ public abstract class Mech extends Entity implements Serializable {
 
     public static final int COCKPIT_STANDARD = 0;
 
-    public static final int COCKPIT_TORSO_MOUNTED = 1;
+    public static final int COCKPIT_INDUSTRIAL = 1;
 
-    public static final int COCKPIT_SMALL = 2;
+    public static final int COCKPIT_PRIMITIVE = 2;
 
-    public static final int COCKPIT_COMMAND_CONSOLE = 3;
+    public static final int COCKPIT_PRIMITIVE_INDUSTRIAL = 3;
 
-    public static final int COCKPIT_DUAL = 4;
+    public static final int COCKPIT_SMALL = 4;
 
-    public static final int COCKPIT_INDUSTRIAL = 5;
+    public static final int COCKPIT_COMMAND_CONSOLE = 5;
 
-    public static final int COCKPIT_PRIMITIVE = 6;
+    public static final int COCKPIT_TORSO_MOUNTED = 6;
 
-    public static final int COCKPIT_PRIMITIVE_INDUSTRIAL = 7;
+    public static final int COCKPIT_DUAL = 7;
 
     public static final String[] COCKPIT_STRING =
-        { "Standard Cockpit", "Torso-Mounted Cockpit", "Small Cockpit", "Command Console", "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit", "Primitive Industrial Cockpit" };
+        { "Standard Cockpit", "Industrial Cockpit", "Primitive Cockpit", "Primitive Industrial Cockpit", "Small Cockpit", "Command Console", "Torso-Mounted Cockpit", "Dual Cockpit" };
 
     public static final String[] COCKPIT_SHORT_STRING =
-        { "Standard", "Torso Mounted", "Small", "Command Console", "Dual", "Industrial", "Primitive", "Primitive Industrial" };
+        { "Standard", "Industrial", "Primitive", "Primitive Industrial", "Small", "Command Console", "Torso Mounted", "Dual" };
 
     // jump types
     public static final int JUMP_UNKNOWN = -1;
@@ -6465,7 +6465,7 @@ public abstract class Mech extends Entity implements Serializable {
 
                 // if damage is greater then 10 then we do not add it to the
                 // standard damage it will be used in special weapons
-                if (((damage < 10)) || (ignoreSpecialAbility && !hasArtemis) || (!ignoreSpecialAbility && hasArtemis)) {
+                if (((damage < 10) && !ignoreSpecialAbility) || (ignoreSpecialAbility && !hasArtemis && (damage >= 10)) || (!ignoreSpecialAbility && hasArtemis)) {
 
                     if (range == Entity.BATTLEFORCESHORTRANGE) {
                         damage *= minRangeDamageModifier;
@@ -6525,7 +6525,7 @@ public abstract class Mech extends Entity implements Serializable {
                 double damage = baseDamage * damageModifier;
                 // if damage is greater then 10 then we do not add it to the
                 // standard damage it will be used in special weapons
-                if (((damage < 10)) || (ignoreSpecialAbility && !hasArtemis) || (!ignoreSpecialAbility && hasArtemis)) {
+                if (((damage < 10) && !ignoreSpecialAbility) || (ignoreSpecialAbility && !hasArtemis && (damage >= 10)) || (!ignoreSpecialAbility && hasArtemis)) {
 
                     frontArcWeaponsTotalDamage += damage * ammoDamage;
                     if (DEBUGBATTLEFORCE) {

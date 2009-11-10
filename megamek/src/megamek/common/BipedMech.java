@@ -68,15 +68,15 @@ public class BipedMech extends Mech {
         } else if (hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)) {
             canFlip = false;
         }
-        
+
         if(getQuirks().booleanOption("hyper_actuator")) {
             canFlip = true;
         }
-        
+
         if(getQuirks().booleanOption("no_arms")) {
             canFlip = false;
         }
-        
+
         if(isProne()) {
             canFlip = false;
         }
@@ -475,10 +475,16 @@ public class BipedMech extends Mech {
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             if ( ((m.getLocation() == Mech.LOC_LARM) || (m.getLocation() == Mech.LOC_RARM)) && (type instanceof MiscType) && ((MiscType) type).isShield() && (this.getInternal(m.getLocation()) > 0)) {
-                return true;
+                for (int slot = 0; slot < this.getNumberOfCriticals(m.getLocation()); slot++) {
+                    CriticalSlot cs = getCritical(m.getLocation(), slot);
+                    if (cs.getMount().equals(m) && !(cs.isDestroyed())) {
+                        // when all crits of a shield are destroyed, it
+                        // no longer hinders movemenet and stuff
+                        return true;
+                    }
+                }
             }
         }
-
         return false;
     }
 
@@ -800,10 +806,10 @@ public class BipedMech extends Mech {
 
         if(game.getOptions().booleanOption("tacops_attempting_stand")) {
             int[] locsToCheck = new int[2];
-    
+
             locsToCheck[0] = Mech.LOC_RARM;
             locsToCheck[1] = Mech.LOC_LARM;
-    
+
             for (int i = 0; i < locsToCheck.length; i++) {
                 int loc = locsToCheck[i];
                 if (isLocationBad(loc)) {

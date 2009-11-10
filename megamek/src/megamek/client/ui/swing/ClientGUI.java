@@ -23,6 +23,7 @@ import java.awt.Font;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
@@ -59,6 +60,7 @@ import megamek.client.Client;
 import megamek.client.bot.TestBot;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.GBC;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -694,6 +696,49 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (curPanel == null) {
             curPanel = initializePanel(phase);
         }
+
+        // Handle phase-specific items.
+        switch (phase) {
+            case PHASE_LOUNGE:
+                // reset old report tabs and images, if any
+                ReportDisplay rD = (ReportDisplay) phaseComponents.get(String
+                        .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+                if (rD != null) {
+                    rD.resetTabs();
+                }
+                ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(IGame.Phase.PHASE_LOUNGE));
+                cb.setDoneButton(cl.butDone);
+                cl.add(cb.getComponent(), BorderLayout.SOUTH);
+                getBoardView().getTilesetManager().reset();
+                break;
+            case PHASE_DEPLOY_MINEFIELDS:
+            case PHASE_DEPLOYMENT:
+            case PHASE_TARGETING:
+            case PHASE_MOVEMENT:
+            case PHASE_OFFBOARD:
+            case PHASE_FIRING:
+            case PHASE_PHYSICAL:
+                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
+                    setMapVisible(true);
+                }
+                break;
+            case PHASE_INITIATIVE_REPORT:
+            case PHASE_TARGETING_REPORT:
+            case PHASE_MOVEMENT_REPORT:
+            case PHASE_OFFBOARD_REPORT:
+            case PHASE_FIRING_REPORT:
+            case PHASE_END_REPORT:
+            case PHASE_VICTORY:
+                rD = (ReportDisplay) phaseComponents.get(String
+                        .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+                cb.setDoneButton(rD.butDone);
+                rD.add(cb.getComponent(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+                setMapVisible(false);
+                mechW.setVisible(false);
+                break;
+            default:
+        }
+
         cardsMain.show(panMain, mainNames.get(name));
         String secondaryToShow = secondaryNames.get(name);
         // only show the secondary component if there is one to show
@@ -1219,43 +1264,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             // Swap to this phase's panel.
             switchPanel(getClient().game.getPhase());
 
-            // Handle phase-specific items.
-            switch (getClient().game.getPhase()) {
-            case PHASE_LOUNGE:
-                // reset old report tabs and images, if any
-                ReportDisplay rD = (ReportDisplay) phaseComponents.get(String
-                        .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
-                if (rD != null) {
-                    rD.resetTabs();
-                }
-                ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(IGame.Phase.PHASE_LOUNGE));
-                cb.setDoneButton(cl.butDone);
-                cl.add(cb.getComponent(), BorderLayout.SOUTH);
-                getBoardView().getTilesetManager().reset();
-                break;
-            case PHASE_DEPLOY_MINEFIELDS:
-            case PHASE_DEPLOYMENT:
-            case PHASE_TARGETING:
-            case PHASE_MOVEMENT:
-            case PHASE_OFFBOARD:
-            case PHASE_FIRING:
-            case PHASE_PHYSICAL:
-                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
-                    setMapVisible(true);
-                }
-                break;
-            case PHASE_INITIATIVE_REPORT:
-            case PHASE_TARGETING_REPORT:
-            case PHASE_MOVEMENT_REPORT:
-            case PHASE_OFFBOARD_REPORT:
-            case PHASE_FIRING_REPORT:
-            case PHASE_END:
-            case PHASE_VICTORY:
-                setMapVisible(false);
-                mechW.setVisible(false);
-                break;
-            default:
-            }
             menuBar.setPhase(getClient().game.getPhase());
             validate();
             cb.moveToEnd();

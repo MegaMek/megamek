@@ -151,7 +151,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Construct a client which will try to connect. If the connection fails, it
      * will alert the player, free resources and hide the frame.
-     * 
+     *
      * @param name
      *            the player name for this client
      * @param host
@@ -417,7 +417,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Adds the specified close client listener to receive close client events.
      * This is used by external programs running megamek
-     * 
+     *
      * @param l
      *            the game listener.
      */
@@ -536,7 +536,7 @@ public class Client implements IClientCommandHandler {
 
     /**
      * Maintain backwards compatability.
-     * 
+     *
      * @param id
      *            - the <code>int</code> ID of the deployed entity
      * @param c
@@ -551,7 +551,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Deploy an entity at the given coordinates, with the given facing, and
      * starting with the given units already loaded.
-     * 
+     *
      * @param id
      *            - the <code>int</code> ID of the deployed entity
      * @param c
@@ -1222,7 +1222,7 @@ public class Client implements IClientCommandHandler {
      * This method is useful in tracking performance issues on various player's
      * systems. You can activate it by changing the "memorydumpon" setting to
      * "true" in the clientsettings.xml file.
-     * 
+     *
      * @param where
      *            - a <code>String</code> indicating which part of the game is
      *            making this call.
@@ -1287,7 +1287,7 @@ public class Client implements IClientCommandHandler {
     /**
      * If we remove an entity, we may need to update the duplicate identifier.
      * TODO: This function is super slow :(
-     * 
+     *
      * @param id
      */
     private void checkDuplicateNamesDuringDelete(int id) {
@@ -1328,7 +1328,7 @@ public class Client implements IClientCommandHandler {
 
     /**
      * Runs the command
-     * 
+     *
      * @param args
      *            the command and it's arguments with the CLIENT_COMMAND already
      *            removed, and the string tokenized.
@@ -1357,7 +1357,7 @@ public class Client implements IClientCommandHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.client.ui.IClientCommandHandler#getAllCommandNames()
      */
     public Enumeration<String> getAllCommandNames() {

@@ -20,6 +20,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -51,6 +52,17 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
      * clientgui.getClient().
      */
     public ReportDisplay(ClientGUI clientgui) {
+        butDone = new JButton();
+        butDone.setActionCommand("doneButton");
+        butDone.addActionListener(new AbstractAction() {
+            private static final long serialVersionUID = -5034474968902280850L;
+
+            public void actionPerformed(ActionEvent e) {
+                if (e.getActionCommand().equals("doneButton")) {
+                    ready();
+                }
+            }
+        });
         this.clientgui = clientgui;
         clientgui.getClient().game.addGameListener(this);
 
@@ -80,10 +92,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         for (int padding = 0; padding < 6; padding++) {
             panButtons.add(new JLabel("")); //$NON-NLS-1$
         }
-        clientgui.cb.setDoneButton(butDone);
         add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-        add(clientgui.cb.getComponent(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-        add(panStatus, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
     }
 

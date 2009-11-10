@@ -28,7 +28,7 @@ import java.util.Vector;
 /**
  * Represents any type of equipment mounted on a mechs, excluding systems and
  * actuators.
- *
+ * 
  * @author Ben
  * @version
  */
@@ -59,27 +59,33 @@ public class EquipmentType {
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
     public static final int T_STRUCTURE_STANDARD = 0;
-    public static final int T_STRUCTURE_ENDO_STEEL = 1;
-    public static final int T_STRUCTURE_ENDO_PROTOTYPE = 2;
-    public static final int T_STRUCTURE_REINFORCED = 3;
-    public static final int T_STRUCTURE_COMPOSITE = 4;
-    public static final int T_STRUCTURE_INDUSTRIAL = 5;
+    public static final int T_STRUCTURE_INDUSTRIAL = 1;
+    public static final int T_STRUCTURE_ENDO_STEEL = 2;
+    public static final int T_STRUCTURE_ENDO_PROTOTYPE = 3;
+    public static final int T_STRUCTURE_REINFORCED = 4;
+    public static final int T_STRUCTURE_COMPOSITE = 5;
 
-    public static final String[] armorNames = { "Standard", "Ferro-Fibrous", "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous", "Heavy Ferro-Fibrous", "Patchwork", "Stealth", "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide", "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum", "Industrial", "Heavy Industrial", "Ferro-Lamellor" };
+    public static final String[] armorNames =
+        { "Standard", "Ferro-Fibrous", "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous", "Heavy Ferro-Fibrous", "Patchwork", "Stealth", "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide", "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum", "Industrial", "Heavy Industrial", "Ferro-Lamellor" };
 
-    public static final String[] structureNames = { "Standard", "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite", "Industrial" };
+    public static final String[] structureNames =
+        { "Standard", "Industrial", "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite" };
 
-    public static final int[] structureLevels = { 1, 2, 3, 3, 3 };
-
-    // Assume for nowt that prototype is not more expensive
-    public static final double[] structureCosts = { 400, 1600, 1600, 6400, 3200, 300 };
+    public static final int[] structureLevels =
+        { 1, 2, 2, 3, 3, 3 };
 
     // Assume for now that prototype is not more expensive
-    public static final double[] armorCosts = { 10000, 20000, 30000, 30000, 15000, 15000, 25000, /*
-                                                                                                  * patchwork)
-                                                                                                  */50000, 50000, 20000, 3000, 75000, 100000, 50000, 5000, 10000, 35000 };
+    public static final double[] structureCosts =
+        { 400, 300, 1600, 1600, 6400, 3200 };
 
-    public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 1, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875 };
+    // Assume for now that prototype is not more expensive
+    public static final double[] armorCosts =
+        { 10000, 20000, 30000, 30000, 15000, 15000, 25000, /*
+                                                            * patchwork)
+                                                            */50000, 50000, 20000, 3000, 75000, 100000, 50000, 5000, 10000, 35000 };
+
+    public static final double[] armorPointMultipliers =
+        { 1, 1.12, 1, 1, 1, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875 };
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
 
@@ -97,7 +103,8 @@ public class EquipmentType {
 
     public static final int DATE_NONE = -1;
 
-    public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F", "X" };
+    public static final String[] ratingNames =
+        { "A", "B", "C", "D", "E", "F", "X" };
 
     protected String name = null;
 
@@ -125,7 +132,8 @@ public class EquipmentType {
 
     // fluffy stuff
     protected int techRating = RATING_C;
-    protected int[] availRating = { RATING_E, RATING_E, RATING_E };
+    protected int[] availRating =
+        { RATING_E, RATING_E, RATING_E };
     protected int introDate = DATE_NONE;
     protected int extinctDate = DATE_NONE;
     protected int reintroDate = DATE_NONE;
@@ -152,7 +160,7 @@ public class EquipmentType {
 
     /** Creates new EquipmentType */
     public EquipmentType() {
-        //default constructor
+        // default constructor
     }
 
     public void setFlags(BigInteger inF) {
@@ -276,7 +284,7 @@ public class EquipmentType {
      * Sets the modes that this type of equipment can be in. By default the
      * EquipmentType doesn't have the modes, so don't try to call this method
      * with null or empty argument.
-     *
+     * 
      * @param modes
      *            non null, non empty list of available mode names.
      */
@@ -298,7 +306,7 @@ public class EquipmentType {
      * switching. This method checks for end of turn modes that are kept in a
      * vector of names. It is used by the {@link Mounted#setMode(int)} method to
      * distinguish instant and end of turn switching.
-     *
+     * 
      * @param mode
      *            - the <code>String</code> of the mode name involved in the
      *            switch
@@ -322,7 +330,7 @@ public class EquipmentType {
      * <p>
      * Fails if this type of the equipment doesn't have modes, or given mode is
      * out of the valid range.
-     *
+     * 
      * @param modeNum
      * @return mode number <code>modeNum</code> from the list of modes available
      *         for this type of equipment.

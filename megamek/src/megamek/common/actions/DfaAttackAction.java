@@ -28,9 +28,9 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
+import megamek.common.EntityMovementType;
 import megamek.common.EntityWeightClass;
 import megamek.common.GunEmplacement;
-import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -42,6 +42,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.MovePath.MoveStepType;
 
 /**
  * @author Ben
@@ -119,13 +120,13 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         // let's just check this
-        if (!md.contains(MovePath.STEP_DFA)) {
+        if (!md.contains(MoveStepType.DFA)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "D.F.A. action not found in movment path");
         }
 
         // have to jump
-        if (!md.contains(MovePath.STEP_START_JUMP)) {
+        if (!md.contains(MoveStepType.START_JUMP)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "D.F.A. must involve jumping");
         }
@@ -137,7 +138,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         //no evading
-        if(md.contains(MovePath.STEP_EVADE)) {
+        if(md.contains(MoveStepType.EVADE)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No evading while charging");
         }
 
@@ -154,7 +155,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
             if (!step.isLegal()) {
                 break;
             }
-            if (step.getType() == MovePath.STEP_DFA) {
+            if (step.getType() == MoveStepType.DFA) {
                 chargeStep = step;
             } else {
                 chargeSrc = step.getPosition();
@@ -206,6 +207,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
             targetId = target.getTargetId();
+        } else {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid Target");
         }
 
         if (!game.getOptions().booleanOption("friendly_fire")) {
@@ -248,13 +251,13 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         // Can't target a transported entity.
-        if ((te != null) && (Entity.NONE != te.getTransportId())) {
+        if ((Entity.NONE != te.getTransportId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
+        if ((Entity.NONE != te.getSwarmTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is swarming a Mek.");
         }
@@ -270,13 +273,13 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         // can't attack mech making a different displacement attack
-        if ((te != null) && te.hasDisplacementAttack()) {
+        if (te.hasDisplacementAttack()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is already making a charge/DFA attack");
         }
 
         // can't attack the target of another displacement attack
-        if ((te != null) && te.isTargetOfDisplacementAttack()
+        if (te.isTargetOfDisplacementAttack()
                 && (te.findTargetedDisplacement().getEntityId() != ae.getId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is the target of another charge/DFA");
@@ -326,8 +329,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         toHit.append(Compute.getTargetMovementModifier(game, targetId));
 
         // piloting skill differential
-        if ((te != null)
-                && (ae.getCrew().getPiloting() != te.getCrew().getPiloting())) {
+        if ((ae.getCrew().getPiloting() != te.getCrew().getPiloting())) {
             toHit
                     .addModifier(ae.getCrew().getPiloting()
                             - te.getCrew().getPiloting(),
@@ -340,7 +342,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         // target prone
-        if ((te != null) && te.isProne()) {
+        if (te.isProne()) {
             toHit.addModifier(-2, "target prone and adjacent");
         }
 

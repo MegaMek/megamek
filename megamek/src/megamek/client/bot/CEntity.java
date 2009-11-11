@@ -38,6 +38,7 @@ import megamek.common.Tank;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.MovePath.MoveStepType;
 
 public class CEntity {
 
@@ -769,7 +770,7 @@ public class CEntity {
 
         // Add the seed for jumping if allowed
         if (entity.getJumpMPWithTerrain() > 0) {
-            possible.add((base.clone()).addStep(MovePath.STEP_START_JUMP));
+            possible.add((base.clone()).addStep(MoveStepType.START_JUMP));
         }
 
         possible.add(base); // Add the base movement option to the arraylist of
@@ -801,13 +802,13 @@ public class CEntity {
                             // Think about skipping this for infantry, which
                             // have no facing
                             for (int turn = 0; turn < 2; turn++) {
-                                left.addStep(MovePath.STEP_TURN_LEFT);
-                                right.addStep(MovePath.STEP_TURN_RIGHT);
+                                left.addStep(MoveStepType.TURN_LEFT);
+                                right.addStep(MoveStepType.TURN_RIGHT);
                                 discovered.put((left.clone()));
                                 discovered.put((right.clone()));
                             }
                             // Accounts for a 180 degree turn
-                            right.addStep(MovePath.STEP_TURN_RIGHT);
+                            right.addStep(MoveStepType.TURN_RIGHT);
                             discovered.put(right);
                         }
                         int index = Collections.<MoveOption> binarySearch(

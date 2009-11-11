@@ -71,6 +71,7 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.Warship;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
@@ -1195,7 +1196,7 @@ DoneButtoned, KeyListener {
                     unusedVelocity = ((Aero)ce()).getCurrentVelocity() > 0;
                 }
                 boolean flyoff = false;
-                if((null != cmd) && cmd.contains(MovePath.STEP_OFF)) {
+                if((null != cmd) && cmd.contains(MoveStepType.OFF)) {
                     flyoff = true;
                 }
                 if(unusedVelocity && !flyoff) {
@@ -1232,28 +1233,28 @@ DoneButtoned, KeyListener {
         if (shiftheld || (gear == GEAR_TURN)) {
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
         } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP)) {
-            cmd.findPathTo(dest, MovePath.STEP_FORWARDS);
+            cmd.findPathTo(dest, MoveStepType.FORWARDS);
         } else if (gear == GEAR_BACKUP) {
-            cmd.findPathTo(dest, MovePath.STEP_BACKWARDS);
+            cmd.findPathTo(dest, MoveStepType.BACKWARDS);
         } else if (gear == GEAR_CHARGE) {
-            cmd.findPathTo(dest, MovePath.STEP_CHARGE);
+            cmd.findPathTo(dest, MoveStepType.CHARGE);
         } else if (gear == GEAR_DFA) {
-            cmd.findPathTo(dest, MovePath.STEP_DFA);
+            cmd.findPathTo(dest, MoveStepType.DFA);
         } else if (gear == GEAR_SWIM) {
-            cmd.findPathTo(dest, MovePath.STEP_SWIM);
+            cmd.findPathTo(dest, MoveStepType.SWIM);
         } else if (gear == GEAR_RAM) {
-            cmd.findPathTo(dest, MovePath.STEP_FORWARDS);
+            cmd.findPathTo(dest, MoveStepType.FORWARDS);
         } else if (gear == GEAR_IMMEL) {
-            cmd.addStep(MovePath.STEP_UP, true, true);
-            cmd.addStep(MovePath.STEP_UP, true, true);
-            cmd.addStep(MovePath.STEP_DEC, true, true);
-            cmd.addStep(MovePath.STEP_DEC, true, true);
+            cmd.addStep(MoveStepType.UP, true, true);
+            cmd.addStep(MoveStepType.UP, true, true);
+            cmd.addStep(MoveStepType.DEC, true, true);
+            cmd.addStep(MoveStepType.DEC, true, true);
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true);
             gear = GEAR_LAND;
         } else if (gear == GEAR_SPLIT_S) {
-            cmd.addStep(MovePath.STEP_DOWN, true, true);
-            cmd.addStep(MovePath.STEP_DOWN, true, true);
-            cmd.addStep(MovePath.STEP_ACC, true, true);
+            cmd.addStep(MoveStepType.DOWN, true, true);
+            cmd.addStep(MoveStepType.DOWN, true, true);
+            cmd.addStep(MoveStepType.ACC, true, true);
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true);
             gear = GEAR_LAND;
         }
@@ -1334,7 +1335,7 @@ DoneButtoned, KeyListener {
                     cmd = addSteps(cmd, ce);
                 }
 
-                cmd.addStep(MovePath.STEP_RAM);
+                cmd.addStep(MoveStepType.RAM);
 
                 ToHitData toHit = new RamAttackAction(cen, target.getTargetType(), target.getTargetId(), target.getPosition()).toHit(client.game, cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
@@ -1501,7 +1502,7 @@ DoneButtoned, KeyListener {
         if (null == ce) {
             return;
         }
-        setSearchlightEnabled(ce.hasSpotlight() && !cmd.contains(MovePath.STEP_SEARCHLIGHT), ce().isUsingSpotlight());
+        setSearchlightEnabled(ce.hasSpotlight() && !cmd.contains(MoveStepType.SEARCHLIGHT), ce().isUsingSpotlight());
     }
 
     private synchronized void updateElevationButtons() {
@@ -1546,7 +1547,7 @@ DoneButtoned, KeyListener {
             setRollEnabled(false);
         }
 
-        if (cmd.contains(MovePath.STEP_ROLL)) {
+        if (cmd.contains(MoveStepType.ROLL)) {
             setRollEnabled(false);
         }
 
@@ -1574,7 +1575,7 @@ DoneButtoned, KeyListener {
             return;
         }
 
-        if (!cmd.contains(MovePath.STEP_HOVER)) {
+        if (!cmd.contains(MoveStepType.HOVER)) {
             setHoverEnabled(true);
         } else {
             setHoverEnabled(false);
@@ -1644,9 +1645,9 @@ DoneButtoned, KeyListener {
             if (vel > 0) {
                 setDecEnabled(true);
             }
-        } else if (last.getType() == MovePath.STEP_ACC) {
+        } else if (last.getType() == MoveStepType.ACC) {
             setAccEnabled(true);
-        } else if ((last.getType() == MovePath.STEP_DEC) && (vel > 0)) {
+        } else if ((last.getType() == MoveStepType.DEC) && (vel > 0)) {
             setDecEnabled(true);
         }
 
@@ -1665,11 +1666,11 @@ DoneButtoned, KeyListener {
         // allow acc/dec next if acceleration/deceleration hasn't been used
         setAccNEnabled(false);
         setDecNEnabled(false);
-        if (!cmd.contains(MovePath.STEP_ACC) && !cmd.contains(MovePath.STEP_DEC) && !cmd.contains(MovePath.STEP_DECN)) {
+        if (!cmd.contains(MoveStepType.ACC) && !cmd.contains(MoveStepType.DEC) && !cmd.contains(MoveStepType.DECN)) {
             setAccNEnabled(true);
         }
 
-        if (!cmd.contains(MovePath.STEP_ACC) && !cmd.contains(MovePath.STEP_DEC) && !cmd.contains(MovePath.STEP_ACCN) && (veln > 0)) {
+        if (!cmd.contains(MoveStepType.ACC) && !cmd.contains(MoveStepType.DEC) && !cmd.contains(MoveStepType.ACCN) && (veln > 0)) {
             setDecNEnabled(true);
         }
 
@@ -1809,7 +1810,7 @@ DoneButtoned, KeyListener {
             return;
         }
 
-        if (!a.didFailManeuver() && ((null == cmd) || !cmd.contains(MovePath.STEP_MANEUVER))) {
+        if (!a.didFailManeuver() && ((null == cmd) || !cmd.contains(MoveStepType.MANEUVER))) {
             setManeuverEnabled(true);
         }
         return;
@@ -2446,13 +2447,13 @@ DoneButtoned, KeyListener {
         cmd.addManeuver(type);
         switch (type) {
         case (ManeuverType.MAN_HAMMERHEAD):
-            cmd.addStep(MovePath.STEP_YAW, true, true);
+            cmd.addStep(MoveStepType.YAW, true, true);
             return true;
         case (ManeuverType.MAN_HALF_ROLL):
-            cmd.addStep(MovePath.STEP_ROLL, true, true);
+            cmd.addStep(MoveStepType.ROLL, true, true);
             return true;
         case (ManeuverType.MAN_BARREL_ROLL):
-            cmd.addStep(MovePath.STEP_DEC, true, true);
+            cmd.addStep(MoveStepType.DEC, true, true);
             return true;
         case (ManeuverType.MAN_IMMELMAN):
             gear = MovementDisplay.GEAR_IMMEL;
@@ -2471,19 +2472,19 @@ DoneButtoned, KeyListener {
                 vel = last.getVelocityLeft();
             }
             while (vel > 0) {
-                cmd.addStep(MovePath.STEP_DEC, true, true);
+                cmd.addStep(MoveStepType.DEC, true, true);
                 vel--;
             }
-            cmd.addStep(MovePath.STEP_UP);
+            cmd.addStep(MoveStepType.UP);
             return true;
         case (ManeuverType.MAN_SIDE_SLIP_LEFT):
-            cmd.addStep(MovePath.STEP_LATERAL_LEFT, true, true);
+            cmd.addStep(MoveStepType.LATERAL_LEFT, true, true);
             return true;
         case (ManeuverType.MAN_SIDE_SLIP_RIGHT):
-            cmd.addStep(MovePath.STEP_LATERAL_RIGHT, true, true);
+            cmd.addStep(MoveStepType.LATERAL_RIGHT, true, true);
             return true;
         case (ManeuverType.MAN_LOOP):
-            cmd.addStep(MovePath.STEP_LOOP, true, true);
+            cmd.addStep(MoveStepType.LOOP, true, true);
             return true;
         default:
             return false;
@@ -2581,11 +2582,11 @@ DoneButtoned, KeyListener {
                 // in the wrong gear
                 setUnjamEnabled(false);
             } else {
-                cmd.addStep(MovePath.STEP_UNJAM_RAC);
+                cmd.addStep(MoveStepType.UNJAM_RAC);
                 moveTo(cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_SEARCHLIGHT)) {
-            cmd.addStep(MovePath.STEP_SEARCHLIGHT);
+            cmd.addStep(MoveStepType.SEARCHLIGHT);
         } else if (ev.getActionCommand().equals(MOVE_WALK)) {
             if ((gear == MovementDisplay.GEAR_JUMP) || (gear == MovementDisplay.GEAR_SWIM)) {
                 clearAllMoves();
@@ -2595,19 +2596,19 @@ DoneButtoned, KeyListener {
             if ((ce instanceof LandAirMech) && ((LandAirMech) ce).isInMode(LandAirMech.MODE_AIRMECH)) {
 
                 if (cmd.isFlying()) {
-                    cmd.addStep(MovePath.STEP_LAND);
+                    cmd.addStep(MoveStepType.LAND);
                     gear = MovementDisplay.GEAR_JUMP;
                 } else {
-                    cmd.addStep(MovePath.STEP_TAKEOFF);
+                    cmd.addStep(MoveStepType.TAKEOFF);
                     gear = MovementDisplay.GEAR_JUMP;
                 }
             } else {
                 if ((gear != MovementDisplay.GEAR_JUMP) &&
-                        !((cmd.getLastStep() != null) && cmd.getLastStep().isFirstStep() && (cmd.getLastStep().getType() == MovePath.STEP_LAY_MINE))) {
+                        !((cmd.getLastStep() != null) && cmd.getLastStep().isFirstStep() && (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
                     clearAllMoves();
                 }
                 if (!cmd.isJumping()) {
-                    cmd.addStep(MovePath.STEP_START_JUMP);
+                    cmd.addStep(MoveStepType.START_JUMP);
                 }
                 gear = MovementDisplay.GEAR_JUMP;
             }
@@ -2615,7 +2616,7 @@ DoneButtoned, KeyListener {
             if (gear != MovementDisplay.GEAR_SWIM) {
                 clearAllMoves();
             }
-            // dcmd.addStep(MovePath.STEP_SWIM);
+            // dcmd.addStep(MoveStepType.SWIM);
             gear = MovementDisplay.GEAR_SWIM;
             ce.setMovementMode((ce instanceof BipedMech) ? EntityMovementMode.BIPED_SWIM : EntityMovementMode.QUAD_SWIM);
         } else if (ev.getActionCommand().equals(MOVE_TURN)) {
@@ -2666,7 +2667,7 @@ DoneButtoned, KeyListener {
             if ((null != mf) && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.ClearMinefieldDialog.title"), //$NON-NLS-1$
                     Messages.getString("MovementDisplay.ClearMinefieldDialog.message", new Object[] { //$NON-NLS-1$
                             new Integer(clear), new Integer(boom) }))) {
-                cmd.addStep(MovePath.STEP_CLEAR_MINEFIELD, mf);
+                cmd.addStep(MoveStepType.CLEAR_MINEFIELD, mf);
                 moveTo(cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_CHARGE)) {
@@ -2680,7 +2681,7 @@ DoneButtoned, KeyListener {
             }
             gear = MovementDisplay.GEAR_DFA;
             if (!cmd.isJumping()) {
-                cmd.addStep(MovePath.STEP_START_JUMP);
+                cmd.addStep(MoveStepType.START_JUMP);
             }
         } else if (ev.getActionCommand().equals(MOVE_RAM)) {
             if (gear != MovementDisplay.GEAR_LAND) {
@@ -2690,7 +2691,7 @@ DoneButtoned, KeyListener {
         } else if (ev.getActionCommand().equals(MOVE_GET_UP)) {
             //if the unit has a hull down step
             //then don't clear the moves
-            if(!cmd.contains(MovePath.STEP_HULL_DOWN)) {
+            if(!cmd.contains(MoveStepType.HULL_DOWN)) {
                 clearAllMoves();
             }
             if (clientgui.getClient().game.getOptions().booleanOption("tacops_careful_stand")
@@ -2703,16 +2704,16 @@ DoneButtoned, KeyListener {
                 if (response.getAnswer()) {
                     ce.setCarefulStand(true);
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
-                        cmd.addStep(MovePath.STEP_CAREFUL_STAND);
+                        cmd.addStep(MoveStepType.CAREFUL_STAND);
                     }
                 } else {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
-                        cmd.addStep(MovePath.STEP_GET_UP);
+                        cmd.addStep(MoveStepType.GET_UP);
                     }
                 }
             } else {
                 if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
-                    cmd.addStep(MovePath.STEP_GET_UP);
+                    cmd.addStep(MoveStepType.GET_UP);
                 }
             }
             clientgui.bv.drawMovementData(ce, cmd);
@@ -2721,41 +2722,41 @@ DoneButtoned, KeyListener {
 
             ce.setCarefulStand(true);
             if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
-                cmd.addStep(MovePath.STEP_CAREFUL_STAND);
+                cmd.addStep(MoveStepType.CAREFUL_STAND);
             }
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_GO_PRONE)) {
             gear = MovementDisplay.GEAR_LAND;
             if (!cmd.getFinalProne()) {
-                cmd.addStep(MovePath.STEP_GO_PRONE);
+                cmd.addStep(MoveStepType.GO_PRONE);
             }
             clientgui.bv.drawMovementData(ce, cmd);
             butDone.setLabel(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
         } else if (ev.getActionCommand().equals(MOVE_HULL_DOWN)) {
             gear = MovementDisplay.GEAR_LAND;
             if (!cmd.getFinalHullDown()) {
-                cmd.addStep(MovePath.STEP_HULL_DOWN);
+                cmd.addStep(MoveStepType.HULL_DOWN);
             }
             clientgui.bv.drawMovementData(ce, cmd);
             butDone.setLabel(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
         } else if (ev.getActionCommand().equals(MOVE_FLEE) && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"), Messages.getString("MovementDisplay.EscapeDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
             clearAllMoves();
-            cmd.addStep(MovePath.STEP_FLEE);
+            cmd.addStep(MoveStepType.FLEE);
             moveTo(cmd);
         } else if (ev.getActionCommand().equals(MOVE_FLY_OFF) && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.FlyOffDialog.title"), Messages.getString("MovementDisplay.FlyOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
-            cmd.addStep(MovePath.STEP_OFF);
+            cmd.addStep(MoveStepType.OFF);
             moveTo(cmd);
         }
         else if (ev.getActionCommand().equals(MOVE_EJECT)) {
             if (ce instanceof Tank) {
                 if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.AbandonDialog.title"), Messages.getString("MovementDisplay.AbandonDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
                     clearAllMoves();
-                    cmd.addStep(MovePath.STEP_EJECT);
+                    cmd.addStep(MoveStepType.EJECT);
                     moveTo(cmd);
                 }
             } else if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.AbandonDialog1.title"), Messages.getString("MovementDisplay.AbandonDialog1.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
                 clearAllMoves();
-                cmd.addStep(MovePath.STEP_EJECT);
+                cmd.addStep(MoveStepType.EJECT);
                 moveTo(cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_LOAD)) {
@@ -2773,7 +2774,7 @@ DoneButtoned, KeyListener {
             }
 
             if (other != null) {
-                cmd.addStep(MovePath.STEP_LOAD);
+                cmd.addStep(MoveStepType.LOAD);
                 clientgui.bv.drawMovementData(ce, cmd);
                 gear = MovementDisplay.GEAR_LAND;
             } // else - didn't find a unit to load
@@ -2782,11 +2783,11 @@ DoneButtoned, KeyListener {
             Entity other = getUnloadedUnit();
 
             if (other != null) {
-                cmd.addStep(MovePath.STEP_UNLOAD, other);
+                cmd.addStep(MoveStepType.UNLOAD, other);
                 clientgui.bv.drawMovementData(ce, cmd);
             } // else - Player canceled the unload.
         } else if (ev.getActionCommand().equals(MOVE_RAISE_ELEVATION)) {
-            cmd.addStep(MovePath.STEP_UP);
+            cmd.addStep(MoveStepType.UP);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_LOWER_ELEVATION)) {
             // if this movement path goes down more than two altitudes
@@ -2795,18 +2796,18 @@ DoneButtoned, KeyListener {
             if ((ce instanceof Aero) && (null != cmd.getLastStep())
                     && (cmd.getLastStep().getNDown() == 1) && (cmd.getLastStep().getVelocity() < 12)
                     && !(((Aero) ce).isSpheroid() || client.game.getPlanetaryConditions().isVacuum())) {
-                cmd.addStep(MovePath.STEP_ACC, true);
+                cmd.addStep(MoveStepType.ACC, true);
             }
-            cmd.addStep(MovePath.STEP_DOWN);
+            cmd.addStep(MoveStepType.DOWN);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_CLIMB_MODE)) {
             MoveStep ms = cmd.getLastStep();
-            if ((ms != null) && ((ms.getType() == MovePath.STEP_CLIMB_MODE_ON) || (ms.getType() == MovePath.STEP_CLIMB_MODE_OFF))) {
+            if ((ms != null) && ((ms.getType() == MoveStepType.CLIMB_MODE_ON) || (ms.getType() == MoveStepType.CLIMB_MODE_OFF))) {
                 cmd.removeLastStep();
             } else if (cmd.getFinalClimbMode()) {
-                cmd.addStep(MovePath.STEP_CLIMB_MODE_OFF);
+                cmd.addStep(MoveStepType.CLIMB_MODE_OFF);
             } else {
-                cmd.addStep(MovePath.STEP_CLIMB_MODE_ON);
+                cmd.addStep(MoveStepType.CLIMB_MODE_ON);
             }
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_LAY_MINE)) {
@@ -2818,17 +2819,17 @@ DoneButtoned, KeyListener {
                     vsd.setVisible(true);
                     m.setVibraSetting(vsd.getSetting());
                 }
-                cmd.addStep(MovePath.STEP_LAY_MINE, i);
+                cmd.addStep(MoveStepType.LAY_MINE, i);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_DIG_IN)) {
-            cmd.addStep(MovePath.STEP_DIG_IN);
+            cmd.addStep(MoveStepType.DIG_IN);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_FORTIFY)) {
-            cmd.addStep(MovePath.STEP_FORTIFY);
+            cmd.addStep(MoveStepType.FORTIFY);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_SHAKE_OFF)) {
-            cmd.addStep(MovePath.STEP_SHAKE_OFF_SWARMERS);
+            cmd.addStep(MoveStepType.SHAKE_OFF_SWARMERS);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_MODE_MECH)) {
             clearAllMoves();
@@ -2860,28 +2861,28 @@ DoneButtoned, KeyListener {
         } else if (ev.getActionCommand().equals(MOVE_RECKLESS)) {
             cmd.setCareful(false);
         } else if (ev.getActionCommand().equals(MOVE_ACCN)) {
-            cmd.addStep(MovePath.STEP_ACCN);
+            cmd.addStep(MoveStepType.ACCN);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_DECN)) {
-            cmd.addStep(MovePath.STEP_DECN);
+            cmd.addStep(MoveStepType.DECN);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_ACC)) {
-            cmd.addStep(MovePath.STEP_ACC);
+            cmd.addStep(MoveStepType.ACC);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_DEC)) {
-            cmd.addStep(MovePath.STEP_DEC);
+            cmd.addStep(MoveStepType.DEC);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_EVADE)) {
-            cmd.addStep(MovePath.STEP_EVADE);
+            cmd.addStep(MoveStepType.EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_EVADE_AERO)) {
-            cmd.addStep(MovePath.STEP_EVADE);
+            cmd.addStep(MoveStepType.EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_ROLL)) {
-            cmd.addStep(MovePath.STEP_ROLL);
+            cmd.addStep(MoveStepType.ROLL);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_HOVER)) {
-            cmd.addStep(MovePath.STEP_HOVER);
+            cmd.addStep(MoveStepType.HOVER);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_MANEUVER)) {
             ManeuverChoiceDialog choiceDialog = new ManeuverChoiceDialog(clientgui.frame, Messages.getString("MovementDisplay.ManeuverDialog.title"), //$NON-NLS-1$
@@ -2908,7 +2909,7 @@ DoneButtoned, KeyListener {
         } else if (ev.getActionCommand().equals(MOVE_LAUNCH)) {
             TreeMap<Integer, Vector<Integer>> launched = getLaunchedUnits();
             if(!launched.isEmpty()) {
-                cmd.addStep(MovePath.STEP_LAUNCH, launched);
+                cmd.addStep(MoveStepType.LAUNCH, launched);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_RECOVER)) {
@@ -2916,7 +2917,7 @@ DoneButtoned, KeyListener {
             // then bring up an option dialog
             int recoverer = getRecoveryUnit();
             if (recoverer != -1) {
-                cmd.addStep(MovePath.STEP_RECOVER, recoverer, -1);
+                cmd.addStep(MoveStepType.RECOVER, recoverer, -1);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_JOIN)) {
@@ -2924,24 +2925,24 @@ DoneButtoned, KeyListener {
             // then bring up an option dialog
             int joined = getUnitJoined();
             if (joined != -1) {
-                cmd.addStep(MovePath.STEP_JOIN, joined, -1);
+                cmd.addStep(MoveStepType.JOIN, joined, -1);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_TURN_LEFT)) {
-            cmd.addStep(MovePath.STEP_TURN_LEFT);
+            cmd.addStep(MoveStepType.TURN_LEFT);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_TURN_RIGHT)) {
-            cmd.addStep(MovePath.STEP_TURN_RIGHT);
+            cmd.addStep(MoveStepType.TURN_RIGHT);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_THRUST)) {
-            cmd.addStep(MovePath.STEP_THRUST);
+            cmd.addStep(MoveStepType.THRUST);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_YAW)) {
-            cmd.addStep(MovePath.STEP_YAW);
+            cmd.addStep(MoveStepType.YAW);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_END_OVER)) {
-            cmd.addStep(MovePath.STEP_YAW);
-            cmd.addStep(MovePath.STEP_ROLL);
+            cmd.addStep(MoveStepType.YAW);
+            cmd.addStep(MoveStepType.ROLL);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_DUMP)) {
             dumpBombs();
@@ -3398,7 +3399,7 @@ DoneButtoned, KeyListener {
         // if the last step is a launch or recovery, then I want to keep that at
         // the end
         MoveStep lastStep = md.getLastStep();
-        if ((lastStep != null) && ((lastStep.getType() == MovePath.STEP_LAUNCH) || (lastStep.getType() == MovePath.STEP_RECOVER))) {
+        if ((lastStep != null) && ((lastStep.getType() == MoveStepType.LAUNCH) || (lastStep.getType() == MoveStepType.RECOVER))) {
             md.removeLastStep();
         }
 
@@ -3461,7 +3462,7 @@ DoneButtoned, KeyListener {
 
             // check if the next move would put vessel off the map
             if (!client.game.getBoard().contains(c)) {
-                md.addStep(MovePath.STEP_OFF);
+                md.addStep(MoveStepType.OFF);
                 break;
             }
 
@@ -3470,17 +3471,17 @@ DoneButtoned, KeyListener {
             // what kind of step do I need to get there?
             int diff = dir - facing;
             if (diff == 0) {
-                md.addStep(MovePath.STEP_FORWARDS);
+                md.addStep(MoveStepType.FORWARDS);
             } else if ((diff == 1) || (diff == -5)) {
-                md.addStep(MovePath.STEP_LATERAL_RIGHT);
+                md.addStep(MoveStepType.LATERAL_RIGHT);
             } else if ((diff == -2) || (diff == 4)) {
-                md.addStep(MovePath.STEP_LATERAL_RIGHT_BACKWARDS);
+                md.addStep(MoveStepType.LATERAL_RIGHT_BACKWARDS);
             } else if ((diff == -1) || (diff == 5)) {
-                md.addStep(MovePath.STEP_LATERAL_LEFT);
+                md.addStep(MoveStepType.LATERAL_LEFT);
             } else if ((diff == 2) || (diff == -4)) {
-                md.addStep(MovePath.STEP_LATERAL_LEFT_BACKWARDS);
+                md.addStep(MoveStepType.LATERAL_LEFT_BACKWARDS);
             } else if ((diff == 3) || (diff == -3)) {
-                md.addStep(MovePath.STEP_BACKWARDS);
+                md.addStep(MoveStepType.BACKWARDS);
             }
 
             current = c;
@@ -3488,12 +3489,12 @@ DoneButtoned, KeyListener {
         }
 
         // do I now need to add on the last step again?
-        if ((lastStep != null) && (lastStep.getType() == MovePath.STEP_LAUNCH)) {
-            md.addStep(MovePath.STEP_LAUNCH, lastStep.getLaunched());
+        if ((lastStep != null) && (lastStep.getType() == MoveStepType.LAUNCH)) {
+            md.addStep(MoveStepType.LAUNCH, lastStep.getLaunched());
         }
 
-        if ((lastStep != null) && (lastStep.getType() == MovePath.STEP_RECOVER)) {
-            md.addStep(MovePath.STEP_RECOVER, lastStep.getRecoveryUnit());
+        if ((lastStep != null) && (lastStep.getType() == MoveStepType.RECOVER)) {
+            md.addStep(MoveStepType.RECOVER, lastStep.getRecoveryUnit());
         }
 
         return md;

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
@@ -4621,7 +4622,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public PilotingRollData checkGetUp(MoveStep step) {
 
-        if ((step == null) || ((step.getType() != MovePath.STEP_GET_UP) && (step.getType() != MovePath.STEP_CAREFUL_STAND))) {
+        if ((step == null) || ((step.getType() != MoveStepType.GET_UP) && (step.getType() != MoveStepType.CAREFUL_STAND))) {
             return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to get up.");
         }
 
@@ -4826,6 +4827,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity did not use more MPs jumping than possible at 1G");
                 }
                 break;
+            default:
         }
         return roll;
     }

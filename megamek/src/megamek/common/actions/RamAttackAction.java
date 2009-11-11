@@ -27,8 +27,8 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Dropship;
 import megamek.common.Entity;
-import megamek.common.FighterSquadron;
 import megamek.common.EntityMovementType;
+import megamek.common.FighterSquadron;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Jumpship;
@@ -40,6 +40,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.Warship;
+import megamek.common.MovePath.MoveStepType;
 
 /**
  * Represents one unit charging another. Stores information about where the
@@ -107,6 +108,8 @@ public class RamAttackAction extends AbstractAttackAction {
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
+        } else {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid Target");
         }
         
         if (!game.getOptions().booleanOption("friendly_fire")) {
@@ -132,7 +135,7 @@ public class RamAttackAction extends AbstractAttackAction {
         }
 
         // Can't target a transported entity.
-        if (te != null && Entity.NONE != te.getTransportId()) {
+        if (Entity.NONE != te.getTransportId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is a passenger.");
         }
@@ -149,7 +152,7 @@ public class RamAttackAction extends AbstractAttackAction {
         }
 
         // can't attack Aero making a different ramming attack
-        if (te != null && te.isRamming()) {
+        if (te.isRamming()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is already making a ramming attack");
         }
@@ -157,7 +160,7 @@ public class RamAttackAction extends AbstractAttackAction {
         //attacker 
         
         // target must have moved already
-        if (te != null && !te.isDone()) {
+        if (!te.isDone()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target must be done with movement");
         }
@@ -236,7 +239,7 @@ public class RamAttackAction extends AbstractAttackAction {
         MoveStep ramStep = null;
 
         // let's just check this
-        if (!md.contains(MovePath.STEP_RAM)) {
+        if (!md.contains(MoveStepType.RAM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Ram action not found in movement path");
         }
@@ -248,7 +251,7 @@ public class RamAttackAction extends AbstractAttackAction {
             if (step.getMovementType() == EntityMovementType.MOVE_ILLEGAL) {
                 break;
             }
-            if (step.getType() == MovePath.STEP_RAM) {
+            if (step.getType() == MoveStepType.RAM) {
                 ramStep = step;
                 ramSrc = step.getPosition();
                 ramEl = step.getElevation();

@@ -85,7 +85,6 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
-import megamek.common.OffBoardDirection;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.InfernoTracker;
@@ -101,6 +100,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.OffBoardDirection;
 import megamek.common.PhysicalResult;
 import megamek.common.Pilot;
 import megamek.common.PilotingRollData;
@@ -131,6 +131,7 @@ import megamek.common.Warship;
 import megamek.common.WeaponComparator;
 import megamek.common.WeaponType;
 import megamek.common.IGame.Phase;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -4247,7 +4248,7 @@ public class Server implements Runnable {
                     int vel = ta.getCurrentVelocity();
                     MovePath md = new MovePath(game, target);
                     while (vel > 0) {
-                        md.addStep(MovePath.STEP_FORWARDS);
+                        md.addStep(MoveStepType.FORWARDS);
                         vel--;
                     }
                     game.removeTurnFor(target);
@@ -4622,12 +4623,12 @@ public class Server implements Runnable {
         boolean sideslipped = false; // for VTOL sideslipping
 
         // check for fleeing
-        if (md.contains(MovePath.STEP_FLEE)) {
+        if (md.contains(MoveStepType.FLEE)) {
             addReport(processLeaveMap(entity, entity.getPosition(), false, -1));
             return;
         }
 
-        if (md.contains(MovePath.STEP_EJECT)) {
+        if (md.contains(MoveStepType.EJECT)) {
             if (entity instanceof Mech) {
                 r = new Report(2020);
                 r.subject = entity.getId();
@@ -4645,7 +4646,7 @@ public class Server implements Runnable {
             return;
         }
 
-        if (md.contains(MovePath.STEP_CAREFUL_STAND)) {
+        if (md.contains(MoveStepType.CAREFUL_STAND)) {
             entity.setCarefulStand(true);
         }
 
@@ -4812,7 +4813,7 @@ public class Server implements Runnable {
                     thrustUsed = 0;
                 }
 
-                if (step.getType() == MovePath.STEP_OFF) {
+                if (step.getType() == MoveStepType.OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     processLeaveMap(entity, curPos, true, Compute.roundsUntilReturn(game, entity));
                     return;
@@ -4969,7 +4970,7 @@ public class Server implements Runnable {
                 }
 
                 // handle fighter launching
-                if (step.getType() == MovePath.STEP_LAUNCH) {
+                if (step.getType() == MoveStepType.LAUNCH) {
                     TreeMap<Integer, Vector<Integer>> launched = step.getLaunched();
                     Set<Integer> bays = launched.keySet();
                     Iterator<Integer> bayIter = bays.iterator();
@@ -5058,7 +5059,7 @@ public class Server implements Runnable {
                 entity.setHullDown(false);
             }
 
-            if (step.getType() == MovePath.STEP_UNJAM_RAC) {
+            if (step.getType() == MoveStepType.UNJAM_RAC) {
                 entity.setUnjammingRAC(true);
                 game.addAction(new UnjamAction(entity.getId()));
 
@@ -5069,19 +5070,19 @@ public class Server implements Runnable {
                 }
             }
 
-            if (step.getType() == MovePath.STEP_LAY_MINE) {
+            if (step.getType() == MoveStepType.LAY_MINE) {
                 layMine(entity, step.getMineToLay(), step.getPosition());
                 continue;
             }
 
-            if (step.getType() == MovePath.STEP_CLEAR_MINEFIELD) {
+            if (step.getType() == MoveStepType.CLEAR_MINEFIELD) {
                 ClearMinefieldAction cma = new ClearMinefieldAction(entity.getId(), step.getMinefield());
                 entity.setClearingMinefield(true);
                 game.addAction(cma);
                 break;
             }
 
-            if ((step.getType() == MovePath.STEP_SEARCHLIGHT) && entity.hasSpotlight()) {
+            if ((step.getType() == MoveStepType.SEARCHLIGHT) && entity.hasSpotlight()) {
                 final boolean SearchOn = !entity.isUsingSpotlight();
                 entity.setSpotlightState(SearchOn);
                 sendServerChat(entity.getDisplayName() + " switched searchlight " + (SearchOn ? "on" : "off") + '.');
@@ -5097,7 +5098,7 @@ public class Server implements Runnable {
                         .getRunningGravityLimit();
             }
             // check for charge
-            if (step.getType() == MovePath.STEP_CHARGE) {
+            if (step.getType() == MoveStepType.CHARGE) {
                 if (entity.canCharge()) {
                     checkExtremeGravityMovement(entity, step, curPos, cachedGravityLimit);
                     Targetable target = step.getTarget(game);
@@ -5119,7 +5120,7 @@ public class Server implements Runnable {
             }
 
             // check for dfa
-            if (step.getType() == MovePath.STEP_DFA) {
+            if (step.getType() == MoveStepType.DFA) {
                 if (entity.canDFA()) {
                     checkExtremeGravityMovement(entity, step, curPos, cachedGravityLimit);
                     Targetable target = step.getTarget(game);
@@ -5141,7 +5142,7 @@ public class Server implements Runnable {
             }
 
             // check for ram
-            if (step.getType() == MovePath.STEP_RAM) {
+            if (step.getType() == MoveStepType.RAM) {
                 if (entity.canRam()) {
                     Targetable target = step.getTarget(game);
                     RamAttackAction raa = new RamAttackAction(entity.getId(), target.getTargetType(), target
@@ -5161,10 +5162,10 @@ public class Server implements Runnable {
                 break;
             }
 
-            if ((step.getType() == MovePath.STEP_ACC) || (step.getType() == MovePath.STEP_ACCN)) {
+            if ((step.getType() == MoveStepType.ACC) || (step.getType() == MoveStepType.ACCN)) {
                 if (entity instanceof Aero) {
                     Aero a = (Aero) entity;
-                    if (step.getType() == MovePath.STEP_ACCN) {
+                    if (step.getType() == MoveStepType.ACCN) {
                         a.setAccLast(true);
                         a.setNextVelocity(a.getNextVelocity() + 1);
                     } else {
@@ -5175,10 +5176,10 @@ public class Server implements Runnable {
                 }
             }
 
-            if ((step.getType() == MovePath.STEP_DEC) || (step.getType() == MovePath.STEP_DECN)) {
+            if ((step.getType() == MoveStepType.DEC) || (step.getType() == MoveStepType.DECN)) {
                 if (entity instanceof Aero) {
                     Aero a = (Aero) entity;
-                    if (step.getType() == MovePath.STEP_DECN) {
+                    if (step.getType() == MoveStepType.DECN) {
                         a.setAccLast(true);
                         a.setNextVelocity(a.getNextVelocity() - 1);
                     } else {
@@ -5189,12 +5190,12 @@ public class Server implements Runnable {
                 }
             }
 
-            if (step.getType() == MovePath.STEP_EVADE) {
+            if (step.getType() == MoveStepType.EVADE) {
                 entity.setEvading(true);
 
             }
 
-            if (step.getType() == MovePath.STEP_ROLL) {
+            if (step.getType() == MoveStepType.ROLL) {
                 if (entity instanceof Aero) {
                     Aero a = (Aero) entity;
                     if (a.isRolled()) {
@@ -5209,17 +5210,17 @@ public class Server implements Runnable {
             // check for dig in or fortify
             if (entity instanceof Infantry) {
                 Infantry inf = (Infantry) entity;
-                if (step.getType() == MovePath.STEP_DIG_IN) {
+                if (step.getType() == MoveStepType.DIG_IN) {
                     inf.setDugIn(Infantry.DUG_IN_WORKING);
                     continue;
-                } else if (step.getType() == MovePath.STEP_FORTIFY) {
+                } else if (step.getType() == MoveStepType.FORTIFY) {
                     if (!entity.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL)) {
                         sendServerChat(entity.getDisplayName()
                                 + " failed to fortify because it is missing suitable equipment");
                     }
                     inf.setDugIn(Infantry.DUG_IN_FORTIFYING1);
                     continue;
-                } else if ((step.getType() != MovePath.STEP_TURN_LEFT) && (step.getType() != MovePath.STEP_TURN_RIGHT)) {
+                } else if ((step.getType() != MoveStepType.TURN_LEFT) && (step.getType() != MoveStepType.TURN_RIGHT)) {
                     // other movement clears dug in status
                     inf.setDugIn(Infantry.DUG_IN_NONE);
                 }
@@ -5680,7 +5681,7 @@ public class Server implements Runnable {
             }
 
             // Handle loading units.
-            if (step.getType() == MovePath.STEP_LOAD) {
+            if (step.getType() == MoveStepType.LOAD) {
 
                 // Find the unit being loaded.
                 Entity loaded = null;
@@ -5720,7 +5721,7 @@ public class Server implements Runnable {
             } // End STEP_LOAD
 
             // handle fighter recovery
-            if (step.getType() == MovePath.STEP_RECOVER) {
+            if (step.getType() == MoveStepType.RECOVER) {
 
                 loader = game.getEntity(step.getRecoveryUnit());
 
@@ -5761,13 +5762,13 @@ public class Server implements Runnable {
             }
 
             // handle fighter squadron joining
-            if (step.getType() == MovePath.STEP_JOIN) {
+            if (step.getType() == MoveStepType.JOIN) {
                 loader = game.getEntity(step.getRecoveryUnit());
                 recovered = true;
             }
 
             // Handle unloading units.
-            if (step.getType() == MovePath.STEP_UNLOAD) {
+            if (step.getType() == MoveStepType.UNLOAD) {
                 Targetable unloaded = step.getTarget(game);
                 if (!unloadUnit(entity, unloaded, curPos, curFacing, step.getElevation())) {
                     System.err.println("Error! Server was told to unload " + unloaded.getDisplayName() + " from "
@@ -5775,8 +5776,8 @@ public class Server implements Runnable {
                 }
             }
 
-            if (((step.getType() == MovePath.STEP_BACKWARDS)
-                    || (step.getType() == MovePath.STEP_LATERAL_LEFT_BACKWARDS) || (step.getType() == MovePath.STEP_LATERAL_RIGHT_BACKWARDS))
+            if (((step.getType() == MoveStepType.BACKWARDS)
+                    || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                     && (game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation())
                     && !(entity instanceof VTOL)) {
 
@@ -5887,7 +5888,7 @@ public class Server implements Runnable {
             }
 
             // dropping prone intentionally?
-            if (step.getType() == MovePath.STEP_GO_PRONE) {
+            if (step.getType() == MoveStepType.GO_PRONE) {
                 mpUsed = step.getMpUsed();
                 rollTarget = entity.checkDislodgeSwarmers(step);
                 if (rollTarget.getValue() == TargetRoll.CHECK_FALSE) {
@@ -5914,7 +5915,7 @@ public class Server implements Runnable {
             }
 
             // going hull down
-            if (step.getType() == MovePath.STEP_HULL_DOWN) {
+            if (step.getType() == MoveStepType.HULL_DOWN) {
                 mpUsed = step.getMpUsed();
                 entity.setHullDown(true);
             }
@@ -6015,7 +6016,7 @@ public class Server implements Runnable {
                 double penalty = 0.0;
                 // jumpships do not accumulate thrust when they make a turn or
                 // change velocity
-                if (md.contains(MovePath.STEP_TURN_LEFT) || md.contains(MovePath.STEP_TURN_RIGHT)) {
+                if (md.contains(MoveStepType.TURN_LEFT) || md.contains(MoveStepType.TURN_RIGHT)) {
                     // I need to subtract the station keeping thrust from their
                     // accumulated thrust
                     // because they did not actually use it
@@ -6075,7 +6076,7 @@ public class Server implements Runnable {
         // If the entity is being swarmed, erratic movement may dislodge the
         // fleas.
         final int swarmerId = entity.getSwarmAttackerId();
-        if ((Entity.NONE != swarmerId) && md.contains(MovePath.STEP_SHAKE_OFF_SWARMERS)) {
+        if ((Entity.NONE != swarmerId) && md.contains(MoveStepType.SHAKE_OFF_SWARMERS)) {
             final Entity swarmer = game.getEntity(swarmerId);
             final PilotingRollData roll = entity.getBasePilotingRoll(overallMoveType);
 

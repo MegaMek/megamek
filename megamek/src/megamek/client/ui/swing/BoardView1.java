@@ -108,6 +108,7 @@ import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.UnitLocation;
 import megamek.common.WeaponType;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -1787,11 +1788,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             }
             if (!found) {
                 if ((null != previousStep)
-                        && ((step.getType() == MovePath.STEP_UP)
-                                || (step.getType() == MovePath.STEP_DOWN)
-                                || (step.getType() == MovePath.STEP_ACC)
-                                || (step.getType() == MovePath.STEP_DEC)
-                                || (step.getType() == MovePath.STEP_ACCN) || (step.getType() == MovePath.STEP_DECN))) {
+                        && ((step.getType() == MoveStepType.UP)
+                                || (step.getType() == MoveStepType.DOWN)
+                                || (step.getType() == MoveStepType.ACC)
+                                || (step.getType() == MoveStepType.DEC)
+                                || (step.getType() == MoveStepType.ACCN) || (step.getType() == MoveStepType.DECN))) {
                     // Mark the previous elevation change sprite hidden
                     // so that we can draw a new one in it's place without
                     // having overlap.
@@ -3491,7 +3492,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
                 break;
             default:
-                if (step.getType() == MovePath.STEP_BACKWARDS) {
+                if (step.getType() == MoveStepType.BACKWARDS) {
                     col = GUIPreferences.getInstance().getColor("AdvancedMoveBackColor");
                 } else {
                     col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
@@ -3507,20 +3508,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
             // draw arrows and cost for the step
             switch (step.getType()) {
-            case MovePath.STEP_FORWARDS:
-            case MovePath.STEP_SWIM:
-            case MovePath.STEP_BACKWARDS:
-            case MovePath.STEP_CHARGE:
-            case MovePath.STEP_DFA:
-            case MovePath.STEP_LATERAL_LEFT:
-            case MovePath.STEP_LATERAL_RIGHT:
-            case MovePath.STEP_LATERAL_LEFT_BACKWARDS:
-            case MovePath.STEP_LATERAL_RIGHT_BACKWARDS:
-            case MovePath.STEP_DEC:
-            case MovePath.STEP_DECN:
-            case MovePath.STEP_ACC:
-            case MovePath.STEP_ACCN:
-            case MovePath.STEP_LOOP:
+            case FORWARDS:
+            case SWIM:
+            case BACKWARDS:
+            case CHARGE:
+            case DFA:
+            case LATERAL_LEFT:
+            case LATERAL_RIGHT:
+            case LATERAL_LEFT_BACKWARDS:
+            case LATERAL_RIGHT_BACKWARDS:
+            case DEC:
+            case DECN:
+            case ACC:
+            case ACCN:
+            case LOOP:
                 // draw arrows showing them entering the next
                 myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints, movePoly.npoints);
                 graph.setColor(Color.darkGray);
@@ -3533,11 +3534,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 drawMovementCost(step, stepPos, graph, col, true);
                 drawRemainingVelocity(step, stepPos, graph, true);
                 break;
-            case MovePath.STEP_GO_PRONE:
-            case MovePath.STEP_HULL_DOWN:
-            case MovePath.STEP_DOWN:
-            case MovePath.STEP_DIG_IN:
-            case MovePath.STEP_FORTIFY:
+            case GO_PRONE:
+            case HULL_DOWN:
+            case DOWN:
+            case DIG_IN:
+            case FORTIFY:
                 // draw arrow indicating dropping prone
                 // also doubles as the descent indication
                 Polygon downPoly = movementPolys[7];
@@ -3552,9 +3553,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 drawMovementCost(step, offsetCostPos, graph, col, false);
                 drawRemainingVelocity(step, stepPos, graph, true);
                 break;
-            case MovePath.STEP_GET_UP:
-            case MovePath.STEP_UP:
-            case MovePath.STEP_CAREFUL_STAND:
+            case GET_UP:
+            case UP:
+            case CAREFUL_STAND:
                 // draw arrow indicating standing up
                 // also doubles as the climb indication
                 Polygon upPoly = movementPolys[6];
@@ -3569,7 +3570,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 drawMovementCost(step, offsetCostPos, graph, col, false);
                 drawRemainingVelocity(step, stepPos, graph, true);
                 break;
-            case MovePath.STEP_CLIMB_MODE_ON:
+            case CLIMB_MODE_ON:
                 // draw climb mode indicator
                 String climb;
                 if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
@@ -3588,7 +3589,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(col);
                 graph.drawString(climb, climbX - 1, stepPos.y + 38);
                 break;
-            case MovePath.STEP_CLIMB_MODE_OFF:
+            case CLIMB_MODE_OFF:
                 // cancel climb mode indicator
                 String climboff;
                 if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
@@ -3608,12 +3609,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.drawString(climboff, climboffX - 1, stepPos.y + 38);
 
                 break;
-            case MovePath.STEP_TURN_LEFT:
-            case MovePath.STEP_TURN_RIGHT:
-            case MovePath.STEP_THRUST:
-            case MovePath.STEP_YAW:
-            case MovePath.STEP_EVADE:
-            case MovePath.STEP_ROLL:
+            case TURN_LEFT:
+            case TURN_RIGHT:
+            case THRUST:
+            case YAW:
+            case EVADE:
+            case ROLL:
                 // draw arrows showing the facing
                 myPoly = new Polygon(facingPoly.xpoints, facingPoly.ypoints, facingPoly.npoints);
                 graph.setColor(Color.darkGray);
@@ -3626,7 +3627,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     drawMovementCost(step, stepPos, graph, col, false);
                 }
                 break;
-            case MovePath.STEP_LOAD:
+            case LOAD:
                 // Announce load.
                 String load = Messages.getString("BoardView1.Load"); //$NON-NLS-1$
                 if (step.isPastDanger()) {
@@ -3640,7 +3641,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(col);
                 graph.drawString(load, loadX - 1, stepPos.y + 38);
                 break;
-            case MovePath.STEP_LAUNCH:
+            case LAUNCH:
                 // announce launch
                 String launch = Messages.getString("BoardView1.Launch"); //$NON-NLS-1$
                 if (step.isPastDanger()) {
@@ -3655,7 +3656,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(col);
                 graph.drawString(launch, launchX - 1, launchY);
                 break;
-            case MovePath.STEP_RECOVER:
+            case RECOVER:
                 // announce launch
                 String recover = Messages.getString("BoardView1.Recover"); //$NON-NLS-1$
                 if (step.isPastDanger()) {
@@ -3670,7 +3671,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(col);
                 graph.drawString(recover, recoverX - 1, recoverY);
                 break;
-            case MovePath.STEP_JOIN:
+            case JOIN:
                 //announce launch
                 String join = Messages.getString("BoardView1.Join"); //$NON-NLS-1$
                 if (step.isPastDanger()) {
@@ -3684,7 +3685,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(col);
                 graph.drawString(join, joinX - 1, joinY);
                 break;
-            case MovePath.STEP_UNLOAD:
+            case UNLOAD:
                 // Announce unload.
                 String unload = Messages.getString("BoardView1.Unload"); //$NON-NLS-1$
                 if (step.isPastDanger()) {
@@ -3699,7 +3700,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(col);
                 graph.drawString(unload, unloadX - 1, unloadY);
                 break;
-            case MovePath.STEP_HOVER:
+            case HOVER:
                 // announce launch
                 String hover = Messages.getString("BoardView1.Hover"); //$NON-NLS-1$
                 if (step.isPastDanger()) {

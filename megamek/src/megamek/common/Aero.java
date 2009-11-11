@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
 
@@ -1931,7 +1932,7 @@ public class Aero extends Entity
     public PilotingRollData checkHover(MovePath md) {
         PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
 
-        if( md.contains(MovePath.STEP_HOVER) && (md.getLastStepMovementType() == EntityMovementType.MOVE_OVER_THRUST)) {
+        if( md.contains(MoveStepType.HOVER) && (md.getLastStepMovementType() == EntityMovementType.MOVE_OVER_THRUST)) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "hovering above safe thrust"));
         } else {
@@ -1943,7 +1944,7 @@ public class Aero extends Entity
     public PilotingRollData checkStall(MovePath md) {
         PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
 
-        if( (md.getFinalVelocity() == 0)  && !md.contains(MovePath.STEP_HOVER) && isAirborne() && !game.getBoard().inSpace()) {
+        if( (md.getFinalVelocity() == 0)  && !md.contains(MoveStepType.HOVER) && isAirborne() && !game.getBoard().inSpace()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "stalled out"));
         } else {
@@ -1955,7 +1956,7 @@ public class Aero extends Entity
     public PilotingRollData checkRolls(MoveStep step, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if(((step.getType() == MovePath.STEP_ROLL) || (step.getType() == MovePath.STEP_YAW))
+        if(((step.getType() == MoveStepType.ROLL) || (step.getType() == MoveStepType.YAW))
                 && (step.getNRolls() > 1)) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "More than one roll in the same turn"));
@@ -1971,7 +1972,7 @@ public class Aero extends Entity
     public PilotingRollData checkManeuver(MoveStep step, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if ((step == null) || (step.getType() != MovePath.STEP_MANEUVER)) {
+        if ((step == null) || (step.getType() != MoveStepType.MANEUVER)) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
             "Check false: Entity is not attempting to get up.");
             return roll;

@@ -33,56 +33,14 @@ import megamek.common.preference.PreferenceManager;
  */
 public class MovePath implements Cloneable, Serializable {
     private static final long serialVersionUID = -4258296679177532986L;
-    public static final int STEP_FORWARDS = 1;
-    public static final int STEP_BACKWARDS = 2;
-    public static final int STEP_TURN_LEFT = 3;
-    public static final int STEP_TURN_RIGHT = 4;
-    public static final int STEP_GET_UP = 5;
-    public static final int STEP_GO_PRONE = 6;
-    public static final int STEP_START_JUMP = 7;
-    public static final int STEP_CHARGE = 8;
-    public static final int STEP_DFA = 9;
-    public static final int STEP_FLEE = 10;
-    public static final int STEP_LATERAL_LEFT = 11;
-    public static final int STEP_LATERAL_RIGHT = 12;
-    public static final int STEP_LATERAL_LEFT_BACKWARDS = 13;
-    public static final int STEP_LATERAL_RIGHT_BACKWARDS = 14;
-    public static final int STEP_UNJAM_RAC = 15;
-    public static final int STEP_LOAD = 16;
-    public static final int STEP_UNLOAD = 17;
-    public static final int STEP_EJECT = 18;
-    public static final int STEP_CLEAR_MINEFIELD = 19;
-    public static final int STEP_UP = 20;
-    public static final int STEP_DOWN = 21;
-    public static final int STEP_SEARCHLIGHT = 22;
-    public static final int STEP_LAY_MINE = 23;
-    public static final int STEP_HULL_DOWN = 24;
-    public static final int STEP_CLIMB_MODE_ON = 25;
-    public static final int STEP_CLIMB_MODE_OFF = 26;
-    public static final int STEP_SWIM = 27;
-    public static final int STEP_DIG_IN = 28;
-    public static final int STEP_FORTIFY = 29;
-    public static final int STEP_SHAKE_OFF_SWARMERS = 30;
-    public static final int STEP_TAKEOFF = 31;
-    public static final int STEP_LAND = 32;
-    public static final int STEP_ACC = 33;
-    public static final int STEP_DEC = 34;
-    public static final int STEP_EVADE = 35;
-    public static final int STEP_ACCN = 36;
-    public static final int STEP_DECN = 37;
-    public static final int STEP_ROLL = 38;
-    public static final int STEP_OFF  = 39;
-    public static final int STEP_LAUNCH = 40;
-    public static final int STEP_THRUST = 41;
-    public static final int STEP_YAW = 42;
-    public static final int STEP_CRASH = 43;
-    public static final int STEP_RECOVER = 44;
-    public static final int STEP_RAM = 45;
-    public static final int STEP_HOVER = 46;
-    public static final int STEP_MANEUVER = 47;
-    public static final int STEP_LOOP = 48;
-    public static final int STEP_CAREFUL_STAND = 49;
-    public static final int STEP_JOIN = 50;
+
+    public enum MoveStepType {
+        NONE, FORWARDS, BACKWARDS, TURN_LEFT, TURN_RIGHT, GET_UP, GO_PRONE, START_JUMP, CHARGE, DFA, FLEE, LATERAL_LEFT, LATERAL_RIGHT, LATERAL_LEFT_BACKWARDS, LATERAL_RIGHT_BACKWARDS, UNJAM_RAC, LOAD, UNLOAD, EJECT, CLEAR_MINEFIELD, UP, DOWN, SEARCHLIGHT, LAY_MINE, HULL_DOWN, CLIMB_MODE_ON, CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, LAND, ACC, DEC, EVADE, ACCN, DECN, ROLL, OFF, LAUNCH, THRUST, YAW, CRASH, RECOVER, RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN;
+    }
+    
+    public enum Facing {
+        NORTH, NORTHEAST, SOUTHEAST, SOUTH, SOUTHWEST, NORTHWEST;
+    }
 
     public static class Key {
         private final Coords coords;
@@ -101,8 +59,7 @@ public class MovePath implements Cloneable, Serializable {
                 return false;
             }
             final Key s1 = (Key) obj;
-            return (type == s1.type) && (facing == s1.facing)
-            && coords.equals(s1.coords);
+            return (type == s1.type) && (facing == s1.facing) && coords.equals(s1.coords);
         }
 
         @Override
@@ -118,7 +75,7 @@ public class MovePath implements Cloneable, Serializable {
 
     public static final int DEFAULT_PATHFINDER_TIME_LIMIT = 2000;
 
-    //is this move path being done using careful movement?
+    // is this move path being done using careful movement?
     private boolean careful = true;
 
     /**
@@ -134,15 +91,13 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public Key getKey() {
-        return new Key(getFinalCoords(), getFinalFacing(), getFinalProne() ? 0
-                : isJumping() ? 1 : 2);
+        return new Key(getFinalCoords(), getFinalFacing(), getFinalProne() ? 0 : isJumping() ? 1 : 2);
     }
 
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer();
-        for (final Enumeration<MoveStep> i = steps.elements(); i
-                .hasMoreElements();) {
+        for (final Enumeration<MoveStep> i = steps.elements(); i.hasMoreElements();) {
             sb.append(i.nextElement().toString());
             sb.append(' ');
         }
@@ -158,62 +113,64 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Add a new step to the movement path.
-     *
-     * @param type the type of movement.
+     * 
+     * @param type
+     *            the type of movement.
      */
-    public MovePath addStep(final int type) {
+    public MovePath addStep(final MoveStepType type) {
         // TODO : detect steps off the map *here*.
         return addStep(new MoveStep(this, type));
     }
 
     /**
      * Add a new step to the movement path with the given target.
-     *
-     * @param type the type of movement.
-     * @param target the <code>Targetable</code> object that is the target of
-     *            this step. For example, the enemy being charged.
+     * 
+     * @param type
+     *            the type of movement.
+     * @param target
+     *            the <code>Targetable</code> object that is the target of this
+     *            step. For example, the enemy being charged.
      */
-    public MovePath addStep(final int type, final Targetable target) {
+    public MovePath addStep(final MoveStepType type, final Targetable target) {
         return addStep(new MoveStep(this, type, target));
     }
 
-    public MovePath addStep(final int type, final int mineToLay) {
+    public MovePath addStep(final MoveStepType type, final int mineToLay) {
         return addStep(type, -1, mineToLay);
     }
 
-    public MovePath addStep(final int type, final int recover, final int mineToLay) {
+    public MovePath addStep(final MoveStepType type, final int recover, final int mineToLay) {
         return addStep(new MoveStep(this, type, recover, mineToLay));
     }
 
-    public MovePath addStep(int type, TreeMap<Integer, Vector<Integer>> targets) {
+    public MovePath addStep(MoveStepType type, TreeMap<Integer, Vector<Integer>> targets) {
         return addStep(new MoveStep(this, type, targets));
     }
 
-    public MovePath addStep(final int type, final boolean noCost) {
+    public MovePath addStep(final MoveStepType type, final boolean noCost) {
         return addStep(new MoveStep(this, type, noCost));
     }
 
-    public MovePath addStep(final int type, final boolean noCost, final boolean isManeuver) {
+    public MovePath addStep(final MoveStepType type, final boolean noCost, final boolean isManeuver) {
         return addStep(new MoveStep(this, type, noCost, isManeuver));
     }
 
-    public MovePath addStep(final int type, final Minefield mf) {
+    public MovePath addStep(final MoveStepType type, final Minefield mf) {
         return addStep(new MoveStep(this, type, mf));
     }
 
     public MovePath addManeuver(final int manType) {
-        return addStep(new MoveStep(this, STEP_MANEUVER, -1, -1, manType));
+        return addStep(new MoveStep(this, MoveStepType.MANEUVER, -1, -1, manType));
     }
 
     public boolean canShift() {
-        return ((entity instanceof QuadMech) || entity.isUsingManAce())
-                && !isJumping();
+        return ((entity instanceof QuadMech) || entity.isUsingManAce()) && !isJumping();
     }
 
     /**
      * Initializes a step as part of this movement path. Then adds it to the
      * list.
-     *
+     * 
      * @param step
      */
     protected MovePath addStep(final MoveStep step) {
@@ -271,7 +228,7 @@ public class MovePath implements Cloneable, Serializable {
                 step = new MoveStep(this, step.getType(), step.getTarget(game));
             } else if (step.getRecoveryUnit() != -1) {
                 step = new MoveStep(this, step.getType(), step.getRecoveryUnit(), -1);
-            } else if (step.getMineToLay() != -1){
+            } else if (step.getMineToLay() != -1) {
                 step = new MoveStep(this, step.getType(), step.getMineToLay());
             } else if (step.getLaunched().size() > 0) {
                 step = new MoveStep(this, step.getType(), step.getLaunched());
@@ -279,9 +236,9 @@ public class MovePath implements Cloneable, Serializable {
                 step = new MoveStep(this, step.getType(), -1, -1, step.getManeuverType());
             } else if (step.isManeuver()) {
                 step = new MoveStep(this, step.getType(), step.hasNoCost(), step.isManeuver());
-            } else if(step.hasNoCost()) {
+            } else if (step.hasNoCost()) {
                 step = new MoveStep(this, step.getType(), step.hasNoCost());
-            } else if(null != step.getMinefield()) {
+            } else if (null != step.getMinefield()) {
                 step = new MoveStep(this, step.getType(), step.getMinefield());
             } else {
 
@@ -299,8 +256,7 @@ public class MovePath implements Cloneable, Serializable {
 
         // Find the new last step in the path.
         int index = steps.size() - 1;
-        while ((index >= 0) && getStep(index).setEndPos(true)
-                && !getStep(index).isLegal()) {
+        while ((index >= 0) && getStep(index).setEndPos(true) && !getStep(index).isLegal()) {
             index--;
         }
     }
@@ -323,7 +279,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Check for any of the specified type of step in the path
      */
-    public boolean contains(final int type) {
+    public boolean contains(final MoveStepType type) {
         for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
             if (step.getType() == type) {
@@ -416,9 +372,9 @@ public class MovePath implements Cloneable, Serializable {
         }
         return entity.getElevation();
     }
-    
+
     /**
-     * get final altitude 
+     * get final altitude
      */
     public int getFinalAltitude() {
         if (getLastStep() != null) {
@@ -431,8 +387,8 @@ public class MovePath implements Cloneable, Serializable {
         if (getLastStep() != null) {
             return getLastStep().getVelocity();
         }
-        if(entity instanceof Aero) {
-            return ((Aero)entity).getCurrentVelocity();
+        if (entity instanceof Aero) {
+            return ((Aero) entity).getCurrentVelocity();
         }
         return 0;
     }
@@ -477,8 +433,7 @@ public class MovePath implements Cloneable, Serializable {
     public void printAllSteps() {
         System.out.println("*Steps*");
         for (int i = 0; i < steps.size(); i++) {
-            System.out.println("  " + i + ": " + getStep(i) + ", "
-                    + getStep(i).getMovementType());
+            System.out.println("  " + i + ": " + getStep(i) + ", " + getStep(i).getMovementType());
         }
     }
 
@@ -487,47 +442,48 @@ public class MovePath implements Cloneable, Serializable {
      */
     public void clipToPossible() {
         if (steps.size() == 0) {
-            //nothing to clip
+            // nothing to clip
             return;
         }
-        // Do a final check for bad moves, and clip movement after the first bad one
+        // Do a final check for bad moves, and clip movement after the first bad
+        // one
         final Vector<MoveStep> goodSteps = new Vector<MoveStep>();
         Enumeration<MoveStep> i = steps.elements();
         MoveStep step = i.nextElement();
-        
+
         // Can't move out of a hex with an enemy unit unless we started
         // there, BUT we're allowed to turn, unload, or go prone.
-        if (Compute.isEnemyIn(game, entity, entity.getPosition(), false,
-                entity instanceof Mech, entity.getElevation())) {            
-            //This is an enemy, we can't go out and back in, and go out again
+        if (Compute.isEnemyIn(game, entity, entity.getPosition(), false, entity instanceof Mech, entity.getElevation())) {
+            // This is an enemy, we can't go out and back in, and go out again
             boolean left = false;
             boolean returned = false;
             while (i.hasMoreElements()) {
                 step = i.nextElement();
                 if (!left) {
-                    if (!step.getPosition().equals(entity.getPosition()) ||
-                            !(step.getElevation() == entity.getElevation())) {
-                        //we left the location
+                    if (!step.getPosition().equals(entity.getPosition())
+                            || !(step.getElevation() == entity.getElevation())) {
+                        // we left the location
                         left = true;
                         continue;
                     }
                     continue;
                 }
                 if (!returned) {
-                    if (step.getPosition().equals(entity.getPosition()) ||
-                            (step.getElevation() == entity.getElevation())) {
-                        //we returned to the location
+                    if (step.getPosition().equals(entity.getPosition())
+                            || (step.getElevation() == entity.getElevation())) {
+                        // we returned to the location
                         returned = true;
                         continue;
                     }
                     continue;
                 }
-                //we've returned, anything other than the following 4 types are illegal
-                if ((step.getType() != MovePath.STEP_TURN_LEFT)
-                && (step.getType() != MovePath.STEP_TURN_RIGHT)
-                && (step.getType() != MovePath.STEP_UNLOAD)
-                && (step.getType() != MovePath.STEP_GO_PRONE)) {
-                    //we only need to identify the first illegal move
+                // we've returned, anything other than the following 4 types are
+                // illegal
+                if ((step.getType() != MovePath.MoveStepType.TURN_LEFT)
+                        && (step.getType() != MovePath.MoveStepType.TURN_RIGHT)
+                        && (step.getType() != MovePath.MoveStepType.UNLOAD)
+                        && (step.getType() != MovePath.MoveStepType.GO_PRONE)) {
+                    // we only need to identify the first illegal move
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     break;
                 }
@@ -541,15 +497,16 @@ public class MovePath implements Cloneable, Serializable {
             } else {
                 break;
             }
-            
+
         }
         steps = goodSteps;
     }
 
     /**
      * Changes turn-forwards-opposite-turn sequences into quad lateral shifts.
-     * <p/> Finds the sequence of three steps that can be transformed, then
-     * removes all three and replaces them with the lateral shift step.
+     * <p/>
+     * Finds the sequence of three steps that can be transformed, then removes
+     * all three and replaces them with the lateral shift step.
      */
     private void transformLateralShift() {
         if (steps.size() < 3) {
@@ -561,17 +518,15 @@ public class MovePath implements Cloneable, Serializable {
         final MoveStep step3 = getStep(index + 2);
 
         if (step1.oppositeTurn(step3)
-                && ((step2.getType() == MovePath.STEP_BACKWARDS) || (step2
-                        .getType() == MovePath.STEP_FORWARDS))) {
-            final int stepType = step1.getType();
-            final int direction = step2.getType();
+                && ((step2.getType() == MovePath.MoveStepType.BACKWARDS) || (step2.getType() == MovePath.MoveStepType.FORWARDS))) {
+            final MoveStepType stepType = step1.getType();
+            final MoveStepType direction = step2.getType();
             // remove all old steps
             steps.removeElementAt(index);
             steps.removeElementAt(index);
             steps.removeElementAt(index);
             // add new step
-            final MoveStep shift = new MoveStep(this, lateralShiftForTurn(
-                    stepType, direction));
+            final MoveStep shift = new MoveStep(this, lateralShiftForTurn(stepType, direction));
             addStep(shift);
         }
     }
@@ -579,61 +534,61 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Returns the lateral shift that corresponds to the turn direction
      */
-    public static int lateralShiftForTurn(final int turn, final int direction) {
-        if (direction == MovePath.STEP_FORWARDS) {
+    public static MoveStepType lateralShiftForTurn(final MoveStepType turn, final MoveStepType direction) {
+        if (direction == MoveStepType.FORWARDS) {
             switch (turn) {
-                case MovePath.STEP_TURN_LEFT:
-                    return MovePath.STEP_LATERAL_LEFT;
-                case MovePath.STEP_TURN_RIGHT:
-                    return MovePath.STEP_LATERAL_RIGHT;
-                default:
-                    return turn;
+            case TURN_LEFT:
+                return MoveStepType.LATERAL_LEFT;
+            case TURN_RIGHT:
+                return MoveStepType.LATERAL_RIGHT;
+            default:
+                return turn;
             }
         }
         switch (turn) {
-            case MovePath.STEP_TURN_LEFT:
-                return MovePath.STEP_LATERAL_LEFT_BACKWARDS;
-            case MovePath.STEP_TURN_RIGHT:
-                return MovePath.STEP_LATERAL_RIGHT_BACKWARDS;
-            default:
-                return turn;
+        case TURN_LEFT:
+            return MoveStepType.LATERAL_LEFT_BACKWARDS;
+        case TURN_RIGHT:
+            return MoveStepType.LATERAL_RIGHT_BACKWARDS;
+        default:
+            return turn;
         }
     }
 
     /**
      * Returns the turn direction that corresponds to the lateral shift
      */
-    static int turnForLateralShift(final int shift) {
+    static MoveStepType turnForLateralShift(final MoveStepType shift) {
         switch (shift) {
-            case MovePath.STEP_LATERAL_LEFT:
-                return MovePath.STEP_TURN_LEFT;
-            case MovePath.STEP_LATERAL_RIGHT:
-                return MovePath.STEP_TURN_RIGHT;
-            case MovePath.STEP_LATERAL_LEFT_BACKWARDS:
-                return MovePath.STEP_TURN_LEFT;
-            case MovePath.STEP_LATERAL_RIGHT_BACKWARDS:
-                return MovePath.STEP_TURN_RIGHT;
-            default:
-                return shift;
+        case LATERAL_LEFT:
+            return MoveStepType.TURN_LEFT;
+        case LATERAL_RIGHT:
+            return MoveStepType.TURN_RIGHT;
+        case LATERAL_LEFT_BACKWARDS:
+            return MoveStepType.TURN_LEFT;
+        case LATERAL_RIGHT_BACKWARDS:
+            return MoveStepType.TURN_RIGHT;
+        default:
+            return shift;
         }
     }
 
     /**
-     * Returns the direction (either MovePath.STEP_TURN_LEFT or STEP_TURN_RIGHT)
-     * that the destination facing lies in.
+     * Returns the direction (either MovePath.MoveStepType.TURN_LEFT or
+     * MoveStepType.TURN_RIGHT) that the destination facing lies in.
      */
-    public static int getDirection(final int facing, final int destFacing) {
+    public static MoveStepType getDirection(final int facing, final int destFacing) {
         final int rotate = (destFacing + (6 - facing)) % 6;
-        return rotate >= 3 ? STEP_TURN_LEFT : STEP_TURN_RIGHT;
+        return rotate >= 3 ? MoveStepType.TURN_LEFT : MoveStepType.TURN_RIGHT;
     }
 
     /**
      * Returns the adjusted facing, given the start facing.
      */
-    public static int getAdjustedFacing(final int facing, final int movement) {
-        if (movement == STEP_TURN_RIGHT) {
+    public static int getAdjustedFacing(final int facing, final MoveStepType movement) {
+        if (movement == MoveStepType.TURN_RIGHT) {
             return (facing + 1) % 6;
-        } else if (movement == STEP_TURN_LEFT) {
+        } else if (movement == MoveStepType.TURN_LEFT) {
             return (facing + 5) % 6;
         }
         return facing;
@@ -667,7 +622,7 @@ public class MovePath implements Cloneable, Serializable {
         if (steps.size() > 0) {
             boolean jump = false;
             for (MoveStep step : steps) {
-                if (step.getType() == MovePath.STEP_START_JUMP) {
+                if (step.getType() == MovePath.MoveStepType.START_JUMP) {
                     jump = true;
                 }
             }
@@ -680,16 +635,16 @@ public class MovePath implements Cloneable, Serializable {
      * Returns if the entity is flying at the last step of this movepath.
      * WARNING: This function will only evaluate the path of
      * <code>LandAirMech</code>s, for all other types it will return false.
-     *
+     * 
      * @return true if it's a flying LAM.
      */
     public boolean isFlying() {
         if (entity instanceof LandAirMech) {
             boolean flying = entity.isAirborne();
             for (MoveStep step : steps) {
-                if (step.getType() == STEP_TAKEOFF) {
+                if (step.getType() == MoveStepType.TAKEOFF) {
                     flying = true;
-                } else if (step.getType() == STEP_LAND) {
+                } else if (step.getType() == MoveStepType.LAND) {
                     flying = false;
                 }
             }
@@ -701,13 +656,14 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Extend the current path to the destination <code>Coords</code>.
-     *
-     * @param dest the destination <code>Coords</code> of the move.
-     * @param type the type of movment step required.
+     * 
+     * @param dest
+     *            the destination <code>Coords</code> of the move.
+     * @param type
+     *            the type of movment step required.
      */
-    public void findPathTo(final Coords dest, final int type) {
-        final int timeLimit = PreferenceManager.getClientPreferences()
-                .getMaxPathfinderTime();
+    public void findPathTo(final Coords dest, final MoveStepType type) {
+        final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
 
         if (timeLimit >= 5000) {
             System.out.print("WARNING!!!  Settings allow up to ");
@@ -723,15 +679,16 @@ public class MovePath implements Cloneable, Serializable {
             return false;
         }
 
-        //for aero units move must use up all their velocity
-        if(entity instanceof Aero) {
-            Aero a = (Aero)entity;
-            if(getLastStep() == null) {
-                if((a.getCurrentVelocity() > 0) && !game.useVectorMove()) {
+        // for aero units move must use up all their velocity
+        if (entity instanceof Aero) {
+            Aero a = (Aero) entity;
+            if (getLastStep() == null) {
+                if ((a.getCurrentVelocity() > 0) && !game.useVectorMove()) {
                     return false;
                 }
             } else {
-                if((getLastStep().getVelocityLeft() > 0) && !game.useVectorMove() && (getLastStep().getType() != MovePath.STEP_FLEE)) {
+                if ((getLastStep().getVelocityLeft() > 0) && !game.useVectorMove()
+                        && (getLastStep().getType() != MovePath.MoveStepType.FLEE)) {
                     return false;
                 }
             }
@@ -741,10 +698,10 @@ public class MovePath implements Cloneable, Serializable {
             return true;
         }
 
-        if (getLastStep().getType() == STEP_CHARGE) {
+        if (getLastStep().getType() == MoveStepType.CHARGE) {
             return getSecondLastStep().isLegal();
         }
-        if (getLastStep().getType() == STEP_RAM) {
+        if (getLastStep().getType() == MoveStepType.RAM) {
             return getSecondLastStep().isLegal();
         }
         return getLastStep().isLegal();
@@ -753,23 +710,24 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * An A* pathfinder to get from the end of the current path (or entity's
      * position if empty) to the destination.
-     *
-     * @param dest The goal hex
-     * @param type The type of move we want to do
-     * @param timeLimit the maximum <code>int</code> number of milliseconds to
-     *            take hunting for an ideal path.
+     * 
+     * @param dest
+     *            The goal hex
+     * @param type
+     *            The type of move we want to do
+     * @param timeLimit
+     *            the maximum <code>int</code> number of milliseconds to take
+     *            hunting for an ideal path.
      */
-    private void notSoLazyPathfinder(final Coords dest, final int type,
-            final int timeLimit) {
+    private void notSoLazyPathfinder(final Coords dest, final MoveStepType type, final int timeLimit) {
         final long endTime = System.currentTimeMillis() + timeLimit;
 
-        int step = type;
-        if (step != MovePath.STEP_BACKWARDS) {
-            step = MovePath.STEP_FORWARDS;
+        MoveStepType step = type;
+        if (step != MoveStepType.BACKWARDS) {
+            step = MoveStepType.FORWARDS;
         }
 
-        final MovePathComparator mpc = new MovePathComparator(dest,
-                step == MovePath.STEP_BACKWARDS);
+        final MovePathComparator mpc = new MovePathComparator(dest, step == MovePath.MoveStepType.BACKWARDS);
 
         MovePath bestPath = clone();
 
@@ -793,20 +751,17 @@ public class MovePath implements Cloneable, Serializable {
                 break;
             }
 
-            final Iterator<MovePath> adjacent = candidatePath.getNextMoves(
-                    step == STEP_BACKWARDS, step == STEP_FORWARDS).iterator();
+            final Iterator<MovePath> adjacent = candidatePath.getNextMoves(step == MoveStepType.BACKWARDS,
+                    step == MoveStepType.FORWARDS).iterator();
             while (adjacent.hasNext()) {
                 final MovePath expandedPath = adjacent.next();
 
-                if (expandedPath.getLastStep().isMovementPossible(game,
-                        startingPos, startingElev)) {
-                    final MovePath found = discovered
-                            .get(expandedPath.getKey());
+                if (expandedPath.getLastStep().isMovementPossible(game, startingPos, startingElev)) {
+                    final MovePath found = discovered.get(expandedPath.getKey());
                     if ((found != null) && (mpc.compare(found, expandedPath) <= 0)) {
                         continue;
                     }
-                    int index = Collections.<MovePath> binarySearch(candidates,
-                            expandedPath, mpc);
+                    int index = Collections.<MovePath> binarySearch(candidates, expandedPath, mpc);
                     if (index < 0) {
                         index = -index - 1;
                     }
@@ -820,8 +775,7 @@ public class MovePath implements Cloneable, Serializable {
             loopcount++;
             if ((loopcount % 256 == 0) && keepLooping && (candidates.size() > 0)) {
                 final MovePath front = candidates.get(0);
-                if (front.getFinalCoords().distance(dest) < bestPath
-                        .getFinalCoords().distance(dest)) {
+                if (front.getFinalCoords().distance(dest) < bestPath.getFinalCoords().distance(dest)) {
                     bestPath = front;
                     keepLooping = System.currentTimeMillis() < endTime;
                 } else {
@@ -830,8 +784,7 @@ public class MovePath implements Cloneable, Serializable {
             }
         } // end while
 
-        if (getFinalCoords().distance(dest) > bestPath.getFinalCoords()
-                .distance(dest)) {
+        if (getFinalCoords().distance(dest) > bestPath.getFinalCoords().distance(dest)) {
             // Make the path we found, this path.
             steps = bestPath.steps;
         }
@@ -844,14 +797,16 @@ public class MovePath implements Cloneable, Serializable {
      * Find the shortest path to the destination <code>Coords</code> by hex
      * count. This right choice <em>only</em> when making a simple move like a
      * straight line or one with a single turn.
-     *
-     * @param dest the destination <code>Coords</code> of the move.
-     * @param type the type of movment step required.
+     * 
+     * @param dest
+     *            the destination <code>Coords</code> of the move.
+     * @param type
+     *            the type of movment step required.
      */
-    private void lazyPathfinder(final Coords dest, final int type) {
-        int step = STEP_FORWARDS;
-        if (type == STEP_BACKWARDS) {
-            step = STEP_BACKWARDS;
+    private void lazyPathfinder(final Coords dest, final MoveStepType type) {
+        MoveStepType step = MoveStepType.FORWARDS;
+        if (type == MoveStepType.BACKWARDS) {
+            step = MoveStepType.BACKWARDS;
         }
         Coords subDest = dest;
         if (!dest.equals(getFinalCoords())) {
@@ -860,13 +815,12 @@ public class MovePath implements Cloneable, Serializable {
 
         while (!getFinalCoords().equals(subDest)) {
             // adjust facing
-            rotatePathfinder((getFinalCoords().direction(subDest) + (step == STEP_BACKWARDS ? 3
-                    : 0)) % 6, false);
+            rotatePathfinder((getFinalCoords().direction(subDest) + (step == MoveStepType.BACKWARDS ? 3 : 0)) % 6,
+                    false);
             // step forwards
             addStep(step);
         }
-        rotatePathfinder((getFinalCoords().direction(dest) + (step == STEP_BACKWARDS ? 3
-                : 0)) % 6, false);
+        rotatePathfinder((getFinalCoords().direction(dest) + (step == MoveStepType.BACKWARDS ? 3 : 0)) % 6, false);
         if (!dest.equals(getFinalCoords())) {
             addStep(type);
         }
@@ -885,90 +839,84 @@ public class MovePath implements Cloneable, Serializable {
             final MovePath right = clone();
 
             // From here, we can move F, LF, RF, LLF, RRF, and RRRF.
-            result.add(clone().addStep(MovePath.STEP_FORWARDS));
+            result.add(clone().addStep(MovePath.MoveStepType.FORWARDS));
             for (int turn = 0; turn < 2; turn++) {
-                left.addStep(MovePath.STEP_TURN_LEFT);
-                right.addStep(MovePath.STEP_TURN_RIGHT);
-                result.add(left.clone().addStep(MovePath.STEP_FORWARDS));
-                result.add(right.clone().addStep(MovePath.STEP_FORWARDS));
+                left.addStep(MovePath.MoveStepType.TURN_LEFT);
+                right.addStep(MovePath.MoveStepType.TURN_RIGHT);
+                result.add(left.clone().addStep(MovePath.MoveStepType.FORWARDS));
+                result.add(right.clone().addStep(MovePath.MoveStepType.FORWARDS));
             }
-            right.addStep(MovePath.STEP_TURN_RIGHT);
-            result.add(right.addStep(MovePath.STEP_FORWARDS));
+            right.addStep(MovePath.MoveStepType.TURN_RIGHT);
+            result.add(right.addStep(MovePath.MoveStepType.FORWARDS));
 
             // We've got all our next steps.
             return result;
         }
 
-        //need to do a separate section here for Aeros.
-        //just like jumping for now, but I could add some other stuff
-        //here later
-        if(entity instanceof Aero) {
+        // need to do a separate section here for Aeros.
+        // just like jumping for now, but I could add some other stuff
+        // here later
+        if (entity instanceof Aero) {
             MovePath left = clone();
             MovePath right = clone();
 
             // From here, we can move F, LF, RF, LLF, RRF, and RRRF.
-            result.add((clone()).addStep(MovePath.STEP_FORWARDS) );
-            for ( int turn = 0; turn < 2; turn++ ) {
-                left.addStep(MovePath.STEP_TURN_LEFT);
-                right.addStep(MovePath.STEP_TURN_RIGHT);
-                result.add(left.clone().addStep(MovePath.STEP_FORWARDS));
-                result.add(right.clone().addStep(MovePath.STEP_FORWARDS));
+            result.add((clone()).addStep(MovePath.MoveStepType.FORWARDS));
+            for (int turn = 0; turn < 2; turn++) {
+                left.addStep(MovePath.MoveStepType.TURN_LEFT);
+                right.addStep(MovePath.MoveStepType.TURN_RIGHT);
+                result.add(left.clone().addStep(MovePath.MoveStepType.FORWARDS));
+                result.add(right.clone().addStep(MovePath.MoveStepType.FORWARDS));
             }
-            right.addStep(MovePath.STEP_TURN_RIGHT);
-            result.add( right.addStep(MovePath.STEP_FORWARDS) );
+            right.addStep(MovePath.MoveStepType.TURN_RIGHT);
+            result.add(right.addStep(MovePath.MoveStepType.FORWARDS));
 
             // We've got all our next steps.
             return result;
         }
 
         if (getFinalProne() || getFinalHullDown()) {
-            if ((last != null) && (last.getType() != STEP_TURN_RIGHT)) {
-                result.add(clone().addStep(MovePath.STEP_TURN_LEFT));
+            if ((last != null) && (last.getType() != MoveStepType.TURN_RIGHT)) {
+                result.add(clone().addStep(MovePath.MoveStepType.TURN_LEFT));
             }
-            if ((last != null) && (last.getType() != STEP_TURN_LEFT)) {
-                result.add(clone().addStep(MovePath.STEP_TURN_RIGHT));
+            if ((last != null) && (last.getType() != MoveStepType.TURN_LEFT)) {
+                result.add(clone().addStep(MovePath.MoveStepType.TURN_RIGHT));
             }
 
-            if ( entity.isCarefulStand() ) {
-                result.add(clone().addStep(MovePath.STEP_CAREFUL_STAND));
+            if (entity.isCarefulStand()) {
+                result.add(clone().addStep(MovePath.MoveStepType.CAREFUL_STAND));
             } else {
-                result.add(clone().addStep(MovePath.STEP_GET_UP));
+                result.add(clone().addStep(MovePath.MoveStepType.GET_UP));
             }
             return result;
         }
         if (canShift()) {
-            if (forward
-                    && (!backward || ((last == null) || (last.getType() != MovePath.STEP_LATERAL_LEFT)))) {
-                result.add(clone().addStep(STEP_LATERAL_RIGHT));
+            if (forward && (!backward || ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_LEFT)))) {
+                result.add(clone().addStep(MoveStepType.LATERAL_RIGHT));
             }
-            if (forward
-                    && (!backward || ((last == null) || (last.getType() != MovePath.STEP_LATERAL_RIGHT)))) {
-                result.add(clone().addStep(MovePath.STEP_LATERAL_LEFT));
+            if (forward && (!backward || ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_RIGHT)))) {
+                result.add(clone().addStep(MovePath.MoveStepType.LATERAL_LEFT));
             }
             if (backward
-                    && (!forward || ((last == null) || (last.getType() != MovePath.STEP_LATERAL_LEFT_BACKWARDS)))) {
-                result.add(clone().addStep(
-                        MovePath.STEP_LATERAL_RIGHT_BACKWARDS));
+                    && (!forward || ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS)))) {
+                result.add(clone().addStep(MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS));
             }
             if (backward
-                    && (!forward || ((last == null) || (last.getType() != MovePath.STEP_LATERAL_RIGHT_BACKWARDS)))) {
-                result.add(clone().addStep(
-                        MovePath.STEP_LATERAL_LEFT_BACKWARDS));
+                    && (!forward || ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS)))) {
+                result.add(clone().addStep(MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS));
             }
         }
-        if (forward
-                && (!backward || ((last == null) || (last.getType() != MovePath.STEP_BACKWARDS)))) {
-            result.add(clone().addStep(MovePath.STEP_FORWARDS));
+        if (forward && (!backward || ((last == null) || (last.getType() != MovePath.MoveStepType.BACKWARDS)))) {
+            result.add(clone().addStep(MovePath.MoveStepType.FORWARDS));
         }
-        if ((last == null) || (last.getType() != MovePath.STEP_TURN_LEFT)) {
-            result.add(clone().addStep(MovePath.STEP_TURN_RIGHT));
+        if ((last == null) || (last.getType() != MovePath.MoveStepType.TURN_LEFT)) {
+            result.add(clone().addStep(MovePath.MoveStepType.TURN_RIGHT));
         }
-        if ((last == null) || (last.getType() != MovePath.STEP_TURN_RIGHT)) {
-            result.add(clone().addStep(MovePath.STEP_TURN_LEFT));
+        if ((last == null) || (last.getType() != MovePath.MoveStepType.TURN_RIGHT)) {
+            result.add(clone().addStep(MovePath.MoveStepType.TURN_LEFT));
         }
-        if (backward
-                && (!forward || ((last == null) || (last.getType() != MovePath.STEP_FORWARDS)))) {
-            result.add(clone().addStep(MovePath.STEP_BACKWARDS));
+        if (backward && (!forward || ((last == null) || (last.getType() != MovePath.MoveStepType.FORWARDS)))) {
+            result.add(clone().addStep(MovePath.MoveStepType.BACKWARDS));
         }
         return result;
     }
@@ -976,7 +924,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Clones this path, will contain a new clone of the steps so that the clone
      * is independent from the original.
-     *
+     * 
      * @return the cloned MovePath
      */
     @Override
@@ -992,7 +940,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     public void rotatePathfinder(final int destFacing, final boolean isManeuver) {
         while (getFinalFacing() != destFacing) {
-            final int stepType = getDirection(getFinalFacing(), destFacing);
+            final MoveStepType stepType = getDirection(getFinalFacing(), destFacing);
             addStep(stepType, isManeuver, isManeuver);
         }
     }
@@ -1001,18 +949,15 @@ public class MovePath implements Cloneable, Serializable {
         private final Coords destination;
         boolean backward;
 
-        public MovePathComparator(final Coords destination,
-                final boolean backward) {
+        public MovePathComparator(final Coords destination, final boolean backward) {
             this.destination = destination;
             this.backward = backward;
         }
 
         public int compare(final MovePath first, final MovePath second) {
-            final int firstDist = first.getMpUsed()
-                    + first.getFinalCoords().distance(destination)
+            final int firstDist = first.getMpUsed() + first.getFinalCoords().distance(destination)
                     + getFacingDiff(first);
-            final int secondDist = second.getMpUsed()
-                    + second.getFinalCoords().distance(destination)
+            final int secondDist = second.getMpUsed() + second.getFinalCoords().distance(destination)
                     + getFacingDiff(second);
             return firstDist - secondDist;
         }
@@ -1021,9 +966,8 @@ public class MovePath implements Cloneable, Serializable {
             if (first.isJumping()) {
                 return 0;
             }
-            int firstFacing = Math.abs((first.getFinalCoords().direction(
-                    destination) + (backward ? 3 : 0))
-                    % 6 - first.getFinalFacing());
+            int firstFacing = Math.abs((first.getFinalCoords().direction(destination) + (backward ? 3 : 0)) % 6
+                    - first.getFinalFacing());
             if (firstFacing > 3) {
                 firstFacing = 6 - firstFacing;
             }
@@ -1042,18 +986,18 @@ public class MovePath implements Cloneable, Serializable {
         Coords priorPos = startPos;
         Coords finalPos = getFinalCoords();
 
-        //if we moved one or fewer hexes, then just return starting position
-        if(getHexesMoved() < 2) {
+        // if we moved one or fewer hexes, then just return starting position
+        if (getHexesMoved() < 2) {
             return priorPos;
         }
 
-         for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements();) {
-             final MoveStep step = i.nextElement();
-             if(step.getPosition() != finalPos) {
-                 priorPos = step.getPosition();
-             }
-         }
-         return priorPos;
+        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
+            if (step.getPosition() != finalPos) {
+                priorPos = step.getPosition();
+            }
+        }
+        return priorPos;
 
     }
 

@@ -69,6 +69,7 @@ import megamek.common.TeleMissile;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
@@ -1117,7 +1118,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     unusedVelocity = ((Aero) ce()).getCurrentVelocity() > 0;
                 }
                 boolean flyoff = false;
-                if ((null != cmd) && cmd.contains(MovePath.STEP_OFF)) {
+                if ((null != cmd) && cmd.contains(MoveStepType.OFF)) {
                     flyoff = true;
                 }
                 if (unusedVelocity && !flyoff) {
@@ -1158,28 +1159,28 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (shiftheld || (gear == GEAR_TURN)) {
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
         } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP)) {
-            cmd.findPathTo(dest, MovePath.STEP_FORWARDS);
+            cmd.findPathTo(dest, MoveStepType.FORWARDS);
         } else if (gear == GEAR_BACKUP) {
-            cmd.findPathTo(dest, MovePath.STEP_BACKWARDS);
+            cmd.findPathTo(dest, MoveStepType.BACKWARDS);
         } else if (gear == GEAR_CHARGE) {
-            cmd.findPathTo(dest, MovePath.STEP_CHARGE);
+            cmd.findPathTo(dest, MoveStepType.CHARGE);
         } else if (gear == GEAR_DFA) {
-            cmd.findPathTo(dest, MovePath.STEP_DFA);
+            cmd.findPathTo(dest, MoveStepType.DFA);
         } else if (gear == GEAR_SWIM) {
-            cmd.findPathTo(dest, MovePath.STEP_SWIM);
+            cmd.findPathTo(dest, MoveStepType.SWIM);
         } else if (gear == GEAR_RAM) {
-            cmd.findPathTo(dest, MovePath.STEP_FORWARDS);
+            cmd.findPathTo(dest, MoveStepType.FORWARDS);
         } else if (gear == GEAR_IMMEL) {
-            cmd.addStep(MovePath.STEP_UP, true, true);
-            cmd.addStep(MovePath.STEP_UP, true, true);
-            cmd.addStep(MovePath.STEP_DEC, true, true);
-            cmd.addStep(MovePath.STEP_DEC, true, true);
+            cmd.addStep(MoveStepType.UP, true, true);
+            cmd.addStep(MoveStepType.UP, true, true);
+            cmd.addStep(MoveStepType.DEC, true, true);
+            cmd.addStep(MoveStepType.DEC, true, true);
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true);
             gear = GEAR_LAND;
         } else if (gear == GEAR_SPLIT_S) {
-            cmd.addStep(MovePath.STEP_DOWN, true, true);
-            cmd.addStep(MovePath.STEP_DOWN, true, true);
-            cmd.addStep(MovePath.STEP_ACC, true, true);
+            cmd.addStep(MoveStepType.DOWN, true, true);
+            cmd.addStep(MoveStepType.DOWN, true, true);
+            cmd.addStep(MoveStepType.ACC, true, true);
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true);
             gear = GEAR_LAND;
         }
@@ -1264,7 +1265,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     // cmd = addSteps(cmd, ce, clientgui.getClient());
                 }
 
-                cmd.addStep(MovePath.STEP_RAM);
+                cmd.addStep(MoveStepType.RAM);
 
                 ToHitData toHit = new RamAttackAction(cen, target
                         .getTargetType(), target.getTargetId(), target
@@ -1528,7 +1529,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
         setSearchlightEnabled(ce.hasSpotlight()
-                && !cmd.contains(MovePath.STEP_SEARCHLIGHT), ce()
+                && !cmd.contains(MoveStepType.SEARCHLIGHT), ce()
                 .isUsingSpotlight());
     }
 
@@ -1568,7 +1569,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             setRollEnabled(false);
         }
 
-        if (cmd.contains(MovePath.STEP_ROLL)) {
+        if (cmd.contains(MoveStepType.ROLL)) {
             setRollEnabled(false);
         }
 
@@ -1596,7 +1597,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (!cmd.contains(MovePath.STEP_HOVER)) {
+        if (!cmd.contains(MoveStepType.HOVER)) {
             setHoverEnabled(true);
         } else {
             setHoverEnabled(false);
@@ -1666,9 +1667,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             if (vel > 0) {
                 setDecEnabled(true);
             }
-        } else if (last.getType() == MovePath.STEP_ACC) {
+        } else if (last.getType() == MoveStepType.ACC) {
             setAccEnabled(true);
-        } else if ((last.getType() == MovePath.STEP_DEC) && (vel > 0)) {
+        } else if ((last.getType() == MoveStepType.DEC) && (vel > 0)) {
             setDecEnabled(true);
         }
 
@@ -1687,15 +1688,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // allow acc/dec next if acceleration/deceleration hasn't been used
         setAccNEnabled(false);
         setDecNEnabled(false);
-        if (!cmd.contains(MovePath.STEP_ACC)
-                && !cmd.contains(MovePath.STEP_DEC)
-                && !cmd.contains(MovePath.STEP_DECN)) {
+        if (!cmd.contains(MoveStepType.ACC)
+                && !cmd.contains(MoveStepType.DEC)
+                && !cmd.contains(MoveStepType.DECN)) {
             setAccNEnabled(true);
         }
 
-        if (!cmd.contains(MovePath.STEP_ACC)
-                && !cmd.contains(MovePath.STEP_DEC)
-                && !cmd.contains(MovePath.STEP_ACCN) && (veln > 0)) {
+        if (!cmd.contains(MoveStepType.ACC)
+                && !cmd.contains(MoveStepType.DEC)
+                && !cmd.contains(MoveStepType.ACCN) && (veln > 0)) {
             setDecNEnabled(true);
         }
 
@@ -1853,7 +1854,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             setManeuverEnabled(false);
         }
 
-        if ((null != cmd) && cmd.contains(MovePath.STEP_MANEUVER)) {
+        if ((null != cmd) && cmd.contains(MoveStepType.MANEUVER)) {
             setManeuverEnabled(false);
         } else {
             setManeuverEnabled(true);
@@ -2552,13 +2553,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         cmd.addManeuver(type);
         switch (type) {
         case (ManeuverType.MAN_HAMMERHEAD):
-            cmd.addStep(MovePath.STEP_YAW, true, true);
+            cmd.addStep(MoveStepType.YAW, true, true);
             return true;
         case (ManeuverType.MAN_HALF_ROLL):
-            cmd.addStep(MovePath.STEP_ROLL, true, true);
+            cmd.addStep(MoveStepType.ROLL, true, true);
             return true;
         case (ManeuverType.MAN_BARREL_ROLL):
-            cmd.addStep(MovePath.STEP_DEC, true, true);
+            cmd.addStep(MoveStepType.DEC, true, true);
             return true;
         case (ManeuverType.MAN_IMMELMAN):
             gear = MovementDisplay.GEAR_IMMEL;
@@ -2577,19 +2578,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 vel = last.getVelocityLeft();
             }
             while (vel > 0) {
-                cmd.addStep(MovePath.STEP_DEC, true, true);
+                cmd.addStep(MoveStepType.DEC, true, true);
                 vel--;
             }
-            cmd.addStep(MovePath.STEP_UP);
+            cmd.addStep(MoveStepType.UP);
             return true;
         case (ManeuverType.MAN_SIDE_SLIP_LEFT):
-            cmd.addStep(MovePath.STEP_LATERAL_LEFT, true, true);
+            cmd.addStep(MoveStepType.LATERAL_LEFT, true, true);
             return true;
         case (ManeuverType.MAN_SIDE_SLIP_RIGHT):
-            cmd.addStep(MovePath.STEP_LATERAL_RIGHT, true, true);
+            cmd.addStep(MoveStepType.LATERAL_RIGHT, true, true);
             return true;
         case (ManeuverType.MAN_LOOP):
-            cmd.addStep(MovePath.STEP_LOOP, true, true);
+            cmd.addStep(MoveStepType.LOOP, true, true);
             return true;
         default:
             return false;
@@ -2684,11 +2685,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 // gear = Compute.GEAR_LAND;
                 setUnjamEnabled(false);
             } else {
-                cmd.addStep(MovePath.STEP_UNJAM_RAC);
+                cmd.addStep(MoveStepType.UNJAM_RAC);
                 ready();
             }
         } else if (ev.getActionCommand().equals(MOVE_SEARCHLIGHT)) {
-            cmd.addStep(MovePath.STEP_SEARCHLIGHT);
+            cmd.addStep(MoveStepType.SEARCHLIGHT);
         } else if (ev.getActionCommand().equals(MOVE_WALK)) {
             if ((gear == MovementDisplay.GEAR_JUMP)
                     || (gear == MovementDisplay.GEAR_SWIM)) {
@@ -2697,18 +2698,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             gear = MovementDisplay.GEAR_LAND;
         } else if (ev.getActionCommand().equals(MOVE_JUMP)) {
             if ((gear != MovementDisplay.GEAR_JUMP) &&
-                    !((cmd.getLastStep() != null) && cmd.getLastStep().isFirstStep() && (cmd.getLastStep().getType() == MovePath.STEP_LAY_MINE))) {
+                    !((cmd.getLastStep() != null) && cmd.getLastStep().isFirstStep() && (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
                 clear();
             }
             if (!cmd.isJumping()) {
-                cmd.addStep(MovePath.STEP_START_JUMP);
+                cmd.addStep(MoveStepType.START_JUMP);
             }
             gear = MovementDisplay.GEAR_JUMP;
         } else if (ev.getActionCommand().equals(MOVE_SWIM)) {
             if (gear != MovementDisplay.GEAR_SWIM) {
                 clear();
             }
-            // dcmd.addStep(MovePath.STEP_SWIM);
+            // dcmd.addStep(MoveStepType.SWIM);
             gear = MovementDisplay.GEAR_SWIM;
             ce
                     .setMovementMode((ce instanceof BipedMech) ? EntityMovementMode.BIPED_SWIM
@@ -2777,7 +2778,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                                     "MovementDisplay.ClearMinefieldDialog.message", new Object[] {//$NON-NLS-1$
                                                     new Integer(clear),
                                                             new Integer(boom) }))) {
-                cmd.addStep(MovePath.STEP_CLEAR_MINEFIELD, mf);
+                cmd.addStep(MoveStepType.CLEAR_MINEFIELD, mf);
                 ready();
             }
         } else if (ev.getActionCommand().equals(MOVE_CHARGE)) {
@@ -2791,7 +2792,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
             gear = MovementDisplay.GEAR_DFA;
             if (!cmd.isJumping()) {
-                cmd.addStep(MovePath.STEP_START_JUMP);
+                cmd.addStep(MoveStepType.START_JUMP);
             }
         } else if (ev.getActionCommand().equals(MOVE_RAM)) {
             if (gear != MovementDisplay.GEAR_LAND) {
@@ -2801,7 +2802,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(MOVE_GET_UP)) {
             // if the unit has a hull down step
             // then don't clear the moves
-            if (!cmd.contains(MovePath.STEP_HULL_DOWN)) {
+            if (!cmd.contains(MoveStepType.HULL_DOWN)) {
                 clear();
             }
 
@@ -2817,17 +2818,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 if (response.getAnswer()) {
                     ce.setCarefulStand(true);
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
-                        cmd.addStep(MovePath.STEP_CAREFUL_STAND);
+                        cmd.addStep(MoveStepType.CAREFUL_STAND);
                     }
                 } else {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
-                        cmd.addStep(MovePath.STEP_GET_UP);
+                        cmd.addStep(MoveStepType.GET_UP);
                     }
                 }
             } else {
                 butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
                 if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
-                    cmd.addStep(MovePath.STEP_GET_UP);
+                    cmd.addStep(MoveStepType.GET_UP);
                 }
             }
 
@@ -2835,14 +2836,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(MOVE_GO_PRONE)) {
             gear = MovementDisplay.GEAR_LAND;
             if (!cmd.getFinalProne()) {
-                cmd.addStep(MovePath.STEP_GO_PRONE);
+                cmd.addStep(MoveStepType.GO_PRONE);
             }
             clientgui.bv.drawMovementData(ce(), cmd);
             butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
         } else if (ev.getActionCommand().equals(MOVE_HULL_DOWN)) {
             gear = MovementDisplay.GEAR_LAND;
             if (!cmd.getFinalHullDown()) {
-                cmd.addStep(MovePath.STEP_HULL_DOWN);
+                cmd.addStep(MoveStepType.HULL_DOWN);
             }
             clientgui.bv.drawMovementData(ce(), cmd);
             butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
@@ -2852,7 +2853,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                 Messages
                                         .getString("MovementDisplay.EscapeDialog.title"), Messages.getString("MovementDisplay.EscapeDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
             clear();
-            cmd.addStep(MovePath.STEP_FLEE);
+            cmd.addStep(MoveStepType.FLEE);
             ready();
         } else if (ev.getActionCommand().equals(MOVE_FLY_OFF)
                 && clientgui
@@ -2860,7 +2861,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                 Messages
                                         .getString("MovementDisplay.FlyOffDialog.title"), Messages.getString("MovementDisplay.FlyOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
             // clear();
-            cmd.addStep(MovePath.STEP_OFF);
+            cmd.addStep(MoveStepType.OFF);
             ready();
         } else if (ev.getActionCommand().equals(MOVE_EJECT)) {
             if (ce instanceof Tank) {
@@ -2869,7 +2870,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                 Messages
                                         .getString("MovementDisplay.AbandonDialog.title"), Messages.getString("MovementDisplay.AbandonDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
                     clear();
-                    cmd.addStep(MovePath.STEP_EJECT);
+                    cmd.addStep(MoveStepType.EJECT);
                     ready();
                 }
             } else if (clientgui
@@ -2877,7 +2878,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                             Messages
                                     .getString("MovementDisplay.AbandonDialog1.title"), Messages.getString("MovementDisplay.AbandonDialog1.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
                 clear();
-                cmd.addStep(MovePath.STEP_EJECT);
+                cmd.addStep(MoveStepType.EJECT);
                 ready();
             }
         } else if (ev.getActionCommand().equals(MOVE_LOAD)) {
@@ -2895,7 +2896,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 other = null;
             }
             if (other != null) {
-                cmd.addStep(MovePath.STEP_LOAD);
+                cmd.addStep(MoveStepType.LOAD);
                 clientgui.bv.drawMovementData(ce(), cmd);
                 gear = MovementDisplay.GEAR_LAND;
             } // else - didn't find a unit to load
@@ -2903,11 +2904,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             // Ask the user if we're carrying multiple units.
             Entity other = getUnloadedUnit();
             if (other != null) {
-                cmd.addStep(MovePath.STEP_UNLOAD, other);
+                cmd.addStep(MoveStepType.UNLOAD, other);
                 clientgui.bv.drawMovementData(ce(), cmd);
             } // else - Player canceled the unload.
         } else if (ev.getActionCommand().equals(MOVE_RAISE_ELEVATION)) {
-            cmd.addStep(MovePath.STEP_UP);
+            cmd.addStep(MoveStepType.UP);
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (ev.getActionCommand().equals(MOVE_LOWER_ELEVATION)) {
             if ((ce instanceof Aero)
@@ -2916,20 +2917,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     && (cmd.getLastStep().getVelocity() < 12)
                     && !(((Aero) ce).isSpheroid() || clientgui.getClient().game
                             .getPlanetaryConditions().isVacuum())) {
-                cmd.addStep(MovePath.STEP_ACC, true);
+                cmd.addStep(MoveStepType.ACC, true);
             }
-            cmd.addStep(MovePath.STEP_DOWN);
+            cmd.addStep(MoveStepType.DOWN);
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (ev.getActionCommand().equals(MOVE_CLIMB_MODE)) {
             MoveStep ms = cmd.getLastStep();
             if ((ms != null)
-                    && ((ms.getType() == MovePath.STEP_CLIMB_MODE_ON) || (ms
-                            .getType() == MovePath.STEP_CLIMB_MODE_OFF))) {
+                    && ((ms.getType() == MoveStepType.CLIMB_MODE_ON) || (ms
+                            .getType() == MoveStepType.CLIMB_MODE_OFF))) {
                 cmd.removeLastStep();
             } else if (cmd.getFinalClimbMode()) {
-                cmd.addStep(MovePath.STEP_CLIMB_MODE_OFF);
+                cmd.addStep(MoveStepType.CLIMB_MODE_OFF);
             } else {
-                cmd.addStep(MovePath.STEP_CLIMB_MODE_ON);
+                cmd.addStep(MoveStepType.CLIMB_MODE_ON);
             }
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (ev.getActionCommand().equals(MOVE_LAY_MINE)) {
@@ -2942,43 +2943,43 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     vsd.setVisible(true);
                     m.setVibraSetting(vsd.getSetting());
                 }
-                cmd.addStep(MovePath.STEP_LAY_MINE, i);
+                cmd.addStep(MoveStepType.LAY_MINE, i);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_DIG_IN)) {
-            cmd.addStep(MovePath.STEP_DIG_IN);
+            cmd.addStep(MoveStepType.DIG_IN);
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (ev.getActionCommand().equals(MOVE_FORTIFY)) {
-            cmd.addStep(MovePath.STEP_FORTIFY);
+            cmd.addStep(MoveStepType.FORTIFY);
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (ev.getActionCommand().equals(MOVE_SHAKE_OFF)) {
-            cmd.addStep(MovePath.STEP_SHAKE_OFF_SWARMERS);
+            cmd.addStep(MoveStepType.SHAKE_OFF_SWARMERS);
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (ev.getActionCommand().equals(MOVE_RECKLESS)) {
             cmd.setCareful(false);
         } else if (ev.getActionCommand().equals(MOVE_ACCN)) {
-            cmd.addStep(MovePath.STEP_ACCN);
+            cmd.addStep(MoveStepType.ACCN);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_DECN)) {
-            cmd.addStep(MovePath.STEP_DECN);
+            cmd.addStep(MoveStepType.DECN);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_ACC)) {
-            cmd.addStep(MovePath.STEP_ACC);
+            cmd.addStep(MoveStepType.ACC);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_DEC)) {
-            cmd.addStep(MovePath.STEP_DEC);
+            cmd.addStep(MoveStepType.DEC);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_EVADE)) {
-            cmd.addStep(MovePath.STEP_EVADE);
+            cmd.addStep(MoveStepType.EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_EVADE_AERO)) {
-            cmd.addStep(MovePath.STEP_EVADE);
+            cmd.addStep(MoveStepType.EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_ROLL)) {
-            cmd.addStep(MovePath.STEP_ROLL);
+            cmd.addStep(MoveStepType.ROLL);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_HOVER)) {
-            cmd.addStep(MovePath.STEP_HOVER);
+            cmd.addStep(MoveStepType.HOVER);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_MANEUVER)) {
             ManeuverChoiceDialog choiceDialog = new ManeuverChoiceDialog(
@@ -3009,7 +3010,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(MOVE_LAUNCH)) {
             TreeMap<Integer, Vector<Integer>> launched = getLaunchedUnits();
             if (!launched.isEmpty()) {
-                cmd.addStep(MovePath.STEP_LAUNCH, launched);
+                cmd.addStep(MoveStepType.LAUNCH, launched);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_RECOVER)) {
@@ -3017,7 +3018,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             // then bring up an option dialog
             int recoverer = getRecoveryUnit();
             if (recoverer != -1) {
-                cmd.addStep(MovePath.STEP_RECOVER, recoverer, -1);
+                cmd.addStep(MoveStepType.RECOVER, recoverer, -1);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_JOIN)) {
@@ -3025,24 +3026,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             // then bring up an option dialog
             int joined = getUnitJoined();
             if (joined != -1) {
-                cmd.addStep(MovePath.STEP_JOIN, joined, -1);
+                cmd.addStep(MoveStepType.JOIN, joined, -1);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_TURN_LEFT)) {
-            cmd.addStep(MovePath.STEP_TURN_LEFT);
+            cmd.addStep(MoveStepType.TURN_LEFT);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_TURN_RIGHT)) {
-            cmd.addStep(MovePath.STEP_TURN_RIGHT);
+            cmd.addStep(MoveStepType.TURN_RIGHT);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_THRUST)) {
-            cmd.addStep(MovePath.STEP_THRUST);
+            cmd.addStep(MoveStepType.THRUST);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_YAW)) {
-            cmd.addStep(MovePath.STEP_YAW);
+            cmd.addStep(MoveStepType.YAW);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_END_OVER)) {
-            cmd.addStep(MovePath.STEP_YAW);
-            cmd.addStep(MovePath.STEP_ROLL);
+            cmd.addStep(MoveStepType.YAW);
+            cmd.addStep(MoveStepType.ROLL);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_DUMP)) {
             dumpBombs();

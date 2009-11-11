@@ -2,6 +2,7 @@
 ----------------
 v0.35.11-dev (SVN)
 + All Clan Mechs have Clan names again
++ Bug 2884342: Vehicle Fuel Cells were overweight
 
 v0.35.10 (2009-11-10, 20:14 UTC+1)
 + Rearranged Components for ease of use in MML

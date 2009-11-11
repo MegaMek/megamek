@@ -251,7 +251,7 @@ public class Engine implements Serializable {
                 break;
         }
 
-        if (hasFlag(TANK_ENGINE) && (engineType != COMBUSTION_ENGINE)) {
+        if (hasFlag(TANK_ENGINE) && isFusion()) {
             weight *= 1.5f;
         }
 
@@ -392,10 +392,9 @@ public class Engine implements Serializable {
             if (gyroType == Mech.GYRO_COMPACT) {
                 int[] slots = { 0, 1, 2, 5, 6, 7, 8, 9 };
                 return slots;
-            } else {
-                int[] slots = { 0, 1, 2, 7, 8, 9, 10, 11 };
-                return slots;
             }
+            int[] slots = { 0, 1, 2, 7, 8, 9, 10, 11 };
+            return slots;
         } else {
             if (gyroType == Mech.GYRO_COMPACT) {
                 int[] slots = { 0, 1, 2, 5, 6, 7 };

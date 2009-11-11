@@ -36,7 +36,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
-import megamek.common.IOffBoardDirections;
+import megamek.common.OffBoardDirection;
 import megamek.common.IStartingPositions;
 import megamek.common.Player;
 
@@ -220,41 +220,41 @@ public class StartingPositionDialog extends java.awt.Dialog implements
                 // selected home edge.
                 if (client.game.getOptions().booleanOption(
                         "set_arty_player_homeedge")) { //$NON-NLS-1$
-                    int direction = IOffBoardDirections.NONE;
+                    OffBoardDirection direction = OffBoardDirection.NONE;
                     switch (i) {
                         case 0:
                             break;
                         case 1:
                         case 2:
                         case 3:
-                            direction = IOffBoardDirections.NORTH;
+                            direction = OffBoardDirection.NORTH;
                             break;
                         case 4:
-                            direction = IOffBoardDirections.EAST;
+                            direction = OffBoardDirection.EAST;
                             break;
                         case 5:
                         case 6:
                         case 7:
-                            direction = IOffBoardDirections.SOUTH;
+                            direction = OffBoardDirection.SOUTH;
                             break;
                         case 8:
-                            direction = IOffBoardDirections.WEST;
+                            direction = OffBoardDirection.WEST;
                             break;
                         case 11:
                         case 12:
                         case 13:
-                            direction = IOffBoardDirections.NORTH;
+                            direction = OffBoardDirection.NORTH;
                             break;
                         case 14:
-                            direction = IOffBoardDirections.EAST;
+                            direction = OffBoardDirection.EAST;
                             break;
                         case 15:
                         case 16:
                         case 17:
-                            direction = IOffBoardDirections.SOUTH;
+                            direction = OffBoardDirection.SOUTH;
                             break;
                         case 18:
-                            direction = IOffBoardDirections.WEST;
+                            direction = OffBoardDirection.WEST;
                             break;
                     }
                     Enumeration<Entity> thisPlayerArtyUnits = client.game
@@ -269,8 +269,8 @@ public class StartingPositionDialog extends java.awt.Dialog implements
                             });
                     while (thisPlayerArtyUnits.hasMoreElements()) {
                         Entity entity = thisPlayerArtyUnits.nextElement();
-                        if (entity.getOffBoardDirection() != IOffBoardDirections.NONE) {
-                            if (direction > IOffBoardDirections.NONE) {
+                        if (entity.getOffBoardDirection() != OffBoardDirection.NONE) {
+                            if (direction != OffBoardDirection.NONE) {
                                 entity
                                         .setOffBoard(entity
                                                 .getOffBoardDistance(),

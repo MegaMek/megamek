@@ -64,7 +64,7 @@ import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
-import megamek.common.IOffBoardDirections;
+import megamek.common.OffBoardDirection;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
@@ -275,12 +275,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private boolean editable;
 
-    private int direction = -1;
+    private OffBoardDirection direction = OffBoardDirection.NONE;
 
     private int distance = 17;
     
     private JButton butPortrait;
-    private PortraitChoiceDialog portraitDialog;
+    PortraitChoiceDialog portraitDialog;
 
     /**
      * Creates new CustomMechDialog
@@ -559,10 +559,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             choOffBoardDirection.addItem(Messages
                     .getString("CustomMechDialog.West")); //$NON-NLS-1$
             direction = entity.getOffBoardDirection();
-            if (IOffBoardDirections.NONE == direction) {
-                direction = IOffBoardDirections.NORTH;
+            if (OffBoardDirection.NONE == direction) {
+                direction = OffBoardDirection.NORTH;
             }
-            choOffBoardDirection.setSelectedIndex(direction);
+            choOffBoardDirection.setSelectedIndex(direction.getValue());
             panDeploy.add(choOffBoardDirection, GBC.eol());
 
             panDeploy.add(labOffBoardDistance, GBC.std());
@@ -1585,9 +1585,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         h_wpnQuirkComps.get(key).add(optionComp);
     }
 
-    // TODO : implement me!!!
     public void optionClicked(DialogOptionComponent comp, IOption option,
             boolean state) {
+        // TODO : implement me!!!
     }
 
     public boolean isOkay() {
@@ -1896,10 +1896,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                                             .getString("CustomMechDialog.OffboardDistance"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                     return;
                 }
-                entity.setOffBoard(offBoardDistance, choOffBoardDirection
-                        .getSelectedIndex());
+                entity.setOffBoard(offBoardDistance, OffBoardDirection.getDirection(choOffBoardDirection
+                        .getSelectedIndex()));
             } else {
-                entity.setOffBoard(0, Entity.NONE);
+                entity.setOffBoard(0,OffBoardDirection.NONE);
             }
 
             // change entity

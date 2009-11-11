@@ -17,12 +17,29 @@ package megamek.common;
 /**
  * This interface represents Off-Board Directions
  */
-public interface IOffBoardDirections {
+public enum OffBoardDirection {
 
-    public static final int NONE = -1;
-    public static final int NORTH = 0;
-    public static final int SOUTH = 1;
-    public static final int EAST = 2;
-    public static final int WEST = 3;
+    NONE(-1),
+    NORTH(0),
+    SOUTH(1),
+    EAST(2),
+    WEST(3);
 
+    private int value;
+    OffBoardDirection(int value) {
+        this.value = value;
+    }
+    
+    public int getValue() {
+        return value;
+    }
+    
+    public static OffBoardDirection getDirection(int value) {
+        for (OffBoardDirection dir : OffBoardDirection.values()) {
+            if (dir.getValue() == value) {
+                return dir;
+            }
+        }
+        return NONE;
+    }
 }

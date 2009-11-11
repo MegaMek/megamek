@@ -19,7 +19,7 @@ import megamek.common.Board;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.IOffBoardDirections;
+import megamek.common.OffBoardDirection;
 
 public class TestOffBoardEntity {
 
@@ -34,28 +34,28 @@ public class TestOffBoardEntity {
 
         // Deploy the entity 30 hexes north of
         // the board and check it's position.
-        entity.setOffBoard(30, IOffBoardDirections.NORTH);
+        entity.setOffBoard(30, OffBoardDirection.NORTH);
         entity.deployOffBoard();
         Coords north = new Coords(8, -30);
         testCoords(north, entity.getPosition());
 
         // Deploy the entity 45 hexes south of
         // the board and check it's position.
-        entity.setOffBoard(45, IOffBoardDirections.SOUTH);
+        entity.setOffBoard(45, OffBoardDirection.SOUTH);
         entity.deployOffBoard();
         Coords south = new Coords(8, 62);
         testCoords(south, entity.getPosition());
 
         // Deploy the entity 105 hexes east of
         // the board and check it's position.
-        entity.setOffBoard(105, IOffBoardDirections.EAST);
+        entity.setOffBoard(105, OffBoardDirection.EAST);
         entity.deployOffBoard();
         Coords east = new Coords(121, 9);
         testCoords(east, entity.getPosition());
 
         // Deploy the entity 3200 hexes west of
         // the board and check it's position.
-        entity.setOffBoard(3200, IOffBoardDirections.WEST);
+        entity.setOffBoard(3200, OffBoardDirection.WEST);
         entity.deployOffBoard();
         Coords west = new Coords(-3200, 9);
         testCoords(west, entity.getPosition());

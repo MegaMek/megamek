@@ -166,8 +166,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean clearingMinefield = false;
     protected int killerId = Entity.NONE;
     private int offBoardDistance = 0;
-    private int offBoardDirection = IOffBoardDirections.NONE;
-    private int retreatedDirection = IOffBoardDirections.NONE;
+    private OffBoardDirection offBoardDirection = OffBoardDirection.NONE;
+    private OffBoardDirection retreatedDirection = OffBoardDirection.NONE;
 
     protected int[] vectors =
         { 0, 0, 0, 0, 0, 0 };
@@ -6675,30 +6675,27 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *             if a negative distance, an invalid direction is selected, or
      *             the distance does not match the direction.
      */
-    public void setOffBoard(int distance, int direction) {
+    public void setOffBoard(int distance, OffBoardDirection direction) {
         if (distance < 0) {
             throw new IllegalArgumentException("negative number given for distance offboard");
         }
-        if ((direction < IOffBoardDirections.NONE) || (direction > IOffBoardDirections.WEST)) {
-            throw new IllegalArgumentException("bad direction");
-        }
-        if ((0 == distance) && (IOffBoardDirections.NONE != direction)) {
+        if ((0 == distance) && (OffBoardDirection.NONE != direction)) {
             throw new IllegalArgumentException("onboard unit was given an offboard direction");
         }
-        if ((0 != distance) && (IOffBoardDirections.NONE == direction)) {
+        if ((0 != distance) && (OffBoardDirection.NONE == direction)) {
             throw new IllegalArgumentException("offboard unit was not given an offboard direction");
         }
         switch (direction) {
-            case IOffBoardDirections.NORTH:
+            case NORTH:
                 setFacing(3);
                 break;
-            case IOffBoardDirections.SOUTH:
+            case SOUTH:
                 setFacing(0);
                 break;
-            case IOffBoardDirections.WEST:
+            case WEST:
                 setFacing(2);
                 break;
-            case IOffBoardDirections.EAST:
+            case EAST:
                 setFacing(4);
                 break;
         }
@@ -6732,7 +6729,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return the <code>int</code> direction from the board the unit will be
      *         deployed. Only valid values will be returned.
      */
-    public int getOffBoardDirection() {
+    public OffBoardDirection getOffBoardDirection() {
         return offBoardDirection;
     }
 
@@ -6753,24 +6750,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // N.B. 17 / 2 = 8, but the middle of 1..17 is 9, so we
         // add a bit (because 17 % 2 == 1 and 16 % 2 == 0).
         switch (offBoardDirection) {
-            case IOffBoardDirections.NONE:
+            case NONE:
                 break;
-            case IOffBoardDirections.NORTH:
+            case NORTH:
                 setPosition(new Coords(game.getBoard().getWidth() / 2 + game.getBoard().getWidth() % 2, -getOffBoardDistance()));
                 setFacing(3);
                 setDeployed(true);
                 break;
-            case IOffBoardDirections.SOUTH:
+            case SOUTH:
                 setPosition(new Coords(game.getBoard().getWidth() / 2 + game.getBoard().getWidth() % 2, game.getBoard().getHeight() + getOffBoardDistance()));
                 setFacing(0);
                 setDeployed(true);
                 break;
-            case IOffBoardDirections.EAST:
+            case EAST:
                 setPosition(new Coords(game.getBoard().getWidth() + getOffBoardDistance(), game.getBoard().getHeight() / 2 + game.getBoard().getHeight() % 2));
                 setFacing(5);
                 setDeployed(true);
                 break;
-            case IOffBoardDirections.WEST:
+            case WEST:
                 setPosition(new Coords(-getOffBoardDistance(), game.getBoard().getHeight() / 2 + game.getBoard().getHeight() % 2));
                 setFacing(1);
                 setDeployed(true);
@@ -7467,7 +7464,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * @return Returns the retreatedDirection.
      */
-    public int getRetreatedDirection() {
+    public OffBoardDirection getRetreatedDirection() {
         return retreatedDirection;
     }
 
@@ -7475,7 +7472,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param retreatedDirection
      *            The retreatedDirection to set.
      */
-    public void setRetreatedDirection(int retreatedDirection) {
+    public void setRetreatedDirection(OffBoardDirection retreatedDirection) {
         this.retreatedDirection = retreatedDirection;
     }
 

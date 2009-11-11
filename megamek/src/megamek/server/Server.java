@@ -85,7 +85,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
-import megamek.common.IOffBoardDirections;
+import megamek.common.OffBoardDirection;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.InfernoTracker;
@@ -4514,15 +4514,15 @@ public class Server implements Runnable {
         }
         r.addDesc(entity);
         addReport(r);
-        int fleeDirection;
+        OffBoardDirection fleeDirection;
         if (pos.x == 0) {
-            fleeDirection = IOffBoardDirections.WEST;
+            fleeDirection = OffBoardDirection.WEST;
         } else if (pos.y == 0) {
-            fleeDirection = IOffBoardDirections.NORTH;
+            fleeDirection = OffBoardDirection.NORTH;
         } else if (pos.x == game.getBoard().getWidth()) {
-            fleeDirection = IOffBoardDirections.EAST;
+            fleeDirection = OffBoardDirection.EAST;
         } else {
-            fleeDirection = IOffBoardDirections.SOUTH;
+            fleeDirection = OffBoardDirection.SOUTH;
         }
 
         if (returnable > -1) {
@@ -4531,16 +4531,16 @@ public class Server implements Runnable {
             entity.setPosition(null);
             entity.setDone(true);
             switch (fleeDirection) {
-            case IOffBoardDirections.WEST:
+            case WEST:
                 entity.setStartingPos(Board.START_W);
                 break;
-            case IOffBoardDirections.NORTH:
+            case NORTH:
                 entity.setStartingPos(Board.START_N);
                 break;
-            case IOffBoardDirections.EAST:
+            case EAST:
                 entity.setStartingPos(Board.START_E);
                 break;
-            case IOffBoardDirections.SOUTH:
+            case SOUTH:
                 entity.setStartingPos(Board.START_S);
                 break;
             default:

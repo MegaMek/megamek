@@ -39,6 +39,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
+import megamek.common.MovePath.MoveStepType;
 
 public class SharedUtility {
 
@@ -250,12 +251,12 @@ public class SharedUtility {
                 }
             }
 
-            if (step.getType() == MovePath.STEP_GO_PRONE) {
+            if (step.getType() == MoveStepType.GO_PRONE) {
                 rollTarget = entity.checkDislodgeSwarmers(step);
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            if (((step.getType() == MovePath.STEP_BACKWARDS) || (step.getType() == MovePath.STEP_LATERAL_LEFT_BACKWARDS) || (step.getType() == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)) && (game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation()) && !(entity instanceof VTOL)) {
+            if (((step.getType() == MoveStepType.BACKWARDS) || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) && (game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation()) && !(entity instanceof VTOL)) {
                 nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
                 SharedUtility.checkNag(entity.getBasePilotingRoll(overallMoveType),nagReport, psrList);
             }
@@ -428,7 +429,7 @@ public class SharedUtility {
 
         boolean isRamming = false;
         if ((md.getLastStep() != null)
-                && (md.getLastStep().getType() == MovePath.STEP_RAM)) {
+                && (md.getLastStep().getType() == MoveStepType.RAM)) {
             isRamming = true;
         }
 
@@ -446,38 +447,38 @@ public class SharedUtility {
             int vel = a.getCurrentVelocity();
 
             while (vel > 0) {
-                md.addStep(MovePath.STEP_FORWARDS);
+                md.addStep(MoveStepType.FORWARDS);
                 if (!game.getBoard().contains(md.getLastStep().getPosition())) {
                     md.removeLastStep();
-                    md.addStep(MovePath.STEP_OFF);
+                    md.addStep(MoveStepType.OFF);
                     break;
                 }
                 if (a.isRandomMove()) {
                     int roll = Compute.d6(1);
                     switch (roll) {
                     case 1:
-                        md.addStep(MovePath.STEP_TURN_LEFT);
-                        md.addStep(MovePath.STEP_TURN_LEFT);
+                        md.addStep(MoveStepType.TURN_LEFT);
+                        md.addStep(MoveStepType.TURN_LEFT);
                         break;
                     case 2:
-                        md.addStep(MovePath.STEP_TURN_LEFT);
+                        md.addStep(MoveStepType.TURN_LEFT);
                         break;
                     case 5:
-                        md.addStep(MovePath.STEP_TURN_RIGHT);
+                        md.addStep(MoveStepType.TURN_RIGHT);
                         break;
                     case 6:
-                        md.addStep(MovePath.STEP_TURN_RIGHT);
-                        md.addStep(MovePath.STEP_TURN_RIGHT);
+                        md.addStep(MoveStepType.TURN_RIGHT);
+                        md.addStep(MoveStepType.TURN_RIGHT);
                         break;
                     }
                 }
                 vel--;
             }
             // check to see if old movement path contained a launch
-            if (oldmd.contains(MovePath.STEP_LAUNCH)) {
+            if (oldmd.contains(MoveStepType.LAUNCH)) {
                 // since launches have to be the last step
                 MoveStep lastStep = oldmd.getLastStep();
-                if (lastStep.getType() == MovePath.STEP_LAUNCH) {
+                if (lastStep.getType() == MoveStepType.LAUNCH) {
                     md.addStep(lastStep.getType(), lastStep.getLaunched());
                 }
             }
@@ -497,8 +498,8 @@ public class SharedUtility {
         // the end
         MoveStep lastStep = md.getLastStep();
         if ((lastStep != null)
-                && ((lastStep.getType() == MovePath.STEP_LAUNCH) || (lastStep
-                        .getType() == MovePath.STEP_RECOVER))) {
+                && ((lastStep.getType() == MoveStepType.LAUNCH) || (lastStep
+                        .getType() == MoveStepType.RECOVER))) {
             md.removeLastStep();
         }
 
@@ -560,7 +561,7 @@ public class SharedUtility {
             }
 
             if(!game.getBoard().contains(c)) {
-                md.addStep(MovePath.STEP_OFF);
+                md.addStep(MoveStepType.OFF);
                 leftMap = true;
                 break;
             }
@@ -570,29 +571,29 @@ public class SharedUtility {
             // what kind of step do I need to get there?
             int diff = dir - facing;
             if (diff == 0) {
-                md.addStep(MovePath.STEP_FORWARDS);
+                md.addStep(MoveStepType.FORWARDS);
             } else if ((diff == 1) || (diff == -5)) {
-                md.addStep(MovePath.STEP_LATERAL_RIGHT);
+                md.addStep(MoveStepType.LATERAL_RIGHT);
             } else if ((diff == -2) || (diff == 4)) {
-                md.addStep(MovePath.STEP_LATERAL_RIGHT_BACKWARDS);
+                md.addStep(MoveStepType.LATERAL_RIGHT_BACKWARDS);
             } else if ((diff == -1) || (diff == 5)) {
-                md.addStep(MovePath.STEP_LATERAL_LEFT);
+                md.addStep(MoveStepType.LATERAL_LEFT);
             } else if ((diff == 2) || (diff == -4)) {
-                md.addStep(MovePath.STEP_LATERAL_LEFT_BACKWARDS);
+                md.addStep(MoveStepType.LATERAL_LEFT_BACKWARDS);
             } else if ((diff == 3) || (diff == -3)) {
-                md.addStep(MovePath.STEP_BACKWARDS);
+                md.addStep(MoveStepType.BACKWARDS);
             }
             current = c;
 
         }
 
         // do I now need to add on the last step again?
-        if (!leftMap && (lastStep != null) && (lastStep.getType() == MovePath.STEP_LAUNCH)) {
-            md.addStep(MovePath.STEP_LAUNCH, lastStep.getLaunched());
+        if (!leftMap && (lastStep != null) && (lastStep.getType() == MoveStepType.LAUNCH)) {
+            md.addStep(MoveStepType.LAUNCH, lastStep.getLaunched());
         }
 
-        if (!leftMap && (lastStep != null) && (lastStep.getType() == MovePath.STEP_RECOVER)) {
-            md.addStep(MovePath.STEP_RECOVER, lastStep.getRecoveryUnit());
+        if (!leftMap && (lastStep != null) && (lastStep.getType() == MoveStepType.RECOVER)) {
+            md.addStep(MoveStepType.RECOVER, lastStep.getRecoveryUnit());
         }
 
         return md;

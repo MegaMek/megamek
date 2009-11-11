@@ -29,9 +29,9 @@ import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityMovementType;
 import megamek.common.EquipmentType;
 import megamek.common.IAimingModes;
-import megamek.common.EntityMovementType;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -44,6 +44,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.EntityAction;
@@ -265,7 +266,7 @@ public class TestBot extends BotClient {
                     }
                     if ((rac_damage >= other_damage)
                             || (check_range < clearance_range)) {
-                        min.addStep(MovePath.STEP_UNJAM_RAC);
+                        min.addStep(MoveStepType.UNJAM_RAC);
                     }
                 }
             }
@@ -404,12 +405,12 @@ public class TestBot extends BotClient {
                     double max = option.getMaxModifiedDamage(enemy.current,
                             mod, modifiers[MoveOption.DEFENCE_PC]);
                     if (en.isSelectableThisTurn()) {
-                        enemy.current.addStep(MovePath.STEP_TURN_RIGHT);
+                        enemy.current.addStep(MoveStepType.TURN_RIGHT);
                         max = Math.max(option.getMaxModifiedDamage(
                                 enemy.current, mod + 1,
                                 modifiers[MoveOption.DEFENCE_PC]), max);
                         enemy.current.removeLastStep();
-                        enemy.current.addStep(MovePath.STEP_TURN_LEFT);
+                        enemy.current.addStep(MoveStepType.TURN_LEFT);
                         max = Math.max(option.getMaxModifiedDamage(
                                 enemy.current, mod + 1,
                                 modifiers[MoveOption.DEFENCE_PC]), max);
@@ -1867,7 +1868,7 @@ public class TestBot extends BotClient {
                     }
                     if ((rac_damage >= other_damage)
                             || (check_range < clearance_range)) {
-                        min.addStep(MovePath.STEP_UNJAM_RAC);
+                        min.addStep(MoveStepType.UNJAM_RAC);
                     }
                 }
             }

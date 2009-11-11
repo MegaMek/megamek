@@ -18,22 +18,24 @@
 package megamek.client.ui.AWT.boardview3d;
 
 import java.awt.Color;
+
 import javax.media.j3d.Appearance;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.Material;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
-import javax.vecmath.*;
+import javax.vecmath.Color3f;
+import javax.vecmath.Vector3d;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.GUIPreferences;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.IHex;
-import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.Tank;
+import megamek.common.MovePath.MoveStepType;
 
 class MoveStepModel extends ArrowModel {
     public MoveStepModel(MoveStep step, int count, IHex hex, ViewTransform currentView) {
@@ -55,7 +57,7 @@ class MoveStepModel extends ArrowModel {
             col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
             break;
         default:
-            if (step.getType() == MovePath.STEP_BACKWARDS) {
+            if (step.getType() == MoveStepType.BACKWARDS) {
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveBackColor");
             } else {
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
@@ -83,7 +85,7 @@ class MoveStepModel extends ArrowModel {
         double centerOffset = 0.0;
 
         switch (step.getType()) {
-        case MovePath.STEP_CLIMB_MODE_OFF:
+        case CLIMB_MODE_OFF:
             if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
                 label = Messages.getString("BoardView1.WIGEClimbOff"); //$NON-NLS-1$
             } else {
@@ -93,14 +95,14 @@ class MoveStepModel extends ArrowModel {
                 label = "(" + label + ")"; //$NON-NLS-1$ //$NON-NLS-2$
             }
             anim.removeChild(arrow);
-        case MovePath.STEP_GO_PRONE:
-        case MovePath.STEP_HULL_DOWN:
-        case MovePath.STEP_DOWN:
-        case MovePath.STEP_DIG_IN:
-        case MovePath.STEP_FORTIFY:
+        case GO_PRONE:
+        case HULL_DOWN:
+        case DOWN:
+        case DIG_IN:
+        case FORTIFY:
             trans.rotX(-Math.PI/2);
             break;
-        case MovePath.STEP_CLIMB_MODE_ON:
+        case CLIMB_MODE_ON:
             if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
                 label = Messages.getString("BoardView1.WIGEClimb"); //$NON-NLS-1$
             } else {
@@ -110,19 +112,19 @@ class MoveStepModel extends ArrowModel {
                 label = "(" + label + ")"; //$NON-NLS-1$ //$NON-NLS-2$
             }
             anim.removeChild(arrow);
-        case MovePath.STEP_GET_UP:
-        case MovePath.STEP_UP:
+        case GET_UP:
+        case UP:
             trans.rotX(Math.PI/2);
             break;
 
-        case MovePath.STEP_LOAD:
+        case LOAD:
             tg.removeChild(anim);
             label = Messages.getString("BoardView1.Load"); //$NON-NLS-1$
             if (step.isPastDanger()) {
                 label = "(" + label + ")"; //$NON-NLS-1$ //$NON-NLS-2$
             }
             break;
-        case MovePath.STEP_UNLOAD:
+        case UNLOAD:
             tg.removeChild(anim);
             label = Messages.getString("BoardView1.Unload"); //$NON-NLS-1$
             if (step.isPastDanger()) {
@@ -130,8 +132,8 @@ class MoveStepModel extends ArrowModel {
             }
             break;
         
-        case MovePath.STEP_TURN_LEFT:
-        case MovePath.STEP_TURN_RIGHT:
+        case TURN_LEFT:
+        case TURN_RIGHT:
             anim.removeChild(arrow);
             centerOffset = BoardModel.HEX_DIAMETER/6;
             trans.rotZ(-Math.PI/3*step.getFacing());

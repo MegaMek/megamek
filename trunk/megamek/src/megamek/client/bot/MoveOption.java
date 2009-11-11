@@ -181,7 +181,7 @@ public class MoveOption extends MovePath {
     }
 
     @Override
-    public MoveOption addStep(int step_type) {
+    public MoveOption addStep(MoveStepType step_type) {
         super.addStep(step_type);
         MoveStep current = getLastStep();
         // running with gyro or hip hit is dangerous!
@@ -254,7 +254,7 @@ public class MoveOption extends MovePath {
                 || (last.getMovementType() == EntityMovementType.MOVE_ILLEGAL)) {
             return false;
         }
-        if ((last.getType() != STEP_FORWARDS)
+        if ((last.getType() != MoveStepType.FORWARDS)
                 || (isClan
                         && game.getOptions().booleanOption("no_clan_physical") && (getEntity()
                         .getSwarmAttackerId() == Entity.NONE))) {
@@ -268,9 +268,9 @@ public class MoveOption extends MovePath {
                 isPhysical = true;
                 removeLastStep();
                 if (isJumping()) {
-                    addStep(MovePath.STEP_DFA, en);
+                    addStep(MoveStepType.DFA, en);
                 } else {
-                    addStep(MovePath.STEP_CHARGE, en);
+                    addStep(MoveStepType.CHARGE, en);
                 }
                 return true;
             }
@@ -464,13 +464,16 @@ public class MoveOption extends MovePath {
                 mod = .9;
             }
         }
-        int enemy_firing_arcs[] = { 0, MovePath.STEP_TURN_LEFT,
-                MovePath.STEP_TURN_RIGHT };
-        for (int i = 0; i < enemy_firing_arcs.length; i++) {
-            enemy_firing_arcs[i] = CEntity.getThreatHitArc(enemy
-                    .getFinalCoords(), MovePath.getAdjustedFacing(enemy
-                    .getFinalFacing(), enemy_firing_arcs[i]), getFinalCoords());
-        }
+        int enemy_firing_arcs[] = { 0, 0, 0};
+        enemy_firing_arcs[0] =CEntity.getThreatHitArc(enemy
+                .getFinalCoords(), MovePath.getAdjustedFacing(enemy
+                        .getFinalFacing(), MoveStepType.NONE), getFinalCoords());
+        enemy_firing_arcs[0] =CEntity.getThreatHitArc(enemy
+                .getFinalCoords(), MovePath.getAdjustedFacing(enemy
+                        .getFinalFacing(), MoveStepType.TURN_LEFT), getFinalCoords());
+        enemy_firing_arcs[0] =CEntity.getThreatHitArc(enemy
+                .getFinalCoords(), MovePath.getAdjustedFacing(enemy
+                        .getFinalFacing(), MoveStepType.TURN_RIGHT), getFinalCoords());
         max = enemy.centity.getModifiedDamage((apc == 1) ? CEntity.TT
                 : enemy_firing_arcs[0], distance, modifier);
 

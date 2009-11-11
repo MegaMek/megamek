@@ -20,6 +20,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
 
 /**
  * @author dirk
@@ -86,7 +87,7 @@ public class MoveCommand extends ClientCommand {
 
                     clearAllMoves();
                     if (!cmd.isJumping()) {
-                        cmd.addStep(MovePath.STEP_START_JUMP);
+                        cmd.addStep(MoveStepType.START_JUMP);
                     }
                     gear = GEAR_JUMP;
 
@@ -118,7 +119,7 @@ public class MoveCommand extends ClientCommand {
                             + " for a movement of: " + cmd.getHexesMoved();
                 } else if (args[1].equalsIgnoreCase("GETUP")) {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
-                        cmd.addStep(MovePath.STEP_GET_UP);
+                        cmd.addStep(MoveStepType.GET_UP);
                         return "Mech will try to stand up. this requieres a piloting roll.";
                     }
 
@@ -126,7 +127,7 @@ public class MoveCommand extends ClientCommand {
                 } else if (args[1].equalsIgnoreCase("CAREFULSTAND")) {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()
                             && client.game.getOptions().booleanOption("tacops_careful_stand")) {
-                        cmd.addStep(MovePath.STEP_CAREFUL_STAND);
+                        cmd.addStep(MoveStepType.CAREFUL_STAND);
                         return "Mech will try to stand up. this requieres a piloting roll.";
                     }
 
@@ -163,15 +164,15 @@ public class MoveCommand extends ClientCommand {
             if (gear == GEAR_TURN) {
                 cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
             } else if (gear == GEAR_LAND || gear == GEAR_JUMP) {
-                cmd.findPathTo(dest, MovePath.STEP_FORWARDS);
+                cmd.findPathTo(dest, MoveStepType.FORWARDS);
             } else if (gear == GEAR_BACKUP) {
-                cmd.findPathTo(dest, MovePath.STEP_BACKWARDS);
+                cmd.findPathTo(dest, MoveStepType.BACKWARDS);
             } else if (gear == GEAR_CHARGE) {
-                cmd.findPathTo(dest, MovePath.STEP_CHARGE);
+                cmd.findPathTo(dest, MoveStepType.CHARGE);
             } else if (gear == GEAR_DFA) {
-                cmd.findPathTo(dest, MovePath.STEP_DFA);
+                cmd.findPathTo(dest, MoveStepType.DFA);
             } else if (gear == GEAR_SWIM) {
-                cmd.findPathTo(dest, MovePath.STEP_SWIM);
+                cmd.findPathTo(dest, MoveStepType.SWIM);
             }
         }
     }

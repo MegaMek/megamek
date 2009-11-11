@@ -1305,11 +1305,45 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         final IHex dest = game.getBoard().getHexInDir(c, dir);
         final IHex src = game.getBoard().getHex(c);
 
-        if ((dest == null) || !useIsometric()) {
+        if (!useIsometric()) {
+            return;
+        }
+        
+        // Pad the polygon size slightly to avoid rounding errors from the scale
+        // float.
+        int fudge = -1;
+        if ((dir == 2) || (dir == 4) || (dir == 3)) {
+            fudge = 1;
+        }
+        
+        
+        final int elev = src.getElevation();
+        //If the Destination is null, draw the complete elevation side.
+        if(dest == null &&  elev > 0 && (dir==2 || dir==3 || dir==4)) {
+            
+            //Determine the depth of the edge that needs to be drawn.
+            int height = elev;
+            IHex southHex = game.getBoard().getHexInDir(c, 3);
+            if(dir!=3 && southHex != null && elev > southHex.getElevation()) {
+                height = elev - southHex.getElevation();
+            }
+            
+            Polygon p = new Polygon(new int[] { p1.x, p2.x, p2.x, p1.x }, new int[] {
+                    p1.y+fudge, p2.y+fudge, p2.y + (int) (HEX_ELEV * scale * height), 
+                    p1.y + (int) (HEX_ELEV * scale * height)}, 4);
+            boardGraph.setColor(color);
+            boardGraph.drawPolygon(p);
+            boardGraph.fillPolygon(p);
+            
+            boardGraph.setColor(Color.BLACK);
+            if ((dir == 2) || (dir == 4))
+                boardGraph.drawLine(p1.x, p1.y, p1.x, p1.y+(int) (HEX_ELEV * scale * height));
+            return;
+        } else if (dest == null) {
             return;
         }
 
-        int delta = src.getElevation() - dest.getElevation();
+        int delta = elev - dest.getElevation();
         // Don't draw the elevation if there is no exposed edge for the player
         // to see.
         if ((delta == 0) || (((dir == 0) || (dir == 1) || (dir == 5)) && (delta > 0))
@@ -1317,12 +1351,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             return;
         }
 
-        // Pad the polygon size slightly to avoid rounding errors from the scale
-        // float.
-        int fudge = -1;
-        if ((dir == 2) || (dir == 4) || (dir == 3)) {
-            fudge = 1;
-        }
+
 
         if (dir == 1) {
             // Draw a little bit of shadow to improve the 3d isometric effect.
@@ -1333,10 +1362,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             boardGraph.fillPolygon(shadow1);
         }
 
-        Point p3 = new Point(p1.x, p1.y + (int) (HEX_ELEV * scale * delta)
-                + fudge);
-        Polygon p = new Polygon(new int[] { p1.x, p2.x, p3.x }, new int[] {
-                p1.y, p2.y, p3.y }, 3);
+        Point p3 = new Point(p1.x, p1.y + (int) (HEX_ELEV * scale * delta)+fudge);
+        
+        Polygon p = new Polygon(new int[] { p1.x, p2.x, p3.x}, new int[] {
+                p1.y+fudge, p2.y+fudge, p3.y}, 3);
+
 
         boardGraph.setColor(color);
         boardGraph.drawPolygon(p);
@@ -1358,10 +1388,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private final boolean drawElevationLine(Coords src, int direction) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHexInDir(src, direction);
-        if((destHex != null) && (srcHex.getElevation() != destHex.getElevation())) {
+        if(destHex == null && srcHex.getElevation() != 0) {
+            return true;
+        } else if(destHex == null) {
+            return false;
+        }else if(srcHex.getElevation() != destHex.getElevation()) {
             return true;
         } else {
-            return (destHex != null) && (srcHex.floor() != destHex.floor());
+            return (srcHex.floor() != destHex.floor());
         }
     }
 
@@ -1421,13 +1455,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             //When using isometric rendering, a lower hex can obscure the normal hex.
             //Iterate over all hexes from highest to lowest, looking for a hex that
             //falls within the selected mouse click point.
-            final int minElev = game.getBoard().getMinElevation();
-            final int maxElev = game.getBoard().getMaxElevation();
+            final int minElev = Math.min(0, game.getBoard().getMinElevation());
+            final int maxElev = Math.max(0, game.getBoard().getMaxElevation());
             final int delta = (int) Math.ceil(((double) maxElev - minElev)/3.0f);
             final int minHexSpan = Math.max(y - delta, 0);
             final int maxHexSpan = Math.min(y + delta, game.getBoard().getHeight());
             for (int elev = maxElev; elev >= minElev; elev--) {
-                for (int i = minHexSpan; i < maxHexSpan; i++) {
+                for (int i = minHexSpan; i <= maxHexSpan; i++) {
                     Coords c1 = new Coords(x, i);
                     Point pAlt = getHexLocation(c1);
                     IHex hexAlt = game.getBoard().getHex(c1);

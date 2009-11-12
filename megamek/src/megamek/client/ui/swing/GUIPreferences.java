@@ -64,6 +64,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_CHATBOX2_FONTSIZE = "AdvancedChatbox2Fontsize";
     public static final String ADVANCED_CHATBOX2_BACKCOLOR = "AdvancedChatbox2BackColor";
     public static final String ADVANCED_CHATBOX2_TRANSPARANCY = "AdvancedChatbox2Transparancy";
+    public static final String ADVANCED_CHATBOX2_AUTOSLIDEDOWN = "AdvancedChatbox2AutoSlidedown";
     /* --End advanced settings-- */
 
     public static final String AUTO_END_FIRING = "AutoEndFiring";
@@ -164,6 +165,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_CHATBOX2_BACKCOLOR, new Color(255, 255, 255));
         store.setDefault(ADVANCED_CHATBOX2_FONTSIZE, 12);
         store.setDefault(ADVANCED_CHATBOX2_TRANSPARANCY, 50);
+        store.setDefault(ADVANCED_CHATBOX2_AUTOSLIDEDOWN, true);
 
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);

@@ -195,7 +195,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 idleTime = timeIdle;
             }
 
-            if ((idleTime > MAX_IDLE_TIME) && !isSliding()) {
+            if ((idleTime > MAX_IDLE_TIME) && !isSliding() && GUIPreferences.getInstance().getBoolean("AdvancedChatbox2AutoSlidedown")) {
                 slideDown();
             }
         }

@@ -679,7 +679,7 @@ public class Dropship extends SmallCraft implements Serializable {
     @Override
     public void setPosition(Coords position) {
         super.setPosition(position);
-        if (getAltitude() == 0) {
+        if ((getAltitude() == 0) && !game.getBoard().inSpace()) {
             secondaryPositions.put(0, position.translated(0));
             secondaryPositions.put(1, position.translated(1));
             secondaryPositions.put(2, position.translated(2));

@@ -25,7 +25,7 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 
-import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Entity;
@@ -317,11 +317,11 @@ public class PilotMapSet implements DisplayMapSet {
         if ((null == category) || (null == file)) {
             return null;
         }
-        
+
         if (Pilot.PORTRAIT_NONE.equals(file)) {
             file = "default.gif"; //$NON-NLS-1$
         }
-        
+
         if(Pilot.ROOT_PORTRAIT.equals(category)) {
             category = "";
         }

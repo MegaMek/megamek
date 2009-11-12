@@ -51,10 +51,10 @@ import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
-import megamek.common.EntityMovementMode;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
@@ -510,9 +510,13 @@ public class CustomFighterSquadronDialog
         m_tWeapons2.setText("");
         m_chkEquipment.setState(false);
         int nType = m_chType.getSelectedIndex();
-        if (nType == -1) nType = 0;
+        if (nType == -1) {
+            nType = 0;
+        }
         int nUnitType = m_chUnitType.getSelectedIndex();
-        if (nUnitType == -1) nUnitType = 0;
+        if (nUnitType == -1) {
+            nUnitType = 0;
+        }
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
                 .hasMoreElements();) {
             EquipmentType et = e.nextElement();

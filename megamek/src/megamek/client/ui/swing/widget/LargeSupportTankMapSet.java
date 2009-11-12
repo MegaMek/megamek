@@ -24,7 +24,7 @@ import java.util.Vector;
 import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.AWT.GUIPreferences;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Entity;
 import megamek.common.LargeSupportTank;
 import megamek.common.SupportTank;

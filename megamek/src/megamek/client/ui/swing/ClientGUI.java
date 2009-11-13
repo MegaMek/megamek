@@ -50,7 +50,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
@@ -188,10 +187,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Current Selected entity
      */
     private int selectedEntityNum = Entity.NONE;
-
-    static {
-        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-    }
 
     /**
      * Construct a client which will display itself in a new frame. It will not try to connect to a

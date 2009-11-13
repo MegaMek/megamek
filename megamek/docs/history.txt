@@ -6,6 +6,7 @@ v0.35.11-dev (SVN)
 + Bug: secondary positions being set for DropShips in space
 + Made auto-slide-down of chatterbox disableable in the advanced client settings
 + Bug: Hovers and Naval units getting deployed underwater
++ Bug: done button missing in the deployminefielddisplay 
 
 v0.35.10 (2009-11-10, 20:14 UTC+1)
 + Rearranged Components for ease of use in MML

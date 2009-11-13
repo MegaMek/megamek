@@ -55,7 +55,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
     private JButton butC;
     private JButton butM;
-    // private JButton butSpace;
+    private JButton butSpace;
     // private JButton butSpace1;
     // private JButton butSpace2;
     // private JButton butSpace3;
@@ -100,8 +100,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         butM.setActionCommand(DEPLOY_MINE_CONV);
         butM.setEnabled(false);
 
-        // butSpace = new JButton(".");
-        // butSpace.setEnabled(false);
+        butSpace = new JButton("");
+        butSpace.setEnabled(false);
         // butSpace1 = new JButton(".");
         // butSpace1.setEnabled(false);
         // butSpace2 = new JButton(".");
@@ -163,11 +163,11 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         panButtons.add(butI);
         panButtons.add(butA);
         panButtons.add(butRemove);
-        // panButtons.add(butSpace);
+        panButtons.add(butSpace);
         // panButtons.add(butSpace1);
         // panButtons.add(butSpace2);
         // panButtons.add(butSpace3);
-        // panButtons.add(butDone);
+        panButtons.add(butDone);
 
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();

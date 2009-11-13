@@ -38,6 +38,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Terrains;
@@ -536,7 +537,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                 }
             } else if (!(ce() instanceof Aero)) {
                 IHex deployhex = clientgui.getClient().game.getBoard().getHex(moveto);
-                ce().setElevation(deployhex.floor() - deployhex.surface());
+                // hovers and naval units go on the surface
+                if ((ce().getMovementMode() == EntityMovementMode.NAVAL) ||
+                        (ce().getMovementMode() == EntityMovementMode.SUBMARINE) ||
+                        (ce().getMovementMode() == EntityMovementMode.HYDROFOIL) ||
+                        (ce().getMovementMode() == EntityMovementMode.HOVER)) {
+                    ce().setElevation(deployhex.surface());
+                } else {
+                    ce().setElevation(deployhex.floor() - deployhex.surface());
+                }
             }
 
             ce().setPosition(moveto);

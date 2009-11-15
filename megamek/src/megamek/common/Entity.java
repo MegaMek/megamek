@@ -9068,7 +9068,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         standardDamageValue = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, false, true);
 
         if (standardDamageValue <= 0) {
-            standardDamageValue = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE);
+            standardDamageValue = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, false, true);
             damageValueNoHeat = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, true, true);
         } else {
             damageValueNoHeat = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, true, true);
@@ -9094,6 +9094,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public String getBattleForceSpecialAbilites() {
         printDebugToFile();
         return "None";
+    }
+
+    public int getBattleForceSize() {
+        return getWeightClass() + 1;
     }
 
     protected void printDebugToFile() {

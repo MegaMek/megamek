@@ -6554,7 +6554,7 @@ public abstract class Mech extends Entity implements Serializable {
             battleForceDebugString.append('\n');
         }
 
-        totalHeat = getBattleForceTotalHeatGeneration() - 4;
+        totalHeat = getBattleForceTotalHeatGeneration(false) - 4;
 
         if ((totalHeat > getHeatCapacity()) && !ignoreHeat) {
             if (DEBUGBATTLEFORCE) {
@@ -6776,6 +6776,9 @@ public abstract class Mech extends Entity implements Serializable {
             results.append("LTAG, ");
         }
 
+        DEBUGBATTLEFORCE = true;
+
+        battleForceDebugString.append("\nLRM Ability:\n");
         int lrmDamage = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LRM, false, true);
         lrmDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true) / 2;
 
@@ -6789,6 +6792,7 @@ public abstract class Mech extends Entity implements Serializable {
             results.append(String.format("LRM: %1$s/%2$s/%3$s, ", lrmShortDamage, lrmDamage, lrmLongDamage));
         }
 
+        DEBUGBATTLEFORCE = false;
         if (hasWorkingMisc(MiscType.F_CLUB, -1) || hasWorkingMisc(MiscType.F_HAND_WEAPON, -1)) {
             results.append("MEL, ");
         }

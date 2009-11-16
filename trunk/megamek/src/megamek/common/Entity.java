@@ -9025,7 +9025,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return 0;
     }
 
-    public int getBattleForceTotalHeatGeneration() {
+    public int getBattleForceTotalHeatGeneration(boolean allowRear) {
         int totalHeat = 0;
 
         // finish the max heat calculations
@@ -9039,7 +9039,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         for (Mounted mount : getWeaponList()) {
             WeaponType weapon = (WeaponType) mount.getType();
-            if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
+            if (weapon.hasFlag(WeaponType.F_ONESHOT) || (allowRear && !mount.isRearMounted()) || (!allowRear && mount.isRearMounted())) {
                 continue;
             }
             totalHeat += weapon.getHeat();
@@ -9058,7 +9058,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int damageValueNoHeat = 0;
         boolean debugStatus = DEBUGBATTLEFORCE;
 
-        int totalHeat = getBattleForceTotalHeatGeneration() - 4;
+        int totalHeat = getBattleForceTotalHeatGeneration(false) - 4;
 
         if (getHeatCapacity() >= totalHeat) {
             return "None";

@@ -77,7 +77,6 @@ import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
@@ -440,6 +439,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 }
                 // only scroll when we should
                 if (!shouldScroll) {
+                    mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, e.getModifiers());
                     return;
                 }
                 //if we have not yet been dragging, set the var so popups don't
@@ -1323,36 +1323,37 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         if (!useIsometric()) {
             return;
         }
-        
+
         // Pad the polygon size slightly to avoid rounding errors from the scale
         // float.
         int fudge = -1;
         if ((dir == 2) || (dir == 4) || (dir == 3)) {
             fudge = 1;
         }
-        
-        
+
+
         final int elev = src.getElevation();
         //If the Destination is null, draw the complete elevation side.
-        if(dest == null &&  elev > 0 && (dir==2 || dir==3 || dir==4)) {
-            
+        if((dest == null) &&  (elev > 0) && ((dir==2) || (dir==3) || (dir==4))) {
+
             //Determine the depth of the edge that needs to be drawn.
             int height = elev;
             IHex southHex = game.getBoard().getHexInDir(c, 3);
-            if(dir!=3 && southHex != null && elev > southHex.getElevation()) {
+            if((dir!=3) && (southHex != null) && (elev > southHex.getElevation())) {
                 height = elev - southHex.getElevation();
             }
-            
+
             Polygon p = new Polygon(new int[] { p1.x, p2.x, p2.x, p1.x }, new int[] {
-                    p1.y+fudge, p2.y+fudge, p2.y + (int) (HEX_ELEV * scale * height), 
+                    p1.y+fudge, p2.y+fudge, p2.y + (int) (HEX_ELEV * scale * height),
                     p1.y + (int) (HEX_ELEV * scale * height)}, 4);
             boardGraph.setColor(color);
             boardGraph.drawPolygon(p);
             boardGraph.fillPolygon(p);
-            
+
             boardGraph.setColor(Color.BLACK);
-            if ((dir == 2) || (dir == 4))
+            if ((dir == 2) || (dir == 4)) {
                 boardGraph.drawLine(p1.x, p1.y, p1.x, p1.y+(int) (HEX_ELEV * scale * height));
+            }
             return;
         } else if (dest == null) {
             return;
@@ -1378,7 +1379,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         }
 
         Point p3 = new Point(p1.x, p1.y + (int) (HEX_ELEV * scale * delta)+fudge);
-        
+
         Polygon p = new Polygon(new int[] { p1.x, p2.x, p3.x}, new int[] {
                 p1.y+fudge, p2.y+fudge, p3.y}, 3);
 
@@ -1403,7 +1404,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private final boolean drawElevationLine(Coords src, int direction) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHexInDir(src, direction);
-        if(destHex == null && srcHex.getElevation() != 0) {
+        if((destHex == null) && (srcHex.getElevation() != 0)) {
             return true;
         } else if(destHex == null) {
             return false;
@@ -2314,13 +2315,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     }
 
     public void mouseReleased(MouseEvent me) {
-        for (int i = 0; i < displayables.size(); i++) {
-            IDisplayable disp = displayables.get(i);
-            if (disp.isReleased()) {
-                return;
-            }
-        }
-
         // don't show the popup if we are drag-scrolling
         if (me.isPopupTrigger() && !dragging) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP, me.getModifiers());
@@ -2335,6 +2329,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             dragging = false;
             shouldScroll = false;
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+        for (int i = 0; i < displayables.size(); i++) {
+            IDisplayable disp = displayables.get(i);
+            if (disp.isReleased()) {
+                return;
+            }
         }
 
         if (me.getClickCount() == 1) {

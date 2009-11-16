@@ -36,6 +36,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
@@ -75,6 +77,7 @@ import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
@@ -310,6 +313,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         game.getBoard().addBoardListener(this);
         scheduleRedrawTimer();// call only once
         addMouseListener(this);
+        addMouseWheelListener(new MouseWheelListener() {
+            public void mouseWheelMoved(MouseWheelEvent we) {
+                if (GUIPreferences.getInstance().getMouseWheelZoom()) {
+                    if (we.getWheelRotation() > 0) {
+                        zoomIn();
+                    } else {
+                        zoomOut();
+                    }
+                }
+            }
+        });
 
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD1, 0, false), "scrollSW");

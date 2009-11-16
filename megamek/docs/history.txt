@@ -15,6 +15,7 @@ v0.35.11-dev (SVN)
     Also, re-enable movepath plotting by dragging
 + Bug: NPE when checking for shield.
 + More Changed to BF Conversion
++ Bug 2884446: Vtol deployment Elevation on Water
 
 v0.35.10 (2009-11-10, 20:14 UTC+1)
 + Rearranged Components for ease of use in MML

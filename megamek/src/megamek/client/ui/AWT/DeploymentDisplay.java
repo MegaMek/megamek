@@ -42,6 +42,7 @@ import megamek.common.EntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Terrains;
+import megamek.common.VTOL;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
@@ -484,8 +485,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
             // check if deployed unit violates stacking
             return;
         } else {
-
-//          check for buildings and if found ask what level they want to deploy at
+            // check for buildings and if found ask what level they want to deploy at
             Building bldg = clientgui.getClient().game.getBoard().getBuildingAt(moveto);
             if((null != bldg) && !(ce() instanceof Aero)) {
                 if (clientgui.getClient().game.getBoard().getHex(moveto).containsTerrain(Terrains.BLDG_ELEV)) {
@@ -543,7 +543,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                         (ce().getMovementMode() == EntityMovementMode.HYDROFOIL) ||
                         (ce().getMovementMode() == EntityMovementMode.HOVER)) {
                     ce().setElevation(deployhex.surface());
+                } else if (ce() instanceof VTOL) {
+                    // VTOLs go to elevation 1
+                    ce().setElevation(deployhex.surface() + 1);
                 } else {
+                    // everything else goes to elevation 0, or on the floor of a water hex
                     ce().setElevation(deployhex.floor() - deployhex.surface());
                 }
             }

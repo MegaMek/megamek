@@ -8,7 +8,7 @@ v0.35.11-dev (SVN)
 + Bug: Hovers and Naval units getting deployed underwater
 + Bug: done button missing in the deployminefielddisplay 
 + More Battle Force conversion changes
-
++ Bug 2897781: BA don't show correct number of troopers in MechDisplay
 v0.35.10 (2009-11-10, 20:14 UTC+1)
 + Rearranged Components for ease of use in MML
 + Bug: Shields and Spikes count for defensive BV

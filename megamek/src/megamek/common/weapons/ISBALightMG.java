@@ -45,7 +45,7 @@ public class ISBALightMG extends BAMGWeapon {
         shortRange = 2;
         mediumRange = 4;
         longRange = 6;
-        extremeRange = 4;
+        extremeRange = 8;
         tonnage = 0.5f;
         criticals = 1;
         bv = 5;

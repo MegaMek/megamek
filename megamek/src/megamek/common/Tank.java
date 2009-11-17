@@ -1381,14 +1381,6 @@ public class Tank extends Entity {
 
     public void setEngine(Engine e) {
         engine = e;
-        if (e.engineValid) {
-            setOriginalWalkMP(calculateWalk());
-        }
-    }
-
-    protected int calculateWalk() {
-        return (getEngine().getRating() + getSuspensionFactor())
-                / (int) weight;
     }
 
     @Override

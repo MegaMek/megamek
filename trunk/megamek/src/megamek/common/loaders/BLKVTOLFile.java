@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -40,7 +40,7 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find name block.");
         }
         t.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
+        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
             t.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             t.setModel("");
@@ -96,6 +96,7 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         }
         int engineRating = dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight() - t.getSuspensionFactor();
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
+        t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
 
         if (dataFile.exists("armor_type")) {
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);

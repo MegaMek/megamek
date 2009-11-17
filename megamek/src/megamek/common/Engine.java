@@ -136,11 +136,6 @@ public class Engine implements Serializable {
             case FUEL_CELL:
                 break;
             case COMPACT_ENGINE:
-                if (hasFlag(TANK_ENGINE)) {
-                    problem.append(Messages
-                            .getString("Engine.invalidMechOnly"));
-                    return false;
-                }
                 if (hasFlag(LARGE_ENGINE)) {
                     problem.append(Messages
                             .getString("Engine.invalidCompactLarge"));
@@ -469,7 +464,7 @@ public class Engine implements Serializable {
                 return 2;
         }
     }
-    
+
     /*
      * TODO: Waiting for a rules clarification on XXL engines. Until then guess 8
      * http://www.classicbattletech.com/forums/index.php/topic,52221.msg1256924.html#msg1256924

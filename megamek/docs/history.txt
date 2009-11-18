@@ -19,6 +19,8 @@ v0.35.11-dev (SVN)
 + Fix tank cruise MP for tanks with an engine rating that gets bumped up
     because otherwise it's below minimum
 + Bug: compact engines are not mech only
++ added better filtering code for Mul save and load dialogs
++ Bug: More NPE when checking for shield.
 
 v0.35.10 (2009-11-10, 20:14 UTC+1)
 + Rearranged Components for ease of use in MML

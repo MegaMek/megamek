@@ -200,7 +200,7 @@ public class BipedMech extends Mech {
 
     /**
      * Sets the internal structure for the mech.
-     * 
+     *
      * @param head
      *            head
      * @param ct
@@ -330,7 +330,7 @@ public class BipedMech extends Mech {
 
     /**
      * Check to see if a Biped mech has a claw in one of its arms
-     * 
+     *
      * @param location
      *            (LOC_RARM or LOC_LARM)
      * @return True/False
@@ -360,7 +360,7 @@ public class BipedMech extends Mech {
 
     /**
      * Checks to see if this bipmech has any vibro blades on them.
-     * 
+     *
      * @return boolean <code>true</code> if the mech has vibroblades
      *         <code>false</code> if not.
      */
@@ -380,7 +380,7 @@ public class BipedMech extends Mech {
 
     /**
      * Checks to see if this bipedmech has a vibroblade in this location.
-     * 
+     *
      * @param location
      * @return boolean <code>true</code> if the mech has vibroblades
      *         <code>false</code> if not.
@@ -413,7 +413,7 @@ public class BipedMech extends Mech {
 
     /**
      * Does the entity have a retracted blade in the given location
-     * 
+     *
      */
     @Override
     public boolean hasRetractedBlade(int loc) {
@@ -428,7 +428,7 @@ public class BipedMech extends Mech {
     /**
      * Checks for Active Vibroblades in <code>location</code> and returns the
      * amount of heat genereated if active.
-     * 
+     *
      * @param location
      * @return <code>int</code> amount of heat genereated by an active
      *         vibroblade.
@@ -470,7 +470,7 @@ public class BipedMech extends Mech {
 
     /**
      * Does the mech have any shields. a mech can have up to 2 shields.
-     * 
+     *
      * @return <code>true</code> if unit has a shield crit.
      */
     @Override
@@ -480,7 +480,7 @@ public class BipedMech extends Mech {
             if (((m.getLocation() == Mech.LOC_LARM) || (m.getLocation() == Mech.LOC_RARM)) && (type instanceof MiscType) && ((MiscType) type).isShield() && (this.getInternal(m.getLocation()) > 0)) {
                 for (int slot = 0; slot < this.getNumberOfCriticals(m.getLocation()); slot++) {
                     CriticalSlot cs = getCritical(m.getLocation(), slot);
-                    if ((cs != null) && cs.getMount().equals(m) && !(cs.isDestroyed())) {
+                    if ((cs != null) && (cs.getMount() != null) && cs.getMount().equals(m) && !(cs.isDestroyed())) {
                         // when all crits of a shield are destroyed, it
                         // no longer hinders movemenet and stuff
                         return true;

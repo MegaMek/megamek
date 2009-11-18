@@ -273,9 +273,9 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
 
         // Don't open on mouse over, it is annoying.
-        if (mouseOver && isDown()) {
+        /*if (mouseOver && isDown()) {
             slideUp();
-        }
+        }*/
 
         if (mouseOver && isUp()) {
             lockOpen = true;

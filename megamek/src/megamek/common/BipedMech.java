@@ -480,7 +480,7 @@ public class BipedMech extends Mech {
             if (((m.getLocation() == Mech.LOC_LARM) || (m.getLocation() == Mech.LOC_RARM)) && (type instanceof MiscType) && ((MiscType) type).isShield() && (this.getInternal(m.getLocation()) > 0)) {
                 for (int slot = 0; slot < this.getNumberOfCriticals(m.getLocation()); slot++) {
                     CriticalSlot cs = getCritical(m.getLocation(), slot);
-                    if ((cs != null) && (cs.getMount() != null) && cs.getMount().equals(m) && !(cs.isDestroyed())) {
+                    if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT) && cs.getMount().equals(m) && !(cs.isDestroyed())) {
                         // when all crits of a shield are destroyed, it
                         // no longer hinders movemenet and stuff
                         return true;

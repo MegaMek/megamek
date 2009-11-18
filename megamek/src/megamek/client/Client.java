@@ -26,8 +26,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TimerTask;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.SwingUtilities;
@@ -130,6 +133,8 @@ public class Client implements IClientCommandHandler {
     private boolean disconnectFlag = false;
 
     private Hashtable<String, Integer> duplicateNameHash = new Hashtable<String, Integer>();
+
+    public Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
 
     private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
 
@@ -1036,6 +1041,12 @@ public class Client implements IClientCommandHandler {
             receivePlayerInfo(c);
             break;
         case Packet.COMMAND_PLAYER_REMOVE:
+            for (Iterator<Client> botIterator = bots.values().iterator();botIterator.hasNext();) {
+                Client bot = botIterator.next();
+                if (bot.local_pn == c.getIntValue(0)) {
+                    botIterator.remove();
+                }
+            }
             game.removePlayer(c.getIntValue(0));
             break;
         case Packet.COMMAND_CHAT:

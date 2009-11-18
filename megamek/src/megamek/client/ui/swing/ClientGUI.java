@@ -39,7 +39,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -180,9 +179,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Map phase component names to phase component objects.
      */
     HashMap<String, JComponent> phaseComponents = new HashMap<String, JComponent>();
-
-    // TODO: there's a better place for this
-    private Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
 
     /**
      * Current Selected entity
@@ -1380,7 +1376,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public Map<String, Client> getBots() {
-        return bots;
+        return client.bots;
     }
 
     /**

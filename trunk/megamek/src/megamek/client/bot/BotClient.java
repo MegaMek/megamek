@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
@@ -29,9 +29,9 @@ import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.GameTurn;
-import megamek.common.EntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -114,7 +114,7 @@ public abstract class BotClient extends Client {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = i.nextElement();
             if (entity.getOwner().equals(getLocalPlayer())
-                    && entity.getPosition() != null && !entity.isOffBoard()) {
+                    && (entity.getPosition() != null) && !entity.isOffBoard()) {
                 result.add(entity);
             }
         }
@@ -126,7 +126,7 @@ public abstract class BotClient extends Client {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = i.nextElement();
             if (entity.getOwner().isEnemyOf(getLocalPlayer())
-                    && entity.getPosition() != null && !entity.isOffBoard()) {
+                    && (entity.getPosition() != null) && !entity.isOffBoard()) {
                 result.add(entity);
             }
         }
@@ -154,8 +154,8 @@ public abstract class BotClient extends Client {
                 // if the game is not double blind and I can't see anyone
                 // else on the board I should kill myself.
                 if (!(game.getOptions().booleanOption("double_blind")) //$NON-NLS-1$
-                        && game.getEntitiesOwnedBy(getLocalPlayer())
-                                - game.getNoOfEntities() == 0) {
+                        && (game.getEntitiesOwnedBy(getLocalPlayer())
+                                - game.getNoOfEntities() == 0)) {
                     die();
                 }
 
@@ -247,8 +247,8 @@ public abstract class BotClient extends Client {
                 // For now, declare no autohit hexes.
                 Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();
                 sendArtyAutoHitHexes(autoHitHexes);
-            } else if (game.getPhase() == IGame.Phase.PHASE_TARGETING
-                    || game.getPhase() == IGame.Phase.PHASE_OFFBOARD) {
+            } else if ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
+                    || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
                 // Send a "no attack" to clear the game turn, if any.
                 // TODO: Fix for real arty stuff
                 sendAttackData(game.getFirstEntityNum(getMyTurn()),
@@ -525,7 +525,7 @@ public abstract class BotClient extends Client {
             for (Enumeration<Entity> i = valid_attackers.elements(); i
                     .hasMoreElements();) {
                 test_ent = i.nextElement();
-                if (test_ent.isDeployed() == true && !test_ent.isOffBoard()) {
+                if ((test_ent.isDeployed() == true) && !test_ent.isOffBoard()) {
                     for (Mounted mounted : test_ent.getWeaponList()) {
                         test_attack = new WeaponAttackAction(test_ent.getId(),
                                 deployed_ent.getId(), test_ent
@@ -551,7 +551,7 @@ public abstract class BotClient extends Client {
                 for (Enumeration<Entity> j = valid_attackers.elements(); j
                         .hasMoreElements();) {
                     test_ent = j.nextElement();
-                    if (test_ent.isDeployed() == true && !test_ent.isOffBoard()) {
+                    if ((test_ent.isDeployed() == true) && !test_ent.isOffBoard()) {
                         test_attack = new WeaponAttackAction(deployed_ent
                                 .getId(), test_ent.getId(), deployed_ent
                                 .getEquipmentNum(mounted));
@@ -616,7 +616,7 @@ public abstract class BotClient extends Client {
                 Enumeration<Entity> ent_list = game.getEntities(highest_hex);
                 while (ent_list.hasMoreElements()) {
                     test_ent = ent_list.nextElement();
-                    if (deployed_ent.getOwner() == test_ent.getOwner()
+                    if ((deployed_ent.getOwner() == test_ent.getOwner())
                             && !deployed_ent.equals(test_ent)) {
                         if (test_ent instanceof Infantry) {
                             valid_array[valid_arr_index].fitness += 2;
@@ -631,7 +631,7 @@ public abstract class BotClient extends Client {
                             .getEntities(highest_hex);
                     while (adj_ents.hasMoreElements()) {
                         test_ent = adj_ents.nextElement();
-                        if (deployed_ent.getOwner() == test_ent.getOwner()
+                        if ((deployed_ent.getOwner() == test_ent.getOwner())
                                 && !deployed_ent.equals(test_ent)) {
                             if (test_ent instanceof Infantry) {
                                 valid_array[valid_arr_index].fitness += 1;
@@ -734,8 +734,8 @@ public abstract class BotClient extends Client {
         Entity attacker = g.getEntity(waa.getEntityId());
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
         ToHitData hitData = waa.toHit(g);
-        if (hitData.getValue() == TargetRoll.IMPOSSIBLE
-                || hitData.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+        if ((hitData.getValue() == TargetRoll.IMPOSSIBLE)
+                || (hitData.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
             return 0.0f;
         }
 
@@ -761,7 +761,7 @@ public abstract class BotClient extends Client {
                     || (wt.getAmmoType() == AmmoType.T_MRM_STREAK)
                     || (wt.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 fHits = wt.getRackSize();
-            } else if (wt.getRackSize() == 40 || wt.getRackSize() == 30) {
+            } else if ((wt.getRackSize() == 40) || (wt.getRackSize() == 30)) {
                 fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];
             } else {
                 fHits = expectedHitsByRackSize[wt.getRackSize()];
@@ -771,7 +771,7 @@ public abstract class BotClient extends Client {
             if (vCounters != null) {
                 for (int x = 0; x < vCounters.size(); x++) {
                     EquipmentType type = vCounters.get(x).getType();
-                    if (type instanceof WeaponType
+                    if ((type instanceof WeaponType)
                             && type.hasFlag(WeaponType.F_AMS)) {
                         float fAMS = 3.5f * ((WeaponType) type).getDamage();
                         fHits = Math.max(0.0f, fHits - fAMS);

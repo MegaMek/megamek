@@ -156,7 +156,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_MOVE_RUN_COLOR, "yellow");
         setDefault(ADVANCED_MOVE_BACK_COLOR, new Color(255, 255, 0));
         setDefault(ADVANCED_MOVE_SPRINT_COLOR, new Color(255, 20, 147));
-        store.setDefault(ADVANCED_MOVE_STEP_DELAY, 100);
+        store.setDefault(ADVANCED_MOVE_STEP_DELAY, 50);
         store.setDefault(ADVANCED_DARKEN_MAP_AT_NIGHT, true);
         setDefault(ADVANCED_MAPSHEET_COLOR, "blue");
         store.setDefault(ADVANCED_TRANSLUCENT_HIDDEN_UNITS, true);

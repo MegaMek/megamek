@@ -4,6 +4,8 @@ v0.34.10-dev (SVN)
 + Bug: Shields and Spikes count for defensive BV
 + Bug: large shield with all crits destroyed still hindering movement
 + All Clan Mechs have Clan names again
++ use double buffering for swing UI (I don't even remember why I disabled it
+    in the first place)
 
 v0.34.9 (2009-11-09, 19:32 UTC+1)
 + Bug 2585799: Pilot damage assigned to vehicle crew

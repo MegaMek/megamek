@@ -713,18 +713,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             g.setColor(rulerStartColor);
             g.fillRect(start.x - 1, start.y - 1, 2, 2);
         }
-
         // draw all the "displayables"
+        Rectangle rect = new Rectangle();
+        rect.x = -getX();
+        rect.y = -getY();
+        rect.width = scrollpane.getViewport().getWidth();
+        rect.height = scrollpane.getViewport().getHeight();
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
-            double width = Math.min(boardSize.getWidth(), scrollpane.getViewport().getSize().getWidth());
-            double height = Math.min(boardSize.getHeight(), scrollpane.getViewport().getSize().getHeight());
-            Dimension drawDimension = new Dimension();
-            drawDimension.setSize(width, height);
-            disp.draw(g,
-                    new Point((int)Math.min(boardSize.getWidth(), -getBounds().getX()),
-                            (int)Math.min(boardSize.getHeight(),-getBounds().getY())),
-                            drawDimension);
+            disp.draw(g, rect);
         }
     }
 
@@ -1910,7 +1907,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 || (t.getPosition() == null) || (ae.getPosition() == null)) {
             return;
         }
-
         repaint(100);
         for (AttackSprite sprite : attackSprites) {
             // can we just add this attack to an existing one?

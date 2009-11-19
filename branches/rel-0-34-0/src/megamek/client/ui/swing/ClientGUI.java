@@ -294,7 +294,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     private void initializeFrame() {
         frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
-        frame.getRootPane().setDoubleBuffered(false);
         menuBar.setGame(client.game);
         frame.setJMenuBar(menuBar);
         Rectangle virtualBounds = new Rectangle();

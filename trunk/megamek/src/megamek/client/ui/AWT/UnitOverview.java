@@ -92,12 +92,12 @@ public class UnitOverview implements IDisplayable {
         PMUtil.setImage(pageDown, clientgui);
     }
 
-    public void draw(Graphics graph, Point drawRelativeTo, Dimension size) {
+    public void draw(Graphics graph, Rectangle rect) {
         if (!visible) {
             return;
         }
 
-        computeUnitsPerPage(size);
+        computeUnitsPerPage(rect.getSize());
 
         graph.setFont(FONT);
         ArrayList<Entity> v = clientgui.getClient().game
@@ -115,7 +115,7 @@ public class UnitOverview implements IDisplayable {
             }
         }
 
-        int x = size.width - DIST_SIDE - ICON_WIDTH;
+        int x = rect.width - DIST_SIDE - ICON_WIDTH;
         int y = DIST_TOP;
 
         if (scroll) {
@@ -520,10 +520,4 @@ public class UnitOverview implements IDisplayable {
         }
         return s;
     }
-
-    public Rectangle getRectangleOccupied(Point relativeTo, Dimension size) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

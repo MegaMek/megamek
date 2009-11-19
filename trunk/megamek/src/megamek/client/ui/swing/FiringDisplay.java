@@ -1132,15 +1132,17 @@ KeyListener, ItemListener, ListSelectionListener {
      * removes the last action
      */
     private void removeLastFiring() {
-        Object o = attacks.lastElement();
-        if (o instanceof WeaponAttackAction) {
-            WeaponAttackAction waa = (WeaponAttackAction) o;
-            ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
-            attacks.removeElement(o);
-            clientgui.mechD.wPan.displayMech(ce());
-            clientgui.getClient().game.removeAction(o);
-            clientgui.bv.refreshAttacks();
-            clientgui.minimap.drawMap();
+        if (!attacks.isEmpty()) {
+            Object o = attacks.lastElement();
+            if (o instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction) o;
+                ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
+                attacks.removeElement(o);
+                clientgui.mechD.wPan.displayMech(ce());
+                clientgui.getClient().game.removeAction(o);
+                clientgui.bv.refreshAttacks();
+                clientgui.minimap.drawMap();
+            }
         }
     }
 

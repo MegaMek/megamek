@@ -21,6 +21,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -367,48 +368,48 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     /**
      * Draws the chatter box.
      */
-    public void draw(Graphics graph, Point relativeTo, Dimension size) {
+    public void draw(Graphics graph, Rectangle clipBounds) {
         graph.setColor(COLOR_BACKGROUND);
         graph.setFont(FONT_CHAT);
 
         // Draw box.
-        int yOffset = (size.height) - HEIGHT - DIST_BOTTOM + slideOffset + relativeTo.y;
-        graph.fillRoundRect(DIST_SIDE + relativeTo.x, yOffset, WIDTH, HEIGHT, 20, 20);
+        int yOffset = (clipBounds.height) - HEIGHT - DIST_BOTTOM + slideOffset + clipBounds.y;
+        graph.fillRoundRect(DIST_SIDE + clipBounds.x, yOffset, WIDTH, HEIGHT, 20, 20);
         graph.setColor(COLOR_TEXT_BACK);
 
         // Min/max button
         if (slideOffset == 130) {
-            graph.drawImage(maxbutton, 10 + relativeTo.x, yOffset + 3, bv);
+            graph.drawImage(maxbutton, 10 + clipBounds.x, yOffset + 3, bv);
         } else {
-            graph.drawImage(minbutton, 10 + relativeTo.x , yOffset + 3, bv);
+            graph.drawImage(minbutton, 10 + clipBounds.x , yOffset + 3, bv);
         }
 
         // Title
-        printLine(graph, "Incoming messages...", 29 + relativeTo.x, yOffset + 15);
+        printLine(graph, "Incoming messages...", 29 + clipBounds.x, yOffset + 15);
 
         // Scroll up button
-        graph.drawImage(upbutton, WIDTH - 16 + relativeTo.x, yOffset + 3, bv);
+        graph.drawImage(upbutton, WIDTH - 16 + clipBounds.x, yOffset + 3, bv);
 
         // Scroll bar outer
-        graph.drawRect(WIDTH - 16 + relativeTo.x, yOffset + 16, 13, SCROLLBAR_OUTER_HEIGHT);
+        graph.drawRect(WIDTH - 16 + clipBounds.x, yOffset + 16, 13, SCROLLBAR_OUTER_HEIGHT);
 
         // Scroll bar inner
-        graph.drawRect(WIDTH - 14 + relativeTo.x, yOffset + 18 + scrollBarOffset, 9, scrollBarHeight);
+        graph.drawRect(WIDTH - 14 + clipBounds.x, yOffset + 18 + scrollBarOffset, 9, scrollBarHeight);
 
         // Scroll down button
-        graph.drawImage(downbutton, WIDTH - 16 + relativeTo.x, yOffset + 150 - 20, bv);
+        graph.drawImage(downbutton, WIDTH - 16 + clipBounds.x, yOffset + 150 - 20, bv);
 
         // Message box
-        graph.drawRect(10 + relativeTo.x, yOffset + 150 - 21, WIDTH - 50, 17);
+        graph.drawRect(10 + clipBounds.x, yOffset + 150 - 21, WIDTH - 50, 17);
         if (message != null) {
-            printLine(graph, visibleMessage + "_", 13 + relativeTo.x, yOffset + 150 - 7);
+            printLine(graph, visibleMessage + "_", 13 + clipBounds.x, yOffset + 150 - 7);
         }
 
         // Text rows
         int rows = messages.size();
         if (rows <= MAX_NBR_ROWS) {
             for (int i = 0; i < messages.size(); i++) {
-                printLine(graph, messages.elementAt(i), 10 + relativeTo.x, yOffset
+                printLine(graph, messages.elementAt(i), 10 + clipBounds.x, yOffset
                         + 15 + ((i + 1) * 15));
             }
         } else {
@@ -416,7 +417,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             for (int i = rows - (MAX_NBR_ROWS + chatScroll); i < messages
                     .size()
                     - chatScroll; i++) {
-                printLine(graph, messages.elementAt(i), 10 + relativeTo.x, yOffset
+                printLine(graph, messages.elementAt(i), 10 + clipBounds.x, yOffset
                         + 15 + (row * 15));
                 row++;
             }

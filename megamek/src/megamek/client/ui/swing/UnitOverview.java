@@ -21,6 +21,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -92,12 +93,12 @@ public class UnitOverview implements IDisplayable {
         PMUtil.setImage(pageDown, clientgui);
     }
 
-    public void draw(Graphics graph, Point drawRelativeTo, Dimension size) {
+    public void draw(Graphics graph, Rectangle clipBounds) {
         if (!visible) {
             return;
         }
 
-        computeUnitsPerPage(size);
+        computeUnitsPerPage(clipBounds.getSize());
 
         graph.setFont(FONT);
         ArrayList<Entity> v = clientgui.getClient().game
@@ -115,8 +116,8 @@ public class UnitOverview implements IDisplayable {
             }
         }
 
-        int x = drawRelativeTo.x + size.width - DIST_SIDE - ICON_WIDTH;
-        int y = drawRelativeTo.y + DIST_TOP;
+        int x = clipBounds.x + clipBounds.width - DIST_SIDE - ICON_WIDTH;
+        int y = clipBounds.y + DIST_TOP;
 
         if (scroll) {
             graph.drawImage(pageUp, x, y, null);
@@ -519,5 +520,4 @@ public class UnitOverview implements IDisplayable {
         }
         return s;
     }
-
 }

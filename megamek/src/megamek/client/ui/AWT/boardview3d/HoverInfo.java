@@ -85,7 +85,7 @@ class HoverInfo implements IDisplayable {
         fm = bv.getFontMetrics(FONT);
     }
 
-    public void draw(Graphics g, Point drawRelativeTo, Dimension size) {
+    public void draw(Graphics g, Rectangle rect) {
         if (!(g instanceof Graphics2D)) {
             System.err.println("Warning: HoverInfo is meant to be used with Graphics2D");
             return;
@@ -757,10 +757,5 @@ class HoverInfo implements IDisplayable {
 
     public boolean isReleased() {
         return false;
-    }
-
-    public Rectangle getRectangleOccupied(Point relativeTo, Dimension size) {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

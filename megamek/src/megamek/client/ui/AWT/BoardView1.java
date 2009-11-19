@@ -624,7 +624,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // draw all the "displayables"
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
-            disp.draw(backGraph, new Point(backSize.width, backSize.height), backSize);
+            disp.draw(backGraph, new Rectangle(backSize));
         }
 
         // draw the back buffer onto the screen

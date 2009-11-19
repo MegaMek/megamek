@@ -228,7 +228,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     /**
      * Display a system message in the chat box.
-     * 
+     *
      * @param message
      *            the <code>String</code> message to be shown.
      */
@@ -242,7 +242,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     private void initializeFrame() {
         frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
-        frame.getRootPane().setDoubleBuffered(false);
         menuBar.setGame(client.game);
         frame.setJMenuBar(menuBar);
         Rectangle virtualBounds = new Rectangle();
@@ -417,7 +416,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     /**
      * Get the menu bar for this client.
-     * 
+     *
      * @return the <code>CommonMenuBar</code> of this client.
      */
     public CommonMenuBar getMenuBar() {
@@ -968,7 +967,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Pops up a dialog box giving the player a series of choices that are not
      * mutually exclusive.
-     * 
+     *
      * @param title
      *            the <code>String</code> title of the dialog box.
      * @param question
@@ -1004,7 +1003,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     /**
      * Pops up a dialog box asking a yes/no question
-     * 
+     *
      * @param title
      *            the <code>String</code> title of the dialog box.
      * @param question
@@ -1023,7 +1022,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Pops up a dialog box asking a yes/no question
      * <p/>
      * The player will be given a chance to not show the dialog again.
-     * 
+     *
      * @param title
      *            the <code>String</code> title of the dialog box.
      * @param question
@@ -1093,7 +1092,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * select the units for a new game. The file will record damage sustained,
      * non-standard munitions selected, and ammunition expended during the
      * course of the current engagement.
-     * 
+     *
      * @param unitList
      *            - the <code>Vector</code> of <code>Entity</code>s to be saved
      *            to a file. If this value is <code>null</code> or empty, the

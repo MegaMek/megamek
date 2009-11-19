@@ -20,6 +20,7 @@ package megamek.client.ui;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 
 /**
  *
@@ -42,13 +43,8 @@ public interface IDisplayable {
     /**
      * Draw this IDisplayable
      * @param graph -           the <code>Graphics</code> to draw on
-     * @param drawRelativeTo -  the top left <code>Point</code>
-     *                          of the viewport, relative to the Graphics
-     *                          this needs to be drawn on
-     * @param size -            the size of the viewport in
-     *                          which this should be draw
      */
-    public void draw(Graphics graph, Point drawRelativeTo, Dimension size);
+    public void draw(Graphics graph, Rectangle rect);
 
     public boolean isSliding();
 

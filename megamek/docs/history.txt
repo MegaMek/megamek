@@ -24,6 +24,8 @@ v0.35.11-dev (SVN)
 + Keep Bots in Client, not ClientGUI, and remove them when they disconnect
 + use double buffering for swing UI (I don't even remember why I disabled it
     in the first place)
++ Bug: Jump infantry with ground MP 0 should be able to make a 1 hex move as a 
+    jump, not only as walking
 
 v0.35.10 (2009-11-10, 20:14 UTC+1)
 + Rearranged Components for ease of use in MML

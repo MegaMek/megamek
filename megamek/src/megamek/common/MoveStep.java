@@ -1791,7 +1791,8 @@ public class MoveStep implements Serializable {
         // 0 MP infantry units can move 1 hex
         if (isInfantry && (parent.getEntity().getWalkMP() == 0)
                 && parent.getEntity().getPosition().equals(prev.getPosition())
-                && (parent.getEntity().getPosition().distance(getPosition()) == 1)) {
+                && (parent.getEntity().getPosition().distance(getPosition()) == 1)
+                && (movementType != EntityMovementType.MOVE_JUMP)) {
             movementType = EntityMovementType.MOVE_WALK;
         }
         // Free facing changes are legal

@@ -98,7 +98,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     public static final String PHYSICAL_EXPLOSIVES = "explosives"; //$NON-NLS-1$
     public static final String PHYSICAL_VIBRO = "vibro"; //$NON-NLS-1$s
 
-    private static final int NUM_BUTTON_LAYOUTS = 3;
+    private static final int NUM_BUTTON_LAYOUTS = 2;
 
     // buttons
     private JComponent panButtons;

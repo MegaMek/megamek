@@ -30,7 +30,8 @@ v0.35.11-dev (SVN)
 + Data 2855741:  New gun emplacements for MegaMek
 +  Revised "How to use aerospace units on ground maps in MegaMek".
 + Bug 2904168: Vibroclaw melee report
-+ Moved hopalongairsea.zip from unsupported to vehicles/unofficial.
++ Moved hopalongairsea.zip from unsupported to unofficial.zip/vehicles/hopalongairsea
++ Moved Laser HS Night Gyr variants from unsupported to unofficial.zip/_fluff mechs
 
 v0.35.10 (2009-11-10, 20:14 UTC+1)
 + Rearranged Components for ease of use in MML

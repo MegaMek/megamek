@@ -518,11 +518,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISAC5());
         EquipmentType.addType(new ISAC10());
         EquipmentType.addType(new ISAC20());
-        EquipmentType.addType(new ISAC15());
         EquipmentType.addType(new CLProtoMechAC2());
         EquipmentType.addType(new CLProtoMechAC4());
         EquipmentType.addType(new CLProtoMechAC8());
-        EquipmentType.addType(new ISAC10i());
         // Ultras
         EquipmentType.addType(new ISUAC2());
         EquipmentType.addType(new ISUAC5());
@@ -906,6 +904,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISCruiseMissile70());
         EquipmentType.addType(new ISCruiseMissile90());
         EquipmentType.addType(new ISCruiseMissile120());
+        
+        // Unofficial Weapons
+        EquipmentType.addType(new ISAC10i());
+        EquipmentType.addType(new ISAC15());
 
         // Naval weapons
         EquipmentType.addType(new NL35Weapon());

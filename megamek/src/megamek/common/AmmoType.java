@@ -362,6 +362,9 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createISAC20Ammo();
         acAmmos.add(base);
         EquipmentType.addType(base);
+        base = AmmoType.createISAC15Ammo();
+        acAmmos.add(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISLRM5Ammo();
         lrmAmmos.add(base);
         EquipmentType.addType(base);
@@ -1132,6 +1135,25 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 15;
         ammo.cost = 6000;
+
+        return ammo;
+    }
+    
+    private static AmmoType createISAC15Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "AC/15 Ammo";
+        ammo.shortName = "AC";
+        ammo.setInternalName("IS Ammo AC/15");
+        ammo.addLookupName("ISAC15 Ammo");
+        ammo.addLookupName("IS Autocannon/15 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_AC;
+        ammo.shots = 7;
+        ammo.bv = 22;
+        ammo.cost = 8500;
 
         return ammo;
     }

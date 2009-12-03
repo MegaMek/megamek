@@ -113,7 +113,8 @@ public class AmmoType extends EquipmentType {
     public static final int T_THUMPER_CANNON = 85;
     public static final int T_LONG_TOM_CANNON = 86;
     public static final int T_NAIL_RIVET_GUN = 87;
-    public static final int NUM_TYPES = 88;
+    public static final int T_ACi = 88;
+    public static final int NUM_TYPES = 89;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -630,6 +631,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISNailRivetGunAmmoHalf());
         EquipmentType.addType(AmmoType.createCLNailRivetGunAmmo());
         EquipmentType.addType(AmmoType.createCLNailRivetGunAmmoHalf());
+        EquipmentType.addType(AmmoType.createISAC10iAmmo());
 
         base = AmmoType.createCLLongTomAmmo();
         clanArtyAmmos.add(base);
@@ -7661,6 +7663,25 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.cost = 150;
         ammo.explosive = false;
+
+        return ammo;
+    }
+    
+    private static AmmoType createISAC10iAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "AC/10i Ammo";
+        ammo.shortName = "AC";
+        ammo.setInternalName("IS Ammo AC/10i");
+        ammo.addLookupName("ISAC10i Ammo");
+        ammo.addLookupName("IS Autocannon/10i Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_ACi;
+        ammo.shots = 10;
+        ammo.bv = 21;
+        ammo.cost = 12000;
 
         return ammo;
     }

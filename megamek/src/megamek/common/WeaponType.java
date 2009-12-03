@@ -522,6 +522,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLProtoMechAC2());
         EquipmentType.addType(new CLProtoMechAC4());
         EquipmentType.addType(new CLProtoMechAC8());
+        EquipmentType.addType(new ISAC10i());
         // Ultras
         EquipmentType.addType(new ISUAC2());
         EquipmentType.addType(new ISUAC5());

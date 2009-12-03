@@ -114,6 +114,8 @@ public class HitData {
             specCritMod = -3;
         else if (inType.getRackSize() == 10)
             specCritMod = -2;
+        else if (inType.getRackSize() == 15)
+            specCritMod = -2;
         else if (inType.getRackSize() == 20)
             specCritMod = -1;
         

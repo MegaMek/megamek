@@ -452,8 +452,8 @@ public class Report implements Serializable {
             return;
         }
         int i = 0;
-        while (sb.charAt(i) == '\n') {
-            i++;
+        while (sb.substring(i, i+4).equals("<br>")) {
+            i+=4;
             if (i == sb.length()) {
                 continue;
             }

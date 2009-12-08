@@ -90,6 +90,8 @@ public class RandomMapDialog extends JDialog implements ActionListener,
     private JComboBox choFortified;
     private JComboBox choIce;
     private JComboBox choRough;
+    private JComboBox choSand;
+    private JComboBox choPlantedField;
     private JComboBox choRoads;
     private JComboBox choRivers;
     private JComboBox choSwamp;
@@ -106,6 +108,8 @@ public class RandomMapDialog extends JDialog implements ActionListener,
     private JLabel labFortified;
     private JLabel labIce;
     private JLabel labRough;
+    private JLabel labSand;
+    private JLabel labPlantedField;
     private JLabel labRoads;
     private JLabel labRivers;
     private JLabel labSwamp;
@@ -123,6 +127,8 @@ public class RandomMapDialog extends JDialog implements ActionListener,
     private SimpleLine slFortified;
     private SimpleLine slIce;
     private SimpleLine slRough;
+    private SimpleLine slSand;
+    private SimpleLine slPlantedField;
     private SimpleLine slRoads;
     private SimpleLine slRivers;
     private SimpleLine slSwamp;
@@ -139,6 +145,8 @@ public class RandomMapDialog extends JDialog implements ActionListener,
     private SimpleLine slFortifiedAd;
     private SimpleLine slIceAd;
     private SimpleLine slRoughAd;
+    private SimpleLine slSandAd;
+    private SimpleLine slPlantedFieldAd;
     private SimpleLine slRoadsAd;
     private SimpleLine slRiversAd;
     private SimpleLine slSwampAd;
@@ -226,6 +234,26 @@ public class RandomMapDialog extends JDialog implements ActionListener,
     private JLabel labRoughSize;
     private JTextField texMinRoughSize;
     private JTextField texMaxRoughSize;
+
+    /**
+     * sand
+     */
+    private JLabel labSandSpots;
+    private JTextField texMinSandSpots;
+    private JTextField texMaxSandSpots;
+    private JLabel labSandSize;
+    private JTextField texMinSandSize;
+    private JTextField texMaxSandSize;
+
+    /**
+     * planted field
+     */
+    private JLabel labPlantedFieldSpots;
+    private JTextField texMinPlantedFieldSpots;
+    private JTextField texMaxPlantedFieldSpots;
+    private JLabel labPlantedFieldSize;
+    private JTextField texMinPlantedFieldSize;
+    private JTextField texMaxPlantedFieldSize;
 
     /**
      * swamp
@@ -484,6 +512,8 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             addOption(labCliffs, choCliffs, slCliffs);
             addOption(labWoods, choWoods, slWoods);
             addOption(labRough, choRough, slRough);
+            addOption(labSand, choSand, slSand);
+            addOption(labPlantedField, choPlantedField, slPlantedField);
             addOption(labSwamp, choSwamp, slSwamp);
             addOption(labRoads, choRoads, slRoads);
             addOption(labLakes, choLakes, slLakes);
@@ -530,6 +560,20 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                     "-"); //$NON-NLS-1$
 
             addSeparator(slRoughAd);
+
+            addLabelTextField(labSandSpots, texMinSandSpots,
+                    texMaxSandSpots, "-"); //$NON-NLS-1$
+            addLabelTextField(labSandSize, texMinSandSize, texMaxSandSize,
+                    "-"); //$NON-NLS-1$
+
+            addSeparator(slSandAd);
+
+            addLabelTextField(labPlantedFieldSpots, texMinPlantedFieldSpots,
+                    texMaxPlantedFieldSpots, "-"); //$NON-NLS-1$
+            addLabelTextField(labPlantedFieldSize, texMinPlantedFieldSize, texMaxPlantedFieldSize,
+                    "-"); //$NON-NLS-1$
+
+            addSeparator(slPlantedFieldAd);
 
             addLabelTextField(labSwampSpots, texMinSwampSpots,
                     texMaxSwampSpots, "-"); //$NON-NLS-1$
@@ -683,6 +727,18 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         choRough = new JComboBox();
         fillChoice(choRough);
         slRough = new SimpleLine(NORMAL_LINE_WIDTH);
+
+        labSand = new JLabel(
+                Messages.getString("RandomMapDialog.labSand"), SwingConstants.LEFT); //$NON-NLS-1$
+        choSand = new JComboBox();
+        fillChoice(choSand);
+        slSand = new SimpleLine(NORMAL_LINE_WIDTH);
+
+        labPlantedField = new JLabel(
+                Messages.getString("RandomMapDialog.labPlantedField"), SwingConstants.LEFT); //$NON-NLS-1$
+        choPlantedField = new JComboBox();
+        fillChoice(choPlantedField);
+        slPlantedField = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labSwamp = new JLabel(
                 Messages.getString("RandomMapDialog.labSwamp"), SwingConstants.LEFT); //$NON-NLS-1$
@@ -850,6 +906,34 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         texMaxRoughSize = new JTextField(2);
         texMaxRoughSize.addFocusListener(this);
 
+        /** sand */
+        labSandSpots = new JLabel(
+                Messages.getString("RandomMapDialog.labSandSpots"), SwingConstants.LEFT); //$NON-NLS-1$
+        texMinSandSpots = new JTextField(2);
+        texMinSandSpots.addFocusListener(this);
+        texMaxSandSpots = new JTextField(2);
+        texMaxSandSpots.addFocusListener(this);
+        labSandSize = new JLabel(Messages
+                .getString("RandomMapDialog.labSandSize"), SwingConstants.LEFT); //$NON-NLS-1$
+        texMinSandSize = new JTextField(2);
+        texMinSandSize.addFocusListener(this);
+        texMaxSandSize = new JTextField(2);
+        texMaxSandSize.addFocusListener(this);
+
+        /** planted field */
+        labPlantedFieldSpots = new JLabel(
+                Messages.getString("RandomMapDialog.labPlantedFieldSpots"), SwingConstants.LEFT); //$NON-NLS-1$
+        texMinPlantedFieldSpots = new JTextField(2);
+        texMinPlantedFieldSpots.addFocusListener(this);
+        texMaxPlantedFieldSpots = new JTextField(2);
+        texMaxPlantedFieldSpots.addFocusListener(this);
+        labPlantedFieldSize = new JLabel(Messages
+                .getString("RandomMapDialog.labPlantedFieldSize"), SwingConstants.LEFT); //$NON-NLS-1$
+        texMinPlantedFieldSize = new JTextField(2);
+        texMinPlantedFieldSize.addFocusListener(this);
+        texMaxPlantedFieldSize = new JTextField(2);
+        texMaxPlantedFieldSize.addFocusListener(this);
+
         /** swamp */
         labSwampSpots = new JLabel(
                 Messages.getString("RandomMapDialog.labSwampSpots"), SwingConstants.LEFT); //$NON-NLS-1$
@@ -1013,6 +1097,8 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         slFortifiedAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slIceAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slRoughAd = new SimpleLine(ADVANCED_LINE_WIDTH);
+        slSandAd = new SimpleLine(ADVANCED_LINE_WIDTH);
+        slPlantedFieldAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slRoadsAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slRiversAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slSwampAd = new SimpleLine(ADVANCED_LINE_WIDTH);
@@ -1148,6 +1234,24 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         texMaxRoughSize
                 .setText(Integer.toString(mapSettings.getMaxRoughSize()));
 
+        texMinSandSpots.setText(Integer.toString(mapSettings
+                .getMinSandSpots()));
+        texMaxSandSpots.setText(Integer.toString(mapSettings
+                .getMaxSandSpots()));
+        texMinSandSize
+                .setText(Integer.toString(mapSettings.getMinSandSize()));
+        texMaxSandSize
+                .setText(Integer.toString(mapSettings.getMaxSandSize()));
+
+        texMinPlantedFieldSpots.setText(Integer.toString(mapSettings
+                .getMinPlantedFieldSpots()));
+        texMaxPlantedFieldSpots.setText(Integer.toString(mapSettings
+                .getMaxPlantedFieldSpots()));
+        texMinPlantedFieldSize
+                .setText(Integer.toString(mapSettings.getMinPlantedFieldSize()));
+        texMaxPlantedFieldSize
+                .setText(Integer.toString(mapSettings.getMaxPlantedFieldSize()));
+
         texMinSwampSpots.setText(Integer.toString(mapSettings
                 .getMinSwampSpots()));
         texMaxSwampSpots.setText(Integer.toString(mapSettings
@@ -1241,6 +1345,8 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         int minWaterSpots, maxWaterSpots, minWaterSize, maxWaterSize, probDeep;
         int minForestSpots, maxForestSpots, minForestSize, maxForestSize, probHeavy;
         int minRoughSpots, maxRoughSpots, minRoughSize, maxRoughSize;
+        int minSandSpots, maxSandSpots, minSandSize, maxSandSize;
+        int minPlantedFieldSpots, maxPlantedFieldSpots, minPlantedFieldSize, maxPlantedFieldSize;
         int minPavementSpots, maxPavementSpots, minPavementSize, maxPavementSize;
         int minRubbleSpots, maxRubbleSpots, minRubbleSize, maxRubbleSize;
         int minFortifiedSpots, maxFortifiedSpots, minFortifiedSize, maxFortifiedSize;
@@ -1303,6 +1409,38 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 maxRoughSpots = Integer.parseInt(texMaxRoughSpots.getText());
                 minRoughSize = Integer.parseInt(texMinRoughSize.getText());
                 maxRoughSize = Integer.parseInt(texMaxRoughSize.getText());
+                minRoughSpots = Integer.parseInt(texMinRoughSpots.getText());
+                maxRoughSpots = Integer.parseInt(texMaxRoughSpots.getText());
+                minRoughSize = Integer.parseInt(texMinRoughSize.getText());
+                maxRoughSize = Integer.parseInt(texMaxRoughSize.getText());
+                minRoughSpots = Integer.parseInt(texMinRoughSpots.getText());
+                maxRoughSpots = Integer.parseInt(texMaxRoughSpots.getText());
+                minRoughSize = Integer.parseInt(texMinRoughSize.getText());
+                maxRoughSize = Integer.parseInt(texMaxRoughSize.getText());
+                minSandSpots = Integer.parseInt(texMinSandSpots.getText());
+                maxSandSpots = Integer.parseInt(texMaxSandSpots.getText());
+                minSandSize = Integer.parseInt(texMinSandSize.getText());
+                maxSandSize = Integer.parseInt(texMaxSandSize.getText());
+                minSandSpots = Integer.parseInt(texMinSandSpots.getText());
+                maxSandSpots = Integer.parseInt(texMaxSandSpots.getText());
+                minSandSize = Integer.parseInt(texMinSandSize.getText());
+                maxSandSize = Integer.parseInt(texMaxSandSize.getText());
+                minSandSpots = Integer.parseInt(texMinSandSpots.getText());
+                maxSandSpots = Integer.parseInt(texMaxSandSpots.getText());
+                minSandSize = Integer.parseInt(texMinSandSize.getText());
+                maxSandSize = Integer.parseInt(texMaxSandSize.getText());
+                minPlantedFieldSpots = Integer.parseInt(texMinPlantedFieldSpots.getText());
+                maxPlantedFieldSpots = Integer.parseInt(texMaxPlantedFieldSpots.getText());
+                minPlantedFieldSize = Integer.parseInt(texMinPlantedFieldSize.getText());
+                maxPlantedFieldSize = Integer.parseInt(texMaxPlantedFieldSize.getText());
+                minPlantedFieldSpots = Integer.parseInt(texMinPlantedFieldSpots.getText());
+                maxPlantedFieldSpots = Integer.parseInt(texMaxPlantedFieldSpots.getText());
+                minPlantedFieldSize = Integer.parseInt(texMinPlantedFieldSize.getText());
+                maxPlantedFieldSize = Integer.parseInt(texMaxPlantedFieldSize.getText());
+                minPlantedFieldSpots = Integer.parseInt(texMinPlantedFieldSpots.getText());
+                maxPlantedFieldSpots = Integer.parseInt(texMaxPlantedFieldSpots.getText());
+                minPlantedFieldSize = Integer.parseInt(texMinPlantedFieldSize.getText());
+                maxPlantedFieldSize = Integer.parseInt(texMaxPlantedFieldSize.getText());
                 minSwampSpots = Integer.parseInt(texMinSwampSpots.getText());
                 maxSwampSpots = Integer.parseInt(texMaxSwampSpots.getText());
                 minSwampSize = Integer.parseInt(texMinSwampSize.getText());
@@ -1564,6 +1702,102 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                                 frame,
                                 Messages
                                         .getString("RandomMapDialog.MaxRoughSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                return false;
+            }
+            if (minSandSpots < 0) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("RandomMapDialog.MinSandsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                return false;
+            }
+            if (maxSandSpots < 0) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("RandomMapDialog.MaxSandsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                return false;
+            }
+            if (maxSandSpots < minSandSpots) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("RandomMapDialog.MaxSandsWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                return false;
+            }
+            if (minSandSize < 0) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("RandomMapDialog.MinSandSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                return false;
+            }
+            if (maxSandSize < 0) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("RandomMapDialog.MaxSandSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                return false;
+            }
+            if (maxSandSize < minSandSize) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("RandomMapDialog.MaxSandSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                return false;
+            }
+            if (minPlantedFieldSpots < 0) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("RandomMapDialog.MinPlantedFieldsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                return false;
+            }
+            if (maxPlantedFieldSpots < 0) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("RandomMapDialog.MaxPlantedFieldsWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                return false;
+            }
+            if (maxPlantedFieldSpots < minPlantedFieldSpots) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("RandomMapDialog.MaxPlantedFieldsWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                return false;
+            }
+            if (minPlantedFieldSize < 0) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("RandomMapDialog.MinPlantedFieldSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                return false;
+            }
+            if (maxPlantedFieldSize < 0) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("RandomMapDialog.MaxPlantedFieldSizeWarn"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                return false;
+            }
+            if (maxPlantedFieldSize < minPlantedFieldSize) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("RandomMapDialog.MaxPlantedFieldSizeWarn1"), INVALID_SETTING, JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 return false;
             }
             if (minSwampSpots < 0) {
@@ -2022,6 +2256,50 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 minRoughSpots = 5;
                 maxRoughSpots = 10;
             }
+            s = (String) choSand.getSelectedItem();
+            if (s.equals(NONE)) {
+                minSandSize = 0;
+                maxSandSize = 0;
+                minSandSpots = 0;
+                maxSandSpots = 0;
+            } else if (s.equals(LOW)) {
+                minSandSize = 1;
+                maxSandSize = 2;
+                minSandSpots = 2;
+                maxSandSpots = 6;
+            } else if (s.equals(MEDIUM)) {
+                minSandSize = 2;
+                maxSandSize = 5;
+                minSandSpots = 3;
+                maxSandSpots = 8;
+            } else {
+                minSandSize = 3;
+                maxSandSize = 7;
+                minSandSpots = 5;
+                maxSandSpots = 10;
+            }
+            s = (String) choPlantedField.getSelectedItem();
+            if (s.equals(NONE)) {
+                minPlantedFieldSize = 0;
+                maxPlantedFieldSize = 0;
+                minPlantedFieldSpots = 0;
+                maxPlantedFieldSpots = 0;
+            } else if (s.equals(LOW)) {
+                minPlantedFieldSize = 1;
+                maxPlantedFieldSize = 2;
+                minPlantedFieldSpots = 2;
+                maxPlantedFieldSpots = 6;
+            } else if (s.equals(MEDIUM)) {
+                minPlantedFieldSize = 2;
+                maxPlantedFieldSize = 5;
+                minPlantedFieldSpots = 3;
+                maxPlantedFieldSpots = 8;
+            } else {
+                minPlantedFieldSize = 3;
+                maxPlantedFieldSize = 7;
+                minPlantedFieldSpots = 5;
+                maxPlantedFieldSpots = 10;
+            }
             s = (String) choSwamp.getSelectedItem();
             if (s.equals(NONE)) {
                 minSwampSize = 0;
@@ -2243,6 +2521,10 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 minForestSize, maxForestSize, probHeavy);
         mapSettings.setRoughParams(minRoughSpots, maxRoughSpots, minRoughSize,
                 maxRoughSize);
+        mapSettings.setSandParams(minSandSpots, maxSandSpots, minSandSize,
+                maxSandSize);
+        mapSettings.setPlantedFieldParams(minPlantedFieldSpots, maxPlantedFieldSpots, minPlantedFieldSize,
+                maxPlantedFieldSize);
         mapSettings.setSwampParams(minSwampSpots, maxSwampSpots, minSwampSize,
                 maxSwampSize);
         mapSettings.setPavementParams(minPavementSpots, maxPavementSpots,

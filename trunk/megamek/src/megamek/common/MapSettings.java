@@ -115,6 +115,24 @@ public class MapSettings implements Serializable {
     /** maximum Size of a rough spot */
     private int maxRoughSize = 2;
 
+    /** how much sand spots at least */
+    private int minSandSpots = 2;
+    /** how much sand spots at most */
+    private int maxSandSpots = 10;
+    /** minimum size of a rough spot */
+    private int minSandSize = 1;
+    /** maximum Size of a rough spot */
+    private int maxSandSize = 2;
+
+    /** how much planted field spots at least */
+    private int minPlantedFieldSpots = 2;
+    /** how much planted field spots at most */
+    private int maxPlantedFieldSpots = 10;
+    /** minimum size of a planted field spot */
+    private int minPlantedFieldSize = 1;
+    /** maximum size of a planted field spot */
+    private int maxPlantedFieldSize = 2;
+
     /** how much swamp spots at least */
     private int minSwampSpots = 2;
     /** how much swamp spots at most */
@@ -276,6 +294,14 @@ public class MapSettings implements Serializable {
         maxRoughSpots = other.getMaxRoughSpots();
         minRoughSize = other.getMinRoughSize();
         maxRoughSize = other.getMaxRoughSize();
+        minSandSpots = other.getMinSandSpots();
+        maxSandSpots = other.getMaxSandSpots();
+        minSandSize = other.getMinSandSize();
+        maxSandSize = other.getMaxSandSize();
+        minPlantedFieldSpots = other.getMinPlantedFieldSpots();
+        maxPlantedFieldSpots = other.getMaxPlantedFieldSpots();
+        minPlantedFieldSize = other.getMinPlantedFieldSize();
+        maxPlantedFieldSize = other.getMaxPlantedFieldSize();
         minSwampSpots = other.getMinSwampSpots();
         maxSwampSpots = other.getMaxSwampSpots();
         minSwampSize = other.getMinSwampSize();
@@ -330,13 +356,13 @@ public class MapSettings implements Serializable {
     }
 
     public void setBoardSize(int boardWidth, int boardHeight) {
-        if (boardWidth <= 0 || boardHeight <= 0) {
+        if ((boardWidth <= 0) || (boardHeight <= 0)) {
             throw new IllegalArgumentException(
                     "Total board area must be positive");
         }
 
         // change only if actually different
-        if (this.boardWidth != boardWidth || this.boardHeight != boardHeight) {
+        if ((this.boardWidth != boardWidth) || (this.boardHeight != boardHeight)) {
             this.boardWidth = boardWidth;
             this.boardHeight = boardHeight;
 
@@ -361,7 +387,7 @@ public class MapSettings implements Serializable {
     }
 
     public void setMapSize(int mapWidth, int mapHeight) {
-        if (mapWidth <= 0 || mapHeight <= 0) {
+        if ((mapWidth <= 0) || (mapHeight <= 0)) {
             throw new IllegalArgumentException(
                     "Total map area must be positive");
         }
@@ -440,8 +466,8 @@ public class MapSettings implements Serializable {
      */
     public void removeUnavailable() {
         for (int i = 0; i < boardsSelected.size(); i++) {
-            if (boardsSelected.get(i) == null || boardsAvailable.size() == 0
-                    || boardsAvailable.indexOf(boardsSelected.get(i)) == -1) {
+            if ((boardsSelected.get(i) == null) || (boardsAvailable.size() == 0)
+                    || (boardsAvailable.indexOf(boardsSelected.get(i)) == -1)) {
                 boardsSelected.set(i, null);
             }
         }
@@ -532,6 +558,30 @@ public class MapSettings implements Serializable {
         }
         if (maxRoughSize < minRoughSize) {
             maxRoughSize = minRoughSize;
+        }
+        if (minSandSpots < 0) {
+            minSandSpots = 0;
+        }
+        if (maxSandSpots < minSandSpots) {
+            maxSandSpots = minSandSpots;
+        }
+        if (minSandSize < 0) {
+            minSandSize = 0;
+        }
+        if (maxSandSize < minSandSize) {
+            maxSandSize = minSandSize;
+        }
+        if (minPlantedFieldSpots < 0) {
+            minPlantedFieldSpots = 0;
+        }
+        if (maxPlantedFieldSpots < minPlantedFieldSpots) {
+            maxPlantedFieldSpots = minPlantedFieldSpots;
+        }
+        if (minPlantedFieldSize < 0) {
+            minPlantedFieldSize = 0;
+        }
+        if (maxPlantedFieldSize < minPlantedFieldSize) {
+            maxPlantedFieldSize = minPlantedFieldSize;
         }
         if (minSwampSpots < 0) {
             minSwampSpots = 0;
@@ -668,6 +718,14 @@ public class MapSettings implements Serializable {
                 || (maxRoughSpots != other.getMaxRoughSpots())
                 || (minRoughSize != other.getMinRoughSize())
                 || (maxRoughSize != other.getMaxRoughSize())
+                || (minSandSpots != other.getMinSandSpots())
+                || (maxSandSpots != other.getMaxSandSpots())
+                || (minSandSize != other.getMinSandSize())
+                || (maxSandSize != other.getMaxSandSize())
+                || (minPlantedFieldSpots != other.getMinPlantedFieldSpots())
+                || (maxPlantedFieldSpots != other.getMaxPlantedFieldSpots())
+                || (minPlantedFieldSize != other.getMinPlantedFieldSize())
+                || (maxPlantedFieldSize != other.getMaxPlantedFieldSize())
                 || (minSwampSpots != other.getMinSwampSpots())
                 || (maxSwampSpots != other.getMaxSwampSpots())
                 || (minSwampSize != other.getMinSwampSize())
@@ -802,6 +860,70 @@ public class MapSettings implements Serializable {
 
     public int getMaxRoughSize() {
         return maxRoughSize;
+    }
+
+    public int getMinSandSpots() {
+        return minSandSpots;
+    }
+
+    public void setMinSandSpots(int minSandSpots) {
+        this.minSandSpots = minSandSpots;
+    }
+
+    public int getMaxSandSpots() {
+        return maxSandSpots;
+    }
+
+    public void setMaxSandSpots(int maxSandSpots) {
+        this.maxSandSpots = maxSandSpots;
+    }
+
+    public int getMinSandSize() {
+        return minSandSize;
+    }
+
+    public void setMinSandSize(int minSandSize) {
+        this.minSandSize = minSandSize;
+    }
+
+    public int getMaxSandSize() {
+        return maxSandSize;
+    }
+
+    public void setMaxSandSize(int maxSandSize) {
+        this.maxSandSize = maxSandSize;
+    }
+
+    public int getMinPlantedFieldSpots() {
+        return minPlantedFieldSpots;
+    }
+
+    public void setMinPlantedFieldSpots(int minPlantedFieldSpots) {
+        this.minPlantedFieldSpots = minPlantedFieldSpots;
+    }
+
+    public int getMaxPlantedFieldSpots() {
+        return maxPlantedFieldSpots;
+    }
+
+    public void setMaxPlantedFieldSpots(int maxPlantedFieldSpots) {
+        this.maxPlantedFieldSpots = maxPlantedFieldSpots;
+    }
+
+    public int getMinPlantedFieldSize() {
+        return minPlantedFieldSize;
+    }
+
+    public void setMinPlantedFieldSize(int minPlantedFieldSize) {
+        this.minPlantedFieldSize = minPlantedFieldSize;
+    }
+
+    public int getMaxPlantedFieldSize() {
+        return maxPlantedFieldSize;
+    }
+
+    public void setMaxPlantedFieldSize(int maxPlantedFieldSize) {
+        this.maxPlantedFieldSize = maxPlantedFieldSize;
     }
 
     public int getMinSwampSpots() {
@@ -1039,6 +1161,28 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
+    public void setSandParams(int minSpots, int maxSpots, int minSize,
+            int maxSize) {
+        minSandSpots = minSpots;
+        maxSandSpots = maxSpots;
+        minSandSize = minSize;
+        maxSandSize = maxSize;
+    }
+
+    /**
+     * set the Parameters for the Map Generator
+     */
+    public void setPlantedFieldParams(int minSpots, int maxSpots, int minSize,
+            int maxSize) {
+        minPlantedFieldSpots = minSpots;
+        maxPlantedFieldSpots = maxSpots;
+        minPlantedFieldSize = minSize;
+        maxPlantedFieldSize = maxSize;
+    }
+
+    /**
+     * set the Parameters for the Map Generator
+     */
     public void setSwampParams(int minSpots, int maxSpots, int minSize,
             int maxSize) {
         minSwampSpots = minSpots;
@@ -1208,6 +1352,18 @@ public class MapSettings implements Serializable {
             saveParameter(output, "ROUGHMAXSPOTS", maxRoughSpots);
             saveParameter(output, "ROUGHMINHEXES", minRoughSize);
             saveParameter(output, "ROUGHMAXHEXES", maxRoughSize);
+
+            // sand params
+            saveParameter(output, "SANDMINSPOTS", minSandSpots);
+            saveParameter(output, "SANDMAXSPOTS", maxSandSpots);
+            saveParameter(output, "SANDMINHEXES", minSandSize);
+            saveParameter(output, "SANDMAXHEXES", maxSandSize);
+
+            // planted field params
+            saveParameter(output, "PLANTEDFIELDMINSPOTS", minPlantedFieldSpots);
+            saveParameter(output, "PLANTEDFIELDMAXSPOTS", maxPlantedFieldSpots);
+            saveParameter(output, "PLANTEDFIELDMINHEXES", minPlantedFieldSize);
+            saveParameter(output, "PLANTEDFIELDMAXHEXES", maxPlantedFieldSize);
 
             // Swamp params
             saveParameter(output, "SWAMPMINSPOTS", minSwampSpots);
@@ -1383,6 +1539,22 @@ public class MapSettings implements Serializable {
             minRoughSize = Integer.valueOf(param);
         } else if (key.equals("ROUGHMAXHEXES")) {
             maxRoughSize = Integer.valueOf(param);
+        } else if (key.equals("SANDMINSPOTS")) {
+            minSandSpots = Integer.valueOf(param);
+        } else if (key.equals("SANDMAXSPOTS")) {
+            maxSandSpots = Integer.valueOf(param);
+        } else if (key.equals("SANDMINHEXES")) {
+            minSandSize = Integer.valueOf(param);
+        } else if (key.equals("SANDMAXHEXES")) {
+            maxSandSize = Integer.valueOf(param);
+        } else if (key.equals("PLANTEDFIELDMINSPOTS")) {
+            minPlantedFieldSpots = Integer.valueOf(param);
+        } else if (key.equals("PLANTEDFIELDMAXSPOTS")) {
+            maxPlantedFieldSpots = Integer.valueOf(param);
+        } else if (key.equals("PLANTEDFIELDMINHEXES")) {
+            minPlantedFieldSize = Integer.valueOf(param);
+        } else if (key.equals("PLANTEDFIELDMAXHEXES")) {
+            maxPlantedFieldSize = Integer.valueOf(param);
         } else if (key.equals("SWAMPMINSPOTS")) {
             minSwampSpots = Integer.valueOf(param);
         } else if (key.equals("SWAMPMAXSPOTS")) {

@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.35.11-dev (SVN)
+v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again
 + Bug 2884342: Vehicle Fuel Cells were overweight
 + Bug: secondary positions being set for DropShips in space

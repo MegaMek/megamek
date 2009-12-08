@@ -464,7 +464,7 @@ public class Report implements Serializable {
     private String getSpaces() {
         StringBuffer spaces = new StringBuffer();
         for (int i = 0; i < indentation; i++) {
-            spaces.append(" ");
+            spaces.append("&nbsp;");
         }
         return spaces.toString();
     }

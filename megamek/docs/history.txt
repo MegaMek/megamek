@@ -36,6 +36,7 @@ v0.35.11-dev (SVN)
 + Updated contributers.txt
 + Unofficial weapon tech:  AC/10i
 + Created a section in weapontype.java for unofficial weapons.
++ Fix report indenting in swing
 
 v0.35.10 (2009-11-10, 20:14 UTC+1)
 + Rearranged Components for ease of use in MML

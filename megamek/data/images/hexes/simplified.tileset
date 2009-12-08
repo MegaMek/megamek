@@ -1874,6 +1874,8 @@ base 1 "woods:2;swamp:1" "" "swamp/swamp_heavy_forest_1.gif"
 base * "mud:1" "" "boring/mud_1.gif"
 base * "mud:2" "" "boring/mud_2.gif"
 
+base * "planted_fields:1" "" "boring/fields.gif"
+
 base -2 "magma:1" "" "magma/crust_-2.gif"
 base -1 "magma:1" "" "magma/crust_-1.gif"
 base 0 "magma:1" "" "magma/crust_0.gif"

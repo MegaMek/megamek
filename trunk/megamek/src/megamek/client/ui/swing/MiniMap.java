@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
@@ -107,11 +108,13 @@ public class MiniMap extends Canvas {
     private IBoardView m_bview;
     private IGame m_game;
     private IBoard m_board;
-    private JDialog m_dialog;
+    private Container m_dialog;
     private static final int margin = 6;
     private int topMargin;
     private int leftMargin;
-    private static final int buttonHeight = 14;
+    //This value is variable.
+    //if the container m_dialog is an instance of JDialog, it is 14. otherwise 0.
+    private int buttonHeight = 0;
     private boolean minimized = false;
     private int heightBufer;
     private int unitSize = 6;// variable which define size of triangle for
@@ -140,7 +143,7 @@ public class MiniMap extends Canvas {
     /**
      * Creates and lays out a new mech display.
      */
-    public MiniMap(JDialog d, IGame g, IBoardView bview) throws IOException {
+    public MiniMap(Container d, IGame g, IBoardView bview) throws IOException {
         m_game = g;
         m_bview = bview;
         m_dialog = d;
@@ -151,13 +154,13 @@ public class MiniMap extends Canvas {
         initialize();
     }
 
-    public MiniMap(JDialog d, IBoard b) throws IOException {
+    public MiniMap(Container d, IBoard b) throws IOException {
         m_dialog = d;
         m_board = b;
         initialize();
     }
 
-    public MiniMap(JDialog d, ClientGUI c, IBoardView bview) throws IOException {
+    public MiniMap(Container d, ClientGUI c, IBoardView bview) throws IOException {
         this(d, c.getClient().game, bview);
         clientgui = c;
 
@@ -176,25 +179,32 @@ public class MiniMap extends Canvas {
         addMouseListener(mouseListener);
         addComponentListener(componentListener);
         m_dialog.addComponentListener(componentListener);
-        m_dialog.setResizable(false);
+        if (m_dialog instanceof JDialog) {
+            buttonHeight = 14;
+            ((JDialog) m_dialog).setResizable(false);
 
-        // TODO: replace this quick-and-dirty with some real size calculator.
-        Dimension size = getSize();
-        boolean updateSize = false;
-        if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
-            size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
-            updateSize = true;
+            // TODO: replace this quick-and-dirty with some real size
+            // calculator.
+            Dimension size = getSize();
+            boolean updateSize = false;
+            if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
+                size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
+                updateSize = true;
+            }
+            if (size.height < GUIPreferences.getInstance()
+                    .getMinimumSizeHeight()) {
+                size.height = GUIPreferences.getInstance()
+                        .getMinimumSizeHeight();
+                updateSize = true;
+            }
+            if (updateSize) {
+                setSize(size);
+            }
+            setLocation(GUIPreferences.getInstance().getMinimapPosX(),
+                    GUIPreferences.getInstance().getMinimapPosY());
+
+            ((JDialog) m_dialog).pack();
         }
-        if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
-            size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
-            updateSize = true;
-        }
-        if (updateSize) {
-            setSize(size);
-        }
-        setLocation(GUIPreferences.getInstance().getMinimapPosX(),
-                GUIPreferences.getInstance().getMinimapPosY());
-        m_dialog.pack();
     }
 
     @Override
@@ -413,7 +423,8 @@ public class MiniMap extends Canvas {
         }
         getParent().setLocation(x, y);
         setSize(requiredWidth, requiredHeight);
-        m_dialog.pack();
+        if(m_dialog instanceof JDialog)
+            ((JDialog)m_dialog).pack();
         // m_dialog.setVisible(true);
         m_mapImage = createImage(getSize().width, getSize().height);
 
@@ -571,7 +582,8 @@ public class MiniMap extends Canvas {
             }
         }
 
-        drawBtn(g);
+        if(this.m_dialog instanceof JDialog)
+            drawBtn(g);
 
         repaint();
     }
@@ -1285,7 +1297,8 @@ public class MiniMap extends Canvas {
                     // m_dialog.setResizable(false);
                 }
                 minimized = !minimized;
-                m_dialog.pack();
+                if(m_dialog instanceof JDialog) 
+                    ((JDialog) m_dialog).pack();
                 drawMap();
             }
         } else if (m_bview != null) {
@@ -1407,7 +1420,8 @@ public class MiniMap extends Canvas {
         @Override
         public void mousePressed(MouseEvent me) {
             // center main map on clicked area
-            processMouseClick(me.getX(), me.getY(), me);
+            if(m_dialog instanceof JDialog)
+                processMouseClick(me.getX(), me.getY(), me);
         }
     };
 

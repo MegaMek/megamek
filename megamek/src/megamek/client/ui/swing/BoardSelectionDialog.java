@@ -114,11 +114,13 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
     private JLabel labButtonSpace = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-    private JButton butPreview = new JButton(Messages
-            .getString("BoardSelectionDialog.Preview")); //$NON-NLS-1$
-
-    JDialog mapPreviewW;
+    private JButton buttonBoardPreview = new JButton(Messages
+            .getString("BoardSelectionDialog.ViewGameBoard")); //$NON-NLS-1$
+    JPanel mapPreviewPanel;
     MiniMap miniMap = null;
+    
+    JDialog gameBoardPreviewW;
+    MiniMap gameBoardMap = null;
     
     /**
      * Creates new BoardSelectionDialog
@@ -132,7 +134,6 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
 
         randomMapDialog = new RandomMapDialog(client.frame, this, mapSettings);
 
-        setupMapChoice();
         setupMapSize();
         setupSelected();
         setupAvailable();
@@ -151,52 +152,66 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 1;
-        gridbag.setConstraints(panTypeChooser, c);
-        getContentPane().add(panTypeChooser);
-
+        
         gridbag.setConstraints(panMapSize, c);
         getContentPane().add(panMapSize);
-
+        
         gridbag.setConstraints(panBoardsSelected, c);
         getContentPane().add(panBoardsSelected);
-
+        
         c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.2;
         gridbag.setConstraints(butChange, c);
         getContentPane().add(butChange);
 
+        c.weightx = 1.0;
         c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(panBoardsAvailable, c);
         getContentPane().add(panBoardsAvailable);
 
+        mapPreviewPanel = new JPanel();
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(mapPreviewPanel, c);
+        getContentPane().add(mapPreviewPanel);
+        try {
+            miniMap = new MiniMap(mapPreviewPanel, null);
+            //Set a default size for the minimap object to ensure it will have space on the screen to be drawn.
+            miniMap.setSize(160, 200);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this,
+                            Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e, 
+                            Messages.getString("BoardEditor.FatalError"), 
+                            JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            this.dispose();
+        }
+        mapPreviewPanel.add(miniMap);
+        
         gridbag.setConstraints(panButtons, c);
         getContentPane().add(panButtons);
 
+        //setup the board preview window.
+        gameBoardPreviewW = new JDialog(this, Messages
+                .getString("BoardSelectionDialog.ViewGameBoard"), false); //$NON-NLS-1$
 
-        
-        mapPreviewW = new JDialog(this, Messages
-                .getString("BoardSelectionDialog.MapPreview"), false); //$NON-NLS-1$
-
-        mapPreviewW.setLocation(GUIPreferences.getInstance().getMinimapPosX(),
+        gameBoardPreviewW.setLocation(GUIPreferences.getInstance().getMinimapPosX(),
                 GUIPreferences.getInstance().getMinimapPosY());
         
-        mapPreviewW.setVisible(false);
+        gameBoardPreviewW.setVisible(false);
         try {
-            miniMap = new MiniMap(mapPreviewW, null);
+            gameBoardMap = new MiniMap(gameBoardPreviewW, null);
         } catch (IOException e) {
-            JOptionPane
-                    .showMessageDialog(
-                            this,
-                            Messages
-                                    .getString("BoardEditor.CouldNotInitialiseMinimap") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(this, Messages
+                                    .getString("BoardEditor.CouldNotInitialiseMinimap") + e, 
+                                    Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             this.dispose();
         }
-        mapPreviewW.add(miniMap);
+        gameBoardPreviewW.add(gameBoardMap);
         
-        mapPreviewW.addWindowListener(new WindowAdapter() {
+        gameBoardPreviewW.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                mapPreviewW.setVisible(false);
+                gameBoardPreviewW.setVisible(false);
             }
         });
 
@@ -204,7 +219,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
             @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
-                mapPreviewW.setVisible(false);
+                gameBoardPreviewW.setVisible(false);
             }
         });
 
@@ -248,6 +263,8 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         refreshMapSize();
         refreshMapButtons();
 
+        setupMapChoice();
+        
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -266,7 +283,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
 
         gridbag.setConstraints(labBoardDivider, c);
         panMapSize.add(labBoardDivider);
-
+        
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(texBoardHeight, c);
         panMapSize.add(texBoardHeight);
@@ -280,16 +297,21 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
 
         gridbag.setConstraints(labMapDivider, c);
         panMapSize.add(labMapDivider);
-
+        
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(texMapHeight, c);
         panMapSize.add(texMapHeight);
+        
+        gridbag.setConstraints(panTypeChooser, c);
+        panMapSize.add(panTypeChooser);
 
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 1.0;
         gridbag.setConstraints(scrMapButtons, c);
         panMapSize.add(scrMapButtons);
+        
+
     }
 
     private void setupSelected() {
@@ -326,8 +348,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
         butRandomMap.addActionListener(this);
-        butPreview.addActionListener(this);
-
+        buttonBoardPreview.addActionListener(this);
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -346,8 +367,8 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         gridbag.setConstraints(butRandomMap, c);
         panButtons.add(butRandomMap);
 
-        gridbag.setConstraints(butPreview, c);
-        panButtons.add(butPreview);
+        gridbag.setConstraints(buttonBoardPreview, c);
+        panButtons.add(buttonBoardPreview);
 
         c.weightx = 1.0;
         c.weighty = 1.0;
@@ -561,10 +582,10 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
 
         client.getClient().sendMapSettings(mapSettings);
         setVisible(false);
-        mapPreviewW.setVisible(false);
+        gameBoardPreviewW.setVisible(false);
     }
 
-    public void previewBoard() {
+    public void previewMapsheet() {
         String boardName = (String) lisBoardsAvailable.getSelectedValue();
         if (lisBoardsAvailable.getSelectedIndex() > 2) {
             IBoard board = new Board(Integer.parseInt(texBoardWidth.getText()),
@@ -574,8 +595,38 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
                 BoardUtilities.flip(board, true, true);
             }
             miniMap.setBoard(board);
-            mapPreviewW.setVisible(true);
         }
+    }
+    
+    public void previewGameBoard() {
+        MapSettings temp = mapSettings;
+        temp.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
+        temp.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
+        IBoard[] sheetBoards = new IBoard[temp.getMapWidth() * temp.getMapHeight()];
+        for (int i = 0; i < temp.getMapWidth() * temp.getMapHeight(); i++) {
+            sheetBoards[i] = new Board();
+            String name = temp.getBoardsSelectedVector().get(i);
+            boolean isRotated = false;
+            if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
+                // only rotate boards with an even width
+                if (temp.getBoardWidth() % 2 == 0) {
+                    isRotated = true;
+                }
+                name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
+            }
+            if (name.startsWith(MapSettings.BOARD_GENERATED) || (temp.getMedium() == MapSettings.MEDIUM_SPACE)) {
+                sheetBoards[i] = BoardUtilities.generateRandom(temp);
+            } else {
+                sheetBoards[i].load(name + ".board");
+                BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
+            }
+        }
+        
+        IBoard newBoard = BoardUtilities.combine(temp.getBoardWidth(), temp.getBoardHeight(), temp
+                .getMapWidth(), temp.getMapHeight(), sheetBoards, temp.getMedium());
+        gameBoardMap.setBoard(newBoard);
+        gameBoardPreviewW.setVisible(true);
+       
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -592,8 +643,8 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
             setVisible(false);
         } else if (e.getSource().equals(butRandomMap)) {
             randomMapDialog.setVisible(true);
-        } else if (e.getSource().equals(butPreview)) {
-            previewBoard();
+        } else if (e.getSource().equals(buttonBoardPreview)) {
+            previewGameBoard();
         } else if (e.getSource().equals(chkSelectAll)) {
             if (!chkSelectAll.isSelected()) {
                 lisBoardsSelected.setSelectedIndex(0);
@@ -640,6 +691,9 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
     }
 
     public void mouseClicked(MouseEvent arg0) {
+        if ((arg0.getClickCount() == 1) && arg0.getSource().equals(lisBoardsAvailable)) {
+            previewMapsheet();
+        }
         if ((arg0.getClickCount() == 2) && arg0.getSource().equals(lisBoardsAvailable)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
                 change((String) lisBoardsAvailable.getSelectedValue());

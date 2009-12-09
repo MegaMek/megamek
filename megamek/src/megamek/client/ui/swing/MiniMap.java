@@ -1320,6 +1320,10 @@ public class MiniMap extends Canvas {
     public int getZoom() {
         return zoom;
     }
+    
+    public void setZoom(int z) {
+        zoom = z;
+    }
 
     protected BoardListener boardListener = new BoardListenerAdapter() {
         @Override

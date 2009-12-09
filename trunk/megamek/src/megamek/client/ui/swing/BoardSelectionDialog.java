@@ -178,6 +178,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
             miniMap = new MiniMap(mapPreviewPanel, null);
             //Set a default size for the minimap object to ensure it will have space on the screen to be drawn.
             miniMap.setSize(160, 200);
+            miniMap.setZoom(2);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
                             Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e, 

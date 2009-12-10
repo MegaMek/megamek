@@ -542,10 +542,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                         (ce().getMovementMode() == EntityMovementMode.SUBMARINE) ||
                         (ce().getMovementMode() == EntityMovementMode.HYDROFOIL) ||
                         (ce().getMovementMode() == EntityMovementMode.HOVER)) {
-                    ce().setElevation(deployhex.surface());
+                    ce().setElevation(0);
                 } else if (ce() instanceof VTOL) {
                     // VTOLs go to elevation 1
-                    ce().setElevation(deployhex.surface() + 1);
+                    ce().setElevation(1);
                 } else {
                     // everything else goes to elevation 0, or on the floor of a water hex
                     ce().setElevation(deployhex.floor() - deployhex.surface());

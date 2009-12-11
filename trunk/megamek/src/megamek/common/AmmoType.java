@@ -7352,7 +7352,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISAPMortar1Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
         ammo.name = "AP Mortar 1 Ammo";
         ammo.shortName = "Mortar";
         ammo.setInternalName("IS Ammo AP Mortar-1");
@@ -7371,7 +7371,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISAPMortar2Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
         ammo.name = "AP Mortar 2 Ammo";
         ammo.shortName = "Mortar";
         ammo.setInternalName("IS Ammo AP Mortar-2");
@@ -7390,7 +7390,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISAPMortar4Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
         ammo.name = "AP Mortar 4 Ammo";
         ammo.shortName = "Mortar";
         ammo.setInternalName("IS Ammo AP Mortar-4");
@@ -7409,7 +7409,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISAPMortar8Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        ammo.techLevel = TechConstants.T_IS_ADVANCED;
         ammo.name = "AP Mortar 8 Ammo";
         ammo.shortName = "Mortar";
         ammo.setInternalName("IS Ammo AP Mortar-8");
@@ -7428,7 +7428,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLAPMortar1Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_CLAN_TW;
+        ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
         ammo.name = "AP Mortar 1 Ammo";
         ammo.shortName = "Mortar";
         ammo.setInternalName("Clan Ammo AP Mortar-1");
@@ -7447,7 +7447,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLAPMortar2Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_CLAN_TW;
+        ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
         ammo.name = "AP Mortar 2 Ammo";
         ammo.shortName = "Mortar";
         ammo.setInternalName("Clan Ammo AP Mortar-2");
@@ -7466,7 +7466,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLAPMortar4Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_CLAN_TW;
+        ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
         ammo.name = "AP Mortar 4 Ammo";
         ammo.shortName = "Mortar";
         ammo.setInternalName("Clan Ammo AP Mortar-4");
@@ -7485,7 +7485,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLAPMortar8Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_CLAN_TW;
+        ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
         ammo.name = "AP Mortar 8 Ammo";
         ammo.shortName = "Mortar";
         ammo.setInternalName("Clan Ammo AP Mortar-8");

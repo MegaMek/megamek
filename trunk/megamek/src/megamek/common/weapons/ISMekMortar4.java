@@ -30,7 +30,7 @@ public class ISMekMortar4 extends MekMortarWeapon{
      */
     public ISMekMortar4() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel = TechConstants.T_IS_ADVANCED;
         this.name = "Mortar 4";
         this.setInternalName("IS Mech Mortar-4");
         this.addLookupName("ISMekMortar4");

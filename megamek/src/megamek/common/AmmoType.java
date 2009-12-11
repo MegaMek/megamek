@@ -363,9 +363,6 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createISAC20Ammo();
         acAmmos.add(base);
         EquipmentType.addType(base);
-        base = AmmoType.createISAC15Ammo();
-        acAmmos.add(base);
-        EquipmentType.addType(base);
         base = AmmoType.createISLRM5Ammo();
         lrmAmmos.add(base);
         EquipmentType.addType(base);
@@ -631,7 +628,24 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISNailRivetGunAmmoHalf());
         EquipmentType.addType(AmmoType.createCLNailRivetGunAmmo());
         EquipmentType.addType(AmmoType.createCLNailRivetGunAmmoHalf());
+        
+        // Unofficial Ammo
+        base = AmmoType.createISAC15Ammo();
+        acAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createISAC10iAmmo());
+        base = AmmoType.createISGAC2Ammo();
+        acAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISGAC4Ammo();
+        acAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISGAC6Ammo();
+        acAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISGAC8Ammo();
+        acAmmos.add(base);
+        EquipmentType.addType(base);
 
         base = AmmoType.createCLLongTomAmmo();
         clanArtyAmmos.add(base);
@@ -7682,6 +7696,82 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 21;
         ammo.cost = 12000;
+
+        return ammo;
+    }
+    
+    private static AmmoType createISGAC2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "GAC/2 Ammo";
+        ammo.shortName = "AC";
+        ammo.setInternalName("IS Ammo GAC/2");
+        ammo.addLookupName("ISGAC2 Ammo");
+        ammo.addLookupName("IS Gatling AC/2 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_AC;
+        ammo.shots = 22;
+        ammo.bv = 12;
+        ammo.cost = 1000;
+
+        return ammo;
+    }
+    
+    private static AmmoType createISGAC4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "GAC/4 Ammo";
+        ammo.shortName = "AC";
+        ammo.setInternalName("IS Ammo GAC/4");
+        ammo.addLookupName("ISGAC4 Ammo");
+        ammo.addLookupName("IS Gatling AC/4 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_AC;
+        ammo.shots = 11;
+        ammo.bv = 22;
+        ammo.cost = 1000;
+
+        return ammo;
+    }
+    
+    private static AmmoType createISGAC6Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "GAC/6 Ammo";
+        ammo.shortName = "AC";
+        ammo.setInternalName("IS Ammo GAC/6");
+        ammo.addLookupName("ISGAC6 Ammo");
+        ammo.addLookupName("IS Gatling AC/6 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_AC;
+        ammo.shots = 7;
+        ammo.bv = 40;
+        ammo.cost = 1000;
+
+        return ammo;
+    }
+    
+    private static AmmoType createISGAC8Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "GAC/8 Ammo";
+        ammo.shortName = "AC";
+        ammo.setInternalName("IS Ammo GAC/8");
+        ammo.addLookupName("ISGAC8 Ammo");
+        ammo.addLookupName("IS Gatling AC/8 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 8;
+        ammo.ammoType = AmmoType.T_AC;
+        ammo.shots = 5;
+        ammo.bv = 53;
+        ammo.cost = 1000;
 
         return ammo;
     }

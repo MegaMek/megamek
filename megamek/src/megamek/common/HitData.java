@@ -110,7 +110,13 @@ public class HitData {
     public void makeArmorPiercing(AmmoType inType, int modifer) {
         if (inType.getRackSize() == 2)
             specCritMod = -4;
+        else if (inType.getRackSize() == 4)
+            specCritMod = -4;
         else if (inType.getRackSize() == 5)
+            specCritMod = -3;
+        else if (inType.getRackSize() == 6)
+            specCritMod = -3;
+        else if (inType.getRackSize() == 8)
             specCritMod = -3;
         else if (inType.getRackSize() == 10)
             specCritMod = -2;

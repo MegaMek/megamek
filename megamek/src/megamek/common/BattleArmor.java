@@ -85,6 +85,11 @@ public class BattleArmor extends Infantry {
      * the number of troopers of this squad, dead or alive
      */
     private int troopers = -1;
+    
+    /**
+     * The weight of a single trooper
+     */
+    private float trooperWeight = -1.0f;
 
     /**
      * The cost of this unit. This value should be set when the unit's
@@ -1258,7 +1263,15 @@ public class BattleArmor extends Infantry {
                 break;
         }
     }
+    
+    public float getTrooperWeight() {
+        return trooperWeight;
+    }
 
+    public void setTrooperWeight(float trooperWeight) {
+        this.trooperWeight = trooperWeight;
+    }
+    
     @Override
     public int getWeightClass() {
         return weightClass;

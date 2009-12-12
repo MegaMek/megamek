@@ -541,7 +541,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             Entity other;
             while (entities.hasMoreElements()) {
                 other = entities.nextElement();
-                if (other.isSelectableThisTurn() && (ce() != null) && ce().canLoad(other)) {
+                if (other.isSelectableThisTurn() && (ce() != null) && ce().canLoad(other, false)) {
                     choices.addElement(other);
                 }
             }
@@ -561,7 +561,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 other = (Entity) SharedUtility.getTargetPicked(choices, input);
                 if (other != null) {
                     // Please note, the Server may never get this load order.
-                    ce().load(other);
+                    ce().load(other, false);
                     other.setTransportId(cen);
                     clientgui.mechD.displayEntity(ce());
                 }

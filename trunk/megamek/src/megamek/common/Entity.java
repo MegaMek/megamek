@@ -5281,7 +5281,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *         otherwise.
      */
-    public boolean canLoad(Entity unit) {
+    public boolean canLoad(Entity unit, boolean checkElev) {
         // For now, if it's infantry, it can't load anything.
         // Period!
         if (this instanceof Infantry) {
@@ -5295,7 +5295,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             Enumeration<Transporter> iter = transports.elements();
             while (iter.hasMoreElements()) {
                 Transporter next = iter.nextElement();
-                if (next.canLoad(unit) && (unit.getElevation() == getElevation())) {
+                if (next.canLoad(unit) && 
+                        (!checkElev || unit.getElevation() == getElevation())) {
                     return true;
                 }
             }
@@ -5303,6 +5304,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // If we got here, none of our transports can carry the unit.
         return false;
+    }
+    
+    public boolean canLoad(Entity unit) {
+        return this.canLoad(unit, true);
     }
 
     /**
@@ -5313,14 +5318,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @throws IllegalArgumentException
      *             If the unit can't be loaded
      */
-    public void load(Entity unit) {
+    public void load(Entity unit, boolean checkElev) {
         // Walk through this entity's transport components;
         // find the one that can load the unit.
         // Stop looking after the first match.
         Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
-            if (next.canLoad(unit) && (unit.getElevation() == getElevation())) {
+            if (next.canLoad(unit) && 
+                    (!checkElev || unit.getElevation() == getElevation())) {
                 next.load(unit);
                 return;
             }
@@ -5328,6 +5334,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // If we got to this point, then we can't load the unit.
         throw new IllegalArgumentException(getShortName() + " can not load " + unit.getShortName());
+    }
+    
+    public void load(Entity unit) {
+        this.load(unit, true);
     }
 
     /**

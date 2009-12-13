@@ -8,6 +8,7 @@ v0.35.12-dev (SVN)
 + Bug: Battle Armor weight is reported incorrectly.
 + Bug #2912431: Mek Mortars have wrong techbase
 + Bug: Unable to load transports during deployment phase.
++ Bug: HTML tags are displayed in Movement Phase report when unit skids or sideslips.
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

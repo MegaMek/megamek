@@ -50,7 +50,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -993,7 +993,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Pops up a dialog box showing an alert
      */
     public void doAlertDialog(String title, String message) {
-        JTextArea textArea = new JTextArea(10, 65);
+        JTextPane textArea = new JTextPane();
+        textArea.setContentType("text/html");
         textArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);

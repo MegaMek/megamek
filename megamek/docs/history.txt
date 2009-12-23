@@ -10,6 +10,7 @@ v0.35.12-dev (SVN)
 + Bug: Unable to load transports during deployment phase.
 + Bug: HTML tags are displayed in Movement Phase report when unit skids or sideslips.
 + Bug 2910453: Option -Xmx not recognized in startup.sh
++ Switch Gamelog.txt to Gamelog.html. Format output to HTML.
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

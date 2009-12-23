@@ -42,7 +42,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
                 "http://www.damour.info/cgi-bin/james/metaserver");
         store.setDefault(GOAL_PLAYERS, 2);
         store.setDefault(GAMELOG_KEEP, true);
-        store.setDefault(GAMELOG_FILENAME, "gamelog.txt");
+        store.setDefault(GAMELOG_FILENAME, "gamelog.html");
         // store.setDefault(GAMELOG_MAX_SIZE, 1);
         store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
         store.setDefault(UNIT_START_CHAR, 'A');

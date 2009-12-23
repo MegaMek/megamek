@@ -39,9 +39,6 @@ public class GameLog {
     public static final String LOG_DIR = PreferenceManager
             .getClientPreferences().getLogDirectory();
 
-    public static final String LOG_FILE = "gamelog.txt"; //$NON-NLS-1$
-
-    // private long maxFilesize = Long.MAX_VALUE;
     private File logfile;
 
     BufferedWriter writer;
@@ -51,7 +48,6 @@ public class GameLog {
      * 
      * @filename
      */
-    // public GameLog(String filename, boolean append, long maxSize) {
     public GameLog(String filename) {
         try {
             File logDir = new File(LOG_DIR);
@@ -73,17 +69,15 @@ public class GameLog {
         }
     }
 
-    /** Creates new GameLog */
-    // public GameLog() {
-    // this(LOG_FILE,false,Long.MAX_VALUE);
-    // }
     public void append(String toLog) {
         // if (writer == null || logfile.length() > maxFilesize) {
         if (writer == null) {
             return;
         }
+        
         try {
-            writer.write(toLog);
+          //replace any newline characters with a <br>.
+            writer.write(toLog+"<br>");
             writer.newLine();
             writer.flush();
         } catch (IOException ex) {

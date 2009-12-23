@@ -291,6 +291,7 @@ public class Client implements IClientCommandHandler {
         // * 1024 * 1024) );
         log = new GameLog(PreferenceManager.getClientPreferences()
                 .getGameLogFilename());
+        log.append("<html><body>");
     }
 
     private boolean keepGameLog() {

@@ -206,8 +206,8 @@ public class Engine implements Serializable {
      *
      * @return the weight of the engine.
      */
-    public float getWeightEngine() {
-        return getWeightEngine(TestEntity.CEIL_HALFTON);
+    public float getWeightEngine(Entity entity) {
+        return getWeightEngine(entity, TestEntity.CEIL_HALFTON);
     }
 
     /**
@@ -217,7 +217,7 @@ public class Engine implements Serializable {
      *            {@link megamek.common.verifier.TestEntity}.
      * @return the weight of the engine in tons.
      */
-    public float getWeightEngine(float roundWeight) {
+    public float getWeightEngine(Entity entity, float roundWeight) {
         float weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5)];
         switch (engineType) {
             case COMBUSTION_ENGINE:
@@ -249,8 +249,12 @@ public class Engine implements Serializable {
         if (hasFlag(TANK_ENGINE) && isFusion()) {
             weight *= 1.5f;
         }
-
-        return TestEntity.ceilMaxHalf(weight, roundWeight);
+        float toReturn = TestEntity.ceilMaxHalf(weight, roundWeight);
+        // hover have a minimum weight of 20%
+        if ((entity.getMovementMode() == EntityMovementMode.HOVER) && (entity instanceof Tank)) {
+            return Math.max(TestEntity.ceilMaxHalf(entity.getWeight()/5, TestEntity.CEIL_HALFTON), toReturn);
+        }
+        return toReturn;
     }
 
     /**

@@ -252,7 +252,7 @@ public class MiscType extends EquipmentType {
                     if (e == null) {
                         return 0.0f;
                     }
-                    return (float) (Math.ceil(e.getWeightEngine() / 10.0 * 2.0) / 2.0);
+                    return (float) (Math.ceil(e.getWeightEngine(entity) / 10.0 * 2.0) / 2.0);
                 }
                 if (entity.isClan()) {
                     return Math.round(entity.getWeight() / 25.0f);

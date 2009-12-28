@@ -218,7 +218,7 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public float getWeightEngine() {
-        float weight = engine.getWeightEngine(getWeightCeilingEngine());
+        float weight = engine.getWeightEngine(getEntity(), getWeightCeilingEngine());
         return weight;
     }
 
@@ -598,7 +598,7 @@ public abstract class TestEntity implements TestEntityOption {
     /**
      * Check if the unit has combinations of equipment which are not allowed in
      * the construction rules.
-     * 
+     *
      * @param buff
      *            diagnostics are appended to this
      * @return true if the entity is illegal

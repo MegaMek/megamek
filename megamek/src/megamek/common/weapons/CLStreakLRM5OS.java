@@ -44,7 +44,7 @@ public class CLStreakLRM5OS extends StreakLRMWeapon {
         extremeRange = 28;
         tonnage = 2.5f;
         criticals = 1;
-        bv = 87;
+        bv = 17;
         flags = flags.or(F_ONESHOT);
         cost = 75000;
     }

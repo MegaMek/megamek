@@ -12,6 +12,8 @@ v0.35.12-dev (SVN)
 + Bug 2910453: Option -Xmx not recognized in startup.sh
 + Switch Gamelog.txt to Gamelog.html. Format output to HTML.
 + Bug: minimum engine weight for hovers not calculated
++ Bug: Fix BV of Clan Streak LRMs and Clan RACs
++ Bug: Fix explosive DBV reduction of PPC Capacitors
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

@@ -144,10 +144,8 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
                     "Target is making a DFA attack");
         }
 
-        // Can't target woods or ignite a building with a physical.
-        if ((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
+        // Can only attack other entities
+        if (target.getTargetType() != Targetable.TYPE_ENTITY) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 

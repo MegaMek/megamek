@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -18,13 +18,12 @@
 package megamek.common;
 
 /**
- * @author Andrew Hunter VTOLs are helicopters (more or less.) They don't really
- *         work properly yet. Don't use them.
+ * @author Andrew Hunter VTOLs are helicopters (more or less.)
  */
 public class VTOL extends Tank {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7406911547399249173L;
 
@@ -59,7 +58,7 @@ public class VTOL extends Tank {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#checkSkid(int, megamek.common.IHex, int,
      *      megamek.common.MoveStep, int, int, megamek.common.Coords,
      *      megamek.common.Coords, boolean, int)
@@ -77,7 +76,7 @@ public class VTOL extends Tank {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Tank#canCharge()
      */
     @Override
@@ -126,25 +125,27 @@ public class VTOL extends Tank {
 
     @Override
     public boolean isHexProhibited(IHex hex) {
-        if (hex.containsTerrain(Terrains.IMPASSABLE))
+        if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
-        
-        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+        }
+
+        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
-        
+        }
+
         return false;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Tank#isRepairable()
      */
     @Override
     public boolean isRepairable() {
-        boolean retval = this.isSalvage();
+        boolean retval = isSalvage();
         int loc = Tank.LOC_FRONT;
-        while (retval && loc < VTOL.LOC_ROTOR) {
+        while (retval && (loc < VTOL.LOC_ROTOR)) {
             int loc_is = this.getInternal(loc);
             loc++;
             retval = (loc_is != IArmorState.ARMOR_DOOMED)
@@ -174,7 +175,7 @@ public class VTOL extends Tank {
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE)
                 && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-            
+
             int roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
@@ -194,10 +195,11 @@ public class VTOL extends Tank {
                         HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 break;
             case 5:
-                if (bSide)
+                if (bSide) {
                     rv = new HitData(LOC_FRONT);
-                else
+                } else {
                     rv = new HitData(LOC_RIGHT);
+                }
                 break;
             case 6:
             case 7:
@@ -208,10 +210,11 @@ public class VTOL extends Tank {
                 }
                 break;
             case 9:
-                if (bSide)
+                if (bSide) {
                     rv = new HitData(LOC_REAR);
-                else
+                } else {
                     rv = new HitData(LOC_LEFT);
+                }
                 break;
             case 10:
             case 11:
@@ -223,8 +226,9 @@ public class VTOL extends Tank {
                         | HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
             }
         }
-        if (table == ToHitData.HIT_SWARM)
+        if (table == ToHitData.HIT_SWARM) {
             rv.setEffect(rv.getEffect() | HitData.EFFECT_CRITICAL);
+        }
         return rv;
     }
 
@@ -232,12 +236,12 @@ public class VTOL extends Tank {
     public boolean doomedInVacuum() {
         return true;
     }
-    
+
     @Override
     public boolean doomedInAtmosphere() {
         return true;
     }
-    
+
     @Override
     public boolean doomedInSpace() {
         return true;
@@ -252,30 +256,34 @@ public class VTOL extends Tank {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     * 
+     *
      * @param roll the final dice roll
      * @param loc the hit location
      * @return a critical type
      */
     @Override
     public int getCriticalEffect(int roll, int loc) {
-        if (roll > 12)
+        if (roll > 12) {
             roll = 12;
-        if (roll < 6)
+        }
+        if (roll < 6) {
             return CRIT_NONE;
+        }
         for (int i = 0; i < 2; i++) {
-            if (i > 0)
+            if (i > 0) {
                 roll = 6;
+            }
             if (loc == LOC_FRONT) {
                 switch (roll) {
                     case 6:
-                        if (!isDriverHit())
+                        if (!isDriverHit()) {
                             return CRIT_COPILOT;
-                        else if (!crew.isDead() && !crew.isDoomed())
+                        } else if (!crew.isDead() && !crew.isDoomed()) {
                             return CRIT_CREW_KILLED;
+                        }
                     case 7:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isJammed() && !m.isHit()) {
                                 return CRIT_WEAPON_JAM;
                             }
@@ -289,33 +297,36 @@ public class VTOL extends Tank {
                             }
                         }
                     case 9:
-                        if (getSensorHits() < 4)
+                        if (getSensorHits() < 4) {
                             return CRIT_SENSOR;
+                        }
                     case 10:
-                        if (!isCommanderHit())
+                        if (!isCommanderHit()) {
                             return CRIT_PILOT;
-                        else if (!crew.isDead() && !crew.isDoomed()) {
+                        } else if (!crew.isDead() && !crew.isDoomed()) {
                             return CRIT_CREW_KILLED;
                         }
                     case 11:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
                     case 12:
-                        if (!crew.isDead() && !crew.isDoomed())
+                        if (!crew.isDead() && !crew.isDoomed()) {
                             return CRIT_CREW_KILLED;
+                        }
                 }
             } else if (loc == LOC_REAR) {
                 switch (roll) {
                     case 6:
-                        if (getLoadedUnits().size() > 0)
+                        if (getLoadedUnits().size() > 0) {
                             return CRIT_CARGO;
+                        }
                     case 7:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isJammed() && !m.isHit()) {
                                 return CRIT_WEAPON_JAM;
                             }
@@ -330,34 +341,39 @@ public class VTOL extends Tank {
                         }
                     case 9:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
                     case 10:
-                        if (getSensorHits() < 4)
+                        if (getSensorHits() < 4) {
                             return CRIT_SENSOR;
+                        }
                     case 11:
-                        if (!engineHit)
+                        if (!engineHit) {
                             return CRIT_ENGINE;
+                        }
                     case 12:
-                        if (getEngine().isFusion() && !engineHit)
+                        if (getEngine().isFusion() && !engineHit) {
                             return CRIT_ENGINE;
-                        else if (!getEngine().isFusion())
+                        } else if (!getEngine().isFusion()) {
                             return CRIT_FUEL_TANK;
+                        }
                 }
             } else if (loc == LOC_ROTOR) {
                 switch (roll) {
                     case 6:
                     case 7:
                     case 8:
-                        if (!isImmobile())
+                        if (!isImmobile()) {
                             return CRIT_ROTOR_DAMAGE;
+                        }
                     case 9:
                     case 10:
-                        if (!isStabiliserHit(loc))
+                        if (!isStabiliserHit(loc)) {
                             return CRIT_FLIGHT_STABILIZER;
+                        }
                     case 11:
                     case 12:
                         return CRIT_ROTOR_DESTROYED;
@@ -366,14 +382,15 @@ public class VTOL extends Tank {
                 switch (roll) {
                     case 6:
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isJammed() && !m.isHit()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
                     case 7:
-                        if (getLoadedUnits().size() > 0)
+                        if (getLoadedUnits().size() > 0) {
                             return CRIT_CARGO;
+                        }
                     case 8:
                         if (!isStabiliserHit(loc)) {
                             for (Mounted m : getWeaponList()) {
@@ -388,14 +405,15 @@ public class VTOL extends Tank {
                         // chooses which weapon gets destroyed
                         // 4-6: attacker chooses which weapon gets destroyed
                         for (Mounted m : getWeaponList()) {
-                            if (m.getLocation() == loc && !m.isDestroyed()
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
                                     && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
                     case 10:
-                        if (!engineHit)
+                        if (!engineHit) {
                             return CRIT_ENGINE;
+                        }
                     case 11:
                         for (Mounted m : getAmmo()) {
                             if (!m.isDestroyed() && !m.isHit()) {
@@ -403,10 +421,11 @@ public class VTOL extends Tank {
                             }
                         }
                     case 12:
-                        if (getEngine().isFusion() && !engineHit)
+                        if (getEngine().isFusion() && !engineHit) {
                             return CRIT_ENGINE;
-                        else if (!getEngine().isFusion())
+                        } else if (!getEngine().isFusion()) {
                             return CRIT_FUEL_TANK;
+                        }
                 }
             }
         }
@@ -418,17 +437,19 @@ public class VTOL extends Tank {
         if (movementDamage > 0) {
             prd.addModifier(movementDamage, "Steering Damage");
         }
-        if (isDriverHit())
+        if (isDriverHit()) {
             prd.addModifier(2, "pilot injured");
-        if (isStabiliserHit(LOC_ROTOR))
+        }
+        if (isStabiliserHit(LOC_ROTOR)) {
             prd.addModifier(3, "flight stabiliser damaged");
+        }
 
         // VDNI bonus?
         if (getCrew().getOptions().booleanOption("vdni")
                 && !getCrew().getOptions().booleanOption("bvdni")) {
             prd.addModifier(-1, "VDNI");
         }
-     
+
         return prd;
     }
 }

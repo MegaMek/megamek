@@ -452,7 +452,7 @@ public class Compute {
     /**
      * Gets a valid displacement, from the hexes around src, as close to the
      * original direction as is possible.
-     * 
+     *
      * @return valid displacement coords, or null if none
      */
     public static Coords getValidDisplacement(IGame game, int entityId, Coords src, int direction) {
@@ -473,7 +473,7 @@ public class Compute {
      * with the same elevation as original hex, if not available it picks the
      * highest elevation that is a valid displacement. This will preferably not
      * displace into friendly units
-     * 
+     *
      * @return valid displacement coords, or null if none
      */
     public static Coords getPreferredDisplacement(IGame game, int entityId, Coords src, int direction) {
@@ -584,7 +584,7 @@ public class Compute {
                     .getId()))
                     && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
-                LosEffects los = LosEffects.calculateLos(game, other.getId(), target);
+                LosEffects los = LosEffects.calculateLos(game, other.getId(), target, true);
                 ToHitData mods = los.losModifiers(game);
                 los.setTargetCover(LosEffects.COVER_NONE);
                 mods.append(Compute.getAttackerMovementModifier(game, other.getId()));
@@ -621,7 +621,7 @@ public class Compute {
      * Determines the to-hit modifier due to range for an attack with the
      * specified parameters. Includes minimum range, infantry 0-range mods, and
      * target stealth mods. Accounts for friendly C3 units.
-     * 
+     *
      * @return the modifiers
      */
     public static ToHitData getRangeMods(IGame game, Entity ae, int weaponId, Targetable target) {
@@ -875,7 +875,7 @@ public class Compute {
      * Finds the effective distance between an attacker and a target. Includes
      * the distance bonus if the attacker and target are in the same building
      * and on different levels. Also takes account of altitude differences
-     * 
+     *
      * @return the effective distance
      */
     public static int effectiveDistance(IGame game, Entity attacker, Targetable target) {
@@ -936,7 +936,7 @@ public class Compute {
     /**
      * Attempts to find a C3 spotter that is closer to the target than the
      * attacker.
-     * 
+     *
      * @return A closer C3 spotter, or the attack if no spotters are found
      */
     private static Entity findC3Spotter(IGame game, Entity attacker, Targetable target) {
@@ -972,7 +972,7 @@ public class Compute {
 
     /**
      * find a c3i spotter that is closer to the target than the attacker.
-     * 
+     *
      * @param game
      * @param attacker
      * @param target
@@ -1046,7 +1046,7 @@ public class Compute {
 
     /**
      * Gets the modifiers, if any, that the mech receives from being prone.
-     * 
+     *
      * @return any applicable modifiers due to being prone
      */
     public static ToHitData getProneMods(IGame game, Entity attacker, int weaponId) {
@@ -1129,7 +1129,7 @@ public class Compute {
     /**
      * Checks to see if there is an attack previous to the one with this weapon
      * from the specified arm.
-     * 
+     *
      * @return true if there is a previous attack from this arm
      */
     private static boolean isFiringFromArmAlready(IGame game, int weaponId, final Entity attacker, int armLoc) {
@@ -1157,7 +1157,7 @@ public class Compute {
 
     /**
      * Adds any damage modifiers from arm critical hits or sensor damage.
-     * 
+     *
      * @return Any applicable damage modifiers
      */
     public static ToHitData getDamageWeaponMods(Entity attacker, Mounted weapon) {
@@ -1247,7 +1247,7 @@ public class Compute {
     /**
      * Determines if the current target is a secondary target, and if so,
      * returns the appropriate modifier.
-     * 
+     *
      * @return The secondary target modifier.
      * @author Ben
      */
@@ -2292,7 +2292,7 @@ public class Compute {
     /**
      * If this is an ultra or rotary cannon, lets see about 'spinning it up' for
      * extra damage
-     * 
+     *
      * @return the <code>int</code> ID of weapon mode
      */
 
@@ -2402,7 +2402,7 @@ public class Compute {
 
     /**
      * Returns true if the target is in the specified arc.
-     * 
+     *
      * @param src
      *            the attacker coordinate
      * @param facing
@@ -2703,7 +2703,7 @@ public class Compute {
 
     /**
      * Maintain backwards compatability.
-     * 
+     *
      * @param missiles
      *            - the <code>int</code> number of missiles in the pack.
      */
@@ -2713,7 +2713,7 @@ public class Compute {
 
     /**
      * Maintain backwards compatability.
-     * 
+     *
      * @param missiles
      * @param nMod
      * @return
@@ -2724,7 +2724,7 @@ public class Compute {
 
     /**
      * Maintain backwards compatability.
-     * 
+     *
      * @param missiles
      * @param nMod
      * @param hotloaded
@@ -2737,7 +2737,7 @@ public class Compute {
     /**
      * Roll the number of missiles (or whatever) on the missile hit table, with
      * the specified mod to the roll.
-     * 
+     *
      * @param missiles
      *            - the <code>int</code> number of missiles in the pack.
      * @param nMod
@@ -2814,7 +2814,7 @@ public class Compute {
 
     /**
      * Returns the consciousness roll number
-     * 
+     *
      * @param hit
      *            - the <code>int</code> number of the crew hit currently being
      *            rolled.
@@ -2843,7 +2843,7 @@ public class Compute {
     /**
      * This method checks to see if a line from a to b is affected by an ECM
      * field of the enemy of ae
-     * 
+     *
      * @param ae
      * @param a
      * @param b
@@ -2856,7 +2856,7 @@ public class Compute {
     /**
      * This method checks to see if a line from a to b is affected by an ECCM
      * field of the enemy of ae
-     * 
+     *
      * @param ae
      * @param a
      * @param b
@@ -2869,7 +2869,7 @@ public class Compute {
     /**
      * This method returns the highest number of enemy ECM fields of ae between
      * points a and b
-     * 
+     *
      * @param ae
      * @param a
      * @param b
@@ -2973,7 +2973,7 @@ public class Compute {
     /**
      * This method returns the highest number of enemy ECCM fields of ae between
      * points a and b
-     * 
+     *
      * @param ae
      * @param a
      * @param b
@@ -3077,7 +3077,7 @@ public class Compute {
     /**
      * This method checks to see if a line from a to b is affected by an Angel
      * ECM field of the enemy of ae
-     * 
+     *
      * @param ae
      * @param a
      * @param b
@@ -3560,7 +3560,7 @@ public class Compute {
     /**
      * Get the base to-hit number of a space bomb attack by the given attacker
      * upon the given defender
-     * 
+     *
      * @param attacker
      *            - the <code>Entity</code> conducting the leg attack.
      * @param defender
@@ -3668,7 +3668,7 @@ public class Compute {
             data.addModifier(TargetRoll.IMPOSSIBLE, "Unknown defender");
             return data;
         }
-        
+
         if (attacker instanceof BattleArmor) {
             // Battle Armor units can't do an AM Attack if they're burdened.
             if (((BattleArmor) attacker).isBurdened()) {
@@ -3688,18 +3688,18 @@ public class Compute {
             data.addModifier(TargetRoll.IMPOSSIBLE, "Target is a passenger.");
             return data;
         }
-        
+
         if (defender.isMakingDfa()) {
             data.addModifier(TargetRoll.IMPOSSIBLE, "Target is making a DFA.");
             return data;
         }
-        
+
         // Already conducting a swarm attack.
         if (Entity.NONE != attacker.getSwarmTargetId()) {
             data.addModifier(TargetRoll.IMPOSSIBLE, "Attacker is currently swarming.");
             return data;
         }
-        
+
         if ((defender instanceof Mech) && ((Mech) defender).isIndustrial()) {
             data.addModifier(-1, "targeting industrial mech");
         }
@@ -3723,7 +3723,7 @@ public class Compute {
     /**
      * Get the base to-hit number of a Leg Attack by the given attacker upon the
      * given defender
-     * 
+     *
      * @param attacker
      *            - the <code>Entity</code> conducting the leg attack.
      * @param defender
@@ -3787,7 +3787,7 @@ public class Compute {
     /**
      * Get the base to-hit number of a Swarm Mek by the given attacker upon the
      * given defender.
-     * 
+     *
      * @param attacker
      *            - the <code>Entity</code> swarming.
      * @param defender
@@ -3942,7 +3942,7 @@ public class Compute {
      * Can movement between the two coordinates be on pavement (which includes
      * roads and bridges)? If so it will override prohibited terrain, it may
      * change movement costs, and it may lead to skids.
-     * 
+     *
      * @param game
      *            - the <code>IGame</code> object.
      * @param src
@@ -3996,7 +3996,7 @@ public class Compute {
 
     /**
      * Determines whether the attacker and the target are in the same building.
-     * 
+     *
      * @return true if the target can and does occupy the same building, false
      *         otherwise.
      */
@@ -4018,7 +4018,7 @@ public class Compute {
     /**
      * Determine if the given unit is inside of a building at the given
      * coordinates.
-     * 
+     *
      * @param game
      *            - the <code>IGame</code> object. This value may be
      *            <code>null</code>.
@@ -4050,7 +4050,7 @@ public class Compute {
     /**
      * Determine if the given unit is inside of a building at the given
      * coordinates.
-     * 
+     *
      * @param game
      *            - the <code>IGame</code> object. This value may be
      *            <code>null</code>.
@@ -4122,7 +4122,7 @@ public class Compute {
     /**
      * scatter from hex according to dive bombing rules (1d6 of scatter
      * distance)
-     * 
+     *
      * @param coords
      *            The <code>Coords</code> to scatter from
      * @return the <code>Coords</code> scattered to
@@ -4134,7 +4134,7 @@ public class Compute {
     /**
      * scatter from hex according to direct fire artillery rules (1d6 of scatter
      * distance)
-     * 
+     *
      * @param coords
      *            The <code>Coords</code> to scatter from
      * @return the <code>Coords</code> scattered to
@@ -4145,7 +4145,7 @@ public class Compute {
 
     /**
      * scatter from a hex according, roll d6 to choose scatter direction
-     * 
+     *
      * @param coords
      *            The <code>Coords</code> to scatter from
      * @param margin
@@ -4161,7 +4161,7 @@ public class Compute {
     /**
      * scatter from hex according to atmospheric drop rules d6 for direction,
      * 1d6 per point of MOF
-     * 
+     *
      * @param coords
      *            The <code>Coords</code> to scatter from
      * @param margin
@@ -4176,7 +4176,7 @@ public class Compute {
 
     /**
      * Gets a ring of hexes at a specified distance from the centre
-     * 
+     *
      * @param centre
      *            The centre point of the ring
      * @param range
@@ -4201,7 +4201,7 @@ public class Compute {
     /**
      * Gets a new target for a flight of swarm missiles that was just shot at an
      * entity and has missiles left
-     * 
+     *
      * @param game
      * @param aeId
      *            The attacking <code>Entity</code>
@@ -4360,7 +4360,7 @@ public class Compute {
 
     /*
      * public static FighterSquadron compileSquadron(Vector<Entity> squadron) {
-     * 
+     *
      * //cycle through the entity vector and create a fighter squadron
      * FighterSquadron fs = new FighterSquadron(); / String chassis =
      * squadron.elementAt(0).getChassis(); int si = 99; boolean alike = true;
@@ -4372,15 +4372,15 @@ public class Compute {
      * e.getHeatCapacity(); //weight weight += e.getWeight(); bv +=
      * e.calculateBattleValue(); cost += e.getCost(); //safe thrust
      * if(e.getWalkMP() < safeThrust) safeThrust = e.getWalkMP();
-     * 
+     *
      * Aero a = (Aero)e; //si if(a.getSI() < si) { si = a.getSI(); }
-     * 
+     *
      * //fuel - give the minimum fuel if(a.getFuel() < fuel || fuel == 0) { fuel
      * = a.getFuel(); }
-     * 
-     * 
+     *
+     *
      * //weapons Mounted newmount; for(Mounted m : e.getEquipment() ) {
-     * 
+     *
      * if(m.getType() instanceof WeaponType) { //first load the weapon onto the
      * squadron WeaponType wtype = (WeaponType)m.getType(); try{ newmount =
      * fs.addEquipment(wtype, m.getLocation()); } catch (LocationFullException
@@ -4388,7 +4388,7 @@ public class Compute {
      * //$NON-NLS-2$ //$NON-NLS-3$ ex.printStackTrace(); return fs; } //skip to
      * the next if it has no AT class if(wtype.getAtClass() ==
      * WeaponType.CLASS_NONE) { continue; }
-     * 
+     *
      * //now find the right bay Mounted bay = fs.getFirstBay(wtype,
      * newmount.getLocation(), newmount.isRearMounted()); //if this is null,
      * then I should create a new bay if(bay == null) { EquipmentType newBay =
@@ -4405,16 +4405,16 @@ public class Compute {
      * (LocationFullException ex) {
      * System.out.println("Unable to add equipment"); //$NON-NLS-1$
      * //$NON-NLS-2$ //$NON-NLS-3$ ex.printStackTrace(); return fs; } } } }
-     * 
+     *
      * armor = (int)Math.round(armor / 10.0);
-     * 
+     *
      * fs.setArmor(armor); fs.set0Armor(armor); fs.setHeatSinks(heat);
      * fs.setOriginalWalkMP(safeThrust); fs.setN0Fighters(n);
      * fs.setNFighters(n); fs.autoSetThresh(); fs.setWeight(weight);
      * fs.set0SI(si); fs.setCost(cost); fs.setFuel(fuel);
-     * 
+     *
      * if(nTC >= n) { fs.setHasTC(true); }
-     * 
+     *
      * //if all the same chassis, name by chassis //otherwise name by weight
      * if(alike) { fs.setChassis(chassis + " Squadron"); } else { int aveWeight
      * = Math.round(weight/n); if(aveWeight <= 45) {
@@ -4422,7 +4422,7 @@ public class Compute {
      * fs.setChassis("Mixed Medium Squadron"); } else {
      * fs.setChassis("Mixed Heavy Squadron"); } } fs.setModel("");
      * fs.loadAllWeapons(); fs.setRapidFire();
-     * 
+     *
      * return fs; }
      */
 
@@ -4450,7 +4450,7 @@ public class Compute {
     /**
      * method to change a set of active vectors for a one-point thrust
      * expenditure in the giving facing
-     * 
+     *
      * @param v
      * @param facing
      * @return
@@ -4514,7 +4514,7 @@ public class Compute {
 
     /**
      * compare two vectors and determine if they are the same
-     * 
+     *
      * @param v1
      * @param v2
      * @return
@@ -4553,7 +4553,7 @@ public class Compute {
      * Method replicates the Non-Conventional Damage against Infantry damage
      * table as well as shifting for direct blows. also adjust for non-infantry
      * damaging mechanized infantry
-     * 
+     *
      * @param damage
      * @param mos
      * @param damageType
@@ -4601,7 +4601,7 @@ public class Compute {
 
     /**
      * Method computes how much damage a dial down weapon has done
-     * 
+     *
      * @param weapon
      * @param wtype
      * @returnnew damage
@@ -4612,7 +4612,7 @@ public class Compute {
 
     /**
      * Method computes how much damage a dial down weapon has done
-     * 
+     *
      * @param weapon
      * @param wtype
      * @param range
@@ -4639,7 +4639,7 @@ public class Compute {
 
     /**
      * Method computes how much heat a dial down weapon generates
-     * 
+     *
      * @param weapon
      * @param wtype
      * @return Heat, minimum of 1;
@@ -4650,7 +4650,7 @@ public class Compute {
 
     /**
      * Method computes how much heat a dial down weapon generates
-     * 
+     *
      * @param weapon
      * @param wtype
      * @param range
@@ -4731,7 +4731,7 @@ public class Compute {
      * allows units that flee the field for any reason to return after a certain
      * number of rounds It can potentially be expanded to include other
      * conditions
-     * 
+     *
      * @param en
      * @param velocity
      * @return number of rounds until return (-1 if never)

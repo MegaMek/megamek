@@ -156,7 +156,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                             if ((player == entity.getOwnerId())
                                     && spottersBefore.contains(id)
                                     && !(LosEffects.calculateLos(game, entity
-                                            .getId(), targ)).isBlocked()
+                                            .getId(), targ, true)).isBlocked()
                                     && entity.isActive()
                                     && !entity.isINarcedWith(INarcPod.HAYWIRE)) {
                                 return true;

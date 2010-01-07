@@ -904,7 +904,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISCruiseMissile70());
         EquipmentType.addType(new ISCruiseMissile90());
         EquipmentType.addType(new ISCruiseMissile120());
-        
+
         // Unofficial Weapons
         EquipmentType.addType(new ISAC10i());
         EquipmentType.addType(new ISAC15());

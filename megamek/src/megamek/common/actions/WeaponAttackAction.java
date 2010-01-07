@@ -29,11 +29,11 @@ import megamek.common.Coords;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EntityMovementType;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -357,11 +357,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // woods is only +1 total)
         int eistatus = 0;
 
-        boolean MPMelevationHack = false;
+        boolean mpMelevationHack = false;
         if (usesAmmo && (wtype.getAmmoType() == AmmoType.T_LRM) && (atype != null)
                 && (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE) && (ae.getElevation() == -1)
                 && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {
-            MPMelevationHack = true;
+            mpMelevationHack = true;
             // surface to fire
             ae.setElevation(0);
         }
@@ -394,7 +394,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Torpedos must follow water their entire LOS");
             }
         } else {
-            los = LosEffects.calculateLos(game, spotter.getId(), target);
+            los = LosEffects.calculateLos(game, spotter.getId(), target, true);
             // do not count attacker partial cover in indirect fire
             los.setAttackerCover(LosEffects.COVER_NONE);
 
@@ -412,7 +412,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             losMods = los.losModifiers(game);
         }
-        if (MPMelevationHack) {
+        if (mpMelevationHack) {
             // return to depth 1
             ae.setElevation(-1);
         }
@@ -2589,7 +2589,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
                 return toHit.getDesc();
             }
-            if (!isOnlyAttack(game, ae, Infantry.LEG_ATTACK)) { 
+            if (!isOnlyAttack(game, ae, Infantry.LEG_ATTACK)) {
                 return "Leg attack must be an unit's only attack, and there must not be multiple Leg Attacks.";
             }
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
@@ -2599,7 +2599,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
                 return toHit.getDesc();
             }
-            if (!isOnlyAttack(game, ae, Infantry.SWARM_MEK)) { 
+            if (!isOnlyAttack(game, ae, Infantry.SWARM_MEK)) {
                 return "Swarm attack must be an unit's only attack, and there must not be multiple Swarm Attacks.";
             }
         } else if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {

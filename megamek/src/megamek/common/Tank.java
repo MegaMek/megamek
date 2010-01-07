@@ -662,14 +662,16 @@ public class Tank extends Entity {
 
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD)))
                     || ((etype instanceof AmmoType) && (((AmmoType) etype)
-                            .getAmmoType() == AmmoType.T_AMS))
-                    || ((etype instanceof MiscType) && (etype
+                            .getAmmoType() == AmmoType.T_AMS))) {
+                dEquipmentBV += etype.getBV(this);
+            } else if ((etype instanceof MiscType) && (etype
                             .hasFlag(MiscType.F_ECM)
                             || etype.hasFlag(MiscType.F_AP_POD)
                             // not yet coded: ||
                             // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                            || etype.hasFlag(MiscType.F_BAP)))) {
-                dEquipmentBV += etype.getBV(this);
+                            || etype.hasFlag(MiscType.F_BAP))) {
+                MiscType mtype = (MiscType)etype;
+                dEquipmentBV += mtype.getBV(this, mounted.getLocation());
             }
         }
         dbv += dEquipmentBV;
@@ -882,7 +884,7 @@ public class Tank extends Entity {
                 // weapons
                 continue;
             }
-            oEquipmentBV += mtype.getBV(this);
+            oEquipmentBV += mtype.getBV(this, mounted.getLocation());
         }
 
         weaponBV += oEquipmentBV;

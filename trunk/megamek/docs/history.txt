@@ -15,7 +15,8 @@ v0.35.12-dev (SVN)
 + Bug: Fix BV of Clan Streak LRMs and Clan RACs
 + Bug: Fix explosive DBV reduction of PPC Capacitors
 + Bug 2923916: Vibroclaw physical NPE
-+ Added Solaris Factory board with working skywalk 
++ Added Solaris Factory board with working skywalk
++ Implemented VTOL Mast Mounts
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

@@ -114,6 +114,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_BASIC_MANIPULATOR = BigInteger.valueOf(1).shiftLeft(71);
     public static final BigInteger F_BATTLE_CLAW = BigInteger.valueOf(1).shiftLeft(72);
     public static final BigInteger F_AP_MOUNT = BigInteger.valueOf(1).shiftLeft(73);
+    public static final BigInteger F_MAST_MOUNT = BigInteger.valueOf(1).shiftLeft(74);
 
 
     // Secondary Flags for Physical Weapons
@@ -478,14 +479,25 @@ public class MiscType extends EquipmentType {
             }
         }
 
-        return this.getBV(entity);
+        return this.getBV(entity, mount.getLocation());
     }
 
     @Override
     public double getBV(Entity entity) {
+        return getBV(entity, Entity.LOC_NONE);
+    }
+
+    public double getBV(Entity entity, int location) {
         double returnBV = 0.0;
         if (bv != BV_VARIABLE) {
             returnBV = bv;
+            // Mast Mounts give extra BV to equipment mounted in the mast
+            if ((entity instanceof VTOL)
+                    && entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR)
+                    && (location == VTOL.LOC_ROTOR)
+                    && (hasFlag(MiscType.F_ECM) || hasFlag(MiscType.F_BAP) || hasFlag(MiscType.F_C3S) || hasFlag(MiscType.F_C3I))) {
+                returnBV += 10;
+            }
             return returnBV;
         }
         // check for known formulas
@@ -685,6 +697,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createMASHExtraTheater());
         EquipmentType.addType(MiscType.createParamedicEquipment());
         EquipmentType.addType(MiscType.createCLProtoMyomerBooster());
+        EquipmentType.addType(MiscType.createCLMastMount());
+        EquipmentType.addType(MiscType.createISMastMount());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -3611,6 +3625,36 @@ public class MiscType extends EquipmentType {
         misc.cost = 7500;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createCLMastMount() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Mast Mount";
+        misc.setInternalName("CLMastMount");
+        misc.tonnage = 0.5f;
+        misc.criticals = 0;
+        misc.cost = 50000;
+        misc.flags = misc.flags.or(F_MAST_MOUNT);
+        misc.bv = BV_VARIABLE;
+
+        return misc;
+    }
+
+    public static MiscType createISMastMount() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Mast Mount";
+        misc.setInternalName("ISMastMount");
+        misc.tonnage = 0.5f;
+        misc.criticals = 0;
+        misc.cost = 50000;
+        misc.flags = misc.flags.or(F_MAST_MOUNT);
+        misc.bv = BV_VARIABLE;
 
         return misc;
     }

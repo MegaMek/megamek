@@ -15355,13 +15355,6 @@ public class Server implements Runnable {
             break;
         }
 
-        // check for infantry armor
-        /*
-         * if(isPlatoon) { damage = (int)Math.ceil(damage / 2.0); r = new
-         * Report(6043); r.subject = te_n; r.indent(2); r.newlines = 0;
-         * r.add(damage); vDesc.addElement(r); }
-         */
-
         // adjust VTOL rotor damage
         if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)) {
             damage = (damage + 9) / 10;
@@ -15752,6 +15745,21 @@ public class Server implements Runnable {
                     r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
+                }
+
+                // if there's a mast mount in the rotor, it and all other equipment
+                // on it get destroyed
+                if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR) && te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR)) {
+                    r = new Report(6081);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    vDesc.addElement(r);
+                    for (Mounted mount : te.getMisc()) {
+                        if (mount.getLocation() == VTOL.LOC_ROTOR) {
+                            mount.setHit(true);
+                        }
+                    }
                 }
 
                 if (te.getArmor(hit) >= damage) {

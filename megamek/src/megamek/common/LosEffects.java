@@ -85,7 +85,7 @@ public class LosEffects {
     Building thruBldg = null;
     int minimumWaterDepth = -1;
     boolean arcedShot = false;
-    
+
     public int getMinimumWaterDepth() {
         return minimumWaterDepth;
     }
@@ -247,6 +247,12 @@ public class LosEffects {
      */
     public static LosEffects calculateLos(IGame game, int attackerId,
             Targetable target) {
+        return calculateLos(game, attackerId, target, false);
+    }
+
+
+    public static LosEffects calculateLos(IGame game, int attackerId,
+            Targetable target, boolean spotting) {
         final Entity ae = game.getEntity(attackerId);
 
         // LOS fails if one of the entities is not deployed.
@@ -260,7 +266,7 @@ public class LosEffects {
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targetHex = game.getBoard().getHex(target.getPosition());
-        if (attHex == null || targetHex == null) {
+        if ((attHex == null) || (targetHex == null)) {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
             los.hasLoS = false;
@@ -276,6 +282,10 @@ public class LosEffects {
         ai.targetHeight = target.getHeight();
 
         int attEl = ae.absHeight() + attHex.getElevation();
+        // for spotting, a mast mount raises our elevation by 1
+        if (spotting && ae.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1)) {
+            attEl += 1;
+        }
         int targEl;
         if ((target.getTargetType() == Targetable.TYPE_ENTITY)
                 || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
@@ -344,13 +354,13 @@ public class LosEffects {
                     attHex.terrainLevel(Terrains.WATER), targetHex
                             .terrainLevel(Terrains.WATER));
         }
-        
-        //if this is an air to ground or ground to air attack or a ground to air, 
+
+        //if this is an air to ground or ground to air attack or a ground to air,
         //treat the attacker's position as the same as the target's
         if(Compute.isAirToGround(ae, target) || Compute.isGroundToAir(ae, target)) {
             ai.attackPos = ai.targetPos;
         }
-      
+
         LosEffects finalLoS = calculateLos(game, ai);
         finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);
         finalLoS.hasLoS = !finalLoS.blocked && (finalLoS.screen < 1) && (finalLoS.plantedFields < 6)

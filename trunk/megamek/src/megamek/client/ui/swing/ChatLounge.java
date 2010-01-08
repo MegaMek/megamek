@@ -2074,6 +2074,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         public void clearData() {
             data = new ArrayList<Entity>();
+            fireTableDataChanged();
         }
 
         public int getColumnCount() {

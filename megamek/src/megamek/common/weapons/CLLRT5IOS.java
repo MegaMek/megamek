@@ -18,35 +18,34 @@ import megamek.common.TechConstants;
 /**
  * @author Sebastian Brocks
  */
-public class CLStreakSRM6OS extends StreakSRMWeapon {
+public class CLLRT5IOS extends LRTWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3098137789514566838L;
+    private static final long serialVersionUID = -3651580547253252279L;
 
     /**
      *
      */
-    public CLStreakSRM6OS() {
+    public CLLRT5IOS() {
+        super();
         techLevel = TechConstants.T_CLAN_TW;
-        name = "Streak SRM 6 (OS)";
-        setInternalName("CLStreakSRM6 (OS)");
-        addLookupName("Clan Improved OS Streak SRM-6");
-        addLookupName("Clan Streak SRM 6 (OS)");
-        heat = 4;
-        rackSize = 6;
-        shortRange = 4;
-        mediumRange = 8;
-        longRange = 12;
-        extremeRange = 16;
-        tonnage = 3.5f;
-        criticals = 2;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
-        bv = 24;
-        cost = 120000;
-        shortAV = 12;
-        medAV = 12;
-        maxRange = RANGE_MED;
+        name = "LRT 5 (IOS)";
+        setInternalName("CLLRTorpedo5 (IOS)");
+        addLookupName("Clan IOS LRT-5");
+        addLookupName("Clan LRT 5 (IOS)");
+        heat = 2;
+        rackSize = 5;
+        minimumRange = WEAPON_NA;
+        waterShortRange = 7;
+        waterMediumRange = 14;
+        waterLongRange = 21;
+        waterExtremeRange = 28;
+        tonnage = 1.0f;
+        criticals = 1;
+        bv = 11;
+        flags = flags.or(F_ONESHOT);
+        cost = 30000;
     }
 }

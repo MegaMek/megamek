@@ -18,7 +18,7 @@ import megamek.common.TechConstants;
 /**
  * @author Sebastian Brocks
  */
-public class CLStreakSRM6OS extends StreakSRMWeapon {
+public class CLStreakSRM6IOS extends StreakSRMWeapon {
 
     /**
      *
@@ -28,19 +28,19 @@ public class CLStreakSRM6OS extends StreakSRMWeapon {
     /**
      *
      */
-    public CLStreakSRM6OS() {
+    public CLStreakSRM6IOS() {
         techLevel = TechConstants.T_CLAN_TW;
-        name = "Streak SRM 6 (OS)";
-        setInternalName("CLStreakSRM6 (OS)");
+        name = "Streak SRM 6 (IOS)";
+        setInternalName("CLStreakSRM6 (IOS)");
         addLookupName("Clan Improved OS Streak SRM-6");
-        addLookupName("Clan Streak SRM 6 (OS)");
+        addLookupName("Clan Streak SRM 6 (IOS)");
         heat = 4;
         rackSize = 6;
         shortRange = 4;
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 3.5f;
+        tonnage = 3f;
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         bv = 24;

@@ -18,35 +18,35 @@ import megamek.common.TechConstants;
 /**
  * @author Sebastian Brocks
  */
-public class CLStreakSRM6OS extends StreakSRMWeapon {
+public class ISLRT5IOS extends LRTWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3098137789514566838L;
+    private static final long serialVersionUID = -7475019239065402296L;
 
     /**
      *
      */
-    public CLStreakSRM6OS() {
-        techLevel = TechConstants.T_CLAN_TW;
-        name = "Streak SRM 6 (OS)";
-        setInternalName("CLStreakSRM6 (OS)");
-        addLookupName("Clan Improved OS Streak SRM-6");
-        addLookupName("Clan Streak SRM 6 (OS)");
-        heat = 4;
-        rackSize = 6;
-        shortRange = 4;
-        mediumRange = 8;
-        longRange = 12;
-        extremeRange = 16;
-        tonnage = 3.5f;
-        criticals = 2;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
-        bv = 24;
-        cost = 120000;
-        shortAV = 12;
-        medAV = 12;
-        maxRange = RANGE_MED;
+    public ISLRT5IOS() {
+        super();
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        name = "LRT 5 (IOS)";
+        setInternalName(name);
+        addLookupName("IS IOS LRT-5");
+        addLookupName("ISLRTorpedo5 (IOS)");
+        addLookupName("IS LRT 5 (IOS)");
+        heat = 2;
+        rackSize = 5;
+        minimumRange = 6;
+        waterShortRange = 7;
+        waterMediumRange = 14;
+        waterLongRange = 21;
+        waterExtremeRange = 28;
+        tonnage = 2.0f;
+        criticals = 1;
+        bv = 9;
+        flags = flags.or(F_ONESHOT);
+        cost = 30000;
     }
 }

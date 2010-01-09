@@ -39,66 +39,133 @@ public class WeaponType extends EquipmentType {
     public static final int WEAPON_NA = Integer.MIN_VALUE;
 
     // weapon flags (note: many weapons can be identified by their ammo type)
-    public static final BigInteger F_DIRECT_FIRE = BigInteger.valueOf(1).shiftLeft(0); // marks any weapon
+    public static final BigInteger F_DIRECT_FIRE = BigInteger.valueOf(1).shiftLeft(0); // marks
+    // any
+    // weapon
     // affected by a
     // targetting computer
     public static final BigInteger F_FLAMER = BigInteger.valueOf(1).shiftLeft(1);
-    public static final BigInteger F_LASER = BigInteger.valueOf(1).shiftLeft(2); // for eventual glazed armor
+    public static final BigInteger F_LASER = BigInteger.valueOf(1).shiftLeft(2); // for
+    // eventual
+    // glazed
+    // armor
     // purposes
     public static final BigInteger F_PPC = BigInteger.valueOf(1).shiftLeft(3); // "
-    public static final BigInteger F_AUTO_TARGET = BigInteger.valueOf(1).shiftLeft(4); // for weapons that
+    public static final BigInteger F_AUTO_TARGET = BigInteger.valueOf(1).shiftLeft(4); // for
+    // weapons
+    // that
     // target automatically
     // (AMS)
-    public static final BigInteger F_NO_FIRES = BigInteger.valueOf(1).shiftLeft(5); // cannot start fires
-    public static final BigInteger F_SOLO_ATTACK = BigInteger.valueOf(1).shiftLeft(7); // must be only weapon
+    public static final BigInteger F_NO_FIRES = BigInteger.valueOf(1).shiftLeft(5); // cannot
+    // start
+    // fires
+    public static final BigInteger F_SOLO_ATTACK = BigInteger.valueOf(1).shiftLeft(7); // must
+    // be
+    // only
+    // weapon
     // attacking
-    public static final BigInteger F_SPLITABLE = BigInteger.valueOf(1).shiftLeft(8); // Weapons that can be split
+    public static final BigInteger F_SPLITABLE = BigInteger.valueOf(1).shiftLeft(8); // Weapons
+    // that
+    // can
+    // be
+    // split
     // between locations
-    public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(9); // MGL; for rapid fire set up
-    public static final BigInteger F_INFERNO = BigInteger.valueOf(1).shiftLeft(10); // Inferno weapon
-    public static final BigInteger F_INFANTRY = BigInteger.valueOf(1).shiftLeft(11); // small calibre weapon, no
+    public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(9); // MGL;
+    // for
+    // rapid
+    // fire
+    // set
+    // up
+    public static final BigInteger F_INFERNO = BigInteger.valueOf(1).shiftLeft(10); // Inferno
+    // weapon
+    public static final BigInteger F_INFANTRY = BigInteger.valueOf(1).shiftLeft(11); // small
+    // calibre
+    // weapon,
+    // no
     // ammo, damage based on #
     // men shooting
-    public static final BigInteger F_MISSILE_HITS = BigInteger.valueOf(1).shiftLeft(13); // use missile rules or
+    public static final BigInteger F_MISSILE_HITS = BigInteger.valueOf(1).shiftLeft(13); // use
+    // missile
+    // rules
+    // or
     // # of hits
-    public static final BigInteger F_ONESHOT = BigInteger.valueOf(1).shiftLeft(14); // weapon is oneShot.
+    public static final BigInteger F_ONESHOT = BigInteger.valueOf(1).shiftLeft(14); // weapon
+    // is
+    // oneShot.
     public static final BigInteger F_ARTILLERY = BigInteger.valueOf(1).shiftLeft(15);
-    public static final BigInteger F_BALLISTIC = BigInteger.valueOf(1).shiftLeft(16); // For Gunnery/Ballistic
+    public static final BigInteger F_BALLISTIC = BigInteger.valueOf(1).shiftLeft(16); // For
+    // Gunnery/Ballistic
     // skill
-    public static final BigInteger F_ENERGY = BigInteger.valueOf(1).shiftLeft(17); // For Gunnery/Energy skill
-    public static final BigInteger F_MISSILE = BigInteger.valueOf(1).shiftLeft(18); // For Gunnery/Missile skill
-    public static final BigInteger F_PLASMA = BigInteger.valueOf(1).shiftLeft(19); // For fires
-    public static final BigInteger F_INCENDIARY_NEEDLES = BigInteger.valueOf(1).shiftLeft(20); // For fires
-    public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(21); // for war of 3039
+    public static final BigInteger F_ENERGY = BigInteger.valueOf(1).shiftLeft(17); // For
+    // Gunnery/Energy
+    // skill
+    public static final BigInteger F_MISSILE = BigInteger.valueOf(1).shiftLeft(18); // For
+    // Gunnery/Missile
+    // skill
+    public static final BigInteger F_PLASMA = BigInteger.valueOf(1).shiftLeft(19); // For
+    // fires
+    public static final BigInteger F_INCENDIARY_NEEDLES = BigInteger.valueOf(1).shiftLeft(20); // For
+    // fires
+    public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(21); // for
+    // war
+    // of
+    // 3039
     // prototype weapons
-    public static final BigInteger F_HEATASDICE = BigInteger.valueOf(1).shiftLeft(22); // heat is listed in
+    public static final BigInteger F_HEATASDICE = BigInteger.valueOf(1).shiftLeft(22); // heat
+    // is
+    // listed
+    // in
     // dice, not points
-    public static final BigInteger F_AMS = BigInteger.valueOf(1).shiftLeft(23); // Weapon is an anti-missile
+    public static final BigInteger F_AMS = BigInteger.valueOf(1).shiftLeft(23); // Weapon
+    // is
+    // an
+    // anti-missile
     // system.
-    // public static final BigInteger F_UNUSED = BigInteger.valueOf(1).shiftLeft(24);
-    public static final BigInteger F_INFANTRY_ONLY = BigInteger.valueOf(1).shiftLeft(25); // only target
+    // public static final BigInteger F_UNUSED =
+    // BigInteger.valueOf(1).shiftLeft(24);
+    public static final BigInteger F_INFANTRY_ONLY = BigInteger.valueOf(1).shiftLeft(25); // only
+    // target
     // infantry
-    public static final BigInteger F_TAG = BigInteger.valueOf(1).shiftLeft(26); // Target acquisition gear
-    public static final BigInteger F_C3M = BigInteger.valueOf(1).shiftLeft(27); // C3 Master with Target
+    public static final BigInteger F_TAG = BigInteger.valueOf(1).shiftLeft(26); // Target
+    // acquisition
+    // gear
+    public static final BigInteger F_C3M = BigInteger.valueOf(1).shiftLeft(27); // C3
+    // Master
+    // with
+    // Target
     // acquisition gear
-    public static final BigInteger F_PLASMA_MFUK = BigInteger.valueOf(1).shiftLeft(28); // Plasma Rifle
-    public static final BigInteger F_EXTINGUISHER = BigInteger.valueOf(1).shiftLeft(29); // Fire extinguisher
-    public static final BigInteger F_PULSE = BigInteger.valueOf(1).shiftLeft(30); // pulse weapons
-    public static final BigInteger F_BURST_FIRE = BigInteger.valueOf(1).shiftLeft(31); // full damage vs
+    public static final BigInteger F_PLASMA_MFUK = BigInteger.valueOf(1).shiftLeft(28); // Plasma
+    // Rifle
+    public static final BigInteger F_EXTINGUISHER = BigInteger.valueOf(1).shiftLeft(29); // Fire
+    // extinguisher
+    public static final BigInteger F_PULSE = BigInteger.valueOf(1).shiftLeft(30); // pulse
+    // weapons
+    public static final BigInteger F_BURST_FIRE = BigInteger.valueOf(1).shiftLeft(31); // full
+    // damage
+    // vs
     // infantry
-    public static final BigInteger F_MGA = BigInteger.valueOf(1).shiftLeft(32); // machine gun array
+    public static final BigInteger F_MGA = BigInteger.valueOf(1).shiftLeft(32); // machine
+    // gun
+    // array
     public static final BigInteger F_NO_AIM = BigInteger.valueOf(1).shiftLeft(33);
     public static final BigInteger F_BOMBAST_LASER = BigInteger.valueOf(1).shiftLeft(34);
     public static final BigInteger F_CRUISE_MISSILE = BigInteger.valueOf(1).shiftLeft(35);
     public static final BigInteger F_B_POD = BigInteger.valueOf(1).shiftLeft(36);
     public static final BigInteger F_TASER = BigInteger.valueOf(1).shiftLeft(37);
-    public static final BigInteger F_ANTI_SHIP = BigInteger.valueOf(1).shiftLeft(38); // for anti-ship missiles
+    public static final BigInteger F_ANTI_SHIP = BigInteger.valueOf(1).shiftLeft(38); // for
+    // anti-ship
+    // missiles
     public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(39);
-    //public static final BigInteger F_ARTILLERY_CANNON = BigInteger.valueOf(1).shiftLeft(40; Not needed
+    // public static final BigInteger F_ARTILLERY_CANNON =
+    // BigInteger.valueOf(1).shiftLeft(40; Not needed
     public static final BigInteger F_DIVE_BOMB = BigInteger.valueOf(1).shiftLeft(41);
     public static final BigInteger F_ALT_BOMB = BigInteger.valueOf(1).shiftLeft(42);
 
-    public static final BigInteger F_BA_WEAPON = BigInteger.valueOf(1).shiftLeft(43); // Currently only used by MML
+    public static final BigInteger F_BA_WEAPON = BigInteger.valueOf(1).shiftLeft(43); // Currently
+    // only
+    // used
+    // by
+    // MML
     public static final BigInteger F_MECH_WEAPON = BigInteger.valueOf(1).shiftLeft(44);
     public static final BigInteger F_AERO_WEAPON = BigInteger.valueOf(1).shiftLeft(45);
     public static final BigInteger F_PROTO_WEAPON = BigInteger.valueOf(1).shiftLeft(46);
@@ -138,7 +205,8 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_SUB_CAPITAL_CANNON = 22;
     public static final int NUM_CLASSES = 23;
 
-    public static String[] classNames = { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon" };
+    public static String[] classNames =
+        { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon" };
 
     // protected RangeType rangeL;
     protected int heat;
@@ -288,7 +356,8 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
         }
-        int[] weaponRanges = { minRange, sRange, mRange, lRange, eRange };
+        int[] weaponRanges =
+            { minRange, sRange, mRange, lRange, eRange };
         return weaponRanges;
     }
 
@@ -313,7 +382,8 @@ public class WeaponType extends EquipmentType {
     }
 
     public int[] getWRanges() {
-        return new int[] { minimumRange, waterShortRange, waterMediumRange, waterLongRange, waterExtremeRange };
+        return new int[]
+            { minimumRange, waterShortRange, waterMediumRange, waterLongRange, waterExtremeRange };
     }
 
     public int getWShortRange() {
@@ -338,9 +408,11 @@ public class WeaponType extends EquipmentType {
 
     public int[] getATRanges() {
         if (capital) {
-            return new int[] { Integer.MIN_VALUE, 12, 24, 40, 50 };
+            return new int[]
+                { Integer.MIN_VALUE, 12, 24, 40, 50 };
         }
-       return new int[] { Integer.MIN_VALUE, 6, 12, 20, 25 };
+        return new int[]
+            { Integer.MIN_VALUE, 6, 12, 20, 25 };
     }
 
     public double getShortAV() {
@@ -390,12 +462,12 @@ public class WeaponType extends EquipmentType {
     public static EquipmentType getSubCapBayType(int atclass) {
         // return the correct weapons bay for the given type of weapon
         switch (atclass) {
-        case (CLASS_CAPITAL_AC):
-            return EquipmentType.get("Sub-Capital Cannon Bay");
-        case (CLASS_CAPITAL_LASER):
-            return EquipmentType.get("Sub-Capital Laser Bay");
-        default:
-            return WeaponType.getBayType(atclass);
+            case (CLASS_CAPITAL_AC):
+                return EquipmentType.get("Sub-Capital Cannon Bay");
+            case (CLASS_CAPITAL_LASER):
+                return EquipmentType.get("Sub-Capital Laser Bay");
+            default:
+                return WeaponType.getBayType(atclass);
         }
     }
 
@@ -403,50 +475,50 @@ public class WeaponType extends EquipmentType {
     public static EquipmentType getBayType(int atclass) {
         // return the correct weapons bay for the given type of weapon
         switch (atclass) {
-        case (CLASS_LASER):
-            return EquipmentType.get("Laser Bay");
-        case (CLASS_POINT_DEFENSE):
-            return EquipmentType.get("Point Defense Bay");
-        case (CLASS_PPC):
-            return EquipmentType.get("PPC Bay");
-        case (CLASS_PULSE_LASER):
-            return EquipmentType.get("Pulse Laser Bay");
-        case (CLASS_ARTILLERY):
-            return EquipmentType.get("Artillery Bay");
-        case (CLASS_PLASMA):
-            return EquipmentType.get("Plasma Bay");
-        case (CLASS_AC):
-            return EquipmentType.get("AC Bay");
-        case (CLASS_LBX_AC):
-            return EquipmentType.get("LBX AC Bay");
-        case (CLASS_LRM):
-            return EquipmentType.get("LRM Bay");
-        case (CLASS_SRM):
-            return EquipmentType.get("SRM Bay");
-        case (CLASS_MRM):
-            return EquipmentType.get("MRM Bay");
-        case (CLASS_MML):
-            return EquipmentType.get("MML Bay");
-        case (CLASS_ATM):
-            return EquipmentType.get("ATM Bay");
-        case (CLASS_ROCKET_LAUNCHER):
-            return EquipmentType.get("Rocket Launcher Bay");
-        case (CLASS_CAPITAL_LASER):
-            return EquipmentType.get("Capital Laser Bay");
-        case (CLASS_CAPITAL_PPC):
-            return EquipmentType.get("Capital PPC Bay");
-        case (CLASS_CAPITAL_AC):
-            return EquipmentType.get("Capital AC Bay");
-        case (CLASS_CAPITAL_GAUSS):
-            return EquipmentType.get("Capital Gauss Bay");
-        case (CLASS_CAPITAL_MISSILE):
-            return EquipmentType.get("Capital Missile Bay");
-        case (CLASS_AR10):
-            return EquipmentType.get("AR10 Bay");
-        case (CLASS_SCREEN):
-            return EquipmentType.get("Screen Launcher Bay");
-        default:
-            return EquipmentType.get("Misc Bay");
+            case (CLASS_LASER):
+                return EquipmentType.get("Laser Bay");
+            case (CLASS_POINT_DEFENSE):
+                return EquipmentType.get("Point Defense Bay");
+            case (CLASS_PPC):
+                return EquipmentType.get("PPC Bay");
+            case (CLASS_PULSE_LASER):
+                return EquipmentType.get("Pulse Laser Bay");
+            case (CLASS_ARTILLERY):
+                return EquipmentType.get("Artillery Bay");
+            case (CLASS_PLASMA):
+                return EquipmentType.get("Plasma Bay");
+            case (CLASS_AC):
+                return EquipmentType.get("AC Bay");
+            case (CLASS_LBX_AC):
+                return EquipmentType.get("LBX AC Bay");
+            case (CLASS_LRM):
+                return EquipmentType.get("LRM Bay");
+            case (CLASS_SRM):
+                return EquipmentType.get("SRM Bay");
+            case (CLASS_MRM):
+                return EquipmentType.get("MRM Bay");
+            case (CLASS_MML):
+                return EquipmentType.get("MML Bay");
+            case (CLASS_ATM):
+                return EquipmentType.get("ATM Bay");
+            case (CLASS_ROCKET_LAUNCHER):
+                return EquipmentType.get("Rocket Launcher Bay");
+            case (CLASS_CAPITAL_LASER):
+                return EquipmentType.get("Capital Laser Bay");
+            case (CLASS_CAPITAL_PPC):
+                return EquipmentType.get("Capital PPC Bay");
+            case (CLASS_CAPITAL_AC):
+                return EquipmentType.get("Capital AC Bay");
+            case (CLASS_CAPITAL_GAUSS):
+                return EquipmentType.get("Capital Gauss Bay");
+            case (CLASS_CAPITAL_MISSILE):
+                return EquipmentType.get("Capital Missile Bay");
+            case (CLASS_AR10):
+                return EquipmentType.get("AR10 Bay");
+            case (CLASS_SCREEN):
+                return EquipmentType.get("Screen Launcher Bay");
+            default:
+                return EquipmentType.get("Misc Bay");
         }
     }
 
@@ -650,6 +722,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLRT10OS());
         EquipmentType.addType(new ISLRT15OS());
         EquipmentType.addType(new ISLRT20OS());
+
         EquipmentType.addType(new CLLRT1());
         EquipmentType.addType(new CLLRT2());
         EquipmentType.addType(new CLLRT3());
@@ -988,6 +1061,53 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new SCLBayWeapon());
         EquipmentType.addType(new SubCapitalMissileBayWeapon());
         EquipmentType.addType(new MiscBayWeapon());
+
+        // Improved OS Weapons
+        EquipmentType.addType(new ISLRM5IOS());
+        EquipmentType.addType(new ISLRM10IOS());
+        EquipmentType.addType(new ISLRM15IOS());
+        EquipmentType.addType(new ISLRM20IOS());
+        EquipmentType.addType(new CLLRM5IOS());
+        EquipmentType.addType(new CLLRM10IOS());
+        EquipmentType.addType(new CLLRM15IOS());
+        EquipmentType.addType(new CLLRM20IOS());
+        EquipmentType.addType(new CLStreakLRM10IOS());
+        EquipmentType.addType(new CLStreakLRM15IOS());
+        EquipmentType.addType(new CLStreakLRM20IOS());
+        EquipmentType.addType(new ISLRT5IOS());
+        EquipmentType.addType(new ISLRT10IOS());
+        EquipmentType.addType(new ISLRT15IOS());
+        EquipmentType.addType(new ISLRT20IOS());
+        EquipmentType.addType(new CLLRT5IOS());
+        EquipmentType.addType(new CLLRT10IOS());
+        EquipmentType.addType(new CLLRT15IOS());
+        EquipmentType.addType(new CLLRT20IOS());
+        EquipmentType.addType(new ISSRM2IOS());
+        EquipmentType.addType(new ISSRM4IOS());
+        EquipmentType.addType(new ISSRM6IOS());
+        EquipmentType.addType(new CLSRM2IOS());
+        EquipmentType.addType(new CLSRM4IOS());
+        EquipmentType.addType(new CLSRM6IOS());
+        EquipmentType.addType(new CLAdvancedSRM2IOS());
+        EquipmentType.addType(new CLAdvancedSRM4IOS());
+        EquipmentType.addType(new CLAdvancedSRM6IOS());
+        EquipmentType.addType(new ISStreakSRM2IOS());
+        EquipmentType.addType(new ISStreakSRM4IOS());
+        EquipmentType.addType(new ISStreakSRM6IOS());
+        EquipmentType.addType(new CLStreakSRM2IOS());
+        EquipmentType.addType(new CLStreakSRM4IOS());
+        EquipmentType.addType(new CLStreakSRM6IOS());
+        EquipmentType.addType(new ISSRT2IOS());
+        EquipmentType.addType(new ISSRT4IOS());
+        EquipmentType.addType(new ISSRT6IOS());
+        EquipmentType.addType(new CLSRT2IOS());
+        EquipmentType.addType(new CLSRT4IOS());
+        EquipmentType.addType(new CLSRT6IOS());
+        EquipmentType.addType(new ISMRM10IOS());
+        EquipmentType.addType(new ISMRM20IOS());
+        EquipmentType.addType(new ISMRM30IOS());
+        EquipmentType.addType(new ISMRM40IOS());
+
     }
 
     @Override

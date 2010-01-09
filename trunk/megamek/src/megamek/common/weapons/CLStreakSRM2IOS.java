@@ -18,35 +18,35 @@ import megamek.common.TechConstants;
 /**
  * @author Sebastian Brocks
  */
-public class CLStreakSRM6OS extends StreakSRMWeapon {
+public class CLStreakSRM2IOS extends StreakSRMWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3098137789514566838L;
+    private static final long serialVersionUID = 2219171972794110915L;
 
     /**
      *
      */
-    public CLStreakSRM6OS() {
+    public CLStreakSRM2IOS() {
         techLevel = TechConstants.T_CLAN_TW;
-        name = "Streak SRM 6 (OS)";
-        setInternalName("CLStreakSRM6 (OS)");
-        addLookupName("Clan Improved OS Streak SRM-6");
-        addLookupName("Clan Streak SRM 6 (OS)");
-        heat = 4;
-        rackSize = 6;
+        name = "Streak SRM 2 (IOS)";
+        setInternalName("CLStreakSRM2 (IOS)");
+        addLookupName("Clan IOS Streak SRM-2");
+        addLookupName("Clan Streak SRM 2 (IOS)");
+        heat = 2;
+        rackSize = 2;
         shortRange = 4;
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 3.5f;
-        criticals = 2;
+        tonnage = 1.0f;
+        criticals = 1;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
-        bv = 24;
-        cost = 120000;
-        shortAV = 12;
-        medAV = 12;
+        bv = 8;
+        cost = 15000;
+        shortAV = 4;
+        medAV = 4;
         maxRange = RANGE_MED;
     }
 }

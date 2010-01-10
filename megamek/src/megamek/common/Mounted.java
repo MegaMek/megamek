@@ -760,6 +760,9 @@ public class Mounted implements Serializable, RoundUpdated {
                     return 15;
                 }
             }
+            if (mtype.hasFlag(MiscType.F_FUEL)) {
+                return 20;
+            }
             return 0;
         }
         // um, otherwise, I'm not sure

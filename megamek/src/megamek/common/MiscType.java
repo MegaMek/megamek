@@ -115,6 +115,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_BATTLE_CLAW = BigInteger.valueOf(1).shiftLeft(72);
     public static final BigInteger F_AP_MOUNT = BigInteger.valueOf(1).shiftLeft(73);
     public static final BigInteger F_MAST_MOUNT = BigInteger.valueOf(1).shiftLeft(74);
+    public static final BigInteger F_FUEL = BigInteger.valueOf(1).shiftLeft(75);
 
 
     // Secondary Flags for Physical Weapons
@@ -3655,6 +3656,36 @@ public class MiscType extends EquipmentType {
         misc.cost = 50000;
         misc.flags = misc.flags.or(F_MAST_MOUNT);
         misc.bv = BV_VARIABLE;
+
+        return misc;
+    }
+
+    public static MiscType createFuel1() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Extendend Fuel Tank(1 ton)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.cost = 500;
+        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.explosive = true;
+
+        return misc;
+    }
+
+    public static MiscType createFuelHalf() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Extended Fuel Tank (0.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.cost = 500;
+        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.explosive = true;
 
         return misc;
     }

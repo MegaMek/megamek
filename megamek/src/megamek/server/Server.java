@@ -2938,11 +2938,10 @@ public class Server implements Runnable {
                 }
             }
             addReport(r);
-
             // write seperator
             addReport(new Report(1200, Report.PUBLIC));
         } else {
-            addReport(new Report(1210, Report.PUBLIC)); // newline
+            addReport(new Report(1210, Report.PUBLIC));
         }
 
         if (game.getOptions().booleanOption("individual_initiative")) {

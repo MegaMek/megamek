@@ -700,6 +700,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLProtoMyomerBooster());
         EquipmentType.addType(MiscType.createCLMastMount());
         EquipmentType.addType(MiscType.createISMastMount());
+        EquipmentType.addType(MiscType.createFuel1());
+        EquipmentType.addType(MiscType.createFuelHalf());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());

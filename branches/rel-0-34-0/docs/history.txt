@@ -7,6 +7,7 @@ v0.34.10-dev (SVN)
 + use double buffering for swing UI (I don't even remember why I disabled it
     in the first place)
 + Bug 2928258: LRM 15 not loading from TDB .xml files
++ Bug 2930686: Plasma rifle vs. fire-resistant armor
 
 v0.34.9 (2009-11-09, 19:32 UTC+1)
 + Bug 2585799: Pilot damage assigned to vehicle crew

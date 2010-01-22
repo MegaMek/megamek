@@ -11917,16 +11917,6 @@ public class Server implements Runnable {
             chargePSR = new PilotingRollData(ae.getId(), 2, "charging");
         }
 
-        // move attacker and target, if possible
-        Coords src = te.getPosition();
-        Coords dest = src.translated(direction);
-
-        if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
-            addNewLines();
-            addReport(doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 2, "was charged")));
-            addReport(doEntityDisplacement(ae, ae.getPosition(), src, chargePSR));
-        }
-
         // Damage To Target
         int damage = ChargeAttackAction.getDamageFor(ae, te, game.getOptions().booleanOption("tacops_charge_damage"), toHit.getMoS());
 
@@ -12066,6 +12056,17 @@ public class Server implements Runnable {
         } else if (ae instanceof Tank) {
             addReport(damageEntity(ae, new HitData(Tank.LOC_FRONT), spikeDamage, false, DamageType.NONE, false, false, throughFront));
         }
+
+        // move attacker and target, if possible
+        Coords src = te.getPosition();
+        Coords dest = src.translated(direction);
+
+        if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
+            addNewLines();
+            addReport(doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 2, "was charged")));
+            addReport(doEntityDisplacement(ae, ae.getPosition(), src, chargePSR));
+        }
+
 
         addNewLines();
 

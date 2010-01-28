@@ -72,8 +72,6 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
             a.setModel("");
         }
         setTechLevel(a);
-
-        a.setVSTOL(true);
         
         if (dataFile.exists("source")) {
             a.setSource(dataFile.getDataAsString("source")[0]);

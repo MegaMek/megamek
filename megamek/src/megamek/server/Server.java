@@ -4659,6 +4659,7 @@ public class Server implements Runnable {
                 a.setMovementMode(EntityMovementMode.AERODYNE);
             }
             a.setPosition(a.getPosition().translated(a.getFacing(), a.getTakeOffLength()));
+            entity.setDone(true);
             entityUpdate(entity.getId());
             return;
         }

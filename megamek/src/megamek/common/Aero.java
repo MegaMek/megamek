@@ -2701,11 +2701,10 @@ public class Aero extends Entity
     }
     
     public boolean canTakeOffHorizontally() {
-        
-        if(isSpheroid()) {
-            return false;
-        }
-        
+        return !isSpheroid();
+    }
+    
+    public boolean hasRoomForHorizontalTakeOff() {
         //walk along the hexes in the facing of the unit
         Coords pos = getPosition();
         IHex hex = game.getBoard().getHex(pos);
@@ -2727,5 +2726,9 @@ public class Aero extends Entity
             }
         }
         return true;
+    }
+    
+    public boolean canTakeOffVertically() {   
+        return isVSTOL() || isSpheroid();
     }
 }

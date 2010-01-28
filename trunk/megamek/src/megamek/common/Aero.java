@@ -2701,18 +2701,28 @@ public class Aero extends Entity
     }
     
     public boolean canTakeOffHorizontally() {
+        
+        if(isSpheroid()) {
+            return false;
+        }
+        
         //walk along the hexes in the facing of the unit
         Coords pos = getPosition();
+        IHex hex = game.getBoard().getHex(pos);
+        int elev = hex.getElevation();
         int facing = getFacing();
         for(int i = 0; i < getTakeOffLength(); i++) {
             pos = pos.translated(facing);
-            IHex hex = game.getBoard().getHex(pos);
+            hex = game.getBoard().getHex(pos);
             //if the hex is null, then we are offboard. Don't let units
             //take off offboard.
             if(null == hex) {
                 return false;
             }
             if(!hex.isClear()) {
+                return false;
+            }
+            if(hex.getElevation() != elev) {
                 return false;
             }
         }

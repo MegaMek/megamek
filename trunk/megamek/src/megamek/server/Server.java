@@ -4546,7 +4546,7 @@ public class Server implements Runnable {
             default:
                 entity.setStartingPos(Board.START_EDGE);
             }
-            this.entityUpdate(entity.getId());
+            entityUpdate(entity.getId());
             return vReport;
         }
 
@@ -4647,6 +4647,20 @@ public class Server implements Runnable {
 
         if (md.contains(MoveStepType.CAREFUL_STAND)) {
             entity.setCarefulStand(true);
+        }
+        
+        if (md.contains(MoveStepType.TAKEOFF) && entity instanceof Aero) {
+            Aero a = (Aero)entity;
+            a.setCurrentVelocity(1);
+            a.setAltitude(1);
+            if(a.isSpheroid()) {
+                a.setMovementMode(EntityMovementMode.SPHEROID);
+            } else {
+                a.setMovementMode(EntityMovementMode.AERODYNE);
+            }
+            a.setPosition(a.getPosition().translated(a.getFacing(), a.getTakeOffLength()));
+            entityUpdate(entity.getId());
+            return;
         }
 
         // okay, proceed with movement calculations

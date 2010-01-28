@@ -489,6 +489,16 @@ public class Hex implements IHex, Serializable {
         
     }
     
+    public boolean isClear() {
+        //FIXME: for now just return true, need to loop through terrain anything but paved and fluff returns false
+        for(int i = 0; i < Terrains.SIZE; i++) {
+            if(containsTerrain(i) && i != Terrains.PAVEMENT) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
     public int getFireTurn() {
         return fireTurn;
     }

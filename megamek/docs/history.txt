@@ -25,6 +25,10 @@ v0.35.12-dev (SVN)
 + Bug 2933643: Charge should do damage first, displace later
 + Aero horizontal liftoff (partial)
 + RFE 2898899: Option for the old, simple Unit Viewer
++ added missing messages for horizontal liftoff
++ Bug: dropships not treated as VSTOL
++ Bug: spheroid dropships can lift off horizontally
++ Bug: level changes not taken into account for a clear liftoff path
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

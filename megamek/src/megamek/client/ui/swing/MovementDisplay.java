@@ -133,6 +133,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String MOVE_JOIN = "MoveJoin"; //$NON-NLS-1$
     public static final String MOVE_FLY_OFF = "MoveOff"; //$NON-NLS-1$
     public static final String MOVE_TAKE_OFF = "MoveTakeOff"; //$NON-NLS-1$
+    public static final String MOVE_VERT_TAKE_OFF = "MoveVertTakeOff"; //$NON-NLS-1$
     public static final String MOVE_LAND = "MoveLand"; //$NON-NLS-1$
     // Aero Vector Movement
     public static final String MOVE_TURN_LEFT = "MoveTurnLeft"; //$NON-NLS-1$
@@ -187,6 +188,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private JButton butManeuver;
     private JButton butJoin;
     private JButton butTakeOff;
+    private JButton butVTakeOff;
 
     private JButton butTurnLeft;
     private JButton butTurnRight;
@@ -470,6 +472,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butTakeOff.setEnabled(false);
         butTakeOff.setActionCommand(MOVE_TAKE_OFF);
         butTakeOff.addKeyListener(this);
+        
+        butVTakeOff = new JButton(Messages.getString("MovementDisplay.butVTakeOff")); //$NON-NLS-1$
+        butVTakeOff.addActionListener(this);
+        butVTakeOff.setEnabled(false);
+        butVTakeOff.setActionCommand(MOVE_VERT_TAKE_OFF);
+        butVTakeOff.addKeyListener(this);
 
         butManeuver = new JButton(Messages
                 .getString("MovementDisplay.butManeuver")); //$NON-NLS-1$
@@ -532,7 +540,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsMech.add(butEject);
         buttonsMech.add(butFlee);
         buttonsMech.add(butRAC);
-        buttonsTank = new ArrayList<JButton>(18);
+        
+        buttonsTank = new ArrayList<JButton>(19);
         buttonsTank.add(butWalk);
         buttonsTank.add(butBackup);
         buttonsTank.add(butTurn);
@@ -551,6 +560,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsTank.add(butLayMine);
         buttonsTank.add(butShakeOff);
         buttonsTank.add(butTakeOff);
+        buttonsTank.add(butVTakeOff);
       
         buttonsVtol = new ArrayList<JButton>(15);
         buttonsVtol.add(butWalk);
@@ -809,7 +819,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateSearchlightButton();
         updateLoadButtons();
         updateElevationButtons();
-        updateTakeOffButton();
+        updateTakeOffButtons();
         updateJoinButton();
         updateRecoveryButton();
         updateDumpButton();
@@ -957,6 +967,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setHoverEnabled(false);
         setJoinEnabled(false);
         setTakeOffEnabled(false);
+        setVTakeOffEnabled(false);
     }
 
     /**
@@ -990,7 +1001,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateRACButton();
         updateSearchlightButton();
         updateElevationButtons();
-        updateTakeOffButton();
+        updateTakeOffButtons();
         updateFlyOffButton();
         updateLaunchButton();
         updateRecklessButton();
@@ -1479,7 +1490,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateSearchlightButton();
             updateLoadButtons();
             updateElevationButtons();
-            updateTakeOffButton();
+            updateTakeOffButtons();
             updateEvadeButton();
             updateFlyOffButton();
             updateLaunchButton();
@@ -1567,12 +1578,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 .getFinalCoords()));
     }
     
-    private synchronized void updateTakeOffButton() {
+    private synchronized void updateTakeOffButtons() {
         
         if(null != cmd && cmd.length() > 0) {
             //you can't take off if you have already moved
             //http://www.classicbattletech.com/forums/index.php?topic=54112.0
             setTakeOffEnabled(false);
+            setVTakeOffEnabled(false);
             return;
         }
         
@@ -1584,11 +1596,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if(ce instanceof Aero) {
             if(ce.isAirborne()) {
                 setTakeOffEnabled(false);
+                setVTakeOffEnabled(false);
             } else {
                 setTakeOffEnabled(((Aero)ce).canTakeOffHorizontally());
+                setVTakeOffEnabled(((Aero)ce).canTakeOffVertically());
             }
         } else {
             setTakeOffEnabled(false);
+            setVTakeOffEnabled(false);
         }
     }
 
@@ -3087,21 +3102,25 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(MOVE_DUMP)) {
             dumpBombs();
         }
-        else if (ev.getActionCommand().equals(MOVE_TAKE_OFF)
-                && clientgui
-                        .doYesNoDialog(
-                                Messages
-                                        .getString("MovementDisplay.TakeOffDialog.title"), Messages.getString("MovementDisplay.TakeOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
-            clear();
-            cmd.addStep(MoveStepType.TAKEOFF);
-            ready();
+        else if (ev.getActionCommand().equals(MOVE_TAKE_OFF)) {          
+            if(ce() instanceof Aero && !((Aero)ce()).hasRoomForHorizontalTakeOff()) {
+                String title = Messages.getString("MovementDisplay.NoTakeOffDialog.title"); //$NON-NLS-1$
+                String body = Messages.getString("MovementDisplay.NoTakeOffDialog.message", new Object[] {((Aero)ce()).getTakeOffLength()}); //$NON-NLS-1$
+                clientgui.doAlertDialog(title, body);
+            } else {
+                if(clientgui.doYesNoDialog(Messages.getString("MovementDisplay.TakeOffDialog.title"), Messages.getString("MovementDisplay.TakeOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                    clear();
+                    cmd.addStep(MoveStepType.TAKEOFF);
+                    ready();
+                }
+            }
         }
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();
         updateLoadButtons();
         updateElevationButtons();
-        updateTakeOffButton();
+        updateTakeOffButtons();
         updateFlyOffButton();
         updateLaunchButton();
         updateRecklessButton();
@@ -3489,7 +3508,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     
     private void setTakeOffEnabled(boolean enabled) {
         butTakeOff.setEnabled(enabled);
-        clientgui.getMenuBar().setMoveHoverEnabled(enabled);
+        //clientgui.getMenuBar().setMoveTakeOffEnabled(enabled);
+    }
+    
+    private void setVTakeOffEnabled(boolean enabled) {
+        butVTakeOff.setEnabled(enabled);
+        //clientgui.getMenuBar().setMoveVTakeOffEnabled(enabled);
     }
 
     private void setManeuverEnabled(boolean enabled) {

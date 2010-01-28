@@ -67,8 +67,6 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("source")) {
             a.setSource(dataFile.getDataAsString("source")[0]);
         }
-
-        a.setVSTOL(true);
         
         setTechLevel(a);
 

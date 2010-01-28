@@ -733,7 +733,7 @@ public class MoveStep implements Serializable {
             setMp(entity.getRunMP() - entity.getWalkMP());
             break;
         case TAKEOFF:
-            setMp(2);
+            setMp(0);
             break;
         case LAND:
             setMp(2);
@@ -1837,6 +1837,11 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
+
+        if (isFirstStep() && stepType == MoveStepType.TAKEOFF) {
+            movementType = EntityMovementType.MOVE_SAFE_THRUST;
+        } else 
+        
         // VTOLs with a damaged flight stabiliser can't flank
         if ((entity instanceof VTOL)
                 && (movementType == EntityMovementType.MOVE_VTOL_RUN)
@@ -2044,25 +2049,6 @@ public class MoveStep implements Serializable {
         } else if (stepType == MoveStepType.HULL_DOWN) {
             setProne(false);
             setHullDown(true);
-        }
-
-        // update flying state
-        if (stepType == MoveStepType.TAKEOFF) {
-            movementType = EntityMovementType.MOVE_FLYING;
-            // taking off while prone allowed? I would guess not.
-            if (!isFirstStep() || isFlying || isProne) { // can't takeoff
-                // while flying.
-                movementType = EntityMovementType.MOVE_ILLEGAL;
-            }
-        } else if (stepType == MoveStepType.LAND) { // this must be the last
-            // step.
-            if (!isFlying || (getElevation() == 0)) { // must be flying, how else
-                // would we land?
-                movementType = EntityMovementType.MOVE_ILLEGAL;
-            } else {
-                movementType = EntityMovementType.MOVE_FLYING;
-                danger = true; // langing requiers a roll. (at -4)
-            }
         }
 
         if ( entity.isCarefulStand() ) {

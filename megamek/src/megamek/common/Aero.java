@@ -2692,4 +2692,30 @@ public class Aero extends Entity
         setCurrentVelocity(0);
         setNextVelocity(0);
     }
+    
+    public int getTakeOffLength() {
+        if(isVSTOL()) {
+            return 10;
+        }
+        return 20;
+    }
+    
+    public boolean canTakeOffHorizontally() {
+        //walk along the hexes in the facing of the unit
+        Coords pos = getPosition();
+        int facing = getFacing();
+        for(int i = 0; i < getTakeOffLength(); i++) {
+            pos = pos.translated(facing);
+            IHex hex = game.getBoard().getHex(pos);
+            //if the hex is null, then we are offboard. Don't let units
+            //take off offboard.
+            if(null == hex) {
+                return false;
+            }
+            if(!hex.isClear()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

@@ -4653,12 +4653,7 @@ public class Server implements Runnable {
         if (md.contains(MoveStepType.TAKEOFF) && entity instanceof Aero) {
             Aero a = (Aero)entity;
             a.setCurrentVelocity(1);
-            a.setAltitude(1);
-            if(a.isSpheroid()) {
-                a.setMovementMode(EntityMovementMode.SPHEROID);
-            } else {
-                a.setMovementMode(EntityMovementMode.AERODYNE);
-            }
+            a.liftOff(1);
             a.setPosition(a.getPosition().translated(a.getFacing(), a.getTakeOffLength()));
             entity.setDone(true);
             entityUpdate(entity.getId());
@@ -4670,12 +4665,7 @@ public class Server implements Runnable {
             rollTarget = a.checkVerticalTakeOff();
             if (doVerticalTakeOffCheck(entity, rollTarget)) {      
                 a.setCurrentVelocity(0);
-                a.setAltitude(1);
-                if(a.isSpheroid()) {
-                    a.setMovementMode(EntityMovementMode.SPHEROID);
-                } else {
-                    a.setMovementMode(EntityMovementMode.AERODYNE);
-                }
+                a.liftOff(1);
             }
             entity.setDone(true);
             entityUpdate(entity.getId());

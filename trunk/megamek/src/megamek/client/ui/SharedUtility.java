@@ -124,6 +124,12 @@ public class SharedUtility {
 
             final IHex curHex = game.getBoard().getHex(curPos);
 
+            //check for vertical takeoff
+            if(step.getType() == MoveStepType.VTAKEOFF && entity instanceof Aero) {
+                rollTarget = ((Aero)entity).checkVerticalTakeOff();
+                checkNag(rollTarget, nagReport, psrList);
+            }
+            
             //check for leap
             if(!lastPos.equals(curPos) && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
                     && (entity instanceof Mech) && game.getOptions().booleanOption("tacops_leaping")) {

@@ -4620,6 +4620,7 @@ public class Server implements Runnable {
     private void processMovement(Entity entity, MovePath md) {
         Report r;
         boolean sideslipped = false; // for VTOL sideslipping
+        PilotingRollData rollTarget;
 
         // check for fleeing
         if (md.contains(MoveStepType.FLEE)) {
@@ -4663,6 +4664,23 @@ public class Server implements Runnable {
             entityUpdate(entity.getId());
             return;
         }
+        
+        if (md.contains(MoveStepType.VTAKEOFF) && entity instanceof Aero) {
+            Aero a = (Aero)entity;
+            rollTarget = a.checkVerticalTakeOff();
+            if (doVerticalTakeOffCheck(entity, rollTarget)) {      
+                a.setCurrentVelocity(0);
+                a.setAltitude(1);
+                if(a.isSpheroid()) {
+                    a.setMovementMode(EntityMovementMode.SPHEROID);
+                } else {
+                    a.setMovementMode(EntityMovementMode.AERODYNE);
+                }
+            }
+            entity.setDone(true);
+            entityUpdate(entity.getId());
+            return;
+        }
 
         // okay, proceed with movement calculations
         Coords lastPos = entity.getPosition();
@@ -4692,7 +4710,6 @@ public class Server implements Runnable {
         final boolean isInfantry = entity instanceof Infantry;
         AttackAction charge = null;
         RamAttackAction ram = null;
-        PilotingRollData rollTarget;
         // cache this here, otherwise changing MP in the turn causes
         // errorneous gravity PSRs
         int cachedGravityLimit = -1;
@@ -7923,6 +7940,106 @@ public class Server implements Runnable {
         return suc;
     }
 
+    /**
+     * Do a piloting skill check to take off vertically
+     *
+     * @param entity
+     *            The <code>Entity</code> that should make the PSR
+     * @param roll
+     *            The <code>PilotingRollData</code> to be used for this PSR.
+     *
+     * @return true if check succeeds, false otherwise.
+     *
+     */
+    private boolean doVerticalTakeOffCheck(Entity entity, PilotingRollData roll) {
+
+        if(!(entity instanceof Aero)) {
+            return false;
+        }
+        
+        Aero a = (Aero)entity;
+        
+        if (roll.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+            return true;
+        }
+
+        // okay, print the info
+        Report r = new Report(9320);
+        r.subject = entity.getId();
+        r.addDesc(entity);
+        r.add(roll.getLastPlainDesc(), true);
+        addReport(r);
+
+        // roll
+        final int diceRoll = Compute.d6(2);
+        r = new Report(9321);
+        r.subject = entity.getId();
+        r.add(roll.getValueAsString());
+        r.add(roll.getDesc());
+        r.add(diceRoll);
+        r.newlines = 0;
+        addReport(r);
+        boolean suc = false;
+        if (diceRoll < roll.getValue()) {
+            int mof = roll.getValue() - diceRoll;
+            if(mof < 3) {
+                r = new Report(9322);
+                r.subject = entity.getId();
+                addReport(r);
+                suc = true;
+            } else if(mof < 5) {
+                PilotingRollData newRoll = entity.getBasePilotingRoll();
+                if(Compute.d6(2) >= newRoll.getValue()) {
+                    r = new Report(9322);
+                    r.subject = entity.getId();
+                    addReport(r);
+                    suc = true;
+                } else {
+                    r = new Report(9323);
+                    r.subject = entity.getId();
+                    addReport(r);
+                    int damage = 20;
+                    while (damage > 0) {
+                        addReport(damageEntity(entity, entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_REAR),
+                                Math.min(5, damage)));
+                        damage -= 5;
+                    }
+                }
+            } else if(mof < 6) { 
+                r = new Report(9323);
+                r.subject = entity.getId();
+                addReport(r);
+                int damage = 50;
+                while (damage > 0) {
+                    addReport(damageEntity(entity, entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_REAR),
+                            Math.min(5, damage)));
+                    damage -= 5;
+                }
+            } else {
+                r = new Report(9323);
+                r.subject = entity.getId();
+                addReport(r);
+                int damage = 100;
+                while (damage > 0) {
+                    addReport(damageEntity(entity, entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_REAR),
+                            Math.min(5, damage)));
+                    damage -= 5;
+                }
+            }
+            a.setGearHit(true);
+            r = new Report(9125);
+            r.subject = entity.getId();
+            addReport(r);
+        } else {
+            r = new Report(9322);
+            r.subject = entity.getId();
+            addReport(r);
+            suc = true;
+        }
+
+        return suc;
+    }
+    
     /**
      * Do a piloting skill check in space to do a successful maneuver Failure
      * means moving forward half velocity

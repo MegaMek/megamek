@@ -2733,6 +2733,7 @@ public class Aero extends Entity
             setMovementMode(EntityMovementMode.AERODYNE);
         }
         setAltitude(altitude);
+        secondaryPositions.clear();
     }
 
     public void land() {

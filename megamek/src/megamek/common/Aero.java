@@ -224,6 +224,28 @@ public class Aero extends Entity
 
         return j;
     }
+    
+    /**
+     * Thi is the same as getWalkMP, but does not divide by 2 when grounded
+     * @return
+     */
+    public int getCurrentThrust() {
+        int j = getOriginalWalkMP();
+        j = Math.max(0, j - getCargoMpReduction());
+        if(null != game) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            if(weatherMod != 0) {
+                j = Math.max(j + weatherMod, 0);
+            }
+        }
+        //get bomb load
+        j = Math.max(0, j - (int)Math.ceil(getBombPoints()/5.0));
+
+        if ( hasModularArmor() ) {
+            j--;
+        }
+        return j;
+    }
 
     /**
      * Returns the number of locations in the entity
@@ -1965,6 +1987,34 @@ public class Aero extends Entity
         }
         return roll;
     }
+    
+    public PilotingRollData checkVerticalTakeOff() {
+        PilotingRollData roll = getBasePilotingRoll(EntityMovementType.MOVE_SAFE_THRUST);
+
+        if(isGearHit()) {
+            roll.addModifier(+1, "landing gear damaged");
+        }
+        
+        if((getLeftThrustHits() + getRightThrustHits()) > 0) {
+            roll.addModifier(+3, "Maneuvering thrusters damaged");
+        }
+        
+        //Supposed to be -1 for lifting off from an "airfield or landing pad."
+        //We will just treat this as having paved terrain
+        Coords pos = getPosition();
+        IHex hex = game.getBoard().getHex(pos);
+        if(null != hex && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
+            roll.addModifier(-1, "on landing pad");
+        }
+        
+        if(!(this instanceof SmallCraft)) {
+            roll.addModifier(+2, "Fighter making vertical liftoff");
+        }
+        
+        //TODO: Taking off from a crater? What constitutes a crater?
+        
+        return roll;
+    }
 
     /**
      * Checks if a maneuver requires a control roll
@@ -2701,7 +2751,7 @@ public class Aero extends Entity
     }
     
     public boolean canTakeOffHorizontally() {
-        return !isSpheroid();
+        return !isSpheroid() && getCurrentThrust() > 0;
     }
     
     public boolean hasRoomForHorizontalTakeOff() {
@@ -2729,6 +2779,6 @@ public class Aero extends Entity
     }
     
     public boolean canTakeOffVertically() {   
-        return isVSTOL() || isSpheroid();
+        return (isVSTOL() || isSpheroid()) && getCurrentThrust() > 2;
     }
 }

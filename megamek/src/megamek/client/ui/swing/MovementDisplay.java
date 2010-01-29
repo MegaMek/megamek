@@ -3115,6 +3115,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 }
             }
         }
+        else if (ev.getActionCommand().equals(MOVE_VERT_TAKE_OFF)) {          
+            if(clientgui.doYesNoDialog(Messages.getString("MovementDisplay.TakeOffDialog.title"), Messages.getString("MovementDisplay.TakeOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                clear();
+                cmd.addStep(MoveStepType.VTAKEOFF);
+                ready();
+            }
+        }
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();

@@ -289,6 +289,8 @@ public class MoveStep implements Serializable {
             return "CM-";
         case TAKEOFF:
             return "Takeoff";
+        case VTAKEOFF:
+            return "Vertical Takeoff";
         case LAND:
             return "Landing";
         default:
@@ -733,6 +735,7 @@ public class MoveStep implements Serializable {
             setMp(entity.getRunMP() - entity.getWalkMP());
             break;
         case TAKEOFF:
+        case VTAKEOFF:
             setMp(0);
             break;
         case LAND:
@@ -1838,7 +1841,7 @@ public class MoveStep implements Serializable {
         }
 
 
-        if (isFirstStep() && stepType == MoveStepType.TAKEOFF) {
+        if (isFirstStep() && (stepType == MoveStepType.TAKEOFF || stepType == MoveStepType.VTAKEOFF)) {
             movementType = EntityMovementType.MOVE_SAFE_THRUST;
         } else 
         

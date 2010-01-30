@@ -1103,7 +1103,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_INTRO_BOXSET;
         ammo.name = "AC/2 Ammo";
-        ammo.shortName = "AC 2";
+        ammo.shortName = "AC/2";
         ammo.setInternalName("IS Ammo AC/2");
         ammo.addLookupName("ISAC2 Ammo");
         ammo.addLookupName("IS Autocannon/2 Ammo");
@@ -1122,7 +1122,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_INTRO_BOXSET;
         ammo.name = "AC/5 Ammo";
-        ammo.shortName = "AC 5";
+        ammo.shortName = "AC/5";
         ammo.setInternalName("IS Ammo AC/5");
         ammo.addLookupName("ISAC5 Ammo");
         ammo.addLookupName("IS Autocannon/5 Ammo");
@@ -1141,7 +1141,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_INTRO_BOXSET;
         ammo.name = "AC/10 Ammo";
-        ammo.shortName = "AC 10";
+        ammo.shortName = "AC/10";
         ammo.setInternalName("IS Ammo AC/10");
         ammo.addLookupName("ISAC10 Ammo");
         ammo.addLookupName("IS Autocannon/10 Ammo");
@@ -1160,7 +1160,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "AC/15 Ammo";
-        ammo.shortName = "AC 15";
+        ammo.shortName = "AC/15";
         ammo.setInternalName("IS Ammo AC/15");
         ammo.addLookupName("ISAC15 Ammo");
         ammo.addLookupName("IS Autocannon/15 Ammo");
@@ -1179,7 +1179,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_INTRO_BOXSET;
         ammo.name = "AC/20 Ammo";
-        ammo.shortName = "AC 20";
+        ammo.shortName = "AC/20";
         ammo.setInternalName("IS Ammo AC/20");
         ammo.addLookupName("ISAC20 Ammo");
         ammo.addLookupName("IS Autocannon/20 Ammo");
@@ -2256,7 +2256,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "Rotary AC/2 Ammo";
-        ammo.shortName = "RAC 2";
+        ammo.shortName = "RAC/2";
         ammo.setInternalName("ISRotaryAC2 Ammo");
         ammo.addLookupName("IS Rotary AC/2 Ammo");
         ammo.damagePerShot = 1;
@@ -2274,7 +2274,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "Rotary AC/5 Ammo";
-        ammo.shortName = "RAC 5";
+        ammo.shortName = "RAC/5";
         ammo.setInternalName("ISRotaryAC5 Ammo");
         ammo.addLookupName("IS Rotary AC/5 Ammo");
         ammo.damagePerShot = 1;
@@ -2292,7 +2292,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "Rotary AC/10 Ammo";
-        ammo.shortName = "RAC 10";
+        ammo.shortName = "RAC/10";
         ammo.setInternalName("ISRotaryAC10 Ammo");
         ammo.addLookupName("IS Rotary AC/10 Ammo");
         ammo.damagePerShot = 1;
@@ -2310,7 +2310,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "Rotary AC/20 Ammo";
-        ammo.shortName = "RAC 20";
+        ammo.shortName = "RAC/20";
         ammo.setInternalName("ISRotaryAC20 Ammo");
         ammo.addLookupName("IS Rotary AC/20 Ammo");
         ammo.damagePerShot = 1;
@@ -3179,7 +3179,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         ammo.name = "Rotary AC/2 Ammo";
-        ammo.shortName = "RAC 2";
+        ammo.shortName = "RAC/2";
         ammo.setInternalName("CLRotaryAC2 Ammo");
         ammo.addLookupName("CL Rotary AC/2 Ammo");
         ammo.addLookupName("Rotary Assault Cannon/2 Ammo");
@@ -3198,7 +3198,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         ammo.name = "Rotary AC/5 Ammo";
-        ammo.shortName = "RAC 5";
+        ammo.shortName = "RAC/5";
         ammo.setInternalName("CLRotaryAC5 Ammo");
         ammo.addLookupName("CL Rotary AC/5 Ammo");
         ammo.addLookupName("Rotary Assault Cannon/5 Ammo");
@@ -3217,7 +3217,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_UNOFFICIAL;
         ammo.name = "Rotary AC/10 Ammo";
-        ammo.shortName = "RAC 10";
+        ammo.shortName = "RAC/10";
         ammo.setInternalName("CLRotaryAC10 Ammo");
         ammo.addLookupName("CL Rotary AC/10 Ammo");
         ammo.addLookupName("Rotary Assault Cannon/10 Ammo");
@@ -3236,7 +3236,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_UNOFFICIAL;
         ammo.name = "Rotary AC/20 Ammo";
-        ammo.shortName = "RAC 20";
+        ammo.shortName = "RAC/20";
         ammo.setInternalName("CLRotaryAC20 Ammo");
         ammo.addLookupName("CL Rotary AC/20 Ammo");
         ammo.addLookupName("Rotary Assault Cannon/20 Ammo");
@@ -5930,7 +5930,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "LAC/2 Ammo";
-        ammo.shortName = "LAC 2";
+        ammo.shortName = "LAC/2";
         ammo.setInternalName("IS Ammo LAC/2");
         ammo.addLookupName("ISLAC2 Ammo");
         ammo.addLookupName("IS Light Autocannon/2 Ammo");
@@ -5950,7 +5950,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "LAC/5 Ammo";
-        ammo.shortName = "LAC 5";
+        ammo.shortName = "LAC/5";
         ammo.setInternalName("IS Ammo LAC/5");
         ammo.addLookupName("ISLAC5 Ammo");
         ammo.addLookupName("IS Light Autocannon/5 Ammo");
@@ -5970,7 +5970,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "LAC/10 Ammo";
-        ammo.shortName = "LAC 10";
+        ammo.shortName = "LAC/10";
         ammo.setInternalName("IS Ammo LAC/10");
         ammo.addLookupName("ISLAC10 Ammo");
         ammo.addLookupName("IS Light Autocannon/10 Ammo");
@@ -5990,7 +5990,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "LAC/20 Ammo";
-        ammo.shortName = "LAC 20";
+        ammo.shortName = "LAC/20";
         ammo.setInternalName("IS Ammo LAC/20");
         ammo.addLookupName("ISLAC20 Ammo");
         ammo.addLookupName("IS Light Autocannon/20 Ammo");
@@ -6010,7 +6010,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         ammo.name = "HVAC/2 Ammo";
-        ammo.shortName = "HVAC 2";
+        ammo.shortName = "HVAC/2";
         ammo.setInternalName("IS Ammo HVAC/2");
         ammo.addLookupName("ISHVAC2 Ammo");
         ammo.addLookupName("IS Hyper Velocity Autocannon/2 Ammo");
@@ -6030,7 +6030,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         ammo.name = "HVAC/5 Ammo";
-        ammo.shortName = "HVAC 5";
+        ammo.shortName = "HVAC/5";
         ammo.setInternalName("IS Ammo HVAC/5");
         ammo.addLookupName("ISHVAC5 Ammo");
         ammo.addLookupName("IS Hyper Velocity Autocannon/5 Ammo");
@@ -6050,7 +6050,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         ammo.name = "HVAC/10 Ammo";
-        ammo.shortName = "HVAC 10";
+        ammo.shortName = "HVAC/10";
         ammo.setInternalName("IS Ammo HVAC/10");
         ammo.addLookupName("ISHVAC10 Ammo");
         ammo.addLookupName("IS Hyper Velocity Autocannon/10 Ammo");
@@ -7689,7 +7689,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "AC/10i Ammo";
-        ammo.shortName = "AC 10i";
+        ammo.shortName = "AC/10i";
         ammo.setInternalName("IS Ammo AC/10i");
         ammo.addLookupName("ISAC10i Ammo");
         ammo.addLookupName("IS Autocannon/10i Ammo");
@@ -7708,7 +7708,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "GAC/2 Ammo";
-        ammo.shortName = "GAC 2";
+        ammo.shortName = "GAC/2";
         ammo.setInternalName("IS Ammo GAC/2");
         ammo.addLookupName("ISGAC2 Ammo");
         ammo.addLookupName("IS Gatling AC/2 Ammo");
@@ -7727,7 +7727,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "GAC/4 Ammo";
-        ammo.shortName = "GAC 4";
+        ammo.shortName = "GAC/4";
         ammo.setInternalName("IS Ammo GAC/4");
         ammo.addLookupName("ISGAC4 Ammo");
         ammo.addLookupName("IS Gatling AC/4 Ammo");
@@ -7746,7 +7746,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "GAC/6 Ammo";
-        ammo.shortName = "GAC 6";
+        ammo.shortName = "GAC/6";
         ammo.setInternalName("IS Ammo GAC/6");
         ammo.addLookupName("ISGAC6 Ammo");
         ammo.addLookupName("IS Gatling AC/6 Ammo");
@@ -7765,7 +7765,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "GAC/8 Ammo";
-        ammo.shortName = "GAC 8";
+        ammo.shortName = "GAC/8";
         ammo.setInternalName("IS Ammo GAC/8");
         ammo.addLookupName("ISGAC8 Ammo");
         ammo.addLookupName("IS Gatling AC/8 Ammo");

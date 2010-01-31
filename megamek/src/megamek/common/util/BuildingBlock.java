@@ -34,7 +34,8 @@ import java.io.InputStreamReader;
 import java.util.Vector;
 
 /**
- * buildingBlock is based on a file format I used in an online game. The original was written in PHP, this one is more robust, and written in Java.
+ * buildingBlock is based on a file format I used in an online game. The
+ * original was written in PHP, this one is more robust, and written in Java.
  */
 public class BuildingBlock {
 
@@ -51,10 +52,13 @@ public class BuildingBlock {
     }
 
     /**
-     * Creates a new buildingBlock and fills it with the data in the String[] array.
+     * Creates a new buildingBlock and fills it with the data in the String[]
+     * array.
      * 
      * @param data
-     *            This is most usefull for storing one block file inside another...but <I>data</I> can be an array of anything...such as comments.
+     *            This is most usefull for storing one block file inside
+     *            another...but <I>data</I> can be an array of anything...such
+     *            as comments.
      */
     public BuildingBlock(String[] data) {
         rawData = new Vector<String>();
@@ -100,7 +104,7 @@ public class BuildingBlock {
 
                 // check for blank lines & comment lines...
                 // don't add them to the rawData if they are
-                if (data.length() > 0 && !data.startsWith("" + BuildingBlock.comment)) {
+                if ((data.length() > 0) && !data.startsWith("" + BuildingBlock.comment)) {
                     rawData.add(data);
                 }
             }
@@ -113,8 +117,9 @@ public class BuildingBlock {
     }
 
     /**
-     * Finds the starting index of a block. This is used by the class to locate data, but is a public function that can be useful if you know what you want to
-     * do with the <CODE>rawData</CODE> Vector.
+     * Finds the starting index of a block. This is used by the class to locate
+     * data, but is a public function that can be useful if you know what you
+     * want to do with the <CODE>rawData</CODE> Vector.
      * 
      * @param blockName
      *            The name of the data block to locate.
@@ -141,7 +146,7 @@ public class BuildingBlock {
 
             // look for "<blockName>"
             try {
-                if (line.length() >= 3 && line.equalsIgnoreCase(key)) {
+                if ((line.length() >= 3) && line.equalsIgnoreCase(key)) {
                     startIndex = ++lineNum;
                     break;
                 }
@@ -162,8 +167,9 @@ public class BuildingBlock {
     }
 
     /**
-     * Finds the starting index of a block. This is used by the class to locate data, but is a public function that can be useful if you know what you want to
-     * do with the <CODE>rawData</CODE> Vector.
+     * Finds the starting index of a block. This is used by the class to locate
+     * data, but is a public function that can be useful if you know what you
+     * want to do with the <CODE>rawData</CODE> Vector.
      * 
      * @param blockName
      *            The name of the data block to locate.
@@ -189,7 +195,7 @@ public class BuildingBlock {
 
             // look for "</blockName>"
             try {
-                if (line.length() >= 3 && line.equalsIgnoreCase(key)) {
+                if ((line.length() >= 3) && line.equalsIgnoreCase(key)) {
                     endIndex = lineNum;
                     break;
                 }
@@ -224,7 +230,7 @@ public class BuildingBlock {
 
         endIndex = findEndIndex(blockName);
 
-        if (startIndex == -1 || endIndex == -1) {
+        if ((startIndex == -1) || (endIndex == -1)) {
 
             data = new String[1];
             data[0] = "0"; //$NON-NLS-1$
@@ -236,11 +242,14 @@ public class BuildingBlock {
         int size = endIndex - startIndex;
 
         if (size == 0) {
-            data = new String[size + 1]; // add one so we always have at
+            // data = new String[size + 1]; // add one so we always have at
             // least a size 1 array...
-        } else {
-            data = new String[size];
+            data = new String[1];
+            data[0] = "0"; //$NON-NLS-1$
+            return data;
         }
+
+        data = new String[size];
 
         int dataRecord = 0;
 
@@ -264,7 +273,7 @@ public class BuildingBlock {
 
         endIndex = findEndIndex(blockName);
 
-        if (startIndex == -1 || endIndex == -1) {
+        if ((startIndex == -1) || (endIndex == -1)) {
 
             data = new int[1];
             data[0] = 0;
@@ -278,11 +287,13 @@ public class BuildingBlock {
         int size = endIndex - startIndex;
 
         if (size == 0) {
-            data = new int[size + 1]; // add one so we always have at least a
+            // data = new int[size + 1]; // add one so we always have at least a
             // size 1 array...
-        } else {
-            data = new int[size];
+            data = new int[1];
+            data[0] = 0;
+            return data;
         }
+        data = new int[size];
 
         int dataRecord = 0;
 
@@ -291,7 +302,8 @@ public class BuildingBlock {
 
             try {
                 // Bug with people placing , in the fuel strings like 18,000
-                // Should probably change this to a method to weed out all non-numeric
+                // Should probably change this to a method to weed out all
+                // non-numeric
                 // variables but this is the most common.
                 String rawString = rawData.get(rawRecord).toString();
                 if (rawString.indexOf(',') >= 0) {
@@ -320,7 +332,7 @@ public class BuildingBlock {
 
         endIndex = findEndIndex(blockName);
 
-        if (startIndex == -1 || endIndex == -1) {
+        if ((startIndex == -1) || (endIndex == -1)) {
 
             data = new float[1];
             data[0] = 0;
@@ -334,11 +346,14 @@ public class BuildingBlock {
         int size = endIndex - startIndex;
 
         if (size == 0) {
-            data = new float[size + 1]; // add one so we always have at least a
+            // data = new float[size + 1]; // add one so we always have at least
+            // a
             // size 1 array...
-        } else {
-            data = new float[size];
+            data = new float[1];
+            data[0] = 0;
+            return data;
         }
+        data = new float[size];
 
         int dataRecord = 0;
 
@@ -379,7 +394,7 @@ public class BuildingBlock {
 
         endIndex = findEndIndex(blockName);
 
-        if (startIndex == -1 || endIndex == -1) {
+        if ((startIndex == -1) || (endIndex == -1)) {
 
             data = new Vector<String>();
             data.clear();
@@ -401,7 +416,8 @@ public class BuildingBlock {
     }
 
     /**
-     * Clears the <CODE>rawData</CODE> Vector and inserts a default comment and <I>BlockVersion</I> information.
+     * Clears the <CODE>rawData</CODE> Vector and inserts a default comment and
+     * <I>BlockVersion</I> information.
      * 
      * @return Returns true on success.
      */
@@ -675,7 +691,8 @@ public class BuildingBlock {
     }
 
     /**
-     * Tells you the size of an array this thing returned by giving you the number in the [0] position.
+     * Tells you the size of an array this thing returned by giving you the
+     * number in the [0] position.
      * 
      * @param array
      *            The array to get the size of.

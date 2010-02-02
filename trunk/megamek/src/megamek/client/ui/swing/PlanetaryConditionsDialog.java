@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -42,7 +42,7 @@ import megamek.common.PlanetaryConditions;
 
 /**
  * A dialog that allows for customization of planetary conditions
- * 
+ *
  * @author Jay Lawson
  * @version
  */
@@ -52,7 +52,12 @@ public class PlanetaryConditionsDialog extends JDialog implements
     private static final long serialVersionUID = -4426594323169113468L;
 
     private ClientGUI client;
+    private JFrame frame;
     private PlanetaryConditions conditions;
+    public PlanetaryConditions getConditions() {
+        return conditions;
+    }
+
     private JLabel labLight = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labLight"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox choLight = new JComboBox();
@@ -99,7 +104,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
 
     /**
      * Initialize this dialog.
-     * 
+     *
      * @param frame
      *            - the <code>Frame</code> parent of this dialog.
      * @param options
@@ -107,6 +112,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
      */
     private void init(JFrame frame, PlanetaryConditions planetConditions) {
         conditions = (PlanetaryConditions) planetConditions.clone();
+        this.frame = frame;
 
         setupConditions();
         setupButtons();
@@ -152,6 +158,12 @@ public class PlanetaryConditionsDialog extends JDialog implements
                 .getString("PlanetaryConditionsDialog.title"), true); //$NON-NLS-1$
         this.client = client;
         init(client.frame, client.getClient().game.getPlanetaryConditions());
+    }
+
+    public PlanetaryConditionsDialog(JFrame frame, PlanetaryConditions conditions) {
+        super(frame, Messages
+                .getString("PlanetaryConditionsDialog.title"), true); //$NON-NLS-1$
+        init(frame, conditions);
     }
 
     private void setupButtons() {
@@ -209,7 +221,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(fldGrav, c);
         panOptions.add(fldGrav);
-        
+
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labLight, c);
@@ -239,7 +251,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(choWind, c);
         panOptions.add(choWind);
-        
+
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labAtmosphere, c);
@@ -284,7 +296,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(choMinWind, c);
         panOptions.add(choMinWind);
-        
+
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labMaxWind, c);
@@ -366,7 +378,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
 
     }
 
-    public void send() {
+    private void setConditions() {
 
         // make the changes to the planetary conditions
         conditions.setLight(choLight.getSelectedIndex());
@@ -384,8 +396,15 @@ public class PlanetaryConditionsDialog extends JDialog implements
         conditions.setEMI(cEMI.isSelected());
         conditions.setTerrainAffected(cTerrainAffected.isSelected());
 
+        if (client != null) {
+            send();
+        }
+    }
+
+    private void send() {
         client.getClient().sendPlanetaryConditions(conditions);
     }
+
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butOkay) {
@@ -397,7 +416,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
             } catch (NumberFormatException er) {
                 JOptionPane
                         .showMessageDialog(
-                                client.frame,
+                                frame,
                                 Messages
                                         .getString("PlanetaryConditionsDialog.EnterValidTemperature"),
                                 Messages
@@ -410,7 +429,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
             } catch (NumberFormatException er) {
                 JOptionPane
                         .showMessageDialog(
-                                client.frame,
+                                frame,
                                 Messages
                                         .getString("PlanetaryConditionsDialog.EnterValidGravity"),
                                 Messages
@@ -419,10 +438,10 @@ public class PlanetaryConditionsDialog extends JDialog implements
                 return;
             }
 
-            if (temper > 200 || temper < -200) {
+            if ((temper > 200) || (temper < -200)) {
                 JOptionPane
                         .showMessageDialog(
-                                client.frame,
+                                frame,
                                 Messages
                                         .getString("PlanetaryConditionsDialog.EnterValidTemperature"),
                                 Messages
@@ -431,10 +450,10 @@ public class PlanetaryConditionsDialog extends JDialog implements
                 return;
             }
 
-            if (grav < 0.1 || grav > 10.0) {
+            if ((grav < 0.1) || (grav > 10.0)) {
                 JOptionPane
                         .showMessageDialog(
-                                client.frame,
+                                frame,
                                 Messages
                                         .getString("PlanetaryConditionsDialog.EnterValidGravity"),
                                 Messages
@@ -442,7 +461,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
                                 JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             //make sure that the minimum and maximum wind conditions fall within the actual
             if(choWind.getSelectedIndex() < choMinWind.getSelectedIndex()) {
                 choMinWind.setSelectedIndex(choWind.getSelectedIndex());
@@ -454,11 +473,11 @@ public class PlanetaryConditionsDialog extends JDialog implements
             // can't combine certain wind conditions with certain atmospheres
             int wind = choWind.getSelectedIndex();
             int atmo = choAtmosphere.getSelectedIndex();
-            if (atmo == PlanetaryConditions.ATMO_VACUUM
-                    && wind > PlanetaryConditions.WI_NONE) {
+            if ((atmo == PlanetaryConditions.ATMO_VACUUM)
+                    && (wind > PlanetaryConditions.WI_NONE)) {
                 JOptionPane
                         .showMessageDialog(
-                                client.frame,
+                                frame,
                                 Messages
                                         .getString("PlanetaryConditionsDialog.VacuumWind"),
                                 Messages
@@ -466,11 +485,11 @@ public class PlanetaryConditionsDialog extends JDialog implements
                                 JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (atmo == PlanetaryConditions.ATMO_TRACE
-                    && wind > PlanetaryConditions.WI_STORM) {
+            if ((atmo == PlanetaryConditions.ATMO_TRACE)
+                    && (wind > PlanetaryConditions.WI_STORM)) {
                 JOptionPane
                         .showMessageDialog(
-                                client.frame,
+                                frame,
                                 Messages
                                         .getString("PlanetaryConditionsDialog.TraceWind"),
                                 Messages
@@ -478,11 +497,11 @@ public class PlanetaryConditionsDialog extends JDialog implements
                                 JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (atmo == PlanetaryConditions.ATMO_THIN
-                    && wind > PlanetaryConditions.WI_TORNADO_F13) {
+            if ((atmo == PlanetaryConditions.ATMO_THIN)
+                    && (wind > PlanetaryConditions.WI_TORNADO_F13)) {
                 JOptionPane
                         .showMessageDialog(
-                                client.frame,
+                                frame,
                                 Messages
                                         .getString("PlanetaryConditionsDialog.ThinWind"),
                                 Messages
@@ -490,9 +509,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
                                 JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (client != null) {
-                send();
-            }
+            setConditions();
             setVisible(false);
         } else if (e.getSource() == butCancel) {
             refreshConditions();

@@ -477,7 +477,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                 String s = f.getName();
                 int i = s.lastIndexOf('.');
 
-                if (i > 0 && i < s.length() - 1) {
+                if ((i > 0) && (i < s.length() - 1)) {
                     ext = s.substring(i + 1).toLowerCase();
                 }
 
@@ -531,6 +531,13 @@ public class MegaMekGUI implements IMegaMekGUI {
             orig.setValue(opt.getValue());
         }
         god = null;
+
+        // popup planetry conditions dialog
+        PlanetaryConditionsDialog pcd = new PlanetaryConditionsDialog(frame, g.getPlanetaryConditions());
+        pcd.update(g.getPlanetaryConditions());
+        pcd.setVisible(true);
+        g.setPlanetaryConditions(pcd.getConditions());
+        pcd = null;
 
         // get player types and colors set
         Player[] pa = new Player[g.getPlayersVector().size()];

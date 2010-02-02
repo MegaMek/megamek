@@ -37,6 +37,7 @@ v0.35.12-dev (SVN)
 + Bug: NPE when non-linked PPC Cap is checked for BV
 + Made MechFileParser.postLoadInit Public and static.
 + Bug in Coolant Pod BV calculation
++ Added planetary conditions dialog to scenarios
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

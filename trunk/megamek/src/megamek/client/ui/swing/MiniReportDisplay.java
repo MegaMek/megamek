@@ -23,7 +23,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 
 import megamek.client.ui.Messages;
@@ -54,18 +53,15 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
 
         getContentPane().add(BorderLayout.SOUTH, butOkay);
         getContentPane().add(BorderLayout.CENTER, taData);
-        setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(),
-                GUIPreferences.getInstance().getMiniReportSizeHeight());
+        setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(), GUIPreferences.getInstance().getMiniReportSizeHeight());
         doLayout();
-        setLocation(GUIPreferences.getInstance().getMiniReportPosX(),
-                GUIPreferences.getInstance().getMiniReportPosY());
+        setLocation(GUIPreferences.getInstance().getMiniReportPosX(), GUIPreferences.getInstance().getMiniReportPosY());
 
         // closing the window is the same as hitting butOkay
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                actionPerformed(new ActionEvent(butOkay,
-                        ActionEvent.ACTION_PERFORMED, butOkay.getText()));
+                actionPerformed(new ActionEvent(butOkay, ActionEvent.ACTION_PERFORMED, butOkay.getText()));
             }
         });
 
@@ -74,10 +70,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
 
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(butOkay)) {
-            GUIPreferences.getInstance()
-                    .setMiniReportSizeWidth(getSize().width);
-            GUIPreferences.getInstance().setMiniReportSizeHeight(
-                    getSize().height);
+            GUIPreferences.getInstance().setMiniReportSizeWidth(getSize().width);
+            GUIPreferences.getInstance().setMiniReportSizeHeight(getSize().height);
             GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);
             GUIPreferences.getInstance().setMiniReportPosY(getLocation().y);
 

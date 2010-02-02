@@ -67,17 +67,14 @@ import megamek.common.weapons.ISSnubNosePPC;
 public class MechFileParser {
     private Entity m_entity = null;
     private static Vector<String> canonUnitNames = null;
-    private static final File ROOT = new File(PreferenceManager
-            .getClientPreferences().getMechDirectory());
-    private static final File OFFICIALUNITS = new File(ROOT,
-            "OfficialUnitList.txt");
+    private static final File ROOT = new File(PreferenceManager.getClientPreferences().getMechDirectory());
+    private static final File OFFICIALUNITS = new File(ROOT, "OfficialUnitList.txt");
 
     public MechFileParser(File f) throws EntityLoadingException {
         this(f, null);
     }
 
-    public MechFileParser(File f, String entryName)
-            throws EntityLoadingException {
+    public MechFileParser(File f, String entryName) throws EntityLoadingException {
         if (entryName == null) {
             // try normal file
             try {
@@ -85,11 +82,9 @@ public class MechFileParser {
             } catch (Exception ex) {
                 ex.printStackTrace();
                 if (ex instanceof EntityLoadingException) {
-                    throw new EntityLoadingException("While parsing file "
-                            + f.getName() + ", " + ex.getMessage());
+                    throw new EntityLoadingException("While parsing file " + f.getName() + ", " + ex.getMessage());
                 }
-                throw new EntityLoadingException("Exception from "
-                        + ex.getClass() + ": " + ex.getMessage());
+                throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
             }
         } else {
 
@@ -97,22 +92,19 @@ public class MechFileParser {
             ZipFile zFile;
             try {
                 zFile = new ZipFile(f.getAbsolutePath());
-                parse(zFile.getInputStream(zFile.getEntry(entryName)),
-                        entryName);
+                parse(zFile.getInputStream(zFile.getEntry(entryName)), entryName);
             } catch (EntityLoadingException ele) {
                 throw new EntityLoadingException(ele.getMessage());
             } catch (NullPointerException npe) {
                 throw new NullPointerException();
             } catch (Exception ex) {
                 ex.printStackTrace();
-                throw new EntityLoadingException("Exception from "
-                        + ex.getClass() + ": " + ex.getMessage());
+                throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
             }
         }
     }
 
-    public MechFileParser(InputStream is, String fileName)
-            throws EntityLoadingException {
+    public MechFileParser(InputStream is, String fileName) throws EntityLoadingException {
         try {
             parse(is, fileName);
         } catch (Exception ex) {
@@ -120,8 +112,7 @@ public class MechFileParser {
             if (ex instanceof EntityLoadingException) {
                 throw new EntityLoadingException(ex.getMessage());
             }
-            throw new EntityLoadingException("Exception from " + ex.getClass()
-                    + ": " + ex.getMessage());
+            throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
         }
     }
 
@@ -129,8 +120,7 @@ public class MechFileParser {
         return m_entity;
     }
 
-    public void parse(InputStream is, String fileName)
-            throws EntityLoadingException {
+    public void parse(InputStream is, String fileName) throws EntityLoadingException {
         String lowerName = fileName.toLowerCase();
         IMechLoader loader;
 
@@ -148,8 +138,7 @@ public class MechFileParser {
             BuildingBlock bb = new BuildingBlock(is);
             if (bb.exists("UnitType")) {
                 String sType = bb.getDataAsString("UnitType")[0];
-                if (sType.equals("Tank") || sType.equals("Naval")
-                        || sType.equals("Surface") || sType.equals("Hydrofoil")) {
+                if (sType.equals("Tank") || sType.equals("Naval") || sType.equals("Surface") || sType.equals("Hydrofoil")) {
                     loader = new BLKTankFile(bb);
                 } else if (sType.equals("Infantry")) {
                     loader = new BLKInfantryFile(bb);
@@ -163,11 +152,11 @@ public class MechFileParser {
                     loader = new BLKVTOLFile(bb);
                 } else if (sType.equals("GunEmplacement")) {
                     loader = new BLKGunEmplacementFile(bb);
-                } else if (sType.equals("SupportTank")){
+                } else if (sType.equals("SupportTank")) {
                     loader = new BLKSupportTankFile(bb);
-                } else if (sType.equals("LargeSupportTank")){
+                } else if (sType.equals("LargeSupportTank")) {
                     loader = new BLKLargeSupportTankFile(bb);
-                } else if (sType.equals("SupportVTOL")){
+                } else if (sType.equals("SupportVTOL")) {
                     loader = new BLKSupportVTOLFile(bb);
                 } else if (sType.equals("Aero")) {
                     loader = new BLKAeroFile(bb);
@@ -184,15 +173,13 @@ public class MechFileParser {
                 } else if (sType.equals("SpaceStation")) {
                     loader = new BLKSpaceStationFile(bb);
                 } else {
-                    throw new EntityLoadingException("Unknown UnitType: "
-                            + sType);
+                    throw new EntityLoadingException("Unknown UnitType: " + sType);
                 }
             } else {
                 loader = new BLKMechFile(bb);
             }
         } else if (lowerName.endsWith(".dbm")) {
-            throw new EntityLoadingException(
-                    "In order to use mechs from The Drawing Board with MegaMek, you must save your mech as an XML file (look in the 'File' menu of TDB.)  Then use the resulting '.xml' file instead of the '.dbm' file.  Note that only version 2.0.23 or later of TDB is compatible with MegaMek.");
+            throw new EntityLoadingException("In order to use mechs from The Drawing Board with MegaMek, you must save your mech as an XML file (look in the 'File' menu of TDB.)  Then use the resulting '.xml' file instead of the '.dbm' file.  Note that only version 2.0.23 or later of TDB is compatible with MegaMek.");
         } else {
             throw new EntityLoadingException("Unsupported file suffix");
         }
@@ -205,23 +192,23 @@ public class MechFileParser {
      * File-format agnostic location to do post-load initialization on a unit.
      * Automatically add BattleArmorHandles to all OmniMechs.
      */
-    private void postLoadInit(Entity ent) throws EntityLoadingException {
+    public static void postLoadInit(Entity ent) throws EntityLoadingException {
 
-        //add any sensors to the entity's vector of sensors
-        if(ent instanceof Mech) {
-            //all meks get the four basic sensors
+        // add any sensors to the entity's vector of sensors
+        if (ent instanceof Mech) {
+            // all meks get the four basic sensors
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_RADAR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_IR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_MAGSCAN));
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_SEISMIC));
             ent.setNextSensor(ent.getSensors().firstElement());
-        } else if(ent instanceof VTOL) {
+        } else if (ent instanceof VTOL) {
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_RADAR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_IR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAGSCAN));
             ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent instanceof Tank) {
-            //all tanks get the four basic sensors
+            // all tanks get the four basic sensors
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_RADAR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_IR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAGSCAN));
@@ -233,17 +220,14 @@ public class MechFileParser {
         for (Mounted m : ent.getMisc()) {
 
             // Link Artemis IV fire-control systems to their missle racks.
-            if ((m.getType().hasFlag(MiscType.F_ARTEMIS) || (m.getType().hasFlag(MiscType.F_ARTEMIS_V)))
-                    && (m.getLinked() == null)) {
+            if ((m.getType().hasFlag(MiscType.F_ARTEMIS) || (m.getType().hasFlag(MiscType.F_ARTEMIS_V))) && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     // only srm, lrm and mml are valid for artemis
-                    if ((wtype.getAmmoType() != AmmoType.T_LRM)
-                            && (wtype.getAmmoType() != AmmoType.T_MML)
-                            && (wtype.getAmmoType() != AmmoType.T_SRM)) {
+                    if ((wtype.getAmmoType() != AmmoType.T_LRM) && (wtype.getAmmoType() != AmmoType.T_MML) && (wtype.getAmmoType() != AmmoType.T_SRM)) {
                         continue;
                     }
 
@@ -258,9 +242,7 @@ public class MechFileParser {
                         break;
                     }
                     // also, mechs have a special location rule
-                    else if ((ent instanceof Mech)
-                            && (m.getLocation() == Mech.LOC_HEAD)
-                            && (mWeapon.getLocation() == Mech.LOC_CT)) {
+                    else if ((ent instanceof Mech) && (m.getLocation() == Mech.LOC_HEAD) && (mWeapon.getLocation() == Mech.LOC_CT)) {
                         m.setLinked(mWeapon);
                         break;
                     }
@@ -268,14 +250,10 @@ public class MechFileParser {
 
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
-                    throw new EntityLoadingException(
-                            "Unable to match Artemis to launcher");
+                    throw new EntityLoadingException("Unable to match Artemis to launcher");
                 }
             } // End link-Artemis
-            else if ((m.getType().hasFlag(MiscType.F_STEALTH)
-                    || m.getType().hasFlag(MiscType.F_VOIDSIG))
-                    && (m.getLinked() == null)
-                    && (ent instanceof Mech)) {
+            else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType().hasFlag(MiscType.F_VOIDSIG)) && (m.getLinked() == null) && (ent instanceof Mech)) {
                 // Find an ECM suite to link to the stealth system.
                 // Stop looking after we find the first ECM suite.
                 for (Mounted mEquip : ent.getMisc()) {
@@ -289,13 +267,11 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // This mech has stealth armor but no ECM. Probably
                     // an improperly created custom.
-                    throw new EntityLoadingException(
-                            "Unable to find an ECM Suite.  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
+                    throw new EntityLoadingException("Unable to find an ECM Suite.  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
                 }
             } // End link-Stealth
             // Link PPC Capacitor to PPC it its location.
-            else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
-                    && (m.getLinked() == null)) {
+            else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getWeaponList()) {
@@ -314,12 +290,8 @@ public class MechFileParser {
                     // check location
                     if (mWeapon.getLocation() == m.getLocation()) {
 
-                        //Only Legal IS PPC's are allowed.
-                        if ( (mWeapon.getType() instanceof ISPPC)
-                                ||  (mWeapon.getType() instanceof ISLightPPC)
-                                ||  (mWeapon.getType() instanceof ISHeavyPPC)
-                                ||  (mWeapon.getType() instanceof ISERPPC)
-                                ||  (mWeapon.getType() instanceof ISSnubNosePPC) ) {
+                        // Only Legal IS PPC's are allowed.
+                        if ((mWeapon.getType() instanceof ISPPC) || (mWeapon.getType() instanceof ISLightPPC) || (mWeapon.getType() instanceof ISHeavyPPC) || (mWeapon.getType() instanceof ISERPPC) || (mWeapon.getType() instanceof ISSnubNosePPC)) {
                             m.setLinked(mWeapon);
                             break;
                         }
@@ -328,13 +300,11 @@ public class MechFileParser {
 
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
-                    throw new EntityLoadingException(
-                            "Unable to match Capacitor to PPC");
+                    throw new EntityLoadingException("Unable to match Capacitor to PPC");
                 }
             } // End link-PPC Capacitor
             // Link MRM Apollo fire-control systems to their missle racks.
-            else if (m.getType().hasFlag(MiscType.F_APOLLO)
-                    && (m.getLinked() == null)) {
+            else if (m.getType().hasFlag(MiscType.F_APOLLO) && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
@@ -360,59 +330,53 @@ public class MechFileParser {
 
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
-                    throw new EntityLoadingException(
-                            "Unable to match Apollo to launcher");
+                    throw new EntityLoadingException("Unable to match Apollo to launcher");
                 }
             } // End link-Apollo
-            //now find any active probes and add them to the sensor list
-            //choose this sensor if added
-            if(m.getType().hasFlag(MiscType.F_BAP)) {
-                if(m.getType().getInternalName().equals(Sensor.BAP)) {
+            // now find any active probes and add them to the sensor list
+            // choose this sensor if added
+            if (m.getType().hasFlag(MiscType.F_BAP)) {
+                if (m.getType().getInternalName().equals(Sensor.BAP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BAP));
                     ent.setNextSensor(ent.getSensors().lastElement());
-                } else if(m.getType().getInternalName().equals(Sensor.BLOODHOUND)) {
+                } else if (m.getType().getInternalName().equals(Sensor.BLOODHOUND)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BLOODHOUND));
                     ent.setNextSensor(ent.getSensors().lastElement());
-                } else if(m.getType().getInternalName().equals(Sensor.WATCHDOG)) {
+                } else if (m.getType().getInternalName().equals(Sensor.WATCHDOG)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_WATCHDOG));
                     ent.setNextSensor(ent.getSensors().lastElement());
-                } else if(m.getType().getInternalName().equals(Sensor.CLAN_AP)) {
+                } else if (m.getType().getInternalName().equals(Sensor.CLAN_AP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_CLAN_BAP));
                     ent.setNextSensor(ent.getSensors().lastElement());
-                } else if(m.getType().getInternalName().equals(Sensor.LIGHT_AP)) {
+                } else if (m.getType().getInternalName().equals(Sensor.LIGHT_AP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_LIGHT_AP));
                     ent.setNextSensor(ent.getSensors().lastElement());
-                } else if(m.getType().getInternalName().equals(Sensor.CLIMPROVED)) {
+                } else if (m.getType().getInternalName().equals(Sensor.CLIMPROVED)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BA_IMPROVED));
                     ent.setNextSensor(ent.getSensors().lastElement());
-                } else if(m.getType().getInternalName().equals(Sensor.ISIMPROVED)) {
+                } else if (m.getType().getInternalName().equals(Sensor.ISIMPROVED)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BA_IMPROVED));
                     ent.setNextSensor(ent.getSensors().lastElement());
                 }
             }
 
-            if ((ent instanceof Mech)
-                    && (m.getType().hasFlag(MiscType.F_CASE) || m.getType()
-                            .hasFlag(MiscType.F_CASEII))) {
+            if ((ent instanceof Mech) && (m.getType().hasFlag(MiscType.F_CASE) || m.getType().hasFlag(MiscType.F_CASEII))) {
                 ((Mech) ent).setAutoEject(false);
             }
 
-            if ( (ent instanceof Mech) && m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+            if ((ent instanceof Mech) && m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
 
-                if ( ent.hasTargComp()
-                        || ((Mech)ent).hasTSM()
-                        || (((Mech)ent).hasMASC() && !ent.hasWorkingMisc(MiscType.F_MASC, MiscType.S_SUPERCHARGER)) ) {
+                if (ent.hasTargComp() || ((Mech) ent).hasTSM() || (((Mech) ent).hasMASC() && !ent.hasWorkingMisc(MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
                     throw new EntityLoadingException("Unable to load AES due to incompatible systems");
                 }
 
-                if ( (m.getLocation() != Mech.LOC_LARM) && (m.getLocation() != Mech.LOC_LLEG)
-                        && (m.getLocation() != Mech.LOC_RARM) && (m.getLocation() != Mech.LOC_RLEG)) {
+                if ((m.getLocation() != Mech.LOC_LARM) && (m.getLocation() != Mech.LOC_LLEG) && (m.getLocation() != Mech.LOC_RARM) && (m.getLocation() != Mech.LOC_RLEG)) {
                     throw new EntityLoadingException("Unable to load AES due to incompatible location");
                 }
 
             }
 
-            if ( m.getType().hasFlag(MiscType.F_HARJEL) && (m.getLocation() == Mech.LOC_HEAD) ) {
+            if (m.getType().hasFlag(MiscType.F_HARJEL) && (m.getLocation() == Mech.LOC_HEAD)) {
                 throw new EntityLoadingException("Unable to load harjel in head.");
             }
 
@@ -420,82 +384,80 @@ public class MechFileParser {
                 throw new EntityLoadingException("Unable to load MASS!  Must be located in the same location as the cockpit.");
             }
 
-            if ( m.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
-                    && ( ((ent instanceof Mech) && (m.getLocation() == Mech.LOC_HEAD)) || ((ent instanceof VTOL) && (m.getLocation() == VTOL.LOC_ROTOR)) )) {
+            if (m.getType().hasFlag(MiscType.F_MODULAR_ARMOR) && (((ent instanceof Mech) && (m.getLocation() == Mech.LOC_HEAD)) || ((ent instanceof VTOL) && (m.getLocation() == VTOL.LOC_ROTOR)))) {
                 throw new EntityLoadingException("Unable to load Modular Armor in Rotor/Head location");
             }
 
-            if ( m.getType().hasFlag(MiscType.F_TALON) ){
-               if ( ent instanceof BipedMech ){
-                   if ( (m.getLocation() != Mech.LOC_LLEG) && (m.getLocation() != Mech.LOC_RLEG) ){
-                       throw new EntityLoadingException("Talons are only legal in the Legs");
-                   }
+            if (m.getType().hasFlag(MiscType.F_TALON)) {
+                if (ent instanceof BipedMech) {
+                    if ((m.getLocation() != Mech.LOC_LLEG) && (m.getLocation() != Mech.LOC_RLEG)) {
+                        throw new EntityLoadingException("Talons are only legal in the Legs");
+                    }
 
-                   if ( !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LLEG) ){
-                       throw new EntityLoadingException("Talons must be in all legs");
-                   }
-               }else if ( ent instanceof QuadMech ){
-                   if ( (m.getLocation() != Mech.LOC_LLEG) && (m.getLocation() != Mech.LOC_RLEG)  &&
-                           (m.getLocation() != Mech.LOC_LARM) && (m.getLocation() != Mech.LOC_RARM)){
-                       throw new EntityLoadingException("Talons are only legal in the Legs");
-                   }
+                    if (!ent.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LLEG)) {
+                        throw new EntityLoadingException("Talons must be in all legs");
+                    }
+                } else if (ent instanceof QuadMech) {
+                    if ((m.getLocation() != Mech.LOC_LLEG) && (m.getLocation() != Mech.LOC_RLEG) && (m.getLocation() != Mech.LOC_LARM) && (m.getLocation() != Mech.LOC_RARM)) {
+                        throw new EntityLoadingException("Talons are only legal in the Legs");
+                    }
 
-                   if ( !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LLEG) ||
-                           !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LARM) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LARM)){
-                       throw new EntityLoadingException("Talons must be in all legs");
-                   }
+                    if (!ent.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LLEG) || !ent.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LARM) || !ent.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LARM)) {
+                        throw new EntityLoadingException("Talons must be in all legs");
+                    }
 
-               }else {
-                   throw new EntityLoadingException("Unable to load talons in non-Mek entity");
-               }
+                } else {
+                    throw new EntityLoadingException("Unable to load talons in non-Mek entity");
+                }
             }
 
         } // Check the next piece of equipment.
 
-        //need to load all those weapons in the weapon bays
-        if(ent.usesWeaponBays()) {
+        // need to load all those weapons in the weapon bays
+        if (ent.usesWeaponBays()) {
             ent.loadAllWeapons();
         }
 
-        if(ent instanceof Aero) {
-            //set RACs and UACs at maximum firing rate if aero
+        if (ent instanceof Aero) {
+            // set RACs and UACs at maximum firing rate if aero
             ent.setRapidFire();
         }
         if (ent instanceof BattleArmor) {
-            // now, depending on equipment and chassis, BA might be able to do leg
+            // now, depending on equipment and chassis, BA might be able to do
+            // leg
             // and swarm attacks
-            if (((BattleArmor)ent).getChassisType() != BattleArmor.CHASSIS_TYPE_QUAD) {
+            if (((BattleArmor) ent).getChassisType() != BattleArmor.CHASSIS_TYPE_QUAD) {
                 int tBasicManipulatorCount = ent.countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
                 int tArmoredGloveCount = ent.countWorkingMisc(MiscType.F_ARMORED_GLOVE);
                 int tBattleClawCount = ent.countWorkingMisc(MiscType.F_BATTLE_CLAW);
                 switch (ent.getWeightClass()) {
-                case EntityWeightClass.WEIGHT_BA_PAL:
-                case EntityWeightClass.WEIGHT_BA_LIGHT:
-                    if ((tArmoredGloveCount > 1) || (tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
-                        try {
-                            ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false);
-                            ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), BattleArmor.LOC_SQUAD, false, false);
-                            ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD, false, false);
-                        } catch (LocationFullException ex) {
-                            throw new EntityLoadingException(ex.getMessage());
+                    case EntityWeightClass.WEIGHT_BA_PAL:
+                    case EntityWeightClass.WEIGHT_BA_LIGHT:
+                        if ((tArmoredGloveCount > 1) || (tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
+                            try {
+                                ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false);
+                                ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), BattleArmor.LOC_SQUAD, false, false);
+                                ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD, false, false);
+                            } catch (LocationFullException ex) {
+                                throw new EntityLoadingException(ex.getMessage());
+                            }
                         }
-                    }
-                    break;
-                case EntityWeightClass.WEIGHT_BA_MEDIUM:
-                    if ((tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
-                        try {
-                            ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false);
-                            ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), BattleArmor.LOC_SQUAD, false, false);
-                            ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD, false, false);
-                        } catch (LocationFullException ex) {
-                            throw new EntityLoadingException(ex.getMessage());
+                        break;
+                    case EntityWeightClass.WEIGHT_BA_MEDIUM:
+                        if ((tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
+                            try {
+                                ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false);
+                                ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), BattleArmor.LOC_SQUAD, false, false);
+                                ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD, false, false);
+                            } catch (LocationFullException ex) {
+                                throw new EntityLoadingException(ex.getMessage());
+                            }
                         }
-                    }
-                    break;
-                case EntityWeightClass.WEIGHT_BA_HEAVY:
-                case EntityWeightClass.WEIGHT_BA_ASSAULT:
-                default:
-                    break;
+                        break;
+                    case EntityWeightClass.WEIGHT_BA_HEAVY:
+                    case EntityWeightClass.WEIGHT_BA_ASSAULT:
+                    default:
+                        break;
                 }
                 // if it has AP mount, also add an infantry rifle
                 if (ent.countWorkingMisc(MiscType.F_AP_MOUNT) > 0) {
@@ -540,29 +502,22 @@ public class MechFileParser {
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.out
-                    .println("Files in a supported MegaMek file format can be specified on");
-            System.out
-                    .println("the command line.  Multiple files may be processed at once.");
+            System.out.println("Files in a supported MegaMek file format can be specified on");
+            System.out.println("the command line.  Multiple files may be processed at once.");
             System.out.println("The supported formats are:");
-            System.out
-                    .println("\t.mtf    The native MegaMek format that your file will be converted into");
+            System.out.println("\t.mtf    The native MegaMek format that your file will be converted into");
             System.out.println("\t.blk    Another native MegaMek format");
             System.out.println("\t.hmp    Heavy Metal Pro (c)RCW Enterprises");
-            System.out
-                    .println("\t.mep    MechEngineer Pro (c)Howling Moon SoftWorks");
-            System.out
-                    .println("\t.xml    The Drawing Board (c)Blackstone Interactive");
-            System.out
-                    .println("Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
+            System.out.println("\t.mep    MechEngineer Pro (c)Howling Moon SoftWorks");
+            System.out.println("\t.xml    The Drawing Board (c)Blackstone Interactive");
+            System.out.println("Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
             MechFileParser.getResponse("Press <enter> to exit...");
             return;
         }
         for (int i = 0; i < args.length; i++) {
             String filename = args[i];
             File file = new File(filename);
-            String outFilename = filename.substring(0, filename
-                    .lastIndexOf("."));
+            String outFilename = filename.substring(0, filename.lastIndexOf("."));
             BufferedWriter out = null;
             try {
                 MechFileParser mfp = new MechFileParser(file);
@@ -571,8 +526,7 @@ public class MechFileParser {
                     outFilename += ".mtf";
                     File outFile = new File(outFilename);
                     if (outFile.exists()) {
-                        if (!MechFileParser
-                                .getResponse("File already exists, overwrite? ")) {
+                        if (!MechFileParser.getResponse("File already exists, overwrite? ")) {
                             return;
                         }
                     }
@@ -582,9 +536,9 @@ public class MechFileParser {
                     outFilename += ".blk";
                     if (e instanceof SupportTank) {
                         if (e instanceof LargeSupportTank) {
-                            BLKLargeSupportTankFile.encode(outFilename, (LargeSupportTank)e);
+                            BLKLargeSupportTankFile.encode(outFilename, (LargeSupportTank) e);
                         } else {
-                            BLKSupportTankFile.encode(outFilename, (SupportTank)e);
+                            BLKSupportTankFile.encode(outFilename, (SupportTank) e);
                         }
                     } else {
                         BLKTankFile.encode(outFilename, (Tank) e);

@@ -211,7 +211,7 @@ public class MechDisplay extends JPanel {
         ((CardLayout) displayP.getLayout()).show(displayP, s);
         if ("movement".equals(s)) { //$NON-NLS-1$
             tabStrip.setTab(0);
-        } if (s == "pilot") { //$NON-NLS-1$
+        } if ("pilot".equals(s)) { //$NON-NLS-1$
             tabStrip.setTab(1);
         }else if ("armor".equals(s)) { //$NON-NLS-1$
             tabStrip.setTab(2);

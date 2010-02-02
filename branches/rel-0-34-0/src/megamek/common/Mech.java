@@ -2902,7 +2902,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         bvText.append("Base Heat Efficiency ");
 
-        int coolantPods = 0;
+        double coolantPods = 0;
         for (Mounted ammo : getAmmo()) {
             if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
                 coolantPods++;
@@ -2911,7 +2911,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         // account for coolant pods
         if (coolantPods > 0) {
-            mechHeatEfficiency += Math.min(2 * getNumberOfSinks(), Math.ceil((double) (getNumberOfSinks() * coolantPods) / 5));
+            mechHeatEfficiency += getHeatCapacity() * Math.ceil(coolantPods / 5);
             bvText.append(" + Coolant Pods ");
         }
 
@@ -2929,7 +2929,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         if (coolantPods > 0) {
             bvText.append(" + ");
-            bvText.append(Math.min(2 * getNumberOfSinks(), Math.ceil((double) (getNumberOfSinks() * coolantPods) / 5)));
+            bvText.append(Math.min(2 * getNumberOfSinks(), Math.ceil((getNumberOfSinks() * coolantPods) / 5)));
         }
 
         bvText.append(" - ");

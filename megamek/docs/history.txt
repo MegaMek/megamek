@@ -34,6 +34,8 @@ v0.35.12-dev (SVN)
 + Aero vertical liftoff (no proximity damage)
 + Bug: Dropship secondary positions unchanged on liftoff
 + Bug: NPE when an empty tag is left in a BLK FILE
++ Bug: NPE when non-linked PPC Cap is checked for BV
++ Made MechFileParser.postLoadInit Public and static.
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

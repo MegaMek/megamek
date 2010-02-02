@@ -13,7 +13,7 @@ import megamek.client.ui.swing.MechDisplay;
 public class MechPanelTabStrip extends PicMap {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1282343469769007184L;
 
@@ -37,8 +37,9 @@ public class MechPanelTabStrip extends PicMap {
     }
 
     public void setTab(int i) {
-        if (i > 5)
+        if (i > 5) {
             i = 5;
+        }
         activeTab = i;
         redrawImages();
         update();
@@ -110,7 +111,6 @@ public class MechPanelTabStrip extends PicMap {
         tabs[0].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
-                    setTab(0);
                     md.showPanel("movement"); //$NON-NLS-1$
                 }
             }
@@ -118,7 +118,6 @@ public class MechPanelTabStrip extends PicMap {
         tabs[1].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
-                    setTab(1);
                     md.showPanel("pilot"); //$NON-NLS-1$
                 }
             }
@@ -126,7 +125,6 @@ public class MechPanelTabStrip extends PicMap {
         tabs[2].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
-                    setTab(2);
                     md.showPanel("armor"); //$NON-NLS-1$
                 }
             }
@@ -134,7 +132,6 @@ public class MechPanelTabStrip extends PicMap {
         tabs[3].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
-                    setTab(3);
                     md.showPanel("systems"); //$NON-NLS-1$
                 }
             }
@@ -142,7 +139,6 @@ public class MechPanelTabStrip extends PicMap {
         tabs[4].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
-                    setTab(4);
                     md.showPanel("weapons"); //$NON-NLS-1$
                 }
             }
@@ -150,7 +146,6 @@ public class MechPanelTabStrip extends PicMap {
         tabs[5].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
-                    setTab(5);
                     md.showPanel("extras"); //$NON-NLS-1$
                 }
             }

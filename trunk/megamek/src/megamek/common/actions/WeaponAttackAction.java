@@ -1134,7 +1134,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())) {
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
             }
-            toHit.addModifier(7, "indirect artillery modifier");
+            int mod = 7;
+            if(ae.getCrew().getOptions().booleanOption("oblique_attacker")) {
+                mod--;
+            }
+            toHit.addModifier(mod, "indirect artillery modifier");
             int adjust = ae.aTracker.getModifier(weapon, target.getPosition());
             if (adjust == TargetRoll.AUTOMATIC_SUCCESS) {
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Artillery firing at target that's been hit before.");
@@ -1215,7 +1219,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Indirect fire has a +1 mod
         if (isIndirect) {
-            toHit.addModifier(1, "indirect fire");
+            if(ae.getCrew().getOptions().booleanOption("oblique_attacker")) {
+                toHit.addModifier(0, "indirect fire");
+            } else {
+                toHit.addModifier(1, "indirect fire");
+            }
         }
 
         if (wtype instanceof MekMortarWeapon) {

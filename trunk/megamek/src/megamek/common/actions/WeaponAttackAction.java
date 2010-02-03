@@ -47,6 +47,7 @@ import megamek.common.MechWarrior;
 import megamek.common.MinefieldTarget;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.Pilot;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
 import megamek.common.Protomech;
@@ -885,6 +886,34 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         if (ae.crew.getOptions().booleanOption("gunnery_missile") && wtype.hasFlag(WeaponType.F_MISSILE)) {
             toHit.addModifier(-1, "Gunnery/Missile");
+        }
+        
+        //aToW style gunnery specialization: -1 for type but a +1 for all other types
+        if(!ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_NONE))) {
+            if(wtype.hasFlag(WeaponType.F_ENERGY)) {
+                if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_LASER))) {
+                    toHit.addModifier(-1, "Laser Specialization");
+                } 
+                else {
+                    toHit.addModifier(+1, "Unspecialized");
+                }
+            }
+            else if(wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_BALLISTIC))) {
+                    toHit.addModifier(-1, "Ballistic Specialization");
+                } 
+                else {
+                    toHit.addModifier(+1, "Unspecialized");
+                }
+            }
+            else if(wtype.hasFlag(WeaponType.F_MISSILE)) {
+                if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_MISSILE))) {
+                    toHit.addModifier(-1, "Missile Specialization");
+                } 
+                else {
+                    toHit.addModifier(+1, "Unspecialized");
+                }
+            }
         }
 
         // check for VDNI

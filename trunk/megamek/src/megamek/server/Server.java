@@ -14703,6 +14703,15 @@ public class Server implements Runnable {
                 Vector<PilotingRollData> rolls = new Vector<PilotingRollData>();
                 StringBuffer reasons = new StringBuffer();
                 PilotingRollData base = e.getBasePilotingRoll();
+                //maneuvering ace
+                //TODO: pending rules query
+                //http://www.classicbattletech.com/forums/index.php/topic,63552.new.html#new
+                //for now I am assuming Man Ace applies to all out-of-control rolls, but not other 
+                //uses of control rolls (thus it doesn't go in Entity#addEntityBonuses) and
+                //furthermore it doesn't apply to recovery rolls
+                if(a.isUsingManAce()) {
+                    base.addModifier(-1, "maneuvering ace");
+                }
                 for (Enumeration<PilotingRollData> j = game.getControlRolls(); j.hasMoreElements();) {
                     final PilotingRollData modifier = j.nextElement();
                     if (modifier.getEntityId() != e.getId()) {

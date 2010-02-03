@@ -1369,7 +1369,11 @@ public class Compute {
         } else if (movement == EntityMovementType.MOVE_SKID) {
             toHit.addModifier(3, "attacker ran and skidded");
         } else if (movement == EntityMovementType.MOVE_JUMP) {
-            toHit.addModifier(3, "attacker jumped");
+            if(entity.getCrew().getOptions().booleanOption("jumping_jack")) {
+                toHit.addModifier(1, "attacker jumped");
+            } else {
+                toHit.addModifier(3, "attacker jumped");
+            }
         } else if (movement == EntityMovementType.MOVE_OVER_THRUST) {
             toHit.addModifier(2, "over thrust used");
         } else if (movement == EntityMovementType.MOVE_SPRINT) {

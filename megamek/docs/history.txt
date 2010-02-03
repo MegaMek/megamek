@@ -45,6 +45,7 @@ v0.35.12-dev (SVN)
 + updated Maneuvering Ace to aToW rules
 + aToW Jumping Jack SPA
 + Bug: all units get +1 penalty for specialization
++ aToW Sniper SPA
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

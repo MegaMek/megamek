@@ -13146,6 +13146,11 @@ public class Server implements Runnable {
             }
             IHex entityHex = game.getBoard().getHex(entity.getPosition());
 
+            int hotDogMod = 0;
+            if(entity.getCrew().getOptions().booleanOption("hot_dog")) {
+                hotDogMod = 1;
+            }
+            
             // put in ASF heat build-up first because there are few differences
             if (entity instanceof Aero) {
 
@@ -13219,7 +13224,7 @@ public class Server implements Runnable {
                             addReport(r);
                         } else {
                             // roll for startup
-                            int startup = 4 + (entity.heat - 14) / 4 * 2;
+                            int startup = 4 + (entity.heat - 14) / 4 * 2 - hotDogMod;
                             if (mtHeat) {
                                 startup -= 5;
                                 switch (entity.crew.getPiloting()) {
@@ -13276,7 +13281,7 @@ public class Server implements Runnable {
                         // okay, now mark shut down
                         entity.setShutDown(true);
                     } else if (entity.heat >= 14) {
-                        int shutdown = 4 + (entity.heat - 14) / 4 * 2;
+                        int shutdown = 4 + (entity.heat - 14) / 4 * 2 - hotDogMod;
                         if (mtHeat) {
                             shutdown -= 5;
                             switch (entity.crew.getPiloting()) {
@@ -13318,7 +13323,7 @@ public class Server implements Runnable {
                 // random moving)
                 if ((entity.heat >= 5) && !a.isRandomMove()) {
                     int controlavoid = 5 + (entity.heat >= 10 ? 1 : 0) + (entity.heat >= 15 ? 1 : 0)
-                            + (entity.heat >= 20 ? 1 : 0) + (entity.heat >= 25 ? 2 : 0);
+                            + (entity.heat >= 20 ? 1 : 0) + (entity.heat >= 25 ? 2 : 0) - hotDogMod;
                     int controlroll = Compute.d6(2);
                     r = new Report(9210);
                     r.subject = entity.getId();
@@ -13357,7 +13362,7 @@ public class Server implements Runnable {
 
                 // heat effects: ammo explosion!
                 if (entity.heat >= 19) {
-                    int boom = 4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0);
+                    int boom = 4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0) - hotDogMod;
                     if (mtHeat) {
                         boom += (entity.heat >= 35 ? 2 : 0) + (entity.heat >= 40 ? 2 : 0) + (entity.heat >= 45 ? 2 : 0);
                         // Last line is a crutch; 45 heat should be no roll
@@ -13383,7 +13388,7 @@ public class Server implements Runnable {
 
                 // heat effects: pilot damage
                 if (entity.heat >= 21) {
-                    int ouch = 6 + (entity.heat >= 27 ? 3 : 0);
+                    int ouch = 6 + (entity.heat >= 27 ? 3 : 0) - hotDogMod;
                     int ouchroll = Compute.d6(2);
                     r = new Report(5075);
                     r.subject = entity.getId();
@@ -13648,7 +13653,7 @@ public class Server implements Runnable {
                 // Roll for possible inferno ammo explosion.
                 if (entity.heat >= 10) {
                     int boom = 4 + (entity.heat >= 14 ? 2 : 0) + (entity.heat >= 19 ? 2 : 0)
-                            + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0);
+                            + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0) - hotDogMod;
                     int boomroll = Compute.d6(2);
                     r = new Report(5040);
                     r.subject = entity.getId();
@@ -13689,7 +13694,7 @@ public class Server implements Runnable {
                         addReport(r);
                     } else {
                         // roll for startup
-                        int startup = 4 + (entity.heat - 14) / 4 * 2;
+                        int startup = 4 + (entity.heat - 14) / 4 * 2 - hotDogMod;
                         if (mtHeat) {
                             startup -= 5;
                             switch (entity.crew.getPiloting()) {
@@ -13752,7 +13757,7 @@ public class Server implements Runnable {
                     // okay, now mark shut down
                     entity.setShutDown(true);
                 } else if (entity.heat >= 14) {
-                    int shutdown = 4 + (entity.heat - 14) / 4 * 2;
+                    int shutdown = 4 + (entity.heat - 14) / 4 * 2 - hotDogMod;
                     if (mtHeat) {
                         shutdown -= 5;
                         switch (entity.crew.getPiloting()) {
@@ -13797,7 +13802,7 @@ public class Server implements Runnable {
 
             // heat effects: ammo explosion!
             if (entity.heat >= 19) {
-                int boom = 4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0);
+                int boom = 4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0) - hotDogMod;
                 if (mtHeat) {
                     boom += (entity.heat >= 35 ? 2 : 0) + (entity.heat >= 40 ? 2 : 0) + (entity.heat >= 45 ? 2 : 0);
                     // Last line is a crutch; 45 heat should be no roll
@@ -13893,6 +13898,7 @@ public class Server implements Runnable {
                 } else if (entity.heat >= 32) {
                     avoidNumber = 8;
                 }
+                avoidNumber -= hotDogMod;
                 r = new Report(5075);
                 r.subject = entity.getId();
                 r.addDesc(entity);
@@ -13928,6 +13934,7 @@ public class Server implements Runnable {
                     } else if (entity.heat >= 36) {
                         damageNumber = 8;
                     }
+                    damageNumber -= hotDogMod;
                     r = new Report(5085);
                     r.subject = entity.getId();
                     r.addDesc(entity);

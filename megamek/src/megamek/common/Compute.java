@@ -1416,8 +1416,7 @@ public class Compute {
      */
     public static void modifyPhysicalBTHForAdvantages(Entity attacker, Entity target, ToHitData toHit, IGame game) {
 
-        if (attacker.getCrew().getOptions().booleanOption("melee_specialist") && (attacker instanceof Mech)
-                && (Compute.getAttackerMovementModifier(game, attacker.getId()).getValue() > 0)) {
+        if (attacker.getCrew().getOptions().booleanOption("melee_specialist") && (attacker instanceof Mech)) {
             toHit.addModifier(-1, "melee specialist");
         }
 

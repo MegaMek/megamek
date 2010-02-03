@@ -38,6 +38,8 @@ v0.35.12-dev (SVN)
 + Made MechFileParser.postLoadInit Public and static.
 + Bug in Coolant Pod BV calculation
 + Added planetary conditions dialog to scenarios
++ aToW Gunnery Specialization (-1 to specialized type, +1 to all others)
++ renamed pilot advantages to reflect source
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

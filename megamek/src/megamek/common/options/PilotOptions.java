@@ -37,6 +37,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "jumping_jack", false); //$NON-NLS-1$
         addOption(adv, "maneuvering_ace", false); //$NON-NLS-1$
         addOption(adv, "melee_specialist", false); //$NON-NLS-1$
+        addOption(adv, "multi_tasker", false); //$NON-NLS-1$
         addOption(adv, "pain_resistance", false); //$NON-NLS-1$
         addOption(adv, "sniper", false); //$NON-NLS-1$
         addOption(adv, "tactical_genius", false); //$NON-NLS-1$

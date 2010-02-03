@@ -628,6 +628,8 @@ public class MoveStep implements Serializable {
             compileMove(game, entity, prev);
             if(entity.isAirborne()) {
                 setMp(0);
+            } else if(entity.isUsingManAce() & entity instanceof QuadMech) {
+                setMp(getMp());
             } else {
                 setMp(getMp() + 1); //+1 for side step
             }
@@ -640,6 +642,8 @@ public class MoveStep implements Serializable {
             compileMove(game, entity, prev);
             if(entity.isAirborne()) {
                 setMp(0);
+            } else if(entity.isUsingManAce() & entity instanceof QuadMech) {
+                setMp(getMp());
             } else {
                 setMp(getMp() + 1); //+1 for side step
             }
@@ -802,7 +806,11 @@ public class MoveStep implements Serializable {
             setMp(2);
             break;
         case MANEUVER:
-            setMp(ManeuverType.getCost(getManeuverType(), getVelocity()));
+            int cost = ManeuverType.getCost(getManeuverType(), getVelocity());
+            if(entity.isUsingManAce()) {
+                cost = Math.max(cost - 1, 0);
+            }
+            setMp(cost);
             break;
         case LOOP:
             setVelocityLeft(getVelocityLeft() - 4);

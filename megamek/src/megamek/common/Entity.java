@@ -6358,7 +6358,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
-    boolean isUsingManAce() {
+    public boolean isUsingManAce() {
         return getCrew().getOptions().booleanOption("maneuvering_ace");
     }
 
@@ -7607,7 +7607,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         if ((moveType != EntityMovementType.MOVE_JUMP) && (prevHex != null) && (distance > 1) && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_VTOL_RUN)) && (prevFacing != curFacing) && !lastPos.equals(curPos) && !(this instanceof Infantry)) {
             roll.append(new PilotingRollData(getId(), 0, "flanking and turning"));
-
+            if(isUsingManAce()) {
+                roll.addModifier(-1, "Maneuvering Ace");
+            }         
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: not apparently sideslipping");
         }

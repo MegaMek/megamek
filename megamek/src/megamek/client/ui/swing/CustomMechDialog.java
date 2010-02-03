@@ -1562,6 +1562,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
             optionComp.setSelected(option.stringValue());
         }
+        
+        if ("specialist".equals(option.getName())) { //$NON-NLS-1$           
+            for (int i = 0; i < Pilot.SPECIAL_NUM; i++) {
+                optionComp.addValue(Pilot.getSpecializationName(i));
+            }
+            optionComp.setSelected(option.stringValue()); 
+        }
 
         gridbag.setConstraints(optionComp, c);
         panOptions.add(optionComp);

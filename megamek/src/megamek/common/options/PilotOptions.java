@@ -25,7 +25,7 @@ public class PilotOptions extends AbstractOptions {
     private static final long serialVersionUID = 6628080570425023949L;
     public static final String LVL3_ADVANTAGES = "lvl3Advantages"; //$NON-NLS-1$
     public static final String MD_ADVANTAGES = "MDAdvantages"; //$NON-NLS-1$
-
+    
     public PilotOptions() {
         super();
     }
@@ -38,13 +38,15 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "melee_specialist", false); //$NON-NLS-1$
         addOption(adv, "pain_resistance", false); //$NON-NLS-1$
         addOption(adv, "tactical_genius", false); //$NON-NLS-1$
+        addOption(adv, "specialist", new Vector<String>()); //$NON-NLS-1$
         addOption(adv, "weapon_specialist", new Vector<String>()); //$NON-NLS-1$
+        addOption(adv, "ei_implant", false); //$NON-NLS-1$
         addOption(adv, "gunnery_laser", false); //$NON-NLS-1$
         addOption(adv, "gunnery_missile", false); //$NON-NLS-1$
         addOption(adv, "gunnery_ballistic", false); //$NON-NLS-1$
         addOption(adv, "iron_man", false); //$NON-NLS-1$
-        addOption(adv, "ei_implant", false); //$NON-NLS-1$
         addOption(adv, "clan_pilot_training", false); //$NON-NLS-1$
+        
         addOption(adv, "edge", 0); //$NON-NLS-1$
 
         /* different edge triggers */

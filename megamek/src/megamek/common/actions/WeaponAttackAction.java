@@ -870,10 +870,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(+1, "inaccurate weapon");
         }
 
-        // Is the pilot a weapon specialist?
-        if (ae.crew.getOptions().stringOption("weapon_specialist").equals(wtype.getName())) {
-            toHit.addModifier(-2, "weapon specialist");
-        }
+        
 
         // Has the pilot the appropriate gunnery skill?
         if (ae.crew.getOptions().booleanOption("gunnery_laser") && wtype.hasFlag(WeaponType.F_ENERGY)) {
@@ -888,8 +885,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(-1, "Gunnery/Missile");
         }
         
-        //aToW style gunnery specialization: -1 for type but a +1 for all other types
-        if(!ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_NONE))) {
+        //Is the pilot a weapon specialist?
+        if (ae.crew.getOptions().stringOption("weapon_specialist").equals(wtype.getName())) {
+            toHit.addModifier(-2, "weapon specialist");
+        } else if(!ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_NONE))) {
+            //aToW style gunnery specialist: -1 to specialized weapon and +1 to all other weapons
+            //Note that weapon specialist supercedes gunnery specialization, so if you have 
+            //a specialization in Medium Lasers and a Laser specialization, you only get the -2 specialization mod
             if(wtype.hasFlag(WeaponType.F_ENERGY)) {
                 if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_LASER))) {
                     toHit.addModifier(-1, "Laser Specialization");

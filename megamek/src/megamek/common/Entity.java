@@ -6987,6 +6987,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getMediumRangeModifier() {
         int mod = 2;
+        if(getCrew().getOptions().booleanOption("sniper")) {
+            mod = mod/2;
+        }
         if (getQuirks().booleanOption("imp_target_med")) {
             mod--;
         }
@@ -6998,6 +7001,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getLongRangeModifier() {
         int mod = 4;
+        if(getCrew().getOptions().booleanOption("sniper")) {
+            mod = mod/2;
+        }
         if (getQuirks().booleanOption("imp_target_long")) {
             mod--;
         }
@@ -7008,7 +7014,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getExtremeRangeModifier() {
-        return 6;
+        int mod = 6;
+        if(getCrew().getOptions().booleanOption("sniper")) {
+            mod = mod/2;
+        }
+        return mod;
     }
 
     public void setArmorType(int armType) {

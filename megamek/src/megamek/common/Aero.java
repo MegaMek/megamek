@@ -2287,11 +2287,6 @@ public class Aero extends Entity
         loadAllWeapons();
     }
 
-    @Override
-    public int getExtremeRangeModifier() {
-        return 6;
-    }
-
     public int getStraightMoves() {
         return straightMoves;
     }

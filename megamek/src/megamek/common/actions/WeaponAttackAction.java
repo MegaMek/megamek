@@ -888,7 +888,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         //Is the pilot a weapon specialist?
         if (ae.crew.getOptions().stringOption("weapon_specialist").equals(wtype.getName())) {
             toHit.addModifier(-2, "weapon specialist");
-        } else if(!ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_NONE))) {
+        } else if(!ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_NONE))
+                && !ae.crew.getOptions().stringOption("specialist").equals("")) {
             //aToW style gunnery specialist: -1 to specialized weapon and +1 to all other weapons
             //Note that weapon specialist supercedes gunnery specialization, so if you have 
             //a specialization in Medium Lasers and a Laser specialization, you only get the -2 specialization mod

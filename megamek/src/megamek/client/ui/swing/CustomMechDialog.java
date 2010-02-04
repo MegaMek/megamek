@@ -1578,9 +1578,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
         
         if ("specialist".equals(option.getName())) { //$NON-NLS-1$           
-            for (int i = 0; i < Pilot.SPECIAL_NUM; i++) {
-                optionComp.addValue(Pilot.getSpecializationName(i));
-            }
+            optionComp.addValue(Pilot.SPECIAL_NONE);
+            optionComp.addValue(Pilot.SPECIAL_LASER);
+            optionComp.addValue(Pilot.SPECIAL_BALLISTIC);
+            optionComp.addValue(Pilot.SPECIAL_MISSILE);
             optionComp.setSelected(option.stringValue()); 
         }
 

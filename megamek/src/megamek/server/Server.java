@@ -14908,6 +14908,9 @@ public class Server implements Runnable {
 
         for (int hit = totalHits - damage + 1; hit <= totalHits; hit++) {
             int rollTarget = Compute.getConsciousnessNumber(hit);
+            if(game.getOptions().booleanOption("toughness")) {
+                rollTarget -= e.crew.getToughness();
+            }
             boolean edgeUsed = false;
             do {
                 if (edgeUsed) {

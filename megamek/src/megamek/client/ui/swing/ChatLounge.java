@@ -1082,7 +1082,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     }
 
-    public static String formatPilotTooltip(Pilot pilot, boolean command, boolean init) {
+    public static String formatPilotTooltip(Pilot pilot, boolean command, boolean init, boolean tough) {
 
         String value = "<html>";
         value += "<b>" + pilot.getDesc() + "</b><br>";
@@ -1091,6 +1091,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             value += "<font color='red'>" + Messages.getString("ChatLounge.Hits") + pilot.getHits() + "</font><br>";
         }
         value += "" + pilot.getGunnery() + "/" + pilot.getPiloting() + "<br>";
+        if (tough) {
+            value += Messages.getString("ChatLounge.Tough") + pilot.getToughness() + "<br>";
+        }
         if (command) {
             value += Messages.getString("ChatLounge.Command") + pilot.getCommandBonus() + "<br>";
         }
@@ -2285,7 +2288,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         } else {
                             setPortrait(entity.crew);
                         }
-                        setToolTipText(formatPilotTooltip(entity.crew, clientgui.getClient().game.getOptions().booleanOption("command_init"), clientgui.getClient().game.getOptions().booleanOption("individual_initiative")));
+                        setToolTipText(formatPilotTooltip(entity.crew, 
+                                clientgui.getClient().game.getOptions().booleanOption("command_init"), 
+                                clientgui.getClient().game.getOptions().booleanOption("individual_initiative"), 
+                                clientgui.getClient().game.getOptions().booleanOption("toughness")));
                     }
                 }
                 if (isSelected) {

@@ -46,8 +46,8 @@ public class PilotMapSet implements DisplayMapSet {
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMPicArea portraitArea;
-    private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, initBL, commandBL;
-    private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR, initBR, commandBR, hitsR;
+    private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, toughBL, initBL, commandBL;
+    private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR, toughBR, initBR, commandBR, hitsR;
     private PMSimpleLabel[] advantagesR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font(
@@ -130,20 +130,27 @@ public class PilotMapSet implements DisplayMapSet {
         commandBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 15,
                 getYCoord());
         content.addArea(commandBR);
-
+        
         gunneryLL = createLabel(
                     Messages.getString("PilotMapSet.gunneryLL"), fm, 0, getYCoord()); //$NON-NLS-1$
         content.addArea(gunneryLL);
         gunneryLR = createLabel(STAR3, fm, pilotL.getSize().width + 25,
                     getYCoord());
         content.addArea(gunneryLR);
-
+  
         gunneryML = createLabel(
                     Messages.getString("PilotMapSet.gunneryML"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(gunneryML);
         gunneryMR = createLabel(STAR3, fm, pilotL.getSize().width + 25,
                     getYCoord());
         content.addArea(gunneryMR);
+         
+        toughBL = createLabel(
+                Messages.getString("PilotMapSet.toughBL"), fm, pilotL.getSize().width + 50, getYCoord()); //$NON-NLS-1$
+        content.addArea(toughBL);
+        toughBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 15,
+                getYCoord());
+        content.addArea(toughBR);
 
         gunneryBL = createLabel(
                     Messages.getString("PilotMapSet.gunneryBL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
@@ -201,6 +208,13 @@ public class PilotMapSet implements DisplayMapSet {
             gunneryBR.setVisible(false);
             gunneryL.setVisible(true);
             gunneryR.setVisible(true);
+        }
+        if ((en.getGame() != null)
+                && en.getGame().getOptions().booleanOption("toughness")) {
+            toughBR.setString(Integer.toString(en.crew.getToughness()));
+        } else {
+            toughBL.setVisible(false);
+            toughBR.setVisible(false);
         }
         if ((en.getGame() != null)
                 && en.getGame().getOptions().booleanOption("individual_initiative")) {

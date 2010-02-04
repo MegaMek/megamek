@@ -413,10 +413,18 @@ public class EntityListFile {
             }
             output.write("\" piloting=\"");
             output.write(String.valueOf(crew.getPiloting()));
-            output.write("\" initB=\"");
-            output.write(String.valueOf(crew.getInitBonus()));
-            output.write("\" commandB=\"");
-            output.write(String.valueOf(crew.getCommandBonus()));
+            if(crew.getToughness() != 0) {               
+                output.write("\" toughness=\"");
+                output.write(String.valueOf(crew.getToughness()));
+            }
+            if(crew.getInitBonus() != 0) {
+                output.write("\" initB=\"");
+                output.write(String.valueOf(crew.getInitBonus()));
+            }
+            if(crew.getCommandBonus() != 0) {
+                output.write("\" commandB=\"");
+                output.write(String.valueOf(crew.getCommandBonus()));
+            }
             if (crew.isDead() || crew.getHits() > 5) {
                 output.write("\" hits=\"Dead");
             } else if (crew.getHits() > 0) {

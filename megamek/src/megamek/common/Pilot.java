@@ -52,6 +52,9 @@ public class Pilot implements Serializable {
     //commander bonus
     private int commandBonus;
     
+    //a toughness bonus that is applied to all KO checks
+    private int toughness;
+    
     // these are only used on the server:
     private boolean koThisRound; // did I go KO this game round?
 
@@ -107,6 +110,7 @@ public class Pilot implements Serializable {
         this.piloting = piloting;
         this.initBonus = 0;
         this.commandBonus = 0;
+        this.toughness = 0;
         hits = 0;
         unconscious = false;
         dead = false;
@@ -663,6 +667,14 @@ public class Pilot implements Serializable {
 
     public String getPortraitFileName() {
         return portraitFileName;
+    }
+    
+    public int getToughness() {
+        return toughness;
+    }
+    
+    public void setToughness(int t) {
+        this.toughness = t;
     }
     
 

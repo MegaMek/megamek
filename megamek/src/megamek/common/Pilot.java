@@ -66,13 +66,10 @@ public class Pilot implements Serializable {
     private String portraitCategory = ROOT_PORTRAIT;
     private String portraitFileName = PORTRAIT_NONE;
     
-    public static final int SPECIAL_NONE = 0;
-    public static final int SPECIAL_LASER = 1;
-    public static final int SPECIAL_BALLISTIC = 2;
-    public static final int SPECIAL_MISSILE = 3;
-    public static final int SPECIAL_NUM = 4;
-    
-    private static String[] specialNames = { "None", "Laser", "Ballistic", "Missile" };
+    public static final String SPECIAL_NONE = "None";
+    public static final String SPECIAL_LASER = "Laser";
+    public static final String SPECIAL_BALLISTIC = "Ballistic";
+    public static final String SPECIAL_MISSILE = "Missile";
     
     private static double[][] bvMod = new double[][] {
             {2.8,  2.63, 2.45, 2.28, 2.01, 1.82, 1.75, 1.67, 1.59},
@@ -88,13 +85,6 @@ public class Pilot implements Serializable {
 
     /** The number of hits that a pilot can take before he dies. */
     static public final int DEATH = 6;
-
-    public static String getSpecializationName(int special) {
-        if(special >= SPECIAL_NUM) {
-            special = SPECIAL_NONE;
-        }
-        return specialNames[special];
-    }
     
     public Pilot() {
         this("Unnamed", 4, 5);

@@ -888,13 +888,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         //Is the pilot a weapon specialist?
         if (ae.crew.getOptions().stringOption("weapon_specialist").equals(wtype.getName())) {
             toHit.addModifier(-2, "weapon specialist");
-        } else if(!ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_NONE))
-                && !ae.crew.getOptions().stringOption("specialist").equals("")) {
+        } else if(ae.crew.getOptions().booleanOption("specialist")) {
             //aToW style gunnery specialist: -1 to specialized weapon and +1 to all other weapons
             //Note that weapon specialist supercedes gunnery specialization, so if you have 
             //a specialization in Medium Lasers and a Laser specialization, you only get the -2 specialization mod
             if(wtype.hasFlag(WeaponType.F_ENERGY)) {
-                if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_LASER))) {
+                if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.SPECIAL_LASER)) {
                     toHit.addModifier(-1, "Laser Specialization");
                 } 
                 else {
@@ -902,7 +901,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
             else if(wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_BALLISTIC))) {
+                if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.SPECIAL_BALLISTIC)) {
                     toHit.addModifier(-1, "Ballistic Specialization");
                 } 
                 else {
@@ -910,7 +909,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
             else if(wtype.hasFlag(WeaponType.F_MISSILE)) {
-                if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.getSpecializationName(Pilot.SPECIAL_MISSILE))) {
+                if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.SPECIAL_MISSILE)) {
                     toHit.addModifier(-1, "Missile Specialization");
                 } 
                 else {

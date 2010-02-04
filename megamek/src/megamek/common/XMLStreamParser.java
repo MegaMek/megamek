@@ -159,6 +159,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String GUNNERYM = "gunneryM";
     public static final String GUNNERYB = "gunneryB";
     public static final String PILOTING = "piloting";
+    public static final String TOUGH = "toughness";
     public static final String INITB = "initB";
     public static final String COMMANDB = "commandB";
     public static final String HITS = "hits";
@@ -497,6 +498,7 @@ public class XMLStreamParser implements XMLResponder {
                 String gunneryM = (String) attr.get(GUNNERYM);
                 String gunneryB = (String) attr.get(GUNNERYB);
                 String piloting = (String) attr.get(PILOTING);
+                String tough = (String) attr.get(TOUGH);
                 String initB = (String) attr.get(INITB);
                 String commandB = (String) attr.get(COMMANDB);
                 String hits = (String) attr.get(HITS);
@@ -541,6 +543,16 @@ public class XMLStreamParser implements XMLResponder {
                         return;
                     }
 
+                    //toughness
+                    int toughVal = 0;
+                    if (null != tough && tough.length() > 0) {
+                        try {
+                            toughVal = Integer.parseInt(tough);
+                        } catch (NumberFormatException excep) {
+                            // Handled by the next if test.
+                        }
+                    }
+                    
                     //init bonus
                     int initBVal = 0;
                     if (null != initB && initB.length() > 0) {
@@ -618,6 +630,7 @@ public class XMLStreamParser implements XMLResponder {
                     if (null != portraitFile && portraitFile.length() > 0) {
                         crew.setPortraitFileName(portraitFile);
                      }
+                    crew.setToughness(toughVal);
                     crew.setInitBonus(initBVal);
                     crew.setCommandBonus(commandBVal);
                     if ((null != advantages)

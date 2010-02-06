@@ -16021,12 +16021,11 @@ public class Server implements Runnable {
                             r.add(te.getLocationAbbr(new_loc));
                             vDesc.addElement(r);
                             te.setArmor(te.getArmor(new_loc) - damage, new_loc);
-                            if ((te instanceof Warship) || (te instanceof Jumpship)) {
-                                damage = 1;
+                            if ((te instanceof Warship) || (te instanceof Dropship)) {
+                                damage = 2;
                             } else {
                                 damage = 0;
                             }
-                            //
                         }
                     }
 

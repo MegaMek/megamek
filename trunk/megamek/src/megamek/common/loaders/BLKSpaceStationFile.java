@@ -287,7 +287,6 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         Mounted bayMount = null;
         // set up a new bay type
         boolean newBay = false;
-        boolean subCap = false;
         int bayDamage = 0;
         int nBay = 1;
         if (saEquip[0] != null) {
@@ -295,7 +294,6 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                 rearMount = false;
                 nAmmo = 1;
                 newBay = false;
-                subCap = false;
                 String equipName = element.trim();
 
                 // I will need to deal with rear-mounted bays on Dropships
@@ -309,11 +307,6 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                     equipName = equipName.substring(4);
                 }
 
-                if (equipName.startsWith("(SC) ")) {
-                    newBay = true;
-                    subCap = true;
-                    equipName = equipName.substring(4);
-                }
                 // check for ammo loadouts
                 if (equipName.contains(":") && equipName.contains("Ammo")) {
                     // then split by the :
@@ -354,21 +347,12 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                         // initialized
                         WeaponType weap = (WeaponType) newmount.getType();
                         if (bayMount == null) {
-                            if (subCap) {
-                                try {
-                                    bayMount = a.addEquipment(WeaponType.getSubCapBayType(weap.getAtClass()), nLoc, rearMount);
-                                    newBay = false;
-                                } catch (LocationFullException ex) {
-                                    throw new EntityLoadingException(ex.getMessage());
-                                }
-                            } else {
-                                try {
-                                    bayMount = a.addEquipment(WeaponType.getBayType(weap.getAtClass()), nLoc, rearMount);
-                                    newBay = false;
-                                } catch (LocationFullException ex) {
-                                    throw new EntityLoadingException(ex.getMessage());
-                                }
-                            }
+                        	try {
+                        		bayMount = a.addEquipment(weap.getBayType(), nLoc, rearMount);
+                        		newBay = false;
+                        	} catch (LocationFullException ex) {
+                        		throw new EntityLoadingException(ex.getMessage());
+                        	}
                         }
 
                         int damage = weap.getRoundShortAV();
@@ -380,19 +364,11 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
                             bayDamage += damage;
                         } else {
-                            if (subCap) {
-                                try {
-                                    bayMount = a.addEquipment(WeaponType.getSubCapBayType(weap.getAtClass()), nLoc, rearMount);
-                                } catch (LocationFullException ex) {
-                                    throw new EntityLoadingException(ex.getMessage());
-                                }
-                            } else {
-                                try {
-                                    bayMount = a.addEquipment(WeaponType.getBayType(weap.getAtClass()), nLoc, rearMount);
-                                } catch (LocationFullException ex) {
-                                    throw new EntityLoadingException(ex.getMessage());
-                                }
-                            }
+                        	try {
+                        		bayMount = a.addEquipment(weap.getBayType(), nLoc, rearMount);
+                        	} catch (LocationFullException ex) {
+                        		throw new EntityLoadingException(ex.getMessage());
+                        	}
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
                             // reset bay damage
                             bayDamage = damage;

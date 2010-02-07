@@ -54,7 +54,7 @@ public class BombType extends AmmoType {
                                                     null,"LAAMissile",null,null,"AlamoMissile"};
 
 
-    public static final int[] bombCosts = {1,1,1,1,1,5,6,6,5,5,1,1,1,1,10};
+    public static final int[] bombCosts = {1,1,1,1,1,5,6,6,5,5,1,2,1,1,10};
     private int bombType;
 
     public static String getBombName(int type) {

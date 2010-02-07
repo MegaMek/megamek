@@ -54,6 +54,7 @@ v0.35.12-dev (SVN)
 + Bug 2879684: Wrong Over Penetration applied
 + Bug 2918499: Sub Caps AAA
 + Bug 2946656: Building CF is reset to default
++ Bug 2881368: Top of the building deployment
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

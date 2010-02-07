@@ -459,22 +459,10 @@ public class WeaponType extends EquipmentType {
         return atClass;
     }
 
-    public static EquipmentType getSubCapBayType(int atclass) {
-        // return the correct weapons bay for the given type of weapon
-        switch (atclass) {
-            case (CLASS_CAPITAL_AC):
-                return EquipmentType.get("Sub-Capital Cannon Bay");
-            case (CLASS_CAPITAL_LASER):
-                return EquipmentType.get("Sub-Capital Laser Bay");
-            default:
-                return WeaponType.getBayType(atclass);
-        }
-    }
-
     // Probably not the best place for this
-    public static EquipmentType getBayType(int atclass) {
+    public EquipmentType getBayType() {
         // return the correct weapons bay for the given type of weapon
-        switch (atclass) {
+        switch (atClass) {
             case (CLASS_LASER):
                 return EquipmentType.get("Laser Bay");
             case (CLASS_POINT_DEFENSE):
@@ -504,10 +492,16 @@ public class WeaponType extends EquipmentType {
             case (CLASS_ROCKET_LAUNCHER):
                 return EquipmentType.get("Rocket Launcher Bay");
             case (CLASS_CAPITAL_LASER):
+            	if(subCapital) {
+            		return EquipmentType.get("Sub-Capital Laser Bay");
+            	}
                 return EquipmentType.get("Capital Laser Bay");
             case (CLASS_CAPITAL_PPC):
                 return EquipmentType.get("Capital PPC Bay");
             case (CLASS_CAPITAL_AC):
+            	if(subCapital) {
+            		return EquipmentType.get("Sub-Capital Cannon Bay");
+            	}
                 return EquipmentType.get("Capital AC Bay");
             case (CLASS_CAPITAL_GAUSS):
                 return EquipmentType.get("Capital Gauss Bay");

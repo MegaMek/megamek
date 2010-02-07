@@ -425,7 +425,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             // check if deployed unit violates stacking
             return;
         } else {
-
             //check for buildings and if found ask what level they want to deploy at
             Building bldg = clientgui.getClient().game.getBoard().getBuildingAt(moveto);
             if((null != bldg) && !(ce() instanceof Aero)) {
@@ -444,9 +443,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                     .getString("DeploymentDisplay.floorsDialog.title"), //$NON-NLS-1$
                             JOptionPane.QUESTION_MESSAGE, null, floors, null);
                     if (input != null) {
-                        for (int loop = 1; loop <= height; loop++) {
-                            if (input.equals(floors[loop - 1])) {
-                                ce().setElevation(loop-1);
+                        for (int loop = 0; loop < floors.length; loop++) {
+                            if (input.equals(floors[loop])) {
+                                ce().setElevation(loop);
                                 break;
                             }
                         }

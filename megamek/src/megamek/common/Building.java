@@ -145,8 +145,12 @@ public class Building implements Serializable {
         // We passed our tests, add the next hex to this building.
         this.coordinates.addElement(coords);
         originalHexes++;
-        this.currentCF.put(coords, getDefaultCF(this.type));
-        this.phaseCF.put(coords, getDefaultCF(this.type));
+        this.currentCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
+    	this.phaseCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
+        if(structureType == Terrains.BRIDGE) {
+        	this.currentCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));
+        	this.phaseCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));
+        }
         if(nextHex.containsTerrain(Terrains.BLDG_ARMOR)) {
             this.armor.put(coords,nextHex.terrainLevel(Terrains.BLDG_ARMOR));
         } else {

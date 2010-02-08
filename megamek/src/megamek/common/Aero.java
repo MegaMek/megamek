@@ -2549,7 +2549,7 @@ public class Aero extends Entity
      *          <code>false</code> otherwise.
      */
     @Override
-    public boolean canLoad( Entity unit ) {
+    public boolean canLoad( Entity unit, boolean checkFalse ) {
         // capital fighters can load other capital fighters (becoming squadrons)
         //but not in the deployment phase
         if ( isCapitalFighter() && !unit.isEnemyOf(this) && unit.isCapitalFighter()
@@ -2557,7 +2557,7 @@ public class Aero extends Entity
             return true;
         }
 
-        return super.canLoad(unit);
+        return super.canLoad(unit, checkFalse);
     }
 
     /***

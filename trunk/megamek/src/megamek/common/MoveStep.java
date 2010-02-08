@@ -896,7 +896,7 @@ public class MoveStep implements Serializable {
         isEvading = prev.isEvading;
         nRolls = prev.nRolls;
         isRolled = prev.isRolled;
-        mv = prev.mv;
+        mv = prev.mv.clone();
         freeTurn = prev.freeTurn;
         nStraight = prev.nStraight;
         nDown = prev.nDown;

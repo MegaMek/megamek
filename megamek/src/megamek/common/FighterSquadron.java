@@ -546,7 +546,7 @@ public class FighterSquadron extends Aero {
      *          <code>false</code> otherwise.
      */
     @Override
-    public boolean canLoad( Entity unit ) {
+    public boolean canLoad(Entity unit, boolean checkFalse) {
         // We must have enough space for the new fighter.
         if ( !unit.isEnemyOf(this) && unit.isFighter()  && (fighters.size() < MAX_SIZE)) {
             return true;
@@ -570,7 +570,7 @@ public class FighterSquadron extends Aero {
      *          <code>IllegalArgumentException</code> exception will be thrown.
      */
     @Override
-    public void load( Entity unit ) throws IllegalArgumentException {
+    public void load(Entity unit, boolean checkFalse) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if ( !canLoad(unit) ) {
             throw new IllegalArgumentException( "Can not load " +

@@ -60,6 +60,7 @@ v0.35.12-dev (SVN)
 + Bug 2864731: Infinate Aero Movement
 + Bug 2859447: Can't fire screen launchers
 + Bug 2879417: HAG Flak mode in space
++ Bug 2936007: 0.35.12-dev 0 Unable to load fighters into squadrons
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

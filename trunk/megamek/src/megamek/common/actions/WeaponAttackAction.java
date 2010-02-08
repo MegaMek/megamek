@@ -1074,9 +1074,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
             toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
             toHit.append(losMods);
-            if (!wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
-                toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
-            }
+            toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
             // actuator & sensor damage to attacker
             toHit.append(Compute.getDamageWeaponMods(ae, weapon));
             // heat
@@ -1322,7 +1320,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // secondary targets modifier,
         // if this is not a iNarc Nemesis confused attack
-        if (!isNemesisConfused) {
+        if (!isNemesisConfused && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
             toHit.append(Compute.getSecondaryTargetMod(game, ae, target, exchangeSwarmTarget));
         }
 

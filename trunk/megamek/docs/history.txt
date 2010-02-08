@@ -56,6 +56,7 @@ v0.35.12-dev (SVN)
 + Bug 2946656: Building CF is reset to default
 + Bug 2881368: Top of the building deployment
 + Bug 2915226: Light Air-to-Air Missiles (LAA) wrong number of Bomb Slots
++ Bug 2868771: Altitude bombing uses secondary target modifier
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

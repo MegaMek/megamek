@@ -1390,7 +1390,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // ammo to-hit modifier
         // TODO: shouldn't this use the Entity#isFlying() method?
-        if ((te != null)
+        if ((te != null) && !game.getBoard().inSpace()
                 && (te.isAirborne() || te.isAirborneVTOL())
                 && (atype != null)
                 && ((((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB) || (atype

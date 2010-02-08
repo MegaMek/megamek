@@ -4708,6 +4708,11 @@ public class Compute {
         if ((attacker == null) || (target == null)) {
             return false;
         }
+        
+        if(attacker.game.getBoard().inSpace()) {
+            return false;
+        }
+        
         return attacker.isAirborne() && !target.isAirborne() && !target.isAirborneVTOL();
     }
 

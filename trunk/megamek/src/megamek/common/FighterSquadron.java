@@ -426,6 +426,9 @@ public class FighterSquadron extends Aero {
                 continue;
             }
             for (Mounted mounted : fighter.getWeaponGroupList()) {
+            	if(mounted.isHit() || mounted.isDestroyed()) {
+            		continue;
+            	}
                 int loc = mounted.getLocation();
                 String key = mounted.getType().getInternalName() + ":" + loc;
                 if(null == groups.get(key)) {

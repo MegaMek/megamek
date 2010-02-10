@@ -53,15 +53,7 @@ v0.35.12-dev (SVN)
 + refactored gunnery specialization constants
 + Bug 2879684: Wrong Over Penetration applied
 + Bug 2918499: Sub Caps AAA
-+ Bug 2946656: Building CF is reset to default
-+ Bug 2881368: Top of the building deployment
-+ Bug 2915226: Light Air-to-Air Missiles (LAA) wrong number of Bomb Slots
-+ Bug 2868771: Altitude bombing uses secondary target modifier
-+ Bug 2864731: Infinate Aero Movement
-+ Bug 2859447: Can't fire screen launchers
-+ Bug 2879417: HAG Flak mode in space
-+ Bug 2936007: 0.35.12-dev 0 Unable to load fighters into squadrons
-+ Bug 2918503: Squadron Crits
++ Bug: too many BA can be loaded into transports
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

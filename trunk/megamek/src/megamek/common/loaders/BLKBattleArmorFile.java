@@ -28,9 +28,9 @@ package megamek.common.loaders;
 
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
-import megamek.common.EntityMovementMode;
 import megamek.common.LocationFullException;
 import megamek.common.TechConstants;
 import megamek.common.util.BuildingBlock;
@@ -72,7 +72,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find weightclass block.");
         }
         t.setWeightClass(dataFile.getDataAsInt("weightclass")[0]);
-        t.setWeight(EntityWeightClass.getClassLimit(t.getWeightClass()) * t.getTroopers());
+        t.setWeight(t.getTroopers());
         t.setTrooperWeight(EntityWeightClass.getClassLimit(t.getWeightClass()));
 
         if (!dataFile.exists("chassis")) {

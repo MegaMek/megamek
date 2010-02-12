@@ -159,6 +159,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String GUNNERYM = "gunneryM";
     public static final String GUNNERYB = "gunneryB";
     public static final String PILOTING = "piloting";
+    public static final String ARTILLERY = "artillery";
     public static final String TOUGH = "toughness";
     public static final String INITB = "initB";
     public static final String COMMANDB = "commandB";
@@ -498,6 +499,7 @@ public class XMLStreamParser implements XMLResponder {
                 String gunneryM = (String) attr.get(GUNNERYM);
                 String gunneryB = (String) attr.get(GUNNERYB);
                 String piloting = (String) attr.get(PILOTING);
+                String artillery = (String) attr.get(ARTILLERY);
                 String tough = (String) attr.get(TOUGH);
                 String initB = (String) attr.get(INITB);
                 String commandB = (String) attr.get(COMMANDB);
@@ -613,6 +615,21 @@ public class XMLStreamParser implements XMLResponder {
                             return;
                         }
                     }
+                    
+                    int artVal = gunVal;
+                    if (null != artillery && artillery.length() > 0) {
+                        try {
+                            artVal = Integer.parseInt(artillery);
+                        } catch (NumberFormatException excep) {
+                            // Handled by the next if test.
+                        }
+                        if (artVal < 0 || artVal > 7) {
+                            warning.append(
+                                    "Found invalid artillery value: ").append(
+                                    artillery).append(".\n");
+                            return;
+                        }
+                    }
 
                     if (null == pilotName || pilotName.length() == 0) {
                             pilotName = "Unnamed";
@@ -630,6 +647,7 @@ public class XMLStreamParser implements XMLResponder {
                     if (null != portraitFile && portraitFile.length() > 0) {
                         crew.setPortraitFileName(portraitFile);
                      }
+                    crew.setArtillery(artVal);
                     crew.setToughness(toughVal);
                     crew.setInitBonus(initBVal);
                     crew.setCommandBonus(commandBVal);

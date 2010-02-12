@@ -214,8 +214,6 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules,"return_flyover", false); //$NON-NLS-1$
 
         IBasicOptionGroup initiative = addGroup("initiative"); //$NON-NLS-1$
-        addOption(initiative, "individual_initiative", false); //$NON-NLS-1$
-        addOption(initiative, "command_init", false); //$NON-NLS-1$
         addOption(initiative, "inf_move_even", false); //$NON-NLS-1$
         addOption(initiative, "inf_deploy_even", false); //$NON-NLS-1$
         addOption(initiative, "inf_move_later", false); //$NON-NLS-1$
@@ -233,10 +231,13 @@ public class GameOptions extends AbstractOptions {
         addOption(initiative, "front_load_initiative", false);
         addOption(initiative, "initiative_streak_compensation", false);
 
-        IBasicOptionGroup rpg = addGroup("rpg"); //$NON-NLS-1$
+        IBasicOptionGroup rpg = addGroup("rpg"); //$NON-NLS-1
         addOption(rpg, "pilot_advantages", false); //$NON-NLS-1$
         addOption(rpg, "manei_domini", false); //$NON-NLS-1$
+        addOption(rpg, "individual_initiative", false); //$NON-NLS-1$
+        addOption(rpg, "command_init", false); //$NON-NLS-1$
         addOption(rpg, "rpg_gunnery", false); //$NON-NLS-1$
+        addOption(rpg, "artillery_skill", false); //$NON-NLS-1$
         addOption(rpg, "toughness", false); //$NON-NLS-1$
 
 

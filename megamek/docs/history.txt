@@ -65,6 +65,7 @@ v0.35.12-dev (SVN)
 + Bug: too many BA can be loaded into transports
 + Added override method for Entity#hasWorkinghasWorkingMisc
 + Bug: mech verifier treated partial wings wrong
++ RPG option for separate artillery skill
 
 v0.35.11 (2009-12-08, 22:44 UTC+1)
 + All Clan Mechs have Clan names again

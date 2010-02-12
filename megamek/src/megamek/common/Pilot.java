@@ -41,12 +41,17 @@ public class Pilot implements Serializable {
     private boolean dead;
     private boolean ejected;
 
-    // RPG skills
+    
+    /***Additional RPG Skills***/
+    // MW3e uses 3 different gunnery skills
     private int gunneryL;
     private int gunneryM;
     private int gunneryB; 
     
-    //init bonus
+    //Separate artillery skill
+    private int artillery;
+    
+    //init bonuses
     //bonus for individual initiative
     private int initBonus;
     //commander bonus
@@ -54,6 +59,8 @@ public class Pilot implements Serializable {
     
     //a toughness bonus that is applied to all KO checks
     private int toughness;
+    
+    /***End RPG Skills***/
     
     // these are only used on the server:
     private boolean koThisRound; // did I go KO this game round?
@@ -97,6 +104,7 @@ public class Pilot implements Serializable {
         this.gunneryL = gunnery;
         this.gunneryM = gunnery;
         this.gunneryB = gunnery;
+        this.artillery = gunnery;
         this.piloting = piloting;
         this.initBonus = 0;
         this.commandBonus = 0;
@@ -117,6 +125,7 @@ public class Pilot implements Serializable {
         this.gunneryL = gunneryL;
         this.gunneryM = gunneryM;
         this.gunneryB = gunneryB;
+        this.artillery = this.gunnery;
         this.piloting = piloting;
         this.initBonus = 0;
         this.commandBonus = 0;
@@ -150,6 +159,10 @@ public class Pilot implements Serializable {
 
     public int getGunneryB() {
         return gunneryB;
+    }
+    
+    public int getArtillery() {
+    	return artillery;
     }
 
     public int getPiloting() {
@@ -186,6 +199,10 @@ public class Pilot implements Serializable {
 
     public void setGunneryB(int gunnery) {
         this.gunneryB = gunnery;
+    }
+    
+    public void setArtillery(int artillery) {
+    	this.artillery = artillery;
     }
 
     public void setPiloting(int piloting) {

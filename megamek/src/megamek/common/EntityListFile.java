@@ -413,6 +413,10 @@ public class EntityListFile {
             }
             output.write("\" piloting=\"");
             output.write(String.valueOf(crew.getPiloting()));
+            if(null != entity.getGame() && entity.getGame().getOptions().booleanOption("artillery_skill")) {               
+                output.write("\" artillery=\"");
+                output.write(String.valueOf(crew.getArtillery()));
+            }
             if(crew.getToughness() != 0) {               
                 output.write("\" toughness=\"");
                 output.write(String.valueOf(crew.getToughness()));

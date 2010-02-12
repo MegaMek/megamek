@@ -419,7 +419,7 @@ public class MiscType extends EquipmentType {
                 return 7;
             }
             return 14;
-        } else if (hasFlag(F_JUMP_BOOSTER)) {
+        } else if (hasFlag(F_JUMP_BOOSTER) || hasFlag(F_TALON)) {
             return (entity instanceof QuadMech) ? 8 : 4; // all slots in all
             // legs
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
@@ -442,13 +442,6 @@ public class MiscType extends EquipmentType {
             }
             if (entity instanceof BipedMech) {
                 return 2;
-            }
-        } else if (hasFlag(F_TALON)) {
-            if (entity instanceof QuadMech) {
-                return 8;
-            }
-            if (entity instanceof BipedMech) {
-                return 4;
             }
         }
         // right, well I'll just guess then

@@ -413,7 +413,7 @@ public class TestMech extends TestEntity {
             return false;
         }
         if ((mech.getJumpMP(false) > mech.getOriginalWalkMP()) &&
-               ((mech.getJumpType() != Mech.JUMP_IMPROVED) && !mech.hasWorkingMisc(MiscType.F_TALON, -1))) {
+               ((mech.getJumpType() != Mech.JUMP_IMPROVED) && !mech.hasWorkingMisc(MiscType.F_PARTIAL_WING))) {
           buff.append("Jump MP exceeds walk MP without IJJs");
           return false;
         }

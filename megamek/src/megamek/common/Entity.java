@@ -2634,6 +2634,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * 
      * @param flag
      *            A MiscType.F_XXX
+     * @return true if at least one ready item.
+     */
+    public boolean hasWorkingMisc(BigInteger flag) {
+        return hasWorkingMisc(flag, -1);
+    }
+
+    /**
+     * Check if the entity has an arbitrary type of misc equipment
+     * 
+     * @param flag
+     *            A MiscType.F_XXX
      * @param secondary
      *            A MiscType.S_XXX or -1 for don't care
      * @return true if at least one ready item.
@@ -5295,8 +5306,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             Enumeration<Transporter> iter = transports.elements();
             while (iter.hasMoreElements()) {
                 Transporter next = iter.nextElement();
-                if (next.canLoad(unit) && 
-                        (!checkElev || unit.getElevation() == getElevation())) {
+                if (next.canLoad(unit) && (!checkElev || (unit.getElevation() == getElevation()))) {
                     return true;
                 }
             }
@@ -5305,7 +5315,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // If we got here, none of our transports can carry the unit.
         return false;
     }
-    
+
     public boolean canLoad(Entity unit) {
         return this.canLoad(unit, true);
     }
@@ -5325,8 +5335,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
-            if (next.canLoad(unit) && 
-                    (!checkElev || unit.getElevation() == getElevation())) {
+            if (next.canLoad(unit) && (!checkElev || (unit.getElevation() == getElevation()))) {
                 next.load(unit);
                 return;
             }
@@ -5335,7 +5344,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // If we got to this point, then we can't load the unit.
         throw new IllegalArgumentException(getShortName() + " can not load " + unit.getShortName());
     }
-    
+
     public void load(Entity unit) {
         this.load(unit, true);
     }
@@ -6987,8 +6996,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getMediumRangeModifier() {
         int mod = 2;
-        if(getCrew().getOptions().booleanOption("sniper")) {
-            mod = mod/2;
+        if (getCrew().getOptions().booleanOption("sniper")) {
+            mod = mod / 2;
         }
         if (getQuirks().booleanOption("imp_target_med")) {
             mod--;
@@ -7001,8 +7010,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getLongRangeModifier() {
         int mod = 4;
-        if(getCrew().getOptions().booleanOption("sniper")) {
-            mod = mod/2;
+        if (getCrew().getOptions().booleanOption("sniper")) {
+            mod = mod / 2;
         }
         if (getQuirks().booleanOption("imp_target_long")) {
             mod--;
@@ -7015,8 +7024,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getExtremeRangeModifier() {
         int mod = 6;
-        if(getCrew().getOptions().booleanOption("sniper")) {
-            mod = mod/2;
+        if (getCrew().getOptions().booleanOption("sniper")) {
+            mod = mod / 2;
         }
         return mod;
     }
@@ -7617,9 +7626,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         if ((moveType != EntityMovementType.MOVE_JUMP) && (prevHex != null) && (distance > 1) && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_VTOL_RUN)) && (prevFacing != curFacing) && !lastPos.equals(curPos) && !(this instanceof Infantry)) {
             roll.append(new PilotingRollData(getId(), 0, "flanking and turning"));
-            if(isUsingManAce()) {
+            if (isUsingManAce()) {
                 roll.addModifier(-1, "Maneuvering Ace");
-            }         
+            }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: not apparently sideslipping");
         }

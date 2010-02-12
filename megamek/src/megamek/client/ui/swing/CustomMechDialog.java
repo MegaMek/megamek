@@ -151,6 +151,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private JTextField fldPiloting = new JTextField(3);
 
+    private JLabel labArtillery = new JLabel(Messages
+            .getString("CustomMechDialog.labArtillery"), SwingConstants.RIGHT); //$NON-NLS-1$
+
+    private JTextField fldArtillery = new JTextField(3);
+    
     private JLabel labTough = new JLabel(Messages
             .getString("CustomMechDialog.labTough"), SwingConstants.RIGHT); //$NON-NLS-1$
 
@@ -384,6 +389,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panPilot.add(labPiloting, GBC.std());
         panPilot.add(fldPiloting, GBC.eop());
 
+        if(client.game.getOptions().booleanOption("artillery_skill")) {
+            panPilot.add(labArtillery, GBC.std());
+            panPilot.add(fldArtillery, GBC.eop());
+        }
+        
         if(client.game.getOptions().booleanOption("toughness")) {
             panPilot.add(labTough, GBC.std());
             panPilot.add(fldTough, GBC.eop());
@@ -599,6 +609,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         fldGunneryB.addActionListener(this);
         fldPiloting.setText(Integer.toString(entity.getCrew().getPiloting()));
         fldPiloting.addActionListener(this);
+        fldArtillery.setText(Integer.toString(entity.getCrew().getArtillery()));
+        fldArtillery.addActionListener(this);
         fldTough.setText(Integer.toString(entity.getCrew().getToughness()));
         fldTough.addActionListener(this);
         fldInit.setText(Integer.toString(entity.getCrew().getInitBonus()));
@@ -624,6 +636,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldGunneryM.setEnabled(false);
             fldGunneryB.setEnabled(false);
             fldPiloting.setEnabled(false);
+            fldArtillery.setEnabled(false);
             fldTough.setEnabled(false);
             fldInit.setEnabled(false);
             fldCommandInit.setEnabled(false);
@@ -1840,6 +1853,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             int gunneryL;
             int gunneryM;
             int gunneryB;
+            int artillery;
             int piloting;
             int tough = 0;
             int init = 0;
@@ -1854,6 +1868,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 gunneryM = Integer.parseInt(fldGunneryM.getText());
                 gunneryB = Integer.parseInt(fldGunneryB.getText());
                 piloting = Integer.parseInt(fldPiloting.getText());
+                artillery = Integer.parseInt(fldArtillery.getText());
                 tough = Integer.parseInt(fldTough.getText());
                 init = Integer.parseInt(fldInit.getText());
                 command = Integer.parseInt(fldCommandInit.getText());
@@ -1873,7 +1888,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // keep these reasonable, please
             if ((gunnery < 0) || (gunnery > 8) || (piloting < 0) || (piloting > 8)
                     || (gunneryL < 0) || (gunneryL > 8) || (gunneryM < 0)
-                    || (gunneryM > 8) || (gunneryB < 0) || (gunneryB > 8)) {
+                    || (gunneryM > 8) || (gunneryB < 0) || (gunneryB > 8)
+                    || (artillery < 0) || (artillery > 8)) {
                 JOptionPane
                         .showMessageDialog(
                                 clientgui.frame,
@@ -1933,6 +1949,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             } else {
                 entity.setCrew(new Pilot(name, gunnery, piloting));
             }
+            entity.getCrew().setArtillery(artillery);
             entity.getCrew().setToughness(tough);
             entity.getCrew().setInitBonus(init);
             entity.getCrew().setCommandBonus(command);

@@ -22,6 +22,8 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Choice;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -46,6 +48,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -116,7 +119,6 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
     private JButton buttonBoardPreview = new JButton(Messages
             .getString("BoardSelectionDialog.ViewGameBoard")); //$NON-NLS-1$
-    JPanel mapPreviewPanel;
     MiniMap miniMap = null;
     
     JDialog gameBoardPreviewW;
@@ -169,15 +171,10 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         gridbag.setConstraints(panBoardsAvailable, c);
         getContentPane().add(panBoardsAvailable);
 
-        mapPreviewPanel = new JPanel();
+        JScrollPane mapPreviewScroller = new JScrollPane();
         
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(mapPreviewPanel, c);
-        getContentPane().add(mapPreviewPanel);
         try {
-            miniMap = new MiniMap(mapPreviewPanel, null);
-            //Set a default size for the minimap object to ensure it will have space on the screen to be drawn.
-            miniMap.setSize(160, 200);
+            miniMap = new MiniMap(mapPreviewScroller, null);
             miniMap.setZoom(2);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
@@ -186,7 +183,15 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
                             JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             this.dispose();
         }
-        mapPreviewPanel.add(miniMap);
+        mapPreviewScroller.setViewportView(miniMap);
+        mapPreviewScroller.getViewport().setBackground(Color.BLACK);
+        mapPreviewScroller.setPreferredSize(new Dimension(178, 214));
+        mapPreviewScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        mapPreviewScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(mapPreviewScroller, c);
+        getContentPane().add(mapPreviewScroller);
         
         gridbag.setConstraints(panButtons, c);
         getContentPane().add(panButtons);

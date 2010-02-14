@@ -14,7 +14,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -40,6 +39,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import megamek.client.Client;
@@ -82,7 +83,7 @@ import megamek.common.event.GameTurnChangeEvent;
  * buttons -clean up listenercode.. -initializecolors is fugly -uses exception
  * to return from method? -uses break-to-label -uses while-true
  */
-public class MiniMap extends Canvas {
+public class MiniMap extends JPanel {
 
     // these indices match those in Terrains.java, and are therefore sensitive
     // to any changes there
@@ -104,6 +105,9 @@ public class MiniMap extends Canvas {
     private final static int SHOW_TOTAL_HEIGHT = 3;
     private final static int NBR_MODES = 3;
 
+    private final static int SCROLL_PANE_WIDTH = 160;
+    private final static int SCROLL_PANE_HEIGHT = 200;
+    
     private Image m_mapImage;
     private IBoardView m_bview;
     private IGame m_game;
@@ -422,7 +426,18 @@ public class MiniMap extends Canvas {
             y = (int) (virtualBounds.getMinY());
         }
         getParent().setLocation(x, y);
-        setSize(requiredWidth, requiredHeight);
+        int xTemp = requiredWidth;
+        int yTemp = requiredHeight;
+        
+        if (m_dialog instanceof JScrollPane) {
+            //For the scrollPane, enforce the minimum size.
+            if (requiredWidth < SCROLL_PANE_WIDTH)
+                xTemp = SCROLL_PANE_WIDTH;
+            if (requiredHeight < SCROLL_PANE_HEIGHT)
+                yTemp = SCROLL_PANE_HEIGHT;
+        }
+        setSize(xTemp, yTemp);
+        setPreferredSize(new Dimension(xTemp, yTemp));
         if(m_dialog instanceof JDialog)
             ((JDialog)m_dialog).pack();
         // m_dialog.setVisible(true);
@@ -440,6 +455,7 @@ public class MiniMap extends Canvas {
             topMargin = ((getSize().height - requiredHeight) / 2) + margin;
         }
         drawMap();
+        revalidate();
     }
 
     protected long lastDrawMapReq = 0;

@@ -49,7 +49,7 @@ public class CLLongTom extends ArtilleryWeapon {
         extremeRange = 30; // No extreme range.
         tonnage = 30f;
         criticals = 30;
-        bv = 560;
+        bv = 368;
         cost = 450000;
     }
 

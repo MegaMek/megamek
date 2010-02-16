@@ -50,7 +50,7 @@ public class CLSniper extends ArtilleryWeapon {
         extremeRange = 18; // No extreme range.
         tonnage = 20f;
         criticals = 20;
-        bv = 96;
+        bv = 85;
         cost = 300000;
     }
 

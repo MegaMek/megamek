@@ -8,6 +8,8 @@ v0.35.13-dev (SVN)
 + Bug: Reinforced Internal Structure BV modifier missing
 + Bug: PPC capacitor BV not quite correct
 + Bug: M-Pods should subtract defensive BV for being explosive
++ TO Errata: Clan artillery and mech mortar weapons should have same BV as IS
++ Bug: Spike BV wrong
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

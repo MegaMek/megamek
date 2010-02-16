@@ -156,8 +156,7 @@ public class WeaponType extends EquipmentType {
     // anti-ship
     // missiles
     public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(39);
-    // public static final BigInteger F_ARTILLERY_CANNON =
-    // BigInteger.valueOf(1).shiftLeft(40; Not needed
+    public static final BigInteger F_M_POD = BigInteger.valueOf(1).shiftLeft(40);
     public static final BigInteger F_DIVE_BOMB = BigInteger.valueOf(1).shiftLeft(41);
     public static final BigInteger F_ALT_BOMB = BigInteger.valueOf(1).shiftLeft(42);
 

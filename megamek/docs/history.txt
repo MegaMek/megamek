@@ -2,6 +2,12 @@
 ----------------
 v0.35.13-dev (SVN)
 + Added scroll bars to Map selection preview.
++ Bug: Clan ER Medium Pulse and Clan ER Large Pulse had wrong BV
++ Bug: Thunderbolt 15 ammo has wrong BV
++ Bug: Fluid gun ammo considered explosive
++ Bug: Reinforced Internal Structure BV modifier missing
++ Bug: PPC capacitor BV not quite correct
++ Bug: M-Pods should subtract defensive BV for being explosive
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

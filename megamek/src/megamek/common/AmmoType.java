@@ -2732,6 +2732,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 1;
         ammo.cost = 500;
+        ammo.explosive = false;
 
         return ammo;
     }
@@ -4477,7 +4478,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 3 LRM Ammo";
-        ammo.shortName = "MML/LRM 3";
+        ammo.shortName = "MML 3/LRM";
         ammo.setInternalName("IS Ammo MML-3 LRM");
         ammo.addLookupName("ISMML3 LRM Ammo");
         ammo.addLookupName("IS MML-3 LRM Ammo");
@@ -4498,7 +4499,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 3 SRM Ammo";
-        ammo.shortName = "MML/SRM 3";
+        ammo.shortName = "MML 3/SRM";
         ammo.setInternalName("IS Ammo MML-3 SRM");
         ammo.addLookupName("ISMML3 SRM Ammo");
         ammo.addLookupName("IS MML-3 SRM Ammo");
@@ -4517,7 +4518,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 5 LRM Ammo";
-        ammo.shortName = "MML/LRM 5";
+        ammo.shortName = "MML 5/LRM";
         ammo.setInternalName("IS Ammo MML-5 LRM");
         ammo.addLookupName("ISMML5 LRM Ammo");
         ammo.addLookupName("IS MML-5 LRM Ammo");
@@ -4538,7 +4539,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 5 SRM Ammo";
-        ammo.shortName = "MML/SRM 5";
+        ammo.shortName = "MML 5/SRM";
         ammo.setInternalName("IS Ammo MML-5 SRM");
         ammo.addLookupName("ISMML5 SRM Ammo");
         ammo.addLookupName("IS MML-5 SRM Ammo");
@@ -4557,7 +4558,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 7 LRM Ammo";
-        ammo.shortName = "MML/LRM 7";
+        ammo.shortName = "MML 7/LRM";
         ammo.setInternalName("IS Ammo MML-7 LRM");
         ammo.addLookupName("ISMML7 LRM Ammo");
         ammo.addLookupName("IS MML-7 LRM Ammo");
@@ -4578,7 +4579,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 7 SRM Ammo";
-        ammo.shortName = "MML/SRM 7";
+        ammo.shortName = "MML 7/SRM";
         ammo.setInternalName("IS Ammo MML-7 SRM");
         ammo.addLookupName("ISMML7 SRM Ammo");
         ammo.addLookupName("IS MML-7 SRM Ammo");
@@ -4597,7 +4598,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 9 LRM Ammo";
-        ammo.shortName = "MML/LRM 9";
+        ammo.shortName = "MML 9/LRM";
         ammo.setInternalName("IS Ammo MML-9 LRM");
         ammo.addLookupName("ISMML9 LRM Ammo");
         ammo.addLookupName("IS MML-9 LRM Ammo");
@@ -4618,7 +4619,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "MML 9 SRM Ammo";
-        ammo.shortName = "MML/SRM 9";
+        ammo.shortName = "MML 9/SRM";
         ammo.setInternalName("IS Ammo MML-9 SRM");
         ammo.addLookupName("ISMML9 SRM Ammo");
         ammo.addLookupName("IS MML-9 SRM Ammo");
@@ -6278,7 +6279,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_TBOLT_15;
         ammo.shots = 4;
-        ammo.bv = 26;
+        ammo.bv = 29;
         ammo.cost = 50000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });

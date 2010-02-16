@@ -448,32 +448,32 @@ public class MiscType extends EquipmentType {
         return 1;
     }
 
-    public double getBV(Entity entity, Mounted mount) {
+    public double getBV(Entity entity, Mounted linkedTo) {
 
-        if (hasFlag(F_PPC_CAPACITOR) && (mount != null) && (mount.getLinked() != null)) {
+        if (hasFlag(F_PPC_CAPACITOR) && (linkedTo != null) && (linkedTo.getLinkedBy() != null)) {
 
-            if (mount.getLinked().getType() instanceof ISLightPPC) {
+            if (linkedTo.getType() instanceof ISLightPPC) {
                 return 44;
             }
 
-            if (mount.getLinked().getType() instanceof ISPPC) {
+            if (linkedTo.getType() instanceof ISPPC) {
                 return 88;
             }
 
-            if (mount.getLinked().getType() instanceof ISHeavyPPC) {
+            if (linkedTo.getType() instanceof ISHeavyPPC) {
                 return 53;
             }
 
-            if (mount.getLinked().getType() instanceof ISSnubNosePPC) {
+            if (linkedTo.getType() instanceof ISSnubNosePPC) {
                 return 90;
             }
 
-            if (mount.getLinked().getType() instanceof ISERPPC) {
+            if (linkedTo.getType() instanceof ISERPPC) {
                 return 114;
             }
         }
 
-        return this.getBV(entity, mount.getLocation());
+        return this.getBV(entity, linkedTo.getLocation());
     }
 
     @Override

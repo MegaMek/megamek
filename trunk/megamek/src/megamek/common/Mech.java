@@ -2721,6 +2721,8 @@ public abstract class Mech extends Entity implements Serializable {
         double internalMultiplier = 1.0;
         if (getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL) {
             internalMultiplier = 0.5;
+        } else if (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED) {
+            internalMultiplier = 2.0;
         }
 
         dbv += getTotalInternal() * internalMultiplier * 1.5 * getEngine().getBVMultiplier();
@@ -2911,8 +2913,8 @@ public abstract class Mech extends Entity implements Serializable {
                 toSubtract = 0;
             }
 
-            // B-Pods shouldn't subtract
-            if ((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_B_POD))) {
+            // B- and M-Pods shouldn't subtract
+            if ((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_B_POD) || etype.hasFlag(WeaponType.F_M_POD))) {
                 toSubtract = 0;
             }
 
@@ -3252,16 +3254,18 @@ public abstract class Mech extends Entity implements Serializable {
                 }
                 dBV = mgaBV * 0.67;
             }
+            String name = wtype.getName();
             // check to see if the weapon is a PPC and has a Capacitor attached
             // to it
             if (wtype.hasFlag(WeaponType.F_PPC) && (weapon.getLinkedBy() != null)) {
                 dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this, weapon);
+                name = name.concat(" with Capacitor");
             }
 
             bvText.append(startRow);
             bvText.append(startColumn);
 
-            bvText.append(wtype.getName());
+            bvText.append(name);
             if (weapon.isRearMounted()) {
                 bvRear += dBV;
                 bvText.append(" (R)");
@@ -3420,16 +3424,19 @@ public abstract class Mech extends Entity implements Serializable {
                 weaponHeat *= 0.5;
             }
 
+            String name = wtype.getName();
+
             // check to see if the weapon is a PPC and has a Capacitor attached
             // to it
             if (wtype.hasFlag(WeaponType.F_PPC) && (mounted.getLinkedBy() != null)) {
+                name = name.concat(" with Capacitor");
                 weaponHeat += 5;
             }
 
             bvText.append(startRow);
             bvText.append(startColumn);
 
-            bvText.append(wtype.getName());
+            bvText.append(name);
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append(endColumn);
@@ -3472,6 +3479,7 @@ public abstract class Mech extends Entity implements Serializable {
                 // attached to it
                 if (wtype.hasFlag(WeaponType.F_PPC)) {
                     dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(this, mounted);
+                    weaponName = weaponName.concat(" with Capacitor");
                 }
                 Mounted mLinker = mounted.getLinkedBy();
                 if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {

@@ -50,7 +50,7 @@ public class CLThumper extends ArtilleryWeapon {
         extremeRange = 21; // No extreme range.
         tonnage = 15f;
         criticals = 15;
-        bv = 48;
+        bv = 43;
         cost = 187500;
     }
 

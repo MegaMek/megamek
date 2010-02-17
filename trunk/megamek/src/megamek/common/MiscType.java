@@ -465,7 +465,7 @@ public class MiscType extends EquipmentType {
             }
 
             if (linkedTo.getType() instanceof ISSnubNosePPC) {
-                return 90;
+                return 87;
             }
 
             if (linkedTo.getType() instanceof ISERPPC) {

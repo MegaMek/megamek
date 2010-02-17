@@ -30,6 +30,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -63,7 +65,7 @@ import megamek.common.util.BoardUtilities;
  * @author Ben
  */
 public class BoardSelectionDialog extends JDialog implements ActionListener,
-        IMapSettingsObserver, ListSelectionListener, MouseListener {
+        IMapSettingsObserver, ListSelectionListener, MouseListener, KeyListener {
     /**
      *
      */
@@ -143,7 +145,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
 
         butChange.addActionListener(this);
         lisBoardsAvailable.addMouseListener(this);
-
+        lisBoardsAvailable.addKeyListener(this);
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -720,6 +722,22 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
     }
 
     public void mouseReleased(MouseEvent arg0) {
+        //ignore
+    }
+
+    public void keyPressed(KeyEvent e) {
+        //ignore
+    }
+
+    public void keyReleased(KeyEvent e) {
+        int code = e.getKeyCode();
+        if((code == KeyEvent.VK_DOWN || code == KeyEvent.VK_UP) && 
+           e.getSource().equals(lisBoardsAvailable)) {
+            previewMapsheet();
+        }
+    }
+
+    public void keyTyped(KeyEvent e) {
         //ignore
     }
 }

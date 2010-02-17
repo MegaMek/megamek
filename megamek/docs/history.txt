@@ -11,6 +11,7 @@ v0.35.13-dev (SVN)
 + TO Errata: Clan artillery and mech mortar weapons should have same BV as IS
 + Bug: Spike BV wrong
 + Bug 2951922: Map sheet preview image does not update with Arrow keys.
++ Bug: snub-nose PPC with capacitor has wrong BV
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

@@ -617,6 +617,19 @@ public abstract class TestEntity implements TestEntityOption {
         }
         if (getEntity() instanceof Mech) {
             Mech mech = (Mech) getEntity();
+            if (mech.hasWorkingWeapon(WeaponType.F_TASER)) {
+                switch (mech.getEngine().getEngineType()) {
+                    case Engine.FISSION:
+                    case Engine.FUEL_CELL:
+                    case Engine.COMBUSTION_ENGINE:
+                        buff.append("Mech Taser needs fusion engine\n");
+                        illegal = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             // TODO: disallow the weapons on quads, except unless it's one per
             // side torso
             for (int loc = Mech.LOC_RARM; loc <= Mech.LOC_LARM; loc++) {
